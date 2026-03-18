@@ -6,8 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { Plus, Loader as LoaderIcon } from "lucide-react";
+import { Download, Plus, Upload, Loader as LoaderIcon, RefreshCw } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -16,11 +17,16 @@ import { PageWrapper } from "@/components/common/page-wrapper";
 import { useInstanceDepartment } from "@/hooks/store";
 import { DepartmentTreeItem } from "./components/department-tree-item";
 import { DepartmentFormModal } from "./components/department-form-modal";
+import { AutoJoinModal } from "./components/auto-join-modal";
+import { RejoinAllModal } from "./components/rejoin-all-modal";
 
 const DepartmentsPage = observer(function DepartmentsPage() {
-  const { tree, loader, fetchTree, deleteDepartment } = useInstanceDepartment();
+  const { tree, loader, fetchTree, deleteDepartment, exportDepartments } = useInstanceDepartment();
+  const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [editDept, setEditDept] = useState<IInstanceDepartment | null>(null);
+  const [autoJoinDept, setAutoJoinDept] = useState<IInstanceDepartment | null>(null);
+  const [rejoinModalOpen, setRejoinModalOpen] = useState(false);
 
   useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
 
@@ -59,10 +65,24 @@ const DepartmentsPage = observer(function DepartmentsPage() {
             Department tree
             {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
           </div>
-          <Button variant="primary" size="sm" onClick={() => { setEditDept(null); setModalOpen(true); }}>
-            <Plus className="w-4 h-4" />
-            Add Department
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => exportDepartments()}>
+              <Download className="w-4 h-4" />
+              Export
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => router.push("/departments/import")}>
+              <Upload className="w-4 h-4" />
+              Import
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setRejoinModalOpen(true)}>
+              <RefreshCw className="w-4 h-4" />
+              Rejoin
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => { setEditDept(null); setModalOpen(true); }}>
+              <Plus className="w-4 h-4" />
+              Add Department
+            </Button>
+          </div>
         </div>
 
         {loader === "init-loader" ? (
@@ -83,6 +103,7 @@ const DepartmentsPage = observer(function DepartmentsPage() {
                 dept={dept}
                 onEdit={handleEdit}
                 onDelete={(id) => void handleDelete(id)}
+                onAutoJoin={setAutoJoinDept}
               />
             ))}
           </div>
@@ -90,6 +111,12 @@ const DepartmentsPage = observer(function DepartmentsPage() {
       </div>
 
       <DepartmentFormModal open={modalOpen} onClose={handleModalClose} editDept={editDept} />
+      <AutoJoinModal
+        deptId={autoJoinDept?.id ?? null}
+        deptName={autoJoinDept?.name ?? ""}
+        onClose={() => setAutoJoinDept(null)}
+      />
+      <RejoinAllModal open={rejoinModalOpen} onClose={() => setRejoinModalOpen(false)} />
     </PageWrapper>
   );
 });

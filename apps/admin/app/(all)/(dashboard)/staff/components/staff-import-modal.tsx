@@ -6,7 +6,7 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
@@ -28,6 +28,18 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
   const [updateExisting, setUpdateExisting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<IInstanceStaffBulkImportResponse | null>(null);
+
+  const handleDownloadTemplate = () => {
+    const headers = "staff_id,first_name,last_name,display_name,department_code,position,job_grade,phone,date_of_joining";
+    const sample = "EMP001,John,Doe,Johnny,DEPT01,Engineer,G5,0901234567,2025-01-15";
+    const blob = new Blob([`${headers}\n${sample}\n`], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "staff-import-template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleClose = () => {
     setFile(null);
@@ -83,6 +95,17 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             className="hidden"
           />
+          <div className="flex flex-col gap-0.5">
+            <span className="text-13 font-medium">CSV file</span>
+            <button
+              type="button"
+              onClick={handleDownloadTemplate}
+              className="flex items-center gap-1 text-xs text-custom-primary-100 hover:underline w-fit"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Download template
+            </button>
+          </div>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}

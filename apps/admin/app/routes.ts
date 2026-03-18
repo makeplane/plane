@@ -30,6 +30,7 @@ export default [
     route("users/bulk-import", "./(all)/(dashboard)/users/bulk-import/page.tsx"),
     route("users/:userId", "./(all)/(dashboard)/users/detail/page.tsx"),
     route("departments", "./(all)/(dashboard)/departments/page.tsx"),
+    route("departments/import", "./(all)/(dashboard)/departments/import/page.tsx"),
     route("staff", "./(all)/(dashboard)/staff/page.tsx"),
     route("staff/create", "./(all)/(dashboard)/staff/create/page.tsx"),
     route("ai", "./(all)/(dashboard)/ai/page.tsx"),

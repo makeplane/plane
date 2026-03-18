@@ -1,12 +1,16 @@
 # Python imports
+import io
 import json
+from datetime import datetime
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Count, Q
+from django.http import HttpResponse
 
 # Third party imports
+import openpyxl
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -15,6 +19,43 @@ from plane.app.serializers.department import DepartmentSerializer, DepartmentTre
 from plane.db.models import Department, Workspace, WorkspaceMember
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
+
+
+def _dept_to_row(dept):
+    """Convert a Department instance to a flat export dict."""
+    return {
+        "name": dept.name,
+        "code": dept.code or "",
+        "short_name": dept.short_name or "",
+        "dept_code": dept.dept_code or "",
+        "dept_type": dept.dept_type or "",
+        "parent_code": dept.parent.code if dept.parent_id and dept.parent else "",
+        "manager_email": dept.manager.email if dept.manager_id and dept.manager else "",
+        "sort_order": dept.sort_order,
+        "is_active": dept.is_active,
+        "level": dept.level,
+    }
+
+
+def _xlsx_response(rows):
+    """Build an HttpResponse streaming a flat XLSX of departments."""
+    headers = ["name", "code", "short_name", "dept_code", "dept_type", "parent_code", "manager_email", "sort_order", "is_active", "level"]
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Departments"
+    ws.append(headers)
+    for row in rows:
+        ws.append([row.get(h, "") for h in headers])
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    response = HttpResponse(
+        buf.read(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    response["Content-Disposition"] = f'attachment; filename="departments_{timestamp}.xlsx"'
+    return response
 
 
 class InstanceDepartmentEndpoint(BaseAPIView):
@@ -151,6 +192,19 @@ class InstanceDepartmentStaffEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class DepartmentExportView(BaseAPIView):
+    """Export all departments as a flat XLSX file."""
+
+    def get(self, request):
+        departments = (
+            Department.objects.filter(deleted_at__isnull=True)
+            .select_related("parent", "manager")
+            .order_by("level", "sort_order", "name")
+        )
+        rows = [_dept_to_row(d) for d in departments]
+        return _xlsx_response(rows)
+
+
 class InstanceDepartmentLinkWorkspaceEndpoint(BaseAPIView):
     """Link or unlink a department to a workspace. Always auto-joins all active staff."""
 
@@ -223,6 +277,285 @@ class InstanceDepartmentLinkWorkspaceEndpoint(BaseAPIView):
         department.linked_workspace = None
         department.save(update_fields=["linked_workspace"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InstanceDepartmentAutoJoinEndpoint(BaseAPIView):
+    """Join the department manager to projects in linked workspaces.
+
+    If the department has its own linked_workspace, use that.
+    Otherwise, collect all descendant departments' linked workspaces and use those.
+    """
+
+    def post(self, request, pk):
+        from django.db.models import Min
+        from plane.db.models import Project, ProjectMember, ProjectUserProperty
+
+        department = (
+            Department.objects.filter(pk=pk, deleted_at__isnull=True)
+            .select_related("linked_workspace", "manager")
+            .first()
+        )
+        if not department:
+            return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        mode = request.data.get("mode")
+        if mode not in ("all_projects", "bank_wide_projects"):
+            return Response({"error": "mode must be 'all_projects' or 'bank_wide_projects'"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Collect managers: own dept + all ancestors (Option B cascade upward)
+        managers = _collect_dept_and_ancestor_managers(department)
+
+        if not managers:
+            return Response({"error": "Department has no manager"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Use own workspace, or fall back to descendant workspaces
+        if department.linked_workspace:
+            workspaces = [department.linked_workspace]
+        else:
+            workspaces = _collect_descendant_workspaces(department)
+
+        if not workspaces:
+            return Response(
+                {"error": "No linked workspace found on this department or its children"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        newly_added = 0
+        already_member = 0
+
+        for workspace in workspaces:
+            projects = Project.objects.filter(workspace=workspace, deleted_at__isnull=True)
+            if mode == "bank_wide_projects":
+                projects = projects.filter(is_bank_wide=True)
+            projects = list(projects)
+
+            for manager in managers:
+                # Ensure manager is a WorkspaceMember before adding to projects.
+                # Use all_objects to catch soft-deleted records (objects auto-filters deleted_at=None).
+                any_ws = WorkspaceMember.all_objects.filter(workspace=workspace, member=manager).first()
+                if any_ws:
+                    fields = []
+                    if any_ws.deleted_at is not None:
+                        any_ws.deleted_at = None
+                        fields.append("deleted_at")
+                    if any_ws.role < 20:
+                        any_ws.role = 20
+                        fields.append("role")
+                    if not any_ws.is_active:
+                        any_ws.is_active = True
+                        fields.append("is_active")
+                    if fields:
+                        any_ws.save(update_fields=fields)
+                else:
+                    WorkspaceMember.objects.create(
+                        workspace=workspace, member=manager, role=20, is_active=True
+                    )
+
+                for project in projects:
+                    # Check for existing active membership
+                    if ProjectMember.objects.filter(project=project, member=manager).exists():
+                        already_member += 1
+                        continue
+
+                    # Restore soft-deleted membership instead of creating a duplicate
+                    soft_deleted = ProjectMember.all_objects.filter(
+                        project=project, member=manager
+                    ).exclude(deleted_at__isnull=True).first()
+                    if soft_deleted:
+                        soft_deleted.deleted_at = None
+                        soft_deleted.is_active = True
+                        soft_deleted.role = max(soft_deleted.role, 20)
+                        soft_deleted.save(update_fields=["deleted_at", "is_active", "role"])
+                        newly_added += 1
+                        continue
+
+                    # New membership — use bulk_create pattern (bypasses save() to avoid ProjectUserProperty dupe)
+                    # then manually create ProjectUserProperty with ignore_conflicts=True (matches "Add to Project" button logic)
+                    min_sort = ProjectUserProperty.objects.filter(
+                        workspace=workspace, user=manager
+                    ).aggregate(min=Min("sort_order"))["min"]
+                    ProjectMember.objects.bulk_create(
+                        [ProjectMember(member=manager, role=20, project=project, workspace=workspace, is_active=True)],
+                        ignore_conflicts=True,
+                    )
+                    ProjectUserProperty.objects.bulk_create(
+                        [ProjectUserProperty(
+                            user=manager, project=project, workspace=workspace,
+                            sort_order=(min_sort - 10000 if min_sort is not None else 65535),
+                        )],
+                        ignore_conflicts=True,
+                    )
+                    newly_added += 1
+
+        return Response(
+            {
+                "newly_added": newly_added,
+                "already_member": already_member,
+                "total": newly_added + already_member,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class RejoinAllEndpoint(BaseAPIView):
+    """Bulk rejoin: join ALL department managers to ALL linked workspaces + projects."""
+
+    def post(self, request):
+        from django.db.models import Min
+        from plane.db.models import Project, ProjectMember, ProjectUserProperty
+
+        mode = request.data.get("mode")
+        if mode not in ("all_projects", "bank_wide_projects"):
+            return Response({"error": "mode must be 'all_projects' or 'bank_wide_projects'"}, status=status.HTTP_400_BAD_REQUEST)
+
+        departments = Department.objects.filter(
+            deleted_at__isnull=True, linked_workspace__isnull=False
+        ).select_related("linked_workspace", "manager")
+
+        departments_processed = 0
+        newly_added = 0
+        already_member = 0
+
+        for department in departments:
+            managers = _collect_dept_and_ancestor_managers(department)
+            if not managers:
+                continue
+
+            departments_processed += 1
+            workspace = department.linked_workspace
+            projects = Project.objects.filter(workspace=workspace, deleted_at__isnull=True)
+            if mode == "bank_wide_projects":
+                projects = projects.filter(is_bank_wide=True)
+            projects = list(projects)
+
+            for manager in managers:
+                any_ws = WorkspaceMember.all_objects.filter(workspace=workspace, member=manager).first()
+                if any_ws:
+                    fields = []
+                    if any_ws.deleted_at is not None:
+                        any_ws.deleted_at = None
+                        fields.append("deleted_at")
+                    if any_ws.role < 20:
+                        any_ws.role = 20
+                        fields.append("role")
+                    if not any_ws.is_active:
+                        any_ws.is_active = True
+                        fields.append("is_active")
+                    if fields:
+                        any_ws.save(update_fields=fields)
+                else:
+                    WorkspaceMember.objects.create(
+                        workspace=workspace, member=manager, role=20, is_active=True
+                    )
+
+                for project in projects:
+                    if ProjectMember.objects.filter(project=project, member=manager).exists():
+                        already_member += 1
+                        continue
+
+                    soft_deleted = ProjectMember.all_objects.filter(
+                        project=project, member=manager
+                    ).exclude(deleted_at__isnull=True).first()
+                    if soft_deleted:
+                        soft_deleted.deleted_at = None
+                        soft_deleted.is_active = True
+                        soft_deleted.role = max(soft_deleted.role, 20)
+                        soft_deleted.save(update_fields=["deleted_at", "is_active", "role"])
+                        newly_added += 1
+                        continue
+
+                    min_sort = ProjectUserProperty.objects.filter(
+                        workspace=workspace, user=manager
+                    ).aggregate(min=Min("sort_order"))["min"]
+                    ProjectMember.objects.bulk_create(
+                        [ProjectMember(member=manager, role=20, project=project, workspace=workspace, is_active=True)],
+                        ignore_conflicts=True,
+                    )
+                    ProjectUserProperty.objects.bulk_create(
+                        [ProjectUserProperty(
+                            user=manager, project=project, workspace=workspace,
+                            sort_order=(min_sort - 10000 if min_sort is not None else 65535),
+                        )],
+                        ignore_conflicts=True,
+                    )
+                    newly_added += 1
+
+        return Response(
+            {
+                "departments_processed": departments_processed,
+                "newly_added": newly_added,
+                "already_member": already_member,
+                "total": newly_added + already_member,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+def _collect_descendant_workspaces(department):
+    """Collect unique linked workspaces from all descendant departments using BFS."""
+    workspaces = []
+    seen_ws_ids = set()
+    visited_dept_ids = {department.pk}
+    queue = [department]
+
+    while queue:
+        current = queue.pop(0)
+        children = Department.objects.filter(
+            parent=current, deleted_at__isnull=True
+        ).select_related("linked_workspace")
+        for child in children:
+            if child.pk in visited_dept_ids:
+                continue
+            visited_dept_ids.add(child.pk)
+            if child.linked_workspace and child.linked_workspace_id not in seen_ws_ids:
+                seen_ws_ids.add(child.linked_workspace_id)
+                workspaces.append(child.linked_workspace)
+            queue.append(child)
+
+    return workspaces
+
+
+def _collect_dept_and_ancestor_managers(department):
+    """Collect unique managers from this department and all ancestor departments.
+
+    Checks both Department.manager FK and StaffProfile.is_department_manager=True
+    for each level, walking up the parent chain (max 10 levels).
+    """
+    from plane.db.models import StaffProfile
+
+    managers = []
+    seen_ids = set()
+    current = department
+    depth = 0
+
+    while current and depth < 10:
+        # Source 1: Department.manager FK
+        if current.manager_id and current.manager_id not in seen_ids:
+            seen_ids.add(current.manager_id)
+            managers.append(current.manager)
+
+        # Source 2: StaffProfile.is_department_manager=True (no employment_status filter — manager flag is authoritative)
+        for staff in StaffProfile.objects.filter(
+            department=current,
+            is_department_manager=True,
+            deleted_at__isnull=True,
+        ).select_related("user"):
+            if staff.user_id not in seen_ids:
+                seen_ids.add(staff.user_id)
+                managers.append(staff.user)
+
+        # Walk up - need to fetch parent with select_related
+        if current.parent_id:
+            current = (
+                Department.objects.filter(pk=current.parent_id, deleted_at__isnull=True)
+                .select_related("manager")
+                .first()
+            )
+        else:
+            current = None
+        depth += 1
+
+    return managers
 
 
 def _add_managers_to_workspace(department, workspace):

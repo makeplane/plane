@@ -6,8 +6,19 @@
 
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { API_BASE_URL } from "@plane/constants";
 // plane imports
-import type { IInstanceDepartment, IInstanceDepartmentCreate, IInstanceDepartmentUpdate, ILinkWorkspaceResult } from "@plane/services";
+import type {
+  IDepartmentBulkImportRequest,
+  IDepartmentBulkImportResponse,
+  IAutoJoinResult,
+  IRejoinAllResult,
+  IInstanceDepartment,
+  IInstanceDepartmentCreate,
+  IInstanceDepartmentUpdate,
+  ILinkWorkspaceResult,
+  TAutoJoinMode,
+} from "@plane/services";
 import { InstanceDepartmentService } from "@plane/services";
 import type { TLoader } from "@plane/types";
 // root store
@@ -28,6 +39,10 @@ export interface IInstanceDepartmentStore {
   deleteDepartment: (id: string) => Promise<void>;
   linkWorkspace: (id: string, workspaceId: string) => Promise<ILinkWorkspaceResult>;
   unlinkWorkspace: (id: string) => Promise<void>;
+  exportDepartments: () => void;
+  bulkImport: (data: IDepartmentBulkImportRequest) => Promise<IDepartmentBulkImportResponse>;
+  autoJoin: (id: string, mode: TAutoJoinMode) => Promise<IAutoJoinResult>;
+  rejoinAll: (mode: TAutoJoinMode) => Promise<IRejoinAllResult>;
 }
 
 export class InstanceDepartmentStore implements IInstanceDepartmentStore {
@@ -50,6 +65,10 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       deleteDepartment: action,
       linkWorkspace: action,
       unlinkWorkspace: action,
+      exportDepartments: action,
+      bulkImport: action,
+      autoJoin: action,
+      rejoinAll: action,
     });
     this.service = new InstanceDepartmentService();
   }
@@ -173,6 +192,41 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       });
     } catch (error) {
       console.error("Error unlinking workspace", error);
+      throw error;
+    }
+  };
+
+  exportDepartments = (): void => {
+    window.open(`${API_BASE_URL}/api/instances/departments/export/`);
+  };
+
+  autoJoin = async (id: string, mode: TAutoJoinMode): Promise<IAutoJoinResult> => {
+    try {
+      return await this.service.autoJoin(id, mode);
+    } catch (error) {
+      console.error("Error auto-joining department manager to projects", error);
+      throw error;
+    }
+  };
+
+  rejoinAll = async (mode: TAutoJoinMode): Promise<IRejoinAllResult> => {
+    try {
+      return await this.service.rejoinAll(mode);
+    } catch (error) {
+      console.error("Error rejoining all department managers to projects", error);
+      throw error;
+    }
+  };
+
+  bulkImport = async (data: IDepartmentBulkImportRequest): Promise<IDepartmentBulkImportResponse> => {
+    try {
+      const result = await this.service.bulkImport(data);
+      if (result.total_created > 0) {
+        await this.fetchTree();
+      }
+      return result;
+    } catch (error) {
+      console.error("Error bulk importing departments", error);
       throw error;
     }
   };
