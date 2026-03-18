@@ -58,10 +58,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const canInteract = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -198,7 +195,15 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
                 <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
               </Tooltip>
-              <div className="flex items-center gap-2" role="button" onClick={handleEventPropagation} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleEventPropagation(e as any); }}
+              <div
+                className="flex items-center gap-2"
+                role="button"
+                onClick={handleEventPropagation}
+                tabIndex={0}
+                onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                  if (e.key === "Enter" || e.key === " ") handleEventPropagation(e);
+                }}
+              >
                 {moduleStatus && (
                   <ModuleStatusDropdown
                     isDisabled={isDisabled}
@@ -229,7 +234,15 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
               )}
             </div>
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
-            <div className="flex items-center justify-between py-0.5" role="button" onClick={handleEventPropagation} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleEventPropagation(e as any); }}
+            <div
+              className="flex items-center justify-between py-0.5"
+              role="button"
+              onClick={handleEventPropagation}
+              tabIndex={0}
+              onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (e.key === "Enter" || e.key === " ") handleEventPropagation(e);
+              }}
+            >
               <DateRangeDropdown
                 buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}
                 buttonVariant="transparent-with-text"
@@ -239,7 +252,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   to: getDate(moduleDetails.target_date),
                 }}
                 onSelect={(val) => {
-                  handleModuleDetailsChange({
+                  void handleModuleDetailsChange({
                     start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
                     target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
                   });
