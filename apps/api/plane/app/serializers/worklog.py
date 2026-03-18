@@ -13,7 +13,7 @@ from plane.db.models import IssueWorkLog
 MAX_DURATION_MINUTES = 720
 
 
-def get_min_allowed_date(working_days=7):
+def get_min_allowed_date(working_days=60):
     """Calculate date that is N working days ago (Mon-Fri only)."""
     current = date.today()
     days_counted = 0
@@ -73,7 +73,7 @@ class IssueWorkLogSerializer(BaseSerializer):
         min_date = get_min_allowed_date()
         if value < min_date:
             raise serializers.ValidationError(
-                "Cannot log time more than 7 working days ago."
+                "Cannot log time more than 60 working days ago."
             )
         return value
 
@@ -122,6 +122,6 @@ class TimesheetBulkEntrySerializer(serializers.Serializer):
         min_date = get_min_allowed_date()
         if value < min_date:
             raise serializers.ValidationError(
-                "Cannot log time more than 7 working days ago."
+                "Cannot log time more than 60 working days ago."
             )
         return value

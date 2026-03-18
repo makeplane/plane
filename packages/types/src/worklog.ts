@@ -41,6 +41,7 @@ export interface IWorkLogUpdate {
   duration_minutes?: number;
   description?: string;
   logged_at?: string;
+  reason?: string;
 }
 
 export interface IWorkLogSummary {

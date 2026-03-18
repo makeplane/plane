@@ -1561,6 +1561,48 @@ def create_intake_activity(
         )
 
 
+def worklog_activity_updated(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    requested = json.loads(requested_data) if requested_data else {}
+    current = json.loads(current_instance) if current_instance else {}
+    reason = requested.get("reason", "")
+
+    changes = []
+    if "duration_minutes" in requested and requested.get("duration_minutes") != current.get("duration_minutes"):
+        changes.append(f"duration: {current.get('duration_minutes')}m → {requested.get('duration_minutes')}m")
+    if "logged_at" in requested and requested.get("logged_at") != current.get("logged_at"):
+        changes.append(f"date: {current.get('logged_at')} → {requested.get('logged_at')}")
+    if "description" in requested and requested.get("description") != current.get("description"):
+        changes.append("description updated")
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id, project_id=project_id, workspace_id=workspace_id,
+            actor_id=actor_id, verb="updated", field="worklog",
+            old_value=", ".join(changes) if changes else "worklog updated",
+            new_value=reason, epoch=epoch,
+        )
+    )
+
+
+def worklog_activity_deleted(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    requested = json.loads(requested_data) if requested_data else {}
+    current = json.loads(current_instance) if current_instance else {}
+    reason = requested.get("reason", "")
+    duration = current.get("duration_minutes", 0)
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id, project_id=project_id, workspace_id=workspace_id,
+            actor_id=actor_id, verb="deleted", field="worklog",
+            old_value=f"{duration}m logged", new_value=reason, epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1627,6 +1669,8 @@ def issue_activity(
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
+            "worklog.activity.updated": worklog_activity_updated,
+            "worklog.activity.deleted": worklog_activity_deleted,
         }
 
         func = ACTIVITY_MAPPER.get(type)

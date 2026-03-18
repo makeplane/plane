@@ -60,7 +60,7 @@ class TimesheetBulkUpdateEndpoint(BaseAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Check aggregate daily limit (720min) — exclude worklogs being replaced
-        min_allowed_date = get_min_allowed_date(working_days=7)
+        min_allowed_date = get_min_allowed_date(working_days=60)
         date_totals = defaultdict(int)
         replace_keys = set()
         for entry in serializer.validated_data:
@@ -115,7 +115,7 @@ class TimesheetBulkUpdateEndpoint(BaseAPIView):
             # Check edit window for existing worklogs
             if existing.logged_at < min_allowed_date:
                 return Response(
-                    {"error": f"Worklog for {logged_at} is locked. Worklogs older than 7 working days are read-only."},
+                    {"error": f"Worklog for {logged_at} is locked. Worklogs older than 60 working days are read-only."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
             if duration_minutes == 0:
