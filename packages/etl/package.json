@@ -11,6 +11,7 @@
   "type": "module",
   "exports": {
     "./asana": "./dist/asana/index.js",
+    "./bitbucket": "./dist/bitbucket/index.js",
     "./clickup": "./dist/clickup/index.js",
     "./core": "./dist/core/index.js",
     "./flatfile": "./dist/flatfile/index.js",

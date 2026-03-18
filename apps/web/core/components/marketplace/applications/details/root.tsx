@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
 //assets
+import BitbucketLogo from "@/app/assets/services/bitbucket.svg?url";
 import GitHubLogo from "@/app/assets/logos/integrations/github.png?url";
 import GitlabLogo from "@/app/assets/logos/integrations/gitlab.png?url";
 import SentryLogo from "@/app/assets/logos/integrations/sentry.png?url";
@@ -91,8 +92,17 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     logoUrl: GitlabLogo,
     beta: true,
   },
+  {
+    flag: E_FEATURE_FLAGS.BITBUCKET_DC_INTEGRATION,
+    urlSlug: "bitbucket-dc",
+    key: "bitbucket_dc",
+    title: "Bitbucket Data Center",
+    logoUrl: BitbucketLogo,
+    beta: true,
+  },
 ];
 
+// eslint-disable-next-line react/only-export-components
 export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TUserApplication[] => {
   const internalApps: TUserApplication[] = [];
 

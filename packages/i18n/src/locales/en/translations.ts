@@ -4978,6 +4978,10 @@ if you are sure your search is right. `,
       server_error_states: "Server error while loading states",
     },
   },
+  bitbucket_dc_integration: {
+    name: "Bitbucket Data Center",
+    description: "Connect and sync your Bitbucket Data Center repositories with Plane.",
+  },
   github_enterprise_integration: {
     name: "GitHub Enterprise",
     description: "Connect and sync your GitHub Enterprise organization with Plane.",

@@ -18,6 +18,10 @@ import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { useValidateUserAuthentication } from "@/lib/decorators";
 import { OAuthController } from "./controller";
+import { convertProviderToIntegrationKey } from "./helpers";
+import { decodeOAuthState } from "@plane/etl/bitbucket";
+
+const PROVIDERS_WITH_SHARED_CALLBACK: E_INTEGRATION_KEYS[] = [E_INTEGRATION_KEYS.BITBUCKET_DC];
 
 @Controller("/api/oauth")
 export class OAuthRoutes {
@@ -127,6 +131,24 @@ export class OAuthRoutes {
     try {
       const { integrationKey } = req.params;
       const { code, state, ...additionalParams } = req.query;
+
+      // Check if this is a user-level OAuth flow routed through the same callback URL
+      // (needed for providers like Bitbucket DC that only allow one registered redirect_uri)
+      if (PROVIDERS_WITH_SHARED_CALLBACK.includes(integrationKey as E_INTEGRATION_KEYS)) {
+        try {
+          const decodedState = decodeOAuthState(state as string);
+          if (decodedState.is_user_flow) {
+            return this.controller.handleRedirectToPlaneOAuth(
+              integrationKey as E_INTEGRATION_KEYS,
+              code as string,
+              state as string,
+              res
+            );
+          }
+        } catch {
+          // If state decoding fails, fall through to normal callback handling
+        }
+      }
 
       return this.controller.handleCallback(
         integrationKey as E_INTEGRATION_KEYS,
@@ -250,20 +272,6 @@ export class OAuthRoutes {
     }
   }
 }
-
-// Utility function to convert provider string to E_INTEGRATION_KEYS
-const convertProviderToIntegrationKey = (provider: string): E_INTEGRATION_KEYS => {
-  // Convert "github" to "GITHUB"
-  // Convert "prd-agent" to "PRD_AGENT"
-  const normalizedProvider = provider.toUpperCase().replace(/-/g, "_");
-
-  // Validate if the converted value is a valid E_INTEGRATION_KEYS
-  if (Object.values(E_INTEGRATION_KEYS).includes(normalizedProvider as E_INTEGRATION_KEYS)) {
-    return normalizedProvider as E_INTEGRATION_KEYS;
-  }
-
-  throw new Error(`Invalid provider: ${provider}`);
-};
 
 // Decorator to enrich request with integration key
 function enrichIntegrationKey() {

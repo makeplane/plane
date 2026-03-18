@@ -13,6 +13,7 @@ export default defineConfig({
     "src/flatfile/index.ts",
     "src/sentry/index.ts",
     "src/clickup/index.ts",
+    "src/bitbucket/index.ts",
   ],
   format: ["esm"],
   dts: true,

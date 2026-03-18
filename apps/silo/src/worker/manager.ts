@@ -20,6 +20,8 @@
 
 import { logger } from "@plane/logger";
 import { AsanaDataMigrator } from "@/apps/asana-importer/migrator";
+import { BitbucketWebhookWorker } from "@/apps/bitbucket-dc/workers";
+import { PlaneBitbucketWebhookWorker } from "@/apps/bitbucket-dc/workers/plane";
 import { ClickUpAdditionalDataMigrator } from "@/apps/clickup-importer/migrator/clickup-additional.migrator";
 import { ClickUpDataMigrator } from "@/apps/clickup-importer/migrator/clickup.migrator";
 import { FlatfileMigrator } from "@/apps/flatfile/migrator/flatfile.migrator";
@@ -79,10 +81,14 @@ class WorkerFactory {
         return new NotionDataMigrator(mq, store, s3Client);
       case "github-webhook":
         return new GithubWebhookWorker(mq, store);
+      case "bitbucket-dc-webhook":
+        return new BitbucketWebhookWorker(mq, store);
       case "gitlab-webhook":
         return new GitlabWebhookWorker(mq, store);
       case "plane-github-webhook":
         return new PlaneGithubWebhookWorker(mq, store);
+      case "plane-bitbucket-dc-webhook":
+        return new PlaneBitbucketWebhookWorker(mq, store);
       case "plane-gitlab-webhook":
         return new PlaneGitlabWebhookWorker(mq, store);
       case "slack-interaction":

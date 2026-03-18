@@ -174,6 +174,7 @@ import type {
   ISentryStore,
   IGithubEnterpriseStore,
   IGitlabEnterpriseStore,
+  IBitbucketStore,
 } from "./integrations";
 import {
   SlackStore,
@@ -183,6 +184,7 @@ import {
   SentryStore,
   GithubEnterpriseStore,
   GitlabEnterpriseStore,
+  BitbucketStore,
 } from "./integrations";
 // workspace features
 import type { IWorkspaceFeatureStore } from "@/store/workspace-feature.store";
@@ -292,6 +294,7 @@ export class CoreRootStore {
   gitlabIntegration: IGitlabStore;
   gitlabEnterpriseIntegration: IGitlabEnterpriseStore;
   sentryIntegration: ISentryStore;
+  bitbucketDCIntegration: IBitbucketStore;
   workspaceFeatures: IWorkspaceFeatureStore;
   workspaceMembersActivityStore: IWorkspaceMembersActivityStore;
   projectMembersActivityStore: IProjectMembersActivityStore;
@@ -384,6 +387,7 @@ export class CoreRootStore {
     this.gitlabIntegration = new GitlabStore(this as unknown as RootStore);
     this.gitlabEnterpriseIntegration = new GitlabEnterpriseStore(this as unknown as RootStore);
     this.sentryIntegration = new SentryStore(this as unknown as RootStore);
+    this.bitbucketDCIntegration = new BitbucketStore(this as unknown as RootStore);
     this.workspaceFeatures = new WorkspaceFeatureStore(this as unknown as RootStore);
     this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this as unknown as RootStore);
     this.projectMembersActivityStore = new ProjectMembersActivityStore(this as unknown as RootStore);
@@ -488,6 +492,7 @@ export class CoreRootStore {
     this.gitlabIntegration = new GitlabStore(this as unknown as RootStore);
     this.gitlabEnterpriseIntegration = new GitlabEnterpriseStore(this as unknown as RootStore);
     this.sentryIntegration = new SentryStore(this as unknown as RootStore);
+    this.bitbucketDCIntegration = new BitbucketStore(this as unknown as RootStore);
     this.workspaceFeatures = new WorkspaceFeatureStore(this as unknown as RootStore);
     this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this as unknown as RootStore);
     this.projectMembersActivityStore = new ProjectMembersActivityStore(this as unknown as RootStore);

@@ -35,6 +35,7 @@ import {
   ConnectionsController,
 } from "@/apps/engine/controllers";
 
+import BitbucketController from "@/apps/bitbucket-dc/controllers";
 import GithubController from "@/apps/github/controllers";
 import JiraController from "@/apps/jira-importer/controllers";
 import LinearController from "@/apps/linear-importer/controllers";
@@ -84,6 +85,7 @@ export default class Server {
       AsanaController,
       NotionController,
       SlackController,
+      BitbucketController,
       GithubController,
       GithubEnterpriseController,
       JiraDataCenterController,

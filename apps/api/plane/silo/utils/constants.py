@@ -57,6 +57,15 @@ APPLICATIONS = {
         "redirect_uris": f"{settings.SILO_URL}/api/slack/plane-oauth/callback",
         "resource_permissions": ["read", "write"],
     },
+    "bitbucket_dc": {
+        "key": "bitbucket_dc",
+        "name": "Bitbucket DC",
+        "slug": "bitbucket-dc",
+        "short_description": "Bitbucket Data Center Integration",
+        "description_html": "<p>Bitbucket Data Center Integration</p>",
+        "redirect_uris": f"{settings.SILO_URL}/api/oauth/bitbucket-dc/plane-oauth/callback",
+        "resource_permissions": ["read", "write"],
+    },
     "sentry": {
         "key": "sentry",
         "name": "Sentry",

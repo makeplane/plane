@@ -11,12 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web components
 import type { E_INTEGRATION_KEYS } from "@plane/types";
 // assets
+import BitbucketLogo from "@/app/assets/services/bitbucket.svg?url";
 import GitHubLogo from "@/app/assets/services/github.svg?url";
 import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
 import SentryLogo from "@/app/assets/services/sentry.svg?url";
@@ -73,6 +73,14 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     key: "slack",
     title: "Slack",
     logo: SlackLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.BITBUCKET_DC_INTEGRATION,
+    urlSlug: "bitbucket-dc",
+    key: "bitbucket_dc",
+    title: "Bitbucket Data Center",
+    logo: BitbucketLogo,
     beta: true,
   },
   {

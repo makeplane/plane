@@ -17,6 +17,7 @@ import { sentryAuth } from "@/apps/sentry/auth/auth";
 import { env } from "@/env";
 import { OAuthController } from "./controller";
 import { OAuthRoutes } from "./routes";
+import { BitbucketOAuthStrategy } from "./strategies/bitbucket-dc.strategy";
 import { GithubEnterpriseStrategy } from "./strategies/github.strategy";
 import { GitlabEnterpriseStrategy } from "./strategies/gitlab.strategy";
 import { PlaneOAuthStrategy } from "./strategies/plane-oauth.strategy";
@@ -47,6 +48,8 @@ export function registerOAuthStrategies() {
     E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
     new GitlabEnterpriseStrategy(E_INTEGRATION_KEYS.GITLAB_ENTERPRISE)
   );
+
+  strategyManager.registerStrategy(E_INTEGRATION_KEYS.BITBUCKET_DC, new BitbucketOAuthStrategy());
 }
 
 export { OAuthController, OAuthRoutes, OAuthStrategyManager };

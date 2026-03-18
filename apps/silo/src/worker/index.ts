@@ -35,8 +35,10 @@ export const integrationTaskManager = new TaskManager({
   workerTypes: {
     "slack-interaction": "slack-interaction",
     "github-webhook": "github-webhook",
+    "bitbucket-dc-webhook": "bitbucket-dc-webhook",
     "gitlab-webhook": "gitlab-webhook",
     "plane-github-webhook": "plane-github-webhook",
+    "plane-bitbucket-dc-webhook": "plane-bitbucket-dc-webhook",
     "plane-gitlab-webhook": "plane-gitlab-webhook",
     "plane-slack-webhook": "plane-slack-webhook",
     "sentry-webhook": "sentry-webhook",

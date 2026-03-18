@@ -12,6 +12,7 @@
  */
 
 import type { Response } from "express";
+import { decodeOAuthState } from "@plane/etl/bitbucket";
 import { E_SILO_ERROR_CODES, E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import type { PlaneUser } from "@plane/sdk";
@@ -32,7 +33,16 @@ const PLANE_OAUTH_SUPPORTED_PROVIDERS = [
   E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
   E_INTEGRATION_KEYS.SENTRY,
   E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
+  E_INTEGRATION_KEYS.BITBUCKET_DC,
 ];
+
+const getWorkspaceSlugFromOAuthState = (provider: E_INTEGRATION_KEYS, state: string): string => {
+  if (provider === E_INTEGRATION_KEYS.BITBUCKET_DC) {
+    return decodeOAuthState(state).workspace_slug;
+  }
+
+  return (JSON.parse(Buffer.from(state, "base64").toString()) as { workspace_slug: string }).workspace_slug;
+};
 
 export class OAuthController {
   private strategyManager = OAuthStrategyManager.getInstance();
@@ -160,7 +170,7 @@ export class OAuthController {
     } catch (error: any) {
       // Handle specific error cases
       const providerString = convertIntegrationKeyToProvider(provider);
-      const redirectBase = `${env.APP_BASE_URL}/${JSON.parse(Buffer.from(state, "base64").toString()).workspace_slug}/settings/integrations/${providerString}/`;
+      const redirectBase = `${env.APP_BASE_URL}/${getWorkspaceSlugFromOAuthState(provider, state)}/settings/integrations/${providerString}/`;
 
       logger.error(`OAuth handleCallback error for provider: ${providerString}`, {
         error: error.message,
@@ -309,7 +319,7 @@ export class OAuthController {
       res.redirect(authorizationURL);
     } catch (error: any) {
       const providerUrlSlug = convertIntegrationKeyToProvider(provider);
-      const redirectBase = `${env.APP_BASE_URL}/${JSON.parse(Buffer.from(state, "base64").toString()).workspace_slug}/settings/integrations/${providerUrlSlug}/`;
+      const redirectBase = `${env.APP_BASE_URL}/${getWorkspaceSlugFromOAuthState(provider, state)}/settings/integrations/${providerUrlSlug}/`;
       res.status(400).redirect(`${redirectBase}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }

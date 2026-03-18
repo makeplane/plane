@@ -16,3 +16,4 @@ export * from "./github";
 export * from "./gitlab";
 export * from "./slack";
 export * from "./common";
+export * from "./bitbucket";
