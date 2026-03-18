@@ -5,4 +5,5 @@
  */
 
 export * from "./root";
+export * from "./worklog-activity-group";
 export * from "./worklog-create-button";

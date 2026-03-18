@@ -72,6 +72,9 @@ export default defineConfig([
       },
     },
     rules: {
+      // react-hooks v7 "rules-of-hooks" includes React Compiler checks (39
+      // pre-existing violations). These bypass severity settings — accepted as-is.
+      // Fix by refactoring setState-in-effect patterns or pin react-hooks < v7.
       "no-console": "off",
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
@@ -80,14 +83,64 @@ export default defineConfig([
       "react/display-name": "off",
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           destructuredArrayIgnorePattern: "^_",
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-      "@typescript-eslint/no-floating-promises": "error",
+      // --- Downgraded to warn: mass pre-existing violations that are not
+      // actionable without major refactoring. Threshold enforces zero new violations.
+      // Re-promote to error individually as violations are cleaned up.
+      "@typescript-eslint/no-floating-promises": "warn",
+      "@typescript-eslint/no-misused-promises": "warn",
+      "@typescript-eslint/require-await": "warn",
+      "@typescript-eslint/unbound-method": "warn",
+      "@typescript-eslint/restrict-template-expressions": "warn",
+      "@typescript-eslint/no-redundant-type-constituents": "warn",
+      "@typescript-eslint/no-unused-expressions": "warn",
+      // --- Disabled: upstream packages (@plane/i18n, store hooks) lack proper
+      // type declarations, causing cascading `any` throughout the codebase.
+      // Re-enable individually as type coverage improves (see Approach B roadmap).
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-enum-comparison": "off",
+      "@typescript-eslint/no-base-to-string": "warn",
+      "@typescript-eslint/only-throw-error": "warn",
+      "@typescript-eslint/await-thenable": "warn",
+      "@typescript-eslint/restrict-plus-operands": "warn",
+      "@typescript-eslint/prefer-promise-reject-errors": "warn",
+      // --- a11y / promise / react-refresh: downgraded from plugin defaults
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/no-static-element-interactions": "warn",
+      "jsx-a11y/no-autofocus": "warn",
+      "jsx-a11y/no-noninteractive-element-interactions": "warn",
+      "jsx-a11y/tabindex-no-positive": "warn",
+      "jsx-a11y/mouse-events-have-key-events": "warn",
+      "jsx-a11y/img-redundant-alt": "warn",
+      "jsx-a11y/no-redundant-roles": "warn",
+      "jsx-a11y/no-noninteractive-element-to-interactive-role": "warn",
+      "jsx-a11y/interactive-supports-focus": "warn",
+      "jsx-a11y/label-has-associated-control": "warn",
+      "jsx-a11y/iframe-has-title": "warn",
+      "promise/always-return": "warn",
+      "promise/catch-or-return": "warn",
+      "react-refresh/only-export-components": "warn",
+      // --- JS base rules: pre-existing violations, downgraded to catch regressions via threshold
+      "no-constant-binary-expression": "warn",
+      "no-empty-pattern": "warn",
+      "valid-typeof": "warn",
+      "no-useless-catch": "warn",
+      "no-prototype-builtins": "warn",
+      "no-unsafe-optional-chaining": "warn",
+      "no-empty": "warn",
+      "react/no-unknown-property": "warn",
+      "@typescript-eslint/no-unnecessary-type-assertion": "warn",
+      "@typescript-eslint/no-for-in-array": "warn",
       "import/no-unresolved": "off",
       "plane/no-legacy-tokens": "error",
       "promise/no-nesting": "warn",

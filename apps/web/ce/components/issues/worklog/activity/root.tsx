@@ -16,7 +16,9 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useWorklog } from "@/hooks/store/use-worklog";
+import { extractApiError } from "../utils/extract-api-error";
 import { isWithinEditWindow } from "../utils/worklog-date-utils";
+import { WorklogDeleteModal } from "../worklog-delete-modal";
 import { WorklogModal } from "../worklog-modal";
 
 type TIssueActivityWorklog = {
@@ -34,12 +36,13 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   const { allowPermissions } = useUserPermissions();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Find the matching worklog entry by id for display details
   const worklogs = store.getWorklogsForIssue(issueId);
   const worklog = worklogs.find((w) => w.id === activityComment.id);
 
-  // Permission: project admin can edit/delete worklogs within 7-working-day window
+  // Permission: project admin can edit/delete worklogs within 60-working-day window
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
   const isEditable = isAdmin && worklog && isWithinEditWindow(worklog.logged_at);
 
@@ -55,14 +58,18 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   const displayName = worklog?.logged_by_detail?.display_name;
   const duration = worklog ? formatMinutesToDisplay(worklog.duration_minutes) : null;
 
-  const handleDelete = async () => {
+  const handleDelete = async (reason: string) => {
     if (!worklog) return;
     try {
-      await store.deleteWorklog(workspaceSlug, projectId, issueId, worklog.id);
+      await store.deleteWorklog(workspaceSlug, projectId, issueId, worklog.id, reason);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("worklog.deleted"), message: t("worklog.deleted_successfully") });
     } catch (err: unknown) {
-      const apiError = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: apiError || t("worklog.delete_failed") });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("worklog.error"),
+        message: extractApiError(err) || t("worklog.delete_failed"),
+      });
+      throw err; // re-throw so delete modal knows it failed
     }
   };
 
@@ -110,7 +117,7 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
           <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
             <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
               <CustomMenu.MenuItem onClick={() => setIsEditModalOpen(true)}>{t("edit")}</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => void handleDelete()}>
+              <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
                 <span className="text-red-500">{t("delete")}</span>
               </CustomMenu.MenuItem>
             </CustomMenu>
@@ -127,6 +134,15 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
           projectId={projectId}
           issueId={issueId}
           existingWorklog={worklog}
+        />
+      )}
+
+      {/* Delete confirmation modal */}
+      {isEditable && (
+        <WorklogDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDelete}
         />
       )}
     </>

@@ -27,6 +27,16 @@ class IssueWorkLogViewSet(BaseViewSet):
     serializer_class = IssueWorkLogSerializer
     model = IssueWorkLog
 
+    def _validate_reason(self, request):
+        """Extract and validate mandatory reason from request body."""
+        reason = request.data.get("reason", "").strip()
+        if not reason:
+            return None, Response(
+                {"error": "A reason for this change is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return reason, None
+
     def get_queryset(self):
         return self.filter_queryset(
             super()
@@ -55,8 +65,8 @@ class IssueWorkLogViewSet(BaseViewSet):
         return True, None
 
     def _check_edit_window(self, worklog):
-        """Return True if worklog is within editable window (7 working days)."""
-        min_date = get_min_allowed_date(working_days=7)
+        """Return True if worklog is within editable window (60 working days)."""
+        min_date = get_min_allowed_date(working_days=60)
         return worklog.logged_at >= min_date
 
     def _check_time_tracking_enabled(self, project_id):
@@ -127,12 +137,17 @@ class IssueWorkLogViewSet(BaseViewSet):
             )
         except IssueWorkLog.DoesNotExist:
             return Response({"error": "Worklog not found."}, status=status.HTTP_404_NOT_FOUND)
-        # Check 7-working-day edit window
+        # Check 60-working-day edit window
         if not self._check_edit_window(worklog):
             return Response(
-                {"error": "This worklog is locked and cannot be edited. Worklogs older than 7 working days are read-only."},
+                {"error": "This worklog is locked and cannot be edited. Worklogs older than 60 working days are read-only."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        # Reason is mandatory for edits
+        reason, error_response = self._validate_reason(request)
+        if error_response:
+            return error_response
+
         current_instance = json.dumps(
             IssueWorkLogSerializer(worklog).data, cls=DjangoJSONEncoder
         )
@@ -150,9 +165,11 @@ class IssueWorkLogViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             serializer.save()
+            activity_data = dict(request.data)
+            activity_data["reason"] = reason
             issue_activity.delay(
                 type="worklog.activity.updated",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(activity_data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
@@ -175,19 +192,24 @@ class IssueWorkLogViewSet(BaseViewSet):
             )
         except IssueWorkLog.DoesNotExist:
             return Response({"error": "Worklog not found."}, status=status.HTTP_404_NOT_FOUND)
-        # Check 7-working-day edit window
+        # Check 60-working-day edit window
         if not self._check_edit_window(worklog):
             return Response(
-                {"error": "This worklog is locked and cannot be deleted. Worklogs older than 7 working days are read-only."},
+                {"error": "This worklog is locked and cannot be deleted. Worklogs older than 60 working days are read-only."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        # Reason is mandatory for deletions
+        reason, error_response = self._validate_reason(request)
+        if error_response:
+            return error_response
+
         current_instance = json.dumps(
             IssueWorkLogSerializer(worklog).data, cls=DjangoJSONEncoder
         )
         worklog.delete()
         issue_activity.delay(
             type="worklog.activity.deleted",
-            requested_data=json.dumps({"worklog_id": str(pk)}),
+            requested_data=json.dumps({"worklog_id": str(pk), "reason": reason}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),

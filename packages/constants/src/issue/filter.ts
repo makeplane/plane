@@ -308,12 +308,16 @@ export enum EActivityFilterType {
   STATE = "STATE",
   ASSIGNEE = "ASSIGNEE",
   WORKLOG = "WORKLOG",
+  WORKLOG_GROUP = "WORKLOG_GROUP",
   DEFAULT = "DEFAULT",
 }
 
 export type TActivityFilters = EActivityFilterType;
 
-export type TActivityFilterOptionsKey = Exclude<TActivityFilters, EActivityFilterType.DEFAULT>;
+export type TActivityFilterOptionsKey = Exclude<
+  TActivityFilters,
+  EActivityFilterType.DEFAULT | EActivityFilterType.WORKLOG_GROUP
+>;
 
 export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { labelTranslationKey: string }> = {
   [EActivityFilterType.ACTIVITY]: {
@@ -352,9 +356,12 @@ export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
-  activity.filter((activity) => {
-    if (activity.activity_type === EActivityFilterType.DEFAULT) return true;
-    return filters.includes(activity.activity_type as TActivityFilters);
+  activity.filter((activityItem) => {
+    const type = activityItem.activity_type;
+    if (type === ("DEFAULT" as const)) return true;
+    // WORKLOG_GROUP follows the WORKLOG filter
+    if (type === ("WORKLOG_GROUP" as const)) return filters.includes(EActivityFilterType.WORKLOG);
+    return filters.includes(type as TActivityFilters);
   });
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;

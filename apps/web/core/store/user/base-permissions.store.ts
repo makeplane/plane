@@ -325,7 +325,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
         runInAction(() => {
           set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
-        void this.fetchWorkspaceLevelProjectEntities(workspaceSlug, projectId);
+        this.fetchWorkspaceLevelProjectEntities(workspaceSlug, projectId).catch(console.error);
       }
     } catch (error) {
       console.error("Error user joining the project", error);

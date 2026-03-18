@@ -134,7 +134,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
-          void fetchActivities(workspaceSlug, projectId, issueId);
+          fetchActivities(workspaceSlug, projectId, issueId).catch(console.error);
         } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -169,7 +169,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             },
           });
           await removeFromCyclePromise;
-          void fetchActivities(workspaceSlug, projectId, issueId);
+          fetchActivities(workspaceSlug, projectId, issueId).catch(console.error);
         } catch (error) {
           console.error("Error removing issue from cycle", error);
         }
@@ -206,7 +206,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             },
           });
           await removeFromModulePromise;
-          void fetchActivities(workspaceSlug, projectId, issueId);
+          fetchActivities(workspaceSlug, projectId, issueId).catch(console.error);
         } catch (error) {
           console.error("Error removing issue from module", error);
         }

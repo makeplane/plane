@@ -14,6 +14,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkLog } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { useWorklog } from "@/hooks/store/use-worklog";
+import { extractApiError } from "./utils/extract-api-error";
 import { getMinAllowedDate } from "./utils/worklog-date-utils";
 
 type TWorklogModal = {
@@ -40,6 +41,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // populate form when editing an existing worklog
@@ -49,11 +51,13 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
       setHours(Math.floor(existingWorklog.duration_minutes / 60));
       setMinutes(existingWorklog.duration_minutes % 60);
       setDescription(existingWorklog.description ?? "");
+      setReason("");
     } else {
       setLoggedAt(todayDate());
       setHours(0);
       setMinutes(0);
       setDescription("");
+      setReason("");
     }
   }, [existingWorklog, isOpen]);
 
@@ -62,6 +66,10 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
     const duration_minutes = parseDisplayToMinutes(hours, minutes);
     if (duration_minutes <= 0) {
       setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: t("worklog.duration_required") });
+      return;
+    }
+    if (existingWorklog && !reason.trim()) {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: t("worklog.reason_required") });
       return;
     }
     setIsSubmitting(true);
@@ -74,6 +82,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             duration_minutes,
             logged_at: loggedAt,
             description: description || undefined,
+            reason: reason.trim(),
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -90,8 +99,11 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
         }
         onClose();
       } catch (err: unknown) {
-        const apiError = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-        setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: apiError || t("worklog.save_failed") });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("worklog.error"),
+          message: extractApiError(err) || t("worklog.save_failed"),
+        });
       } finally {
         setIsSubmitting(false);
       }
@@ -168,6 +180,24 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary placeholder-tertiary focus:outline-none resize-none"
           />
         </div>
+
+        {/* Reason for change (edit mode only) */}
+        {existingWorklog && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="worklog-reason" className="text-11 font-medium text-tertiary">
+              {t("worklog.reason_label")} <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="worklog-reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={2}
+              placeholder={t("worklog.reason_placeholder")}
+              className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary placeholder-tertiary focus:outline-none resize-none"
+              required
+            />
+          </div>
+        )}
 
         {/* Footer actions */}
         <div className="flex justify-end gap-2 pt-1">

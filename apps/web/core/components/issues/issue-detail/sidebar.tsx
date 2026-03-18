@@ -206,7 +206,12 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-              <div className={cn("flex items-center gap-2 w-full", fieldErrors.includes("target_date") && "rounded border border-red-500")}>
+              <div
+                className={cn(
+                  "flex items-center gap-2 w-full",
+                  fieldErrors.includes("target_date") && "rounded border border-red-500"
+                )}
+              >
                 <DateDropdown
                   placeholder={t("issue.add.due_date")}
                   value={issue.target_date}
@@ -306,12 +311,14 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            <IssueWorklogProperty
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              disabled={!isEditable}
-            />
+            {projectDetails?.is_time_tracking_enabled !== false && (
+              <IssueWorklogProperty
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                disabled={!isEditable}
+              />
+            )}
           </div>
         </div>
       </div>

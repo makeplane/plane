@@ -8,7 +8,7 @@
  * Calculate date N working days ago (Mon-Fri).
  * Returns YYYY-MM-DD string.
  */
-export const getMinAllowedDate = (workingDays = 7): string => {
+export const getMinAllowedDate = (workingDays = 60): string => {
   const d = new Date();
   let counted = 0;
   while (counted < workingDays) {
@@ -20,9 +20,9 @@ export const getMinAllowedDate = (workingDays = 7): string => {
 };
 
 /**
- * Check if a worklog logged_at date is within the editable window (7 working days).
+ * Check if a worklog logged_at date is within the editable window (60 working days).
  */
-export const isWithinEditWindow = (loggedAt: string, workingDays = 7): boolean => {
+export const isWithinEditWindow = (loggedAt: string, workingDays = 60): boolean => {
   const minDate = getMinAllowedDate(workingDays);
   return loggedAt >= minDate; // string comparison works for YYYY-MM-DD
 };
