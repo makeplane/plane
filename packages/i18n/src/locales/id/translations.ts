@@ -4335,6 +4335,7 @@ jika Anda yakin pencarian Anda benar. `,
     select_state: "Pilih Status",
     set_state: "Set Status",
     choose_project: "Pilih Projek...",
+    skip_backward_state_movement: "Cegah item berpindah ke status sebelumnya karena pembaruan PR",
   },
   github_integration: {
     name: "GitHub",

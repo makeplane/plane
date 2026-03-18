@@ -37,6 +37,7 @@ export type TGithubRepository = {
 export type TGithubEntityConnectionConfig = object & {
   states: { mergeRequestEventMapping?: TStateMap; issueEventMapping?: TIssueStateMap };
   allowBidirectionalSync?: boolean;
+  skipBackwardStateMovement?: boolean;
 };
 
 // github connection config

@@ -4317,6 +4317,7 @@ export default {
     select_state: "状態を選択",
     set_state: "状態を設定",
     choose_project: "プロジェクトを選択...",
+    skip_backward_state_movement: "PRの更新により課題が以前の状態に戻ることを防ぐ",
   },
   github_integration: {
     name: "GitHub",

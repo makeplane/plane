@@ -35,4 +35,5 @@ export const gitlabEntityConnectionSchema = z.object({
       mergeRequestEventMapping: z.record(z.custom<MergeRequestEvent>(), exStateSchema),
     })
     .optional(),
+  skipBackwardStateMovement: z.boolean().optional(),
 });

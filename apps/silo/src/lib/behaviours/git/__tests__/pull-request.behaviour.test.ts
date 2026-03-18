@@ -48,6 +48,9 @@ const createMockPlaneClient = () => ({
     update: vi.fn(),
     createLink: vi.fn(),
   },
+  state: {
+    list: vi.fn(),
+  },
 });
 
 describe("PullRequestBehaviour", () => {
@@ -83,6 +86,19 @@ describe("PullRequestBehaviour", () => {
       },
     },
   ];
+
+  const mockPlaneStates = {
+    results: [
+      { id: "draft-state", name: "Draft", group: "unstarted", sequence: 1 },
+      { id: "open-state", name: "Open", group: "started", sequence: 1 },
+      { id: "ready-state", name: "Ready", group: "started", sequence: 2 },
+      { id: "merged-state", name: "Merged", group: "completed", sequence: 1 },
+      { id: "closed-state", name: "Closed", group: "cancelled", sequence: 1 },
+    ],
+  };
+
+  const SORTED_STATE_IDS = ["draft-state", "open-state", "ready-state", "merged-state", "closed-state"];
+
   beforeEach(() => {
     service = createMockPullRequestService();
     planeClient = createMockPlaneClient();
@@ -127,6 +143,7 @@ describe("PullRequestBehaviour", () => {
       project: "project-id",
       name: "Test Issue",
       sequence: 123,
+      state: "open-state",
     };
 
     it("should handle a pull request with issue references successfully", async () => {
@@ -137,6 +154,7 @@ describe("PullRequestBehaviour", () => {
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.resolve(mockIssue));
       planeClient.issue.update.mockImplementation(() => Promise.resolve({} as any));
       planeClient.issue.createLink.mockImplementation(() => Promise.resolve({} as any));
+      planeClient.state.list.mockImplementation(() => Promise.resolve(mockPlaneStates));
 
       // Execute
       await behaviour.handleEvent(mockPullRequestData);
@@ -419,6 +437,11 @@ describe("PullRequestBehaviour", () => {
         id: "issue-id",
         project: "project-id",
         name: "Test Issue",
+        state: "draft-state",
+      };
+
+      behaviour["projectIdToSortedStateIds"] = {
+        "project-id": SORTED_STATE_IDS,
       };
 
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.resolve(mockIssue));
@@ -623,6 +646,157 @@ describe("PullRequestBehaviour", () => {
       expect(planeClient.issue.update).toHaveBeenNthCalledWith(2, "test-workspace", "project-id", "issue-2", {
         state: "open-state",
       });
+    });
+  });
+
+  describe("backward state movement", () => {
+    const mockPR: IPullRequestDetails = {
+      title: "Fix PL-123",
+      description: "Fixes issue PL-123",
+      number: 1,
+      url: "https://test.com/pr/1",
+      repository: {
+        owner: "test-owner",
+        name: "test-repo",
+        id: "1",
+      },
+      state: "open",
+      merged: false,
+      draft: false,
+      mergeable: true,
+      mergeable_state: "clean",
+    };
+
+    it("should skip state update when skipBackwardStateMovement is enabled and target state is behind current state", async () => {
+      const entityConnectionsWithSkip = [
+        {
+          ...mockEntityConnections[0],
+          config: { ...mockConfig, skipBackwardStateMovement: true },
+        },
+      ];
+      const behaviourWithSkip = new PullRequestBehaviour(
+        "test-provider",
+        "test-workspace",
+        service,
+        planeClient as unknown as PlaneClient,
+        entityConnectionsWithSkip
+      );
+      behaviourWithSkip["projectIdToSortedStateIds"] = {
+        "project-id": SORTED_STATE_IDS,
+      };
+
+      const mockIssue = {
+        id: "issue-id",
+        project: "project-id",
+        name: "Test Issue",
+        state: "merged-state",
+      };
+
+      planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.resolve(mockIssue));
+      planeClient.issue.createLink.mockImplementation(() => Promise.resolve({} as any));
+
+      const result = await behaviourWithSkip["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_OPENED"
+      );
+
+      expect(result).toEqual({
+        result: {
+          reference: { identifier: "PL", sequence: 123, isClosing: true },
+          issue: mockIssue,
+        },
+        stateTransitionSkipped: false,
+      });
+      expect(planeClient.issue.update).not.toHaveBeenCalled();
+      expect(planeClient.issue.createLink).toHaveBeenCalled();
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("skip backward state movement is enabled"),
+        expect.any(Object)
+      );
+    });
+
+    it("should allow state update when skipBackwardStateMovement is enabled but target state is ahead of current state", async () => {
+      const entityConnectionsWithSkip = [
+        {
+          ...mockEntityConnections[0],
+          config: { ...mockConfig, skipBackwardStateMovement: true },
+        },
+      ];
+      const behaviourWithSkip = new PullRequestBehaviour(
+        "test-provider",
+        "test-workspace",
+        service,
+        planeClient as unknown as PlaneClient,
+        entityConnectionsWithSkip
+      );
+      behaviourWithSkip["projectIdToSortedStateIds"] = {
+        "project-id": SORTED_STATE_IDS,
+      };
+
+      const mockIssue = {
+        id: "issue-id",
+        project: "project-id",
+        name: "Test Issue",
+        state: "draft-state",
+      };
+
+      planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.resolve(mockIssue));
+      planeClient.issue.update.mockImplementation(() => Promise.resolve({} as any));
+      planeClient.issue.createLink.mockImplementation(() => Promise.resolve({} as any));
+
+      const result = await behaviourWithSkip["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_MERGED"
+      );
+
+      expect(result).toEqual({
+        result: {
+          reference: { identifier: "PL", sequence: 123, isClosing: true },
+          issue: mockIssue,
+        },
+        stateTransitionSkipped: false,
+      });
+      expect(planeClient.issue.update).toHaveBeenCalledWith("test-workspace", "project-id", "issue-id", {
+        state: "merged-state",
+      });
+      expect(planeClient.issue.createLink).toHaveBeenCalled();
+    });
+
+    it("should allow backward state movement when skipBackwardStateMovement is not enabled", async () => {
+      behaviour["projectIdToSortedStateIds"] = {
+        "project-id": SORTED_STATE_IDS,
+      };
+
+      const mockIssue = {
+        id: "issue-id",
+        project: "project-id",
+        name: "Test Issue",
+        state: "merged-state",
+      };
+
+      planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.resolve(mockIssue));
+      planeClient.issue.update.mockImplementation(() => Promise.resolve({} as any));
+      planeClient.issue.createLink.mockImplementation(() => Promise.resolve({} as any));
+
+      const result = await behaviour["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_OPENED"
+      );
+
+      expect(result).toEqual({
+        result: {
+          reference: { identifier: "PL", sequence: 123, isClosing: true },
+          issue: mockIssue,
+        },
+        stateTransitionSkipped: false,
+      });
+      expect(planeClient.issue.update).toHaveBeenCalledWith("test-workspace", "project-id", "issue-id", {
+        state: "open-state",
+      });
+      expect(planeClient.issue.createLink).toHaveBeenCalled();
     });
   });
 });

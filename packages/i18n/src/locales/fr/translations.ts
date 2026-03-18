@@ -4375,6 +4375,8 @@ si vous êtes sûr que votre recherche est correcte.`,
     select_state: "Sélectionner l'état",
     set_state: "Définir l'état",
     choose_project: "Choisir le projet...",
+    skip_backward_state_movement:
+      "Empêcher le déplacement des issues vers un état antérieur en raison des mises à jour de PR",
   },
   github_integration: {
     name: "GitHub",

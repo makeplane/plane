@@ -26,6 +26,7 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 import type { TProjectMap } from "@/types/integrations/gitlab";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
+import { SkipBackwardStateTransition } from "@/components/integrations/ui";
 
 type TProjectEntityFormCreate = {
   modal: boolean;
@@ -49,7 +50,7 @@ export const ProjectEntityFormCreate = observer(function ProjectEntityFormCreate
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [projectMap, setProjectMap] = useState<TProjectMap>(projectMapInit);
   const [stateMap, setStateMap] = useState<TStateMap>(stateMapInit);
-
+  const [skipBackwardStateMovement, setSkipBackwardStateMovement] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
 
@@ -79,12 +80,14 @@ export const ProjectEntityFormCreate = observer(function ProjectEntityFormCreate
         project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
+          skipBackwardStateMovement: skipBackwardStateMovement,
         },
       };
       await createProjectConnection(payload);
 
       setStateMap(stateMapInit);
       setProjectMap(projectMapInit);
+      setSkipBackwardStateMovement(false);
       handleModal(false);
     } catch (error) {
       console.error("handleSubmit", error);
@@ -119,7 +122,7 @@ export const ProjectEntityFormCreate = observer(function ProjectEntityFormCreate
               </div>
             )}
           </div>
-
+          <SkipBackwardStateTransition value={skipBackwardStateMovement} onChange={setSkipBackwardStateMovement} />
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="secondary" onClick={() => handleModal(false)}>
               {t("common.cancel")}

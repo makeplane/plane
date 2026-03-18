@@ -4792,6 +4792,7 @@ if you are sure your search is right. `,
     select_state: "Select State",
     set_state: "Set State",
     choose_project: "Choose Project...",
+    skip_backward_state_movement: "Prevent issues from moving to an earlier state due to PR updates",
   },
   github_integration: {
     name: "GitHub",

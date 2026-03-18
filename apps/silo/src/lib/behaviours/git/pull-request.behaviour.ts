@@ -17,7 +17,7 @@
  */
 
 import { logger } from "@plane/logger";
-import type { Client, ExIssue } from "@plane/sdk";
+import type { Client, ExIssue, IState } from "@plane/sdk";
 import { env } from "@/env";
 import { CONSTANTS, E_STATE_MAP_KEYS } from "@/helpers/constants";
 import type { IssueReference, IssueWithReference } from "@/helpers/parser";
@@ -32,6 +32,8 @@ import type {
 } from "@/types/behaviours/git";
 import type { Either } from "@/types/either";
 import { left, right } from "@/types/either";
+import { STATE_GROUPS } from "@plane/constants";
+import { processBatchPromises } from "@/helpers/methods";
 
 /**
  * Pull Request Behaviour
@@ -45,6 +47,8 @@ export class PullRequestBehaviour {
   private readonly projectIdToPRStateMap: Record<string, Record<string, { id: string; name: string }>>;
   private readonly commentPrefix: string;
   private readonly oldCommentPrefix: string;
+  private projectIdToSortedStateIds: Record<string, string[]> = {};
+
   constructor(
     // Identifiers
     private readonly providerName: string,
@@ -110,7 +114,8 @@ export class PullRequestBehaviour {
 
       // Determine which references to process
       const referredIssues = [...references.closingReferences, ...references.nonClosingReferences];
-
+      // store in the projectIdToSortedStateIds map
+      await this.getProjectIdToSortedStateIds(Object.keys(this.projectIdToPRStateMap));
       const updateResults = await this.updateReferencedIssues(referredIssues, pullRequestDetails, event);
       const validIssues = updateResults
         .map((result) => result.result)
@@ -214,6 +219,49 @@ export class PullRequestBehaviour {
   }
 
   /**
+   * Get the project ID to sorted state IDs map
+   * @param planeProjectIds - The Plane project IDs
+   * @returns The project ID to sorted state IDs map
+   */
+  private async getProjectIdToSortedStateIds(planeProjectIds: string[]) {
+    // get all the states for the projects from plane
+    // sort by state groups and then by sequence
+    const fetchStates = async (projectId: string) => {
+      const states = await this.planeClient.state.list(this.workspaceSlug, projectId);
+      const sortedStates = this.sortStates(states.results);
+      this.projectIdToSortedStateIds[projectId] = sortedStates.map((state) => state.id);
+    };
+    await processBatchPromises(planeProjectIds, fetchStates, 2);
+  }
+
+  /**
+   * Sort states by group and sequence
+   * @param states - The states
+   * @returns The sorted states
+   */
+  private sortStates(states: IState[]) {
+    // sorts by state groups and then by sequence
+    return states.sort((stateA, stateB) => {
+      if (stateA.group === stateB.group) {
+        return stateA.sequence - stateB.sequence;
+      }
+      return Object.keys(STATE_GROUPS).indexOf(stateA.group) - Object.keys(STATE_GROUPS).indexOf(stateB.group);
+    });
+  }
+
+  /**
+   * Check if the backward state movement should be skipped
+   * @param projectId - The project ID
+   * @returns Whether the backward state movement should be skipped
+   */
+  private shouldSkipBackwardStateMovement(projectId: string): boolean {
+    const skipBackwardStateMovementEConnections = this.entityConnections.filter(
+      (connection) => connection.config?.skipBackwardStateMovement && connection.project_id === projectId
+    );
+    return skipBackwardStateMovementEConnections.length > 0;
+  }
+
+  /**
    * Update a single issue
    * @param reference - The reference
    * @param prDetails - The pull request details
@@ -236,10 +284,29 @@ export class PullRequestBehaviour {
         true
       );
 
-      // get the PR state for the event from projectId and PR state map
-      // for gitlab we get the state from config directly
       const targetState = this.projectIdToPRStateMap[issue.project]?.[event];
-      if (targetState && reference.isClosing) {
+      // check if the target state is after the current state in the sorted state ids
+      // and if the skip backward state movement is enabled for the project
+      const sortedStateIds = this.projectIdToSortedStateIds[issue.project];
+      const shouldNotUpdateState =
+        targetState && sortedStateIds
+          ? sortedStateIds.indexOf(targetState.id) < sortedStateIds.indexOf(issue.state) &&
+            this.shouldSkipBackwardStateMovement(issue.project)
+          : false;
+
+      if (shouldNotUpdateState) {
+        logger.info(
+          `[${this.providerName.toUpperCase()}] Target state is behind the current state and skip backward state movement is enabled, state update will be skipped`,
+          {
+            targetState: targetState?.id,
+            currentState: issue.state,
+            sortedStateIds: sortedStateIds,
+            projectId: issue.project,
+            issueId: issue.id,
+          }
+        );
+      }
+      if (targetState && reference.isClosing && !shouldNotUpdateState) {
         try {
           await this.planeClient.issue.update(this.workspaceSlug, issue.project, issue.id, { state: targetState.id });
           logger.info(

@@ -30,6 +30,7 @@ import type { TProjectMap } from "@/types/integrations";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 import { MapProjectPRState } from "./common";
+import { SkipBackwardStateTransition } from "@/components/integrations/ui";
 
 type TEditPRStateMappingForm = {
   modal: boolean;
@@ -53,7 +54,7 @@ export const EditPRStateMappingForm = observer(function EditPRStateMappingForm(p
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [projectMap, setProjectMap] = useState<TProjectMap>(projectMapInit);
   const [stateMap, setStateMap] = useState<TStateMap>(stateMapInit);
-
+  const [skipBackwardStateMovement, setSkipBackwardStateMovement] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const entityConnections = entityIds
@@ -94,6 +95,7 @@ export const EditPRStateMappingForm = observer(function EditPRStateMappingForm(p
         project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
+          skipBackwardStateMovement: skipBackwardStateMovement,
         },
         type: EGithubEntityConnectionType.PROJECT_PR_AUTOMATION,
       };
@@ -125,6 +127,7 @@ export const EditPRStateMappingForm = observer(function EditPRStateMappingForm(p
         [E_STATE_MAP_KEYS.MR_MERGED]: data.config?.states?.mergeRequestEventMapping?.[E_STATE_MAP_KEYS.MR_MERGED],
         [E_STATE_MAP_KEYS.MR_CLOSED]: data.config?.states?.mergeRequestEventMapping?.[E_STATE_MAP_KEYS.MR_CLOSED],
       });
+      setSkipBackwardStateMovement(data.config?.skipBackwardStateMovement ?? false);
     };
     if (workspaceSlug && data.project_id) {
       updateEntityConnection(workspaceSlug, data.project_id);
@@ -160,7 +163,10 @@ export const EditPRStateMappingForm = observer(function EditPRStateMappingForm(p
               />
             </div>
           </div>
-
+          <SkipBackwardStateTransition
+            value={skipBackwardStateMovement}
+            onChange={(value: boolean) => setSkipBackwardStateMovement(value)}
+          />
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="secondary" onClick={() => handleModal(false)}>
               {t("common.cancel")}

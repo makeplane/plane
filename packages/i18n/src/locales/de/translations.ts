@@ -4338,6 +4338,7 @@ Erstellen Sie ein neues.`,
     select_state: "Status auswählen",
     set_state: "Status setzen",
     choose_project: "Projekt auswählen...",
+    skip_backward_state_movement: "Verhindern, dass Issues durch PR-Updates in einen früheren Status verschoben werden",
   },
   github_integration: {
     name: "GitHub",

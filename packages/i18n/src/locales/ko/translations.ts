@@ -4280,6 +4280,7 @@ export default {
     select_state: "스테이트 선택",
     set_state: "스테이트 설정",
     choose_project: "프로젝트 선택...",
+    skip_backward_state_movement: "PR 업데이트로 인해 이슈가 이전 상태로 이동하는 것을 방지",
   },
   github_integration: {
     name: "GitHub",

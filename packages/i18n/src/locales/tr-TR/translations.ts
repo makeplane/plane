@@ -4316,6 +4316,7 @@ modüller arşivlenebilir.`,
     select_state: "Durum Seçin",
     set_state: "Durumu Ayarla",
     choose_project: "Proje Seçin...",
+    skip_backward_state_movement: "PR güncellemeleri nedeniyle sorunların önceki bir duruma taşınmasını önle",
   },
   github_integration: {
     name: "GitHub",

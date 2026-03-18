@@ -30,6 +30,7 @@ import type { TProjectMap } from "@/types/integrations";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 import { MapProjectPRState } from "./common";
+import { SkipBackwardStateTransition } from "@/components/integrations/ui";
 
 type TCreatePRStateMappingForm = {
   modal: boolean;
@@ -53,7 +54,7 @@ export const CreatePRStateMappingForm = observer(function CreatePRStateMappingFo
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [projectMap, setProjectMap] = useState<TProjectMap>(projectMapInit);
   const [stateMap, setStateMap] = useState<TStateMap>(stateMapInit);
-
+  const [skipBackwardStateMovement, setSkipBackwardStateMovement] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const entityConnections = entityIds
@@ -93,6 +94,7 @@ export const CreatePRStateMappingForm = observer(function CreatePRStateMappingFo
         project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
+          skipBackwardStateMovement: skipBackwardStateMovement,
         },
         type: EGithubEntityConnectionType.PROJECT_PR_AUTOMATION,
       };
@@ -100,7 +102,7 @@ export const CreatePRStateMappingForm = observer(function CreatePRStateMappingFo
 
       setProjectMap(projectMapInit);
       setStateMap(stateMapInit);
-
+      setSkipBackwardStateMovement(false);
       handleModal(false);
     } catch (error) {
       console.error("handleSubmit", error);
@@ -138,7 +140,7 @@ export const CreatePRStateMappingForm = observer(function CreatePRStateMappingFo
               />
             </div>
           </div>
-
+          <SkipBackwardStateTransition value={skipBackwardStateMovement} onChange={setSkipBackwardStateMovement} />
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="secondary" onClick={() => handleModal(false)}>
               {t("common.cancel")}

@@ -4350,6 +4350,7 @@ export default {
     select_state: "Выбрать состояние",
     set_state: "Установить состояние",
     choose_project: "Выбрать проект...",
+    skip_backward_state_movement: "Запретить перемещение задач в более раннее состояние из-за обновлений PR",
   },
   github_integration: {
     name: "GitHub",

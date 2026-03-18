@@ -4353,6 +4353,7 @@ văzute aici`,
     select_state: "Selectează Starea",
     set_state: "Setează Starea",
     choose_project: "Alege Proiectul...",
+    skip_backward_state_movement: "Împiedică mutarea problemelor într-o stare anterioară din cauza actualizărilor PR",
   },
   github_integration: {
     name: "GitHub",

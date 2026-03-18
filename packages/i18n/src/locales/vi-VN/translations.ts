@@ -4313,6 +4313,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
     select_state: "Chọn trạng thái",
     set_state: "Cập nhật trạng thái",
     choose_project: "Chọn dự án...",
+    skip_backward_state_movement: "Ngăn các vấn đề chuyển về trạng thái trước đó do cập nhật PR",
   },
   github_integration: {
     name: "GitHub",

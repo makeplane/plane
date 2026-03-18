@@ -4348,6 +4348,8 @@ Crea un nuovo progetto invece`,
     select_state: "Seleziona stato",
     set_state: "Imposta stato",
     choose_project: "Scegli progetto...",
+    skip_backward_state_movement:
+      "Impedisci che le issue tornino a uno stato precedente a causa degli aggiornamenti PR",
   },
   github_integration: {
     name: "GitHub",

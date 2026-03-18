@@ -4304,6 +4304,7 @@ Utwórz nowy.`,
     select_state: "Wybierz stan",
     set_state: "Ustaw stan",
     choose_project: "Wybierz projekt...",
+    skip_backward_state_movement: "Zapobiegaj przenoszeniu zadań do wcześniejszego stanu z powodu aktualizacji PR",
   },
   github_integration: {
     name: "GitHub",

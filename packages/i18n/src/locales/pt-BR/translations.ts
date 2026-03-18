@@ -4358,6 +4358,7 @@ se você tem certeza de que sua pesquisa está correta.`,
     select_state: "Selecionar Estado",
     set_state: "Definir Estado",
     choose_project: "Escolher Projeto...",
+    skip_backward_state_movement: "Impedir que os itens voltem a um estado anterior devido a atualizações de PR",
   },
   github_integration: {
     name: "GitHub",

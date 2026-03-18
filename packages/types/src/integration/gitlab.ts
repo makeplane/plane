@@ -35,6 +35,7 @@ export type TGitlabEntityConnectionConfig = object & {
     issueEventMapping?: TIssueStateMap;
   };
   allowBidirectionalSync?: boolean;
+  skipBackwardStateMovement?: boolean;
 };
 
 // gitlab workspace connection config

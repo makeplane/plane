@@ -4268,6 +4268,7 @@ Vytvorte nový.`,
     select_state: "Vyberte stav",
     set_state: "Nastaviť stav",
     choose_project: "Vyberte projekt...",
+    skip_backward_state_movement: "Zabrániť presunu problémov do skoršieho stavu kvôli aktualizáciám PR",
   },
   github_integration: {
     name: "GitHub",

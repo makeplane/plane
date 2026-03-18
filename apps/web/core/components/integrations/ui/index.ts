@@ -15,3 +15,4 @@ export * from "./installation-card";
 export * from "./personal-account-installation-card";
 export * from "./mapping-loader";
 export * from "./project-entity-item";
+export * from "./skip-backward-state-transition";

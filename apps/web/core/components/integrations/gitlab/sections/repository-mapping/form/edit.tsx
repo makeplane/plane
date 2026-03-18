@@ -28,6 +28,7 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 import type { TProjectMap } from "@/types/integrations/gitlab";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
+import { SkipBackwardStateTransition } from "@/components/integrations/ui";
 
 type TFormEdit = {
   modal: boolean;
@@ -52,7 +53,7 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [projectMap, setProjectMap] = useState<TProjectMap>(projectMapInit);
   const [stateMap, setStateMap] = useState<TStateMap>(stateMapInit);
-
+  const [skipBackwardStateMovement, setSkipBackwardStateMovement] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
 
@@ -81,6 +82,7 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
         project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
+          skipBackwardStateMovement: skipBackwardStateMovement,
         },
       };
       await updateEntityConnection(data.id, payload);
@@ -111,6 +113,7 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
         [E_STATE_MAP_KEYS.MR_MERGED]: data.config?.states?.mergeRequestEventMapping?.[E_STATE_MAP_KEYS.MR_MERGED],
         [E_STATE_MAP_KEYS.MR_CLOSED]: data.config?.states?.mergeRequestEventMapping?.[E_STATE_MAP_KEYS.MR_CLOSED],
       });
+      setSkipBackwardStateMovement(data.config?.skipBackwardStateMovement ?? false);
     };
     if (workspaceSlug && data.project_id) {
       updateEntityConnection(workspaceSlug, data.project_id);
@@ -141,7 +144,10 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
               />
             </div>
           </div>
-
+          <SkipBackwardStateTransition
+            value={skipBackwardStateMovement}
+            onChange={(value: boolean) => setSkipBackwardStateMovement(value)}
+          />
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="secondary" onClick={() => handleModal(false)}>
               {t("common.cancel")}

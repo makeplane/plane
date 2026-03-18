@@ -4299,6 +4299,7 @@ export default {
     select_state: "Виберіть Стейт",
     set_state: "Встановити Стейт",
     choose_project: "Виберіть Проджект...",
+    skip_backward_state_movement: "Запобігти переміщенню завдань у попередній стан через оновлення PR",
   },
   github_integration: {
     name: "GitHub",

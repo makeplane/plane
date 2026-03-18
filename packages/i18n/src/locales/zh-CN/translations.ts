@@ -4202,6 +4202,7 @@ export default {
     select_state: "选择状态",
     set_state: "设置状态",
     choose_project: "选择项目...",
+    skip_backward_state_movement: "防止因 PR 更新将问题移回较早的状态",
   },
   github_integration: {
     name: "GitHub",
