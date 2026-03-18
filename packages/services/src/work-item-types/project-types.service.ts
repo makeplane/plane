@@ -92,7 +92,7 @@ export class ProjectWorkItemTypesService extends APIService {
 
   async importGlobalTypes(payload: TImportWorkItemTypesPayload): Promise<void> {
     return this.post(`/api/workspaces/${payload.workspaceSlug}/projects/${payload.projectId}/import-work-item-types/`, {
-      work_item_types: payload.typeIds.map((typeId) => ({ id: typeId })),
+      work_item_types: payload.typeIds,
     })
       .then((response) => response?.data)
       .catch((error) => {

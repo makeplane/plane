@@ -28,6 +28,7 @@ from .app.issue_property import (
     IssuePropertySerializer,
     IssuePropertyOptionSerializer,
     IssuePropertyActivitySerializer,
+    WorkspaceWorkItemTypeSerializer,
 )
 
 from .app.customer import (

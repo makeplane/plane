@@ -20,7 +20,11 @@ from rest_framework.response import Response
 from plane.db.models import Issue, Workspace, IssueType, ProjectIssueType
 from plane.ee.models import IssueProperty, IssuePropertyOption, PropertyTypeEnum
 from plane.ee.permissions import ProjectEntityPermission
-from plane.ee.serializers import IssuePropertyOptionSerializer, IssuePropertySerializer, IssueTypeSerializer
+from plane.ee.serializers import (
+    IssuePropertyOptionSerializer,
+    IssuePropertySerializer,
+    WorkspaceWorkItemTypeSerializer,
+)
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
@@ -323,7 +327,7 @@ class ProjectWorkItemTypeEndpoint(BaseAPIView):
             )
         )
         # serialize the data and return the response
-        serializer = IssueTypeSerializer(local_work_item_types, many=True)
+        serializer = WorkspaceWorkItemTypeSerializer(local_work_item_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

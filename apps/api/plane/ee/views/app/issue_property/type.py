@@ -24,7 +24,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, Project, ProjectIssueType, Workspace
 from plane.ee.models import WorkitemTemplate, WorkspaceFeature, IssueProperty, IssueTypeProperty, IssuePropertyValue
 from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
-from plane.ee.serializers import IssueTypeSerializer, IssuePropertySerializer
+from plane.ee.serializers import IssueTypeSerializer, IssuePropertySerializer, WorkspaceWorkItemTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -55,7 +55,7 @@ class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
             )
             .prefetch_related("issue_type_properties")
         ).order_by("created_at")
-        serializer = IssueTypeSerializer(issue_types, many=True)
+        serializer = WorkspaceWorkItemTypeSerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
@@ -77,7 +77,7 @@ class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
             )
 
         # Create a new issue type
-        serializer = IssueTypeSerializer(
+        serializer = WorkspaceWorkItemTypeSerializer(
             data=request.data,
             context={
                 "workspace_id": workspace.id,
@@ -98,7 +98,7 @@ class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_type = IssueType.objects.get(workspace__slug=slug, pk=pk)
-        serializer = IssueTypeSerializer(
+        serializer = WorkspaceWorkItemTypeSerializer(
             issue_type,
             data=request.data,
             context={
@@ -243,7 +243,7 @@ class ImportWorkItemTypesEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
     def post(self, request, slug, project_id):
-        work_item_type_ids = [wt["id"] for wt in request.data.get("work_item_types", [])]
+        work_item_type_ids = request.data.get("work_item_types", [])
         workspace = Workspace.objects.get(slug=slug)
 
         # Validate that project_id belongs to this workspace

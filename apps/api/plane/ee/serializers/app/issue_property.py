@@ -28,7 +28,7 @@ from plane.utils.constants import (
 from plane.utils.issue_type_hierarchy import validate_type_hierarchy
 
 
-class IssueTypeSerializer(BaseSerializer):
+class WorkspaceWorkItemTypeSerializer(BaseSerializer):
     project_ids = serializers.ListField(child=serializers.UUIDField(), read_only=True)
     properties = serializers.SerializerMethodField()
 
@@ -77,7 +77,8 @@ class IssueTypeSerializer(BaseSerializer):
                                 f"Issues of this type have a parent with type level {parent_level}. {error_msg}"
                             )
 
-                    # Check child compatibility: get the child type level for any issue of this type that has sub-workitems
+                    # Check child compatibility: get the child type level for any
+                    # issue of this type that has sub-workitems
                     child_issue = (
                         Issue.objects.filter(
                             parent__type=self.instance,
@@ -104,6 +105,15 @@ class IssueTypeSerializer(BaseSerializer):
 
     def get_properties(self, obj):
         return {str(itp.property_id): itp.sort_order for itp in obj.issue_type_properties.all()}
+
+
+class IssueTypeSerializer(BaseSerializer):
+    project_ids = serializers.ListField(child=serializers.UUIDField(), read_only=True)
+
+    class Meta:
+        model = IssueType
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "is_default", "deleted_at", "level"]
 
 
 class IssuePropertySerializer(BaseSerializer):
