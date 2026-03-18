@@ -48,6 +48,7 @@ class WorkspaceFeatureAPIEndpoint(BaseAPIView):
             "customers": workspace_feature.is_customer_enabled,
             "wiki": workspace_feature.is_wiki_enabled,
             "pi": workspace_feature.is_pi_enabled,
+            "work_item_types": workspace_feature.is_work_item_types_enabled,
         }
 
     @workspace_docs(

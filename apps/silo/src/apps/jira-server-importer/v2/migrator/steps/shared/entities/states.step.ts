@@ -21,6 +21,7 @@ import type {
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { STATE_GROUPS } from "@plane/constants";
 import type { IStateConfig, JiraConfig } from "@plane/etl/jira-server";
+import { buildExtenalId } from "@plane/etl/jira-server";
 import type { ExState } from "@plane/sdk";
 import type { TImportJob, TStateGroups } from "@plane/types";
 import type { StatusCategory, StatusDetails } from "jira.js/out/version2/models";
@@ -196,7 +197,7 @@ export class JiraStatesStep implements IStep {
     const { group, color } = this.resolveStateGroup(statusCategory);
 
     return {
-      external_id: `${projectId}_${resourceId}_${jiraStatus.id}`,
+      external_id: buildExtenalId([projectId, resourceId, jiraStatus.id]),
       name: jiraStatus.name,
       group,
       color,

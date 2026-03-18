@@ -44,6 +44,7 @@ class WorkspaceFeatureSerializer(serializers.Serializer):
     customers = serializers.BooleanField(required=False)
     wiki = serializers.BooleanField(required=False)
     pi = serializers.BooleanField(required=False)
+    work_item_types = serializers.BooleanField(required=False)
 
     def validate_project_grouping(self, value):
         if not check_workspace_feature_flag(FeatureFlag.PROJECT_GROUPING, self.context["slug"]):
@@ -75,6 +76,11 @@ class WorkspaceFeatureSerializer(serializers.Serializer):
             raise serializers.ValidationError("Upgrade your plan to enable AI")
         return value
 
+    def validate_work_item_types(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Work Item Types")
+        return value
+
     def update(self, instance, validated_data):
         workspace_feature_fields = {
             "project_grouping": "is_project_grouping_enabled",
@@ -83,6 +89,7 @@ class WorkspaceFeatureSerializer(serializers.Serializer):
             "customers": "is_customer_enabled",
             "wiki": "is_wiki_enabled",
             "pi": "is_pi_enabled",
+            "work_item_types": "is_work_item_types_enabled",
         }
 
         workspace_feature = WorkspaceFeature.objects.get(workspace_id=self.context["workspace_id"])
@@ -104,4 +111,5 @@ class WorkspaceFeatureSerializer(serializers.Serializer):
             "customers": workspace_feature.is_customer_enabled,
             "wiki": workspace_feature.is_wiki_enabled,
             "pi": workspace_feature.is_pi_enabled,
+            "work_item_types": workspace_feature.is_work_item_types_enabled,
         }

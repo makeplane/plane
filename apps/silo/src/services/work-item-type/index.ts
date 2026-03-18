@@ -11,6 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./create-project.step";
-export * from "./project-config.step";
-export * from "./workspace-features.step";
+export * from "./work-item-type.service";

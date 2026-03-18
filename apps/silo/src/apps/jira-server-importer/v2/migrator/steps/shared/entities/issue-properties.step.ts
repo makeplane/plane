@@ -40,6 +40,7 @@ import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log
 import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
 import type { IKnownCustomFieldMatcher } from "@/apps/jira-server-importer/v2/helpers/constants";
 import type { Resolution } from "jira.js/out/version2/models";
+import type { TBulkOperationResponse } from "@/types/services";
 
 const EXCLUDED_CUSTOM_FIELDS = [
   ...KNOWN_CUSTOM_FIELDS.START_DATE.names,
@@ -177,9 +178,12 @@ export class JiraIssuePropertiesStep implements IStep {
    */
   private transform(job: TImportJob<JiraConfig>, jiraFields: JiraIssueField[]): Partial<ExIssueProperty>[] {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
+    const config = job.config as JiraConfig;
+    const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
+    const projectId = importWorkItemTypesGlobally ? undefined : job.project_id;
 
     return jiraFields
-      .map((field) => transformIssueFields({ resourceId, projectId: job.project_id, source: this.source }, field))
+      .map((field) => transformIssueFields({ resourceId, projectId: projectId, source: this.source }, field))
       .filter((field) => field && field.property_type) as Partial<ExIssueProperty>[];
   }
 
@@ -193,16 +197,18 @@ export class JiraIssuePropertiesStep implements IStep {
     issueTypesData: TIssueTypesData
   ): Promise<Partial<ExIssueProperty>[]> {
     const { resourceId, projectId } = extractJobData(job);
+    const config = job.config as JiraConfig;
+    const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
     const defaultProperties: Partial<ExIssueProperty>[] = [];
     const propertyData = await this.getDefaultPropertyData(job.id, storage);
 
     for (const issueType of issueTypesData) {
       const properties = getSupportedDefaultProperties(
         resourceId,
-        projectId,
         issueType.id,
         issueType.external_id,
         this.source,
+        importWorkItemTypesGlobally ? undefined : projectId,
         propertyData
       );
       defaultProperties.push(...properties);
@@ -259,7 +265,6 @@ export class JiraIssuePropertiesStep implements IStep {
     }
 
     // Process each issue type's properties using bulk API
-    const apiClient = getAPIClientInternal();
     const allProperties: ExIssueProperty[] = [];
     const allErrors: Array<{ payload: Partial<ExIssueProperty>; error: string }> = [];
 
@@ -289,12 +294,7 @@ export class JiraIssuePropertiesStep implements IStep {
             total: typeProperties.length,
           });
 
-          const result = await apiClient.workItemProperty.bulkCreateOrUpdateIssueProperties(
-            job.workspace_slug,
-            job.project_id,
-            typeId,
-            chunk
-          );
+          const result = await this.pushPropertiesToPlane(job, typeId, chunk);
 
           allProperties.push(...result.created, ...result.updated);
           allErrors.push(...result.errored);
@@ -366,6 +366,31 @@ export class JiraIssuePropertiesStep implements IStep {
     }
 
     return allProperties;
+  }
+
+  private async pushPropertiesToPlane(
+    job: TImportJob<JiraConfig>,
+    typeId: string,
+    properties: Partial<ExIssueProperty>[]
+  ): Promise<TBulkOperationResponse<ExIssueProperty>> {
+    const apiClient = getAPIClientInternal();
+    const config = job.config as JiraConfig;
+    const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
+
+    if (importWorkItemTypesGlobally) {
+      return await apiClient.workItemProperty.bulkCreateOrUpdateWorkspaceIssueProperties(
+        job.workspace_slug,
+        typeId,
+        properties
+      );
+    } else {
+      return await apiClient.workItemProperty.bulkCreateOrUpdateIssueProperties(
+        job.workspace_slug,
+        job.project_id,
+        typeId,
+        properties
+      );
+    }
   }
 
   /**

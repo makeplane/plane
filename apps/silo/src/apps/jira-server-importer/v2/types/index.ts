@@ -19,6 +19,7 @@ import type { Resolution } from "jira.js/out/version2/models";
 
 export enum EJiraStep {
   // Pre-run
+  WORKSPACE_FEATURES = "workspace_features",
   PLANE_PROJECT_CREATION = "plane_project_creation",
   PLANE_PROJECT_CONFIGURATION = "plane_project_configuration",
 

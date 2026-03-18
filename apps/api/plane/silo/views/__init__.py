@@ -21,6 +21,7 @@ from .importer_report import (
     ImportReportAPIView,
     ImportReportCountIncrementAPIView,
 )
-from .page import ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView, WikiBulkOperationAPIView
+from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView
+from .work_item_property import IssuePropertyBulkOperationAPIView, WorkspaceIssuePropertyBulkOperationAPIView
+from .work_item_type import WorkspaceIssueTypeBulkOperationAPIView, WorkspaceWorkItemTypeImportAPIView
 from .releases import ReleaseBulkOperationAPIView
-from .work_item_property import IssuePropertyBulkOperationAPIView

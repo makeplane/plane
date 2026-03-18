@@ -11,41 +11,36 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { ExIssueProperty } from "@plane/sdk";
+import type { ExIssueType } from "@plane/sdk";
 import type { ClientOptions } from "@/types";
 import { APIService } from "../api.service";
 import type { AxiosError } from "axios";
 import type { TBulkOperationResponse } from "@/types/services";
 
-export type TIssuePropertyBulkOperationResponse = TBulkOperationResponse<ExIssueProperty>;
+export type TIssueTypeBulkOperationResponse = TBulkOperationResponse<ExIssueType>;
 
-export class WorkItemPropertyAPIService extends APIService {
+export class WorkItemTypeAPIService extends APIService {
   constructor(options: ClientOptions) {
     super(options);
   }
 
-  async bulkCreateOrUpdateIssueProperties(
+  async bulkCreateOrUpdateWorkspaceIssueTypes(
     workspaceSlug: string,
-    projectId: string,
-    typeId: string,
-    payload: Partial<ExIssueProperty>[]
-  ): Promise<TIssuePropertyBulkOperationResponse> {
-    return this.post(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/properties/bulk-operation/`,
-      payload
-    )
+    payload: Partial<ExIssueType>[]
+  ): Promise<TIssueTypeBulkOperationResponse> {
+    return this.post(`/api/v1/workspaces/${workspaceSlug}/issue-types/bulk-operation/`, payload)
       .then((response) => response.data)
       .catch((error: AxiosError) => {
         throw error?.response?.data;
       });
   }
 
-  async bulkCreateOrUpdateWorkspaceIssueProperties(
+  async importWorkspaceIssueTypesToProject(
     workspaceSlug: string,
-    typeId: string,
-    payload: Partial<ExIssueProperty>[]
-  ): Promise<TIssuePropertyBulkOperationResponse> {
-    return this.post(`/api/v1/workspaces/${workspaceSlug}/issue-types/${typeId}/properties/bulk-operation/`, payload)
+    projectId: string,
+    payload: { work_item_types: string[] }
+  ): Promise<TIssueTypeBulkOperationResponse> {
+    return this.post(`/api/v1/workspaces/${workspaceSlug}/issue-types/${projectId}/import/`, payload)
       .then((response) => response.data)
       .catch((error: AxiosError) => {
         throw error?.response?.data;

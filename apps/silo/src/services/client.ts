@@ -25,6 +25,7 @@ import { PageAPIService } from "./page/page.service";
 import { WorkItemPropertyAPIService } from "./work-item-property/work-item-property.service";
 import { ReleaseAPIService } from "./release/release.service";
 import { ImportExecutionLogAPIService } from "./job";
+import { WorkItemTypeAPIService } from "./work-item-type";
 
 export class APIClient {
   options: ClientOptions;
@@ -37,6 +38,7 @@ export class APIClient {
   // App level services
   page: PageAPIService;
   asset: AssetApiService;
+  workItemType: WorkItemTypeAPIService;
   workItemProperty: WorkItemPropertyAPIService;
   release: ReleaseAPIService;
 
@@ -50,6 +52,7 @@ export class APIClient {
     this.importExecutionLog = new ImportExecutionLogAPIService(options);
     this.page = new PageAPIService(options);
     this.asset = new AssetApiService(options);
+    this.workItemType = new WorkItemTypeAPIService(options);
     this.workItemProperty = new WorkItemPropertyAPIService(options);
     this.release = new ReleaseAPIService(options);
   }

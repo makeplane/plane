@@ -14,6 +14,7 @@
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { ExIssueProperty } from "@plane/sdk";
 import type { TDefaultPropertyData } from "../types";
+import { buildExtenalId } from "@plane/etl/jira-server";
 
 export enum E_DEFAULT_PROPERTY_TYPES {
   FIX_VERSION = "fix-version",
@@ -24,21 +25,6 @@ export enum E_DEFAULT_PROPERTY_TYPES {
   RESOLUTION = "resolution",
 }
 
-export const getDefaultPropertyExternalId = (
-  resourceId: string,
-  projectId: string,
-  issueTypeId: string,
-  propertyType: E_DEFAULT_PROPERTY_TYPES
-): string => `${resourceId}-${projectId}-${issueTypeId}-${propertyType}`;
-
-export const getDefaultPropertyOptionExternalId = (
-  resourceId: string,
-  projectId: string,
-  issueTypeId: string,
-  propertyType: E_DEFAULT_PROPERTY_TYPES,
-  optionId: string
-): string => `${resourceId}-${projectId}-${issueTypeId}-${propertyType}-${optionId}`;
-
 /*
  * We are using external id as the issue type id is not available in the dependency data
  * as the push function will map the external id to the internal id and that is how the
@@ -46,15 +32,15 @@ export const getDefaultPropertyOptionExternalId = (
  */
 export const getSupportedDefaultProperties = (
   resourceId: string,
-  projectId: string,
   issueTypeId: string,
   issueTypeExternalId: string,
   source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+  projectId?: string,
   propertyData?: TDefaultPropertyData
 ): Partial<ExIssueProperty>[] => [
   {
     type_id: issueTypeExternalId,
-    external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.FIX_VERSION),
+    external_id: buildExtenalId([resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.FIX_VERSION], "-"),
     external_source: source,
     display_name: "Fix Version",
     property_type: "RELATION",
@@ -63,12 +49,7 @@ export const getSupportedDefaultProperties = (
   },
   {
     type_id: issueTypeExternalId,
-    external_id: getDefaultPropertyExternalId(
-      resourceId,
-      projectId,
-      issueTypeId,
-      E_DEFAULT_PROPERTY_TYPES.AFFECTED_VERSION
-    ),
+    external_id: buildExtenalId([resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.AFFECTED_VERSION], "-"),
     external_source: source,
     display_name: "Affected Version",
     property_type: "RELATION",
@@ -77,7 +58,7 @@ export const getSupportedDefaultProperties = (
   },
   {
     type_id: issueTypeExternalId,
-    external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.REPORTER),
+    external_id: buildExtenalId([resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.REPORTER], "-"),
     external_source: source,
     display_name: "Reporter",
     property_type: "RELATION",
@@ -86,12 +67,7 @@ export const getSupportedDefaultProperties = (
   },
   {
     type_id: issueTypeExternalId,
-    external_id: getDefaultPropertyExternalId(
-      resourceId,
-      projectId,
-      issueTypeId,
-      E_DEFAULT_PROPERTY_TYPES.ORIGINAL_ESTIMATE
-    ),
+    external_id: buildExtenalId([resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.ORIGINAL_ESTIMATE], "-"),
     external_source: source,
     display_name: "Original Estimate",
     property_type: "DECIMAL",
@@ -99,28 +75,26 @@ export const getSupportedDefaultProperties = (
   },
   {
     type_id: issueTypeExternalId,
-    external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.RESOLUTION),
+    external_id: buildExtenalId([resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.RESOLUTION], "-"),
     external_source: source,
     display_name: "Resolution",
     property_type: "DATETIME",
     is_active: true,
   },
-  generateResolutionStateField(resourceId, projectId, issueTypeId, issueTypeExternalId, source, propertyData),
+  generateResolutionStateField(resourceId, issueTypeId, issueTypeExternalId, source, projectId, propertyData),
 ];
 
 const generateResolutionStateField = (
   resourceId: string,
-  projectId: string,
   issueTypeId: string,
   issueTypeExternalId: string,
   source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+  projectId?: string,
   propertyData?: TDefaultPropertyData
 ): Partial<ExIssueProperty> => {
-  const propertyExternalId = getDefaultPropertyExternalId(
-    resourceId,
-    projectId,
-    issueTypeId,
-    E_DEFAULT_PROPERTY_TYPES.RESOLUTION_STATE
+  const propertyExternalId = buildExtenalId(
+    [resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.RESOLUTION_STATE],
+    "-"
   );
 
   if (propertyData && propertyData.resolutions) {
@@ -134,12 +108,9 @@ const generateResolutionStateField = (
       options: propertyData.resolutions.map((resolution) => ({
         name: resolution.name,
         external_source: source,
-        external_id: getDefaultPropertyOptionExternalId(
-          resourceId,
-          projectId,
-          issueTypeId,
-          E_DEFAULT_PROPERTY_TYPES.RESOLUTION_STATE,
-          resolution.id ?? ""
+        external_id: buildExtenalId(
+          [resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.RESOLUTION_STATE, resolution.id ?? ""],
+          "-"
         ),
         is_active: true,
         property_id: propertyExternalId,

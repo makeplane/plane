@@ -28,12 +28,14 @@ import {
   WaitForCeleryStep,
   JiraStatesStep,
   PlaneProjectCreateStep,
+  WorkspaceFeaturesStep,
 } from "../shared";
 import { JiraResolutionsStep } from "../shared/entities/resolutions.step";
 import { JiraReleasesStep } from "../shared/entities/releases.step";
 
 const JIRA_SERVER_STEPS = [
   // Pre-run steps
+  new WorkspaceFeaturesStep(),
   new PlaneProjectCreateStep(),
   new PlaneProjectConfigurationStep(),
   // Entity steps

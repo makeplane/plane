@@ -37,6 +37,7 @@ import { protect } from "@/lib";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { getAPIClientInternal } from "@/services/client";
 
 /**
  * Jira Server Issue Types Step
@@ -106,6 +107,7 @@ export class JiraIssueTypesStep implements IStep {
       }
 
       const projectId = job.config?.project?.id;
+
       if (!projectId) {
         throw new Error("Project ID not found in job config");
       }
@@ -113,6 +115,7 @@ export class JiraIssueTypesStep implements IStep {
       // Fetch what already exists in Plane
       const config = job.config as JiraConfig;
       const epicsAsWorkItems = config.importEpicsAsWorkItems;
+      const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
 
       // Get pagination state
       const startAt = previousContext?.pageCtx.startAt ?? 0;
@@ -134,16 +137,25 @@ export class JiraIssueTypesStep implements IStep {
 
       // Transform to Plane issue types
       const transformed = this.transform(job, pulled.items, epicsAsWorkItems || false);
+      const pushedWorkItemTypes: ExIssueType[] = [];
 
       // Push to Plane (handles epics, conflicts, create/update)
-      const pushedCount = await this.push(jobContext, transformed, storage, epicsAsWorkItems || false);
+      if (importWorkItemTypesGlobally) {
+        const pushed = await this.pushAtGlobalLevel(jobContext, transformed);
+        pushedWorkItemTypes.push(...pushed);
+      } else {
+        const pushed = await this.pushAtProjectLevel(jobContext, transformed, epicsAsWorkItems || false);
+        pushedWorkItemTypes.push(...pushed);
+      }
+
+      await this.storeIssueTypeMappings(job, pushedWorkItemTypes, storage);
 
       return createPaginationContext({
         hasMore: pulled.hasMore,
         startAt: startAt,
         pageSize: this.PAGE_SIZE,
         pulled: pulled.items.length,
-        pushed: pushedCount,
+        pushed: pushedWorkItemTypes.length,
         totalProcessed: totalProcessed + pulled.items.length,
       });
     } catch (error) {
@@ -211,9 +223,11 @@ export class JiraIssueTypesStep implements IStep {
     epicsAsWorkItems: boolean
   ): Partial<ExIssueType>[] {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
+    const importWorkItemTypesGlobally = job.config.importWorkItemTypesGlobally ?? false;
+    const projectId = importWorkItemTypesGlobally ? undefined : job.project_id;
 
     return jiraIssueTypes.map((issueType) =>
-      transformIssueType({ resourceId, projectId: job.project_id, source: this.source }, issueType, epicsAsWorkItems)
+      transformIssueType({ resourceId, projectId, source: this.source }, issueType, epicsAsWorkItems)
     );
   }
 
@@ -221,14 +235,11 @@ export class JiraIssueTypesStep implements IStep {
    * Push issue types to Plane and store mappings
    * Orchestrates the create/update flow with epic handling
    */
-  private async push(
+  private async pushAtProjectLevel(
     jobContext: TJobContext,
     issueTypes: Partial<ExIssueType>[],
-    storage: IStorageService,
     epicsAsWorkItems: boolean
-  ): Promise<number> {
-    const { job } = jobContext;
-
+  ): Promise<ExIssueType[]> {
     const existingIssueTypes = await this.fetchExistingIssueTypes(jobContext);
     const defaultIssueType = existingIssueTypes.find((type) => type.is_default);
 
@@ -241,8 +252,8 @@ export class JiraIssueTypesStep implements IStep {
 
     // Create/update issue types
     const [created, updated] = await Promise.all([
-      this.putIssueTypes(jobContext, toCreate, "create"),
-      this.putIssueTypes(jobContext, toUpdate, "update"),
+      this.putIssueTypesToProject(jobContext, toCreate, "create"),
+      this.putIssueTypesToProject(jobContext, toUpdate, "update"),
     ]);
 
     // Collect all issue types for mapping storage
@@ -258,10 +269,78 @@ export class JiraIssueTypesStep implements IStep {
       allIssueTypes.push(epicIssueType);
     }
 
-    // Store mappings for this page
-    await this.storeIssueTypeMappings(job, allIssueTypes, storage);
+    return allIssueTypes;
+  }
 
-    return allIssueTypes.length;
+  private async pushAtGlobalLevel(jobContext: TJobContext, issueTypes: Partial<ExIssueType>[]): Promise<ExIssueType[]> {
+    const { job } = jobContext;
+    const { workspace_slug } = job;
+    const apiClient = getAPIClientInternal();
+    const chunkSize = 50;
+    const allIssueTypes: ExIssueType[] = [];
+
+    logger.info(`[${job.id}] [${this.name}] Starting global bulk operation`, {
+      jobId: job.id,
+      totalCount: issueTypes.length,
+      batchSize: chunkSize,
+    });
+
+    for (let i = 0; i < issueTypes.length; i += chunkSize) {
+      const chunk = issueTypes.slice(i, i + chunkSize);
+
+      try {
+        const response = await apiClient.workItemType.bulkCreateOrUpdateWorkspaceIssueTypes(workspace_slug, chunk);
+        allIssueTypes.push(...response.created, ...response.updated);
+
+        executionLog.collect(job.id, {
+          entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+          phase: "CREATE_ISSUE_TYPES",
+          level: EExecutionLogLevel.INFO,
+          metrics: {
+            imported: response.created.length,
+            already_existed: response.updated.length,
+            errored: response.errored.length,
+          },
+        });
+
+        const workItemTypeIds = [...response.created.map((t) => t.id), ...response.updated.map((t) => t.id)].filter(
+          Boolean
+        );
+
+        const issueTypeAssociation = await apiClient.workItemType.importWorkspaceIssueTypesToProject(
+          job.workspace_slug,
+          job.project_id,
+          {
+            work_item_types: workItemTypeIds as string[],
+          }
+        );
+
+        logger.info(`[${job.id}] [${this.name}] Issue type association`, {
+          jobId: job.id,
+          chunkSize: chunkSize,
+          issueTypeAssociation: issueTypeAssociation,
+        });
+      } catch (error) {
+        logger.error(`[${job.id}][${this.name}] Error in global bulk operation`, {
+          jobId: job.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+
+        executionLog.collect(job.id, {
+          entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+          phase: "CREATE_ISSUE_TYPES",
+          level: EExecutionLogLevel.ERROR,
+          error: extractErrorMetadata(error),
+          additional_data: {
+            attemptedCount: chunk.length,
+          },
+        });
+
+        throw error;
+      }
+    }
+
+    return allIssueTypes;
   }
 
   /**
@@ -362,7 +441,7 @@ export class JiraIssueTypesStep implements IStep {
   /**
    * Create or update issue types in Plane
    */
-  private async putIssueTypes(
+  private async putIssueTypesToProject(
     jobContext: TJobContext,
     issueTypes: Partial<ExIssueType>[],
     method: "create" | "update"

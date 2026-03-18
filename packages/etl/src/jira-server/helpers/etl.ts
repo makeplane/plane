@@ -39,6 +39,10 @@ export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState)
   return targetState?.target_state;
 };
 
+export const buildExtenalId = (args: (string | undefined)[], separator: string = "_") => {
+  return args.filter(Boolean).join(separator);
+};
+
 export const getTargetAttachments = (
   resourceId: string,
   projectId: string,
@@ -54,7 +58,7 @@ export const getTargetAttachments = (
       }
 
       return {
-        external_id: `${projectId}_${resourceId}_${attachment.id}`,
+        external_id: buildExtenalId([projectId, resourceId, attachment.id]),
         external_source: E_IMPORTER_KEYS.JIRA,
         attributes: {
           name: attachment.filename ?? "Untitled",
@@ -229,12 +233,12 @@ export const resolveFieldTypeKey = (schema?: {
 
 export const getPropertyValues = (
   resourceId: string,
-  projectId: string,
   typeId: string,
   propertyId: string,
   fieldTypeKey: string,
   value: any,
-  renderedValue: any
+  renderedValue: any,
+  projectId?: string
 ): ExIssuePropertyValue => {
   const propertyValues: ExIssuePropertyValue = [];
   const commonPropertyProp: Partial<TPropertyValue> = {
@@ -273,8 +277,8 @@ export const getPropertyValues = (
       // Handle single select
       propertyValues.push({
         ...commonPropertyProp,
-        external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
-        value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
+        external_id: buildExtenalId([projectId, resourceId, typeId, propertyId, value.id]),
+        value: buildExtenalId([projectId, resourceId, typeId, propertyId, value.id]),
       });
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:float":
@@ -299,8 +303,8 @@ export const getPropertyValues = (
         value.forEach((val) => {
           propertyValues.push({
             ...commonPropertyProp,
-            external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
-            value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
+            external_id: buildExtenalId([projectId, resourceId, typeId, propertyId, val.id]),
+            value: buildExtenalId([projectId, resourceId, typeId, propertyId, val.id]),
           });
         });
       }
@@ -320,8 +324,8 @@ export const getPropertyValues = (
       // Handle radiobuttons
       propertyValues.push({
         ...commonPropertyProp,
-        external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
-        value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
+        external_id: buildExtenalId([projectId, resourceId, typeId, propertyId, value.id]),
+        value: buildExtenalId([projectId, resourceId, typeId, propertyId, value.id]),
       });
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:multiselect":
@@ -330,8 +334,8 @@ export const getPropertyValues = (
         value.forEach((val) => {
           propertyValues.push({
             ...commonPropertyProp,
-            external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
-            value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
+            external_id: buildExtenalId([projectId, resourceId, typeId, propertyId, val.id]),
+            value: buildExtenalId([projectId, resourceId, typeId, propertyId, val.id]),
           });
         });
       }

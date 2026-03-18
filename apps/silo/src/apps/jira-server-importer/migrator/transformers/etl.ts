@@ -36,6 +36,7 @@ import {
   transformIssuePropertyValues,
   transformDefaultPropertyValues,
   resolveFieldTypeKey,
+  buildExtenalId,
 } from "@plane/etl/jira-server";
 import type {
   ExCycle,
@@ -49,7 +50,6 @@ import type {
   PlaneUser,
 } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
-import { buildExternalId } from "../../v2/helpers/job";
 import type { TIssueTypesData } from "../../v2/types";
 
 export const getTransformedIssues = (
@@ -246,6 +246,7 @@ export const getTransformedIssuePropertyValuesV2 = (
 ): TIssuePropertyValuesPayload => {
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
   const projectId = job.project_id;
+  const importWorkItemTypesGlobally = job.config.importWorkItemTypesGlobally ?? false;
   const transformedIssuePropertyValues: TIssuePropertyValuesPayload = {};
   // Get the plane issue properties map to only transform values for the properties that are present in the plane
   //
@@ -271,16 +272,23 @@ export const getTransformedIssuePropertyValuesV2 = (
   // Transform values for each issue
   issues.forEach((issue: IJiraIssue) => {
     if (issue.id && issue.fields) {
-      const issueKey = `${projectId}_${resourceId}_${issue.id}`;
-      const issueTypeId = issueTypes?.find(
-        (type) =>
-          issue.fields.issuetype?.id &&
-          type.external_id === buildExternalId(projectId, resourceId, issue.fields.issuetype?.id)
-      )?.id;
+      const issueKey = buildExtenalId([projectId, resourceId, issue.id]);
+      const issueTypeId = issueTypes?.find((type) => {
+        const issuetypeId = issue.fields.issuetype?.id;
+        if (!issuetypeId || !type.external_id) return false;
+        const comparisonExternalId = importWorkItemTypesGlobally
+          ? buildExtenalId([resourceId, issuetypeId])
+          : buildExtenalId([projectId, resourceId, issuetypeId]);
+        return type.external_id === comparisonExternalId;
+      })?.id;
 
       // Transform custom field property values
       const customPropertyValues = transformIssuePropertyValues(
-        { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
+        {
+          resourceId,
+          projectId: importWorkItemTypesGlobally ? undefined : projectId,
+          source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+        },
         issue,
         issue.fields.issuetype?.id ?? "",
         planeIssuePropertiesMap,
@@ -290,7 +298,11 @@ export const getTransformedIssuePropertyValuesV2 = (
       // Transform default property values (fix versions, affected versions, reporter)
       const defaultPropertyValues = issueTypeId
         ? transformDefaultPropertyValues(
-            { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
+            {
+              resourceId,
+              projectId: importWorkItemTypesGlobally ? undefined : projectId,
+              source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+            },
             job.workspace_slug,
             issue,
             issueTypeId,

@@ -11,17 +11,17 @@
 
 from django.urls import path
 
-from plane.silo.views import IssuePropertyBulkOperationAPIView, WorkspaceIssuePropertyBulkOperationAPIView
+from plane.silo.views import WorkspaceIssueTypeBulkOperationAPIView, WorkspaceWorkItemTypeImportAPIView
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/<uuid:type_id>/properties/bulk-operation/",
-        IssuePropertyBulkOperationAPIView.as_view(),
-        name="api-issue-property-bulk-operation",
+        "workspaces/<str:slug>/issue-types/bulk-operation/",
+        WorkspaceIssueTypeBulkOperationAPIView.as_view(),
+        name="api-workspace-issue-type-bulk-operation",
     ),
     path(
-        "workspaces/<str:slug>/issue-types/<uuid:type_id>/properties/bulk-operation/",
-        WorkspaceIssuePropertyBulkOperationAPIView.as_view(),
-        name="api-workspace-issue-property-bulk-operation",
+        "workspaces/<str:slug>/issue-types/<uuid:project_id>/import/",
+        WorkspaceWorkItemTypeImportAPIView.as_view(),
+        name="api-workspace-issue-type-import",
     ),
 ]

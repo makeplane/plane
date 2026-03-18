@@ -14,7 +14,7 @@
 import { v4 as uuidv4 } from "uuid";
 import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/core";
 import type { IJiraIssue, JiraConfig, JiraIssueField } from "@plane/etl/jira-server";
-import { pullIssuesV2, transformIssueV2 } from "@plane/etl/jira-server";
+import { buildExtenalId, pullIssuesV2, transformIssueV2 } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
 import type { ExIssue, ExIssueActivity, ExIssueComment, ExIssueProperty, ExIssuePropertyOption } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
@@ -91,6 +91,7 @@ export class JiraIssuesStep implements IStep {
     try {
       const config = job.config as JiraConfig;
       const epicsAsWorkItems = config.importEpicsAsWorkItems;
+      const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
       const projectKey = this.getProjectKey(job);
       const jql = this.getJQL(job);
       const paginationCtx = this.getPaginationContext(previousContext);
@@ -166,7 +167,13 @@ export class JiraIssuesStep implements IStep {
       const allRelations = this.mergeRelationsByExternalId([...relations, ...crossProjectResolvedRelations]);
 
       // Load entity mappings from storage
-      const mappings = await this.loadMappings(job, processedIssues, associations, storage);
+      const mappings = await this.loadMappings(
+        job,
+        processedIssues,
+        associations,
+        storage,
+        importWorkItemTypesGlobally
+      );
 
       // Transform issues (uses existing transformIssue function)
       const transformed = await this.transform(job, processedIssues, additionalData.knownCustomFieldMapping);
@@ -423,7 +430,8 @@ export class JiraIssuesStep implements IStep {
     job: TImportJob<JiraConfig>,
     issues: IJiraIssue[],
     associations: TIssuesAssociationsData,
-    storage: IStorageService
+    storage: IStorageService,
+    importWorkItemTypesGlobally: boolean
   ): Promise<{
     userMap: Map<string, string>;
     releaseMap: Map<string, string>;
@@ -446,7 +454,9 @@ export class JiraIssuesStep implements IStep {
 
       // Issue types
       if (issue.fields.issuetype?.id) {
-        const issueTypeExternalId = `${projectId}_${resourceId}_${issue.fields.issuetype.id}`;
+        const issueTypeExternalId = importWorkItemTypesGlobally
+          ? buildExtenalId([resourceId, issue.fields.issuetype.id])
+          : buildExtenalId([projectId, resourceId, issue.fields.issuetype.id]);
         issueTypeIds.add(issueTypeExternalId);
       }
 
@@ -500,6 +510,9 @@ export class JiraIssuesStep implements IStep {
     issues: IJiraIssue[],
     knownCustomFieldMapping: TKnownFieldMapping[]
   ): Promise<Partial<ExIssue>[]> {
+    const config = job.config as JiraConfig;
+    const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
+
     const resourceId = job.config?.resource?.id || "";
     const resourceUrl = job.config?.resource?.url || "";
     const stateMapping = job.config?.state || [];
@@ -519,7 +532,8 @@ export class JiraIssuesStep implements IStep {
           startDateFields,
           completionDateFields,
           storyPointsFields,
-        }
+        },
+        importWorkItemTypesGlobally
       )
     );
 

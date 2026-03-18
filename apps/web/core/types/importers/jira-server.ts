@@ -46,6 +46,7 @@ export type TImporterDataPayload = {
     useCustomJql?: boolean;
     jql?: string;
     importEpicsAsWorkItems?: boolean;
+    importWorkItemTypesGlobally?: boolean;
   };
   [E_IMPORTER_STEPS.MAP_STATES]: {
     [key: string]: string | undefined;

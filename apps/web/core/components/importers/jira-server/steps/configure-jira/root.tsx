@@ -33,6 +33,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web  types
 import type { TImporterDataPayload } from "@/types/importers/jira-server";
 import { E_IMPORTER_STEPS } from "@/types/importers/jira-server";
+import { ImportGlobalWorkItemTypes } from "./global-work-item-types";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_JIRA];
 
@@ -56,6 +57,7 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
     useCustomJql: false,
     jql: "",
     importEpicsAsWorkItems: false,
+    importWorkItemTypesGlobally: false,
   });
   const [isJqlValid, setIsJqlValid] = useState(true);
 
@@ -78,6 +80,7 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
     handleSyncJobConfig("useCustomJql", formData.useCustomJql);
     handleSyncJobConfig("jql", formData.jql);
     handleSyncJobConfig("importEpicsAsWorkItems", formData.importEpicsAsWorkItems);
+    handleSyncJobConfig("importWorkItemTypesGlobally", formData.importWorkItemTypesGlobally);
     handleStepper("next");
   };
 
@@ -120,6 +123,25 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
             <ImportEpicsConfig value={formData.importEpicsAsWorkItems || false} onFormDataUpdate={handleFormData} />
           </div>
         </Transition>
+        <Transition
+          as={Fragment}
+          show={!!formData.projectId}
+          enter="transition-all duration-300 ease-in-out"
+          enterFrom="opacity-0 translate-y-2"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition-all duration-300 ease-in-out"
+          leaveFrom="opacity-100 translate-y-0"
+          leaveTo="opacity-0 translate-y-2"
+        >
+          <div className="pt-2">
+            <ImportGlobalWorkItemTypes
+              workspaceSlug={workspaceSlug || ""}
+              value={formData.importWorkItemTypesGlobally || false}
+              onFormDataUpdate={handleFormData}
+            />
+          </div>
+        </Transition>
+
         <ConfigureJiraCustomJQL
           projectId={formData.projectId}
           projectKey={projectKey}

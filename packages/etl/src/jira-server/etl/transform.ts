@@ -29,6 +29,7 @@ import type {
 import { createHashForString } from "@/core";
 import type { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 import {
+  buildExtenalId,
   getFormattedDate,
   getPropertyAttributes,
   getPropertyValues,
@@ -56,7 +57,7 @@ import type {
 
 export type TTransformationContext = {
   resourceId: string;
-  projectId: string;
+  projectId?: string;
   source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA;
 };
 
@@ -70,7 +71,7 @@ export const transformIssue = (
   const { resourceId, projectId, source } = ctx;
   const targetState = getTargetState(stateMap, issue.fields.status);
   const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
-  const attachments = getTargetAttachments(resourceId, projectId, issue.fields.attachment);
+  const attachments = projectId ? getTargetAttachments(resourceId, projectId, issue.fields.attachment) : [];
   const renderedFields = (issue.renderedFields as { description: string }) ?? {
     description: "<p></p>",
   };
@@ -120,12 +121,13 @@ export const transformIssueV2 = (
     startDateFields?: string[];
     completionDateFields?: string[];
     storyPointsFields?: string[];
-  }
+  },
+  importWorkItemTypesGlobally: boolean = false
 ): Partial<PlaneIssue> => {
   const { resourceId, projectId, source } = ctx;
   const targetState = getTargetState(stateMap, issue.fields.status);
   const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
-  const attachments = getTargetAttachments(resourceId, projectId, issue.fields.attachment);
+  const attachments = projectId ? getTargetAttachments(resourceId, projectId, issue.fields.attachment) : [];
   const renderedFields = (issue.renderedFields as { description: string }) ?? {
     description: "<p></p>",
   };
@@ -143,6 +145,9 @@ export const transformIssueV2 = (
   description = normalizeJiraHTML(description);
 
   issue.fields.labels.push("JIRA IMPORTED");
+  const typeId = importWorkItemTypesGlobally
+    ? buildExtenalId([resourceId, issue.fields.issuetype.id])
+    : buildExtenalId([projectId, resourceId, issue.fields.issuetype.id]);
 
   return {
     assignees: issue.fields.assignee?.emailAddress
@@ -151,7 +156,7 @@ export const transformIssueV2 = (
         ? [issue.fields.assignee.displayName]
         : [],
     links,
-    external_id: `${projectId}_${resourceId}_${issue.id}`,
+    external_id: buildExtenalId([projectId, resourceId, issue.id]),
     external_source: source,
     created_by: issue.fields.creator?.emailAddress || issue.fields.creator?.displayName,
     name: issue.fields.summary ?? "Untitled",
@@ -170,11 +175,13 @@ export const transformIssueV2 = (
     updated_at: issue.fields.updated,
     attachments: attachments,
     state: targetState?.id ?? "",
-    external_source_state_id: targetState?.external_id ? `${projectId}_${resourceId}_${targetState.external_id}` : null,
+    external_source_state_id: targetState?.external_id
+      ? buildExtenalId([projectId, resourceId, targetState.external_id])
+      : null,
     priority: targetPriority ?? "none",
     labels: issue.fields.labels,
-    parent: issue.fields.parent?.id ? `${projectId}_${resourceId}_${issue.fields.parent?.id}` : null,
-    type_id: issue.fields.issuetype?.id ? `${projectId}_${resourceId}_${issue.fields.issuetype?.id}` : null,
+    parent: issue.fields.parent?.id ? buildExtenalId([projectId, resourceId, issue.fields.parent?.id]) : null,
+    type_id: issue.fields.issuetype?.id ? typeId : null,
     external_sequence_id: issue.key.split("-")[1],
     story_points:
       knownCustomFields.storyPointsFields?.reduce((val: number | null, id: string) => {
@@ -200,7 +207,7 @@ export const transformComment = (ctx: TTransformationContext, comment: JiraComme
   }
 
   return {
-    external_id: `${projectId}_${resourceId}_${comment.id}`,
+    external_id: buildExtenalId([projectId, resourceId, comment.id]),
     external_source: source,
     created_at: comment.created,
     created_by: comment.author?.emailAddress || comment.author?.displayName,
@@ -227,7 +234,7 @@ export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
 export const transformSprint = (ctx: TTransformationContext, sprint: JiraSprint): Partial<ExCycle> => {
   const { resourceId, projectId, source } = ctx;
   return {
-    external_id: `${projectId}_${resourceId}_${sprint.sprint.id.toString()}`,
+    external_id: buildExtenalId([projectId, resourceId, sprint.sprint.id.toString()]),
     external_source: source,
     name: sprint.sprint.name,
     start_date: getFormattedDate(sprint.sprint.startDate),
@@ -240,7 +247,7 @@ export const transformSprint = (ctx: TTransformationContext, sprint: JiraSprint)
 export const transformComponent = (ctx: TTransformationContext, component: JiraComponent): Partial<ExModule> => {
   const { resourceId, projectId, source } = ctx;
   return {
-    external_id: `${projectId}_${resourceId}_${component.component.id}`,
+    external_id: buildExtenalId([projectId, resourceId, component.component.id]),
     external_source: source,
     name: component.component.name,
     issues: component.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
@@ -253,7 +260,7 @@ export const transformComponentV2 = (
 ): Partial<ExModule> => {
   const { resourceId, projectId, source } = ctx;
   return {
-    external_id: `${projectId}_${resourceId}_${component.id}`,
+    external_id: buildExtenalId([projectId, resourceId, component.id]),
     external_source: source,
     name: component.name,
   };
@@ -272,7 +279,7 @@ export const transformIssueType = (
     description: issueType.description,
     is_active: true,
     is_epic: isEpic,
-    external_id: `${projectId}_${resourceId}_${issueType.id}`,
+    external_id: buildExtenalId([projectId, resourceId, issueType.id]),
     external_source: source,
   };
 };
@@ -317,10 +324,10 @@ export const transformIssueFields = (
     : undefined;
 
   return {
-    external_id: `${projectId}_${resourceId}_${issueField.scope?.type}_${fieldId}`,
+    external_id: buildExtenalId([projectId, resourceId, issueField.scope?.type, fieldId]),
     external_source: source,
     display_name: issueField.name,
-    type_id: issueField.scope?.type ? `${projectId}_${resourceId}_${issueField.scope?.type}` : undefined,
+    type_id: issueField.scope?.type ? buildExtenalId([projectId, resourceId, issueField.scope?.type]) : undefined,
     is_required: false,
     is_active: true,
     ...getPropertyAttributes(issueField),
@@ -335,11 +342,11 @@ export const transformIssueFieldOptions = (
 ): Partial<ExIssuePropertyOption> => {
   const { resourceId, projectId, source } = ctx;
   return {
-    external_id: `${projectId}_${resourceId}_${typeId}_${issueFieldOption.fieldId}_${issueFieldOption.id}`,
+    external_id: buildExtenalId([projectId, resourceId, typeId, issueFieldOption.fieldId, issueFieldOption.id]),
     external_source: source,
     name: issueFieldOption.value,
     is_active: issueFieldOption.disabled ? false : true,
-    property_id: `${projectId}_${resourceId}_${typeId}_${issueFieldOption.fieldId}`,
+    property_id: buildExtenalId([projectId, resourceId, typeId, issueFieldOption.fieldId]),
   };
 };
 
@@ -365,12 +372,12 @@ export const transformIssuePropertyValues = (
     if (property && property.external_id && jiraFieldTypeMap.has(key)) {
       propertyValuesPayload[property.external_id] = getPropertyValues(
         resourceId,
-        projectId,
         typeId,
         jiraPropertyId ?? "",
         jiraFieldTypeMap.get(key) as string,
         issue.fields[key],
-        (issue.renderedFields as Record<string, unknown>)?.[key] as string | undefined
+        (issue.renderedFields as Record<string, unknown>)?.[key] as string | undefined,
+        projectId
       );
     }
   });
@@ -389,7 +396,7 @@ export const transformDefaultPropertyValues = (
 
   // Fix Versions
   if (issue.fields.fixVersions && Array.isArray(issue.fields.fixVersions)) {
-    const fixVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-fix-version`;
+    const fixVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "fix-version"]);
     propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version) => {
       const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
       const hashedName = createHashForString(versionNameInput);
@@ -404,7 +411,7 @@ export const transformDefaultPropertyValues = (
 
   // Affected Versions
   if (issue.fields.versions && Array.isArray(issue.fields.versions)) {
-    const affectedVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-affected-version`;
+    const affectedVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "affected-version"]);
     const versions = issue.fields.versions as { id?: string; name?: string }[];
     propertyValuesPayload[affectedVersionExternalId] = versions.map((version) => {
       const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
@@ -419,7 +426,7 @@ export const transformDefaultPropertyValues = (
 
   // Reporter
   if (issue.fields.reporter) {
-    const reporterExternalId = `${resourceId}-${projectId}-${issueTypeId}-reporter`;
+    const reporterExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "reporter"]);
     propertyValuesPayload[reporterExternalId] = [
       {
         external_source: source,
@@ -431,7 +438,7 @@ export const transformDefaultPropertyValues = (
 
   // Original Estimate
   if (issue.fields.timeoriginalestimate) {
-    const originalEstimateExternalId = `${resourceId}-${projectId}-${issueTypeId}-original_estimate`;
+    const originalEstimateExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "original_estimate"]);
     const estimate = Number(issue.fields.timeoriginalestimate);
     propertyValuesPayload[originalEstimateExternalId] = [
       {
@@ -444,7 +451,7 @@ export const transformDefaultPropertyValues = (
   // Resolution State
   if (issue.fields.resolution) {
     const resolutionProperty = planeIssueProperties.find(
-      (property) => property.external_id === `${resourceId}-${projectId}-${issueTypeId}-resolution_state`
+      (property) => property.external_id === buildExtenalId([resourceId, projectId, issueTypeId, "resolution_state"])
     );
     const resolutionExternalId = resolutionProperty?.external_id;
 
@@ -489,7 +496,7 @@ export const transformDefaultPropertyValues = (
 
   // Resolution as Resolution Date
   if (issue.fields.resolutiondate) {
-    const resolutionDateExternalId = `${resourceId}-${projectId}-${issueTypeId}-resolution`;
+    const resolutionDateExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "resolution"]);
     const formattedDate = getFormattedDate(issue.fields.resolutiondate);
     if (formattedDate) {
       propertyValuesPayload[resolutionDateExternalId] = [

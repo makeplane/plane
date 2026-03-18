@@ -31,9 +31,11 @@ import { UserService } from "@/services/user.service";
 // types
 import type { ClientOptions } from "@/types/types";
 import { AssetService, IntakeService } from "./services";
+import { WorkspaceService } from "./services/workspace.service";
 
 export class Client {
   options: ClientOptions;
+  workspace: WorkspaceService;
   users: UserService;
   label: LabelService;
   state: StateService;
@@ -54,6 +56,7 @@ export class Client {
 
   constructor(options: ClientOptions) {
     this.options = options;
+    this.workspace = new WorkspaceService(options);
     this.label = new LabelService(options);
     this.state = new StateService(options);
     this.issue = new IssueService(options);

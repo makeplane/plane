@@ -154,6 +154,7 @@ export type JiraConfig = {
   useCustomJql?: boolean;
   jql?: string;
   importEpicsAsWorkItems?: boolean;
+  importWorkItemTypesGlobally?: boolean;
 };
 
 export type JiraAuthState = {
