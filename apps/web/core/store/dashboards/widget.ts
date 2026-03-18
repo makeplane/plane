@@ -242,15 +242,10 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
     const originalWidget = { ...this.asJSON };
-    const filtersUpdated = "filters" in data && data.filters !== undefined;
     try {
       // optimistically update
       this.mutateProperties(data);
       const res = await this.helpers.actions.updateWidget(this.id, data);
-      // Refetch widget data when filters change so the chart reflects the new filters
-      if (filtersUpdated && !this.isConfigurationMissing) {
-        void this.fetchWidgetData();
-      }
       return res;
     } catch (error) {
       // revert changes
