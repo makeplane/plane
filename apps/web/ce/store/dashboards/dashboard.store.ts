@@ -148,7 +148,7 @@ export class DashboardStore implements IDashboardStore {
         set(this.dashboardWidgets, dashboardId, [...widgets, response]);
       });
       // Fire-and-forget: fetch initial chart data for the new widget
-      this.fetchWidgetChartData(workspaceSlug, dashboardId, response.id).catch(console.error);
+      void this.fetchWidgetChartData(workspaceSlug, dashboardId, response.id);
     } catch (error) {
       console.error("Failed to create widget", error);
       throw error;
@@ -176,7 +176,7 @@ export class DashboardStore implements IDashboardStore {
 
       // Re-fetch chart data if data-affecting properties changed
       if (data.x_axis_property || data.y_axis_metric || data.group_by !== undefined || data.filters) {
-        this.fetchWidgetChartData(workspaceSlug, dashboardId, widgetId).catch(console.error);
+        void this.fetchWidgetChartData(workspaceSlug, dashboardId, widgetId);
       }
     } catch (error) {
       // Rollback optimistic update on failure
