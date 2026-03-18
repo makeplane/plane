@@ -338,7 +338,7 @@ class WorkItemCreateAPIEndpoint(BaseAPIView):
                 IssueProperty.objects.filter(
                     workspace__slug=slug,
                     project_id=project_id,
-                    issue_type_id=issue_type.id,
+                    issue_type_properties__issue_type_id=issue_type.id,
                     is_active=True,
                 ).prefetch_related(
                     Prefetch(
@@ -369,7 +369,7 @@ class WorkItemCreateAPIEndpoint(BaseAPIView):
                     IssueProperty.objects.filter(
                         workspace__slug=slug,
                         project_id=project_id,
-                        issue_type_id=issue_type.id,
+                        issue_type_properties__issue_type_id=issue_type.id,
                         is_active=True,
                         is_required=True,
                     )

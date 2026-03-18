@@ -21,5 +21,5 @@ export const useIssueTypes = (): IIssueTypesStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useIssueTypes must be used within StoreProvider");
 
-  return context.issueTypes;
+  return context.workItemTypeBridge;
 };

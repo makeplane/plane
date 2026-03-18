@@ -31,6 +31,7 @@ def track_property_text(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -41,7 +42,7 @@ def track_property_text(
         bulk_property_activity.append(
             RecurringWorkItemTaskActivity(
                 workspace_id=property.workspace_id,
-                project_id=property.project_id,
+                project_id=project_id,
                 field="custom_property",
                 property=property,
                 recurring_workitem_task_id=recurring_workitem_task_id,
@@ -59,7 +60,7 @@ def track_property_text(
         bulk_property_activity.append(
             RecurringWorkItemTaskActivity(
                 workspace_id=property.workspace_id,
-                project_id=property.project_id,
+                project_id=project_id,
                 field="custom_property",
                 property=property,
                 recurring_workitem_task_id=recurring_workitem_task_id,
@@ -77,7 +78,7 @@ def track_property_text(
         bulk_property_activity.append(
             RecurringWorkItemTaskActivity(
                 workspace_id=property.workspace_id,
-                project_id=property.project_id,
+                project_id=project_id,
                 field="custom_property",
                 property=property,
                 recurring_workitem_task_id=recurring_workitem_task_id,
@@ -98,6 +99,7 @@ def handle_multi_properties(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     if property.is_multi:
@@ -109,7 +111,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 RecurringWorkItemTaskActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     field="custom_property",
                     property=property,
                     recurring_workitem_task_id=recurring_workitem_task_id,
@@ -126,7 +128,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 RecurringWorkItemTaskActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     field="custom_property",
                     property=property,
                     recurring_workitem_task_id=recurring_workitem_task_id,
@@ -143,7 +145,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 RecurringWorkItemTaskActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     field="custom_property",
                     property=property,
                     recurring_workitem_task_id=recurring_workitem_task_id,
@@ -161,7 +163,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 RecurringWorkItemTaskActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     field="custom_property",
                     property=property,
                     recurring_workitem_task_id=recurring_workitem_task_id,
@@ -179,7 +181,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 RecurringWorkItemTaskActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     field="custom_property",
                     property=property,
                     recurring_workitem_task_id=recurring_workitem_task_id,
@@ -200,6 +202,7 @@ def track_property_datetime(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -223,6 +226,7 @@ def track_property_decimal(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -235,6 +239,7 @@ def track_property_decimal(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -246,6 +251,7 @@ def track_property_option(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -258,6 +264,7 @@ def track_property_option(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -269,6 +276,7 @@ def track_property_boolean(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -281,6 +289,7 @@ def track_property_boolean(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -292,6 +301,7 @@ def track_property_relation(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -304,6 +314,7 @@ def track_property_relation(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -315,6 +326,7 @@ def track_property_email(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -327,6 +339,7 @@ def track_property_email(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -338,6 +351,7 @@ def track_property_url(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -350,6 +364,7 @@ def track_property_url(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -361,6 +376,7 @@ def track_property_file(
     requested_value,
     recurring_workitem_task_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -373,6 +389,7 @@ def track_property_file(
         requested_value=requested_value,
         recurring_workitem_task_id=recurring_workitem_task_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -391,6 +408,7 @@ def recurring_work_item_property_activity(
             id=recurring_workitem_task_id
         )
         issue_type_id = recurring_workitem_task.workitem_blueprint.type.get("id")
+        project_id = recurring_workitem_task.project_id
 
         if not issue_type_id:
             return
@@ -398,8 +416,7 @@ def recurring_work_item_property_activity(
         # Get the issue type
         properties = IssueProperty.objects.filter(
             workspace_id=recurring_workitem_task.workspace_id,
-            project_id=recurring_workitem_task.project_id,
-            issue_type_id=issue_type_id,
+            issue_type_properties__issue_type_id=issue_type_id,
         )
 
         # Define the property mapper
@@ -435,6 +452,7 @@ def recurring_work_item_property_activity(
                     requested_value=requested_value,
                     recurring_workitem_task_id=recurring_workitem_task_id,
                     user_id=user_id,
+                    project_id=project_id,
                     epoch=epoch,
                 )
 

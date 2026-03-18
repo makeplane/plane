@@ -83,11 +83,11 @@ class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):
     def save(self, *args, **kwargs):
         self.name = slugify(self.display_name)
         created = self._state.adding
-        if created:
+        if created and self.issue_type:
             # Get the maximum sequence value from the database
-            last_id = IssueProperty.objects.filter(issue_type=self.issue_type_id, project_id=self.project_id).aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
+            last_id = IssueTypeProperty.objects.filter(
+                issue_type_id=self.issue_type.id, workspace_id=self.workspace_id
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -100,7 +100,7 @@ class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):
 
     def sync_to_issue_type_properties(self, created=False, changed_fields=None):
         issue_type = self.issue_type
-        if created:
+        if created and issue_type:
             IssueTypeProperty.objects.create(
                 workspace_id=self.workspace_id,
                 issue_type=issue_type,
@@ -112,7 +112,7 @@ class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):
                 external_source=self.external_source,
                 external_id=self.external_id,
             )
-        else:
+        elif issue_type:
             if changed_fields:
                 fields_to_update = {field: getattr(self, field) for field in changed_fields}
                 IssueTypeProperty.objects.filter(issue_type=issue_type, property=self).update(**fields_to_update)
@@ -171,6 +171,17 @@ class IssueTypeProperty(ProjectOptionalBaseModel):
 
     def __str__(self):
         return f"{self.issue_type.name} - {self.property.display_name}"
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and not self.sort_order:
+            # Get the maximum sequence value from the database
+            last_id = IssueTypeProperty.objects.filter(
+                issue_type_id=self.issue_type.id, workspace_id=self.workspace_id
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            # if last_id is not None
+            if last_id is not None:
+                self.sort_order = last_id + 10000
+        super(IssueTypeProperty, self).save(*args, **kwargs)
 
 
 class IssuePropertyOption(ProjectOptionalBaseModel):

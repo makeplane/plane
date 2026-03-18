@@ -219,7 +219,7 @@ def fetch_formula_values(work_item_id: Union[str, UUIDField], property_ids: Opti
         formula_properties = IssueProperty.objects.filter(
             property_type=PropertyTypeEnum.FORMULA,
             formula_config__isnull=False,
-            issue_type_id=work_item_type_id,
+            issue_type_properties__issue_type_id=work_item_type_id,
             is_active=True,
         )
 

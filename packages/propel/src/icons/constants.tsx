@@ -44,6 +44,7 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
   { icon: <Icon name="arrow.external-link" />, title: "ExternalLinkIcon" },
   { icon: <Icon name="arrow.reply" />, title: "ReplyIcon" },
+  { icon: <Icon name="arrow.import" />, title: "ImportIcon" },
   { icon: <Icon name="arrow.arrow-left" />, title: "ArrowLeftIcon" },
   { icon: <Icon name="arrow.arrow-right" />, title: "ArrowRightIcon" },
   { icon: <Icon name="arrow.accordion-close" />, title: "AccordionCloseIcon" },
@@ -73,6 +74,7 @@ export const ProjectIconsMap = [
   { icon: <Icon name="project.page" />, title: "PageIcon" },
   { icon: <Icon name="project.view" />, title: "ViewIcon" },
   { icon: <Icon name="project.work-items" />, title: "WorkItemsIcon" },
+  { icon: <Icon name="project.properties" />, title: "PropertiesIcon" },
 ];
 
 export const SubBrandIconsMap = [

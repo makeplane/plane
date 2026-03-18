@@ -19,6 +19,7 @@ class WorkspaceFeatureContext(Enum):
     # Workspace level project states
     IS_PROJECT_GROUPING_ENABLED = "is_project_grouping_enabled"
     IS_CUSTOMER_ENABLED = "is_customer_enabled"
+    IS_WORK_ITEM_TYPES_ENABLED = "is_work_item_types_enabled"
 
 
 def check_workspace_feature(slug, feature: WorkspaceFeatureContext):

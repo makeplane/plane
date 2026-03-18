@@ -45,6 +45,7 @@ import {
   WorkflowHorizontalStackIllustration,
   RunnerScriptsHorizontalStackIllustration,
   RunnerFunctionsHorizontalStackIllustration,
+  CustomPropertiesHorizontalStackIllustration,
   ScriptHorizontalStackIllustration,
 } from "./horizontal-stack";
 import { InboxIllustration, SearchIllustration } from "./illustration";
@@ -101,6 +102,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   "group-syncing": GroupSyncingHorizontalStackIllustration,
   "runner-scripts": RunnerScriptsHorizontalStackIllustration,
   "runner-functions": RunnerFunctionsHorizontalStackIllustration,
+  "custom-properties": CustomPropertiesHorizontalStackIllustration,
 };
 
 // Vertical Stack Asset Registry

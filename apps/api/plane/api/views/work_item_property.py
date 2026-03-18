@@ -24,6 +24,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_docs
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -147,6 +148,13 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, type_id):
+        if check_workspace_feature(slug, WorkspaceFeatureContext.IS_WORK_ITEM_TYPES_ENABLED):
+            return Response(
+                {
+                    "error": "Cannot create project-level work item properties when workspace work item types are enabled." # noqa E501
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         workspace = Workspace.objects.get(slug=slug)
         project = Project.objects.get(pk=project_id, workspace=workspace)
         issue_type = IssueType.objects.get(pk=type_id, workspace=workspace, project_issue_types__project=project)

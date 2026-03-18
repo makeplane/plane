@@ -45,7 +45,10 @@ class WorkspaceEpicTypeEndpoint(BaseAPIView):
                     ArrayAgg(
                         "project_issue_types__project_id",
                         distinct=True,
-                        filter=Q(project_issue_types__deleted_at__isnull=True),
+                        filter=Q(
+                            project_issue_types__deleted_at__isnull=True,
+                            project_issue_types__project_id__isnull=False,
+                        ),
                     ),
                     [],
                 )

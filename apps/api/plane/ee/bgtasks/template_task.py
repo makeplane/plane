@@ -449,8 +449,8 @@ def create_issue_property_values(
     issue_properties = IssueProperty.objects.filter(
         workspace_id=workspace_id,
         project_id=project_id,
-        issue_type_id=issue.type_id,
-        issue_type__is_epic=False,
+        issue_type_properties__issue_type_id=issue.type_id,
+        issue_type_properties__issue_type__is_epic=False,
         is_active=True,
     )
 
@@ -707,6 +707,8 @@ def create_project_from_template(template_id, project_id, user_id, state_map, or
         estimate_point_map = {}
         label_map = {}
         workitem_type_map = {}
+        workitem_property_map = {}
+        workitem_property_option_map = {}
 
         # create estimates
         if project_template.estimates:

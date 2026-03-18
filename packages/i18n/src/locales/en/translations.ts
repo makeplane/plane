@@ -733,6 +733,7 @@ now to enhance your experience!`,
     disabled: "Disabled",
     mandate: "Mandate",
     mandatory: "Mandatory",
+    global: "Global",
     yes: "Yes",
     no: "No",
     please_wait: "Please wait",
@@ -4341,14 +4342,20 @@ if you are sure your search is right. `,
     label: "Work item Types",
     label_lowercase: "work item types",
     settings: {
-      title: "Work item Types",
+      description: "Customize and add your own properties to tailor it to your team's needs.",
       cant_delete_default_message:
         "This work item type cannot be deleted because it's set as the default for this project",
       properties: {
-        title: "Custom properties",
+        title: "Properties",
+        description: "Create and customize properties.",
         tooltip:
           "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
         add_button: "Add new property",
+        project: {
+          add_button: {
+            import_from_workspace: "Import from workspace",
+          },
+        },
         dropdown: {
           label: "Property type",
           placeholder: "Select type",
@@ -4484,6 +4491,10 @@ if you are sure your search is right. `,
           },
         },
         create_update: {
+          title: {
+            create: "Create new custom property",
+            update: "Update custom property",
+          },
           form: {
             display_name: {
               placeholder: "Title",
@@ -4557,6 +4568,34 @@ if you are sure your search is right. `,
         empty_state: {
           title: "Add custom properties",
           description: "New properties you add for this work item type will show here.",
+        },
+      },
+      types: {
+        title: "Types",
+        description: "Create and customize work item types with properties.",
+        sort_options: {
+          project_count: "Number of projects part of",
+        },
+        filter_options: {
+          show_active: "Show active",
+          show_inactive: "Show inactive",
+        },
+        project: {
+          add_button: {
+            create_new: "Create new",
+            import_from_workspace: "Import from workspace",
+          },
+        },
+      },
+      linked_properties: {
+        title: "Custom properties",
+        add_button: "Add properties",
+        modal: {
+          title: "Add properties",
+          empty: {
+            title: "No properties available",
+            description: "All properties have already been linked to this type.",
+          },
         },
       },
       item_delete_confirmation: {

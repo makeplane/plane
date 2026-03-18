@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { describe, expect, it } from "vitest";
 import type { PlainTextOption } from "../slack-options";
 import { buildOptionGroups } from "../slack-options";
 

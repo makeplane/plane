@@ -366,7 +366,7 @@ export const getMilestoneColumns = (): IGroupByColumn[] | undefined => {
 
 export const getEpicColumns = (): IGroupByColumn[] | undefined => {
   const { projectId, workspaceSlug } = store.router;
-  const { isEpicEnabledForProject } = store.issueTypes;
+  const { isEpicEnabledForProject } = store.workItemTypeBridge;
 
   if (!projectId || !workspaceSlug) return;
 

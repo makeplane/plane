@@ -25,6 +25,8 @@ type Props<T> = {
   keyExtractor: (item: T, index: number) => string;
   containerClassName?: string;
   id?: string;
+  allowExternalDrop?: boolean;
+  onExternalAdd?: (externalData: any, targetItem: T, position: "top" | "bottom") => void;
 };
 
 const moveItem = <T,>(
@@ -69,13 +71,28 @@ const moveItem = <T,>(
   };
 };
 
-export function Sortable<T>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) {
+export function Sortable<T>({
+  data,
+  render,
+  onChange,
+  keyExtractor,
+  containerClassName,
+  id,
+  allowExternalDrop,
+  onExternalAdd,
+}: Props<T>) {
   useEffect(() => {
     const unsubscribe = monitorForElements({
       // @ts-expect-error Due to live server dependencies
       onDrop({ source, location }) {
         const destination = location?.current?.dropTargets[0];
         if (!destination) return;
+
+        // Skip if external drop (handled by Draggable's onExternalDrop)
+        if (source.data.isExternal) {
+          return;
+        }
+
         const { newData, movedItem } = moveItem(
           data,
           source.data as TEnhancedData<T>,
@@ -104,6 +121,12 @@ export function Sortable<T>({ data, render, onChange, keyExtractor, containerCla
           key={keyExtractor(enhancedData[index], index)}
           data={enhancedData[index]}
           className={containerClassName}
+          allowExternalDrop={allowExternalDrop}
+          onExternalDrop={(externalData, position) => {
+            if (onExternalAdd) {
+              onExternalAdd(externalData, item, position);
+            }
+          }}
         >
           <Fragment>{render(item, index)}</Fragment>
         </Draggable>

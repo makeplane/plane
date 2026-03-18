@@ -145,7 +145,9 @@ const getModuleActivityMessage = (activity: TRecurringWorkItemActivity, action: 
 };
 
 const getCustomPropertyActivityDetails = (activity: TRecurringWorkItemActivity): TRecurringWorkItemActivityDetails => {
-  const propertyDetail = activity.property ? store.issueTypes.getIssuePropertyById(activity.property) : undefined;
+  const propertyDetail = activity.property
+    ? store.workItemTypeBridge.getIssuePropertyById(activity.property)
+    : undefined;
 
   if (!propertyDetail)
     return {

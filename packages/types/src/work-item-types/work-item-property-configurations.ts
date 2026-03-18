@@ -12,7 +12,7 @@
  */
 
 import type { TLogoProps } from "../common";
-import type { EIssuePropertyRelationType, EIssuePropertyType } from "./work-item-properties";
+import type { CustomPropertyRelationType, CustomPropertyType } from "./work-item-properties";
 
 // Issue property operation modes
 export type TOperationMode = "create" | "update";
@@ -21,9 +21,9 @@ export type TOperationMode = "create" | "update";
 export type TCreationListModes = "add" | "update" | "remove";
 
 // Unique keys for issue property types
-export type TIssuePropertyTypeKeys =
-  | `${Exclude<EIssuePropertyType, EIssuePropertyType.RELATION>}`
-  | `${EIssuePropertyType.RELATION}_${EIssuePropertyRelationType}`;
+export type CustomPropertyTypeKey =
+  | `${Exclude<CustomPropertyType, (typeof CustomPropertyType)["RELATION"]>}`
+  | `${(typeof CustomPropertyType)["RELATION"]}_${CustomPropertyRelationType}`;
 
 // Issue property type details
 export type TIssuePropertyTypeIconKey =
@@ -37,17 +37,17 @@ export type TIssuePropertyTypeIconKey =
   | "Link2"
   | "Formula";
 
-export type TIssuePropertyTypeDetails<T extends EIssuePropertyType> = {
+export type TWorkItemPropertyTypeDetails<T extends CustomPropertyType> = {
   i18n_displayName: string;
   iconKey: TIssuePropertyTypeIconKey;
   dataToUpdate: {
     logo_props: TLogoProps;
-    property_type: EIssuePropertyType;
-    relation_type: EIssuePropertyRelationType | null;
+    property_type: CustomPropertyType;
+    relation_type: CustomPropertyRelationType | null;
     is_multi: boolean;
     is_required: boolean;
     default_value: string[];
-    settings: TIssuePropertySettingsMap[T];
+    settings: TWorkItemPropertySettingsMap[T];
   };
 };
 
@@ -76,15 +76,15 @@ export type TFormulaAttributeConfigurations = {
 };
 
 // Issue property settings configurations
-export type TIssuePropertySettingsMap = {
-  [EIssuePropertyType.TEXT]: TTextAttributeConfigurations;
-  [EIssuePropertyType.DECIMAL]: undefined;
-  [EIssuePropertyType.OPTION]: undefined;
-  [EIssuePropertyType.BOOLEAN]: undefined;
-  [EIssuePropertyType.DATETIME]: TDateAttributeConfigurations;
-  [EIssuePropertyType.RELATION]: undefined;
-  [EIssuePropertyType.URL]: undefined;
-  [EIssuePropertyType.FORMULA]: TFormulaAttributeConfigurations;
+export type TWorkItemPropertySettingsMap = {
+  [CustomPropertyType.TEXT]: TTextAttributeConfigurations;
+  [CustomPropertyType.DECIMAL]: undefined;
+  [CustomPropertyType.OPTION]: undefined;
+  [CustomPropertyType.BOOLEAN]: undefined;
+  [CustomPropertyType.DATETIME]: TDateAttributeConfigurations;
+  [CustomPropertyType.RELATION]: undefined;
+  [CustomPropertyType.URL]: undefined;
+  [CustomPropertyType.FORMULA]: TFormulaAttributeConfigurations;
 };
 
 // Rendered component configurations
@@ -105,5 +105,5 @@ export type TSettingsConfigurations = {
 
 // Issue property settings configurations details
 export type TIssuePropertySettingsConfigurationsDetails = {
-  [key in TIssuePropertyTypeKeys]: TSettingsConfigurations[];
+  [key in CustomPropertyTypeKey]: TSettingsConfigurations[];
 };

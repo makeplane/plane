@@ -36,3 +36,4 @@ export * from "./customers";
 export * from "./recurring-work-items";
 export * from "./sso";
 export * from "./workflows";
+export * from "./work-item-types";

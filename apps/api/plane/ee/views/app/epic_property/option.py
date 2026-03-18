@@ -36,7 +36,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 pk=pk,
-                property__issue_type__is_epic=True,
+                property__issue_type_properties__issue_type__is_epic=True,
             )
             serializer = IssuePropertyOptionSerializer(epic_property_option)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -47,7 +47,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 property_id=epic_property_id,
-                property__issue_type__is_epic=True,
+                property__issue_type_properties__issue_type__is_epic=True,
             )
             serializer = IssuePropertyOptionSerializer(epic_property_options, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -56,7 +56,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         epic_property_options = IssuePropertyOption.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         )
 
         serializer = IssuePropertyOptionSerializer(epic_property_options, many=True)
@@ -78,7 +78,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             pk=epic_property_id,
-            issue_type__is_epic=True,
+            issue_type_properties__issue_type__is_epic=True,
         )
 
         # Check if the property type is option
@@ -91,7 +91,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         last_id = IssuePropertyOption.objects.filter(
             project=project_id,
             property_id=epic_property_id,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         ).aggregate(largest=models.Max("sort_order"))["largest"]
 
         # Set the sort order for the new option
@@ -128,7 +128,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=epic_property_id,
             pk=pk,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         )
 
         # Fetch the issue property
@@ -136,7 +136,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             pk=epic_property_id,
-            issue_type__is_epic=True,
+            issue_type_properties__issue_type__is_epic=True,
         )
 
         # Check if the property type is option
@@ -163,7 +163,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=epic_property_id,
             pk=pk,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         )
         epic_property_option.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

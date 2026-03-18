@@ -21,3 +21,8 @@ from .workspace_license_api_token_task import update_api_tokens
 
 from .recurring_work_item_scheduler import schedule_batch, schedule_on_create_or_enable
 from .recurring_work_item_task import create_work_item_from_template
+from .merge_issue_type_task import (
+    move_project_issue_types_to_workspace,
+    move_project_issue_types_to_workspace_orchestrator,
+    move_project_issue_types_to_workspace_sequential,
+)

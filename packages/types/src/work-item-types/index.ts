@@ -18,4 +18,3 @@ export * from "./work-item-properties";
 export * from "./work-item-properties-activity";
 export * from "./work-item-types";
 export * from "./services";
-export * from "./work-item-types-extended";

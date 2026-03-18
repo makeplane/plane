@@ -38,7 +38,8 @@ export type HorizontalStackAssetType =
   | "workflow"
   | "group-syncing"
   | "runner-scripts"
-  | "runner-functions";
+  | "runner-functions"
+  | "custom-properties";
 
 // Vertical Stack Asset Types
 export type VerticalStackAssetType =

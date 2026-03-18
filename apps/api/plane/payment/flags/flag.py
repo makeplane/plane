@@ -132,6 +132,8 @@ class FeatureFlag(Enum):
     RELEASES = "RELEASES"
     # Formula properties
     WORKITEM_TYPE_FORMULA_FIELD = "WORKITEM_TYPE_FORMULA_FIELD"
+    # Workspace work item types
+    WORKSPACE_WORK_ITEM_TYPES = "WORKSPACE_WORK_ITEM_TYPES"
     # Custom relations
     CUSTOM_RELATIONS = "CUSTOM_RELATIONS"
     # Manage Issue Subscribers

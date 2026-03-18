@@ -23,11 +23,12 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { IssueTypesRoot } from "@/components/work-item-types";
 // types
 import type { Route } from "./+types/page";
 import { WorkItemTypesProjectSettingsHeader } from "./header";
+import { ProjectWorkItemTypesSettingsRoot } from "@/components/work-item-types-new/settings/project/root";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { IssueTypesRoot } from "@/components/work-item-types";
 
 function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
   // router params
@@ -39,7 +40,7 @@ function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
   const { currentProjectDetails } = useProject();
   // derived values
   const pageTitle = currentProjectDetails?.name
-    ? `${currentProjectDetails?.name} - ${t("work_item_types.settings.title")}`
+    ? `${currentProjectDetails?.name} - ${t("work_item_types.label")}`
     : undefined;
   const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
@@ -51,7 +52,13 @@ function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
     <SettingsContentWrapper header={<WorkItemTypesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full`}>
-        <IssueTypesRoot workspaceSlug={workspaceSlug} projectId={projectId} />
+        <WithFeatureFlagHOC
+          workspaceSlug={workspaceSlug}
+          flag="WORKSPACE_WORK_ITEM_TYPES"
+          fallback={<IssueTypesRoot workspaceSlug={workspaceSlug} projectId={projectId} />}
+        >
+          <ProjectWorkItemTypesSettingsRoot workspaceSlug={workspaceSlug} projectId={projectId} />
+        </WithFeatureFlagHOC>
       </div>
     </SettingsContentWrapper>
   );

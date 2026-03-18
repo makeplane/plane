@@ -10,133 +10,143 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-
-// types
 import type { TLogoProps } from "../common";
 import type { TLoader } from "../issues/base";
-import type { EIssuePropertyType, TIssueProperty, IIssueProperty, TIssuePropertyPayload } from "./work-item-properties";
-import type { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
+import type { CustomProperty, CustomPropertyType, TWorkItemTypePropertyRef } from "./work-item-properties";
+import type { CustomPropertyTypeKey } from "./work-item-property-configurations";
+import type {
+  TCreateWorkspaceWorkItemTypePayload,
+  TCreateProjectWorkItemTypePayload,
+  TDeleteWorkspaceWorkItemTypePayload,
+  TDeleteProjectWorkItemTypePayload,
+  TImportGlobalPropertyPayload,
+  TImportWorkItemTypesPayload,
+  TWorkItemTypeResponse,
+} from "./services";
+
+export type TWorkItemTypesTab = "types" | "properties";
 
 export enum EWorkItemTypeEntity {
   WORK_ITEM = "WORK_ITEM",
   EPIC = "EPIC",
 }
 
-export enum EWorkItemConversionType {
-  WORK_ITEM = "work_item",
-  EPIC = "epic",
-}
-
-// Issue Type
-export type TIssueType = {
-  id: string | undefined;
-  name: string | undefined;
-  description: string | undefined;
-  logo_props: TLogoProps | undefined;
-  is_active: boolean | undefined;
-  is_default: boolean | undefined;
-  level: number | undefined;
-  is_epic: boolean | undefined;
-  project_ids: string[] | undefined;
-  workspace: string | undefined;
-  created_at: Date | undefined;
-  created_by: string | undefined;
-  updated_at: Date | undefined;
-  updated_by: string | undefined;
+// Work item type
+export type TWorkItemType = {
+  id: string;
+  name: string;
+  description: string | null;
+  logo_props: TLogoProps;
+  is_active: boolean;
+  is_default: boolean;
+  level: number;
+  is_epic: boolean;
+  is_global: boolean; // to check if the type is created at workspace level(global) or project level(local)
+  properties: TWorkItemTypePropertyRef; // sort order for a property is specific to the type
+  workspace: string;
+  created_at: Date;
+  created_by: string | null;
+  updated_at: Date;
+  updated_by: string | null;
 };
 
-// Issue Type Instance
-export interface IIssueType extends TIssueType {
-  properties: IIssueProperty<EIssuePropertyType>[];
-  // computed
-  asJSON: TIssueType | undefined;
-  activeProperties: IIssueProperty<EIssuePropertyType>[];
-  sortedProperties: IIssueProperty<EIssuePropertyType>[];
-  // computed function
-  getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
+// Work item type instance
+export interface BaseWorkItemTypeInstanceSchema extends TWorkItemTypeResponse {
+  asJSON: TWorkItemTypeResponse;
+  workspaceSlug: string | undefined;
+  linkedPropertyIds: string[];
+  // permissions
+  canEdit: boolean;
+  canDelete: boolean;
+  canEnableDisable: boolean;
+  canLinkProperties: boolean;
+  canUnlinkProperties: boolean;
+  canReorderProperties: boolean;
   // actions
-  updateType: (issueTypeData: Partial<TIssueType>, shouldSync?: boolean) => Promise<TIssueType | undefined>;
-  addOrUpdateProperty: (
-    propertyData: TIssueProperty<EIssuePropertyType>,
-    propertyOptions: TIssuePropertyOption[]
-  ) => void;
-  createProperty: (propertyData: TIssuePropertyPayload) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
-  deleteProperty: (propertyId: string) => Promise<void>;
+  mutateProperties: (data: Partial<TWorkItemTypeResponse>) => void;
+  updateType: (data: Partial<TWorkItemType>) => Promise<void>;
+  linkProperties: (propertyIds: string[]) => Promise<void>;
+  unlinkProperty: (propertyId: string) => Promise<void>;
+  reorderProperty: (propertyId: string, newSortOrder: number) => Promise<void>;
 }
 
-// Issue Type Store related types
-export type TIssueTypesPromise = Promise<[TIssueType[], TIssueType[]]>;
+export interface ProjectWorkItemTypeInstanceSchema {
+  updateType: (data: Partial<TWorkItemType>) => Promise<void>;
+}
 
-export type TWorkItemTypesPropertiesOptions = {
-  workItemTypeProperties: TIssueProperty<EIssuePropertyType>[];
-  workItemTypePropertyOptions: TIssuePropertyOptionsPayload;
+export interface WorkspaceWorkItemTypeInstanceSchema {
+  updateType: (data: Partial<TWorkItemType>) => Promise<void>;
+}
+
+export type TResolvedWorkItemType = Omit<TWorkItemType, "properties"> & {
+  properties: CustomProperty<CustomPropertyType>[];
+  property_refs: TWorkItemTypePropertyRef;
 };
 
-export type TEpicPropertiesOptions = {
-  epicProperties: TIssueProperty<EIssuePropertyType>[];
-  epicPropertyOptions: TIssuePropertyOptionsPayload;
-};
+export interface RootWorkItemTypesStoreSchema {
+  allTypes: BaseWorkItemTypeInstanceSchema[];
+  get: (typeId: string) => BaseWorkItemTypeInstanceSchema | undefined;
+  addOrMutate: (typeId: string, instance: BaseWorkItemTypeInstanceSchema) => void;
+  remove: (typeId: string) => void;
+  // sub-stores
+  workspaceWorkItemTypesStore: WorkspaceWorkItemTypesStoreSchema;
+  projectWorkItemTypesStore: ProjectWorkItemTypesStoreSchema;
+}
 
-// Issue Type Store
-export interface IIssueTypesStore {
-  // observables
-  loader: TLoader; // issue type loader
-  issueTypePromise: TIssueTypesPromise | undefined; // promise to fetch issue types and epics
-  propertiesLoader: Record<string, Record<EWorkItemTypeEntity, TLoader>>; // project id -> work item entity type -> TLoader
-  propertiesFetchedMap: Record<string, Record<EWorkItemTypeEntity, boolean>>; // project id -> work item entity type -> boolean
-  issueTypes: Record<string, IIssueType>; // issue type id -> issue type
-  projectEpics: Record<string, IIssueType>; // epic issue type id -> epic issue type
-  // computed
-  data: Record<string, IIssueType>; // all issue type id -> issue type
-  // computed functions
-  getIssueTypeIds: (activeOnly: boolean) => string[];
-  getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
-  getIssuePropertyById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
-  getProjectWorkItemPropertiesLoader: (projectId: string, entityType: EWorkItemTypeEntity) => TLoader;
-  getProjectWorkItemPropertiesFetchedMap: (projectId: string, entityType: EWorkItemTypeEntity) => boolean;
-  getProjectIssueTypeIds: (projectId: string) => string[];
-  getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
-  getProjectEpicId: (projectId: string) => string | undefined;
-  getProjectEpicDetails: (projectId: string) => IIssueType | undefined;
-  getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
-  getProjectDefaultWorkItemTypeId: (projectId: string) => string | undefined;
-  getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
-  getIssueTypeIdsWithMandatoryProperties: (projectId: string) => string[];
-  isWorkItemTypeEnabledForProject: (workspaceSlug: string, projectId: string) => boolean;
-  isEpicEnabledForProject: (workspaceSlug: string, projectId: string) => boolean;
-  isWorkItemTypeEntityEnabledForProject: (
-    workspaceSlug: string,
-    projectId: string,
-    entityType?: EWorkItemTypeEntity
-  ) => boolean;
-  // helper actions
-  addOrUpdateIssueTypes: (issueTypes: TIssueType[], projectId?: string) => void;
-  fetchAllWorkItemTypePropertyData: (
-    workspaceSlug: string,
-    projectId: string
-  ) => Promise<TWorkItemTypesPropertiesOptions>;
-  fetchAllEpicPropertyData: (workspaceSlug: string, projectId: string) => Promise<TEpicPropertiesOptions>;
-  fetchAllIssueTypes: (workspaceSlug: string, projectId?: string) => Promise<TIssueType[]>;
-  fetchAllEpics: (workspaceSlug: string, projectId?: string) => Promise<TIssueType[]>;
+export type WorkspaceWorkItemTypesStoreSchema = {
+  // loader
+  getLoaderByWorkspaceSlug: (workspaceSlug: string) => TLoader | undefined;
+  // helpers
+  getWorkItemTypesByWorkspaceSlug: (workspaceSlug: string) => BaseWorkItemTypeInstanceSchema[];
+  getDefaultWorkItemTypeId: (workspaceSlug: string) => string | undefined;
   // actions
-  enableIssueTypes: (workspaceSlug: string, projectId: string) => Promise<void>;
-  enableEpics: (workspaceSlug: string, projectId: string) => Promise<void>;
-  disableEpics: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchAll: (workspaceSlug: string, projectId?: string) => Promise<void>;
-  fetchAllWorkItemTypePropertiesAndOptions: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
-  fetchAllEpicPropertiesAndOptions: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
-  fetchAllPropertiesAndOptions: (
-    workspaceSlug: string,
-    projectId: string,
-    entityType: EWorkItemTypeEntity
-  ) => Promise<void | undefined>;
-  createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
-  deleteType: (typeId: string) => Promise<void>;
-  // convert actions
-  convertWorkItem: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    convertTo: EWorkItemConversionType
-  ) => Promise<void>;
-}
+  fetchTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse[]>;
+  createType: (payload: TCreateWorkspaceWorkItemTypePayload) => Promise<TWorkItemTypeResponse | undefined>;
+  deleteType: (payload: TDeleteWorkspaceWorkItemTypePayload) => Promise<void>;
+  enableWorkItemTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse | undefined>;
+  // permissions
+  canCreate: (workspaceSlug: string) => boolean;
+  canView: (workspaceSlug: string) => boolean;
+};
+
+export type ProjectWorkItemTypesStoreSchema = {
+  // loader
+  getLoaderByProjectId: (workspaceSlug: string) => TLoader | undefined;
+  // helpers
+  getWorkItemTypesByProjectId: (projectId: string) => BaseWorkItemTypeInstanceSchema[];
+  getDefaultWorkItemTypeId: (projectId: string) => string | undefined;
+  enrichTypeIdsFromWorkspaceTypes: (types: TWorkItemTypeResponse[]) => void;
+  // actions
+  fetchTypes: (workspaceSlug: string, projectId: string) => Promise<TWorkItemTypeResponse[]>;
+  createType: (payload: TCreateProjectWorkItemTypePayload) => Promise<TWorkItemTypeResponse | undefined>;
+  deleteType: (payload: TDeleteProjectWorkItemTypePayload) => Promise<void>;
+  importGlobalTypes: (payload: TImportWorkItemTypesPayload) => Promise<void>;
+  importGlobalProperties: (payload: TImportGlobalPropertyPayload) => Promise<void>;
+  removeImportedTypes: (payload: TImportWorkItemTypesPayload) => Promise<void>;
+  // permissions
+  canCreate: (workspaceSlug: string, projectId: string) => boolean;
+  canView: (workspaceSlug: string, projectId: string) => boolean;
+};
+
+export type TIssuePropertySerializedValuePrimitive = string | number | boolean | null | undefined;
+export type TIssuePropertySerializedValue =
+  | TIssuePropertySerializedValuePrimitive
+  | TIssuePropertySerializedValuePrimitive[];
+
+export type TIssuePropertySerializedEntry = {
+  property_id?: string;
+  value?: TIssuePropertySerializedValue;
+  [key: string]: TIssuePropertySerializedValue | undefined;
+} | null;
+
+export type TWorkItemPropertyDisplayEntry = {
+  property: CustomProperty<CustomPropertyType>;
+  propertyId: string;
+  propertyTypeKey: CustomPropertyTypeKey;
+  displayValues: string[];
+};
+
+export type TWorkItemPropertyDisplayContext = {
+  entries: TIssuePropertySerializedEntry[];
+  workItemType?: BaseWorkItemTypeInstanceSchema;
+};

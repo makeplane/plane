@@ -1,0 +1,100 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useState } from "react";
+import { observer } from "mobx-react";
+// plane imports
+import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import type {
+  CustomProperty,
+  TOperationMode,
+  TTextAttributeDisplayOptions,
+  TTextAttributeConfigurations,
+} from "@plane/types";
+import { TextArea } from "@plane/ui";
+import { getTextAttributeDisplayNameKey } from "@plane/utils";
+// local imports
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
+
+type TTextAttributesProps = {
+  textPropertyDetail: Partial<CustomProperty<"TEXT">>;
+  currentOperationMode: TOperationMode;
+  onTextDetailChange: <K extends keyof CustomProperty<"TEXT">>(
+    key: K,
+    value: CustomProperty<"TEXT">[K],
+    shouldSync?: boolean
+  ) => void;
+  isUpdateAllowed: boolean;
+};
+
+export const TextAttributes = observer(function TextAttributes(props: TTextAttributesProps) {
+  const { textPropertyDetail, currentOperationMode, onTextDetailChange, isUpdateAllowed } = props;
+  // states
+  const [data, setData] = useState<string[]>([]);
+  // plane hooks
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    setData(textPropertyDetail.default_value ?? []);
+  }, [textPropertyDetail.default_value]);
+
+  const handleReadOnlyFieldChange = () => {
+    // trim and filter empty values
+    const trimmedValue = data.map((val) => val.trim()).filter((val) => val);
+    // update readonly data
+    onTextDetailChange("default_value", trimmedValue);
+  };
+
+  return (
+    <div>
+      <span className="text-caption-md-regular text-tertiary">
+        {t("work_item_types.settings.properties.attributes.label")}
+      </span>
+      {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.TEXT?.map((configurations, index) => (
+        <PropertySettingsConfiguration
+          key={index}
+          settings={textPropertyDetail.settings ?? undefined}
+          settingsConfigurations={configurations}
+          onChange={(value) => {
+            onTextDetailChange("settings", value as CustomProperty<"TEXT">["settings"]);
+            onTextDetailChange("default_value", []);
+            if ((value as TTextAttributeConfigurations)?.display_format === "readonly") {
+              onTextDetailChange("is_required", false);
+            }
+          }}
+          getLabelDetails={(labelKey) => t(getTextAttributeDisplayNameKey(labelKey as TTextAttributeDisplayOptions))}
+          isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
+        />
+      ))}
+      {textPropertyDetail.settings?.display_format === "readonly" && (
+        <div className="pt-2">
+          <div className="text-caption-md-medium text-tertiary">
+            {t("work_item_types.settings.properties.attributes.text.readonly.label")}
+          </div>
+          <TextArea
+            id="default_value"
+            value={data?.[0] ?? ""}
+            onChange={(e) => setData([e.target.value])}
+            onKeyDown={(e) => e.key === "Enter" && !!data[0] && e.currentTarget.blur()}
+            onBlur={() => handleReadOnlyFieldChange()}
+            className="w-full max-h-28 resize-none text-body-xs-regular bg-surface-1 border-[0.5px] border-subtle-1 rounded"
+            tabIndex={1}
+            textAreaSize="xs"
+            autoFocus
+          />
+        </div>
+      )}
+    </div>
+  );
+});

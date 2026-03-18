@@ -32,9 +32,11 @@ type Props = {
   children: React.ReactNode;
   data: any; //@todo make this generic
   className?: string;
+  allowExternalDrop?: boolean;
+  onExternalDrop?: (externalData: any, position: "top" | "bottom") => void;
 };
 
-function Draggable({ children, data, className }: Props) {
+function Draggable({ children, data, className, allowExternalDrop, onExternalDrop }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<boolean>(false); // NEW
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -58,12 +60,30 @@ function Draggable({ children, data, className }: Props) {
             setIsDraggedOver(true);
             setClosestEdge(extractClosestEdge(args.self.data));
           },
-          onDragLeave: () => setIsDraggedOver(false),
-          onDrop: () => {
+          onDragLeave: () => {
             setIsDraggedOver(false);
+            setClosestEdge(null);
           },
           // @ts-expect-error Due to live server dependencies
-          canDrop: ({ source }) => !isEqual(source.data, data) && source.data.__uuid__ === data.__uuid__,
+          onDrop: (args) => {
+            setIsDraggedOver(false);
+            setClosestEdge(null);
+
+            // Handle external drops
+            if (args.source.data.isExternal && onExternalDrop) {
+              const edge = extractClosestEdge(args.self.data);
+              onExternalDrop(args.source.data, edge as "top" | "bottom");
+            }
+          },
+          // @ts-expect-error Due to live server dependencies
+          canDrop: ({ source }) => {
+            // Allow external drops if enabled
+            if (allowExternalDrop && source.data.isExternal) {
+              return true;
+            }
+            // Standard same-list check
+            return !isEqual(source.data, data) && source.data.__uuid__ === data.__uuid__;
+          },
           // @ts-expect-error Due to live server dependencies
           getData: ({ input, element }) =>
             attachClosestEdge(data, {
@@ -74,7 +94,7 @@ function Draggable({ children, data, className }: Props) {
         })
       );
     }
-  }, [data]);
+  }, [data, allowExternalDrop, onExternalDrop]);
 
   return (
     <div ref={ref} className={cn(dragging && "opacity-25", className)}>

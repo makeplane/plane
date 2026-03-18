@@ -46,7 +46,7 @@ import { rootStore } from "@/lib/store-context";
 import { COMMON_BUTTON_CLASS_NAME } from "@/components/templates/settings/common";
 import { TemplateDetails } from "@/components/templates/settings/common/form/template-details";
 import { WorkItemBlueprintListRoot } from "@/components/templates/settings/work-item/blueprint/list/root";
-import { useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import { useFlag, useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { IssuePropertyOption } from "@/store/issue-types/issue-property-option";
 import { IssueType } from "@/store/issue-types/issue-type";
 // local imports
@@ -163,6 +163,8 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
     workspace: { getWorkspaceMemberIds },
   } = useMember();
   const { getProjectStateIdsByWorkspaceId } = useWorkspaceProjectStates();
+  // derived values
+  const isWorkspaceWorkItemTypesFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKSPACE_WORK_ITEM_TYPES");
   // form state
   const defaultValues = useMemo(
     () => ({
@@ -340,14 +342,34 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
   );
 
   /**
+   * Sanitize form data before submission based on active feature flags.
+   * Each feature-flag check strips or overrides fields that should not be
+   * included in the payload when the corresponding feature is active.
+   */
+  const sanitizeSubmissionData = useCallback(
+    (data: TProjectTemplateForm): TProjectTemplateForm => {
+      const sanitized = { ...data, project: { ...data.project } };
+
+      // Strip per-project work item types when workspace-level types are enabled
+      if (isWorkspaceWorkItemTypesFlagEnabled) {
+        sanitized.project.workitem_types = {};
+        sanitized.project.is_issue_type_enabled = false;
+      }
+
+      return sanitized;
+    },
+    [isWorkspaceWorkItemTypesFlagEnabled]
+  );
+
+  /**
    * Handle form submit
    * @param data - The form data
    */
   const onSubmit = useCallback(
     async (data: TProjectTemplateForm) => {
-      await handleFormSubmit({ data, workItemListCustomPropertyValues });
+      await handleFormSubmit({ data: sanitizeSubmissionData(data), workItemListCustomPropertyValues });
     },
-    [handleFormSubmit, workItemListCustomPropertyValues]
+    [handleFormSubmit, workItemListCustomPropertyValues, sanitizeSubmissionData]
   );
 
   /**
@@ -453,11 +475,13 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
                   projectId={preloadedData?.template?.id ?? ""}
                 />
                 {/* Project Work Item Types */}
-                <ProjectWorkItemTypes
-                  {...projectTemplateFormGettersHelpers(watch("project"))}
-                  workspaceSlug={workspaceSlug?.toString()}
-                  projectTemplateId={preloadedData?.template?.id}
-                />
+                {!isWorkspaceWorkItemTypesFlagEnabled && (
+                  <ProjectWorkItemTypes
+                    {...projectTemplateFormGettersHelpers(watch("project"))}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    projectTemplateId={preloadedData?.template?.id}
+                  />
+                )}
                 {/* Project Epic Work Item Type */}
                 <ProjectEpicWorkItemType />
                 {/* Project Work Items */}

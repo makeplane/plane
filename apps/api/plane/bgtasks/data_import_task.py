@@ -1501,7 +1501,7 @@ def process_issue_property_values(slug, issue, issue_property_values, report_id=
                 project_id=issue.project_id,
                 issue_id=issue.id,
                 property_id=property_id,
-                property__issue_type__is_epic=False,
+                property__issue_type_properties__issue_type__is_epic=False,
             )
 
             issue_property_values_data = property_data.get("values", [])

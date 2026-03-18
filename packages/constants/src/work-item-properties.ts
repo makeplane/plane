@@ -17,12 +17,12 @@ import type {
   TIssuePropertySettingsConfigurationsDetails,
   TIssuePropertySettingsMap,
   TIssuePropertyTypeDetails,
-  TIssuePropertyTypeKeys,
+  CustomPropertyTypeKey,
 } from "@plane/types";
 import { EIssuePropertyRelationType, EIssuePropertyType } from "@plane/types";
 
 export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
-  Record<TIssuePropertyTypeKeys, TIssuePropertyTypeDetails<EIssuePropertyType>>
+  Record<CustomPropertyTypeKey, TIssuePropertyTypeDetails<EIssuePropertyType>>
 > = {
   TEXT: {
     i18n_displayName: "work_item_types.settings.properties.property_type.text.label",
@@ -202,7 +202,7 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
 };
 
 export const DROPDOWN_ATTRIBUTES: Partial<{
-  [key in TIssuePropertyTypeKeys]: {
+  [key in CustomPropertyTypeKey]: {
     key: TDropdownAttributeOptions;
     i18n_label: string;
   }[];

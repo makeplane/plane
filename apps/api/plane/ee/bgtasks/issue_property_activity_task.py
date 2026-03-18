@@ -24,6 +24,7 @@ def track_property_text(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -34,7 +35,7 @@ def track_property_text(
         bulk_property_activity.append(
             IssuePropertyActivity(
                 workspace_id=property.workspace_id,
-                project_id=property.project_id,
+                project_id=project_id,
                 property=property,
                 issue_id=issue_id,
                 old_value="",
@@ -52,7 +53,7 @@ def track_property_text(
         bulk_property_activity.append(
             IssuePropertyActivity(
                 workspace_id=property.workspace_id,
-                project_id=property.project_id,
+                project_id=project_id,
                 property=property,
                 issue_id=issue_id,
                 old_value=existing_value[0],
@@ -70,7 +71,7 @@ def track_property_text(
         bulk_property_activity.append(
             IssuePropertyActivity(
                 workspace_id=property.workspace_id,
-                project_id=property.project_id,
+                project_id=project_id,
                 property=property,
                 issue_id=issue_id,
                 old_value=existing_value[0],
@@ -91,6 +92,7 @@ def handle_multi_properties(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     if property.is_multi:
@@ -102,7 +104,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 IssuePropertyActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     property=property,
                     issue_id=issue_id,
                     old_value="",
@@ -119,7 +121,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 IssuePropertyActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     property=property,
                     issue_id=issue_id,
                     old_value=value,
@@ -136,7 +138,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 IssuePropertyActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     property=property,
                     issue_id=issue_id,
                     old_value="",
@@ -154,7 +156,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 IssuePropertyActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     property=property,
                     issue_id=issue_id,
                     old_value=existing_value[0],
@@ -172,7 +174,7 @@ def handle_multi_properties(
             bulk_property_activity.append(
                 IssuePropertyActivity(
                     workspace_id=property.workspace_id,
-                    project_id=property.project_id,
+                    project_id=project_id,
                     property=property,
                     issue_id=issue_id,
                     old_value=existing_value[0],
@@ -193,6 +195,7 @@ def track_property_datetime(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -205,6 +208,7 @@ def track_property_datetime(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -216,6 +220,7 @@ def track_property_decimal(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -228,6 +233,7 @@ def track_property_decimal(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -239,6 +245,7 @@ def track_property_option(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -251,6 +258,7 @@ def track_property_option(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -262,6 +270,7 @@ def track_property_boolean(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -274,6 +283,7 @@ def track_property_boolean(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -285,6 +295,7 @@ def track_property_relation(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -297,6 +308,7 @@ def track_property_relation(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -308,6 +320,7 @@ def track_property_email(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -320,6 +333,7 @@ def track_property_email(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -331,6 +345,7 @@ def track_property_url(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -343,6 +358,7 @@ def track_property_url(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -354,6 +370,7 @@ def track_property_file(
     requested_value,
     issue_id,
     user_id,
+    project_id,
     epoch,
 ):
     """
@@ -366,6 +383,7 @@ def track_property_file(
         requested_value=requested_value,
         issue_id=issue_id,
         user_id=user_id,
+        project_id=project_id,
         epoch=epoch,
     )
 
@@ -378,13 +396,14 @@ def issue_property_activity(existing_values, requested_values, issue_id, user_id
 
     # Get the issue
     issue = Issue.objects.get(id=issue_id)
+    project_id = issue.project_id
 
     # Get the issue type
     properties = IssueProperty.objects.filter(
         workspace_id=issue.workspace_id,
-        project_id=issue.project_id,
-        issue_type_id=issue.type_id,
-    )
+        issue_type_properties__issue_type_id=issue.type_id,
+        issue_type_properties__deleted_at__isnull=True,
+    ).distinct()
 
     # Define the property mapper
     ACTIVITY_MAPPER = {
@@ -419,6 +438,7 @@ def issue_property_activity(existing_values, requested_values, issue_id, user_id
                 requested_value=requested_value,
                 issue_id=issue_id,
                 user_id=user_id,
+                project_id=project_id,
                 epoch=epoch,
             )
 

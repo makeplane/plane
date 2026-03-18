@@ -80,7 +80,7 @@ class WorkItemPropertiesAPIEndpoint(BaseAPIView):
             IssueProperty.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                issue_type_id=issue_type_id,
+                issue_type_properties__issue_type_id=issue_type_id,
                 is_active=True,
             )
             .prefetch_related(

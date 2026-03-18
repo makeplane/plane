@@ -11,19 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TIssueServiceType, TLoader } from "../issues/base";
 import type { IUserLite } from "../users";
 
-export type TIssuePropertyAction = "created" | "updated" | "deleted";
+export type TWorkItemPropertyAction = "created" | "updated" | "deleted";
 
-export type TIssuePropertiesActivity = {
+export type TWorkItemPropertiesActivity = {
   id: string | undefined;
   old_value: string | undefined;
   new_value: string | undefined;
   old_identifier: string | undefined;
   new_identifier: string | undefined;
 
-  action: TIssuePropertyAction | undefined;
+  action: TWorkItemPropertyAction | undefined;
   epoch: number | undefined;
   comment: string | undefined;
   actor_detail: IUserLite | undefined;
@@ -39,32 +38,3 @@ export type TIssuePropertiesActivity = {
   updated_at: string | undefined;
   updated_by: string | undefined;
 };
-
-// Issue properties activity instance
-export interface IIssuePropertiesActivity extends TIssuePropertiesActivity {
-  // computed
-  asJSON: TIssuePropertiesActivity;
-  // helper action
-  updateActivityData: (issueActivityData: Partial<TIssuePropertiesActivity>) => void;
-}
-
-// Issue properties activity store
-export interface IIssuePropertiesActivityStore {
-  // observables
-  loader: TLoader;
-  propertyActivities: Record<string, IIssuePropertiesActivity>; // activityId -> IIssuePropertiesActivity
-
-  // computed functions
-  getPropertyActivityIdsByIssueId: (issueId: string) => string[] | undefined;
-  getPropertyActivityById: (activityId: string) => IIssuePropertiesActivity | undefined;
-  // helper actions
-  addOrUpdatePropertyActivity: (activities: TIssuePropertiesActivity[]) => void;
-  // actions
-  fetchPropertyActivities: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    loaderType?: TLoader,
-    serviceType?: TIssueServiceType
-  ) => Promise<TIssuePropertiesActivity[]>;
-}

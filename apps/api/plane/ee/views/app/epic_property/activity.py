@@ -39,7 +39,7 @@ class EpicPropertyActivityEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_id=epic_id,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
             **filters,
         ).order_by(order_by)
 

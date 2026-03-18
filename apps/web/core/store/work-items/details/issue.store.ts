@@ -81,7 +81,10 @@ export class IssueStore implements IIssueStore {
 
   isEpic = computedFn((projectId: string, issue: Partial<TBaseIssue>) => {
     if (issue.is_epic !== undefined) return issue.is_epic;
-    return this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) === issue.type_id;
+    return (
+      this.rootIssueDetailStore.rootIssueStore.rootStore.workItemTypeBridge.getProjectEpicId(projectId) ===
+      issue.type_id
+    );
   });
 
   getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
@@ -127,7 +130,7 @@ export class IssueStore implements IIssueStore {
     ) {
       // if typeId exists in epic projectEpics
       if (
-        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) ===
+        this.rootIssueDetailStore.rootIssueStore.rootStore.workItemTypeBridge.getProjectEpicId(projectId) ===
         issue?.parent.type_id
       ) {
         this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {

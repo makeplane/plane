@@ -24,7 +24,7 @@ import type {
   TIssuePropertySerializedEntry,
   TIssuePropertySerializedValue,
   TIssuePropertyTypeDetails,
-  TIssuePropertyTypeKeys,
+  CustomPropertyTypeKey,
   TIssuePropertyValues,
   TTextAttributeDisplayOptions,
   TTextAttributeConfigurations,
@@ -69,8 +69,7 @@ export const getDateAttributeDisplayName = (display_format: TDateAttributeDispla
 export const getIssuePropertyTypeKey = (
   issuePropertyType: EIssuePropertyType | undefined,
   issuePropertyRelationType: EIssuePropertyRelationType | null | undefined
-) =>
-  `${issuePropertyType}${issuePropertyRelationType ? `_${issuePropertyRelationType}` : ""}` as TIssuePropertyTypeKeys;
+) => `${issuePropertyType}${issuePropertyRelationType ? `_${issuePropertyRelationType}` : ""}` as CustomPropertyTypeKey;
 
 // Get the display name for the issue property type based on the property type and relation type
 export const getIssuePropertyTypeDetails = (
@@ -88,7 +87,7 @@ export const getNumberAttributeDisplayName = (default_value: string | undefined)
 // Get the display name for multi select attribute based on the is_multi property
 export const getMultiSelectAttributeDisplayName = (
   is_multi: boolean | undefined,
-  variant: TIssuePropertyTypeKeys = "RELATION_USER"
+  variant: CustomPropertyTypeKey = "RELATION_USER"
 ) => {
   const multiSelectAttributes = DROPDOWN_ATTRIBUTES[variant];
   const singleSelectLabel =
@@ -191,7 +190,7 @@ const formatDateValue = (
 
 export const getIssuePropertyDisplayValues = (
   property: IIssueProperty<EIssuePropertyType>,
-  propertyTypeKey: TIssuePropertyTypeKeys,
+  propertyTypeKey: CustomPropertyTypeKey,
   rawValue: TIssuePropertySerializedValue | undefined
 ): string[] => {
   const normalizedValues = normalizeSerializedValues(rawValue);

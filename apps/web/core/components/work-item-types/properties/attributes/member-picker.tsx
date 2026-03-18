@@ -84,7 +84,7 @@ export const MemberPickerAttributes = observer(function MemberPickerAttributes(p
           {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <MemberValueSelect
-          propertyDetail={memberPickerPropertyDetail}
+          displayName={memberPickerPropertyDetail.display_name}
           value={memberPickerPropertyDetail.default_value ?? []}
           projectId={projectId?.toString()}
           variant="create"

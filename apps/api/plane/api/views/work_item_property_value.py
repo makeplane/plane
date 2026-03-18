@@ -129,7 +129,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=issue_id,
             property_id=property_id,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
         )
         issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
         return Response(issue_property_values, status=status.HTTP_200_OK)
@@ -179,7 +179,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=issue_id,
             property_id=property_id,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
         )
 
         issue_property_values = request.data.get("values", [])
@@ -225,7 +225,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=issue_id,
             property=issue_property,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
         )
         issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
 
@@ -266,7 +266,7 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
             workspace__slug=slug,
             project_id=project_id,
             issue_id=issue_id,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
             property__issue_type_id=issue.type_id,
         )
         issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
@@ -333,7 +333,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=work_item_id,
             property_id=property_id,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
         )
 
         if not property_values.exists():
@@ -442,7 +442,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             issue_property = IssueProperty.objects.get(
                 pk=property_id,
                 workspace__slug=slug,
-                issue_type__is_epic=False,
+                issue_type_properties__issue_type__is_epic=False,
             )
         except Workspace.DoesNotExist:
             return Response(
@@ -578,7 +578,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             issue_property = IssueProperty.objects.get(
                 pk=property_id,
                 workspace__slug=slug,
-                issue_type__is_epic=False,
+                issue_type_properties__issue_type__is_epic=False,
             )
 
             # Get the existing property value(s)
@@ -587,7 +587,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_id=work_item_id,
                 property_id=property_id,
-                property__issue_type__is_epic=False,
+                property__issue_type_properties__issue_type__is_epic=False,
             )
 
             if not property_values.exists():
@@ -656,7 +656,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=work_item_id,
             property_id=property_id,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
         )
 
         if not property_values.exists():

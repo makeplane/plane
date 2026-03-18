@@ -179,7 +179,7 @@ export class ProjectDetailsStore implements IProjectDetailsStore {
         });
       }
       // fetch project work item types and epics
-      await this.rootStore.issueTypes.fetchAll(workspaceSlug, response.id);
+      await this.rootStore.workItemTypeBridge.fetchAll(workspaceSlug, response.id);
 
       return response;
     } catch (error) {

@@ -43,6 +43,7 @@ import {
   ChevronUpIcon,
   ExternalLinkIcon,
   ReplyIcon,
+  ImportIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
   AccordionCloseIcon,
@@ -63,7 +64,16 @@ import {
 // Misc icons
 import { InfoIcon, AlertIcon, HistoryIcon, ShiftIcon } from "./misc";
 // Project icons
-import { CycleIcon, EpicIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "./project";
+import {
+  CycleIcon,
+  EpicIcon,
+  IntakeIcon,
+  ModuleIcon,
+  PageIcon,
+  PropertiesIcon,
+  ViewsIcon,
+  WorkItemsIcon,
+} from "./project";
 // Property icons
 import {
   BooleanPropertyIcon,
@@ -145,6 +155,7 @@ export const ICON_REGISTRY = {
   "project.page": PageIcon,
   "project.view": ViewsIcon,
   "project.work-items": WorkItemsIcon,
+  "project.properties": PropertiesIcon,
 
   // Layout icons
   "layout.calendar": CalendarLayoutIcon,
@@ -220,6 +231,7 @@ export const ICON_REGISTRY = {
   "misc.history": HistoryIcon,
   "arrow.reply": ReplyIcon,
   "arrow.external-link": ExternalLinkIcon,
+  "arrow.import": ImportIcon,
   "arrow.accordion-close": AccordionCloseIcon,
   // Other products icons
   "other-products.jira": JiraIcon,

@@ -18,6 +18,7 @@ export * from "./automations";
 export * from "./calendar";
 export * from "./color";
 export * from "./common";
+export * from "./custom-properties";
 export * from "./cycle";
 export * from "./datetime";
 export * from "./distribution-update";

@@ -184,7 +184,7 @@ export class UserPermissionStore implements IUserPermissionStore {
   fetchWorkspaceLevelProjectEntities = (workspaceSlug: string, projectId: string): void => {
     void Promise.all([
       this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId),
-      this.store.issueTypes.fetchAll(workspaceSlug, projectId),
+      this.store.workItemTypeBridge.fetchAll(workspaceSlug, projectId),
     ]);
   };
 

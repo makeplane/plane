@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
-from plane.db.models import Project, Workspace
+from plane.db.models import Project, Workspace, IssueType, ProjectIssueType
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import WorkspaceFeature, ProjectState, ProjectAttribute
 from plane.ee.permissions import WorkspaceEntityPermission
@@ -34,6 +34,39 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
         is_project_grouping_enabled = request.data.get("is_project_grouping_enabled", False)
         workspace = Workspace.objects.get(slug=slug)
         workspace_feature = WorkspaceFeature.objects.get(workspace_id=workspace.id)
+        is_work_item_types_enabled = request.data.get("is_work_item_types_enabled", False)
+
+        if is_work_item_types_enabled:
+            # check any default work item type exists in the workspace
+            default_work_item_type = IssueType.objects.filter(workspace__slug=slug, is_default=True).first()
+            if not default_work_item_type:
+                # Create a new default issue type
+                IssueType.objects.create(
+                    workspace_id=workspace.id,
+                    name="Task",
+                    is_default=True,
+                    description="Default work item type with the option to add new properties",
+                    logo_props={
+                        "in_use": "icon",
+                        "icon": {"color": "#ffffff", "background_color": "#6695FF"},
+                    },
+                )
+
+            default_work_item_type = IssueType.objects.filter(workspace__slug=slug, is_default=True).first()
+            if default_work_item_type:
+                existing_project_ids = ProjectIssueType.objects.filter(
+                    issue_type=default_work_item_type,
+                    project__workspace__slug=slug,
+                ).values_list("project_id", flat=True)
+                project_ids = (
+                    Project.objects.filter(workspace__slug=slug)
+                    .exclude(id__in=existing_project_ids)
+                    .values_list("id", flat=True)
+                )
+                ProjectIssueType.objects.bulk_create(
+                    [ProjectIssueType(project_id=pid, issue_type_id=default_work_item_type.id) for pid in project_ids],
+                    ignore_conflicts=True,
+                )
 
         if is_project_grouping_enabled:
             project_states = ProjectState.objects.filter(workspace__slug=slug).first()

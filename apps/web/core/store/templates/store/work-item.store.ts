@@ -105,7 +105,7 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
       const typeId = template?.template_data?.type?.id;
       // If there's no work item type ID, include the template
       // Otherwise check if the ID is valid
-      return !typeId || isValidId(typeId, this.rootStore.issueTypes.getIssueTypeIds(true));
+      return !typeId || isValidId(typeId, this.rootStore.workItemTypeBridge.getIssueTypeIds(true));
     })
   );
 
@@ -214,7 +214,7 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
    * @param projectId - The id of the project
    */
   updateWorkItemTemplatesWithDefaultType = action((workspaceSlug: string, projectId: string) => {
-    const defaultWorkItemType = this.rootStore.issueTypes.getProjectDefaultWorkItemTypeId(projectId);
+    const defaultWorkItemType = this.rootStore.workItemTypeBridge.getProjectDefaultWorkItemTypeId(projectId);
     if (!defaultWorkItemType) return;
 
     const currentProjectWorkItemTemplates = this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
@@ -222,7 +222,7 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
 
     const defaultTypeBlueprint = buildWorkItemTypeBlueprint(
       defaultWorkItemType,
-      this.rootStore.issueTypes.getIssueTypeById
+      this.rootStore.workItemTypeBridge.getIssueTypeById
     );
 
     for (const template of currentProjectWorkItemTemplates) {

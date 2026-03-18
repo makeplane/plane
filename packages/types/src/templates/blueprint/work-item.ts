@@ -18,8 +18,8 @@ import type { IModule } from "../../module";
 import type { IState } from "../../state";
 import type { IUserLite } from "../../users";
 import type { CompleteOrEmpty } from "../../utils";
-import type { TIssuePropertyOption, TIssueType } from "../../work-item-types";
-import type { EIssuePropertyType, TIssueProperty } from "../../work-item-types/work-item-properties";
+import type { TIssuePropertyOption, TIssueType } from "../../work-item-types-legacy";
+import type { EIssuePropertyType, TIssueProperty } from "../../work-item-types-legacy/work-item-properties";
 
 export type TWorkItemTypeBlueprint = Pick<TIssueType, "id" | "name" | "description" | "logo_props" | "is_epic">;
 

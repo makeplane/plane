@@ -76,7 +76,7 @@ class EpicPropertyEndpoint(BaseAPIView):
                     project_id=project_id,
                     property_id=issue_property.id,
                     pk=option["id"],
-                    property__issue_type__is_epic=True,
+                    property__issue_type_properties__issue_type__is_epic=True,
                 )
                 option_serializer = IssuePropertyOptionSerializer(issue_property_option, data=option, partial=True)
                 option_serializer.is_valid(raise_exception=True)
@@ -92,7 +92,7 @@ class EpicPropertyEndpoint(BaseAPIView):
             workspace_id=issue_property.workspace_id,
             project_id=issue_property.project_id,
             is_default=True,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         ).update(is_default=False)
 
     def update_property_default_options(self, issue_property):
@@ -102,7 +102,7 @@ class EpicPropertyEndpoint(BaseAPIView):
             workspace_id=issue_property.workspace_id,
             project_id=issue_property.project_id,
             is_default=True,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         ).values_list("id", flat=True)
 
         # Save the default value
@@ -114,7 +114,7 @@ class EpicPropertyEndpoint(BaseAPIView):
             property_id=issue_property.id,
             workspace__slug=slug,
             project_id=project_id,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         )
         options_serializer = IssuePropertyOptionSerializer(options, many=True)
         return options_serializer.data
@@ -127,8 +127,8 @@ class EpicPropertyEndpoint(BaseAPIView):
                 IssueProperty.objects.filter(
                     workspace__slug=slug,
                     project_id=project_id,
-                    issue_type__is_epic=True,
-                    issue_type__is_active=True,
+                    issue_type_properties__issue_type__is_epic=True,
+                    issue_type_properties__issue_type__is_active=True,
                     pk=pk,
                 )
                 .select_related("formula_config")
@@ -141,8 +141,8 @@ class EpicPropertyEndpoint(BaseAPIView):
         issue_properties = IssueProperty.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
-            issue_type__is_epic=True,
-            issue_type__is_active=True,
+            issue_type_properties__issue_type__is_epic=True,
+            issue_type_properties__issue_type__is_active=True,
         ).select_related("formula_config")
         serializer = IssuePropertySerializer(issue_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -205,8 +205,8 @@ class EpicPropertyEndpoint(BaseAPIView):
 
                 issue_property = IssueProperty.objects.get(
                     project_id=project_id,
-                    issue_type_id=epic_id,
-                    issue_type__is_epic=True,
+                    issue_type_properties__issue_type_id=epic_id,
+                    issue_type_properties__issue_type__is_epic=True,
                     pk=serializer.data["id"],
                 )
 
@@ -229,7 +229,7 @@ class EpicPropertyEndpoint(BaseAPIView):
                                 workspace_id=issue_property.workspace_id,
                                 project_id=issue_property.project_id,
                                 is_default=True,
-                                property__issue_type__is_epic=True,
+                                property__issue_type_properties__issue_type__is_epic=True,
                             ).count()
                             > 1
                         ):
@@ -244,7 +244,10 @@ class EpicPropertyEndpoint(BaseAPIView):
 
             issue_property = (
                 IssueProperty.objects.filter(
-                    project_id=project_id, issue_type_id=epic_id, issue_type__is_epic=True, pk=serializer.data["id"]
+                    project_id=project_id,
+                    issue_type_properties__issue_type_id=epic_id,
+                    issue_type_properties__issue_type__is_epic=True,
+                    pk=serializer.data["id"],
                 )
                 .select_related("formula_config")
                 .get()
@@ -278,8 +281,8 @@ class EpicPropertyEndpoint(BaseAPIView):
         issue_property = IssueProperty.objects.get(
             workspace__slug=slug,
             project_id=project_id,
-            issue_type_id=epic_id,
-            issue_type__is_epic=True,
+            issue_type_properties__issue_type_id=epic_id,
+            issue_type_properties__issue_type__is_epic=True,
             pk=pk,
         )
 
@@ -359,7 +362,7 @@ class EpicPropertyEndpoint(BaseAPIView):
                             workspace_id=issue_property.workspace_id,
                             project_id=issue_property.project_id,
                             is_default=True,
-                            property__issue_type__is_epic=True,
+                            property__issue_type_properties__issue_type__is_epic=True,
                         ).count()
                         > 1
                     ):
@@ -404,8 +407,8 @@ class EpicPropertyEndpoint(BaseAPIView):
         issue_property = IssueProperty.objects.get(
             workspace__slug=slug,
             project_id=project_id,
-            issue_type_id=epic_id,
-            issue_type__is_epic=True,
+            issue_type_properties__issue_type_id=epic_id,
+            issue_type_properties__issue_type__is_epic=True,
             pk=pk,
         )
         # ========== FORMULA PROPERTY ==========

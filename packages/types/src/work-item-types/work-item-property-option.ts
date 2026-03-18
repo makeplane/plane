@@ -11,40 +11,39 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// types
+// local imports
 import type { TLogoProps } from "../common";
 
-// Issue property dropdown options
-export type TIssuePropertyOption = {
-  id: string | undefined;
-  name: string | undefined;
-  sort_order: number | undefined;
-  property: string | undefined;
-  description: string | undefined;
-  logo_props: TLogoProps | undefined;
-  is_active: boolean | undefined;
-  parent: string | undefined;
-  is_default: boolean | undefined;
-  created_at: Date | undefined;
-  created_by: string | undefined;
-  updated_at: Date | undefined;
-  updated_by: string | undefined;
+export type CustomPropertyOption = {
+  created_at: Date;
+  created_by: string | null;
+  description: string | null;
+  id: string;
+  is_active: boolean;
+  is_default: boolean;
+  logo_props: TLogoProps | null;
+  name: string;
+  parent: string | null;
+  property_id: string;
+  sort_order: number;
+  updated_at: Date;
+  updated_by: string | null;
 };
 
-// Issue property option store
-export interface IIssuePropertyOption extends TIssuePropertyOption {
+// Work item property option store
+export interface CustomPropertyOptionsInstanceSchema extends CustomPropertyOption {
   // computed
-  asJSON: TIssuePropertyOption;
+  asJSON: CustomPropertyOption;
   // helper action
-  updateOptionData: (propertyOptionData: Partial<TIssuePropertyOption>) => void;
+  mutateProperties: (data: Partial<CustomPropertyOption>) => void;
 }
 
-// Issue property options payload
-export type TIssuePropertyOptionsPayload = {
-  [propertyId: string]: TIssuePropertyOption[];
+// Work item property options payload
+export type TWorkItemPropertyOptionsPayload = {
+  [propertyId: string]: CustomPropertyOption[];
 };
 
-// Issue property option create list
-export type TIssuePropertyOptionCreateUpdateData = Partial<TIssuePropertyOption> & {
+// Work item property option create list
+export type TWorkItemPropertyOptionCreateUpdateData = Partial<CustomPropertyOption> & {
   key?: string;
 };

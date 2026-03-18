@@ -1035,7 +1035,7 @@ class TestIndividualFunctions:
         assert IssueType.objects.filter(workspace=project.workspace).exists()
         issue_type = IssueType.objects.get(workspace=project.workspace, name="Task")
         assert ProjectIssueType.objects.filter(project=project, issue_type=issue_type).exists()
-        assert IssueProperty.objects.filter(issue_type=issue_type).exists()
+        assert IssueProperty.objects.filter(issue_type_properties__issue_type=issue_type).exists()
 
         assert len(workitem_type_map) == 1
         assert len(workitem_property_map) == 1

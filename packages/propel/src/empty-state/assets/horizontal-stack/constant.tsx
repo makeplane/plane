@@ -36,6 +36,7 @@ import {
   WorklogHorizontalStackIllustration,
   RunnerScriptsHorizontalStackIllustration,
   RunnerFunctionsHorizontalStackIllustration,
+  CustomPropertiesHorizontalStackIllustration,
 } from "./";
 
 export const HorizontalStackAssetsMap = [
@@ -134,5 +135,9 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <RunnerFunctionsHorizontalStackIllustration className="w-20 h-20" />,
     title: "Runner Functions",
+  },
+  {
+    asset: <CustomPropertiesHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Custom Properties",
   },
 ];

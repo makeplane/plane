@@ -49,6 +49,8 @@ from plane.db.models import (
     WorkspaceMember,
     APIToken,
     ProjectUserProperty,
+    IssueType,
+    ProjectIssueType,
 )
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
@@ -489,6 +491,20 @@ class ProjectViewSet(BaseViewSet):
                             start_date=start_date,
                             target_date=target_date,
                             workspace_id=workspace.id,
+                        )
+
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.WORKSPACE_WORK_ITEM_TYPES,
+                    slug=slug,
+                    user_id=str(request.user.id),
+                    default_value=False,
+                ):
+                    # validating the is_work_item_types_enabled workspace feature is enabled
+                    if check_workspace_feature(slug, WorkspaceFeatureContext.IS_WORK_ITEM_TYPES_ENABLED):
+                        default_work_item_type = IssueType.objects.filter(workspace__slug=slug, is_default=True).first()
+                        # create the default work item type in the project
+                        ProjectIssueType.objects.create(
+                            project_id=serializer.data["id"], issue_type_id=default_work_item_type.id
                         )
 
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()

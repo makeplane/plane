@@ -305,6 +305,21 @@ export class ProjectStore implements IProjectStore {
       set(this.projectMap, [data.id], data);
       // updating the user project role in workspaceProjectsPermissions
       set(this.rootStore.user.permission.workspaceProjectsPermissions, [workspaceSlug, data.id], data.member_role);
+
+      // Get the default work item type from workspace and add it to the project type ids
+      const defaultWorkItemTypeId =
+        this.rootStore.workItemTypesRootStore.workspaceWorkItemTypesStore.getDefaultWorkItemTypeId(workspaceSlug);
+      const defaultWorkItemType = defaultWorkItemTypeId
+        ? this.rootStore.workItemTypesRootStore.get(defaultWorkItemTypeId)
+        : undefined;
+      if (defaultWorkItemType) {
+        defaultWorkItemType.mutateProperties({
+          project_ids: [...(defaultWorkItemType.project_ids ?? []), data.id],
+        });
+        this.rootStore.workItemTypesRootStore.projectWorkItemTypesStore.enrichTypeIdsFromWorkspaceTypes([
+          defaultWorkItemType.asJSON,
+        ]);
+      }
     });
   };
 

@@ -26,6 +26,6 @@ export const useIssueProperty = <T extends EIssuePropertyType>(
   if (!propertyId) {
     return undefined;
   }
-  const issueProperty = context.issueTypes.data?.[typeId]?.getPropertyById<T>(propertyId);
+  const issueProperty = context.workItemTypeBridge.data?.[typeId]?.getPropertyById<T>(propertyId);
   return issueProperty;
 };

@@ -53,7 +53,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
   // plane web store
   const isWorkItemTypeEnabled = projectId
-    ? store.issueTypes.isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString())
+    ? store.workItemTypeBridge.isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString())
     : store.featureFlags.getFeatureFlag(workspaceSlug?.toString(), "ISSUE_TYPES", false);
   const isCustomersFeatureEnabled = store.customersStore.isCustomersFeatureEnabled;
 

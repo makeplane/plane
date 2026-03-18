@@ -11,19 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import type { EIssuePropertyValueError, TPropertyValueVariant } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import type { MemberDropdownProps } from "@/components/dropdowns/member/types";
 
 type TMemberValueSelectProps = {
-  propertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;
+  displayName: string | undefined;
   value: string[];
   projectId: string | undefined;
   variant: TPropertyValueVariant;
@@ -36,7 +36,7 @@ type TMemberValueSelectProps = {
 
 export const MemberValueSelect = observer(function MemberValueSelect(props: TMemberValueSelectProps) {
   const {
-    propertyDetail,
+    displayName,
     value,
     projectId,
     variant,
@@ -99,7 +99,7 @@ export const MemberValueSelect = observer(function MemberValueSelect(props: TMem
                 : "transparent-with-text"
               : "border-with-text"
           }
-          className="h-auto w-full flex-grow group"
+          className="h-auto w-full grow group"
           multiple
         />
       ) : (
@@ -123,13 +123,13 @@ export const MemberValueSelect = observer(function MemberValueSelect(props: TMem
                 : "transparent-with-text"
               : "border-with-text"
           }
-          className="h-auto w-full flex-grow group"
+          className="h-auto w-full grow group"
           multiple={false}
         />
       )}
       {Boolean(error) && (
         <span className="text-caption-md-medium text-danger-primary">
-          {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
+          {error === "REQUIRED" ? t("common.errors.entity_required", { entity: displayName }) : error}
         </span>
       )}
     </>

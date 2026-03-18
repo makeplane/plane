@@ -31,8 +31,6 @@ import type {
 } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey, cn } from "@plane/utils";
-// hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { useIsPropertyTypeEnabled } from "../helpers/use-enabled-property-types";
 // local imports
@@ -74,7 +72,6 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
   } = props;
   const { workspaceSlug } = useParams();
   // store hooks
-  const { peekIssue } = useIssueDetail();
   const isPropertyTypeEnabled = useIsPropertyTypeEnabled();
 
   const propertyTypeDetails = getIssuePropertyTypeDetails(propertyDetail?.property_type, propertyDetail?.relation_type);
@@ -135,7 +132,8 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
     DECIMAL: (
       <>
         <NumberValueInput
-          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.DECIMAL>}
+          id={propertyDetail?.id}
+          displayName={propertyDetail?.display_name}
           value={propertyValue}
           error={propertyValueError}
           variant={variant}
@@ -147,7 +145,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
     ),
     OPTION: (
       <>
-        {propertyDetail?.id && propertyDetail?.issue_type && (
+        {propertyDetail?.id && (
           <OptionValueSelect
             propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.OPTION>}
             value={propertyValue}
@@ -189,7 +187,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
     RELATION_USER: (
       <>
         <MemberValueSelect
-          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.RELATION>}
+          displayName={propertyDetail?.display_name}
           value={propertyValue}
           error={propertyValueError}
           projectId={projectId}

@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@plane/constants": "workspace:*",
+    "@plane/services": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
     "lodash-es": "catalog:",

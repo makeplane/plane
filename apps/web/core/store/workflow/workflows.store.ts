@@ -156,7 +156,10 @@ export class WorkflowsStore implements IWorkflowsStore {
       false
     );
     const isWorkflowFeatureEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "WORKFLOWS", false);
-    const isWorkItemTypesEnabled = this.rootStore.issueTypes.isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    const isWorkItemTypesEnabled = this.rootStore.workItemTypeBridge.isWorkItemTypeEnabledForProject(
+      workspaceSlug,
+      projectId
+    );
 
     return isMultipleWorkflowsFeatureEnabled && isWorkItemTypesEnabled && isWorkflowFeatureEnabled;
   });
@@ -258,7 +261,7 @@ export class WorkflowsStore implements IWorkflowsStore {
    * For epics, always resolves to the project default workflow.
    */
   getApplicableWorkflowForType = computedFn((projectId: string, typeId: string): IWorkflow | null => {
-    const workItemType = this.rootStore.issueTypes.getIssueTypeById(typeId);
+    const workItemType = this.rootStore.workItemTypeBridge.getIssueTypeById(typeId);
 
     // Epics always follow the project's default workflow.
     if (workItemType?.is_epic) {
@@ -283,7 +286,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   });
 
   getEligibleTypeIdsForState = computedFn((projectId: string, stateId: string): string[] => {
-    const projectWorkItemTypes = this.rootStore.issueTypes.getProjectIssueTypes(projectId, true);
+    const projectWorkItemTypes = this.rootStore.workItemTypeBridge.getProjectIssueTypes(projectId, true);
 
     return Object.keys(projectWorkItemTypes).filter((typeId) =>
       this.isStateCreationAllowedForType(projectId, typeId, stateId)
@@ -291,7 +294,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   });
 
   getCreationTypeForState = computedFn((projectId: string, stateId: string): string | undefined => {
-    const defaultWorkItemType = this.rootStore.issueTypes.getProjectDefaultIssueType(projectId);
+    const defaultWorkItemType = this.rootStore.workItemTypeBridge.getProjectDefaultIssueType(projectId);
     const defaultWorkItemTypeId = defaultWorkItemType?.id;
 
     if (defaultWorkItemTypeId && this.isStateCreationAllowedForType(projectId, defaultWorkItemTypeId, stateId)) {
@@ -331,7 +334,7 @@ export class WorkflowsStore implements IWorkflowsStore {
       }
 
       if (workflowMode === "multiple") {
-        const projectWorkItemTypes = this.rootStore.issueTypes.getProjectIssueTypes(projectId, true);
+        const projectWorkItemTypes = this.rootStore.workItemTypeBridge.getProjectIssueTypes(projectId, true);
         const typeIds = Object.keys(projectWorkItemTypes);
         if (typeIds.length > 0) {
           return typeIds.some((currentTypeId) => {
@@ -409,8 +412,8 @@ export class WorkflowsStore implements IWorkflowsStore {
         };
       };
 
-      const projectWorkItemTypes = this.rootStore.issueTypes.getProjectIssueTypes(projectId, true);
-      const defaultWorkItemTypeId = this.rootStore.issueTypes.getProjectDefaultIssueType(projectId)?.id;
+      const projectWorkItemTypes = this.rootStore.workItemTypeBridge.getProjectIssueTypes(projectId, true);
+      const defaultWorkItemTypeId = this.rootStore.workItemTypeBridge.getProjectDefaultIssueType(projectId)?.id;
       const sortedTypeIds = Object.keys(projectWorkItemTypes).sort((leftTypeId, rightTypeId) => {
         if (leftTypeId === defaultWorkItemTypeId) return -1;
         if (rightTypeId === defaultWorkItemTypeId) return 1;
@@ -421,7 +424,7 @@ export class WorkflowsStore implements IWorkflowsStore {
 
       if (typeId) {
         const workflow = this.getApplicableWorkflowForType(projectId, typeId);
-        const workItemType = this.rootStore.issueTypes.getIssueTypeById(typeId);
+        const workItemType = this.rootStore.workItemTypeBridge.getIssueTypeById(typeId);
         const isDefaultWorkflowSection = workflow?.is_default ?? false;
         const defaultWorkflow = this.getProjectActiveDefaultWorkflow(projectId);
         const otherTypeIdsInDefaultWorkflow = sortedTypeIds.filter(
@@ -458,7 +461,7 @@ export class WorkflowsStore implements IWorkflowsStore {
       sortedTypeIds.forEach((currentTypeId) => {
         const workflow = this.getApplicableWorkflowForType(projectId, currentTypeId);
         if (workflow?.id === defaultWorkflow?.id) return;
-        const workItemType = this.rootStore.issueTypes.getIssueTypeById(currentTypeId);
+        const workItemType = this.rootStore.workItemTypeBridge.getIssueTypeById(currentTypeId);
         const section = getSectionForWorkflow(workflow, stateId, "type-scoped", {
           typeId: currentTypeId,
           typeName: workItemType?.name ?? "Work item",

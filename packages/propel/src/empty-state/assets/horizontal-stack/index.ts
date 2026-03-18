@@ -37,3 +37,4 @@ export * from "./worklog";
 export * from "./workflow";
 export * from "./runner-scripts";
 export * from "./runner-functions";
+export * from "./custom-properties";

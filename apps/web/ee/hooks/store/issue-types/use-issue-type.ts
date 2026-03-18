@@ -23,6 +23,6 @@ export const useIssueType = (typeId: string | null | undefined): IIssueType | un
   if (!typeId) {
     return undefined;
   }
-  const issueType = context.issueTypes.data?.[typeId];
+  const issueType = context.workItemTypeBridge.getIssueTypeById(typeId);
   return issueType;
 };

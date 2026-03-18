@@ -66,6 +66,8 @@ import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
 import { useRunners } from "@/plane-web/hooks/store";
 import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
+import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
+import { useWorkspaceCustomProperties } from "@/plane-web/hooks/store/custom-properties/use-workspace-custom-properties";
 
 type WorkspaceAuthWrapper = {
   children: ReactNode;
@@ -95,7 +97,9 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { isTeamspacesFeatureEnabled, fetchTeamspaces } = useTeamspaces();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
-  const { fetchAll } = useIssueTypes();
+  const { fetchAll: fetchAllIssueTypes } = useIssueTypes();
+  const { fetchTypes: fetchAllWorkspaceWorkItemTypes } = useWorkspaceWorkItemTypes();
+  const { fetchPropertiesAndOptions: fetchAllWorkspaceCustomPropertiesAndOptions } = useWorkspaceCustomProperties();
   const { fetchAllTemplates: fetchAllProjectTemplates } = useProjectTemplates();
   const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
   const { fetchAllTemplates: fetchAllPageTemplates } = usePageTemplates();
@@ -120,6 +124,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
   const isIssueTypesEnabled = useFlag(workspaceSlug, "ISSUE_TYPES", false);
+  const isWorkspaceWorkItemTypesEnabled = useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false);
   const isEpicsEnabled = useFlag(workspaceSlug, "EPICS", false);
   const isProjectStateEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
   const isProjectTemplatesEnabled = useFlag(workspaceSlug, "PROJECT_TEMPLATES");
@@ -250,7 +255,21 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     isIssueTypesEnabled || isEpicsEnabled
       ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}_${isEpicsEnabled}`
       : null,
-    isIssueTypesEnabled || isEpicsEnabled ? () => fetchAll(workspaceSlug) : null,
+    isIssueTypesEnabled || isEpicsEnabled ? () => fetchAllIssueTypes(workspaceSlug) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching all workspace work item types
+  useSWR(
+    isWorkspaceWorkItemTypesEnabled
+      ? `WORKSPACE_WORK_ITEM_TYPES_${workspaceSlug}_${isWorkspaceWorkItemTypesEnabled}`
+      : null,
+    isWorkspaceWorkItemTypesEnabled ? () => fetchAllWorkspaceWorkItemTypes(workspaceSlug) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching all workspace custom properties and options
+  useSWR(
+    isWorkspaceWorkItemTypesEnabled ? `WORKSPACE_CUSTOM_PROPERTIES_AND_OPTIONS_${workspaceSlug}` : null,
+    isWorkspaceWorkItemTypesEnabled ? () => fetchAllWorkspaceCustomPropertiesAndOptions(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

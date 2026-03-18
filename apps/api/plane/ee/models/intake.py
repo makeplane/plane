@@ -72,7 +72,9 @@ class IntakeForm(ProjectBaseModel):
         # Get valid field IDs from IssueProperty
         valid_field_ids = list(
             IssueProperty.objects.filter(
-                project_id=self.project_id, issue_type_id=self.work_item_type_id, pk__in=form_field_ids
+                project_id=self.project_id,
+                issue_type_properties__issue_type_id=self.work_item_type_id,
+                pk__in=form_field_ids,
             ).values_list("id", flat=True)
         )
 

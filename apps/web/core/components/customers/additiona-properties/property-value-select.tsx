@@ -106,7 +106,8 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
     DECIMAL: (
       <>
         <NumberValueInput
-          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.DECIMAL>}
+          id={propertyDetail?.id}
+          displayName={propertyDetail?.display_name}
           value={propertyValue}
           error={propertyValueError}
           variant={variant}
@@ -160,7 +161,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
     RELATION_USER: (
       <>
         <MemberValueSelect
-          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.RELATION>}
+          displayName={propertyDetail?.display_name}
           value={propertyValue}
           projectId={undefined}
           error={propertyValueError}

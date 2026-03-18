@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// plane web store
+// plane web imports
 import type { IPublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
@@ -19,7 +19,7 @@ import { WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store
 import { TimeLineStore } from "@/plane-web/store/timeline";
 // store
 import { CoreRootStore } from "@/store/root.store";
-// timeline
+// local imports
 import type { ITimelineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
@@ -30,7 +30,6 @@ export class RootStore extends CoreRootStore {
 
   constructor() {
     super();
-    // Override the theme store with extended version
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.timelineStore = new TimeLineStore(this);
@@ -38,7 +37,6 @@ export class RootStore extends CoreRootStore {
 
   resetOnSignOut() {
     super.resetOnSignOut();
-    // Override theme store reset
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.timelineStore = new TimeLineStore(this);

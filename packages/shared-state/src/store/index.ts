@@ -17,3 +17,5 @@ export * from "./work-item-filters";
 export * from "./work-items";
 export * from "./intake";
 export * from "./workflow";
+export * from "./work-item-types";
+export * from "./custom-properties";

@@ -13,8 +13,8 @@
 
 import type { TLogoProps } from "../common";
 import type { TProjectDetails } from "../publish";
-import type { TIssueProperty, TIssuePropertyOption, EIssuePropertyType } from "../work-item-types";
-import type { TIssuePropertySerializedEntry } from "../work-item-types/work-item-types-extended";
+import type { TIssueProperty, TIssuePropertyOption, EIssuePropertyType } from "../work-item-types-legacy";
+import type { TIssuePropertySerializedEntry } from "../work-item-types";
 
 export type TIntakeTypeForm = {
   id: string;

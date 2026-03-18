@@ -191,7 +191,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       // check if worklogs are enabled for the project
       const isWorklogsEnabled = this.store.workspaceWorklogs.isWorklogsEnabledByProjectId(projectId);
       // check if work item types are enabled for the project
-      const isWorkItemTypeEnabled = this.store.issueTypes.isWorkItemTypeEntityEnabledForProject(
+      const isWorkItemTypeEnabled = this.store.workItemTypeBridge.isWorkItemTypeEntityEnabledForProject(
         workspaceSlug,
         projectId,
         this.serviceType === EIssueServiceType.EPICS ? EWorkItemTypeEntity.EPIC : EWorkItemTypeEntity.WORK_ITEM

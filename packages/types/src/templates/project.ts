@@ -17,7 +17,7 @@ import type { TProject, TProjectPriority, TProjectState } from "../project";
 import type { IState } from "../state";
 import type { IUserLite } from "../users";
 import type { CompleteOrEmpty } from "../utils";
-import type { IIssueType, TIssueType } from "../work-item-types";
+import type { IIssueType, TIssueType } from "../work-item-types-legacy";
 import type { ETemplateType, TBaseTemplate } from "./base";
 import type {
   TCustomPropertyBlueprint,

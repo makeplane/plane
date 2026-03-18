@@ -447,7 +447,7 @@ const getGroupBy = (groupBy: TIssueGroupByOptions | undefined) => {
   if (!workspaceSlug || !groupBy) return groupBy;
 
   const { isMilestonesEnabled } = store.milestone;
-  const { isEpicEnabledForProject } = store.issueTypes;
+  const { isEpicEnabledForProject } = store.workItemTypeBridge;
 
   const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
   const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;

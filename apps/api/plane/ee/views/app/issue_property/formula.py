@@ -20,7 +20,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import IssueType, Project, Workspace
-from plane.ee.permissions import ProjectEntityPermission
+from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
 from plane.ee.utils.formula import (
     execute_formula,
     fetch_work_item_custom_properties,
@@ -96,6 +96,67 @@ def _validate_issue_type(
         raise APIException(detail="Issue type not found", code="not_found")
     except Exception as e:
         raise APIException(detail=str(e), code="something_went_wrong")
+
+
+class WorkspaceWorkItemTypeFormulaValidateEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD)
+    def post(self, request, slug, issue_type_id):
+        # validating workspace
+        workspace = _validate_workspace(workspace_slug=slug)
+        workspace_id = workspace.id
+
+        # validate issue type
+        issue_type = IssueType.objects.get(workspace_id=workspace_id, id=issue_type_id)
+        issue_type_id = issue_type.id
+
+        # requiring the formula
+        formula: Optional[str] = request.data.get("formula", None)
+        if not formula:
+            raise APIException(detail="Formula is required", code="bad_request")
+
+        # requiring the work item
+        work_item_id = request.data.get("work_item", None)
+
+        # fetching the work item properties
+        work_item_properties = fetch_work_item_properties(work_item_id=work_item_id)
+
+        # fetching the work item type properties
+        work_item_type_properties = fetch_work_item_custom_properties(
+            work_item_type_id=issue_type_id, work_item_id=work_item_id
+        )
+
+        # combining the work item properties and work item type properties
+        properties = work_item_properties + work_item_type_properties
+
+        # validating the formula
+        validated_formula = validate_formula(formula=formula, work_item_properties=properties)
+        validated_formula_response = {
+            "valid": validated_formula.valid,
+            "result_type": validated_formula.result_type,
+            "error": validated_formula.error,
+            "referenced_fields": list(validated_formula.referenced_fields),
+        }
+
+        # executing the formula
+        executed_formula_response = None
+        if validated_formula.valid and work_item_id:
+            executed_formula = execute_formula(formula=formula, work_item_properties=properties)
+            executed_formula_response = {
+                "success": executed_formula.success,
+                "result_type": executed_formula.result_type,
+                "value": executed_formula.value,
+                "error": executed_formula.error,
+            }
+
+        # response
+        return_response = {
+            "validated_formula": validated_formula_response,
+            "executed_formula": executed_formula_response,
+        }
+
+        return Response(return_response, status=status.HTTP_200_OK)
 
 
 class IssuePropertyFormulaValidateEndpoint(BaseAPIView):

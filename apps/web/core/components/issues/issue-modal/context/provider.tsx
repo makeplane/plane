@@ -127,9 +127,11 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
     if (!isWorkItemTypeEnabled || !issueTypeId) return 0;
     // all properties for the issue type
     const properties = getIssueTypeProperties(issueTypeId);
+    // if properties is undefined return 0
+    if (properties === undefined) return 0;
     // filter all active properties
-    const activeProperties = properties?.filter((property) => property.is_active);
-    return activeProperties?.length || 0;
+    const activeProperties = properties.filter((property) => property.is_active);
+    return activeProperties.length || 0;
   };
 
   const getAvailableWorkItemCreationStateIds = useCallback(

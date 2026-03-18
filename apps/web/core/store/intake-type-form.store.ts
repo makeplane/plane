@@ -166,7 +166,10 @@ export class IntakeTypeFormStore implements IIntakeTypeFormStore {
   });
 
   isCustomFormsEnabled = computedFn((workspaceSlug: string, projectId: string) => {
-    const isWorkItemTypesEnabled = this.rootStore.issueTypes.isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    const isWorkItemTypesEnabled = this.rootStore.workItemTypeBridge.isWorkItemTypeEnabledForProject(
+      workspaceSlug,
+      projectId
+    );
     const isIntakeFormFeatureFlagEnabled = this.rootStore.featureFlags.getFeatureFlag(
       workspaceSlug,
       E_FEATURE_FLAGS.WORKITEM_TYPE_INTAKE_FORM,

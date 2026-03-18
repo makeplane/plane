@@ -11,158 +11,170 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TEpicAnalytics, TEpicStats } from "../epics";
-import type {
-  EIssuePropertyType,
-  TIssueProperty,
-  TIssuePropertyPayload,
-  TIssuePropertyResponse,
-} from "./work-item-properties";
-import type { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
-import type { TIssueType } from "./work-item-types";
+import type { CustomProperty, CustomPropertyType, TWorkItemPropertyPayload } from "./work-item-properties";
+import type { CustomPropertyOption } from "./work-item-property-option";
+import type { TWorkItemType } from "./work-item-types";
 
-// -------------------------- ISSUE TYPES --------------------------
-
-export type TFetchIssueTypesPayload = {
-  workspaceSlug: string;
+export type TWorkItemTypeResponse = TWorkItemType & {
+  project_ids: string[] | undefined;
 };
 
-export type TFetchIssueTypesProjectLevelPayload = TFetchIssueTypesPayload & {
+// --------- WORK ITEM TYPES ---------
+// create
+export type TCreateWorkspaceWorkItemTypePayload = {
+  workspaceSlug: string;
+  data: Partial<TWorkItemType>;
+};
+export type TCreateProjectWorkItemTypePayload = TCreateWorkspaceWorkItemTypePayload & {
   projectId: string;
 };
 
-export type TCreateIssueTypePayload = {
-  workspaceSlug: string;
-  projectId: string;
-  data: Partial<TIssueType>;
+// update
+export type TUpdateWorkspaceWorkItemTypePayload = TCreateWorkspaceWorkItemTypePayload & {
+  typeId: string;
 };
-
-export type TUpdateIssueTypePayload = {
-  workspaceSlug: string;
-  projectId?: string;
-  issueTypeId?: string;
-  data: Partial<TIssueType>;
-};
-
-export type TDeleteIssueTypePayload = {
-  workspaceSlug: string;
-  projectId: string;
-  issueTypeId?: string;
-};
-
-export type TEnableIssueTypePayload = {
-  workspaceSlug: string;
+export type TUpdateProjectWorkItemTypePayload = TUpdateWorkspaceWorkItemTypePayload & {
   projectId: string;
 };
 
-export type TDisableIssueTypePayload = {
+// delete
+export type TDeleteWorkspaceWorkItemTypePayload = {
+  workspaceSlug: string;
+  typeId: string;
+};
+export type TDeleteProjectWorkItemTypePayload = TDeleteWorkspaceWorkItemTypePayload & {
+  projectId: string;
+};
+
+// --------- WORK ITEM TYPE PROPERTIES ---------
+// update
+export type TUpdateWorkspaceTypePropertyPayload = {
+  workspaceSlug: string;
+  typeId: string;
+  propertyId: string;
+  data: Partial<CustomProperty<CustomPropertyType>>;
+};
+export type TUpdateProjectTypePropertyPayload = TUpdateWorkspaceTypePropertyPayload & {
+  projectId: string;
+};
+
+export type TEnableLocalTypeCreationPayload = {
+  workspaceSlug: string;
+  projectIds: string[];
+};
+
+export type TLinkPropertyToGlobalTypePayload = {
+  workspaceSlug: string;
+  typeId: string;
+  properties: string[]; // list of property IDs to link
+};
+
+export type TReorderPropertyToGlobalTypePayload = {
+  workspaceSlug: string;
+  typeId: string;
+  propertyId: string;
+  newSortOrder: number;
+};
+
+export type TUnlinkPropertyFromGlobalTypePayload = {
+  workspaceSlug: string;
+  typeId: string;
+  propertyId: string;
+};
+
+export type TLinkPropertyToLocalTypePayload = TLinkPropertyToGlobalTypePayload & {
+  projectId: string;
+};
+
+export type TReorderPropertyToLocalTypePayload = TReorderPropertyToGlobalTypePayload & {
+  projectId: string;
+};
+
+export type TUnlinkPropertyFromLocalTypePayload = TUnlinkPropertyFromGlobalTypePayload & {
+  projectId: string;
+};
+
+export type TFetchWorkspaceTypePropertiesPayload = {
+  workspaceSlug: string;
+  typeId: string;
+};
+
+// Global
+export type TCreateGlobalPropertyPayload = {
+  workspaceSlug: string;
+  data: TWorkItemPropertyPayload;
+};
+
+export type TUpdateGlobalPropertyPayload = {
+  workspaceSlug: string;
+  propertyId: string;
+  data: TWorkItemPropertyPayload;
+};
+
+export type TDeleteGlobalPropertyPayload = {
+  workspaceSlug: string;
+  propertyId: string;
+};
+
+// Local
+export type TCreateLocalPropertyPayload = {
   workspaceSlug: string;
   projectId: string;
-  issueTypeId?: string;
+  typeId: string;
+  data: TWorkItemPropertyPayload;
 };
 
-export interface IWorkItemTypeInstanceServices {
-  create?(payload: TCreateIssueTypePayload): Promise<TIssueType>;
-  update?(payload: TUpdateIssueTypePayload): Promise<TIssueType>;
-}
-
-export interface IIssueTypesService extends IWorkItemTypeInstanceServices {
-  fetchAll(payload: TFetchIssueTypesPayload): Promise<TIssueType[]>;
-  fetchAllProjectLevel(payload: TFetchIssueTypesProjectLevelPayload): Promise<TIssueType[]>;
-  deleteType?(payload: TDeleteIssueTypePayload): Promise<void>;
-  enable?(payload: TEnableIssueTypePayload): Promise<TIssueType>;
-  disable?(payload: TDisableIssueTypePayload): Promise<void>;
-}
-
-// -------------------------- ISSUE PROPERTIES --------------------------
-
-export type TFetchIssuePropertiesPayload = {
+export type TUpdateLocalPropertyPayload = {
   workspaceSlug: string;
-  projectId?: string;
+  projectId: string;
+  typeId: string;
+  propertyId: string;
+  data: TWorkItemPropertyPayload;
 };
 
-export type TCreateIssuePropertyPayload = {
+export type TDeleteLocalPropertyPayload = {
   workspaceSlug: string;
-  projectId?: string;
-  issueTypeId?: string;
-  data: TIssuePropertyPayload;
+  projectId: string;
+  typeId: string;
+  propertyId: string;
 };
 
-export type TUpdateIssuePropertyPayload = {
+export type TImportGlobalPropertyPayload = {
   workspaceSlug: string;
-  projectId?: string;
-  issueTypeId?: string;
-  customPropertyId: string;
-  data: TIssuePropertyPayload;
+  projectId: string;
+  propertyIds: string[];
 };
 
-export type TDeleteIssuePropertyPayload = {
+export type TImportWorkItemTypesPayload = {
   workspaceSlug: string;
-  projectId?: string;
-  issueTypeId?: string;
-  customPropertyId: string;
+  projectId: string;
+  typeIds: string[];
 };
-
-export interface ICustomPropertiesInstanceServices {
-  create(payload: TCreateIssuePropertyPayload): Promise<TIssuePropertyResponse>;
-  update(payload: TUpdateIssuePropertyPayload): Promise<TIssuePropertyResponse>;
-  deleteProperty(payload: TDeleteIssuePropertyPayload): Promise<void>;
-}
-
-export interface IIssuePropertiesService extends ICustomPropertiesInstanceServices {
-  fetchAll(payload: TFetchIssuePropertiesPayload): Promise<TIssueProperty<EIssuePropertyType>[]>;
-}
 
 // -------------------------- ISSUE PROPERTY OPTIONS --------------------------
 
-export type TFetchIssuePropertyOptionsPayload = {
+export type TFetchWorkItemPropertyOptionsPayload = {
   workspaceSlug: string;
   projectId?: string;
 };
 
-export type TCreateIssuePropertyOptionPayload = {
+export type TCreateWorkItemPropertyOptionPayload = {
   workspaceSlug: string;
   projectId?: string;
   customPropertyId: string;
-  data: Partial<TIssuePropertyOption>;
+  data: Partial<CustomPropertyOption>;
 };
 
-export type TDeleteIssuePropertyOptionPayload = {
+export type TUpdateWorkItemPropertyOptionPayload = {
+  workspaceSlug: string;
+  customPropertyId: string;
+  optionId: string;
+  data: Partial<CustomPropertyOption>;
+};
+
+export type TDeleteWorkItemPropertyOptionPayload = {
   workspaceSlug: string;
   projectId?: string;
   customPropertyId: string;
   issuePropertyOptionId: string;
 };
-
-export interface ICustomPropertyOptionsInstanceServices {
-  create(payload: TCreateIssuePropertyOptionPayload): Promise<TIssuePropertyOption>;
-  deleteOption(payload: TDeleteIssuePropertyOptionPayload): Promise<void>;
-}
-
-export interface IIssuePropertyOptionsService extends ICustomPropertyOptionsInstanceServices {
-  fetchAll(payload: TFetchIssuePropertyOptionsPayload): Promise<TIssuePropertyOptionsPayload>;
-}
-
-// -------------------------- ISSUE TYPES SERVICES --------------------------
-
-export type TIssueTypeStoreServices = {
-  issueTypes?: IIssueTypesService;
-  issueProperties: IIssuePropertiesService;
-  issuePropertyOptions: IIssuePropertyOptionsService;
-};
-
-export interface ICustomPropertyStoreInstanceServices {
-  customProperty: ICustomPropertiesInstanceServices;
-  customPropertyOption: ICustomPropertyOptionsInstanceServices;
-}
-
-export interface IWorkItemTypeStoreInstanceServices extends ICustomPropertyStoreInstanceServices {
-  workItemType: IWorkItemTypeInstanceServices;
-}
-
-// -------------------------- EPIC SERVICES --------------------------
-
-export interface IEpicService {
-  getIssueProgressAnalytics(workspaceSlug: string, projectId: string, issueId: string): Promise<TEpicAnalytics>;
-  fetchEpicStats(workspaceSlug: string, projectId: string): Promise<TEpicStats[]>;
-}

@@ -69,7 +69,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         issue_properties_with_default_values = IssueProperty.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
-            issue_type_id=type_id,
+            issue_type_properties__issue_type_id=type_id,
             default_value__isnull=False,
         ).exclude(default_value=[])
 
@@ -83,7 +83,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue__type_id=type_id,
                 issue__in=issues,
-                property__issue_type__is_epic=False,
+                property__issue_type_properties__issue_type__is_epic=False,
             ).values_list("property_id", "issue_id")
         )
 

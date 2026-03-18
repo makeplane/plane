@@ -10,13 +10,18 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from .activity import IssuePropertyActivityEndpoint
-from .base import IssuePropertyEndpoint
+from .base import IssuePropertyEndpoint, WorkspaceWorkItemPropertyEndpoint, ProjectWorkItemTypeEndpoint
 from .draft import DraftIssuePropertyValueEndpoint
-from .formula import IssuePropertyFormulaValidateEndpoint
-from .option import IssuePropertyOptionEndpoint
+from .formula import IssuePropertyFormulaValidateEndpoint, WorkspaceWorkItemTypeFormulaValidateEndpoint
+from .option import WorkspaceWorkItemPropertyOptionEndpoint, IssuePropertyOptionEndpoint
 from .type import (
-    DefaultIssueTypeEndpoint,
     IssueTypeEndpoint,
+    DefaultIssueTypeEndpoint,
     WorkspaceIssueTypeEndpoint,
+    ImportWorkItemTypesEndpoint,
+    WorkspaceWorkItemTypeEndpoint,
+    WorkspaceWorkItemTypePropertyEndpoint,
+    WorkspaceDefaultWorkItemTypeEndpoint,
 )
 from .value import IssuePropertyValueEndpoint
+from .merge import MergeWorkItemTypesEndpoint

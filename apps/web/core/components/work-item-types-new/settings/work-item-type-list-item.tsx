@@ -1,0 +1,184 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useMemo } from "react";
+import { observer } from "mobx-react";
+import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
+// plane imports
+import type { TLoader, IIssueType, TIssuePropertyTypeKeys } from "@plane/types";
+import { EIssuePropertyType } from "@plane/types";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+import { cn } from "@plane/utils";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// services
+import { issuePropertyService } from "@/services/issue-types";
+// local imports
+import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
+import { useIsPropertyTypeEnabled } from "@/components/work-item-types/helpers/use-enabled-property-types";
+import { IssuePropertiesRoot } from "@/components/work-item-types/properties/root";
+import type { TPropertyValidator } from "@/components/work-item-types/properties/property-list-item";
+import { IssueTypeQuickActions } from "@/components/work-item-types/quick-actions";
+
+type TWorkItemTypeListItem = {
+  workItemTypeId: string;
+  projectId?: string;
+  isOpen: boolean;
+  isCollapseDisabled: boolean;
+  propertiesLoader: TLoader;
+  containerClassName?: string;
+  onToggle: (issueTypeId: string) => void;
+  onEditIssueType: (issueTypeId: string) => void;
+  onDeleteIssueTypeIdChange: (issueTypeId: string) => void;
+  onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
+  getClassName?: (isOpen: boolean) => string;
+};
+
+export const WorkItemTypeListItem = observer(function WorkItemTypeListItem(props: TWorkItemTypeListItem) {
+  const {
+    workItemTypeId,
+    projectId,
+    isOpen,
+    isCollapseDisabled,
+    propertiesLoader,
+    containerClassName,
+    onToggle,
+    onEditIssueType,
+    onDeleteIssueTypeIdChange,
+    onEnableDisableIssueType,
+    getWorkItemTypeById,
+    getClassName,
+  } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  const { currentWorkspace } = useWorkspace();
+  const isPropertyTypeEnabled = useIsPropertyTypeEnabled({ projectId });
+  // store hooks
+  const issueType = getWorkItemTypeById(workItemTypeId);
+  // derived values
+  const issueTypeDetail = issueType?.asJSON;
+  // compute allowed property types from feature flags
+  const allowedPropertyTypes = useMemo(
+    () =>
+      (Object.keys(ISSUE_PROPERTY_TYPE_DETAILS) as TIssuePropertyTypeKeys[]).filter((key) =>
+        isPropertyTypeEnabled(key)
+      ),
+    [isPropertyTypeEnabled]
+  );
+  // construct property validator — formula validation closes over workspace/project/issueType context
+  const propertyValidator: TPropertyValidator = useMemo(
+    () => ({
+      [EIssuePropertyType.FORMULA]: async (formulaWithIds: string) =>
+        issuePropertyService.validateFormula({
+          workspaceSlug: currentWorkspace?.slug ?? "",
+          projectId: projectId ?? "",
+          issueTypeId: workItemTypeId,
+          formula: formulaWithIds,
+        }),
+    }),
+    [currentWorkspace?.slug, projectId, workItemTypeId]
+  );
+  if (!issueTypeDetail) return null;
+
+  return (
+    <div className={cn("py-2 border-b border-subtle last:border-b-0", containerClassName)}>
+      <div
+        className={cn(
+          "group/issue-type bg-surface-1 hover:bg-layer-1-hover rounded-md",
+          {
+            "bg-layer-1": isOpen,
+          },
+          getClassName?.(isOpen)
+        )}
+      >
+        <Collapsible
+          key={workItemTypeId}
+          open={isOpen}
+          onOpenChange={(open) => {
+            if (open !== isOpen) {
+              onToggle(workItemTypeId);
+            }
+          }}
+          className={cn("p-2")}
+        >
+          <CollapsibleTrigger
+            className={cn("flex w-full py-2 gap-2 items-center justify-between", {
+              "cursor-not-allowed": isCollapseDisabled,
+            })}
+          >
+            <div className={cn("flex items-center w-full px-2 gap-2 cursor-pointer")}>
+              <div className={cn("flex w-full gap-2 items-center truncate")}>
+                <div className="flex-shrink-0">
+                  <ChevronRightIcon
+                    className={cn("flex-shrink-0 size-4", {
+                      "rotate-90 text-primary": isOpen,
+                      "text-tertiary": !isOpen,
+                      "text-placeholder opacity-70": isCollapseDisabled,
+                    })}
+                  />
+                </div>
+                <IssueTypeLogo
+                  icon_props={issueTypeDetail?.logo_props?.icon}
+                  size="xl"
+                  isDefault={issueTypeDetail?.is_default}
+                  containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
+                />
+                <div className="flex flex-col items-start justify-start whitespace-normal">
+                  <div className="flex gap-4 text-left items-center">
+                    <div className="text-body-xs-medium text-primary line-clamp-1">{issueTypeDetail?.name}</div>
+                    {!issueTypeDetail?.is_active && (
+                      <div className="py-0.5 px-3 text-caption-sm-medium rounded-sm text-tertiary bg-layer-2">
+                        {t("common.disabled")}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-caption-sm-medium text-tertiary text-left line-clamp-1">
+                    {issueTypeDetail?.description}
+                  </div>
+                </div>
+              </div>
+              {issueTypeDetail?.is_default && (
+                <div className="flex-shrink-0 py-0.5 px-2 text-caption-sm-medium rounded-sm text-accent-primary bg-transparent border border-accent-strong cursor-default">
+                  {t("common.default")}
+                </div>
+              )}
+              <div className="flex-shrink-0 flex">
+                <IssueTypeQuickActions
+                  issueTypeId={workItemTypeId}
+                  getWorkItemTypeById={getWorkItemTypeById}
+                  onEditIssueTypeIdChange={onEditIssueType}
+                  onDeleteIssueTypeIdChange={onDeleteIssueTypeIdChange}
+                  onEnableDisableIssueType={onEnableDisableIssueType}
+                />
+              </div>
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="p-2">
+              <IssuePropertiesRoot
+                issueTypeId={workItemTypeId}
+                propertyValidator={propertyValidator}
+                allowedPropertyTypes={allowedPropertyTypes}
+                propertiesLoader={propertiesLoader}
+                getWorkItemTypeById={getWorkItemTypeById}
+              />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </div>
+  );
+});

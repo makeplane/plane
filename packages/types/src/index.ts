@@ -79,6 +79,7 @@ export * from "./waitlist";
 export * from "./webhook";
 export * from "./work-item-relation-definition";
 export * from "./work-item-types";
+export * from "./work-item-types-legacy";
 export * from "./work-item-filters";
 export * from "./workflow";
 export * from "./workspace";

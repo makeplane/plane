@@ -46,6 +46,7 @@ export interface IWorkspaceRootStore {
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
+  getWorkspaceSlugById: (workspaceId: string) => string | undefined;
   // fetch actions
   fetchWorkspaces: () => Promise<IWorkspace[]>;
   // crud actions
@@ -179,6 +180,12 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param workspaceId
    */
   getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null; // TODO: use undefined instead of null
+
+  getWorkspaceSlugById = (workspaceId: string) => {
+    const workspace = this.getWorkspaceById(workspaceId);
+    if (!workspace) return undefined;
+    return workspace.slug;
+  };
 
   /**
    * fetch user workspaces from API

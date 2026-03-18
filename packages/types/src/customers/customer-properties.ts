@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TIssueProperty, TIssuePropertyOptionsPayload } from "../work-item-types";
-import type { EIssuePropertyType } from "../work-item-types/work-item-properties";
+import type { TIssueProperty, TIssuePropertyOptionsPayload } from "../work-item-types-legacy";
+import type { EIssuePropertyType } from "../work-item-types-legacy/work-item-properties";
 
 export type TCustomerPropertiesOptions = {
   customerProperties: TIssueProperty<EIssuePropertyType>[];

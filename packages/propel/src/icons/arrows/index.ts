@@ -20,4 +20,5 @@ export * from "./chevron-right";
 export * from "./chevron-up";
 export * from "./external-link";
 export * from "./reply-icon";
+export * from "./import-icon";
 export * from "./accordion-close";

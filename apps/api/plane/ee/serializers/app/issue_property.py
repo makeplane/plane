@@ -25,12 +25,16 @@ from plane.utils.constants import (
 
 
 class IssueTypeSerializer(BaseSerializer):
-    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    project_ids = serializers.ListField(child=serializers.UUIDField(), read_only=True)
+    properties = serializers.SerializerMethodField()
 
     class Meta:
         model = IssueType
         fields = "__all__"
         read_only_fields = ["workspace", "project", "is_default", "deleted_at"]
+
+    def get_properties(self, obj):
+        return {str(itp.property_id): itp.sort_order for itp in obj.issue_type_properties.all()}
 
 
 class IssuePropertySerializer(BaseSerializer):

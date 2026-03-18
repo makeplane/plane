@@ -10,10 +10,10 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.db.models import OuterRef, Subquery
+from django.db import models
+from django.db.models import OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
 
 # Third party imports
 from rest_framework import status
@@ -21,12 +21,354 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.db.models import IssueType, Issue, Project, ProjectIssueType
-from plane.ee.models import WorkitemTemplate
+from plane.db.models import IssueType, Issue, Project, ProjectIssueType, Workspace
+from plane.ee.models import WorkitemTemplate, WorkspaceFeature, IssueProperty, IssueTypeProperty, IssuePropertyValue
 from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
-from plane.ee.serializers import IssueTypeSerializer
+from plane.ee.serializers import IssueTypeSerializer, IssuePropertySerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+
+
+class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def get(self, request, slug):
+        # Get all issue types for the workspace
+        issue_types = (
+            IssueType.objects.filter(
+                workspace__slug=slug,
+                is_epic=False,
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "project_issue_types__project_id",
+                        distinct=True,
+                        filter=Q(
+                            project_issue_types__deleted_at__isnull=True,
+                            project_issue_types__project_id__isnull=False,
+                        ),
+                    ),
+                    [],
+                )
+            )
+            .prefetch_related("issue_type_properties")
+        ).order_by("created_at")
+        serializer = IssueTypeSerializer(issue_types, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def post(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+        # Check if the workspace has the feature flag enabled
+        workspace_feature, _ = WorkspaceFeature.objects.get_or_create(workspace_id=workspace.id)
+        if not workspace_feature.is_work_item_types_enabled:
+            return Response(
+                {"error": "Workspace work item type creation is not enabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check for duplicate name at workspace scope
+        if IssueType.objects.filter(workspace__slug=slug, name=request.data.get("name"), is_epic=False).exists():
+            return Response(
+                {"error": "Work item type with this name already exists", "code": "WORK_ITEM_TYPE_ALREADY_EXIST"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create a new issue type
+        serializer = IssueTypeSerializer(
+            data=request.data,
+            context={
+                "workspace_id": workspace.id,
+            },
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(workspace_id=workspace.id)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def patch(self, request, slug, pk):
+        workspace = Workspace.objects.get(slug=slug)
+        # Check if the workspace has the feature flag enabled
+        workspace_feature, _ = WorkspaceFeature.objects.get_or_create(workspace_id=workspace.id)
+        if not workspace_feature.is_work_item_types_enabled:
+            return Response(
+                {"error": "Workspace work item type creation is not enabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        issue_type = IssueType.objects.get(workspace__slug=slug, pk=pk)
+        serializer = IssueTypeSerializer(
+            issue_type,
+            data=request.data,
+            context={
+                "workspace_id": workspace.id,
+            },
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(workspace_id=workspace.id)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def delete(self, request, slug, pk):
+        # Check if the workspace has the feature flag enabled
+        if not WorkspaceFeature.objects.get(workspace__slug=slug).is_work_item_types_enabled:
+            return Response(
+                {"error": "Workspace work item type creation is not enabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        issue_type = IssueType.objects.get(workspace__slug=slug, pk=pk)
+
+        # Check if the issue type is the default issue type
+        if issue_type.is_default:
+            return Response(
+                {"error": "Cannot delete default work item type"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if there are any issues using this issue type
+        if Issue.objects.filter(workspace__slug=slug, type_id=pk).exists():
+            return Response(
+                {"error": "Cannot delete work item type with associated work items."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issue_type.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceWorkItemTypePropertyEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def get(self, request, slug, work_item_type_id):
+        issue_type_properties = IssueProperty.objects.filter(
+            workspace__slug=slug,
+            issue_type_properties__issue_type_id=work_item_type_id,
+        ).exclude(issue_type_properties__issue_type__is_epic=True)
+
+        return Response(IssuePropertySerializer(issue_type_properties, many=True).data, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def post(self, request, slug, work_item_type_id):
+        property_ids = request.data.get("properties", [])
+
+        if not property_ids or not isinstance(property_ids, list):
+            return Response(
+                {"error": "Expected a list of property_ids"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace = Workspace.objects.get(slug=slug)
+
+        last_sort_order = IssueTypeProperty.objects.filter(
+            workspace__slug=slug,
+            issue_type_id=work_item_type_id,
+        ).aggregate(largest=models.Max("sort_order"))["largest"]
+        sort_order = (last_sort_order if last_sort_order else 0) + 10000
+
+        issue_type_properties = [
+            IssueTypeProperty(
+                workspace_id=workspace.id,
+                issue_type_id=work_item_type_id,
+                property_id=property_id,
+                sort_order=sort_order + (i * 10000),
+                created_by_id=request.user.id,
+                updated_by_id=request.user.id,
+            )
+            for i, property_id in enumerate(property_ids)
+        ]
+        IssueTypeProperty.objects.bulk_create(issue_type_properties, ignore_conflicts=True)
+        sort_order_map = {
+            str(pid): sort_order
+            for pid, sort_order in IssueTypeProperty.objects.filter(
+                workspace_id=workspace.id,
+                issue_type_id=work_item_type_id,
+                property_id__in=property_ids,
+            ).values_list("property_id", "sort_order")
+        }
+        return Response(sort_order_map, status=status.HTTP_201_CREATED)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def patch(self, request, slug, work_item_type_id, pk):
+        sort_order = request.data.get("sort_order")
+        if sort_order is None:
+            return Response(
+                {"error": "sort_order is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # if have to update the sort order in the work item type
+        issue_type_property = IssueTypeProperty.objects.get(
+            workspace__slug=slug,
+            issue_type_id=work_item_type_id,
+            property_id=pk,
+        )
+        issue_type_property.sort_order = sort_order
+        issue_type_property.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def delete(self, request, slug, work_item_type_id, pk):
+        # first check if the issue type property already exists
+        if not IssueTypeProperty.objects.filter(
+            workspace__slug=slug,
+            issue_type_id=work_item_type_id,
+            property_id=pk,
+        ).exists():
+            return Response(
+                {"error": "Issue type property does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # check any work item using this property
+        if IssuePropertyValue.objects.filter(workspace__slug=slug, property_id=pk).exists():
+            return Response(
+                {"error": "Cannot delete property with associated work items"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # delete the issue type property
+        issue_type_property = IssueTypeProperty.objects.get(
+            workspace__slug=slug,
+            issue_type_id=work_item_type_id,
+            property_id=pk,
+        )
+        issue_type_property.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ImportWorkItemTypesEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def post(self, request, slug, project_id):
+        work_item_type_ids = [wt["id"] for wt in request.data.get("work_item_types", [])]
+        workspace = Workspace.objects.get(slug=slug)
+
+        # Validate that project_id belongs to this workspace
+        if not Project.objects.filter(id=project_id, workspace__slug=slug).exists():
+            return Response(
+                {"error": "Project does not exist in this workspace"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not work_item_type_ids:
+            return Response(status=status.HTTP_200_OK)
+
+        # Fetch all work item types in a single query
+        work_item_types = IssueType.objects.filter(
+            id__in=work_item_type_ids,
+            workspace__slug=slug,
+            is_epic=False,
+        )
+
+        # Bulk create ProjectIssueType records
+        project_issue_types = [
+            ProjectIssueType(
+                project_id=project_id,
+                issue_type_id=wt.id,
+                level=0,
+                is_default=False,
+                workspace_id=workspace.id,
+                created_by_id=request.user.id,
+                updated_by_id=request.user.id,
+            )
+            for wt in work_item_types
+        ]
+        ProjectIssueType.objects.bulk_create(
+            project_issue_types,
+            ignore_conflicts=True,
+        )
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class WorkspaceDefaultWorkItemTypeEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def post(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+
+        # If issue type is already exists
+        if not IssueType.objects.filter(
+            workspace__slug=slug,
+            is_epic=False,
+            is_default=True,
+        ).exists():
+            # Create a new default issue type
+            work_item_type = IssueType.objects.create(
+                workspace_id=workspace.id,
+                name="Task",
+                is_default=True,
+                description="Default work item type with the option to add new properties",
+                logo_props={
+                    "in_use": "icon",
+                    "icon": {"color": "#ffffff", "background_color": "#6695FF"},
+                },
+            )
+
+            # Update existing issues to use the new default issue type
+            Issue.objects.filter(workspace__slug=slug, type_id__isnull=True).update(type_id=work_item_type.id)
+
+            # for each project in the workspace, create the default work item type
+            projects = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
+            ProjectIssueType.objects.bulk_create(
+                [
+                    ProjectIssueType(
+                        project_id=project_id,
+                        issue_type_id=work_item_type.id,
+                        level=0,
+                        is_default=True,
+                        workspace_id=workspace.id,
+                    )
+                    for project_id in projects
+                ],
+                ignore_conflicts=True,
+            )
+
+            # Update existing work item templates to use the new default issue type
+            work_item_type_template_schema = {
+                "id": str(work_item_type.id),
+                "name": work_item_type.name,
+                "logo_props": work_item_type.logo_props,
+                "is_epic": work_item_type.is_epic,
+            }
+            WorkitemTemplate.objects.filter(
+                project_id__in=projects,
+                workspace__slug=slug,
+                type__exact={},
+            ).update(type=work_item_type_template_schema)
+
+        # get the workspace feature and toggle it one
+        workspace_feature = WorkspaceFeature.objects.get(workspace_id=workspace.id)
+        workspace_feature.is_work_item_types_enabled = True
+        workspace_feature.save()
+
+        # Refetch the data
+        work_item_type = IssueType.objects.filter(
+            workspace__slug=slug,
+            is_epic=False,
+            is_default=True,
+        ).annotate(
+            project_ids=Coalesce(
+                Subquery(
+                    ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
+                    .values("issue_type")
+                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                    .values("project_ids")
+                ),
+                [],
+            )
+        )
+
+        work_item_type = work_item_type.first()
+
+        # Serialize the data
+        serializer = IssueTypeSerializer(work_item_type)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class WorkspaceIssueTypeEndpoint(BaseAPIView):
@@ -40,17 +382,21 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 is_epic=False,
             )
-            .accessible_to(request.user.id, slug)
+            # .accessible_to(request.user.id, slug)
             .annotate(
                 project_ids=Coalesce(
                     ArrayAgg(
                         "project_issue_types__project_id",
                         distinct=True,
-                        filter=Q(project_issue_types__deleted_at__isnull=True),
+                        filter=Q(
+                            project_issue_types__deleted_at__isnull=True,
+                            project_issue_types__project_id__isnull=False,
+                        ),
                     ),
                     [],
                 )
             )
+            .prefetch_related("issue_type_properties")
         ).order_by("created_at")
         serializer = IssueTypeSerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

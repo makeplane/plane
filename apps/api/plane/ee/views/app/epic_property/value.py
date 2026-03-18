@@ -109,7 +109,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 workspace__slug=workspace_slug,
                 project_id=project_id,
                 id__in=property_ids,
-                issue_type__is_epic=True,
+                issue_type_properties__issue_type__is_epic=True,
                 property_type=PropertyTypeEnum.FORMULA,
             )
             if issue_property_formula_properties.count() != len(property_ids):
@@ -144,7 +144,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_id=epic_id,
                 property_id=epic_property_id,
-                property__issue_type__is_epic=True,
+                property__issue_type_properties__issue_type__is_epic=True,
             )
 
             epic_property_value = self.query_annotator(epic_property_value).values("property_id", "value")
@@ -157,7 +157,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=epic_id,
             property__is_active=True,
-            property__issue_type__is_epic=True,
+            property__issue_type_properties__issue_type__is_epic=True,
         )
 
         # Annotate the query
@@ -207,7 +207,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_id=epic_id,
-                property__issue_type__is_epic=True,
+                property__issue_type_properties__issue_type__is_epic=True,
             )
 
             # Get all epic property values
@@ -227,8 +227,8 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             epic_properties = IssueProperty.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                issue_type_id=epic_type_id,
-                issue_type__is_epic=True,
+                issue_type_properties__issue_type_id=epic_type_id,
+                issue_type_properties__issue_type__is_epic=True,
                 is_active=True,
             ).exclude(property_type=PropertyTypeEnum.FORMULA)
 
@@ -281,7 +281,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 pk=property_id,
-                issue_type__is_epic=True,
+                issue_type_properties__issue_type__is_epic=True,
             )
 
             # Check if this is a formula property (read-only)

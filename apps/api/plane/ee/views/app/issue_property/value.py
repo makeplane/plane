@@ -94,7 +94,6 @@ class IssuePropertyValueEndpoint(BaseAPIView):
     def get_formula_values(
         self,
         workspace_slug: str,
-        project_id: Union[str, UUIDField],
         work_item_id: Union[str, UUIDField],
         property_ids: Optional[list] = None,
     ) -> Optional[dict]:
@@ -107,9 +106,8 @@ class IssuePropertyValueEndpoint(BaseAPIView):
         if property_ids:
             issue_property_formula_properties = IssueProperty.objects.filter(
                 workspace__slug=workspace_slug,
-                project_id=project_id,
                 id__in=property_ids,
-                issue_type__is_epic=False,
+                issue_type_properties__issue_type__is_epic=False,
                 property_type=PropertyTypeEnum.FORMULA,
             )
             if issue_property_formula_properties.count() != len(property_ids):
@@ -129,7 +127,6 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             formula_values = (
                 self.get_formula_values(
                     workspace_slug=slug,
-                    project_id=project_id,
                     work_item_id=issue_id,
                     property_ids=[property_id],
                 )
@@ -145,7 +142,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_id=issue_id,
                 property_id=property_id,
-                property__issue_type__is_epic=False,
+                property__issue_type_properties__issue_type__is_epic=False,
             )
 
             issue_property_value = self.query_annotator(issue_property_value).values("property_id", "values")
@@ -160,7 +157,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=issue_id,
             property__is_active=True,
-            property__issue_type__is_epic=False,
+            property__issue_type_properties__issue_type__is_epic=False,
         )
 
         # Annotate the query
@@ -175,7 +172,6 @@ class IssuePropertyValueEndpoint(BaseAPIView):
         # ========== FORMULA PROPERTY ==========
         formula_values = self.get_formula_values(
             workspace_slug=slug,
-            project_id=project_id,
             work_item_id=issue_id,
         )
         if formula_values:
@@ -210,7 +206,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_id=issue_id,
-                property__issue_type__is_epic=False,
+                property__issue_type_properties__issue_type__is_epic=False,
             )
 
             # Get all issue property values
@@ -229,9 +225,8 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             # Get all issue properties (exclude formula properties)
             issue_properties = IssueProperty.objects.filter(
                 workspace__slug=slug,
-                project_id=project_id,
-                issue_type_id=issue_type_id,
-                issue_type__is_epic=False,
+                issue_type_properties__issue_type_id=issue_type_id,
+                issue_type_properties__issue_type__is_epic=False,
                 is_active=True,
             ).exclude(property_type=PropertyTypeEnum.FORMULA)
 
@@ -283,9 +278,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             # Get the issue property
             issue_property = IssueProperty.objects.get(
                 workspace__slug=slug,
-                project_id=project_id,
                 pk=property_id,
-                issue_type__is_epic=False,
             )
 
             # Check if this is a formula property (read-only)
@@ -337,7 +330,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                     issue_id=issue_id,
                     existing_values=[],
                     workspace_id=issue_property.workspace_id,
-                    project_id=issue_property.project_id,
+                    project_id=project_id,
                 )
                 # Delete the old values
                 existing_prop_queryset.filter(property_id=property_id).delete()

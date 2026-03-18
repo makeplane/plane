@@ -28,6 +28,7 @@ export enum EWorkspaceFeatures {
   IS_PI_ENABLED = "is_pi_enabled",
   IS_WIKI_ENABLED = "is_wiki_enabled",
   IS_MILESTONES_ENABLED = "is_milestones_enabled",
+  IS_WORK_ITEM_TYPES_ENABLED = "is_work_item_types_enabled",
   IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED = "is_cross_project_sub_work_items_enabled",
 }
 

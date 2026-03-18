@@ -15,8 +15,13 @@ import { enableStaticRendering } from "mobx-react";
 // plane imports
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 import type { IWorkItemFilterStore } from "@plane/shared-state";
-import { WorkItemFilterStore } from "@plane/shared-state";
-import type { IIssueTypesStore } from "@plane/types";
+import { RootWorkItemTypesStore, RootCustomPropertiesStore, WorkItemFilterStore } from "@plane/shared-state";
+import type {
+  CustomPropertyType,
+  IIssueTypesStore,
+  RootCustomPropertiesStoreSchema,
+  RootWorkItemTypesStoreSchema,
+} from "@plane/types";
 // plane web store
 import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { AnalyticsStore } from "@/plane-web/store/analytics.store";
@@ -190,8 +195,6 @@ import { ProjectMembersActivityStore } from "@/store/project-members-activity.st
 // agents
 import type { IAgentStore } from "./agent";
 import { AgentStore } from "./agent";
-// work item types
-import { IssueTypes } from "./issue-types";
 // intake type forms
 import type { IIntakeTypeFormStore } from "./intake-type-form.store";
 import { IntakeTypeFormStore } from "./intake-type-form.store";
@@ -210,6 +213,8 @@ import type { IWorkspaceSubscriptionStore } from "./subscription/subscription.st
 import { WorkspaceSubscriptionStore } from "./subscription/subscription.store";
 import type { IWorkflowsStore } from "./workflow/workflows.store";
 import { WorkflowsStore } from "./workflow/workflows.store";
+// work item types
+import { WorkItemTypeBridgeStore } from "./work-item-type-bridge";
 // relation definitions
 import type { IRelationDefinitionStore } from "./relation-definition.store";
 import { RelationDefinitionStore } from "./relation-definition.store";
@@ -291,7 +296,6 @@ export class CoreRootStore {
   workspaceMembersActivityStore: IWorkspaceMembersActivityStore;
   projectMembersActivityStore: IProjectMembersActivityStore;
   agent: IAgentStore;
-  issueTypes: IIssueTypesStore;
   intakeTypeForms: IIntakeTypeFormStore;
   intakeResponsibility: IIntakeResponsibilityStore;
   // epics
@@ -302,6 +306,10 @@ export class CoreRootStore {
   selfHostedSubscription: ISelfHostedSubscriptionStore;
   // workflows
   workflowsStore: IWorkflowsStore;
+  // work item types
+  workItemTypeBridge: IIssueTypesStore;
+  workItemTypesRootStore: RootWorkItemTypesStoreSchema;
+  customPropertiesRootStore: RootCustomPropertiesStoreSchema<CustomPropertyType>;
   // relation definitions
   relationDefinition: IRelationDefinitionStore;
 
@@ -380,7 +388,6 @@ export class CoreRootStore {
     this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this as unknown as RootStore);
     this.projectMembersActivityStore = new ProjectMembersActivityStore(this as unknown as RootStore);
     this.agent = new AgentStore(this as unknown as RootStore);
-    this.issueTypes = new IssueTypes(this as unknown as RootStore);
     this.intakeTypeForms = new IntakeTypeFormStore(this as unknown as RootStore);
     this.intakeResponsibility = new IntakeResponsibilityStore(this as unknown as RootStore);
     // epics
@@ -391,6 +398,19 @@ export class CoreRootStore {
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
     // workflows
     this.workflowsStore = new WorkflowsStore(this as unknown as RootStore);
+    // work item types
+    this.workItemTypesRootStore = new RootWorkItemTypesStore({
+      getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
+      getProjectRoleByWorkspaceSlugAndProjectId: this.user.permission.getProjectRoleByWorkspaceSlugAndProjectId.bind(
+        this.user.permission
+      ),
+      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+    });
+    this.customPropertiesRootStore = new RootCustomPropertiesStore<CustomPropertyType>({
+      getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
+      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+    });
+    this.workItemTypeBridge = new WorkItemTypeBridgeStore(this as unknown as RootStore);
     // relation definitions
     this.relationDefinition = new RelationDefinitionStore();
   }
@@ -472,7 +492,6 @@ export class CoreRootStore {
     this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this as unknown as RootStore);
     this.projectMembersActivityStore = new ProjectMembersActivityStore(this as unknown as RootStore);
     this.agent = new AgentStore(this as unknown as RootStore);
-    this.issueTypes = new IssueTypes(this as unknown as RootStore);
     this.intakeTypeForms = new IntakeTypeFormStore(this as unknown as RootStore);
     this.intakeResponsibility = new IntakeResponsibilityStore(this as unknown as RootStore);
     // epics
@@ -483,6 +502,19 @@ export class CoreRootStore {
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
     // workflows
     this.workflowsStore = new WorkflowsStore(this as unknown as RootStore);
+    // work item types
+    this.workItemTypesRootStore = new RootWorkItemTypesStore({
+      getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
+      getProjectRoleByWorkspaceSlugAndProjectId: this.user.permission.getProjectRoleByWorkspaceSlugAndProjectId.bind(
+        this.user.permission
+      ),
+      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+    });
+    this.customPropertiesRootStore = new RootCustomPropertiesStore<CustomPropertyType>({
+      getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
+      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+    });
+    this.workItemTypeBridge = new WorkItemTypeBridgeStore(this as unknown as RootStore);
     // relation definitions
     this.relationDefinition = new RelationDefinitionStore();
   }

@@ -23,6 +23,11 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
   const isPiDedupeEnabled = store.aiFeatureFlags.getAiFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.AI_DEDUPE, false);
   const isPlaneRunnerEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PLANE_RUNNER, false);
   const isReleasesEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES, false);
+  const isWorkItemTypesEnabled = store.featureFlags.getFeatureFlag(
+    workspaceSlug,
+    E_FEATURE_FLAGS.WORKSPACE_WORK_ITEM_TYPES,
+    false
+  );
   const isCustomRelationsEnabled = store.featureFlags.getFeatureFlag(
     workspaceSlug,
     E_FEATURE_FLAGS.CUSTOM_RELATIONS,
@@ -41,6 +46,8 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
       return isReleasesEnabled;
     case "relations":
       return isCustomRelationsEnabled;
+    case "work_item_types":
+      return isWorkItemTypesEnabled;
     default:
       return true;
   }

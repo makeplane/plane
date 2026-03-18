@@ -16,12 +16,13 @@ import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import type { EIssuePropertyValueError, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type TNumberValueInputProps = {
-  propertyDetail: Partial<TIssueProperty<EIssuePropertyType.DECIMAL>>;
+  id: string | undefined;
+  displayName: string | undefined;
   value: string[];
   variant: TPropertyValueVariant;
   numberInputSize?: "xs" | "sm" | "md";
@@ -33,7 +34,8 @@ type TNumberValueInputProps = {
 
 export const NumberValueInput = observer(function NumberValueInput(props: TNumberValueInputProps) {
   const {
-    propertyDetail,
+    id,
+    displayName,
     value,
     variant,
     numberInputSize = "sm",
@@ -68,7 +70,7 @@ export const NumberValueInput = observer(function NumberValueInput(props: TNumbe
   return (
     <>
       <Input
-        id={`number_input_${propertyDetail.id}`}
+        id={`number_input_${id}`}
         type="number"
         value={data?.[0] ?? ""}
         onChange={handleChange}
@@ -96,7 +98,7 @@ export const NumberValueInput = observer(function NumberValueInput(props: TNumbe
       />
       {Boolean(error) && (
         <span className="text-caption-md-medium text-danger-primary">
-          {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
+          {error === "REQUIRED" ? t("common.errors.entity_required", { entity: displayName }) : error}
         </span>
       )}
     </>

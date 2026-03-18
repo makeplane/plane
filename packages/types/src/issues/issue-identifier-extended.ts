@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { IIssueType } from "../work-item-types/work-item-types";
+import type { IIssueType } from "../work-item-types-legacy/work-item-types";
 import type { TIssueIdentifierProps, TIssueTypeIdentifier as TIssueTypeIdentifierBase } from "./issue-identifier";
 import type { EWorkItemTypeEntity } from "../work-item-types";
 
