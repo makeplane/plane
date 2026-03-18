@@ -50,6 +50,7 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
   // react-popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
+    strategy: "fixed",
   });
   // translation
   const { t } = useTranslation();

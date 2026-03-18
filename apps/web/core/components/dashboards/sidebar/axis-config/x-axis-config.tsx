@@ -120,7 +120,7 @@ export function WidgetConfigSidebarXAxisConfig(props: Props) {
           render={({ field: { value, onChange } }) => (
             <WidgetPropertySelect
               onChange={(val) => handleGroupByChange(val, onChange)}
-              placeholder={t("dashboards.widget.chart_types.table_chart.rows_placeholder")}
+              placeholder={t("dashboards.widget.common.add_property")}
               title={t("dashboards.widget.chart_types.table_chart.rows")}
               value={value}
             />

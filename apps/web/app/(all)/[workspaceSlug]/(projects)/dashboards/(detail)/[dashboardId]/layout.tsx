@@ -69,7 +69,6 @@ export default observer(function WorkspaceDashboardDetailsLayout(props: Route.Co
       labelIds={getWorkspaceLabelIds(workspaceSlug)}
       projectIds={joinedProjectIds}
       updateFilters={updateFilters}
-      showOnMount
       workspaceSlug={workspaceSlug ?? ""}
     >
       <AppHeader header={<WorkspaceDashboardDetailsHeader workspaceSlug={workspaceSlug} dashboardId={dashboardId} />} />

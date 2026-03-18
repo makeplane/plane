@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { set } from "lodash-es";
+import { isEqual, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane types
@@ -208,10 +208,17 @@ export class DashboardInstance implements IDashboardInstance {
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
     const originalPage = { ...this.asJSON };
+    const sourceChanged =
+      ("filters" in data && !isEqual(data.filters, originalPage.filters)) ||
+      ("project_ids" in data && !isEqual(data.project_ids, originalPage.project_ids));
     try {
       // optimistically update
       this.mutateProperties(data);
       const res = await this.helpers.actions.update(data);
+
+      if (sourceChanged) {
+        this.widgetsStore.refetchAllWidgetData();
+      }
       return res;
     } catch (error) {
       // revert changes
