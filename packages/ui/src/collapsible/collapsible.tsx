@@ -39,7 +39,7 @@ export function Collapsible(props: TCollapsibleProps) {
 
   return (
     <div className={className}>
-      <button ref={buttonRef} type="button" className={buttonClassName} onClick={handleOnClick}>
+      <button ref={buttonRef} type="button" className={buttonClassName} onClick={handleOnClick} aria-expanded={localIsOpen}>
         {title}
       </button>
       {localIsOpen && (

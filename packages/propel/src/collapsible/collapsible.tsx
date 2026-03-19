@@ -47,7 +47,7 @@ const useCollapsible = () => {
 
 // Components
 function Root({ children, className, isOpen: controlledIsOpen, onToggle, defaultOpen }: RootProps) {
-  const [localIsOpen, setLocalIsOpen] = useState<boolean>(controlledIsOpen || defaultOpen || false);
+  const [localIsOpen, setLocalIsOpen] = useState<boolean>(controlledIsOpen !== undefined ? controlledIsOpen : !!defaultOpen);
 
   useEffect(() => {
     if (controlledIsOpen !== undefined) {
