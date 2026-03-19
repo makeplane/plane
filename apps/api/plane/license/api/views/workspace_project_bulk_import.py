@@ -194,6 +194,12 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                         existing_project.project_lead_id = project_leader_id
                         existing_project.updated_by = request.user
                         existing_project.save(update_fields=["project_lead_id", "updated_by"])
+                        # Ensure leader has project access with admin role
+                        ProjectMember.objects.update_or_create(
+                            project=existing_project,
+                            member_id=project_leader_id,
+                            defaults={"role": ROLE.ADMIN.value},
+                        )
                     for member_user, role in valid_members:
                         ProjectMember.objects.get_or_create(
                             project=existing_project,
@@ -269,6 +275,15 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                             defaults={"role": ROLE.ADMIN.value},
                         )
                         already_added.add(wm.member_id)
+
+                    # Ensure project leader is an admin member (if not already added above)
+                    if project_leader_id and project_leader_id not in already_added:
+                        ProjectMember.objects.get_or_create(
+                            project=project,
+                            member_id=project_leader_id,
+                            defaults={"role": ROLE.ADMIN.value},
+                        )
+                        already_added.add(project_leader_id)
 
                     # Add imported members (skip if already added above)
                     for member_user, role in valid_members:
