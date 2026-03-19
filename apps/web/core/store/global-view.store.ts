@@ -70,7 +70,12 @@ export class GlobalViewStore implements IGlobalViewStore {
       const view = this.globalViewMap[viewId];
       return view && view.workspace === currentWorkspace.id;
     });
-    return workspaceViewsList;
+    // Default views (Daily Status) appear first
+    return workspaceViewsList.sort((a, b) => {
+      const aDefault = this.globalViewMap[a]?.is_default ? 0 : 1;
+      const bDefault = this.globalViewMap[b]?.is_default ? 0 : 1;
+      return aDefault - bDefault;
+    });
   }
 
   /**

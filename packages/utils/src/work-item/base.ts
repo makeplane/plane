@@ -283,6 +283,7 @@ export const getComputedDisplayFilters = (
     sub_group_by: filters?.sub_group_by || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
+    show_archived: filters?.show_archived ?? true,
   };
 };
 
@@ -318,6 +319,7 @@ export const getComputedDisplayProperties = (
   completed_date: displayProperties?.completed_date ?? false,
   reference_link: displayProperties?.reference_link ?? false,
   total_log_time: displayProperties?.total_log_time ?? false,
+  project_lead: displayProperties?.project_lead ?? false,
 });
 
 

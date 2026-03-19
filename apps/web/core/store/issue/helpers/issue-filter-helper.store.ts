@@ -122,6 +122,9 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     if (ENABLE_ISSUE_DEPENDENCIES && displayFilters?.layout === EIssueLayoutTypes.GANTT)
       issueFiltersParams["expand"] = "issue_relation,issue_related";
 
+    // Pass show_archived to API as include_archived
+    if (displayFilters?.show_archived) issueFiltersParams.include_archived = true;
+
     return issueFiltersParams;
   };
 

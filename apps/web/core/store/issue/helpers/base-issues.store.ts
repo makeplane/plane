@@ -1745,7 +1745,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
-    const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
+    // Determine archive filter type: "all" when show_archived is enabled (includes both), else standard filter
+    const showArchived = this.issueFilterStore?.issueFilters?.displayFilters?.show_archived;
+    const archiveType = this.isArchived ? "archived" : showArchived ? "all" : "un-archived";
+    const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, archiveType);
     const array = orderBy(issues, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
 
     switch (key) {

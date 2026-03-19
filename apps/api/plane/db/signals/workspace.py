@@ -40,6 +40,7 @@ DEFAULT_VIEW_DISPLAY_PROPERTIES = {
     # CE extended properties
     "department_name": True,
     "project_name": True,
+    "project_lead": True,
     "bank_wide_project": True,
     "progress_tracking": True,
     "completed_date": True,
@@ -64,10 +65,7 @@ def create_default_view_on_workspace_creation(sender, instance, created, **kwarg
         query={},
         display_filters=DEFAULT_VIEW_DISPLAY_FILTERS,
         display_properties=DEFAULT_VIEW_DISPLAY_PROPERTIES,
-        rich_filters={
-            "start_date": ["today;after_including;"],
-            "target_date": ["today;before_including;"],
-        },
+        rich_filters={},
         access=1,  # Public
         is_default=True,
         is_locked=True,

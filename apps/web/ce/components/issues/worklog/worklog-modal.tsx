@@ -13,6 +13,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkLog } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { extractApiError } from "./utils/extract-api-error";
 import { getMinAllowedDate } from "./utils/worklog-date-utils";
@@ -35,6 +36,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
   const { isOpen, onClose, workspaceSlug, projectId, issueId, existingWorklog } = props;
   const { t } = useTranslation();
   const store = useWorklog();
+  const { fetchActivities } = useIssueDetail();
 
   // form state
   const [loggedAt, setLoggedAt] = useState(todayDate());
@@ -97,6 +99,8 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
           });
           setToast({ type: TOAST_TYPE.SUCCESS, title: t("worklog.logged"), message: t("worklog.logged_successfully") });
         }
+        // Refresh activity feed to pick up audit trail created by backend Celery task
+        void fetchActivities(workspaceSlug, projectId, issueId);
         onClose();
       } catch (err: unknown) {
         setToast({

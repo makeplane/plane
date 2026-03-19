@@ -3434,6 +3434,7 @@ export default {
     columns: {
       department_name: "Department",
       project_name: "Project",
+      project_lead: "Team/Project Lead",
       bank_wide_project: "Bank-wide Project",
       progress_tracking: "Progress Tracking",
       completed_date: "Completed Date",

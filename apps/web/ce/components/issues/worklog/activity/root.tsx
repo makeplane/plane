@@ -14,6 +14,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueActivityComment } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { extractApiError } from "../utils/extract-api-error";
@@ -33,6 +34,7 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   const { activityComment, workspaceSlug, projectId, issueId, ends } = props;
   const { t } = useTranslation();
   const store = useWorklog();
+  const { fetchActivities } = useIssueDetail();
   const { allowPermissions } = useUserPermissions();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -62,6 +64,8 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
     if (!worklog) return;
     try {
       await store.deleteWorklog(workspaceSlug, projectId, issueId, worklog.id, reason);
+      // Refresh activity feed to pick up audit trail created by backend Celery task
+      void fetchActivities(workspaceSlug, projectId, issueId);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("worklog.deleted"), message: t("worklog.deleted_successfully") });
     } catch (err: unknown) {
       setToast({

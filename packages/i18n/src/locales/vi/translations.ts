@@ -3430,6 +3430,7 @@ export default {
     columns: {
       department_name: "Phòng ban",
       project_name: "Dự án",
+      project_lead: "Trưởng nhóm/dự án",
       bank_wide_project: "Dự án toàn hàng",
       progress_tracking: "Theo dõi tiến độ",
       completed_date: "Ngày hoàn thành",
