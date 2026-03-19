@@ -4,8 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -84,13 +83,17 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
     [issueCrudState]
   );
 
-  const handleFetchSubIssues = useCallback(async () => {
+  const handleFetchSubIssues = useCallback(() => {
     const currentSubIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
     if (!currentSubIssueHelpers.issue_visibility.includes(parentIssueId)) {
       try {
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-        setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+        void subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+        // Guard: only add to visibility if not already present — avoids toggle-out on double-invoke (React StrictMode)
+        const afterFetchHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
+        if (!afterFetchHelpers.issue_visibility.includes(parentIssueId)) {
+          setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+        }
       } catch (error) {
         console.error("Error fetching sub-work items:", error);
       } finally {
@@ -100,7 +103,7 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
   }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
 
   useEffect(() => {
-    handleFetchSubIssues();
+    void handleFetchSubIssues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentIssueId]);
 
