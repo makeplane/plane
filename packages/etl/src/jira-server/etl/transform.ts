@@ -396,14 +396,14 @@ export const transformDefaultPropertyValues = (
 
   // Fix Versions
   if (issue.fields.fixVersions && Array.isArray(issue.fields.fixVersions)) {
-    const fixVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "fix-version"]);
+    const fixVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "fix-version"], "-");
     propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version) => {
       const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
       const hashedName = createHashForString(versionNameInput);
 
       return {
         external_source: source,
-        external_id: `${projectId}_${resourceId}_${version.id}`,
+        external_id: buildExtenalId([projectId, resourceId, version.id]),
         value: `${resourceId}_${hashedName}`,
       };
     });
@@ -411,14 +411,14 @@ export const transformDefaultPropertyValues = (
 
   // Affected Versions
   if (issue.fields.versions && Array.isArray(issue.fields.versions)) {
-    const affectedVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "affected-version"]);
+    const affectedVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "affected-version"], "-");
     const versions = issue.fields.versions as { id?: string; name?: string }[];
     propertyValuesPayload[affectedVersionExternalId] = versions.map((version) => {
       const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
       const hashedName = createHashForString(versionNameInput);
       return {
         external_source: source,
-        external_id: `${projectId}_${resourceId}_${version.id}`,
+        external_id: buildExtenalId([projectId, resourceId, version.id]),
         value: `${resourceId}_${hashedName}`,
       };
     });
@@ -426,7 +426,7 @@ export const transformDefaultPropertyValues = (
 
   // Reporter
   if (issue.fields.reporter) {
-    const reporterExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "reporter"]);
+    const reporterExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "reporter"], "-");
     propertyValuesPayload[reporterExternalId] = [
       {
         external_source: source,
@@ -438,7 +438,7 @@ export const transformDefaultPropertyValues = (
 
   // Original Estimate
   if (issue.fields.timeoriginalestimate) {
-    const originalEstimateExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "original_estimate"]);
+    const originalEstimateExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "original_estimate"], "-");
     const estimate = Number(issue.fields.timeoriginalestimate);
     propertyValuesPayload[originalEstimateExternalId] = [
       {
@@ -451,7 +451,8 @@ export const transformDefaultPropertyValues = (
   // Resolution State
   if (issue.fields.resolution) {
     const resolutionProperty = planeIssueProperties.find(
-      (property) => property.external_id === buildExtenalId([resourceId, projectId, issueTypeId, "resolution_state"])
+      (property) =>
+        property.external_id === buildExtenalId([resourceId, projectId, issueTypeId, "resolution_state"], "-")
     );
     const resolutionExternalId = resolutionProperty?.external_id;
 
@@ -496,7 +497,7 @@ export const transformDefaultPropertyValues = (
 
   // Resolution as Resolution Date
   if (issue.fields.resolutiondate) {
-    const resolutionDateExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "resolution"]);
+    const resolutionDateExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "resolution"], "-");
     const formattedDate = getFormattedDate(issue.fields.resolutiondate);
     if (formattedDate) {
       propertyValuesPayload[resolutionDateExternalId] = [
