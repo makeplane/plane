@@ -11,6 +11,8 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   IDepartmentBulkImportRequest,
   IDepartmentBulkImportResponse,
+  IDepartmentBulkLinkRequest,
+  IDepartmentBulkLinkResponse,
   IAutoJoinResult,
   IRejoinAllResult,
   IInstanceDepartment,
@@ -40,7 +42,9 @@ export interface IInstanceDepartmentStore {
   linkWorkspace: (id: string, workspaceId: string) => Promise<ILinkWorkspaceResult>;
   unlinkWorkspace: (id: string) => Promise<void>;
   exportDepartments: () => void;
+  exportWorkspaceLinked: () => void;
   bulkImport: (data: IDepartmentBulkImportRequest) => Promise<IDepartmentBulkImportResponse>;
+  bulkLinkWorkspace: (data: IDepartmentBulkLinkRequest) => Promise<IDepartmentBulkLinkResponse>;
   autoJoin: (id: string, mode: TAutoJoinMode) => Promise<IAutoJoinResult>;
   rejoinAll: (mode: TAutoJoinMode) => Promise<IRejoinAllResult>;
 }
@@ -66,7 +70,9 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       linkWorkspace: action,
       unlinkWorkspace: action,
       exportDepartments: action,
+      exportWorkspaceLinked: action,
       bulkImport: action,
+      bulkLinkWorkspace: action,
       autoJoin: action,
       rejoinAll: action,
     });
@@ -200,6 +206,28 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
     window.open(`${API_BASE_URL}/api/instances/departments/export/`);
   };
 
+  exportWorkspaceLinked = (): void => {
+    void import("xlsx").then((XLSX) => {
+      const flatten = (nodes: IInstanceDepartment[]): IInstanceDepartment[] =>
+        nodes.flatMap((n) => [n, ...flatten(n.children ?? [])]);
+
+      const rows = flatten(this.tree)
+        .filter((d) => d.linked_workspace_detail !== null)
+        .map((d) => ({
+          workspace_slug: d.linked_workspace_detail!.slug,
+          code: d.code,
+        }));
+
+      const ws = XLSX.utils.json_to_sheet(rows, { header: ["workspace_slug", "code"] });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Workspace Linked");
+
+      const timestamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+      XLSX.writeFile(wb, `workspace-linked-departments_${timestamp}.xlsx`);
+      return;
+    });
+  };
+
   autoJoin = async (id: string, mode: TAutoJoinMode): Promise<IAutoJoinResult> => {
     try {
       return await this.service.autoJoin(id, mode);
@@ -227,6 +255,15 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       return result;
     } catch (error) {
       console.error("Error bulk importing departments", error);
+      throw error;
+    }
+  };
+
+  bulkLinkWorkspace = async (data: IDepartmentBulkLinkRequest): Promise<IDepartmentBulkLinkResponse> => {
+    try {
+      return await this.service.bulkLinkWorkspace(data);
+    } catch (error) {
+      console.error("Error bulk linking departments to workspaces", error);
       throw error;
     }
   };

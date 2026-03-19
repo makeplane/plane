@@ -48,15 +48,15 @@ def _validate_row(row, row_number, existing_short_names, batch_short_names, batc
             # Department with this short_name already exists — silently skip (not an error)
             return _ALREADY_EXISTS
 
-    dept_code = str(row.get("dept_code", "")).strip()
+    dept_code = str(row.get("dept_code") or "").strip()
     if dept_code and not DEPT_CODE_RE.match(dept_code):
         return "dept_code must be exactly 4 digits"
 
-    dept_type = str(row.get("dept_type", "")).strip()
+    dept_type = str(row.get("dept_type") or "").strip()
     if dept_type not in VALID_DEPT_TYPES:
         return f"dept_type must be HO, BRX, OSR, or empty (got '{dept_type}')"
 
-    parent_code = str(row.get("parent_code", "")).strip()
+    parent_code = str(row.get("parent_code") or "").strip()
     if parent_code:
         # parent_code must exist in DB or in same batch
         exists_in_db = Department.objects.filter(code=parent_code, deleted_at__isnull=True).exists()
@@ -200,13 +200,9 @@ def _resolve_and_create(sorted_rows, skipped_from_sort):
             created.append(dept)
         except IntegrityError as e:
             error_str = str(e)
-            if "short_name" in error_str:
-                reason = f"short_name '{short_name}' conflicts with existing record"
-            else:
-                reason = "database constraint violation"
-            skipped.append({"row": row, "reason": reason})
-        except Exception:
-            skipped.append({"row": row, "reason": "unexpected error creating department"})
+            skipped.append({"row": row, "reason": f"db error: {error_str}"})
+        except Exception as e:
+            skipped.append({"row": row, "reason": f"unexpected error: {e}"})
 
     return created, skipped
 

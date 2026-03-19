@@ -11,6 +11,7 @@ from plane.license.api.views.department import (
     RejoinAllEndpoint,
 )
 from plane.license.api.views.department_bulk_import import DepartmentBulkImportView
+from plane.license.api.views.department_bulk_link import DepartmentBulkLinkWorkspaceView
 
 urlpatterns = [
     path(
@@ -33,6 +34,11 @@ urlpatterns = [
         "departments/bulk-import/",
         DepartmentBulkImportView.as_view(http_method_names=["post"]),
         name="instance-department-bulk-import",
+    ),
+    path(
+        "departments/bulk-link-workspace/",
+        DepartmentBulkLinkWorkspaceView.as_view(http_method_names=["post"]),
+        name="instance-department-bulk-link-workspace",
     ),
     path(
         "departments/rejoin-all/",

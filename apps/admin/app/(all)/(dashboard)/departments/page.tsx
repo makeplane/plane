@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { Download, Plus, Upload, Loader as LoaderIcon, RefreshCw } from "lucide-react";
+import { Download, Plus, Upload, Loader as LoaderIcon, RefreshCw, Link } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -19,14 +19,16 @@ import { DepartmentTreeItem } from "./components/department-tree-item";
 import { DepartmentFormModal } from "./components/department-form-modal";
 import { AutoJoinModal } from "./components/auto-join-modal";
 import { RejoinAllModal } from "./components/rejoin-all-modal";
+import { BulkLinkModal } from "./components/bulk-link-modal";
 
 const DepartmentsPage = observer(function DepartmentsPage() {
-  const { tree, loader, fetchTree, deleteDepartment, exportDepartments } = useInstanceDepartment();
+  const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked } = useInstanceDepartment();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [editDept, setEditDept] = useState<IInstanceDepartment | null>(null);
   const [autoJoinDept, setAutoJoinDept] = useState<IInstanceDepartment | null>(null);
   const [rejoinModalOpen, setRejoinModalOpen] = useState(false);
+  const [bulkLinkOpen, setBulkLinkOpen] = useState(false);
 
   useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
 
@@ -68,15 +70,23 @@ const DepartmentsPage = observer(function DepartmentsPage() {
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => exportDepartments()}>
               <Download className="w-4 h-4" />
-              Export
+              Export Dept
             </Button>
             <Button variant="outline" size="sm" onClick={() => router.push("/departments/import")}>
               <Upload className="w-4 h-4" />
-              Import
+              Import Dept
             </Button>
             <Button variant="outline" size="sm" onClick={() => setRejoinModalOpen(true)}>
               <RefreshCw className="w-4 h-4" />
               Rejoin
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setBulkLinkOpen(true)}>
+              <Link className="w-4 h-4" />
+              Bulk Linked
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => exportWorkspaceLinked()}>
+              <Download className="w-4 h-4" />
+              Export Workspace Linked
             </Button>
             <Button variant="primary" size="sm" onClick={() => { setEditDept(null); setModalOpen(true); }}>
               <Plus className="w-4 h-4" />
@@ -117,6 +127,7 @@ const DepartmentsPage = observer(function DepartmentsPage() {
         onClose={() => setAutoJoinDept(null)}
       />
       <RejoinAllModal open={rejoinModalOpen} onClose={() => setRejoinModalOpen(false)} />
+      <BulkLinkModal open={bulkLinkOpen} onClose={() => setBulkLinkOpen(false)} />
     </PageWrapper>
   );
 });
