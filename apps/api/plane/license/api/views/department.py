@@ -21,15 +21,37 @@ from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
 
 
-def _dept_to_row(dept):
-    """Convert a Department instance to a flat export dict."""
+def _build_export_code_map(departments):
+    """Build a map from dept.pk → export code.
+
+    Departments without a stored code get an auto-generated sequential code
+    (e.g. DEPT0001) so that parent_code references are always resolvable on
+    re-import and the hierarchical tree is preserved.
+    """
+    code_map = {}
+    counter = 1
+    for dept in departments:
+        if dept.code:
+            code_map[str(dept.pk)] = dept.code
+        else:
+            code_map[str(dept.pk)] = f"DEPT{counter:04d}"
+            counter += 1
+    return code_map
+
+
+def _dept_to_row(dept, code_map):
+    """Convert a Department instance to a flat export dict.
+
+    Uses code_map so that departments without a stored code still produce a
+    stable parent_code reference for round-trip import.
+    """
     return {
         "name": dept.name,
-        "code": dept.code or "",
+        "code": code_map.get(str(dept.pk), dept.code or ""),
         "short_name": dept.short_name or "",
         "dept_code": dept.dept_code or "",
         "dept_type": dept.dept_type or "",
-        "parent_code": dept.parent.code if dept.parent_id and dept.parent else "",
+        "parent_code": code_map.get(str(dept.parent_id), "") if dept.parent_id else "",
         "manager_email": dept.manager.email if dept.manager_id and dept.manager else "",
         "sort_order": dept.sort_order,
         "is_active": dept.is_active,
@@ -201,7 +223,9 @@ class DepartmentExportView(BaseAPIView):
             .select_related("parent", "manager")
             .order_by("level", "sort_order", "name")
         )
-        rows = [_dept_to_row(d) for d in departments]
+        departments = list(departments)
+        code_map = _build_export_code_map(departments)
+        rows = [_dept_to_row(d, code_map) for d in departments]
         return _xlsx_response(rows)
 
 

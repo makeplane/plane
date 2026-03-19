@@ -13,6 +13,7 @@ import { Dialog, EDialogWidth } from "@plane/propel/dialog";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IInstanceStaffBulkImportResponse } from "@plane/services";
 import { useInstanceStaff } from "@/hooks/store";
+import { downloadCsvTemplate, downloadXlsxTemplate, toCSVFile } from "./staff-import-utils";
 
 type Props = {
   open: boolean;
@@ -29,18 +30,6 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<IInstanceStaffBulkImportResponse | null>(null);
 
-  const handleDownloadTemplate = () => {
-    const headers = "staff_id,first_name,last_name,display_name,department_code,position,job_grade,phone,date_of_joining";
-    const sample = "EMP001,John,Doe,Johnny,DEPT01,Engineer,G5,0901234567,2025-01-15";
-    const blob = new Blob([`${headers}\n${sample}\n`], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "staff-import-template.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   const handleClose = () => {
     setFile(null);
     setDefaultPassword("");
@@ -54,7 +43,9 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
     if (!file || !defaultPassword) return;
     setIsSubmitting(true);
     try {
-      const data = await bulkImport(file, defaultPassword, skipExisting, updateExisting);
+      // Convert Excel files (any extension) to CSV before sending to backend
+      const csvFile = await toCSVFile(file);
+      const data = await bulkImport(csvFile, defaultPassword, skipExisting, updateExisting);
       setResult(data);
       if (data.created > 0 || data.updated > 0) {
         setToast({ type: TOAST_TYPE.SUCCESS, title: `${data.created} created, ${data.updated} updated` });
@@ -78,33 +69,43 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
 
           <div className="rounded-md border border-subtle p-3 text-13 text-tertiary space-y-1">
             <p>
-              CSV columns:{" "}
+              Columns:{" "}
               <code className="text-primary">
                 staff_id, first_name, last_name, display_name, department_code, position, job_grade, phone,
                 date_of_joining
               </code>
             </p>
-            <p>Max 500 rows. Default password used for new user accounts.</p>
+            <p>Max 500 rows. Supports CSV and Excel formats (including non-standard extensions). Default password used for new accounts.</p>
           </div>
 
-          {/* File upload */}
+          {/* File upload — accepts any extension; Excel detected by content */}
           <input
             ref={fileInputRef}
             type="file"
-            accept=".csv"
+            accept="*"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             className="hidden"
           />
           <div className="flex flex-col gap-0.5">
-            <span className="text-13 font-medium">CSV file</span>
-            <button
-              type="button"
-              onClick={handleDownloadTemplate}
-              className="flex items-center gap-1 text-xs text-custom-primary-100 hover:underline w-fit"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Download template
-            </button>
+            <span className="text-13 font-medium">CSV or Excel file</span>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={downloadCsvTemplate}
+                className="flex items-center gap-1 text-xs text-custom-primary-100 hover:underline w-fit"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Template (.csv)
+              </button>
+              <button
+                type="button"
+                onClick={() => void downloadXlsxTemplate()}
+                className="flex items-center gap-1 text-xs text-custom-primary-100 hover:underline w-fit"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Template (.xlsx)
+              </button>
+            </div>
           </div>
           <button
             type="button"
@@ -112,7 +113,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
             className="flex items-center gap-3 rounded-md border border-dashed border-subtle p-5 w-full hover:bg-layer-2 transition-colors"
           >
             <Upload className="h-5 w-5 text-tertiary" />
-            <span className="text-13">{file ? file.name : "Click to select a CSV file"}</span>
+            <span className="text-13">{file ? file.name : "Click to select a file (CSV or Excel)"}</span>
           </button>
 
           {/* Default password */}

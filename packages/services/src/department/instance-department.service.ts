@@ -94,6 +94,34 @@ export interface IRejoinAllResult {
   total: number;
 }
 
+export interface IDepartmentBulkLinkRow {
+  code: string;
+  workspace_slug: string;
+}
+
+export interface IDepartmentBulkLinkRequest {
+  links: IDepartmentBulkLinkRow[];
+}
+
+export interface IDepartmentBulkLinkLinked {
+  code: string;
+  name: string;
+  workspace: string;
+}
+
+export interface IDepartmentBulkLinkSkipped {
+  row: number;
+  code?: string;
+  reason: string;
+}
+
+export interface IDepartmentBulkLinkResponse {
+  linked: IDepartmentBulkLinkLinked[];
+  skipped: IDepartmentBulkLinkSkipped[];
+  total_linked: number;
+  total_skipped: number;
+}
+
 export class InstanceDepartmentService extends APIService {
   constructor(BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
@@ -190,6 +218,14 @@ export class InstanceDepartmentService extends APIService {
   async bulkImport(data: IDepartmentBulkImportRequest): Promise<IDepartmentBulkImportResponse> {
     return this.post("/api/instances/departments/bulk-import/", data)
       .then((res) => res?.data as IDepartmentBulkImportResponse)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkLinkWorkspace(data: IDepartmentBulkLinkRequest): Promise<IDepartmentBulkLinkResponse> {
+    return this.post("/api/instances/departments/bulk-link-workspace/", data)
+      .then((res) => res?.data as IDepartmentBulkLinkResponse)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });
