@@ -155,7 +155,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
       ? "absolute z-[25] flex flex-col overflow-hidden rounded-sm border border-subtle bg-surface-1 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
-      "top-0 bottom-0 right-0 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
+      "top-0 bottom-0 right-0 w-full lg:w-[1024px] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
       "inset-0 m-4 absolute": peekMode === "full-screen",
     }
