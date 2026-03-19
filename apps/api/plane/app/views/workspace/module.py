@@ -3,7 +3,10 @@
 # See the LICENSE file for details.
 
 # Django imports
-from django.db.models import Prefetch, Q, Count
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Prefetch, Q, Count, UUIDField, Value
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models.functions import Coalesce
 
 # Third party modules
 from rest_framework import status
@@ -102,6 +105,19 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
+                )
+            )
+            .annotate(
+                member_ids=Coalesce(
+                    ArrayAgg(
+                        "members__id",
+                        distinct=True,
+                        filter=Q(
+                            members__id__isnull=False,
+                            modulemember__deleted_at__isnull=True,
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))

@@ -33,6 +33,7 @@ class ModuleWriteSerializer(BaseSerializer):
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
+        allow_null=True,
     )
 
     class Meta:
