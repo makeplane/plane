@@ -238,11 +238,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         title: t("success"),
         message: `${is_draft_issue ? t("draft_created") : t("issue_created_successfully")} `,
         actionItems: !is_draft_issue && response?.project_id && (
-          <CreateIssueToastActionItems
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={response?.project_id}
-            issueId={response.id}
-          />
+          <CreateIssueToastActionItems workspaceSlug={workspaceSlug.toString()} issueId={response.id} />
         ),
       });
       if (!createMore) handleClose();
@@ -316,11 +312,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         message: t("issue_updated_successfully"),
         actionItems:
           showActionItemsOnUpdate && payload.project_id ? (
-            <CreateIssueToastActionItems
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={payload.project_id}
-              issueId={data.id}
-            />
+            <CreateIssueToastActionItems workspaceSlug={workspaceSlug.toString()} issueId={data.id} />
           ) : undefined,
       });
       handleClose();
