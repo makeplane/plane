@@ -182,6 +182,7 @@ export class IssueStore implements IIssueStore {
       updated_at: issue?.updated_at,
       start_date: issue?.start_date,
       start_time: issue?.start_time,
+      opposition_team: issue?.opposition_team,
       level: issue?.level,
       sport: issue?.sport,
       program: issue?.program,

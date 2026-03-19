@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 // import { CustomMenu } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { getDate, getTabIndex, isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
 // components
 // import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
@@ -61,6 +61,11 @@ type TIssueDefaultPropertiesProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
+type TOppositionTeamOption = {
+  name: string;
+  logo: string;
+};
+
 export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
   const {
     control,
@@ -69,6 +74,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     workspaceSlug,
     selectedParentIssue,
     startDate,
+    startTime,
     targetDate,
     parentId,
     isDraft,
@@ -98,31 +104,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   const maxDate = new Date();
   // const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
-
-  // --- LOCK PROPERTIES IF START DATE + START TIME IS IN THE PAST ----------------
-const eventDateTime = (() => {
-  const sd = control._formValues?.start_date;
-  const st = control._formValues?.start_time;
-
-  if (!sd || !st) return null;
-
-  // st is ISO: "2025-12-08T14:46:00Z"
-  const time = new Date(st);
-
-  // sd is "YYYY-MM-DD"
-  const date = new Date(sd);
-
-  date.setUTCHours(time.getUTCHours());
-  date.setUTCMinutes(time.getUTCMinutes());
-  date.setUTCSeconds(time.getUTCSeconds());
-
-  return date;
-})();
-
-const isPastEvent = eventDateTime ? eventDateTime < new Date() : false;
-
-// final disabled flag for all fields
-const isLocked = isPastEvent;
+  const isDateTimeLocked = isDateTimePast(startDate, startTime);
 
 
   return (
@@ -171,7 +153,6 @@ const isLocked = isPastEvent;
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <YearRangeDropdown
-              // disabled={isLocked}
               value={value}
               onChange={(year) => {
                 onChange(year);
@@ -190,7 +171,6 @@ const isLocked = isPastEvent;
        render={({ field: {value, onChange}}) => (
         <div className="h-7">
           <CategoryDropdown
-            //  disabled={isLocked}
              value={value}
              onChange={(category) => {
               onChange(category);
@@ -209,7 +189,6 @@ const isLocked = isPastEvent;
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <MemberDropdown
-              // disabled={isLocked}
               projectId={projectId ?? undefined}
               value={value}
               onChange={(assigneeIds) => {
@@ -229,11 +208,9 @@ const isLocked = isPastEvent;
       <Controller
         control={control}
         name="sport"
-        render={({ field: { value, onChange } }) => {
-          console.log("Sport Property:", value);
-          return(<div className="h-7">
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
             <SportDropdown
-              // disabled={isLocked}
               value={value ?? null}
               onChange={(sport) => {
                 onChange(sport);
@@ -243,9 +220,8 @@ const isLocked = isPastEvent;
               buttonVariant="border-with-text"
               tabIndex={getIndex("sport")}
             />
-          </div>)
-
-        }}
+          </div>
+        )}
       />
 
       {/* <Controller
@@ -273,7 +249,7 @@ const isLocked = isPastEvent;
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <DateDropdown
-              // disabled={isLocked}
+              disabled={isDateTimeLocked}
               value={value}
               onChange={(date) => {
                 onChange(date ? renderFormattedPayloadDate(date) : null);
@@ -293,7 +269,7 @@ const isLocked = isPastEvent;
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <DateDropdown
-              disabled={isLocked}
+              disabled={isDateTimeLocked}
               value={value}
               onChange={(date) => {
                 onChange(date ? renderFormattedPayloadDate(date) : null);
@@ -311,24 +287,21 @@ const isLocked = isPastEvent;
       <Controller
         control={control}
         name="start_time"
-        render={({ field: { value, onChange } }) => {
-          console.log("Time value:", value);
-          return (
-            <div className="h-7">
-              <TimeDropdown
-                // disabled={isLocked}
-                value={value ?? null}
-                onChange={(time) => {
-                  onChange(time);
-                  handleFormChange();
-                }}
-                placeholder={t("starting_time")}
-                buttonVariant="border-with-text"
-                tabIndex={getIndex("start_time")}
-              />
-            </div>
-          );
-        }}
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <TimeDropdown
+              disabled={isDateTimeLocked}
+              value={value ?? null}
+              onChange={(time) => {
+                onChange(time);
+                handleFormChange();
+              }}
+              placeholder={t("starting_time")}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("start_time")}
+            />
+          </div>
+        )}
       />
 
       <Controller
@@ -337,7 +310,6 @@ const isLocked = isPastEvent;
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <ProgramDropdown
-              // disabled={isLocked}
               value={value}
               onChange={(program) => {
                 onChange(program);
@@ -356,7 +328,6 @@ const isLocked = isPastEvent;
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <LevelDropdown
-              // disabled={isLocked}
               value={value}
               onChange={(level) => {
                 onChange(level);
@@ -522,10 +493,9 @@ const isLocked = isPastEvent;
           >
             <OppositionTeamProperty
               storageKey={`opp-team-${id}`}
-              // disabled={isLocked}
-              value={value}
+              value={value as unknown as TOppositionTeamOption | null | undefined}
               onChange={(team) => {
-                onChange(team);
+                onChange(team as unknown as string | null);
                 handleFormChange();
               }}
             />

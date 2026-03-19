@@ -22,7 +22,7 @@ import type {
 } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
-import { convertToISODateString } from "@plane/utils";
+import { convertToISODateString, isDateTimePast } from "@plane/utils";
 // local-db
 import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
@@ -269,6 +269,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     this.cycleService = new CycleService();
 
     this.controller = new AbortController();
+  }
+
+  protected isIssueDateTimeLocked(issueId: string) {
+    const issue = this.rootIssueStore.issues.getIssueById(issueId);
+
+    return isDateTimePast(issue?.start_date, issue?.start_time);
+  }
+
+  protected getUnlockedDateTimeUpdate(data: Partial<TIssue>) {
+    const unlockedData = { ...data };
+    delete unlockedData.start_date;
+    delete unlockedData.start_time;
+
+    return unlockedData;
   }
 
   // Abstract class to be implemented to fetch parent stats such as project, module or cycle details
@@ -584,12 +598,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     data: Partial<TIssue>,
     shouldSync = true
   ) {
+    const nextData = this.isIssueDateTimeLocked(issueId) ? this.getUnlockedDateTimeUpdate(data) : data;
+    if (!Object.keys(nextData).length) return;
+
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
     try {
       // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      this.rootIssueStore.issues.updateIssue(issueId, nextData);
+      this.updateIssueList({ ...issueBeforeUpdate, ...nextData } as TIssue, issueBeforeUpdate);
 
       // Check if should Sync
       if (!shouldSync) return;
@@ -597,18 +614,18 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // update parent stats optimistically
       this.updateParentStats(issueBeforeUpdate, {
         ...issueBeforeUpdate,
-        ...data,
+        ...nextData,
       } as TIssue);
 
       // call API to update the issue
-      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, nextData);
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
     } catch (error) {
       // If errored out update store again to revert the change
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...nextData } as TIssue);
       throw error;
     }
   }
@@ -745,17 +762,77 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param {TBulkOperationsPayload} data
    */
   bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
-    const issueIds = data.issue_ids;
-    // make request to update issue properties
-    await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+    const lockedIssueIds = new Set(data.issue_ids.filter((issueId) => this.isIssueDateTimeLocked(issueId)));
+    const hasDateTimeUpdate = data.properties.start_date !== undefined || data.properties.start_time !== undefined;
+
+    if (!hasDateTimeUpdate || !lockedIssueIds.size) {
+      await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+
+      runInAction(() => {
+        data.issue_ids.forEach((issueId) => {
+          const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+          if (!issueBeforeUpdate) throw new Error("Work item not found");
+          Object.keys(data.properties).forEach((key) => {
+            const property = key as keyof TBulkOperationsPayload["properties"];
+            const propertyValue = data.properties[property];
+            if (Array.isArray(propertyValue)) {
+              const existingValue = issueBeforeUpdate[property];
+              const newExistingValue = Array.isArray(existingValue) ? existingValue : [];
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: uniq([...newExistingValue, ...propertyValue]),
+              });
+            } else {
+              this.rootIssueStore.issues.updateIssue(issueId, {
+                [property]: propertyValue,
+              });
+            }
+          });
+          const issueDetails = this.rootIssueStore.issues.getIssueById(issueId);
+          this.updateIssueList(issueDetails, issueBeforeUpdate);
+        });
+      });
+
+      return;
+    }
+
+    const unlockedIssueIds = data.issue_ids.filter((issueId) => !lockedIssueIds.has(issueId));
+    const { start_date, start_time, ...otherProperties } = data.properties;
+    const dateTimeProperties: TBulkOperationsPayload["properties"] = {};
+
+    if (start_date !== undefined) dateTimeProperties.start_date = start_date;
+    if (start_time !== undefined) dateTimeProperties.start_time = start_time;
+
+    if (Object.keys(otherProperties).length) {
+      await this.issueService.bulkOperations(workspaceSlug, projectId, {
+        ...data,
+        properties: otherProperties,
+      });
+    }
+
+    if (Object.keys(dateTimeProperties).length && unlockedIssueIds.length) {
+      await this.issueService.bulkOperations(workspaceSlug, projectId, {
+        ...data,
+        issue_ids: unlockedIssueIds,
+        properties: dateTimeProperties,
+      });
+    }
+
     // update issues in the store
-    runInAction(() => {
-      issueIds.forEach((issueId) => {
+      runInAction(() => {
+      data.issue_ids.forEach((issueId) => {
+        const properties: TBulkOperationsPayload["properties"] = lockedIssueIds.has(issueId)
+          ? otherProperties
+          : {
+              ...otherProperties,
+              ...dateTimeProperties,
+            };
+        if (!Object.keys(properties).length) return;
+
         const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
         if (!issueBeforeUpdate) throw new Error("Work item not found");
-        Object.keys(data.properties).forEach((key) => {
+        Object.keys(properties).forEach((key) => {
           const property = key as keyof TBulkOperationsPayload["properties"];
-          const propertyValue = data.properties[property];
+          const propertyValue = properties[property];
           // update root issue map properties
           if (Array.isArray(propertyValue)) {
             // if property value is array, append it to the existing values
@@ -784,11 +861,23 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     projectId?: string
   ) {
     if (!projectId) return;
+    const sanitizedUpdates: { id: string; start_date?: string; target_date?: string }[] = updates
+      .map((update) => {
+        if (!this.isIssueDateTimeLocked(update.id)) return update;
+
+        return {
+          id: update.id,
+          target_date: update.target_date,
+        };
+      })
+      .filter((update) => update.start_date !== undefined || update.target_date !== undefined);
+    if (!sanitizedUpdates.length) return;
+
     const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
     try {
       const getIssueById = this.rootIssueStore.issues.getIssueById;
       runInAction(() => {
-        for (const update of updates) {
+        for (const update of sanitizedUpdates) {
           const dates: Partial<TIssue> = {};
           if (update.start_date) dates.start_date = update.start_date;
           if (update.target_date) dates.target_date = update.target_date;
@@ -807,7 +896,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         }
       });
 
-      await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
+      await this.issueService.updateIssueDates(workspaceSlug, projectId, sanitizedUpdates);
     } catch (e) {
       runInAction(() => {
         for (const update of issueDatesBeforeChange) {

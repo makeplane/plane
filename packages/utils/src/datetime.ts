@@ -137,6 +137,35 @@ export const updateISOTime = (oldISO: string | null, time24: string): string | n
   return date.toISOString();
 };
 
+/**
+ * Combines a date-only value with a time-only ISO value into a single local Date instance.
+ */
+export const getDateTimeFromDateAndTime = (
+  dateValue: string | Date | undefined | null,
+  timeValue: string | Date | undefined | null
+): Date | undefined => {
+  const date = getDate(dateValue);
+  if (!date || !timeValue) return;
+
+  const time = new Date(timeValue);
+  if (!isValid(time)) return;
+
+  const combinedDateTime = new Date(date);
+  combinedDateTime.setHours(time.getHours(), time.getMinutes(), time.getSeconds(), time.getMilliseconds());
+
+  return combinedDateTime;
+};
+
+export const isDateTimePast = (
+  dateValue: string | Date | undefined | null,
+  timeValue: string | Date | undefined | null
+): boolean => {
+  const dateTime = getDateTimeFromDateAndTime(dateValue, timeValue);
+  if (!dateTime) return false;
+
+  return dateTime.getTime() <= Date.now();
+};
+
 
 // Date Difference Helpers
 /**

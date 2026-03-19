@@ -20,7 +20,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 // ui
 import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { getDate, isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -60,6 +60,11 @@ type Props = {
   isEditable: boolean;
 };
 
+type TOppositionTeamOption = {
+  name: string;
+  logo: string;
+};
+
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
@@ -85,6 +90,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+  const isDateTimeLocked = !isEditable || isDateTimePast(issue.start_date, issue.start_time);
 
 
   return (
@@ -219,7 +225,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   })
                 }
                 maxDate={maxDate ?? undefined}
-                disabled={!isEditable}
+                disabled={isDateTimeLocked}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
@@ -238,13 +244,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
               <TimeDropdown
                 value={issue.start_time}
-                onChange={(val) => {
-                  if (!val) return;
+                onChange={(val) =>
                   issueOperations.update(workspaceSlug, projectId, issueId, {
                     start_time: val,
-                  });
-                }}
-                disabled={!isEditable}
+                  })
+                }
+                disabled={isDateTimeLocked}
                 placeholder={t("add_start_time")}
                 buttonVariant="transparent-with-text"
                 className="w-3/4 flex-grow group"
@@ -287,8 +292,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
 
 
-            
-
            {/* sport field */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gapa-1 text-sm text-custom-text-300">
@@ -316,10 +319,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
               <OppositionTeamProperty
                 storageKey={`opp-team-${issueId}`}
-                value={issue?.opposition_team}
+                value={issue?.opposition_team as unknown as TOppositionTeamOption | null | undefined}
                 onChange={(team) =>
                   issueOperations.update(workspaceSlug, projectId, issueId, {
-                    opposition_team: team,
+                    opposition_team: team as unknown as string | null,
                   })
                 }
                 disabled={!isEditable}

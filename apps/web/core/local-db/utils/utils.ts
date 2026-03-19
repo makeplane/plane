@@ -28,6 +28,7 @@ export const addIssueToPersistanceLayer = async (issue: TIssue) => {
       "estimate_point",
       "priority",
       "start_date",
+      "start_time",
       "target_date",
       "sequence_id",
       "project_id",
@@ -48,6 +49,12 @@ export const addIssueToPersistanceLayer = async (issue: TIssue) => {
       "module_ids",
       "type_id",
       "description_html",
+      "opposition_team",
+      "level",
+      "sport",
+      "program",
+      "year",
+      "category",
     ]);
     await updateIssue({ ...issuePartial, is_local_update: 1 });
   } catch (e) {

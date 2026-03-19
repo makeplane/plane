@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 
 // utils
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
 
 // components
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
@@ -39,6 +39,11 @@ interface IPeekOverviewProperties {
   issueOperations: TIssueOperations;
 }
 
+type TOppositionTeamOption = {
+  name: string;
+  logo: string;
+};
+
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
   const { t } = useTranslation();
@@ -61,37 +66,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const stateDetails = getStateById(issue.state_id);
 
   const minDate = new Date();
-  // const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
+  const isReadOnly = disabled;
+  const isDateTimeLocked = isReadOnly || isDateTimePast(issue.start_date, issue.start_time);
 
-  const maxDate = getDate(issue.target_date);
-  maxDate?.setDate(maxDate.getDate());
-
-  // ⭐ NEW: Detect if event start date + time is in the past
-  const eventDateTime = (() => {
-    if (!issue?.start_date || !issue?.start_time) return null;
-
-    // start_time is ISO timestamp: "2025-12-08T14:46:00Z"
-    const time = new Date(issue.start_time);
-
-    // start_date is "YYYY-MM-DD"
-    const date = new Date(issue.start_date);
-
-    // apply time (using UTC to avoid timezone mismatch)
-    date.setUTCHours(time.getUTCHours());
-    date.setUTCMinutes(time.getUTCMinutes());
-    date.setUTCSeconds(time.getUTCSeconds());
-
-    return date;
-  })();
-
-  const isPastEvent = eventDateTime ? eventDateTime < new Date() : false;
-
-  // final disabled flag
-  const isLocked = disabled || isPastEvent;
-
-  const buildManifestMeta = useCallback((currentIssue: TIssue) => {
-    return {
+  const buildManifestMeta = useCallback(
+    (currentIssue: TIssue) => ({
       category: currentIssue.category || "Work items",
       start_date: currentIssue.start_date ?? null,
       start_time: currentIssue.start_time ?? null,
@@ -100,8 +80,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
       sport: currentIssue.sport ?? null,
       opposition: currentIssue.opposition_team ?? null,
       season: currentIssue.year ?? null,
-    };
-  }, []);
+    }),
+    []
+  );
 
   const updateManifestMeta = useCallback(
     async (currentIssue: TIssue) => {
@@ -123,19 +104,28 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const handlePropertyUpdate = useCallback(
     async (data: Partial<TIssue>) => {
+      if (isReadOnly) return;
       await issueOperations.update(workspaceSlug, projectId, issueId, data);
       const updatedIssue = getIssueById(issueId);
       if (!updatedIssue) return;
       await updateManifestMeta(updatedIssue);
     },
-    [getIssueById, issueId, issueOperations, projectId, updateManifestMeta, workspaceSlug]
+    [getIssueById, isReadOnly, issueId, issueOperations, projectId, updateManifestMeta, workspaceSlug]
+  );
+
+  const handleDateTimeUpdate = useCallback(
+    async (data: Partial<TIssue>) => {
+      if (isDateTimeLocked) return;
+      await handlePropertyUpdate(data);
+    },
+    [handlePropertyUpdate, isDateTimeLocked]
   );
 
   return (
     <div>
       <h6 className="text-sm font-medium">Event Details</h6>
 
-      <div className={`w-full space-y-2 mt-3 ${isLocked ? "opacity-60" : ""}`}>
+      <div className="w-full space-y-2 mt-3">
         {/* created by */}
         {createdByDetails && (
           <div className="flex w-full items-center gap-3 h-8">
@@ -164,14 +154,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <DateDropdown
             value={issue.start_date}
             onChange={(val) =>
-              void handlePropertyUpdate({
+              void handleDateTimeUpdate({
                 start_date: val ? renderFormattedPayloadDate(val) : null,
               })
             }
             placeholder={t("issue.add.start_date")}
             buttonVariant="transparent-with-text"
             minDate={minDate ?? undefined}
-            // disabled={isLocked}
+            disabled={isDateTimeLocked}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
@@ -189,14 +179,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <TimeDropdown
             value={issue.start_time}
             onChange={(val) => {
-              void handlePropertyUpdate({
+              void handleDateTimeUpdate({
                 start_time: val,
               });
             }}
             placeholder={t("add_start_time")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            // disabled={isLocked}
+            disabled={isDateTimeLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.start_time ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -221,7 +211,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_level")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            // disabled={isLocked}
+            disabled={isReadOnly}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.level ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -246,7 +236,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_program")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            // disabled={isLocked}
+            disabled={isReadOnly}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.program ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -271,7 +261,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_sport")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            // disabled={isLocked}
+            disabled={isReadOnly}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -288,13 +278,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           <OppositionTeamProperty
             storageKey={`opp-team-${issueId}`}
-            value={issue?.opposition_team}
+            value={issue?.opposition_team as unknown as TOppositionTeamOption | null | undefined}
             onChange={(team) =>
               void handlePropertyUpdate({
-                opposition_team: team,
+                opposition_team: team as unknown as string | null,
               })
             }
-            // disabled={isLocked}
+            disabled={isReadOnly}
           />
         </div>
 
@@ -315,7 +305,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_category")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            // disabled={isLocked}
+            disabled={isReadOnly}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.category ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -340,7 +330,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_year")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            // disabled={isLocked}
+            disabled={isReadOnly}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.year ? "" : "text-custom-text-400"}`}
             hideIcon

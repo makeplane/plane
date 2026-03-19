@@ -85,6 +85,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   if (!issue || !issue.project_id) return <></>;
 
   const isPeekModeActive = Boolean(peekIssue);
+  const isContentReadOnly = isArchived || !isEditable;
 
   return (
     <>
@@ -100,7 +101,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         )}
 
         <div className="mb-2.5 flex items-center justify-between gap-4">
-          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
+          <IssueTypeSwitcher issueId={issueId} disabled={isContentReadOnly} />
           <div className="flex items-center gap-3">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
             {duplicateIssues?.length > 0 && (
@@ -123,7 +124,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={isArchived || !isEditable}
+          disabled={isContentReadOnly}
           value={issue.name}
           containerClassName="-ml-3"
         />
@@ -134,7 +135,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           projectId={issue.project_id}
           issueId={issue.id}
           initialValue={issue.description_html}
-          disabled={isArchived || !isEditable}
+          disabled={isContentReadOnly}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           containerClassName="-ml-3 border-none"
@@ -158,7 +159,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
                 createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
                 id: issueId,
-                isRestoreDisabled: !isEditable || isArchived,
+                isRestoreDisabled: isContentReadOnly,
               }}
               fetchHandlers={{
                 listDescriptionVersions: (issueId) =>
@@ -178,7 +179,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issueId}
-        disabled={!isEditable || isArchived}
+        disabled={isContentReadOnly}
         renderWidgetModals={!isPeekModeActive}
         issueServiceType={EIssueServiceType.ISSUES}
       />
@@ -189,7 +190,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           projectId={projectId}
           issueId={issueId}
           issueOperations={issueOperations}
-          disabled={!isEditable || isArchived}
+          disabled={isContentReadOnly}
         />
       )}
 

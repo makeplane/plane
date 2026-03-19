@@ -12,6 +12,7 @@ export const issueSchema: Schema = {
   priority: "TEXT",
   priority_proxy: "INTEGER",
   start_date: "TEXT",
+  start_time: "TEXT",
   target_date: "TEXT",
   sequence_id: "INTEGER",
   project_id: "TEXT",
@@ -32,6 +33,12 @@ export const issueSchema: Schema = {
   assignee_ids: "TEXT",
   module_ids: "TEXT",
   description_html: "TEXT",
+  opposition_team: "TEXT",
+  level: "TEXT",
+  sport: "TEXT",
+  program: "TEXT",
+  year: "TEXT",
+  category: "TEXT",
   is_local_update: "INTEGER",
 };
 

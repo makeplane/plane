@@ -18,8 +18,9 @@ import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/t
 import {
   cn,
   getDate,
-  renderFormattedPayloadDate,
   generateWorkItemLink,
+  isDateTimePast,
+  renderFormattedPayloadDate,
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
 // components
@@ -92,6 +93,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const subIssueCount = issue?.sub_issues_count ?? 0;
+  const isEventLocked = isDateTimePast(issue.start_date, issue.start_time);
+  const isDateTimeLocked = isReadOnly || isEventLocked;
 
   const issueOperations = useMemo(
     () => ({
@@ -115,8 +118,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     [workspaceSlug, issue, changeModulesInIssue, addCycleToIssue, removeCycleFromIssue]
   );
 
-  const buildManifestMeta = useCallback((currentIssue: TIssue) => {
-    return {
+  const buildManifestMeta = useCallback(
+    (currentIssue: TIssue) => ({
       category: currentIssue.category || "Work items",
       start_date: currentIssue.start_date ?? null,
       start_time: currentIssue.start_time ?? null,
@@ -125,8 +128,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       sport: currentIssue.sport ?? null,
       opposition: currentIssue.opposition_team ?? null,
       season: currentIssue.year ?? null,
-    };
-  }, []);
+    }),
+    []
+  );
 
   const updateManifestMeta = useCallback(
     async (currentIssue: TIssue) => {
@@ -238,14 +242,16 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleStartDate = (date: Date | null) => {
+    if (isDateTimeLocked) return;
     handleEventPropertyUpdate({ start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
- const handleStartTime = (time: string | null) => {
-  handleEventPropertyUpdate({
-    start_time: time ?? null, // time only (HH:mm)
-  });
-};
+  const handleStartTime = (time: string | null) => {
+    if (isDateTimeLocked) return;
+    handleEventPropertyUpdate({
+      start_time: time ?? null,
+    });
+  };
 
 
   const handleSport = (sport: string | null) => {
@@ -321,25 +327,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     e.preventDefault();
   };
 
-const isStartTimeReadOnly = (
-  _dateValue: string | null,
-  timeValue: string | null
-): boolean => {
-  if (!timeValue) return false;
-
-  const eventDateTime = new Date(timeValue);
-
-  console.log("Event datetime:", eventDateTime.toString());
-  console.log("System datetime:", new Date().toString());
-
-  return eventDateTime.getTime() <= Date.now();
-};
-
-
-
-// Usage:
- const disabled = isStartTimeReadOnly(issue.start_date, issue.start_time);
-
   // {console.log("Render all display propertie:", JSON.parse(JSON.stringify(displayProperties)) )}
 
   return (
@@ -353,7 +340,7 @@ const isStartTimeReadOnly = (
             value={issue.state_id}
             onChange={handleState}
             projectId={issue.project_id}
-            // disabled={disabled}
+            disabled={isReadOnly}
             buttonVariant="border-with-text"
             renderByDefault={isMobile}
             showTooltip
@@ -371,7 +358,7 @@ const isStartTimeReadOnly = (
              icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.year ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-            //  disabled={disabled}
+             disabled={isReadOnly}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -441,7 +428,7 @@ const isStartTimeReadOnly = (
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
-            // disabled={disabled}
+            disabled={isDateTimeLocked}
             renderByDefault={isMobile}
             showTooltip
           />
@@ -458,7 +445,7 @@ const isStartTimeReadOnly = (
       icon={<Clock className="h-3 w-3 flex-shrink-0" />}
       buttonVariant={issue.start_time ? "border-with-text" : "border-without-text"}
       clearIconClassName="!text-custom-text-100"
-      // disabled={disabled || !issue.start_date}
+      disabled={isDateTimeLocked}
       renderByDefault={isMobile}
       showTooltip
     />
@@ -474,7 +461,7 @@ const isStartTimeReadOnly = (
              icon={<SignalIcon className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.level ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-            //  disabled={disabled}
+             disabled={isReadOnly}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -492,7 +479,7 @@ const isStartTimeReadOnly = (
              icon={<Tag className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.category ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-            //  disabled={disabled}
+             disabled={isReadOnly}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -514,7 +501,7 @@ const isStartTimeReadOnly = (
              icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.sport ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-            //  disabled={disabled}
+             disabled={isReadOnly}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -530,7 +517,7 @@ const isStartTimeReadOnly = (
              icon={<User className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.program ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-            //  disabled={disabled}
+             disabled={isReadOnly}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -546,7 +533,7 @@ const isStartTimeReadOnly = (
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
             onChange={handleAssignee}
-            // disabled={disabled}
+            disabled={isReadOnly}
             multiple
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
@@ -571,7 +558,7 @@ const isStartTimeReadOnly = (
                     projectId={issue?.project_id}
                     value={issue?.module_ids ?? []}
                     onChange={handleModule}
-                    // disabled={disabled}
+                    disabled={isReadOnly}
                     renderByDefault={isMobile}
                     multiple
                     buttonVariant="border-with-text"
@@ -591,7 +578,7 @@ const isStartTimeReadOnly = (
                     projectId={issue?.project_id}
                     value={issue?.cycle_id}
                     onChange={handleCycle}
-                    // disabled={disabled}
+                    disabled={isReadOnly}
                     buttonVariant="border-with-text"
                     renderByDefault={isMobile}
                     showTooltip
@@ -611,7 +598,7 @@ const isStartTimeReadOnly = (
               value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
               projectId={issue.project_id}
-              // disabled={isReadOnly}
+              disabled={isReadOnly}
               buttonVariant="border-with-text"
               renderByDefault={isMobile}
               showTooltip
