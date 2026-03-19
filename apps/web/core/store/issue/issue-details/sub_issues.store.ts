@@ -117,28 +117,15 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
   // actions
   setSubIssueHelpers = (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => {
-    if (!parentIssueId || !key) return;
+    if (!parentIssueId || !key || !value) return;
 
-    // Empty value means clear the entire list (e.g. clearing preview_loader after load)
-    if (!value) {
-      runInAction(() => {
-        set(this.subIssueHelpers, [parentIssueId, key], []);
-      });
-      return;
-    }
-
-    // issue_visibility is idempotent: add if absent, remove only when explicitly toggling
-    // preview_loader / issue_loader use toggle (add = show spinner, same value = remove spinner)
-    if (key === "issue_visibility") {
-      update(this.subIssueHelpers, [parentIssueId, key], (_list: string[] = []) =>
-        _list.includes(value) ? _list : uniq(concat(_list, value))
-      );
-    } else {
-      update(this.subIssueHelpers, [parentIssueId, key], (_list: string[] = []) => {
-        if (_list.includes(value)) return pull(_list, value);
-        return concat(_list, value);
-      });
-    }
+    update(this.subIssueHelpers, [parentIssueId, key], (_subIssueHelpers: string[] = []) => {
+      // issue_visibility: idempotent add (no toggle) to prevent StrictMode double-invoke from removing the entry
+      if (key === "issue_visibility")
+        return _subIssueHelpers.includes(value) ? _subIssueHelpers : concat(_subIssueHelpers, value);
+      if (_subIssueHelpers.includes(value)) return pull(_subIssueHelpers, value);
+      return concat(_subIssueHelpers, value);
+    });
   };
 
   fetchSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string) => {
@@ -156,7 +143,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       const otherProjectIds = uniq(
         issueList.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
       ) as string[];
-      this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
+      void this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
     }
     if (issueList) {
       this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentIssueId, {
@@ -171,11 +158,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         parentIssueId,
         issueList.map((issue) => issue.id)
       );
-      // Ensure filters are initialized so computedFn getGroupedSubWorkItems
-      // has valid data when the component renders after fetch.
-      if (!this.filters.subIssueFilters[parentIssueId]) {
-        this.filters.initializeFilters(parentIssueId);
-      }
     });
 
     this.loader = undefined;
@@ -195,7 +177,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       const otherProjectIds = uniq(
         subIssues.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
       ) as string[];
-      this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
+      void this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
     }
 
     runInAction(() => {

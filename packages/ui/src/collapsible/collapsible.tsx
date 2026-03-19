@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useCallback, useRef } from "react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { useState, useCallback } from "react";
 
 export type TCollapsibleProps = {
   title: string | React.ReactNode;
@@ -19,47 +20,40 @@ export type TCollapsibleProps = {
 
 export function Collapsible(props: TCollapsibleProps) {
   const { title, children, buttonRef, className, buttonClassName, isOpen, onToggle, defaultOpen } = props;
-  // Controlled value takes precedence; otherwise use internal state
+  // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(defaultOpen ?? false);
-  const internalRef = useRef<HTMLButtonElement>(null);
-  const resolvedButtonRef = (buttonRef ?? internalRef);
 
   // Display state: controlled mode overrides internal state
   const displayIsOpen = isOpen !== undefined ? isOpen : localIsOpen;
 
+  // handlers
   const handleOnClick = useCallback(() => {
     if (isOpen !== undefined) {
-      // Controlled mode — delegate to parent
       if (onToggle) onToggle();
     } else {
-      // Uncontrolled mode — manage locally
       setLocalIsOpen((prev) => !prev);
     }
   }, [isOpen, onToggle]);
 
   return (
-    <div className={className} data-state={displayIsOpen ? "open" : "closed"}>
-      <button
-        ref={resolvedButtonRef}
-        type="button"
-        className={buttonClassName}
-        onClick={handleOnClick}
-        aria-expanded={displayIsOpen}
-      >
+    <Disclosure as="div" className={className}>
+      <Disclosure.Button ref={buttonRef} className={buttonClassName} onClick={handleOnClick}>
         {title}
-      </button>
-      {/* CSS grid animation — avoids Tailwind JIT arbitrary value scanning issues with @headlessui Transition */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateRows: displayIsOpen ? "1fr" : "0fr",
-          opacity: displayIsOpen ? 1 : 0,
-          overflow: "hidden",
-          transition: "grid-template-rows 300ms ease-in-out, opacity 300ms ease-in-out",
-        }}
+      </Disclosure.Button>
+      <Transition
+        show={displayIsOpen}
+        enter="transition-all duration-300 ease-in-out"
+        enterFrom="grid-rows-[0fr] opacity-0"
+        enterTo="grid-rows-[1fr] opacity-100"
+        leave="transition-all duration-300 ease-in-out"
+        leaveFrom="grid-rows-[1fr] opacity-100"
+        leaveTo="grid-rows-[0fr] opacity-0"
+        className="grid overflow-hidden"
       >
-        <div style={{ minHeight: 0 }}>{children}</div>
-      </div>
-    </div>
+        <Disclosure.Panel static className="min-h-0">
+          {children}
+        </Disclosure.Panel>
+      </Transition>
+    </Disclosure>
   );
 }

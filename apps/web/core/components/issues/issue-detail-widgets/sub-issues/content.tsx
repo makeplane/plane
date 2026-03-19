@@ -83,17 +83,13 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
     [issueCrudState]
   );
 
-  const handleFetchSubIssues = useCallback(() => {
+  const handleFetchSubIssues = useCallback(async () => {
     const currentSubIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
     if (!currentSubIssueHelpers.issue_visibility.includes(parentIssueId)) {
       try {
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-        void subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-        // Guard: only add to visibility if not already present — avoids toggle-out on double-invoke (React StrictMode)
-        const afterFetchHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
-        if (!afterFetchHelpers.issue_visibility.includes(parentIssueId)) {
-          setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-        }
+        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+        setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
       } catch (error) {
         console.error("Error fetching sub-work items:", error);
       } finally {

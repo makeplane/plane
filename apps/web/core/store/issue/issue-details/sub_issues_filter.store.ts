@@ -32,7 +32,6 @@ export const DEFAULT_DISPLAY_PROPERTIES = {
 export interface IWorkItemSubIssueFiltersStore {
   subIssueFilters: Record<string, Partial<ISubWorkItemFilters>>;
   // helpers methods
-  initializeFilters: (workItemId: string) => void;
   updateSubWorkItemFilters: (
     filterType: EIssueFilterType,
     filters: IIssueDisplayFilterOptions | IIssueDisplayProperties | IIssueFilterOptions,
@@ -54,9 +53,8 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
   constructor(subIssueStore: IssueSubIssuesStore) {
     makeObservable(this, {
       subIssueFilters: observable,
-      initializeFilters: action,
       updateSubWorkItemFilters: action,
-      resetFilters: action,
+      getSubIssueFilters: action,
     });
 
     // root store
@@ -64,24 +62,25 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
   }
 
   /**
-   * @description This method is used to initialize the sub issue filters.
-   * Must be called before reading filters for a workItemId.
+   * @description This method is used to get the sub issue filters
+   * @param workItemId
+   * @returns
+   */
+  getSubIssueFilters = (workItemId: string) => {
+    if (!this.subIssueFilters[workItemId]) {
+      this.initializeFilters(workItemId);
+    }
+    return this.subIssueFilters[workItemId];
+  };
+
+  /**
+   * @description This method is used to initialize the sub issue filters
    * @param workItemId
    */
   initializeFilters = (workItemId: string) => {
     set(this.subIssueFilters, [workItemId, "displayProperties"], DEFAULT_DISPLAY_PROPERTIES);
     set(this.subIssueFilters, [workItemId, "filters"], {});
     set(this.subIssueFilters, [workItemId, "displayFilters"], {});
-  };
-
-  /**
-   * @description Pure getter — returns existing filters for a workItemId,
-   * or a default empty object if not yet initialized.
-   * Does NOT mutate state (safe to call from computedFn).
-   * @param workItemId
-   */
-  getSubIssueFilters = (workItemId: string): Partial<ISubWorkItemFilters> => {
-    return this.subIssueFilters[workItemId] ?? {};
   };
 
   /**
@@ -105,9 +104,7 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
    * @returns
    */
   getGroupedSubWorkItems = computedFn((parentWorkItemId: string) => {
-    // Read observable directly — avoids calling an action inside computedFn.
-    // Falls back to default values if not yet initialized.
-    const subIssueFilters = this.subIssueFilters[parentWorkItemId] ?? {};
+    const subIssueFilters = this.getSubIssueFilters(parentWorkItemId);
 
     const filteredWorkItems = this.getFilteredSubWorkItems(parentWorkItemId, subIssueFilters.filters ?? {});
 
@@ -142,8 +139,6 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
    * @param workItemId
    */
   resetFilters = (workItemId: string) => {
-    runInAction(() => {
-      this.initializeFilters(workItemId);
-    });
+    this.initializeFilters(workItemId);
   };
 }
