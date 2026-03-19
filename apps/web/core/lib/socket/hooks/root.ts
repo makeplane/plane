@@ -11,10 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useLayoutEffect, useRef, useCallback, useContext } from "react";
+import { useEffect, useLayoutEffect, useRef, useContext } from "react";
 // local imports
 import { SocketContext } from "@/lib/socket/provider/root";
-import type { TServerEventName, TServerEventPayload, TConnectionStatus, TSocketContext } from "@/lib/socket/types/root";
+import type { TSocketContext, TEntityEvent } from "@/lib/socket/types/root";
 
 // Internal hook to access socket context
 function useSocketInternal(): TSocketContext {
@@ -28,48 +28,24 @@ function useSocketInternal(): TSocketContext {
 }
 
 /**
- * Get the current connection status
+ * Subscribe to events for a specific entity with automatic room management.
+ * Joins the server-side room on mount so only events for this entity are delivered.
  *
  * @example
- * const { isConnected, isReconnecting } = useSocketStatus();
- */
-export function useSocketStatus(): {
-  status: TConnectionStatus;
-  isConnected: boolean;
-  isConnecting: boolean;
-  isReconnecting: boolean;
-  isDisconnected: boolean;
-} {
-  const { status } = useSocketInternal();
-
-  return {
-    status,
-    isConnected: status === "connected",
-    isConnecting: status === "connecting",
-    isReconnecting: status === "reconnecting",
-    isDisconnected: status === "disconnected",
-  };
-}
-
-/**
- * Subscribe to a socket event with automatic cleanup
- *
- * @example
- * useSocketEvent("issue:updated", (data) => {
- *   console.log("Issue updated:", data.issue_id);
- *   // Trigger your SWR revalidation here
- *   mutate(`/api/issues/${data.issue_id}`);
+ * useEntityEvent("workitem", workItemId, (data) => {
+ *   console.log(data.event_type);
+ *   mutate(`/api/issues/${data.entity_id}`);
  * });
  */
-export function useSocketEvent<E extends TServerEventName>(
-  event: E,
-  handler: (data: TServerEventPayload<E>) => void,
+export function useEntityEvent(
+  entityType: string,
+  entityId: string | undefined,
+  handler: (data: TEntityEvent) => void,
   options: { enabled?: boolean } = {}
 ): void {
   const { enabled = true } = options;
-  const { subscribe, status } = useSocketInternal();
+  const { subscribeEntity, status } = useSocketInternal();
 
-  // Use ref to avoid re-subscribing when handler changes
   const handlerRef = useRef(handler);
 
   useLayoutEffect(() => {
@@ -77,60 +53,12 @@ export function useSocketEvent<E extends TServerEventName>(
   });
 
   useEffect(() => {
-    if (!enabled || status !== "connected") {
-      return;
-    }
+    if (!enabled || !entityId || status !== "connected") return;
 
-    const unsubscribe = subscribe(event, (data) => {
+    const unsubscribe = subscribeEntity(entityType, entityId, (data) => {
       handlerRef.current(data);
     });
 
     return unsubscribe;
-  }, [event, enabled, status, subscribe]);
-}
-
-/**
- * Filter socket events by a condition
- *
- * @example
- * // Only handle events for a specific project
- * useFilteredSocketEvent(
- *   "issue:updated",
- *   (data) => data.project_id === currentProjectId,
- *   (data) => {
- *     mutate(`/api/projects/${data.project_id}/issues`);
- *   }
- * );
- */
-export function useFilteredSocketEvent<E extends TServerEventName>(
-  event: E,
-  filter: (data: TServerEventPayload<E>) => boolean,
-  handler: (data: TServerEventPayload<E>) => void,
-  options: { enabled?: boolean } = {}
-): void {
-  const filterRef = useRef(filter);
-  const handlerRef = useRef(handler);
-
-  useLayoutEffect(() => {
-    filterRef.current = filter;
-    handlerRef.current = handler;
-  });
-
-  const wrappedHandler = useCallback((data: TServerEventPayload<E>) => {
-    if (filterRef.current(data)) {
-      handlerRef.current(data);
-    }
-  }, []);
-
-  useSocketEvent(event, wrappedHandler, options);
-}
-
-/**
- * Access the socket context
- *
- * @example
- * const { status, subscribe } = useSocket();
- */
-export function useSocket(): TSocketContext {
-  return useSocketInternal();
+  }, [entityType, entityId, enabled, status, subscribeEntity]);
 }

@@ -14,19 +14,6 @@
 import { Effect, Ref, HashMap } from "effect";
 import type { IncomingMessage, ServerResponse } from "http";
 
-interface HealthStatus {
-  status: "ok" | "degraded" | "unhealthy";
-  timestamp: number;
-  uptime: number;
-  connections: {
-    total: number;
-    channels: number;
-  };
-  redis: {
-    connected: boolean;
-  };
-}
-
 export interface HealthContext<T = unknown, U = unknown> {
   startTime: number;
   clients: Ref.Ref<HashMap.HashMap<string, T>>;
@@ -34,60 +21,57 @@ export interface HealthContext<T = unknown, U = unknown> {
   redisConnected: () => Effect.Effect<boolean>;
 }
 
-export const getHealthStatus = <T, U>(ctx: HealthContext<T, U>): Effect.Effect<HealthStatus> =>
-  Effect.gen(function* () {
-    const clientMap = yield* Ref.get(ctx.clients);
-    const channelMap = yield* Ref.get(ctx.channelSubscribers);
-    const redisConnected = yield* ctx.redisConnected().pipe(Effect.catchAll(() => Effect.succeed(false)));
+export const getHealthStatus = Effect.fn("getHealthStatus")(function* <T, U>(ctx: HealthContext<T, U>) {
+  const clientMap = yield* Ref.get(ctx.clients);
+  const channelMap = yield* Ref.get(ctx.channelSubscribers);
+  const redisConnected = yield* ctx.redisConnected().pipe(Effect.catchAll(() => Effect.succeed(false)));
 
-    const totalConnections = HashMap.size(clientMap);
-    const totalChannels = HashMap.size(channelMap);
-    const uptime = Date.now() - ctx.startTime;
+  const totalConnections = HashMap.size(clientMap);
+  const totalChannels = HashMap.size(channelMap);
+  const uptime = Date.now() - ctx.startTime;
 
-    const status: "ok" | "degraded" | "unhealthy" = redisConnected ? "ok" : "degraded";
+  const status: "ok" | "degraded" | "unhealthy" = redisConnected ? "ok" : "degraded";
 
-    return {
-      status,
-      timestamp: Date.now(),
-      uptime,
-      connections: {
-        total: totalConnections,
-        channels: totalChannels,
-      },
-      redis: {
-        connected: redisConnected,
-      },
-    };
-  });
+  return {
+    status,
+    timestamp: Date.now(),
+    uptime,
+    connections: {
+      total: totalConnections,
+      channels: totalChannels,
+    },
+    redis: {
+      connected: redisConnected,
+    },
+  };
+});
 
-export const handleHealthRequest = <T, U>(
+export const handleHealthRequest = Effect.fn("handleHealthRequest")(function* <T, U>(
   ctx: HealthContext<T, U>,
   _req: IncomingMessage,
   res: ServerResponse
-): Effect.Effect<void> =>
-  Effect.gen(function* () {
-    const health = yield* getHealthStatus(ctx);
+) {
+  const health = yield* getHealthStatus(ctx);
 
-    res.writeHead(health.status === "ok" ? 200 : 503, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(health));
-  });
+  res.writeHead(health.status === "ok" ? 200 : 503, { "Content-Type": "application/json" });
+  res.end(JSON.stringify(health));
+});
 
-export const handleReadinessRequest = <T, U>(
+export const handleReadinessRequest = Effect.fn("handleReadinessRequest")(function* <T, U>(
   ctx: HealthContext<T, U>,
   _req: IncomingMessage,
   res: ServerResponse
-): Effect.Effect<void> =>
-  Effect.gen(function* () {
-    const redisConnected = yield* ctx.redisConnected().pipe(Effect.catchAll(() => Effect.succeed(false)));
+) {
+  const redisConnected = yield* ctx.redisConnected().pipe(Effect.catchAll(() => Effect.succeed(false)));
 
-    if (redisConnected) {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ready: true }));
-    } else {
-      res.writeHead(503, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ready: false, reason: "Redis not connected" }));
-    }
-  });
+  if (redisConnected) {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ready: true }));
+  } else {
+    res.writeHead(503, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ready: false, reason: "Redis not connected" }));
+  }
+});
 
 export const handleLivenessRequest = (_req: IncomingMessage, res: ServerResponse): Effect.Effect<void> =>
   Effect.sync(() => {

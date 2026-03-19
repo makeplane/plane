@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Effect, Schema, Ref, Queue, Schedule, Duration, Fiber, pipe, Option, Deferred, Runtime, Scope } from "effect";
+import { Effect, Fiber, Schema, Ref, Queue, Stream, Schedule, Duration, pipe, Option, Deferred, Runtime } from "effect";
 import amqplib from "amqplib";
 import type { Connection, Channel, ConsumeMessage } from "amqplib";
 import { AppConfig } from "./config";
@@ -26,142 +26,12 @@ export class AmqpConsumeError extends Schema.TaggedError<AmqpConsumeError>()("Am
   cause: Schema.optional(Schema.Unknown),
 }) {}
 
-export const AmqpMessageContent = Schema.Unknown;
-
 export type AmqpMessage = {
   readonly content: unknown;
+  readonly redelivered: boolean;
   readonly ack: Effect.Effect<void>;
   readonly nack: Effect.Effect<void>;
 };
-
-type AmqpConnectionState = {
-  readonly connection: Connection | null;
-  readonly channel: Channel | null;
-  readonly queue: string | null;
-  readonly consumerFiber: Fiber.RuntimeFiber<void, never> | null;
-  readonly watcherFiber: Fiber.RuntimeFiber<void, never> | null;
-  readonly disconnectDeferred: Deferred.Deferred<void, never> | null;
-};
-
-const initialState: AmqpConnectionState = {
-  connection: null,
-  channel: null,
-  queue: null,
-  consumerFiber: null,
-  watcherFiber: null,
-  disconnectDeferred: null,
-};
-
-type AmqpServiceShape = {
-  readonly isConnected: Effect.Effect<boolean>;
-  readonly subscribe: <E>(
-    handler: (message: AmqpMessage) => Effect.Effect<void, E>
-  ) => Effect.Effect<Fiber.RuntimeFiber<void, AmqpConsumeError | E>, AmqpConnectionError, Scope.Scope>;
-  readonly messages: Queue.Dequeue<AmqpMessage>;
-};
-
-const connect = (url: string, exchange: string, prefetchCount: number) =>
-  Effect.gen(function* () {
-    yield* Effect.logInfo("AMQP: Connecting...");
-
-    const connection = yield* Effect.tryPromise({
-      try: () => amqplib.connect(url, { heartbeat: 30 }),
-      catch: (error) =>
-        new AmqpConnectionError({
-          message: "Failed to connect to AMQP broker",
-          cause: error,
-        }),
-    });
-
-    const channel = yield* Effect.tryPromise({
-      try: () => connection.createChannel(),
-      catch: (error) =>
-        new AmqpConnectionError({
-          message: "Failed to create AMQP channel",
-          cause: error,
-        }),
-    });
-
-    yield* Effect.tryPromise({
-      try: () => channel.assertExchange(exchange, "fanout", { durable: true }),
-      catch: (error) =>
-        new AmqpConnectionError({
-          message: "Failed to assert exchange",
-          cause: error,
-        }),
-    });
-
-    const { queue } = yield* Effect.tryPromise({
-      try: () =>
-        channel.assertQueue("", {
-          exclusive: true,
-          autoDelete: true,
-        }),
-      catch: (error) =>
-        new AmqpConnectionError({
-          message: "Failed to create queue",
-          cause: error,
-        }),
-    });
-
-    yield* Effect.tryPromise({
-      try: () => channel.bindQueue(queue, exchange, ""),
-      catch: (error) =>
-        new AmqpConnectionError({
-          message: "Failed to bind queue to exchange",
-          cause: error,
-        }),
-    });
-
-    yield* Effect.tryPromise({
-      try: () => channel.prefetch(prefetchCount),
-      catch: (error) =>
-        new AmqpConnectionError({
-          message: "Failed to set prefetch count",
-          cause: error,
-        }),
-    });
-
-    yield* Effect.logInfo("AMQP: Connection established");
-
-    return { connection, channel, queue };
-  });
-
-const cleanupFibers = (state: AmqpConnectionState) =>
-  Effect.gen(function* () {
-    if (state.consumerFiber) {
-      yield* Effect.logDebug("AMQP: Interrupting consumer fiber");
-      yield* Fiber.interrupt(state.consumerFiber).pipe(Effect.ignore);
-    }
-    if (state.watcherFiber) {
-      yield* Effect.logDebug("AMQP: Interrupting watcher fiber");
-      yield* Fiber.interrupt(state.watcherFiber).pipe(Effect.ignore);
-    }
-  });
-
-const disconnect = (state: AmqpConnectionState) =>
-  Effect.gen(function* () {
-    yield* Effect.logInfo("AMQP: Disconnecting...");
-
-    // First, interrupt any running fibers
-    yield* cleanupFibers(state);
-
-    if (state.channel) {
-      yield* Effect.tryPromise({
-        try: () => state.channel!.close(),
-        catch: () => undefined,
-      }).pipe(Effect.ignore);
-    }
-
-    if (state.connection) {
-      yield* Effect.tryPromise({
-        try: () => state.connection!.close(),
-        catch: () => undefined,
-      }).pipe(Effect.ignore);
-    }
-
-    yield* Effect.logInfo("AMQP: Disconnected");
-  });
 
 const parseMessageContent = (msg: ConsumeMessage): unknown => {
   const content = msg.content.toString();
@@ -172,74 +42,160 @@ const parseMessageContent = (msg: ConsumeMessage): unknown => {
 
 const createAmqpMessage = (channel: Channel, msg: ConsumeMessage): AmqpMessage => ({
   content: parseMessageContent(msg),
+  redelivered: msg.fields.redelivered,
   ack: Effect.sync(() => channel.ack(msg)),
-  nack: Effect.sync(() => channel.nack(msg, false, false)),
+  nack: Effect.sync(() => channel.nack(msg, false, true)),
 });
 
-const startConsuming = (
+const acquireConnection = (url: string) =>
+  Effect.acquireRelease(
+    Effect.tryPromise({
+      try: () => amqplib.connect(url, { heartbeat: 30 }),
+      catch: (cause) =>
+        new AmqpConnectionError({
+          message: "Failed to connect to AMQP broker",
+          cause,
+        }),
+    }),
+    (connection) =>
+      Effect.tryPromise({
+        try: () => connection.close(),
+        catch: () => undefined,
+      }).pipe(
+        Effect.tap(() => Effect.logDebug("AMQP: Connection closed")),
+        Effect.ignore
+      )
+  );
+
+const acquireChannel = (connection: Connection) =>
+  Effect.acquireRelease(
+    Effect.tryPromise({
+      try: () => connection.createChannel(),
+      catch: (cause) =>
+        new AmqpConnectionError({
+          message: "Failed to create AMQP channel",
+          cause,
+        }),
+    }),
+    (channel) =>
+      Effect.tryPromise({
+        try: () => channel.close(),
+        catch: () => undefined,
+      }).pipe(
+        Effect.tap(() => Effect.logDebug("AMQP: Channel closed")),
+        Effect.ignore
+      )
+  );
+
+const setupChannel = Effect.fn("setupChannel")(function* (channel: Channel, exchange: string, prefetchCount: number) {
+  yield* Effect.tryPromise({
+    try: () => channel.assertExchange(exchange, "fanout", { durable: true }),
+    catch: (cause) =>
+      new AmqpConnectionError({
+        message: "Failed to assert exchange",
+        cause,
+      }),
+  });
+
+  const { queue } = yield* Effect.tryPromise({
+    try: () =>
+      channel.assertQueue("", {
+        exclusive: true,
+        autoDelete: true,
+      }),
+    catch: (cause) =>
+      new AmqpConnectionError({
+        message: "Failed to create queue",
+        cause,
+      }),
+  });
+
+  yield* Effect.tryPromise({
+    try: () => channel.bindQueue(queue, exchange, ""),
+    catch: (cause) =>
+      new AmqpConnectionError({
+        message: "Failed to bind queue to exchange",
+        cause,
+      }),
+  });
+
+  yield* Effect.tryPromise({
+    try: () => channel.prefetch(prefetchCount),
+    catch: (cause) =>
+      new AmqpConnectionError({
+        message: "Failed to set prefetch count",
+        cause,
+      }),
+  });
+
+  return queue;
+});
+
+const registerConsumer = (
   channel: Channel,
   queueName: string,
   messageQueue: Queue.Queue<AmqpMessage>,
   runtime: Runtime.Runtime<never>
 ) =>
-  Effect.tryPromise({
-    try: () =>
-      channel.consume(
-        queueName,
-        (msg) => {
-          if (msg) {
-            const amqpMessage = createAmqpMessage(channel, msg);
-            // Use Runtime.runFork for proper fiber tracking within the runtime
-            Runtime.runFork(runtime)(
-              Queue.offer(messageQueue, amqpMessage).pipe(
-                Effect.catchAllDefect((err) =>
-                  Effect.logError("AMQP: Failed to enqueue message", { error: err }).pipe(
-                    Effect.tap(() => Effect.sync(() => channel.nack(msg, false, false)))
+  Effect.acquireRelease(
+    Effect.tryPromise({
+      try: () =>
+        channel.consume(
+          queueName,
+          (msg) => {
+            if (msg) {
+              const amqpMessage = createAmqpMessage(channel, msg);
+              Runtime.runFork(runtime)(
+                Queue.offer(messageQueue, amqpMessage).pipe(
+                  Effect.catchAllCause((cause) =>
+                    Effect.logError("AMQP: Failed to enqueue message", { cause }).pipe(
+                      Effect.tap(() => Effect.sync(() => channel.nack(msg, false, true)).pipe(Effect.ignore))
+                    )
                   )
                 )
-              )
-            );
-          }
-        },
-        { noAck: false }
-      ),
-    catch: (error) =>
-      new AmqpConsumeError({
-        message: "Failed to start consuming",
-        cause: error,
-      }),
-  }).pipe(Effect.asVoid);
+              );
+            }
+          },
+          { noAck: false }
+        ),
+      catch: (cause) =>
+        new AmqpConsumeError({
+          message: "Failed to start consuming",
+          cause,
+        }),
+    }),
+    ({ consumerTag }) =>
+      Effect.tryPromise({
+        try: () => channel.cancel(consumerTag),
+        catch: () => undefined,
+      }).pipe(Effect.ignore)
+  ).pipe(Effect.asVoid);
 
-const watchConnection = (
-  connection: Connection,
-  disconnectDeferred: Deferred.Deferred<void, never>,
-  runtime: Runtime.Runtime<never>
-) =>
+const waitForDisconnect = (connection: Connection, channel: Channel, runtime: Runtime.Runtime<never>) =>
   Effect.async<void>((resume) => {
-    const handleClose = () => {
-      Runtime.runFork(runtime)(
-        Effect.logWarning("AMQP: Connection closed").pipe(
-          Effect.tap(() => Deferred.succeed(disconnectDeferred, void 0))
-        )
-      );
+    let done = false;
+
+    const finish = (logEffect: Effect.Effect<void>) => {
+      if (done) return;
+      done = true;
+      Runtime.runFork(runtime)(logEffect);
       resume(Effect.void);
     };
 
-    const handleError = (error: Error) => {
-      Runtime.runFork(runtime)(
-        Effect.logError("AMQP: Connection error", { error }).pipe(
-          Effect.tap(() => Deferred.succeed(disconnectDeferred, void 0))
-        )
-      );
-      resume(Effect.void);
-    };
+    const onClose = () => finish(Effect.logWarning("AMQP: Connection/channel closed"));
 
-    connection.on("close", handleClose);
-    connection.on("error", handleError);
+    const onError = (error: unknown) => finish(Effect.logError("AMQP: Connection/channel error", { error }));
+
+    connection.once("close", onClose);
+    connection.once("error", onError as Parameters<Connection["once"]>[1]);
+    channel.once("close", onClose);
+    channel.once("error", onError as Parameters<Channel["once"]>[1]);
 
     return Effect.sync(() => {
-      connection.removeListener("close", handleClose);
-      connection.removeListener("error", handleError);
+      connection.removeListener("close", onClose);
+      connection.removeListener("error", onError);
+      channel.removeListener("close", onClose);
+      channel.removeListener("error", onError);
     });
   });
 
@@ -252,103 +208,58 @@ const makeAmqpService = Effect.gen(function* () {
   const prefetchCount = config.prefetchCount;
   const maxRetries = 5;
 
-  const stateRef = yield* Ref.make<AmqpConnectionState>(initialState);
+  const connectedRef = yield* Ref.make(false);
   const messageQueue = yield* Queue.bounded<AmqpMessage>(1000);
-  const shutdownRef = yield* Ref.make(false);
+  const firstConnected = yield* Deferred.make<void, never>();
 
   const retrySchedule = pipe(
     Schedule.exponential(Duration.seconds(1)),
     Schedule.compose(Schedule.recurs(maxRetries)),
-    Schedule.tapInput((error: AmqpConnectionError) => Effect.logWarning("AMQP: Retrying connection", { error }))
+    Schedule.tapInput((error: AmqpConnectionError | AmqpConsumeError) =>
+      Effect.logWarning("AMQP: Retrying connection", { error })
+    )
   );
 
-  // Single connection attempt that sets up fibers and returns disconnect signal
-  const establishConnection = Effect.gen(function* () {
-    // Clean up any existing fibers before reconnecting
-    const currentState = yield* Ref.get(stateRef);
-    yield* cleanupFibers(currentState);
+  // One connection session: acquire resources, consume, wait for disconnect.
+  // Disconnect listeners are installed immediately after acquiring connection/channel
+  // to avoid a race where a broker-initiated close fires before waitForDisconnect attaches.
+  const runSession = Effect.scoped(
+    Effect.gen(function* () {
+      const connection = yield* acquireConnection(url);
+      const channel = yield* acquireChannel(connection);
 
-    // Create a deferred to signal disconnection
-    const disconnectDeferred = yield* Deferred.make<void, never>();
+      // Install disconnect listeners early — before setup/consume so we never miss a close event
+      const disconnectFiber = yield* Effect.fork(waitForDisconnect(connection, channel, runtime));
 
-    // Connect to AMQP
-    const { connection, channel, queue } = yield* connect(url, exchange, prefetchCount);
+      const queue = yield* setupChannel(channel, exchange, prefetchCount);
+      yield* registerConsumer(channel, queue, messageQueue, runtime);
 
-    // Start consumer fiber (tracked)
-    const consumerFiber = yield* Effect.fork(
-      startConsuming(channel, queue, messageQueue, runtime).pipe(
-        Effect.catchAll((error) => Effect.logError("AMQP: Consumer error", { error }))
-      )
-    );
+      yield* Ref.set(connectedRef, true);
+      yield* Deferred.succeed(firstConnected, void 0).pipe(Effect.ignore);
 
-    // Start watcher fiber (tracked)
-    const watcherFiber = yield* Effect.fork(watchConnection(connection, disconnectDeferred, runtime));
+      yield* Effect.logInfo("AMQP: Connection established, consuming messages");
+      yield* Fiber.join(disconnectFiber);
+    }).pipe(Effect.ensuring(Ref.set(connectedRef, false)))
+  );
 
-    // Update state with all tracked resources
-    yield* Ref.set(stateRef, {
-      connection,
-      channel,
-      queue,
-      consumerFiber,
-      watcherFiber,
-      disconnectDeferred,
-    });
+  // Reconnect cycle: try session with retries, on failure wait before retry
+  const reconnectCycle = runSession.pipe(
+    Effect.retry(retrySchedule),
+    Effect.catchAll((error) =>
+      Effect.logError("AMQP: Max reconnect attempts reached, waiting before retry...", {
+        maxRetries,
+        error,
+      }).pipe(Effect.tap(() => Effect.sleep(Duration.seconds(30))))
+    ),
+    Effect.tap(() => Effect.logInfo("AMQP: Disconnected, will attempt to reconnect...")),
+    Effect.tap(() => Effect.sleep(Duration.seconds(1)))
+  );
 
-    return disconnectDeferred;
-  });
-
-  // Connection loop that handles reconnection
-  const connectionLoop = Effect.gen(function* () {
-    while (true) {
-      const isShutdown = yield* Ref.get(shutdownRef);
-      if (isShutdown) {
-        yield* Effect.logInfo("AMQP: Shutdown requested, exiting connection loop");
-        return;
-      }
-
-      // Try to establish connection with retry
-      const result = yield* establishConnection.pipe(Effect.retry(retrySchedule), Effect.either);
-
-      if (result._tag === "Left") {
-        yield* Effect.logError("AMQP: Max reconnect attempts reached, waiting before retry...", {
-          maxRetries,
-          error: result.left,
-        });
-        // Wait before trying again after max retries exhausted
-        yield* Effect.sleep(Duration.seconds(30));
-        continue;
-      }
-
-      const disconnectDeferred = result.right;
-
-      // Wait for disconnection signal
-      yield* Deferred.await(disconnectDeferred);
-
-      yield* Effect.logInfo("AMQP: Disconnected, will attempt to reconnect...");
-
-      // Clean up current state before reconnecting
-      const currentState = yield* Ref.get(stateRef);
-      yield* disconnect(currentState);
-      yield* Ref.set(stateRef, initialState);
-
-      // Small delay before reconnecting to avoid tight loop
-      yield* Effect.sleep(Duration.seconds(1));
-    }
-  });
-
-  // Start the connection loop in a forked fiber (not daemon - tied to scope)
-  const connectionLoopFiber = yield* Effect.forkScoped(connectionLoop);
+  // Start the connection loop in a forked fiber (tied to scope)
+  yield* Effect.forkScoped(Effect.forever(reconnectCycle));
 
   // Wait for initial connection to be established
-  yield* Effect.gen(function* () {
-    while (true) {
-      const state = yield* Ref.get(stateRef);
-      if (state.connection !== null) {
-        return;
-      }
-      yield* Effect.sleep(Duration.millis(100));
-    }
-  }).pipe(
+  yield* Deferred.await(firstConnected).pipe(
     Effect.timeout(Duration.seconds(30)),
     Effect.catchAll(() =>
       Effect.fail(
@@ -359,64 +270,22 @@ const makeAmqpService = Effect.gen(function* () {
     )
   );
 
-  // Add finalizer for cleanup
+  // Finalizer only needs to shut down the queue — scoped sessions handle connection cleanup
   yield* Effect.addFinalizer(() =>
     Effect.gen(function* () {
       yield* Effect.logInfo("AMQP: Service finalizer running...");
-
-      // Signal shutdown
-      yield* Ref.set(shutdownRef, true);
-
-      // Interrupt connection loop fiber
-      yield* Fiber.interrupt(connectionLoopFiber).pipe(Effect.ignore);
-
-      // Clean up current connection
-      const state = yield* Ref.get(stateRef);
-      yield* disconnect(state);
       yield* Queue.shutdown(messageQueue);
-
       yield* Effect.logInfo("AMQP: Service cleanup complete");
     })
   );
 
   return {
-    isConnected: Ref.get(stateRef).pipe(Effect.map((state) => state.connection !== null)),
-
-    subscribe: <E>(handler: (message: AmqpMessage) => Effect.Effect<void, E>) =>
-      Effect.gen(function* () {
-        const state = yield* Ref.get(stateRef);
-        if (!state.connection) {
-          return yield* Effect.fail(
-            new AmqpConnectionError({
-              message: "AMQP not connected",
-            })
-          );
-        }
-
-        // Use forkScoped so fiber is tied to caller's scope
-        const fiber = yield* Effect.forkScoped(
-          Effect.forever(
-            Effect.gen(function* () {
-              const message = yield* Queue.take(messageQueue);
-              yield* handler(message).pipe(
-                Effect.catchAll((error) =>
-                  Effect.logError("AMQP: Handler error", { error }).pipe(Effect.flatMap(() => message.nack))
-                )
-              );
-            })
-          )
-        );
-
-        return fiber;
-      }),
-
-    messages: messageQueue,
-  } satisfies AmqpServiceShape;
+    isConnected: Ref.get(connectedRef),
+    messages: Stream.fromQueue(messageQueue),
+  };
 });
 
 export class AmqpService extends Effect.Service<AmqpService>()("AmqpService", {
   scoped: makeAmqpService,
   dependencies: [AppConfig.Default],
 }) {}
-
-export const AmqpServiceLive = AmqpService.Default;

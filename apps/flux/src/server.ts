@@ -18,6 +18,9 @@ import { Server as SocketIOServer } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import Redis from "ioredis";
 import { AppConfig } from "./services/config";
+import { AuthService } from "./services/auth";
+import { WorkspaceRegistry } from "./services/workspace-registry";
+import { RedisClient } from "./services/redis";
 import {
   handleHealthRequest,
   handleReadinessRequest,
@@ -31,46 +34,51 @@ import { createAuthMiddleware } from "./middleware";
 export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
   effect: Effect.gen(function* () {
     const config = yield* AppConfig;
+    const auth = yield* AuthService;
+    const registry = yield* WorkspaceRegistry;
+    const redisClient = yield* RedisClient;
     const runtime = yield* Effect.runtime<never>();
     const startTime = Date.now();
 
+    const runPromise = Runtime.runPromise(runtime);
+    const runFork = Runtime.runFork(runtime);
+
     // Track workspace connections for health/stats
     const workspaceConnections = yield* Ref.make<HashMap.HashMap<string, WorkspaceConnection>>(HashMap.empty());
-
-    const runPromise = <A, E>(effect: Effect.Effect<A, E, never>): Promise<A> => {
-      return Runtime.runPromise(runtime)(effect);
-    };
-
-    const runFork = <A, E>(effect: Effect.Effect<A, E, never>) => {
-      Runtime.runFork(runtime)(effect);
-    };
 
     // Health context
     const healthContext = {
       startTime,
       clients: workspaceConnections,
       channelSubscribers: yield* Ref.make<HashMap.HashMap<string, unknown>>(HashMap.empty()),
-      redisConnected: () => Effect.succeed(true),
+      redisConnected: () =>
+        Effect.tryPromise({
+          try: () => redisClient.ping(),
+          catch: () => false,
+        }).pipe(
+          Effect.map(() => true),
+          Effect.catchAll(() => Effect.succeed(false))
+        ),
     };
 
-    const basePath = config.fluxBasePath.endsWith("/") ? config.fluxBasePath.slice(0, -1) : config.fluxBasePath;
+    const basePath = config.basePath;
 
     // HTTP request handler for health endpoints
     const handleHttpRequest = (req: IncomingMessage, res: ServerResponse) => {
       const url = req.url || "/";
 
       if (url === `${basePath}/health` || url === "/health") {
-        runPromise(handleHealthRequest(healthContext, req, res));
+        void runPromise(handleHealthRequest(healthContext, req, res));
         return;
       }
 
       if (url === `${basePath}/ready` || url === "/ready") {
-        runPromise(handleReadinessRequest(healthContext, req, res));
+        void runPromise(handleReadinessRequest(healthContext, req, res));
         return;
       }
 
       if (url === `${basePath}/live` || url === "/live") {
-        runPromise(handleLivenessRequest(req, res));
+        void runPromise(handleLivenessRequest(req, res));
         return;
       }
 
@@ -98,7 +106,7 @@ export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
         transports: ["websocket", "polling"],
       });
 
-      // Setup Redis adapter for horizontal scaling
+      // Setup Redis adapter for horizontal scaling (needs dedicated pub/sub clients)
       const redisUrl = Redacted.value(config.redisUrl);
       const pubClient = new Redis(redisUrl);
       const subClient = pubClient.duplicate();
@@ -110,14 +118,8 @@ export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
       yield* Effect.addFinalizer(() =>
         Effect.gen(function* () {
           yield* Effect.log("Shutting down Socket.IO server...");
-          yield* Effect.promise(
-            () =>
-              new Promise<void>((resolve) => {
-                io.close(() => {
-                  httpServer.close(() => resolve());
-                });
-              })
-          );
+          // io.close() also closes the underlying httpServer when one was passed to the constructor
+          yield* Effect.promise(() => io.close());
           yield* Effect.promise(() => pubClient.quit());
           yield* Effect.promise(() => subClient.quit());
           yield* Effect.log("Socket.IO server closed");
@@ -126,15 +128,32 @@ export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
 
       // Setup authentication middleware for events namespace
       const authMiddleware = createAuthMiddleware({
-        apiBaseUrl: config.apiBaseUrl,
+        auth,
+        registry,
+        runPromise,
+        runFork: (effect) => {
+          runFork(effect);
+        },
         requireWorkspaceMembership: true,
       });
 
       // Setup namespace handlers
       const eventsNamespace = io.of(/^\/events\/[\w-]+$/);
-      eventsNamespace.use(authMiddleware);
-      setupEventsNamespace(eventsNamespace, { workspaceConnections, runFork });
-      setupFluxNamespace(io, { runFork });
+      eventsNamespace.use((socket, next) => {
+        void authMiddleware(socket, next);
+      });
+      setupEventsNamespace(eventsNamespace, {
+        workspaceConnections,
+        registry,
+        runFork: (effect) => {
+          runFork(effect);
+        },
+      });
+      setupFluxNamespace(io, {
+        runFork: (effect) => {
+          runFork(effect);
+        },
+      });
 
       // Start HTTP server
       yield* Effect.async<void>((resume) => {
@@ -145,13 +164,11 @@ export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
 
       yield* Effect.logInfo(`Flux server listening on port ${config.port}`);
       yield* Effect.logInfo(`Socket.IO path: ${basePath}/socket.io`);
-      yield* Effect.logInfo(`Events namespace: /events/{workspaceId}`);
+      yield* Effect.logInfo(`Events namespace: /events/{workspaceSlug}`);
       yield* Effect.logInfo(`Health endpoint: ${basePath}/health`);
     });
 
     return { start };
   }),
-  dependencies: [AppConfig.Default],
+  dependencies: [AppConfig.Default, AuthService.Default, WorkspaceRegistry.Default, RedisClient.Default],
 }) {}
-
-export const FluxServerLive = FluxServer.Default;

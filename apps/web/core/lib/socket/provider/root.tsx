@@ -11,16 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { createContext, useEffect, useState, useCallback, useMemo } from "react";
+import { createContext, useEffect, useState, useCallback, useMemo, useSyncExternalStore } from "react";
 // local imports
 import { SocketClient } from "../socket-client";
-import type {
-  TSocketContext,
-  TSocketOptions,
-  TConnectionStatus,
-  TServerEventName,
-  TServerEventListener,
-} from "../types/root";
+import type { TSocketContext, TSocketOptions, TEntityEvent } from "../types/root";
 
 // =============================================================================
 // Context
@@ -39,10 +33,10 @@ type TSocketProviderProps = {
   children: React.ReactNode;
   options: TSocketOptions;
   /**
-   * When workspaceId changes, the socket will automatically
+   * When workspaceSlug changes, the socket will automatically
    * disconnect from the old workspace and connect to the new one.
    */
-  workspaceId: string;
+  workspaceSlug: string;
   /**
    * Whether the socket connection is enabled.
    * If false, no connection will be established.
@@ -56,37 +50,28 @@ type TSocketProviderProps = {
 // =============================================================================
 
 export function SocketProvider(props: TSocketProviderProps) {
-  const { children, options, workspaceId, enabled = true } = props;
-  // States
-  const [status, setStatus] = useState<TConnectionStatus>("disconnected");
+  const { children, options, workspaceSlug, enabled = true } = props;
 
   // Initialize client once using lazy state initialization
   const [client] = useState(() => new SocketClient(options));
 
-  // Subscribe to status changes
-  useEffect(() => {
-    return client.onStatusChange((newStatus) => {
-      setStatus(newStatus);
-    });
-  }, [client]);
+  // Subscribe to status via useSyncExternalStore
+  const status = useSyncExternalStore(client.onStatusChange, client.getStatus);
 
   // Handle workspace changes and cleanup
   useEffect(() => {
-    // Only connect if enabled
     if (enabled) {
-      client.connect(workspaceId);
+      client.connect(workspaceSlug);
     }
 
-    // Cleanup: disconnect when workspaceId changes or component unmounts
     return () => {
       client.disconnect();
     };
-  }, [client, workspaceId, enabled]);
+  }, [client, workspaceSlug, enabled]);
 
-  const subscribe = useCallback(
-    <E extends TServerEventName>(event: E, handler: TServerEventListener<E>) => {
-      return client.subscribe(event, handler);
-    },
+  const subscribeEntity = useCallback(
+    (entityType: string, entityId: string, handler: (data: TEntityEvent) => void) =>
+      client.subscribeEntity(entityType, entityId, handler),
     [client]
   );
 
@@ -94,9 +79,9 @@ export function SocketProvider(props: TSocketProviderProps) {
   const contextValue = useMemo<TSocketContext>(
     () => ({
       status,
-      subscribe,
+      subscribeEntity,
     }),
-    [status, subscribe]
+    [status, subscribeEntity]
   );
 
   return <SocketContext.Provider value={contextValue}>{children}</SocketContext.Provider>;

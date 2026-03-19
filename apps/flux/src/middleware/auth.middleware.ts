@@ -13,39 +13,57 @@
 
 import { Effect } from "effect";
 import type { Socket } from "socket.io";
-import { makeAuthService } from "../services/auth";
-import type { IUser } from "../services/auth";
+import type { AuthService, User } from "../services/auth";
+import type { WorkspaceRegistry } from "../services/workspace-registry";
 
 export interface AuthenticatedSocket extends Socket {
   data: {
-    user: IUser;
+    user: User;
+    workspaceSlug?: string;
     workspaceId?: string;
   };
 }
 
 export interface AuthMiddlewareConfig {
-  apiBaseUrl: string;
+  auth: AuthService;
+  registry: WorkspaceRegistry;
+  runPromise: <A, E>(effect: Effect.Effect<A, E, never>) => Promise<A>;
+  runFork: <A, E>(effect: Effect.Effect<A, E, never>) => void;
   requireWorkspaceMembership?: boolean;
 }
+
+const getCookie = (socket: Socket): string | undefined => {
+  const auth: unknown = socket.handshake.auth;
+  const authCookie =
+    typeof auth === "object" &&
+    auth !== null &&
+    "cookie" in auth &&
+    typeof (auth as Record<string, unknown>).cookie === "string"
+      ? ((auth as Record<string, unknown>).cookie as string)
+      : undefined;
+
+  const headerCookie =
+    typeof socket.handshake.headers.cookie === "string" ? socket.handshake.headers.cookie : undefined;
+
+  return authCookie ?? headerCookie;
+};
 
 /**
  * Creates a Socket.IO authentication middleware
  * Validates user session via cookie and optionally checks workspace membership
  */
 export const createAuthMiddleware = (config: AuthMiddlewareConfig) => {
-  const authService = makeAuthService({ apiBaseUrl: config.apiBaseUrl });
+  const { auth, registry, runPromise, runFork } = config;
 
   return async (socket: Socket, next: (err?: Error) => void) => {
     const authEffect = Effect.gen(function* () {
-      // Extract cookie from handshake
-      const cookie = socket.handshake.auth?.cookie || socket.handshake.headers?.cookie;
+      const cookie = getCookie(socket);
 
       if (!cookie) {
         return yield* Effect.fail(new Error("Authentication required: No session cookie provided"));
       }
 
-      // Validate user session with the API
-      const userResult = yield* authService
+      const userResult = yield* auth
         .currentUser(cookie)
         .pipe(Effect.mapError(() => new Error("Authentication failed: Invalid or expired session")));
 
@@ -53,26 +71,40 @@ export const createAuthMiddleware = (config: AuthMiddlewareConfig) => {
         return yield* Effect.fail(new Error("Authentication failed: User not found"));
       }
 
-      // Extract workspaceId from namespace path (e.g., /events/workspace-123)
+      // Extract workspaceSlug from namespace path (e.g., /events/my-workspace)
       const namespacePath = socket.nsp.name;
       const workspaceMatch = namespacePath.match(/^\/events\/(.+)$/);
-      const workspaceId = workspaceMatch?.[1];
+      const workspaceSlug = workspaceMatch?.[1];
 
       // Optionally verify workspace membership
-      if (config.requireWorkspaceMembership && workspaceId) {
-        const membership = yield* authService.getWorkspaceMembership(cookie, workspaceId);
+      if (config.requireWorkspaceMembership && workspaceSlug) {
+        const membership = yield* auth
+          .getWorkspaceMembership(cookie, workspaceSlug)
+          .pipe(Effect.mapError(() => new Error("Authentication failed: Could not verify workspace membership")));
         if (!membership) {
-          return yield* Effect.fail(new Error(`Access denied: User is not a member of workspace ${workspaceId}`));
+          return yield* Effect.fail(new Error(`Access denied: User is not a member of workspace ${workspaceSlug}`));
         }
       }
 
+      // Fetch workspace UUID and register the slug↔UUID mapping
+      let workspaceId: string | undefined;
+      if (workspaceSlug) {
+        const workspace = yield* auth
+          .getWorkspace(cookie, workspaceSlug)
+          .pipe(Effect.mapError(() => new Error("Authentication failed: Could not fetch workspace")));
+        workspaceId = workspace.id;
+        yield* registry.register(workspaceId, workspaceSlug);
+      }
+
       // Attach user info to socket
-      socket.data.user = userResult;
-      socket.data.workspaceId = workspaceId;
+      (socket as AuthenticatedSocket).data.user = userResult;
+      (socket as AuthenticatedSocket).data.workspaceSlug = workspaceSlug;
+      (socket as AuthenticatedSocket).data.workspaceId = workspaceId;
 
       yield* Effect.logInfo("User authenticated for socket connection", {
         userId: userResult.id,
         email: userResult.email,
+        workspaceSlug,
         workspaceId,
         socketId: socket.id,
       });
@@ -80,21 +112,12 @@ export const createAuthMiddleware = (config: AuthMiddlewareConfig) => {
       return userResult;
     });
 
-    const result = await Effect.runPromiseExit(authEffect);
-
-    if (result._tag === "Success") {
+    try {
+      await runPromise(authEffect);
       next();
-    } else {
-      const error = result.cause;
-      let message = "Authentication failed";
-
-      // Extract error message from the cause
-      if ("_tag" in error && error._tag === "Fail") {
-        const failError = error as { error: Error };
-        message = failError.error?.message || message;
-      }
-
-      Effect.runSync(
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Authentication failed";
+      runFork(
         Effect.logWarning("Socket authentication failed", {
           error: message,
           socketId: socket.id,

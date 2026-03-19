@@ -43,7 +43,6 @@
     "@socket.io/redis-adapter": "catalog:",
     "@socket.io/redis-emitter": "catalog:",
     "amqplib": "catalog:",
-    "axios": "catalog:",
     "dd-trace": "catalog:",
     "effect": "catalog:",
     "ioredis": "catalog:",

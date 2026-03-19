@@ -20,76 +20,21 @@ export interface FluxHandlerContext {
 
 /**
  * Setup handler for the default namespace (/)
- * Provides general pub/sub flux functionality
+ *
+ * The root namespace has no authenticated clients — the web client connects
+ * only to /events/{workspaceSlug}. The consumer process uses SocketEmitter
+ * (Redis-based, no socket connection) to emit events.
+ *
+ * We reject all connections to the root namespace to prevent unauthenticated access.
  */
 export const setupFluxNamespace = (io: SocketIOServer, ctx: FluxHandlerContext): void => {
   io.on("connection", (socket: Socket) => {
-    const clientId = socket.id;
-
     ctx.runFork(
-      Effect.logInfo("FLUX: Client connected", {
-        clientId,
+      Effect.logWarning("FLUX: Rejecting unauthenticated connection to root namespace", {
+        clientId: socket.id,
         remoteAddress: socket.handshake.address,
       })
     );
-
-    socket.emit("connected", {
-      clientId,
-      timestamp: Date.now(),
-    });
-
-    // Subscribe to a channel
-    socket.on("subscribe", (channel: string) => {
-      socket.join(channel);
-      ctx.runFork(
-        Effect.logInfo("FLUX: Client subscribed to channel", {
-          clientId,
-          channel,
-        })
-      );
-      socket.emit("subscribed", { channel, timestamp: Date.now() });
-    });
-
-    // Unsubscribe from a channel
-    socket.on("unsubscribe", (channel: string) => {
-      socket.leave(channel);
-      ctx.runFork(
-        Effect.logInfo("FLUX: Client unsubscribed from channel", {
-          clientId,
-          channel,
-        })
-      );
-      socket.emit("unsubscribed", { channel, timestamp: Date.now() });
-    });
-
-    // Broadcast to a channel
-    socket.on("broadcast", (data: { channel: string; payload: unknown }) => {
-      ctx.runFork(
-        Effect.logInfo("FLUX: Broadcasting to channel", {
-          clientId,
-          channel: data.channel,
-        })
-      );
-      socket.to(data.channel).emit("message", {
-        channel: data.channel,
-        payload: data.payload,
-        sender: clientId,
-        timestamp: Date.now(),
-      });
-    });
-
-    // Ping/pong
-    socket.on("ping", () => {
-      socket.emit("pong", { timestamp: Date.now() });
-    });
-
-    socket.on("disconnect", (reason: string) => {
-      ctx.runFork(
-        Effect.logInfo("FLUX: Client disconnected", {
-          clientId,
-          reason,
-        })
-      );
-    });
+    socket.disconnect(true);
   });
 };

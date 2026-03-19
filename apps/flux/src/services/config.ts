@@ -44,6 +44,7 @@ export class AppConfig extends Effect.Service<AppConfig>()("AppConfig", {
       fluxBasePath,
       apiBaseUrl,
       corsOrigin,
+      basePath: fluxBasePath.endsWith("/") ? fluxBasePath.slice(0, -1) : fluxBasePath,
       isProduction: nodeEnv === "production",
       // AMQP
       amqpUrl,
@@ -52,5 +53,3 @@ export class AppConfig extends Effect.Service<AppConfig>()("AppConfig", {
     };
   }),
 }) {}
-
-export const AppConfigLive = AppConfig.Default;

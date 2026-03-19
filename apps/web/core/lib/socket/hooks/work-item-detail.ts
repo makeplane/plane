@@ -15,7 +15,7 @@ import type { KeyedMutator } from "swr";
 // plane imports
 import type { TIssue, TIssueActivity, TIssueComment, TIssueRelation, TIssueSubIssues } from "@plane/types";
 // local imports
-import { useSocketEvent } from "./root";
+import { useEntityEvent } from "./root";
 
 type TUseWorkItemDetailRevalidationProps = {
   workItemId: string | undefined;
@@ -35,53 +35,29 @@ export const useWorkItemDetailRevalidation = ({
   entityType,
   mutateFn,
 }: TUseWorkItemDetailRevalidationProps) =>
-  useSocketEvent("work-item:updated", (data) => {
-    // Guard clauses
-    if (!workItemId || !data.entity_id) return;
-    if (!data.event_type?.startsWith(entityType + ".")) return;
-    if (data.entity_id !== workItemId) return;
+  useEntityEvent(entityType, workItemId, (data) => {
+    const isCommentEvent = data.event_type.includes(".comment.");
+    const isRelationEvent = data.event_type.includes(".relation.");
 
-    // Revalidate detail for main entity changes
-    if (
-      [
-        `${entityType}.created`,
-        `${entityType}.updated`,
-        `${entityType}.deleted`,
-        `${entityType}.state.updated`,
-        `${entityType}.assignee.added`,
-        `${entityType}.assignee.removed`,
-        `${entityType}.module.added`,
-        `${entityType}.module.removed`,
-        `${entityType}.label.added`,
-        `${entityType}.label.removed`,
-        `${entityType}.cycle.added`,
-        `${entityType}.cycle.removed`,
-        `${entityType}.link.added`,
-        `${entityType}.link.updated`,
-        `${entityType}.link.removed`,
-      ].includes(data.event_type)
-    ) {
+    // Revalidate detail for direct entity changes (not comments or relations)
+    if (!isCommentEvent && !isRelationEvent) {
       void mutateFn.detail();
     }
 
     // Revalidate comments for comment events
-    if (data.event_type?.startsWith(`${entityType}.comment.`)) {
-      const parentCommentId =
-        data.payload?.data && "comment" in data.payload.data ? data.payload.data.comment?.parent_id : undefined;
-      // It's a comment reply if there is a parent comment id
-      if (parentCommentId) {
-        void mutateFn.commentReplies?.(parentCommentId);
+    if (isCommentEvent) {
+      if (data.parent_comment_id) {
+        void mutateFn.commentReplies?.(data.parent_comment_id);
       }
-      // Always revalidate comments to update reply counts and comment list
       void mutateFn.comments();
     }
 
     // Revalidate relations for relation events
-    if (data.event_type?.startsWith(`${entityType}.relation.`)) {
+    if (isRelationEvent) {
       void mutateFn.relations();
     }
 
-    // TODO: (TEMP) Update this once sub work item events are implemented
+    // TODO: Update this once sub work item events are implemented
     void mutateFn.subWorkItems();
 
     // Always revalidate activity

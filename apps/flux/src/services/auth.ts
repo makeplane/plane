@@ -11,75 +11,91 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Effect, Context } from "effect";
-import axios from "axios";
+import { Effect, Schema } from "effect";
+import { FetchHttpClient, HttpClient, HttpClientError, HttpClientResponse, Headers } from "@effect/platform";
+import { AppConfig } from "./config";
 
-export interface IUser {
-  id: string;
-  email: string;
-  display_name: string;
-}
+export const User = Schema.Struct({
+  id: Schema.String,
+  email: Schema.String,
+  display_name: Schema.String,
+});
+export type User = typeof User.Type;
 
-export interface WorkspaceMembership {
-  role: number;
-}
+export const Workspace = Schema.Struct({
+  id: Schema.String,
+  slug: Schema.String,
+});
+export type Workspace = typeof Workspace.Type;
 
-export class AuthServiceError {
-  readonly _tag = "AuthServiceError";
-  constructor(
-    readonly message: string,
-    readonly cause?: unknown
-  ) {}
-}
+export const WorkspaceMembership = Schema.Struct({
+  role: Schema.Number,
+});
+export type WorkspaceMembership = typeof WorkspaceMembership.Type;
 
-export interface AuthServiceConfig {
-  apiBaseUrl: string;
-}
+export class AuthServiceError extends Schema.TaggedError<AuthServiceError>()("AuthServiceError", {
+  message: Schema.String,
+  cause: Schema.optional(Schema.Unknown),
+}) {}
 
-export class AuthService extends Context.Tag("AuthService")<
-  AuthService,
-  {
-    readonly currentUser: (cookie: string) => Effect.Effect<IUser, AuthServiceError>;
-    readonly getWorkspaceMembership: (
-      cookie: string,
-      workspaceId: string
-    ) => Effect.Effect<WorkspaceMembership | null, AuthServiceError>;
-  }
->() {}
+export class AuthService extends Effect.Service<AuthService>()("AuthService", {
+  effect: Effect.gen(function* () {
+    const { apiBaseUrl } = yield* AppConfig;
+    const client = HttpClient.filterStatusOk(yield* HttpClient.HttpClient);
 
-export const makeAuthService = (config: AuthServiceConfig) => {
-  const client = axios.create({
-    baseURL: config.apiBaseUrl,
-    withCredentials: true,
-    timeout: 20000,
-  });
-
-  const currentUser = (cookie: string): Effect.Effect<IUser, AuthServiceError> =>
-    Effect.tryPromise({
-      try: async () => {
-        const response = await client.get<IUser>("/api/users/me/", {
-          headers: { Cookie: cookie },
-        });
-        return response.data;
-      },
-      catch: (error) => new AuthServiceError("Failed to fetch current user", error),
+    const currentUser = Effect.fn("AuthService.currentUser")(function* (cookie: string) {
+      const url = new URL("/api/users/me/", apiBaseUrl).toString();
+      return yield* client.get(url, { headers: Headers.fromInput({ Cookie: cookie }) }).pipe(
+        Effect.flatMap(HttpClientResponse.schemaBodyJson(User)),
+        Effect.mapError(
+          (cause) =>
+            new AuthServiceError({
+              message: "Failed to fetch current user",
+              cause,
+            })
+        )
+      );
     });
 
-  const getWorkspaceMembership = (
-    cookie: string,
-    workspaceId: string
-  ): Effect.Effect<WorkspaceMembership | null, AuthServiceError> =>
-    Effect.tryPromise({
-      try: async () => {
-        const response = await client.get<WorkspaceMembership>(`/api/workspaces/${workspaceId}/workspace-members/me/`, {
-          headers: { Cookie: cookie },
-        });
-        return response.data;
-      },
-      catch: () => null as WorkspaceMembership | null,
-    }).pipe(Effect.catchAll(() => Effect.succeed(null)));
+    const getWorkspace = Effect.fn("AuthService.getWorkspace")(function* (cookie: string, workspaceSlug: string) {
+      const url = new URL(`/api/workspaces/${workspaceSlug}/`, apiBaseUrl).toString();
+      return yield* client.get(url, { headers: Headers.fromInput({ Cookie: cookie }) }).pipe(
+        Effect.flatMap(HttpClientResponse.schemaBodyJson(Workspace)),
+        Effect.mapError(
+          (cause) =>
+            new AuthServiceError({
+              message: "Failed to fetch workspace",
+              cause,
+            })
+        )
+      );
+    });
 
-  return { currentUser, getWorkspaceMembership };
-};
+    const getWorkspaceMembership = Effect.fn("AuthService.getWorkspaceMembership")(function* (
+      cookie: string,
+      workspaceSlug: string
+    ) {
+      const url = new URL(`/api/workspaces/${workspaceSlug}/workspace-members/me/`, apiBaseUrl).toString();
+      return yield* client.get(url, { headers: Headers.fromInput({ Cookie: cookie }) }).pipe(
+        Effect.flatMap(HttpClientResponse.schemaBodyJson(WorkspaceMembership)),
+        Effect.catchIf(
+          (e): e is HttpClientError.ResponseError =>
+            e instanceof HttpClientError.ResponseError &&
+            e.reason === "StatusCode" &&
+            (e.response.status === 403 || e.response.status === 404),
+          () => Effect.succeed(null)
+        ),
+        Effect.mapError(
+          (cause) =>
+            new AuthServiceError({
+              message: "Failed to fetch workspace membership",
+              cause,
+            })
+        )
+      );
+    });
 
-export const AuthServiceLive = (config: AuthServiceConfig) => AuthService.of(makeAuthService(config));
+    return { currentUser, getWorkspace, getWorkspaceMembership };
+  }),
+  dependencies: [AppConfig.Default, FetchHttpClient.layer],
+}) {}

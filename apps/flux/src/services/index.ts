@@ -12,8 +12,9 @@
  */
 
 export * from "./config";
-export * from "./redis";
 export * from "./amqp";
 export * from "./auth";
+export * from "./redis";
 export * from "./socket-emitter";
 export * from "./telemetry";
+export * from "./workspace-registry";

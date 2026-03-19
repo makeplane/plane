@@ -16,10 +16,10 @@ import "./config/tracer";
 
 import { Effect, Layer, Logger, LogLevel } from "effect";
 import { NodeRuntime } from "@effect/platform-node";
-import { AppConfigLive, Telemetry, TelemetryTracingLive } from "./services";
-import { FluxServer, FluxServerLive } from "./server";
+import { Telemetry, TelemetryLive } from "./services";
+import { FluxServer } from "./server";
 
-const MainLive = Layer.mergeAll(AppConfigLive, TelemetryTracingLive, FluxServerLive);
+const MainLive = Layer.mergeAll(TelemetryLive, FluxServer.Default);
 
 const program = Effect.gen(function* () {
   // Initialize telemetry first (Sentry must be ready before other services)
@@ -29,13 +29,14 @@ const program = Effect.gen(function* () {
   yield* Effect.never;
 });
 
-const isProduction = process.env.NODE_ENV === "production";
+const JsonLoggerLive =
+  process.env.NODE_ENV === "production" ? Logger.replace(Logger.defaultLogger, Logger.jsonLogger) : Layer.empty;
 
 const runnable = program.pipe(
-  Effect.provide(MainLive),
   Effect.scoped,
+  Effect.provide(MainLive),
   Logger.withMinimumLogLevel(LogLevel.Info),
-  isProduction ? Effect.provide(Logger.replace(Logger.defaultLogger, Logger.jsonLogger)) : (e) => e
+  Effect.provide(JsonLoggerLive)
 );
 
 NodeRuntime.runMain(runnable);

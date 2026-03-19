@@ -12,9 +12,8 @@
  */
 
 import { Effect, Config, Layer, Option, Context } from "effect";
-import { AppConfig } from "./config";
 import * as Sentry from "@sentry/node";
-import { SentrySpanProcessor, SentryPropagator, SentrySampler } from "@sentry/opentelemetry";
+import { SentrySpanProcessor } from "@sentry/opentelemetry";
 import { NodeSdk } from "@effect/opentelemetry";
 
 export interface TelemetryConfig {
@@ -45,16 +44,15 @@ export class Telemetry extends Context.Tag("Telemetry")<Telemetry, TelemetryServ
 
 /**
  * Complete telemetry layer that provides both the Telemetry service
- * and the Effect OpenTelemetry NodeSdk for automatic span propagation.
+ * and the Effect OpenTelemetry NodeSdk for bridging Effect spans to Sentry.
  *
- * Initializes Sentry first, then creates the NodeSdk layer with the Sentry client,
+ * Initializes Sentry first, then creates the NodeSdk layer with SentrySpanProcessor,
  * ensuring proper ordering and no race conditions.
  */
-export const TelemetryTracingLive = Layer.unwrapScoped(
+export const TelemetryLive = Layer.unwrapScoped(
   Effect.gen(function* () {
     const config = yield* TelemetryConfigSchema;
 
-    // Initialize Sentry first
     if (Option.isSome(config.sentryDsn)) {
       Sentry.init({
         dsn: config.sentryDsn.value,
@@ -73,10 +71,6 @@ export const TelemetryTracingLive = Layer.unwrapScoped(
       yield* Effect.logDebug("Sentry telemetry disabled (no SENTRY_DSN configured)");
     }
 
-    // Now Sentry is initialized, we can safely get the client
-    const client = Option.isSome(config.sentryDsn) ? Sentry.getClient() : undefined;
-
-    // Cleanup on shutdown
     yield* Effect.addFinalizer(() =>
       Effect.gen(function* () {
         if (Option.isSome(config.sentryDsn)) {
@@ -86,7 +80,6 @@ export const TelemetryTracingLive = Layer.unwrapScoped(
       }).pipe(Effect.catchAll(() => Effect.void))
     );
 
-    // Create the Telemetry service
     const telemetryService: TelemetryService = {
       config,
       captureException: (error: unknown) =>
@@ -115,7 +108,8 @@ export const TelemetryTracingLive = Layer.unwrapScoped(
         }),
     };
 
-    // Create NodeSdk layer with Sentry integration
+    // NodeSdk.layer bridges Effect's tracing (Effect.withSpan) to OpenTelemetry.
+    // SentrySpanProcessor forwards those spans to Sentry.
     const nodeSdkLayer = NodeSdk.layer(() => ({
       resource: {
         serviceName: config.serviceName,
@@ -125,12 +119,8 @@ export const TelemetryTracingLive = Layer.unwrapScoped(
         },
       },
       spanProcessor: new SentrySpanProcessor(),
-      sampler: client ? new SentrySampler(client) : undefined,
-      contextManager: undefined,
-      textMapPropagator: new SentryPropagator(),
     }));
 
-    // Combine Telemetry service layer with NodeSdk layer
     return Layer.merge(Layer.succeed(Telemetry, telemetryService), nodeSdkLayer);
-  }).pipe(Effect.provide(AppConfig.Default))
+  })
 );

@@ -13,13 +13,7 @@
 
 import { io } from "socket.io-client";
 // types
-import type {
-  TSocketOptions,
-  TConnectionStatus,
-  TServerEventName,
-  TServerEventListener,
-  TSocketInstance,
-} from "./types/root";
+import type { TSocketOptions, TConnectionStatus, TEntityEvent, TSocketInstance } from "./types/root";
 
 const DEFAULT_OPTIONS = {
   withCredentials: true,
@@ -31,13 +25,11 @@ const DEFAULT_OPTIONS = {
   path: "/socket.io",
 } satisfies TSocketOptions;
 
-type TStatusChangeHandler = (status: TConnectionStatus) => void;
-
 export class SocketClient {
   private socket: TSocketInstance | null = null;
   private options: Required<TSocketOptions>;
-  private currentWorkspaceId: string | null = null;
-  private statusChangeHandler: TStatusChangeHandler | null = null;
+  private currentWorkspaceSlug: string | null = null;
+  private listeners = new Set<() => void>();
   private _status: TConnectionStatus = "disconnected";
 
   constructor(options: TSocketOptions) {
@@ -56,20 +48,12 @@ export class SocketClient {
   // Public API
   // ===========================================================================
 
-  get status(): TConnectionStatus {
-    return this._status;
-  }
-
-  get workspaceId(): string | null {
-    return this.currentWorkspaceId;
-  }
-
   /**
    * Connect to a workspace namespace
    */
-  connect(workspaceId: string): void {
+  connect(workspaceSlug: string): void {
     // Already connected to this workspace
-    if (this.currentWorkspaceId === workspaceId && this.socket?.connected) {
+    if (this.currentWorkspaceSlug === workspaceSlug && this.socket?.connected) {
       return;
     }
 
@@ -78,12 +62,12 @@ export class SocketClient {
       this.disconnect();
     }
 
-    this.currentWorkspaceId = workspaceId;
+    this.currentWorkspaceSlug = workspaceSlug;
     this.setStatus("connecting");
 
-    // Build namespace: /events/{workspaceId} (for flux server)
-    // Full URL will be: http://host:port/events/{workspaceId} with path /flux/socket.io
-    const namespace = `/events/${workspaceId}`;
+    // Build namespace: /events/{workspaceSlug} (for flux server)
+    // Full URL will be: http://host:port/events/{workspaceSlug} with path /flux/socket.io
+    const namespace = `/events/${workspaceSlug}`;
     const serverUrl = this.options.url;
 
     if (process.env.NODE_ENV === "development") {
@@ -111,56 +95,55 @@ export class SocketClient {
     if (!this.socket) return;
 
     if (process.env.NODE_ENV === "development") {
-      console.log("[WorkspaceSocket] Disconnecting socket from workspace:", this.currentWorkspaceId);
+      console.log("[WorkspaceSocket] Disconnecting socket from workspace:", this.currentWorkspaceSlug);
     }
 
     this.socket.removeAllListeners();
     this.socket.disconnect();
     this.socket = null;
-    this.currentWorkspaceId = null;
+    this.currentWorkspaceSlug = null;
     this.setStatus("disconnected");
   }
 
   /**
-   * Subscribe to a server event with full type safety
-   *
-   * Note: Socket.IO's type system uses FallbackToUntypedListener which doesn't properly
-   * recognize our generic event handler types. The handlers are type-safe at the API level,
-   * and Socket.IO will call them correctly at runtime. We use ts-expect-error to acknowledge
-   * this known Socket.IO typing limitation while maintaining full type safety for users of this API.
+   * Subscribe to events for a specific entity.
+   * Joins the server-side room so only events for this entity are delivered.
    */
-  subscribe<E extends TServerEventName>(event: E, handler: TServerEventListener<E>): () => void {
-    if (!this.socket) {
-      console.warn(`[WorkspaceSocket] Cannot subscribe to "${event}" - not connected`);
+  subscribeEntity(entityType: string, entityId: string, handler: (data: TEntityEvent) => void): () => void {
+    const socket = this.socket;
+    if (!socket) {
+      console.warn(`[WorkspaceSocket] Cannot subscribe to entity "${entityId}" - not connected`);
       return () => {};
     }
 
-    // Socket.IO's complex conditional types don't recognize our handler type
-    // but it's type-safe and will work correctly at runtime
-    // @ts-expect-error - Socket.IO FallbackToUntypedListener type limitation
-    this.socket.on(event, handler);
+    const room = `${entityType}:${entityId}` as const;
+    socket.emit("subscribe:entity", { entityType, entityId });
+    socket.on(room, handler);
 
-    // Return unsubscribe function
     return () => {
-      if (this.socket) {
-        // @ts-expect-error - Socket.IO FallbackToUntypedListener type limitation
-        this.socket.off(event, handler);
+      socket.off(room, handler);
+      // Only send unsubscribe if still connected — server-side rooms are already
+      // cleaned up on disconnect, and buffering during reconnect causes ordering issues
+      if (socket.connected) {
+        socket.emit("unsubscribe:entity", { entityType, entityId });
       }
     };
   }
 
   /**
-   * Subscribe to status changes
+   * Subscribe to status changes (useSyncExternalStore-compatible)
    */
-  onStatusChange(handler: TStatusChangeHandler): () => void {
-    this.statusChangeHandler = handler;
-    // Immediately call with current status
-    handler(this._status);
-
+  onStatusChange = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
     return () => {
-      this.statusChangeHandler = null;
+      this.listeners.delete(listener);
     };
-  }
+  };
+
+  /**
+   * Get current status snapshot (useSyncExternalStore-compatible)
+   */
+  getStatus = (): TConnectionStatus => this._status;
 
   // ===========================================================================
   // Private methods
@@ -173,7 +156,7 @@ export class SocketClient {
       this.setStatus("connected");
 
       if (process.env.NODE_ENV === "development") {
-        console.log(`[WorkspaceSocket] Connected to workspace namespace: ${this.currentWorkspaceId}`);
+        console.log(`[WorkspaceSocket] Connected to workspace namespace: ${this.currentWorkspaceSlug}`);
       }
     });
 
@@ -182,10 +165,12 @@ export class SocketClient {
         console.log(`[WorkspaceSocket] Disconnected: ${reason}`);
       }
 
-      // Socket.IO will auto-reconnect for these reasons
-      if (reason === "io server disconnect") {
-        // Server forcefully disconnected, won't auto-reconnect
+      if (reason === "io server disconnect" || reason === "io client disconnect") {
+        // Server forcefully disconnected or client called disconnect() — won't auto-reconnect
         this.setStatus("disconnected");
+      } else {
+        // Transport close, ping timeout, etc. — Socket.IO will auto-reconnect
+        this.setStatus("reconnecting");
       }
     });
 
@@ -201,7 +186,7 @@ export class SocketClient {
       this.setStatus("connected");
 
       if (process.env.NODE_ENV === "development") {
-        console.log(`[WorkspaceSocket] Reconnected to workspace namespace: ${this.currentWorkspaceId}`);
+        console.log(`[WorkspaceSocket] Reconnected to workspace namespace: ${this.currentWorkspaceSlug}`);
       }
     });
 
@@ -222,11 +207,13 @@ export class SocketClient {
     if (this._status === status) return;
 
     this._status = status;
-    if (this.statusChangeHandler) {
+    for (const listener of this.listeners) {
       try {
-        this.statusChangeHandler(status);
+        listener();
       } catch (error) {
-        console.error("[WorkspaceSocket] Status change handler error:", error);
+        if (process.env.NODE_ENV === "development") {
+          console.error("[WorkspaceSocket] Error in status listener:", error);
+        }
       }
     }
   }
