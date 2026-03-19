@@ -13,7 +13,7 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams } from "react-router";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
@@ -41,8 +41,9 @@ import type { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-
 // plane web imports
 import { IssueTypeDropdown } from "@/components/work-item-types/dropdowns/issue-type";
 import type { TIssueTypeOptionTooltip } from "@/components/work-item-types/dropdowns/issue-type";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type Props = {
   selectionHelpers: TSelectionHelper;
@@ -81,16 +82,20 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
     isWorkItemTypeEnabledForProject,
     getIssueTypeIdsWithMandatoryProperties,
   } = useIssueTypes();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
-  const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
+  const projectDetails = getProjectById(projectId);
   const isCyclesEnabled = !!projectDetails?.cycle_view;
   const isModulesEnabled = !!projectDetails?.module_view;
-  const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_PRO");
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
+  const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug, "BULK_OPS_PRO");
+  const isWorkItemTypeEnabled =
+    !!workspaceSlug && !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+  const isWorkItemHierarchyEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED);
+  const shouldShowWorkItemTypeSelect = isWorkItemTypeEnabled && !isWorkItemHierarchyEnabled;
   // Get issue types with mandatory properties
   const issueTypeIdsWithMandatoryProperties = useMemo(() => {
     if (!projectId) return [];
-    return getIssueTypeIdsWithMandatoryProperties(projectId?.toString());
+    return getIssueTypeIdsWithMandatoryProperties(projectId);
   }, [getIssueTypeIdsWithMandatoryProperties, projectId]);
   // Create a map of information for issue types with mandatory field
   const optionTooltip: TIssueTypeOptionTooltip = useMemo(() => {
@@ -124,7 +129,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
       payload[payloadKey] = data[payloadKey];
     });
 
-    await bulkUpdateProperties(workspaceSlug.toString(), projectId.toString(), {
+    await bulkUpdateProperties(workspaceSlug, projectId, {
       issue_ids: snapshot.selectedEntityIds,
       properties: payload,
     })
@@ -172,7 +177,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
               <StateDropdown
                 value={value}
                 onChange={(val) => onChange(value === val ? "" : val)}
-                projectId={projectId?.toString() ?? ""}
+                projectId={projectId}
                 buttonVariant="border-with-text"
                 disabled={isUpdateDisabled}
                 showDefaultState={false}
@@ -208,7 +213,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 onChange={onChange}
                 buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
                 buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
-                projectId={projectId?.toString() ?? ""}
+                projectId={projectId}
                 placeholder="Assignees"
                 multiple
                 disabled={isUpdateDisabled}
@@ -262,7 +267,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 <div className="h-6">
                   <IssueLabelSelect
                     value={value}
-                    projectId={projectId.toString()}
+                    projectId={projectId}
                     onChange={onChange}
                     buttonContainerClassName="text-tertiary "
                     placement="top-start"
@@ -282,7 +287,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                   <CycleDropdown
                     value={value}
                     onChange={onChange}
-                    projectId={projectId.toString()}
+                    projectId={projectId}
                     buttonVariant="border-with-text"
                     buttonClassName="text-tertiary py-1 rounded"
                     disabled={isUpdateDisabled}
@@ -292,7 +297,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 )}
               />
             )}
-            {projectId && currentActiveEstimateId && areEstimateEnabledByProjectId(projectId?.toString()) && (
+            {projectId && currentActiveEstimateId && areEstimateEnabledByProjectId(projectId) && (
               <Controller
                 name="estimate_point"
                 control={control}
@@ -300,7 +305,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                   <EstimateDropdown
                     value={value}
                     onChange={onChange}
-                    projectId={projectId.toString()}
+                    projectId={projectId}
                     buttonVariant="border-with-text"
                     buttonClassName="text-tertiary py-1"
                     disabled={isUpdateDisabled}
@@ -318,7 +323,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                   <ModuleDropdown
                     value={value}
                     onChange={onChange}
-                    projectId={projectId.toString()}
+                    projectId={projectId}
                     buttonVariant="border-with-text"
                     buttonClassName="text-tertiary border-none  px-2 py-1"
                     buttonContainerClassName="border-[0.5px] border-subtle-1 rounded"
@@ -331,7 +336,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 )}
               />
             )}
-            {projectId && isWorkItemTypeEnabled && (
+            {shouldShowWorkItemTypeSelect && (
               <Controller
                 control={control}
                 name="type_id"

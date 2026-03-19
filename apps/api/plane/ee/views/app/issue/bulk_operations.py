@@ -40,10 +40,10 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
 )
-from plane.ee.models import IssueProperty, IssuePropertyValue
+from plane.ee.models import IssueProperty, IssuePropertyValue, WorkspaceFeature
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.error_codes import ERROR_CODES
 from plane.ee.utils.issue_property_validators import property_savers
@@ -327,6 +327,29 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Issue Type
             if properties.get("type_id", False):
+                # Check if the issue type hierarchy feature flag is enabled.
+                is_hierarchy_flag_enabled = check_workspace_feature_flag(
+                    feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY,
+                    slug=slug,
+                    user_id=str(request.user.id),
+                )
+                workspace_feature = WorkspaceFeature.objects.filter(
+                    workspace__slug=slug,
+                ).first()
+
+                workspace_hierarchy_enabled = (
+                    workspace_feature.is_workitem_hierarchy_enabled if workspace_feature else False
+                )
+                if is_hierarchy_flag_enabled and workspace_hierarchy_enabled:
+                    return Response(
+                        {
+                            "error_code": "ISSUE_TYPE_HIERARCHY_VIOLATION",
+                            "error_message": """The issue type hierarchy feature is enabled for this workspace. 
+                            Bulk updating issue types is not allowed as it may violate the hierarchy constraints.""",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 issue_activities.append(
                     {
                         "type": "issue.activity.updated",
