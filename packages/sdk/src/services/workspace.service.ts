@@ -20,6 +20,14 @@ export class WorkspaceService extends APIService {
     super(options);
   }
 
+  async getFeatures(slug: string): Promise<{ work_item_types: boolean }> {
+    return this.get(`/api/v1/workspaces/${slug}/features/`)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async toggle(slug: string, feature: { work_item_types: boolean }): Promise<ExIssue> {
     return this.patch(`/api/v1/workspaces/${slug}/features/`, feature)
       .then((response) => response.data)

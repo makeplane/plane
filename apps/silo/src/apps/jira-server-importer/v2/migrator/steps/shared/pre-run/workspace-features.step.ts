@@ -14,6 +14,8 @@
 import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import type { JiraConfig } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
 
 export class WorkspaceFeaturesStep implements IStep {
@@ -25,10 +27,42 @@ export class WorkspaceFeaturesStep implements IStep {
     const { job, planeClient } = jobContext;
     const { workspace_slug } = job;
 
+    const config = job.config as JiraConfig;
+    const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally;
+
+    /**
+     * There are two cases that we are handling here:
+     *
+     * 1. Check if the workspace work item types features is already enabled
+     * 2. If the workspace work item types features is already enabled, and job
+     * config doesn't have `importWorkItemTypesGlobally` set to true, then we
+     * need to update the job config to enabled import of the importWorkItemTypesGlobally
+     * 3. If the workspace work item types feature is not enabled and job config
+     * has `importWorkItemTypesGlobally` set to true, then we need to enable the
+     * workspace work item types feature
+     **/
+
     try {
-      await planeClient.workspace.toggle(workspace_slug, {
-        work_item_types: true,
-      });
+      const currentFeatures = await planeClient.workspace.getFeatures(workspace_slug);
+
+      if (currentFeatures.work_item_types && !importWorkItemTypesGlobally) {
+        logger.info(`[${job.id.slice(0, 7)}] Disabling workspace work item types feature`, currentFeatures);
+        await integrationConnectionHelper.updateImportJob({
+          job_id: job.id,
+          config: {
+            ...job.config,
+            importWorkItemTypesGlobally: true,
+          },
+        });
+      }
+
+      if (!currentFeatures.work_item_types && importWorkItemTypesGlobally) {
+        logger.info(`[${job.id.slice(0, 7)}] Enabling workspace work item types feature`, currentFeatures);
+        await planeClient.workspace.toggle(workspace_slug, {
+          work_item_types: true,
+        });
+      }
+
       logger.info(`[${job.id.slice(0, 7)}] Workspace features updated`);
     } catch (error) {
       logger.error(`[${job.id}][${this.name}] Failed to toggle workspace features`, error);

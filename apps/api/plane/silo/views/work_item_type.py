@@ -99,12 +99,6 @@ class WorkspaceIssueTypeBulkOperationAPIView(BaseServiceAPIView):
             for item in existing_items:
                 existing_issue_types[(item.external_source, item.external_id)] = item
         
-        # Pre-fetch existing names for uniqueness check
-        existing_names = set(
-            self.model.objects.filter(workspace=workspace)
-            .values_list("name", flat=True)
-        )
-
         for item_data in request.data:
             try:
                 external_id = item_data.get("external_id")
@@ -118,12 +112,6 @@ class WorkspaceIssueTypeBulkOperationAPIView(BaseServiceAPIView):
                     # Return the existing item
                     updated.append(self.serializer_class(existing_item).data)
                 else:
-                    # Name uniqueness validation
-                    name = item_data.get("name")
-                    if name in existing_names:
-                        errored.append({"payload": item_data, "error": "Work item type with this name already exists"})
-                        continue
-
                     # Create new item using serializer
                     serializer = self.serializer_class(data=item_data)
                     serializer.is_valid(raise_exception=True)
@@ -133,7 +121,6 @@ class WorkspaceIssueTypeBulkOperationAPIView(BaseServiceAPIView):
                     )
                     
                     # Update tracking
-                    existing_names.add(name)
                     created.append(serializer.data)
 
             except Exception as e:

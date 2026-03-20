@@ -27,6 +27,7 @@ import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import type { JiraConfig } from "@plane/etl/jira-server";
 
 export type TRequiredFlags = {
   epics: boolean;
@@ -47,6 +48,7 @@ export class PlaneProjectConfigurationStep implements IStep {
     try {
       const allFeatureFlags = await this.fetchFeatureFlags(workspace_slug, job.initiator_id);
       const requiredFlags = this.collectRequiredFlags(allFeatureFlags);
+      const config = job.config as JiraConfig;
 
       logger.info(`[${job.id.slice(0, 7)}] Project configuration: ${JSON.stringify(requiredFlags)}`, {
         workspace_slug,
@@ -83,6 +85,11 @@ export class PlaneProjectConfigurationStep implements IStep {
         work_item_types: requiredFlags.issue_types,
       });
 
+      // Here the importWorkItemTypesGlobally, also checks for the global
+      // work item types being enabled.
+      const shouldEnableIssueTypes = requiredFlags.issue_types && !config.importWorkItemTypesGlobally ? true : false;
+      const shouldEnableEpics = requiredFlags.epics && !config.importEpicsAsWorkItems ? true : false;
+
       executionLog.collect(job.id, {
         entity_type: EExecutionLogEntityType.PROJECT,
         phase: "UPDATE_PROJECT_CONFIG",
@@ -92,10 +99,10 @@ export class PlaneProjectConfigurationStep implements IStep {
           projectUpdated: {
             is_time_tracking_enabled: requiredFlags.issue_worklog,
             featuresUpdated: {
-              epics: requiredFlags.epics,
+              epics: shouldEnableEpics,
               modules: true,
               cycles: true,
-              work_item_types: requiredFlags.issue_types,
+              work_item_types: shouldEnableIssueTypes,
             },
           },
         },
