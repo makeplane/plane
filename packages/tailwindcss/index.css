@@ -5,6 +5,7 @@
 /* Scan only packages with UI components for Tailwind classes */
 @source "../ui/**/*.{ts,tsx}";
 @source "../propel/**/*.{ts,tsx}";
+@source "../blocks/**/*.{ts,tsx}";
 @source "../editor/**/*.{ts,tsx}";
 @source "../hooks/**/*.{ts,tsx}";
 
