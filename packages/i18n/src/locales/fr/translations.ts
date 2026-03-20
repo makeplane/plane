@@ -6883,4 +6883,71 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hiérarchie",
+      tab_label: "Hiérarchie",
+      description:
+        "Configurez les niveaux de hiérarchie pour organiser votre travail. Chaque niveau définit une relation parent avec l'élément directement au-dessus et une relation enfant avec l'élément directement en dessous. ",
+      sidebar_label: "Hiérarchie",
+      enable_control: {
+        title: "Activer la hiérarchie",
+        description: "Créez des relations parent-enfant entre différents types d'éléments de travail.",
+        tooltip: "Vous ne pouvez pas désactiver la hiérarchie une fois qu'elle est activée.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Définissez d'abord les types d'éléments de travail pour créer une nouvelle hiérarchie.",
+        cta: "Paramètres des types d'éléments de travail",
+      },
+    },
+    levels: {
+      add_level_button: "Ajouter un niveau de hiérarchie",
+      empty_level_placeholder: "Ajouter un type d'élément de travail au niveau {level}",
+      empty_level_unauthorized: "Aucun type d'élément de travail trouvé à ce niveau.",
+      zero_level_description: "Par défaut, tous les types d'éléments de travail sont au niveau 0 jusqu'à ce qu'ils soient assignés à une hiérarchie.",
+    },
+    add_level_modal: {
+      title: "Ajouter un niveau de hiérarchie",
+      description: "Ajouter un nouveau niveau de hiérarchie au type d'élément de travail.",
+      work_item_type: "Type d'élément de travail",
+      empty_state: {
+        title: "Tous les types d'éléments de travail sont utilisés",
+        description: "Chaque type d'élément de travail défini dans cet espace de travail fait déjà partie de votre hiérarchie.",
+      },
+      invalid_level_toast: {
+        title: "Erreur !",
+        message: "{type_name} ne peut pas être ajouté au niveau {level} car cela enfreint les règles de hiérarchie.",
+      },
+      not_found_toast: {
+        title: "Erreur",
+        message: "Type d'élément de travail introuvable.",
+      },
+      error_toast: {
+        title: "Erreur",
+        message: "Impossible d'ajouter le type d'élément de travail à la hiérarchie.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Suppression du type d'élément de travail du niveau",
+      success: {
+        title: "Succès !",
+        message: "Type d'élément de travail supprimé du niveau avec succès.",
+      },
+      error: {
+        title: "Erreur !",
+        message: "Impossible de supprimer le type d'élément de travail du niveau.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Erreur !",
+        message:
+          "Le type d'élément de travail sélectionné ne peut pas être utilisé pour créer un nouvel élément de travail car cela enfreint les règles de hiérarchie.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Erreur !",
+        message: "Le type d'élément de travail ne peut pas être mis à jour car cela enfreint les règles de hiérarchie.",
+      },
+    },
+  },
 } as const;

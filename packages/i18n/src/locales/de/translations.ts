@@ -6835,4 +6835,71 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hierarchie",
+      tab_label: "Hierarchie",
+      description:
+        "Richten Sie Hierarchieebenen ein, um Ihre Arbeit zu organisieren. Jede Ebene definiert eine Eltern-Beziehung mit dem Element direkt darüber und eine Kind-Beziehung mit dem Element direkt darunter. ",
+      sidebar_label: "Hierarchie",
+      enable_control: {
+        title: "Hierarchie aktivieren",
+        description: "Erstellen Sie Eltern-Kind-Beziehungen zwischen verschiedenen Arbeitselement-Typen.",
+        tooltip: "Sie können die Hierarchie nach der Aktivierung nicht mehr deaktivieren.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Definieren Sie zuerst Arbeitselement-Typen, um eine neue Hierarchie zu erstellen.",
+        cta: "Einstellungen für Arbeitselement-Typen",
+      },
+    },
+    levels: {
+      add_level_button: "Hierarchieebene hinzufügen",
+      empty_level_placeholder: "Arbeitselement-Typ zu Ebene {level} hinzufügen",
+      empty_level_unauthorized: "Keine Arbeitselement-Typen in dieser Ebene gefunden.",
+      zero_level_description: "Standardmäßig befinden sich alle Arbeitselement-Typen auf Ebene 0, bis sie einer Hierarchie zugewiesen werden.",
+    },
+    add_level_modal: {
+      title: "Hierarchieebene hinzufügen",
+      description: "Fügen Sie dem Arbeitselement-Typ eine neue Hierarchieebene hinzu.",
+      work_item_type: "Arbeitselement-Typ",
+      empty_state: {
+        title: "Alle Arbeitselement-Typen werden verwendet",
+        description: "Jeder in diesem Arbeitsbereich definierte Arbeitselement-Typ ist bereits Teil Ihrer Hierarchie.",
+      },
+      invalid_level_toast: {
+        title: "Fehler!",
+        message: "{type_name} kann nicht zur Ebene {level} hinzugefügt werden, da dies die Hierarchieregeln verletzt.",
+      },
+      not_found_toast: {
+        title: "Fehler",
+        message: "Arbeitselement-Typ nicht gefunden.",
+      },
+      error_toast: {
+        title: "Fehler",
+        message: "Arbeitselement-Typ konnte nicht zur Hierarchie hinzugefügt werden.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Arbeitselement-Typ wird von der Ebene entfernt",
+      success: {
+        title: "Erfolg!",
+        message: "Arbeitselement-Typ erfolgreich von der Ebene entfernt.",
+      },
+      error: {
+        title: "Fehler!",
+        message: "Arbeitselement-Typ konnte nicht von der Ebene entfernt werden.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Fehler!",
+        message:
+          "Der ausgewählte Arbeitselement-Typ kann nicht zum Erstellen eines neuen Arbeitselements verwendet werden, da dies die Hierarchieregeln verletzt.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Fehler!",
+        message: "Der Arbeitselement-Typ kann nicht aktualisiert werden, da dies die Hierarchieregeln verletzt.",
+      },
+    },
+  },
 } as const;

@@ -6865,4 +6865,71 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Jerarquía",
+      tab_label: "Jerarquía",
+      description:
+        "Configura niveles de jerarquía para organizar tu trabajo. Cada nivel define una relación de padre con el elemento directamente encima y una relación de hijo con el elemento directamente debajo. ",
+      sidebar_label: "Jerarquía",
+      enable_control: {
+        title: "Habilitar jerarquía",
+        description: "Crea relaciones padre-hijo entre diferentes tipos de elementos de trabajo.",
+        tooltip: "No puedes deshabilitar la jerarquía una vez que está habilitada.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Define primero los tipos de elementos de trabajo para crear una nueva jerarquía.",
+        cta: "Configuración de tipos de elementos de trabajo",
+      },
+    },
+    levels: {
+      add_level_button: "Agregar nivel de jerarquía",
+      empty_level_placeholder: "Agrega un tipo de elemento de trabajo al nivel {level}",
+      empty_level_unauthorized: "No se encontraron tipos de elementos de trabajo en este nivel.",
+      zero_level_description: "Por defecto, todos los tipos de elementos de trabajo están en el nivel 0 hasta que se asignan a una jerarquía.",
+    },
+    add_level_modal: {
+      title: "Agregar nivel de jerarquía",
+      description: "Agrega un nuevo nivel de jerarquía al tipo de elemento de trabajo.",
+      work_item_type: "Tipo de elemento de trabajo",
+      empty_state: {
+        title: "Todos los tipos de elementos de trabajo en uso",
+        description: "Cada tipo de elemento de trabajo definido en este espacio de trabajo ya forma parte de la jerarquía.",
+      },
+      invalid_level_toast: {
+        title: "¡Error!",
+        message: "{type_name} no se puede agregar al nivel {level} ya que rompe las reglas de jerarquía.",
+      },
+      not_found_toast: {
+        title: "Error",
+        message: "Tipo de elemento de trabajo no encontrado.",
+      },
+      error_toast: {
+        title: "Error",
+        message: "Error al agregar el tipo de elemento de trabajo a la jerarquía.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Eliminando tipo de elemento de trabajo del nivel",
+      success: {
+        title: "¡Éxito!",
+        message: "Tipo de elemento de trabajo eliminado del nivel correctamente.",
+      },
+      error: {
+        title: "¡Error!",
+        message: "Error al eliminar el tipo de elemento de trabajo del nivel.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "¡Error!",
+        message:
+          "El tipo de elemento de trabajo seleccionado no se puede usar para crear un nuevo elemento de trabajo ya que rompe las reglas de jerarquía.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "¡Error!",
+        message: "El tipo de elemento de trabajo no se puede actualizar ya que rompe las reglas de jerarquía.",
+      },
+    },
+  },
 } as const;

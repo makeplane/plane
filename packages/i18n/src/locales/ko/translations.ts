@@ -6703,4 +6703,71 @@ export default {
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "계층 구조",
+      tab_label: "계층 구조",
+      description:
+        "작업을 정리하기 위한 계층 구조 레벨을 설정하세요. 각 레벨은 바로 위 항목과의 상위 관계와 바로 아래 항목과의 하위 관계를 정의합니다. ",
+      sidebar_label: "계층 구조",
+      enable_control: {
+        title: "계층 구조 활성화",
+        description: "다양한 작업 항목 유형 간에 상위-하위 관계를 생성합니다.",
+        tooltip: "계층 구조는 한번 활성화되면 비활성화할 수 없습니다.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "새 계층 구조를 만들려면 먼저 작업 항목 유형을 정의하세요.",
+        cta: "작업 항목 유형 설정",
+      },
+    },
+    levels: {
+      add_level_button: "계층 레벨 추가",
+      empty_level_placeholder: "레벨 {level}에 작업 항목 유형 추가",
+      empty_level_unauthorized: "이 레벨에서 작업 항목 유형을 찾을 수 없습니다.",
+      zero_level_description: "기본적으로 모든 작업 항목 유형은 계층 구조에 할당될 때까지 레벨 0에 있습니다.",
+    },
+    add_level_modal: {
+      title: "계층 레벨 추가",
+      description: "작업 항목 유형에 새 계층 레벨을 추가합니다.",
+      work_item_type: "작업 항목 유형",
+      empty_state: {
+        title: "모든 작업 항목 유형이 사용 중",
+        description: "이 워크스페이스에 정의된 모든 작업 항목 유형은 이미 계층 구조의 일부입니다.",
+      },
+      invalid_level_toast: {
+        title: "오류!",
+        message: "{type_name}은(는) 계층 규칙을 위반하므로 레벨 {level}에 추가할 수 없습니다.",
+      },
+      not_found_toast: {
+        title: "오류",
+        message: "작업 항목 유형을 찾을 수 없습니다.",
+      },
+      error_toast: {
+        title: "오류",
+        message: "작업 항목 유형을 계층 구조에 추가하지 못했습니다.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "레벨에서 작업 항목 유형 제거 중",
+      success: {
+        title: "성공!",
+        message: "작업 항목 유형이 레벨에서 성공적으로 제거되었습니다.",
+      },
+      error: {
+        title: "오류!",
+        message: "레벨에서 작업 항목 유형을 제거하지 못했습니다.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "오류!",
+        message:
+          "선택한 작업 항목 유형은 계층 규칙을 위반하므로 새 작업 항목을 만드는 데 사용할 수 없습니다.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "오류!",
+        message: "작업 항목 유형은 계층 규칙을 위반하므로 업데이트할 수 없습니다.",
+      },
+    },
+  },
 } as const;

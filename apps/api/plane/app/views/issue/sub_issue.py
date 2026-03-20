@@ -298,35 +298,49 @@ class SubWorkitemSearchEndpoint(BaseAPIView):
                 )
 
             # Determine the current workitem's type level
-            current_level = 0 if not workitem.type_id else workitem.type.level
+            current_level = workitem.type.level if workitem.type_id else None
 
-        # Get type IDs that are valid for sub-workitems
-        if current_level == 0:
-            # Level 0 workitems can only have level 0 sub-workitems
-            valid_type_ids = IssueType.objects.filter(
-                workspace__slug=slug,
-                level=current_level,
-            ).values_list("id", flat=True)
-        else:
-            # Higher level workitems can have sub-workitems with lower levels
-            valid_type_ids = IssueType.objects.filter(
-                workspace__slug=slug,
-                level=(current_level - 1),
-            ).values_list("id", flat=True)
+        if current_level is not None:
+            # Get type IDs that are valid for sub-workitems
+            if current_level == 0:
+                # Level 0 workitems can only have level 0 sub-workitems
+                valid_type_ids = IssueType.objects.filter(
+                    workspace__slug=slug,
+                    level=current_level,
+                ).values_list("id", flat=True)
+            else:
+                # Higher level workitems can have sub-workitems with lower levels
+                valid_type_ids = IssueType.objects.filter(
+                    workspace__slug=slug,
+                    level=(current_level - 1),
+                ).values_list("id", flat=True)
 
-        # Build the base queryset
-        issues = (
-            Issue.issue_and_epics_objects.filter(
-                workspace__slug=slug,
+            # Build the base queryset
+            issues = (
+                Issue.issue_and_epics_objects.filter(
+                    workspace__slug=slug,
+                )
+                .filter(type_id__in=valid_type_ids)
+                .select_related("project", "state", "workspace")
+                .exclude(id=workitem_id)
+                .exclude(parent_id=workitem_id)
+                .accessible_to(request.user.id, slug)
+                .distinct()
+                .order_by("-last_activity_at")
             )
-            .filter(type_id__in=valid_type_ids)
-            .select_related("project", "state", "workspace")
-            .exclude(id=workitem_id)
-            .exclude(parent_id=workitem_id)
-            .accessible_to(request.user.id, slug)
-            .distinct()
-            .order_by("-last_activity_at")
-        )
+        else:
+            # If we don't have a current level, we consider all types as valid for sub-workitems
+            issues = (
+                Issue.issue_and_epics_objects.filter(
+                    workspace__slug=slug,
+                )
+                .select_related("project", "state", "workspace")
+                .exclude(id=workitem_id)
+                .exclude(parent_id=workitem_id)
+                .accessible_to(request.user.id, slug)
+                .distinct()
+                .order_by("-last_activity_at")
+            )
 
         if project_id:
             issues = issues.filter(project_id=project_id)
@@ -393,36 +407,49 @@ class ParentWorkitemSearchEndpoint(BaseAPIView):
             )
 
             # Determine the current workitem's type level
-            current_level = 0 if not workitem.type_id else workitem.type.level
+            current_level = workitem.type.level if workitem.type_id else None
 
         # Get type IDs that are valid for parent workitems
         valid_type_ids = IssueType.objects.filter(
             workspace__slug=slug,
         )
 
-        # Level 0 workitems cannot have parent workitems, so we only consider types for levels greater than 0
-        if current_level == 0:
-            valid_type_ids = valid_type_ids.filter(Q(level=current_level) | Q(level=current_level + 1)).values_list(
-                "id", flat=True
+        if current_level is not None:
+            # Level 0 workitems cannot have parent workitems, so we only consider types for levels greater than 0
+            if current_level == 0:
+                valid_type_ids = valid_type_ids.filter(Q(level=current_level) | Q(level=current_level + 1)).values_list(
+                    "id", flat=True
+                )
+            else:
+                valid_type_ids = valid_type_ids.filter(level=current_level + 1).values_list("id", flat=True)
+
+            # Higher level workitems can have parent workitems with higher levels
+            valid_type_ids = valid_type_ids.values_list("id", flat=True)
+
+            # Build the base queryset
+            issues = (
+                Issue.issue_and_epics_objects.filter(
+                    workspace__slug=slug,
+                    type_id__in=valid_type_ids,
+                )
+                .select_related("project", "state", "workspace")
+                .exclude(id=workitem_id)
+                .exclude(id__in=children_workitem_ids)
+                .accessible_to(request.user.id, slug)
+                .order_by("-last_activity_at")
             )
         else:
-            valid_type_ids = valid_type_ids.filter(level=current_level + 1).values_list("id", flat=True)
-
-        # Higher level workitems can have parent workitems with higher levels
-        valid_type_ids = valid_type_ids.values_list("id", flat=True)
-
-        # Build the base queryset
-        issues = (
-            Issue.issue_and_epics_objects.filter(
-                workspace__slug=slug,
-                type_id__in=valid_type_ids,
+            # If we don't have a current level, we consider all types as valid for parent workitems
+            issues = (
+                Issue.issue_and_epics_objects.filter(
+                    workspace__slug=slug,
+                )
+                .select_related("project", "state", "workspace")
+                .exclude(id=workitem_id)
+                .exclude(id__in=children_workitem_ids)
+                .accessible_to(request.user.id, slug)
+                .order_by("-last_activity_at")
             )
-            .select_related("project", "state", "workspace")
-            .exclude(id=workitem_id)
-            .exclude(id__in=children_workitem_ids)
-            .accessible_to(request.user.id, slug)
-            .order_by("-last_activity_at")
-        )
 
         if project_id:
             issues = issues.filter(project_id=project_id)

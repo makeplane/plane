@@ -6757,4 +6757,71 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Phân cấp",
+      tab_label: "Phân cấp",
+      description:
+        "Thiết lập các cấp độ phân cấp để tổ chức công việc của bạn. Mỗi cấp độ xác định mối quan hệ cha với mục ngay phía trên và mối quan hệ con với mục ngay phía dưới. ",
+      sidebar_label: "Phân cấp",
+      enable_control: {
+        title: "Bật phân cấp",
+        description: "Tạo mối quan hệ cha-con giữa các loại mục công việc khác nhau.",
+        tooltip: "Bạn không thể tắt phân cấp sau khi đã bật.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Trước tiên hãy xác định các Loại Mục Công Việc để tạo phân cấp mới.",
+        cta: "Cài đặt loại mục công việc",
+      },
+    },
+    levels: {
+      add_level_button: "Thêm cấp độ phân cấp",
+      empty_level_placeholder: "Thêm loại mục công việc vào cấp độ {level}",
+      empty_level_unauthorized: "Không tìm thấy loại mục công việc nào ở cấp độ này.",
+      zero_level_description: "Theo mặc định, tất cả các loại mục công việc ở cấp độ 0 cho đến khi được gán vào phân cấp.",
+    },
+    add_level_modal: {
+      title: "Thêm cấp độ phân cấp",
+      description: "Thêm cấp độ phân cấp mới vào loại mục công việc.",
+      work_item_type: "Loại mục công việc",
+      empty_state: {
+        title: "Tất cả loại mục công việc đang được sử dụng",
+        description: "Mỗi loại mục công việc được định nghĩa trong không gian làm việc này đã là một phần của phân cấp của bạn.",
+      },
+      invalid_level_toast: {
+        title: "Lỗi!",
+        message: "{type_name} không thể thêm vào cấp độ {level} vì vi phạm quy tắc phân cấp.",
+      },
+      not_found_toast: {
+        title: "Lỗi",
+        message: "Không tìm thấy loại mục công việc.",
+      },
+      error_toast: {
+        title: "Lỗi",
+        message: "Không thể thêm loại mục công việc vào phân cấp.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Đang xóa loại mục công việc khỏi cấp độ",
+      success: {
+        title: "Thành công!",
+        message: "Đã xóa loại mục công việc khỏi cấp độ thành công.",
+      },
+      error: {
+        title: "Lỗi!",
+        message: "Không thể xóa loại mục công việc khỏi cấp độ.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Lỗi!",
+        message:
+          "Loại mục công việc được chọn không thể dùng để tạo mục công việc mới vì vi phạm quy tắc phân cấp.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Lỗi!",
+        message: "Loại mục công việc không thể cập nhật vì vi phạm quy tắc phân cấp.",
+      },
+    },
+  },
 } as const;

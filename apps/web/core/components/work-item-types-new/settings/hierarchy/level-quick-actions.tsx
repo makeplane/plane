@@ -36,7 +36,7 @@ export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItem
   const handleRemove = useCallback(() => {
     const workItemTypeToRemoveFromLevel = workItemTypes[0];
     if (!workItemTypeToRemoveFromLevel) return;
-    const promise = workItemTypeToRemoveFromLevel.updateType({ level: 0 });
+    const promise = workItemTypeToRemoveFromLevel.updateType({ level: 0 }, false);
     setPromiseToast(promise, {
       loading: t("work_item_type_hierarchy.remove_from_level_toast.loading"),
       success: {

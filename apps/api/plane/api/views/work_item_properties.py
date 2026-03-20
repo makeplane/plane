@@ -387,6 +387,8 @@ Custom properties can only be updated if the ISSUE_TYPES feature is enabled.""",
                 context={
                     "project_id": project_id,
                     "workspace_id": workspace.id,
+                    "slug": slug,
+                    "user_id": request.user.id,
                 },
             )
             if not serializer.is_valid():

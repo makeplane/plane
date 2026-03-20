@@ -6763,4 +6763,71 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hierarchia",
+      tab_label: "Hierarchia",
+      description:
+        "Skonfiguruj poziomy hierarchii, aby zorganizować swoją pracę. Każdy poziom definiuje relację nadrzędną z elementem bezpośrednio powyżej i relację podrzędną z elementem bezpośrednio poniżej. ",
+      sidebar_label: "Hierarchia",
+      enable_control: {
+        title: "Włącz hierarchię",
+        description: "Twórz relacje nadrzędny-podrzędny między różnymi typami elementów roboczych.",
+        tooltip: "Nie można wyłączyć hierarchii po jej włączeniu.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Najpierw zdefiniuj typy elementów roboczych, aby utworzyć nową hierarchię.",
+        cta: "Ustawienia typów elementów roboczych",
+      },
+    },
+    levels: {
+      add_level_button: "Dodaj poziom hierarchii",
+      empty_level_placeholder: "Dodaj typ elementu roboczego do poziomu {level}",
+      empty_level_unauthorized: "Nie znaleziono typów elementów roboczych na tym poziomie.",
+      zero_level_description: "Domyślnie wszystkie typy elementów roboczych są na poziomie 0, dopóki nie zostaną przypisane do hierarchii.",
+    },
+    add_level_modal: {
+      title: "Dodaj poziom hierarchii",
+      description: "Dodaj nowy poziom hierarchii do typu elementu roboczego.",
+      work_item_type: "Typ elementu roboczego",
+      empty_state: {
+        title: "Wszystkie typy elementów roboczych są w użyciu",
+        description: "Każdy typ elementu roboczego zdefiniowany w tym obszarze roboczym jest już częścią hierarchii.",
+      },
+      invalid_level_toast: {
+        title: "Błąd!",
+        message: "{type_name} nie może być dodany do poziomu {level}, ponieważ narusza zasady hierarchii.",
+      },
+      not_found_toast: {
+        title: "Błąd",
+        message: "Nie znaleziono typu elementu roboczego.",
+      },
+      error_toast: {
+        title: "Błąd",
+        message: "Nie udało się dodać typu elementu roboczego do hierarchii.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Usuwanie typu elementu roboczego z poziomu",
+      success: {
+        title: "Sukces!",
+        message: "Typ elementu roboczego został pomyślnie usunięty z poziomu.",
+      },
+      error: {
+        title: "Błąd!",
+        message: "Nie udało się usunąć typu elementu roboczego z poziomu.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Błąd!",
+        message:
+          "Wybrany typ elementu roboczego nie może być użyty do utworzenia nowego elementu roboczego, ponieważ narusza zasady hierarchii.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Błąd!",
+        message: "Typ elementu roboczego nie może być zaktualizowany, ponieważ narusza zasady hierarchii.",
+      },
+    },
+  },
 } as const;

@@ -6818,4 +6818,71 @@ modüller arşivlenebilir.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hiyerarşi",
+      tab_label: "Hiyerarşi",
+      description:
+        "Çalışmanızı düzenlemek için hiyerarşi seviyeleri oluşturun. Her seviye, doğrudan üstündeki öğeyle üst ilişkisi ve doğrudan altındaki öğeyle alt ilişkisi tanımlar. ",
+      sidebar_label: "Hiyerarşi",
+      enable_control: {
+        title: "Hiyerarşiyi etkinleştir",
+        description: "Farklı iş öğesi türleri arasında üst-alt ilişkileri oluşturun.",
+        tooltip: "Hiyerarşi etkinleştirildikten sonra devre dışı bırakılamaz.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Yeni bir hiyerarşi oluşturmak için önce İş Öğesi Türlerini tanımlayın.",
+        cta: "İş öğesi türleri ayarları",
+      },
+    },
+    levels: {
+      add_level_button: "Hiyerarşi seviyesi ekle",
+      empty_level_placeholder: "{level}. seviyeye bir iş öğesi türü ekleyin",
+      empty_level_unauthorized: "Bu seviyede iş öğesi türü bulunamadı.",
+      zero_level_description: "Varsayılan olarak, tüm iş öğesi türleri bir hiyerarşiye atanana kadar seviye 0'dadır.",
+    },
+    add_level_modal: {
+      title: "Hiyerarşi seviyesi ekle",
+      description: "İş öğesi türüne yeni bir hiyerarşi seviyesi ekleyin.",
+      work_item_type: "İş öğesi türü",
+      empty_state: {
+        title: "Tüm iş öğesi türleri kullanımda",
+        description: "Bu çalışma alanında tanımlanan her iş öğesi türü zaten hiyerarşinizin bir parçasıdır.",
+      },
+      invalid_level_toast: {
+        title: "Hata!",
+        message: "{type_name}, hiyerarşi kurallarını bozduğundan {level}. seviyeye eklenemiyor.",
+      },
+      not_found_toast: {
+        title: "Hata",
+        message: "İş öğesi türü bulunamadı.",
+      },
+      error_toast: {
+        title: "Hata",
+        message: "İş öğesi türü hiyerarşiye eklenemedi.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "İş öğesi türü seviyeden kaldırılıyor",
+      success: {
+        title: "Başarılı!",
+        message: "İş öğesi türü seviyeden başarıyla kaldırıldı.",
+      },
+      error: {
+        title: "Hata!",
+        message: "İş öğesi türü seviyeden kaldırılamadı.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Hata!",
+        message:
+          "Seçilen iş öğesi türü, hiyerarşi kurallarını bozduğundan yeni bir iş öğesi oluşturmak için kullanılamaz.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Hata!",
+        message: "İş öğesi türü, hiyerarşi kurallarını bozduğundan güncellenemiyor.",
+      },
+    },
+  },
 } as const;

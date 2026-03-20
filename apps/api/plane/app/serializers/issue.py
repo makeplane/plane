@@ -247,7 +247,7 @@ class IssueCreateSerializer(BaseSerializer):
         ).first()
 
         hierarchy_enabled = workspace_feature.is_workitem_hierarchy_enabled if workspace_feature else False
-        is_workitem_heirarchy_enabled = (
+        is_workitem_hierarchy_enabled = (
             check_workspace_feature_flag(
                 feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY,
                 user_id=self.context.get("user_id"),
@@ -290,7 +290,7 @@ class IssueCreateSerializer(BaseSerializer):
                 )
 
             # Check workitem hierarchy
-            if is_workitem_heirarchy_enabled:
+            if is_workitem_hierarchy_enabled:
                 # Validate type hierarchy with parent
                 child_type = attrs.get("type") if attrs.get("type") else self.instance.type
                 if not child_type:

@@ -6835,4 +6835,71 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hierarquia",
+      tab_label: "Hierarquia",
+      description:
+        "Configure os níveis de hierarquia para organizar seu trabalho. Cada nível define uma relação de pai com o item diretamente acima e uma relação de filho com o item diretamente abaixo. ",
+      sidebar_label: "Hierarquia",
+      enable_control: {
+        title: "Ativar hierarquia",
+        description: "Crie relações pai-filho entre diferentes tipos de itens de trabalho.",
+        tooltip: "Você não pode desativar a hierarquia depois que ela for ativada.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Defina primeiro os tipos de itens de trabalho para criar uma nova hierarquia.",
+        cta: "Configurações de tipos de itens de trabalho",
+      },
+    },
+    levels: {
+      add_level_button: "Adicionar nível de hierarquia",
+      empty_level_placeholder: "Adicionar um tipo de item de trabalho ao nível {level}",
+      empty_level_unauthorized: "Nenhum tipo de item de trabalho encontrado neste nível.",
+      zero_level_description: "Por padrão, todos os tipos de itens de trabalho estão no nível 0 até que sejam atribuídos a uma hierarquia.",
+    },
+    add_level_modal: {
+      title: "Adicionar nível de hierarquia",
+      description: "Adicionar um novo nível de hierarquia ao tipo de item de trabalho.",
+      work_item_type: "Tipo de item de trabalho",
+      empty_state: {
+        title: "Todos os tipos de itens de trabalho em uso",
+        description: "Cada tipo de item de trabalho definido neste espaço de trabalho já faz parte da sua hierarquia.",
+      },
+      invalid_level_toast: {
+        title: "Erro!",
+        message: "{type_name} não pode ser adicionado ao nível {level} pois viola as regras de hierarquia.",
+      },
+      not_found_toast: {
+        title: "Erro",
+        message: "Tipo de item de trabalho não encontrado.",
+      },
+      error_toast: {
+        title: "Erro",
+        message: "Falha ao adicionar o tipo de item de trabalho à hierarquia.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Removendo tipo de item de trabalho do nível",
+      success: {
+        title: "Sucesso!",
+        message: "Tipo de item de trabalho removido do nível com sucesso.",
+      },
+      error: {
+        title: "Erro!",
+        message: "Falha ao remover o tipo de item de trabalho do nível.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Erro!",
+        message:
+          "O tipo de item de trabalho selecionado não pode ser usado para criar um novo item de trabalho pois viola as regras de hierarquia.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Erro!",
+        message: "O tipo de item de trabalho não pode ser atualizado pois viola as regras de hierarquia.",
+      },
+    },
+  },
 } as const;

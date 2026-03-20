@@ -11,11 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue, TWorkItemRelationsSearchResponse } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -27,6 +25,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssueTypes, useEpicAnalytics, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // types
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { SubWorkItemsListModal } from "@/components/issues/modals/add-sub-work-items/modal";
 
 type Props = {
   workspaceSlug: string;
@@ -88,8 +87,9 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
       await createEpicSubIssues(workspaceSlug, projectId, parentIssueId, issueIds).then(() => {
         fetchEpicAnalytics(workspaceSlug, projectId, epicId);
         handleAddSubIssueResponse("Work items added successfully");
+        return;
       });
-    } catch (error) {
+    } catch {
       handleAddSubIssueError();
     }
   };
@@ -98,8 +98,9 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
     try {
       await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds).then(() => {
         handleAddSubIssueResponse("Work items added successfully");
+        return;
       });
-    } catch (error) {
+    } catch {
       handleAddSubIssueError();
     }
   };
@@ -120,18 +121,18 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
     });
   };
 
-  const handleExistingIssuesModalClose = () => {
+  const handleSubWorkItemsModalClose = () => {
     handleIssueCrudState("existing", null, null);
     setLastWidgetAction("sub-work-items");
     toggleSubIssuesModal(null);
   };
 
-  const handleExistingIssuesModalOnSubmit = async (_issue: ISearchIssueResponse[]) =>
+  const handleSubWorkItemsModalOnSubmit = async (_workItems: TWorkItemRelationsSearchResponse[]) =>
     await addSubIssueToEpic(
       workspaceSlug,
       projectId,
       epicId,
-      _issue.map((issue) => issue.id)
+      _workItems.map((workItem) => workItem.id)
     );
 
   const handleCreateUpdateModalClose = () => {
@@ -191,13 +192,8 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
     project_id: projectId,
   };
 
-  const existingIssuesModalSearchParams = {
-    sub_issue: true,
-    issue_id: issueCrudOperationState?.existing?.parentIssueId,
-  };
-
   // render conditions
-  const shouldRenderExistingIssuesModal =
+  const shouldRenderSubWorkItemsModal =
     issueCrudOperationState?.existing?.toggle &&
     issueCrudOperationState?.existing?.parentIssueId &&
     isSubIssuesModalOpen;
@@ -219,15 +215,14 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
         />
       )}
 
-      {shouldRenderExistingIssuesModal && (
-        <ExistingIssuesListModal
-          workspaceSlug={workspaceSlug}
+      {shouldRenderSubWorkItemsModal && (
+        <SubWorkItemsListModal
           projectId={projectId}
           isOpen={issueCrudOperationState?.existing?.toggle}
-          handleClose={handleExistingIssuesModalClose}
-          searchParams={existingIssuesModalSearchParams}
-          handleOnSubmit={handleExistingIssuesModalOnSubmit}
-          workspaceLevelToggle={isCrossProjectSubWorkItemsEnabled}
+          handleClose={handleSubWorkItemsModalClose}
+          workItemId={epicId}
+          handleSubmit={handleSubWorkItemsModalOnSubmit}
+          enableCrossProjectToggle={isCrossProjectSubWorkItemsEnabled}
         />
       )}
 

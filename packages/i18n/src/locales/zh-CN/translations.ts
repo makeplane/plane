@@ -6589,4 +6589,71 @@ export default {
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "层级",
+      tab_label: "层级",
+      description:
+        "设置层级结构以整理您的工作。每个层级定义与直接上方项目的父关系，以及与直接下方项目的子关系。 ",
+      sidebar_label: "层级",
+      enable_control: {
+        title: "启用层级",
+        description: "在不同工作项类型之间建立父子关系。",
+        tooltip: "层级一旦启用便无法停用。",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "请先定义工作项类型，再创建新的层级。",
+        cta: "工作项类型设置",
+      },
+    },
+    levels: {
+      add_level_button: "添加层级",
+      empty_level_placeholder: "向第 {level} 层添加工作项类型",
+      empty_level_unauthorized: "此层级中未找到工作项类型。",
+      zero_level_description: "默认情况下，所有工作项类型在分配到层级结构之前均处于第 0 层。",
+    },
+    add_level_modal: {
+      title: "添加层级",
+      description: "为工作项类型添加新的层级。",
+      work_item_type: "工作项类型",
+      empty_state: {
+        title: "所有工作项类型已在使用中",
+        description: "此工作区中定义的每个工作项类型已是您层级的一部分。",
+      },
+      invalid_level_toast: {
+        title: "错误！",
+        message: "{type_name} 无法添加至第 {level} 层，因为这违反了层级规则。",
+      },
+      not_found_toast: {
+        title: "错误",
+        message: "未找到工作项类型。",
+      },
+      error_toast: {
+        title: "错误",
+        message: "无法将工作项类型添加至层级。",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "正在从层级移除工作项类型",
+      success: {
+        title: "成功！",
+        message: "已成功从层级移除工作项类型。",
+      },
+      error: {
+        title: "错误！",
+        message: "无法从层级移除工作项类型。",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "错误！",
+        message:
+          "所选工作项类型违反层级规则，无法用于创建新的工作项。",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "错误！",
+        message: "工作项类型因违反层级规则而无法更新。",
+      },
+    },
+  },
 } as const;

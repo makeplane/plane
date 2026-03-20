@@ -6787,4 +6787,71 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hierarki",
+      tab_label: "Hierarki",
+      description:
+        "Atur tingkat hierarki untuk mengorganisir pekerjaan Anda. Setiap tingkat mendefinisikan hubungan induk dengan item langsung di atasnya dan hubungan anak dengan item langsung di bawahnya. ",
+      sidebar_label: "Hierarki",
+      enable_control: {
+        title: "Aktifkan hierarki",
+        description: "Buat hubungan induk-anak antara berbagai jenis item pekerjaan.",
+        tooltip: "Anda tidak dapat menonaktifkan hierarki setelah diaktifkan.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Tentukan Jenis Item Pekerjaan terlebih dahulu untuk membuat hierarki baru.",
+        cta: "Pengaturan jenis item pekerjaan",
+      },
+    },
+    levels: {
+      add_level_button: "Tambah tingkat hierarki",
+      empty_level_placeholder: "Tambahkan jenis item pekerjaan ke tingkat {level}",
+      empty_level_unauthorized: "Tidak ada jenis item pekerjaan yang ditemukan di tingkat ini.",
+      zero_level_description: "Secara default, semua jenis item pekerjaan berada di tingkat 0 hingga ditetapkan ke hierarki.",
+    },
+    add_level_modal: {
+      title: "Tambah tingkat hierarki",
+      description: "Tambahkan tingkat hierarki baru ke jenis item pekerjaan.",
+      work_item_type: "Jenis item pekerjaan",
+      empty_state: {
+        title: "Semua jenis item pekerjaan sedang digunakan",
+        description: "Setiap jenis item pekerjaan yang ditentukan di ruang kerja ini sudah menjadi bagian dari hierarki Anda.",
+      },
+      invalid_level_toast: {
+        title: "Kesalahan!",
+        message: "{type_name} tidak dapat ditambahkan ke tingkat {level} karena melanggar aturan hierarki.",
+      },
+      not_found_toast: {
+        title: "Kesalahan",
+        message: "Jenis item pekerjaan tidak ditemukan.",
+      },
+      error_toast: {
+        title: "Kesalahan",
+        message: "Gagal menambahkan jenis item pekerjaan ke hierarki.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Menghapus jenis item pekerjaan dari tingkat",
+      success: {
+        title: "Berhasil!",
+        message: "Jenis item pekerjaan berhasil dihapus dari tingkat.",
+      },
+      error: {
+        title: "Kesalahan!",
+        message: "Gagal menghapus jenis item pekerjaan dari tingkat.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Kesalahan!",
+        message:
+          "Jenis item pekerjaan yang dipilih tidak dapat digunakan untuk membuat item pekerjaan baru karena melanggar aturan hierarki.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Kesalahan!",
+        message: "Jenis item pekerjaan tidak dapat diperbarui karena melanggar aturan hierarki.",
+      },
+    },
+  },
 } as const;

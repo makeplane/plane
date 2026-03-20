@@ -432,7 +432,12 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                     "description_json": issue_description_json,
                 }
 
-            issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
+            issue_serializer = IssueSerializer(
+                issue,
+                data=issue_data,
+                partial=True,
+                context={"request": request, "slug": slug, "user_id": request.user.id},
+            )
 
             if not issue_serializer.is_valid():
                 return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

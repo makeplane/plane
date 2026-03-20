@@ -6613,4 +6613,71 @@ export default {
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "層級",
+      tab_label: "層級",
+      description:
+        "設定層級結構以整理您的工作。每個層級定義與直接上方項目的父關係，以及與直接下方項目的子關係。 ",
+      sidebar_label: "層級",
+      enable_control: {
+        title: "啟用層級",
+        description: "在不同工作項目類型之間建立父子關係。",
+        tooltip: "層級一旦啟用便無法停用。",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "請先定義工作項目類型，再建立新的層級。",
+        cta: "工作項目類型設定",
+      },
+    },
+    levels: {
+      add_level_button: "新增層級",
+      empty_level_placeholder: "新增工作項目類型至第 {level} 層",
+      empty_level_unauthorized: "此層級中未找到工作項目類型。",
+      zero_level_description: "預設情況下，所有工作項目類型在分配至層級結構之前均處於第 0 層。",
+    },
+    add_level_modal: {
+      title: "新增層級",
+      description: "為工作項目類型新增一個新層級。",
+      work_item_type: "工作項目類型",
+      empty_state: {
+        title: "所有工作項目類型已在使用中",
+        description: "此工作區中定義的每個工作項目類型已是您階層的一部分。",
+      },
+      invalid_level_toast: {
+        title: "錯誤！",
+        message: "{type_name} 無法新增至第 {level} 層，因為這違反了層級規則。",
+      },
+      not_found_toast: {
+        title: "錯誤",
+        message: "找不到工作項目類型。",
+      },
+      error_toast: {
+        title: "錯誤",
+        message: "無法將工作項目類型新增至層級。",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "正在從層級移除工作項目類型",
+      success: {
+        title: "成功！",
+        message: "已成功從層級移除工作項目類型。",
+      },
+      error: {
+        title: "錯誤！",
+        message: "無法從層級移除工作項目類型。",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "錯誤！",
+        message:
+          "所選工作項目類型違反層級規則，無法用於建立新的工作項目。",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "錯誤！",
+        message: "工作項目類型因違反層級規則而無法更新。",
+      },
+    },
+  },
 } as const;

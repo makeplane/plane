@@ -344,7 +344,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 setSelectedParentIssue(workItem);
               }}
               projectId={projectId}
-              workItemId={isDraft ? undefined : id}
+              workItemId={isDraft || typeId ? undefined : id}
+              typeId={typeId ?? undefined}
             />
           )}
         />

@@ -6753,4 +6753,71 @@ export default {
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "階層",
+      tab_label: "階層",
+      description:
+        "作業を整理するための階層レベルを設定します。各レベルは、直接上のアイテムとの親関係と、直接下のアイテムとの子関係を定義します。 ",
+      sidebar_label: "階層",
+      enable_control: {
+        title: "階層を有効にする",
+        description: "異なる作業アイテムタイプ間に親子関係を作成します。",
+        tooltip: "一度有効にすると、階層を無効にすることはできません。",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "新しい階層を作成するには、まず作業アイテムタイプを定義してください。",
+        cta: "作業アイテムタイプの設定",
+      },
+    },
+    levels: {
+      add_level_button: "階層レベルを追加",
+      empty_level_placeholder: "レベル {level} に作業アイテムタイプを追加",
+      empty_level_unauthorized: "このレベルに作業アイテムタイプが見つかりません。",
+      zero_level_description: "デフォルトでは、すべての作業アイテムタイプは階層に割り当てられるまでレベル0にあります。",
+    },
+    add_level_modal: {
+      title: "階層レベルを追加",
+      description: "作業アイテムタイプに新しい階層レベルを追加します。",
+      work_item_type: "作業アイテムタイプ",
+      empty_state: {
+        title: "すべての作業アイテムタイプが使用中",
+        description: "このワークスペースで定義されたすべての作業アイテムタイプはすでに階層の一部です。",
+      },
+      invalid_level_toast: {
+        title: "エラー！",
+        message: "{type_name} は階層ルールに違反するため、レベル {level} に追加できません。",
+      },
+      not_found_toast: {
+        title: "エラー",
+        message: "作業アイテムタイプが見つかりません。",
+      },
+      error_toast: {
+        title: "エラー",
+        message: "作業アイテムタイプを階層に追加できませんでした。",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "作業アイテムタイプをレベルから削除しています",
+      success: {
+        title: "成功！",
+        message: "作業アイテムタイプをレベルから正常に削除しました。",
+      },
+      error: {
+        title: "エラー！",
+        message: "作業アイテムタイプをレベルから削除できませんでした。",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "エラー！",
+        message:
+          "選択した作業アイテムタイプは階層ルールに違反するため、新しい作業アイテムの作成に使用できません。",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "エラー！",
+        message: "作業アイテムタイプは階層ルールに違反するため更新できません。",
+      },
+    },
+  },
 } as const;

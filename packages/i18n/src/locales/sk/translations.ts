@@ -6723,4 +6723,71 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hierarchia",
+      tab_label: "Hierarchia",
+      description:
+        "Nastavte úrovne hierarchie na organizáciu svojej práce. Každá úroveň definuje nadradenú vzťah s položkou priamo nad ňou a podradenou vzťah s položkou priamo pod ňou. ",
+      sidebar_label: "Hierarchia",
+      enable_control: {
+        title: "Povoliť hierarchiu",
+        description: "Vytvorte vzťahy rodič-potomok medzi rôznymi typmi pracovných položiek.",
+        tooltip: "Hierarchiu nemôžete deaktivovať po jej aktivácii.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Najprv definujte typy pracovných položiek na vytvorenie novej hierarchie.",
+        cta: "Nastavenia typov pracovných položiek",
+      },
+    },
+    levels: {
+      add_level_button: "Pridať úroveň hierarchie",
+      empty_level_placeholder: "Pridajte typ pracovnej položky na úroveň {level}",
+      empty_level_unauthorized: "Na tejto úrovni sa nenašli žiadne typy pracovných položiek.",
+      zero_level_description: "Predvolene sú všetky typy pracovných položiek na úrovni 0, kým nie sú priradené k hierarchii.",
+    },
+    add_level_modal: {
+      title: "Pridať úroveň hierarchie",
+      description: "Pridajte novú úroveň hierarchie k typu pracovnej položky.",
+      work_item_type: "Typ pracovnej položky",
+      empty_state: {
+        title: "Všetky typy pracovných položiek sú používané",
+        description: "Každý typ pracovnej položky definovaný v tomto pracovnom priestore je už súčasťou vašej hierarchie.",
+      },
+      invalid_level_toast: {
+        title: "Chyba!",
+        message: "{type_name} nie je možné pridať na úroveň {level}, pretože porušuje pravidlá hierarchie.",
+      },
+      not_found_toast: {
+        title: "Chyba",
+        message: "Typ pracovnej položky sa nenašiel.",
+      },
+      error_toast: {
+        title: "Chyba",
+        message: "Nepodarilo sa pridať typ pracovnej položky do hierarchie.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Odstraňovanie typu pracovnej položky z úrovne",
+      success: {
+        title: "Úspech!",
+        message: "Typ pracovnej položky bol úspešne odstránený z úrovne.",
+      },
+      error: {
+        title: "Chyba!",
+        message: "Nepodarilo sa odstrániť typ pracovnej položky z úrovne.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Chyba!",
+        message:
+          "Vybraný typ pracovnej položky nie je možné použiť na vytvorenie novej pracovnej položky, pretože porušuje pravidlá hierarchie.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Chyba!",
+        message: "Typ pracovnej položky nie je možné aktualizovať, pretože porušuje pravidlá hierarchie.",
+      },
+    },
+  },
 } as const;

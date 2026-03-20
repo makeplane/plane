@@ -493,6 +493,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
+                "slug": slug,
+                "user_id": request.user.id,
             },
         )
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
@@ -706,6 +708,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     context={
                         "project_id": project_id,
                         "workspace_id": project.workspace_id,
+                        "slug": slug,
+                        "user_id": request.user.id,
                     },
                     partial=True,
                 )
@@ -767,6 +771,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         "project_id": project_id,
                         "workspace_id": project.workspace_id,
                         "default_assignee_id": project.default_assignee_id,
+                        "slug": slug,
+                        "user_id": request.user.id,
                     },
                 )
 
@@ -854,7 +860,12 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         serializer = IssueSerializer(
             issue,
             data=request.data,
-            context={"project_id": project_id, "workspace_id": project.workspace_id},
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+                "slug": slug,
+                "user_id": request.user.id,
+            },
             partial=True,
         )
 
@@ -3121,7 +3132,6 @@ class IssueVoteAPIEndpoint(BaseAPIView):
         )
         serializer = IssueVoteSerializer(votes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     @issue_docs(
         operation_id="create_work_item_vote",

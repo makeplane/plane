@@ -35,6 +35,7 @@ from plane.utils.timezone_converter import user_timezone_converter
 from plane.app.permissions import allow_permission, ROLE
 from collections import defaultdict
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.issue_type_hierarchy import validate_type_hierarchy
 
 
 class EpicIssuesEndpoint(BaseAPIView):
@@ -187,9 +188,19 @@ class EpicIssuesEndpoint(BaseAPIView):
         if not len(sub_work_item_ids):
             return Response({"error": "Sub Work Item IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        work_items = Issue.issue_objects.filter(id__in=sub_work_item_ids, workspace__slug=slug)
+        work_items = Issue.issue_objects.filter(id__in=sub_work_item_ids, workspace__slug=slug).select_related("type")
 
+        parent_level = parent_issue.type.level if parent_issue.type else None
         for work_item in work_items:
+            # Validate issue type hierarchy
+            child_level = work_item.type.level if work_item.type else None
+            is_valid, error_message = validate_type_hierarchy(parent_level, child_level)
+            if not is_valid:
+                return Response(
+                    {"error": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             work_item.parent = parent_issue
 
         _ = Issue.objects.bulk_update(work_items, ["parent"], batch_size=10)

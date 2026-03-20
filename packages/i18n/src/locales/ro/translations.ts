@@ -6837,4 +6837,71 @@ așa cum dorești din sursele pe care le specifici.`,
       },
     },
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Ierarhie",
+      tab_label: "Ierarhie",
+      description:
+        "Configurați niveluri de ierarhie pentru a vă organiza munca. Fiecare nivel definește o relație de părinte cu elementul direct deasupra și o relație de copil cu elementul direct dedesubt. ",
+      sidebar_label: "Ierarhie",
+      enable_control: {
+        title: "Activați ierarhia",
+        description: "Creați relații părinte-copil între diferite tipuri de elemente de lucru.",
+        tooltip: "Nu puteți dezactiva ierarhia odată ce este activată.",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Definiți mai întâi tipurile de elemente de lucru pentru a crea o nouă ierarhie.",
+        cta: "Setări tipuri elemente de lucru",
+      },
+    },
+    levels: {
+      add_level_button: "Adăugați nivel de ierarhie",
+      empty_level_placeholder: "Adăugați un tip de element de lucru la nivelul {level}",
+      empty_level_unauthorized: "Nu s-au găsit tipuri de elemente de lucru la acest nivel.",
+      zero_level_description: "Implicit, toate tipurile de elemente de lucru sunt la nivelul 0 până când sunt atribuite unei ierarhii.",
+    },
+    add_level_modal: {
+      title: "Adăugați nivel de ierarhie",
+      description: "Adăugați un nou nivel de ierarhie tipului de element de lucru.",
+      work_item_type: "Tip element de lucru",
+      empty_state: {
+        title: "Toate tipurile de elemente de lucru sunt utilizate",
+        description: "Fiecare tip de element de lucru definit în acest spațiu de lucru face deja parte din ierarhia dvs.",
+      },
+      invalid_level_toast: {
+        title: "Eroare!",
+        message: "{type_name} nu poate fi adăugat la nivelul {level} deoarece încalcă regulile ierarhiei.",
+      },
+      not_found_toast: {
+        title: "Eroare",
+        message: "Tipul de element de lucru nu a fost găsit.",
+      },
+      error_toast: {
+        title: "Eroare",
+        message: "Eroare la adăugarea tipului de element de lucru în ierarhie.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Se elimină tipul de element de lucru din nivel",
+      success: {
+        title: "Succes!",
+        message: "Tipul de element de lucru a fost eliminat din nivel cu succes.",
+      },
+      error: {
+        title: "Eroare!",
+        message: "Eroare la eliminarea tipului de element de lucru din nivel.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Eroare!",
+        message:
+          "Tipul de element de lucru selectat nu poate fi utilizat pentru a crea un nou element de lucru deoarece încalcă regulile ierarhiei.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Eroare!",
+        message: "Tipul de element de lucru nu poate fi actualizat deoarece încalcă regulile ierarhiei.",
+      },
+    },
+  },
 } as const;
