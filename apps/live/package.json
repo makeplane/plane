@@ -47,7 +47,7 @@
     "axios": "catalog:",
     "compression": "1.8.1",
     "cors": "^2.8.5",
-    "effect": "^3.16.3",
+    "effect": "^3.20.0",
     "express": "catalog:",
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
