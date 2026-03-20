@@ -315,10 +315,10 @@ main(){
     # Enable Plane AI supervisor programs if ENABLE_PLANE_AI=1
     if [ "${ENABLE_PLANE_AI:-0}" == "1" ]; then
         echo "Enabling Plane AI (PI) services..."
-        sed -i '/^\[program:pi-migrator\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
-        sed -i '/^\[program:pi-api\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
-        sed -i '/^\[program:pi-beat\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
-        sed -i '/^\[program:pi-worker\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
+        sed -i '/^\[program:pi-migrator\]/,/^\[/{s/autostart=false/autostart=true/}' /app/supervisor.conf
+        sed -i '/^\[program:pi-api\]/,/^\[/{s/autostart=false/autostart=true/}' /app/supervisor.conf
+        sed -i '/^\[program:pi-beat\]/,/^\[/{s/autostart=false/autostart=true/}' /app/supervisor.conf
+        sed -i '/^\[program:pi-worker\]/,/^\[/{s/autostart=false/autostart=true/}' /app/supervisor.conf
         echo "✅ Plane AI services enabled"
         echo ""
     fi
@@ -328,7 +328,7 @@ main(){
     source plane.env
     set +a
 
-    supervisord -c /etc/supervisor/conf.d/supervisor.conf
+    supervisord -c /app/supervisor.conf
 }
 
 main "$@"
