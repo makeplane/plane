@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import crypto from "crypto";
+import crypto from "node:crypto";
 import axios from "axios";
 import type { GitLabAuthConfig, GitLabAuthorizeState, GitLabAuthPayload, GitLabTokenResponse } from "../types/auth";
 
