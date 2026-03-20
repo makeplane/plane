@@ -130,6 +130,13 @@ const envSchema = z.object({
   REDIS_AUTH_TOKEN_KEY: z.string().default("REDIS_AUTH_TOKEN"),
   REDIS_HOST_KEY: z.string().default("REDIS_HOST"),
   REDIS_PORT_KEY: z.string().default("REDIS_PORT"),
+  // RDS (PostgreSQL)
+  RDS_SECRET_ARN: z.string().optional(),
+  RDS_DB_NAME_KEY: z.string().default("DB_NAME"),
+  RDS_DB_HOST_KEY: z.string().default("DB_HOST"),
+  RDS_DB_PASSWORD_KEY: z.string().default("DB_PASSWORD"),
+  RDS_DB_PORT_KEY: z.string().default("DB_PORT"),
+  RDS_DB_USERNAME_KEY: z.string().default("DB_USERNAME"),
   // AmazonMQ (RabbitMQ)
   AMAZONMQ_SECRET_ARN: z.string().optional(),
   RABBITMQ_USER_KEY: z.string().default("RABBITMQ_USER"),
@@ -230,10 +237,29 @@ async function resolveRedisUrl(): Promise<string> {
   return `rediss://:${token}@${host}:${port}`;
 }
 
+async function resolveDatabaseUrl(): Promise<string> {
+  if (!env.RDS_SECRET_ARN || env.DATABASE_URL) return env.DATABASE_URL ?? "";
+
+  const secret = await fetchSecret(env.RDS_SECRET_ARN, env.AWS_REGION);
+  const user = encodeURIComponent(secretString(secret, env.RDS_DB_USERNAME_KEY));
+  const password = encodeURIComponent(secretString(secret, env.RDS_DB_PASSWORD_KEY));
+  const host = secretString(secret, env.RDS_DB_HOST_KEY);
+  const port = Number(secret[env.RDS_DB_PORT_KEY] ?? 5432);
+  const name = secretString(secret, env.RDS_DB_NAME_KEY);
+  return `postgresql://${user}:${password}@${host}:${port}/${name}`;
+}
+
 async function refreshSecrets(): Promise<void> {
-  const [amqpUrl, redisUrl] = await Promise.all([resolveAmqpUrl(), resolveRedisUrl()]);
+  const [amqpUrl, redisUrl, databaseUrl] = await Promise.all([
+    resolveAmqpUrl(),
+    resolveRedisUrl(),
+    resolveDatabaseUrl(),
+  ]);
   (env as Record<string, unknown>).AMQP_URL = amqpUrl;
   (env as Record<string, unknown>).REDIS_URL = redisUrl;
+  if (databaseUrl) {
+    (env as Record<string, unknown>).DATABASE_URL = databaseUrl;
+  }
 }
 
 /**
