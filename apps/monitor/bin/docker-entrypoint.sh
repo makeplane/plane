@@ -15,4 +15,9 @@ if [ "$(id -u)" = "0" ]; then
   chown -R plane:plane /app
   exec su-exec plane "$0" "$@"
 fi
-exec prime-monitor start
+
+if [ "$IS_AIRGAPPED" = "1" ]; then
+  exec prime-monitor start-airgapped
+else
+  exec prime-monitor start
+fi

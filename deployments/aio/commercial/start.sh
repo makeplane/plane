@@ -131,6 +131,7 @@ update_env_file(){
     update_env_value "APP_PROTOCOL" "$app_protocol"
     update_env_value "DOMAIN_NAME" "$DOMAIN_NAME"
     update_env_value "APP_DOMAIN" "$DOMAIN_NAME"
+    update_env_value "IS_AIRGAPPED" "${IS_AIRGAPPED:-0}"
     if [ -n "$SITE_ADDRESS" ]; then
         update_env_value "SITE_ADDRESS" "$SITE_ADDRESS"
     else

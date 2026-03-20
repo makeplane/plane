@@ -9,6 +9,7 @@ x-plane-commercial: &plane
   MACHINE_SIGNATURE: ${SERVICE_PASSWORD_64_MACHINESIGNATURE}
   DEPLOY_PLATFORM: coolify
   PRIME_HOST: https://prime.plane.so
+  IS_AIRGAPPED: ${IS_AIRGAPPED:-0}
 
 x-monitor-env: &monitor-env
   SERVICE_HTTP_WEB: web:3000
