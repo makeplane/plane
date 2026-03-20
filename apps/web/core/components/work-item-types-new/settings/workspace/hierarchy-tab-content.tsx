@@ -11,58 +11,47 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ArrowUpRight, TriangleAlert } from "lucide-react";
 import { observer } from "mobx-react";
-import { Navigate } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { setPromiseToast } from "@plane/propel/toast";
+import { UpgradeIcon } from "@plane/propel/icons";
 import { Switch } from "@plane/propel/switch";
+import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
-// component
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-import { PageHead } from "@/components/core/page-title";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { SettingsHeading } from "@/components/settings/heading";
+// components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
-// plane web imports
-import { WorkItemTypeHierarchyLevelsRoot } from "@/components/work-item-types-new/settings/hierarchy/root";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // types
-import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
-import type { Route } from "./+types/page";
-import { WorkItemTypeHierarchyWorkspaceSettingsHeader } from "./header";
+import { WorkItemTypeHierarchyLevelsRoot } from "../hierarchy/root";
+import { Button } from "@plane/propel/button";
+import { ArrowUpRight, TriangleAlert } from "lucide-react";
 
-function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const WorkspaceWorkItemTypesHierarchyTabContent = observer(function WorkspaceWorkItemTypesHierarchyTabContent({
+  workspaceSlug,
+}: Props) {
   // router
-  const { workspaceSlug } = params;
   const router = useAppRouter();
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
-  const { isWorkspaceFeatureEnabled, updateWorkspaceFeature, loader } = useWorkspaceFeatures();
-  const { t } = useTranslation();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
+  const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-  const pageTitle = currentWorkspace?.name
-    ? `${currentWorkspace.name} - ${t("work_item_type_hierarchy.settings.title")}`
-    : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isWorkItemTypesHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY");
   const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
     EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
   );
   const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
-  const disableToggling = !isWorkspaceWorkItemTypesEnabled || isWorkItemHierarchyFeatureEnabled;
+  const disableToggling =
+    isWorkItemTypesHierarchyFlagAvailable && (!isWorkspaceWorkItemTypesEnabled || isWorkItemHierarchyFeatureEnabled);
 
   const toggleWorkItemHierarchyFeature = async () => {
     try {
@@ -87,25 +76,17 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
       console.error(error);
     }
   };
-
-  if (!isWorkItemTypesHierarchyFlagAvailable) {
-    //TODO: replace with upgrade screen once ready
-    return <Navigate to={`/${workspaceSlug}`} />;
-  }
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
-
-  if (loader === EWorkspaceFeatureLoader.INIT_LOADER) return null;
+  // hooks
+  const { t } = useTranslation();
 
   return (
-    <SettingsContentWrapper header={<WorkItemTypeHierarchyWorkspaceSettingsHeader />}>
-      <PageHead title={pageTitle} />
-      <SettingsHeading
-        title={t("work_item_type_hierarchy.settings.title")}
-        description={t("work_item_type_hierarchy.settings.description")}
-      />
+    <div className="flex flex-col">
+      <div className="flex flex-col gap-2">
+        <h6 className="text-h6-medium">{t("work_item_type_hierarchy.settings.title")}</h6>
+        <p className="text-body-xs-regular text-secondary">{t("work_item_type_hierarchy.settings.description")}</p>
+      </div>
       <div
-        className={cn("mt-6", {
+        className={cn("mt-4", {
           "opacity-60": disableToggling,
         })}
       >
@@ -113,27 +94,34 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
           title={t("work_item_type_hierarchy.settings.enable_control.title")}
           description={t("work_item_type_hierarchy.settings.enable_control.description")}
           control={
-            <Tooltip tooltipContent={t("work_item_type_hierarchy.settings.enable_control.tooltip")} position="top">
-              {/* NOTE: added a wrapper span since disabling Switch removes pointer events thus ultimately disabling the tooltip. */}
-              <span>
-                <Switch
-                  value={isWorkItemHierarchyFeatureEnabled}
-                  onChange={toggleWorkItemHierarchyFeature}
-                  disabled={isWorkItemHierarchyFeatureEnabled}
-                />
-              </span>
-            </Tooltip>
+            isWorkItemTypesHierarchyFlagAvailable ? (
+              <Tooltip tooltipContent={t("work_item_type_hierarchy.settings.enable_control.tooltip")} position="top">
+                {/* NOTE: added a wrapper span since disabling Switch removes pointer events thus ultimately disabling the tooltip. */}
+                <span>
+                  <Switch
+                    value={isWorkItemHierarchyFeatureEnabled}
+                    onChange={toggleWorkItemHierarchyFeature}
+                    disabled={isWorkItemHierarchyFeatureEnabled}
+                  />
+                </span>
+              </Tooltip>
+            ) : (
+              <Button variant="secondary" prependIcon={<UpgradeIcon />} onClick={() => togglePaidPlanModal(true)}>
+                {t("common.upgrade")}
+              </Button>
+            )
           }
         />
       </div>
       {isWorkspaceWorkItemTypesEnabled ? (
+        isWorkItemTypesHierarchyFlagAvailable &&
         isWorkItemHierarchyFeatureEnabled && (
-          <div className="mt-12">
-            <WorkItemTypeHierarchyLevelsRoot />
+          <div className="mt-6">
+            <WorkItemTypeHierarchyLevelsRoot workspaceSlug={workspaceSlug} />
           </div>
         )
       ) : (
-        <div className="bg-warning-subtle border border-warning-subtle text-warning-secondary shadow-raised-200 rounded-lg py-3.5 px-4 mt-6 flex items-center justify-between">
+        <div className="bg-warning-subtle border border-warning-subtle text-warning-secondary shadow-raised-200 rounded-lg py-3.5 px-4 mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TriangleAlert className="shrink-0 size-5" />
             <p className="text-body-sm-medium">
@@ -151,8 +139,6 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
           </div>
         </div>
       )}
-    </SettingsContentWrapper>
+    </div>
   );
-}
-
-export default observer(WorkItemTypeHierarchySettingsPage);
+});

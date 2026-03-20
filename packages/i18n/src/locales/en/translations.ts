@@ -7536,6 +7536,7 @@ the way you want to from the sources you specify.`,
   work_item_type_hierarchy: {
     settings: {
       title: "Hierarchy",
+      tab_label: "Hierarchy",
       description:
         "Set up hierarchy levels to organize your work. Each level defines a parent relationship with the item directly above it and child relationship with the item directly below it. ",
       sidebar_label: "Hierarchy",
@@ -7559,6 +7560,10 @@ the way you want to from the sources you specify.`,
       title: "Add hierarchy level",
       description: "Add a new hierarchy level to the work item type.",
       work_item_type: "Work item type",
+      empty_state: {
+        title: "All work item types in use",
+        description: "Every work item type defined in this workspace is already part of your hierarchy.",
+      },
       invalid_level_toast: {
         title: "Error!",
         message: "{type_name} cannot be added to level {level} since it breaks the hierarchy rules.",

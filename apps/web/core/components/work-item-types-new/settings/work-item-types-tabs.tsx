@@ -14,13 +14,11 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-// components
-import { TabNavigationItem, TabNavigationList } from "@plane/propel/tab-navigation";
-import React, { useState } from "react";
-import { PropertiesIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
+import { HierarchyIcon, PropertiesIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { TabNavigationItem, TabNavigationList } from "@plane/propel/tab-navigation";
 
-type TWorkItemTypesTab = "types" | "properties";
+export type TWorkItemTypesTab = "types" | "properties" | "hierarchy";
 
 const NAVIGATION_ITEMS: { key: TWorkItemTypesTab; labelKey: string; icon: React.FC<ISvgIcons> }[] = [
   {
@@ -33,19 +31,28 @@ const NAVIGATION_ITEMS: { key: TWorkItemTypesTab; labelKey: string; icon: React.
     labelKey: "work_item_types.settings.properties.title",
     icon: PropertiesIcon,
   },
+  {
+    key: "hierarchy",
+    labelKey: "work_item_type_hierarchy.settings.tab_label",
+    icon: HierarchyIcon,
+  },
 ];
+export const TABS_LIST = NAVIGATION_ITEMS.map((tab) => tab.key);
 
 type Props = {
-  TypesTab: React.ReactNode;
-  PropertiesTab: React.ReactNode;
+  activeTab: TWorkItemTypesTab;
+  handleActiveTabChange: (tab: TWorkItemTypesTab) => void;
+  tabs: {
+    TypesTab: React.ReactNode;
+    PropertiesTab: React.ReactNode;
+    HierarchyTab: React.ReactNode;
+  };
 };
 
 export const WorkItemTypesSettingsTabs = observer(function WorkItemTypesSettingsTabs(props: Props) {
-  const { TypesTab, PropertiesTab } = props;
+  const { activeTab, handleActiveTabChange, tabs } = props;
   // translation
   const { t } = useTranslation();
-  // states
-  const [activeTab, setActiveTab] = useState<TWorkItemTypesTab>("types");
 
   return (
     <div className="flex flex-col gap-6">
@@ -55,7 +62,7 @@ export const WorkItemTypesSettingsTabs = observer(function WorkItemTypesSettings
           {NAVIGATION_ITEMS.map((tab) => {
             const Icon = tab.icon;
             return (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)} className="relative">
+              <button key={tab.key} onClick={() => handleActiveTabChange(tab.key)} className="relative">
                 <TabNavigationItem key={tab.key} isActive={activeTab === tab.key}>
                   <Icon className="size-4 text-tertiary" />
                   {t(tab.labelKey)}
@@ -69,8 +76,9 @@ export const WorkItemTypesSettingsTabs = observer(function WorkItemTypesSettings
         </TabNavigationList>
       </div>
       <div>
-        {activeTab === "types" && TypesTab}
-        {activeTab === "properties" && PropertiesTab}
+        {activeTab === "types" && tabs.TypesTab}
+        {activeTab === "properties" && tabs.PropertiesTab}
+        {activeTab === "hierarchy" && tabs.HierarchyTab}
       </div>
     </div>
   );

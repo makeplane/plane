@@ -11,22 +11,56 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { WorkItemTypesSettingsTabs } from "../work-item-types-tabs";
-import { WorkspaceWorkItemTypesTypesTabContent } from "./types-tab-content";
+import { useSearchParams } from "react-router";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
+import { useQueryParams } from "@/hooks/use-query-params";
+// local imports
+import type { TWorkItemTypesTab } from "../work-item-types-tabs";
+import { TABS_LIST, WorkItemTypesSettingsTabs } from "../work-item-types-tabs";
+import { WorkspaceWorkItemTypesHierarchyTabContent } from "./hierarchy-tab-content";
 import { WorkspacePropertiesTabContent } from "./properties-tab-content";
+import { WorkspaceWorkItemTypesTypesTabContent } from "./types-tab-content";
 
 type Props = {
   workspaceSlug: string;
 };
 
-export const WorkspaceWorkItemTypesSettingsRoot = observer(function WorkspaceWorkItemTypesSettingsRoot(props: Props) {
-  // props
-  const { workspaceSlug } = props;
+export const WorkspaceWorkItemTypesSettingsRoot = observer(function WorkspaceWorkItemTypesSettingsRoot({
+  workspaceSlug,
+}: Props) {
+  // params
+  const [searchParams] = useSearchParams();
+  const router = useAppRouter();
+  // query params manipulation
+  const { updateQueryParams } = useQueryParams();
+  const queryParamTab = searchParams.get("tab");
+  const resolvedTab: TWorkItemTypesTab = useMemo(
+    () => (TABS_LIST.includes(queryParamTab as TWorkItemTypesTab) ? (queryParamTab as TWorkItemTypesTab) : "types"),
+    [queryParamTab]
+  );
+
+  const handleActiveTabChange = useCallback(
+    (tab: TWorkItemTypesTab) => {
+      const updatedRoute = updateQueryParams({
+        paramsToAdd: { tab },
+      });
+      router.replace(updatedRoute);
+    },
+    [router, updateQueryParams]
+  );
+
   return (
     <WorkItemTypesSettingsTabs
-      TypesTab={<WorkspaceWorkItemTypesTypesTabContent workspaceSlug={workspaceSlug} />}
-      PropertiesTab={<WorkspacePropertiesTabContent workspaceSlug={workspaceSlug} />}
+      activeTab={resolvedTab}
+      handleActiveTabChange={handleActiveTabChange}
+      tabs={{
+        TypesTab: <WorkspaceWorkItemTypesTypesTabContent workspaceSlug={workspaceSlug} />,
+        PropertiesTab: <WorkspacePropertiesTabContent workspaceSlug={workspaceSlug} />,
+        HierarchyTab: <WorkspaceWorkItemTypesHierarchyTabContent workspaceSlug={workspaceSlug} />,
+      }}
     />
   );
 });

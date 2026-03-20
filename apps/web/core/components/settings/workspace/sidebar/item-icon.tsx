@@ -65,5 +65,4 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   "access-tokens": KeyRound,
   scripts: FileCode,
   work_item_types: WorkItemsIcon,
-  work_item_type_hierarchy: HierarchyIcon,
 };

@@ -14,7 +14,6 @@
 import { Fragment } from "react";
 import { MoveDown } from "lucide-react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
 // plane imports
 import { Loader } from "@plane/ui";
 // plane web imports
@@ -23,16 +22,20 @@ import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-typ
 import { WorkItemTypeHierarchyAddToLevelButton } from "./add-to-level-button";
 import { WorkItemTypeHierarchyLevelItem } from "./level-item";
 
-export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHierarchyLevelsRoot() {
-  // params
-  const { workspaceSlug } = useParams();
+type Props = {
+  workspaceSlug: string;
+};
+
+export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHierarchyLevelsRoot({
+  workspaceSlug,
+}: Props) {
   // store hooks
   const { canCreate, getWorkItemTypesByWorkspaceSlugGroupedByLevel, getLoaderByWorkspaceSlug } =
     useWorkspaceWorkItemTypes();
   // derived values
-  const workItemTypesByLevel = workspaceSlug ? getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug) : new Map();
-  const isLoading = workspaceSlug ? getLoaderByWorkspaceSlug(workspaceSlug) === "init-loader" : true;
-  const canAddLevel = !!workspaceSlug && canCreate(workspaceSlug);
+  const workItemTypesByLevel = getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug);
+  const isLoading = getLoaderByWorkspaceSlug(workspaceSlug) === "init-loader";
+  const canAddLevel = canCreate(workspaceSlug);
 
   if (isLoading)
     return (

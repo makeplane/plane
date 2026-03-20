@@ -291,10 +291,6 @@ export const settingsRoutes: RouteConfigEntry[] = [
         ":workspaceSlug/settings/work-item-types",
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/work-item-types/page.tsx"
       ),
-      route(
-        ":workspaceSlug/settings/work-item-type-hierarchy",
-        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/work-item-type-hierarchy/page.tsx"
-      ),
     ]),
 
     // ====================================================================

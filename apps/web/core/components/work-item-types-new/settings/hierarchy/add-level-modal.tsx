@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { Button } from "@plane/propel/button";
@@ -107,17 +108,26 @@ export const AddWorkItemTypeHierarchyLevelModal = observer(function AddWorkItemT
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XL}>
       <div className="px-4 py-3 flex flex-col gap-y-3">
         <h5 className="text-h5-medium">{t("work_item_type_hierarchy.add_level_modal.title")}</h5>
-        <div className="flex flex-col gap-2">
-          <p className="text-body-xs-medium">{t("work_item_type_hierarchy.add_level_modal.work_item_type")}</p>
-          <IssueTypeDropdown
-            allWorkItemTypes={workItemTypes}
-            handleChange={setWorkItemTypeId}
-            selectedWorkItemTypeId={workItemTypeId}
-            buttonClassName="py-2 px-3 rounded-md"
-            noChevron={false}
-            showOnlyActiveWorkItemTypes={false}
+        {workItemTypes.length === 0 ? (
+          <EmptyStateCompact
+            assetKey="work-item"
+            title={t("work_item_type_hierarchy.add_level_modal.empty_state.title")}
+            description={t("work_item_type_hierarchy.add_level_modal.empty_state.description")}
+            rootClassName="py-6"
           />
-        </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <p className="text-body-xs-medium">{t("work_item_type_hierarchy.add_level_modal.work_item_type")}</p>
+            <IssueTypeDropdown
+              allWorkItemTypes={workItemTypes}
+              handleChange={setWorkItemTypeId}
+              selectedWorkItemTypeId={workItemTypeId}
+              buttonClassName="py-2 px-3 rounded-md"
+              noChevron={false}
+              showOnlyActiveWorkItemTypes={false}
+            />
+          </div>
+        )}
         <hr className="border-[0.5px] border-subtle" />
         <div className="flex items-center justify-end gap-3">
           <Button variant="secondary" size="lg" onClick={handleClose}>

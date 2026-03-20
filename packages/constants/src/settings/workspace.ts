@@ -183,13 +183,6 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/work-item-types/`,
   },
-  work_item_type_hierarchy: {
-    key: "work_item_type_hierarchy",
-    i18n_label: "work_item_type_hierarchy.settings.sidebar_label",
-    href: `/settings/work-item-type-hierarchy`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/work-item-type-hierarchy/`,
-  },
 };
 
 export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
@@ -221,7 +214,6 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["relations"],
     WORKSPACE_SETTINGS["plane-intelligence"],
     WORKSPACE_SETTINGS["work_item_types"],
-    WORKSPACE_SETTINGS["work_item_type_hierarchy"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"], WORKSPACE_SETTINGS["access-tokens"]],
 };
