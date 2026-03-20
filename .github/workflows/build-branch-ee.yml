@@ -532,6 +532,12 @@ jobs:
             cp deployments/cli/commercial/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
             cp deployments/cli/commercial/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
 
+            cp ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-airgapped.yml
+            sed -i 's@${IS_AIRGAPPED.*@"1"@' ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-airgapped.yml
+
+            cp ~/${{ env.ARTIFACT_SUFFIX }}/variables.env ~/${{ env.ARTIFACT_SUFFIX }}/variables-airgapped.env
+            sed -i 's@IS_AIRGAPPED=.*@IS_AIRGAPPED=1@' ~/${{ env.ARTIFACT_SUFFIX }}/variables-airgapped.env
+
             sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/coolify/commercial/coolify-compose.yml
             cp deployments/coolify/commercial/coolify-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
 
@@ -631,6 +637,13 @@ jobs:
           name: docker-compose.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
 
+      - name: Upload docker-compose-airgapped.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-compose-airgapped.yml
+          path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-airgapped.yml
+
       - name: Upload docker-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
         uses: actions/upload-artifact@v4
@@ -671,6 +684,13 @@ jobs:
         with:
           name: variables.env
           path: ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
+
+      - name: Upload variables-airgapped.env
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: variables-airgapped.env
+          path: ~/${{ env.ARTIFACT_SUFFIX }}/variables-airgapped.env
 
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
@@ -719,6 +739,12 @@ jobs:
             sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/portainer/commercial/portainer-compose.yml
             cp deployments/cli/commercial/docker-compose.yml deployments/cli/commercial/docker-compose-caddy.yml
             cp deployments/portainer/commercial/portainer-compose.yml deployments/portainer/commercial/swarm-compose.yml
+
+            cp deployments/cli/commercial/docker-compose.yml deployments/cli/commercial/docker-compose-airgapped.yml
+            sed -i 's@${IS_AIRGAPPED.*@"1"@' deployments/cli/commercial/docker-compose-airgapped.yml
+
+            cp deployments/cli/commercial/variables.env deployments/cli/commercial/variables-airgapped.env
+            sed -i 's@IS_AIRGAPPED=.*@IS_AIRGAPPED=1@' deployments/cli/commercial/variables-airgapped.env
           fi
 
       - name: Create Release
@@ -735,7 +761,9 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ github.workspace }}/deployments/cli/commercial/variables.env
+            ${{ github.workspace }}/deployments/cli/commercial/variables-airgapped.env
             ${{ github.workspace }}/deployments/cli/commercial/docker-compose.yml
+            ${{ github.workspace }}/deployments/cli/commercial/docker-compose-airgapped.yml
             ${{ github.workspace }}/deployments/coolify/commercial/coolify-compose.yml
             ${{ github.workspace }}/deployments/portainer/commercial/portainer-compose.yml
             ${{ github.workspace }}/deployments/portainer/commercial/swarm-compose.yml
