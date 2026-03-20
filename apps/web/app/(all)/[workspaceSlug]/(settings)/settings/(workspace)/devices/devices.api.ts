@@ -18,6 +18,20 @@ const hasFailureMarker = (text: string) => FAILURE_TEXT_MARKERS.some((marker) =>
 const toNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const normalizeApplicationOption = (value: unknown): string | null => {
+  if (typeof value === "string" && value.trim().length > 0) {
+    return value.trim();
+  }
+
+  if (!value || typeof value !== "object") return null;
+
+  const record = value as Record<string, unknown>;
+  const candidate =
+    record.app_name ?? record.appName ?? record.name ?? record.label ?? record.value ?? record.application;
+
+  return typeof candidate === "string" && candidate.trim().length > 0 ? candidate.trim() : null;
+};
+
 const hasFailureStatus = (value: unknown): boolean => {
   if (typeof value === "boolean") return value === false;
   if (typeof value === "number") return value >= 400 || value < 0;
@@ -333,6 +347,17 @@ const mapDeviceTypes = (rows: Record<string, unknown>[]): string[] => {
     .filter((item) => item.length > 0);
 };
 
+const mapApplications = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? Array.from(
+        new Set(
+          value
+            .map((entry) => normalizeApplicationOption(entry))
+            .filter((item): item is string => typeof item === "string")
+        )
+      ).sort((a, b) => a.localeCompare(b))
+    : [];
+
 const mapUsers = (rows: Record<string, unknown>[]): TUserOption[] =>
   rows
     .map((row) => {
@@ -367,17 +392,9 @@ export const fetchDeviceFormOptions = async (cpServerBaseUrl: string): Promise<T
     getJson(`${cpServerBaseUrl}${APPLICATIONS_ENDPOINT}`),
   ]);
 
-  const applications = Array.isArray(
+  const applications = mapApplications(
     (applicationsPayload as { "Gateway Response"?: { applications?: unknown } })?.["Gateway Response"]?.applications
-  )
-    ? (
-        (applicationsPayload as { "Gateway Response"?: { applications?: unknown } })["Gateway Response"]
-          ?.applications as unknown[]
-      )
-        .filter((item): item is string => typeof item === "string")
-        .map((item) => item.trim())
-        .filter((item) => item.length > 0)
-    : [];
+  );
 
   return {
     applications,

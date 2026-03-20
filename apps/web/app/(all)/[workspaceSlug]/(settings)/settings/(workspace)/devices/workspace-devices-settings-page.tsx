@@ -30,6 +30,14 @@ const SERVICE_GATEWAY_USER_LABEL = "service gateway";
 const getServiceGatewayUserId = (users: TDeviceFormOptions["users"]) =>
   users.find((user) => user.label.trim().toLowerCase() === SERVICE_GATEWAY_USER_LABEL)?.id ?? null;
 
+const mergeApplicationOptions = (applications: string[], devices: TDevice[]) =>
+  Array.from(
+    new Set([
+      ...applications,
+      ...devices.map((device) => device.appName.trim()).filter((appName) => appName.length > 0),
+    ])
+  ).sort((a, b) => a.localeCompare(b));
+
 const WorkspaceDevicesSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -44,7 +52,8 @@ const WorkspaceDevicesSettingsPage = observer(() => {
   const [devices, setDevices] = useState<TDevice[]>([]);
   const [formOptions, setFormOptions] = useState<TDeviceFormOptions>(EMPTY_DEVICE_OPTIONS);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFormOptionsLoading, setIsFormOptionsLoading] = useState(true);
+  const [isFormOptionsLoading, setIsFormOptionsLoading] = useState(false);
+  const [hasLoadedFormOptions, setHasLoadedFormOptions] = useState(false);
   const [isMutating, setIsMutating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedDeviceId, setCopiedDeviceId] = useState<number | null>(null);
@@ -67,12 +76,12 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     return null;
   }, [cpServerBaseUrl]);
 
-  const loadDevices = useCallback(async () => {
+  const loadDevices = useCallback(async (): Promise<TDevice[]> => {
     const baseUrl = resolveCpServerBaseUrl();
     if (!baseUrl) {
       setError("NEXT_PUBLIC_CP_SERVER_URL is not configured.");
       setIsLoading(false);
-      return;
+      return [];
     }
 
     setIsLoading(true);
@@ -81,18 +90,22 @@ const WorkspaceDevicesSettingsPage = observer(() => {
       const data = await fetchDevices(baseUrl);
       setDevices(data);
       setError(null);
+      return data;
     } catch (err) {
       setError(getErrorMessage(err, "Unable to load devices."));
+      return [];
     } finally {
       setIsLoading(false);
     }
   }, [resolveCpServerBaseUrl]);
 
-  const loadFormOptions = useCallback(async () => {
+  const ensureFormOptionsLoaded = useCallback(async () => {
+    if (hasLoadedFormOptions) return true;
+    if (isFormOptionsLoading) return false;
+
     const baseUrl = resolveCpServerBaseUrl();
     if (!baseUrl) {
-      setIsFormOptionsLoading(false);
-      return;
+      return false;
     }
 
     setIsFormOptionsLoading(true);
@@ -100,21 +113,26 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     try {
       const options = await fetchDeviceFormOptions(baseUrl);
       setFormOptions(options);
+      setHasLoadedFormOptions(true);
+      return true;
     } catch (err) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: getErrorMessage(err, "Unable to load device form options."),
       });
+      return false;
     } finally {
       setIsFormOptionsLoading(false);
     }
-  }, [resolveCpServerBaseUrl]);
+  }, [hasLoadedFormOptions, isFormOptionsLoading, resolveCpServerBaseUrl]);
 
   useEffect(() => {
-    void Promise.all([loadDevices(), loadFormOptions()]);
-  }, [loadDevices, loadFormOptions]);
+    void loadDevices();
+  }, [loadDevices]);
 
-  const openCreateModal = () => {
+  const openCreateModal = async () => {
+    if (!(await ensureFormOptionsLoaded())) return;
+
     setFormMode("create");
     setFormInitialValues({
       ...DEVICE_FORM_DEFAULT_VALUES,
@@ -123,7 +141,9 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     setIsFormModalOpen(true);
   };
 
-  const openEditModal = (device: TDevice) => {
+  const openEditModal = async (device: TDevice) => {
+    if (!(await ensureFormOptionsLoaded())) return;
+
     setFormMode("edit");
     setFormInitialValues({
       id: device.id,
@@ -160,7 +180,20 @@ const WorkspaceDevicesSettingsPage = observer(() => {
       });
 
       closeFormModal();
-      await loadDevices();
+      const refreshedDevices = await loadDevices();
+
+      if (formMode === "edit" && values.id) {
+        const refreshedDevice = refreshedDevices.find((device) => device.id === values.id);
+        const submittedAppName = values.appName.trim();
+
+        if (refreshedDevice && refreshedDevice.appName.trim() !== submittedAppName) {
+          setToast({
+            type: TOAST_TYPE.WARNING,
+            title: "The CP server is still returning a different app name.",
+            message: `Saved "${submittedAppName}", but the latest device payload still reports "${refreshedDevice.appName}".`,
+          });
+        }
+      }
     } catch (err) {
       if (formMode === "edit") {
         setToast({
@@ -257,6 +290,14 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     }
   };
 
+  const formOptionsWithDeviceApps = useMemo(
+    () => ({
+      ...formOptions,
+      applications: mergeApplicationOptions(formOptions.applications, devices),
+    }),
+    [devices, formOptions]
+  );
+
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
   }
@@ -273,7 +314,9 @@ const WorkspaceDevicesSettingsPage = observer(() => {
               variant="primary"
               size="sm"
               prependIcon={<Plus className="h-4 w-4" />}
-              onClick={openCreateModal}
+              onClick={() => {
+                void openCreateModal();
+              }}
               disabled={isFormOptionsLoading || isMutating}
             >
               Register Device
@@ -286,11 +329,13 @@ const WorkspaceDevicesSettingsPage = observer(() => {
             devices={devices}
             copiedDeviceId={copiedDeviceId}
             isLoading={isLoading}
-            isMutating={isMutating}
+            isMutating={isMutating || isFormOptionsLoading}
             onCopyUrl={(device) => {
               void handleCopyUrl(device);
             }}
-            onEdit={openEditModal}
+            onEdit={(device) => {
+              void openEditModal(device);
+            }}
             onDelete={(device) => {
               openDeleteModal(device);
             }}
@@ -322,7 +367,7 @@ const WorkspaceDevicesSettingsPage = observer(() => {
         mode={formMode}
         isSubmitting={isMutating}
         initialValues={formInitialValues}
-        options={formOptions}
+        options={formOptionsWithDeviceApps}
         onClose={closeFormModal}
         onSubmit={(values) => {
           void handleFormSubmit(values);

@@ -54,6 +54,7 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
                 <Link
                   key={link.key}
                   href={`/${workspaceSlug}/settings/projects/${projectId}${link.href}`}
+                  prefetch={false}
                   onClick={() => toggleSidebar(true)}
                 >
                   <div

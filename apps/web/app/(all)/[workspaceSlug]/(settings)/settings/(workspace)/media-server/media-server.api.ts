@@ -6,25 +6,52 @@ const VHOST_ENDPOINT = "/omal/vhost-info";
 const CREATE_APP_ENDPOINTS = ["/omal/create-app", APPLICATIONS_ENDPOINT, "/omal/apps", "/omal/app"] as const;
 const DELETE_APP_ENDPOINTS = ["/omal/app", APPLICATIONS_ENDPOINT, "/omal/apps"] as const;
 
+const toNonEmptyString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
 const throwIfNotOk = (response: Response, message: string) => {
   if (!response.ok) {
     throw new Error(`${message} (${response.status}).`);
   }
 };
 
-const parseMutationErrorMessage = async (response: Response): Promise<string | null> => {
-  try {
-    const payload = (await response.json()) as {
-      error?: unknown;
-      message?: unknown;
-      detail?: unknown;
-    };
-    const candidates = [payload.error, payload.message, payload.detail];
-    for (const value of candidates) {
-      if (typeof value === "string" && value.trim().length > 0) {
-        return value.trim();
-      }
+const extractMutationErrorMessage = (value: unknown, depth = 0): string | null => {
+  if (depth > 4 || value === null || value === undefined) return null;
+
+  if (typeof value === "string") return toNonEmptyString(value);
+
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const nested = extractMutationErrorMessage(entry, depth + 1);
+      if (nested) return nested;
     }
+
+    return null;
+  }
+
+  if (typeof value !== "object") return null;
+
+  const record = value as Record<string, unknown>;
+  const directFields = ["error", "message", "detail", "reason", "statusText"];
+
+  for (const key of directFields) {
+    const direct = toNonEmptyString(record[key]);
+    if (direct) return direct;
+  }
+
+  const nestedCandidates = [record["Gateway Response"], record.gatewayResponse, record.response, record.data, record.result];
+
+  for (const candidate of nestedCandidates) {
+    const nested = extractMutationErrorMessage(candidate, depth + 1);
+    if (nested) return nested;
+  }
+
+  return null;
+};
+
+const getMutationPayload = async (response: Response): Promise<unknown> => {
+  try {
+    return await response.json();
   } catch {
     // Fall through to text parsing.
   }
@@ -61,9 +88,11 @@ const mutateApplication = async (
       body: JSON.stringify({ "app-name": applicationName }),
     });
 
-    if (response.ok) return;
+    const mutationPayload = await getMutationPayload(response);
+    const mutationError = extractMutationErrorMessage(mutationPayload);
 
-    const mutationError = await parseMutationErrorMessage(response);
+    if (response.ok && !mutationError) return;
+
     const errorMessage = mutationError ?? `${failureMessage} (${response.status}).`;
     const isFallbackAllowed =
       endpoint !== endpoints[endpoints.length - 1] &&
@@ -81,29 +110,41 @@ const mutateApplication = async (
 };
 
 export const fetchMediaServerData = async (cpServerBaseUrl: string): Promise<TMediaServerData> => {
-  const [applicationsResponse, virtualHostResponse] = await Promise.all([
-    fetch(`${cpServerBaseUrl}${APPLICATIONS_ENDPOINT}`, { cache: "no-store" }),
-    fetch(`${cpServerBaseUrl}${VHOST_ENDPOINT}`, { cache: "no-store" }),
+  const [applications, virtualHost] = await Promise.all([
+    fetchApplications(cpServerBaseUrl),
+    fetchVirtualHost(cpServerBaseUrl),
   ]);
 
+  return {
+    applications,
+    virtualHost,
+  };
+};
+
+export const fetchApplications = async (cpServerBaseUrl: string): Promise<string[]> => {
+  const applicationsResponse = await fetch(`${cpServerBaseUrl}${APPLICATIONS_ENDPOINT}`, { cache: "no-store" });
+
   throwIfNotOk(applicationsResponse, "Failed to fetch applications");
-  throwIfNotOk(virtualHostResponse, "Failed to fetch virtual host info");
 
   const applicationsPayload = (await applicationsResponse.json()) as {
     "Gateway Response"?: {
       applications?: unknown;
     };
   };
+
+  return normalizeApplications(applicationsPayload?.["Gateway Response"]?.applications);
+};
+
+export const fetchVirtualHost = async (cpServerBaseUrl: string) => {
+  const virtualHostResponse = await fetch(`${cpServerBaseUrl}${VHOST_ENDPOINT}`, { cache: "no-store" });
+
+  throwIfNotOk(virtualHostResponse, "Failed to fetch virtual host info");
+
   const virtualHostPayload = (await virtualHostResponse.json()) as unknown;
 
-  const applications = normalizeApplications(applicationsPayload?.["Gateway Response"]?.applications);
   const virtualHostRecords = parseVirtualHostRecords(virtualHostPayload);
-  const virtualHost = normalizeVirtualHost(virtualHostRecords[0]);
 
-  return {
-    applications,
-    virtualHost,
-  };
+  return normalizeVirtualHost(virtualHostRecords[0]);
 };
 
 export const createApplication = async (cpServerBaseUrl: string, applicationName: string) => {

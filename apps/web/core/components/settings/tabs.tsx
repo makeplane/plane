@@ -44,6 +44,7 @@ const SettingsTabs = observer(() => {
           <Link
             key={tab.key}
             href={`/${workspaceSlug}${href}`}
+            prefetch={false}
             className={cn(
               "flex items-center justify-center p-1 min-w-fit w-full font-medium outline-none focus:outline-none cursor-pointer transition-all rounded text-custom-text-200 ",
               {

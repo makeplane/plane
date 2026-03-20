@@ -17,7 +17,7 @@ import { ApplicationFormModal } from "./components/application-form-modal";
 import { CollapsibleConfigurationCard } from "./components/collapsible-configuration-card";
 import { ServerConfigurationContent } from "./components/server-configuration-content";
 import { VirtualHostConfigurationContent } from "./components/virtual-host-configuration-content";
-import { createApplication, fetchMediaServerData, removeApplication } from "./media-server.api";
+import { createApplication, fetchApplications, fetchVirtualHost, removeApplication } from "./media-server.api";
 import { EMPTY_VIRTUAL_HOST } from "./media-server.types";
 import type { TVirtualHostState } from "./media-server.types";
 import { getCpServerBaseUrl, getErrorMessage } from "./media-server.utils";
@@ -36,39 +36,59 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
   const [applications, setApplications] = useState<string[]>([]);
   const [newApplicationName, setNewApplicationName] = useState("");
   const [virtualHost, setVirtualHost] = useState<TVirtualHostState>(EMPTY_VIRTUAL_HOST);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isApplicationsLoading, setIsApplicationsLoading] = useState<boolean>(true);
+  const [isVirtualHostLoading, setIsVirtualHostLoading] = useState<boolean>(false);
   const [isMutating, setIsMutating] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [applicationsError, setApplicationsError] = useState<string | null>(null);
+  const [virtualHostError, setVirtualHostError] = useState<string | null>(null);
+  const [hasLoadedVirtualHost, setHasLoadedVirtualHost] = useState<boolean>(false);
   const [isServerConfigOpen, setIsServerConfigOpen] = useState<boolean>(false);
   const [isVirtualHostOpen, setIsVirtualHostOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [applicationToDelete, setApplicationToDelete] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
 
-  const loadMediaServerData = useCallback(async () => {
+  const loadApplications = useCallback(async () => {
     if (!cpServerBaseUrl) {
-      setError("NEXT_PUBLIC_CP_SERVER_URL is not configured.");
-      setIsLoading(false);
+      setApplicationsError("NEXT_PUBLIC_CP_SERVER_URL is not configured.");
+      setIsApplicationsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
+    setIsApplicationsLoading(true);
+    setApplicationsError(null);
 
     try {
-      const data = await fetchMediaServerData(cpServerBaseUrl);
-      setApplications(data.applications);
-      setVirtualHost(data.virtualHost);
+      setApplications(await fetchApplications(cpServerBaseUrl));
     } catch (err) {
-      setError(getErrorMessage(err, "Unable to load media server details."));
+      setApplicationsError(getErrorMessage(err, "Unable to load media server applications."));
     } finally {
-      setIsLoading(false);
+      setIsApplicationsLoading(false);
     }
   }, [cpServerBaseUrl]);
 
   useEffect(() => {
-    void loadMediaServerData();
-  }, [loadMediaServerData]);
+    void loadApplications();
+  }, [loadApplications]);
+
+  const loadVirtualHostData = useCallback(async () => {
+    if (!cpServerBaseUrl) {
+      setVirtualHostError("NEXT_PUBLIC_CP_SERVER_URL is not configured.");
+      return;
+    }
+
+    setIsVirtualHostLoading(true);
+    setVirtualHostError(null);
+
+    try {
+      setVirtualHost(await fetchVirtualHost(cpServerBaseUrl));
+      setHasLoadedVirtualHost(true);
+    } catch (err) {
+      setVirtualHostError(getErrorMessage(err, "Unable to load virtual host details."));
+    } finally {
+      setIsVirtualHostLoading(false);
+    }
+  }, [cpServerBaseUrl]);
 
   const resolveCpServerBaseUrl = useCallback(() => {
     if (cpServerBaseUrl) return cpServerBaseUrl;
@@ -105,7 +125,7 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
       });
       setNewApplicationName("");
       setIsCreateModalOpen(false);
-      await loadMediaServerData();
+      await loadApplications();
     } catch (err) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -114,7 +134,7 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
     } finally {
       setIsMutating(false);
     }
-  }, [loadMediaServerData, newApplicationName, resolveCpServerBaseUrl]);
+  }, [loadApplications, newApplicationName, resolveCpServerBaseUrl]);
 
   const handleDeleteApplication = useCallback(
     async (applicationName: string) => {
@@ -129,7 +149,7 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
           type: TOAST_TYPE.SUCCESS,
           title: "Application removed.",
         });
-        await loadMediaServerData();
+        await loadApplications();
       } catch (err) {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -139,8 +159,13 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
         setIsMutating(false);
       }
     },
-    [loadMediaServerData, resolveCpServerBaseUrl]
+    [loadApplications, resolveCpServerBaseUrl]
   );
+
+  const ensureVirtualHostLoaded = useCallback(() => {
+    if (hasLoadedVirtualHost || isVirtualHostLoading) return;
+    void loadVirtualHostData();
+  }, [hasLoadedVirtualHost, isVirtualHostLoading, loadVirtualHostData]);
 
   const openDeleteModal = (applicationName: string) => {
     setApplicationToDelete(applicationName);
@@ -183,7 +208,7 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
         <div className="mt-6 space-y-4">
           <ApplicationConfigurationCard
             applications={applications}
-            isLoading={isLoading}
+            isLoading={isApplicationsLoading}
             isMutating={isMutating}
             onOpenCreateModal={openCreateModal}
             onDeleteApplication={(applicationName) => {
@@ -194,20 +219,40 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
           <CollapsibleConfigurationCard
             title="Server Configuration"
             isOpen={isServerConfigOpen}
-            onToggle={() => setIsServerConfigOpen((state) => !state)}
+            onToggle={() => {
+              const nextState = !isServerConfigOpen;
+              setIsServerConfigOpen(nextState);
+              if (nextState) ensureVirtualHostLoaded();
+            }}
           >
-            <ServerConfigurationContent hostName={virtualHost.hostName} />
+            {isVirtualHostLoading ? (
+              <p className="text-sm text-custom-text-300">Loading server configuration...</p>
+            ) : virtualHostError ? (
+              <p className="text-sm text-red-500">{virtualHostError}</p>
+            ) : (
+              <ServerConfigurationContent hostName={virtualHost.hostName} />
+            )}
           </CollapsibleConfigurationCard>
 
           <CollapsibleConfigurationCard
             title="Virtual Host Configuration"
             isOpen={isVirtualHostOpen}
-            onToggle={() => setIsVirtualHostOpen((state) => !state)}
+            onToggle={() => {
+              const nextState = !isVirtualHostOpen;
+              setIsVirtualHostOpen(nextState);
+              if (nextState) ensureVirtualHostLoaded();
+            }}
           >
-            <VirtualHostConfigurationContent virtualHost={virtualHost} />
+            {isVirtualHostLoading ? (
+              <p className="text-sm text-custom-text-300">Loading virtual host configuration...</p>
+            ) : virtualHostError ? (
+              <p className="text-sm text-red-500">{virtualHostError}</p>
+            ) : (
+              <VirtualHostConfigurationContent virtualHost={virtualHost} />
+            )}
           </CollapsibleConfigurationCard>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {applicationsError && <p className="text-sm text-red-500">{applicationsError}</p>}
         </div>
       </div>
 
