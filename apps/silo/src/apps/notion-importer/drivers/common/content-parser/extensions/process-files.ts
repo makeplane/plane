@@ -114,7 +114,14 @@ export class NotionFileParserExtension implements IParserExtension {
     attachmentComponent.setAttribute("data-name", cleanedFileName || file.name);
     attachmentComponent.setAttribute("data-file-type", file.type);
     attachmentComponent.setAttribute("data-file-size", file.size.toString());
+    if (this.isVideoMimeType(file.type)) {
+      attachmentComponent.setAttribute("data-preview", "true");
+    }
     return attachmentComponent;
+  }
+
+  protected isVideoMimeType(mimeType: string): boolean {
+    return mimeType.startsWith("video/");
   }
 
   protected normalizeFilePath(src: string): string {

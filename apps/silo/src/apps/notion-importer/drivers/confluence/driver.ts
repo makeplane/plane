@@ -34,10 +34,8 @@ import {
   ConfluenceColorIdParserExtension,
   ConfluenceExtractBodyExtension,
   ConfluenceFileParserExtension,
-  ConfluenceIconParserExtension,
   ConfluencePageParserExtension,
   ConfluenceStatusMacroParserExtension,
-  ConfluenceTaskListParserExtension,
   PTagCustomComponentExtension,
 } from "./content-parser";
 import { ConfluenceExtractAttachmentConfigExtension } from "./content-parser/extensions/extract-attachments-config";
@@ -79,8 +77,6 @@ export class ConfluenceImportDriver implements IZipImportDriver {
     const preprocessExtensions: IParserExtension[] = [
       new ConfluenceExtractAttachmentConfigExtension({ selector: CONFLUENCE_ATTACHMENT_CONTAINER_SELECTOR, context }),
       new ConfluenceExtractBodyExtension({ selector: CONFLUENCE_BODY_SELECTOR, context }),
-      new ConfluenceTaskListParserExtension(),
-      new ConfluenceIconParserExtension(),
       new ConfluencePageParserExtension(config),
     ];
 

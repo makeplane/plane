@@ -11,8 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./extract-body";
-export * from "./process-callouts";
-export * from "./process-colors";
-export * from "./process-files";
-export * from "./process-page";
+export * from "./confluence-html-normalizer";

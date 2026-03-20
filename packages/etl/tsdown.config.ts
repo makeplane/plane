@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: [
     "src/asana/index.ts",
+    "src/confluence/index.ts",
     "src/core/index.ts",
     "src/github/index.ts",
     "src/gitlab/index.ts",

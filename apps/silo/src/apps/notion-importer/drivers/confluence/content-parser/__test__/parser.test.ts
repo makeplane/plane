@@ -30,8 +30,6 @@ import { NotionImageParserExtension } from "../../../common/content-parser/exten
 import { ProcessLinksExtension } from "../../../common/content-parser/extensions/process-links";
 import {
   ConfluenceExtractBodyExtension,
-  ConfluenceTaskListParserExtension,
-  ConfluenceIconParserExtension,
   ConfluencePageParserExtension,
   ConfluenceStatusMacroParserExtension,
   ConfluenceColorIdParserExtension,
@@ -86,8 +84,6 @@ describe("ContentParser", () => {
 
     const preprocessExtensions: IParserExtension[] = [
       new ConfluenceExtractBodyExtension({ selector: "div#main-content", context }),
-      new ConfluenceTaskListParserExtension(),
-      new ConfluenceIconParserExtension(),
       new ConfluencePageParserExtension(config),
     ];
 

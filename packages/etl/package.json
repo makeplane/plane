@@ -13,6 +13,7 @@
     "./asana": "./dist/asana/index.js",
     "./bitbucket": "./dist/bitbucket/index.js",
     "./clickup": "./dist/clickup/index.js",
+    "./confluence": "./dist/confluence/index.js",
     "./core": "./dist/core/index.js",
     "./flatfile": "./dist/flatfile/index.js",
     "./github": "./dist/github/index.js",

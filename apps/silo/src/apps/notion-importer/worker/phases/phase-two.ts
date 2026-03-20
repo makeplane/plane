@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { normalizeConfluenceHTML } from "@plane/etl/confluence";
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import type { TImportJob, TPage } from "@plane/types";
@@ -21,7 +22,7 @@ import type { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { getAPIClientInternal } from "@/services/client";
 import type { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
-import type { EZipDriverType } from "../../drivers";
+import { EZipDriverType } from "../../drivers";
 import type { IZipImportDriver } from "../../drivers/types";
 import type { TDocImporterJobConfig, TNotionMigratorData } from "../../types";
 import { EDocImporterDestinationType, ENotionImporterKeyType } from "../../types";
@@ -76,7 +77,8 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
       contentMap,
       pageNodes,
       pageMap,
-      assetMap
+      assetMap,
+      type
     );
     await this.processDirectoryNodes(
       job as TImportJob<TDocImporterJobConfig>,
@@ -113,7 +115,8 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
     contentMap: Map<string, Buffer>,
     pageNodes: TZipFileNode[],
     pageMap: Map<string, string>,
-    assetMap: Map<string, string>
+    assetMap: Map<string, string>,
+    type: EZipDriverType
   ): Promise<void> {
     const { id: jobId, workspace_slug } = job;
     // Get the map of the page and asset ids from the store
@@ -139,7 +142,7 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
               return;
             }
 
-            return this.getPageUpdatePayload(pageId, pageNode, parser, contentMap);
+            return this.getPageUpdatePayload(pageId, pageNode, parser, contentMap, type);
           })
         )
       ).filter(Boolean) as Partial<TPage>[];
@@ -333,7 +336,8 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
     id: string,
     node: TZipFileNode,
     contentParser: ContentParser,
-    contentMap: Map<string, Buffer>
+    contentMap: Map<string, Buffer>,
+    type: EZipDriverType
   ): Promise<Partial<TPage> | undefined> {
     const content = contentMap.get(node.path) || "<p></p>";
     // Basic transformation logic - extract name from filename and convert content
@@ -351,7 +355,15 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
 
     const htmlContent = content.toString();
     const emojiPayload = getEmojiPayload(htmlContent);
-    const parsedContent = await contentParser.toPlaneHtml(htmlContent);
+    let parsedContent = await contentParser.toPlaneHtml(htmlContent);
+
+    // For Confluence imports, apply the ETL normalizer for additional transforms
+    // (multi-column layouts, list fixes, block spacing cleanup, Tiptap schema validation).
+    // postParser: true skips body extraction, image, and attachment transforms since
+    // Silo's ContentParser already handled asset URL rewriting via assetMap.
+    if (type === EZipDriverType.CONFLUENCE) {
+      parsedContent = normalizeConfluenceHTML(parsedContent, { postParser: true });
+    }
 
     // Create page in ExPage format
     return {
