@@ -63,7 +63,7 @@
     "AWS_SECRET_CACHE_TTL"
   ],
   "remoteCache": {
-    "apiUrl": "https://turborepo-remote-cache.vamsi-906.workers.dev",
+    "apiUrl": "https://turbo-remote-cache.plane.town",
     "enabled": true,
     "signature": true,
     "teamSlug": "plane"
