@@ -6808,7 +6808,8 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       add_level_button: "Tambah tingkat hierarki",
       empty_level_placeholder: "Tambahkan jenis item pekerjaan ke tingkat {level}",
       empty_level_unauthorized: "Tidak ada jenis item pekerjaan yang ditemukan di tingkat ini.",
-      zero_level_description: "Secara default, semua jenis item pekerjaan berada di tingkat 0 hingga ditetapkan ke hierarki.",
+      zero_level_description:
+        "Secara default, semua jenis item pekerjaan berada di tingkat 0 hingga ditetapkan ke hierarki.",
     },
     add_level_modal: {
       title: "Tambah tingkat hierarki",
@@ -6816,7 +6817,8 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       work_item_type: "Jenis item pekerjaan",
       empty_state: {
         title: "Semua jenis item pekerjaan sedang digunakan",
-        description: "Setiap jenis item pekerjaan yang ditentukan di ruang kerja ini sudah menjadi bagian dari hierarki Anda.",
+        description:
+          "Setiap jenis item pekerjaan yang ditentukan di ruang kerja ini sudah menjadi bagian dari hierarki Anda.",
       },
       invalid_level_toast: {
         title: "Kesalahan!",

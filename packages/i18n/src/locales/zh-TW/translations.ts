@@ -6617,8 +6617,7 @@ export default {
     settings: {
       title: "層級",
       tab_label: "層級",
-      description:
-        "設定層級結構以整理您的工作。每個層級定義與直接上方項目的父關係，以及與直接下方項目的子關係。 ",
+      description: "設定層級結構以整理您的工作。每個層級定義與直接上方項目的父關係，以及與直接下方項目的子關係。 ",
       sidebar_label: "層級",
       enable_control: {
         title: "啟用層級",
@@ -6671,8 +6670,7 @@ export default {
     work_item_modal: {
       invalid_work_item_type_create_toast: {
         title: "錯誤！",
-        message:
-          "所選工作項目類型違反層級規則，無法用於建立新的工作項目。",
+        message: "所選工作項目類型違反層級規則，無法用於建立新的工作項目。",
       },
       invalid_work_item_type_update_toast: {
         title: "錯誤！",

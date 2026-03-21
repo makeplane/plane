@@ -6784,7 +6784,8 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       add_level_button: "Dodaj poziom hierarchii",
       empty_level_placeholder: "Dodaj typ elementu roboczego do poziomu {level}",
       empty_level_unauthorized: "Nie znaleziono typów elementów roboczych na tym poziomie.",
-      zero_level_description: "Domyślnie wszystkie typy elementów roboczych są na poziomie 0, dopóki nie zostaną przypisane do hierarchii.",
+      zero_level_description:
+        "Domyślnie wszystkie typy elementów roboczych są na poziomie 0, dopóki nie zostaną przypisane do hierarchii.",
     },
     add_level_modal: {
       title: "Dodaj poziom hierarchii",

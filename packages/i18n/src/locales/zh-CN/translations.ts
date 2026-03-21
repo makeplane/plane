@@ -6593,8 +6593,7 @@ export default {
     settings: {
       title: "层级",
       tab_label: "层级",
-      description:
-        "设置层级结构以整理您的工作。每个层级定义与直接上方项目的父关系，以及与直接下方项目的子关系。 ",
+      description: "设置层级结构以整理您的工作。每个层级定义与直接上方项目的父关系，以及与直接下方项目的子关系。 ",
       sidebar_label: "层级",
       enable_control: {
         title: "启用层级",
@@ -6647,8 +6646,7 @@ export default {
     work_item_modal: {
       invalid_work_item_type_create_toast: {
         title: "错误！",
-        message:
-          "所选工作项类型违反层级规则，无法用于创建新的工作项。",
+        message: "所选工作项类型违反层级规则，无法用于创建新的工作项。",
       },
       invalid_work_item_type_update_toast: {
         title: "错误！",

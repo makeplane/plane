@@ -20,10 +20,14 @@ import { calculateSortOrder } from "@plane/utils";
 import { LinkedPropertyListItem } from "./linked-property-list-item";
 import type { LinkedPropertyData, LinkedPropertyActions, LinkedPropertyPermissions } from "./types";
 
+type LinkedPropertyListActions = Omit<LinkedPropertyActions, "unlink"> & {
+  unlink: (propertyId: string) => void;
+};
+
 type LinkedPropertyListProps = {
   id: string;
   linkedProperties: LinkedPropertyData[];
-  actions: LinkedPropertyActions;
+  actions: LinkedPropertyListActions;
   permissions: LinkedPropertyPermissions;
 };
 

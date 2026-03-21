@@ -6811,8 +6811,7 @@ export default {
     work_item_modal: {
       invalid_work_item_type_create_toast: {
         title: "エラー！",
-        message:
-          "選択した作業アイテムタイプは階層ルールに違反するため、新しい作業アイテムの作成に使用できません。",
+        message: "選択した作業アイテムタイプは階層ルールに違反するため、新しい作業アイテムの作成に使用できません。",
       },
       invalid_work_item_type_update_toast: {
         title: "エラー！",

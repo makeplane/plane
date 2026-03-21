@@ -6886,7 +6886,8 @@ si estás seguro de que tu búsqueda es correcta.`,
       add_level_button: "Agregar nivel de jerarquía",
       empty_level_placeholder: "Agrega un tipo de elemento de trabajo al nivel {level}",
       empty_level_unauthorized: "No se encontraron tipos de elementos de trabajo en este nivel.",
-      zero_level_description: "Por defecto, todos los tipos de elementos de trabajo están en el nivel 0 hasta que se asignan a una jerarquía.",
+      zero_level_description:
+        "Por defecto, todos los tipos de elementos de trabajo están en el nivel 0 hasta que se asignan a una jerarquía.",
     },
     add_level_modal: {
       title: "Agregar nivel de jerarquía",
@@ -6894,7 +6895,8 @@ si estás seguro de que tu búsqueda es correcta.`,
       work_item_type: "Tipo de elemento de trabajo",
       empty_state: {
         title: "Todos los tipos de elementos de trabajo en uso",
-        description: "Cada tipo de elemento de trabajo definido en este espacio de trabajo ya forma parte de la jerarquía.",
+        description:
+          "Cada tipo de elemento de trabajo definido en este espacio de trabajo ya forma parte de la jerarquía.",
       },
       invalid_level_toast: {
         title: "¡Error!",

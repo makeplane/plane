@@ -76,7 +76,7 @@ export class WorkspaceWorkItemTypeInstance
   }
 
   get canUnlinkProperties(): boolean {
-    return false;
+    return this.canEdit;
   }
 
   get canReorderProperties(): boolean {

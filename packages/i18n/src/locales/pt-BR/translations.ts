@@ -6856,7 +6856,8 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       add_level_button: "Adicionar nível de hierarquia",
       empty_level_placeholder: "Adicionar um tipo de item de trabalho ao nível {level}",
       empty_level_unauthorized: "Nenhum tipo de item de trabalho encontrado neste nível.",
-      zero_level_description: "Por padrão, todos os tipos de itens de trabalho estão no nível 0 até que sejam atribuídos a uma hierarquia.",
+      zero_level_description:
+        "Por padrão, todos os tipos de itens de trabalho estão no nível 0 até que sejam atribuídos a uma hierarquia.",
     },
     add_level_modal: {
       title: "Adicionar nível de hierarquia",

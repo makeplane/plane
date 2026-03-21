@@ -221,12 +221,12 @@ class WorkspaceWorkItemTypePropertyEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # check any work item using this property
-        if IssuePropertyValue.objects.filter(workspace__slug=slug, property_id=pk).exists():
-            return Response(
-                {"error": "Cannot delete property with associated work items"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # soft-delete any property values for issues using this work item type
+        IssuePropertyValue.objects.filter(
+            workspace__slug=slug,
+            property_id=pk,
+            issue__type_id=work_item_type_id,
+        ).delete()
 
         # delete the issue type property
         issue_type_property = IssueTypeProperty.objects.get(

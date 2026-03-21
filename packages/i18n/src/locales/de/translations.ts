@@ -6856,7 +6856,8 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       add_level_button: "Hierarchieebene hinzufügen",
       empty_level_placeholder: "Arbeitselement-Typ zu Ebene {level} hinzufügen",
       empty_level_unauthorized: "Keine Arbeitselement-Typen in dieser Ebene gefunden.",
-      zero_level_description: "Standardmäßig befinden sich alle Arbeitselement-Typen auf Ebene 0, bis sie einer Hierarchie zugewiesen werden.",
+      zero_level_description:
+        "Standardmäßig befinden sich alle Arbeitselement-Typen auf Ebene 0, bis sie einer Hierarchie zugewiesen werden.",
     },
     add_level_modal: {
       title: "Hierarchieebene hinzufügen",

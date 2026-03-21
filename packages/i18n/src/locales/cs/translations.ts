@@ -6771,7 +6771,8 @@ Vytvořte nový.`,
       add_level_button: "Přidat úroveň hierarchie",
       empty_level_placeholder: "Přidejte typ pracovní položky na úroveň {level}",
       empty_level_unauthorized: "Na této úrovni nebyly nalezeny žádné typy pracovních položek.",
-      zero_level_description: "Ve výchozím nastavení jsou všechny typy pracovních položek na úrovni 0, dokud nejsou přiřazeny k hierarchii.",
+      zero_level_description:
+        "Ve výchozím nastavení jsou všechny typy pracovních položek na úrovni 0, dokud nejsou přiřazeny k hierarchii.",
     },
     add_level_modal: {
       title: "Přidat úroveň hierarchie",
@@ -6779,7 +6780,8 @@ Vytvořte nový.`,
       work_item_type: "Typ pracovní položky",
       empty_state: {
         title: "Všechny typy pracovních položek jsou používány",
-        description: "Každý typ pracovní položky definovaný v tomto pracovním prostoru je již součástí vaší hierarchie.",
+        description:
+          "Každý typ pracovní položky definovaný v tomto pracovním prostoru je již součástí vaší hierarchie.",
       },
       invalid_level_toast: {
         title: "Chyba!",

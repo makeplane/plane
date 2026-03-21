@@ -6744,7 +6744,8 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       add_level_button: "Pridať úroveň hierarchie",
       empty_level_placeholder: "Pridajte typ pracovnej položky na úroveň {level}",
       empty_level_unauthorized: "Na tejto úrovni sa nenašli žiadne typy pracovných položiek.",
-      zero_level_description: "Predvolene sú všetky typy pracovných položiek na úrovni 0, kým nie sú priradené k hierarchii.",
+      zero_level_description:
+        "Predvolene sú všetky typy pracovných položiek na úrovni 0, kým nie sú priradené k hierarchii.",
     },
     add_level_modal: {
       title: "Pridať úroveň hierarchie",
@@ -6752,7 +6753,8 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       work_item_type: "Typ pracovnej položky",
       empty_state: {
         title: "Všetky typy pracovných položiek sú používané",
-        description: "Každý typ pracovnej položky definovaný v tomto pracovnom priestore je už súčasťou vašej hierarchie.",
+        description:
+          "Každý typ pracovnej položky definovaný v tomto pracovnom priestore je už súčasťou vašej hierarchie.",
       },
       invalid_level_toast: {
         title: "Chyba!",

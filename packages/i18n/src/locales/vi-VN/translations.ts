@@ -6778,7 +6778,8 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       add_level_button: "Thêm cấp độ phân cấp",
       empty_level_placeholder: "Thêm loại mục công việc vào cấp độ {level}",
       empty_level_unauthorized: "Không tìm thấy loại mục công việc nào ở cấp độ này.",
-      zero_level_description: "Theo mặc định, tất cả các loại mục công việc ở cấp độ 0 cho đến khi được gán vào phân cấp.",
+      zero_level_description:
+        "Theo mặc định, tất cả các loại mục công việc ở cấp độ 0 cho đến khi được gán vào phân cấp.",
     },
     add_level_modal: {
       title: "Thêm cấp độ phân cấp",
@@ -6786,7 +6787,8 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       work_item_type: "Loại mục công việc",
       empty_state: {
         title: "Tất cả loại mục công việc đang được sử dụng",
-        description: "Mỗi loại mục công việc được định nghĩa trong không gian làm việc này đã là một phần của phân cấp của bạn.",
+        description:
+          "Mỗi loại mục công việc được định nghĩa trong không gian làm việc này đã là một phần của phân cấp của bạn.",
       },
       invalid_level_toast: {
         title: "Lỗi!",
@@ -6815,8 +6817,7 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
     work_item_modal: {
       invalid_work_item_type_create_toast: {
         title: "Lỗi!",
-        message:
-          "Loại mục công việc được chọn không thể dùng để tạo mục công việc mới vì vi phạm quy tắc phân cấp.",
+        message: "Loại mục công việc được chọn không thể dùng để tạo mục công việc mới vì vi phạm quy tắc phân cấp.",
       },
       invalid_work_item_type_update_toast: {
         title: "Lỗi!",

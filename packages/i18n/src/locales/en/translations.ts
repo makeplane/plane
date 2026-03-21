@@ -4597,6 +4597,15 @@ if you are sure your search is right. `,
             description: "All properties have already been linked to this type.",
           },
         },
+        unlink_confirmation: {
+          title: "Unlink property",
+          description:
+            "Unlinking this property will permanently delete all its values across every work item using this type. This action cannot be undone.",
+          input_label: "Type",
+          input_label_suffix: "to continue:",
+          confirm: "Unlink property",
+          loading: "Unlinking",
+        },
       },
       item_delete_confirmation: {
         title: "Delete this type",

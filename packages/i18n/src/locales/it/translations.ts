@@ -6854,7 +6854,8 @@ Crea un nuovo progetto invece`,
       add_level_button: "Aggiungi livello di gerarchia",
       empty_level_placeholder: "Aggiungi un tipo di elemento di lavoro al livello {level}",
       empty_level_unauthorized: "Nessun tipo di elemento di lavoro trovato in questo livello.",
-      zero_level_description: "Per impostazione predefinita, tutti i tipi di elementi di lavoro sono al livello 0 finché non vengono assegnati a una gerarchia.",
+      zero_level_description:
+        "Per impostazione predefinita, tutti i tipi di elementi di lavoro sono al livello 0 finché non vengono assegnati a una gerarchia.",
     },
     add_level_modal: {
       title: "Aggiungi livello di gerarchia",
@@ -6862,7 +6863,8 @@ Crea un nuovo progetto invece`,
       work_item_type: "Tipo elemento di lavoro",
       empty_state: {
         title: "Tutti i tipi di elementi di lavoro in uso",
-        description: "Ogni tipo di elemento di lavoro definito in questo spazio di lavoro fa già parte della tua gerarchia.",
+        description:
+          "Ogni tipo di elemento di lavoro definito in questo spazio di lavoro fa già parte della tua gerarchia.",
       },
       invalid_level_toast: {
         title: "Errore!",

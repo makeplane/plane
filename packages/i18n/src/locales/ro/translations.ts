@@ -6858,7 +6858,8 @@ așa cum dorești din sursele pe care le specifici.`,
       add_level_button: "Adăugați nivel de ierarhie",
       empty_level_placeholder: "Adăugați un tip de element de lucru la nivelul {level}",
       empty_level_unauthorized: "Nu s-au găsit tipuri de elemente de lucru la acest nivel.",
-      zero_level_description: "Implicit, toate tipurile de elemente de lucru sunt la nivelul 0 până când sunt atribuite unei ierarhii.",
+      zero_level_description:
+        "Implicit, toate tipurile de elemente de lucru sunt la nivelul 0 până când sunt atribuite unei ierarhii.",
     },
     add_level_modal: {
       title: "Adăugați nivel de ierarhie",
@@ -6866,7 +6867,8 @@ așa cum dorești din sursele pe care le specifici.`,
       work_item_type: "Tip element de lucru",
       empty_state: {
         title: "Toate tipurile de elemente de lucru sunt utilizate",
-        description: "Fiecare tip de element de lucru definit în acest spațiu de lucru face deja parte din ierarhia dvs.",
+        description:
+          "Fiecare tip de element de lucru definit în acest spațiu de lucru face deja parte din ierarhia dvs.",
       },
       invalid_level_toast: {
         title: "Eroare!",

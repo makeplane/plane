@@ -6761,8 +6761,7 @@ export default {
     work_item_modal: {
       invalid_work_item_type_create_toast: {
         title: "오류!",
-        message:
-          "선택한 작업 항목 유형은 계층 규칙을 위반하므로 새 작업 항목을 만드는 데 사용할 수 없습니다.",
+        message: "선택한 작업 항목 유형은 계층 규칙을 위반하므로 새 작업 항목을 만드는 데 사용할 수 없습니다.",
       },
       invalid_work_item_type_update_toast: {
         title: "오류!",

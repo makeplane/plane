@@ -6904,7 +6904,8 @@ si vous êtes sûr que votre recherche est correcte.`,
       add_level_button: "Ajouter un niveau de hiérarchie",
       empty_level_placeholder: "Ajouter un type d'élément de travail au niveau {level}",
       empty_level_unauthorized: "Aucun type d'élément de travail trouvé à ce niveau.",
-      zero_level_description: "Par défaut, tous les types d'éléments de travail sont au niveau 0 jusqu'à ce qu'ils soient assignés à une hiérarchie.",
+      zero_level_description:
+        "Par défaut, tous les types d'éléments de travail sont au niveau 0 jusqu'à ce qu'ils soient assignés à une hiérarchie.",
     },
     add_level_modal: {
       title: "Ajouter un niveau de hiérarchie",
@@ -6912,7 +6913,8 @@ si vous êtes sûr que votre recherche est correcte.`,
       work_item_type: "Type d'élément de travail",
       empty_state: {
         title: "Tous les types d'éléments de travail sont utilisés",
-        description: "Chaque type d'élément de travail défini dans cet espace de travail fait déjà partie de votre hiérarchie.",
+        description:
+          "Chaque type d'élément de travail défini dans cet espace de travail fait déjà partie de votre hiérarchie.",
       },
       invalid_level_toast: {
         title: "Erreur !",

@@ -11,12 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { useTranslation } from "@plane/i18n";
+// components
+import { TypedConfirmationModal } from "@/components/common/modal/typed-confirmation-modal";
 // local imports
 import { LinkedPropertyList } from "./linked-property-list";
 import { LinkPropertiesModal } from "./link-properties-modal";
@@ -30,10 +32,14 @@ type LinkedPropertiesRootProps = {
   permissions: LinkedPropertyPermissions;
 };
 
+const CONFIRMATION_TEXT = "permanently delete values";
+
 export const LinkedPropertiesRoot = observer(function LinkedPropertiesRoot(props: LinkedPropertiesRootProps) {
   const { id, linkedProperties, availableProperties, actions, permissions } = props;
   // state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [unlinkPropertyId, setUnlinkPropertyId] = useState<string | null>(null);
+  const [isUnlinking, setIsUnlinking] = useState(false);
   // hooks
   const { t } = useTranslation();
 
@@ -48,6 +54,21 @@ export const LinkedPropertiesRoot = observer(function LinkedPropertiesRoot(props
     () => [...linkedProperties].sort((a, b) => a.sort_order - b.sort_order),
     [linkedProperties]
   );
+
+  const handleUnlinkClose = useCallback(() => {
+    setUnlinkPropertyId(null);
+  }, []);
+
+  const handleUnlinkConfirm = useCallback(async () => {
+    if (!unlinkPropertyId) return;
+    setIsUnlinking(true);
+    try {
+      await actions.unlink(unlinkPropertyId);
+    } finally {
+      setIsUnlinking(false);
+      handleUnlinkClose();
+    }
+  }, [unlinkPropertyId, actions, handleUnlinkClose]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -64,7 +85,12 @@ export const LinkedPropertiesRoot = observer(function LinkedPropertiesRoot(props
       <LinkedPropertyList
         id={id}
         linkedProperties={sortedLinkedProperties}
-        actions={actions}
+        actions={{
+          ...actions,
+          unlink: async (propertyId: string) => {
+            setUnlinkPropertyId(propertyId);
+          },
+        }}
         permissions={permissions}
       />
       {/* Add button */}
@@ -82,6 +108,27 @@ export const LinkedPropertiesRoot = observer(function LinkedPropertiesRoot(props
         onClose={() => setIsModalOpen(false)}
         linkableProperties={linkableProperties}
         onLink={(propertyIds) => actions.link(propertyIds)}
+      />
+      {/* Unlink confirmation modal */}
+      <TypedConfirmationModal
+        isOpen={!!unlinkPropertyId}
+        onClose={handleUnlinkClose}
+        onSubmit={handleUnlinkConfirm}
+        isSubmitting={isUnlinking}
+        title={t("work_item_types.settings.linked_properties.unlink_confirmation.title")}
+        description={t("work_item_types.settings.linked_properties.unlink_confirmation.description")}
+        confirmationText={CONFIRMATION_TEXT}
+        inputLabel={
+          <>
+            {t("work_item_types.settings.linked_properties.unlink_confirmation.input_label")}{" "}
+            <span className="font-medium text-primary">{CONFIRMATION_TEXT}</span>{" "}
+            {t("work_item_types.settings.linked_properties.unlink_confirmation.input_label_suffix")}
+          </>
+        }
+        primaryButtonText={{
+          default: t("work_item_types.settings.linked_properties.unlink_confirmation.confirm"),
+          loading: t("work_item_types.settings.linked_properties.unlink_confirmation.loading"),
+        }}
       />
     </div>
   );
