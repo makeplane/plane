@@ -20,6 +20,7 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
 import { PageNotFound } from "@/components/ui/not-found";
+import { buildAnchorApiUrl } from "@/helpers/api.helper";
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
 import type { Route } from "./+types/layout";
 
@@ -33,11 +34,14 @@ interface TypeFormMetadata {
 }
 
 // Loader function runs on the server and fetches metadata
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   const { anchor } = params;
 
+  const url = buildAnchorApiUrl(request.url, anchor, "/intake/form/settings/");
+  if (!url) return { metadata: null };
+
   try {
-    const response = await fetch(`${process.env.VITE_API_BASE_URL}/api/public/anchor/${anchor}/intake/form/settings/`);
+    const response = await fetch(url);
 
     if (!response.ok) {
       return { metadata: null };

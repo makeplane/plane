@@ -22,6 +22,7 @@ import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error
 import { IssuesNavbarRoot } from "@/components/issues/navbar";
 // hooks
 import { PageNotFound } from "@/components/ui/not-found";
+import { buildAnchorApiUrl } from "@/helpers/api.helper";
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 import type { Route } from "./+types/layout";
@@ -36,17 +37,14 @@ interface IssueMetadata {
 }
 
 // Loader function runs on the server and fetches metadata
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   const { anchor } = params;
 
-  // Validate anchor before using in request (only allow alphanumeric, -, _)
-  const ANCHOR_REGEX = /^[a-zA-Z0-9_-]+$/;
-  if (!ANCHOR_REGEX.test(anchor)) {
-    return { metadata: null };
-  }
+  const url = buildAnchorApiUrl(request.url, anchor, "/meta/");
+  if (!url) return { metadata: null };
 
   try {
-    const response = await fetch(`${process.env.VITE_API_BASE_URL}/api/public/anchor/${anchor}/meta/`);
+    const response = await fetch(url);
 
     if (!response.ok) {
       return { metadata: null };
