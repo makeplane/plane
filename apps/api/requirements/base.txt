@@ -89,6 +89,7 @@ django-ratelimit==4.1.0
 
 # OpenAPI Specification
 drf-spectacular==0.28.0
+drf-spectacular-sidecar==2026.3.1
 
 # html sanitizer
 nh3==0.2.18

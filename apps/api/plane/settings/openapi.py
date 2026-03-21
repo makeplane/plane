@@ -320,4 +320,10 @@ SPECTACULAR_SETTINGS = {
         "IntakeWorkItemStatusEnum": "plane.db.models.intake.IntakeIssueStatus",
     },
     "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": False,
+    # ========================================================================
+    # Use local Swagger UI assets from drf-spectacular-sidecar instead of CDN
+    # ========================================================================
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
 }
