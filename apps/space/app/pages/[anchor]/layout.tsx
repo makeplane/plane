@@ -19,6 +19,7 @@ import useSWR from "swr";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { PageNotFound } from "@/components/ui/not-found";
+import { buildAnchorApiUrl } from "@/helpers/api.helper";
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 // plane web components
 import { PageDetailsError } from "@/plane-web/components/pages";
@@ -34,11 +35,14 @@ interface PageMetadata {
 }
 
 // Loader function runs on the server and fetches metadata
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   const { anchor } = params;
 
+  const url = buildAnchorApiUrl(request.url, anchor, "/pages/meta/");
+  if (!url) return { metadata: null };
+
   try {
-    const response = await fetch(`${process.env.VITE_API_BASE_URL}/api/public/anchor/${anchor}/pages/meta/`);
+    const response = await fetch(url);
 
     if (!response.ok) {
       return { metadata: null };
