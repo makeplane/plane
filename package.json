@@ -56,12 +56,13 @@
       "@types/react-dom": "18.3.7",
       "minimatch": ">=3.1.4",
       "dompurify": ">=3.3.2",
-      "fast-xml-parser": ">=5.3.8",
+      "fast-xml-parser": ">=5.5.7",
       "ajv": ">=8.18.0",
       "undici@6": ">=6.24.0",
       "undici@7": ">=7.24.0",
       "got": ">=11.8.5",
-      "flatted": ">=3.4.0"
+      "flatted": ">=3.4.2",
+      "socket.io-parser": ">=4.2.6"
     }
   }
 }

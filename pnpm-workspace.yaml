@@ -1,9 +1,9 @@
 packages:
-  - apps/*
-  - packages/*
-  - apps/runners/*
-  - "!apps/api"
-  - "!apps/proxy"
+- apps/*
+- packages/*
+- apps/runners/*
+- "!apps/api"
+- "!apps/proxy"
 
 catalog:
   "@atlaskit/pragmatic-drag-and-drop": 1.7.7
@@ -164,7 +164,7 @@ catalog:
   date-fns: ^4.1.0
   dd-trace: ^5.87.0
   dotenv: ^16.6.1
-  effect: ^3.19.19
+  effect: 3.20.0
   electron: 40.0.0
   electron-store: ^11.0.2
   emoji-picker-react: ^4.18.0
@@ -282,9 +282,9 @@ catalogMode: prefer
 cleanupUnusedCatalogs: true
 
 onlyBuiltDependencies:
-  - "@firebase/util"
-  - "@sentry/cli"
-  - esbuild
-  - electron
-  - protobufjs
-  - turbo
+- "@firebase/util"
+- "@sentry/cli"
+- esbuild
+- electron
+- protobufjs
+- turbo
