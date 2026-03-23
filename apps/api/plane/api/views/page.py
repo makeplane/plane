@@ -277,6 +277,12 @@ class PageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if page.archived_at is not None:
+            return Response(
+                {"error": "Cannot update an archived page"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Validate parent exists in the same project if provided
         parent = request.data.get("parent", None)
         if parent:
@@ -371,7 +377,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
-                role=20,
+                role=ROLE.ADMIN.value,
                 project_id=project_id,
                 is_active=True,
             ).exists()
@@ -544,6 +550,12 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             project_pages__deleted_at__isnull=True,
         )
 
+        if page.archived_at is None:
+            return Response(
+                {"error": "Page is not archived"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Only the owner or admin can unarchive
         if (
             ProjectMember.objects.filter(
@@ -559,10 +571,12 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # If parent is still archived, break the hierarchy
-        if page.parent_id and page.parent.archived_at:
-            page.parent = None
-            page.save(update_fields=["parent"])
+        # If parent was deleted or is still archived, break the hierarchy
+        if page.parent_id:
+            parent = Page.objects.filter(pk=page.parent_id).first()
+            if not parent or parent.archived_at:
+                page.parent = None
+                page.save(update_fields=["parent"])
 
         unarchive_archive_page_and_descendants(page_id, None)
 

@@ -358,6 +358,19 @@ class TestPageDetailAPIEndpoint:
         assert "locked" in response.data["error"].lower()
 
     @pytest.mark.django_db
+    def test_update_archived_page(self, api_key_client, workspace, project, create_page):
+        """Test that archived pages cannot be updated"""
+        create_page.archived_at = timezone.now().date()
+        create_page.save()
+
+        url = self.get_page_detail_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.patch(url, {"name": "New Name"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "archived" in response.data["error"].lower()
+
+    @pytest.mark.django_db
     def test_update_page_access_by_non_owner(self, api_key_client, workspace, project, create_user):
         """Test that non-owners cannot change page access level"""
         from plane.db.models import User
@@ -755,6 +768,16 @@ class TestPageArchiveUnarchiveAPIEndpoint:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         page.refresh_from_db()
         assert page.archived_at is None
+
+    @pytest.mark.django_db
+    def test_unarchive_non_archived_page(self, api_key_client, workspace, project, create_page):
+        """Test that unarchiving a non-archived page returns 400"""
+        url = self.get_unarchive_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "not archived" in response.data["error"].lower()
 
     @pytest.mark.django_db
     def test_unarchive_page_success(self, api_key_client, workspace, project, create_page):
