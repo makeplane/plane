@@ -57,9 +57,10 @@ export async function extractZipTableOfContents(zipStream: ZipStream): Promise<s
 export async function extractCentralDirectoryData(zipStream: ZipStream) {
   const fileSize = zipStream.size;
   const endOfCentralDirData = await findEndOfCentralDirectory(zipStream, fileSize);
-  const { centralDirOffset, centralDirSize, entriesCount } = readCentralDirectoryInfo(
+  const { centralDirOffset, centralDirSize, entriesCount } = await readCentralDirectoryInfo(
     endOfCentralDirData.chunk,
-    endOfCentralDirData.offset
+    endOfCentralDirData.offset,
+    zipStream
   );
   await zipStream.seek(centralDirOffset);
   const centralDirData = await zipStream.read(centralDirSize);
@@ -279,21 +280,78 @@ async function findEndOfCentralDirectory(
 
 /**
  * Extracts information about the Central Directory from the EOCD record.
+ * Handles Zip64 format by checking for sentinel values and reading the
+ * Zip64 End of Central Directory Record when needed.
  *
- * @param chunk - Buffer containing the End of Central Directory record
+ * @param chunk - Buffer containing the End of Central Directory record (and preceding data)
  * @param offset - Offset within the buffer where the EOCD record starts
+ * @param zipStream - Stream interface to access the ZIP file (needed for Zip64)
  * @returns Object containing central directory offset, size, and number of entries
  */
-function readCentralDirectoryInfo(
+async function readCentralDirectoryInfo(
   chunk: Buffer,
-  offset: number
-): { centralDirOffset: number; centralDirSize: number; entriesCount: number } {
+  offset: number,
+  zipStream: ZipStream
+): Promise<{ centralDirOffset: number; centralDirSize: number; entriesCount: number }> {
   // Extract information about the central directory from the EOCD record
   const centralDirOffset = chunk.readUInt32LE(offset + 16);
   const centralDirSize = chunk.readUInt32LE(offset + 12);
   const entriesCount = chunk.readUInt16LE(offset + 10);
 
-  return { centralDirOffset, centralDirSize, entriesCount };
+  // Check for Zip64 sentinel values
+  const isZip64 = centralDirOffset === 0xffffffff || centralDirSize === 0xffffffff || entriesCount === 0xffff;
+
+  if (!isZip64) {
+    return { centralDirOffset, centralDirSize, entriesCount };
+  }
+
+  logger.info("Detected Zip64 format, reading Zip64 End of Central Directory Record");
+
+  // The Zip64 EOCD Locator (20 bytes) sits immediately before the standard EOCD.
+  // It has signature 0x07064b50 and contains the absolute offset of the Zip64 EOCD Record.
+  const zip64LocatorSize = 20;
+  if (offset < zip64LocatorSize) {
+    throw new Error("Not enough data before EOCD to contain Zip64 EOCD Locator");
+  }
+
+  const locatorOffset = offset - zip64LocatorSize;
+
+  // Verify Zip64 EOCD Locator signature (0x07064b50)
+  if (
+    chunk[locatorOffset] !== 0x50 ||
+    chunk[locatorOffset + 1] !== 0x4b ||
+    chunk[locatorOffset + 2] !== 0x06 ||
+    chunk[locatorOffset + 3] !== 0x07
+  ) {
+    throw new Error("Could not find Zip64 End of Central Directory Locator");
+  }
+
+  // Read the offset of the Zip64 EOCD Record (8-byte value at locator offset + 8)
+  const zip64EocdOffset = Number(chunk.readBigUInt64LE(locatorOffset + 8));
+
+  // Read the Zip64 EOCD Record (minimum 56 bytes)
+  await zipStream.seek(zip64EocdOffset);
+  const zip64Eocd = await zipStream.read(56);
+
+  // Verify Zip64 EOCD Record signature (0x06064b50)
+  if (zip64Eocd[0] !== 0x50 || zip64Eocd[1] !== 0x4b || zip64Eocd[2] !== 0x06 || zip64Eocd[3] !== 0x06) {
+    throw new Error("Invalid Zip64 End of Central Directory Record signature");
+  }
+
+  // Read 64-bit values from the Zip64 EOCD Record
+  const zip64EntriesCount = Number(zip64Eocd.readBigUInt64LE(32));
+  const zip64CentralDirSize = Number(zip64Eocd.readBigUInt64LE(40));
+  const zip64CentralDirOffset = Number(zip64Eocd.readBigUInt64LE(48));
+
+  logger.info(
+    `Zip64 central directory: offset=${zip64CentralDirOffset}, size=${zip64CentralDirSize}, entries=${zip64EntriesCount}`
+  );
+
+  return {
+    centralDirOffset: zip64CentralDirOffset,
+    centralDirSize: zip64CentralDirSize,
+    entriesCount: zip64EntriesCount,
+  };
 }
 
 /**
@@ -435,17 +493,33 @@ function findFileEntryInCentralDirectory(
 
     // Read key information
     const compressionMethod = centralDirData.readUInt16LE(pos + 10);
-    const compressedSize = centralDirData.readUInt32LE(pos + 20);
+    const uncompressedSize = centralDirData.readUInt32LE(pos + 24);
+    let compressedSize = centralDirData.readUInt32LE(pos + 20);
     const fileNameLength = centralDirData.readUInt16LE(pos + 28);
     const extraFieldLength = centralDirData.readUInt16LE(pos + 30);
     const fileCommentLength = centralDirData.readUInt16LE(pos + 32);
-    const localHeaderOffset = centralDirData.readUInt32LE(pos + 42);
+    let localHeaderOffset = centralDirData.readUInt32LE(pos + 42);
 
     // Read the file name
     const fileName = centralDirData.toString("utf8", pos + 46, pos + 46 + fileNameLength);
 
     // Check if this is the file we're looking for
     if (fileName === targetFileName) {
+      // Handle Zip64 extra field if any values are sentinel 0xFFFFFFFF
+      if (uncompressedSize === 0xffffffff || compressedSize === 0xffffffff || localHeaderOffset === 0xffffffff) {
+        const extraFieldStart = pos + 46 + fileNameLength;
+        const zip64Values = readZip64ExtraField(
+          centralDirData,
+          extraFieldStart,
+          extraFieldLength,
+          uncompressedSize,
+          compressedSize,
+          localHeaderOffset
+        );
+        compressedSize = zip64Values.compressedSize;
+        localHeaderOffset = zip64Values.localHeaderOffset;
+      }
+
       return {
         localHeaderOffset,
         compressedSize,
@@ -502,6 +576,54 @@ async function extractFileData(zipStream: ZipStream, fileEntry: ZipFileEntry): P
 
   // Handle decompression based on the compression method
   return decompressData(compressedData, fileEntry.compressionMethod);
+}
+
+/**
+ * Reads Zip64 extended information from the extra field of a central directory entry.
+ * The Zip64 extra field (tag 0x0001) contains 64-bit values for fields that overflow
+ * their 32-bit counterparts. Values appear in order: uncompressedSize, compressedSize,
+ * localHeaderOffset, diskNumber — but only for fields that have the sentinel value 0xFFFFFFFF.
+ */
+function readZip64ExtraField(
+  buffer: Buffer,
+  extraFieldStart: number,
+  extraFieldLength: number,
+  uncompressedSize: number,
+  compressedSize: number,
+  localHeaderOffset: number
+): { compressedSize: number; localHeaderOffset: number } {
+  let extraPos = extraFieldStart;
+  const extraEnd = extraFieldStart + extraFieldLength;
+
+  while (extraPos + 4 <= extraEnd) {
+    const tag = buffer.readUInt16LE(extraPos);
+    const size = buffer.readUInt16LE(extraPos + 2);
+
+    if (tag === 0x0001) {
+      // Zip64 extended information extra field
+      let fieldOffset = extraPos + 4;
+
+      // Values appear in order, but only for fields with sentinel values
+      if (uncompressedSize === 0xffffffff) {
+        // Skip uncompressed size (we don't need it, but must account for it)
+        fieldOffset += 8;
+      }
+      if (compressedSize === 0xffffffff) {
+        compressedSize = Number(buffer.readBigUInt64LE(fieldOffset));
+        fieldOffset += 8;
+      }
+      if (localHeaderOffset === 0xffffffff) {
+        localHeaderOffset = Number(buffer.readBigUInt64LE(fieldOffset));
+      }
+
+      return { compressedSize, localHeaderOffset };
+    }
+
+    extraPos += 4 + size;
+  }
+
+  logger.warn("Zip64 extra field not found despite sentinel values in central directory entry");
+  return { compressedSize, localHeaderOffset };
 }
 
 /**
