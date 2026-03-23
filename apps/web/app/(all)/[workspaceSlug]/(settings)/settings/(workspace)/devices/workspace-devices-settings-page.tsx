@@ -30,14 +30,6 @@ const SERVICE_GATEWAY_USER_LABEL = "service gateway";
 const getServiceGatewayUserId = (users: TDeviceFormOptions["users"]) =>
   users.find((user) => user.label.trim().toLowerCase() === SERVICE_GATEWAY_USER_LABEL)?.id ?? null;
 
-const mergeApplicationOptions = (applications: string[], devices: TDevice[]) =>
-  Array.from(
-    new Set([
-      ...applications,
-      ...devices.map((device) => device.appName.trim()).filter((appName) => appName.length > 0),
-    ])
-  ).sort((a, b) => a.localeCompare(b));
-
 const WorkspaceDevicesSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -53,7 +45,6 @@ const WorkspaceDevicesSettingsPage = observer(() => {
   const [formOptions, setFormOptions] = useState<TDeviceFormOptions>(EMPTY_DEVICE_OPTIONS);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOptionsLoading, setIsFormOptionsLoading] = useState(false);
-  const [hasLoadedFormOptions, setHasLoadedFormOptions] = useState(false);
   const [isMutating, setIsMutating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedDeviceId, setCopiedDeviceId] = useState<number | null>(null);
@@ -63,7 +54,6 @@ const WorkspaceDevicesSettingsPage = observer(() => {
   const [formInitialValues, setFormInitialValues] = useState<TDeviceFormValues>(DEVICE_FORM_DEFAULT_VALUES);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deviceToDelete, setDeviceToDelete] = useState<TDevice | null>(null);
-  const defaultServiceGatewayUserId = useMemo(() => getServiceGatewayUserId(formOptions.users), [formOptions.users]);
 
   const resolveCpServerBaseUrl = useCallback(() => {
     if (cpServerBaseUrl) return cpServerBaseUrl;
@@ -99,13 +89,12 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     }
   }, [resolveCpServerBaseUrl]);
 
-  const ensureFormOptionsLoaded = useCallback(async () => {
-    if (hasLoadedFormOptions) return true;
-    if (isFormOptionsLoading) return false;
+  const loadFormOptions = useCallback(async (): Promise<TDeviceFormOptions | null> => {
+    if (isFormOptionsLoading) return null;
 
     const baseUrl = resolveCpServerBaseUrl();
     if (!baseUrl) {
-      return false;
+      return null;
     }
 
     setIsFormOptionsLoading(true);
@@ -113,36 +102,37 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     try {
       const options = await fetchDeviceFormOptions(baseUrl);
       setFormOptions(options);
-      setHasLoadedFormOptions(true);
-      return true;
+      return options;
     } catch (err) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: getErrorMessage(err, "Unable to load device form options."),
       });
-      return false;
+      return null;
     } finally {
       setIsFormOptionsLoading(false);
     }
-  }, [hasLoadedFormOptions, isFormOptionsLoading, resolveCpServerBaseUrl]);
+  }, [isFormOptionsLoading, resolveCpServerBaseUrl]);
 
   useEffect(() => {
     void loadDevices();
   }, [loadDevices]);
 
   const openCreateModal = async () => {
-    if (!(await ensureFormOptionsLoaded())) return;
+    const options = await loadFormOptions();
+    if (!options) return;
 
     setFormMode("create");
     setFormInitialValues({
       ...DEVICE_FORM_DEFAULT_VALUES,
-      userId: defaultServiceGatewayUserId,
+      userId: getServiceGatewayUserId(options.users),
     });
     setIsFormModalOpen(true);
   };
 
   const openEditModal = async (device: TDevice) => {
-    if (!(await ensureFormOptionsLoaded())) return;
+    const options = await loadFormOptions();
+    if (!options) return;
 
     setFormMode("edit");
     setFormInitialValues({
@@ -150,7 +140,7 @@ const WorkspaceDevicesSettingsPage = observer(() => {
       appName: device.appName,
       deviceName: device.deviceName,
       deviceType: device.deviceType,
-      userId: device.userId ?? defaultServiceGatewayUserId,
+      userId: device.userId ?? getServiceGatewayUserId(options.users),
       deviceCode: device.deviceCode,
       pin: device.pin,
     });
@@ -290,14 +280,6 @@ const WorkspaceDevicesSettingsPage = observer(() => {
     }
   };
 
-  const formOptionsWithDeviceApps = useMemo(
-    () => ({
-      ...formOptions,
-      applications: mergeApplicationOptions(formOptions.applications, devices),
-    }),
-    [devices, formOptions]
-  );
-
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
   }
@@ -367,7 +349,7 @@ const WorkspaceDevicesSettingsPage = observer(() => {
         mode={formMode}
         isSubmitting={isMutating}
         initialValues={formInitialValues}
-        options={formOptionsWithDeviceApps}
+        options={formOptions}
         onClose={closeFormModal}
         onSubmit={(values) => {
           void handleFormSubmit(values);
