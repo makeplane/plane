@@ -125,29 +125,21 @@ class PageListCreateAPIEndpoint(BaseAPIView):
         serializer = PageCreateSerializer(data=request.data)
         if serializer.is_valid():
             # Check for duplicate external_id + external_source
-            if (
-                request.data.get("external_id")
-                and request.data.get("external_source")
-                and Page.objects.filter(
-                    workspace__slug=slug,
-                    projects__id=project_id,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).exists()
-            ):
-                page = Page.objects.filter(
+            if request.data.get("external_id") and request.data.get("external_source"):
+                existing = Page.objects.filter(
                     workspace__slug=slug,
                     projects__id=project_id,
                     external_source=request.data.get("external_source"),
                     external_id=request.data.get("external_id"),
                 ).first()
-                return Response(
-                    {
-                        "error": "Page with the same external id and external source already exists",
-                        "id": str(page.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
+                if existing:
+                    return Response(
+                        {
+                            "error": "Page with the same external id and external source already exists",
+                            "id": str(existing.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
 
             # Validate parent belongs to the same project
             parent_id = request.data.get("parent")
