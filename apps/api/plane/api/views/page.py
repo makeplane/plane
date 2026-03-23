@@ -11,6 +11,7 @@ from django.db.models import (
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
+from django.db import transaction
 from django.utils import timezone
 
 # Third party imports
@@ -124,27 +125,10 @@ class PageListCreateAPIEndpoint(BaseAPIView):
         """
         serializer = PageCreateSerializer(data=request.data)
         if serializer.is_valid():
-            # Check for duplicate external_id + external_source
-            if request.data.get("external_id") and request.data.get("external_source"):
-                existing = Page.objects.filter(
-                    workspace__slug=slug,
-                    projects__id=project_id,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).first()
-                if existing:
-                    return Response(
-                        {
-                            "error": "Page with the same external id and external source already exists",
-                            "id": str(existing.id),
-                        },
-                        status=status.HTTP_409_CONFLICT,
-                    )
-
-            # Validate parent belongs to the same project
-            parent_id = request.data.get("parent")
-            if parent_id and not Page.objects.filter(
-                pk=parent_id,
+            # Validate parent belongs to the same project and is not a cycle
+            parent = serializer.validated_data.get("parent")
+            if parent and not Page.objects.filter(
+                pk=parent.id,
                 workspace__slug=slug,
                 projects__id=project_id,
                 project_pages__deleted_at__isnull=True,
@@ -154,26 +138,49 @@ class PageListCreateAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+            with transaction.atomic():
+                project = Project.objects.select_for_update().get(
+                    pk=project_id, workspace__slug=slug,
+                )
 
-            page = serializer.save(
-                workspace_id=project.workspace_id,
-                owned_by=request.user,
-            )
+                # Check for duplicate external_id + external_source
+                if request.data.get("external_id") and request.data.get("external_source"):
+                    existing = Page.objects.filter(
+                        workspace__slug=slug,
+                        projects__id=project_id,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).first()
+                    if existing:
+                        return Response(
+                            {
+                                "error": "Page with the same external id and external source already exists",
+                                "id": str(existing.id),
+                            },
+                            status=status.HTTP_409_CONFLICT,
+                        )
 
-            # Create the project-page association
-            ProjectPage.objects.create(
-                workspace_id=project.workspace_id,
-                project_id=project_id,
-                page_id=page.id,
-            )
+                page = serializer.save(
+                    workspace_id=project.workspace_id,
+                    owned_by=request.user,
+                )
 
-            # Fire the page transaction background task
-            page_transaction.delay(
-                new_description_html=request.data.get("description_html", "<p></p>"),
-                old_description_html=None,
-                page_id=page.id,
-            )
+                # Create the project-page association
+                ProjectPage.objects.create(
+                    workspace_id=project.workspace_id,
+                    project_id=project_id,
+                    page_id=page.id,
+                )
+
+                description_html = request.data.get("description_html", "<p></p>")
+                page_id = page.id
+                transaction.on_commit(
+                    lambda: page_transaction.delay(
+                        new_description_html=description_html,
+                        old_description_html=None,
+                        page_id=page_id,
+                    )
+                )
 
             # Re-fetch with annotations for the response
             page = self.get_queryset().get(pk=page.id)
@@ -275,16 +282,6 @@ class PageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Validate parent exists in the same project if provided
-        parent = request.data.get("parent", None)
-        if parent:
-            Page.objects.get(
-                pk=parent,
-                workspace__slug=slug,
-                projects__id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
-
         # Only the owner can change access
         if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
             return Response(
@@ -296,41 +293,75 @@ class PageDetailAPIEndpoint(BaseAPIView):
 
         serializer = PageUpdateSerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
-            # Check for external_id/external_source conflicts when either changes
-            new_external_id = request.data.get("external_id", page.external_id)
-            new_external_source = request.data.get("external_source", page.external_source)
-            if (
-                new_external_id
-                and new_external_source
-                and (
-                    new_external_id != page.external_id
-                    or new_external_source != page.external_source
-                )
-            ):
-                existing = Page.objects.filter(
+            # Validate parent exists in the same project and is not a cycle
+            parent = serializer.validated_data.get("parent")
+            if parent is not None:
+                if not Page.objects.filter(
+                    pk=parent.id,
                     workspace__slug=slug,
                     projects__id=project_id,
-                    external_source=new_external_source,
-                    external_id=new_external_id,
-                ).exclude(pk=pk).first()
-                if existing:
+                    project_pages__deleted_at__isnull=True,
+                ).exists():
                     return Response(
-                        {
-                            "error": "Page with the same external id and external source already exists",
-                            "id": str(existing.id),
-                        },
-                        status=status.HTTP_409_CONFLICT,
+                        {"error": "Parent page does not belong to this project"},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
+                # Block hierarchy cycles
+                if parent.id == pk:
+                    return Response(
+                        {"error": "A page cannot be its own parent"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                ancestor = parent
+                while ancestor.parent_id:
+                    if ancestor.parent_id == pk:
+                        return Response(
+                            {"error": "Setting this parent would create a cycle"},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+                    ancestor = ancestor.parent
 
-            serializer.save()
+            with transaction.atomic():
+                # Check for external_id/external_source conflicts when either changes
+                new_external_id = request.data.get("external_id", page.external_id)
+                new_external_source = request.data.get("external_source", page.external_source)
+                if (
+                    new_external_id
+                    and new_external_source
+                    and (
+                        new_external_id != page.external_id
+                        or new_external_source != page.external_source
+                    )
+                ):
+                    existing = Page.objects.filter(
+                        workspace__slug=slug,
+                        projects__id=project_id,
+                        external_source=new_external_source,
+                        external_id=new_external_id,
+                    ).exclude(pk=pk).first()
+                    if existing:
+                        return Response(
+                            {
+                                "error": "Page with the same external id and external source already exists",
+                                "id": str(existing.id),
+                            },
+                            status=status.HTTP_409_CONFLICT,
+                        )
 
-            # Fire page transaction on description change
-            if "description_html" in request.data:
-                page_transaction.delay(
-                    new_description_html=request.data.get("description_html", "<p></p>"),
-                    old_description_html=page_description,
-                    page_id=pk,
-                )
+                serializer.save()
+
+                # Fire page transaction on description change
+                if "description_html" in request.data:
+                    desc_html = request.data.get("description_html", "<p></p>")
+                    old_desc = page_description
+                    page_pk = pk
+                    transaction.on_commit(
+                        lambda: page_transaction.delay(
+                            new_description_html=desc_html,
+                            old_description_html=old_desc,
+                            page_id=page_pk,
+                        )
+                    )
 
             # Re-fetch with annotations
             page = self.get_queryset().get(pk=pk)
@@ -352,7 +383,6 @@ class PageDetailAPIEndpoint(BaseAPIView):
         Only the owner or a project admin can delete.
         """
         page = Page.objects.get(
-            Q(owned_by=request.user) | Q(access=0),
             pk=pk,
             workspace__slug=slug,
             projects__id=project_id,
@@ -486,7 +516,6 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         Only the page owner or a project admin can archive.
         """
         page = Page.objects.get(
-            Q(owned_by=request.user) | Q(access=0),
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
@@ -535,7 +564,6 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         Only the page owner or a project admin can unarchive.
         """
         page = Page.objects.get(
-            Q(owned_by=request.user) | Q(access=0),
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
