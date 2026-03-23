@@ -23,6 +23,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IInboxIssueStore } from "@plane/types";
 import { IconButton } from "@plane/propel/icon-button";
 import { EInboxIssueStatus } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { ControlLink, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
@@ -162,7 +163,7 @@ export const IntakeWorkitemActionsHeader = observer(function IntakeWorkitemActio
         fetchIssueDetails={false}
         showActionItemsOnUpdate
         modalTitle={t("inbox_issue.actions.move", {
-          value: `${currentProjectDetails?.identifier}-${issue?.sequence_id}`,
+          value: formatProjectWorkItemIdentifierForDisplay(currentProjectDetails?.identifier || "", issue?.sequence_id),
         })}
         primaryButtonText={{
           default: t("add_to_project"),

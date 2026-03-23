@@ -17,7 +17,7 @@ import { PageIcon } from "@plane/propel/icons";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
-import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
+import { calculateTimeAgo, getFileURL, getPageName, truncateProjectIdentifierForDisplay } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -60,7 +60,7 @@ export function RecentPage(props: BlockProps) {
           </div>
           {pageDetails?.project_identifier && (
             <div className="font-medium text-placeholder text-13 whitespace-nowrap">
-              {pageDetails?.project_identifier}
+              {truncateProjectIdentifierForDisplay(pageDetails?.project_identifier)}
             </div>
           )}
         </div>

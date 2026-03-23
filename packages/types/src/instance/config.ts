@@ -11,13 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./ai";
-export * from "./auth";
-export * from "./auth-ee";
-export * from "./base";
-export * from "./email";
-export * from "./image";
-export * from "./config";
-export * from "./workspace";
-export * from "./changelog";
-export * from "./user";
+export type TInstanceConfigKeys = "PROJECT_IDENTIFIER_MAX_LENGTH";

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Image, BrainCog, Cog, Mail, CreditCard, Users } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, CreditCard, Users, SlidersHorizontal } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
@@ -19,6 +19,7 @@ import type { TSidebarMenuItem } from "./types";
 
 export type TCoreSidebarMenuKey =
   | "general"
+  | "configurations"
   | "email"
   | "workspace"
   | "authentication"
@@ -33,6 +34,12 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "General",
     description: "Identify your instances and get key details.",
     href: `/general/`,
+  },
+  configurations: {
+    Icon: SlidersHorizontal,
+    name: "Configurations",
+    description: "Manage project and system configurations.",
+    href: `/configurations/`,
   },
   email: {
     Icon: Mail,

@@ -23,7 +23,7 @@ import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, FavoriteStar } from "@plane/ui";
-import { cn, copyUrlToClipboard } from "@plane/utils";
+import { cn, copyUrlToClipboard, truncateProjectIdentifierForDisplay } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 // helpers
@@ -237,7 +237,7 @@ export const Details = observer(function Details(props: Props) {
               <h3 className=" font-medium w-full truncate ">{project.name}</h3>
             </div>
             <span className="flex items-center gap-1.5">
-              <p className="text-11 font-medium ">{project.identifier} </p>
+              <p className="text-11 font-medium ">{truncateProjectIdentifierForDisplay(project.identifier)}</p>
               {project.network === 0 && <LockIcon className="h-2.5 w-2.5  " />}
             </span>
           </div>

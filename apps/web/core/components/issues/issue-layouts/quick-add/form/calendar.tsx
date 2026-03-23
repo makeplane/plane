@@ -13,6 +13,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
+import { truncateProjectIdentifierForDisplay } from "@plane/utils";
 import type { TQuickAddIssueForm } from "../root";
 
 export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssueForm(props: TQuickAddIssueForm) {
@@ -29,7 +30,9 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
         onSubmit={onSubmit}
         className="z-50 flex w-full items-center gap-x-2 rounded-sm md:border-[0.5px] border-subtle bg-surface-1 px-2 md:shadow-raised-100 transition-opacity"
       >
-        <h4 className="text-13 md:text-11 leading-5 text-placeholder">{projectDetail?.identifier ?? "..."}</h4>
+        <h4 className="text-13 md:text-11 leading-5 text-placeholder">
+          {projectDetail?.identifier ? truncateProjectIdentifierForDisplay(projectDetail.identifier) : "..."}
+        </h4>
         <input
           type="text"
           autoComplete="off"

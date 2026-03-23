@@ -23,7 +23,7 @@ import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon, TeamsIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { cn, truncateText } from "@plane/utils";
+import { cn, truncateProjectIdentifierForDisplay, truncateText } from "@plane/utils";
 // assets
 import searchProjectDark from "@/app/assets/empty-state/search/project-dark.webp?url";
 import searchProjectLight from "@/app/assets/empty-state/search/project-light.webp?url";
@@ -150,7 +150,7 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
                 >
                   <Logo logo={projectDetails.logo_props} size={14} />
                   <p className="text-caption-sm-regular truncate text-tertiary group-hover:text-secondary transition-colors">
-                    {projectDetails.identifier}
+                    {truncateProjectIdentifierForDisplay(projectDetails.identifier)}
                   </p>
                   <CloseIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary transition-colors" />
                 </div>
@@ -199,7 +199,9 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
                         <Checkbox checked={isProjectSelected} />
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
-                      <span className="flex-shrink-0 text-caption-xs-regular">{projectDetails.identifier}</span>
+                      <span className="flex-shrink-0 text-caption-xs-regular">
+                        {truncateProjectIdentifierForDisplay(projectDetails.identifier)}
+                      </span>
                       <p className="text-body-xs-regular truncate">{projectDetails.name}</p>
                     </div>
                   </Combobox.Option>

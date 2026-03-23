@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { StateGroupIcon } from "@plane/propel/icons";
 import type { TEditorWorkItemMention } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 
 type Props = {
   workItemDetails: TEditorWorkItemMention;
@@ -27,7 +28,7 @@ export const EditorWorkItemMentionPreview = observer(function EditorWorkItemMent
     <>
       <div className="flex items-center justify-between gap-3 text-secondary">
         <p className="shrink-0 text-11 font-medium">
-          {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
+          {formatProjectWorkItemIdentifierForDisplay(workItemDetails.project__identifier, workItemDetails.sequence_id)}
         </p>
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={workItemDetails.state__group} className="shrink-0 size-3" />

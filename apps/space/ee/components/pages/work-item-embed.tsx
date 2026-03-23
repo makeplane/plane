@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Loader } from "@plane/ui";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { IssueBlockPriority } from "@/components/issues/issue-layouts/properties/priority";
 import { IssueBlockState } from "@/components/issues/issue-layouts/properties/state";
@@ -59,7 +60,10 @@ export const WorkItemEmbedCard = observer(function WorkItemEmbedCard(props: Prop
   return (
     <div className="issue-embed space-y-2 rounded-md bg-layer-1 p-3 my-2 cursor-default">
       <h5 className="!text-11 !font-normal !mt-0 text-tertiary">
-        {workItemDetails?.project__identifier}-{workItemDetails?.sequence_id}
+        {formatProjectWorkItemIdentifierForDisplay(
+          workItemDetails?.project__identifier || "",
+          workItemDetails?.sequence_id
+        )}
       </h5>
       <h4 className="!text-13 !font-medium !mt-1 line-clamp-2 break-words">{workItemDetails?.name}</h4>
       <div className="hide-horizontal-scrollbar relative flex w-full flex-grow items-end gap-2 overflow-x-scroll">

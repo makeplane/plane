@@ -17,6 +17,7 @@ from rest_framework import serializers
 import re
 
 # Module imports
+from plane.license.utils.instance_value import get_project_identifier_max_length
 from plane.db.models import (
     Intake,
     Project,
@@ -134,6 +135,11 @@ class ProjectCreateSerializer(BaseSerializer):
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
+        if project_identifier is not None:
+            max_length = get_project_identifier_max_length()
+            if len(project_identifier) > max_length:
+                raise serializers.ValidationError(f"Project identifier exceeds maximum allowed length of {max_length}.")
 
         if data.get("project_lead", None) is not None:
             # Check if the project lead is a member of the workspace
@@ -261,6 +267,11 @@ class ProjectSerializer(BaseSerializer):
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
+        if project_identifier is not None:
+            max_length = get_project_identifier_max_length()
+            if len(project_identifier) > max_length:
+                raise serializers.ValidationError(f"Project identifier exceeds maximum allowed length of {max_length}.")
 
         # Check project lead should be a member of the workspace
         if (

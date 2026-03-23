@@ -22,7 +22,7 @@ import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, truncateProjectIdentifierForDisplay } from "@plane/utils";
 // assets
 import darkProjectAsset from "@/app/assets/empty-state/search/project-dark.webp?url";
 import lightProjectAsset from "@/app/assets/empty-state/search/project-light.webp?url";
@@ -121,7 +121,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                 >
                   <Logo logo={projectDetails.logo_props} size={14} />
                   <p className="text-11 truncate text-tertiary group-hover:text-secondary transition-colors">
-                    {projectDetails.identifier}
+                    {truncateProjectIdentifierForDisplay(projectDetails.identifier)}
                   </p>
                   <CloseIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary transition-colors" />
                 </div>
@@ -170,7 +170,9 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                         <Checkbox checked={isProjectSelected} />
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
-                      <span className="flex-shrink-0 text-10">{projectDetails.identifier}</span>
+                      <span className="flex-shrink-0 text-10">
+                        {truncateProjectIdentifierForDisplay(projectDetails.identifier)}
+                      </span>
                       <p className="text-13 truncate">{projectDetails.name}</p>
                     </div>
                   </Combobox.Option>

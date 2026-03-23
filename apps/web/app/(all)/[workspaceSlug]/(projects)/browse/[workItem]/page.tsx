@@ -20,6 +20,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // assets
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -77,7 +78,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   const workItemLoader = !workItemDetail || isLoading;
   const pageTitle =
     project && workItemDetail
-      ? `${project?.identifier}-${workItemDetail?.sequence_id} ${workItemDetail?.name}`
+      ? `${formatProjectWorkItemIdentifierForDisplay(project?.identifier || "", workItemDetail?.sequence_id)} ${workItemDetail?.name}`
       : undefined;
   const workItemServiceType = workItemDetail?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES;
 

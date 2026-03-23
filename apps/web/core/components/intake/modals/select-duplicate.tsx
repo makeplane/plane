@@ -20,6 +20,7 @@ import { useTranslation } from "@plane/i18n";
 import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
@@ -118,7 +119,10 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                     }}
                   />
                   <span className="flex-shrink-0 text-11 text-secondary">
-                    {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                    {formatProjectWorkItemIdentifierForDisplay(
+                      getProjectById(issue?.project_id)?.identifier || "",
+                      issue.sequence_id
+                    )}
                   </span>
                   <span className="text-secondary">{issue.name}</span>
                 </div>

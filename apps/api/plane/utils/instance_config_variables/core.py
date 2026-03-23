@@ -260,6 +260,15 @@ chat_support_config_variables = [
     },
 ]
 
+project_config_variables = [
+    {
+        "key": "PROJECT_IDENTIFIER_MAX_LENGTH",
+        "value": os.environ.get("PROJECT_IDENTIFIER_MAX_LENGTH", "10"),
+        "category": "PROJECT",
+        "is_encrypted": False,
+    },
+]
+
 core_config_variables = [
     *authentication_config_variables,
     *workspace_management_config_variables,
@@ -271,4 +280,5 @@ core_config_variables = [
     *llm_config_variables,
     *unsplash_config_variables,
     *chat_support_config_variables,
+    *project_config_variables,
 ]

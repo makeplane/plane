@@ -19,6 +19,7 @@ import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } fr
 import { PriorityIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/plane-web/components/pages";
 import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
@@ -56,7 +57,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
       });
       const structuredIssues: TEmbedItem[] = (response?.issue_mention ?? []).map((issue) => ({
         id: issue.id,
-        subTitle: `${issue.project__identifier}-${issue.sequence_id}`,
+        subTitle: formatProjectWorkItemIdentifierForDisplay(issue.project__identifier, issue.sequence_id),
         title: issue.name,
         icon: <PriorityIcon priority={issue.priority} />,
         projectId: issue.project_id?.toString() ?? "",

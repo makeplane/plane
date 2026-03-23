@@ -20,7 +20,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
 // plane utils
-import { cn } from "@plane/utils";
+import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
 // helpers
@@ -58,7 +58,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-11 text-tertiary">
-            {project_details?.identifier}-{issue.sequence_id}
+            {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issue.sequence_id)}
           </div>
         </div>
       </WithDisplayPropertiesHOC>

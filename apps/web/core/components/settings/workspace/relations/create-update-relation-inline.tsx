@@ -81,15 +81,13 @@ export const CreateUpdateRelationInline = observer(function CreateUpdateRelation
         handleClose();
       })
       .catch((error) => {
-        const nameError = error?.name;
-        const message =
-          nameError && Array.isArray(nameError)
-            ? "A relation with this name already exists"
-            : (error?.detail ?? error?.error ?? t("common.something_went_wrong"));
         setToast({
           title: "Error!",
           type: TOAST_TYPE.ERROR,
-          message,
+          message:
+            error?.name && Array.isArray(error.name)
+              ? "A relation with this name already exists"
+              : (error?.detail ?? error?.error ?? t("common.something_went_wrong")),
         });
       });
   };
@@ -108,15 +106,13 @@ export const CreateUpdateRelationInline = observer(function CreateUpdateRelation
         handleClose();
       })
       .catch((error) => {
-        const nameError = error?.name;
-        const message =
-          nameError && Array.isArray(nameError)
-            ? "A relation with this name already exists"
-            : (error?.detail ?? error?.error ?? "Failed to update relation");
         setToast({
           title: "Error!",
           type: TOAST_TYPE.ERROR,
-          message,
+          message:
+            error?.name && Array.isArray(error.name)
+              ? "A relation with this name already exists"
+              : (error?.detail ?? error?.error ?? "Failed to update relation"),
         });
       });
   };

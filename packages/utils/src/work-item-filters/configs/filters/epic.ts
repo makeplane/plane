@@ -15,6 +15,7 @@
 import type { TEpicMeta, TFilterProperty, TSupportedOperators } from "@plane/types";
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
+import { formatProjectWorkItemIdentifierForDisplay } from "../../../project";
 import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
 import {
   createFilterConfig,
@@ -41,7 +42,8 @@ export const getEpicMultiSelectConfig = (params: TCreateEpicFilterParams, single
     {
       items: params.epics.filter(Boolean).filter((epic) => epic.id && epic.name),
       getId: (epic) => epic.id,
-      getLabel: (epic) => epic.project_identifier + "-" + epic.sequence_id + " " + epic.name,
+      getLabel: (epic) =>
+        `${formatProjectWorkItemIdentifierForDisplay(epic.project_identifier, epic.sequence_id)} ${epic.name}`,
       getValue: (epic) => epic.id,
       getIconData: (epic) => epic,
     },

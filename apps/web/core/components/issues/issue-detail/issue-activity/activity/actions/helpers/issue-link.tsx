@@ -12,7 +12,7 @@
  */
 
 import { Tooltip } from "@plane/propel/tooltip";
-import { generateWorkItemLink } from "@plane/utils";
+import { formatProjectWorkItemIdentifierForDisplay, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -52,7 +52,10 @@ export function IssueLink(props: TIssueLink) {
         className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
       >
         {activity.issue_detail
-          ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
+          ? formatProjectWorkItemIdentifierForDisplay(
+              activity.project_detail.identifier,
+              activity.issue_detail.sequence_id
+            )
           : "Work items"}{" "}
         <span className="font-regular">{activity.issue_detail?.name}</span>
       </a>

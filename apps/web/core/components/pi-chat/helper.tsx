@@ -13,6 +13,7 @@
 
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import type { TSearchResults, TWorkspaceSearchResultItem } from "@plane/types";
 
@@ -69,7 +70,10 @@ export const formatSearchQuery = (data: Partial<TSearchResults>): TSearchResults
     parsedResponse[type] = data[type]?.slice(0, 5).map((item) => ({
       id: item.id,
       title: item.name,
-      subTitle: type === "issue" ? `${item.project__identifier}-${item.sequence_id}` : undefined,
+      subTitle:
+        type === "issue"
+          ? formatProjectWorkItemIdentifierForDisplay(item.project__identifier || "", item.sequence_id)
+          : undefined,
       icon: getIcon(type, item),
     }));
   });

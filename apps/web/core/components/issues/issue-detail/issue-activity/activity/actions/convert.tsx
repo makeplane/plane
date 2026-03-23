@@ -14,6 +14,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ArrowRightLeft } from "lucide-react";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 // hooks
@@ -43,7 +44,12 @@ export const WorkItemConvertActivity = observer(function WorkItemConvertActivity
     >
       <>
         converted{" "}
-        <span className="text-primary font-medium">{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+        <span className="text-primary font-medium">
+          {formatProjectWorkItemIdentifierForDisplay(
+            activity?.project_detail?.identifier || "",
+            activity?.issue_detail?.sequence_id
+          )}
+        </span>{" "}
         to epic.
       </>
     </IssueActivityBlockComponent>

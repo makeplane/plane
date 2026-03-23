@@ -24,7 +24,12 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader, IInboxIssueStore } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
 import { ControlLink, CustomMenu, Row } from "@plane/ui";
-import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
+import {
+  copyUrlToClipboard,
+  findHowManyDaysLeft,
+  formatProjectWorkItemIdentifierForDisplay,
+  generateWorkItemLink,
+} from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
@@ -255,7 +260,10 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
           fetchIssueDetails={false}
           showActionItemsOnUpdate
           modalTitle={t("inbox_issue.actions.move", {
-            value: `${currentProjectDetails?.identifier}-${issue?.sequence_id}`,
+            value: formatProjectWorkItemIdentifierForDisplay(
+              currentProjectDetails?.identifier || "",
+              issue?.sequence_id
+            ),
           })}
           primaryButtonText={{
             default: t("add_to_project"),
@@ -293,7 +301,10 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
           )}
           {issue?.project_id && issue.sequence_id && (
             <h3 className="text-14 font-medium text-tertiary flex-shrink-0">
-              {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
+              {formatProjectWorkItemIdentifierForDisplay(
+                getProjectById(issue.project_id)?.identifier || "",
+                issue.sequence_id
+              )}
             </h3>
           )}
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />

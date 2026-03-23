@@ -14,6 +14,7 @@
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // ui
 import { Banner } from "@plane/propel/banner";
 import { Button } from "@plane/propel/button";
@@ -48,7 +49,10 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   // derived values
   const issue = getIssueById(archivedIssueId);
   const project = issue ? getProjectById(issue?.project_id ?? "") : undefined;
-  const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+  const pageTitle =
+    project && issue
+      ? `${formatProjectWorkItemIdentifierForDisplay(project?.identifier || "", issue?.sequence_id)} ${issue?.name}`
+      : undefined;
 
   if (!issue) return <></>;
 

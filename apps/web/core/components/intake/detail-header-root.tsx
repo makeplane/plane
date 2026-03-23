@@ -17,6 +17,7 @@ import { RefreshCcw } from "lucide-react";
 import { IntakeIcon } from "@plane/propel/icons";
 
 import { Breadcrumbs, Header } from "@plane/ui";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -83,7 +84,10 @@ export const ProjectIntakeDetailHeader = observer(function ProjectIntakeDetailHe
                   <BreadcrumbLink
                     label={
                       projectDetails && inboxIssue
-                        ? `${projectDetails.identifier}-${inboxIssue?.issue?.sequence_id}`
+                        ? formatProjectWorkItemIdentifierForDisplay(
+                            projectDetails.identifier,
+                            inboxIssue?.issue?.sequence_id
+                          )
                         : ""
                     }
                   />

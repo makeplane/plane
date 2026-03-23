@@ -21,6 +21,7 @@ export default [
   ]),
   layout("./(all)/(dashboard)/(with-sidebar)/layout.tsx", [
     route("general", "./(all)/(dashboard)/(with-sidebar)/general/page.tsx"),
+    route("configurations", "./(all)/(dashboard)/(with-sidebar)/configurations/page.tsx"),
     route("workspace", "./(all)/(dashboard)/(with-sidebar)/workspace/page.tsx"),
     route("workspace/create", "./(all)/(dashboard)/(with-sidebar)/workspace/create/page.tsx"),
     route("email", "./(all)/(dashboard)/(with-sidebar)/email/page.tsx"),

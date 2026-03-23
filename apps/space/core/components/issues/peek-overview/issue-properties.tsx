@@ -24,7 +24,7 @@ import {
   PriorityIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getIssuePriorityFilters } from "@plane/utils";
+import { cn, formatProjectWorkItemIdentifierForDisplay, getIssuePriorityFilters } from "@plane/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
@@ -72,7 +72,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            {project_details?.identifier}-{issueDetails.sequence_id}
+            {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issueDetails.sequence_id)}
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">

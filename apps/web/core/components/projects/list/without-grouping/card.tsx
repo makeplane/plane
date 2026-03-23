@@ -27,7 +27,13 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TContextMenuItem } from "@plane/ui";
 import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { ContextMenu, FavoriteStar } from "@plane/ui";
-import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
+import {
+  copyUrlToClipboard,
+  cn,
+  getFileURL,
+  renderFormattedDate,
+  truncateProjectIdentifierForDisplay,
+} from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { DeleteProjectModal } from "@/components/projects/modals/delete-project-modal";
@@ -238,7 +244,9 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
                 <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
-                  <p className="text-11 font-medium text-on-color">{project.identifier} </p>
+                  <p className="text-11 font-medium text-on-color">
+                    {truncateProjectIdentifierForDisplay(project.identifier)}
+                  </p>
                   {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
                 </span>
               </div>

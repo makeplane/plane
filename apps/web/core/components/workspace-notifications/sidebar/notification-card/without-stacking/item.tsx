@@ -17,7 +17,14 @@ import { Clock } from "lucide-react";
 // plane imports
 import { Avatar } from "@plane/propel/avatar";
 import { Row } from "@plane/ui";
-import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
+import {
+  calculateTimeAgo,
+  cn,
+  formatProjectWorkItemIdentifierForDisplay,
+  getFileURL,
+  renderFormattedDate,
+  renderFormattedTime,
+} from "@plane/utils";
 // components
 import { NotificationContent } from "@/components/workspace-notifications/sidebar/notification-card/common/content";
 // hooks
@@ -130,7 +137,11 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
 
           <div className="relative flex items-center gap-3 text-caption-sm-regular text-secondary">
             <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1">
-              {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
+              {formatProjectWorkItemIdentifierForDisplay(
+                notification?.data?.issue?.identifier || "",
+                notification?.data?.issue?.sequence_id
+              )}
+              &nbsp;
               {notification?.data?.issue?.name}
             </div>
             <div className="flex-shrink-0">

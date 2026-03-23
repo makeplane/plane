@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 import { useCallback } from "react";
 // plane imports
 import type { TStateGroups } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import type { TWorkItemMentionResponse } from "@/types";
 // local imports
 import { EditorWorkItemMentionLogo } from "./logo";
@@ -44,7 +45,7 @@ export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) =>
     >
       <EditorWorkItemMentionLogo className="shrink-0 size-3" stateGroup={workItemDetails.stateGroup as TStateGroups} />
       <span className="text-custom-text-300">
-        {workItemDetails.projectIdentifier}-{workItemDetails.sequenceId}
+        {formatProjectWorkItemIdentifierForDisplay(workItemDetails.projectIdentifier, workItemDetails.sequenceId)}
       </span>
       <span className="text-custom-text-200 group-hover/work-item-mention:text-custom-text-100 transition-colors">
         {trimmedName}

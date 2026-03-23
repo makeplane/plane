@@ -23,7 +23,12 @@ import {
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
+import {
+  formatProjectWorkItemIdentifierForDisplay,
+  generateWorkItemLink,
+  getDate,
+  renderFormattedPayloadDate,
+} from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
@@ -209,7 +214,10 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 >
                   <Tooltip tooltipContent={`${duplicateIssueDetails?.name}`}>
                     <span className="flex items-center gap-1 cursor-pointer text-11 rounded-sm px-1.5 py-1 pb-0.5 bg-layer-1 text-secondary">
-                      {`${currentProjectDetails?.identifier}-${duplicateIssueDetails?.sequence_id}`}
+                      {formatProjectWorkItemIdentifierForDisplay(
+                        currentProjectDetails?.identifier || "",
+                        duplicateIssueDetails?.sequence_id
+                      )}
                     </span>
                   </Tooltip>
                 </ControlLink>

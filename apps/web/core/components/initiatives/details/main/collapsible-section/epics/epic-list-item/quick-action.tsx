@@ -20,7 +20,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
-import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { cn, copyUrlToClipboard, formatProjectWorkItemIdentifierForDisplay, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -91,7 +91,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
-            message: `You have removed the epic ${projectIdentifier}-${epic?.sequence_id} from this initiative.`,
+            message: `You have removed the epic ${formatProjectWorkItemIdentifierForDisplay(projectIdentifier || "", epic?.sequence_id)} from this initiative.`,
           });
         }),
       title: t("common.remove"),

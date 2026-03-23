@@ -16,6 +16,7 @@ import { useCallback, useMemo } from "react";
 import type { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
 // plane ui
 import { PriorityIcon } from "@plane/propel/icons";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // ce hooks
 import type { TIssueEmbedHookProps } from "@/ce/hooks/use-editor-embed";
 // plane web components
@@ -37,7 +38,7 @@ export const useIssueEmbed = (props: TIssueEmbedHookProps) => {
       });
       const structuredIssues: TEmbedItem[] = (response?.issue_mention ?? []).map((issue) => ({
         id: issue.id,
-        subTitle: `${issue.project__identifier}-${issue.sequence_id}`,
+        subTitle: formatProjectWorkItemIdentifierForDisplay(issue.project__identifier, issue.sequence_id),
         title: issue.name,
         icon: <PriorityIcon priority={issue.priority} />,
         projectId: issue.project_id?.toString() ?? "",

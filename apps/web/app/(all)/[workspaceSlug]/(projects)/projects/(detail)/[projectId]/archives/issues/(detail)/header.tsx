@@ -17,6 +17,7 @@ import useSWR from "swr";
 // ui
 import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
@@ -97,7 +98,10 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
               <BreadcrumbLink
                 label={
                   currentProjectDetails && issueDetails
-                    ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
+                    ? formatProjectWorkItemIdentifierForDisplay(
+                        currentProjectDetails.identifier,
+                        issueDetails.sequence_id
+                      )
                     : ""
                 }
               />

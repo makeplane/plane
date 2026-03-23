@@ -14,6 +14,7 @@
 import { Crown } from "lucide-react";
 // ui
 import { Button } from "@plane/propel/button";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export function IssueEmbedUpgradeCard(props: any) {
@@ -25,7 +26,10 @@ export function IssueEmbedUpgradeCard(props: any) {
       } w-full h-[100px] cursor-pointer space-y-2 rounded-md border-[0.5px] border-subtle-1 shadow-raised-100`}
     >
       <h5 className="h-[20%] text-11 text-tertiary p-2">
-        {props.node?.attrs?.project_identifier}-{props?.node?.attrs?.sequence_id}
+        {formatProjectWorkItemIdentifierForDisplay(
+          props.node?.attrs?.project_identifier || "",
+          props?.node?.attrs?.sequence_id
+        )}
       </h5>
       <div className="relative h-[71%]">
         <div className="h-full backdrop-filter backdrop-blur-[30px] bg-layer-1/30 flex items-center w-full justify-between gap-5 mt-2.5 pl-4 pr-5 py-3 max-md:max-w-full max-md:flex-wrap relative">

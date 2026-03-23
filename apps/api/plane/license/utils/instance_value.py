@@ -46,6 +46,36 @@ def get_configuration_value(keys):
     return tuple(environment_list)
 
 
+def get_project_identifier_max_length():
+    """
+    Returns the effective project identifier max length.
+    On cloud (IS_SELF_MANAGED=False), always returns the hardcoded default (10).
+    On self-managed, reads from instance configuration.
+    """
+    DEFAULT_MAX_LENGTH = 10
+
+    if not settings.IS_SELF_MANAGED:
+        return DEFAULT_MAX_LENGTH
+
+    (max_length_str,) = get_configuration_value(
+        [
+            {
+                "key": "PROJECT_IDENTIFIER_MAX_LENGTH",
+                "default": os.environ.get(
+                    "PROJECT_IDENTIFIER_MAX_LENGTH",
+                    str(DEFAULT_MAX_LENGTH),
+                ),
+            },
+        ]
+    )
+
+    try:
+        max_length = int(max_length_str)
+        return max(1, min(max_length, 255))
+    except (ValueError, TypeError):
+        return DEFAULT_MAX_LENGTH
+
+
 def get_email_configuration():
     return get_configuration_value(
         [

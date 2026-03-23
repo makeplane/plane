@@ -14,6 +14,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { truncateProjectIdentifierForDisplay } from "@plane/utils";
 import type { TQuickAddIssueForm } from "../root";
 
 export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm(props: TQuickAddIssueForm) {
@@ -23,7 +24,9 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
     <div className="m-1 overflow-hidden rounded-sm shadow-raised-200 bg-layer-2">
       <form ref={ref} onSubmit={onSubmit} className="flex w-full items-center gap-x-3 p-3">
         <div className="w-full">
-          <h4 className="text-11 font-medium leading-5 text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
+          <h4 className="text-11 font-medium leading-5 text-tertiary">
+            {projectDetail?.identifier ? truncateProjectIdentifierForDisplay(projectDetail.identifier) : "..."}
+          </h4>
           <input
             autoComplete="off"
             placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}

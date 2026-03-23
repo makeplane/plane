@@ -18,7 +18,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // plane ui
-import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
+import { calculateTimeAgo, formatProjectWorkItemIdentifierForDisplay, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -94,7 +94,10 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
                 <WorkItemsIcon className="size-4 text-tertiary" />
               </div>
               <div className="font-medium text-placeholder text-13 whitespace-nowrap">
-                {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
+                {formatProjectWorkItemIdentifierForDisplay(
+                  issueDetails?.project_identifier || "",
+                  issueDetails?.sequence_id
+                )}
               </div>
             </div>
           )}

@@ -34,7 +34,7 @@ import {
   ViewsIcon,
 } from "@plane/propel/icons";
 // plane web components
-import { generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink, truncateProjectIdentifierForDisplay } from "@plane/utils";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // core imports
 import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
@@ -59,7 +59,8 @@ export const SearchItems: {
     icon: () => <CycleIcon className="size-4 my-auto" />,
     itemName: (cycle: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
-        <span className="text-11 text-tertiary">{cycle.project_identifier}</span> {cycle.name}
+        <span className="text-11 text-tertiary">{truncateProjectIdentifierForDisplay(cycle.project_identifier)}</span>{" "}
+        {cycle.name}
       </h6>
     ),
     path: (cycle: IWorkspaceDefaultEnhancedSearchResult) =>
@@ -100,7 +101,8 @@ export const SearchItems: {
     icon: () => <ViewsIcon className="size-4 my-auto" />,
     itemName: (view: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
-        <span className="text-11 text-tertiary">{view.project_identifier}</span> {view.name}
+        <span className="text-11 text-tertiary">{truncateProjectIdentifierForDisplay(view.project_identifier)}</span>{" "}
+        {view.name}
       </h6>
     ),
     path: (view: IWorkspaceDefaultEnhancedSearchResult) =>
@@ -111,7 +113,8 @@ export const SearchItems: {
     icon: () => <ModuleIcon className="size-4 my-auto" />,
     itemName: (module: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
-        <span className="text-11 text-tertiary">{module.project_identifier}</span> {module.name}
+        <span className="text-11 text-tertiary">{truncateProjectIdentifierForDisplay(module.project_identifier)}</span>{" "}
+        {module.name}
       </h6>
     ),
     path: (module: IWorkspaceDefaultEnhancedSearchResult) =>
@@ -122,7 +125,10 @@ export const SearchItems: {
     icon: () => <PageIcon className="size-4 my-auto" />,
     itemName: (page: IWorkspacePageEnhancedSearchResult) => (
       <h6>
-        <span className="text-11 text-tertiary">{page.project_identifiers?.[0]}</span> {page.name}
+        <span className="text-11 text-tertiary">
+          {truncateProjectIdentifierForDisplay(page.project_identifiers?.[0] || "")}
+        </span>{" "}
+        {page.name}
       </h6>
     ),
     path: (page: IWorkspacePageEnhancedSearchResult) => {

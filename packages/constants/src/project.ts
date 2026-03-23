@@ -15,6 +15,8 @@
 import type { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
 // local imports
 
+export const DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH = 10;
+
 export type TNetworkChoiceIconKey = "Lock" | "Globe2";
 
 export type TNetworkChoice = {

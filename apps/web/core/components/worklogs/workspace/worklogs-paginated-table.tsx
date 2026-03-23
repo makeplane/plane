@@ -15,7 +15,12 @@ import type { FC } from "react";
 import { Avatar } from "@plane/propel/avatar";
 import { Table } from "@plane/ui";
 // helpers
-import { convertMinutesToHoursMinutesString, getFileURL, renderFormattedDate } from "@plane/utils";
+import {
+  convertMinutesToHoursMinutesString,
+  formatProjectWorkItemIdentifierForDisplay,
+  getFileURL,
+  renderFormattedDate,
+} from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -59,7 +64,10 @@ export function WorklogsPaginatedTableRoot(props: TWorklogsPaginatedTableRoot) {
         return (
           <div className="flex items-center gap-2">
             <div className="text-11 text-secondary">
-              {currentProject?.identifier}-{rowData.issue_detail?.sequence_id}
+              {formatProjectWorkItemIdentifierForDisplay(
+                currentProject?.identifier || "",
+                rowData.issue_detail?.sequence_id
+              )}
             </div>
             <div className="text-primary">{rowData.issue_detail?.name || "undefined"}</div>
           </div>

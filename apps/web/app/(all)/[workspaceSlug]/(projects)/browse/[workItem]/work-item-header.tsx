@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 // plane ui
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
@@ -63,7 +64,11 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label={projectDetails && issueDetails ? `${projectDetails.identifier}-${issueDetails.sequence_id}` : ""}
+                label={
+                  projectDetails && issueDetails
+                    ? formatProjectWorkItemIdentifierForDisplay(projectDetails.identifier, issueDetails.sequence_id)
+                    : ""
+                }
               />
             }
           />

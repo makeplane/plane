@@ -18,6 +18,7 @@ import type { TSidebarMenuItem } from "./types";
 export function useSidebarMenu(): TSidebarMenuItem[] {
   const sidebarMenu = [
     coreSidebarMenuLinks.general,
+    coreSidebarMenuLinks.configurations,
     coreSidebarMenuLinks.email,
     coreSidebarMenuLinks.authentication,
     coreSidebarMenuLinks.workspace,

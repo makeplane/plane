@@ -21,7 +21,7 @@ import { EpicIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -99,7 +99,10 @@ export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHead
                 <BreadcrumbLink
                   label={
                     currentProjectDetails && issueDetails
-                      ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
+                      ? formatProjectWorkItemIdentifierForDisplay(
+                          currentProjectDetails.identifier,
+                          issueDetails.sequence_id
+                        )
                       : ""
                   }
                 />

@@ -16,14 +16,14 @@ import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { InfoIcon } from "@plane/propel/icons";
 // plane imports
-import { ETabIndices } from "@plane/constants";
+import { DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import { Input, TextArea } from "@plane/ui";
 import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
-// plane utils
-// helpers
+// hooks
+import { useInstance } from "@/hooks/store/use-instance";
 // plane-web types
 import type { TProject } from "@/types/projects";
 
@@ -37,13 +37,18 @@ type Props = {
 
 function ProjectCommonAttributes(props: Props) {
   const { setValue, isMobile, shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier, handleFormOnChange } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { config } = useInstance();
+  // form state
   const {
     formState: { errors },
     control,
   } = useFormContext<TProject>();
-
+  // derived values
+  const projectIdentifierMaxLength = config?.project_identifier_max_length ?? DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH;
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
-  const { t } = useTranslation();
 
   const handleNameChange =
     (onChange: (event: ChangeEvent<HTMLInputElement>) => void) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +57,7 @@ function ProjectCommonAttributes(props: Props) {
         return;
       }
       if (e.target.value === "") setValue("identifier", "");
-      else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 10));
+      else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, projectIdentifierMaxLength));
       onChange(e);
       handleFormOnChange?.();
     };
@@ -107,8 +112,8 @@ function ProjectCommonAttributes(props: Props) {
               message: t("project_id_min_char"),
             },
             maxLength: {
-              value: 10,
-              message: t("project_id_max_char"),
+              value: projectIdentifierMaxLength,
+              message: t("project_id_max_char", { max: projectIdentifierMaxLength }),
             },
           }}
           render={({ field: { value, onChange } }) => (
@@ -120,7 +125,7 @@ function ProjectCommonAttributes(props: Props) {
               onChange={handleIdentifierChange(onChange)}
               hasError={Boolean(errors.identifier)}
               placeholder={t("project_id")}
-              className={cn("w-full text-11 focus:border-blue-400 pr-7", {
+              className={cn("w-full text-11 focus:border-blue-400 pr-7 truncate", {
                 uppercase: value,
               })}
               tabIndex={getIndex("identifier")}

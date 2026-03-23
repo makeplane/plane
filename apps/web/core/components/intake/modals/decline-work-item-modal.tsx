@@ -15,6 +15,7 @@ import React, { useState } from "react";
 // types
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
@@ -59,7 +60,7 @@ export function DeclineIssueModal(props: Props) {
         <>
           Are you sure you want to decline work item{" "}
           <span className="break-words font-medium text-primary">
-            {projectDetails?.identifier}-{data?.sequence_id}
+            {formatProjectWorkItemIdentifierForDisplay(projectDetails?.identifier || "", data?.sequence_id)}
           </span>
           {""}? This action cannot be undone.
         </>

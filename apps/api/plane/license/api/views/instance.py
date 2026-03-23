@@ -26,7 +26,10 @@ from plane.db.models import Workspace
 from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers import InstanceSerializer
 from plane.license.models import Instance
-from plane.license.utils.instance_value import get_configuration_value
+from plane.license.utils.instance_value import (
+    get_configuration_value,
+    get_project_identifier_max_length,
+)
 from plane.utils.cache import cache_response, invalidate_cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -241,6 +244,9 @@ class InstanceEndpoint(BaseAPIView):
         data["is_self_managed"] = settings.IS_SELF_MANAGED
 
         data["is_opensearch_enabled"] = OPENSEARCH_ENABLED == "1"
+
+        # Project configurations
+        data["project_identifier_max_length"] = get_project_identifier_max_length()
 
         # Airgapped mode
         data["is_airgapped"] = settings.IS_AIRGAPPED

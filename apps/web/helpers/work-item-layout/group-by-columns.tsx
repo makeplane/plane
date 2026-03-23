@@ -25,7 +25,7 @@ import {
 } from "@plane/propel/icons";
 import type { IGroupByColumn, TCycleGroups, GroupByColumnTypes, TGetColumns } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
-import { getFileURL, getMilestoneIconProps } from "@plane/utils";
+import { formatProjectWorkItemIdentifierForDisplay, getFileURL, getMilestoneIconProps } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";
 // types
@@ -393,7 +393,7 @@ export const getEpicColumns = (): IGroupByColumn[] | undefined => {
     if (!epicMeta) return;
     epicColumns.push({
       id: epicMeta.id,
-      name: `${epicMeta.project_identifier}-${epicMeta.sequence_id} ${epicMeta.name}`,
+      name: `${formatProjectWorkItemIdentifierForDisplay(epicMeta.project_identifier, epicMeta.sequence_id)} ${epicMeta.name}`,
       icon: <EpicIcon className="size-4 text-primary" />,
       payload: { parent_id: epicMeta.id },
     });

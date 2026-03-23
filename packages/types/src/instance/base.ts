@@ -18,6 +18,7 @@ import type {
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
+  TInstanceConfigKeys,
   TInstanceWorkspaceConfigurationKeys,
   TCoreLoginMediums,
 } from "./";
@@ -94,6 +95,8 @@ export interface IInstanceConfig extends IInstanceConfigExtended {
   silo_base_url: string | undefined;
   // opensearch
   is_opensearch_enabled: boolean;
+  // project
+  project_identifier_max_length: number;
 }
 
 export interface IInstanceUpdate {
@@ -121,6 +124,7 @@ export type TInstanceConfigurationKeys =
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
   | TInstanceChatSupportConfigurationKeys
+  | TInstanceConfigKeys
   | TInstanceWorkspaceConfigurationKeys
   | TInstanceEnterpriseAuthenticationKeys; // enterprise
 

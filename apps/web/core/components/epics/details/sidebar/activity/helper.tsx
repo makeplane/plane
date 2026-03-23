@@ -24,7 +24,12 @@ import {
   StatePropertyIcon,
 } from "@plane/propel/icons";
 import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
-import { convertMinutesToHoursMinutesString, getPageName, renderFormattedDate } from "@plane/utils";
+import {
+  convertMinutesToHoursMinutesString,
+  formatProjectWorkItemIdentifierForDisplay,
+  getPageName,
+  renderFormattedDate,
+} from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
 import { getRelationActivityContent } from "@/components/relations/activity";
@@ -353,9 +358,12 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     message: (
       <>
         converted{" "}
-        <span
-          className={commonTextClassName}
-        >{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+        <span className={commonTextClassName}>
+          {formatProjectWorkItemIdentifierForDisplay(
+            activity?.project_detail?.identifier || "",
+            activity?.issue_detail?.sequence_id
+          )}
+        </span>{" "}
         to epic.
       </>
     ),
@@ -366,9 +374,12 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     message: (
       <>
         converted{" "}
-        <span
-          className={commonTextClassName}
-        >{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+        <span className={commonTextClassName}>
+          {formatProjectWorkItemIdentifierForDisplay(
+            activity?.project_detail?.identifier || "",
+            activity?.issue_detail?.sequence_id
+          )}
+        </span>{" "}
         to work item.
       </>
     ),

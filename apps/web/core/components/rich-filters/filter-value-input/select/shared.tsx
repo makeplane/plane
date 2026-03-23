@@ -13,7 +13,7 @@
 
 // plane imports
 import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue, TWorkItemMeta } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // local imports
 import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
 import { WorkItemsIcon } from "@plane/propel/icons";
@@ -70,7 +70,7 @@ export const getCommonCustomSearchSelectProps = (isDisabled?: boolean) => ({
 export const getWorkItemsFilterOptions = (items: TWorkItemMeta[]): IFilterOption<string>[] =>
   items.map((workItem) => ({
     id: workItem.id,
-    label: workItem.project_identifier + "-" + workItem.sequence_id + " " + workItem.name,
+    label: `${formatProjectWorkItemIdentifierForDisplay(workItem.project_identifier, workItem.sequence_id)} ${workItem.name}`,
     value: workItem.id,
     icon: <WorkItemsIcon className="size-3" />,
   }));

@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 // plane types
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
-import { calculateTimeAgo } from "@plane/utils";
+import { calculateTimeAgo, truncateProjectIdentifierForDisplay } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -47,7 +47,9 @@ export function RecentProject(props: BlockProps) {
           <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
             <Logo logo={projectDetails?.logo_props} size={16} />
           </div>
-          <div className="font-medium text-placeholder text-13 whitespace-nowrap">{projectDetails?.identifier}</div>
+          <div className="font-medium text-placeholder text-13 whitespace-nowrap">
+            {truncateProjectIdentifierForDisplay(projectDetails?.identifier || "")}
+          </div>
         </div>
       }
       appendTitleElement={

@@ -25,6 +25,7 @@ import type { TIssue, IIssueDisplayProperties } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
 import { Spinner, ControlLink, Row } from "@plane/ui";
+import { DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH } from "@plane/constants";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
@@ -168,7 +169,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   // Use next_work_item_sequence from backend (static value from project endpoint)
   const maxSequenceId = currentProjectNextSequenceId ?? 1;
   const keyMinWidth = displayProperties?.key
-    ? calculateIdentifierWidth(projectIdentifier?.length ?? 0, maxSequenceId)
+    ? calculateIdentifierWidth(
+        Math.min(projectIdentifier?.length ?? 0, DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH),
+        maxSequenceId
+      )
     : 0;
 
   const workItemLink = generateWorkItemLink({

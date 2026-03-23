@@ -30,6 +30,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { truncateProjectIdentifierForDisplay } from "@plane/utils";
 // components
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
@@ -102,7 +103,9 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-10 text-secondary shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-10 text-secondary shrink-0">
+            {truncateProjectIdentifierForDisplay(projectDetails?.identifier || "")}
+          </span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -179,7 +182,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
                           .map((projectId) => {
                             const projectDetails = getProjectById(projectId);
 
-                            return projectDetails?.identifier;
+                            return truncateProjectIdentifierForDisplay(projectDetails?.identifier || "");
                           })
                           .join(", ")
                       : "All projects"

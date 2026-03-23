@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { TEditorWorkItemMention } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
@@ -56,7 +57,7 @@ export const EditorWorkItemMentionContent = observer(function EditorWorkItemMent
         workItemTypeId={workItemDetails.type_id}
       />
       <span className="shrink-0 text-tertiary">
-        {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
+        {formatProjectWorkItemIdentifierForDisplay(workItemDetails.project__identifier, workItemDetails.sequence_id)}
       </span>
       <span className="text-secondary group-hover/work-item-mention:text-primary transition-colors truncate">
         {workItemDetails.name}

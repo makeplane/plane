@@ -20,6 +20,7 @@ import re
 from .base import BaseSerializer, DynamicBaseSerializer
 from django.db.models import Max
 from plane.app.serializers.workspace import WorkspaceLiteSerializer
+from plane.license.utils.instance_value import get_project_identifier_max_length
 from plane.app.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
     Project,
@@ -72,6 +73,10 @@ class ProjectSerializer(BaseSerializer):
 
         if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, identifier):
             raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
+
+        max_length = get_project_identifier_max_length()
+        if len(identifier) > max_length:
+            raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_EXCEEDS_MAX_LENGTH")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 

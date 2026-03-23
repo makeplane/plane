@@ -18,7 +18,7 @@ import { useParams } from "next/navigation";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IGanttBlock } from "@plane/types";
-import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
+import { findTotalDaysInRange, renderFormattedDate, truncateProjectIdentifierForDisplay } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -95,7 +95,7 @@ export const ProjectTimelineSidebarBlock = observer(function ProjectTimelineSide
     <>
       <div className="relative flex h-full w-full items-center gap-2 py-3">
         <div className="flex-shrink-0 text-11 text-tertiary mr-3 w-[40px]">
-          {projectDetails.identifier} {projectDetails?.sequence_id}
+          {truncateProjectIdentifierForDisplay(projectDetails.identifier)} {projectDetails?.sequence_id}
         </div>
         <Logo logo={projectDetails.logo_props} size={16} />
         <Tooltip tooltipContent={projectDetails?.name} isMobile={isMobile}>

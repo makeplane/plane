@@ -42,7 +42,12 @@ import {
 } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueActivity } from "@plane/types";
-import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
+import {
+  capitalizeFirstLetter,
+  formatProjectWorkItemIdentifierForDisplay,
+  generateWorkItemLink,
+  renderFormattedDate,
+} from "@plane/utils";
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -74,7 +79,12 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline items-center gap-1 font-medium text-primary hover:underline"
         >
-          <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
+          <span className="whitespace-nowrap">
+            {formatProjectWorkItemIdentifierForDisplay(
+              activity.project_detail.identifier,
+              activity.issue_detail.sequence_id
+            )}
+          </span>{" "}
           <span className="font-regular break-all">{activity.issue_detail?.name}</span>
         </a>
       ) : (

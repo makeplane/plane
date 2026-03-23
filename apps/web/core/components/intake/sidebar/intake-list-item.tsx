@@ -20,7 +20,7 @@ import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/propel/avatar";
 import { Row } from "@plane/ui";
-import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+import { cn, renderFormattedDate, getFileURL, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
@@ -79,7 +79,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
           <div className="space-y-1">
             <div className="relative flex items-center justify-between gap-2">
               <div className="flex-shrink-0 text-11 font-medium text-tertiary">
-                {projectIdentifier}-{issue.sequence_id}
+                {formatProjectWorkItemIdentifierForDisplay(projectIdentifier || "", issue.sequence_id)}
               </div>
               <div className="flex items-center gap-2">
                 {inboxIssue.source && <InboxSourcePill source={inboxIssue.source} />}

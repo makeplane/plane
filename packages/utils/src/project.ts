@@ -58,6 +58,38 @@ export const orderJoinedProjects = (
 export const projectIdentifierSanitizer = (identifier: string): string =>
   identifier.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
 
+export const PROJECT_IDENTIFIER_DISPLAY_LENGTH = 10;
+
+export const truncateProjectIdentifierForDisplay = (
+  identifier: string,
+  maxLength: number = PROJECT_IDENTIFIER_DISPLAY_LENGTH
+): string => {
+  if (!identifier) return "";
+  if (identifier.length <= maxLength) return identifier;
+  if (maxLength <= 3) return identifier.slice(0, maxLength);
+
+  return `${identifier.slice(0, maxLength - 3)}...`;
+};
+
+export const formatProjectIdentifierForDisplay = (identifier: string): string => {
+  if (!identifier) return "";
+
+  const [projectIdentifier, ...rest] = identifier.split("-");
+  const truncatedProjectIdentifier = truncateProjectIdentifierForDisplay(projectIdentifier);
+
+  return rest.length > 0 ? `${truncatedProjectIdentifier}-${rest.join("-")}` : truncatedProjectIdentifier;
+};
+
+export const formatProjectWorkItemIdentifierForDisplay = (
+  projectIdentifier: string,
+  sequenceId?: string | number | null
+): string => {
+  if (sequenceId === undefined || sequenceId === null || sequenceId === "")
+    return truncateProjectIdentifierForDisplay(projectIdentifier);
+
+  return `${truncateProjectIdentifierForDisplay(projectIdentifier)}-${sequenceId}`;
+};
+
 /**
  * @description filters projects based on the filter
  * @param {TProject} project

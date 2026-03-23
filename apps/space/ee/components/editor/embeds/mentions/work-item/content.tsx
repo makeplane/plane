@@ -14,6 +14,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import type { TEditorWorkItemMention } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // local imports
 import { EditorWorkItemMentionLogo } from "./logo";
 
@@ -35,7 +36,7 @@ export const EditorWorkItemMentionContent = observer(function EditorWorkItemMent
         stateGroup={workItemDetails.state__group}
       />
       <span className="text-tertiary">
-        {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
+        {formatProjectWorkItemIdentifierForDisplay(workItemDetails.project__identifier, workItemDetails.sequence_id)}
       </span>
       <span className="text-secondary">{trimmedName}</span>
     </span>

@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import { ArrowRightLeft } from "lucide-react";
 import { EpicIcon } from "@plane/propel/icons";
 import type { TIssueActivity } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
@@ -54,7 +55,12 @@ export const EpicActivity = observer(function EpicActivity(props: TEpicActivityP
         ) : (
           <>
             converted{" "}
-            <span className="text-primary font-medium">{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+            <span className="text-primary font-medium">
+              {formatProjectWorkItemIdentifierForDisplay(
+                activity?.project_detail?.identifier || "",
+                activity?.issue_detail?.sequence_id
+              )}
+            </span>{" "}
             to work item.
           </>
         )}

@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useModule } from "@/hooks/store/use-module";
@@ -115,7 +116,7 @@ export const useAIAssistant = (params: Record<string, string | undefined>) => {
         id: issue.id,
         type: "issues",
         title: issue.name,
-        subTitle: `${projectIdentifier}-${sequence_id}`,
+        subTitle: formatProjectWorkItemIdentifierForDisplay(projectIdentifier, sequence_id),
       };
     }
     case "cycle": {

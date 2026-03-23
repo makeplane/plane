@@ -11,10 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo } from "react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, formatProjectIdentifierForDisplay } from "@plane/utils";
 
 const SIZE_MAP: Record<TIssueIdentifierSize, string> = {
   xs: "text-caption-sm-regular",
@@ -34,6 +35,24 @@ const VARIANT_MAP: Record<TIdentifierTextVariant, string> = {
 
 export function IdentifierText(props: TIdentifierTextProps) {
   const { identifier, enableClickToCopyIdentifier = false, size = "lg", variant = "default" } = props;
+  const displayIdentifier = formatProjectIdentifierForDisplay(identifier);
+  const isIdentifierTruncated = displayIdentifier !== identifier;
+  const tooltipContent = useMemo(() => {
+    if (isIdentifierTruncated && enableClickToCopyIdentifier) {
+      return (
+        <div className="space-y-1">
+          <div>{identifier}</div>
+          <div className="text-tertiary">Click to copy</div>
+        </div>
+      );
+    } else if (isIdentifierTruncated) {
+      return identifier;
+    } else if (enableClickToCopyIdentifier) {
+      return "Click to copy";
+    } else {
+      return undefined;
+    }
+  }, [isIdentifierTruncated, enableClickToCopyIdentifier, identifier]);
   // handlers
   const handleCopyIssueIdentifier = () => {
     if (enableClickToCopyIdentifier) {
@@ -56,7 +75,7 @@ export function IdentifierText(props: TIdentifierTextProps) {
   const variantClassName = VARIANT_MAP[variant];
 
   return (
-    <Tooltip tooltipContent="Click to copy" disabled={!enableClickToCopyIdentifier} position="top">
+    <Tooltip tooltipContent={tooltipContent} disabled={!tooltipContent} position="top">
       <button
         type="button"
         className={cn("font-medium whitespace-nowrap text-tertiary text-12", textSizeClassName, variantClassName, {
@@ -65,7 +84,7 @@ export function IdentifierText(props: TIdentifierTextProps) {
         onClick={handleCopyIssueIdentifier}
         disabled={!enableClickToCopyIdentifier}
       >
-        {identifier}
+        {displayIdentifier}
       </button>
     </Tooltip>
   );

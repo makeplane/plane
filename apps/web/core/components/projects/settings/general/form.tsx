@@ -14,7 +14,7 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { NETWORK_CHOICES } from "@plane/constants";
+import { DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH, NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
@@ -24,7 +24,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
 import { CustomSelect, Input, TextArea } from "@plane/ui";
-import { renderFormattedDate } from "@plane/utils";
+import { projectIdentifierSanitizer, renderFormattedDate } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -33,6 +33,7 @@ import { ProjectNetworkIcon } from "@/components/projects/common/project-network
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -53,8 +54,11 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
+  const { config } = useInstance();
   const { updateProject } = useProject();
   const { isMobile } = usePlatformOS();
+  // derived values
+  const projectIdentifierMaxLength = config?.project_identifier_max_length ?? DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH;
 
   // form info
   const {
@@ -89,8 +93,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
   // handlers
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
-    const formattedValue = alphanumericValue.toUpperCase();
+    const formattedValue = projectIdentifierSanitizer(value).toUpperCase();
     setValue("identifier", formattedValue);
   };
 
@@ -187,7 +190,10 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug, payload.identifier ?? "")
         .then(async (res) => {
-          if (res.exists) setError("identifier", { message: t("common.identifier_already_exists") });
+          if (res.exists)
+            setError("identifier", {
+              message: t("common.identifier_already_exists"),
+            });
           else await handleUpdateChange(payload);
         });
     else await handleUpdateChange(payload);
@@ -334,8 +340,8 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     message: t("project_id_min_char"),
                   },
                   maxLength: {
-                    value: 10,
-                    message: t("project_id_max_char"),
+                    value: projectIdentifierMaxLength,
+                    message: t("project_id_max_char", { max: projectIdentifierMaxLength }),
                   },
                 }}
                 render={({ field: { value, ref } }) => (
@@ -348,7 +354,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     ref={ref}
                     hasError={Boolean(errors.identifier)}
                     placeholder={t("project_settings.general.enter_project_id")}
-                    className="w-full font-medium"
+                    className="w-full font-medium pr-6 truncate"
                     disabled={!isAdmin}
                   />
                 )}
@@ -415,7 +421,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             <Controller
               name="timezone"
               control={control}
-              rules={{ required: t("project_settings.general.please_select_a_timezone") }}
+              rules={{
+                required: t("project_settings.general.please_select_a_timezone"),
+              }}
               render={({ field: { value, onChange } }) => (
                 <>
                   <TimezoneSelect

@@ -24,6 +24,7 @@ import { Avatar } from "@plane/propel/avatar";
 import {
   calculateTimeAgo,
   cn,
+  formatProjectWorkItemIdentifierForDisplay,
   formatDuration,
   getFileURL,
   renderFormattedDate,
@@ -80,7 +81,7 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
             </span>
             <div>
               <p className="font-semibold">
-                {projectIdentifier}-{runDetails?.work_item_sequence_id}
+                {formatProjectWorkItemIdentifierForDisplay(projectIdentifier || "", runDetails?.work_item_sequence_id)}
               </p>
               <p className="flex items-center gap-0.5 text-secondary">
                 {renderFormattedTime(activityDetails.created_at ?? "")}

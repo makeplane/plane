@@ -18,6 +18,7 @@ import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
+import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // constants
@@ -86,7 +87,7 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
         <>
           Are you sure you want to delete work item{" "}
           <span className="break-words font-medium text-primary">
-            {projectDetails?.identifier}-{data?.sequence_id}
+            {formatProjectWorkItemIdentifierForDisplay(projectDetails?.identifier || "", data?.sequence_id)}
           </span>
           {""}? The work item will only be deleted from the intake and this action cannot be undone.
         </>
