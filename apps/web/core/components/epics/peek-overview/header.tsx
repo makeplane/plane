@@ -26,12 +26,13 @@ import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConver
 import { CustomSelect } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
+import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
@@ -70,6 +71,7 @@ export type PeekOverviewHeaderProps = {
   disabled: boolean;
   embedIssue: boolean;
   toggleEditEpicModal: (value: boolean) => void;
+  toggleVotingMembersEpicModal: (value: boolean) => void;
   toggleDeleteEpicModal: (value: boolean) => void;
   toggleArchiveEpicModal: (value: boolean) => void;
   toggleDuplicateEpicModal: (value: boolean) => void;
@@ -86,6 +88,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     issueId,
     isArchived,
     toggleEditEpicModal,
+    toggleVotingMembersEpicModal,
     toggleDeleteEpicModal,
     toggleArchiveEpicModal,
     toggleDuplicateEpicModal,
@@ -97,6 +100,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
+  const { data: currentUser } = useUser();
   const {
     issue: { getIssueById, archiveIssue },
     setPeekIssue,
@@ -224,6 +228,16 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             typeId={issue.type_id}
             currentStateId={issue.state_id}
             workspaceSlug={workspaceSlug}
+          />
+        )}
+        {currentUser && (
+          <IssueVotes
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            currentUser={currentUser}
+            disabled={isArchived}
+            toggleVotingMembersModal={toggleVotingMembersEpicModal}
           />
         )}
         {!isArchived && (

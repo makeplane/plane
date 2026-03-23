@@ -17,7 +17,6 @@ import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -53,14 +52,6 @@ export const EpicInfoActionItems = observer(function EpicInfoActionItems(props: 
     <div className="shrink-0 w-full flex items-center justify-between gap-2 mt-4">
       {currentUser && (
         <div className="flex items-center gap-2">
-          <IssueVotes
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={epicId}
-            currentUser={currentUser}
-            disabled={disabled}
-          />
-
           <IssueReaction
             workspaceSlug={workspaceSlug}
             projectId={projectId}

@@ -26,11 +26,12 @@ import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // helpers
 import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
+import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -52,6 +53,7 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
+  const { data: currentUser } = useUser();
   const { getProjectById, loader } = useProject();
   const {
     issues: { restoreIssue },
@@ -152,6 +154,15 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
             typeId={issueDetails.type_id}
             currentStateId={issueDetails.state_id}
             workspaceSlug={workspaceSlug}
+          />
+        )}
+        {epicId && projectId && currentUser && (
+          <IssueVotes
+            workspaceSlug={workspaceSlug}
+            projectId={projectId?.toString()}
+            issueId={epicId}
+            currentUser={currentUser}
+            disabled={!!issueDetails?.archived_at}
           />
         )}
         {epicId && projectId && !issueDetails?.archived_at && (

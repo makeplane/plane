@@ -81,6 +81,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
+  const [isVotingMembersModalOpen, setIsVotingMembersModalOpen] = useState(false);
   const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
   const [isArchiveIssueModalOpen, setIsArchiveIssueModalOpen] = useState(false);
   const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
@@ -103,13 +104,18 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
   };
 
+  const toggleVotingMembersModal = (value: boolean) => setIsVotingMembersModalOpen(value);
   const toggleDeleteIssueModal = (value: boolean) => setIsDeleteIssueModalOpen(value);
   const toggleArchiveIssueModal = (value: boolean) => setIsArchiveIssueModalOpen(value);
   const toggleDuplicateIssueModal = (value: boolean) => setIsDuplicateIssueModalOpen(value);
   const toggleEditIssueModal = (value: boolean) => setIsEditIssueModalOpen(value);
 
   const isAnyLocalModalOpen =
-    isDeleteIssueModalOpen || isArchiveIssueModalOpen || isDuplicateIssueModalOpen || isEditIssueModalOpen;
+    isVotingMembersModalOpen ||
+    isDeleteIssueModalOpen ||
+    isArchiveIssueModalOpen ||
+    isDuplicateIssueModalOpen ||
+    isEditIssueModalOpen;
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
@@ -190,6 +196,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 peekMode={peekMode}
                 setPeekMode={(value) => setPeekMode(value)}
                 removeRoutePeekId={removeRoutePeekId}
+                toggleVotingMembersModal={toggleVotingMembersModal}
                 toggleDeleteIssueModal={toggleDeleteIssueModal}
                 toggleArchiveIssueModal={toggleArchiveIssueModal}
                 toggleDuplicateIssueModal={toggleDuplicateIssueModal}

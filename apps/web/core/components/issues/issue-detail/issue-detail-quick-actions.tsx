@@ -34,6 +34,7 @@ import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { WorkItemApproveRejectActions } from "./approve-reject-actions";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { IssueSubscription } from "./subscription";
+import { IssueVotes } from "./issue-votes";
 
 type Props = {
   workspaceSlug: string;
@@ -138,6 +139,15 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
               typeId={issue.type_id}
               currentStateId={issue.state_id}
               workspaceSlug={workspaceSlug}
+            />
+          )}
+          {currentUser && (
+            <IssueVotes
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              currentUser={currentUser}
+              disabled={!!issue?.archived_at}
             />
           )}
           {currentUser && !issue?.archived_at && (

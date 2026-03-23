@@ -11,15 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { useState } from "react";
 import { observer } from "mobx-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 // plane imports
+import { cn } from "@plane/propel/utils";
 import type { IUser } from "@plane/types";
-import { Button } from "@plane/propel/button";
-import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useIssueVotes } from "@/hooks/use-issue-votes";
-import type { IssueVote } from "@/hooks/use-issue-votes";
+// local imports
+import { WorkItemVotedMembersModal } from "./issue-votes-members-modal";
+
+export type TVotes = "upVotes" | "downVotes";
 
 type IssueVotesProps = {
   workspaceSlug: string;
@@ -27,37 +30,15 @@ type IssueVotesProps = {
   issueId: string;
   currentUser: IUser;
   disabled?: boolean;
-};
-
-type WorkItemVotedMembersProps = {
-  votes: IssueVote[];
-  message: string;
-};
-
-const VOTES_LIMIT = 10;
-
-const WorkItemVotedMembers = (props: WorkItemVotedMembersProps) => {
-  const { votes, message } = props;
-  return (
-    <div>
-      {votes.length > 0 ? (
-        <>
-          {votes
-            .map((r) => r.actor_detail?.display_name)
-            .splice(0, VOTES_LIMIT)
-            .join(", ")}
-          {votes.length > VOTES_LIMIT && " and " + (votes.length - VOTES_LIMIT) + " more"}
-        </>
-      ) : (
-        <>{message}</>
-      )}
-    </div>
-  );
+  toggleVotingMembersModal?: (value: boolean) => void;
 };
 
 export const IssueVotes = observer(function IssueVotes(props: IssueVotesProps) {
-  const { workspaceSlug, projectId, issueId, currentUser, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, currentUser, disabled = false, toggleVotingMembersModal } = props;
   const userId = currentUser.id;
+
+  const [isModalOpen, setIsModalOpen] = useState<TVotes | undefined>(undefined);
+
   // Fetching votes
   const {
     loading: isSubmitting,
@@ -71,33 +52,84 @@ export const IssueVotes = observer(function IssueVotes(props: IssueVotesProps) {
   const isUpVotedByUser = upVotes.some((vote) => vote.actor_detail?.id === userId);
   const isDownVotedByUser = downVotes.some((vote) => vote.actor_detail?.id === userId);
 
+  const isDisabled = isSubmitting || disabled;
+
+  const openVotingMembersModal = (voteType: TVotes) => {
+    setIsModalOpen(voteType);
+    if (toggleVotingMembersModal) toggleVotingMembersModal(true);
+  };
+
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 text-body-xs-medium text-secondary pr-1">
+      <WorkItemVotedMembersModal
+        isOpen={!!isModalOpen}
+        handleClose={() => {
+          setIsModalOpen(undefined);
+          if (toggleVotingMembersModal) toggleVotingMembersModal(false);
+        }}
+        upVotes={upVotes}
+        downVotes={downVotes}
+        defaultTab={isModalOpen}
+      />
+
       {/* upvote button */}
-      <Tooltip tooltipContent={<WorkItemVotedMembers votes={upVotes} message="No upvotes yet" />}>
-        <Button
-          prependIcon={<ArrowUp />}
-          disabled={isSubmitting || disabled}
-          onClick={() => handleVote(1)}
-          variant={isUpVotedByUser ? "success-outline" : "secondary"}
-          size="sm"
+      <div className="flex items-center gap-1.5">
+        <span
+          aria-label="Upvote"
+          aria-disabled={isDisabled}
+          tabIndex={0}
+          role="button"
+          className={cn(
+            "flex items-center justify-center shrink-0 size-6 rounded-full cursor-pointer",
+            isUpVotedByUser ? "border-none text-label-indigo-text bg-label-indigo-bg" : "border-inverse bg-layer-3"
+          )}
+          onClick={() => !isDisabled && handleVote(1)}
+          onKeyDown={(e) => e.key === "Enter" && !isDisabled && handleVote(1)}
+        >
+          <ArrowUp className="size-4" />
+        </span>
+
+        <span
+          aria-label="Upvote members"
+          tabIndex={0}
+          role="button"
+          className={cn("cursor-pointer", isUpVotedByUser && "text-label-indigo-text")}
+          onClick={() => openVotingMembersModal("upVotes")}
+          onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("upVotes")}
         >
           {upVotesCount}
-        </Button>
-      </Tooltip>
+        </span>
+      </div>
 
       {/* downvote button */}
-      <Tooltip tooltipContent={<WorkItemVotedMembers votes={downVotes} message="No downvotes yet" />}>
-        <Button
-          prependIcon={<ArrowDown />}
-          disabled={isSubmitting || disabled}
-          onClick={() => handleVote(-1)}
-          variant={isDownVotedByUser ? "error-outline" : "secondary"}
-          size="sm"
+      <div className="flex items-center gap-1.5">
+        <span
+          aria-label="Downvote"
+          aria-disabled={isDisabled}
+          tabIndex={0}
+          role="button"
+          className={cn(
+            "flex items-center justify-center shrink-0 size-6 rounded-full cursor-pointer",
+            isDownVotedByUser ? "border-none text-label-crimson-text bg-label-crimson-bg" : "border-inverse bg-layer-3"
+          )}
+          onClick={() => !isDisabled && handleVote(-1)}
+          onKeyDown={(e) => e.key === "Enter" && !isDisabled && handleVote(-1)}
+        >
+          <ArrowDown className="size-4" />
+        </span>
+
+        <span
+          aria-label="Downvote members"
+          aria-disabled={isDisabled}
+          tabIndex={0}
+          role="button"
+          className={cn("cursor-pointer", isDownVotedByUser && "text-label-crimson-text")}
+          onClick={() => openVotingMembersModal("downVotes")}
+          onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("downVotes")}
         >
           {downVotesCount}
-        </Button>
-      </Tooltip>
+        </span>
+      </div>
     </div>
   );
 });

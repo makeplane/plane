@@ -39,7 +39,6 @@ import { WorkItemVersionService } from "@/services/issue";
 // local components
 import type { TIssueOperations } from "../issue-detail";
 import { IssueParentDetail } from "../issue-detail/parent";
-import { IssueVotes } from "../issue-detail/issue-votes";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
 // services init
@@ -164,14 +163,6 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       <div className="flex items-center justify-between gap-2 mt-4">
         {currentUser && (
           <div className="flex items-center gap-2">
-            <IssueVotes
-              workspaceSlug={workspaceSlug}
-              projectId={issue.project_id}
-              issueId={issueId}
-              currentUser={currentUser}
-              disabled={isArchived}
-            />
-
             <IssueReaction
               workspaceSlug={workspaceSlug}
               projectId={issue.project_id}

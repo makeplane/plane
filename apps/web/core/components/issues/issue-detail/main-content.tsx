@@ -41,7 +41,6 @@ import { PeekOverviewProperties } from "../peek-overview/properties";
 import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
-import { IssueVotes } from "./issue-votes";
 import { IssueReaction } from "./reactions";
 import type { TIssueOperations } from "./root";
 // services init
@@ -179,14 +178,6 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
         <div className="flex items-center justify-between gap-2 mt-4">
           {currentUser && (
             <div className="flex items-center gap-2">
-              <IssueVotes
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                currentUser={currentUser}
-                disabled={isArchived}
-              />
-
               <IssueReaction
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}

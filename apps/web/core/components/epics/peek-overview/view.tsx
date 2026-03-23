@@ -65,6 +65,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [votingMembersEpicModal, setVotingMembersEpicModal] = useState(false);
   const [deleteEpicModal, setDeleteEpicModal] = useState(false);
   const [archiveEpicModal, setArchiveEpicModal] = useState(false);
   const [editEpicModal, setEditEpicModal] = useState(false);
@@ -102,6 +103,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
         if (
           !isAnyModalOpen &&
           !isAnyIssueModalOpen &&
+          !votingMembersEpicModal &&
           !deleteEpicModal &&
           !archiveEpicModal &&
           !editEpicModal &&
@@ -152,6 +154,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
   );
 
   const toggleEditEpicModal = (value: boolean) => setEditEpicModal(value);
+  const toggleVotingMembersEpicModal = (value: boolean) => setVotingMembersEpicModal(value);
   const toggleDeleteEpicModal = (value: boolean) => setDeleteEpicModal(value);
   const toggleArchiveEpicModal = (value: boolean) => setArchiveEpicModal(value);
   const toggleDuplicateEpicModal = (value: boolean) => setDuplicateEpicModal(value);
@@ -186,6 +189,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
                 setPeekMode={(value) => setPeekMode(value)}
                 removeRoutePeekId={removeRoutePeekId}
                 toggleEditEpicModal={toggleEditEpicModal}
+                toggleVotingMembersEpicModal={toggleVotingMembersEpicModal}
                 toggleDeleteEpicModal={toggleDeleteEpicModal}
                 toggleArchiveEpicModal={toggleArchiveEpicModal}
                 toggleDuplicateEpicModal={toggleDuplicateEpicModal}

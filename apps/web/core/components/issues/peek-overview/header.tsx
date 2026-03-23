@@ -41,6 +41,7 @@ import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
 import { WorkItemApproveRejectActions } from "../issue-detail/approve-reject-actions";
+import { IssueVotes } from "../issue-detail/issue-votes";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -72,6 +73,7 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   embedIssue: boolean;
+  toggleVotingMembersModal: (value: boolean) => void;
   toggleDeleteIssueModal: (value: boolean) => void;
   toggleArchiveIssueModal: (value: boolean) => void;
   toggleDuplicateIssueModal: (value: boolean) => void;
@@ -91,6 +93,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     disabled,
     embedIssue = false,
     removeRoutePeekId,
+    toggleVotingMembersModal,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
     toggleDuplicateIssueModal,
@@ -208,6 +211,16 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               typeId={issueDetails?.type_id}
               currentStateId={issueDetails?.state_id}
               workspaceSlug={workspaceSlug}
+            />
+          )}
+          {currentUser && (
+            <IssueVotes
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              currentUser={currentUser}
+              disabled={isArchived}
+              toggleVotingMembersModal={toggleVotingMembersModal}
             />
           )}
           {currentUser && !isArchived && (
