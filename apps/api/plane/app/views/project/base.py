@@ -264,9 +264,9 @@ class ProjectViewSet(BaseViewSet):
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=(projects),
-                on_results=lambda projects: ProjectListSerializer(
-                    projects, many=True, context={"request": request, "slug": slug}
-                ).data,
+                on_results=lambda projects: (
+                    ProjectListSerializer(projects, many=True, context={"request": request, "slug": slug}).data
+                ),
             )
 
         projects = ProjectListSerializer(
@@ -919,14 +919,11 @@ class DeployBoardViewSet(BaseViewSet):
         reactions = request.data.get("is_reactions_enabled", False)
         intake = request.data.get("intake", None)
         votes = request.data.get("is_votes_enabled", False)
-        views = request.data.get(
-            "views",
+        view_props = request.data.get(
+            "view_props",
             {
                 "list": True,
                 "kanban": True,
-                "calendar": True,
-                "gantt": True,
-                "spreadsheet": True,
             },
         )
 
@@ -934,7 +931,7 @@ class DeployBoardViewSet(BaseViewSet):
             entity_name="project", entity_identifier=project_id, project_id=project_id
         )
         project_deploy_board.intake = intake
-        project_deploy_board.view_props = views
+        project_deploy_board.view_props = view_props
         project_deploy_board.is_votes_enabled = votes
         project_deploy_board.is_comments_enabled = comments
         project_deploy_board.is_reactions_enabled = reactions
