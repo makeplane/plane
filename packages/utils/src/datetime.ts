@@ -166,6 +166,21 @@ export const isDateTimePast = (
   return dateTime.getTime() <= Date.now();
 };
 
+export const isDateTimePastWithOverrides = ({
+  currentDateValue,
+  currentTimeValue,
+  nextDateValue,
+  nextTimeValue,
+}: {
+  currentDateValue: string | Date | undefined | null;
+  currentTimeValue: string | Date | undefined | null;
+  nextDateValue?: string | Date | undefined | null;
+  nextTimeValue?: string | Date | undefined | null;
+}): boolean =>
+  isDateTimePast(
+    nextDateValue !== undefined ? nextDateValue : currentDateValue,
+    nextTimeValue !== undefined ? nextTimeValue : currentTimeValue
+  );
 
 // Date Difference Helpers
 /**

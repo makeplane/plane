@@ -7,10 +7,11 @@ import { Signal, Tag, CalendarClock, User, UserCircle2, Handshake, Volleyball, C
 
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 
 // utils
-import { isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
+import { isDateTimePast, isDateTimePastWithOverrides, renderFormattedPayloadDate } from "@plane/utils";
 
 // components
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
@@ -116,9 +117,24 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleDateTimeUpdate = useCallback(
     async (data: Partial<TIssue>) => {
       if (isDateTimeLocked) return;
+      if (
+        isDateTimePastWithOverrides({
+          currentDateValue: issue.start_date,
+          currentTimeValue: issue.start_time,
+          nextDateValue: data.start_date,
+          nextTimeValue: data.start_time,
+        })
+      ) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: "Event date and time cannot be earlier than the current time.",
+        });
+        return;
+      }
       await handlePropertyUpdate(data);
     },
-    [handlePropertyUpdate, isDateTimeLocked]
+    [handlePropertyUpdate, isDateTimeLocked, issue.start_date, issue.start_time, t]
   );
 
   return (

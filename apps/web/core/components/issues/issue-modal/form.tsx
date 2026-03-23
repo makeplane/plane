@@ -23,6 +23,7 @@ import {
   getTextContent,
   getChangedIssuefields,
   getTabIndex,
+  isDateTimePast,
 } from "@plane/utils";
 // components
 import {
@@ -186,7 +187,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   useEffect(() => {
     if (data) {
       console.log("Resetting form with data:", data);
-      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data});
+      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...dataResetProperties]);
@@ -237,6 +238,18 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     )
       return;
 
+    const shouldValidateStartDateTime =
+      !is_draft_issue && (!data?.id || !!dirtyFields.start_date || !!dirtyFields.start_time);
+
+    if (shouldValidateStartDateTime && isDateTimePast(formData.start_date, formData.start_time)) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: "Event date and time cannot be earlier than the current time.",
+      });
+      return;
+    }
+
     const submitData = !data?.id
       ? formData
       : {
@@ -274,7 +287,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         console.error(error);
       });
   };
-
 
   const handleMoveToProjects = async () => {
     if (!data?.id || !data?.project_id || !data) return;
@@ -499,13 +511,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   projectId={projectId}
                   workspaceSlug={workspaceSlug?.toString()}
                   selectedParentIssue={selectedParentIssue}
-                  startDate={watch("start_date")}
-                  startTime={watch("start_time")}
-                  targetDate={watch("target_date")}
+                  initialStartDate={data?.start_date ?? null}
+                  initialStartTime={data?.start_time ?? null}
                   Sport={watch("sport")}
                   Level={watch("level")}
                   Program={watch("program")}
-                  Year= {watch("year")}
+                  Year={watch("year")}
                   Category={watch("category")}
                   parentId={watch("parent_id")}
                   isDraft={isDraft}

@@ -43,6 +43,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.issue_datetime import is_issue_start_datetime_in_past
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -124,6 +125,15 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def validate(self, attrs):
+        should_validate_start_datetime = self.instance is None or "start_date" in attrs or "start_time" in attrs
+        start_date = attrs.get("start_date", getattr(self.instance, "start_date", None))
+        start_time = attrs.get("start_time", getattr(self.instance, "start_time", None))
+
+        if should_validate_start_datetime and is_issue_start_datetime_in_past(start_date, start_time):
+            raise serializers.ValidationError(
+                {"start_time": "Event date and time cannot be earlier than the current time."}
+            )
+
         if (
             attrs.get("start_date", None) is not None
             and attrs.get("target_date", None) is not None

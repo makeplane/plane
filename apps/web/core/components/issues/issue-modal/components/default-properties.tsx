@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 // import { CustomMenu } from "@plane/ui";
-import { getDate, getTabIndex, isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
+import { getTabIndex, isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
 // components
 // import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
@@ -23,7 +23,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { ProgramDropdown } from "@/components/dropdowns/program-property";
- // import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+// import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 
 import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
@@ -40,16 +40,14 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
-
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
   id: string | undefined;
   projectId: string | null;
   workspaceSlug: string;
   selectedParentIssue: ISearchIssueResponse | null;
-  startDate: string | null;
-  startTime: string | null;
-  targetDate: string | null;
+  initialStartDate: string | null;
+  initialStartTime: string | null;
   Level: string | null;
   Sport: string | null;
   Program: string | null;
@@ -73,9 +71,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     projectId,
     workspaceSlug,
     selectedParentIssue,
-    startDate,
-    startTime,
-    targetDate,
+    initialStartDate,
+    initialStartTime,
     parentId,
     isDraft,
     handleFormChange,
@@ -97,15 +94,10 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   const canCreateLabel =
     projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
-  const minDate = getDate(startDate);
-  // const minDate = getDate(startDate);
-  minDate?.setDate(minDate.getDate());
+  const minDate = new Date();
+  minDate.setHours(0, 0, 0, 0);
 
-  const maxDate = new Date();
-  // const maxDate = getDate(targetDate);
-  maxDate?.setDate(maxDate.getDate());
-  const isDateTimeLocked = isDateTimePast(startDate, startTime);
-
+  const isDateTimeLocked = !!id && !isDraft && isDateTimePast(initialStartDate, initialStartTime);
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -166,21 +158,21 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
       />
 
       <Controller
-       control={control}
-       name="category"
-       render={({ field: {value, onChange}}) => (
-        <div className="h-7">
-          <CategoryDropdown
-             value={value}
-             onChange={(category) => {
-              onChange(category);
-              handleFormChange();
-             }}
-             buttonVariant="border-with-text"
-             placeholder={t("category_field")}
-          />
-        </div>
-       )}
+        control={control}
+        name="category"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <CategoryDropdown
+              value={value}
+              onChange={(category) => {
+                onChange(category);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+              placeholder={t("category_field")}
+            />
+          </div>
+        )}
       />
 
       <Controller

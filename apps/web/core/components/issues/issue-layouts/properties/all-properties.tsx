@@ -6,12 +6,24 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Link, Paperclip, Clock, SignalIcon, Volleyball, Calendar, User, Tag } from "lucide-react";
+import {
+  CalendarCheck2,
+  CalendarClock,
+  Link,
+  Paperclip,
+  Clock,
+  SignalIcon,
+  Volleyball,
+  Calendar,
+  User,
+  Tag,
+} from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { ViewsIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -20,6 +32,7 @@ import {
   getDate,
   generateWorkItemLink,
   isDateTimePast,
+  isDateTimePastWithOverrides,
   renderFormattedPayloadDate,
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
@@ -243,37 +256,66 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   const handleStartDate = (date: Date | null) => {
     if (isDateTimeLocked) return;
-    handleEventPropertyUpdate({ start_date: date ? renderFormattedPayloadDate(date) : null });
+    const nextStartDate = date ? renderFormattedPayloadDate(date) : null;
+
+    if (
+      isDateTimePastWithOverrides({
+        currentDateValue: issue.start_date,
+        currentTimeValue: issue.start_time,
+        nextDateValue: nextStartDate,
+      })
+    ) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: "Event date and time cannot be earlier than the current time.",
+      });
+      return;
+    }
+    handleEventPropertyUpdate({ start_date: nextStartDate });
   };
 
   const handleStartTime = (time: string | null) => {
     if (isDateTimeLocked) return;
+
+    if (
+      isDateTimePastWithOverrides({
+        currentDateValue: issue.start_date,
+        currentTimeValue: issue.start_time,
+        nextTimeValue: time,
+      })
+    ) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: "Event date and time cannot be earlier than the current time.",
+      });
+      return;
+    }
+
     handleEventPropertyUpdate({
       start_time: time ?? null,
     });
   };
 
-
   const handleSport = (sport: string | null) => {
     handleEventPropertyUpdate({ sport: sport ?? null });
-  }
+  };
   const handleYear = (year: string | null) => {
     handleEventPropertyUpdate({ year: year ?? null });
-  }
-
+  };
 
   const handleLevel = (level: string | null) => {
     handleEventPropertyUpdate({ level: level ?? null });
-  }
-
+  };
 
   const handleCategory = (category: string | null) => {
     handleEventPropertyUpdate({ category: category ?? null });
-  }
+  };
 
-   const handleProgram = (program: string | null) => {
+  const handleProgram = (program: string | null) => {
     handleEventPropertyUpdate({ program: program ?? null });
-  }
+  };
 
   const handleTargetDate = (date: Date | null) => {
     if (updateIssue)
@@ -349,22 +391,21 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* Season field */}
-       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="year">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="year">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <YearRangeDropdown
-             value={issue.year ?? null}
-             onChange={handleYear}
-             placeholder={t("year_field")}
-             icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
-             buttonVariant={issue?.year ? "border-with-text": "border-without-text"}
-             clearIconClassName="!text-custom-text-100"
-             disabled={isReadOnly}
-             renderByDefault={isMobile}
-             showTooltip
-              />
+            value={issue.year ?? null}
+            onChange={handleYear}
+            placeholder={t("year_field")}
+            icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue?.year ? "border-with-text" : "border-without-text"}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
         </div>
       </WithDisplayPropertiesHOC>
-
 
       {/* priority */}
       {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
@@ -415,10 +456,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC> */}
 
       {/* start date */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        displayPropertyKey="start_date"
-      >
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue.start_date ?? null}
@@ -436,95 +474,86 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* start time */}
-  <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_time">
-  <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-    <TimeDropdown
-      value={issue.start_time ?? null}
-      onChange={handleStartTime}
-      placeholder={t("starting_time")}
-      icon={<Clock className="h-3 w-3 flex-shrink-0" />}
-      buttonVariant={issue.start_time ? "border-with-text" : "border-without-text"}
-      clearIconClassName="!text-custom-text-100"
-      disabled={isDateTimeLocked}
-      renderByDefault={isMobile}
-      showTooltip
-    />
-  </div>
-</WithDisplayPropertiesHOC>
-        {/* Level */}
-<WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_time">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <TimeDropdown
+            value={issue.start_time ?? null}
+            onChange={handleStartTime}
+            placeholder={t("starting_time")}
+            icon={<Clock className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.start_time ? "border-with-text" : "border-without-text"}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isDateTimeLocked}
+            renderByDefault={isMobile}
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+      {/* Level */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <LevelDropdown
-             value={issue.level ?? null}
-             onChange={handleLevel}
-             placeholder={t("level_field")}
-             icon={<SignalIcon className="h-3 w-3 flex-shrink-0" />}
-             buttonVariant={issue?.level ? "border-with-text": "border-without-text"}
-             clearIconClassName="!text-custom-text-100"
-             disabled={isReadOnly}
-             renderByDefault={isMobile}
-             showTooltip
-              />
+            value={issue.level ?? null}
+            onChange={handleLevel}
+            placeholder={t("level_field")}
+            icon={<SignalIcon className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue?.level ? "border-with-text" : "border-without-text"}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
         </div>
       </WithDisplayPropertiesHOC>
 
-
-
-<WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="category">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="category">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <CategoryDropdown
-             value={issue.category ?? null}
-             onChange={handleCategory}
-             placeholder={t("category_field")}
-             icon={<Tag className="h-3 w-3 flex-shrink-0" />}
-             buttonVariant={issue?.category ? "border-with-text": "border-without-text"}
-             clearIconClassName="!text-custom-text-100"
-             disabled={isReadOnly}
-             renderByDefault={isMobile}
-             showTooltip
-              />
+            value={issue.category ?? null}
+            onChange={handleCategory}
+            placeholder={t("category_field")}
+            icon={<Tag className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue?.category ? "border-with-text" : "border-without-text"}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
         </div>
       </WithDisplayPropertiesHOC>
-
-
-
-
-
 
       {/* sport field */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="sport">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <SportDropdown
-             value={issue.sport ?? null}
-             onChange={handleSport}
-             placeholder={t("sport_field")}
-             icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
-             buttonVariant={issue?.sport ? "border-with-text": "border-without-text"}
-             clearIconClassName="!text-custom-text-100"
-             disabled={isReadOnly}
-             renderByDefault={isMobile}
-             showTooltip
-              />
+            value={issue.sport ?? null}
+            onChange={handleSport}
+            placeholder={t("sport_field")}
+            icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue?.sport ? "border-with-text" : "border-without-text"}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
         </div>
       </WithDisplayPropertiesHOC>
 
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="program">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="program">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <ProgramDropdown
-             value={issue.program ?? null}
-             onChange={handleProgram}
-             placeholder={t("program_field")}
-             icon={<User className="h-3 w-3 flex-shrink-0" />}
-             buttonVariant={issue?.program ? "border-with-text": "border-without-text"}
-             clearIconClassName="!text-custom-text-100"
-             disabled={isReadOnly}
-             renderByDefault={isMobile}
-             showTooltip
-              />
+            value={issue.program ?? null}
+            onChange={handleProgram}
+            placeholder={t("program_field")}
+            icon={<User className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue?.program ? "border-with-text" : "border-without-text"}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
         </div>
       </WithDisplayPropertiesHOC>
-
-
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">

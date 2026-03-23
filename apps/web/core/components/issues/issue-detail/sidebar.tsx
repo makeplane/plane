@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue } from "@plane/types";
 // ui
 import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
-import { getDate, isDateTimePast, renderFormattedPayloadDate } from "@plane/utils";
+import { getDate, isDateTimePast, isDateTimePastWithOverrides, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -92,6 +94,25 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   maxDate?.setDate(maxDate.getDate());
   const isDateTimeLocked = !isEditable || isDateTimePast(issue.start_date, issue.start_time);
 
+  const handleDateTimeUpdate = (data: Partial<TIssue>) => {
+    if (
+      isDateTimePastWithOverrides({
+        currentDateValue: issue.start_date,
+        currentTimeValue: issue.start_time,
+        nextDateValue: data.start_date,
+        nextTimeValue: data.start_time,
+      })
+    ) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: "Event date and time cannot be earlier than the current time.",
+      });
+      return;
+    }
+
+    issueOperations.update(workspaceSlug, projectId, issueId, data);
+  };
 
   return (
     <>
@@ -128,16 +149,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span>{t("year_field")}</span>
               </div>
               <YearRangeDropdown
-               value={issue?.year}
-               onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { year: val })}
-               disabled={!isEditable}
-               placeholder={t("add_year")}
+                value={issue?.year}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { year: val })}
+                disabled={!isEditable}
+                placeholder={t("add_year")}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="text-sm"
                 hideIcon
-                clearIconClassName="h-3 w-3 hidden group-hover:inline"/>
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
             </div>
 
             {/* category field */}
@@ -146,16 +168,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <span>{t("category_field")}</span>
               </div>
-              <CategoryDropdown value={issue?.category} onChange={(val) => {issueOperations.update(workspaceSlug, projectId, issueId, { category: val })}}
+              <CategoryDropdown
+                value={issue?.category}
+                onChange={(val) => {
+                  issueOperations.update(workspaceSlug, projectId, issueId, { category: val });
+                }}
                 disabled={!isEditable}
-                 placeholder={t("add_category")}
+                placeholder={t("add_category")}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="text-sm"
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
-                 />
+              />
             </div>
 
             <div className="flex h-8 items-center gap-2">
@@ -220,7 +246,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 placeholder={t("issue.add.start_date")}
                 value={issue.start_date}
                 onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                  handleDateTimeUpdate({
                     start_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
@@ -245,7 +271,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <TimeDropdown
                 value={issue.start_time}
                 onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                  handleDateTimeUpdate({
                     start_time: val,
                   })
                 }
@@ -289,18 +315,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div> */}
 
-
-
-
-           {/* sport field */}
+            {/* sport field */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gapa-1 text-sm text-custom-text-300">
                 <Volleyball className="h-4 w-4 flex-shrink-0" />
                 <span>{t("sport_field")}</span>
               </div>
-              <SportDropdown value={issue.sport} onChange={(val: string | null) => {
-                issueOperations.update(workspaceSlug, projectId, issueId, {sport: val})
-              }}
+              <SportDropdown
+                value={issue.sport}
+                onChange={(val: string | null) => {
+                  issueOperations.update(workspaceSlug, projectId, issueId, { sport: val });
+                }}
                 disabled={!isEditable}
                 placeholder={t("add_sport")}
                 hideIcon
@@ -308,7 +333,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
-                clearIconClassName="h-3 w-3 hidden group-hover:inline" />
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
             </div>
 
             {/* opposition field */}
@@ -335,17 +361,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <User className="h-4 w-4 flex-shrink-0" />
                 <span>{t("program_field")}</span>
               </div>
-              <ProgramDropdown value={issue.program} onChange={(val: string | null) => {
-                issueOperations.update(workspaceSlug, projectId, issueId, {program: val})
-              }}
-              disabled={!isEditable}
-              placeholder={t("add_program")}
-              hideIcon
-              buttonVariant="transparent-with-text"
-              className="group w-3/5 flex-grow"
-              buttonContainerClassName="w-full text-left"
-              buttonClassName="text-sm"
-              clearIconClassName="h-3 w-3 hidden group-hover:inline" />
+              <ProgramDropdown
+                value={issue.program}
+                onChange={(val: string | null) => {
+                  issueOperations.update(workspaceSlug, projectId, issueId, { program: val });
+                }}
+                disabled={!isEditable}
+                placeholder={t("add_program")}
+                hideIcon
+                buttonVariant="transparent-with-text"
+                className="group w-3/5 flex-grow"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="text-sm"
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
             </div>
 
             {/* level field */}
@@ -354,9 +383,11 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <SignalIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("level_field")}</span>
               </div>
-              <LevelDropdown value={issue.level} onChange={(val: string | null) => {
-                issueOperations.update(workspaceSlug, projectId, issueId, { level : val})
-              }}
+              <LevelDropdown
+                value={issue.level}
+                onChange={(val: string | null) => {
+                  issueOperations.update(workspaceSlug, projectId, issueId, { level: val });
+                }}
                 disabled={!isEditable}
                 placeholder={t("add_level")}
                 hideIcon
@@ -364,7 +395,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="text-sm"
-                clearIconClassName="h-3 w-3 hidden group-hover:inline" />
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              />
             </div>
 
             {projectId && areEstimateEnabledByProjectId(projectId) && (

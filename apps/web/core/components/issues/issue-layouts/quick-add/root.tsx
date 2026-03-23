@@ -10,9 +10,9 @@ import { PlusIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { setPromiseToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
-import { cn, createIssuePayload } from "@plane/utils";
+import { cn, createIssuePayload, isDateTimePast } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web imports
@@ -99,14 +99,23 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
   const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
-    reset({ ...defaultValues });
-
     const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
+    if (isDateTimePast(payload.start_date, payload.start_time)) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("common.error.label"),
+        message: "Event date and time cannot be earlier than the current time.",
+      });
+      return;
+    }
+
     if (quickAddCallback) {
+      reset({ ...defaultValues });
+
       const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
         loading: isEpic ? t("epic.adding") : t("issue.adding"),
