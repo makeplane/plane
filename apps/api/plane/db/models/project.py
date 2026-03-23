@@ -34,6 +34,7 @@ from .base import BaseModel
 from .workspace import WorkspaceManager
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+PROJECT_IDENTIFIER_MAX_LENGTH = 255
 
 
 class ROLE(Enum):
@@ -137,7 +138,9 @@ class Project(BaseModel):
     description_html = models.JSONField(verbose_name="Project Description HTML", blank=True, null=True)
     network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
     workspace = models.ForeignKey("db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project")
-    identifier = models.CharField(max_length=255, verbose_name="Project Identifier", db_index=True)
+    identifier = models.CharField(
+        max_length=PROJECT_IDENTIFIER_MAX_LENGTH, verbose_name="Project Identifier", db_index=True
+    )
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -443,7 +446,7 @@ class ProjectMember(ProjectBaseModel):
 class ProjectIdentifier(AuditModel):
     workspace = models.ForeignKey("db.Workspace", models.CASCADE, related_name="project_identifiers", null=True)
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="project_identifier")
-    name = models.CharField(max_length=12, db_index=True)
+    name = models.CharField(max_length=PROJECT_IDENTIFIER_MAX_LENGTH, db_index=True)
 
     class Meta:
         unique_together = ["name", "workspace", "deleted_at"]
@@ -578,6 +581,3 @@ def track_project_created_event(instance):
 def trigger_project_post_save_operations(sender, instance, created, **kwargs):
     if created:
         track_project_created_event(instance)
-
-
-
