@@ -235,12 +235,12 @@ all_urlpatterns = [
     ## End Issue Archives
     ## Issue Relation
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:work_item_id>/issue-relation/",
         IssueRelationViewSet.as_view({"get": "list", "post": "create"}),
         name="issue-relation",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/remove-relation/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:work_item_id>/remove-relation/",
         IssueRelationViewSet.as_view({"post": "remove_relation"}),
         name="issue-relation",
     ),
