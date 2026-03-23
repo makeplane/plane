@@ -12,14 +12,12 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams } from "react-router";
 import { CheckIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
-import { WorkFlowDisabledMessage } from "@/components/workflows";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useWorkflows } from "@/hooks/store/use-workflows";
@@ -43,50 +41,37 @@ export const WorkItemStateOptionWithWorkflow = observer(function WorkItemStateOp
   const { data: currentUser } = useUser();
   const { isWorkflowsEnabled, getAllowedTransitionStateIds, getCreationAllowedStateIds } = useWorkflows();
   // derived values
-  const isEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug.toString(), projectId) : false;
+  const isEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
   const availableStateIdMap =
-    isEnabled && projectId
+    isEnabled && workspaceSlug && projectId
       ? isForWorkItemCreation
         ? getCreationAllowedStateIds(projectId, typeId)
-        : getAllowedTransitionStateIds(workspaceSlug.toString(), projectId, typeId, selectedValue, currentUser?.id)
+        : getAllowedTransitionStateIds(workspaceSlug, projectId, typeId, selectedValue, currentUser?.id)
       : {};
-  const isDisabled =
-    selectedValue !== option.value && filterAvailableStateIds && !availableStateIdMap[option.value ?? ""];
-  const messageStateId = isForWorkItemCreation ? (option.value ?? "") : (selectedValue ?? "");
+  const isCurrentState = selectedValue === option.value;
+  const isDisabled = !isCurrentState && filterAvailableStateIds && !availableStateIdMap[option.value ?? ""];
+
+  if (isDisabled) return null;
 
   return (
-    <Tooltip
-      tooltipContent={
-        <WorkFlowDisabledMessage
-          parentStateId={messageStateId}
-          typeId={typeId}
-          compact
-          isForWorkItemCreation={isForWorkItemCreation}
-        />
-      }
-      className="border-[0.5px] border-subtle-1 mx-0.5 shadow-lg"
-      position="right-start"
-      disabled={!isDisabled || !messageStateId}
-    >
-      <div>
-        <Combobox.Option
-          key={option.value}
-          value={option.value}
-          className={({ active, selected }) =>
-            cn(className, active ? "bg-layer-1" : "", selected ? "text-primary" : "text-secondary", {
-              "cursor-not-allowed text-placeholder hover:bg-layer-1": isDisabled,
-            })
-          }
-          disabled={isDisabled}
-        >
-          {({ selected }) => (
-            <div className={cn("flex justify-between w-full")}>
-              <span className="flex-grow truncate">{option.content}</span>
-              {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-            </div>
-          )}
-        </Combobox.Option>
-      </div>
-    </Tooltip>
+    <div>
+      <Combobox.Option
+        key={option.value}
+        value={option.value}
+        className={({ active, selected }) =>
+          cn(className, active ? "bg-layer-1" : "", selected ? "text-primary" : "text-secondary", {
+            "cursor-not-allowed text-placeholder hover:bg-layer-1": isDisabled,
+          })
+        }
+        disabled={isDisabled}
+      >
+        {({ selected }) => (
+          <div className="flex justify-between w-full">
+            <span className="grow truncate">{option.content}</span>
+            {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0" />}
+          </div>
+        )}
+      </Combobox.Option>
+    </div>
   );
 });
