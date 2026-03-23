@@ -36,6 +36,10 @@ from plane.db.models.project import ROLE
 from .base import BaseAPIView
 from plane.app.views.page.base import unarchive_archive_page_and_descendants
 from plane.bgtasks.page_transaction_task import page_transaction
+from plane.utils.openapi import (
+    page_docs,
+    CONFLICT_RESPONSE,
+)
 
 
 class PageListCreateAPIEndpoint(BaseAPIView):
@@ -83,6 +87,11 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @page_docs(
+        operation_id="list_pages",
+        summary="List pages",
+        description="Retrieve all non-archived pages in a project that the user has access to.",
+    )
     def get(self, request, slug, project_id):
         """List pages
 
@@ -101,6 +110,12 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             ),
         )
 
+    @page_docs(
+        operation_id="create_page",
+        summary="Create page",
+        description="Create a new page within a project.",
+        responses={201: PageSerializer, 409: CONFLICT_RESPONSE},
+    )
     def post(self, request, slug, project_id):
         """Create page
 
@@ -132,6 +147,19 @@ class PageListCreateAPIEndpoint(BaseAPIView):
                         "id": str(page.id),
                     },
                     status=status.HTTP_409_CONFLICT,
+                )
+
+            # Validate parent belongs to the same project
+            parent_id = request.data.get("parent")
+            if parent_id and not Page.objects.filter(
+                pk=parent_id,
+                workspace__slug=slug,
+                projects__id=project_id,
+                project_pages__deleted_at__isnull=True,
+            ).exists():
+                return Response(
+                    {"error": "Parent page does not belong to this project"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             project = Project.objects.get(pk=project_id, workspace__slug=slug)
@@ -207,6 +235,11 @@ class PageDetailAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @page_docs(
+        operation_id="get_page",
+        summary="Get page",
+        description="Retrieve a single page with full details.",
+    )
     def get(self, request, slug, project_id, pk):
         """Retrieve page
 
@@ -218,6 +251,12 @@ class PageDetailAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @page_docs(
+        operation_id="update_page",
+        summary="Update page",
+        description="Update page properties. Locked pages cannot be updated.",
+        responses={409: CONFLICT_RESPONSE},
+    )
     def patch(self, request, slug, project_id, pk):
         """Update page
 
@@ -225,6 +264,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
         Only the page owner can change the access level.
         """
         page = Page.objects.get(
+            Q(owned_by=request.user) | Q(access=0),
             pk=pk,
             workspace__slug=slug,
             projects__id=project_id,
@@ -258,28 +298,36 @@ class PageDetailAPIEndpoint(BaseAPIView):
 
         serializer = PageUpdateSerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
+            # Check for external_id/external_source conflicts when either changes
+            new_external_id = request.data.get("external_id", page.external_id)
+            new_external_source = request.data.get("external_source", page.external_source)
             if (
-                request.data.get("external_id")
-                and (page.external_id != request.data.get("external_id"))
-                and Page.objects.filter(
+                new_external_id
+                and new_external_source
+                and (
+                    new_external_id != page.external_id
+                    or new_external_source != page.external_source
+                )
+            ):
+                existing = Page.objects.filter(
                     workspace__slug=slug,
                     projects__id=project_id,
-                    external_source=request.data.get("external_source", page.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
-            ):
-                return Response(
-                    {
-                        "error": "Page with the same external id and external source already exists",
-                        "id": str(page.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
+                    external_source=new_external_source,
+                    external_id=new_external_id,
+                ).exclude(pk=pk).first()
+                if existing:
+                    return Response(
+                        {
+                            "error": "Page with the same external id and external source already exists",
+                            "id": str(existing.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
 
             serializer.save()
 
             # Fire page transaction on description change
-            if request.data.get("description_html"):
+            if "description_html" in request.data:
                 page_transaction.delay(
                     new_description_html=request.data.get("description_html", "<p></p>"),
                     old_description_html=page_description,
@@ -294,6 +342,11 @@ class PageDetailAPIEndpoint(BaseAPIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @page_docs(
+        operation_id="delete_page",
+        summary="Delete page",
+        description="Permanently delete a page. The page must be archived first.",
+    )
     def delete(self, request, slug, project_id, pk):
         """Delete page
 
@@ -301,6 +354,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
         Only the owner or a project admin can delete.
         """
         page = Page.objects.get(
+            Q(owned_by=request.user) | Q(access=0),
             pk=pk,
             workspace__slug=slug,
             projects__id=project_id,
@@ -399,6 +453,11 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @page_docs(
+        operation_id="list_archived_pages",
+        summary="List archived pages",
+        description="Retrieve all pages that have been archived in the project.",
+    )
     def get(self, request, slug, project_id):
         """List archived pages
 
@@ -417,6 +476,11 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ),
         )
 
+    @page_docs(
+        operation_id="archive_page",
+        summary="Archive page",
+        description="Move a page and its descendants to archived status.",
+    )
     def post(self, request, slug, project_id, page_id):
         """Archive page
 
@@ -424,6 +488,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         Only the page owner or a project admin can archive.
         """
         page = Page.objects.get(
+            Q(owned_by=request.user) | Q(access=0),
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
@@ -460,6 +525,11 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @page_docs(
+        operation_id="unarchive_page",
+        summary="Unarchive page",
+        description="Restore an archived page and its descendants to active status.",
+    )
     def delete(self, request, slug, project_id, page_id):
         """Unarchive page
 
@@ -467,6 +537,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         Only the page owner or a project admin can unarchive.
         """
         page = Page.objects.get(
+            Q(owned_by=request.user) | Q(access=0),
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,

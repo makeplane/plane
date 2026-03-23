@@ -164,6 +164,7 @@ from .decorators import (
     issue_attachment_docs,
     module_docs,
     module_issue_docs,
+    page_docs,
     state_docs,
 )
 
@@ -314,6 +315,7 @@ __all__ = [
     "issue_attachment_docs",
     "module_docs",
     "module_issue_docs",
+    "page_docs",
     "state_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",

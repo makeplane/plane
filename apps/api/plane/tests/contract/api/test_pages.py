@@ -137,6 +137,46 @@ class TestPageListCreateAPIEndpoint:
         assert "same external id" in response.data["error"]
 
     @pytest.mark.django_db
+    def test_create_page_parent_outside_project_rejected(self, api_key_client, workspace, project, create_user):
+        """Test creating page with parent from different project is rejected"""
+        # Create a second project
+        other_project = Project.objects.create(
+            name="Other Project",
+            identifier="OP",
+            workspace=workspace,
+            created_by=create_user,
+        )
+        ProjectMember.objects.create(
+            project=other_project,
+            member=create_user,
+            role=20,
+            is_active=True,
+        )
+
+        # Create a page in the other project
+        other_page = Page.objects.create(
+            name="Other Project Page",
+            workspace=workspace,
+            owned_by=create_user,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=other_project,
+            page=other_page,
+        )
+
+        url = self.get_page_url(workspace.slug, project.id)
+        data = {
+            "name": "Child Page",
+            "parent": str(other_page.id),
+        }
+
+        response = api_key_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "parent" in response.data["error"].lower()
+
+    @pytest.mark.django_db
     def test_list_pages_success(self, api_key_client, workspace, project, create_page, create_user):
         """Test successful page listing"""
         url = self.get_page_url(workspace.slug, project.id)
@@ -375,6 +415,66 @@ class TestPageDetailAPIEndpoint:
 
         assert response.status_code == status.HTTP_409_CONFLICT
         assert "same external id" in response.data["error"]
+
+    @pytest.mark.django_db
+    def test_update_external_source_only_conflict(self, api_key_client, workspace, project, create_user):
+        """Test updating only external_source to create a conflict is detected"""
+        # Create page A with ext-100 / source-a
+        page_a = Page.objects.create(
+            name="Page A",
+            workspace=workspace,
+            owned_by=create_user,
+            external_id="ext-100",
+            external_source="source-a",
+        )
+        ProjectPage.objects.create(workspace=workspace, project=project, page=page_a)
+
+        # Create page B with ext-100 / source-b
+        page_b = Page.objects.create(
+            name="Page B",
+            workspace=workspace,
+            owned_by=create_user,
+            external_id="ext-100",
+            external_source="source-b",
+        )
+        ProjectPage.objects.create(workspace=workspace, project=project, page=page_b)
+
+        url = self.get_page_detail_url(workspace.slug, project.id, page_b.id)
+
+        # Change only external_source to collide with page A
+        response = api_key_client.patch(
+            url,
+            {"external_source": "source-a"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.data["id"] == str(page_a.id)
+
+    @pytest.mark.django_db
+    def test_patch_private_page_by_non_owner(self, api_key_client, workspace, project, create_user):
+        """Test that non-owners cannot patch another user's private page"""
+        from plane.db.models import User
+
+        other_user = User.objects.create(
+            email="private_owner@plane.so",
+            username=f"priv_{uuid4().hex[:8]}",
+            first_name="Private",
+            last_name="Owner",
+        )
+
+        private_page = Page.objects.create(
+            name="Private Page",
+            workspace=workspace,
+            owned_by=other_user,
+            access=1,  # Private
+        )
+        ProjectPage.objects.create(workspace=workspace, project=project, page=private_page)
+
+        url = self.get_page_detail_url(workspace.slug, project.id, private_page.id)
+        response = api_key_client.patch(url, {"name": "Hacked"}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.django_db
     def test_delete_archived_page_success(self, api_key_client, workspace, project, create_page):
