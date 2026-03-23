@@ -29,6 +29,9 @@ const envSchema = z.object({
 
   // API configuration
   API_BASE_URL: z.string().url("API_BASE_URL must be a valid URL"),
+
+  // Allowed domains for sandboxed fetch (comma-separated)
+  ALLOWED_DOMAINS: z.string().default(""),
 });
 
 const validateEnv = () => {
@@ -50,4 +53,9 @@ export const serverConfig = {
   initTimeoutMs: env.INIT_TIMEOUT_MS,
   memoryLimitMb: env.ISOLATE_MEMORY_MB,
   apiBaseUrl: env.API_BASE_URL,
+  allowedDomains: env.ALLOWED_DOMAINS
+    ? env.ALLOWED_DOMAINS.split(",")
+        .map((d) => d.trim())
+        .filter(Boolean)
+    : [],
 };

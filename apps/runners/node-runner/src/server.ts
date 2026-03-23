@@ -187,7 +187,7 @@ app.post("/validate", async (req: Request, res: Response) => {
 /**
  * POST /execute-sync
  * Executes code synchronously and returns result directly
- * Request body: { code: string, build?: string, workspace_slug: string, input_data?: object, code_type?: string, env_variables?: object, allowed_domains?: string[], access_token: string }
+ * Request body: { code: string, build?: string, workspace_slug: string, input_data?: object, code_type?: string, env_variables?: object, access_token: string }
  * Response: { status: "completed" | "errored", output_data?: unknown, error_data?: object }
  *
  * If `build` is provided (pre-built bundle), skips the build step for faster execution.
@@ -204,7 +204,6 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
       code_type,
       env_variables,
       execution_variables,
-      allowed_domains,
       access_token,
       workspace_slug,
       functions,
@@ -215,7 +214,6 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
       code_type?: string;
       env_variables?: Record<string, string>;
       execution_variables?: Record<string, string>;
-      allowed_domains?: string[];
       access_token: string;
       workspace_slug: string;
       functions?: ScriptFunction[];
@@ -275,7 +273,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
       event: input_data,
       env: env_variables || {},
       variables: execution_variables || {},
-      allowedDomains: allowed_domains || [],
+      allowedDomains: serverConfig.allowedDomains,
       code,
       inlineScript,
       accessToken: access_token,
