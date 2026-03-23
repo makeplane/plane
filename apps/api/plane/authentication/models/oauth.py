@@ -348,9 +348,9 @@ class WorkspaceAppInstallation(BaseModel):
                         bot_type = BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
                         self.app_bot = User.objects.create(
                             username=username,
-                            display_name=f"{self.application.name} Bot",
+                            display_name=f"{self.application.name}",
                             first_name=f"{self.application.name}",
-                            last_name="Bot",
+                            last_name="",
                             is_bot=True,
                             bot_type=bot_type,
                             email=email,

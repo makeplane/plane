@@ -466,9 +466,9 @@ class TestOAuthApplicationUninstallEndpoint:
         assert app_bot.is_bot is True
         assert app_bot.is_active is True
         assert app_bot.username == f"{workspace.slug}_{oauth_application.slug}_bot"
-        assert app_bot.display_name == f"{oauth_application.name} Bot"
+        assert app_bot.display_name == f"{oauth_application.name}"
         assert app_bot.first_name == oauth_application.name
-        assert app_bot.last_name == "Bot"
+        assert app_bot.last_name == ""
         assert app_bot.email == f"{app_bot.username}@plane.so"
 
         # Verify bot is added to workspace members
