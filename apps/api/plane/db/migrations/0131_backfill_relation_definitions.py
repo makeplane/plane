@@ -129,6 +129,40 @@ def backfill_category_and_relations(apps, schema_editor):
     
     print(f"  [backfill] deduplicated {dedup_count} duplicate relations in {time.time() - t_dedup:.2f}s")
 
+    # Cross-type dedup: the unique constraint is on the unordered pair
+    # regardless of relation_type, so soft-delete later rows when the same
+    # pair has multiple dependency types (e.g. start_before + blocked_by).
+    earlier_dep_exists = (
+        IssueRelation.objects.filter(
+            deleted_at__isnull=True,
+            relation_type__in=DEPENDENCY_TYPES,
+            created_at__lt=OuterRef("created_at"),
+        )
+        .annotate(
+            inner_min=Least("issue_id", "related_issue_id"),
+            inner_max=Greatest("issue_id", "related_issue_id"),
+        )
+        .filter(
+            inner_min=Least(
+                OuterRef("issue_id"), OuterRef("related_issue_id")
+            ),
+            inner_max=Greatest(
+                OuterRef("issue_id"), OuterRef("related_issue_id")
+            ),
+        )
+    )
+
+    cross_dedup_count = (
+        IssueRelation.objects.filter(
+            deleted_at__isnull=True,
+            relation_type__in=DEPENDENCY_TYPES,
+        )
+        .filter(Exists(earlier_dep_exists))
+        .update(deleted_at=now)
+    )
+
+    print(f"  [backfill] deduplicated {cross_dedup_count} cross-type duplicate dependencies in {time.time() - t_dedup:.2f}s")
+
     # Dependency rows already have category="dependency" from the default,
     # but set it explicitly for any edge cases.
     t_dep = time.time()
