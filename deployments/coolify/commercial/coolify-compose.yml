@@ -136,6 +136,8 @@ x-app-env: &app-env
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
   # Live Server Secret Key
   LIVE_SERVER_SECRET_KEY: ${SERVICE_PASSWORD_64_LIVESERVERSECRETKEY}
+  # OpenAPI / drf-spectacular toggle for API schema and docs
+  ENABLE_DRF_SPECTACULAR: ${ENABLE_DRF_SPECTACULAR:-0}
 
 x-live-env: &live-env
   API_BASE_URL: http://api:8000
