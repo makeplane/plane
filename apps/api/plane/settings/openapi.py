@@ -14,6 +14,20 @@ OpenAPI/Swagger configuration for drf-spectacular.
 
 This file contains the complete configuration for API documentation generation.
 """
+import os
+
+if os.environ.get("IS_SELF_MANAGED", "1") == "1":
+    web_url = os.environ.get("WEB_URL")
+    app_base_url = os.environ.get("APP_BASE_URL")
+    base_origin = app_base_url or web_url
+    SERVERS = [
+        {"url": base_origin, "description": "Your Plane Instance"},
+    ]
+else:
+    SERVERS = [
+        {"url": "https://api.plane.so", "description": "Production"},
+    ]
+
 
 SPECTACULAR_SETTINGS = {
     # ========================================================================
@@ -50,10 +64,7 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     # Server Configuration
     # ========================================================================
-    "SERVERS": [
-        {"url": "https://api.plane.so", "description": "Production"},
-        {"url": "http://localhost:8000", "description": "Local"},
-    ],
+    "SERVERS": SERVERS,
     # ========================================================================
     # API Tag Definitions
     # ========================================================================
