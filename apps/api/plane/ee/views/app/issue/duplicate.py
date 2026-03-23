@@ -143,6 +143,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
             outward=DEFAULT_DUPLICATE_DEFINITION["outward"],
             is_default=True,
             is_active=True,
+            workspace__slug=slug,
         )
 
         # append the duplicate relation
