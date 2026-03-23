@@ -78,17 +78,18 @@ export class PlaneProjectConfigurationStep implements IStep {
         external_id: `${resourceId}_${projectKey}`,
       });
 
+      const shouldEnableIssueTypes = requiredFlags.issue_types && !config.importWorkItemTypesGlobally;
+      const shouldEnableEpics = requiredFlags.epics && !config.importEpicsAsWorkItems;
+
       const featureUpdate = await planeClient.project.toggleProjectFeatures(workspace_slug, project_id, {
-        epics: requiredFlags.epics,
+        epics: shouldEnableEpics,
         modules: true,
         cycles: true,
-        work_item_types: requiredFlags.issue_types,
+        work_item_types: shouldEnableIssueTypes,
       });
 
       // Here the importWorkItemTypesGlobally, also checks for the global
       // work item types being enabled.
-      const shouldEnableIssueTypes = requiredFlags.issue_types && !config.importWorkItemTypesGlobally ? true : false;
-      const shouldEnableEpics = requiredFlags.epics && !config.importEpicsAsWorkItems ? true : false;
 
       executionLog.collect(job.id, {
         entity_type: EExecutionLogEntityType.PROJECT,

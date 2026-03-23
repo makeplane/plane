@@ -60,10 +60,13 @@ export class JiraIssueTypesStep implements IStep {
     const { jobContext } = input;
     const { job, planeClient } = jobContext;
 
+    const config = job.config as JiraConfig;
+    const globallyImportWorkItemTypes = config.importWorkItemTypesGlobally ?? false;
+
     // Ensure if the issue types are enabled for the project or not.
     const featureFlagService = await getPlaneFeatureFlagService();
     const isIssueTypeFeatureEnabled = await withCache(
-      "ISSUE_TYPE_FF",
+      "PROJECT_ISSUE_TYPE_FF",
       job,
       async () =>
         await featureFlagService.featureFlags({
@@ -84,9 +87,12 @@ export class JiraIssueTypesStep implements IStep {
           job.project_id
         )
     );
+
     // Extract the issue types from the plane entities
     const isIssueTypeEnabledForProject = planeProjectDetails.is_issue_type_enabled;
-    return (isIssueTypeFeatureEnabled && isIssueTypeEnabledForProject) ?? false;
+    const enabledForProjectLevel = (isIssueTypeFeatureEnabled && isIssueTypeEnabledForProject) ?? false;
+
+    return enabledForProjectLevel || globallyImportWorkItemTypes;
   }
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
