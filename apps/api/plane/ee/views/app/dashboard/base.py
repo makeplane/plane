@@ -65,7 +65,7 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = DashboardSerializer(
@@ -111,7 +111,7 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         dashboard = Dashboard.objects.get(workspace__slug=slug, pk=pk)
         serializer = DashboardSerializer(dashboard, data=request.data)
@@ -121,7 +121,7 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE")
     def destroy(self, request, slug, pk):
         dashboard = Dashboard.objects.get(workspace__slug=slug, pk=pk)
         dashboard.delete()

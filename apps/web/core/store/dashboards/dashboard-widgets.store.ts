@@ -50,6 +50,7 @@ export interface IDashboardWidgetsStore {
   // grid layout helpers
   layoutItems: Layouts;
   // permissions
+  canCurrentUserViewWidgets: boolean;
   canCurrentUserCreateWidget: boolean;
   // widget helpers
   allWidgetIds: string[];
@@ -78,6 +79,7 @@ export type TDashboardWidgetHelpers = {
     fetchWidgetData: (widgetId: string, filters?: TWorkItemFilterExpression) => Promise<TDashboardWidgetData>;
   };
   permissions: {
+    canCurrentUserViewWidgets: boolean;
     canCurrentUserCreateWidget: boolean;
     canCurrentUserDeleteWidget: boolean;
     canCurrentUserEditWidget: boolean;
@@ -133,6 +135,7 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
       isDeletingWidget: observable.ref,
       isEditingWidget: observable.ref,
       // widget computed
+      canCurrentUserViewWidgets: computed,
       canCurrentUserCreateWidget: computed,
       allWidgetIds: computed,
       isAnyWidgetAvailable: computed,
@@ -151,6 +154,10 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
   }
 
   // permissions
+  get canCurrentUserViewWidgets() {
+    return this.helpers.permissions.canCurrentUserViewWidgets;
+  }
+
   get canCurrentUserCreateWidget() {
     return this.helpers.permissions.canCurrentUserCreateWidget;
   }
@@ -237,6 +244,7 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
 
   // widget actions
   fetchWidgets: IDashboardWidgetsStore["fetchWidgets"] = async () => {
+    if (!this.canCurrentUserViewWidgets) return [];
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug) throw new Error("workspaceSlug not found");
     try {

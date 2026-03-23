@@ -51,7 +51,7 @@ class WidgetEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
     def post(self, request, slug, dashboard_id):
         workspace = Workspace.objects.filter(slug=slug).first()
         serializer = WidgetSerializer(
@@ -66,7 +66,7 @@ class WidgetEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
     def patch(self, request, slug, dashboard_id, pk):
         widget = Widget.objects.filter(id=pk, workspace__slug=slug).first()
         if not widget:
@@ -93,14 +93,14 @@ class WidgetEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug, dashboard_id):
         widgets = self.get_queryset()
         serializer = WidgetSerializer(widgets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
     def delete(self, request, slug, dashboard_id, pk):
         dashboard_widget = DashboardWidget.objects.filter(
             dashboard_id=dashboard_id, widget_id=pk, workspace__slug=slug
@@ -213,7 +213,7 @@ class WidgetListEndpoint(BaseAPIView):
 
 class BulkWidgetEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
     def post(self, request, slug, dashboard_id):
         widgets_data = request.data.get("widgets", [])
 

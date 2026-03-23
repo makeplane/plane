@@ -36,14 +36,26 @@ def allow_permission(
     creator=False,
     field="created_by",
     model=None,
+    lookup_kwarg="pk",
 ):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             # Check for ownership if required
             if creator and model:
-                obj = model.objects.filter(id=kwargs["pk"], **{field: request.user}).exists()
-                if obj:
+                # check for the user is part of the workspace
+                if not WorkspaceMember.objects.filter(
+                    member=request.user,
+                    workspace__slug=kwargs["slug"],
+                    is_active=True,
+                ).exists():
+                    return Response(
+                        {"error": "You don't have the required permissions."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
+                lookup_value = kwargs.get(lookup_kwarg)
+                if lookup_value and model.objects.filter(id=lookup_value, **{field: request.user}).exists():
                     return view_func(instance, request, *args, **kwargs)
 
             # Convert allowed_roles to their values if they are enum members

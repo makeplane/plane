@@ -117,6 +117,9 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
             await this.service.retrieveWidgetData(workspaceSlug, dashboardId, widgetId, quickFilters),
         },
         permissions: {
+          canCurrentUserViewWidgets:
+            currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN ||
+            currentUserWorkspaceRole === EUserWorkspaceRoles.MEMBER,
           canCurrentUserCreateWidget:
             currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
           canCurrentUserDeleteWidget:
@@ -166,7 +169,10 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
   }
 
   get canCurrentUserCreateDashboard() {
-    return this.currentUserWorkspaceRole === EUserPermissions.ADMIN;
+    return (
+      this.currentUserWorkspaceRole === EUserPermissions.ADMIN ||
+      this.currentUserWorkspaceRole === EUserPermissions.MEMBER
+    );
   }
 
   // dashboard crud
