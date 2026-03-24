@@ -76,7 +76,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
     try {
       const res = await cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
       return res.status;
-    } catch (err) {
+    } catch (_err) {
       return false;
     }
   };

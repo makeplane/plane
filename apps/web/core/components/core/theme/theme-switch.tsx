@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";

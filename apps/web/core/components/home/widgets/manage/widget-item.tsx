@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -21,7 +20,7 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import type { InstructionType, TWidgetEntityData } from "@plane/types";
+import type { InstructionType } from "@plane/types";
 // plane ui
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
 // plane utils

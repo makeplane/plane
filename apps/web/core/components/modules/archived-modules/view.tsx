@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
 import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg?url";

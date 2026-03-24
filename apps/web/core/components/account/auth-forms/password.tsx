@@ -10,7 +10,7 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, Info, XCircle } from "lucide-react";
 // plane imports
-import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_EVENTS, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
+import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";

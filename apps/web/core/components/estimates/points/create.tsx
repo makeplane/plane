@@ -166,12 +166,6 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
         handleEstimatePointError(estimateInputValue, t("project_settings.estimates.validation.empty"));
   };
 
-  // derived values
-  const inputProps = {
-    type: "text",
-    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
-  };
-
   return (
     <form onSubmit={handleCreate} className="relative flex items-center gap-2 pr-2.5 text-14">
       <div

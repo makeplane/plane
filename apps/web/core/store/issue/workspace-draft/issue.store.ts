@@ -391,31 +391,39 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   // dummies
   viewFlags: ViewFlags = { enableQuickAdd: false, enableIssueCreation: false, enableInlineEditing: false };
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined = undefined;
-  getIssueIds = (groupId?: string, subGroupId?: string) => undefined;
-  getPaginationData = (groupId: string | undefined, subGroupId: string | undefined) => undefined;
-  getIssueLoader = (groupId?: string, subGroupId?: string) => "loaded" as TLoader;
-  getGroupIssueCount = (groupId: string | undefined, subGroupId: string | undefined, isSubGroupCumulative: boolean) =>
-    undefined;
-  removeCycleFromIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {};
+  getIssueIds = (_groupId?: string, _subGroupId?: string) => undefined;
+  getPaginationData = (_groupId: string | undefined, _subGroupId: string | undefined) => undefined;
+  getIssueLoader = (_groupId?: string, _subGroupId?: string) => "loaded" as TLoader;
+  getGroupIssueCount = (
+    _groupId: string | undefined,
+    _subGroupId: string | undefined,
+    _isSubGroupCumulative: boolean
+  ) => undefined;
+  removeCycleFromIssue = async (_workspaceSlug: string, _projectId: string, _issueId: string) => {};
   addIssueToCycle = async (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    issueIds: string[],
-    fetchAddedIssues?: boolean
+    _workspaceSlug: string,
+    _projectId: string,
+    _cycleId: string,
+    _issueIds: string[],
+    _fetchAddedIssues?: boolean
   ) => {};
-  removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {};
+  removeIssueFromCycle = async (_workspaceSlug: string, _projectId: string, _cycleId: string, _issueId: string) => {};
 
-  removeIssuesFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {};
-  changeModulesInIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    addModuleIds: string[],
-    removeModuleIds: string[]
+  removeIssuesFromModule = async (
+    _workspaceSlug: string,
+    _projectId: string,
+    _moduleId: string,
+    _issueIds: string[]
   ) => {};
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {};
-  archiveBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {};
-  removeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {};
-  bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {};
+  changeModulesInIssue = async (
+    _workspaceSlug: string,
+    _projectId: string,
+    _issueId: string,
+    _addModuleIds: string[],
+    _removeModuleIds: string[]
+  ) => {};
+  archiveIssue = async (_workspaceSlug: string, _projectId: string, _issueId: string) => {};
+  archiveBulkIssues = async (_workspaceSlug: string, _projectId: string, _issueIds: string[]) => {};
+  removeBulkIssues = async (_workspaceSlug: string, _projectId: string, _issueIds: string[]) => {};
+  bulkUpdateProperties = async (_workspaceSlug: string, _projectId: string, _data: TBulkOperationsPayload) => {};
 }

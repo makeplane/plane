@@ -328,7 +328,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description delete a page
    * @param {string} pageId
    */
-  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
+  removePage = async ({ pageId, shouldSync: _shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons

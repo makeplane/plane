@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { CircleCheck, CircleX, Clock, FileStack, MoveRight } from "lucide-react";

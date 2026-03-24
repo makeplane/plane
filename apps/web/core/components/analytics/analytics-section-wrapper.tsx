@@ -16,7 +16,7 @@ type Props = {
 };
 
 function AnalyticsSectionWrapper(props: Props) {
-  const { title, children, className, subtitle, actions, headerClassName } = props;
+  const { title, children, className, actions, headerClassName } = props;
   return (
     <div className={className}>
       <div className={cn("mb-6 flex items-center gap-2 text-nowrap", headerClassName)}>

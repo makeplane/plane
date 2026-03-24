@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";

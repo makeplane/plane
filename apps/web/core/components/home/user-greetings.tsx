@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";

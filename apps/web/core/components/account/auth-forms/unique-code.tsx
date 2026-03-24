@@ -41,7 +41,7 @@ const defaultValues: TUniqueCodeFormValues = {
 };
 
 export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
-  const { mode, email, handleEmailClear, generateEmailUniqueCode, isExistingEmail, nextPath } = props;
+  const { mode, email, handleEmailClear, generateEmailUniqueCode, nextPath } = props;
   // derived values
   const defaultResetTimerValue = 5;
   // states

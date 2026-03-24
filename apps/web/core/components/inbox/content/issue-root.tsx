@@ -117,7 +117,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,

@@ -64,7 +64,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             .then(() => {
               handleClose();
             })
-            .catch((err) => {
+            .catch((_err) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",

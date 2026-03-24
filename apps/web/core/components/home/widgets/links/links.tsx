@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { Row, ERowVariant } from "@plane/ui";
 

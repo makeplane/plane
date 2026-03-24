@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
