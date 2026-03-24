@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
@@ -24,7 +23,7 @@ type TCreateIssueToastActionItems = {
 export const CreateIssueToastActionItems = observer(function CreateIssueToastActionItems(
   props: TCreateIssueToastActionItems
 ) {
-  const { workspaceSlug, projectId, issueId, isEpic = false } = props;
+  const { workspaceSlug, issueId, isEpic = false } = props;
   // state
   const [copied, setCopied] = useState(false);
   // store hooks
@@ -53,7 +52,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
       await copyUrlToClipboard(workItemLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
+    } catch (_error) {
       setCopied(false);
     }
     e.preventDefault();

@@ -54,7 +54,7 @@ export const IssueReaction = observer(function IssueReaction(props: TIssueReacti
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Network } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
