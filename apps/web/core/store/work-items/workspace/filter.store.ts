@@ -16,7 +16,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -27,6 +27,8 @@ import type {
   IssuePaginationOptions,
   TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
+  AdvancedFilterType,
+  PQLFilterValue,
 } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes, STATIC_VIEW_TYPES } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
@@ -47,7 +49,7 @@ export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 
 export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
   // fetch action
-  fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
+  fetchFilters: (workspaceSlug: string, viewId: string, defaultFilters?: Partial<IIssueFilters>) => Promise<void>;
   updateAdvancedFilters: (workspaceSlug: string, viewId: string, params: UpdateAdvancedFiltersParams) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
@@ -159,14 +161,16 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     }
   );
 
-  fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
-    let richFilters: TWorkItemFilterExpression;
+  fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters, defaultFilters?: Partial<IIssueFilters>) => {
+    let richFilters: TWorkItemFilterExpression = {};
     let displayFilters: IIssueDisplayFilterOptions;
     let displayProperties: IIssueDisplayProperties;
     let kanbanFilters: TIssueKanbanFilters = {
       group_by: [],
       sub_group_by: [],
     };
+    let lastUsedFilterType: AdvancedFilterType = "rich_filters";
+    let pqlFilters: PQLFilterValue = DEFAULT_PQL_FILTER_VALUE;
 
     const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
     displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
@@ -188,6 +192,8 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
         order_by: "-created_at",
       });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+      lastUsedFilterType = _filters?.last_used_filter;
+      pqlFilters = _filters?.pql_filters;
     }
 
     // override existing order by if ordered by manual sort_order
@@ -195,11 +201,34 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       displayFilters.order_by = "-created_at";
     }
 
+    if (defaultFilters) {
+      if (defaultFilters.richFilters) {
+        richFilters = defaultFilters.richFilters;
+      }
+      if (defaultFilters.displayFilters) {
+        displayFilters = defaultFilters.displayFilters;
+      }
+      if (defaultFilters.displayProperties) {
+        displayProperties = defaultFilters.displayProperties;
+      }
+      if (defaultFilters.kanbanFilters) {
+        kanbanFilters = defaultFilters.kanbanFilters;
+      }
+      if (defaultFilters.lastUsedFilterType) {
+        lastUsedFilterType = defaultFilters.lastUsedFilterType;
+      }
+      if (defaultFilters.pqlFilters) {
+        pqlFilters = defaultFilters.pqlFilters;
+      }
+    }
+
     runInAction(() => {
       set(this.filters, [viewId, "richFilters"], richFilters);
       set(this.filters, [viewId, "displayFilters"], displayFilters);
       set(this.filters, [viewId, "displayProperties"], displayProperties);
       set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
+      set(this.filters, [viewId, "lastUsedFilterType"], lastUsedFilterType);
+      set(this.filters, [viewId, "pqlFilters"], pqlFilters);
     });
   };
 

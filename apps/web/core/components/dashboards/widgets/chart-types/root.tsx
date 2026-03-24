@@ -88,12 +88,25 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
       const finalExpression: TWorkItemFilterExpression = {
         and: [],
       };
+      // add source filters
       if (dashboardDetails?.filters && Object.keys(dashboardDetails.filters).length > 0) {
         finalExpression.and.push(toJS(dashboardDetails.filters));
       }
+      // add source projects
+      if (dashboardDetails?.project_ids && dashboardDetails.project_ids.length > 0) {
+        finalExpression.and.push({
+          project_id__in: dashboardDetails.project_ids.join(","),
+        });
+      }
+      // add quick filters
+      if (dashboardDetails?.quickFilters && Object.keys(dashboardDetails.quickFilters).length > 0) {
+        finalExpression.and.push(toJS(dashboardDetails.quickFilters));
+      }
+      // add widget filters
       if (widget?.filters && Object.keys(widget.filters).length > 0) {
         finalExpression.and.push(toJS(widget.filters));
       }
+      // add chart expression
       if (chartExpression && Object.keys(chartExpression).length > 0) {
         finalExpression.and.push(chartExpression);
       }
@@ -101,7 +114,7 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
         `/${workspaceSlug}/workspace-views/all-issues/?rich_filters=${encodeURIComponent(JSON.stringify(finalExpression))}`
       );
     },
-    [dashboardDetails?.filters, isEditingEnabled, widget?.filters, router, workspaceSlug]
+    [dashboardDetails, isEditingEnabled, widget?.filters, router, workspaceSlug]
   );
 
   let WidgetComponent: React.FC<TWidgetComponentProps> | null = null;

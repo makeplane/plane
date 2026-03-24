@@ -19,7 +19,7 @@ import useSWR from "swr";
 // plane imports
 import { DEFAULT_PQL_FILTER_VALUE, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import type { IIssueFilters } from "@plane/types";
+import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // components
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
@@ -105,6 +105,15 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   // search params
   const searchParams = useSearchParams();
   const paramsRichFilters = searchParams.get("rich_filters");
+  const sanitizedParamsRichFilters: TWorkItemFilterExpression | undefined = useMemo(() => {
+    if (!paramsRichFilters) return undefined;
+    try {
+      return JSON.parse(decodeURIComponent(paramsRichFilters));
+    } catch (error) {
+      console.error("Failed to decode rich filters", error);
+      return undefined;
+    }
+  }, [paramsRichFilters]);
   // store hooks
   const {
     issuesFilter: { filters, fetchFilters, updateAdvancedFilters },
@@ -121,19 +130,8 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
 
     const isStaticView = STATIC_VIEW_TYPES.includes(globalViewId);
     const hasViewDetails = Boolean(viewDetails);
-    let richFilters = viewDetails?.rich_filters;
-    let lastUsedFilterType = viewDetails?.last_used_filter;
-    if (paramsRichFilters) {
-      try {
-        const decodedRichFilters = decodeURIComponent(paramsRichFilters);
-        richFilters = JSON.parse(decodedRichFilters);
-        lastUsedFilterType = "rich_filters";
-      } catch (error) {
-        console.error("Failed to decode rich filters", error);
-        richFilters = viewDetails?.rich_filters;
-        lastUsedFilterType = viewDetails?.last_used_filter;
-      }
-    }
+    const richFilters = sanitizedParamsRichFilters || viewDetails?.rich_filters;
+    const lastUsedFilterType = sanitizedParamsRichFilters ? "rich_filters" : viewDetails?.last_used_filter;
 
     if (!isStaticView && !hasViewDetails) return undefined;
 
@@ -145,7 +143,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
       pqlFilters: viewDetails?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
       lastUsedFilterType: lastUsedFilterType || "rich_filters",
     };
-  }, [globalViewId, paramsRichFilters, viewDetails, workItemFilters]);
+  }, [globalViewId, sanitizedParamsRichFilters, viewDetails, workItemFilters]);
 
   // Custom hooks
   useWorkspaceIssueProperties(workspaceSlug);
@@ -168,11 +166,21 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   );
 
   const { isLoading: filtersLoading } = useSWR(
-    workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
+    workspaceSlug && globalViewId
+      ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}_${sanitizedParamsRichFilters ? "1" : "0"}`
+      : null,
     async () => {
       if (workspaceSlug && globalViewId) {
         clear();
-        await fetchFilters(workspaceSlug, globalViewId);
+        await fetchFilters(
+          workspaceSlug,
+          globalViewId,
+          sanitizedParamsRichFilters
+            ? {
+                richFilters: sanitizedParamsRichFilters,
+              }
+            : undefined
+        );
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
