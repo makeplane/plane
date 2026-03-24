@@ -155,7 +155,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             <GlobalViewLayoutSelection
               onChange={handleLayoutChange}
               selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
-              workspaceSlug={workspaceSlug.toString()}
             />
           )}
           {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}

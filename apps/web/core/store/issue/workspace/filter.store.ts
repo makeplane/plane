@@ -9,7 +9,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, WORKSPACE_KANBAN_GROUP_BY_OPTIONS } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -37,14 +37,14 @@ export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
   // fetch action
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
-  updateFilterExpression: (workspaceSlug: string, viewId: string, filters: TWorkItemFilterExpression) => Promise<void>;
+  updateFilterExpression: (workspaceSlug: string, viewId: string, filters: TWorkItemFilterExpression) => void;
   updateFilters: (
     workspaceSlug: string,
     projectId: string | undefined,
     filterType: TSupportedFilterTypeForUpdate,
     filters: TSupportedFilterForUpdate,
     viewId: string
-  ) => Promise<void>;
+  ) => void;
   //helper action
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
   getAppliedFilters: (viewId: string) => Partial<Record<TIssueParams, string | boolean>> | undefined;
@@ -83,6 +83,28 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     this.issueFilterService = new WorkspaceService();
   }
 
+  /**
+   * Applies layout-specific defaults to display filters:
+   * - Kanban: defaults group_by to "state_detail.group" if unset or incompatible
+   * - Calendar: defaults calendar config if missing
+   */
+  private applyLayoutDefaults(displayFilters: IIssueDisplayFilterOptions): void {
+    if (displayFilters.layout === "kanban") {
+      if (
+        !displayFilters.group_by ||
+        !WORKSPACE_KANBAN_GROUP_BY_OPTIONS.includes(
+          displayFilters.group_by as (typeof WORKSPACE_KANBAN_GROUP_BY_OPTIONS)[number]
+        )
+      ) {
+        displayFilters.group_by = "state_detail.group";
+      }
+    }
+
+    if (displayFilters.layout === "calendar" && !displayFilters.calendar) {
+      displayFilters.calendar = { layout: "month", show_weekends: true };
+    }
+  }
+
   getIssueFilters = (viewId: string | undefined) => {
     if (!viewId) return undefined;
 
@@ -100,7 +122,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.SPREADSHEET, "my_issues");
+    // Use the current layout to get the correct filter params
+
+    const currentLayout = (userFilters?.displayFilters?.layout ?? EIssueLayoutTypes.SPREADSHEET) as EIssueLayoutTypes;
+    const filteredParams = handleIssueQueryParamsByLayout(currentLayout, "my_issues");
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -185,6 +210,8 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       displayFilters.order_by = "-created_at";
     }
 
+    this.applyLayoutDefaults(displayFilters);
+
     runInAction(() => {
       set(this.filters, [viewId, "richFilters"], richFilters);
       set(this.filters, [viewId, "displayFilters"], displayFilters);
@@ -198,20 +225,25 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IWorkspaceIssuesFilter["updateFilterExpression"] = async (workspaceSlug, viewId, filters) => {
+  updateFilterExpression: IWorkspaceIssuesFilter["updateFilterExpression"] = (workspaceSlug, viewId, filters) => {
     try {
       runInAction(() => {
         set(this.filters, [viewId, "richFilters"], filters);
       });
 
-      this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+      // Fire-and-forget: UI updates optimistically, fetch runs in background
+      this.rootIssueStore.workspaceIssues
+        .fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation")
+        .catch((error) => {
+          console.error("error while fetching issues after rich filter update", error instanceof Error ? error.message : error);
+        });
     } catch (error) {
-      console.log("error while updating rich filters", error);
+      console.error("error while updating rich filters", error instanceof Error ? error.message : error);
       throw error;
     }
   };
 
-  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters, viewId) => {
+  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = (workspaceSlug, _projectId, type, filters, viewId) => {
     try {
       const issueFilters = this.getIssueFilters(viewId);
 
@@ -242,10 +274,32 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to state if layout is switched to kanban and group_by is null
-          if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
-            _filters.displayFilters.group_by = "state";
-            updatedDisplayFilters.group_by = "state";
+          // Apply layout-specific defaults (kanban group_by, calendar config)
+          const prevGroupBy = _filters.displayFilters.group_by;
+          const prevCalendar = _filters.displayFilters.calendar;
+          this.applyLayoutDefaults(_filters.displayFilters);
+          // Sync any defaults that were applied back to updatedDisplayFilters for local storage persistence
+          if (_filters.displayFilters.group_by !== prevGroupBy) {
+            updatedDisplayFilters.group_by = _filters.displayFilters.group_by;
+          }
+          if (_filters.displayFilters.calendar !== prevCalendar) {
+            updatedDisplayFilters.calendar = _filters.displayFilters.calendar;
+          }
+          // Nullify sub_group_by if it now matches the normalized group_by (kanban-specific)
+          if (
+            _filters.displayFilters.layout === "kanban" &&
+            _filters.displayFilters.group_by === _filters.displayFilters.sub_group_by
+          ) {
+            _filters.displayFilters.sub_group_by = null;
+            updatedDisplayFilters.sub_group_by = null;
+          }
+
+          // When layout changes, clear issue IDs BEFORE updating the layout
+          // This ensures IssueLayoutHOC shows the loader immediately (due to issueCount being undefined)
+          // instead of trying to render with data in the wrong format.
+          // Skip the clear if the layout isn't actually changing to avoid unnecessary loader flashes.
+          if (updatedDisplayFilters.layout && updatedDisplayFilters.layout !== issueFilters.displayFilters?.layout) {
+            this.rootIssueStore.workspaceIssues.clearIssueIds();
           }
 
           runInAction(() => {
@@ -258,7 +312,27 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+          // Fetch issues when display filters change
+          // Fire-and-forget pattern: UI updates optimistically via MobX, fetches run in background
+          // Calendar layout is skipped — it needs date-range parameters that only the component can provide
+          if (updatedDisplayFilters.layout && updatedDisplayFilters.layout !== "calendar") {
+            // Layout is changing to kanban or spreadsheet - fetch with correct canGroup
+            const needsGrouping = _filters.displayFilters.layout === "kanban";
+            this.rootIssueStore.workspaceIssues.fetchIssues(
+              workspaceSlug,
+              viewId,
+              "init-loader",
+              { canGroup: needsGrouping, perPageCount: needsGrouping ? 30 : 100 }
+            ).catch((error) => {
+              console.error("error while fetching issues after layout change", error instanceof Error ? error.message : error);
+            });
+          } else if (!updatedDisplayFilters.layout) {
+            this.rootIssueStore.workspaceIssues
+              .fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation")
+              .catch((error) => {
+                console.error("error while fetching issues after display filter update", error instanceof Error ? error.message : error);
+              });
+          }
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
@@ -312,7 +386,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           break;
       }
     } catch (error) {
-      if (viewId) this.fetchFilters(workspaceSlug, viewId);
+      if (viewId)
+        this.fetchFilters(workspaceSlug, viewId).catch((err) => {
+          console.error("error while re-fetching filters", err instanceof Error ? err.message : err);
+        });
       throw error;
     }
   };
