@@ -18,6 +18,7 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Tuple
+import re
 
 from pi import logger
 
@@ -230,12 +231,18 @@ class PlaneToolBase:
 
     @staticmethod
     def generate_project_identifier(name: str) -> str:
-        """Generate a project identifier from name."""
-        # Take first 3-4 characters, remove spaces, convert to uppercase
-        base_identifier = "".join(name.split())[:4].upper()
+        """Generate a project identifier from name (letters and numbers only)."""
+
+        # Remove everything except letters and numbers
+        cleaned_name = re.sub(r'[^A-Za-z0-9]', '', name)
+
+        # Take first 4 characters and uppercase
+        base_identifier = cleaned_name[:4].upper()
+
+        # Ensure minimum length of 3
         if len(base_identifier) < 3:
-            # If name is too short, pad with 'X' to meet minimum length
             base_identifier = base_identifier.ljust(3, "X")
+
         return base_identifier
 
     @staticmethod

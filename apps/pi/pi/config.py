@@ -327,7 +327,7 @@ class LLMConfig:
 
     CUSTOM_LLM_BASE_URL: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_BASE_URL", ""))
     CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", ""))
-    CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")))
+    CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: get_env_int("CUSTOM_LLM_MAX_TOKENS", "128000"))
     CUSTOM_LLM_AWS_REGION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_AWS_REGION", ""))
 
     # Provider → required config fields
