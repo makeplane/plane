@@ -14,9 +14,6 @@ from typing import List, Dict, Any, Optional
 from uuid import UUID
 import json
 
-# Django imports
-from django.db.models import Subquery
-
 # Module imports
 from plane.db.models import (
     Issue,
@@ -29,11 +26,14 @@ from plane.db.models import (
     State,
     UserNotificationPreference,
 )
+from plane.ee.models import TeamspaceProject, TeamspaceMember
 from plane.utils.notifications.base import (
     SubscriberData,
     BaseNotificationHandler,
     ActivityData,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkItemNotificationHandler(BaseNotificationHandler):
@@ -131,14 +131,32 @@ class WorkItemNotificationHandler(BaseNotificationHandler):
 
     def get_subscribers(self, exclude_users: List[str]) -> SubscriberData:
         """Get issue subscribers, assignees, and creator"""
+
+        project_members = ProjectMember.objects.filter(
+            project_id=self.context.project_id, workspace_id=self.workspace.id, is_active=True
+        ).values_list("member_id", flat=True)
+
+        members = list(project_members)
+
+        if check_workspace_feature_flag(FeatureFlag.TEAMSPACES, self.workspace.slug):
+            linked_teamspaces = TeamspaceProject.objects.filter(
+                project_id=self.context.project_id, workspace_id=self.workspace.id
+            ).values_list("team_space", flat=True)
+
+            teamspace_members = (
+                TeamspaceMember.objects.filter(team_space__in=linked_teamspaces, workspace_id=self.workspace.id)
+                .exclude(member_id__in=project_members)
+                .values_list("member_id", flat=True)
+            )
+
+            members = members + list(teamspace_members)
+
         # Get subscribers (excluding mentioned users and actor)
         subscribers = list(
             IssueSubscriber.objects.filter(
                 project_id=self.context.project_id,
                 issue_id=self.context.entity_id,
-                subscriber__in=Subquery(
-                    ProjectMember.objects.filter(project_id=self.context.project_id, is_active=True).values("member_id")
-                ),
+                subscriber__in=members,
             )
             .exclude(subscriber_id__in=exclude_users)
             .values_list("subscriber", flat=True)
@@ -149,9 +167,7 @@ class WorkItemNotificationHandler(BaseNotificationHandler):
             IssueAssignee.objects.filter(
                 issue_id=self.context.entity_id,
                 project_id=self.context.project_id,
-                assignee__in=Subquery(
-                    ProjectMember.objects.filter(project_id=self.context.project_id, is_active=True).values("member_id")
-                ),
+                assignee__in=members,
             ).values_list("assignee", flat=True)
         )
 

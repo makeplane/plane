@@ -57,6 +57,9 @@ from plane.ee.models import (
     PageUser,
 )
 
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+
 
 class GlobalSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the workspace and
@@ -632,6 +635,45 @@ class SearchEndpoint(BaseAPIView):
                     )
 
                     response_data["user_mention"] = list(users[:count])
+
+                    if check_workspace_feature_flag(FeatureFlag.TEAMSPACES, slug):
+                        # Teamspace members
+                        linked_teamspaces = TeamspaceProject.objects.filter(
+                            project_id=project_id, workspace__slug=slug
+                        ).values_list("team_space", flat=True)
+
+                        teamspace_users = (
+                            TeamspaceMember.objects.filter(
+                                q, bot_filter, workspace__slug=slug, team_space_id__in=linked_teamspaces
+                            )
+                            .exclude(member_id__in=users.values("member__id"))
+                            .annotate(
+                                member__avatar_url=Case(
+                                    When(
+                                        member__avatar_asset__isnull=False,
+                                        then=Concat(
+                                            Value("/api/assets/v2/static/"),
+                                            "member__avatar_asset",
+                                            Value("/"),
+                                        ),
+                                    ),
+                                    When(
+                                        member__avatar_asset__isnull=True,
+                                        then="member__avatar",
+                                    ),
+                                    default=Value(None),
+                                    output_field=CharField(),
+                                )
+                            )
+                            .distinct()
+                            .values(
+                                "member__avatar_url",
+                                "member__display_name",
+                                "member__id",
+                            )
+                        )
+
+                        response_data["user_mention"].extend(teamspace_users[:count])
 
                 elif query_type == "project_mention":
                     fields = ["name", "identifier"]
