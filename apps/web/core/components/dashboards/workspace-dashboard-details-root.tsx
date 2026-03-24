@@ -55,7 +55,7 @@ export const WorkspaceDashboardDetailsRoot = observer(function WorkspaceDashboar
       <WorkItemFiltersRowWrapper filter={filter} disablePQL />
       <div className="flex flex-1 overflow-hidden">
         <DashboardsWidgetsListRoot
-          className="shrink-0 flex-grow px-page-x py-6 overflow-y-scroll vertical-scrollbar scrollbar-sm"
+          className="shrink-0 grow px-page-x py-6 overflow-y-scroll vertical-scrollbar scrollbar-sm"
           dashboardId={dashboardId.toString()}
         />
         <DashboardsWidgetConfigSidebarRoot

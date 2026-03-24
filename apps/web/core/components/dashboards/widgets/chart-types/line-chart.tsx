@@ -15,7 +15,7 @@ import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import type { TLineChartWidgetConfig, TLineItem } from "@plane/types";
 import { EWidgetChartModels } from "@plane/types";
 // local imports
@@ -29,9 +29,9 @@ const LineChart = lazy(function LineChart() {
 });
 
 export const DashboardLineChartWidget = observer(function DashboardLineChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget } = props;
+  const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model } = widget ?? {};
+  const { chart_model, group_by } = widget ?? {};
   const widgetConfig = widget?.config as TLineChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   // next-themes
@@ -56,6 +56,7 @@ export const DashboardLineChartWidget = observer(function DashboardLineChartWidg
           stroke: widgetConfig?.line_color ?? DEFAULT_WIDGET_COLOR,
           showDot: !!widgetConfig?.show_markers,
           smoothCurves: !!widgetConfig?.smoothing,
+          onClick: () => onClick?.(),
         },
       ];
     } else if (chart_model === EWidgetChartModels.MULTI_LINE && parsedData.schema) {
@@ -67,12 +68,18 @@ export const DashboardLineChartWidget = observer(function DashboardLineChartWidg
         stroke: extendedColors[index],
         showDot: !!widgetConfig?.show_markers,
         smoothCurves: !!widgetConfig?.smoothing,
+        onClick: () => {
+          if (!group_by) return;
+          onClick?.({
+            [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[group_by]}__in`]: key,
+          });
+        },
       }));
     } else {
       parsedLines = [];
     }
     return parsedLines;
-  }, [baseColors, chart_model, parsedData.schema, widgetConfig]);
+  }, [baseColors, chart_model, group_by, onClick, parsedData.schema, widgetConfig]);
 
   if (!widget) return null;
 

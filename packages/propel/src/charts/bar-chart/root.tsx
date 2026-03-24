@@ -25,7 +25,7 @@ import {
 } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import type { TBarChartProps } from "@plane/types";
+import type { TDashboardWidgetDatum, TBarChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
@@ -121,6 +121,11 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           onMouseEnter={() => setActiveBar(bar.key)}
           onMouseLeave={() => setActiveBar(null)}
           fill={getBarColor(data, bar.key)}
+          onClick={(...args: unknown[]) => {
+            if (!Array.isArray(args) || !args[0] || typeof args[0] !== "object" || !("payload" in args[0])) return;
+            const payload = args[0].payload as TDashboardWidgetDatum;
+            bar.onClick?.(payload);
+          }}
         />
       )),
     [activeLegend, stackKeys, bars, getBarColor, data]

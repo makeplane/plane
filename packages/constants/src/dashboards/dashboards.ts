@@ -506,3 +506,22 @@ export const WIDGET_DROPDOWN_SECTIONS: {
     ],
   },
 ];
+
+export const WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY: Record<EWidgetXAxisProperty, string> = {
+  [EWidgetXAxisProperty.STATES]: "state_id",
+  [EWidgetXAxisProperty.STATE_GROUPS]: "state_group",
+  [EWidgetXAxisProperty.LABELS]: "label_id",
+  [EWidgetXAxisProperty.ASSIGNEES]: "assignee_id",
+  [EWidgetXAxisProperty.ESTIMATE_POINTS]: "estimate_point",
+  [EWidgetXAxisProperty.CYCLES]: "cycle_id",
+  [EWidgetXAxisProperty.MODULES]: "module_id",
+  [EWidgetXAxisProperty.PRIORITY]: "priority",
+  [EWidgetXAxisProperty.WORK_ITEM_TYPES]: "type_id",
+  [EWidgetXAxisProperty.PROJECTS]: "project_id",
+  [EWidgetXAxisProperty.START_DATE]: "start_date",
+  [EWidgetXAxisProperty.TARGET_DATE]: "target_date",
+  [EWidgetXAxisProperty.CREATED_AT]: "created_at",
+  [EWidgetXAxisProperty.COMPLETED_AT]: "completed_at",
+  [EWidgetXAxisProperty.CREATED_BY]: "created_by_id",
+  [EWidgetXAxisProperty.EPICS]: "epic_id",
+};

@@ -15,7 +15,7 @@ import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import type { TAreaChartWidgetConfig, TAreaItem } from "@plane/types";
 import { EWidgetChartModels } from "@plane/types";
 // local imports
@@ -29,9 +29,9 @@ const AreaChart = lazy(function AreaChart() {
 });
 
 export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget } = props;
+  const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model } = widget ?? {};
+  const { chart_model, group_by } = widget ?? {};
   const widgetConfig = widget?.config as TAreaChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   const isComparisonModel = chart_model === EWidgetChartModels.COMPARISON;
@@ -59,6 +59,7 @@ export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidg
           strokeOpacity: widgetConfig?.show_border ? 1 : 0,
           smoothCurves: !!widgetConfig?.smoothing,
           strokeColor: widgetConfig?.fill_color ?? DEFAULT_WIDGET_COLOR,
+          onClick: () => onClick?.(),
         },
       ];
     } else if (chart_model === EWidgetChartModels.STACKED && parsedData.schema) {
@@ -72,12 +73,18 @@ export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidg
         strokeOpacity: widgetConfig?.show_border ? 1 : 0,
         smoothCurves: !!widgetConfig?.smoothing,
         showDot: !!widgetConfig?.show_markers,
+        onClick: () => {
+          if (!group_by) return;
+          onClick?.({
+            [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[group_by]}__in`]: key,
+          });
+        },
       }));
     } else {
       parsedAreas = [];
     }
     return parsedAreas;
-  }, [baseColors, chart_model, parsedData.schema, widgetConfig]);
+  }, [baseColors, chart_model, group_by, onClick, parsedData.schema, widgetConfig]);
 
   if (!widget) return null;
 

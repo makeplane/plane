@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 import { useCallback, useMemo } from "react";
 import { Outlet } from "react-router";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE, WORK_ITEM_FILTERS_ENTITY } from "@plane/constants";
 import type { TWorkItemFilterExpression } from "@plane/types";
 // components
 import { AppHeader } from "@/components/core/app-header";
@@ -28,7 +28,6 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useDashboards } from "@/plane-web/hooks/store";
-import { WORK_ITEM_FILTERS_ENTITY } from "@plane/constants";
 import type { Route } from "./+types/layout";
 
 const defaultWorkItemFilters = {

@@ -140,7 +140,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
           </h3>
           <div className="space-y-3">
             <div className="space-y-1">
-              <label className="inline-block mb-2 text-caption-md text-secondary font-medium">
+              <label className="inline-block mb-2 text-caption-md-medium text-secondary">
                 {t("dashboards.create_modal.title.label")}
               </label>
               <Controller
@@ -153,7 +153,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                   <Input
                     type="text"
                     placeholder={t("dashboards.create_modal.title.placeholder")}
-                    className="w-full px-2 py-1.5 text-body-xs"
+                    className="w-full px-2 py-1.5 text-caption-md-regular"
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors?.name)}
@@ -162,10 +162,10 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                   />
                 )}
               />
-              <span className="text-caption-xs text-danger-primary">{errors?.name?.message}</span>
+              <span className="text-caption-xs-regular text-danger-primary">{errors?.name?.message}</span>
             </div>
             <div>
-              <label className="inline-block mb-2 text-caption-md text-secondary font-medium">
+              <label className="inline-block mb-2 text-caption-md-medium text-secondary">
                 {t("dashboards.create_modal.project.label")}
               </label>
               <div className="space-y-1">
@@ -186,7 +186,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                       button={
                         <div
                           className={cn(
-                            "px-2 py-1.5 rounded-md border-[0.5px] border-subtle-1 text-left flex items-center gap-2 flex-wrap",
+                            "px-2 py-1.5 rounded-md border-[0.5px] border-subtle-1 text-left flex items-center gap-2 flex-wrap bg-layer-2",
                             {
                               "border-danger-strong": errors?.project_ids,
                             }
@@ -199,9 +199,9 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                               return (
                                 <div
                                   key={projectId}
-                                  className="h-6 px-1 rounded-sm bg-layer-1 text-caption-md text-secondary flex items-center gap-1 truncate"
+                                  className="h-6 px-1 rounded-sm bg-layer-1 text-caption-md-regular text-secondary flex items-center gap-1 truncate"
                                 >
-                                  <span className="flex-shrink-0 size-3 grid place-items-center">
+                                  <span className="shrink-0 size-3 grid place-items-center">
                                     <Logo logo={projectDetails.logo_props} size={12} />
                                   </span>
                                   <span className="truncate">{projectDetails.name}</span>
@@ -209,7 +209,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                               );
                             })
                           ) : (
-                            <span className="text-body-xs text-placeholder">
+                            <span className="text-caption-md-regular text-placeholder">
                               {t("dashboards.create_modal.project.placeholder")}
                             </span>
                           )}
@@ -220,11 +220,11 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                     />
                   )}
                 />
-                <span className="text-caption-xs text-danger-primary">{errors?.project_ids?.message}</span>
+                <span className="text-caption-xs-regular text-danger-primary">{errors?.project_ids?.message}</span>
               </div>
             </div>
             <div>
-              <div className="inline-block mb-2 text-caption-md text-secondary font-medium">
+              <div className="inline-block mb-2 text-caption-md-medium text-secondary">
                 {t("dashboards.create_modal.filters_label")}
               </div>
               <Controller

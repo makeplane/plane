@@ -13,17 +13,17 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { WIDGET_X_AXIS_PROPERTIES_LIST } from "@plane/constants";
+import { WIDGET_X_AXIS_PROPERTIES_LIST, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TWidgetComponentProps } from ".";
 
 export const DashboardTableChartWidget = observer(function DashboardTableChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget } = props;
+  const { parsedData, widget, onClick } = props;
   // translation
   const { t } = useTranslation();
   // derived values
-  const { group_by } = widget ?? {};
+  const { group_by, x_axis_property } = widget ?? {};
   // columns = x-axis items (each datum)
   const columns = parsedData.data;
   // rows = schema keys (group values)
@@ -50,6 +50,12 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
                     key={col.key}
                     className="min-w-0 pr-3 py-3 text-left font-medium text-tertiary text-11 truncate"
                     title={col.name}
+                    onClick={() => {
+                      if (!x_axis_property) return;
+                      onClick?.({
+                        [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: col.key,
+                      });
+                    }}
                   >
                     {col.name}
                   </th>
@@ -67,6 +73,12 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
                       <td
                         className="sticky left-0 z-10 min-w-0 bg-surface-1 pr-3 py-3 text-secondary truncate"
                         title={groupLabel}
+                        onClick={() => {
+                          if (!group_by) return;
+                          onClick?.({
+                            [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[group_by]}__in`]: groupKey,
+                          });
+                        }}
                       >
                         {groupLabel}
                       </td>
@@ -77,6 +89,15 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
                             key={col.key}
                             className="min-w-0 pr-3 py-3 text-primary tabular-nums truncate"
                             title={String(cellValue)}
+                            onClick={() => {
+                              if (!x_axis_property || !group_by) return;
+                              onClick?.({
+                                and: [
+                                  { [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: col.key },
+                                  { [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[group_by]}__in`]: groupKey },
+                                ],
+                              });
+                            }}
                           >
                             {cellValue}
                           </td>

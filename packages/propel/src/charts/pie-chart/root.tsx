@@ -12,6 +12,7 @@
  */
 
 import React, { useMemo, useState } from "react";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 import { Cell, PieChart as CorePieChart, Label, Legend, Pie, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
 import type { TPieChartProps } from "@plane/types";
@@ -73,14 +74,23 @@ export const PieChart = React.memo(function PieChart<K extends string, T extends
           }}
         >
           <Pie
-            activeIndex={activeIndex === null ? undefined : activeIndex}
+            activeIndex={activeIndex ?? undefined}
             onMouseLeave={() => setActiveIndex(null)}
             data={data}
             dataKey={dataKey}
             cx="50%"
             cy="50%"
             blendStroke
-            activeShape={<CustomActiveShape />}
+            activeShape={(props: PieSectorDataItem) => (
+              <CustomActiveShape
+                {...props}
+                onClick={() => {
+                  const activeCell = cells.find((_c, index) => index === activeIndex);
+                  if (!activeCell) return;
+                  activeCell.onClick?.();
+                }}
+              />
+            )}
             innerRadius={innerRadius}
             outerRadius={outerRadius}
             cornerRadius={cornerRadius}

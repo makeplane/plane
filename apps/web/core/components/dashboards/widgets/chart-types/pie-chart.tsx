@@ -16,7 +16,7 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane constants
-import { CHART_COLOR_PALETTES } from "@plane/constants";
+import { CHART_COLOR_PALETTES, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@plane/types";
 // local imports
@@ -72,9 +72,9 @@ const parsePieChartData = (
 };
 
 export const DashboardPieChartWidget = observer(function DashboardPieChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget } = props;
+  const { parsedData, widget, onClick } = props;
   // derived values
-  const { height, width } = widget ?? {};
+  const { height, width, x_axis_property } = widget ?? {};
   const widgetConfig = widget?.config as TPieChartWidgetConfig | undefined;
   const showLabels = !!widgetConfig?.show_values && height !== 1;
   const showLegends = !!widgetConfig?.show_legends;
@@ -94,9 +94,15 @@ export const DashboardPieChartWidget = observer(function DashboardPieChartWidget
 
   const cells: TCellItem<string>[] = useMemo(() => {
     const extendedColors = generateExtendedColors(baseColors ?? [], pieParsedData.length);
-    const parsedCells = pieParsedData.map((datum, index) => ({
+    const parsedCells: TCellItem<string>[] = pieParsedData.map((datum, index) => ({
       key: datum.key,
       fill: extendedColors[index],
+      onClick: () => {
+        if (!x_axis_property) return;
+        onClick?.({
+          [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: datum.key,
+        });
+      },
     }));
 
     if (widgetConfig?.group_thin_pieces) {
@@ -111,11 +117,14 @@ export const DashboardPieChartWidget = observer(function DashboardPieChartWidget
         parsedCells.push({
           key: THIN_PIECES_GROUP_KEY,
           fill: extendedColors[parsedCells.length],
+          onClick: () => {
+            onClick?.();
+          },
         });
       }
     }
     return parsedCells;
-  }, [baseColors, pieParsedData, widgetConfig]);
+  }, [baseColors, onClick, pieParsedData, widgetConfig, x_axis_property]);
 
   if (!widget) return null;
 

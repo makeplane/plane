@@ -88,6 +88,7 @@ export const AreaChart = React.memo(function AreaChart<K extends string, T exten
           onMouseEnter={() => setActiveArea(area.key)}
           onMouseLeave={() => setActiveArea(null)}
           className="[&_path]:transition-opacity [&_path]:duration-200"
+          onClick={area.onClick}
         />
       )),
     [activeLegend, areas]

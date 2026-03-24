@@ -104,6 +104,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
   // search params
   const searchParams = useSearchParams();
+  const paramsRichFilters = searchParams.get("rich_filters");
   // store hooks
   const {
     issuesFilter: { filters, fetchFilters, updateAdvancedFilters },
@@ -120,6 +121,19 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
 
     const isStaticView = STATIC_VIEW_TYPES.includes(globalViewId);
     const hasViewDetails = Boolean(viewDetails);
+    let richFilters = viewDetails?.rich_filters;
+    let lastUsedFilterType = viewDetails?.last_used_filter;
+    if (paramsRichFilters) {
+      try {
+        const decodedRichFilters = decodeURIComponent(paramsRichFilters);
+        richFilters = JSON.parse(decodedRichFilters);
+        lastUsedFilterType = "rich_filters";
+      } catch (error) {
+        console.error("Failed to decode rich filters", error);
+        richFilters = viewDetails?.rich_filters;
+        lastUsedFilterType = viewDetails?.last_used_filter;
+      }
+    }
 
     if (!isStaticView && !hasViewDetails) return undefined;
 
@@ -127,11 +141,11 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
       displayFilters: workItemFilters?.displayFilters,
       displayProperties: workItemFilters?.displayProperties,
       kanbanFilters: workItemFilters?.kanbanFilters,
-      richFilters: viewDetails?.rich_filters || {},
+      richFilters: richFilters || {},
       pqlFilters: viewDetails?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
-      lastUsedFilterType: viewDetails?.last_used_filter || "rich_filters",
+      lastUsedFilterType: lastUsedFilterType || "rich_filters",
     };
-  }, [globalViewId, viewDetails, workItemFilters]);
+  }, [globalViewId, paramsRichFilters, viewDetails, workItemFilters]);
 
   // Custom hooks
   useWorkspaceIssueProperties(workspaceSlug);

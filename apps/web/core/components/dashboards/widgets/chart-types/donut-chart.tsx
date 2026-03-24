@@ -15,7 +15,12 @@ import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, STATE_GROUPS } from "@plane/constants";
+import {
+  CHART_COLOR_PALETTES,
+  DEFAULT_WIDGET_COLOR,
+  STATE_GROUPS,
+  WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY,
+} from "@plane/constants";
 import type { TCellItem, TDashboardWidgetDatum, TDonutChartWidgetConfig } from "@plane/types";
 import { EWidgetChartModels } from "@plane/types";
 // local imports
@@ -55,9 +60,9 @@ export const parseDonutChartData = (
 };
 
 export const DashboardDonutChartWidget = observer(function DashboardDonutChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget } = props;
+  const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model, data, height, width } = widget ?? {};
+  const { chart_model, data, height, width, x_axis_property } = widget ?? {};
   const widgetConfig = widget?.config as TDonutChartWidgetConfig | undefined;
   const isOfUnitHeight = height === 1;
   const showLabels = !isOfUnitHeight && chart_model !== EWidgetChartModels.PROGRESS;
@@ -85,23 +90,39 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
       parsedCells = donutParsedData.map((datum, index) => ({
         key: datum.key,
         fill: extendedColors[index],
+        onClick: () => {
+          if (!x_axis_property) return;
+          onClick?.({
+            [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: datum.key,
+          });
+        },
       }));
     } else if (chart_model === EWidgetChartModels.PROGRESS) {
       parsedCells = [
         {
           key: "completed",
           fill: widgetConfig?.completed_color ?? DEFAULT_WIDGET_COLOR,
+          onClick: () => {
+            onClick?.({
+              state_group__in: STATE_GROUPS.completed.key,
+            });
+          },
         },
         {
           key: "pending",
           fill: "var(--background-color-layer-1)",
+          onClick: () => {
+            onClick?.({
+              state_group__in: STATE_GROUPS.unstarted.key,
+            });
+          },
         },
       ];
     } else {
       parsedCells = [];
     }
     return parsedCells;
-  }, [baseColors, chart_model, donutParsedData, widgetConfig]);
+  }, [baseColors, chart_model, donutParsedData, onClick, widgetConfig, x_axis_property]);
 
   if (!widget) return null;
 

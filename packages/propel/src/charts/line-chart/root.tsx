@@ -94,6 +94,7 @@ export const LineChart = React.memo(function LineChart<K extends string, T exten
           }}
           onMouseEnter={() => setActiveLine(line.key)}
           onMouseLeave={() => setActiveLine(null)}
+          onClick={line.onClick}
         />
       )),
     [activeLegend, lines]

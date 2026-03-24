@@ -13,7 +13,6 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Eye } from "lucide-react";
 import { EditIcon, PlusIcon, DashboardIcon } from "@plane/propel/icons";
 // plane imports
@@ -117,7 +116,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
                 title={dashboardDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <DashboardIcon className="size-4 flex-shrink-0 text-tertiary" />
+                    <DashboardIcon className="size-4 shrink-0 text-tertiary" />
                   </Breadcrumbs.Icon>
                 }
                 isLast

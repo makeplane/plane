@@ -15,7 +15,7 @@ import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import type { TBarChartWidgetConfig, TBarItem, TDashboardWidgetDatum } from "@plane/types";
 import { EWidgetChartModels } from "@plane/types";
 // local imports
@@ -29,9 +29,9 @@ const BarChart = lazy(function BarChart() {
 });
 
 export const DashboardBarChartWidget = observer(function DashboardBarChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget } = props;
+  const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model } = widget ?? {};
+  const { chart_model, x_axis_property } = widget ?? {};
   const widgetConfig = widget?.config as TBarChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   // next-themes
@@ -57,6 +57,12 @@ export const DashboardBarChartWidget = observer(function DashboardBarChartWidget
           showPercentage: false,
           showTopBorderRadius: () => true,
           showBottomBorderRadius: () => true,
+          onClick: (payload) => {
+            if (!x_axis_property) return;
+            onClick?.({
+              [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: payload.key,
+            });
+          },
         },
       ];
     } else if (chart_model === EWidgetChartModels.STACKED && parsedData.schema) {
@@ -88,6 +94,12 @@ export const DashboardBarChartWidget = observer(function DashboardBarChartWidget
         showPercentage: false,
         showTopBorderRadius: (value, payload: TDashboardWidgetDatum) => parsedExtremes[payload.key].top === value,
         showBottomBorderRadius: (value, payload: TDashboardWidgetDatum) => parsedExtremes[payload.key].bottom === value,
+        onClick: (payload) => {
+          if (!x_axis_property) return;
+          onClick?.({
+            [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: payload.key,
+          });
+        },
       }));
     } else if (chart_model === EWidgetChartModels.GROUPED && parsedData.schema) {
       parsedBars = schemaKeys.map((key, index) => ({
@@ -99,12 +111,18 @@ export const DashboardBarChartWidget = observer(function DashboardBarChartWidget
         showPercentage: false,
         showTopBorderRadius: () => true,
         showBottomBorderRadius: () => true,
+        onClick: (payload) => {
+          if (!x_axis_property) return;
+          onClick?.({
+            [`${WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY[x_axis_property]}__in`]: payload.key,
+          });
+        },
       }));
     } else {
       parsedBars = [];
     }
     return parsedBars;
-  }, [baseColors, chart_model, parsedData, widgetConfig]);
+  }, [baseColors, chart_model, parsedData, widgetConfig, onClick, x_axis_property]);
 
   if (!widget) return null;
 

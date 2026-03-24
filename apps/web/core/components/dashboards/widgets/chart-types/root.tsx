@@ -11,13 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { toJS } from "mobx";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 import useSWR from "swr";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
+import type { TWorkItemFilterExpression } from "@plane/types";
 import { EWidgetChartTypes } from "@plane/types";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // chart types
@@ -44,6 +48,9 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
   const { activeBreakpoint, dashboardId, widgetId } = props;
   // refs
   const widgetRef = useRef<HTMLDivElement>(null);
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getDashboardById } = useDashboards();
   // derived values
@@ -73,6 +80,28 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
   useSWR(
     isWidgetConfigured && isWidgetAvailableInCurrentPlan && widgetId ? `WIDGET_DATA_${widgetId}` : null,
     isWidgetConfigured && isWidgetAvailableInCurrentPlan && widgetId ? () => fetchWidgetData?.() : null
+  );
+
+  const handleChartClick = useCallback(
+    (chartExpression?: TWorkItemFilterExpression) => {
+      if (isEditingEnabled) return;
+      const finalExpression: TWorkItemFilterExpression = {
+        and: [],
+      };
+      if (dashboardDetails?.filters && Object.keys(dashboardDetails.filters).length > 0) {
+        finalExpression.and.push(toJS(dashboardDetails.filters));
+      }
+      if (widget?.filters && Object.keys(widget.filters).length > 0) {
+        finalExpression.and.push(toJS(widget.filters));
+      }
+      if (chartExpression && Object.keys(chartExpression).length > 0) {
+        finalExpression.and.push(chartExpression);
+      }
+      router.push(
+        `/${workspaceSlug}/workspace-views/all-issues/?rich_filters=${encodeURIComponent(JSON.stringify(finalExpression))}`
+      );
+    },
+    [dashboardDetails?.filters, isEditingEnabled, widget?.filters, router, workspaceSlug]
   );
 
   let WidgetComponent: React.FC<TWidgetComponentProps> | null = null;
@@ -127,6 +156,14 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
         toggleEditWidget?.(widgetId);
       }}
       role={isEditingEnabled ? "button" : "none"}
+      tabIndex={isEditingEnabled ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (["Enter", " "].includes(e.key) && isEditingEnabled) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleEditWidget?.(widgetId);
+        }
+      }}
     >
       <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
       <DashboardWidgetContent
@@ -136,7 +173,7 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
         isDataEmpty={data?.data.length === 0}
         widget={widget}
       >
-        <WidgetComponent parsedData={parsedData} widget={widget} />
+        <WidgetComponent parsedData={parsedData} widget={widget} onClick={handleChartClick} />
       </DashboardWidgetContent>
     </div>
   );

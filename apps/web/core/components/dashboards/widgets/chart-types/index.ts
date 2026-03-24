@@ -16,7 +16,12 @@ export * from "./root";
 import { getWeekOfMonth, isValid } from "date-fns";
 // plane imports
 import { TO_CAPITALIZE_PROPERTIES, WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
-import type { EWidgetXAxisProperty, TDashboardWidgetData, TDashboardWidgetDatum } from "@plane/types";
+import type {
+  EWidgetXAxisProperty,
+  TDashboardWidgetData,
+  TDashboardWidgetDatum,
+  TWorkItemFilterExpression,
+} from "@plane/types";
 import { EWidgetXAxisDateGrouping } from "@plane/types";
 // helpers
 import {
@@ -33,6 +38,7 @@ import type { DashboardWidgetInstance } from "@/store/dashboards/widget";
 export type TWidgetComponentProps = {
   parsedData: TDashboardWidgetData;
   widget: DashboardWidgetInstance | undefined;
+  onClick?: (expression?: TWorkItemFilterExpression) => void;
 };
 
 type TArgs = {
@@ -49,7 +55,7 @@ export const commonWidgetClassName = (args: TArgs) => {
   const { className, isEditingEnabled, isSelected, isResizingDisabled } = args;
 
   const commonClassName = cn(
-    "group/widget dashboard-widget-item size-full rounded-lg bg-surface-1 border border-subtle-1 transition-colors",
+    "group/widget dashboard-widget-item size-full rounded-lg bg-surface-1 border border-subtle-1 transition-colors focus-visible:border-accent-strong",
     {
       "selected border-accent-strong": isSelected,
       "cursor-pointer": isEditingEnabled,

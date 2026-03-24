@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { TDashboardWidgetDatum } from "../dashboards";
+
 // ============================================================
 // Chart Base
 // ============================================================
@@ -100,6 +102,7 @@ export type TBarItem<T extends string> = {
   showTopBorderRadius?: (barKey: string, payload: any) => boolean;
   showBottomBorderRadius?: (barKey: string, payload: any) => boolean;
   shapeVariant?: TBarChartShapeVariant;
+  onClick?: (payload: TDashboardWidgetDatum) => void;
 };
 
 export type TBarChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
@@ -124,6 +127,7 @@ export type TLineItem<T extends string> = {
   smoothCurves: boolean;
   stroke: string;
   style?: Record<string, string | number>;
+  onClick?: () => void;
 };
 
 export type TLineChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
@@ -160,6 +164,7 @@ export type TAreaItem<T extends string> = {
   strokeColor: string;
   strokeOpacity: number;
   style?: Record<string, string | number>;
+  onClick?: () => void;
 };
 
 export type TAreaChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
@@ -177,6 +182,7 @@ export type TAreaChartProps<K extends string, T extends string> = TAxisChartProp
 export type TCellItem<T extends string> = {
   key: T;
   fill: string;
+  onClick?: () => void;
 };
 
 export type TPieChartProps<K extends string, T extends string> = Pick<
