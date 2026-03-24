@@ -609,3 +609,11 @@ PROJECT_LABEL_ID_PARAMETER = OpenApiParameter(
         )
     ],
 )
+
+ESTIMATE_ID_PARAMETER = OpenApiParameter(
+    name="estimate_id",
+    description="Estimate ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+)

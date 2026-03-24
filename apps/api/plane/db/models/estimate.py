@@ -18,11 +18,19 @@ from django.db.models import Q
 from .project import ProjectBaseModel
 
 
+class EstimateType(models.TextChoices):
+    CATEGORIES = "categories", "Categories"
+    POINTS = "points", "Points"
+    TIME = "time", "Time"
+
+
 class Estimate(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(verbose_name="Estimate Description", blank=True)
-    type = models.CharField(max_length=255, default="categories")
+    type = models.CharField(max_length=255, default=EstimateType.CATEGORIES, choices=EstimateType.choices)
     last_used = models.BooleanField(default=False)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+    external_source = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         """Return name of the estimate"""
@@ -48,6 +56,8 @@ class EstimatePoint(ProjectBaseModel):
     key = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     description = models.TextField(blank=True)
     value = models.CharField(max_length=255)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+    external_source = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         """Return name of the estimate"""

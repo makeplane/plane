@@ -113,6 +113,13 @@ export const RESOURCE_PERMISSIONS_GROUPS = [
         write_permission: "projects.milestones:write",
       },
       {
+        key: "projects.estimates",
+        title: "Estimates",
+        description: "Project estimates and all related entities",
+        read_permission: "projects.estimates:read",
+        write_permission: "projects.estimates:write",
+      },
+      {
         key: "projects.work_items",
         title: "Work Items",
         description: "Project Work Items",

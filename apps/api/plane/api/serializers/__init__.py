@@ -63,7 +63,7 @@ from .intake import (
     IntakeIssueCreateSerializer,
     IntakeIssueUpdateSerializer,
 )
-from .estimate import EstimatePointSerializer
+from .estimate import EstimateSerializer, EstimatePointSerializer
 from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from .asset import (
     UserAssetUploadSerializer,

@@ -13,6 +13,7 @@ from .asset import urlpatterns as asset_patterns
 from .customer import urlpatterns as customer_patterns
 from .cycle import urlpatterns as cycle_patterns
 from .epic import urlpatterns as epic_patterns
+from .estimate import urlpatterns as estimate_patterns
 from .initiative import urlpatterns as initiative_patterns
 from .intake import urlpatterns as intake_patterns
 from .invite import urlpatterns as invite_patterns
@@ -44,6 +45,7 @@ urlpatterns = [
     *customer_patterns,
     *cycle_patterns,
     *epic_patterns,
+    *estimate_patterns,
     *initiative_patterns,
     *intake_patterns,
     *invite_patterns,

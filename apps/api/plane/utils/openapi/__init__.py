@@ -62,6 +62,7 @@ from .parameters import (
     TEAMSPACE_ID_PARAMETER,
     PROJECT_LABEL_ID_PARAMETER,
     PAGE_ID_PARAMETER,
+    ESTIMATE_ID_PARAMETER,
 )
 
 # Responses
@@ -149,6 +150,10 @@ from .examples import (
     STATE_UPDATE_EXAMPLE,
     INTAKE_ISSUE_CREATE_EXAMPLE,
     INTAKE_ISSUE_UPDATE_EXAMPLE,
+    ESTIMATE_CREATE_EXAMPLE,
+    ESTIMATE_UPDATE_EXAMPLE,
+    ESTIMATE_POINT_CREATE_EXAMPLE,
+    ESTIMATE_POINT_UPDATE_EXAMPLE,
     # Response Examples
     CYCLE_EXAMPLE,
     TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE,
@@ -176,6 +181,8 @@ from .examples import (
     TEAMSPACE_EXAMPLE,
     PROJECT_FEATURE_EXAMPLE,
     WORKSPACE_FEATURE_EXAMPLE,
+    ESTIMATE_EXAMPLE,
+    ESTIMATE_POINT_EXAMPLE,
 )
 
 # Helper decorators
@@ -199,6 +206,8 @@ from .decorators import (
     state_docs,
     issue_worklog_docs,
     work_item_page_docs,
+    estimate_docs,
+    estimate_point_docs,
 )
 
 # Schema processing hooks
@@ -246,6 +255,7 @@ __all__ = [
     "TEAMSPACE_ID_PARAMETER",
     "PROJECT_LABEL_ID_PARAMETER",
     "PAGE_ID_PARAMETER",
+    "ESTIMATE_ID_PARAMETER",
     # Responses
     "UNAUTHORIZED_RESPONSE",
     "FORBIDDEN_RESPONSE",
@@ -354,6 +364,8 @@ __all__ = [
     "TEAMSPACE_EXAMPLE",
     "PROJECT_FEATURE_EXAMPLE",
     "WORKSPACE_FEATURE_EXAMPLE",
+    "ESTIMATE_EXAMPLE",
+    "ESTIMATE_POINT_EXAMPLE",
     # Decorators
     "workspace_docs",
     "project_docs",
@@ -374,6 +386,8 @@ __all__ = [
     "state_docs",
     "issue_worklog_docs",
     "work_item_page_docs",
+    "estimate_docs",
+    "estimate_point_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",

@@ -526,3 +526,31 @@ def work_item_page_docs(**kwargs):
     }
 
     return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def estimate_docs(**kwargs):
+    """Decorator for estimate-related endpoints"""
+    defaults = {
+        "tags": ["Estimates"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def estimate_point_docs(**kwargs):
+    """Decorator for estimate point-related endpoints"""
+    defaults = {
+        "tags": ["Estimate Points"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))

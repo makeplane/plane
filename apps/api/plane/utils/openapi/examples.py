@@ -834,6 +834,70 @@ WORKSPACE_FEATURE_EXAMPLE = OpenApiExample(
     },
 )
 
+# Estimate Examples
+ESTIMATE_EXAMPLE = OpenApiExample(
+    name="Estimate",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Estimate 1",
+        "description": "Estimate 1 description",
+    },
+    description="Example response for an estimate",
+)
+
+ESTIMATE_POINT_EXAMPLE = OpenApiExample(
+    name="EstimatePoint",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "estimate": "550e8400-e29b-41d4-a716-446655440001",
+        "key": 1,
+        "value": "1",
+    },
+    description="Example response for an estimate point",
+)
+
+ESTIMATE_CREATE_EXAMPLE = OpenApiExample(
+    name="EstimateCreateSerializer",
+    value={
+        "name": "Estimate 1",
+        "description": "Estimate 1 description",
+    },
+    description="Example request for creating an estimate",
+)
+ESTIMATE_UPDATE_EXAMPLE = OpenApiExample(
+    name="EstimateUpdateSerializer",
+    value={
+        "name": "Estimate 1",
+        "description": "Estimate 1 description",
+    },
+    description="Example request for updating an estimate",
+)
+
+# Estimate Point Examples
+ESTIMATE_POINT_CREATE_EXAMPLE = OpenApiExample(
+    name="EstimatePointCreateSerializer",
+    value=[
+        {
+            "value": "1",
+            "description": "Estimate Point 1 description",
+        },
+        {
+            "value": "2",
+            "description": "Estimate Point 2 description",
+        },
+    ],
+    description="Example request for creating an estimate point",
+)
+ESTIMATE_POINT_UPDATE_EXAMPLE = OpenApiExample(
+    name="EstimatePointUpdateSerializer",
+    value={
+        "value": "1",
+        "description": "Estimate Point 1 description",
+    },
+    description="Example request for updating an estimate point",
+)
+
+
 # Sample data for different entity types
 SAMPLE_ISSUE = {
     "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -1002,6 +1066,25 @@ SAMPLE_WORKSPACE_FEATURE = {
     "wiki": True,
     "pi": True,
 }
+
+SAMPLE_ESTIMATE = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Estimate 1",
+    "description": "Estimate 1 description",
+    "type": "categories",
+    "last_used": False,
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
+SAMPLE_ESTIMATE_POINT = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "estimate": "550e8400-e29b-41d4-a716-446655440001",
+    "key": 1,
+    "value": "1",
+    "description": "Estimate Point 1 description",
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
 # Mapping of schema types to sample data
 SCHEMA_EXAMPLES = {
     "Issue": SAMPLE_ISSUE,
@@ -1024,6 +1107,8 @@ SCHEMA_EXAMPLES = {
     "Teamspace": SAMPLE_TEAMSPACE,
     "ProjectFeature": SAMPLE_PROJECT_FEATURE,
     "WorkspaceFeature": SAMPLE_WORKSPACE_FEATURE,
+    "Estimate": SAMPLE_ESTIMATE,
+    "EstimatePoint": SAMPLE_ESTIMATE_POINT,
 }
 
 
