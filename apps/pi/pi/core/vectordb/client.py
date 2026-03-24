@@ -16,9 +16,9 @@ import time
 from typing import Any
 from typing import Dict
 
-from opensearchpy import AWSV4SignerAuth
-from opensearchpy import AWSV4SignerAsyncAuth
 from opensearchpy import AsyncHttpConnection
+from opensearchpy import AWSV4SignerAsyncAuth
+from opensearchpy import AWSV4SignerAuth
 from opensearchpy import ConnectionTimeout
 from opensearchpy import OpenSearch
 from opensearchpy import RequestError
@@ -66,7 +66,7 @@ def _build_opensearch_auth_kwargs_sync() -> Dict[str, Any]:
 
     import boto3
 
-    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION") or "us-east-1"
     credentials = boto3.Session().get_credentials()
     if credentials is None:
         return {}
@@ -96,7 +96,7 @@ def _build_opensearch_auth_kwargs_async() -> Dict[str, Any]:
 
     import boto3
 
-    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION") or "us-east-1"
     credentials = boto3.Session().get_credentials()
     if credentials is None:
         return {}

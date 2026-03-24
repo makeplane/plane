@@ -31,6 +31,8 @@ from pi.app.models.message_mention import MessageMention
 from pi.app.models.oauth import PlaneOAuthState
 from pi.app.models.oauth import PlaneOAuthToken
 from pi.app.models.pages import PageAIBlock
+from pi.app.models.pages import PageUtilityEmbed
+from pi.app.models.pql_translation import PQLTranslation
 from pi.app.models.transcription import Transcription  # noqa: F401
 from pi.app.models.workspace_vectorization import WorkspaceVectorization  # noqa: F401
 
@@ -52,6 +54,8 @@ __all__ = [
     "MessageFlowStep",
     "MessageMeta",
     "PageAIBlock",
+    "PageUtilityEmbed",
+    "PQLTranslation",
     "MessageMention",
     "Transcription",
     "UserChatPreference",

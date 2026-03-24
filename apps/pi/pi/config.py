@@ -513,8 +513,8 @@ class Celery:
             password = quote(str(secret.get(os.getenv("RABBITMQ_PASSWORD_KEY"), "")), safe="")
             host = secret.get(os.getenv("RABBITMQ_HOST_KEY"), "")
             port = secret.get(os.getenv("RABBITMQ_PORT_KEY"), 5671)
-            vhost = quote(str(secret.get(os.getenv("RABBITMQ_VHOST_KEY"), "/")), safe="")
-            self.BROKER_URL = f"amqps://{user}:{password}@{host}:{port}/{vhost}"
+            secret_vhost = quote(str(secret.get(os.getenv("RABBITMQ_VHOST_KEY"), "/")), safe="")
+            self.BROKER_URL = f"amqps://{user}:{password}@{host}:{port}/{secret_vhost}"
             return
 
         # If broker is provided but missing credentials (e.g. `host:5671`), inject creds from secret.
@@ -550,7 +550,7 @@ class Celery:
 
         host = host_from_raw
         port = port_from_raw
-        vhost = vhost_from_raw
+        vhost: str | None = vhost_from_raw
 
         if parsed is not None:
             host = parsed.hostname or host

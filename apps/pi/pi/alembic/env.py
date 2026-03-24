@@ -32,8 +32,10 @@ from pi.app.models import MessageFlowStep  # noqa: F401
 from pi.app.models import MessageMention  # noqa: F401
 from pi.app.models import MessageMeta  # noqa: F401
 from pi.app.models import PageAIBlock  # noqa: F401
+from pi.app.models import PageUtilityEmbed  # noqa: F401
 from pi.app.models import PlaneOAuthState  # noqa: F401
 from pi.app.models import PlaneOAuthToken  # noqa: F401
+from pi.app.models import PQLTranslation  # noqa: F401
 from pi.app.models import Transcription  # noqa: F401
 from pi.app.models import WorkspaceVectorization  # noqa: F401
 from pi.app.models.base import BaseModel

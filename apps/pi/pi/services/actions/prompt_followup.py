@@ -820,7 +820,7 @@ Examples:
 - "set priority to high and assign to me" → true, target_fields=["priority", "assignee_ids"], operations=["set", "add"]
 
 Respond with JSON only:
-{{"needs_entity_resolution": true/false, "target_fields": [...], "operations": [...]}}""" # noqa: E501
+{{"needs_entity_resolution": true/false, "target_fields": [...], "operations": [...]}}"""  # noqa: E501
     try:
         # Initialize chatbot for analysis
         chatbot = PlaneChatBot()

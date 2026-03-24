@@ -215,11 +215,13 @@ def build_issue_text_search_query(
     # Add query_description clauses only if it's not empty or None
     if query_description and query_description.strip():
         # query_description vs title matches
-        should_clauses.extend([
-            _build_match_clause("name", query_description),
-            # query_description vs description matches
-            _build_match_clause("description", query_description),
-        ])
+        should_clauses.extend(
+            [
+                _build_match_clause("name", query_description),
+                # query_description vs description matches
+                _build_match_clause("description", query_description),
+            ]
+        )
 
     # Add user_id filter if provided
     filters = [filter_query]

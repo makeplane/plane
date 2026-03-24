@@ -10,9 +10,13 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 import uuid
+from typing import Any
+from typing import Dict
 from typing import Optional
 
+from sqlalchemy import JSON
 from sqlalchemy import Column
+from sqlalchemy import Index
 from sqlalchemy import String
 from sqlmodel import Field
 
@@ -56,4 +60,47 @@ class PageAIBlock(UUIDModel, TimeAuditModel, table=True):
     workspace_id: uuid.UUID = Field(
         nullable=False,
         index=True,
+    )
+
+
+class PageUtilityEmbed(UUIDModel, TimeAuditModel, table=True):
+    """Persists embed payloads (charts, work items, views, etc.) produced by PI tools when a chat response is saved as a page."""
+
+    __tablename__ = "page_utility_embeds"
+    __table_args__ = (
+        Index("ix_page_utility_embeds_entity", "entity_type", "entity_id"),
+        Index("ix_page_utility_embeds_chat_message", "chat_id", "message_id"),
+    )
+
+    embed_id: uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        nullable=False,
+        index=True,
+        unique=True,
+        description="Stable UUID referenced by the page document placeholder",
+    )
+    embed_type: str = Field(
+        sa_column=Column(String(50), nullable=False),
+        description="Broad embed category: 'chart', 'workitem', 'view', 'image', 'audio', etc.",
+    )
+    sub_type: Optional[str] = Field(
+        sa_column=Column(String(100), nullable=True),
+        description="Renderer/variant within the category: 'PieChart', 'BarChart' for charts; 'issue', 'cycle' for work items",
+    )
+    entity_type: str = Field(
+        sa_column=Column(String(50), nullable=False),
+        description="Type of entity containing the embed: 'page' or 'wiki'",
+    )
+    entity_id: uuid.UUID = Field(
+        nullable=False,
+        description="Plane page/wiki ID that contains the embed",
+    )
+    workspace_id: uuid.UUID = Field(nullable=False, index=True)
+    project_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
+    chat_id: uuid.UUID = Field(nullable=False, description="Chat session the embed originated from")
+    message_id: Optional[uuid.UUID] = Field(default=None, nullable=True, description="Assistant message ID that produced the embed")
+    title: Optional[str] = Field(default=None, nullable=True, description="Display title for the embed")
+    payload: Dict[str, Any] = Field(
+        sa_column=Column(JSON, nullable=False),
+        description="Full JSON payload whose shape varies by embed_type",
     )
