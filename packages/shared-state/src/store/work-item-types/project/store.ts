@@ -102,7 +102,9 @@ export class ProjectWorkItemTypesStore extends BaseWorkItemTypesStore implements
     }
     runInAction(() => {
       for (const [projectId, ids] of projectTypeIds) {
-        this.typeIdsMap.set(projectId, ids);
+        const existingIds = this.typeIdsMap.get(projectId) ?? [];
+        const newIds = new Set([...existingIds, ...ids]);
+        this.typeIdsMap.set(projectId, Array.from(newIds));
       }
     });
   };
