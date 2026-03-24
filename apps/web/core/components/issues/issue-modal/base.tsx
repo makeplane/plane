@@ -414,6 +414,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           });
         }
       }
+      throw error;
     }
   };
 
