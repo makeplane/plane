@@ -153,7 +153,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       >
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className={cn("flex-grow truncate text-left text-body-xs-medium", labelClassName)}>
+          <span className={cn("flex-grow truncate text-left", labelClassName)}>
             {value ? renderFormattedDate(value, formatToken) : placeholder}
           </span>
         )}

@@ -212,7 +212,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                     selectedEstimate.value
                   )
                 ) : (
-                  <span className="text-placeholder">{placeholder}</span>
+                  <span>{placeholder}</span>
                 )}
               </span>
             )}

@@ -147,7 +147,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           tabIndex={tabIndex}
         >
           <DropdownButton
-            className={cn("text-11", buttonClassName)}
+            className={buttonClassName}
             isActive={isOpen}
             tooltipHeading={placeholder}
             tooltipContent={
@@ -159,9 +159,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           >
             {!hideIcon && <ButtonAvatars size={iconSize} showTooltip={showTooltip} userIds={value} icon={icon} />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="grow truncate leading-5 text-left text-body-xs-medium">
-                {getDisplayName(value, showUserDetails, placeholder)}
-              </span>
+              <span className="grow truncate text-left">{getDisplayName(value, showUserDetails, placeholder)}</span>
             )}
             {dropdownArrow && (
               <ChevronDownIcon className={cn("h-2.5 w-2.5 shrink-0", dropdownArrowClassName)} aria-hidden="true" />

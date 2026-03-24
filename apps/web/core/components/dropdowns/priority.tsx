@@ -20,6 +20,7 @@ import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { getButtonStyling } from "@plane/propel/button";
 import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssuePriorities } from "@plane/types";
@@ -97,6 +98,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
+          getButtonStyling("ghost", "sm"),
           "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
@@ -135,7 +137,7 @@ function BorderButton(props: ButtonProps) {
           ))}
         {!hideText && (
           <span
-            className={cn("flex-grow truncate text-body-xs-medium", {
+            className={cn("flex-grow truncate", {
               "text-secondary": priority && priority !== "none",
               "text-placeholder": !priority || priority === "none",
             })}
@@ -188,6 +190,7 @@ function BackgroundButton(props: ButtonProps) {
     >
       <div
         className={cn(
+          getButtonStyling("ghost", "sm"),
           "h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
@@ -226,7 +229,7 @@ function BackgroundButton(props: ButtonProps) {
           ))}
         {!hideText && (
           <span
-            className={cn("flex-grow truncate text-body-xs-medium", {
+            className={cn("flex-grow truncate", {
               "text-secondary": priority && priority !== "none",
               "text-placeholder": !priority || priority === "none",
             })}
@@ -272,6 +275,7 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
+          getButtonStyling("ghost", "sm"),
           "h-full w-full flex items-center gap-1.5 rounded-sm hover:bg-layer-transparent-hover px-2",
           {
             // compact the icons if text is hidden
@@ -310,7 +314,7 @@ function TransparentButton(props: ButtonProps) {
           ))}
         {!hideText && (
           <span
-            className={cn("flex-grow truncate text-body-xs-medium", {
+            className={cn("flex-grow truncate", {
               "text-secondary": priority && priority !== "none",
               "text-placeholder": !priority || priority === "none",
             })}

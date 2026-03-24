@@ -167,97 +167,94 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <div className="size-full flex items-center justify-between gap-3">
-      <div className="flex items-center gap-3">
-        <div className="h-6">
-          <Controller
-            name="state_id"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <StateDropdown
-                value={value}
-                onChange={(val) => onChange(value === val ? "" : val)}
-                projectId={projectId}
-                buttonVariant="border-with-text"
-                disabled={isUpdateDisabled}
-                showDefaultState={false}
-                placement="top-start"
-                alwaysAllowStateChange
-              />
-            )}
-          />
-        </div>
-        <div className="h-6">
-          <Controller
-            name="priority"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <PriorityDropdown
-                value={value}
-                onChange={(val) => onChange(value === val ? undefined : val)}
-                buttonVariant="border-with-text"
-                buttonClassName="text-tertiary!"
-                disabled={isUpdateDisabled}
-                placement="top-start"
-              />
-            )}
-          />
-        </div>
-        <div className="h-6">
-          <Controller
-            name="assignee_ids"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <MemberDropdown
-                value={value}
-                onChange={onChange}
-                buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
-                buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
-                projectId={projectId}
-                placeholder="Assignees"
-                multiple
-                disabled={isUpdateDisabled}
-                placement="top-start"
-              />
-            )}
-          />
-        </div>
-        <div className="h-6">
-          <Controller
-            name="start_date"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <DateDropdown
-                value={value}
-                onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
-                buttonVariant="border-with-text"
-                placeholder="Start date"
-                icon={<StartDatePropertyIcon className="size-3 shrink-0" />}
-                disabled={isUpdateDisabled}
-                maxDate={maxDate ?? undefined}
-                placement="top-start"
-              />
-            )}
-          />
-        </div>
-        <div className="h-6">
-          <Controller
-            name="target_date"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <DateDropdown
-                value={value}
-                onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
-                buttonVariant="border-with-text"
-                placeholder="Due date"
-                icon={<DueDatePropertyIcon className="size-3 shrink-0" />}
-                disabled={isUpdateDisabled}
-                minDate={minDate ?? undefined}
-                placement="top-start"
-              />
-            )}
-          />
-        </div>
+    <div className="size-full flex items-center justify-between gap-3 h-6">
+      <div className="flex items-center gap-3 h-full">
+        <Controller
+          name="state_id"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <StateDropdown
+              value={value}
+              onChange={(val) => onChange(value === val ? "" : val)}
+              projectId={projectId}
+              buttonVariant="border-with-text"
+              disabled={isUpdateDisabled}
+              showDefaultState={false}
+              buttonClassName="text-tertiary"
+              placement="top-start"
+              alwaysAllowStateChange
+            />
+          )}
+        />
+
+        <Controller
+          name="priority"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <PriorityDropdown
+              value={value}
+              onChange={(val) => onChange(value === val ? undefined : val)}
+              buttonVariant="border-with-text"
+              disabled={isUpdateDisabled}
+              placement="top-start"
+            />
+          )}
+        />
+
+        <Controller
+          name="assignee_ids"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <MemberDropdown
+              value={value}
+              onChange={onChange}
+              buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
+              buttonClassName={cn("text-tertiary", value?.length > 0 ? "hover:bg-transparent" : "")}
+              projectId={projectId}
+              placeholder="Assignees"
+              multiple
+              disabled={isUpdateDisabled}
+              placement="top-start"
+            />
+          )}
+        />
+
+        <Controller
+          name="start_date"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DateDropdown
+              value={value}
+              onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
+              buttonVariant="border-with-text"
+              placeholder="Start date"
+              icon={<StartDatePropertyIcon className="size-3 shrink-0" />}
+              disabled={isUpdateDisabled}
+              maxDate={maxDate ?? undefined}
+              buttonClassName="text-tertiary"
+              placement="top-start"
+            />
+          )}
+        />
+
+        <Controller
+          name="target_date"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DateDropdown
+              value={value}
+              onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
+              buttonVariant="border-with-text"
+              placeholder="Due date"
+              icon={<DueDatePropertyIcon className="size-3 shrink-0" />}
+              disabled={isUpdateDisabled}
+              minDate={minDate ?? undefined}
+              buttonClassName="text-tertiary"
+              placement="top-start"
+            />
+          )}
+        />
+
         {projectId && (
           <Controller
             name="label_ids"
@@ -269,7 +266,8 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     value={value}
                     projectId={projectId}
                     onChange={onChange}
-                    buttonContainerClassName="text-tertiary "
+                    buttonContainerClassName="text-tertiary"
+                    buttonClassName="text-caption-md-medium"
                     placement="top-start"
                   />
                 </div>
@@ -307,7 +305,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     onChange={onChange}
                     projectId={projectId}
                     buttonVariant="border-with-text"
-                    buttonClassName="text-tertiary py-1"
+                    buttonClassName="text-tertiary"
                     disabled={isUpdateDisabled}
                     placement="top-start"
                     placeholder="Estimates"
@@ -325,8 +323,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     onChange={onChange}
                     projectId={projectId}
                     buttonVariant="border-with-text"
-                    buttonClassName="text-tertiary border-none  px-2 py-1"
-                    buttonContainerClassName="border-[0.5px] border-subtle-1 rounded"
+                    buttonClassName="text-tertiary"
                     disabled={isUpdateDisabled}
                     placement="top-start"
                     placeholder="Module"
@@ -363,7 +360,12 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
         )}
       </div>
       {isDirty && (
-        <Button variant="primary" className="py-1" onClick={handleSubmit(handleBulkOperations)} loading={isSubmitting}>
+        <Button
+          variant="primary"
+          className="text-caption-md-medium"
+          onClick={handleSubmit(handleBulkOperations)}
+          loading={isSubmitting}
+        >
           {isSubmitting ? "Updating" : "Update"}
         </Button>
       )}
