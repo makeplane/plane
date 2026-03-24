@@ -5,7 +5,6 @@
  */
 
 import { Tab } from "@headlessui/react";
-import type { FC } from "react";
 import React, { Fragment, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";

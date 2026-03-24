@@ -252,7 +252,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
           src={displayedImageSrc}
           alt=""
           onLoad={handleImageLoad}
-          onError={(e) =>
+          onError={(_e) =>
             void (async () => {
               // for old image extension this command doesn't exist or if the image failed to load for the first time
               if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {

@@ -46,7 +46,7 @@ type ActiveCyclesComponentProps = {
 const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
   cycleId,
   activeCycle,
-  activeCycleResolvedPath,
+  activeCycleResolvedPath: _activeCycleResolvedPath,
   workspaceSlug,
   projectId,
   handleFiltersUpdate,

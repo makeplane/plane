@@ -12,7 +12,7 @@ import type { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@/helpers/state.helper";
 // store
-import type { CoreRootStore } from "./root.store";
+import type { RootStore } from "./root.store";
 
 export interface IStateStore {
   // observables
@@ -28,9 +28,9 @@ export interface IStateStore {
 export class StateStore implements IStateStore {
   states: IState[] | undefined = undefined;
   stateService: SitesStateService;
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       states: observable,

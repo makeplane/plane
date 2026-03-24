@@ -10,7 +10,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { InstanceService } from "@plane/services";
 import type { IInstance, IInstanceConfig } from "@plane/types";
 // store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -40,7 +40,7 @@ export class InstanceStore implements IInstanceStore {
   // services
   instanceService;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,

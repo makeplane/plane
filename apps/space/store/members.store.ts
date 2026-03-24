@@ -9,7 +9,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // plane imports
 import { SitesMemberService } from "@plane/services";
 import type { TPublicMember } from "@/types/member";
-import type { CoreRootStore } from "./root.store";
+import type { RootStore } from "./root.store";
 
 export interface IIssueMemberStore {
   // observables
@@ -24,9 +24,9 @@ export interface IIssueMemberStore {
 export class MemberStore implements IIssueMemberStore {
   memberMap: Record<string, TPublicMember> = {};
   memberService: SitesMemberService;
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       memberMap: observable,

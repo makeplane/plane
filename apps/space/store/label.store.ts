@@ -10,7 +10,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { SitesLabelService } from "@plane/services";
 import type { IIssueLabel } from "@plane/types";
 // store
-import type { CoreRootStore } from "./root.store";
+import type { RootStore } from "./root.store";
 
 export interface IIssueLabelStore {
   // observables
@@ -25,9 +25,9 @@ export interface IIssueLabelStore {
 export class LabelStore implements IIssueLabelStore {
   labelMap: Record<string, IIssueLabel> = {};
   labelService: SitesLabelService;
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       labelMap: observable,

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { DOMParser } from "@tiptap/pm/model";
 import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
 import { cn } from "@plane/utils";

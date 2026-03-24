@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React from "react";
 import type { TIssue } from "@plane/types";
 
@@ -22,6 +21,6 @@ export interface EpicModalProps {
   isProjectSelectionDisabled?: boolean;
 }
 
-export function CreateUpdateEpicModal(props: EpicModalProps) {
+export function CreateUpdateEpicModal(_props: EpicModalProps) {
   return <></>;
 }

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { LayoutGroup } from "framer-motion";
 import { cn } from "../utils";
 import type { TTabNavigationListProps } from "./tab-navigation-types";
