@@ -87,7 +87,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     if (editorContainer) {
       closestEditorContainer = editorContainer;
     } else {
-      closestEditorContainer = img.closest(".editor-container");
+      closestEditorContainer = img.closest(".editor-container") as HTMLDivElement | null;
       if (!closestEditorContainer) {
         console.error("Editor container not found");
         return;
@@ -238,6 +238,8 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
       <div
         ref={containerRef}
         className="group/image-component relative inline-block max-w-full"
+        role="button"
+        tabIndex={-1}
         onMouseDown={handleImageMouseDown}
         style={{
           width: size.width,
@@ -252,7 +254,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
           src={displayedImageSrc}
           alt=""
           onLoad={handleImageLoad}
-          onError={(e) =>
+          onError={() =>
             void (async () => {
               // for old image extension this command doesn't exist or if the image failed to load for the first time
               if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {
@@ -344,6 +346,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
                   "right-0 translate-x-1/2 cursor-nwse-resize": nodeAlignment !== "right",
                 }
               )}
+              role="button"
+              aria-roledescription="Resize image"
+              tabIndex={0}
               onMouseDown={handleResizeStart}
               onTouchStart={handleResizeStart}
             />
