@@ -162,6 +162,9 @@ export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attac
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
+/** Payload for PATCH /issues/{id}/ — `reason` is transient (popped by backend before save) */
+export type TIssueUpdatePayload = Partial<TIssue> & { reason?: string };
+
 export interface IPublicIssue extends Pick<
   TIssue,
   | "description_html"

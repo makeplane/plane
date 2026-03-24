@@ -47,10 +47,10 @@ mkdir -p "${DIST_DIR}"
 IMAGES=(
   "plane-frontend:apps/web/Dockerfile.web:."
   "plane-admin:apps/admin/Dockerfile.admin:."
-  "plane-space:apps/space/Dockerfile.space:."
-  "plane-live:apps/live/Dockerfile.live:."
+  # "plane-space:apps/space/Dockerfile.space:."
+  # "plane-live:apps/live/Dockerfile.live:."
   "plane-backend:apps/api/Dockerfile.api:./apps/api"
-  "plane-proxy:apps/proxy/Dockerfile.ce:./apps/proxy"
+  # "plane-proxy:apps/proxy/Dockerfile.ce:./apps/proxy"
 )
 
 TOTAL=${#IMAGES[@]}

@@ -19,7 +19,6 @@ import {
   IssueParentActivity,
   IssueRelationActivity,
   IssueStartDateActivity,
-  IssueTargetDateActivity,
   IssueCycleActivity,
   IssueModuleActivity,
   IssueLabelActivity,
@@ -74,7 +73,9 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
       case "start_date":
         return <IssueStartDateActivity {...componentDefaultProps} showIssue={false} />;
       case "target_date":
-        return <IssueTargetDateActivity {...componentDefaultProps} showIssue={false} />;
+      case "completed_at":
+        // Route through CE AdditionalActivityRoot to support reason display
+        return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;
       case "cycles":
         return <IssueCycleActivity {...componentDefaultProps} />;
       case "modules":

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { E_SORT_ORDER, TActivityFilters, EActivityFilterType } from "@plane/constants";
@@ -16,10 +15,8 @@ import { CommentCard } from "@/components/comments/card/root";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues/issue-details/issue-properties-activity";
-import { OpinionButton } from "@/plane-web/components/issues/opinion";
 import { WorklogActivityGroup } from "@/plane-web/components/issues/worklog/activity/worklog-activity-group";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
-import { useOpinion } from "@/plane-web/hooks/store/use-opinion";
 // local imports
 import { IssueActivityItem } from "./activity/activity-list";
 import { IssueActivityLoader } from "./loader";
@@ -50,19 +47,11 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
   } = props;
   // store hooks
   const {
-    activity: { getActivityAndCommentsByIssueId, getActivityById },
+    activity: { getActivityAndCommentsByIssueId },
     comment: { getCommentById },
   } = useIssueDetail();
-  const opinionStore = useOpinion();
   // derived values
   const activityAndComments = getActivityAndCommentsByIssueId(issueId, sortOrder);
-
-  // Batch-load opinions when activity feed mounts
-  useEffect(() => {
-    if (workspaceSlug && projectId && issueId) {
-      void opinionStore.fetchOpinionsForIssue(workspaceSlug, projectId, issueId);
-    }
-  }, [workspaceSlug, projectId, issueId, opinionStore]);
 
   if (!activityAndComments) return <IssueActivityLoader />;
 
@@ -75,7 +64,6 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
       {filteredActivityAndComments.map((activityComment, index) => {
         const comment = getCommentById(activityComment.id);
         const ends = index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined;
-        const activity = getActivityById(activityComment.id);
         return activityComment.activity_type === "COMMENT" ? (
           <CommentCard
             key={activityComment.id}
@@ -91,22 +79,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             enableReplies
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
-          <IssueActivityItem
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={ends}
-            actionSlot={
-              activity ? (
-                <OpinionButton
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  activityId={activityComment.id}
-                  actorId={activity.actor}
-                />
-              ) : undefined
-            }
-          />
+          <IssueActivityItem key={activityComment.id} activityId={activityComment.id} ends={ends} />
         ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
           <IssueAdditionalPropertiesActivity key={activityComment.id} activityId={activityComment.id} ends={ends} />
         ) : activityComment.activity_type === "WORKLOG" ? (

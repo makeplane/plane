@@ -91,7 +91,6 @@ from .sticky import Sticky
 
 from .description import Description, DescriptionVersion
 from .worklog import IssueWorkLog
-from .opinion import IssueOpinion
 
 from .dashboard import Dashboard, DashboardWidget
 
