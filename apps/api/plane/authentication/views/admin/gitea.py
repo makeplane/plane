@@ -116,6 +116,7 @@ class GiteaCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
+            request.is_admin_auth = True
             provider = GiteaOAuthProvider(
                 request=request,
                 code=code,

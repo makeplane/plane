@@ -116,6 +116,7 @@ class GoogleCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
+            request.is_admin_auth = True
             provider = GoogleOAuthProvider(
                 request=request,
                 code=code,

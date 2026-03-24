@@ -68,6 +68,7 @@ class LDAPSignInAuthAdminEndpoint(View):
         username = username.strip()
 
         try:
+            request.is_admin_auth = True
             provider = LDAPProvider(
                 request=request,
                 key=username,

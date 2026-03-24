@@ -116,6 +116,7 @@ class GitLabCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
+            request.is_admin_auth = True
             provider = GitLabOAuthProvider(
                 request=request,
                 code=code,

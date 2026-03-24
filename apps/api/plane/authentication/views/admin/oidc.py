@@ -93,6 +93,7 @@ class OIDCCallbackAdminEndpoint(View):
                     error_message=AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
                 )
 
+            request.is_admin_auth = True
             provider = OIDCOAuthProvider(
                 request=request,
                 code=code,

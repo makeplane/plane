@@ -116,6 +116,7 @@ class GitHubCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
+            request.is_admin_auth = True
             provider = GitHubOAuthProvider(
                 request=request,
                 code=code,

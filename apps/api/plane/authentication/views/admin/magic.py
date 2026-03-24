@@ -101,6 +101,7 @@ class MagicSignInAdminEndpoint(RateLimitedView):
             return HttpResponseRedirect(url)
 
         try:
+            request.is_admin_auth = True
             provider = MagicCodeProvider(
                 request=request,
                 key=f"magic_{email}",

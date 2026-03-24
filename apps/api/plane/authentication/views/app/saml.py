@@ -97,6 +97,8 @@ class SAMLCallbackEndpoint(View):
         else:
             host = base_host(request=request, is_app=True)
         try:
+            if is_admin:
+                request.is_admin_auth = True
             provider = SAMLAdapter(request=request)
             user = provider.authenticate()
 

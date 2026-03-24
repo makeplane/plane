@@ -79,7 +79,9 @@ class InstanceAdmin(BaseModel):
 
     @classmethod
     def is_instance_admin(cls, user):
-        """Check if the given user is an instance admin."""
+        """Check if the given user is an active instance admin."""
+        if not user.is_active:
+            return False
         instance = Instance.objects.first()
         if not instance:
             return False

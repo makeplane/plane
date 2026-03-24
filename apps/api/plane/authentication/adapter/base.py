@@ -303,6 +303,13 @@ class Adapter:
         # Check if sign up case or login
         is_signup = not bool(user)
 
+        # Block deactivated users in admin authentication flows
+        if user and not user.is_active and getattr(self.request, "is_admin_auth", False):
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_USER_DEACTIVATED"],
+                error_message="ADMIN_USER_DEACTIVATED",
+            )
+
         # If user is not present, create a new user
         if not user:
             # New user
