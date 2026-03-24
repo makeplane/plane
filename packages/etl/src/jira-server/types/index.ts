@@ -68,6 +68,15 @@ export type JiraApiUser = {
   locale: string;
 };
 
+export type JiraPriorityScheme = {
+  self: string;
+  id: number;
+  name: string;
+  description: string;
+  optionIds: string[];
+  defaultScheme: boolean;
+};
+
 export type JiraComment = JComment & {
   issue_id: string;
 };

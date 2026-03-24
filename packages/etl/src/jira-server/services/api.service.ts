@@ -13,7 +13,7 @@
 
 // services
 import type { AxiosError } from "axios";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import type { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile/index.js";
 import { Version2Client } from "jira.js/out/version2/index.js";
@@ -25,9 +25,10 @@ import type {
   Project,
   IssueTypeDetails,
   StatusDetails,
+  Priority,
 } from "jira.js/out/version2/models/index.js";
 import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
-import type { JiraApiUser, JiraProps } from "..";
+import type { JiraApiUser, JiraPriorityScheme, JiraProps } from "..";
 import { fetchPaginatedData, EJiraAuthenticationType } from "..";
 
 export class JiraV2Service {
@@ -228,8 +229,63 @@ export class JiraV2Service {
   }
 
   // Verified
-  async getIssuePriorities() {
-    return this.jiraClient.issuePriorities.getPriorities();
+  async getIssuePriorities(projectIdOrKey?: string) {
+    if (!projectIdOrKey) {
+      return this.jiraClient.issuePriorities.getPriorities();
+    } else {
+      try {
+        // We get the priority scheme for the project
+        const priorityScheme = await this.jiraClient.sendRequestFullResponse<JiraPriorityScheme>({
+          method: "GET",
+          url: `${this.hostname}/rest/api/2/project/${projectIdOrKey}/priorityscheme`,
+        });
+
+        const schemeId = priorityScheme?.data?.id;
+
+        if (!schemeId) {
+          throw new Error("No priority scheme found for project");
+        }
+
+        const priorityIds = priorityScheme?.data?.optionIds;
+
+        if (!priorityIds) {
+          throw new Error("No priority ids found for project");
+        }
+
+        const priorities: Priority[] = [];
+        const CHUNK_SIZE = 5;
+
+        for (let i = 0; i < priorityIds.length; i += CHUNK_SIZE) {
+          // Fetch priority data in chunks of 5 for better performance
+          const chunk = priorityIds.slice(i, i + CHUNK_SIZE);
+          const results = await Promise.all(
+            chunk.map(async (priorityId) => {
+              const priority = await this.jiraClient.sendRequestFullResponse<Priority>({
+                method: "GET",
+                url: `${this.hostname}/rest/api/2/priority/${priorityId}`,
+              });
+
+              if (!priority?.data) {
+                console.warn(`Priority ${priorityId} not found`);
+                return null;
+              }
+              return priority.data;
+            })
+          );
+          results.forEach((p) => p && priorities.push(p));
+        }
+
+        return priorities;
+      } catch (error) {
+        if (isAxiosError(error)) {
+          console.error("Error getting priority schemes", error.response?.data);
+        } else {
+          console.error("Error getting priority schemes", error);
+        }
+
+        return this.jiraClient.issuePriorities.getPriorities();
+      }
+    }
   }
 
   // Verified

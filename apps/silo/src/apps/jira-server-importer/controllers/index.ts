@@ -123,11 +123,11 @@ class JiraDataCenterController {
   @Post("/priorities")
   @useValidateUserAuthentication()
   async getPriority(req: Request, res: Response) {
-    const { workspaceId, userId } = req.body;
+    const { workspaceId, userId, projectId } = req.body;
 
     try {
       const jiraClient = await createJiraServerClient(workspaceId, userId);
-      const priorities = await jiraClient.getIssuePriorities();
+      const priorities = await jiraClient.getIssuePriorities(projectId);
       return res.json(priorities);
     } catch (error: any) {
       responseHandler(res, 500, error);
