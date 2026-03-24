@@ -497,11 +497,12 @@ jobs:
 
             CLOUDFLARE_TOKEN=$(echo "$SECRET_JSON" | jq -r '.cloudflare_api_token')
             REDIS_URL=$(echo "$SECRET_JSON" | jq -r '.redis_url')
+            RABBITMQ_URL=$(echo "$SECRET_JSON" | jq -r '.rabbitmq_url')
 
             # Mask sensitive values immediately after extraction
             echo "::add-mask::$REDIS_URL"
             echo "::add-mask::$CLOUDFLARE_TOKEN"
-
+            echo "::add-mask::$RABBITMQ_URL"
             # Generate random delimiter for heredoc to prevent injection
             DELIMITER=$(openssl rand -hex 16)
 
@@ -514,6 +515,12 @@ jobs:
             {
               echo "redis_url<<${DELIMITER}"
               echo "$REDIS_URL"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
+
+            {
+              echo "rabbitmq_url<<${DELIMITER}"
+              echo "$RABBITMQ_URL"
               echo "${DELIMITER}"
             } >> "$GITHUB_ENV"
 
@@ -666,6 +673,8 @@ jobs:
               --set services.email.image=makeplane/plane-email-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.postgres.local_setup=false \
               --set services.redis.local_setup=false \
+              --set services.rabbitmq.local_setup=false \
+              --set services.rabbitmq.external_rabbitmq_url=${{ env.rabbitmq_url }} \
               --set planeVersion=${IMAGE_TAG} \
               --set ingress.enabled=true \
               --set license.licenseDomain=${APP_HOST} \
@@ -699,6 +708,8 @@ jobs:
               --set ssl.generate_certs=true \
               --set services.storage_class=gp2 \
               --set services.web.enabled=true \
+              --set services.rabbitmq.local_setup=false \
+              --set services.rabbitmq.external_rabbitmq_url=${{ env.rabbitmq_url }} \              
               --set services.web.image=makeplane/plane-web-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.space.enabled=true \
               --set services.space.image=makeplane/plane-space-${{ needs.pre-requisites.outputs.image_repo }} \
