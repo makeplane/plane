@@ -709,7 +709,7 @@ jobs:
               --set services.storage_class=gp2 \
               --set services.web.enabled=true \
               --set services.rabbitmq.local_setup=false \
-              --set services.rabbitmq.external_rabbitmq_url=${{ env.rabbitmq_url }} \              
+              --set services.rabbitmq.external_rabbitmq_url=${{ env.rabbitmq_url }} \
               --set services.web.image=makeplane/plane-web-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.space.enabled=true \
               --set services.space.image=makeplane/plane-space-${{ needs.pre-requisites.outputs.image_repo }} \
