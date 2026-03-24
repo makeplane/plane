@@ -23,6 +23,7 @@ from plane.app.views.release import (
     ReleaseLinkViewSet,
     ReleasePageEndpoint,
     ReleaseAttachmentEndpoint,
+    ReleaseWorkItemSearchEndpoint,
 )
 
 urlpatterns = [
@@ -64,6 +65,12 @@ urlpatterns = [
         "workspaces/<str:slug>/releases/<uuid:release_id>/work-items/",
         ReleaseWorkItemEndpoint.as_view(),
         name="release-work-items",
+    ),
+    # Search work items
+    path(
+        "workspaces/<str:slug>/releases/<uuid:release_id>/search-work-items/",
+        ReleaseWorkItemSearchEndpoint.as_view(),
+        name="release-work-item-search",
     ),
     # Release Comments
     path(

@@ -9,8 +9,14 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+import copy
+
 # Django imports
 from django.db.models import Prefetch
+from django.db.models import Q, Subquery, OuterRef, Count, Func, F, Value, UUIDField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 
 # Third party imports
 from rest_framework import status
@@ -26,22 +32,34 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     ReleaseWorkItem,
+    CycleIssue,
+    IssueLink,
+    FileAsset,
 )
+from plane.utils.paginator import GroupedOffsetPaginator
+from plane.ee.models import MilestoneIssue
+from django.db.models.functions import Coalesce
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
+from plane.app.serializers.sub_workitem import WorkitemSearchSerializer
+from plane.utils.issue_search import search_issues
 
 
 class ReleaseWorkItemEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
 
-    @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
-    def get(self, request, slug, release_id):
-        work_items = (
+    def get_queryset(self):
+        return (
             Issue.objects.filter(
-                release_work_items__release_id=release_id,
+                release_work_items__release_id=self.kwargs.get("release_id"),
                 release_work_items__deleted_at__isnull=True,
-                workspace__slug=slug,
+                workspace__slug=self.kwargs.get("slug"),
             )
             .select_related("state", "project", "parent")
             .prefetch_related(
@@ -57,29 +75,124 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
             .order_by("-created_at")
         )
 
-        results = []
-        for item in work_items:
-            results.append(
-                {
-                    "id": str(item.id),
-                    "name": item.name,
-                    "state_id": str(item.state_id) if item.state_id else None,
-                    "state_group": item.state.group if item.state else None,
-                    "priority": item.priority,
-                    "project_id": str(item.project_id) if item.project_id else None,
-                    "parent_id": str(item.parent_id) if item.parent_id else None,
-                    "sequence_id": item.sequence_id,
-                    "sort_order": item.sort_order,
-                    "start_date": item.start_date,
-                    "target_date": item.target_date,
-                    "assignee_ids": [str(a.assignee_id) for a in item.issue_assignee.all()],
-                    "label_ids": [str(la.label_id) for la in item.label_issue.all()],
-                    "created_at": item.created_at,
-                    "updated_at": item.updated_at,
-                }
+    def apply_annotations(self, issues):
+        return (
+            issues.annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
             )
+            .annotate(
+                link_count=Subquery(
+                    IssueLink.objects.filter(issue=OuterRef("id"))
+                    .values("issue")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                attachment_count=Subquery(
+                    FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .values("issue_id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                customer_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=True,
+                            customer_request_issues__issue_id__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+        )
 
-        return Response(results, status=status.HTTP_200_OK)
+    @check_feature_flag(FeatureFlag.RELEASES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, release_id):
+        issue_queryset = self.get_queryset()
+
+        # queryset before applying annotations
+        filtered_issue_queryset = copy.deepcopy(issue_queryset)
+
+        issue_queryset = self.apply_annotations(issue_queryset)
+
+        # Order by
+        order_by_param = request.GET.get("order_by", "-created_at")
+        issue_queryset, order_by_param = order_issue_queryset(
+            issue_queryset=issue_queryset, order_by_param=order_by_param
+        )
+
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
+
+        if group_by:
+            return self.paginate(
+                request=request,
+                order_by=order_by_param,
+                queryset=issue_queryset,
+                total_count_queryset=filtered_issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by, slug=slug, user_id=request.user.id
+                ),
+                paginator_cls=GroupedOffsetPaginator,
+                group_by_fields=issue_group_values(field=group_by, slug=slug, queryset=issue_queryset),
+                group_by_field_name=group_by,
+                count_filter=Q(
+                    Q(issue_intake__status=1)
+                    | Q(issue_intake__status=-1)
+                    | Q(issue_intake__status=2)
+                    | Q(issue_intake__isnull=True),
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            )
+        else:
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                total_count_queryset=filtered_issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by, slug=slug, user_id=request.user.id
+                ),
+            )
 
     @check_feature_flag(FeatureFlag.RELEASES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
@@ -149,3 +262,35 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
         ).delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReleaseWorkItemSearchEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceUserPermission]
+
+    @check_feature_flag(FeatureFlag.RELEASES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, release_id):
+        query = request.query_params.get("search", None)
+
+        issues = (
+            (
+                Issue.issue_objects.filter(
+                    Q(workspace__slug=slug),
+                    Q(issue_intake__status=1)
+                    | Q(issue_intake__status=-1)
+                    | Q(issue_intake__status=2)
+                    | Q(issue_intake__isnull=True),
+                )
+            )
+            .select_related("project", "state", "workspace")
+            .exclude(release_work_items__release_id=release_id)
+            .accessible_to(request.user.id, slug)
+            .order_by("-last_activity_at")
+        )
+
+        if query:
+            issues = search_issues(query, issues)
+
+        serializer = WorkitemSearchSerializer(issues[:20], many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

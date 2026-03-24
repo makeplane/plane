@@ -13,7 +13,7 @@ from .base import ReleaseEndpoint
 from .tag import ReleaseTagEndpoint
 from .label import ReleaseLabelEndpoint
 from .comment import ReleaseCommentViewSet, ReleaseCommentReactionViewSet
-from .work_item import ReleaseWorkItemEndpoint
+from .work_item import ReleaseWorkItemEndpoint, ReleaseWorkItemSearchEndpoint
 from .activity import ReleaseActivityEndpoint
 from .changelog import ReleaseChangelogEndpoint
 from .link import ReleaseLinkViewSet
