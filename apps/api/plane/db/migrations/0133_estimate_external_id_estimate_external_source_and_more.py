@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0123_remove_workspaceuserlink_project'),
+        ('db', '0132_remove_webhook_version_webhook_content_type_and_more'),
     ]
 
     operations = [
