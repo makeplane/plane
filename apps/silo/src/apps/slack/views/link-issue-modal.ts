@@ -16,6 +16,7 @@ import type { ExState, IssueWithExpanded } from "@plane/sdk";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { ACTIONS, ENTITIES } from "../helpers/constants";
 import { E_MESSAGE_ACTION_TYPES } from "../types/types";
+import { sanitizeSlackMrkdwn } from "../helpers/slack-options";
 
 export type LinkIssueModalView = {
   type: "modal";
@@ -144,7 +145,7 @@ export const alreadyLinkedModalView = (
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `> <${getIssueUrlFromSequenceId(workspaceSlug, issue.project.identifier!, issue.sequence_id.toString())}|${issue.project.identifier}-${issue.sequence_id}>\n> ${issue.name}`,
+        text: `> <${getIssueUrlFromSequenceId(workspaceSlug, issue.project.identifier!, issue.sequence_id.toString())}|${issue.project.identifier}-${issue.sequence_id}>\n> ${sanitizeSlackMrkdwn(issue.name)}`,
       },
     },
   ],

@@ -21,6 +21,7 @@ import {
 } from "../helpers/blocks";
 import { INTAKE_STATUSES } from "../helpers/constants";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
+import { sanitizeSlackMrkdwn } from "../helpers/slack-options";
 
 export const createSlackIntakeLinkback = (
   workspaceSlug: string,
@@ -37,7 +38,8 @@ export const createSlackIntakeLinkback = (
   const statusInfo = INTAKE_STATUSES.find((s) => s.id === issue.status) || INTAKE_STATUSES[0];
 
   // Build markdown content for main section
-  const title = `<${getIntakeUrl(workspaceSlug, issue.project, issue.id)}|Intake: *${issue_detail?.name || "Untitled"}*>`;
+  const safeTitle = sanitizeSlackMrkdwn(issue_detail?.name || "Untitled");
+  const title = `*<${getIntakeUrl(workspaceSlug, issue.project, issue.id)}|Intake: ${safeTitle}>*`;
 
   blocks.push({
     type: "section",

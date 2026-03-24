@@ -22,6 +22,7 @@ import {
 import { capitalize } from "@/helpers/generic-helpers";
 import { ACTIONS } from "../helpers/constants";
 import { getUserMarkdown } from "../helpers/user";
+import { sanitizeSlackMrkdwn } from "../helpers/slack-options";
 
 export const createSlackLinkback = (
   workspaceSlug: string,
@@ -40,7 +41,7 @@ export const createSlackLinkback = (
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `<${getIssueUrlFromSequenceId(workspaceSlug, issue.project.identifier ?? "", issue.sequence_id.toString())}|*${issue.project.identifier}-${issue.sequence_id} ${issue.name}*>`,
+      text: `*<${getIssueUrlFromSequenceId(workspaceSlug, issue.project.identifier ?? "", issue.sequence_id.toString())}|${issue.project.identifier}-${issue.sequence_id} ${sanitizeSlackMrkdwn(issue.name)}>*`,
     },
   });
 

@@ -75,6 +75,19 @@ export const convertToSlackOptions = (
  */
 export const createSlackHyperlinkMarkdown = (displayText: string, url: string): string => `<${url}|${displayText}>`;
 
+// Sanitizes a string for safe display in Slack markdown by escaping special characters
+export const sanitizeSlackMrkdwn = (value: string): string =>
+  value
+    .replace(/\\/g, "\\\\")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\*/g, "\\*")
+    .replace(/_/g, "\\_")
+    .replace(/~/g, "\\~")
+    .replace(/`/g, "\\`")
+    .replace(/\|/g, "\\|");
+
 export type TSlackOptionGroup = {
   label: { type: "plain_text"; text: string };
   options: PlainTextOption[];
