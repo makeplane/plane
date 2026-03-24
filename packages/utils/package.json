@@ -41,8 +41,8 @@
     "rehype-remark": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "remark-stringify": "^11.0.0",
-    "sanitize-html": "2.17.0",
-    "tailwind-merge": "3.4.0",
+    "sanitize-html": "2.17.2",
+    "tailwind-merge": "3.5.0",
     "unified": "^11.0.5",
     "uuid": "catalog:"
   },
@@ -54,7 +54,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/sanitize-html": "2.16.0",
+    "@types/sanitize-html": "2.16.1",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

@@ -9,9 +9,9 @@
     "**/*.css"
   ],
   "devDependencies": {
-    "@tailwindcss/postcss": "4.1.17",
-    "postcss": "8.5.6",
-    "tailwindcss": "4.1.17"
+    "@tailwindcss/postcss": "4.2.2",
+    "postcss": "8.5.8",
+    "tailwindcss": "4.2.2"
   },
   "exports": {
     "./index.css": "./index.css",
