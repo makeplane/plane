@@ -14,7 +14,6 @@ import { DashboardStore } from "./dashboards/dashboard.store";
 import { ProjectWorklogStore } from "./project/worklog.store";
 import type { IWorkflowStore } from "./workflow.store";
 import { WorkflowStore } from "./workflow.store";
-import { OpinionStore } from "./opinion.store";
 import type { IModuleActivityStore } from "./module-activity.store";
 import { ModuleActivityStore } from "./module-activity.store";
 
@@ -24,7 +23,6 @@ export class RootStore extends CoreRootStore {
   customDashboard: DashboardStore;
   projectWorklog: ProjectWorklogStore;
   workflowStore: IWorkflowStore;
-  opinion: OpinionStore;
   moduleActivity: IModuleActivityStore;
 
   constructor() {
@@ -35,7 +33,6 @@ export class RootStore extends CoreRootStore {
     this.customDashboard = new DashboardStore(this);
     this.projectWorklog = new ProjectWorklogStore();
     this.workflowStore = new WorkflowStore();
-    this.opinion = new OpinionStore();
     this.moduleActivity = new ModuleActivityStore();
   }
 }

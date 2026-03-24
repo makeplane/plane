@@ -15,6 +15,7 @@ import type {
   TIssueActivity,
   TIssueLink,
   TIssueServiceType,
+  TIssueUpdatePayload,
   TIssuesResponse,
   TIssueSubIssues,
 } from "@plane/types";
@@ -223,7 +224,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>): Promise<any> {
+  async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {

@@ -265,6 +265,7 @@ def track_target_date(
     epoch,
 ):
     if current_instance.get("target_date") != requested_data.get("target_date"):
+        reason = (requested_data.get("reason") or "").strip()
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -277,7 +278,7 @@ def track_target_date(
                 field="target_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment="updated the target date to",
+                comment=reason,
                 epoch=epoch,
             )
         )
@@ -295,6 +296,7 @@ def track_completed_at(
     epoch,
 ):
     if current_instance.get("completed_at") != requested_data.get("completed_at"):
+        reason = (requested_data.get("reason") or "").strip()
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -309,7 +311,7 @@ def track_completed_at(
                 field="completed_at",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment="updated the completed date to",
+                comment=reason,
                 epoch=epoch,
             )
         )

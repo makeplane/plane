@@ -24,7 +24,7 @@ import {
   ParentPropertyIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
@@ -42,7 +42,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
 // plane web components
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
+import { DueDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/due-date-property";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
@@ -205,34 +205,17 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-          <div
-            className={cn(
-              "flex items-center gap-2 w-full",
-              fieldErrors.includes("target_date") && "rounded border border-red-500"
-            )}
-          >
-            <DateDropdown
-              value={issue.target_date}
-              onChange={(val) =>
-                void issueOperations.update(workspaceSlug, projectId, issueId, {
-                  target_date: val ? renderFormattedPayloadDate(val) : null,
-                })
-              }
-              placeholder={t("issue.add.due_date")}
-              buttonVariant="transparent-with-text"
-              minDate={minDate ?? undefined}
-              disabled={disabled}
-              className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={cn("text-body-xs-medium", {
-                "text-placeholder": !issue.target_date,
-                "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-              })}
-              hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"
-            />
-            {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
-          </div>
+          <DueDateProperty
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            issueOperations={issueOperations}
+            isEditable={!disabled}
+            stateGroup={stateDetails?.group}
+            minDate={minDate ?? undefined}
+            hasFieldError={fieldErrors.includes("target_date")}
+            issue={issue}
+          />
         </SidebarPropertyListItem>
 
         <CompletedAtProperty issueId={issueId} />

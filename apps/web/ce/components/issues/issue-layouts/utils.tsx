@@ -33,7 +33,6 @@ import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
   SpreadsheetCreatedOnColumn,
-  SpreadsheetDueDateColumn,
   SpreadsheetEstimateColumn,
   SpreadsheetLabelColumn,
   SpreadsheetModuleColumn,
@@ -55,6 +54,7 @@ import {
   SpreadsheetReferenceLinkColumn,
   SpreadsheetTotalLogTimeColumn,
 } from "@/plane-web/components/issues/spreadsheet/columns";
+import { SpreadsheetDueDateColumnWithReason } from "@/plane-web/components/issues/issue-layouts/spreadsheet-due-date-column-with-reason";
 // store
 import { store } from "@/lib/store-context";
 
@@ -107,7 +107,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
 export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpreadsheetColumn } = {
   assignee: SpreadsheetAssigneeColumn,
   created_on: SpreadsheetCreatedOnColumn,
-  due_date: SpreadsheetDueDateColumn,
+  due_date: SpreadsheetDueDateColumnWithReason,
   estimate: SpreadsheetEstimateColumn,
   labels: SpreadsheetLabelColumn,
   modules: SpreadsheetModuleColumn,

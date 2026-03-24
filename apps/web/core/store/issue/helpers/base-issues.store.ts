@@ -25,6 +25,7 @@ import type {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
+  TIssueUpdatePayload,
 } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
@@ -555,15 +556,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<TIssue>,
+    data: TIssueUpdatePayload,
     shouldSync = true
   ) {
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    // Strip transient `reason` field before merging into MobX store (reason is not an issue model field)
+    const { reason: _reason, ...issueData } = data;
     try {
       // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      this.rootIssueStore.issues.updateIssue(issueId, issueData);
+      this.updateIssueList({ ...issueBeforeUpdate, ...issueData } as TIssue, issueBeforeUpdate);
 
       // Check if should Sync
       if (!shouldSync) return;

@@ -701,14 +701,35 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
+
+        # Validate: reason required when setting (non-null) target_date or completed_at
+        REASON_REQUIRED_FIELDS = {"target_date", "completed_at"}
+        is_setting_protected = any(
+            field in request.data and request.data[field] not in (None, "", [])
+            for field in REASON_REQUIRED_FIELDS
+        )
+        if is_setting_protected:
+            reason = (request.data.get("reason") or "").strip()
+            if not reason:
+                return Response(
+                    {"error": "A reason is required when changing the due date or completed date."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Build serializer data without transient `reason` field (not an Issue model field)
+        serializer_data = {k: v for k, v in request.data.items() if k != "reason"}
+        serializer = IssueCreateSerializer(issue, data=serializer_data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
             if not is_migration_description_update:
-                issue_activity.delay(
+                # Run activity creation synchronously so the record exists
+                # before the HTTP response — the frontend can fetch it
+                # immediately. Notifications are still dispatched async
+                # inside the task via notifications.delay().
+                issue_activity(
                     type="issue.activity.updated",
                     requested_data=requested_data,
                     actor_id=str(request.user.id),

@@ -170,4 +170,3 @@ export interface ILayoutDisplayFiltersOptions {
   };
 }
 
-export * from "./issues/opinion";

@@ -51,10 +51,10 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   // Format date for display
   const createdAt = activityComment.created_at
     ? new Date(activityComment.created_at).toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
     : null;
 
   const displayName = worklog?.logged_by_detail?.display_name;
@@ -80,14 +80,14 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   return (
     <>
       <div
-        className={cn("group relative flex items-start gap-2 py-1.5", {
+        className={cn("group relative flex items-center gap-3 text-caption-sm-regular py-2", {
           "pb-0": ends === "bottom",
           "pt-0": ends === "top",
         })}
       >
         {/* icon */}
-        <span className="flex-shrink-0 mt-0.5 rounded-full bg-layer-2 p-1">
-          <Timer className="h-3 w-3 text-tertiary" />
+        <span className="flex-shrink-0 w-7 h-7 rounded-lg overflow-hidden flex justify-center items-center z-[4] bg-layer-2 text-secondary border border-subtle shadow-raised-100">
+          <Timer className="h-4 w-4 text-tertiary" />
         </span>
 
         {/* message — clickable for admin to open edit modal */}
@@ -97,13 +97,13 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
           })}
           {...(isEditable
             ? {
-                onClick: () => setIsEditModalOpen(true),
-                role: "button",
-                tabIndex: 0,
-                onKeyDown: (e: KeyboardEvent) => {
-                  if (e.key === "Enter" || e.key === " ") setIsEditModalOpen(true);
-                },
-              }
+              onClick: () => setIsEditModalOpen(true),
+              role: "button",
+              tabIndex: 0,
+              onKeyDown: (e: KeyboardEvent) => {
+                if (e.key === "Enter" || e.key === " ") setIsEditModalOpen(true);
+              },
+            }
             : {})}
         >
           {displayName && <span className="font-medium text-primary">{displayName}</span>}

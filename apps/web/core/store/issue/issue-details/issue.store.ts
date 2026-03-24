@@ -7,7 +7,7 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType, TIssueUpdatePayload } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // services
 import { IssueArchiveService, WorkspaceDraftService, IssueService } from "@/services/issue";
@@ -17,7 +17,7 @@ import type { IIssueDetail } from "./root.store";
 export interface IIssueStoreActions {
   // actions
   fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -184,10 +184,10 @@ export class IssueStore implements IIssueStore {
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
 
-    await Promise.all([
-      currentStore.updateIssue(workspaceSlug, projectId, issueId, data),
-      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
-    ]);
+    // Wait for update to complete — the backend now creates activity synchronously
+    // before returning 204, so fetching activities right after will include the new one.
+    await currentStore.updateIssue(workspaceSlug, projectId, issueId, data);
+    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {

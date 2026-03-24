@@ -36,9 +36,6 @@ from plane.app.views import (
     TimesheetGridEndpoint,
     TimesheetBulkUpdateEndpoint,
     ProjectCapacityEndpoint,
-    IssueOpinionEndpoint,
-    IssueOpinionDetailEndpoint,
-    IssueOpinionListEndpoint,
 )
 
 urlpatterns = [
@@ -332,21 +329,4 @@ urlpatterns = [
         name="project-capacity-report",
     ),
     ## End Issue WorkLogs
-    ## Issue Opinions
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/<uuid:activity_id>/opinion/",
-        IssueOpinionEndpoint.as_view(),
-        name="issue-activity-opinion",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/<uuid:activity_id>/opinion/<uuid:pk>/",
-        IssueOpinionDetailEndpoint.as_view(),
-        name="issue-activity-opinion-detail",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activity-opinions/",
-        IssueOpinionListEndpoint.as_view(),
-        name="issue-activity-opinions-list",
-    ),
-    ## End Issue Opinions
 ]

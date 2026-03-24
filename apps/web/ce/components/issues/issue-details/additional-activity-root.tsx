@@ -5,8 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import { PencilLine, Trash2 } from "lucide-react";
+import { CalendarCheck, CalendarDays, PencilLine, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { renderFormattedDate } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions/helpers/activity-block";
 
@@ -24,33 +25,86 @@ export const AdditionalActivityRoot = observer(function AdditionalActivityRoot(p
     activity: { getActivityById },
   } = useIssueDetail();
 
-  // Only render worklog audit trail entries
-  if (field !== "worklog") return <></>;
-
   const activity = getActivityById(activityId);
   if (!activity) return <></>;
 
-  const isDeleted = activity.verb === "deleted";
-  const icon = isDeleted ? (
-    <Trash2 className="h-3.5 w-3.5 text-red-500" />
-  ) : (
-    <PencilLine className="h-3.5 w-3.5 text-secondary" />
-  );
+  // Worklog audit trail
+  if (field === "worklog") {
+    const isDeleted = activity.verb === "deleted";
+    const icon = isDeleted ? (
+      <Trash2 className="h-3.5 w-3.5 text-red-500" />
+    ) : (
+      <PencilLine className="h-3.5 w-3.5 text-secondary" />
+    );
+    return (
+      <IssueActivityBlockComponent activityId={activityId} icon={icon} ends={ends}>
+        <span>
+          {isDeleted ? t("worklog.activity_deleted_log") : t("worklog.activity_modified")}
+          {activity.old_value && <span className="font-medium text-primary"> — {activity.old_value}</span>}
+          {activity.new_value && (
+            <>
+              <br />
+              <span className="text-tertiary ml-0.5">
+                {t("worklog.activity_reason")}: &quot;{activity.new_value}&quot;
+              </span>
+            </>
+          )}
+        </span>
+      </IssueActivityBlockComponent>
+    );
+  }
 
-  return (
-    <IssueActivityBlockComponent activityId={activityId} icon={icon} ends={ends}>
-      <span>
-        {isDeleted ? t("worklog.activity_deleted_log") : t("worklog.activity_modified")}
-        {activity.old_value && <span className="font-medium text-primary"> — {activity.old_value}</span>}
-        {activity.new_value && (
-          <>
-            <br />
-            <span className="text-tertiary ml-0.5">
-              {t("worklog.activity_reason")}: &quot;{activity.new_value}&quot;
-            </span>
-          </>
-        )}
-      </span>
-    </IssueActivityBlockComponent>
-  );
+  // Due date change with reason
+  if (field === "target_date") {
+    return (
+      <IssueActivityBlockComponent
+        activityId={activityId}
+        icon={<CalendarDays className="h-3.5 w-3.5 text-secondary" />}
+        ends={ends}
+      >
+        <span>
+          {activity.new_value ? t("issue.activity_due_date_set") : t("issue.activity_due_date_removed")}
+          {activity.new_value && (
+            <span className="font-medium text-primary ml-1">{renderFormattedDate(activity.new_value)}</span>
+          )}
+          {activity.comment && (
+            <>
+              <br />
+              <span className="text-tertiary ml-0.5">
+                {t("issue.activity_reason")}: &quot;{activity.comment}&quot;
+              </span>
+            </>
+          )}
+        </span>
+      </IssueActivityBlockComponent>
+    );
+  }
+
+  // Completed date change with reason
+  if (field === "completed_at") {
+    return (
+      <IssueActivityBlockComponent
+        activityId={activityId}
+        icon={<CalendarCheck className="h-3.5 w-3.5 text-secondary" />}
+        ends={ends}
+      >
+        <span>
+          {activity.new_value ? t("issue.activity_completed_at_set") : t("issue.activity_completed_at_removed")}
+          {activity.new_value && (
+            <span className="font-medium text-primary ml-1">{renderFormattedDate(activity.new_value)}</span>
+          )}
+          {activity.comment && (
+            <>
+              <br />
+              <span className="text-tertiary ml-0.5">
+                {t("issue.activity_reason")}: &quot;{activity.comment}&quot;
+              </span>
+            </>
+          )}
+        </span>
+      </IssueActivityBlockComponent>
+    );
+  }
+
+  return <></>;
 });
