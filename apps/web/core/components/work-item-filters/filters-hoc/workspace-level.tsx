@@ -93,15 +93,12 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   );
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
-  const hasAdditionalChanges = useMemo(
-    () =>
-      !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
-      !isEqual(
-        removeNillKeys(initialWorkItemFilters?.displayProperties),
-        removeNillKeys(viewDetails?.display_properties)
-      ),
-    [initialWorkItemFilters, viewDetails]
-  );
+  const hasAdditionalChanges =
+    !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
+    !isEqual(
+      removeNillKeys(initialWorkItemFilters?.displayProperties),
+      removeNillKeys(viewDetails?.display_properties)
+    );
 
   const getDefaultViewDetailPayload: () => Partial<IWorkspaceView> = useCallback(
     () => ({

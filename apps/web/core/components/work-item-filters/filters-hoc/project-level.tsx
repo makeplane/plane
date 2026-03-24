@@ -137,15 +137,12 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   );
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
-  const hasAdditionalChanges = useMemo(
-    () =>
-      !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
-      !isEqual(
-        removeNillKeys(initialWorkItemFilters?.displayProperties),
-        removeNillKeys(viewDetails?.display_properties)
-      ),
-    [initialWorkItemFilters, viewDetails]
-  );
+  const hasAdditionalChanges =
+    !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
+    !isEqual(
+      removeNillKeys(initialWorkItemFilters?.displayProperties),
+      removeNillKeys(viewDetails?.display_properties)
+    );
   const customPropertyIds: string[] | undefined = useMemo(() => {
     // Get custom property IDs based on entity type and feature flags
     if (props.entityType === EIssuesStoreType.EPIC && isEpicEnabled) {
