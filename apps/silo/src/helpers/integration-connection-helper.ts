@@ -182,13 +182,16 @@ class IntegrationConnectionHelper {
   async getWorkspaceEntityConnections({
     workspace_connection_id,
     entity_type,
+    project_id,
   }: {
     workspace_connection_id: string;
     entity_type?: string;
+    project_id?: string;
   }): Promise<TWorkspaceEntityConnection[]> {
     return this.apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
       workspace_connection_id,
       entity_type,
+      project_id,
     });
   }
 

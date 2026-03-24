@@ -92,6 +92,7 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
 
   const [projectEntityConnection] = await integrationConnectionHelper.getWorkspaceEntityConnections({
     workspace_connection_id: workspaceConnection.id,
+    project_id: payload.project,
     entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
   });
 
