@@ -13,6 +13,7 @@
   "dependencies": {
     "@makeplane/plane-node-sdk": "catalog:",
     "@plane/logger": "workspace:*",
+    "@plane/types": "workspace:*",
     "@sveltejs/acorn-typescript": "catalog:",
     "acorn": "catalog:",
     "acorn-walk": "catalog:",

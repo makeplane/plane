@@ -83,6 +83,16 @@ export const LazyEditor = function LazyEditor(props: Props) {
         event: PlaneEvent;
         context: AutomationContext;
       }
+      
+      interface WorkflowTransitionContext {
+        workflow_transition_id: string;
+        rule_id: string;
+      }
+
+      interface WorkflowTransitionEventInput {
+        event: PlaneEvent;
+        context: WorkflowTransitionContext;
+      }
 
       const Plane: PlaneClient;
       const workspaceSlug: string;

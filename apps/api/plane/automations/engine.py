@@ -654,7 +654,7 @@ class AutomationExecutionEngine:
         """Finalize automation as successfully completed."""
         automation_run.status = RunStatusChoices.SUCCESS
         automation_run.completed_at = timezone.now()
-        automation_run.result_data = {
+        automation_run.result = {
             "message": message,
             "final_result": result.to_dict(),
         }
@@ -678,7 +678,7 @@ class AutomationExecutionEngine:
         automation_run.completed_at = timezone.now()
 
         result_dict = result.to_dict() if result else {}
-        automation_run.result_data = {"message": message, "error_result": result_dict}
+        automation_run.result = {"message": message, "error_result": result_dict}
         automation_run.save()
 
         return AutomationResult(

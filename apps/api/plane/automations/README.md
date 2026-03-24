@@ -90,6 +90,10 @@ All events follow this standardized structure:
 - **`state_changed`**: Fires on state transitions (issue.state.updated)
 - **`assignee_changed`**: Fires on assignee changes (issue.assignee.added/removed)
 - **`comment_created`**: Fires when comments are added (issue.comment.created)
+- **`scheduled`**: Fires on a time schedule. Two modes:
+  - **Fixed**: frequency (daily/weekly/monthly/yearly) + day/time selection
+  - **Cron**: standard 5-field cron expression
+  - Timezone resolved from trigger config → project → workspace → UTC
 
 ### Conditions
 
@@ -406,7 +410,13 @@ python manage.py create_automation --workspace-id uuid --project-id uuid
 python manage.py check_automation_consumer
 ```
 
-### 10.3 Configuration Settings
+### 10.3 Scheduled Triggers
+
+Scheduled triggers are processed by a batch scheduler running every 5 minutes via Celery Beat. No additional infrastructure is required beyond the existing Celery Beat process.
+
+The batch scheduler finds due triggers and dispatches execution via Celery tasks. Schedule configuration (fixed or cron) is stored on the trigger node's config. Timezone is resolved from the trigger config, falling back to project then workspace timezone.
+
+### 10.4 Configuration Settings
 
 Add to your Django settings:
 

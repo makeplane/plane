@@ -25,6 +25,7 @@ export type CodeType = "code-block";
 export interface RunnerScript {
   id: string;
   name: string;
+  script_type: ERunnerScriptType;
   description?: string | null;
 
   workspace_slug: string; // workspace slug
@@ -67,6 +68,7 @@ export type RunnerScriptFormData = {
   code: string;
   env_variables: TJSON[];
   variables: TVariableDefinition[];
+  script_type: ERunnerScriptType;
 };
 
 export type TRunnerScriptExecution = {
@@ -94,4 +96,16 @@ export type TRunnerScriptFilters = {
   project_id?: string;
   platform?: RunnerPlatform;
   runner_type?: RunnerType;
+};
+
+export enum ERunnerScriptType {
+  AUTOMATION = "automation",
+  WORKFLOW_TRANSITION = "workflow_transition",
+  CRON_TRIGGER = "cron_trigger",
+}
+
+export const RUNNER_SCRIPT_TYPE_MAP = {
+  [ERunnerScriptType.AUTOMATION]: "Automation",
+  [ERunnerScriptType.WORKFLOW_TRANSITION]: "Workflow Transition",
+  [ERunnerScriptType.CRON_TRIGGER]: "Cron Trigger",
 };

@@ -27,8 +27,16 @@ class Script(BaseModel):
         ("main_fn", "Main Function"),
     ]
 
+
+    SCRIPT_TYPE_CHOICES = [
+        ("automation", "Automation"),
+        ("workflow_transition", "Workflow Transition"),
+        ("cron_trigger", "Cron Trigger"),
+    ]
+
     name = models.CharField(max_length=255, verbose_name="Script Name")
     description = models.TextField(null=True, blank=True, verbose_name="Script Description")
+    script_type = models.CharField(max_length=255, choices=SCRIPT_TYPE_CHOICES, default="automation")
     workspace = models.ForeignKey(
         Workspace,
         on_delete=models.CASCADE,

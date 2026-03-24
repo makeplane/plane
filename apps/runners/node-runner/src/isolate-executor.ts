@@ -21,7 +21,8 @@ import * as vm from "vm";
 import { promises as fs } from "fs";
 import { logger } from "@plane/logger";
 import type { RunnerConfig } from "./config";
-import type { ExecutionContext, ScriptFunction } from "./types";
+import type { ExecutionContext, ScriptFunction } from './types';
+import { ERunnerScriptType } from '@plane/types';
 import { serverConfig } from "./env";
 
 // Import PlaneClient to inject into VM context
@@ -212,7 +213,20 @@ export async function runInIsolate(
     });
 
     // Execute main with timeout - Promise.race will reject if timeout fires first
-    const result = await Promise.race([mainFn(context.__PLANE_EVENT, context.__PLANE_VARIABLES), timeoutPromise]);
+    // mainFn depends on the eventType to take input and variables as arguments
+    let functionPromise: Promise<unknown>;
+    if (execCtx.eventType === ERunnerScriptType.CRON_TRIGGER) {
+      functionPromise = mainFn(context.__PLANE_VARIABLES);
+    } else if (
+      execCtx.eventType === ERunnerScriptType.AUTOMATION ||
+      execCtx.eventType === ERunnerScriptType.WORKFLOW_TRANSITION
+    ) {
+      functionPromise = mainFn(context.__PLANE_EVENT, context.__PLANE_VARIABLES);
+    } else {
+      throw new Error(`Unsupported runner script type: ${execCtx.eventType}`);
+    }
+    // execute the function with timeout
+    const result = await Promise.race([functionPromise, timeoutPromise]);
 
     return { value: result };
   } catch (err: any) {

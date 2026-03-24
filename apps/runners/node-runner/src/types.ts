@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { ERunnerScriptType } from "@plane/types";
+
 export interface FunctionParameter {
   name: string;
   type: string;
@@ -64,9 +66,22 @@ export interface AutomationEventInput {
   context: AutomationContext;
 }
 
+export interface WorkflowTransitionContext {
+  workflow_transition_id: string;
+  rule_id: string;
+}
+
+export interface WorkflowTransitionEventInput {
+  event: PlaneEvent;
+  context: WorkflowTransitionContext;
+}
+
+export type ExecutionEventInput = AutomationEventInput | WorkflowTransitionEventInput;
+
 export interface ExecutionContext {
   workspaceSlug: string;
-  event: AutomationEventInput;
+  eventType: ERunnerScriptType;
+  event: ExecutionEventInput | undefined;
   env: Record<string, string | undefined>;
   variables: Record<string, string>;
   allowedDomains: string[];

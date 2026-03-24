@@ -18,10 +18,18 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+from zoneinfo import ZoneInfo
+from datetime import datetime
+from croniter import croniter
 
 # Module imports
 from plane.db.models import ProjectBaseModel
 from plane.db.models import User, WorkspaceMember, BotTypeEnum
+
+
+DAY_TO_CRON = {"mon": "1", "tue": "2", "wed": "3", "thu": "4", "fri": "5", "sat": "6", "sun": "0"}
+UTC = ZoneInfo("UTC")
 
 
 class AutomationScopeChoices(models.TextChoices):
@@ -285,6 +293,18 @@ class AutomationNode(ProjectBaseModel):
     # Execution metadata
     is_enabled = models.BooleanField(default=True)
 
+    # Scheduling fields (only populated for handler_name="scheduled")
+    next_scheduled_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Next scheduled execution time (UTC). Only for scheduled triggers.",
+    )
+    last_triggered_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Last time this scheduled trigger was dispatched.",
+    )
+
     class Meta:
         db_table = "automation_nodes"
         verbose_name = "Automation Node"
@@ -300,7 +320,53 @@ class AutomationNode(ProjectBaseModel):
                 name="autonode_trig_part_idx",
             ),
             GinIndex(fields=["config"], name="autonode_cfg_gin", opclasses=["jsonb_path_ops"]),
+            models.Index(
+                fields=["next_scheduled_at"],
+                condition=models.Q(handler_name="scheduled", is_enabled=True),
+                name="autonode_sched_next_idx",
+            ),
         ]
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.handler_name == "scheduled":
+            self.next_scheduled_at = self.compute_next_scheduled_at(self.config, self.version.project)
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def fixed_to_cron(config):
+        """Convert fixed schedule config to a cron expression."""
+        freq = config["frequency"]
+        h, m = config["hour"], config["minute"]
+
+        if freq == "daily":
+            return f"{m} {h} * * *"
+        elif freq == "weekly":
+            cron_days = ",".join(DAY_TO_CRON[d] for d in config["days"])
+            return f"{m} {h} * * {cron_days}"
+        elif freq == "monthly":
+            return f"{m} {h} {config['day_of_month']} * *"
+        elif freq == "yearly":
+            return f"{m} {h} {config['day_of_month']} {config['month']} *"
+        raise ValueError(f"Unknown frequency: {freq}")
+
+    @staticmethod
+    def resolve_timezone(config, project):
+        """Resolve timezone: trigger config → project → workspace → UTC."""
+        tz_name = config.get("timezone")
+        if not tz_name:
+            tz_name = getattr(project, "timezone", None)
+        if not tz_name:
+            workspace = getattr(project, "workspace", None)
+            tz_name = getattr(workspace, "timezone", None) if workspace else None
+        return tz_name or "UTC"
+
+    @classmethod
+    def compute_next_scheduled_at(cls, config, project, current=None):
+        """Compute next fire time. Both fixed and cron go through croniter."""
+        tz = ZoneInfo(cls.resolve_timezone(config, project))
+        now = current or timezone.now()
+        cron_expr = config.get("cron_expression") if config.get("method") == "cron" else cls.fixed_to_cron(config)
+        return croniter(cron_expr, now.astimezone(tz)).get_next(datetime).astimezone(UTC)
 
     def __str__(self):
         return f"{self.name} ({self.node_type}) - {self.version}"

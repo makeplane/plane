@@ -152,6 +152,11 @@ EE_JOBS = {
         "task": "plane.authentication.bgtasks.group_sync_task.sync_idp_groups_offline",
         "schedule": crontab(hour="*/2", minute=10),  # Every 2 hours at minute 10
     },
+    # Automation scheduled triggers batch scheduler
+    "schedule-automation-triggers": {
+        "task": "plane.automations.tasks.schedule_automation_triggers_batch",
+        "schedule": crontab(minute="*/5"),  # Every 5 minutes
+    },
 }
 
 

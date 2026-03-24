@@ -26,7 +26,8 @@ import { buildFromCodeString } from "./npm-installer";
 import { runInIsolate } from "./isolate-executor";
 import { serverConfig } from "./env";
 import { validateCodeSecurity } from "./code-validator";
-import type { ScriptFunction, AutomationEventInput } from "./types";
+import type { ScriptFunction, ExecutionEventInput } from "./types";
+import { ERunnerScriptType } from "@plane/types";
 
 /**
  * Detect function names used in code via Functions.* member expressions.
@@ -201,6 +202,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
       code,
       build,
       input_data,
+      event_type,
       code_type,
       env_variables,
       execution_variables,
@@ -210,7 +212,8 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
     } = req.body as {
       code: string;
       build?: string;
-      input_data: AutomationEventInput;
+      input_data: ExecutionEventInput;
+      event_type: ERunnerScriptType;
       code_type?: string;
       env_variables?: Record<string, string>;
       execution_variables?: Record<string, string>;
@@ -270,6 +273,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
     // Create minimal execution context
     const execCtx = {
       workspaceSlug: workspace_slug,
+      eventType: event_type || ERunnerScriptType.AUTOMATION,
       event: input_data,
       env: env_variables || {},
       variables: execution_variables || {},

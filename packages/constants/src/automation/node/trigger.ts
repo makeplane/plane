@@ -14,7 +14,7 @@
 import type { TTriggerNodeHandlerName } from "@plane/types";
 import { ETriggerNodeHandlerName } from "@plane/types";
 
-export type TAutomationTriggerIconKey = "LayersIcon" | "DoubleCircleIcon" | "Users" | "MessageCircle";
+export type TAutomationTriggerIconKey = "LayersIcon" | "DoubleCircleIcon" | "Users" | "MessageCircle" | "ClockIcon";
 
 export type TAutomationTriggerSelectOption = {
   iconKey: TAutomationTriggerIconKey;
@@ -53,5 +53,14 @@ export const AUTOMATION_TRIGGER_SELECT_OPTIONS: TAutomationTriggerSelectOption[]
     label: "Comment created",
     readableLabel: "A comment is added",
     value: ETriggerNodeHandlerName.COMMENT_CREATED,
+  },
+];
+
+export const AUTOMATION_TRIGGER_TIME_BASED_OPTIONS: TAutomationTriggerSelectOption[] = [
+  {
+    iconKey: "ClockIcon",
+    label: "Fixed schedule",
+    readableLabel: "A fixed schedule is triggered",
+    value: ETriggerNodeHandlerName.FIXED_SCHEDULE,
   },
 ];

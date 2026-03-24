@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { MessageCircle } from "lucide-react";
+import { Clock, MessageCircle } from "lucide-react";
 import type { TAutomationTriggerIconKey } from "@plane/constants";
 import { LayersIcon, MembersPropertyIcon, StatePropertyIcon } from "@plane/propel/icons";
 
@@ -31,6 +31,8 @@ export function AutomationTriggerIcon(props: Props) {
       return <MembersPropertyIcon className={COMMON_ICON_CLASSNAME} />;
     case "MessageCircle":
       return <MessageCircle className={COMMON_ICON_CLASSNAME} />;
+    case "ClockIcon":
+      return <Clock className={COMMON_ICON_CLASSNAME} />;
     default:
       return null;
   }

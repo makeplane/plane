@@ -16,13 +16,14 @@ Event → Trigger Match → Condition Check → Sequential Actions → Result
 
 ### Triggers
 
-| Node               | Purpose                  |
-| ------------------ | ------------------------ |
-| `record_created`   | When a record is created |
-| `record_updated`   | When a record is updated |
-| `state_changed`    | When issue state changes |
-| `assignee_changed` | When assignee changes    |
-| `comment_created`  | When comment is added    |
+| Node               | Purpose                        |
+| ------------------ | ------------------------------ |
+| `record_created`   | When a record is created       |
+| `record_updated`   | When a record is updated       |
+| `state_changed`    | When issue state changes       |
+| `assignee_changed` | When assignee changes          |
+| `comment_created`  | When comment is added          |
+| `scheduled`        | Time-based fixed/cron schedule |
 
 ### Conditions
 

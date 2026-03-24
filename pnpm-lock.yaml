@@ -1333,6 +1333,9 @@ importers:
       '@plane/logger':
         specifier: workspace:*
         version: link:../../../packages/logger
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../../../packages/types
       '@sveltejs/acorn-typescript':
         specifier: 'catalog:'
         version: 1.0.9(acorn@8.16.0)

@@ -122,6 +122,7 @@ class ScriptListSerializer(serializers.ModelSerializer):
             "successful_executions",
             "success_rate",
             "last_run",
+            "script_type",
         ]
         read_only_fields = fields
 

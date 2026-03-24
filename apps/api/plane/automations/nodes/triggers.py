@@ -15,7 +15,9 @@ Trigger nodes for the Plane Automation Engine.
 These nodes detect database events and decide whether an automation should be triggered.
 """
 
-from pydantic import BaseModel
+from typing import List, Literal, Optional
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from plane.automations.registry import register_node, TriggerNode
 
@@ -301,3 +303,88 @@ class CommentCreatedTrigger(TriggerNode):
                     "reason": "Not a comment created event",
                 },
             }
+
+
+class ScheduledTriggerParams(BaseModel):
+    """Parameters for the scheduled trigger — supports fixed schedule and cron."""
+
+    method: Literal["cron", "fixed"]
+
+    # Cron mode
+    cron_expression: Optional[str] = None
+
+    # Fixed schedule mode
+    frequency: Optional[Literal["daily", "weekly", "monthly", "yearly"]] = None
+    days: Optional[List[Literal["mon", "tue", "wed", "thu", "fri", "sat", "sun"]]] = None
+    day_of_month: Optional[int] = Field(None, ge=1, le=31)
+    month: Optional[int] = Field(None, ge=1, le=12)
+    hour: Optional[int] = Field(None, ge=0, le=23)
+    minute: Optional[int] = Field(None, ge=0, le=59)
+
+    # Common
+    timezone: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_schedule(self):
+        if self.method == "cron":
+            if not self.cron_expression:
+                raise ValueError("cron_expression is required for cron method")
+            return self
+
+        if not self.frequency or self.hour is None or self.minute is None:
+            raise ValueError("frequency, hour, and minute are required for fixed method")
+
+        if self.frequency == "weekly" and not self.days:
+            raise ValueError("days is required for weekly frequency")
+
+        if self.frequency == "monthly" and self.day_of_month is None:
+            raise ValueError("day_of_month is required for monthly frequency")
+
+        if self.frequency == "yearly" and (self.month is None or self.day_of_month is None):
+            raise ValueError("month and day_of_month are required for yearly frequency")
+
+        return self
+
+    @field_validator("cron_expression")
+    @classmethod
+    def validate_cron(cls, v):
+        if v is not None:
+            from croniter import croniter
+
+            if not croniter.is_valid(v):
+                raise ValueError(f"Invalid cron expression: {v}")
+        return v
+
+    @field_validator("timezone")
+    @classmethod
+    def validate_timezone(cls, v):
+        if v is not None:
+            from zoneinfo import available_timezones
+
+            if v not in available_timezones():
+                raise ValueError(f"Invalid timezone: {v}")
+        return v
+
+
+@register_node("scheduled", "trigger", ScheduledTriggerParams)
+class ScheduledTrigger(TriggerNode):
+    """
+    Trigger that fires on a time schedule (fixed or cron).
+
+    Always returns success when invoked by the batch scheduler —
+    the schedule match already happened. Returns metadata for the audit trail.
+    """
+
+    schema = ScheduledTriggerParams
+    name = "scheduled"
+
+    def execute(self, event: dict, context: dict) -> dict:
+        return {
+            "success": True,
+            "action": "scheduled",
+            "result": {
+                "matched": True,
+                "event_type": "automation.scheduled",
+                "method": self.params.method,
+            },
+        }

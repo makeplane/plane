@@ -54,6 +54,7 @@ class ScriptTestView(APIView):
                 return Response({"error": "code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             code_type = request.data.get("code_type")
+            script_type = request.data.get("script_type")
 
             # Step 1: Build to detect functions and catch syntax errors
             runner_service_url = getattr(settings, "RUNNER_BASE_URL", None)
@@ -109,6 +110,7 @@ class ScriptTestView(APIView):
                 function_names=function_names,
                 workspace_id=workspace.id,
                 workspace_slug=slug,
+                script_type=script_type,
                 input_data=request.data.get("input_data", {}),
                 execution_variables=request.data.get("execution_variables", {}),
                 code_type=code_type,

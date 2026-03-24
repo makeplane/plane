@@ -65,6 +65,7 @@ vi.mock("@makeplane/plane-node-sdk", () => {
 import { runInIsolate } from "../src/isolate-executor";
 import type { RunnerConfig } from "../src/config";
 import type { ExecutionContext, AutomationEventInput } from "../src/types";
+import { ERunnerScriptType } from "@plane/types";
 
 // Helper to write a bundle to a temp file
 let tmpDir: string;
@@ -107,6 +108,7 @@ function makeEvent(overrides: Partial<AutomationEventInput> = {}): AutomationEve
 
 function makeExecCtx(overrides: Partial<ExecutionContext> = {}): ExecutionContext {
   return {
+    eventType: ERunnerScriptType.AUTOMATION,
     workspaceSlug: "test-ws",
     event: makeEvent(),
     env: { MY_VAR: "hello" },

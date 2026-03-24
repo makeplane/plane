@@ -28,10 +28,20 @@ type TProps = {
   selectedHandlerName: EActionNodeHandlerName;
   workspaceId: string;
   workspaceSlug: string;
+  isTimeBasedTrigger?: boolean;
 };
 
 export function AutomationActionConfigurationRoot(props: TProps) {
-  const { automationId, editorRef, isDisabled, selectedHandlerName, projectId, workspaceId, workspaceSlug } = props;
+  const {
+    automationId,
+    editorRef,
+    isDisabled,
+    selectedHandlerName,
+    projectId,
+    workspaceId,
+    workspaceSlug,
+    isTimeBasedTrigger,
+  } = props;
   // plane hooks
   const { t } = useTranslation();
 
@@ -51,7 +61,7 @@ export function AutomationActionConfigurationRoot(props: TProps) {
         <AutomationActionChangePropertyConfiguration isDisabled={isDisabled} projectId={projectId} />
       )}
       {selectedHandlerName === EActionNodeHandlerName.RUN_SCRIPT && (
-        <AutomationActionRunScriptConfiguration workspaceSlug={workspaceSlug} />
+        <AutomationActionRunScriptConfiguration workspaceSlug={workspaceSlug} isTimeBasedTrigger={isTimeBasedTrigger} />
       )}
     </div>
   );

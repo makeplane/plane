@@ -19,13 +19,16 @@ import type { TAutomationActionFormData } from "../../root";
 import { useRunners } from "@/hooks/store/runners/use-runners";
 import { Pencil } from "lucide-react";
 import { Input } from "@plane/ui";
+import { ERunnerScriptType } from "@plane/types";
 import type { TRunScriptActionConfig } from "@plane/types";
 
-export const AutomationActionRunScriptConfiguration = observer(function AutomationActionRunScriptConfiguration(_props: {
+export const AutomationActionRunScriptConfiguration = observer(function AutomationActionRunScriptConfiguration(props: {
   workspaceSlug: string;
+  isTimeBasedTrigger?: boolean;
 }) {
   // hooks
   const { control, watch, setValue } = useFormContext<TAutomationActionFormData>();
+  const { isTimeBasedTrigger } = props;
   const { getScriptById } = useRunners();
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -67,6 +70,7 @@ export const AutomationActionRunScriptConfiguration = observer(function Automati
             handleClose={handleClose}
             defaultScriptId={value}
             handleUseSelectedScript={onChange}
+            scriptType={isTimeBasedTrigger ? ERunnerScriptType.CRON_TRIGGER : ERunnerScriptType.AUTOMATION}
           />
         )}
       />

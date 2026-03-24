@@ -23,7 +23,7 @@ import type {
   TChangePropertyActionConfig,
   TChangePropertyActionFormConfig,
 } from "@plane/types";
-import { EActionNodeHandlerName, EAutomationNodeType } from "@plane/types";
+import { EActionNodeHandlerName, EAutomationNodeType, ETriggerNodeHandlerName } from "@plane/types";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 import type { IAutomationActionNodeInstance } from "@/store/automations/node/action";
@@ -57,6 +57,7 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
   const actionNodesCount = actionNodes?.length ?? 0;
   const sidebarHelper = automation?.sidebarHelper;
   const isCreateActionButtonSelected = sidebarHelper?.selectedSidebarConfig.mode === "create";
+  const isTimeBasedTrigger = automation?.trigger?.handler_name === ETriggerNodeHandlerName.FIXED_SCHEDULE;
 
   const scrollToActionForm = useCallback((formElement: HTMLFormElement | null) => {
     setTimeout(() => {
@@ -177,6 +178,7 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
             key={actionNode.id}
             automationId={automationId}
             currentIndex={index}
+            isTimeBasedTrigger={isTimeBasedTrigger}
             isSubmitting={isCreatingUpdatingAction}
             onDelete={() => setSelectedActionToDelete(actionNode.id)}
             onSubmit={(data) => handleUpdateAction(actionNode, data)}
@@ -194,6 +196,7 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
             ref={actionFormRef}
             automationId={automationId}
             currentIndex={actionNodesCount}
+            isTimeBasedTrigger={isTimeBasedTrigger}
             isSubmitting={isCreatingUpdatingAction}
             onCancel={() => setIsActionFormOpen(false)}
             onDelete={() => setIsActionFormOpen(false)}

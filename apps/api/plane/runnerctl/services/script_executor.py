@@ -153,6 +153,7 @@ def execute_sync(
     # Only needed when code is provided directly (ignored if script_id provided)
     workspace_id: Optional[str] = None,
     workspace_slug: Optional[str] = None,
+    script_type: Optional[str] = None,
     code_type: Optional[str] = None,
     env_variables: Optional[dict] = None,
     allowed_domains: Optional[list] = None,
@@ -294,6 +295,7 @@ def execute_sync(
         "code": exec_code,
         "build": exec_build,  # Pre-built bundle (if available) for faster execution
         "input_data": input_data,
+        "event_type": script_type,
         "code_type": exec_code_type,
         "env_variables": exec_env_variables or {},
         "execution_variables": execution_variables or {},

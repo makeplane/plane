@@ -4,6 +4,7 @@
     "pk": "a28ee0b4-eb42-4ebb-a5cf-3b2fff9722b9",
     "fields": {
       "name": "Mark parent as done if all children are done",
+      "script_type": "automation",
       "description": "When a work item is marked as done (completed state group), checks all siblings. If every sibling is also completed, automatically updates the parent work item to a completed state.",
       "workspace": null,
       "project": null,
@@ -27,6 +28,7 @@
     "pk": "1423794b-bc83-4895-a4f9-dae4089efd74",
     "fields": {
       "name": "Create linked work item in another project on state change",
+      "script_type": "automation",
       "description": "When a work item in the source project moves to a specified state, creates a copy in the destination project and adds a relates_to relation between them.",
       "workspace": null,
       "project": null,

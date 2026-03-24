@@ -11,13 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export enum ETriggerNodeHandlerName {
-  RECORD_CREATED = "record_created",
-  RECORD_UPDATED = "record_updated",
-  STATE_CHANGED = "state_changed",
-  ASSIGNEE_CHANGED = "assignee_changed",
-  COMMENT_CREATED = "comment_created",
-  /** Time-based (fixed schedule) trigger; API `handler_name` is `scheduled`. */
-  FIXED_SCHEDULE = "scheduled",
-}
-export type TTriggerNodeHandlerName = ETriggerNodeHandlerName;
+export * from "./runner-form";

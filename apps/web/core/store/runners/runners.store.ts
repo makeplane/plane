@@ -14,7 +14,13 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { RunnerScript, TRunnerScriptExecution, TRunnerScriptFilters, TRunnerScriptStats } from "@plane/types";
+import type {
+  ERunnerScriptType,
+  RunnerScript,
+  TRunnerScriptExecution,
+  TRunnerScriptFilters,
+  TRunnerScriptStats,
+} from "@plane/types";
 // plane web store
 // services
 import { RunnerCtlService } from "@/services/runners/runnerctl.service";
@@ -31,6 +37,7 @@ export interface IRunnersStore {
   runnerAvailability: Map<string, boolean>; // workspaceSlug => isAvailable
   // computed
   getScriptsByWorkspaceSlug: (workspaceSlug: string) => RunnerScript[];
+  getFilteredScriptsByWorkspaceSlug: (workspaceSlug: string, scriptType?: ERunnerScriptType) => RunnerScript[];
   getScriptById: (scriptId: string) => RunnerScript | undefined;
   getExecutionsByScriptId: (scriptId: string) => TRunnerScriptExecution[];
   isRunnerAvailable: (workspaceSlug: string) => boolean;
@@ -91,6 +98,11 @@ export class RunnersStore implements IRunnersStore {
       if (script) result.push(script);
     }
     return result;
+  });
+
+  getFilteredScriptsByWorkspaceSlug = computedFn((workspaceSlug: string, scriptType?: ERunnerScriptType) => {
+    const scripts = this.getScriptsByWorkspaceSlug(workspaceSlug);
+    return scripts.filter((script) => script.script_type === scriptType);
   });
 
   getScriptById = computedFn((scriptId: string) => {

@@ -11,51 +11,52 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Zap } from "lucide-react";
 // plane imports
-import { AUTOMATION_TRIGGER_SELECT_OPTIONS, DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION } from "@plane/constants";
+import {
+  AUTOMATION_TRIGGER_SELECT_OPTIONS,
+  DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION,
+  AUTOMATION_TRIGGER_TIME_BASED_OPTIONS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownIcon } from "@plane/propel/icons";
 // helpers
-import type {
-  ICustomSearchSelectOption,
-  TAutomationConditionFilterExpression,
-  TTriggerNodeHandlerName,
-} from "@plane/types";
-import { EAutomationSidebarTab } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import type { TAutomationConditionFilterExpression, TTriggerNodeHandlerName } from "@plane/types";
+import { EAutomationSidebarTab, ETriggerNodeHandlerName } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 import { cn, generateConditionPayload } from "@plane/utils";
 // plane web imports
+import { useUser } from "@/hooks/store/user";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
 import { AutomationDetailsSidebarActionButtons } from "../action-buttons";
 import { AutomationDetailsSidebarTriggerConditionRoot } from "./condition/root";
 import { AutomationTriggerIcon } from "./icon";
+import { AutomationDetailsSidebarTriggerSchedule } from "./schedule";
+import {
+  createDefaultFixedScheduleConfig,
+  fixedScheduleToTriggerConfig,
+  getFixedScheduleValidationErrorKey,
+  isFixedScheduleConfigComplete,
+  stripScheduleFieldsFromConfig,
+  triggerConfigToFixedSchedule,
+} from "./schedule-config";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
 type Props = {
   automationId: string;
 };
-
-const AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT: ICustomSearchSelectOption[] =
-  AUTOMATION_TRIGGER_SELECT_OPTIONS.map((option) => ({
-    value: option.value,
-    query: option.label,
-    content: (
-      <span className="flex items-center gap-2">
-        <AutomationTriggerIcon iconKey={option.iconKey} />
-        {option.label}
-      </span>
-    ),
-  }));
 
 export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationDetailsSidebarTriggerRoot(props: Props) {
   const { automationId } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
+  const user = useUser();
+  const profileTimezone = user.data?.user_timezone;
   const { getAutomationById } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
@@ -64,29 +65,57 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   const conditionNode = automation?.allConditions?.[0];
   const filterExpression = conditionNode?.config?.filter_expression;
   const triggerNodeHandlerName = triggerNode?.handler_name;
+  const isTimeBasedTrigger = triggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE;
   // states
   const [isCreatingUpdatingTrigger, setIsCreatingUpdatingTrigger] = useState(false);
   const [isCreatingUpdatingCondition, setIsCreatingUpdatingCondition] = useState(false);
-  const [selectedTriggerNodeHandlerName, setSelectedTriggerNodeHandlerName] = useState<TTriggerNodeHandlerName | null>(
-    triggerNodeHandlerName ?? null
-  );
+  const [selectedTriggerNodeHandlerName, setSelectedTriggerNodeHandlerName] = useState<
+    TTriggerNodeHandlerName | undefined
+  >(triggerNodeHandlerName);
   const [selectedFilterExpression, setSelectedFilterExpression] = useState<TAutomationConditionFilterExpression>(
     filterExpression ?? DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION
   );
+  const [fixedScheduleConfig, setFixedScheduleConfig] = useState(() =>
+    triggerNode && isTimeBasedTrigger
+      ? triggerConfigToFixedSchedule(triggerNode.config, profileTimezone)
+      : createDefaultFixedScheduleConfig(profileTimezone)
+  );
+  const workspaceSlug = automation?.workspaceSlug ?? "";
   // derived states
   const selectedTriggerNodeHandlerOption = useMemo(
-    () => AUTOMATION_TRIGGER_SELECT_OPTIONS.find((option) => option.value === selectedTriggerNodeHandlerName),
+    () =>
+      [...AUTOMATION_TRIGGER_SELECT_OPTIONS, ...AUTOMATION_TRIGGER_TIME_BASED_OPTIONS].find(
+        (option) => option.value === selectedTriggerNodeHandlerName
+      ),
     [selectedTriggerNodeHandlerName]
   );
+
+  useEffect(() => {
+    if (selectedTriggerNodeHandlerName !== ETriggerNodeHandlerName.FIXED_SCHEDULE) return;
+    if (triggerNode && isTimeBasedTrigger) {
+      setFixedScheduleConfig(triggerConfigToFixedSchedule(triggerNode.config, profileTimezone));
+    } else {
+      setFixedScheduleConfig(createDefaultFixedScheduleConfig(profileTimezone));
+    }
+
+    // Intentionally omit profileTimezone and triggerNode.config: profile timezone is synced separately without
+    // resetting the form; config changes are handled on save / navigation.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTriggerNodeHandlerName, triggerNode?.handler_name, triggerNode?.id]);
 
   const createOrUpdateTrigger = async () => {
     if (!automation || !selectedTriggerNodeHandlerName) return;
 
     // If trigger node doesn't exist, create it with the selected handler and condition.
+    const isFixedSchedule = selectedTriggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE;
+    if (isFixedSchedule && !isFixedScheduleConfigComplete(fixedScheduleConfig)) {
+      return;
+    }
     if (!triggerNode) {
       try {
         await automation.createTrigger({
           handler_name: selectedTriggerNodeHandlerName,
+          ...(isFixedSchedule ? { config: fixedScheduleToTriggerConfig(fixedScheduleConfig) } : {}),
           conditionPayload: {
             config: {
               filter_expression: selectedFilterExpression,
@@ -99,14 +128,21 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
       return;
     }
 
-    // If handler name changed, update the trigger node.
-    if (triggerNode.handler_name !== selectedTriggerNodeHandlerName) {
+    const nextTriggerConfig = isFixedSchedule
+      ? fixedScheduleToTriggerConfig(fixedScheduleConfig)
+      : stripScheduleFieldsFromConfig(triggerNode.config);
+
+    const handlerChanged = triggerNode.handler_name !== selectedTriggerNodeHandlerName;
+    const configChanged = !isEqual(triggerNode.config, nextTriggerConfig);
+
+    if (handlerChanged || configChanged) {
       try {
         await triggerNode.update({
-          handler_name: selectedTriggerNodeHandlerName,
+          ...(handlerChanged ? { handler_name: selectedTriggerNodeHandlerName } : {}),
+          ...(configChanged ? { config: nextTriggerConfig } : {}),
         });
       } catch (error) {
-        console.error("Failed to update trigger handler:", error);
+        console.error("Failed to update trigger:", error);
       }
     }
   };
@@ -178,17 +214,16 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
           </span>
           <p className="text-11 font-medium">{t("automations.trigger.input_label")}</p>
         </div>
-        <CustomSearchSelect
-          options={AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT}
-          value={selectedTriggerNodeHandlerName}
-          onChange={(value: TTriggerNodeHandlerName) => {
-            setSelectedTriggerNodeHandlerName(value);
-          }}
+        <CustomMenu
+          className="w-full"
+          placement="bottom-start"
+          maxHeight="lg"
+          closeOnSelect
           customButtonClassName="w-full"
           customButton={
             <span
               className={cn(
-                "w-full px-4 py-1.5 rounded-md border-[0.5px] border-subtle-1 hover:bg-layer-transparent-hover text-left flex items-center gap-2 cursor-pointer transition-colors",
+                "text-caption-sm-regular w-full px-4 h-7 rounded-md border-[0.5px] border-subtle-1 hover:bg-layer-transparent-hover text-left flex items-center gap-2 cursor-pointer transition-colors",
                 {
                   "text-placeholder border-accent-strong": !selectedTriggerNodeHandlerName,
                 }
@@ -207,13 +242,54 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
               <ChevronDownIcon className="flex-shrink-0 size-3" />
             </span>
           }
-        />
+        >
+          <div className="px-1 pb-1">
+            <p className="text-11 font-semibold text-tertiary">{t("automations.trigger.section_plane_events")}</p>
+          </div>
+          {AUTOMATION_TRIGGER_SELECT_OPTIONS.map((option) => (
+            <CustomMenu.MenuItem
+              key={option.value}
+              className="flex items-center gap-2"
+              onClick={() => {
+                setSelectedTriggerNodeHandlerName(option.value);
+              }}
+            >
+              <AutomationTriggerIcon iconKey={option.iconKey} />
+              <span className="truncate font-medium">{option.label}</span>
+            </CustomMenu.MenuItem>
+          ))}
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={"SCHEDULED_AUTOMATIONS"} fallback={null}>
+            <div className="mx-1 mt-1 border-t border-subtle-1 pt-2 pb-1">
+              <p className="text-11 font-semibold text-tertiary">{t("automations.trigger.section_time_based")}</p>
+            </div>
+            {AUTOMATION_TRIGGER_TIME_BASED_OPTIONS.map((option) => (
+              <CustomMenu.MenuItem
+                key={option.value}
+                className="flex items-center gap-2"
+                onClick={() => {
+                  setSelectedTriggerNodeHandlerName(option.value);
+                }}
+              >
+                <AutomationTriggerIcon iconKey={option.iconKey} />
+                <span className="truncate font-medium">{option.label}</span>
+              </CustomMenu.MenuItem>
+            ))}
+          </WithFeatureFlagHOC>
+        </CustomMenu>
       </div>
-      <AutomationDetailsSidebarTriggerConditionRoot
-        automationId={automationId}
-        initialFilterExpression={selectedFilterExpression}
-        updateFilterExpression={setSelectedFilterExpression}
-      />
+      {selectedTriggerNodeHandlerOption?.value === ETriggerNodeHandlerName.FIXED_SCHEDULE ? (
+        <AutomationDetailsSidebarTriggerSchedule
+          value={fixedScheduleConfig}
+          onChange={setFixedScheduleConfig}
+          validationErrorKey={getFixedScheduleValidationErrorKey(fixedScheduleConfig)}
+        />
+      ) : (
+        <AutomationDetailsSidebarTriggerConditionRoot
+          automationId={automationId}
+          initialFilterExpression={selectedFilterExpression}
+          updateFilterExpression={setSelectedFilterExpression}
+        />
+      )}
       <AutomationDetailsSidebarActionButtons
         previousButton={{
           label: t("automations.trigger.button.previous"),
@@ -225,7 +301,12 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
             : triggerNode
               ? t("common.continue")
               : t("automations.trigger.button.next"),
-          isDisabled: !selectedTriggerNodeHandlerName || isCreatingUpdatingTrigger || isCreatingUpdatingCondition,
+          isDisabled:
+            !selectedTriggerNodeHandlerName ||
+            isCreatingUpdatingTrigger ||
+            isCreatingUpdatingCondition ||
+            (selectedTriggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE &&
+              !isFixedScheduleConfigComplete(fixedScheduleConfig)),
           onClick: handleNextButtonClick,
         }}
       />

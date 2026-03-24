@@ -24,6 +24,9 @@ import { LazyPlaneSDKCodeEditor } from "@/components/plane-sdk-editor/root";
 import { formDataToScriptPayload, scriptToFormData } from "./env-variables-field";
 import { VariablesField } from "./variables-field";
 import { TestScript } from "./test-script";
+import { DEFAULT_SCRIPT_FORM_DATA } from "@plane/constants";
+import { ERunnerScriptType } from "@plane/types";
+import { SelectScriptType } from "./select-script-type";
 
 type Props = {
   scriptData?: RunnerScript;
@@ -32,28 +35,7 @@ type Props = {
   callBack?: (scriptId: string | null) => void;
 };
 
-const DEFAULT_FORM_VALUES: RunnerScriptFormData = {
-  name: "",
-  code: `// Plane Runner Script
-// Type 'Plane.' to see available APIs with full IntelliSense!
-
-export async function main(input: AutomationEventInput, variables: Record<string, string>) {
-  const { event, context } = input;
-  const workItemId = event.payload.data.id;
-  const projectId = event.project_id;
-  const workItem = await Plane.workItems.retrieve(workspaceSlug, projectId, workItemId);
-  console.log("Work Item:", workItem);
-  return { success: true, workItem };
-}
-`,
-  env_variables: [
-    {
-      key: "",
-      value: "",
-    },
-  ],
-  variables: [],
-};
+const DEFAULT_FORM_VALUES: RunnerScriptFormData = DEFAULT_SCRIPT_FORM_DATA[ERunnerScriptType.AUTOMATION];
 
 export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScript(props: Props) {
   const { scriptData, headerAction, callBack, handleCancel } = props;
@@ -109,6 +91,11 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
     }
   };
 
+  const handleScriptTypeChange = (value: ERunnerScriptType) => {
+    // set the default values for the script type
+    reset(DEFAULT_SCRIPT_FORM_DATA[value]);
+  };
+
   useEffect(() => {
     if (scriptData) {
       reset(scriptToFormData(scriptData));
@@ -123,7 +110,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
         <div className="space-y-3">
           {/* Name */}
           <div
-            className={cn("space-y-1 flex gap-2 items-center justify-between", {
+            className={cn("space-y-1 flex gap-2 items-center justify-between mb-6", {
               "border-b border-subtle pb-3": headerAction,
             })}
           >
@@ -147,6 +134,11 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
             {headerAction}
           </div>
 
+          {/* Script Type */}
+          <div className="flex justify-between flex-col gap-1">
+            <div className="text-body-xs-medium text-primary">Script Type</div>
+            <SelectScriptType onScriptTypeChange={handleScriptTypeChange} />
+          </div>
           {/* Variables */}
           <VariablesField readOnly={isReadOnly} />
 

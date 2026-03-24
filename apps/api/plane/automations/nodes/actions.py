@@ -807,6 +807,7 @@ class RunScriptAction(ActionNode):
         # Execute via runnerctl service
         result = execute_sync(
             script_id=script_id,
+            script_type='automation',
             input_data=input_data,
             execution_variables=self.params.execution_variables,
             workspace_id=str(automation.workspace_id),

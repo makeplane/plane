@@ -89,6 +89,8 @@ type TProps = {
   projectId: string;
   workspaceId: string;
   workspaceSlug: string;
+  /** When set, the action handler dropdown only offers run script (fixed-schedule automations). */
+  isTimeBasedTrigger?: boolean;
 } & (TNewAutomationAction | TExistingAutomationAction);
 
 const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
@@ -105,6 +107,7 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
       projectId,
       workspaceId,
       workspaceSlug,
+      isTimeBasedTrigger = false,
     } = props;
     // plane hooks
     const { t } = useTranslation();
@@ -115,7 +118,12 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
     const defaultValueForReset =
       type === EAutomationActionFormType.EXISTING
         ? merge({}, DEFAULT_AUTOMATION_ACTION_FORM_DATA, props.data)
-        : DEFAULT_AUTOMATION_ACTION_FORM_DATA;
+        : isTimeBasedTrigger
+          ? merge({}, DEFAULT_AUTOMATION_ACTION_FORM_DATA, {
+              handler_name: EActionNodeHandlerName.RUN_SCRIPT,
+              config: DEFAULT_RUN_SCRIPT_CONFIG,
+            })
+          : DEFAULT_AUTOMATION_ACTION_FORM_DATA;
     const methods = useForm<TAutomationActionFormData>({
       defaultValues: defaultValueForReset,
     });
@@ -234,7 +242,11 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
               )
             }
           >
-            <AutomationActionHandlerDropdown value={methods.watch("handler_name")} onChange={handleHandlerNameChange} />
+            <AutomationActionHandlerDropdown
+              value={methods.watch("handler_name")}
+              onChange={handleHandlerNameChange}
+              isTimeBasedTrigger={isTimeBasedTrigger}
+            />
             {selectedHandlerName && (
               <AutomationActionConfigurationRoot
                 automationId={automationId}
@@ -243,6 +255,7 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
                 projectId={projectId}
                 workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
+                isTimeBasedTrigger={isTimeBasedTrigger}
               />
             )}
           </AutomationDetailsSidebarSectionWrapper>
