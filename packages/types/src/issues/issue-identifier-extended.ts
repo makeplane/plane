@@ -17,9 +17,11 @@ import type { EWorkItemTypeEntity } from "../work-item-types";
 
 export type TIssueTypeIdentifierExtended = TIssueTypeIdentifierBase & {
   getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
+  showWorkItemTypeName?: boolean;
 };
 
 export type TIssueIdentifierPropsExtended = TIssueIdentifierProps & {
   getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
+  showWorkItemTypeName?: boolean;
   isWorkItemTypeEntityEnabled?: (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => boolean;
 };

@@ -30,19 +30,21 @@ import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-lo
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueTypeIdentifier: FC<TIssueTypeIdentifierExtended> = observer((props) => {
-  const { getWorkItemTypeById, issueTypeId, size = "sm" } = props;
+  const { getWorkItemTypeById, issueTypeId, size = "sm", showWorkItemTypeName = false } = props;
   // derived values
   const workItemTypeFromStore = useIssueType(issueTypeId);
   const issueType = getWorkItemTypeById ? getWorkItemTypeById(issueTypeId) : workItemTypeFromStore;
 
   return (
     <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-start">
-      <div className="flex flex-shrink-0">
+      <div className="flex shrink-0">
         <IssueTypeLogo
           icon_props={issueType?.logo_props?.icon}
           size={size}
           isDefault={issueType?.is_default}
           isEpic={issueType?.is_epic}
+          showWorkItemTypeName={showWorkItemTypeName}
+          issueTypeName={issueType?.name}
         />
       </div>
     </Tooltip>
@@ -57,6 +59,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierPropsExtended> = observer
     projectId,
     size = "sm",
     variant = "default",
+    showWorkItemTypeName = false,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -100,16 +103,21 @@ export const IssueIdentifier: React.FC<TIssueIdentifierPropsExtended> = observer
 
   if (issueTypesLoader === "init-loader") {
     return (
-      <Loader className="flex flex-shrink-0 w-20 h-5">
+      <Loader className="flex shrink-0 w-20 h-5">
         <Loader.Item height="100%" width="100%" />
       </Loader>
     );
   }
 
   return (
-    <div className={cn("flex flex-shrink-0 items-center", size === "xs" ? "space-x-1" : "space-x-2")}>
+    <div className={cn("flex shrink-0 items-center", size === "xs" ? "space-x-1" : "space-x-2")}>
       {shouldRenderIssueTypeIcon && issueTypeId && (
-        <IssueTypeIdentifier getWorkItemTypeById={getWorkItemTypeById} issueTypeId={issueTypeId} size={size} />
+        <IssueTypeIdentifier
+          getWorkItemTypeById={getWorkItemTypeById}
+          issueTypeId={issueTypeId}
+          size={size}
+          showWorkItemTypeName={showWorkItemTypeName}
+        />
       )}
       {shouldRenderIssueID && (
         <IdentifierText

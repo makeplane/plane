@@ -80,7 +80,13 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
         fetchIssueDetails={false}
       />
       <div className={cn("group flex items-center gap-3 cursor-pointer")}>
-        <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" enableClickToCopyIdentifier />
+        <IssueIdentifier
+          issueId={issueId}
+          projectId={issue.project_id}
+          size="md"
+          enableClickToCopyIdentifier
+          showWorkItemTypeName
+        />
         <button
           type="button"
           className={cn(

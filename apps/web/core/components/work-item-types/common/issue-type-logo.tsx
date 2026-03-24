@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 // plane imports
 import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
 import { EpicIcon, LayersIcon } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
-import { cn, generateIconColors } from "@plane/utils";
+import { cn, generateIconColors, truncateProjectIdentifierForDisplay } from "@plane/utils";
 
 export type TIssueTypeLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -26,6 +25,8 @@ type Props = {
   containerClassName?: string;
   isDefault?: boolean;
   isEpic?: boolean;
+  showWorkItemTypeName?: boolean;
+  issueTypeName?: string;
 };
 
 const iconSizeMap = {
@@ -45,7 +46,15 @@ const containerSizeMap = {
 };
 
 export function IssueTypeLogo(props: Props) {
-  const { icon_props, size = "sm", containerClassName, isDefault = false, isEpic = false } = props;
+  const {
+    icon_props,
+    size = "sm",
+    containerClassName,
+    isDefault = false,
+    isEpic = false,
+    showWorkItemTypeName = false,
+    issueTypeName = "",
+  } = props;
 
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find(function LucideIcon(item) {
@@ -63,14 +72,16 @@ export function IssueTypeLogo(props: Props) {
       <span
         style={{
           height: containerSizeMap[size],
-          width: containerSizeMap[size],
+          minWidth: containerSizeMap[size],
           backgroundColor: isEpic ? "transparent" : background,
         }}
         className={cn(
-          "flex-shrink-0 grid place-items-center rounded-sm bg-layer-1",
+          "shrink-0 flex items-center justify-center gap-2 rounded-sm bg-layer-1",
           {
             "bg-transparent": isEpic,
+            "px-2": !isEpic && showWorkItemTypeName,
           },
+
           containerClassName
         )}
       >
@@ -99,6 +110,11 @@ export function IssueTypeLogo(props: Props) {
               }}
             />
           )
+        )}
+        {!isEpic && showWorkItemTypeName && (
+          <span className="text-body-xs-medium" style={{ color: foreground }}>
+            {truncateProjectIdentifierForDisplay(issueTypeName)}
+          </span>
         )}
       </span>
     </>
