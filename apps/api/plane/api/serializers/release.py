@@ -26,6 +26,7 @@ from plane.ee.serializers import DescriptionSerializer
 
 class ReleaseSerializer(BaseSerializer):
     description_html = serializers.CharField(required=False, write_only=True, allow_blank=True)
+    description_json = serializers.JSONField(required=False, write_only=True)
     description = DescriptionSerializer(read_only=True)
 
     class Meta:
@@ -36,19 +37,28 @@ class ReleaseSerializer(BaseSerializer):
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
 
-        description = validated_data.pop("description_html", "<p></p>")
+        description_html = validated_data.pop("description_html", "<p></p>")
+        description_json = validated_data.pop("description_json", {})
 
-        description = Description.objects.create(workspace_id=workspace_id, description_html=description)
+        description = Description.objects.create(
+            workspace_id=workspace_id,
+            description_html=description_html,
+            description_json=description_json,
+        )
 
         release = Release.objects.create(**validated_data, description=description)
 
         return release
 
     def update(self, instance, validated_data):
-        description = validated_data.pop("description_html", "<p></p>")
+        description_html = validated_data.pop("description_html", None)
+        description_json = validated_data.pop("description_json", None)
 
-        if instance.description_id:
-            Description.objects.filter(id=instance.description_id).update(description_html=description)
+        if instance.description_id and description_html is not None:
+            Description.objects.filter(id=instance.description_id).update(
+                description_html=description_html,
+                description_json=description_json if description_json is not None else {},
+            )
 
         return super().update(instance, validated_data)
 

@@ -14,12 +14,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { Controller } from "react-hook-form";
-import type { Control, FieldErrors, UseFormHandleSubmit } from "react-hook-form";
+import type { Control, FieldErrors, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/ui";
 import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
-import type { Release } from "@plane/types";
+import type { Release, ReleaseWrite } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -37,16 +37,18 @@ import { DEFAULT_RELEASE_STATE } from "@/constants/release";
 type Props = {
   workspaceSlug: string;
   releaseDetail?: Release;
-  control: Control<Partial<Release>>;
-  handleSubmit: UseFormHandleSubmit<Partial<Release>>;
-  onSubmit: (data: Partial<Release>) => Promise<void>;
-  errors: FieldErrors<Partial<Release>>;
+  control: Control<ReleaseWrite>;
+  handleSubmit: UseFormHandleSubmit<ReleaseWrite>;
+  onSubmit: (data: ReleaseWrite) => Promise<void>;
+  errors: FieldErrors<ReleaseWrite>;
   isSubmitting: boolean;
   handleClose: () => void;
+  setValue: UseFormSetValue<ReleaseWrite>;
 };
 
 export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm(props: Props) {
-  const { workspaceSlug, releaseDetail, control, handleSubmit, onSubmit, errors, isSubmitting, handleClose } = props;
+  const { workspaceSlug, releaseDetail, control, handleSubmit, onSubmit, errors, isSubmitting, handleClose, setValue } =
+    props;
 
   const { currentWorkspace } = useWorkspace();
   const {
@@ -129,7 +131,7 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
                 id="name"
                 type="text"
                 value={field.value ?? ""}
-                placeholder={t("releases.release")}
+                placeholder={t("releases.label", { count: 1 })}
                 className="w-full text-14"
                 hasError={Boolean(errors.name)}
                 onKeyDown={(e) => {
@@ -144,7 +146,7 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
         {/* Description */}
         <Controller
           control={control}
-          name="description"
+          name="description_json"
           render={({ field: { value, onChange } }) => (
             <RichTextEditor
               editable
@@ -153,7 +155,10 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
               workspaceSlug={workspaceSlug.toString()}
               workspaceId={currentWorkspace.id}
               dragDropEnabled={false}
-              onChange={(_, html) => onChange(html)}
+              onChange={(json, html) => {
+                onChange(json);
+                setValue("description_html", html);
+              }}
               placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
               searchMentionCallback={searchEntity}
               editorClassName="text-11"

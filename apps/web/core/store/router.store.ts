@@ -51,6 +51,8 @@ export interface IRouterStore {
   webhookId: string | undefined;
   /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   epicId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
+  releaseId: string | undefined;
 }
 
 export class RouterStore implements IRouterStore {
@@ -78,6 +80,7 @@ export class RouterStore implements IRouterStore {
       inboxId: computed,
       webhookId: computed,
       epicId: computed,
+      releaseId: computed,
     });
   }
 
@@ -201,5 +204,13 @@ export class RouterStore implements IRouterStore {
    */
   get epicId() {
     return this.query?.epicId?.toString();
+  }
+
+  /**
+   * Returns the release id from the query
+   * @returns string|undefined
+   */
+  get releaseId() {
+    return this.query?.releaseId?.toString();
   }
 }

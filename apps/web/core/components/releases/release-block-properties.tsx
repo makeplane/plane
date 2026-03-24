@@ -13,11 +13,14 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import type { Release, ReleaseStatus } from "@plane/types";
+import type { Release, ReleaseStatus, ReleaseWrite } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { mutate } from "swr";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { DateDropdown } from "@/components/dropdowns/date";
-import { useReleaseActions } from "@/hooks/releases/use-release-actions";
+import { RELEASES } from "@/constants/fetch-keys";
+import { useReleases } from "@/hooks/store/use-releases";
 import { ReleaseLabelDropdown } from "./modal/release-label-dropdown";
 import { ReleaseStateDropdown } from "./modal/release-state-dropdown";
 import { ReleaseTagDropdown } from "./modal/release-tag-dropdown";
@@ -37,7 +40,22 @@ const PropertyBlockWrapper = ({ children }: { children: React.ReactNode }) => (
 export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(props: Props) {
   const { release, isSidebarCollapsed, workspaceSlug } = props;
   const { t } = useTranslation();
-  const { updateRelease } = useReleaseActions(workspaceSlug);
+  const { release: releaseStore } = useReleases();
+
+  const handleUpdate = async (patch: ReleaseWrite) => {
+    try {
+      await releaseStore.updateRelease(workspaceSlug, release.id, patch);
+      const { description_html: _html, description_json: _json, ...optimisticPatch } = patch;
+      await mutate(
+        RELEASES(workspaceSlug),
+        (current: Release[] | undefined) =>
+          (current ?? []).map((r) => (r.id === release.id ? { ...r, ...optimisticPatch } : r)),
+        { revalidate: false }
+      );
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error.something_went_wrong") });
+    }
+  };
 
   return (
     <div
@@ -46,7 +64,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
       <PropertyBlockWrapper>
         <ReleaseStateDropdown
           value={release.status ?? "unreleased"}
-          onChange={(val) => updateRelease(release.id, { status: val as ReleaseStatus })}
+          onChange={(val) => handleUpdate({ status: val })}
           placeholder={t("state")}
         />
       </PropertyBlockWrapper>
@@ -56,7 +74,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
           buttonVariant="border-with-text"
           className="h-6"
           value={getDate(release.release_date) ?? null}
-          onChange={(val) => updateRelease(release.id, { release_date: val ? renderFormattedPayloadDate(val) : null })}
+          onChange={(val) => handleUpdate({ release_date: val ? renderFormattedPayloadDate(val) : null })}
           placeholder={t("target_date")}
         />
       </PropertyBlockWrapper>
@@ -64,7 +82,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
       <PropertyBlockWrapper>
         <MemberDropdown
           value={release.lead ?? null}
-          onChange={(val) => updateRelease(release.id, { lead: val ?? null })}
+          onChange={(val) => handleUpdate({ lead: val ?? null })}
           multiple={false}
           buttonVariant="border-with-text"
           placeholder={t("lead")}
@@ -75,7 +93,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
       <PropertyBlockWrapper>
         <ReleaseLabelDropdown
           value={release.label_ids ?? []}
-          onChange={(val) => updateRelease(release.id, { label_ids: val })}
+          onChange={(val) => handleUpdate({ label_ids: val })}
           placeholder="Label"
         />
       </PropertyBlockWrapper>
@@ -83,7 +101,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
       <PropertyBlockWrapper>
         <ReleaseTagDropdown
           value={release.tag ?? null}
-          onChange={(val) => updateRelease(release.id, { tag: val })}
+          onChange={(val) => handleUpdate({ tag: val })}
           placeholder="Tag"
         />
       </PropertyBlockWrapper>

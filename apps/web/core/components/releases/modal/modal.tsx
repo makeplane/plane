@@ -11,25 +11,36 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
-import useSWR, { mutate } from "swr";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import useSWR, { mutate } from "swr";
 
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { Release, ReleaseWrite } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import type { Release } from "@plane/types";
 
 import { RELEASE_ERROR_DETAILS } from "@plane/constants";
 
-import { isApiError } from "@plane/utils";
-import useKeypress from "@/hooks/use-keypress";
-import { DEFAULT_RELEASE_STATE } from "@/constants/release";
 import { RELEASES } from "@/constants/fetch-keys";
+import { DEFAULT_RELEASE_STATE } from "@/constants/release";
+import useKeypress from "@/hooks/use-keypress";
 import releaseService from "@/services/release.service";
+import { isApiError } from "@plane/utils";
 import { CreateUpdateReleaseForm } from "./form";
+
+const releaseDetailToFormValues = (release: Release): ReleaseWrite => ({
+  name: release.name,
+  description_html: release.description?.description_html ?? "",
+  description_json: release.description?.description_json ?? {},
+  release_date: release.release_date,
+  lead: release.lead ?? null,
+  label_ids: release.label_ids,
+  work_item_ids: release.work_item_ids,
+  status: release.status,
+  tag: release.tag ?? null,
+});
 
 type Props = {
   workspaceSlug: string;
@@ -38,9 +49,10 @@ type Props = {
   handleClose: () => void;
 };
 
-const DEFAULT_VALUES: Partial<Release> = {
+const DEFAULT_VALUES: ReleaseWrite = {
   name: "",
-  description: "",
+  description_html: "",
+  description_json: {},
   release_date: null,
   lead: null,
   label_ids: [],
@@ -84,17 +96,17 @@ export const CreateUpdateReleaseModal = observer(function CreateUpdateReleaseMod
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<Partial<Release>>({
+  } = useForm<ReleaseWrite>({
     defaultValues: DEFAULT_VALUES,
     mode: "onChange",
   });
 
-  // Reset form when switching between create/edit or when data loads
   useEffect(() => {
     if (!isOpen) return;
     if (releaseId && releaseDetail) {
-      reset(releaseDetail);
+      reset(releaseDetailToFormValues(releaseDetail));
     } else if (!releaseId) {
       reset(DEFAULT_VALUES);
     }
@@ -106,7 +118,7 @@ export const CreateUpdateReleaseModal = observer(function CreateUpdateReleaseMod
   }, [handleClose, reset]);
 
   const onSubmit = useCallback(
-    async (data: Partial<Release>) => {
+    async (data: ReleaseWrite) => {
       if (!workspaceSlug) return;
 
       try {
@@ -161,6 +173,7 @@ export const CreateUpdateReleaseModal = observer(function CreateUpdateReleaseMod
         errors={errors}
         isSubmitting={isSubmitting}
         handleClose={closeAndReset}
+        setValue={setValue}
       />
     </ModalCore>
   );

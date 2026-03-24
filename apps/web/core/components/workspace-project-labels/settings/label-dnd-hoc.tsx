@@ -168,7 +168,7 @@ export const WorkspaceLabelDndHOC = observer(function WorkspaceLabelDndHOC(props
         },
       })
     );
-  }, [labelRef?.current, label, isChild, isGroup, isLastChild, onDrop]);
+  }, [label, isChild, isGroup, isLastChild, onDrop]);
 
   const isMakeChild = instruction == "make-child";
 

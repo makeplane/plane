@@ -6723,10 +6723,56 @@ export default {
     error: "Ошибка при отправке запроса. Проверьте и попробуйте снова.",
   },
   releases: {
-    releases: "Релизы",
-    release: "Релиз",
+    label: "{count, plural, one {Релиз} other {Релизы}}",
     no_release: "Нет релиза",
+    unreleased: "Не выпущен",
     select_releases: "Выбрать релизы",
+    overview: "Обзор",
+    scope: "Охват",
+    page_title: {
+      scope: "Релиз - {name} | Охват",
+      scope_fallback: "Релиз | Охват",
+    },
+    properties: "Свойства",
+    target_date: "Целевая дата",
+    lead: "Ответственный",
+    release_tag: "Тег",
+    labels: "Метки",
+    description_placeholder: "Добавьте описание...",
+    progress: "Прогресс",
+    completed_work_items: "Завершённые рабочие элементы",
+    pending_work_items: "Ожидающие рабочие элементы",
+    cancelled_work_items: "Отменённые рабочие элементы",
+    scope_page: {
+      work_items: "Рабочие элементы",
+      add_work_items: "Добавить рабочие элементы",
+      remove_from_release: "Убрать из релиза",
+      empty_state: {
+        title: "Нет рабочих элементов",
+        description: "Добавьте рабочие элементы, чтобы определить охват релиза.",
+      },
+      confirm_remove: {
+        content: "Убрать этот рабочий элемент из релиза? Он останется в проекте.",
+        primary_button: {
+          default: "Убрать",
+          loading: "Удаление…",
+        },
+      },
+    },
+    empty_state: {
+      title: "Область пока не задана",
+      description: "Добавьте рабочие элементы в релиз, чтобы отслеживать их завершение для этого релиза.",
+      add_scope: "Добавить область",
+      not_found: {
+        title: "Релиз не найден",
+        description: "Релиз мог быть удалён.",
+        primary_button: "Назад к релизам",
+      },
+    },
+    toast: {
+      work_items_added: "{count, plural, one {Рабочий элемент добавлен} other {Рабочие элементы добавлены}}",
+      work_items_error: "Не удалось добавить рабочие элементы",
+    },
     count_releases: "{count, plural, one {# релиз} other {# релизов}}",
     actions: {
       delete: "Удалить",

@@ -43,6 +43,7 @@ class ReleaseSerializer(BaseSerializer):
     work_item_ids = serializers.SerializerMethodField(read_only=True)
     description = DescriptionSerializer(read_only=True)
     completed_work_item_count = serializers.SerializerMethodField(read_only=True)
+    cancelled_work_item_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Release
@@ -64,11 +65,17 @@ class ReleaseSerializer(BaseSerializer):
             return len(obj.completed_work_item)
         return 0
 
+    def get_cancelled_work_item_count(self, obj):
+        if hasattr(obj, "cancelled_work_item"):
+            return len(obj.cancelled_work_item)
+        return 0
+
 
 class ReleaseWriteSerializer(ReleaseSerializer):
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     work_item_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
-    description = serializers.CharField(required=False, write_only=True, allow_blank=True)
+    description_html = serializers.CharField(required=False, write_only=True, allow_blank=True)
+    description_json = serializers.JSONField(required=False, write_only=True)
 
     def validate_name(self, name):
         workspace_id = self.context.get("workspace_id", None)
@@ -86,11 +93,13 @@ class ReleaseWriteSerializer(ReleaseSerializer):
         labels = validated_data.pop("label_ids", None)
         work_items = validated_data.pop("work_item_ids", None)
         workspace_id = self.context["workspace_id"]
-        description = validated_data.pop("description", "<p></p>")
+        description_html = validated_data.pop("description_html", "<p></p>")
+        description_json = validated_data.pop("description_json", {})
 
         description = Description.objects.create(
             workspace_id=workspace_id,
-            description_html=description,
+            description_html=description_html,
+            description_json=description_json,
         )
 
         release = Release.objects.create(**validated_data, workspace_id=workspace_id, description=description)
@@ -143,10 +152,14 @@ class ReleaseWriteSerializer(ReleaseSerializer):
     def update(self, instance, validated_data):
         labels = validated_data.pop("label_ids", None)
         work_items = validated_data.pop("work_item_ids", None)
-        description = validated_data.pop("description", "<p></p>")
+        description_html = validated_data.pop("description_html", None)
+        description_json = validated_data.pop("description_json", None)
 
-        if instance.description_id:
-            Description.objects.filter(id=instance.description_id).update(description_html=description)
+        if instance.description_id and description_html is not None:
+            Description.objects.filter(id=instance.description_id).update(
+                description_html=description_html,
+                description_json=description_json if description_json is not None else {},
+            )
 
         workspace_id = instance.workspace_id
         created_by_id = instance.created_by_id

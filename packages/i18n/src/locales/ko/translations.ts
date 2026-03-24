@@ -6597,10 +6597,56 @@ export default {
     error: "쿼리 제출 중 오류가 발생했습니다. 확인 후 다시 시도하세요.",
   },
   releases: {
-    releases: "릴리스",
-    release: "릴리스",
+    label: "{count, plural, one {릴리스} other {릴리스}}",
     no_release: "릴리스 없음",
+    unreleased: "미출시",
     select_releases: "릴리스 선택",
+    overview: "개요",
+    scope: "범위",
+    page_title: {
+      scope: "릴리스 - {name} | 범위",
+      scope_fallback: "릴리스 | 범위",
+    },
+    properties: "속성",
+    target_date: "목표일",
+    lead: "담당자",
+    release_tag: "태그",
+    labels: "라벨",
+    description_placeholder: "설명 추가...",
+    progress: "진행 상황",
+    completed_work_items: "완료된 작업 항목",
+    pending_work_items: "대기 중인 작업 항목",
+    cancelled_work_items: "취소된 작업 항목",
+    scope_page: {
+      work_items: "작업 항목",
+      add_work_items: "작업 항목 추가",
+      remove_from_release: "릴리스에서 제거",
+      empty_state: {
+        title: "작업 항목 없음",
+        description: "릴리스 범위를 정의하려면 작업 항목을 추가하세요.",
+      },
+      confirm_remove: {
+        content: "이 작업 항목을 릴리스에서 제거하시겠습니까? 프로젝트에는 그대로 남습니다.",
+        primary_button: {
+          default: "제거",
+          loading: "제거 중",
+        },
+      },
+    },
+    empty_state: {
+      title: "아직 범위가 없습니다",
+      description: "이 릴리스의 완료를 추적하려면 릴리스에 작업 항목을 추가하세요.",
+      add_scope: "범위 추가",
+      not_found: {
+        title: "릴리스를 찾을 수 없음",
+        description: "릴리스가 삭제되었을 수 있습니다.",
+        primary_button: "릴리스로 돌아가기",
+      },
+    },
+    toast: {
+      work_items_added: "{count, plural, one {작업 항목이 추가됨} other {작업 항목이 추가됨}}",
+      work_items_error: "작업 항목을 추가하지 못했습니다",
+    },
     count_releases: "{count, plural, one {# 릴리스} other {# 릴리스}}",
     actions: {
       delete: "삭제",

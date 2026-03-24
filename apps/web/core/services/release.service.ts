@@ -12,8 +12,22 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { Release, ReleaseLabel, ReleaseLabelWrite, ReleaseTag, ReleaseTagWrite, ReleaseWrite } from "@plane/types";
+import type {
+  ISearchIssueResponse,
+  Release,
+  ReleaseLabel,
+  ReleaseLabelWrite,
+  ReleaseTag,
+  ReleaseTagWrite,
+  ReleaseWrite,
+  TIssueParams,
+  TIssuesResponse,
+} from "@plane/types";
 import { APIService } from "@/services/api.service";
+
+export type ReleaseSearchWorkItemsParams = {
+  search?: string;
+};
 
 export class ReleaseService extends APIService {
   constructor() {
@@ -44,7 +58,7 @@ export class ReleaseService extends APIService {
       });
   }
 
-  async update(workspaceSlug: string, releaseId: string, data: Partial<ReleaseWrite>): Promise<Release> {
+  async update(workspaceSlug: string, releaseId: string, data: ReleaseWrite): Promise<Release> {
     return this.patch(`/api/workspaces/${workspaceSlug}/releases/${releaseId}/`, data)
       .then((res) => res?.data)
       .catch((err) => {
@@ -127,6 +141,18 @@ export class ReleaseService extends APIService {
   }
 
   // Work items
+  async listWorkItems(
+    workspaceSlug: string,
+    releaseId: string,
+    params?: Partial<Record<TIssueParams, string | boolean>>
+  ): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/releases/${releaseId}/work-items/`, { params })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async addWorkItems(workspaceSlug: string, releaseId: string, workItemIds: string[]): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/releases/${releaseId}/work-items/`, {
       work_item_ids: workItemIds,
@@ -142,6 +168,20 @@ export class ReleaseService extends APIService {
       work_item_ids: workItemIds,
     })
       .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async searchWorkItems(
+    workspaceSlug: string,
+    releaseId: string,
+    params: ReleaseSearchWorkItemsParams
+  ): Promise<ISearchIssueResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/releases/${releaseId}/search-work-items/`, {
+      params: { search: params.search ?? "" },
+    })
+      .then((res) => res?.data ?? [])
       .catch((err) => {
         throw err?.response?.data;
       });

@@ -320,6 +320,25 @@ export const projectRoutes: RouteConfigEntry[] = [
 
     layout("./(all)/[workspaceSlug]/(projects)/releases/layout.tsx", [
       route(":workspaceSlug/releases", "./(all)/[workspaceSlug]/(projects)/releases/page.tsx"),
+
+      // Release Detail
+      layout("./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/layout.tsx", [
+        // Release Overview
+        layout("./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/(overview)/layout.tsx", [
+          route(
+            ":workspaceSlug/releases/:releaseId",
+            "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/(overview)/page.tsx"
+          ),
+        ]),
+
+        // Release Scope
+        layout("./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/scope/layout.tsx", [
+          route(
+            ":workspaceSlug/releases/:releaseId/scope",
+            "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/scope/page.tsx"
+          ),
+        ]),
+      ]),
     ]),
 
     // ====================================================================

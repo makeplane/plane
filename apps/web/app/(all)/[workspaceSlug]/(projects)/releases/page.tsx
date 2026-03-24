@@ -21,7 +21,9 @@ function ReleasesPage() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - ${t("releases.title")}` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace?.name} - ${t("releases.label", { count: 2 })}`
+    : undefined;
 
   return (
     <>

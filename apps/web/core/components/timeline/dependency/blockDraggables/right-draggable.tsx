@@ -136,7 +136,7 @@ export const RightDependencyDraggable = observer(function RightDependencyDraggab
       );
     }
     return combine(...combineArray);
-  }, [rightDraggableRef?.current, block, relatedBlockIds, isStartDateAvailable, isEndDateAvailable]);
+  }, [block, relatedBlockIds, isStartDateAvailable, isEndDateAvailable]);
 
   return (
     <>

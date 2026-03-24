@@ -6483,10 +6483,56 @@ export default {
     error: "提交查询时出错。请检查后重试。",
   },
   releases: {
-    releases: "发布",
-    release: "发布",
+    label: "{count, plural, one {发布} other {发布}}",
     no_release: "暂无发布",
+    unreleased: "未发布",
     select_releases: "选择发布",
+    overview: "概览",
+    scope: "范围",
+    page_title: {
+      scope: "发布 - {name} | 范围",
+      scope_fallback: "发布 | 范围",
+    },
+    properties: "属性",
+    target_date: "目标日期",
+    lead: "负责人",
+    release_tag: "标签",
+    labels: "标签",
+    description_placeholder: "添加描述...",
+    progress: "进度",
+    completed_work_items: "已完成工作项",
+    pending_work_items: "待处理工作项",
+    cancelled_work_items: "已取消工作项",
+    scope_page: {
+      work_items: "工作项",
+      add_work_items: "添加工作项",
+      remove_from_release: "从发布中移除",
+      empty_state: {
+        title: "暂无工作项",
+        description: "添加工作项以定义发布范围。",
+      },
+      confirm_remove: {
+        content: "确定要从发布中移除此工作项吗？它仍将保留在项目中。",
+        primary_button: {
+          default: "移除",
+          loading: "正在移除",
+        },
+      },
+    },
+    empty_state: {
+      title: "暂无范围",
+      description: "将工作项添加到此发布，以跟踪它们在此发布中的完成情况。",
+      add_scope: "添加范围",
+      not_found: {
+        title: "未找到发布",
+        description: "该发布可能已被删除。",
+        primary_button: "返回发布列表",
+      },
+    },
+    toast: {
+      work_items_added: "{count, plural, one {已添加工作项} other {已添加工作项}}",
+      work_items_error: "添加工作项失败",
+    },
     count_releases: "{count, plural, one {# 发布} other {# 发布}}",
     actions: {
       delete: "删除",

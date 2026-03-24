@@ -13,12 +13,13 @@
 
 // plane imports
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import type { EIssuesStoreType } from "@plane/types";
-// local imports
 import { useWorkItemFilters } from "./use-work-item-filters";
 
+// local imports
+import type { WorkItemFiltersEntity } from "@plane/constants";
+
 export const useWorkItemFilterInstance = (
-  entityType: EIssuesStoreType,
+  entityType: WorkItemFiltersEntity,
   entityId: string | undefined
 ): IWorkItemFilterInstance["richFiltersInstance"] | undefined => {
   const { getFilter } = useWorkItemFilters();

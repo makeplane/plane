@@ -6650,10 +6650,56 @@ export default {
     error: "Помилка при надсиланні запиту. Перевірте та спробуйте ще раз.",
   },
   releases: {
-    releases: "Релізи",
-    release: "Реліз",
+    label: "{count, plural, one {Реліз} other {Релізи}}",
     no_release: "Немає релізу",
+    unreleased: "Не випущено",
     select_releases: "Вибрати релізи",
+    overview: "Огляд",
+    scope: "Обсяг",
+    page_title: {
+      scope: "Реліз - {name} | Обсяг",
+      scope_fallback: "Реліз | Обсяг",
+    },
+    properties: "Властивості",
+    target_date: "Цільова дата",
+    lead: "Відповідальний",
+    release_tag: "Тег",
+    labels: "Мітки",
+    description_placeholder: "Додайте опис...",
+    progress: "Прогрес",
+    completed_work_items: "Завершені робочі одиниці",
+    pending_work_items: "Робочі одиниці в очікуванні",
+    cancelled_work_items: "Скасовані робочі одиниці",
+    scope_page: {
+      work_items: "Робочі одиниці",
+      add_work_items: "Додати робочі одиниці",
+      remove_from_release: "Прибрати з релізу",
+      empty_state: {
+        title: "Немає робочих одиниць",
+        description: "Додайте робочі одиниці, щоб визначити обсяг релізу.",
+      },
+      confirm_remove: {
+        content: "Справді прибрати цю робочу одиницю з релізу? Вона залишиться в проєкті.",
+        primary_button: {
+          default: "Прибрати",
+          loading: "Видалення…",
+        },
+      },
+    },
+    empty_state: {
+      title: "Поки немає області",
+      description: "Додайте робочі елементи до релізу, щоб відстежувати їх завершення для цього релізу.",
+      add_scope: "Додати область",
+      not_found: {
+        title: "Реліз не знайдено",
+        description: "Реліз міг бути видалено.",
+        primary_button: "Назад до релізів",
+      },
+    },
+    toast: {
+      work_items_added: "{count, plural, one {Робочу одиницю додано} other {Робочі одиниці додано}}",
+      work_items_error: "Не вдалося додати робочі одиниці",
+    },
     count_releases: "{count, plural, one {# реліз} other {# релізи}}",
     actions: {
       delete: "Видалити",

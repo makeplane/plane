@@ -6647,10 +6647,56 @@ export default {
     error: "クエリの送信中にエラーが発生しました。確認して再試行してください。",
   },
   releases: {
-    releases: "リリース",
-    release: "リリース",
+    label: "{count, plural, one {リリース} other {リリース}}",
     no_release: "リリースなし",
+    unreleased: "未リリース",
     select_releases: "リリースを選択",
+    overview: "概要",
+    scope: "スコープ",
+    page_title: {
+      scope: "リリース - {name} | スコープ",
+      scope_fallback: "リリース | スコープ",
+    },
+    properties: "プロパティ",
+    target_date: "目標日",
+    lead: "リード",
+    release_tag: "タグ",
+    labels: "ラベル",
+    description_placeholder: "説明を追加...",
+    progress: "進捗",
+    completed_work_items: "完了した作業項目",
+    pending_work_items: "未完了の作業項目",
+    cancelled_work_items: "キャンセルした作業項目",
+    scope_page: {
+      work_items: "作業項目",
+      add_work_items: "作業項目を追加",
+      remove_from_release: "リリースから外す",
+      empty_state: {
+        title: "作業項目がありません",
+        description: "リリースのスコープを定義するには作業項目を追加してください。",
+      },
+      confirm_remove: {
+        content: "この作業項目をリリースから外しますか？プロジェクトには残ります。",
+        primary_button: {
+          default: "外す",
+          loading: "外しています",
+        },
+      },
+    },
+    empty_state: {
+      title: "スコープがまだありません",
+      description: "このリリースの完了状況を追跡するには、作業項目をリリースに追加してください。",
+      add_scope: "スコープを追加",
+      not_found: {
+        title: "リリースが見つかりません",
+        description: "リリースが削除された可能性があります。",
+        primary_button: "リリース一覧に戻る",
+      },
+    },
+    toast: {
+      work_items_added: "{count, plural, one {作業項目を追加しました} other {作業項目を追加しました}}",
+      work_items_error: "作業項目の追加に失敗しました",
+    },
     count_releases: "{count, plural, one {# リリース} other {# リリース}}",
     actions: {
       delete: "削除",

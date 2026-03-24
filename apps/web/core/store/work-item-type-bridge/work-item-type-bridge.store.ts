@@ -279,7 +279,7 @@ export class WorkItemTypeBridgeStore implements IIssueTypesStore {
       // Delegates to this.data which merges new adapted types + old epics.
       // For new types: proxy intercepts .properties → getPropertiesForType()
       // For epics: raw old IIssueType .properties → old store's property array
-      return (this.data[issueTypeId]?.properties ?? []) as IIssueProperty<EIssuePropertyType>[];
+      return this.data[issueTypeId]?.properties ?? [];
     }
     return this.oldStore.getIssueTypeProperties(issueTypeId);
   });

@@ -35,7 +35,7 @@ export const ReleaseDropdownBase = observer(function ReleaseDropdownBase(props: 
   const displayLabel = useMemo(() => {
     if (value.length === 0) return emptyLabel ?? t("releases.no_release");
     if (value.length === 1) {
-      return releases.find((release) => release.id === value[0])?.name ?? t("releases.release");
+      return releases.find((release) => release.id === value[0])?.name ?? t("releases.label", { count: 1 });
     }
     return t("releases.count_releases", { count: value.length });
   }, [emptyLabel, releases, t, value]);

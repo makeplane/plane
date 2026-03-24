@@ -134,8 +134,7 @@ export type TDashboardWidgetConfig =
   | TAreaChartWidgetConfig
   | TDonutChartWidgetConfig
   | TPieChartWidgetConfig
-  | TNumberWidgetConfig
-  | TTableChartWidgetConfig;
+  | TNumberWidgetConfig;
 
 export type TDashboardWidget = {
   chart_model: EWidgetChartModels | undefined;

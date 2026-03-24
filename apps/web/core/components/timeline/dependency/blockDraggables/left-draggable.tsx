@@ -139,7 +139,7 @@ export const LeftDependencyDraggable = observer(function LeftDependencyDraggable
     }
 
     return combine(...combineArray);
-  }, [leftDraggingRef?.current, block, relatedBlockIds, isStartDateAvailable]);
+  }, [block, relatedBlockIds, isStartDateAvailable]);
 
   return (
     <>

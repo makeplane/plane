@@ -162,6 +162,9 @@ import type { IInitiativeFilterStore } from "./initiatives/initiatives-filter.st
 import { InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
 import type { IInitiativeStore } from "./initiatives/initiatives.store";
 import { InitiativeStore } from "./initiatives/initiatives.store";
+// releases
+import type { IReleaseStore } from "./releases/release.store";
+import { ReleaseStore } from "./releases/release.store";
 // recurring work items
 import type { IRecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
 import { RecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
@@ -285,6 +288,7 @@ export class CoreRootStore {
   workspaceWorklogDownloads: IWorklogDownloadStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
+  releaseStore: IReleaseStore;
   recurringWorkItemsRoot: IRecurringWorkItemsRootStore;
   // integrations
   connections: IConnectionStore;
@@ -378,6 +382,7 @@ export class CoreRootStore {
     this.workspaceWorklogDownloads = new WorklogDownloadStore(this as unknown as RootStore);
     this.initiativeFilterStore = new InitiativeFilterStore(this as unknown as RootStore);
     this.initiativeStore = new InitiativeStore(this as unknown as RootStore, this.initiativeFilterStore);
+    this.releaseStore = new ReleaseStore(this as unknown as RootStore);
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this as unknown as RootStore);
     // integrations
     this.connections = new ConnectionStore(this as unknown as RootStore);
@@ -483,6 +488,7 @@ export class CoreRootStore {
     this.workspaceWorklogDownloads = new WorklogDownloadStore(this as unknown as RootStore);
     this.initiativeFilterStore = new InitiativeFilterStore(this as unknown as RootStore);
     this.initiativeStore = new InitiativeStore(this as unknown as RootStore, this.initiativeFilterStore);
+    this.releaseStore = new ReleaseStore(this as unknown as RootStore);
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this as unknown as RootStore);
     // integrations
     this.connections = new ConnectionStore(this as unknown as RootStore);

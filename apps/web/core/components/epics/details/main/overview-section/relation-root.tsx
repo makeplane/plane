@@ -43,7 +43,7 @@ export const EpicRelationsOverviewRoot = observer(function EpicRelationsOverview
   const RELATION_OPTIONS = useCustomRelationOptions();
   const isRelationsEmpty = Object.keys(relations || {})
     .filter((key) => !!RELATION_OPTIONS[key])
-    .every((key) => isEmpty(relations?.[key as keyof typeof relations]));
+    .every((key) => isEmpty(relations?.[key]));
 
   return (
     <>

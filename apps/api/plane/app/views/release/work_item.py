@@ -144,7 +144,7 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.RELEASES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, release_id):
-        issue_queryset = self.get_queryset()
+        issue_queryset = self.get_queryset().accessible_to(request.user.id, slug)
 
         # queryset before applying annotations
         filtered_issue_queryset = copy.deepcopy(issue_queryset)
@@ -207,20 +207,9 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        existing_ids = ReleaseWorkItem.objects.filter(release=release, work_item_id__in=work_item_ids).values_list(
-            "work_item_id", flat=True
-        )
-
-        existing_ids = [str(uid) for uid in existing_ids]
-        new_ids = set(work_item_ids) - set(existing_ids)
-
-        ReleaseWorkItem.objects.filter(release=release, workspace_id=workspace.id).exclude(
-            work_item_id__in=work_item_ids
-        ).delete()
-
         valid_work_item_ids = []
-        if new_ids:
-            for work_item_id in new_ids:
+        if work_item_ids:
+            for work_item_id in work_item_ids:
                 if Issue.objects.filter(workspace_id=workspace.id, id=work_item_id).exists():
                     valid_work_item_ids.extend([work_item_id])
 

@@ -6507,10 +6507,56 @@ export default {
     error: "提交查詢時發生錯誤。請檢查後重試。",
   },
   releases: {
-    releases: "發佈",
-    release: "發佈",
+    label: "{count, plural, one {發佈} other {發佈}}",
     no_release: "尚無發佈",
+    unreleased: "未發佈",
     select_releases: "選擇發佈",
+    overview: "總覽",
+    scope: "範圍",
+    page_title: {
+      scope: "發佈 - {name} | 範圍",
+      scope_fallback: "發佈 | 範圍",
+    },
+    properties: "屬性",
+    target_date: "目標日期",
+    lead: "負責人",
+    release_tag: "標籤",
+    labels: "標籤",
+    description_placeholder: "新增描述...",
+    progress: "進度",
+    completed_work_items: "已完成工作事項",
+    pending_work_items: "待處理工作事項",
+    cancelled_work_items: "已取消工作事項",
+    scope_page: {
+      work_items: "工作事項",
+      add_work_items: "新增工作事項",
+      remove_from_release: "從發佈中移除",
+      empty_state: {
+        title: "尚無工作事項",
+        description: "新增工作事項以定義發佈範圍。",
+      },
+      confirm_remove: {
+        content: "確定要從發佈中移除此工作事項嗎？它仍會保留在專案中。",
+        primary_button: {
+          default: "移除",
+          loading: "正在移除",
+        },
+      },
+    },
+    empty_state: {
+      title: "尚無範圍",
+      description: "將工作項目新增至此發行版本，以追蹤它們在此版本中的完成狀況。",
+      add_scope: "添加範圍",
+      not_found: {
+        title: "找不到發佈",
+        description: "此發佈可能已被刪除。",
+        primary_button: "返回發佈列表",
+      },
+    },
+    toast: {
+      work_items_added: "{count, plural, one {已新增工作事項} other {已新增工作事項}}",
+      work_items_error: "無法新增工作事項",
+    },
     count_releases: "{count, plural, one {# 發佈} other {# 發佈}}",
     actions: {
       delete: "刪除",

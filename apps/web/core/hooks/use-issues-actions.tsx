@@ -66,6 +66,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const archivedEpicsActions = useArchivedEpicsActions();
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
   const teamProjectWorkItemsActions = useTeamProjectWorkItemsActions();
+  const releaseWorkItemActions = useReleaseWorkItemsActions();
 
   switch (storeType) {
     case EIssuesStoreType.TEAM_VIEW:
@@ -93,6 +94,8 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return projectEpicsActions;
     case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
       return teamProjectWorkItemsActions;
+    case EIssuesStoreType.RELEASE:
+      return releaseWorkItemActions;
     case EIssuesStoreType.PROJECT:
     default:
       return projectIssueActions;
@@ -741,6 +744,64 @@ const useArchivedEpicsActions = () => {
       updateFilters,
     }),
     [fetchIssues, fetchNextIssues, removeIssue, restoreIssue, updateFilters]
+  );
+};
+
+const useReleaseWorkItemsActions = () => {
+  const { workspaceSlug: routerWorkspaceSlug, releaseId: routerReleaseId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.RELEASE);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
+      const releaseId = viewId ?? routerReleaseId?.toString();
+      if (!workspaceSlug || !releaseId) return undefined;
+      return issues.fetchIssues(workspaceSlug, releaseId, loadType, options);
+    },
+    [issues.fetchIssues, workspaceSlug, routerReleaseId]
+  );
+
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      const releaseId = routerReleaseId?.toString();
+      if (!workspaceSlug || !releaseId) return undefined;
+      return issues.fetchNextIssues(workspaceSlug, releaseId, groupId, subGroupId);
+    },
+    [issues.fetchNextIssues, workspaceSlug, routerReleaseId]
+  );
+
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug) return;
+      return issues.removeIssue(workspaceSlug, projectId ?? "", issueId);
+    },
+    [issues.removeIssue, workspaceSlug]
+  );
+
+  const updateIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    },
+    [issues.updateIssue, workspaceSlug]
+  );
+
+  const updateFilters = useCallback(
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      return issuesFilter.updateFilters(projectId, filterType, filters);
+    },
+    [issuesFilter.updateFilters]
+  );
+
+  return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      removeIssue,
+      updateIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, removeIssue, updateIssue, updateFilters]
   );
 };
 

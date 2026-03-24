@@ -32,6 +32,7 @@ import type { IProjectIssues, IProjectIssuesFilter } from "@/store/work-items/pr
 import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/work-items/workspace-draft";
+import type { IReleaseIssues, IReleaseIssuesFilter } from "@/store/work-items/release";
 // constants
 
 type defaultIssueStore = {
@@ -94,6 +95,10 @@ export type TStoreIssues = {
   [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: defaultIssueStore & {
     issues: ITeamProjectWorkItems;
     issuesFilter: ITeamProjectWorkItemsFilter;
+  };
+  [EIssuesStoreType.RELEASE]: defaultIssueStore & {
+    issues: IReleaseIssues;
+    issuesFilter: IReleaseIssuesFilter;
   };
 };
 
@@ -170,6 +175,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.teamProjectWorkItems,
         issuesFilter: context.issue.teamProjectWorkItemsFilter,
+      }) as TStoreIssues[T];
+    case EIssuesStoreType.RELEASE:
+      return merge(defaultStore, {
+        issues: context.issue.releaseIssues,
+        issuesFilter: context.issue.releaseIssuesFilter,
       }) as TStoreIssues[T];
     default:
       return merge(defaultStore, {

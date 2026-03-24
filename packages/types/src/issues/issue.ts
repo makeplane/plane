@@ -50,6 +50,7 @@ export enum EIssuesStoreType {
   WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
   EPIC = "EPIC",
   TEAM_PROJECT_WORK_ITEMS = "TEAM_PROJECT_WORK_ITEMS",
+  RELEASE = "RELEASE",
 }
 
 export type TBaseIssue = {

@@ -53,9 +53,16 @@ class ReleaseEndpoint(BaseAPIView):
                 Prefetch(
                     "release_work_items",
                     queryset=ReleaseWorkItem.objects.filter(
-                        deleted_at__isnull=True, work_item__state__group__in=["completed", "cancelled"]
+                        deleted_at__isnull=True, work_item__state__group="completed"
                     ),
                     to_attr="completed_work_item",
+                ),
+                Prefetch(
+                    "release_work_items",
+                    queryset=ReleaseWorkItem.objects.filter(
+                        deleted_at__isnull=True, work_item__state__group="cancelled"
+                    ),
+                    to_attr="cancelled_work_item",
                 ),
             )
             .select_related("lead", "tag", "description")

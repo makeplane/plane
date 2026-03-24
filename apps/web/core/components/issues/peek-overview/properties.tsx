@@ -67,7 +67,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
-import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 interface IPeekOverviewProperties {
@@ -99,7 +100,9 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
-  const isReleasesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+  const isReleasesFeatureEnabled =
+    useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES) &&
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
 
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
@@ -357,7 +360,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         )}
 
         {isReleasesFeatureEnabled && (
-          <SidebarPropertyListItem icon={ReleaseIcon} label={t("releases.releases")}>
+          <SidebarPropertyListItem icon={ReleaseIcon} label={t("releases.label", { count: 2 })}>
             <ReleaseSelect
               workspaceSlug={workspaceSlug}
               projectId={projectId}

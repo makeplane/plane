@@ -47,6 +47,7 @@ const TeamViewEmptyState = lazy(() =>
 const TeamProjectWorkItemEmptyState = lazy(() =>
   import("./team-project").then((module) => ({ default: module.TeamProjectWorkItemEmptyState }))
 );
+const ReleaseEmptyState = lazy(() => import("./release").then((module) => ({ default: module.ReleaseEmptyState })));
 
 const WORK_ITEM_LAYOUT_EMPTY_STATES: Record<EIssuesStoreType, LazyExoticComponent<ComponentType> | undefined> = {
   [EIssuesStoreType.PROJECT]: ProjectEmptyState,
@@ -63,6 +64,7 @@ const WORK_ITEM_LAYOUT_EMPTY_STATES: Record<EIssuesStoreType, LazyExoticComponen
   [EIssuesStoreType.TEAM]: TeamEmptyState,
   [EIssuesStoreType.TEAM_VIEW]: TeamViewEmptyState,
   [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: TeamProjectWorkItemEmptyState,
+  [EIssuesStoreType.RELEASE]: ReleaseEmptyState,
 };
 
 type TIssueLayoutEmptyStateProps = {

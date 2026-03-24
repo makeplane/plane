@@ -250,7 +250,7 @@ class ParserState {
       if (fn.kind === "error") {
         return errorNode(fn.message, fieldTok.from, fn.to);
       }
-      return inNode(field, negated, fn as FunctionCallNode, fieldTok.from, (fn as FunctionCallNode).to);
+      return inNode(field, negated, fn, fieldTok.from, fn.to);
     }
 
     // Parenthesised list: ( value, value, ... )
@@ -412,7 +412,7 @@ class ParserState {
     if (isFunctionToken(t.kind) || t.kind === TokenKind.IDENTIFIER) {
       const fn = this.parseFunctionCall();
       // FunctionCallNode satisfies ValueNode
-      return fn.kind === "error" ? null : (fn as FunctionCallNode);
+      return fn.kind === "error" ? null : fn;
     }
 
     this.addError(`Expected a value but got '${t.value}'`, t);
