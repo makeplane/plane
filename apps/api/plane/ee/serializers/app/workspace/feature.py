@@ -17,3 +17,12 @@ class WorkspaceFeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkspaceFeature
         fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
