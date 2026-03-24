@@ -10,8 +10,6 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-import crypto from "node:crypto";
-
 export const stripTrailingSlash = (url: string): string => url.replace(/\/$/, "");
 
 export const removeArrayObjSpaces = (arr: any[]) => {
@@ -75,9 +73,4 @@ export const convertAppSlugToIntegrationKey = (slug: string): string => {
   // Convert "prd-agent" to "PRD_AGENT"
   const normalizedSlug = slug.toUpperCase().replace(/-/g, "_");
   return normalizedSlug;
-};
-
-export const createHashForString = (str: string): string => {
-  const hash = crypto.createHash("sha1").update(str).digest("hex");
-  return hash;
 };

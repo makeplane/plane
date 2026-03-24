@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { createHash } from "node:crypto";
+
 import axios, { isAxiosError } from "axios";
 import { parse } from "node-html-parser";
 import { validate as uuidValidate } from "uuid";
@@ -164,4 +166,9 @@ export const invertStringMap = (map: Map<string, string>) => {
     invertedMap.set(value, key);
   });
   return invertedMap;
+};
+
+export const createHashForString = (str: string): string => {
+  const hash = createHash("sha1").update(str).digest("hex");
+  return hash;
 };

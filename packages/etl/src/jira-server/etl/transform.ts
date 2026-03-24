@@ -26,7 +26,6 @@ import type {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
-import { createHashForString } from "@/core";
 import type { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 import {
   buildExtenalId,
@@ -389,7 +388,8 @@ export const transformDefaultPropertyValues = (
   workspaceSlug: string,
   issue: IJiraIssue,
   issueTypeId: string,
-  planeIssueProperties: Partial<ExIssueProperty>[]
+  planeIssueProperties: Partial<ExIssueProperty>[],
+  hashFn: (str: string) => string
 ): TPropertyValuesPayload => {
   const { resourceId, projectId, source } = ctx;
   const propertyValuesPayload: TPropertyValuesPayload = {};
@@ -399,7 +399,7 @@ export const transformDefaultPropertyValues = (
     const fixVersionExternalId = buildExtenalId([resourceId, projectId, issueTypeId, "fix-version"], "-");
     propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version) => {
       const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
-      const hashedName = createHashForString(versionNameInput);
+      const hashedName = hashFn(versionNameInput);
 
       return {
         external_source: source,
@@ -415,7 +415,7 @@ export const transformDefaultPropertyValues = (
     const versions = issue.fields.versions as { id?: string; name?: string }[];
     propertyValuesPayload[affectedVersionExternalId] = versions.map((version) => {
       const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
-      const hashedName = createHashForString(versionNameInput);
+      const hashedName = hashFn(versionNameInput);
       return {
         external_source: source,
         external_id: buildExtenalId([projectId, resourceId, version.id]),

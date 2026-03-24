@@ -50,6 +50,7 @@ import type {
   PlaneUser,
 } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
+import { createHashForString } from "@/helpers/utils";
 import type { TIssueTypesData } from "../../v2/types";
 
 export const getTransformedIssues = (
@@ -306,7 +307,8 @@ export const getTransformedIssuePropertyValuesV2 = (
             job.workspace_slug,
             issue,
             issueTypeId,
-            planeIssueProperties
+            planeIssueProperties,
+            createHashForString
           )
         : {};
 

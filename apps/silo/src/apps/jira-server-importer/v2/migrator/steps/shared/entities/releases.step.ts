@@ -18,8 +18,8 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { createHashForString } from "@plane/etl/core";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { createHashForString } from "@/helpers/utils";
 import type { JiraV2Service, JiraConfig } from "@plane/etl/jira-server";
 import { pullVersions, getFormattedDate } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
