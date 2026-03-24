@@ -14,12 +14,22 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, FileStack, MoveRight } from "lucide-react";
+import { Clock, FileStack, MoreHorizontal, MoveRight } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { LinkIcon, CopyIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
+import {
+  LinkIcon,
+  CopyIcon,
+  NewTabIcon,
+  TrashIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CheckCircleFilledIcon,
+  CloseCircleFilledIcon,
+} from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader, IInboxIssueStore } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -316,73 +326,70 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
         <div className="flex items-center gap-2">
           {!isNotificationEmbed && (
             <div className="flex items-center gap-x-2">
-              <button
-                type="button"
-                className="rounded-sm border border-subtle p-1.5"
+              <IconButton
+                variant="secondary"
+                size="lg"
+                icon={ChevronUpIcon}
+                aria-label="Previous work item"
                 onClick={() => handleInboxIssueNavigation("prev")}
-              >
-                <ChevronUpIcon height={14} width={14} strokeWidth={2} />
-              </button>
-              <button
-                type="button"
-                className="rounded-sm border border-subtle p-1.5"
+              />
+              <IconButton
+                variant="secondary"
+                size="lg"
+                icon={ChevronDownIcon}
+                aria-label="Next work item"
                 onClick={() => handleInboxIssueNavigation("next")}
-              >
-                <ChevronDownIcon height={14} width={14} strokeWidth={2} />
-              </button>
+              />
             </div>
           )}
 
           <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
-              <div className="shrink-0">
-                <Button
-                  variant="secondary"
-                  prependIcon={<CircleCheck className="w-3 h-3" />}
-                  className="text-on-color border border-success-strong bg-success-primary focus:bg-success-primary focus:text-success-primary hover:bg-success-primary"
-                  onClick={() =>
-                    handleActionWithPermission(
-                      isProjectAdmin,
-                      () => setAcceptIssueModal(true),
-                      t("inbox_issue.errors.accept_permission")
-                    )
-                  }
-                >
-                  {t("inbox_issue.actions.accept")}
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() =>
+                  handleActionWithPermission(
+                    isProjectAdmin,
+                    () => setAcceptIssueModal(true),
+                    t("inbox_issue.errors.accept_permission")
+                  )
+                }
+              >
+                <CheckCircleFilledIcon className="size-4 shrink-0 text-success-secondary" />
+                {t("inbox_issue.actions.accept")}
+              </Button>
             )}
 
             {canMarkAsDeclined && (
-              <div className="shrink-0">
-                <Button
-                  variant="secondary"
-                  prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-on-color border border-danger-strong bg-danger-primary focus:bg-danger-primary focus:text-danger-primary hover:bg-danger-primary-hover"
-                  onClick={() =>
-                    handleActionWithPermission(
-                      isProjectAdmin,
-                      () => setDeclineIssueModal(true),
-                      t("inbox_issue.errors.decline_permission")
-                    )
-                  }
-                >
-                  {t("inbox_issue.actions.decline")}
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() =>
+                  handleActionWithPermission(
+                    isProjectAdmin,
+                    () => setDeclineIssueModal(true),
+                    t("inbox_issue.errors.decline_permission")
+                  )
+                }
+              >
+                <CloseCircleFilledIcon className="size-4 shrink-0 text-danger-secondary" />
+                {t("inbox_issue.actions.decline")}
+              </Button>
             )}
 
             {isAcceptedOrDeclined ? (
               <div className="flex items-center gap-2">
                 <Button
                   variant="secondary"
+                  size="lg"
                   prependIcon={<LinkIcon className="h-2.5 w-2.5" />}
                   onClick={() => handleCopyIssueLink(workItemLink)}
                 >
                   {t("inbox_issue.actions.copy")}
                 </Button>
                 <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button variant="secondary" prependIcon={<NewTabIcon className="h-2.5 w-2.5" />}>
+                  <Button variant="secondary" size="lg" prependIcon={<NewTabIcon className="h-2.5 w-2.5" />}>
                     {t("inbox_issue.actions.open")}
                   </Button>
                 </ControlLink>
@@ -390,7 +397,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             ) : (
               <>
                 {isAllowed && (
-                  <CustomMenu verticalEllipsis placement="bottom-start">
+                  <CustomMenu
+                    customButton={<MoreHorizontal className="size-4" />}
+                    customButtonClassName={getIconButtonStyling("secondary", "lg")}
+                    placement="bottom-start"
+                  >
                     {canMarkAsAccepted && (
                       <CustomMenu.MenuItem
                         onClick={() =>

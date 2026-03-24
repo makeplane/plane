@@ -17,3 +17,5 @@ export * from "./activity-icon";
 export * from "./info-icon";
 export * from "./updates-icon";
 export * from "./shift-icon";
+export * from "./check-circle-filled-icon";
+export * from "./close-circle-filled-icon";
