@@ -6377,6 +6377,9 @@ the way you want to from the sources you specify.`,
       no_labels: {
         description: "No labels yet. Create labels to help organize and filter work items in you project.",
       },
+      no_modules: {
+        description: "No modules yet. Organize work into sub-projects with dedicated leads and assignees.",
+      },
       no_work_items: {
         description: "No work items yet. Add one to structure your work better.",
       },

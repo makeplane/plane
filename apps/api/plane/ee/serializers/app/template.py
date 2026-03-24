@@ -169,6 +169,7 @@ class ProjectTemplateDataSerializer(BaseSerializer):
             "intake_settings",
             "workspace",
             "workitems",
+            "modules",
             "is_milestone_enabled",
         ]
         read_only_fields = fields

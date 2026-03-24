@@ -13,6 +13,7 @@
 
 import type { TInboxForm } from "../intake";
 import type { IIssueLabel } from "../issues";
+import type { TModuleStatus } from "../module";
 import type { TProject, TProjectPriority, TProjectState } from "../project";
 import type { IState } from "../state";
 import type { IUserLite } from "../users";
@@ -49,6 +50,15 @@ export type TProjectEpicBlueprint = TProjectWorkItemTypeBlueprint;
 
 export type TIntakeSettingsBlueprint = Pick<TInboxForm, "is_in_app_enabled" | "is_form_enabled"> & {
   is_email_enabled: boolean; // TODO: Remove this once the property is added to the inbox form
+};
+
+export type TProjectModuleBlueprint = {
+  id: string;
+  name: string;
+  description?: string;
+  status: TModuleStatus;
+  lead_id?: string | null;
+  member_ids?: string[];
 };
 
 export type TProjectTemplateData = Pick<
@@ -92,6 +102,7 @@ export type TProjectTemplateData = Pick<
   archived_at?: string;
   states: CompleteOrEmpty<TProjectWorkItemStateBlueprint>[];
   labels: CompleteOrEmpty<TWorkItemLabelBlueprint>[];
+  modules: TProjectModuleBlueprint[];
   workflows: CompleteOrEmpty<TProjectWorkflowBlueprint>[];
   estimates: CompleteOrEmpty<TProjectEstimateBlueprint>[];
   workitem_types: CompleteOrEmpty<TProjectWorkItemTypeBlueprint>[];
@@ -135,6 +146,7 @@ export type TProjectTemplateFormData = Pick<
   > & {
     id: string;
     labels: IIssueLabel[];
+    modules: TProjectModuleBlueprint[];
     states: IState[];
     workitem_types: Record<string, IIssueType>;
     epics: IIssueType | undefined;

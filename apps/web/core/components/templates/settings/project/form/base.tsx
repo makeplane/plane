@@ -56,6 +56,7 @@ import { ProjectEpicWorkItemType } from "./epics";
 import { ProjectFeatures } from "./features";
 import { ProjectLabels } from "./labels";
 import { ProjectTemplateLoader } from "./loader";
+import { ProjectModules } from "./modules/root";
 import { ProjectDetails } from "./project-details";
 import { ProjectStates } from "./states";
 import { ProjectWorkItemTypes } from "./work-item-types/root";
@@ -106,6 +107,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
     // attributes
     members: [],
     labels: [],
+    modules: [],
     states: [],
     workitem_types: {},
     epics: undefined,
@@ -464,6 +466,8 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
                 />
                 {/* Project Features */}
                 <ProjectFeatures />
+                {/* Project Modules */}
+                {watch("project.module_view") ? <ProjectModules /> : null}
                 {/* Project States */}
                 <ProjectStates
                   workspaceSlug={workspaceSlug?.toString()}

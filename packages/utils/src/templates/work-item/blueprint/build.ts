@@ -39,7 +39,7 @@ export type TBuildWorkItemBlueprintBaseParams = {
   getStateById: (stateId: string) => IState | undefined;
   getUserDetails: (userId: string) => IUserLite | undefined;
   getLabelById: (labelId: string) => IIssueLabel | null;
-  getModuleById: (moduleId: string) => IModule | null;
+  getModuleById: (moduleId: string) => Pick<IModule, "id" | "name"> | null;
 };
 
 type TBuildWorkItemBlueprintParams = {

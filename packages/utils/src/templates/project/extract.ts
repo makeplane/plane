@@ -18,6 +18,7 @@ import type {
   IIssueLabel,
   IIssueType,
   IState,
+  TProjectModuleBlueprint,
   TProjectTemplate,
   TProjectTemplateFormData,
   TProjectWorkItemTypeBlueprint,
@@ -86,6 +87,7 @@ export const extractProjectTemplateFormData = async (
       ...params,
       labels: projectData.labels,
     }),
+    modules: extractProjectModuleFormData(projectData.modules),
     states: await extractProjectStateFormData({
       ...params,
       states: projectData.states,
@@ -239,4 +241,21 @@ const extractProjectStateFormData = async (params: TExtractProjectStateFormDataP
   }
 
   return stateFormData;
+};
+
+/**
+ * Extracts project module form data
+ */
+const extractProjectModuleFormData = (
+  modules: TProjectTemplate["template_data"]["modules"]
+): TProjectModuleBlueprint[] => {
+  if (!Array.isArray(modules)) return [];
+  return modules.map((mod) => ({
+    id: mod.id ?? uuidv4(),
+    name: mod.name ?? "",
+    description: mod.description ?? "",
+    status: mod.status ?? "planned",
+    lead_id: mod.lead_id ?? null,
+    member_ids: mod.member_ids ?? [],
+  }));
 };

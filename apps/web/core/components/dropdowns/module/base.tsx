@@ -33,7 +33,7 @@ type TModuleDropdownBaseProps = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
-  getModuleById: (moduleId: string) => IModule | null;
+  getModuleById: (moduleId: string) => Pick<IModule, "id" | "name"> | null;
   itemClassName?: string;
   moduleIds?: string[];
   onClose?: () => void;

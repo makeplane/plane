@@ -28,7 +28,7 @@ export type TProjectBlueprintDetails = Pick<TProject, "id" | "identifier" | "nam
 export type TProjectTemplateFormGettersHelpers = {
   getCustomPropertyById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
   getLabelById: (labelId: string) => IIssueLabel | null;
-  getModuleById: (moduleId: string) => IModule | null;
+  getModuleById: (moduleId: string) => Pick<IModule, "id" | "name"> | null;
   getProjectById: (projectId: string | undefined | null) => TProjectBlueprintDetails | undefined;
   getProjectDefaultStateId: (projectId: string) => string | undefined;
   getProjectDefaultWorkItemTypeId: (projectId: string) => string | undefined;
@@ -70,7 +70,11 @@ export const projectTemplateFormGettersHelpers = (
    * @param moduleId - The module id
    * @returns The module
    */
-  getModuleById: () => null,
+  getModuleById: (moduleId: string) => {
+    const mod = project.modules?.find((m) => m.id === moduleId);
+    if (!mod) return null;
+    return { id: mod.id, name: mod.name };
+  },
 
   /**
    * Get the project by id
@@ -153,7 +157,7 @@ export const projectTemplateFormGettersHelpers = (
    * Get the module ids
    * @returns The module ids
    */
-  moduleIds: [],
+  moduleIds: project.modules?.map((m) => m.id) ?? [],
 
   /**
    * Get the project id

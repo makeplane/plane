@@ -26,7 +26,7 @@ import type { TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@pla
 
 export type TWorkItemBlueprintWithAdditionalPropsData = {
   getLabelById: (labelId: string) => IIssueLabel | null;
-  getModuleById: (moduleId: string) => IModule | null;
+  getModuleById: (moduleId: string) => Pick<IModule, "id" | "name"> | null;
   getStateById: (stateId: string | null | undefined) => IState | undefined;
   getUserDetails: (userId: string) => IUserLite | undefined;
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;

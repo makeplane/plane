@@ -70,7 +70,7 @@ export const sanitizeProjectCreationFormData = (params: TSanitizeProjectCreation
   const workItemsResult = sanitizeMultipleWorkItemFormDataBlueprints(extractedData.workitems ?? [], {
     getProjectStateIds: () => helpers.stateIds,
     getProjectLabelIds: () => helpers.labelIds,
-    getProjectModuleIds: () => [],
+    getProjectModuleIds: () => helpers.moduleIds,
     getProjectMemberIds: () => helpers.memberIds,
   });
 

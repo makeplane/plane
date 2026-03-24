@@ -43,6 +43,9 @@ from plane.db.models import (
     State,
     Workspace,
     IssueSequence,
+    Module,
+    ModuleMember,
+    WorkspaceMember,
 )
 from plane.ee.models import (
     IssueProperty,
@@ -61,6 +64,7 @@ from plane.ee.utils.issue_property_validators import (
     property_validators,
     property_savers,
 )
+from plane.db.models.project import ROLE
 
 logger = logging.getLogger("plane.worker")
 
@@ -685,6 +689,92 @@ def create_workitems(
     return created_workitems
 
 
+def create_modules(module_data, project_id, workspace_id, user_id):
+    """
+    Create modules for the project from the template
+    Args:
+        module_data: The module data
+        project_id: The ID of the project
+        workspace_id: The ID of the workspace
+        user_id: The ID of the user
+    """
+
+    module_members = []
+    get_member_ids = set()
+    for module in module_data:
+        created_module = Module.objects.create(
+            workspace_id=workspace_id,
+            project_id=project_id,
+            name=module.get("name", ""),
+            description=module.get("description", ""),
+            description_text=module.get("description_text", ""),
+            description_html=module.get("description_html", "<p></p>"),
+            start_date=module.get("start_date", None),
+            target_date=module.get("target_date", None),
+            status=module.get("status", "planned"),
+            lead_id=module.get("lead_id", None),
+            logo_props=module.get("logo_props", {}),
+            sort_order=random.randint(0, 65535),
+            created_by_id=user_id,
+        )
+
+        member_ids = module.get("member_ids", [])
+        lead_id = module.get("lead_id", False)
+        valid_member_ids = []
+
+        if lead_id and lead_id not in member_ids:
+            member_ids.extend(
+                [lead_id],
+            )
+
+        # Check for active workspace member
+        for member_id in member_ids:
+            if WorkspaceMember.objects.filter(member_id=member_id, is_active=True, workspace_id=workspace_id).exists():
+                valid_member_ids.extend([member_id])
+
+        get_member_ids.update(valid_member_ids)
+
+        module_members.extend(
+            ModuleMember(
+                member_id=member_id,
+                module_id=created_module.id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                created_by_id=user_id,
+                updated_by_id=user_id,
+            )
+            for member_id in valid_member_ids
+        )
+
+    ModuleMember.objects.bulk_create(module_members)
+
+    project_members = ProjectMember.objects.filter(
+        project_id=project_id, workspace_id=workspace_id, member_id__in=get_member_ids
+    ).values_list("member_id", flat=True)
+
+    project_member_ids = {str(m) for m in project_members}
+
+    get_module_members = get_member_ids - project_member_ids
+
+    ProjectMember.objects.bulk_create(
+        [
+            ProjectMember(
+                project_id=project_id,
+                member_id=member_id,
+                role=ROLE.MEMBER.value,
+                workspace_id=workspace_id,
+                created_by_id=user_id,
+                updated_by_id=user_id,
+            )
+            for member_id in get_module_members
+        ],
+        batch_size=10,
+    )
+
+    logger.info("Modules created")
+    return
+
+
 @shared_task
 def create_project_from_template(template_id, project_id, user_id, state_map, origin=None):
     try:
@@ -700,6 +790,7 @@ def create_project_from_template(template_id, project_id, user_id, state_map, or
 
         # get the project template and project
         project_template = ProjectTemplate.objects.get(template_id=template_id)
+
         project = Project.objects.get(id=project_id)
         workspace_id = project.workspace_id
 
@@ -723,6 +814,10 @@ def create_project_from_template(template_id, project_id, user_id, state_map, or
             workitem_type_map, workitem_property_map, workitem_property_option_map = create_workitem_types(
                 project_template.workitem_types, project_id, workspace_id, user_id
             )
+
+        # create modules
+        if project_template.module_view and project_template.modules:
+            create_modules(project_template.modules, project_id, workspace_id, user_id)
 
         # create epics
         if project_template.epics:

@@ -63,7 +63,7 @@ export const buildProjectTemplateBlueprint = (
       getStateById: projectGetterHelpers.getStateById,
       getUserDetails,
       getLabelById: projectGetterHelpers.getLabelById,
-      getModuleById: () => null,
+      getModuleById: projectGetterHelpers.getModuleById,
     };
   };
 
@@ -106,6 +106,7 @@ export const buildProjectTemplateBlueprint = (
     members: buildProjectMembersBlueprint(project.members ?? [], getUserDetails),
     states: buildProjectStatesBlueprint(project.states),
     labels: buildProjectLabelsBlueprint(project.labels),
+    modules: project.modules ?? [],
     workflows: [],
     estimates: [],
     workitem_types: buildProjectWorkItemTypesBlueprint(project.workitem_types),

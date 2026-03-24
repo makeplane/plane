@@ -33,7 +33,7 @@ type DropdownOptions =
   | undefined;
 
 interface Props {
-  getModuleById: (moduleId: string) => IModule | null;
+  getModuleById: (moduleId: string) => Pick<IModule, "id" | "name"> | null;
   isOpen: boolean;
   moduleIds?: string[];
   multiple: boolean;
