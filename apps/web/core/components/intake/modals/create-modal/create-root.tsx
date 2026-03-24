@@ -247,7 +247,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               role="button"
               tabIndex={getIndex("create_more")}
             >
-              <Switch value={createMore} onChange={() => {}} />
+              <Switch value={createMore} onChange={() => setCreateMore((prevData) => !prevData)} />
               <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
