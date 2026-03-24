@@ -87,9 +87,9 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
           </div>
         )}
         {isSelfManaged && !isUpdateAvailable && (
-          <Button variant="ghost" className="font-medium outline-none px-1" onClick={handleCheckForUpdates}>
+          <Button variant="ghost" className="font-medium outline-none" onClick={handleCheckForUpdates}>
             Check for updates
-            <RefreshCw size={10} className={cn("animate-spin", { "opacity-0": !isCheckingForUpdates })} />
+            <RefreshCw size={10} className={cn("animate-spin", { hidden: !isCheckingForUpdates })} />
           </Button>
         )}
       </div>

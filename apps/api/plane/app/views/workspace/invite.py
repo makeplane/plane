@@ -281,8 +281,8 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Delete the invitation
                     workspace_invite.delete()
 
-                # sync workspace members
-                member_sync_task.delay(slug)
+                    # sync workspace members
+                    member_sync_task.delay(slug)
 
                 return Response(
                     {"message": "Workspace Invitation Accepted"},

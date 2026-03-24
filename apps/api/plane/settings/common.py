@@ -826,6 +826,7 @@ ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
 if ENABLE_DRF_SPECTACULAR:
     REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
     INSTALLED_APPS.append("drf_spectacular")
+    INSTALLED_APPS.append("drf_spectacular_sidecar")
     from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
 
 # MongoDB Settings

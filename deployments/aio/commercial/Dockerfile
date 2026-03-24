@@ -29,8 +29,9 @@ RUN apk add --no-cache \
     "libpq" \
     "libxslt" \
     "xmlsec" \
-    "openldap-dev"
-
+    "openldap-dev" \
+    && addgroup -g 1000 plane \
+    && adduser -u 1000 -G plane -D plane
 COPY --from=node /usr/lib /usr/lib
 COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
@@ -68,20 +69,20 @@ COPY --from=pi-img /app/bin /app/pi/bin
 COPY --from=pi-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=pi-img --exclude=python* /usr/local/bin/ /usr/local/bin/
 
-RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim supervisor \
-    && mkdir -p /etc/supervisor/conf.d
+RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim supervisor
 
 COPY start.sh /app/start.sh
 COPY dist/plane.env /app/plane.env
-COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+COPY supervisor.conf /app/supervisor.conf
 
-RUN mkdir -p /app/logs/access && \
-    mkdir -p /app/logs/error && \
-    mkdir -p /app/data && \
+RUN mkdir -p /app/logs/access /app/logs/error /app/data /app/email/tls && \
+    chown -R plane:plane /app && \
     chmod +x /app/start.sh
 
-VOLUME ['/app/data', '/app/logs', '/app/monitor', '/app/email/tls']
+VOLUME ["/app/data", "/app/logs", "/app/monitor", "/app/email/tls"]
 
 EXPOSE 80 443 10025 10465 10587
+
+USER plane
 
 CMD ["/app/start.sh"] 

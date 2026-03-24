@@ -22,6 +22,7 @@ from plane.app.views.base import BaseAPIView
 from plane.settings.storage import S3Storage
 from plane.db.models import Workspace, FileAsset
 from plane.utils.porters import DataImporter, CSVFormatter, UserImportSerializer
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 logger = logging.getLogger("plane.api")
 
@@ -79,6 +80,10 @@ class WorkspaceMembersImportEndpoint(BaseAPIView):
                 if item.get("workspace_member_created"):
                     wm_created += 1
 
+        # Trigger background task to sync members after import
+        member_sync_task.delay(slug)
+
+        # Return detailed result including counts and any errors
         return Response(
             {
                 "total_rows": result.total,

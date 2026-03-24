@@ -4,6 +4,7 @@ x-plane: &plane
   MACHINE_SIGNATURE: ${MACHINE_SIGNATURE}
   DEPLOY_PLATFORM: docker_compose
   PRIME_HOST: https://prime.plane.so
+  IS_AIRGAPPED: ${IS_AIRGAPPED:-0}
 
 x-monitor-env: &monitor-env
   SERVICE_HTTP_WEB: web:3000
@@ -147,6 +148,8 @@ x-app-env: &app-env
   PI_INTERNAL_SECRET: ${PI_INTERNAL_SECRET:-tyfvfqvBJAgpm9bzvf3r4urJer0Ehfdubk}
   # Intake Email Domain
   INTAKE_EMAIL_DOMAIN: ${INTAKE_EMAIL_DOMAIN:-example.com}
+  # OpenAPI / drf-spectacular toggle for API schema and docs
+  ENABLE_DRF_SPECTACULAR: ${ENABLE_DRF_SPECTACULAR:-0}
 
 x-live-env: &live-env
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
