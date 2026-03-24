@@ -52,7 +52,6 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.utils.issue_type_hierarchy import validate_type_hierarchy
 
 
-
 class IssueSerializer(BaseSerializer):
     """
     Comprehensive work item serializer with full relationship management.
@@ -116,12 +115,19 @@ class IssueSerializer(BaseSerializer):
 
         # Validate assignees are from project
         if data.get("assignees", []):
-            data["assignees"] = ProjectMember.objects.filter(
-                project_id=self.context.get("project_id"),
-                is_active=True,
-                role__gte=15,
-                member_id__in=data["assignees"],
-            ).values_list("member_id", flat=True)
+            existing_project_member_ids = list(
+                ProjectMember.objects.filter(
+                    project_id=self.context.get("project_id"),
+                    is_active=True,
+                    role__gte=15,
+                ).values_list("member_id", flat=True)
+            )
+
+            # Fetch assignees that are not part of the project
+            invalid_assignee_ids = set(data.get("assignees")) - set(existing_project_member_ids)
+
+            if invalid_assignee_ids:
+                raise serializers.ValidationError({"assignees": {"invalid_member_ids": invalid_assignee_ids}})
 
         # Validate labels are from project
         if data.get("labels", []):
@@ -135,7 +141,6 @@ class IssueSerializer(BaseSerializer):
             and not State.objects.filter(project_id=self.context.get("project_id"), pk=data.get("state").id).exists()
         ):
             raise serializers.ValidationError("State is not valid please pass a valid state_id")
-
 
         workspace_feature = WorkspaceFeature.objects.filter(
             workspace__slug=self.context.get("slug"),
@@ -170,9 +175,7 @@ class IssueSerializer(BaseSerializer):
             if not is_valid:
                 raise serializers.ValidationError({"type": error_msg}, code="invalid_type_hierarchy")
         # Check parent issue is from workspace as it can be cross workspace
-        if (
-            data.get("parent")
-        ):
+        if data.get("parent"):
             parent_issue = (
                 Issue.objects.filter(
                     workspace__slug=self.context.get("slug"),
