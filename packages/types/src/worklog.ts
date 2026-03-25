@@ -100,3 +100,8 @@ export interface ICapacityReportResponse {
   project_total_logged: number;
   project_daily_totals?: Record<string, { minutes: number; issue_count: number }>;
 }
+
+export interface IUserDailyWorklogTotal {
+  total_minutes: number;
+  date: string;
+}

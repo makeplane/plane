@@ -33,6 +33,8 @@ from .user.base import (
     UserActivityEndpoint,
 )
 
+from .user.daily_worklog import UserDailyWorklogTotalEndpoint
+
 
 from .base import BaseAPIView, BaseViewSet
 

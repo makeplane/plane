@@ -19,6 +19,7 @@ from plane.app.views import (
     ## End User
     ## Workspaces
     UserWorkSpacesEndpoint,
+    UserDailyWorklogTotalEndpoint,
 )
 
 urlpatterns = [
@@ -82,4 +83,9 @@ urlpatterns = [
         name="user-workspace-dashboard",
     ),
     ## End User Graph
+    path(
+        "users/me/daily-worklog-total/",
+        UserDailyWorklogTotalEndpoint.as_view(),
+        name="user-daily-worklog-total",
+    ),
 ]

@@ -18,6 +18,7 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { InboxIcon } from "@plane/propel/icons";
 import useSWR from "swr";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { DailyLogtimeIndicator } from "@/plane-web/components/navigations/daily-logtime-indicator";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
@@ -58,6 +59,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
       </div>
       {/* Additional Actions */}
       <div className="shrink-0 flex-1 flex gap-1 items-center justify-end">
+        <DailyLogtimeIndicator />
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"
