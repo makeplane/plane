@@ -16,6 +16,7 @@ import { mutate, preload } from "swr";
 import {
   AI_FLAGS,
   INSTANCE_INFORMATION,
+  RUNNER_HEALTH,
   USER_INFORMATION,
   WORKSPACE_FLAGS,
   WORKSPACE_MEMBER_ME_INFORMATION,
@@ -98,4 +99,9 @@ export const bootstrapWorkspace = async (workspaceSlug: string) =>
       preloadAndPrimeSWR(featureFlagsKey, () => store.featureFlags.fetchFeatureFlags(workspaceSlug)),
       preloadAndPrimeSWR(aiFlagsKey, () => store.aiFeatureFlags.fetchAiFeatureFlags(workspaceSlug)),
     ]);
+  });
+
+export const bootstrapRunner = async (workspaceSlug: string) =>
+  runOnce(`bootstrap:runner:${workspaceSlug}`, async () => {
+    await preloadAndPrimeSWR(RUNNER_HEALTH(workspaceSlug), () => store.runners.checkRunnerHealth(workspaceSlug));
   });

@@ -34,6 +34,7 @@ import {
   WORKSPACE_PROJECT_NAVIGATION_PREFERENCES,
   WORKSPACE_FLAGS,
   AI_FLAGS,
+  RUNNER_HEALTH,
 } from "@/constants/fetch-keys";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -373,7 +374,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
 
   // fetching runner health
   useSWR(
-    workspaceSlug ? `RUNNER_HEALTH_${workspaceSlug}` : null,
+    workspaceSlug ? RUNNER_HEALTH(workspaceSlug) : null,
     workspaceSlug ? () => checkRunnerHealth(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

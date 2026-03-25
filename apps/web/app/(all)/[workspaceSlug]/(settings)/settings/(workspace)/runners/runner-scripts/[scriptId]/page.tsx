@@ -35,7 +35,8 @@ const ScriptDetailPage = observer(function ScriptDetailPage({ params }: Route.Co
   // swr
   const { isLoading } = useSWR(
     workspaceSlug && scriptId ? `RUNNER_SCRIPT_DETAIL_${workspaceSlug}_${scriptId}` : null,
-    workspaceSlug && scriptId ? () => fetchScriptById(workspaceSlug, scriptId) : null
+    workspaceSlug && scriptId ? () => fetchScriptById(workspaceSlug, scriptId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // Read from store only after the detail fetch has completed so we have
   // the full script object (the list endpoint omits `code`).
@@ -46,6 +47,7 @@ const ScriptDetailPage = observer(function ScriptDetailPage({ params }: Route.Co
         <PageHead title={pageTitle} />
         <div className="w-full">
           <CreateUpdateRunnerScript
+            isLoading={isLoading}
             scriptData={script}
             handleCancel={() => router.push(`/${workspaceSlug}/settings/runner/?tab=scripts`)}
           />

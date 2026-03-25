@@ -38,9 +38,10 @@ export const ScriptModal = observer(function ScriptModal(props: {
   const scripts = workspaceSlug ? getFilteredScriptsByWorkspaceSlug(workspaceSlug, scriptType) : undefined;
   const script = scriptId && workspaceSlug ? getScriptById(scriptId) : undefined;
 
-  useSWR<RunnerScript>(
+  const { isLoading: isScriptLoading } = useSWR<RunnerScript>(
     workspaceSlug && scriptId ? `RUNNER_SCRIPT_DETAIL_${workspaceSlug}_${scriptId}` : null,
-    workspaceSlug && scriptId ? () => fetchScriptById(workspaceSlug, scriptId) : null
+    workspaceSlug && scriptId ? () => fetchScriptById(workspaceSlug, scriptId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   return (
@@ -61,6 +62,7 @@ export const ScriptModal = observer(function ScriptModal(props: {
         <div className="flex flex-col gap-5 p-5 col-span-3">
           <CreateUpdateRunnerScript
             key={scriptId}
+            isLoading={isScriptLoading}
             scriptData={script}
             headerAction={
               <Button

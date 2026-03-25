@@ -40,7 +40,7 @@ export function SelectScriptType({ onScriptTypeChange, scriptType }: Props) {
           value: type.toString(),
         }))}
       disableSearch
-      buttonContainerClassName="bg-surface-1 border border-subtle-1 rounded-md px-2 py-1 w-full"
+      buttonContainerClassName="bg-surface-1 border border-subtle-1 rounded-md px-2 py-1 w-full h-[30px]"
       buttonContent={(isOpen, val) => (
         <span className="flex items-center justify-between gap-1 text-13 text-tertiary w-full">
           {val ? RUNNER_SCRIPT_TYPE_MAP[val as ERunnerScriptType] : t("common.select")}

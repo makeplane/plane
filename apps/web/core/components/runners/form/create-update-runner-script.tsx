@@ -18,7 +18,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { RunnerScript, RunnerScriptFormData } from "@plane/types";
-import { cn, Input } from "@plane/ui";
+import { cn, Input, Loader } from "@plane/ui";
 import { useRunners } from "@/hooks/store/runners/use-runners";
 import { LazyPlaneSDKCodeEditor } from "@/components/plane-sdk-editor/root";
 import { formDataToScriptPayload, scriptToFormData } from "./env-variables-field";
@@ -31,13 +31,14 @@ import { SelectScriptType } from "./select-script-type";
 type Props = {
   scriptData?: RunnerScript;
   headerAction?: React.ReactNode;
+  isLoading?: boolean;
   scriptType?: ERunnerScriptType;
   handleCancel: () => void;
   callBack?: (scriptId: string | null) => void;
 };
 
 export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScript(props: Props) {
-  const { scriptData, headerAction, callBack, handleCancel, scriptType } = props;
+  const { scriptData, headerAction, callBack, handleCancel, scriptType, isLoading = false } = props;
   const { workspaceSlug } = useParams();
   const { createScript, updateScript } = useRunners();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -115,33 +116,53 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
               "border-b border-subtle pb-3": headerAction,
             })}
           >
-            <Controller
-              name="name"
-              control={control}
-              render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Add title"
-                  className={"w-full inline-block text-h3-medium bg-transparent p-0 border-none text-tertiary m-0"}
-                  hasError={Boolean(errors.name)}
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  readOnly={isReadOnly}
-                />
-              )}
-            />
+            {isLoading ? (
+              <Loader className="w-full">
+                <Loader.Item height="28px" width="200px" />
+              </Loader>
+            ) : (
+              <Controller
+                name="name"
+                control={control}
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Add title"
+                    className={"w-full inline-block text-h3-medium bg-transparent p-0 border-none text-tertiary m-0"}
+                    hasError={Boolean(errors.name)}
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    readOnly={isReadOnly}
+                  />
+                )}
+              />
+            )}
             {headerAction}
           </div>
 
           {/* Script Type */}
-          <div className="flex justify-between flex-col gap-1">
-            <div className="text-body-xs-medium text-primary">Script Type</div>
-            <SelectScriptType onScriptTypeChange={handleScriptTypeChange} scriptType={scriptType} />
-          </div>
+          {isLoading ? (
+            <div className="flex justify-between flex-col gap-1">
+              <Loader className="w-full">
+                <Loader.Item height="30px" width="100%" />
+              </Loader>
+            </div>
+          ) : (
+            <div className="flex justify-between flex-col gap-1">
+              <div className="text-body-xs-medium text-primary">Script Type</div>
+              <SelectScriptType onScriptTypeChange={handleScriptTypeChange} scriptType={scriptType} />
+            </div>
+          )}
           {/* Variables */}
-          <VariablesField readOnly={isReadOnly} />
+          {isLoading ? (
+            <Loader className="w-full">
+              <Loader.Item height="60px" width="100%" />
+            </Loader>
+          ) : (
+            <VariablesField readOnly={isReadOnly} />
+          )}
 
           {/* Code Editor */}
           <Controller
@@ -154,6 +175,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
                 onChange={field.onChange}
                 allowFunctionBrowser
                 readOnly={isReadOnly}
+                isLoading={isLoading}
               />
             )}
           />

@@ -17,18 +17,19 @@ import { Code2, Maximize2 } from "lucide-react";
 import { FunctionBrowserModal } from "@/components/runners/function-browser";
 import { Button } from "@plane/propel/button";
 import { IconButton } from "@plane/propel/icon-button";
-import { EModalWidth, ModalCore } from "@plane/ui";
+import { EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { LazyEditor } from "./editor";
 
 type Props = {
   value: string;
   readOnly?: boolean;
+  isLoading?: boolean;
   onChange: (value: string) => void;
   allowFunctionBrowser?: boolean;
 };
 
 export const LazyPlaneSDKCodeEditor = function LazyPlaneSDKCodeEditor(props: Props) {
-  const { value, onChange, allowFunctionBrowser = false, readOnly = false } = props;
+  const { value, onChange, allowFunctionBrowser = false, readOnly = false, isLoading = false } = props;
   const [showFunctionBrowser, setShowFunctionBrowser] = useState(false);
   const [showFullScreenEditor, setShowFullScreenEditor] = useState(false);
   const editorRef = useRef<{ editor: unknown; monaco: unknown } | null>(null);
@@ -76,6 +77,15 @@ export const LazyPlaneSDKCodeEditor = function LazyPlaneSDKCodeEditor(props: Pro
       Functions
     </Button>
   );
+  if (isLoading) {
+    return (
+      <div className="relative">
+        <Loader className="w-full">
+          <Loader.Item height="350px" width="100%" />
+        </Loader>
+      </div>
+    );
+  }
   return (
     <div className="relative">
       <LazyEditor

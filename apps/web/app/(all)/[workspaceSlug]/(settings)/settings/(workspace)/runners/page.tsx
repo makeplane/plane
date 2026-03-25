@@ -34,6 +34,15 @@ import { Button } from "@plane/propel/button";
 import { RunnersUpgrade } from "@/components/runners/upgrade";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import PageNotFound from "@/app/not-found";
+import { bootstrapRunner } from "@/lib/bootstrap/client-bootstrap";
+
+import type { Route } from "./+types/page";
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  await bootstrapRunner(params.workspaceSlug);
+  return null;
+}
+clientLoader.hydrate = true as const;
 
 type TabType = "scripts" | "functions";
 
