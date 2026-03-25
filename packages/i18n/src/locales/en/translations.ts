@@ -1946,6 +1946,20 @@ export default {
         button: "Download today's activity",
         button_loading: "Downloading",
       },
+      today_work_items: {
+        title: "Today Work Items",
+        empty: "No active work items for today.",
+        cross_workspaces: "Cross Workspaces",
+        columns: {
+          work_item: "Work Item",
+          department: "Department",
+          project: "Project",
+          state: "State",
+          progress: "Progress Tracking",
+          start_date: "Start Date",
+          due_date: "Due Date",
+        },
+      },
     },
     actions: {
       profile: "Profile",

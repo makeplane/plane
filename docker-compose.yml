@@ -45,6 +45,8 @@ services:
     command: ./bin/docker-entrypoint-api.sh
     env_file:
       - ./apps/api/.env
+    ports:
+      - "8000:8000"
     depends_on:
       - plane-db
       - plane-redis

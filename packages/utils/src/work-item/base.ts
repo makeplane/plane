@@ -304,24 +304,23 @@ export const getComputedDisplayProperties = (
   sub_issue_count: displayProperties?.sub_issue_count ?? true,
   attachment_count: displayProperties?.attachment_count ?? true,
   link: displayProperties?.link ?? true,
-  estimate: displayProperties?.estimate ?? true,
+  estimate: displayProperties?.estimate ?? false,
   key: displayProperties?.key ?? true,
-  created_on: displayProperties?.created_on ?? true,
-  updated_on: displayProperties?.updated_on ?? true,
+  created_on: displayProperties?.created_on ?? false,
+  updated_on: displayProperties?.updated_on ?? false,
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
-  // CE extended display properties (Shinhan Bank custom columns)
-  department_name: displayProperties?.department_name ?? false,
-  project_name: displayProperties?.project_name ?? false,
-  bank_wide_project: displayProperties?.bank_wide_project ?? false,
-  progress_tracking: displayProperties?.progress_tracking ?? false,
-  completed_date: displayProperties?.completed_date ?? false,
-  reference_link: displayProperties?.reference_link ?? false,
-  total_log_time: displayProperties?.total_log_time ?? false,
-  project_lead: displayProperties?.project_lead ?? false,
+  // CE extended display properties (Shinhan Bank custom columns) — all on by default
+  department_name: displayProperties?.department_name ?? true,
+  project_name: displayProperties?.project_name ?? true,
+  bank_wide_project: displayProperties?.bank_wide_project ?? true,
+  progress_tracking: displayProperties?.progress_tracking ?? true,
+  completed_date: displayProperties?.completed_date ?? true,
+  reference_link: displayProperties?.reference_link ?? true,
+  total_log_time: displayProperties?.total_log_time ?? true,
+  project_lead: displayProperties?.project_lead ?? true,
 });
-
 
 export const generateWorkItemLink = ({
   workspaceSlug,

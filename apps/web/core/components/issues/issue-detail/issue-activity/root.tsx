@@ -20,6 +20,7 @@ import { CommentCreate } from "@/components/comments/comment-create";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorklog } from "@/hooks/store/use-worklog";
 // plane web components
@@ -82,7 +83,11 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
   const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
   const isTimeTrackingEnabled = project?.is_time_tracking_enabled !== false;
-  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && isTimeTrackingEnabled && (isAdmin || isAssigned);
+  const { getStateById } = useProjectState();
+  const stateGroup = issue?.state_id ? getStateById(issue.state_id)?.group : undefined;
+  const isStateTerminal = stateGroup === "completed" || stateGroup === "cancelled";
+  const isWorklogButtonEnabled =
+    !isIntakeIssue && !isGuest && isTimeTrackingEnabled && (isAdmin || isAssigned) && !isStateTerminal;
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     if (!selectedFilters) return;

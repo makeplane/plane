@@ -41,6 +41,12 @@ export const DueDateProperty = observer(function DueDateProperty(props: TDueDate
       void issueOperations.update(workspaceSlug, projectId, issueId, { target_date: null });
       return;
     }
+    if (!issue.target_date) {
+      // Setting date for the first time — no reason required
+      void issueOperations.update(workspaceSlug, projectId, issueId, { target_date: formatted });
+      return;
+    }
+    // Changing existing date — require reason
     setPendingDueDate(formatted);
     setIsModalOpen(true);
   };
@@ -57,12 +63,7 @@ export const DueDateProperty = observer(function DueDateProperty(props: TDueDate
 
   return (
     <>
-      <div
-        className={cn(
-          "flex items-center gap-2 w-full",
-          hasFieldError && "rounded border border-red-500"
-        )}
-      >
+      <div className={cn("flex items-center gap-2 w-full", hasFieldError && "rounded border border-red-500")}>
         <DateDropdown
           placeholder={t("issue.add.due_date")}
           value={issue.target_date}

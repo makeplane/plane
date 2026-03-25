@@ -45,7 +45,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const { getViewDetailsById, currentWorkspaceViews, globalViewMap } = useGlobalView();
+  const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
   const { t } = useTranslation();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
@@ -56,7 +56,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
@@ -70,7 +70,13 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
+      void updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        globalViewId
+      );
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -78,7 +84,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
@@ -111,14 +117,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
     };
   });
 
-  // Default workspace views (Daily Status) appear before built-in views
-  const defaultWorkspaceOptions = workspaceOptions.filter(
-    (opt) => opt && globalViewMap[opt.value]?.is_default
-  );
-  const otherWorkspaceOptions = workspaceOptions.filter(
-    (opt) => opt && !globalViewMap[opt.value]?.is_default
-  );
-  const switcherOptions = [...defaultWorkspaceOptions, ...defaultOptions, ...otherWorkspaceOptions].filter(
+  const switcherOptions = [...defaultOptions, ...workspaceOptions].filter(
     (option) => option !== undefined
   ) as ICustomSearchSelectOption[];
   const currentLayoutFilters = useMemo(() => {
@@ -176,17 +175,15 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             />
           </div>
           {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
-          {!isLocked && (
-            <FiltersDropdown title={t("common.display")} placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={currentLayoutFilters}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-              />
-            </FiltersDropdown>
-          )}
+          <FiltersDropdown title={t("common.display")} placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={currentLayoutFilters}
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
+            />
+          </FiltersDropdown>
           <Button
             variant="primary"
             size="lg"

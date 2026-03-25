@@ -702,13 +702,16 @@ class IssueViewSet(BaseViewSet):
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
-        # Validate: reason required when setting (non-null) target_date or completed_at
+        # Validate: reason required when *changing* an existing target_date or completed_at
+        # (not when setting for the first time)
         REASON_REQUIRED_FIELDS = {"target_date", "completed_at"}
-        is_setting_protected = any(
-            field in request.data and request.data[field] not in (None, "", [])
+        is_changing_protected = any(
+            field in request.data
+            and request.data[field] not in (None, "", [])
+            and getattr(issue, field) not in (None, "")
             for field in REASON_REQUIRED_FIELDS
         )
-        if is_setting_protected:
+        if is_changing_protected:
             reason = (request.data.get("reason") or "").strip()
             if not reason:
                 return Response(

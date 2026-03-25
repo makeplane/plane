@@ -15,6 +15,7 @@ import type { TIssueActivityComment } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { extractApiError } from "../utils/extract-api-error";
@@ -34,8 +35,12 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
   const { activityComment, workspaceSlug, projectId, issueId, ends } = props;
   const { t } = useTranslation();
   const store = useWorklog();
-  const { fetchActivities } = useIssueDetail();
+  const {
+    fetchActivities,
+    issue: { getIssueById },
+  } = useIssueDetail();
   const { allowPermissions } = useUserPermissions();
+  const { getStateById } = useProjectState();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -46,15 +51,19 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
 
   // Permission: project admin can edit/delete worklogs within 60-working-day window
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
-  const isEditable = isAdmin && worklog && isWithinEditWindow(worklog.logged_at);
+  // Hide edit/delete controls when issue is in terminal state
+  const issue = getIssueById(issueId);
+  const stateGroup = issue?.state_id ? getStateById(issue.state_id)?.group : undefined;
+  const isStateTerminal = stateGroup === "completed" || stateGroup === "cancelled";
+  const isEditable = isAdmin && worklog && isWithinEditWindow(worklog.logged_at) && !isStateTerminal;
 
   // Format date for display
   const createdAt = activityComment.created_at
     ? new Date(activityComment.created_at).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : null;
 
   const displayName = worklog?.logged_by_detail?.display_name;
@@ -97,13 +106,13 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
           })}
           {...(isEditable
             ? {
-              onClick: () => setIsEditModalOpen(true),
-              role: "button",
-              tabIndex: 0,
-              onKeyDown: (e: KeyboardEvent) => {
-                if (e.key === "Enter" || e.key === " ") setIsEditModalOpen(true);
-              },
-            }
+                onClick: () => setIsEditModalOpen(true),
+                role: "button",
+                tabIndex: 0,
+                onKeyDown: (e: KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") setIsEditModalOpen(true);
+                },
+              }
             : {})}
         >
           {displayName && <span className="font-medium text-primary">{displayName}</span>}

@@ -1935,6 +1935,20 @@ export default {
         button: "오늘의 활동 다운로드",
         button_loading: "다운로드 중",
       },
+      today_work_items: {
+        title: "오늘의 작업 항목",
+        empty: "오늘의 활성 작업 항목이 없습니다.",
+        cross_workspaces: "교차 워크스페이스",
+        columns: {
+          work_item: "작업 항목",
+          department: "부서",
+          project: "프로젝트",
+          state: "상태",
+          progress: "진행 추적",
+          start_date: "시작일",
+          due_date: "마감일",
+        },
+      },
     },
     actions: {
       profile: "프로필",
