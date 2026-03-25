@@ -45,11 +45,11 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
         ),
     )
     def post(self, request, slug, project_id):
-        project = Project.objects.get(id=project_id, workspace__slug=slug)
+        project = Project.objects.filter(id=project_id, workspace__slug=slug).first()
         if not project:
             return Response(status=status.HTTP_404_NOT_FOUND, data={"error": "Project not found"})
 
-        workspace = Workspace.objects.get(slug=slug)
+        workspace = Workspace.objects.filter(slug=slug).first()
         if not workspace:
             return Response(status=status.HTTP_404_NOT_FOUND, data={"error": "Workspace not found"})
 
