@@ -1958,6 +1958,7 @@ export default {
       today_work_items: {
         title: "Công việc hôm nay",
         empty: "Không có mục công việc hoạt động nào cho hôm nay.",
+        cross_workspaces: "Xuyên Workspace",
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",

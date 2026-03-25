@@ -1938,6 +1938,7 @@ export default {
       today_work_items: {
         title: "오늘의 작업 항목",
         empty: "오늘의 활성 작업 항목이 없습니다.",
+        cross_workspaces: "교차 워크스페이스",
         columns: {
           work_item: "작업 항목",
           department: "부서",

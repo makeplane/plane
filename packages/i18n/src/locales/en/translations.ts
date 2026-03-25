@@ -1949,6 +1949,7 @@ export default {
       today_work_items: {
         title: "Today Work Items",
         empty: "No active work items for today.",
+        cross_workspaces: "Cross Workspaces",
         columns: {
           work_item: "Work Item",
           department: "Department",

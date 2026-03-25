@@ -169,6 +169,14 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "cycle",
   "issue_type",
   "progress_tracking",
+  // CE extended display properties
+  "department_name",
+  "project_name",
+  "project_lead",
+  "bank_wide_project",
+  "completed_date",
+  "reference_link",
+  "total_log_time",
 ];
 
 export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
@@ -222,6 +230,16 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
   { key: "progress_tracking", titleTranslationKey: "spreadsheet.columns.progress_tracking" },
+  // CE extended display properties
+  { key: "department_name", titleTranslationKey: "spreadsheet.columns.department_name" },
+  { key: "project_name", titleTranslationKey: "spreadsheet.columns.project_name" },
+  { key: "project_lead", titleTranslationKey: "spreadsheet.columns.project_lead" },
+  { key: "bank_wide_project", titleTranslationKey: "spreadsheet.columns.bank_wide_project" },
+  { key: "completed_date", titleTranslationKey: "spreadsheet.columns.completed_date" },
+  { key: "reference_link", titleTranslationKey: "spreadsheet.columns.reference_link" },
+  { key: "total_log_time", titleTranslationKey: "spreadsheet.columns.total_log_time" },
+  { key: "created_on", titleTranslationKey: "common.sort.created_on" },
+  { key: "updated_on", titleTranslationKey: "common.sort.updated_on" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
