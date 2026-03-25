@@ -17,6 +17,8 @@ import { AreaChart } from "@plane/propel/charts/area-chart";
 import type { TChartData, TModuleCompletionChartDistribution } from "@plane/types";
 import { renderFormattedDateWithoutYear } from "@plane/utils";
 
+const MAX_DATA_POINTS = 12;
+
 type Props = {
   distribution: TModuleCompletionChartDistribution;
   totalIssues: number;
@@ -25,11 +27,26 @@ type Props = {
 };
 
 function ProgressChart({ distribution, totalIssues, className = "", plotTitle = "work items" }: Props) {
-  const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
-    name: renderFormattedDateWithoutYear(key),
-    current: distribution[key] ?? 0,
-    ideal: totalIssues * (1 - index / (Object.keys(distribution ?? []).length - 1)),
-  }));
+  const distributionEntries = Object.entries(distribution);
+  const normalizedEntries =
+    distributionEntries.length <= MAX_DATA_POINTS
+      ? distributionEntries
+      : Array.from({ length: MAX_DATA_POINTS }, (_, index) => {
+          const entryIndex = Math.round((index * (distributionEntries.length - 1)) / (MAX_DATA_POINTS - 1));
+          return distributionEntries[entryIndex];
+        });
+  const distributionLength = normalizedEntries.length;
+
+  const chartData: TChartData<string, string>[] = normalizedEntries.map(([key, value], index) => {
+    const denominator = Math.max(distributionLength - 1, 1);
+    const idealValue = totalIssues * (1 - index / denominator);
+
+    return {
+      name: renderFormattedDateWithoutYear(key),
+      current: value ?? 0,
+      ideal: Math.floor(idealValue),
+    };
+  });
 
   return (
     <div className={`flex w-full items-center justify-center ${className}`}>
