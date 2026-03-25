@@ -18,8 +18,8 @@ import LogoSpinnerLight from "@/app/assets/images/logo-spinner-light.gif?url";
 export function LogoSpinner() {
   return (
     <div className="flex items-center justify-center">
-      <img src={LogoSpinnerLight} alt="logo" className="h-6 w-auto sm:h-11 object-contain dark:hidden" />
-      <img src={LogoSpinnerDark} alt="logo" className="hidden h-6 w-auto sm:h-11 object-contain dark:block" />
+      <img src={LogoSpinnerLight} alt="logo" className="logo-spinner-light" />
+      <img src={LogoSpinnerDark} alt="logo" className="logo-spinner-dark" />
     </div>
   );
 }

@@ -16,6 +16,29 @@ import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { HydratedRouter } from "react-router/dom";
 
+// Theme guard — re-applies data-theme when React replaces <html> during hydration
+// failure recovery. The MutationObserver fires as a microtask (before next paint),
+// so the user never sees an unstyled frame. Background is handled by the critical
+// theme CSS in root.tsx which keys off data-theme.
+function applyTheme() {
+  try {
+    const root = document.documentElement;
+    if (root.getAttribute("data-theme")) return;
+
+    const stored = localStorage.getItem("theme") || "system";
+    const resolved =
+      stored === "system" ? (window.matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light") : stored;
+
+    root.setAttribute("data-theme", resolved);
+    root.style.colorScheme = resolved.includes("dark") ? "dark" : "light";
+  } catch (_) {
+    // localStorage may throw in sandboxed contexts
+  }
+}
+
+applyTheme();
+new MutationObserver(() => applyTheme()).observe(document, { childList: true });
+
 Sentry.init({
   dsn: process.env.VITE_SENTRY_DSN,
   environment: process.env.VITE_SENTRY_ENVIRONMENT,

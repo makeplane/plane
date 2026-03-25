@@ -50,10 +50,13 @@ import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
-// Inline theme initializer — runs synchronously in <head> before first paint.
-// Reads "theme" from localStorage, resolves "system" via matchMedia, then sets
-// data-theme on <html> + colorScheme + theme-color meta.
+// Runs synchronously in <head> before first paint. Sets data-theme, colorScheme,
+// and theme-color meta from localStorage.
 const THEME_INIT_SCRIPT = `(function(){try{var d=document.documentElement,s=localStorage.getItem("theme")||"system",t=s==="system"?window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light":s;d.setAttribute("data-theme",t);d.style.colorScheme=t.includes("dark")?"dark":"light";var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t.includes("dark")?"#0e0f10":"#eff0f0")}catch(e){}})()`;
+
+// Critical theme CSS — applied before Tailwind loads. Handles background, body margin, and logo spinner.
+// Color values must match packages/tailwindcss/variables.css (--neutral-300 / --neutral-black).
+const CRITICAL_THEME_CSS = `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}body{margin:0}.logo-spinner-light,.logo-spinner-dark{height:1.5rem;width:auto;object-fit:contain}@media(min-width:640px){.logo-spinner-light,.logo-spinner-dark{height:2.75rem}}.logo-spinner-dark{display:none}html[data-theme*="dark"] .logo-spinner-light{display:none}html[data-theme*="dark"] .logo-spinner-dark{display:block}`;
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
@@ -83,16 +86,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script id="theme-init" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        {/* Critical inline CSS — sets html background before globals.css loads to prevent flash.
-            Values must match packages/tailwind-config/variables.css:
-            Light: --neutral-300 = oklch(0.9543 0.001 230.67)
-            Dark: --neutral-black = oklch(0.1689 0.0021 230.81) */}
-        <style
-          id="theme-critical-css"
-          dangerouslySetInnerHTML={{
-            __html: `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}`,
-          }}
-        />
+        <style id="critical-theme" dangerouslySetInnerHTML={{ __html: CRITICAL_THEME_CSS }} />
         <meta name="theme-color" content="#eff0f0" />
         {/* Meta info for PWA */}
         <meta name="application-name" content="Plane" />
@@ -209,7 +203,16 @@ export default function Root() {
 
 export function HydrateFallback() {
   return (
-    <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        height: "100vh",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <LogoSpinner />
     </div>
   );
