@@ -4,7 +4,7 @@
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/utils/index.d.ts",
   "imports": {
     "#*": [
       "./*",
@@ -15,11 +15,12 @@
     ]
   },
   "exports": {
+    "./entity-detail": "./dist/entity-detail/index.js",
+    "./utils": "./dist/utils/index.js",
+    "./package.json": "./package.json",
     ".": {
-      "import": "./dist/index.js",
       "style": "./dist/styles/index.css"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "dev": "tsdown --watch",

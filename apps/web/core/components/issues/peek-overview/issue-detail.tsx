@@ -15,7 +15,9 @@ import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { ContentOverflow } from "@plane/blocks/entity-detail";
 import type { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types";
 import type { TNameDescriptionLoader } from "@plane/types";
 // components
@@ -59,6 +61,8 @@ type Props = {
 export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
   const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
     props;
+  // hooks
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -139,26 +143,33 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         containerClassName="-ml-3"
       />
 
-      <DescriptionInput
-        issueSequenceId={issue.sequence_id}
-        containerClassName="-ml-3 border-none"
-        disabled={disabled || isArchived}
-        editorRef={editorRef}
-        entityId={issue.id}
-        fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-        initialValue={issueDescription}
-        key={issue.id}
-        onSubmit={async (value, isMigrationUpdate) => {
-          if (!issue.id || !issue.project_id) return;
-          await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-            description_html: value.description_html,
-            ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-          });
-        }}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        projectId={issue.project_id}
-        workspaceSlug={workspaceSlug}
-      />
+      <ContentOverflow
+        maxHeight={140}
+        buttonClassName="text-left"
+        showMoreLabel={t("show_all")}
+        showLessLabel={t("show_less")}
+      >
+        <DescriptionInput
+          issueSequenceId={issue.sequence_id}
+          containerClassName="-ml-3 border-none"
+          disabled={disabled || isArchived}
+          editorRef={editorRef}
+          entityId={issue.id}
+          fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+          initialValue={issueDescription}
+          key={issue.id}
+          onSubmit={async (value, isMigrationUpdate) => {
+            if (!issue.id || !issue.project_id) return;
+            await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+              description_html: value.description_html,
+              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+            });
+          }}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          projectId={issue.project_id}
+          workspaceSlug={workspaceSlug}
+        />
+      </ContentOverflow>
 
       <div className="flex items-center justify-between gap-2 mt-4">
         {currentUser && (

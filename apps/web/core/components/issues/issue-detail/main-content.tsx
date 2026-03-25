@@ -14,7 +14,9 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { ContentOverflow } from "@plane/blocks/entity-detail";
 import type { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { getTextContent } from "@plane/utils";
@@ -77,6 +79,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
+  const { t } = useTranslation();
   const windowSize = useSize();
   const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
@@ -154,26 +157,33 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           containerClassName="-ml-3"
         />
 
-        <DescriptionInput
-          issueSequenceId={issue.sequence_id}
-          containerClassName="-ml-6 border-none p-0! pl-6!"
-          disabled={isArchived || !isEditable}
-          editorRef={editorRef}
-          entityId={issue.id}
-          fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-          initialValue={issue.description_html}
-          key={issue.id}
-          onSubmit={async (value, isMigrationUpdate) => {
-            if (!issue.id || !issue.project_id) return;
-            await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-              description_html: value.description_html,
-              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-            });
-          }}
-          projectId={issue.project_id}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-          workspaceSlug={workspaceSlug}
-        />
+        <ContentOverflow
+          maxHeight={140}
+          buttonClassName="text-left"
+          showMoreLabel={t("show_all")}
+          showLessLabel={t("show_less")}
+        >
+          <DescriptionInput
+            issueSequenceId={issue.sequence_id}
+            containerClassName="-ml-6 border-none p-0! pl-6!"
+            disabled={isArchived || !isEditable}
+            editorRef={editorRef}
+            entityId={issue.id}
+            fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+            initialValue={issue.description_html}
+            key={issue.id}
+            onSubmit={async (value, isMigrationUpdate) => {
+              if (!issue.id || !issue.project_id) return;
+              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+                description_html: value.description_html,
+                ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+              });
+            }}
+            projectId={issue.project_id}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            workspaceSlug={workspaceSlug}
+          />
+        </ContentOverflow>
 
         <div className="flex items-center justify-between gap-2 mt-4">
           {currentUser && (

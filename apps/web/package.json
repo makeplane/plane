@@ -31,6 +31,7 @@
     "@fontsource/material-symbols-rounded": "catalog:",
     "@headlessui/react": "catalog:",
     "@makeplane/plane-node-sdk": "catalog:",
+    "@plane/blocks": "workspace:*",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/etl": "workspace:*",
