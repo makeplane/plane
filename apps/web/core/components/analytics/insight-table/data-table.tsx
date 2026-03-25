@@ -38,10 +38,10 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, actions }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, _setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, _setSorting] = React.useState<SortingState>([]);
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
@@ -67,9 +67,9 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
   return (
     <div className="space-y-4">
       <div className="flex w-full items-center justify-between">
-        <div className="relative flex max-w-[300px] items-center gap-4 ">
+        <div className="relative flex max-w-[300px] items-center gap-4">
           {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && (
-            <div className="flex items-center gap-2 whitespace-nowrap text-13 text-placeholder">
+            <div className="flex items-center gap-2 text-13 whitespace-nowrap text-placeholder">
               {searchPlaceholder}
             </div>
           )}

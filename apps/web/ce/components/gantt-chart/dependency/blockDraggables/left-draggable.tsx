@@ -12,6 +12,6 @@ type LeftDependencyDraggableProps = {
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
 
-export function LeftDependencyDraggable(props: LeftDependencyDraggableProps) {
+export function LeftDependencyDraggable(_props: LeftDependencyDraggableProps) {
   return <></>;
 }

@@ -11,6 +11,6 @@ type RightDependencyDraggableProps = {
   block: IGanttBlock;
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
-export function RightDependencyDraggable(props: RightDependencyDraggableProps) {
+export function RightDependencyDraggable(_props: RightDependencyDraggableProps) {
   return <></>;
 }

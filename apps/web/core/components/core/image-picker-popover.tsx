@@ -211,7 +211,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 ))}
                 <Tabs.Indicator />
               </Tabs.List>
-              <div className="vertical-scrollbar scrollbar-sm p-3 mt-3 flex-1 overflow-y-auto overflow-x-hidden">
+              <div className="vertical-scrollbar mt-3 scrollbar-sm flex-1 overflow-x-hidden overflow-y-auto p-3">
                 <Tabs.Content value="unsplash" className="h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
@@ -257,7 +257,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                                 <img
                                   src={image.urls.small}
                                   alt={image.alt_description}
-                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
+                                  className="absolute top-0 left-0 h-full w-full cursor-pointer rounded-sm object-cover"
                                 />
                               </div>
                             ))}
@@ -291,7 +291,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         <img
                           src={imageUrl}
                           alt={`Cover image ${index + 1}`}
-                          className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover hover:opacity-80 transition-opacity"
+                          className="absolute top-0 left-0 h-full w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-80"
                         />
                       </div>
                     ))}
@@ -302,7 +302,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
+                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
                           (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""
@@ -310,7 +310,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       >
                         <button
                           type="button"
-                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
+                          className="absolute top-0 right-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
                         >
                           Edit
                         </button>
@@ -319,7 +319,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             <img
                               src={image ? URL.createObjectURL(image) : getCoverImageDisplayURL(value, "")}
                               alt="image"
-                              className="rounded-lg h-full w-full object-cover"
+                              className="h-full w-full rounded-lg object-cover"
                             />
                           </>
                         ) : (

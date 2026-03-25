@@ -111,8 +111,8 @@ export function InstanceSignInForm() {
   return (
     <>
       <AuthHeader />
-      <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-        <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
+      <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
+        <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">
           <FormHeader
             heading="Manage your Plane instance"
             subHeading="Configure instance-wide settings to secure your instance"
@@ -134,7 +134,7 @@ export function InstanceSignInForm() {
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="email">
+              <label className="text-13 font-medium text-tertiary" htmlFor="email">
                 Email <span className="text-danger-primary">*</span>
               </label>
               <Input
@@ -152,7 +152,7 @@ export function InstanceSignInForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="password">
+              <label className="text-13 font-medium text-tertiary" htmlFor="password">
                 Password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
@@ -170,7 +170,7 @@ export function InstanceSignInForm() {
                 {showPassword ? (
                   <button
                     type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(false)}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -178,7 +178,7 @@ export function InstanceSignInForm() {
                 ) : (
                   <button
                     type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(true)}
                   >
                     <Eye className="h-4 w-4" />

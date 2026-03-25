@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -40,8 +39,8 @@ export const IssueAttachmentsCollapsibleTitle = observer(function IssueAttachmen
   // indicator element
   const indicatorElement = useMemo(
     () => (
-      <span className="flex items-center justify-center ">
-        <p className="text-14 text-tertiary !leading-3">{attachmentCount}</p>
+      <span className="flex items-center justify-center">
+        <p className="text-14 !leading-3 text-tertiary">{attachmentCount}</p>
       </span>
     ),
     [attachmentCount]

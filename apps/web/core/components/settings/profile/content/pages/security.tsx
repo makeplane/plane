@@ -173,7 +173,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
               )}
             </div>
           )}
-          <div className="grid sm:grid-cols-2 gap-y-7 gap-x-4">
+          <div className="grid gap-x-4 gap-y-7 sm:grid-cols-2">
             <div className="flex flex-col gap-y-2">
               <h4 className="text-13">{t("auth.common.password.new_password.label")}</h4>
               <div className="relative flex items-center rounded-md">

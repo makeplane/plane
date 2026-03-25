@@ -72,22 +72,22 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full overflow-hidden ">
-              <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full">
-                <div className={"flex flex-col w-full h-full"}>
+            <div className="flex h-full overflow-hidden">
+              <Tabs value={selectedTab} onValueChange={handleTabChange} className="h-full w-full">
+                <div className={"flex h-full w-full flex-col"}>
                   <div
                     className={cn(
-                      "px-6 py-2 border-b border-subtle flex items-center gap-4 overflow-hidden w-full justify-between bg-surface-1"
+                      "flex w-full items-center justify-between gap-4 overflow-hidden border-b border-subtle bg-surface-1 px-6 py-2"
                     )}
                   >
-                    <Tabs.List className={"overflow-x-auto flex w-fit h-7"}>
+                    <Tabs.List className={"flex h-7 w-fit overflow-x-auto"}>
                       {ANALYTICS_TABS.map((tab) => (
                         <Tabs.Trigger
                           key={tab.key}
                           value={tab.key}
                           disabled={tab.isDisabled}
                           size="md"
-                          className="px-3 h-6"
+                          className="h-6 px-3"
                           onClick={() => {
                             if (!tab.isDisabled) {
                               handleTabChange(tab.key);

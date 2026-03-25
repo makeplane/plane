@@ -34,7 +34,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
         <>
           <IconButton variant="tertiary" icon={ListFilter} />
           {selectedFilters.length < filterOptions.length && (
-            <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-accent-primary rounded-full" />
+            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
           )}
         </>
       }
@@ -44,12 +44,12 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
       render={(item) => (
         <div
           key={item.key}
-          className="flex items-center gap-2 text-13 cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
+          className="flex cursor-pointer items-center gap-2 rounded-xs p-1 px-2 text-13 transition-all hover:bg-layer-1"
           onClick={item.onClick}
         >
           <div
             className={cn(
-              "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-xs transition-all bg-surface-2",
+              "flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-xs bg-surface-2 transition-all",
               {
                 "bg-accent-primary text-on-color": item.isSelected,
                 "bg-layer-1 text-placeholder": item.isSelected && selectedFilters.length === 1,

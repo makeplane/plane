@@ -10,9 +10,9 @@ import { NotificationsSidebarRoot } from "@/components/workspace-notifications/s
 
 export default function ProjectInboxIssuesLayout() {
   return (
-    <div className="relative w-full h-full overflow-hidden flex items-center">
+    <div className="relative flex h-full w-full items-center overflow-hidden">
       <NotificationsSidebarRoot />
-      <div className="w-full h-full overflow-hidden overflow-y-auto">
+      <div className="h-full w-full overflow-hidden overflow-y-auto">
         <Outlet />
       </div>
     </div>

@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-
 type TIssueActivityWorklogCreateButton = {
   workspaceSlug: string;
   projectId: string;

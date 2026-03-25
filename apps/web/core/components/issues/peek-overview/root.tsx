@@ -83,7 +83,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
               fetchActivities(workspaceSlug, projectId, issueId);
               return;
             })
-            .catch((error) => {
+            .catch((_error) => {
               setToast({
                 title: t("toast.error"),
                 type: TOAST_TYPE.ERROR,

@@ -34,7 +34,7 @@ export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigat
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-3 mt-4">
+    <div className="mt-4 space-y-3">
       <div>
         <p className="text-11 font-medium text-tertiary">{t("page_navigation_pane.tabs.info.actors_info.edited_by")}</p>
         <div className="mt-2 flex items-center justify-between gap-2 text-13 font-medium">

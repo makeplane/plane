@@ -140,7 +140,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // if list of workspaces are not there then we have to render the spinner
   if (isParentLoading || allWorkspaces === undefined || loader) {
     return (
-      <div className="grid h-full place-items-center p-4 rounded-lg border border-subtle">
+      <div className="grid h-full place-items-center rounded-lg border border-subtle p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>
@@ -151,8 +151,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
   if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
-      <div className="relative flex h-full w-full flex-col items-center justify-center bg-surface-2 ">
-        <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
+      <div className="relative flex h-full w-full flex-col items-center justify-center bg-surface-2">
+        <div className="relative container mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-surface-2 py-4">
               <PlaneLogo className="h-9 w-auto text-primary" />
@@ -196,7 +196,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-4 top-0 w-0 bg-layer-1 md:w-0.5" />
+          <div className="absolute top-0 bottom-0 left-4 w-0 bg-layer-1 md:w-0.5" />
         </div>
       </div>
     );

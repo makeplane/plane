@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
@@ -30,11 +29,11 @@ export const User = observer(function User(props: TUser) {
   return (
     <>
       {customUserName || actorDetail?.display_name.includes("-intake") ? (
-        <span className="text-primary font-medium">{customUserName || "Plane"}</span>
+        <span className="font-medium text-primary">{customUserName || "Plane"}</span>
       ) : (
         <Link
           href={`/${workspaceDetail?.slug}/profile/${actorDetail?.id}`}
-          className="hover:underline text-primary font-medium"
+          className="font-medium text-primary hover:underline"
         >
           {actorDetail?.display_name}
         </Link>

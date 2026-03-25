@@ -41,10 +41,10 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
   const planeName = getSubscriptionName(planVariant);
 
   return (
-    <div className="flex flex-col py-6 px-3 bg-layer-2 rounded-xl border border-subtle">
+    <div className="flex flex-col rounded-xl border border-subtle bg-layer-2 px-3 py-6">
       <Tab.Group selectedIndex={selectedPlan === "month" ? 0 : 1}>
-        <div className="flex w-full justify-center h-9">
-          <Tab.List className="flex space-x-1 rounded-md p-0.5 w-60 bg-layer-3">
+        <div className="flex h-9 w-full justify-center">
+          <Tab.List className="flex w-60 space-x-1 rounded-md bg-layer-3 p-0.5">
             {prices.map((price: TSubscriptionPrice) => (
               <Tab
                 key={price.key}
@@ -52,7 +52,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                   cn(
                     "w-full rounded-sm py-1 text-caption-md-medium leading-5",
                     selected
-                      ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
+                      ? "border border-subtle-1 bg-layer-2 text-primary shadow-raised-100"
                       : "text-tertiary hover:text-secondary"
                   )
                 }
@@ -76,13 +76,13 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                   {features.map((feature) => (
                     <li
                       key={feature}
-                      className={cn("col-span-12 relative rounded-md p-2 flex", {
+                      className={cn("relative col-span-12 flex rounded-md p-2", {
                         "sm:col-span-6": !verticalFeatureList,
                       })}
                     >
-                      <p className="w-full text-caption-md-medium leading-5 flex items-center line-clamp-1">
-                        <CheckCircle className="size-4 mr-2 text-tertiary flex-shrink-0" />
-                        <span className="text-secondary truncate">{feature}</span>
+                      <p className="line-clamp-1 flex w-full items-center text-caption-md-medium leading-5">
+                        <CheckCircle className="mr-2 size-4 flex-shrink-0 text-tertiary" />
+                        <span className="truncate text-secondary">{feature}</span>
                       </p>
                     </li>
                   ))}

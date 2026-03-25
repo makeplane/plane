@@ -64,8 +64,8 @@ export function StickyEditorToolbar(props: Props) {
   useOutsideClickDetector(colorPaletteRef, () => setShowColorPalette(false));
 
   return (
-    <div className="flex w-full justify-between h-full">
-      <div className="flex my-auto gap-4" ref={colorPaletteRef}>
+    <div className="flex h-full w-full justify-between">
+      <div className="my-auto flex gap-4" ref={colorPaletteRef}>
         {/* color palette */}
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
         <Tooltip
@@ -76,12 +76,12 @@ export function StickyEditorToolbar(props: Props) {
           }
         >
           <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
-            <Palette className="size-4 my-auto" />
+            <Palette className="my-auto size-4" />
           </button>
         </Tooltip>
 
-        <div className="flex w-fit items-stretch justify-between gap-4 rounded-sm p-1 my-auto">
-          <div className="flex items-stretch my-auto gap-4">
+        <div className="my-auto flex w-fit items-stretch justify-between gap-4 rounded-sm p-1">
+          <div className="my-auto flex items-stretch gap-4">
             {Object.keys(toolbarItems).map((key) => (
               <div key={key} className={cn("flex items-stretch gap-4", {})}>
                 {toolbarItems[key].map((item) => {
@@ -100,7 +100,7 @@ export function StickyEditorToolbar(props: Props) {
                       <button
                         type="button"
                         onClick={() => executeCommand(item)}
-                        className={cn("grid place-items-center aspect-square rounded-xs p-0.5 text-primary/50", {})}
+                        className={cn("grid aspect-square place-items-center rounded-xs p-0.5 text-primary/50", {})}
                       >
                         <item.icon
                           className={cn("h-3.5 w-3.5", {

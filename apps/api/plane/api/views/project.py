@@ -23,7 +23,6 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 from plane.db.models import (
     Cycle,
     Intake,
-    ProjectUserProperty,
     Module,
     Project,
     DeployBoard,

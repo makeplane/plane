@@ -117,11 +117,11 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     >
       {formattedConfig ? (
         <div className="space-y-3">
-          <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
+          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="text-16 font-medium pb-1">Allow anyone to sign up even without an invite</div>
-                <div className={cn("font-regular leading-5 text-tertiary text-11")}>
+                <div className="pb-1 text-16 font-medium">Allow anyone to sign up even without an invite</div>
+                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
                   Toggling this off will only let users sign up when they are invited.
                 </div>
               </div>
@@ -143,7 +143,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
               </div>
             </div>
           </div>
-          <div className="text-lg font-medium pt-6">Available authentication modes</div>
+          <div className="text-lg pt-6 font-medium">Available authentication modes</div>
           {authenticationModes.map((method) => (
             <AuthenticationMethodCard
               key={method.key}

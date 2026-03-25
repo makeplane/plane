@@ -1,0 +1,17 @@
+{
+  "printWidth": 120,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "sortTailwindcss": {
+    "stylesheet": "packages/tailwind-config/index.css",
+    "functions": ["cn", "clsx", "cva"]
+  },
+  "overrides": [
+    {
+      "files": ["packages/codemods/**/*"],
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ]
+}

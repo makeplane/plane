@@ -69,8 +69,8 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
       />
       <div className="flex flex-col gap-4 border-b border-subtle py-2">
         <div className="flex items-center gap-3">
-          <div className="shrink-0 size-10 grid place-items-center rounded-sm bg-layer-2">
-            <ArchiveRestore className="shrink-0 size-4 text-primary" />
+          <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
+            <ArchiveRestore className="size-4 shrink-0 text-primary" />
           </div>
           <SettingsControlItem
             title={t("project_settings.automations.auto-archive.title")}
@@ -106,7 +106,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
 
                       <button
                         type="button"
-                        className="flex w-full select-none items-center rounded-sm px-1 py-1.5 text-13 text-secondary hover:bg-layer-1"
+                        className="flex w-full items-center rounded-sm px-1 py-1.5 text-13 text-secondary select-none hover:bg-layer-1"
                         onClick={() => setmonthModal(true)}
                       >
                         {t("common.customize_time_range")}

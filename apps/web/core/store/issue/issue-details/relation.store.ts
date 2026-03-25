@@ -305,7 +305,7 @@ export class IssueRelationStore implements IIssueRelationStore {
           set(this.relationMap, [issueId], issueRelations);
         }
       });
-    } catch (e) {
+    } catch (_e) {
       console.error("Error while extracting issue relations from issues");
     }
   };

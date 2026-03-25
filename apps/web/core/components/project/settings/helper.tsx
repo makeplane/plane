@@ -28,7 +28,7 @@ export function ProjectFeatureToggle(props: Props) {
         <Pill
           variant={value ? EPillVariant.PRIMARY : EPillVariant.DEFAULT}
           size={EPillSize.SM}
-          className="border-none rounded-lg"
+          className="rounded-lg border-none"
         >
           {value ? "Enabled" : "Disabled"}
         </Pill>

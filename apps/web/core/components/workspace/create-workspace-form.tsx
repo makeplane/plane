@@ -160,8 +160,8 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-danger-primary">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border border-subtle px-3 bg-layer-2">
-            <span className="whitespace-nowrap text-12 text-secondary">{window && window.location.host}/</span>
+          <div className="flex w-full items-center rounded-md border border-subtle bg-layer-2 px-3">
+            <span className="text-12 whitespace-nowrap text-secondary">{window && window.location.host}/</span>
             <Controller
               control={control}
               name="slug"

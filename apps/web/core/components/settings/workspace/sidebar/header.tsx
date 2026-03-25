@@ -36,7 +36,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
 
   return (
     <div className="shrink-0">
-      <div className="py-3 pl-4 pr-5 flex items-center gap-1 text-body-md-medium">
+      <div className="flex items-center gap-1 py-3 pr-5 pl-4 text-body-md-medium">
         <IconButton
           variant="ghost"
           size="base"
@@ -45,7 +45,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
         />
         <p>Workspace settings</p>
       </div>
-      <div className="mt-1.5 flex items-center justify-between gap-2 py-0.5 px-5">
+      <div className="mt-1.5 flex items-center justify-between gap-2 px-5 py-0.5">
         <div className="flex items-center gap-2 truncate">
           <WorkspaceLogo
             logo={currentWorkspace?.logo_url}
@@ -53,8 +53,8 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
             classNames="shrink-0 size-8 border border-subtle"
           />
           <div className="truncate">
-            <p className="text-body-sm-medium truncate">{currentWorkspace?.name}</p>
-            <p className="text-caption-md-regular truncate">{t(ROLE_DETAILS[currentWorkspaceRole].i18n_title)}</p>
+            <p className="truncate text-body-sm-medium">{currentWorkspace?.name}</p>
+            <p className="truncate text-caption-md-regular">{t(ROLE_DETAILS[currentWorkspaceRole].i18n_title)}</p>
           </div>
         </div>
         <div className="shrink-0">

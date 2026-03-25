@@ -162,7 +162,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           {customQuickAddButton && <>{customQuickAddButton}</>}
           {!QuickAddButton && !customQuickAddButton && (
             <button
-              className="flex w-full cursor-pointer items-center gap-2 px-2 py-3 bg-layer-transparent hover:bg-layer-transparent-hover"
+              className="flex w-full cursor-pointer items-center gap-2 bg-layer-transparent px-2 py-3 hover:bg-layer-transparent-hover"
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />

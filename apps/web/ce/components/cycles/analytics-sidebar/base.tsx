@@ -79,7 +79,7 @@ export const SidebarChart = observer(function SidebarChart(props: ProgressChartP
               />
             </Fragment>
           ) : (
-            <Loader className="w-full h-[160px] mt-4">
+            <Loader className="mt-4 h-[160px] w-full">
               <Loader.Item width="100%" height="100%" />
             </Loader>
           )}

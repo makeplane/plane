@@ -90,7 +90,7 @@ export function IntegrationCard({ integration }: Props) {
             <div className="h-10 w-10 flex-shrink-0">
               <img
                 src={integrationDetails[integration.integration_detail.provider].logo}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 alt={`${integration.integration_detail.title} Logo`}
               />
             </div>

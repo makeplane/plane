@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -21,7 +20,7 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import type { InstructionType, TWidgetEntityData } from "@plane/types";
+import type { InstructionType } from "@plane/types";
 // plane ui
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
 // plane utils
@@ -77,7 +76,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(<div className="rounded-sm bg-surface-1 text-13 p-1 pr-2">{widget.key}</div>);
+              root.render(<div className="rounded-sm bg-surface-1 p-1 pr-2 text-13">{widget.key}</div>);
               return () => root.unmount();
             },
             nativeSetDragImage,
@@ -127,7 +126,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
       <div
         ref={elementRef}
         className={cn(
-          "px-2 relative flex items-center py-2 font-medium text-13 group/widget-item rounded-sm hover:bg-layer-1 justify-between",
+          "group/widget-item relative flex items-center justify-between rounded-sm px-2 py-2 text-13 font-medium hover:bg-layer-1",
           {
             "cursor-grabbing bg-layer-1": isDragging,
           }

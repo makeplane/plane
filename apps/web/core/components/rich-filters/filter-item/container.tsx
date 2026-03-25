@@ -58,7 +58,7 @@ export function FilterItemContainer(props: FilterItemContainerProps) {
     <Tooltip tooltipContent={tooltipContent} position="bottom" disabled={!tooltipContent}>
       <div
         ref={itemRef}
-        className={cn("flex h-7 items-stretch rounded-sm overflow-hidden border transition-all duration-200", {
+        className={cn("flex h-7 items-stretch overflow-hidden rounded-sm border transition-all duration-200", {
           "border-subtle bg-surface-1": variant === "default",
           "border-danger-strong bg-surface-2": variant === "error",
         })}

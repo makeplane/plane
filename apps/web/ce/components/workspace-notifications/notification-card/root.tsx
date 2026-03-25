@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
@@ -45,12 +44,12 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
       {paginationInfo && paginationInfo?.next_page_results && (
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
-            <div className="py-4 flex justify-center items-center text-13 font-medium">
+            <div className="flex items-center justify-center py-4 text-13 font-medium">
               <div className="text-accent-secondary">{t("loading")}...</div>
             </div>
           ) : (
-            <div className="py-4 flex justify-center items-center text-13 font-medium" onClick={getNextNotifications}>
-              <div className="text-accent-secondary hover:text-accent-primary transition-all cursor-pointer">
+            <div className="flex items-center justify-center py-4 text-13 font-medium" onClick={getNextNotifications}>
+              <div className="cursor-pointer text-accent-secondary transition-all hover:text-accent-primary">
                 {t("load_more")}
               </div>
             </div>

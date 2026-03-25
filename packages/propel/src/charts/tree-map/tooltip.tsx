@@ -22,7 +22,7 @@ export const TreeMapTooltip = React.memo(function TreeMapTooltip({ active, paylo
     <Card className="flex flex-col space-y-1.5" spacing={ECardSpacing.SM}>
       <div className="flex items-center gap-2 border-b border-subtle pb-2.5">
         {data?.icon}
-        <p className="text-11 text-primary font-medium capitalize">{data?.name}</p>
+        <p className="text-11 font-medium text-primary capitalize">{data?.name}</p>
       </div>
       <span className="text-11 font-medium text-secondary">
         {data?.value.toLocaleString()}

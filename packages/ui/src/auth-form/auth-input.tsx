@@ -41,13 +41,13 @@ export function AuthInput({
           {label}
         </label>
       )}
-      <div className={cn("relative flex items-center rounded-md border border-strong py-2 px-3 transition-all")}>
+      <div className={cn("relative flex items-center rounded-md border border-strong px-3 py-2 transition-all")}>
         <Input
           {...props}
           type={inputType}
           autoComplete={autoComplete}
           className={cn(
-            "rounded-md disable-autofill-style h-6 w-full placeholder:text-14 placeholder:text-placeholder p-0 border-none",
+            "h-6 w-full rounded-md border-none p-0 disable-autofill-style placeholder:text-14 placeholder:text-placeholder",
             {
               "border-danger-strong": error,
             },

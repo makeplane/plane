@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
@@ -28,11 +27,11 @@ export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(pro
             {...register("name", {
               required: isEpic ? t("epic.title.required") : t("issue.title.required"),
             })}
-            className="w-full rounded-md bg-transparent px-2 py-3 text-13 font-medium leading-5 text-secondary outline-none"
+            className="w-full rounded-md bg-transparent px-2 py-3 text-13 leading-5 font-medium text-secondary outline-none"
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-11 italic text-secondary">
+      <div className="px-3 py-2 text-11 text-secondary italic">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </div>
     </div>

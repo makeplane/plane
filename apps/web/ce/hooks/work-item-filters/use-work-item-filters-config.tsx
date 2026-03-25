@@ -180,7 +180,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         filterIcon: LabelPropertyIcon,
         labels: workItemLabels ?? [],
         getOptionIcon: (color) => (
-          <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
+          <span className="flex size-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: color }} />
         ),
         ...operatorConfigs,
       }),

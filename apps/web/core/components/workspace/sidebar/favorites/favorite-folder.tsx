@@ -86,8 +86,8 @@ export function FavoriteFolder(props: Props) {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded-sm flex gap-1 bg-surface-1 text-13 p-1 pr-2">
-                  <div className="size-5 grid place-items-center flex-shrink-0">
+                <div className="flex gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-13">
+                  <div className="grid size-5 flex-shrink-0 place-items-center">
                     <FavoriteFolderIcon />
                   </div>
                   <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
@@ -160,7 +160,7 @@ export function FavoriteFolder(props: Props) {
             <DropIndicator isVisible={instruction === "reorder-above"} />
             <div
               className={cn(
-                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-1-hover",
+                "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-1-hover",
                 {
                   "bg-surface-2": isMenuActive,
                 }
@@ -168,17 +168,17 @@ export function FavoriteFolder(props: Props) {
             >
               {/* draggable indicator */}
 
-              <div className="flex-shrink-0 w-3 h-3 rounded-xs absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-surface-2 cursor-pointer text-secondary hover:text-primary">
-                <GripVertical className="w-3 h-3" />
+              <div className="absolute left-0 hidden h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs bg-surface-2 text-secondary transition-colors group-hover:flex hover:text-primary">
+                <GripVertical className="h-3 w-3" />
               </div>
 
               <>
                 <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
-                  <div className="flex-grow flex truncate">
+                  <div className="flex flex-grow truncate">
                     <Disclosure.Button
                       as="button"
                       type="button"
-                      className="flex-grow flex items-center gap-1.5 text-left select-none w-full"
+                      className="flex w-full flex-grow items-center gap-1.5 text-left select-none"
                     >
                       <Tooltip
                         isMobile={isMobile}
@@ -191,7 +191,7 @@ export function FavoriteFolder(props: Props) {
                         <button
                           type="button"
                           className={cn(
-                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
+                            "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
                             {
                               "cursor-not-allowed opacity-60": favorite.sort_order === null,
                               "cursor-grabbing": isDragging,
@@ -201,7 +201,7 @@ export function FavoriteFolder(props: Props) {
                           <DragHandle className="bg-transparent" />
                         </button>
                       </Tooltip>
-                      <div className="size-5 grid place-items-center flex-shrink-0">
+                      <div className="grid size-5 flex-shrink-0 place-items-center">
                         <FavoriteFolderIcon />
                       </div>
                       <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
@@ -212,16 +212,16 @@ export function FavoriteFolder(props: Props) {
                   customButton={
                     <span
                       ref={actionSectionRef}
-                      className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
+                      className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
                     >
                       <MoreHorizontal className="size-3" />
                     </span>
                   }
                   menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
                   className={cn(
-                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                    "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                     {
-                      "opacity-100 pointer-events-auto": isMenuActive,
+                      "pointer-events-auto opacity-100": isMenuActive,
                     }
                   )}
                   customButtonClassName="grid place-items-center"
@@ -230,7 +230,7 @@ export function FavoriteFolder(props: Props) {
                 >
                   <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                     <span className="flex items-center justify-start gap-2">
-                      <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
+                      <Star className="fill-yellow-500 stroke-yellow-500 h-3.5 w-3.5" />
                       <span>Remove from favorites</span>
                     </span>
                   </CustomMenu.MenuItem>
@@ -244,7 +244,7 @@ export function FavoriteFolder(props: Props) {
                 <Disclosure.Button
                   as="button"
                   type="button"
-                  className={cn("hidden group-hover/project-item:inline-block p-0.5 rounded-sm hover:bg-layer-1", {
+                  className={cn("hidden rounded-sm p-0.5 group-hover/project-item:inline-block hover:bg-layer-1", {
                     "inline-block": isMenuActive,
                   })}
                   aria-label={t(
@@ -268,7 +268,7 @@ export function FavoriteFolder(props: Props) {
                 leaveFrom="transform scale-100 opacity-100"
                 leaveTo="transform scale-95 opacity-0"
               >
-                <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1 px-2">
+                <Disclosure.Panel as="div" className="mt-1 flex flex-col gap-0.5 px-2">
                   {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
                     <FavoriteRoot
                       key={child.id}

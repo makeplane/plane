@@ -215,7 +215,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       <div className="relative h-16 w-16 overflow-hidden">
                         <img
                           src={getFileURL(userAvatar)}
-                          className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
+                          className="absolute top-0 left-0 h-full w-full rounded-lg object-cover"
                           onClick={() => setIsImageUploadModalOpen(true)}
                           alt={currentUser?.display_name}
                           role="button"
@@ -226,7 +226,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-3 right-3 flex">
+            <div className="absolute right-3 bottom-3 flex">
               <Controller
                 control={control}
                 name="cover_image_url"
@@ -247,11 +247,11 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
               <div className="item-center flex text-16 font-medium text-secondary">
                 <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
               </div>
-              <span className="text-13 text-tertiary tracking-tight">{watch("email")}</span>
+              <span className="text-13 tracking-tight text-tertiary">{watch("email")}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">
                   {t("first_name")}&nbsp;
@@ -370,7 +370,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                 {isSMTPConfigured && (
                   <button
                     type="button"
-                    className="text-11 underline btn w-fit text-secondary"
+                    className="btn w-fit text-11 text-secondary underline"
                     onClick={() => setIsChangeEmailModalOpen(true)}
                   >
                     {t("account_settings.profile.change_email_modal.title")}

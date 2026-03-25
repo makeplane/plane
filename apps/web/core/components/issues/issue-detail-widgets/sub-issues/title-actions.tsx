@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
@@ -90,7 +89,7 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
   return (
     // prevent click everywhere
     <div
-      className="flex gap-2 items-center"
+      className="flex items-center gap-2"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();

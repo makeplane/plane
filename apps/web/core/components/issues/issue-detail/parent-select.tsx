@@ -78,7 +78,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       <button
         type="button"
         className={cn(
-          "group flex items-center justify-between gap-2 px-2 py-0.5 rounded-sm outline-none",
+          "group flex items-center justify-between gap-2 rounded-sm px-2 py-0.5 outline-none",
           {
             "cursor-not-allowed": disabled,
             "hover:bg-layer-transparent-hover": !disabled,
@@ -125,7 +125,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
         )}
         {!disabled && (
           <span
-            className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
+            className={cn("flex-shrink-0 p-1 opacity-0 group-hover:opacity-100", {
               "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >

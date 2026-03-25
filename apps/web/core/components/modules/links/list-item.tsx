@@ -53,7 +53,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary shrink-0" />
+            <Icon className="size-3 shrink-0 stroke-2 text-tertiary group-hover:text-primary" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
             <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
@@ -66,7 +66,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
           {isEditingAllowed && (
             <button
               type="button"
-              className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
+              className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
               data-ph-element={MODULE_TRACKER_ELEMENTS.LIST_ITEM}
               onClick={(e) => {
                 e.preventDefault();
@@ -80,14 +80,14 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
           <button
             type="button"
             onClick={() => copyToClipboard(link.url)}
-            className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
+            className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
           >
             <CopyIcon className="size-3 stroke-[1.5]" />
           </button>
           {isEditingAllowed && (
             <button
               type="button"
-              className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
+              className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
               data-ph-element={MODULE_TRACKER_ELEMENTS.LIST_ITEM}
               onClick={(e) => {
                 e.preventDefault();
@@ -101,7 +101,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
         </div>
       </div>
       <div className="px-5">
-        <p className="flex items-center gap-1.5 mt-0.5 stroke-[1.5] text-11 text-tertiary">
+        <p className="mt-0.5 flex items-center gap-1.5 stroke-[1.5] text-11 text-tertiary">
           Added {calculateTimeAgo(link.created_at)}{" "}
           {createdByDetails && (
             <>by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}</>

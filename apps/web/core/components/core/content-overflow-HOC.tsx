@@ -134,7 +134,7 @@ export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(p
         <div
           className={cn(
             "bottom-0 left-0 w-full transition-all duration-300 ease-in-out",
-            `bg-gradient-to-t from-surface-1 to-transparent flex flex-col items-center justify-end`,
+            `flex flex-col items-center justify-end bg-gradient-to-t from-surface-1 to-transparent`,
             "text-center",
             {
               "absolute h-[100px] opacity-100": !showAll,
@@ -148,7 +148,7 @@ export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(p
           {customButton || (
             <button
               className={cn(
-                "gap-1 w-full text-accent-primary text-13 font-medium transition-opacity duration-300",
+                "w-full gap-1 text-13 font-medium text-accent-primary transition-opacity duration-300",
                 buttonClassName
               )}
               onClick={handleToggle}

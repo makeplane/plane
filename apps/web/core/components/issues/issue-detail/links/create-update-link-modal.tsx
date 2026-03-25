@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -113,7 +112,7 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">
                 {t("common.display_title")}
-                <span className="text-caption-xs-regular block">{t("common.optional")}</span>
+                <span className="block text-caption-xs-regular">{t("common.optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -134,7 +133,7 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
             {t("common.cancel")}
           </Button>

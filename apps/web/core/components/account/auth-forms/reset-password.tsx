@@ -111,7 +111,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="email">
+          <label className="text-13 font-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
@@ -122,14 +122,14 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               value={resetFormData.email}
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
+              className="h-10 w-full cursor-not-allowed border border-strong !bg-surface-1 pr-12 text-placeholder"
               autoComplete="off"
               disabled
             />
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
@@ -162,7 +162,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">

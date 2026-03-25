@@ -56,35 +56,35 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
 
   return (
     <div
-      className={cn("space-y-1 border border-subtle rounded-sm bg-surface-2 transition-all p-2", groupItemClassName)}
+      className={cn("space-y-1 rounded-sm border border-subtle bg-surface-2 p-2 transition-all", groupItemClassName)}
       ref={dropElementRef}
     >
-      <div className="flex justify-between items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div
-          className="w-full flex items-center cursor-pointer py-1"
+          className="flex w-full cursor-pointer items-center py-1"
           onClick={() => (!currentStateExpanded ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
         >
           <div
             className={cn(
-              "flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-all",
+              "flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all",
               {
                 "rotate-0": currentStateExpanded,
                 "-rotate-90": !currentStateExpanded,
               }
             )}
           >
-            <ChevronDownIcon className="w-4 h-4" />
+            <ChevronDownIcon className="h-4 w-4" />
           </div>
-          <div className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
           </div>
-          <div className="text-14 font-medium text-secondary capitalize px-1">{groupKey}</div>
+          <div className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</div>
         </div>
         <button
           type="button"
           data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
           className={cn(
-            "flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-accent-primary/80 hover:text-accent-primary",
+            "flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-accent-primary/80 transition-colors hover:bg-layer-1 hover:text-accent-primary",
             (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
           )}
           onClick={() => {
@@ -95,12 +95,12 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           }}
           disabled={!isEditable || createState}
         >
-          <PlusIcon className="w-4 h-4" />
+          <PlusIcon className="h-4 w-4" />
         </button>
       </div>
 
       {shouldShowEmptyState && (
-        <div className="flex flex-col justify-center items-center h-full py-4 text-13 text-tertiary">
+        <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
           <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
           {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
         </div>

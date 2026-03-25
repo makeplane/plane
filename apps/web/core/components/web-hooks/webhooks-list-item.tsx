@@ -29,12 +29,12 @@ export function WebhooksListItem(props: IWebhookListItem) {
   };
 
   return (
-    <div className="bg-layer-2 border border-subtle px-4 py-3 rounded-lg">
+    <div className="rounded-lg border border-subtle bg-layer-2 px-4 py-3">
       <Link
         href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}
         className="flex items-center justify-between gap-4"
       >
-        <h5 className="text-body-sm-medium truncate">{webhook.url}</h5>
+        <h5 className="truncate text-body-sm-medium">{webhook.url}</h5>
         <div className="shrink-0">
           <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
         </div>

@@ -26,7 +26,7 @@ export function SettingsSidebarItem(props: Props) {
   const { as, isActive, label } = props;
   // common class
   const className = cn(
-    "flex items-center gap-2 py-1.5 px-2 rounded-lg text-body-sm-medium text-secondary text-left transition-colors",
+    "flex items-center gap-2 rounded-lg px-2 py-1.5 text-left text-body-sm-medium text-secondary transition-colors",
     {
       "bg-layer-transparent-selected text-primary": isActive,
       "hover:bg-layer-transparent-hover": !isActive,
@@ -36,7 +36,7 @@ export function SettingsSidebarItem(props: Props) {
   const content = (
     <>
       {"icon" in props ? (
-        <span className="shrink-0 size-4 grid place-items-center">{<props.icon className="size-3.5" />}</span>
+        <span className="grid size-4 shrink-0 place-items-center">{<props.icon className="size-3.5" />}</span>
       ) : (
         props.iconNode
       )}

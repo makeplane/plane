@@ -54,32 +54,32 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
     <>
       <div
         key={linkId}
-        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-surface-2 hover:bg-layer-1 border-[0.5px] border-subtle rounded-sm"
+        className="group 3xl:col-span-2 col-span-12 flex h-10 flex-shrink-0 items-center justify-between gap-3 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-3 hover:bg-layer-1 lg:col-span-6 xl:col-span-4 2xl:col-span-3"
       >
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
           ) : (
-            <LinkIcon className="size-4 text-tertiary group-hover:text-primary flex-shrink-0" />
+            <LinkIcon className="size-4 flex-shrink-0 text-tertiary group-hover:text-primary" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a
               href={linkDetail.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 w-0 text-body-xs-regular cursor-pointer flex items-center"
+              className="flex w-0 flex-1 cursor-pointer items-center text-body-xs-regular"
             >
-              <span className="truncate flex-1 w-0">
+              <span className="w-0 flex-1 truncate">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
                 {linkTitle && linkTitle !== "" && (
-                  <span className="text-placeholder text-caption-sm-regular"> {linkTitle}</span>
+                  <span className="text-caption-sm-regular text-placeholder"> {linkTitle}</span>
                 )}
               </span>
             </a>
           </Tooltip>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <p className="p-1 text-caption-sm-regular align-bottom leading-5 text-placeholder group-hover-text-secondary">
+        <div className="flex flex-shrink-0 items-center gap-1">
+          <p className="group-hover-text-secondary p-1 align-bottom text-caption-sm-regular leading-5 text-placeholder">
             {calculateTimeAgo(linkDetail.created_at)}
           </p>
           <span
@@ -91,7 +91,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 message: t("common.link_copied_to_clipboard"),
               });
             }}
-            className="relative grid place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary cursor-pointer hover:bg-layer-1"
+            className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary hover:bg-layer-1"
           >
             <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
           </span>

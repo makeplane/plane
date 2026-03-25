@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type React from "react";
 import { observer } from "mobx-react";
 
 type Props = {

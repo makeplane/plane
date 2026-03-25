@@ -58,12 +58,12 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
   return (
     <div
       className={cn(
-        "relative border-0 md:border-r border-subtle z-[10] flex-shrink-0 bg-surface-1 h-full transition-all max-md:overflow-hidden",
+        "relative z-[10] h-full flex-shrink-0 border-0 border-subtle bg-surface-1 transition-all max-md:overflow-hidden md:border-r",
         currentSelectedNotificationId ? "w-0 md:w-3/12" : "w-full md:w-3/12"
       )}
     >
-      <div className="relative w-full h-full flex flex-col">
-        <Row className="h-header border-b border-subtle flex flex-shrink-0">
+      <div className="relative flex h-full w-full flex-col">
+        <Row className="flex h-header flex-shrink-0 border-b border-subtle">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 
@@ -71,12 +71,12 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}
-              className="h-full px-3 relative cursor-pointer"
+              className="relative h-full cursor-pointer px-3"
               onClick={() => handleTabClick(tab.value)}
             >
               <div
                 className={cn(
-                  "relative h-full flex justify-center items-center gap-1 text-body-xs-medium transition-all",
+                  "relative flex h-full items-center justify-center gap-1 text-body-xs-medium transition-all",
                   {
                     "text-accent-primary": currentNotificationTab === tab.value,
                     "text-primary hover:text-secondary": currentNotificationTab !== tab.value,
@@ -89,7 +89,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
                 )}
               </div>
               {currentNotificationTab === tab.value && (
-                <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-accent-strong" />
+                <div className="absolute right-0 bottom-0 left-0 rounded-t-md border border-accent-strong" />
               )}
             </div>
           ))}
@@ -100,7 +100,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
 
         {/* rendering notifications */}
         {loader === "init-loader" ? (
-          <div className="relative w-full h-full overflow-hidden">
+          <div className="relative h-full w-full overflow-hidden">
             <NotificationsLoader />
           </div>
         ) : (
@@ -110,7 +110,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
                 <NotificationListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
               </ContentWrapper>
             ) : (
-              <div className="relative w-full h-full flex justify-center items-center">
+              <div className="relative flex h-full w-full items-center justify-center">
                 <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
               </div>
             )}

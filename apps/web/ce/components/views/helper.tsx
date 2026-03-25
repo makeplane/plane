@@ -13,11 +13,11 @@ export type TLayoutSelectionProps = {
   workspaceSlug: string;
 };
 
-export function GlobalViewLayoutSelection(props: TLayoutSelectionProps) {
+export function GlobalViewLayoutSelection(_props: TLayoutSelectionProps) {
   return <></>;
 }
 
-export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
+export function WorkspaceAdditionalLayouts(_props: TWorkspaceLayoutProps) {
   return <></>;
 }
 

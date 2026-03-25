@@ -28,7 +28,7 @@ export const PreferencesProfileSettings = observer(function PreferencesProfileSe
         title={t("account_settings.preferences.heading")}
         description={t("account_settings.preferences.description")}
       />
-      <div className="mt-7 flex flex-col gap-6 w-full">
+      <div className="mt-7 flex w-full flex-col gap-6">
         <section>
           <ProfileSettingsDefaultPreferencesList />
         </section>

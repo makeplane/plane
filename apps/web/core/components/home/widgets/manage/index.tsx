@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane types
 // plane ui
@@ -26,7 +25,7 @@ export const ManageWidgetsModal = observer(function ManageWidgetsModal(props: TP
   return (
     <ModalCore isOpen={isModalOpen} handleClose={handleOnClose} width={EModalWidth.MD}>
       <div className="p-4">
-        <div className="font-medium text-18"> {t("home.manage_widgets")}</div>
+        <div className="text-18 font-medium"> {t("home.manage_widgets")}</div>
         <WidgetList workspaceSlug={workspaceSlug} />
       </div>
     </ModalCore>

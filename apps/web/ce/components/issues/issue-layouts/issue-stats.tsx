@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React from "react";
 
 type Props = {
@@ -15,6 +14,6 @@ type Props = {
   showLabel?: boolean;
 };
 
-export function IssueStats(props: Props) {
+export function IssueStats(_props: Props) {
   return <></>;
 }

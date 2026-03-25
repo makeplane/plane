@@ -62,7 +62,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
         try {
           if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
           else await updateIssue(workspaceSlug, projectId, issueId, data);
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
@@ -98,7 +98,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   );
 
   return (
-    <div className="relative flex flex-wrap items-center gap-1 min-h-7.5 w-full px-2">
+    <div className="relative flex min-h-7.5 w-full flex-wrap items-center gap-1 px-2">
       <LabelList
         workspaceSlug={workspaceSlug}
         projectId={projectId}

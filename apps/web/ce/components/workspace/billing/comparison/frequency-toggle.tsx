@@ -23,15 +23,15 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
 
   return (
-    <div className="flex w-full items-center cursor-pointer py-1">
-      <div className="flex space-x-1 rounded-md bg-layer-3 p-0.5 w-full">
+    <div className="flex w-full cursor-pointer items-center py-1">
+      <div className="flex w-full space-x-1 rounded-md bg-layer-3 p-0.5">
         <button
           type="button"
           onClick={() => setSelectedFrequency("month")}
           className={cn(
-            "w-full rounded-sm px-1 py-0.5 text-caption-sm-medium leading-5 text-center",
+            "w-full rounded-sm px-1 py-0.5 text-center text-caption-sm-medium leading-5",
             selectedFrequency === "month"
-              ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
+              ? "border border-subtle-1 bg-layer-2 text-primary shadow-raised-100"
               : "text-tertiary hover:text-secondary"
           )}
         >
@@ -41,15 +41,15 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
           type="button"
           onClick={() => setSelectedFrequency("year")}
           className={cn(
-            "w-full rounded-sm px-1 py-0.5 text-caption-sm-medium leading-5 text-center",
+            "w-full rounded-sm px-1 py-0.5 text-center text-caption-sm-medium leading-5",
             selectedFrequency === "year"
-              ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
+              ? "border border-subtle-1 bg-layer-2 text-primary shadow-raised-100"
               : "text-tertiary hover:text-secondary"
           )}
         >
           Yearly
           {yearlyDiscount > 0 && (
-            <span className="bg-accent-primary text-on-color rounded-full px-1 py-0.5 ml-1.5 text-caption-xs-regular">
+            <span className="ml-1.5 rounded-full bg-accent-primary px-1 py-0.5 text-caption-xs-regular text-on-color">
               -{yearlyDiscount}%
             </span>
           )}

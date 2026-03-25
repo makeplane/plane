@@ -45,12 +45,12 @@ export function CodeBlockComponent({ node }: Props) {
   };
 
   return (
-    <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block relative group/code">
+    <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block group/code relative">
       <Tooltip tooltipContent="Copy code">
         <button
           type="button"
           className={cn(
-            "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-layer-1 border border-subtle transition duration-150 ease-in-out backdrop-blur-sm",
+            "group/button absolute top-2 right-2 z-10 hidden size-8 items-center justify-center rounded-md border border-subtle bg-layer-1 backdrop-blur-sm transition duration-150 ease-in-out group-hover/code:flex",
             {
               "bg-success-subtle hover:bg-success-subtle-1 active:bg-success-subtle-1": copied,
             }
@@ -65,7 +65,7 @@ export function CodeBlockComponent({ node }: Props) {
         </button>
       </Tooltip>
 
-      <pre className="bg-layer-3 text-primary rounded-lg p-4 my-2">
+      <pre className="my-2 rounded-lg bg-layer-3 p-4 text-primary">
         <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>

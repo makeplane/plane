@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC, MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";

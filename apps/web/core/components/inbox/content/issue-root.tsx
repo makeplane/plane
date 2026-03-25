@@ -117,7 +117,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
@@ -176,10 +176,11 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
             initialValue={issue.description_html ?? "<p></p>"}
+            key={issue.id}
             onSubmit={async (value, isMigrationUpdate) => {
               if (!issue.id || !issue.project_id) return;
               await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-                description_html: value,
+                description_html: value.description_html,
                 ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
               });
             }}

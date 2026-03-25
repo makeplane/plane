@@ -62,7 +62,7 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
       >
         {({ filter: profileWorkItemsFilter }) => (
           <>
-            <div className="flex flex-col h-full w-full">
+            <div className="flex h-full w-full flex-col">
               {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter} />}
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (

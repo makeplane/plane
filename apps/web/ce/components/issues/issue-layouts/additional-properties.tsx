@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React from "react";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 
@@ -13,6 +12,6 @@ export type TWorkItemLayoutAdditionalProperties = {
   issue: TIssue;
 };
 
-export function WorkItemLayoutAdditionalProperties(props: TWorkItemLayoutAdditionalProperties) {
+export function WorkItemLayoutAdditionalProperties(_props: TWorkItemLayoutAdditionalProperties) {
   return <></>;
 }

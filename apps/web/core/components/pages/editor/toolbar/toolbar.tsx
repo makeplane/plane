@@ -49,8 +49,8 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
             ...item.extraProps,
           })
         }
-        className={cn("shrink-0 grid size-7 place-items-center rounded-sm text-tertiary", {
-          "bg-layer-transparent-selected hover:bg-layer-transparent-selected text-primary": isActive,
+        className={cn("grid size-7 shrink-0 place-items-center rounded-sm text-tertiary", {
+          "bg-layer-transparent-selected text-primary hover:bg-layer-transparent-selected": isActive,
           "hover:bg-layer-transparent-hover": !isActive,
         })}
       >
@@ -116,12 +116,12 @@ export function PageToolbar(props: Props) {
   );
 
   return (
-    <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll animate-in fade-in duration-200">
+    <div className="animate-in fade-in flex items-center divide-x divide-subtle-1 overflow-x-scroll duration-200">
       <CustomMenu
         customButton={
           <span
             className={cn(
-              "text-13 border-[0.5px] border-strong h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left",
+              "flex h-7 w-24 items-center justify-between gap-2 rounded-sm border-[0.5px] border-strong px-2 text-left text-13 whitespace-nowrap",
               {
                 "bg-layer-1-selected text-primary": isTypographyMenuOpen,
                 "text-tertiary hover:bg-layer-1-hover": !isTypographyMenuOpen,
@@ -129,7 +129,7 @@ export function PageToolbar(props: Props) {
             )}
           >
             {activeTypography?.name || "Text"}
-            <ChevronDownIcon className="shrink-0 size-3" />
+            <ChevronDownIcon className="size-3 shrink-0" />
           </span>
         }
         className="pr-2"
@@ -159,7 +159,7 @@ export function PageToolbar(props: Props) {
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && <CheckIcon className="size-3 text-tertiary shrink-0" />}
+            {activeTypography?.itemKey === item.itemKey && <CheckIcon className="size-3 shrink-0 text-tertiary" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>

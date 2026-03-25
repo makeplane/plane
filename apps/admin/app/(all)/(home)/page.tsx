@@ -22,7 +22,7 @@ function HomePage() {
   // if instance is not fetched, show loading
   if (!instance && !error) {
     return (
-      <div className="flex items-center justify-center h-screen w-full">
+      <div className="flex h-screen w-full items-center justify-center">
         <LogoSpinner />
       </div>
     );

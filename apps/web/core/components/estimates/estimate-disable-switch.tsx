@@ -44,7 +44,7 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
           ? t("project_settings.estimates.toasts.disabled.success.message")
           : t("project_settings.estimates.toasts.enabled.success.message"),
       });
-    } catch (err) {
+    } catch (_err) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("project_settings.estimates.toasts.disabled.error.title"),

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -22,7 +21,7 @@ export const WidgetItemDragHandle = observer(function WidgetItemDragHandle(props
 
   return (
     <div
-      className={cn("flex items-center justify-center rounded-sm text-placeholder cursor-grab mr-2", {
+      className={cn("mr-2 flex cursor-grab items-center justify-center rounded-sm text-placeholder", {
         "cursor-grabbing": isDragging,
       })}
     >

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { Row, ERowVariant } from "@plane/ui";
 
@@ -17,7 +16,7 @@ export function ListLayout(props: IListContainer) {
   return (
     <Row
       variant={ERowVariant.HUGGING}
-      className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg"
+      className="vertical-scrollbar flex scrollbar-lg h-full w-full flex-col overflow-y-auto"
     >
       {children}
     </Row>

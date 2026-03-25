@@ -60,8 +60,8 @@ type TProps = {
 export function ColorPalette(props: TProps) {
   const { handleUpdate } = props;
   return (
-    <div className="absolute z-10 bottom-5 left-0 w-56 shadow p-2 rounded-md bg-surface-1 mb-2">
-      <div className="text-13 font-semibold text-placeholder mb-2">Background colors</div>
+    <div className="shadow absolute bottom-5 left-0 z-10 mb-2 w-56 rounded-md bg-surface-1 p-2">
+      <div className="mb-2 text-13 font-semibold text-placeholder">Background colors</div>
       <div className="flex flex-wrap gap-2">
         {STICKY_COLORS_LIST.map((color) => (
           <button
@@ -72,7 +72,7 @@ export function ColorPalette(props: TProps) {
                 background_color: color.key,
               });
             }}
-            className="h-6 w-6 rounded-md hover:ring-2 hover:ring-accent-strong focus:outline-none focus:ring-2 focus:ring-accent-strong transition-all"
+            className="h-6 w-6 rounded-md transition-all hover:ring-2 hover:ring-accent-strong focus:ring-2 focus:ring-accent-strong focus:outline-none"
             style={{
               backgroundColor: color.backgroundColor,
             }}

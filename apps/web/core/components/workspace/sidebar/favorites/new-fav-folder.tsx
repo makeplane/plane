@@ -138,7 +138,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
     setCreateNewFolder(false);
   });
   return (
-    <div className="flex items-center gap-1.5 py-[1px] px-2" ref={ref}>
+    <div className="flex items-center gap-1.5 px-2 py-[1px]" ref={ref}>
       <FavoriteFolderIcon className="size-4" />
       <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
         <Controller

@@ -44,7 +44,7 @@ function ExportsPage() {
     <SettingsContentWrapper header={<ExportsWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <div
-        className={cn("w-full flex flex-col gap-y-6", {
+        className={cn("flex w-full flex-col gap-y-6", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >

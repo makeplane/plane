@@ -118,20 +118,20 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                         onChange([...currentValue, useCase]);
                       }
                     }}
-                    className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
+                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 transition-all duration-200 ${
                       isSelected
                         ? "border-accent-strong bg-accent-subtle text-accent-primary"
-                        : "border-subtle hover:border-strong text-tertiary"
+                        : "border-subtle text-tertiary hover:border-strong"
                     }`}
                   >
                     <span
-                      className={cn(`size-4 rounded-sm border-2 flex items-center justify-center`, {
-                        "bg-accent-primary border-accent-strong": isSelected,
+                      className={cn(`flex size-4 items-center justify-center rounded-sm border-2`, {
+                        "border-accent-strong bg-accent-primary": isSelected,
                         "border-strong": !isSelected,
                       })}
                     >
                       <CheckIcon
-                        className={cn("w-3 h-3 text-on-color", {
+                        className={cn("h-3 w-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,
                         })}

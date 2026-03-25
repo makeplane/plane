@@ -122,7 +122,7 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
 
   return (
     <div
-      className="flex flex-col box-border p-[8px]"
+      className="box-border flex flex-col p-[8px]"
       style={{
         width: itemWidth,
       }}

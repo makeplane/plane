@@ -32,8 +32,8 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-13 pointer-events-none">
-      <div className="flex-shrink-0 flex items-center gap-3">
+    <div className="pointer-events-none flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-13">
+      <div className="flex flex-shrink-0 items-center gap-3">
         <div className="h-7 w-7">{fileIcon}</div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
@@ -47,7 +47,7 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
           </div>
         </div>
       </div>
-      <div className="flex-shrink-0 flex items-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         <span className="flex-shrink-0">
           <CircularProgressIndicator size={20} strokeWidth={3} percentage={uploadStatus.progress} />
         </span>

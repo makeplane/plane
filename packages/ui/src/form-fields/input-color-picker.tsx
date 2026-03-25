@@ -58,7 +58,7 @@ export function InputColorPicker(props: InputColorPickerProps) {
         style={style}
       />
 
-      <Popover as="div" className="absolute right-1 top-1/2 z-10 -translate-y-1/2">
+      <Popover as="div" className="absolute top-1/2 right-1 z-10 -translate-y-1/2">
         {() => (
           <>
             <Popover.Button as={React.Fragment}>

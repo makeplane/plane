@@ -125,8 +125,8 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const mainContent = (
-    <div className="w-full flex items-start gap-2 bg-layer-1 px-4 py-2 rounded-lg">
-      <div className="w-full flex flex-wrap items-center gap-2">{leftContent}</div>
+    <div className="flex w-full items-start gap-2 rounded-lg bg-layer-1 px-4 py-2">
+      <div className="flex w-full flex-wrap items-center gap-2">{leftContent}</div>
       <div
         className={cn("flex items-center gap-2 border-l border-subtle pl-4", {
           "border-l-transparent pl-0": !hasAvailableOperations,
@@ -138,11 +138,11 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const ModalVariant = (
-    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-layer-1 rounded-lg p-2">{mainContent}</div>
+    <div className="flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg bg-layer-1 p-2">{mainContent}</div>
   );
 
   const HeaderVariant = (
-    <Header variant={EHeaderVariant.TERNARY} className="!px-3 min-h-11 bg-surface-1">
+    <Header variant={EHeaderVariant.TERNARY} className="min-h-11 bg-surface-1 !px-3">
       {mainContent}
     </Header>
   );

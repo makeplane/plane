@@ -1,8 +1,8 @@
 {
   "name": "@plane/typescript-config",
-  "version": "1.2.0",
-  "license": "AGPL-3.0",
+  "version": "1.2.3",
   "private": true,
+  "license": "AGPL-3.0",
   "files": [
     "base.json",
     "nextjs.json",

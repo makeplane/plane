@@ -98,7 +98,7 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
       }}
       extendedEditorProps={{}}
       {...rest}
-      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
+      containerClassName={cn("relative pb-3 pl-3", containerClassName)}
     />
   );
 });

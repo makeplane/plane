@@ -27,8 +27,8 @@ export const PageEditorHeaderLogoPicker = observer(function PageEditorHeaderLogo
 
   return (
     <div
-      className={cn(className, "max-h-0 pointer-events-none transition-all ease-linear duration-300", {
-        "max-h-[56px] pointer-events-auto": isLogoSelected,
+      className={cn(className, "pointer-events-none max-h-0 transition-all duration-300 ease-linear", {
+        "pointer-events-auto max-h-[56px]": isLogoSelected,
       })}
     >
       <EmojiPicker
@@ -38,7 +38,7 @@ export const PageEditorHeaderLogoPicker = observer(function PageEditorHeaderLogo
         buttonClassName="flex items-center justify-center"
         label={
           <div
-            className={cn("-ml-[8px] size-[56px] grid place-items-center rounded-sm transition-colors", {
+            className={cn("-ml-[8px] grid size-[56px] place-items-center rounded-sm transition-colors", {
               "hover:bg-layer-1": isContentEditable,
             })}
           >

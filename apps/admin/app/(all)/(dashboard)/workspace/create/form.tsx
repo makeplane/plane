@@ -123,8 +123,8 @@ export function WorkspaceCreateForm() {
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13 text-tertiary">Set your workspace&apos;s URL</h4>
-          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-subtle px-3">
-            <span className="whitespace-nowrap text-13 text-secondary">{workspaceBaseURL}</span>
+          <div className="flex w-full items-center gap-0.5 rounded-md border-[0.5px] border-subtle px-3">
+            <span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
             <Controller
               control={control}
               name="slug"
@@ -188,7 +188,7 @@ export function WorkspaceCreateForm() {
           </div>
         </div>
       </div>
-      <div className="flex max-w-4xl items-center py-1 gap-4">
+      <div className="flex max-w-4xl items-center gap-4 py-1">
         <Button
           variant="primary"
           size="lg"

@@ -103,7 +103,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       onSubmit={(e) => {
         void handleSubmit(handleUpdateTheme)(e);
       }}
-      className="bg-layer-1 border border-subtle rounded-lg py-3 px-4"
+      className="rounded-lg border border-subtle bg-layer-1 px-4 py-3"
     >
       <div className="space-y-5">
         <ProfileSettingsHeading
@@ -114,7 +114,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
         {/* Color Inputs */}
         <CustomThemeColorInputs control={control} />
       </div>
-      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Save Theme Button */}
         <Button variant="primary" size="lg" type="submit" loading={isSubmitting || isLoadingPalette}>
           {isSubmitting ? t("creating_theme") : isLoadingPalette ? "Generating" : t("set_theme")}

@@ -12,15 +12,15 @@ export function TabNavigationItem({ children, isActive, className }: TTabNavigat
   return (
     <div
       className={cn(
-        "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-13 font-medium transition-colors z-10",
-        isActive ? "text-primary" : "text-secondary hover:text-primary hover:bg-layer-transparent-hover",
+        "relative z-10 flex items-center gap-2 rounded-md px-2 py-1.5 text-13 font-medium transition-colors",
+        isActive ? "text-primary" : "text-secondary hover:bg-layer-transparent-hover hover:text-primary",
         className
       )}
     >
       <AnimatePresence>
         {isActive && (
           <motion.div
-            className="absolute inset-0 bg-layer-transparent-active rounded-md -z-10"
+            className="absolute inset-0 -z-10 rounded-md bg-layer-transparent-active"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}

@@ -44,7 +44,7 @@ export const StickiesTruncated = observer(function StickiesTruncated(props: Stic
         <Link
           href={`/${workspaceSlug}/stickies`}
           className={cn(
-            "gap-1 w-full text-accent-primary text-13 font-medium transition-opacity duration-300 bg-surface-2/20"
+            "w-full gap-1 bg-surface-2/20 text-13 font-medium text-accent-primary transition-opacity duration-300"
           )}
           onClick={handleClose}
         >

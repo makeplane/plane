@@ -120,7 +120,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "change_module_status",
       i18n_title: "power_k.contextual_actions.module.change_status",
-      iconNode: <ModuleStatusIcon status="backlog" className="shrink-0 size-3.5" />,
+      iconNode: <ModuleStatusIcon status="backlog" className="size-3.5 shrink-0" />,
       group: "contextual",
       contextType: "module",
       type: "change-page",

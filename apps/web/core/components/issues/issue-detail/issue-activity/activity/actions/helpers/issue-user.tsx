@@ -27,11 +27,11 @@ export function IssueUser(props: TIssueUser) {
   return (
     <>
       {customUserName ? (
-        <span className="text-primary font-medium">{customUserName}</span>
+        <span className="font-medium text-primary">{customUserName}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
-          className="hover:underline text-primary font-medium"
+          className="font-medium text-primary hover:underline"
         >
           {activity.actor_detail?.display_name}
         </Link>

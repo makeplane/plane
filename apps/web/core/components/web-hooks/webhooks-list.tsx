@@ -15,7 +15,7 @@ export const WebhooksList = observer(function WebhooksList() {
   const { webhooks } = useWebhook();
 
   return (
-    <div className="size-full bg-layer-1 p-3 rounded-lg border border-subtle flex flex-col gap-y-2 overflow-y-auto">
+    <div className="flex size-full flex-col gap-y-2 overflow-y-auto rounded-lg border border-subtle bg-layer-1 p-3">
       {Object.values(webhooks ?? {}).map((webhook) => (
         <WebhooksListItem key={webhook.id} webhook={webhook} />
       ))}

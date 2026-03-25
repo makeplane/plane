@@ -47,14 +47,14 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
   return (
     <li className="relative flex items-center gap-x-4 text-11 font-medium">
       {/* timeline icon */}
-      <div className="relative size-6 flex-none grid place-items-center">
+      <div className="relative grid size-6 flex-none place-items-center">
         <div className="size-2 rounded-full bg-layer-3" />
       </div>
       {/* end timeline icon */}
       <Link
         href={getVersionLink(version.id)}
-        className={cn("block flex-1 hover:bg-layer-transparent-hover rounded-md py-2 px-1", {
-          " bg-layer-transparent-selected hover:bg-layer-transparent-selected": isVersionActive,
+        className={cn("block flex-1 rounded-md px-1 py-2 hover:bg-layer-transparent-hover", {
+          "bg-layer-transparent-selected hover:bg-layer-transparent-selected": isVersionActive,
         })}
       >
         <p className="text-tertiary">
@@ -114,19 +114,19 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
       <div className="mt-3">
         <ul className="relative">
           {/* timeline line */}
-          <div className={cn("absolute left-0 top-0 h-full flex w-6 justify-center")}>
+          <div className={cn("absolute top-0 left-0 flex h-full w-6 justify-center")}>
             <div className="w-px bg-layer-3" />
           </div>
           {/* end timeline line */}
           <li className="relative flex items-center gap-x-4 text-11 font-medium">
             {/* timeline icon */}
-            <div className="relative size-6 flex-none rounded-full grid place-items-center bg-accent-primary/20">
+            <div className="relative grid size-6 flex-none place-items-center rounded-full bg-accent-primary/20">
               <div className="size-2.5 rounded-full bg-accent-primary/40" />
             </div>
             {/* end timeline icon */}
             <Link
               href={getVersionLink()}
-              className={cn("flex-1 bg-layer-transparent hover:bg-layer-transparent-hover rounded-md py-2 px-1", {
+              className={cn("flex-1 rounded-md bg-layer-transparent px-1 py-2 hover:bg-layer-transparent-hover", {
                 "bg-layer-transparent-selected hover:bg-layer-transparent-selected": !activeVersion,
               })}
             >

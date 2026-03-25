@@ -69,11 +69,11 @@ export function PageForm(props: Props) {
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
         <h3 className="text-18 font-medium text-secondary">Create page</h3>
-        <div className="flex items-start gap-2 h-9 w-full">
+        <div className="flex h-9 w-full items-start gap-2">
           <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
-            className="flex items-center justify-center flex-shrink0"
+            className="flex-shrink0 flex items-center justify-center"
             buttonClassName="flex items-center justify-center bg-layer-2 hover:bg-layer-2-hover rounded-md"
             label={
               <span className="grid h-9 w-9 place-items-center rounded-md">
@@ -113,7 +113,7 @@ export function PageForm(props: Props) {
                 : EmojiIconPickerTypes.ICON
             }
           />
-          <div className="space-y-1 flew-grow w-full">
+          <div className="flew-grow w-full space-y-1">
             <Input
               id="name"
               type="text"
@@ -133,7 +133,7 @@ export function PageForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <div className="flex items-center gap-2">
           <AccessField
             onChange={(access) => handleFormData("access", access)}

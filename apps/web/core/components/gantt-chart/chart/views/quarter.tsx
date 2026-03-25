@@ -21,7 +21,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
   const quarterBlocks: IQuarterMonthBlock[] = groupMonthsToQuarters(monthBlocks);
 
   return (
-    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
+    <div className={`absolute top-0 left-0 flex h-max min-h-full w-max`}>
       {currentViewData &&
         quarterBlocks?.map((quarterBlock, rootIndex) => (
           <div
@@ -30,44 +30,44 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
           >
             {/** Header Div */}
             <div
-              className="w-full sticky top-0 z-[5] bg-surface-1 flex-shrink-0 outline-[1px] outline-subtle-1"
+              className="sticky top-0 z-[5] w-full flex-shrink-0 bg-surface-1 outline-[1px] outline-subtle-1"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
             >
               {/** Main Quarter Title */}
-              <div className="w-full inline-flex h-7 justify-between">
+              <div className="inline-flex h-7 w-full justify-between">
                 <div
-                  className="sticky flex items-center font-regular z-[1] my-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-surface-1 text-secondary"
+                  className="sticky z-[1] my-1 flex items-center bg-surface-1 px-3 py-1 text-14 font-regular whitespace-nowrap text-secondary capitalize"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
                 >
                   {quarterBlock?.title}
                   {quarterBlock.today && (
-                    <span className={cn("rounded-sm ml-2 font-medium  bg-accent-primary px-1 text-9 text-on-color")}>
+                    <span className={cn("ml-2 rounded-sm bg-accent-primary px-1 text-9 font-medium text-on-color")}>
                       Current
                     </span>
                   )}
                 </div>
-                <div className="sticky whitespace-nowrap px-3 py-2 text-11 capitalize text-placeholder">
+                <div className="sticky px-3 py-2 text-11 whitespace-nowrap text-placeholder capitalize">
                   {quarterBlock.shortTitle}
                 </div>
               </div>
               {/** Months Sub title */}
-              <div className="h-5 w-full flex">
+              <div className="flex h-5 w-full">
                 {quarterBlock?.children?.map((monthBlock, index) => (
                   <div
                     key={`sub-title-${rootIndex}-${index}`}
                     className={cn(
-                      "flex flex-shrink-0 text-center capitalize justify-center outline-[0.25px] outline-subtle-1",
+                      "flex flex-shrink-0 justify-center text-center capitalize outline-[0.25px] outline-subtle-1",
                       {
                         "bg-accent-primary/20": monthBlock.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                   >
-                    <div className="space-x-1 flex items-center justify-center text-11 font-medium h-full">
+                    <div className="flex h-full items-center justify-center space-x-1 text-11 font-medium">
                       <span
                         className={cn({
                           "rounded-lg bg-accent-primary px-2 text-on-color": monthBlock.today,
@@ -81,7 +81,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
               </div>
             </div>
             {/** Month Columns */}
-            <div className="h-full w-full flex-grow flex">
+            <div className="flex h-full w-full flex-grow">
               {quarterBlock?.children?.map((monthBlock, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}

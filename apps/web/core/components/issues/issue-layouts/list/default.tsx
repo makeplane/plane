@@ -129,7 +129,7 @@ export const List = observer(function List(props: IList) {
     entities = orderedGroups;
   }
   return (
-    <div className="relative size-full flex flex-col">
+    <div className="relative flex size-full flex-col">
       {groups && (
         <MultipleSelectGroup
           containerRef={containerRef}
@@ -140,7 +140,7 @@ export const List = observer(function List(props: IList) {
             <>
               <div
                 ref={containerRef}
-                className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto bg-surface-1"
+                className="vertical-scrollbar relative scrollbar-lg size-full overflow-auto bg-surface-1"
               >
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup

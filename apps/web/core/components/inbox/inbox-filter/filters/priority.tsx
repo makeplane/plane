@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
@@ -56,7 +55,7 @@ export const FilterPriority = observer(function FilterPriority(props: Props) {
               />
             ))
           ) : (
-            <p className="text-11 italic text-placeholder">{t("common.search.no_matches_found")}</p>
+            <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>
           )}
         </div>
       )}

@@ -141,7 +141,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
 
   return (
     <>
-      <div className="flex items-center justify-end flex-shrink-0">
+      <div className="flex flex-shrink-0 items-center justify-end">
         <div className="flex flex-wrap items-center gap-2">
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />

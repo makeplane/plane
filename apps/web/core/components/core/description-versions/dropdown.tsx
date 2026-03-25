@@ -41,7 +41,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
     <CustomMenu
       label={
         <div className="flex items-center gap-1 text-tertiary">
-          <span className="flex-shrink-0 size-4 grid place-items-center">
+          <span className="grid size-4 flex-shrink-0 place-items-center">
             <History className="size-3.5" />
           </span>
           <p className="text-11">
@@ -58,7 +58,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
       disabled={disabled}
       closeOnSelect
     >
-      <p className="text-11 text-tertiary font-medium mb-1">{t("description_versions.previously_edited_by")}</p>
+      <p className="mb-1 text-11 font-medium text-tertiary">{t("description_versions.previously_edited_by")}</p>
       {versions?.map((version) => (
         <DescriptionVersionsDropdownItem key={version.id} onClick={onVersionClick} version={version} />
       ))}

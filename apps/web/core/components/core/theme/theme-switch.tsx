@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
@@ -30,7 +29,7 @@ export function ThemeSwitch(props: Props) {
         value ? (
           <div className="flex items-center gap-2">
             <div
-              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full"
+              className="relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border-1"
               style={{
                 borderColor: value.icon.border,
               }}
@@ -64,7 +63,7 @@ export function ThemeSwitch(props: Props) {
         <CustomSelect.Option key={themeOption.value} value={themeOption}>
           <div className="flex items-center gap-2">
             <div
-              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+              className="relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border border-1"
               style={{
                 borderColor: themeOption.icon.border,
               }}

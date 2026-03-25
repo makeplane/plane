@@ -9,7 +9,7 @@ import { ArrowDownWideNarrow } from "lucide-react";
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon } from "@plane/propel/icons";
 import type { TProjectOrderByOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 
@@ -37,12 +37,12 @@ export function ProjectOrderByDropdown(props: Props) {
         <>
           {isMobile ? (
             <div className={getButtonStyling("secondary", "lg")}>
-              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
+              <ArrowDownWideNarrow className="size-3.5 shrink-0" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
             </div>
           ) : (
             <div className={getButtonStyling("secondary", "lg")}>
-              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
+              <ArrowDownWideNarrow className="size-3.5 shrink-0" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
             </div>
           )}

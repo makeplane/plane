@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { CSSProperties, FC } from "react";
+import type { CSSProperties } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
@@ -141,7 +141,7 @@ const getProjectColumns = (): IGroupByColumn[] | undefined => {
         id: project.id,
         name: project.name,
         icon: (
-          <div className="w-6 h-6 grid place-items-center flex-shrink-0">
+          <div className="grid h-6 w-6 flex-shrink-0 place-items-center">
             <Logo logo={project.logo_props} />
           </div>
         ),

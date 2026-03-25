@@ -134,7 +134,7 @@ jobs:
 
       - id: checkout_files
         name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
@@ -142,7 +142,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
-        uses: makeplane/actions/build-push@v1.0.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -164,7 +164,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
-        uses: makeplane/actions/build-push@v1.0.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -186,7 +186,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
-        uses: makeplane/actions/build-push@v1.0.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -208,7 +208,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
-        uses: makeplane/actions/build-push@v1.0.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -230,7 +230,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
-        uses: makeplane/actions/build-push@v1.0.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -252,7 +252,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
-        uses: makeplane/actions/build-push@v1.0.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -282,7 +282,7 @@ jobs:
       - branch_build_push_proxy
     steps:
       - name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Prepare AIO Assets
         id: prepare_aio_assets
@@ -298,13 +298,13 @@ jobs:
           echo "AIO_BUILD_VERSION=${aio_version}" >> $GITHUB_OUTPUT
 
       - name: Upload AIO Assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: ./deployments/aio/community/dist
           name: aio-assets-dist
 
       - name: AIO Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -337,7 +337,7 @@ jobs:
       - branch_build_push_proxy
     steps:
       - name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Update Assets
         run: |
@@ -352,7 +352,7 @@ jobs:
           # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deployments/cli/community/variables.env
 
       - name: Upload Assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: community-assets
           path: |
@@ -381,7 +381,7 @@ jobs:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Update Assets
         run: |
@@ -391,7 +391,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v2.1.0
+        uses: softprops/action-gh-release@v2.6.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:

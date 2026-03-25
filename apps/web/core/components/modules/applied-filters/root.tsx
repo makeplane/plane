@@ -46,7 +46,7 @@ export function ModuleAppliedFiltersList(props: Props) {
 
   return (
     <Header variant={EHeaderVariant.TERNARY}>
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {Object.entries(appliedFilters).map(([key, value]) => {
           const filterKey = key as keyof TModuleFilters;
 
@@ -98,7 +98,7 @@ export function ModuleAppliedFiltersList(props: Props) {
           >
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-11 text-tertiary">Modules</span>
-              <div className="flex items-center gap-1 rounded-sm p-1 text-11 bg-layer-1">
+              <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
                 Favorite
                 {isEditingAllowed && (
                   <button

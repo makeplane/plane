@@ -64,7 +64,7 @@ function TrendPiece(props: Props) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 p-1 rounded-md",
+        "flex items-center gap-1 rounded-md p-1",
         variants[variant][isOnTrack ? "ontrack" : isOffTrack ? "offtrack" : "atrisk"],
         config.text,
         className

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +17,7 @@ export const SpreadsheetAddIssueButton = observer(function SpreadsheetAddIssueBu
     <div className="flex items-center">
       <button
         type="button"
-        className="flex items-center gap-x-[6px] w-full px-2 py-2 bg-layer-transparent hover:bg-layer-transparent-hover transition-colors"
+        className="flex w-full items-center gap-x-[6px] bg-layer-transparent px-2 py-2 transition-colors hover:bg-layer-transparent-hover"
         onClick={onClick}
       >
         <PlusIcon className="h-3.5 w-3.5 stroke-2" />

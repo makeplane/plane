@@ -40,23 +40,23 @@ export function PageTabNavigation(props: TPageTabNavigation) {
   };
 
   return (
-    <div className="relative flex items-center h-full">
+    <div className="relative flex h-full items-center">
       {pageTabs.map((tab) => (
         <Link
           key={tab.key}
           href={`/${workspaceSlug}/projects/${projectId}/pages?type=${tab.key}`}
           onClick={(e) => handleTabClick(e, tab.key)}
-          className="flex flex-col h-full"
+          className="flex h-full flex-col"
         >
           <div
-            className={cn(`flex flex-1 text-13 px-4 font-medium transition-all justify-center items-center`, {
+            className={cn(`flex flex-1 items-center justify-center px-4 text-13 font-medium transition-all`, {
               "text-accent-primary": tab.key === pageType,
             })}
           >
             {tab.label}
           </div>
           <div
-            className={cn(`rounded-t border-t-2 transition-all border-transparent w-full`, {
+            className={cn(`w-full rounded-t border-t-2 border-transparent transition-all`, {
               "border-accent-strong": tab.key === pageType,
             })}
           />

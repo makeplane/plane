@@ -46,10 +46,10 @@ export function ConfirmDiscardModal(props: Props) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[30rem]">
-                <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-tertiary">
+                      <Dialog.Title as="h3" className="text-16 leading-6 font-medium text-tertiary">
                         You have unsaved changes
                       </Dialog.Title>
                       <div className="mt-2">
@@ -60,7 +60,7 @@ export function ConfirmDiscardModal(props: Props) {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end items-center p-4 sm:px-6 gap-2">
+                <div className="flex items-center justify-end gap-2 p-4 sm:px-6">
                   <Button variant="secondary" size="lg" onClick={handleClose}>
                     Keep editing
                   </Button>

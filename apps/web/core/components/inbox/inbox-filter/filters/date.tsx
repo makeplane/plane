@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { concat, uniq } from "lodash-es";
 import { observer } from "mobx-react";
@@ -94,7 +93,7 @@ export const FilterDate = observer(function FilterDate(props: Props) {
               />
             </>
           ) : (
-            <p className="text-11 italic text-placeholder">No matches found</p>
+            <p className="text-11 text-placeholder italic">No matches found</p>
           )}
         </div>
       )}

@@ -93,14 +93,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
-          <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary mr-2" />
+          <MoveRight className="mr-2 h-4 w-4 text-tertiary hover:text-secondary" />
         </button>
       )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-        className={cn("w-4 h-4 flex-shrink-0 mr-2 my-auto", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
+        className={cn("my-auto mr-2 h-4 w-4 flex-shrink-0", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
       />
-      <div className="flex items-center gap-2 w-full bg-surface-1 z-[15]">
+      <div className="z-[15] flex w-full items-center gap-2 bg-surface-1">
         <div className="flex items-center gap-x-2">
           <button
             type="button"
@@ -119,7 +119,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
         </div>
         <div className="flex items-center gap-4">
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
-          <div className="flex items-center justify-end w-full">
+          <div className="flex w-full items-center justify-end">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>

@@ -83,7 +83,7 @@ export function PowerKModalSearchMenu(props: Props) {
   return (
     <>
       {searchTerm.trim() !== "" && (
-        <div className="flex items-center justify-between gap-2 mt-4 px-4">
+        <div className="mt-4 flex items-center justify-between gap-2 px-4">
           <h5
             className={cn("text-11 text-primary", {
               "animate-pulse": isSearching,

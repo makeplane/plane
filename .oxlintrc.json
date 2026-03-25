@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "jsx-a11y", "import", "promise", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "warn",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "settings": {
+    "react": {
+      "version": "18.3"
+    },
+    "jsx-a11y": {
+      "polymorphicPropName": "as"
+    }
+  },
+  "ignorePatterns": [
+    ".cache/**",
+    ".next/**",
+    ".react-router/**",
+    ".storybook/**",
+    ".turbo/**",
+    ".vite/**",
+    "*.config.{js,mjs,cjs,ts}",
+    "build/**",
+    "coverage/**",
+    "dist/**",
+    "**/public/**",
+    "storybook-static/**"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "unicorn/filename-case": "off",
+    "unicorn/no-null": "off",
+    "unicorn/prevent-abbreviations": "off",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
+  }
+}

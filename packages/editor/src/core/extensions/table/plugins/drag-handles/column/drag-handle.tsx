@@ -224,14 +224,14 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
 
   return (
     <>
-      <div className="table-col-handle-container absolute z-20 top-0 left-0 flex justify-center items-center w-full -translate-y-1/2">
+      <div className="table-col-handle-container absolute top-0 left-0 z-20 flex w-full -translate-y-1/2 items-center justify-center">
         <button
           ref={refs.setReference}
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn("px-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200", {
-            "!opacity-100 bg-accent-primary border-accent-strong": isDropdownOpen,
+          className={cn("rounded-sm border border-strong-1 bg-layer-1 px-1 transition-all duration-200 outline-none", {
+            "border-accent-strong bg-accent-primary !opacity-100": isDropdownOpen,
             "hover:bg-layer-1-hover": !isDropdownOpen,
           })}
         >

@@ -50,7 +50,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
 
   if (loaderData.error) {
     return (
-      <div className="flex items-center justify-center size-full">
+      <div className="flex size-full items-center justify-center">
         <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
           title={t("issue.empty_state.issue_detail.title")}
@@ -65,7 +65,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <div className="flex items-center justify-center size-full">
+    <div className="flex size-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

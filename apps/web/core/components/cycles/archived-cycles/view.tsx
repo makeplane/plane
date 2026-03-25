@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
 import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
@@ -34,15 +33,15 @@ export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IA
 
   if (filteredArchivedCycleIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <img
             src={archivedCyclesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching cycles"
           />
-          <h5 className="text-18 font-medium mt-7 mb-1">No matching cycles</h5>
-          <p className="text-placeholder text-14">
+          <h5 className="mt-7 mb-1 text-18 font-medium">No matching cycles</h5>
+          <p className="text-14 text-placeholder">
             {archivedCyclesSearchQuery.trim() === ""
               ? "Remove the filters to see all cycles"
               : "Remove the search criteria to see all cycles"}

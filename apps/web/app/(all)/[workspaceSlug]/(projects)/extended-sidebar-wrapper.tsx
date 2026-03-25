@@ -44,10 +44,10 @@ export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(p
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        "absolute h-full z-[21] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-surface-1 border-r border-subtle p-4 shadow-sm",
+        "shadow-sm absolute z-[21] flex h-full transform flex-col border-r border-subtle bg-surface-1 p-4 py-2 transition-all duration-300 ease-in-out",
         {
           "opacity-100": isExtendedSidebarOpened,
-          "opacity-0 hidden": !isExtendedSidebarOpened,
+          "hidden opacity-0": !isExtendedSidebarOpened,
         },
         className
       )}

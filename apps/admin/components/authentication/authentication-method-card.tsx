@@ -22,8 +22,8 @@ export function AuthenticationMethodCard(props: Props) {
 
   return (
     <div
-      className={cn("w-full flex items-center gap-14 rounded-lg bg-layer-2", {
-        "px-4 py-3 border border-subtle": withBorder,
+      className={cn("flex w-full items-center gap-14 rounded-lg bg-layer-2", {
+        "border border-subtle px-4 py-3": withBorder,
       })}
     >
       <div
@@ -36,7 +36,7 @@ export function AuthenticationMethodCard(props: Props) {
         </div>
         <div className="grow">
           <div
-            className={cn("font-medium leading-5 text-primary", {
+            className={cn("leading-5 font-medium text-primary", {
               "text-13": withBorder,
               "text-18": !withBorder,
             })}
@@ -44,7 +44,7 @@ export function AuthenticationMethodCard(props: Props) {
             {name}
           </div>
           <div
-            className={cn("font-regular leading-5 text-tertiary", {
+            className={cn("leading-5 font-regular text-tertiary", {
               "text-11": withBorder,
               "text-13": !withBorder,
             })}

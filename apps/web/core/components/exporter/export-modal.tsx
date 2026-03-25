@@ -57,7 +57,7 @@ export const Exporter = observer(function Exporter(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-10 text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="flex-shrink-0 text-10 text-secondary">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -147,7 +147,7 @@ export const Exporter = observer(function Exporter(props: Props) {
         </div>
         <div className="flex max-w-min cursor-pointer items-center gap-2">
           <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
-          <div className="whitespace-nowrap text-13">
+          <div className="text-13 whitespace-nowrap">
             {t("workspace_settings.settings.exports.export_separate_files")}
           </div>
         </div>
