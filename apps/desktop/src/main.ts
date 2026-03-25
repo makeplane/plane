@@ -20,7 +20,7 @@ app.setAboutPanelOptions({
   applicationName: "Plane",
   applicationVersion: app.getVersion(),
   version: process.versions.electron,
-  copyright: "Copyright 2023-present Plane Software, Inc.",
+  copyright: "Copyright 2026 Plane Software, Inc.",
   website: "https://plane.so",
   iconPath: path.join(__dirname, "..", "icon.png"),
 });
@@ -257,13 +257,14 @@ function buildMenu(): void {
           },
         },
         { type: "separator" },
-        {
-          label: "Change Instance...",
-          click: () => {
-            instanceStore.setInstanceUrl(undefined);
-            handleInstanceUrlChanged();
-          },
-        },
+        // Self-managed is not available yet — uncomment when ready
+        // {
+        //   label: "Change Instance...",
+        //   click: () => {
+        //     instanceStore.setInstanceUrl(undefined);
+        //     handleInstanceUrlChanged();
+        //   },
+        // },
         {
           label: "Clear Stored Data...",
           click: () => {

@@ -309,8 +309,13 @@
       </svg>
     </div>
 
-    <!-- View 1: Choice Screen -->
-    <div id="view-choice" class="view fade-in">
+    <!-- Auto-connect view (shown on load) -->
+    <div id="view-connecting" class="view fade-in">
+      <h4>Connecting to Plane</h4>
+    </div>
+
+    <!-- View 1: Choice Screen (hidden — kept for revert when self-managed is ready) -->
+    <div id="view-choice" class="view hidden">
       <h4>Choose an instance type</h4>
       <div class="choices">
         <button id="btn-cloud" class="choice-card">
@@ -358,6 +363,7 @@
   <script>
     // State
     const CLOUD_URL = 'https://app.plane.so';
+    const viewConnecting = document.getElementById('view-connecting');
     const viewChoice = document.getElementById('view-choice');
     const viewInput = document.getElementById('view-input');
     const btnCloud = document.getElementById('btn-cloud');
@@ -371,6 +377,7 @@
     // --- Logic ---
 
     function showView(view) {
+      viewConnecting.classList.add('hidden');
       viewChoice.classList.add('hidden');
       viewInput.classList.add('hidden');
       view.classList.remove('hidden');
@@ -386,8 +393,6 @@
       if (!url) {
         return;
       }
-      
-      console.log('Connecting to:', url);
 
       // Disable buttons to prevent double click
       btnCloud.disabled = true;
@@ -462,8 +467,10 @@
       connect(urlText);
     });
 
-    // Initial View
-    showView(viewChoice);
+    // Auto-connect to cloud — self-managed is not available yet.
+    // To revert: replace this with `showView(viewChoice);`
+    showView(viewConnecting);
+    connect(CLOUD_URL);
 
   </script>
 </body>
