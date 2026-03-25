@@ -138,6 +138,7 @@ export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue
   team_project: "project_id",
   milestone: "milestone_id",
   epic: "parent_id",
+  type: "type_id",
 };
 
 export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -154,6 +155,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   team_project: "project_id",
   milestone: "milestone_id",
   epic: "parent_id",
+  type: "type_id",
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on

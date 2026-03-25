@@ -143,7 +143,8 @@ export type GroupByColumnTypes =
   | "created_by"
   | "team_project"
   | "milestone"
-  | "epic";
+  | "epic"
+  | "type";
 
 export type TGetColumns = {
   isWorkspaceLevel?: boolean;

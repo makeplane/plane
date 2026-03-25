@@ -72,6 +72,7 @@ export interface IWorkflowsStore {
   getEligibleTypeIdsForState: (projectId: string, stateId: string) => string[];
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
   canCreateInStateAcrossTypes: (projectId: string, stateId: string) => boolean;
+  getFirstCreationAllowedStateForType: (projectId: string, typeId: string) => string | undefined;
   hasTransitionsForState: (
     workspaceSlug: string,
     projectId: string,
@@ -319,6 +320,27 @@ export class WorkflowsStore implements IWorkflowsStore {
     const workflowState = workflow.getStateById(stateId);
     if (!workflowState) return true;
     return workflowState.allow_issue_creation;
+  });
+
+  getFirstCreationAllowedStateForType = computedFn((projectId: string, typeId: string): string | undefined => {
+    // Prioritize the project default state
+    const defaultStateId = this.rootStore.state.getProjectDefaultStateId(projectId);
+    if (defaultStateId && this.isStateCreationAllowedForType(projectId, typeId, defaultStateId)) {
+      return defaultStateId;
+    }
+
+    // Fallback: iterate states in group order (backlog → unstarted → started → completed → cancelled)
+    const projectStates = this.rootStore.state.getProjectStates(projectId);
+    if (!projectStates) return undefined;
+
+    for (const state of projectStates) {
+      if (state.id === defaultStateId) continue; // already checked
+      if (this.isStateCreationAllowedForType(projectId, typeId, state.id)) {
+        return state.id;
+      }
+    }
+
+    return undefined;
   });
 
   hasTransitionsForState = computedFn(

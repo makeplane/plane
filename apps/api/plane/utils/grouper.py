@@ -21,6 +21,7 @@ from plane.ee.models import Milestone
 from plane.db.models import (
     Cycle,
     Issue,
+    IssueType,
     Label,
     Module,
     Project,
@@ -222,6 +223,14 @@ def issue_group_values(
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]
+
+    if field == "type_id":
+        queryset = IssueType.objects.filter(
+            workspace__slug=slug, is_epic=False
+        ).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_issue_types__project_id=project_id))
+        return list(queryset)
 
     if field == "project_id":
         if team_id:

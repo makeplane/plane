@@ -32,11 +32,15 @@ export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined,
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { isWorkflowsEnabled, getAllowedTransitionStateIds, isApprovalPending, canCreateInStateAcrossTypes } =
-    useWorkflows();
+  const {
+    isWorkflowsEnabled,
+    getAllowedTransitionStateIds,
+    isApprovalPending,
+    canCreateInStateAcrossTypes,
+    getFirstCreationAllowedStateForType,
+  } = useWorkflows();
   // derived values
-  const isWorkflowEnabled =
-    workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug.toString(), projectId.toString()) : false;
+  const isWorkflowEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
 
   const checkStateTransition = (
     sourceStateId: string,
@@ -49,7 +53,7 @@ export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined,
       return;
     }
 
-    if (isApprovalPending(workspaceSlug.toString(), projectIdStr, typeId, sourceStateId)) {
+    if (isApprovalPending(workspaceSlug, projectIdStr, typeId, sourceStateId)) {
       setWorkflowDisabledContext({
         sourceStateId,
         destinationStateId,
@@ -58,7 +62,7 @@ export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined,
     }
 
     const allowedMap = getAllowedTransitionStateIds(
-      workspaceSlug.toString(),
+      workspaceSlug,
       projectIdStr,
       typeId,
       sourceStateId,
@@ -92,15 +96,14 @@ export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined,
 
     const issue = issueId ? getIssueById(issueId) : undefined;
     const typeId = issue?.type_id;
-    const projectIdStr = projectId.toString();
 
     if (groupBy === "state") {
-      checkStateTransition(sourceGroupId, destinationGroupId, typeId, projectIdStr);
+      checkStateTransition(sourceGroupId, destinationGroupId, typeId, projectId);
       return;
     }
 
     if (subGroupBy === "state" && sourceSubGroupId && destinationSubGroupId) {
-      checkStateTransition(sourceSubGroupId, destinationSubGroupId, typeId, projectIdStr);
+      checkStateTransition(sourceSubGroupId, destinationSubGroupId, typeId, projectId);
     }
   };
 
@@ -108,12 +111,22 @@ export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined,
     if (!isWorkflowEnabled || !projectId) return false;
     // Check for groupBy
     if (groupBy === "state") {
-      return !canCreateInStateAcrossTypes(projectId.toString(), groupId);
+      return !canCreateInStateAcrossTypes(projectId, groupId);
     }
 
     // Check for Sub groupBy
     if (subGroupBy === "state" && subGroupId) {
-      return !canCreateInStateAcrossTypes(projectId.toString(), subGroupId);
+      return !canCreateInStateAcrossTypes(projectId, subGroupId);
+    }
+
+    // Check for groupBy type
+    if (groupBy === "type") {
+      return !getFirstCreationAllowedStateForType(projectId, groupId);
+    }
+
+    // Check for subGroupBy type
+    if (subGroupBy === "type" && subGroupId) {
+      return !getFirstCreationAllowedStateForType(projectId, subGroupId);
     }
 
     return false;

@@ -183,6 +183,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         preloadedData = { ...preloadedData, milestone_id: value };
       } else if (groupByKey === "epic" && value != "None") {
         preloadedData = { ...preloadedData, parent_id: value };
+      } else if (groupByKey === "type" && value !== "None") {
+        preloadedData = { ...preloadedData, type_id: value };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: value };
       }
@@ -332,22 +334,20 @@ export const ListGroup = observer(function ListGroup(props: Props) {
               </>
             ))}
 
-          {enableIssueQuickAdd &&
-            !disableIssueCreation &&
-            !isGroupByCreatedBy &&
-            !isCompletedCycle &&
-            !isWorkflowIssueCreationDisabled && (
-              <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-                <QuickAddIssueRoot
-                  layout={EIssueLayoutTypes.LIST}
-                  QuickAddButton={ListQuickAddIssueButton}
-                  prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
-                  containerClassName="border-b border-t border-subtle bg-surface-1 "
-                  quickAddCallback={quickAddCallback}
-                  isEpic={isEpic}
-                />
-              </div>
-            )}
+          {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
+            <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+              <QuickAddIssueRoot
+                layout={EIssueLayoutTypes.LIST}
+                QuickAddButton={ListQuickAddIssueButton}
+                prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
+                containerClassName="border-b border-t border-subtle bg-surface-1 "
+                quickAddCallback={quickAddCallback}
+                isEpic={isEpic}
+                groupBy={group_by}
+                subGroupBy={null}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

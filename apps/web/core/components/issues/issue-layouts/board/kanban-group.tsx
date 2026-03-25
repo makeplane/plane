@@ -233,6 +233,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, milestone_id: groupValue };
       } else if (groupByKey === "epic" && groupValue != "None") {
         preloadedData = { ...preloadedData, parent_id: groupValue };
+      } else if (groupByKey === "type" && groupValue !== "None") {
+        preloadedData = { ...preloadedData, type_id: groupValue };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: groupValue };
       }
@@ -257,6 +259,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, milestone_id: subGroupValue };
       } else if (subGroupByKey === "epic" && subGroupValue != "None") {
         preloadedData = { ...preloadedData, parent_id: subGroupValue };
+      } else if (subGroupByKey === "type" && subGroupValue !== "None") {
+        preloadedData = { ...preloadedData, type_id: subGroupValue };
       } else {
         preloadedData = { ...preloadedData, [subGroupByKey]: subGroupValue };
       }
@@ -341,21 +345,21 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
           </div>
         ))}
 
-      {enableQuickIssueCreate &&
-        !disableIssueCreation &&
-        !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="w-full bg-surface-2 py-0.5 sticky bottom-0">
-            <QuickAddIssueRoot
-              layout={EIssueLayoutTypes.KANBAN}
-              QuickAddButton={KanbanQuickAddIssueButton}
-              prePopulatedData={{
-                ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-              }}
-              quickAddCallback={quickAddCallback}
-              isEpic={isEpic}
-            />
-          </div>
-        )}
+      {enableQuickIssueCreate && !disableIssueCreation && (
+        <div className="w-full bg-surface-2 py-0.5 sticky bottom-0">
+          <QuickAddIssueRoot
+            layout={EIssueLayoutTypes.KANBAN}
+            QuickAddButton={KanbanQuickAddIssueButton}
+            prePopulatedData={{
+              ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+            }}
+            quickAddCallback={quickAddCallback}
+            isEpic={isEpic}
+            groupBy={group_by}
+            subGroupBy={sub_group_by ?? null}
+          />
+        </div>
+      )}
     </div>
   );
 });

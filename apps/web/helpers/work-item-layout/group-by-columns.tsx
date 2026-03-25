@@ -30,6 +30,7 @@ import { formatProjectWorkItemIdentifierForDisplay, getFileURL, getMilestoneIcon
 import { store } from "@/lib/store-context";
 // types
 import type { TGetGroupByColumns } from "./types";
+import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
 // We are using `as` to typecast it to the expected type.
@@ -73,6 +74,7 @@ export const getGroupByColumns = ({
     team_project: getTeamProjectColumns,
     milestone: getMilestoneColumns,
     epic: getEpicColumns,
+    type: getWorkItemTypeColumns,
   };
 
   // Get and return the columns for the specified group by option
@@ -400,4 +402,39 @@ export const getEpicColumns = (): IGroupByColumn[] | undefined => {
   });
 
   return epicColumns;
+};
+
+export const getWorkItemTypeColumns = (): IGroupByColumn[] | undefined => {
+  const { projectId, workspaceSlug } = store.router;
+  const { isWorkItemTypeEnabledForProject, getProjectIssueTypeIds, getIssueTypeById, getIssueTypeIds } =
+    store.workItemTypeBridge;
+
+  if (!workspaceSlug) return;
+
+  // Project-level: check feature flag and use project types
+  if (projectId) {
+    const isWorkItemTypeFeatureEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    if (!isWorkItemTypeFeatureEnabled) return;
+  }
+
+  // Get type IDs: project-level if projectId available, workspace-level otherwise
+  // Use activeOnly=false to include inactive types so work items with inactive types still show in groups
+  const typeIds = projectId ? getProjectIssueTypeIds(projectId) : getIssueTypeIds(false);
+
+  if (!typeIds || typeIds.length === 0) return;
+
+  const workItemTypeColumns: IGroupByColumn[] = [];
+
+  typeIds.forEach((typeId) => {
+    const workItemType = getIssueTypeById(typeId);
+    if (!workItemType || !workItemType.id || !workItemType.name) return;
+    workItemTypeColumns.push({
+      id: workItemType.id,
+      name: workItemType.name,
+      icon: <IssueTypeLogo icon_props={workItemType.logo_props?.icon} isDefault={workItemType.is_default} />,
+      payload: { type_id: workItemType.id },
+    });
+  });
+
+  return workItemTypeColumns;
 };

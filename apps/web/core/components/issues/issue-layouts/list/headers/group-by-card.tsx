@@ -71,11 +71,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
-  const { canCreateInStateAcrossTypes, getCreationTypeForState } = useWorkflows();
-  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
+  const { canCreateInStateAcrossTypes, getCreationTypeForState, getFirstCreationAllowedStateForType } = useWorkflows();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   const storeType = useIssueStoreType();
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
+  const isTypeActive = (typeId: string) => Boolean(getIssueTypeById(typeId)?.is_active);
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
@@ -88,6 +89,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     canCreateInStateAcrossTypes,
     getCreationTypeForState,
     isWorkItemTypeEnabled,
+    getFirstCreationAllowedStateForType,
+    isTypeActive,
   });
   // auth
   const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;

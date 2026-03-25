@@ -35,7 +35,7 @@ import type { CoreRootStore } from "../root.store";
 // helpers
 
 export type TIssueDisplayFilterOptions =
-  | Exclude<TIssueGroupByOptions, null | "team_project" | "milestone" | "epic">
+  | Exclude<TIssueGroupByOptions, null | "team_project" | "milestone" | "epic" | "type">
   | "target_date";
 
 export enum EIssueGroupedAction {

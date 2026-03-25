@@ -11,33 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useParams } from "next/navigation";
 import { observer } from "mobx-react";
 import type { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 import { lazy, Suspense, useEffect, useRef } from "react";
-// plane types
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { EIssueLayoutTypes } from "@plane/types";
-import type { TIssue } from "@plane/types";
-import { getMandatoryFields, resolveQuickAddCreationContext } from "@plane/utils";
+import type { IProject, TIssue } from "@plane/types";
 // components
 import type { TQuickAddIssueForm } from "@/components/issues/issue-layouts/quick-add";
 // hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
-import { useProject } from "@/hooks/store/use-project";
-import { useWorkflows } from "@/hooks/store/use-workflows";
 import useKeypress from "@/hooks/use-keypress";
 
-const CreateUpdateWorkItemModal = lazy(() =>
-  import("@/components/issues/issue-modal/root").then((module) => ({
-    default: module.CreateUpdateIssueModal,
-  }))
-);
-const CreateUpdateEpicModal = lazy(() =>
-  import("@/components/epics/epic-modal").then((module) => ({
-    default: module.CreateUpdateEpicModal,
-  }))
-);
 const ListQuickAddIssueForm = lazy(() =>
   import("./list").then((module) => ({
     default: module.ListQuickAddIssueForm,
@@ -76,10 +61,8 @@ const QUICK_ADD_ISSUE_FORMS: Record<
 };
 
 export type TQuickAddIssueFormRoot = {
-  isOpen: boolean;
   layout: EIssueLayoutTypes;
-  prePopulatedData?: Partial<TIssue>;
-  projectId: string;
+  projectDetail?: IProject;
   hasError?: boolean;
   setFocus: UseFormSetFocus<TIssue>;
   register: UseFormRegister<TIssue>;
@@ -89,75 +72,25 @@ export type TQuickAddIssueFormRoot = {
 };
 
 export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(props: TQuickAddIssueFormRoot) {
-  const {
-    isOpen,
-    layout,
-    prePopulatedData,
-    projectId,
-    hasError = false,
-    setFocus,
-    register,
-    onSubmit,
-    onClose,
-    isEpic = false,
-  } = props;
+  const { layout, projectDetail, hasError = false, setFocus, register, onSubmit, onClose, isEpic = false } = props;
   // refs
   const ref = useRef<HTMLFormElement>(null);
-  const { workspaceSlug } = useParams();
-  // store hooks
-  const { getProjectById } = useProject();
-  const { getProjectDefaultIssueType, getProjectEpicDetails, getIssueTypeById, isWorkItemTypeEnabledForProject } =
-    useIssueTypes();
-  const { getCreationTypeForState } = useWorkflows();
-  // derived values
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
-  const projectDetail = getProjectById(projectId);
-  const defaultIssueType = getProjectDefaultIssueType(projectId);
-  const projectEpics = getProjectEpicDetails(projectId);
-  const defaultIssueTypeId = defaultIssueType?.id;
-  const { creationTypeId, modalData, shouldHideQuickAdd, shouldUseModalWithFallbackType } =
-    resolveQuickAddCreationContext({
-      isEpic,
-      prePopulatedData,
-      defaultIssueTypeId,
-      getCreationTypeForState,
-      projectId,
-      isWorkItemTypeEnabled,
-    });
-  const selectedIssueType = creationTypeId ? getIssueTypeById(creationTypeId) : defaultIssueType;
-  const activeProperties = isEpic ? projectEpics?.activeProperties : selectedIssueType?.activeProperties;
-  const mandatoryFields = getMandatoryFields({ activeProperties });
-  const CurrentLayoutQuickAddIssueForm = QUICK_ADD_ISSUE_FORMS[layout] ?? null;
-
   // click detection
   useKeypress("Escape", onClose);
   useOutsideClickDetector(ref, onClose);
-
   // set focus on name input
   useEffect(() => {
     setFocus("name");
   }, [setFocus]);
 
-  if (shouldHideQuickAdd) return <></>;
-
-  if (shouldUseModalWithFallbackType || mandatoryFields.length > 0) {
-    return (
-      <>
-        {isEpic ? (
-          <CreateUpdateEpicModal isOpen={isOpen} onClose={onClose} data={modalData} />
-        ) : (
-          <CreateUpdateWorkItemModal isOpen={isOpen} onClose={onClose} data={modalData} />
-        )}
-      </>
-    );
-  }
+  const CurrentLayoutQuickAddIssueForm = QUICK_ADD_ISSUE_FORMS[layout] ?? null;
 
   if (!CurrentLayoutQuickAddIssueForm || !projectDetail) return <></>;
   return (
     <Suspense fallback={<></>}>
       <CurrentLayoutQuickAddIssueForm
         ref={ref}
-        isOpen={isOpen}
+        isOpen={true}
         projectDetail={projectDetail}
         hasError={hasError}
         register={register}

@@ -26,6 +26,7 @@ import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/work-items/details/sub_issue
 // hooks
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { useFeatureFlags } from "@/plane-web/hooks/store";
 
 /**
  * This method returns if the filters are applied
@@ -68,19 +69,27 @@ export const useGroupByOptions = (
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { isMilestonesEnabled } = useMilestones();
-  const { isEpicEnabledForProject } = useIssueTypes();
+  const { isEpicEnabledForProject, isWorkItemTypeEnabledForProject } = useIssueTypes();
+  const { getFeatureFlag } = useFeatureFlags();
 
   //derived values
   const groupByOptions = ISSUE_GROUP_BY_OPTIONS.filter((option) => options.includes(option.key));
 
-  if (!workspaceSlug || !projectId) return groupByOptions;
+  if (!workspaceSlug) return groupByOptions;
 
-  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug.toString(), projectId.toString());
-  const isEpicFeatureEnabled = isEpicEnabledForProject(workspaceSlug.toString(), projectId.toString());
+  // feature flags for workspace-level type check
+  const isWorkItemTypeFlagAvailable = getFeatureFlag(workspaceSlug, "ISSUE_TYPES", false);
+  const isWorkspaceWorkItemTypesFlagAvailable = getFeatureFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false);
+  const isWorkItemTypeFlagEnabled = isWorkItemTypeFlagAvailable || isWorkspaceWorkItemTypesFlagAvailable;
+  // project-level feature checks
+  const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
+  const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
+  const isWorkItemTypeEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
 
   const FEATURES_STATUS_MAP: Record<string, boolean> = {
     milestone: isMilestonesFeatureEnabled,
     epic: isEpicFeatureEnabled,
+    type: projectId ? isWorkItemTypeEnabled : isWorkItemTypeFlagEnabled,
   };
 
   // filter out options that are not enabled

@@ -41,6 +41,7 @@ export enum EServerGroupByToFilterOptions {
   "created_by" = "created_by",
   "milestone_id" = "milestone",
   "parent_id" = "epic",
+  "type_id" = "type",
 }
 
 export enum EIssueFilterType {
@@ -129,7 +130,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "project", "labels", null],
+          group_by: ["state_detail.group", "priority", "project", "labels", "type", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -141,7 +142,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "project", "labels"],
+          group_by: ["state_detail.group", "priority", "project", "labels", "type"],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -172,7 +173,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "cycle", "module", "priority", "labels", "assignees", "created_by", null],
+          group_by: ["state", "cycle", "module", "priority", "labels", "assignees", "created_by", "type", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -233,8 +234,17 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ["key", "issue_type"],
         display_filters: {
-          group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project"],
-          sub_group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project", null],
+          group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project", "type"],
+          sub_group_by: [
+            "state_detail.group",
+            "priority",
+            "assignees",
+            "labels",
+            "created_by",
+            "project",
+            "type",
+            null,
+          ],
         },
         extra_options: {
           access: true,
@@ -287,6 +297,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
             "created_by",
             "milestone",
             "epic",
+            "type",
             null,
           ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
@@ -300,8 +311,30 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "milestone", "epic"],
-          sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "epic", null],
+          group_by: [
+            "state",
+            "priority",
+            "cycle",
+            "module",
+            "labels",
+            "assignees",
+            "created_by",
+            "milestone",
+            "epic",
+            "type",
+          ],
+          sub_group_by: [
+            "state",
+            "priority",
+            "cycle",
+            "module",
+            "labels",
+            "assignees",
+            "created_by",
+            "epic",
+            "type",
+            null,
+          ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -361,7 +394,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
+          group_by: ["state_detail.group", "priority", "team_project", "assignees", "type", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -373,8 +406,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
-          sub_group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
+          group_by: ["state_detail.group", "priority", "team_project", "assignees", "type", null],
+          sub_group_by: ["state_detail.group", "priority", "team_project", "assignees", "type", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -434,7 +467,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "assignees", null],
+          group_by: ["state_detail.group", "priority", "assignees", "type", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -446,8 +479,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "assignees", null],
-          sub_group_by: ["state_detail.group", "priority", "assignees", null],
+          group_by: ["state_detail.group", "priority", "assignees", "type", null],
+          sub_group_by: ["state_detail.group", "priority", "assignees", "type", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },

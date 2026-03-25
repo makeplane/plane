@@ -78,6 +78,8 @@ type TResolveStateHeaderCreationArgs = {
   canCreateInStateAcrossTypes: (projectId: string, stateId: string) => boolean;
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
   isWorkItemTypeEnabled: boolean;
+  getFirstCreationAllowedStateForType: (projectId: string, typeId: string) => string | undefined;
+  isTypeActive: (typeId: string) => boolean;
 };
 
 type TResolveStateHeaderCreationResult = {
@@ -101,11 +103,17 @@ type TResolveQuickAddCreationContextArgs = {
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
   projectId: string;
   isWorkItemTypeEnabled: boolean;
+  groupBy: TIssueGroupByOptions;
+  subGroupBy: TIssueGroupByOptions;
+  isStateCreationAllowedForType: (projectId: string, typeId: string, stateId: string) => boolean;
+  getFirstCreationAllowedStateForType: (projectId: string, typeId: string) => string | undefined;
+  isTypeActive: (typeId: string) => boolean;
 };
 
 type TResolveQuickAddCreationContextResult = {
   creationTypeId?: string;
   modalData?: Partial<TIssue>;
+  resolvedPrePopulatedData?: Partial<TIssue>;
   shouldHideQuickAdd: boolean;
   shouldUseModalWithFallbackType: boolean;
 };
@@ -119,13 +127,31 @@ export const resolveStateHeaderCreation = ({
   canCreateInStateAcrossTypes,
   getCreationTypeForState,
   isWorkItemTypeEnabled,
+  getFirstCreationAllowedStateForType,
+  isTypeActive,
 }: TResolveStateHeaderCreationArgs): TResolveStateHeaderCreationResult => {
   const defaultResult: TResolveStateHeaderCreationResult = {
     isCreationDisabled: Boolean(disableIssueCreation),
     createModalData: workItemPayload,
   };
 
-  if (groupBy !== "state" || !projectId || !isWorkItemTypeEnabled) return defaultResult;
+  if (!projectId || !isWorkItemTypeEnabled) return defaultResult;
+
+  if (groupBy === "type") {
+    // Disabled types cannot have new work items created
+    if (!isTypeActive(groupId)) {
+      return { isCreationDisabled: true, createModalData: workItemPayload };
+    }
+    const allowedStateId = getFirstCreationAllowedStateForType(projectId, groupId);
+    return {
+      isCreationDisabled: defaultResult.isCreationDisabled || !allowedStateId,
+      createModalData: allowedStateId
+        ? { ...workItemPayload, type_id: groupId, state_id: allowedStateId }
+        : workItemPayload,
+    };
+  }
+
+  if (groupBy !== "state") return defaultResult;
 
   const workflowCreationTypeId = getCreationTypeForState(projectId, groupId);
   const isWorkflowStateCreationDisabled = !canCreateInStateAcrossTypes(projectId, groupId);
@@ -145,16 +171,62 @@ export const resolveQuickAddCreationContext = ({
   getCreationTypeForState,
   projectId,
   isWorkItemTypeEnabled,
+  groupBy,
+  subGroupBy,
+  isStateCreationAllowedForType,
+  getFirstCreationAllowedStateForType,
+  isTypeActive,
 }: TResolveQuickAddCreationContextArgs): TResolveQuickAddCreationContextResult => {
   if (!isWorkItemTypeEnabled)
     return {
       creationTypeId: defaultIssueTypeId,
       modalData: prePopulatedData,
+      resolvedPrePopulatedData: prePopulatedData,
       shouldHideQuickAdd: false,
       shouldUseModalWithFallbackType: false,
     };
 
+  const prePopulatedTypeId = prePopulatedData?.type_id ?? undefined;
   const targetStateId = prePopulatedData?.state_id ?? undefined;
+
+  // Type-aware logic: when type_id is pre-populated (from type grouping)
+  if (prePopulatedTypeId) {
+    // Disabled types cannot have new work items created
+    if (!isTypeActive(prePopulatedTypeId)) {
+      return {
+        shouldHideQuickAdd: true,
+        shouldUseModalWithFallbackType: false,
+      };
+    }
+    const isStateFromGrouping = groupBy === "state" || subGroupBy === "state";
+
+    if (isStateFromGrouping && targetStateId) {
+      // Case 1: Both type and state from explicit grouping
+      const isAllowed = isStateCreationAllowedForType(projectId, prePopulatedTypeId, targetStateId);
+      return {
+        creationTypeId: prePopulatedTypeId,
+        modalData: { ...prePopulatedData, type_id: prePopulatedTypeId },
+        resolvedPrePopulatedData: prePopulatedData,
+        shouldHideQuickAdd: !isAllowed,
+        shouldUseModalWithFallbackType: false,
+      };
+    } else {
+      // Case 2: Type from grouping, state not from grouping — find best state
+      const allowedStateId = getFirstCreationAllowedStateForType(projectId, prePopulatedTypeId);
+      const resolvedData = allowedStateId
+        ? { ...prePopulatedData, type_id: prePopulatedTypeId, state_id: allowedStateId }
+        : prePopulatedData;
+      return {
+        creationTypeId: prePopulatedTypeId,
+        modalData: resolvedData,
+        resolvedPrePopulatedData: resolvedData,
+        shouldHideQuickAdd: !allowedStateId,
+        shouldUseModalWithFallbackType: false,
+      };
+    }
+  }
+
+  // Existing logic for non-type grouping
   const creationTypeId =
     !isEpic && targetStateId ? getCreationTypeForState(projectId, targetStateId) : defaultIssueTypeId;
   const shouldHideQuickAdd = !isEpic && Boolean(targetStateId) && !creationTypeId;
@@ -165,9 +237,12 @@ export const resolveQuickAddCreationContext = ({
     Boolean(defaultIssueTypeId) &&
     creationTypeId !== defaultIssueTypeId;
 
+  const resultData = !isEpic && creationTypeId ? { ...prePopulatedData, type_id: creationTypeId } : prePopulatedData;
+
   return {
     creationTypeId,
-    modalData: !isEpic && creationTypeId ? { ...prePopulatedData, type_id: creationTypeId } : prePopulatedData,
+    modalData: resultData,
+    resolvedPrePopulatedData: resultData,
     shouldHideQuickAdd,
     shouldUseModalWithFallbackType,
   };

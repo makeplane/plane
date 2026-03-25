@@ -34,6 +34,7 @@ export type TIssueGroupByOptions =
   | "team_project"
   | "milestone"
   | "epic"
+  | "type"
   | null;
 
 export type TIssueOrderByOptions =
