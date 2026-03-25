@@ -32,6 +32,7 @@ export interface IPQLFilterInstance {
   canUpdateView: boolean;
   // actions
   updateValue: (newValue: PQLFilterValue) => void;
+  updateOptions: (newOptions: Pick<InitializePQLFilterInstanceParams, "viewOptions">) => void;
   handleSubmit?: (value: PQLFilterValue) => Promise<void>;
   saveView: () => Promise<void>;
   updateView: () => Promise<void>;
@@ -40,7 +41,7 @@ export interface IPQLFilterInstance {
 export class PQLFilterInstance implements IPQLFilterInstance {
   initialValue: IPQLFilterInstance["initialValue"];
   value: IPQLFilterInstance["value"];
-  private viewOptions: InitializePQLFilterInstanceParams["viewOptions"];
+  viewOptions: InitializePQLFilterInstanceParams["viewOptions"];
   private onSubmit: InitializePQLFilterInstanceParams["onSubmit"];
   private onValueChange: InitializePQLFilterInstanceParams["onValueChange"];
 
@@ -55,6 +56,7 @@ export class PQLFilterInstance implements IPQLFilterInstance {
       // observables
       initialValue: observable,
       value: observable,
+      viewOptions: observable.ref,
       // computed
       hasChanges: computed,
       canClearFilters: computed,
@@ -62,6 +64,7 @@ export class PQLFilterInstance implements IPQLFilterInstance {
       canUpdateView: computed,
       // actions
       updateValue: action,
+      updateOptions: action,
       handleSubmit: action,
       saveView: action,
       updateView: action,
@@ -99,6 +102,12 @@ export class PQLFilterInstance implements IPQLFilterInstance {
     this.onValueChange?.(newValue);
   };
 
+  updateOptions: IPQLFilterInstance["updateOptions"] = (newOptions) => {
+    runInAction(() => {
+      this.viewOptions = newOptions.viewOptions;
+    });
+  };
+
   handleSubmit: IPQLFilterInstance["handleSubmit"] = async (value) => {
     const initialValueBeforeSubmit = cloneDeep(this.initialValue);
     const valueBeforeSubmit = cloneDeep(this.value);
@@ -126,9 +135,20 @@ export class PQLFilterInstance implements IPQLFilterInstance {
   };
 
   updateView: IPQLFilterInstance["updateView"] = async () => {
-    await this.viewOptions?.updateViewOptions?.onViewUpdate({
-      type: "pql_filters",
-      value: this.value,
-    });
+    const initialValueBeforeUpdate = cloneDeep(this.initialValue);
+    try {
+      await this.viewOptions?.updateViewOptions?.onViewUpdate({
+        type: "pql_filters",
+        value: this.value,
+      });
+      runInAction(() => {
+        this.initialValue = cloneDeep(this.value);
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.initialValue = initialValueBeforeUpdate;
+      });
+      throw error;
+    }
   };
 }

@@ -21,6 +21,7 @@ import { getOperatorForPayload } from "@plane/utils";
 // local imports
 import type { TWorkItemFilterCondition } from "../../utils";
 import { buildWorkItemFilterExpressionFromConditions } from "../../utils";
+import type { InitializePQLFilterInstanceParams } from "../pql/filter";
 import type { TWorkItemFilterKey } from "./shared";
 import type { WorkItemFilterInstanceInitParams } from "./filter";
 import { WorkItemFilterInstance } from "./filter";
@@ -80,23 +81,33 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
 
   /**
    * Gets or creates a new filter instance.
-   * If the instance already exists, updates its expression options to ensure they're current.
+   * If the instance already exists, refreshes its callbacks and view options to keep computed state in sync.
    */
   getOrCreateFilter: IWorkItemFilterStore["getOrCreateFilter"] = action((params) => {
     const existingFilter = this.getFilter(params.entityType, params.entityId);
     if (existingFilter) {
-      // Update expression options on existing filter to ensure they're current
-      if (params.richFilters?.expressionOptions) {
-        existingFilter.richFiltersInstance?.updateExpressionOptions(params.richFilters.expressionOptions);
-      }
+      existingFilter.viewOptions = params.viewOptions;
+
+      existingFilter.richFiltersInstance?.updateExpressionOptions({
+        ...params.richFilters?.expressionOptions,
+        saveViewOptions: params.viewOptions?.saveViewOptions,
+        updateViewOptions: params.viewOptions?.updateViewOptions,
+      });
+
       // Update callback if provided
       if (params.richFilters?.onExpressionChange && existingFilter.richFiltersInstance) {
         existingFilter.richFiltersInstance.onExpressionChange = params.richFilters.onExpressionChange;
       }
+
+      existingFilter.pqlFiltersInstance?.updateOptions({
+        viewOptions: params.viewOptions as InitializePQLFilterInstanceParams["viewOptions"],
+      });
+
       // Update visibility if provided
       if (params.showOnMount !== undefined) {
         existingFilter.richFiltersInstance?.toggleVisibility(params.showOnMount);
       }
+
       return existingFilter;
     }
 
