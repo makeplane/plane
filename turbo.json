@@ -103,6 +103,9 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
+    "diagnose": {
+      "cache": false
+    },
     "fix": {
       "cache": false,
       "dependsOn": ["fix:format", "fix:lint"]

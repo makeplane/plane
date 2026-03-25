@@ -1,0 +1,140 @@
+name: React Doctor
+
+on:
+  pull_request:
+    branches:
+      - "preview"
+      - "master"
+      - "release/**"
+    types:
+      - "opened"
+      - "synchronize"
+      - "ready_for_review"
+      - "reopened"
+    paths:
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "packages/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  react-doctor:
+    name: React Doctor
+    runs-on: ubuntu-22.04-4core
+    timeout-minutes: 10
+    if: github.event.pull_request.draft == false
+    # Non-blocking: this job can fail without preventing merge
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run React Doctor
+        run: |
+          npx -y react-doctor@latest . --diff ${{ github.event.pull_request.base.ref }} 2>&1 | tee /tmp/react-doctor-output.txt || true
+
+      - name: Generate summary comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const raw = fs.readFileSync('/tmp/react-doctor-output.txt', 'utf8');
+
+            // Strip ANSI escape codes
+            const clean = raw.replace(/\x1b\[[0-9;]*m/g, '');
+
+            // Parse each project scan
+            const lines = clean.split('\n');
+            const projects = [];
+            let currentProject = null;
+
+            for (const line of lines) {
+              const scanMatch = line.match(/Scanning .*\/(apps|packages)\/([^.]+)\.\.\./);
+              if (scanMatch) {
+                currentProject = { name: `${scanMatch[1]}/${scanMatch[2]}` };
+                projects.push(currentProject);
+                continue;
+              }
+
+              if (!currentProject) continue;
+
+              const scoreMatch = line.match(/(\d+)\s*\/\s*100\s+(Great|Needs work|Critical)/);
+              if (scoreMatch) {
+                currentProject.score = parseInt(scoreMatch[1]);
+                currentProject.label = scoreMatch[2];
+              }
+
+              const statsMatch = line.match(/(?:✗\s*(\d+)\s*errors?\s*)?(?:⚠\s*(\d+)\s*warnings?)?\s*across\s*(\d+)\/(\d+)\s*files/);
+              if (statsMatch) {
+                currentProject.errors = parseInt(statsMatch[1] || '0');
+                currentProject.warnings = parseInt(statsMatch[2] || '0');
+                currentProject.filesAffected = parseInt(statsMatch[3]);
+                currentProject.filesTotal = parseInt(statsMatch[4]);
+              }
+
+              if (line.includes('No issues found')) {
+                currentProject.score = currentProject.score || 100;
+                currentProject.label = currentProject.label || 'Great';
+                currentProject.errors = 0;
+                currentProject.warnings = 0;
+              }
+            }
+
+            if (projects.length === 0) {
+              console.log('No project scores found in output');
+              return;
+            }
+
+            const emoji = (score) => {
+              if (score >= 90) return '🟢';
+              if (score >= 75) return '🟡';
+              return '🔴';
+            };
+
+            let body = `<!-- react-doctor -->\n## 🩺 React Doctor\n\n`;
+            body += `| Project | Score | Status | Errors | Warnings |\n`;
+            body += `|---------|-------|--------|--------|----------|\n`;
+
+            for (const p of projects) {
+              if (p.score === undefined) continue;
+              body += `| \`${p.name}\` | ${emoji(p.score)} **${p.score}**/100 | ${p.label} | ${p.errors || 0} | ${p.warnings || 0} |\n`;
+            }
+
+            body += `\n> Non-blocking — this check is informational only.`;
+
+            // Find and update or create comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes('<!-- react-doctor -->'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

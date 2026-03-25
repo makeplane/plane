@@ -1,0 +1,12 @@
+{
+  "ignore": {
+    "rules": [],
+    "files": [
+      "**/node_modules/**",
+      "**/build/**",
+      "**/dist/**",
+      "**/.react-router/**",
+      "**/generated/**"
+    ]
+  }
+}

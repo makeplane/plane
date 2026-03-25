@@ -19,10 +19,8 @@
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format",
     "check:types": "turbo run check:types",
+    "diagnose": "turbo run diagnose",
     "prepare": "husky"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-darwin-arm64": "4.59.0"
   },
   "devDependencies": {
     "@todesktop/cli": "catalog:",
@@ -35,6 +33,9 @@
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "turbo": "catalog:"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "4.59.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [

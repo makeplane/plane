@@ -14,7 +14,8 @@
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "oxfmt . --check",
     "fix:lint": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
-    "fix:format": "oxfmt . --write"
+    "fix:format": "oxfmt . --write",
+    "diagnose": "react-doctor ."
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -106,6 +107,7 @@
     "@types/react-dom": "catalog:",
     "@types/react-grid-layout": "catalog:",
     "dotenv": "catalog:",
+    "react-doctor": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
