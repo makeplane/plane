@@ -39,7 +39,7 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
     <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey={property}>
       <td
         tabIndex={0}
-        className="h-11 w-full min-w-36 max-w-48 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle"
+        className="h-11 w-full min-w-36 max-w-48 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle bg-layer-2"
       >
         <Column issue={issueDetail} />
       </td>

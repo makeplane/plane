@@ -86,7 +86,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           href={`?${queryParam}`}
           onClick={handleIssuePeekOverview}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-13 after:absolute border-[0.5px] z-10 border-subtle-1 bg-layer-transparent hover:bg-layer-transparent-hover group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-13 after:absolute border-[0.5px] z-10 border-subtle-1 bg-layer-2 hover:bg-layer-2-hover group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
             {
               "border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issueDetail.id),
               "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,

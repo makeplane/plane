@@ -129,7 +129,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             className="shrink-0 focus:outline-none text-tertiary hover:text-secondary"
             tabIndex={1}
           >
-            <LinkIcon className="h-4 w-4 -rotate-45" />
+            <LinkIcon className="h-4 w-4" />
           </button>
         )}
       </div>

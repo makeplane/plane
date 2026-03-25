@@ -117,7 +117,10 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   return (
     <div
       id={`${groupId}__${subGroupId}`}
-      className={cn("relative h-full transition-all min-h-[120px]", { "vertical-scrollbar scrollbar-md": !subGroupBy })}
+      className={cn(
+        "relative flex shrink-0 flex-col border-[1px] border-transparent bg-layer-1 transition-all h-full gap-2",
+        { "vertical-scrollbar scrollbar-md": !subGroupBy }
+      )}
       ref={columnRef}
     >
       <KanbanIssueBlocksList

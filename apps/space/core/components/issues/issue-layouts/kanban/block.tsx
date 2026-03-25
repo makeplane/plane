@@ -54,23 +54,23 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const { project_details } = usePublish(anchor.toString());
 
   return (
-    <div className="space-y-2 px-3 py-2">
+    <div className="flex flex-col gap-3">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
-          <div className="line-clamp-1 text-11 text-tertiary">
+          <div className="line-clamp-1 text-caption-sm-regular text-tertiary">
             {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issue.sequence_id)}
           </div>
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="w-full line-clamp-1 text-13 text-primary mb-1.5">
+      <div className="w-full line-clamp-1 text-body-xs-medium text-secondary">
         <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       </div>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary"
         issue={issue}
         displayProperties={displayProperties}
       />
@@ -97,23 +97,25 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   if (!issue) return null;
 
   return (
-    <div className={cn("group/kanban-block relative p-1.5")}>
+    <div className={cn("group/kanban-block relative")}>
       <div
         className={cn(
-          "relative block w-full border border-subtle border-strong bg-layer-2 text-13 transition-all rounded-lg bg-layer-2 hover:bg-layer-2-hover",
+          "block rounded-lg border outline-1 outline-transparent shadow-raised-100 w-full border-subtle-1 bg-layer-2 text-body-xs-regular transition-all hover:shadow-raised-200 hover:border-strong",
           {
             "border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
           }
         )}
       >
-        <Link
-          id={getIssueBlockId(issueId, groupId, subGroupId)}
-          className="w-full"
-          href={`?${queryParam}`}
-          onClick={handleIssuePeekOverview}
-        >
-          <KanbanIssueDetailsBlock issue={issue} displayProperties={displayProperties} />
-        </Link>
+        <div className="p-3">
+          <Link
+            id={getIssueBlockId(issueId, groupId, subGroupId)}
+            className="w-full"
+            href={`?${queryParam}`}
+            onClick={handleIssuePeekOverview}
+          >
+            <KanbanIssueDetailsBlock issue={issue} displayProperties={displayProperties} />
+          </Link>
+        </div>
         <BlockReactions issueId={issueId} />
       </div>
     </div>

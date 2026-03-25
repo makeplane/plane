@@ -77,7 +77,7 @@ export const IssuesLayoutsRoot = observer(function IssuesLayoutsRoot(props: Prop
             </div>
           )}
           {activeLayout === "kanban" && (
-            <div className="relative mx-auto size-full p-5">
+            <div className="relative mx-auto size-full">
               <IssueKanbanLayoutRoot anchor={anchor} />
             </div>
           )}

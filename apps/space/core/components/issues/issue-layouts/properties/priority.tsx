@@ -20,6 +20,14 @@ import type { TIssuePriorities } from "@plane/types";
 // constants
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 
+const PRIORITY_BORDERS: Record<TIssuePriorities, string> = {
+  urgent: "border-priority-urgent",
+  high: "border-priority-high",
+  medium: "border-priority-medium",
+  low: "border-priority-low",
+  none: "border-priority-none",
+};
+
 export function IssueBlockPriority({
   priority,
   shouldShowName = false,
@@ -31,48 +39,35 @@ export function IssueBlockPriority({
   const { t } = useTranslation();
   const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
 
-  const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent px-1",
-    high: "bg-layer-2 text-priority-high border-priority-high",
-    medium: "bg-layer-2 text-priority-medium border-priority-medium",
-    low: "bg-layer-2 text-priority-low border-priority-low",
-    none: "bg-layer-2 text-priority-none border-priority-none",
-  };
-
   if (priority_detail === null) return <></>;
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
-          priorityClasses[priority ?? "none"],
-          {
-            // compact the icons if text is hidden
-            "px-0.5": !shouldShowName,
-            // highlight the whole button if text is hidden and priority is urgent
-            "border-priority-urgent": priority === "urgent" && shouldShowName,
-          }
-        )}
-      >
+    <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")} className="w-fit">
+      <div className="flex items-center gap-1.5 text-caption-sm-regular w-fit">
         {priority ? (
-          <PriorityIcon
-            priority={priority}
-            size={12}
-            className={cn("flex-shrink-0", {
-              // increase the icon size if text is hidden
-              "h-3.5 w-3.5": !shouldShowName,
-              // centre align the icons if text is hidden
-              "translate-x-[0.0625rem]": !shouldShowName && priority === "high",
-              "translate-x-0.5": !shouldShowName && priority === "medium",
-              "translate-x-1": !shouldShowName && priority === "low",
-              // highlight the icon if priority is urgent
+          <span
+            className={cn("inline-flex shrink-0 items-center justify-center", {
+              "border-[0.5px] rounded-sm p-0.5": !shouldShowName || priority === "urgent",
+              [PRIORITY_BORDERS[priority]]: !shouldShowName || priority === "urgent",
             })}
-          />
+          >
+            <PriorityIcon
+              priority={priority}
+              size={12}
+              className={cn({
+                "h-3.5 w-3.5": !shouldShowName,
+                "translate-x-[0.0625rem]": !shouldShowName && priority === "high",
+                "translate-x-0.5": !shouldShowName && priority === "medium",
+                "translate-x-1": !shouldShowName && priority === "low",
+              })}
+            />
+          </span>
         ) : (
           <SignalHigh className="size-3" />
         )}
-        {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
+        {shouldShowName && (
+          <span className="text-caption-sm-regular">{t(priority_detail?.titleTranslationKey || "")}</span>
+        )}
       </div>
     </Tooltip>
   );

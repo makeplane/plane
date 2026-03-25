@@ -34,6 +34,7 @@ import { usePublish } from "@/hooks/store/publish";
 import { useStates } from "@/hooks/store/use-state";
 // types
 import type { IIssue, IPeekMode } from "@/types/issue";
+import { IssueBlockPriority } from "../issue-layouts/properties/priority";
 
 type Props = {
   issueDetails: IIssue;
@@ -95,26 +96,11 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
 
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
-            <PriorityPropertyIcon className="size-4 flex-shrink-0" />
+            <PriorityPropertyIcon className="size-4 shrink-0" />
             <span>Priority</span>
           </div>
           <div className="w-3/4">
-            <div
-              className={`inline-flex items-center gap-1.5 rounded-sm px-2.5 py-0.5 text-left text-13 capitalize bg-layer-2 ${
-                priority?.key === "urgent"
-                  ? "border-priority-urgent text-priority-urgent"
-                  : priority?.key === "high"
-                    ? "border-priority-high text-priority-high"
-                    : priority?.key === "medium"
-                      ? "border-priority-medium text-priority-medium"
-                      : priority?.key === "low"
-                        ? "border-priority-low text-priority-low"
-                        : "border-priority-none text-priority-none"
-              }`}
-            >
-              {priority && <PriorityIcon priority={priority?.key} size={12} className="flex-shrink-0" />}
-              <span>{t(priority?.titleTranslationKey || "common.none")}</span>
-            </div>
+            <IssueBlockPriority priority={issueDetails.priority} shouldShowName />
           </div>
         </div>
 

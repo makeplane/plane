@@ -32,29 +32,31 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
 
   const modulesString = modules.map((module) => module.name).join(", ");
 
+  const moduleName = (() => {
+    if (modules.length === 0) {
+      return "No Modules";
+    }
+    if (modules.length === 1) {
+      return modules[0].name;
+    }
+    return `${modules.length} Modules`;
+  })();
+
   return (
-    <div className="relative flex h-full flex-wrap items-center gap-1">
-      <Tooltip tooltipHeading="Modules" tooltipContent={modulesString}>
-        {modules.length <= 1 ? (
-          <div
-            key={modules?.[0]?.id}
-            className={cn("flex h-full flex-shrink-0 cursor-default items-center rounded-md px-2.5 py-1 text-11", {
-              "border-[0.5px] border-strong": shouldShowBorder,
-            })}
-          >
-            <div className="flex items-center gap-1.5 text-secondary">
-              <ModuleIcon className="h-3 w-3 flex-shrink-0" />
-              <div className="text-11">{modules?.[0]?.name ?? "No Modules"}</div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
-            <div className="flex items-center gap-1.5 text-secondary">
-              <div className="text-11">{modules.length} Modules</div>
-            </div>
-          </div>
+    <Tooltip tooltipHeading="Modules" tooltipContent={modulesString}>
+      <div
+        className={cn(
+          "flex shrink-0 cursor-default items-center h-full rounded-sm px-2.5 py-1.5 text-caption-sm-regular",
+          {
+            "border-[0.5px] border-strong": shouldShowBorder,
+          }
         )}
-      </Tooltip>
-    </div>
+      >
+        <div className="flex items-center gap-1.5 text-secondary">
+          <ModuleIcon className="h-3 w-3 shrink-0" />
+          <div className="text-caption-sm-regular">{moduleName}</div>
+        </div>
+      </div>
+    </Tooltip>
   );
 });
