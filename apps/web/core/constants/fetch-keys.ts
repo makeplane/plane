@@ -6,7 +6,8 @@
 
 import type { EUserPermissions, IJiraMetadata } from "@plane/types";
 
-const paramsToKey = (params: any) => {
+ 
+const paramsToKey = (params: Record<string, string | undefined>) => {
   const {
     state,
     state_group,
@@ -50,6 +51,7 @@ const paramsToKey = (params: any) => {
   labelsKey = labelsKey.sort().join("_");
   subscriberKey = subscriberKey.sort().join("_");
 
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
@@ -97,7 +99,9 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_
 // cycles
 export const WORKSPACE_ACTIVE_CYCLES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
   `WORKSPACE_ACTIVE_CYCLES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
-export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
+ 
+ 
+export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: Record<string, string | undefined>) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
 
   const paramsKey = paramsToKey(params);
@@ -149,6 +153,8 @@ export const USER_PROFILE_ACTIVITY = (
 ) => `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${params?.cursor}`;
 export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_PROJECT_SEGREGATION_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
+export const USER_PROFILE_TODAY_ISSUES = (workspaceSlug: string, userId: string) =>
+  `USER_PROFILE_TODAY_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
 
 // api-tokens
 export const API_TOKENS_LIST = `API_TOKENS_LIST`;

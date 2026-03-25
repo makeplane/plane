@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -26,12 +26,9 @@ import { ProjectViewsList } from "@/components/views/views-list";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import type { Route } from "./+types/page";
 
 function ProjectViewsPage({ params }: Route.ComponentProps) {
-  // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
@@ -39,20 +36,10 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
-  const { filters, updateFilters, clearAllFilters, getProjectViews } = useProjectView();
+  const { filters, updateFilters, clearAllFilters } = useProjectView();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const project = getProjectById(projectId);
-  const projectViews = getProjectViews(projectId);
-
-  // Auto-navigate to the default view on page load
-  useEffect(() => {
-    if (!workspaceSlug || !projectId || !projectViews) return;
-    const defaultView = projectViews.find((v) => v.is_default === true);
-    if (defaultView) {
-      router.replace(`/${workspaceSlug}/projects/${projectId}/views/${defaultView.id}`);
-    }
-  }, [workspaceSlug, projectId, projectViews, router]);
   const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = resolvedTheme === "light" ? lightViewsAsset : darkViewsAsset;

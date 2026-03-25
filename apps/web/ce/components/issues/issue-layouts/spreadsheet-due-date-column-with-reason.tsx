@@ -33,6 +33,12 @@ export const SpreadsheetDueDateColumnWithReason = observer(function SpreadsheetD
       onChange(issue, data, updates);
       return;
     }
+    if (!issue.target_date) {
+      // Setting date for the first time — no reason required
+      onChange(issue, data, updates);
+      return;
+    }
+    // Changing existing date — require reason
     setPendingChange({ data, updates });
   };
 

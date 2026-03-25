@@ -1955,6 +1955,19 @@ export default {
         button: "Tải xuống hoạt động hôm nay",
         button_loading: "Đang tải xuống",
       },
+      today_work_items: {
+        title: "Công việc hôm nay",
+        empty: "Không có mục công việc hoạt động nào cho hôm nay.",
+        columns: {
+          work_item: "Mục công việc",
+          department: "Phòng ban",
+          project: "Dự án",
+          state: "Trạng thái",
+          progress: "Theo dõi tiến độ",
+          start_date: "Ngày bắt đầu",
+          due_date: "Ngày đến hạn",
+        },
+      },
     },
     actions: {
       profile: "Hồ sơ",
