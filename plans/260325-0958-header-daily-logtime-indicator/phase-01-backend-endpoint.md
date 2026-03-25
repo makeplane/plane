@@ -30,15 +30,18 @@ GET /api/users/me/daily-worklog-total/?tz=Asia/Saigon
 ## Related Code Files
 
 **Modify:**
+
 - `apps/api/plane/app/urls/user.py` — add URL pattern
 - `apps/api/plane/app/views/__init__.py` — export new view (if needed)
 
 **Create:**
+
 - `apps/api/plane/app/views/user/daily_worklog.py` — new view (verify `user/` subdir exists first; create with `__init__.py` if missing)
 
 <!-- Updated: Validation Session 2 - check views/user/ subdirectory before creating file -->
 
 **Reference:**
+
 - `apps/api/plane/app/views/workspace/time_tracking/summary.py` — pattern reference
 - `apps/api/plane/db/models/worklog.py` — IssueWorkLog model
 
@@ -47,6 +50,7 @@ GET /api/users/me/daily-worklog-total/?tz=Asia/Saigon
 1. Check if `apps/api/plane/app/views/user/` directory exists. If not, create it with an empty `__init__.py`.
 
 2. Create `apps/api/plane/app/views/user/daily_worklog.py`:
+
    ```python
    from datetime import datetime
    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -75,6 +79,7 @@ GET /api/users/me/daily-worklog-total/?tz=Asia/Saigon
    ```
 
 3. Register URL in `apps/api/plane/app/urls/user.py`:
+
    ```python
    path("users/me/daily-worklog-total/", UserDailyWorklogTotalEndpoint.as_view(), name="user-daily-worklog-total"),
    ```

@@ -16,11 +16,11 @@ Add circular progress indicator showing current user's total logged time today (
 
 ## Phases
 
-| # | Phase | Status | Priority |
-|---|-------|--------|----------|
-| 1 | [Backend: Daily total endpoint](./phase-01-backend-endpoint.md) | Pending | High |
-| 2 | [Frontend: Circular progress component](./phase-02-frontend-component.md) | Pending | High |
-| 3 | [Integration: Header placement](./phase-03-header-integration.md) | Pending | High |
+| #   | Phase                                                                     | Status  | Priority |
+| --- | ------------------------------------------------------------------------- | ------- | -------- |
+| 1   | [Backend: Daily total endpoint](./phase-01-backend-endpoint.md)           | Pending | High     |
+| 2   | [Frontend: Circular progress component](./phase-02-frontend-component.md) | Pending | High     |
+| 3   | [Integration: Header placement](./phase-03-header-integration.md)         | Pending | High     |
 
 ## Dependencies
 
@@ -35,6 +35,7 @@ Add circular progress indicator showing current user's total logged time today (
 ## Validation Log
 
 ### Session 1 — 2026-03-25
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 5
 
@@ -66,22 +67,26 @@ Add circular progress indicator showing current user's total logged time today (
    - **Rationale:** Simple, explicit — backend reads `request.GET.get('tz')` and computes local date with zoneinfo.
 
 #### Confirmed Decisions
+
 - Timezone: pass user TZ as `?tz=` query param — backend computes local date
 - Max hours: hardcoded 12h constant
 - Scope: all workspaces
 - Refresh: 60s SWR polling only
 
 #### Action Items
+
 - [ ] Phase 1: backend must accept `?tz=` param, use `zoneinfo` to compute today's date in user timezone
 - [ ] Phase 2: service call must append `?tz=Intl.DateTimeFormat().resolvedOptions().timeZone`
 
 #### Impact on Phases
+
 - Phase 1: Add timezone-aware date computation using `zoneinfo.ZoneInfo(tz_param)` instead of `date.today()`
 - Phase 2: Pass `tz` query param in `getUserDailyTotal()` service method
 
 ---
 
 ### Session 2 — 2026-03-25
+
 **Trigger:** Re-validation to surface CE pattern and structural decisions before coding
 **Questions asked:** 3
 
@@ -103,14 +108,17 @@ Add circular progress indicator showing current user's total logged time today (
    - **Rationale:** Simple, no constants file needed — avoids over-engineering for a single-use key.
 
 #### Confirmed Decisions
+
 - CE service: create `apps/web/ce/services/worklog.service.ts`, do NOT modify core/services/
 - Backend view: check if `views/user/` subdir exists; create with `__init__.py` if missing
 - SWR key: inline string directly in component
 
 #### Action Items
+
 - [ ] Phase 2: Replace "Modify: core/services/worklog.service.ts" with "Create: ce/services/worklog.service.ts"
 - [ ] Phase 1: Verify/create `apps/api/plane/app/views/user/` directory structure
 
 #### Impact on Phases
+
 - Phase 2: Service location changes from `core/services/worklog.service.ts` → new `ce/services/worklog.service.ts`
 - Phase 1: Add step to check `views/user/` subdirectory existence before creating view file

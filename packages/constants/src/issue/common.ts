@@ -258,6 +258,8 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: TIssueOrderByOptions;
     descendingOrderTitle: string;
     icon: string;
+    /** When false, the header renders as plain text without a sort dropdown */
+    isSortable?: boolean;
   };
 } = {
   assignee: {
@@ -380,12 +382,13 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "created_at",
     descendingOrderTitle: "Z",
     icon: "BuildingIcon",
+    isSortable: false,
   },
   project_name: {
     i18n_title: "spreadsheet.columns.project_name",
-    ascendingOrderKey: "-created_at",
+    ascendingOrderKey: "project__name",
     ascendingOrderTitle: "A",
-    descendingOrderKey: "created_at",
+    descendingOrderKey: "-project__name",
     descendingOrderTitle: "Z",
     icon: "FolderIcon",
   },
@@ -396,6 +399,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "created_at",
     descendingOrderTitle: "Z",
     icon: "MembersPropertyIcon",
+    isSortable: false,
   },
   bank_wide_project: {
     i18n_title: "spreadsheet.columns.bank_wide_project",
@@ -404,6 +408,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "created_at",
     descendingOrderTitle: "No",
     icon: "BankIcon",
+    isSortable: false,
   },
   progress_tracking: {
     i18n_title: "spreadsheet.columns.progress_tracking",
@@ -415,9 +420,9 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   completed_date: {
     i18n_title: "spreadsheet.columns.completed_date",
-    ascendingOrderKey: "-created_at",
+    ascendingOrderKey: "-completed_at",
     ascendingOrderTitle: "New",
-    descendingOrderKey: "created_at",
+    descendingOrderKey: "completed_at",
     descendingOrderTitle: "Old",
     icon: "CalendarDays",
   },
@@ -431,9 +436,9 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   total_log_time: {
     i18n_title: "spreadsheet.columns.total_log_time",
-    ascendingOrderKey: "-created_at",
+    ascendingOrderKey: "-total_logged_minutes",
     ascendingOrderTitle: "Most",
-    descendingOrderKey: "created_at",
+    descendingOrderKey: "total_logged_minutes",
     descendingOrderTitle: "Least",
     icon: "TimerIcon",
   },

@@ -26,20 +26,24 @@ DailyLogtimeIndicator (ce/components/navigations/)
 ## Related Code Files
 
 **Create:**
+
 - `apps/web/ce/components/navigations/daily-logtime-indicator.tsx` — main component
 
 **Create:**
+
 - `apps/web/ce/services/worklog.service.ts` — new CE service with `getUserDailyTotal()` method
 
 <!-- Updated: Validation Session 2 - CE pattern: create ce/services/worklog.service.ts, do NOT modify core/services/ -->
 
 **Reference:**
+
 - `apps/web/ce/components/navigations/top-navigation-root.tsx` — insertion point
 - `@plane/propel/tooltip` — Tooltip component
 
 ## Type Definition
 
 Add to `packages/types/src/worklog.ts`:
+
 ```typescript
 export interface IUserDailyWorklogTotal {
   total_minutes: number;
@@ -52,6 +56,7 @@ export interface IUserDailyWorklogTotal {
 ### 1. Create `apps/web/ce/services/worklog.service.ts`
 
 <!-- Updated: Validation Session 1 - pass ?tz= query param with user's browser timezone -->
+
 ```typescript
 async getUserDailyTotal(): Promise<IUserDailyWorklogTotal> {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -73,6 +78,7 @@ export interface IUserDailyWorklogTotal {
 ### 3. Create `daily-logtime-indicator.tsx`
 
 Component specs:
+
 - **Size**: 28px SVG ring, fits in 32px container
 - **Progress**: `stroke-dashoffset` based on `totalMinutes / 720`
 - **Center text**: Hours only if >= 1h (e.g., "3h"), else minutes ("45m")
@@ -84,19 +90,32 @@ Component specs:
 - **Empty state**: Show "0h" with empty ring
 
 SVG approach:
+
 ```tsx
 <svg viewBox="0 0 36 36" className="size-7">
   {/* Background track */}
-  <circle cx="18" cy="18" r="15.5" fill="none" strokeWidth="3"
-    className="stroke-custom-border-200" />
+  <circle cx="18" cy="18" r="15.5" fill="none" strokeWidth="3" className="stroke-custom-border-200" />
   {/* Progress arc */}
-  <circle cx="18" cy="18" r="15.5" fill="none" strokeWidth="3"
-    strokeDasharray="97.4" strokeDashoffset={offset}
-    strokeLinecap="round" transform="rotate(-90 18 18)"
-    style={{ stroke: progressColor, transition: "stroke-dashoffset 0.5s ease" }} />
+  <circle
+    cx="18"
+    cy="18"
+    r="15.5"
+    fill="none"
+    strokeWidth="3"
+    strokeDasharray="97.4"
+    strokeDashoffset={offset}
+    strokeLinecap="round"
+    transform="rotate(-90 18 18)"
+    style={{ stroke: progressColor, transition: "stroke-dashoffset 0.5s ease" }}
+  />
   {/* Center text */}
-  <text x="18" y="18" textAnchor="middle" dominantBaseline="central"
-    className="fill-custom-text-200 text-[8px] font-medium">
+  <text
+    x="18"
+    y="18"
+    textAnchor="middle"
+    dominantBaseline="central"
+    className="fill-custom-text-200 text-[8px] font-medium"
+  >
     {label}
   </text>
 </svg>
