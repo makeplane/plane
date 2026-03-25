@@ -208,7 +208,7 @@ export default {
     },
     switch_to_plane_section: {
       title: "Discover why teams switch to Plane",
-      description: "Compare Plane with the tools you use today see the difference.",
+      description: "Compare Plane with the tools you use today and see the difference.",
     },
   },
 } as const;

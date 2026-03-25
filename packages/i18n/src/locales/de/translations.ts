@@ -12,6 +12,7 @@
  */
 
 export default {
+  unknown_user: "Unbekannter Benutzer",
   cloud_maintenance_message: {
     we_are_working_on_this_if_you_need_immediate_assistance: "Wir arbeiten daran. Wenn Sie sofortige Hilfe benötigen,",
     reach_out_to_us: "kontaktieren Sie uns",
@@ -37,15 +38,16 @@ export default {
     favorites: "Favoriten",
     pro: "Pro",
     upgrade: "Upgrade",
-    pi_chat: "AI Tschat",
+    pi_chat: "Plane AI",
     initiatives: "Initiativen",
-    teamspaces: "Timspäses",
-    epics: "Epiks",
-    upgrade_plan: "Apgräde plän",
-    plane_pro: "Pläne Pro",
-    business: "Bisness",
-    customers: "Kastomers",
-    recurring_work_items: "Wiederkehrende Arbeitsaufgaben",
+    teamspaces: "Teamspaces",
+    epics: "Epics",
+    upgrade_plan: "Plan upgraden",
+    plane_pro: "Plane Pro",
+    business: "Business",
+    customers: "Kunden",
+    stickies: "Notizen",
+    releases: "Releases",
   },
   auth: {
     common: {
@@ -256,8 +258,18 @@ export default {
   your_account: "Ihr Konto",
   security: "Sicherheit",
   activity: "Aktivität",
-  appearance: "Aussehen",
+  preferences: "Einstellungen",
+  language_and_time: "Sprache und Zeit",
   notifications: "Benachrichtigungen",
+  timezone_setting: "Aktuelle Zeitzoneneinstellung.",
+  language_setting: "Wählen Sie die in der Benutzeroberfläche verwendete Sprache.",
+  settings_moved_to_preferences: "Zeitzonen- und Spracheinstellungen wurden in die Einstellungen verschoben.",
+  go_to_preferences: "Zu den Einstellungen",
+  pages: "Seiten",
+  target_date: "Zieldatum",
+  settings_description:
+    "Verwalten Sie Ihre Konto-, Arbeitsbereichs- und Projekteinstellungen an einem Ort. Wechseln Sie zwischen den Tabs, um sie einfach zu konfigurieren.",
+  back_to_workspace: "Zurück zum Arbeitsbereich",
   workspaces: "Arbeitsbereiche",
   create_workspace: "Arbeitsbereich erstellen",
   invitations: "Einladungen",
@@ -422,35 +434,6 @@ export default {
   issues: "Arbeitselemente",
   cycles: "Zyklen",
   modules: "Module",
-  pages: {
-    link_pages: "Seiten verbinden",
-    show_wiki_pages: "Wiki-Seiten anzeigen",
-    link_pages_to: "Seiten verbinden zu",
-    linked_pages: "Verlinkte Seiten",
-    no_description: "Diese Seite ist leer. Schreiben Sie etwas hinein und sehen Sie es hier als dieser Platzhalter",
-    toasts: {
-      link: {
-        success: {
-          title: "Seiten aktualisiert",
-          message: "Seiten wurden erfolgreich aktualisiert",
-        },
-        error: {
-          title: "Seiten nicht aktualisiert",
-          message: "Seiten konnten nicht aktualisiert werden",
-        },
-      },
-      remove: {
-        success: {
-          title: "Seite entfernt",
-          message: "Seite wurde erfolgreich entfernt",
-        },
-        error: {
-          title: "Seite nicht entfernt",
-          message: "Seite konnte nicht entfernt werden",
-        },
-      },
-    },
-  },
   intake: "Eingang",
   renew: "Erneuern",
   preview: "Vorschau",
@@ -780,7 +763,7 @@ export default {
       message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
     },
     group_by: "Gruppieren nach",
-    epic: "Epik",
+    epic: "Epic",
     epics: "Epics",
     work_item: "Arbeitselement",
     work_items: "Arbeitselemente",
@@ -895,17 +878,13 @@ export default {
     quarter: "Quartal",
     press_for_commands: "Drücken Sie '/' für Befehle",
     click_to_add_description: "Klicken Sie, um eine Beschreibung hinzuzufügen",
-    search: {
-      label: "Suchen",
-      placeholder: "Suchbegriff eingeben",
-      no_matches_found: "Keine Übereinstimmungen gefunden",
-      no_matching_results: "Keine übereinstimmenden Ergebnisse",
-    },
     actions: {
       edit: "Bearbeiten",
       make_a_copy: "Kopie erstellen",
       open_in_new_tab: "In neuem Tab öffnen",
       copy_link: "Link kopieren",
+      copy_markdown: "Markdown kopieren",
+      reply: "Antworten",
       copy_branch_name: "Branch-Name kopieren",
       archive: "Archivieren",
       restore: "Wiederherstellen",
@@ -1014,6 +993,27 @@ export default {
     templates: "Vorlagen",
     members_and_teamspaces: "Mitglieder & Teamspaces",
     open_in_full_screen: "{page} im Vollbild öffnen",
+    views: "Ansichten",
+    pages: "Seiten",
+    dependencies: "Abhängigkeiten",
+    search: {
+      label: "Suchen",
+      placeholder: "Zum Suchen tippen",
+      no_matches_found: "Keine Treffer gefunden",
+      no_matching_results: "Keine passenden Ergebnisse",
+      min_chars: "Geben Sie mindestens {count} Zeichen ein, um zu suchen",
+      error: "Fehler beim Abrufen der Suchergebnisse",
+      no_results: {
+        title: "Keine passenden Ergebnisse",
+        description: "Entfernen Sie die Suchkriterien, um alle Ergebnisse zu sehen",
+      },
+    },
+    global: "Global",
+    retry: "Erneut versuchen",
+    get_started: "Loslegen",
+    business: "Business",
+    recurring_work_items: "Wiederkehrende Arbeitselemente",
+    milestones: "Meilensteine",
   },
   chart: {
     x_axis: "X-Achse",
@@ -1054,33 +1054,33 @@ export default {
     },
   },
   epic: {
-    all: "Alle Epiks",
-    label: "{count, plural, one {Epik} other {Epiks}}",
-    new: "Neuer Epik",
-    adding: "Epik wird hinzugefügt",
+    all: "Alle Epics",
+    label: "{count, plural, one {Epic} other {Epics}}",
+    new: "Neues Epic",
+    adding: "Epic wird hinzugefügt",
     create: {
-      success: "Epik erfolgreich erstellt",
+      success: "Epic erfolgreich erstellt",
     },
     add: {
-      press_enter: "Drücken Sie 'Enter', um einen weiteren Epik hinzuzufügen",
-      label: "Epik hinzufügen",
+      press_enter: "Drücken Sie 'Enter', um ein weiteres Epic hinzuzufügen",
+      label: "Epic hinzufügen",
     },
     title: {
-      label: "Epik-Titel",
-      required: "Ein Titel für den Epik ist erforderlich.",
+      label: "Epic-Titel",
+      required: "Ein Titel für das Epic ist erforderlich.",
     },
     archive: {
       description: `Nur abgeschlossene oder abgebrochene
-Epiks können archiviert werden`,
-      label: "Epik archivieren",
+Epics können archiviert werden`,
+      label: "Epic archivieren",
       confirm_message:
-        "Sind Sie sicher, dass Sie den Epik archivieren möchten? Alle archivierten Epiks können später wiederhergestellt werden.",
+        "Sind Sie sicher, dass Sie das Epic archivieren möchten? Alle archivierten Epics können später wiederhergestellt werden.",
       success: {
         label: "Archivierung erfolgreich",
         message: "Ihre Archive finden Sie in den Projektarchiven.",
       },
       failed: {
-        message: "Epik konnte nicht archiviert werden. Bitte versuchen Sie es erneut.",
+        message: "Epic konnte nicht archiviert werden. Bitte versuchen Sie es erneut.",
       },
     },
   },
@@ -1109,6 +1109,7 @@ Epiks können archiviert werden`,
       relation: "Beziehung hinzufügen",
       link: "Link hinzufügen",
       existing: "Vorhandenes Arbeitselement hinzufügen",
+      dependency: "Abhängigkeit hinzufügen",
     },
     remove: {
       label: "Arbeitselement entfernen",
@@ -1147,6 +1148,10 @@ Epiks können archiviert werden`,
         created_on: "Erstellt am",
         sub_issue: "Untergeordnetes Element",
         work_item_count: "Anzahl Arbeitselemente",
+        customer_count: "Kundenanzahl",
+        customer_request_count: "Kundenanfragenanzahl",
+        customer: "Kunde",
+        requests: "Kundenanfrage",
       },
       extra: {
         show_sub_issues: "Untergeordnete Elemente anzeigen",
@@ -1196,6 +1201,43 @@ Epiks können archiviert werden`,
       copy_link: {
         success: "Kommentar-Link in die Zwischenablage kopiert",
         error: "Fehler beim Kopieren des Kommentar-Links. Bitte versuchen Sie es später erneut.",
+      },
+      replies: {
+        create: {
+          submit_button: "Antwort hinzufügen",
+          placeholder: "Antwort hinzufügen",
+        },
+        toast: {
+          fetch: {
+            error: {
+              message: "Antworten konnten nicht geladen werden",
+            },
+          },
+          create: {
+            success: {
+              message: "Antwort erfolgreich erstellt",
+            },
+            error: {
+              message: "Antwort konnte nicht erstellt werden",
+            },
+          },
+          update: {
+            success: {
+              message: "Antwort erfolgreich aktualisiert",
+            },
+            error: {
+              message: "Antwort konnte nicht aktualisiert werden",
+            },
+          },
+          delete: {
+            success: {
+              message: "Antwort erfolgreich gelöscht",
+            },
+            error: {
+              message: "Antwort konnte nicht gelöscht werden",
+            },
+          },
+        },
       },
     },
     empty_state: {
@@ -1263,6 +1305,54 @@ Epiks können archiviert werden`,
       deselect_all: "Alle abwählen",
     },
     open_in_full_screen: "Arbeitselement im Vollbild öffnen",
+    duplicate: {
+      modal: {
+        title: "Eine Kopie in ein anderes Projekt erstellen",
+        description1: "Dies erstellt eine Kopie des Arbeitselements.",
+        description2: "Alle Eigenschaftsdaten werden beim Duplizieren entfernt.",
+        placeholder: "Projekt auswählen",
+      },
+    },
+    toast: {
+      duplicate: {
+        success: {
+          message: "Arbeitselement erfolgreich dupliziert",
+        },
+        error: {
+          message: "Arbeitselement konnte nicht dupliziert werden",
+        },
+      },
+    },
+    pages: {
+      link_pages: "Seiten verknüpfen",
+      show_wiki_pages: "Wiki-Seiten anzeigen",
+      link_pages_to: "Seiten verknüpfen mit",
+      linked_pages: "Verknüpfte Seiten",
+      no_description:
+        "Diese Seite ist leer. Schreiben Sie etwas hinein und sehen Sie es hier anstelle dieses Platzhalters",
+      toasts: {
+        link: {
+          success: {
+            title: "Seiten aktualisiert",
+            message: "Seiten wurden erfolgreich aktualisiert",
+          },
+          error: {
+            title: "Seiten nicht aktualisiert",
+            message: "Seiten konnten nicht aktualisiert werden",
+          },
+        },
+        remove: {
+          success: {
+            title: "Seite entfernt",
+            message: "Seite wurde erfolgreich entfernt",
+          },
+          error: {
+            title: "Seite nicht entfernt",
+            message: "Seite konnte nicht entfernt werden",
+          },
+        },
+      },
+    },
   },
   attachment: {
     error: "Datei konnte nicht angehängt werden. Bitte versuchen Sie es erneut.",
@@ -1553,13 +1643,7 @@ Danke,
     summary_of_projects: "Projektübersicht",
     project_insights: "Projekteinblicke",
     started_work_items: "Begonnene {entity}",
-    total_work_items: "Gesamte {entity}",
-    total_projects: "Gesamtprojekte",
-    total_admins: "Gesamtanzahl der Admins",
-    total_users: "Gesamtanzahl der Benutzer",
-    total_intake: "Gesamteinnahmen",
     un_started_work_items: "Nicht begonnene {entity}",
-    total_guests: "Gesamtanzahl der Gäste",
     completed_work_items: "Abgeschlossene {entity}",
     total: "Gesamte {entity}",
     projects_by_status: "Projekte nach Status",
@@ -1727,9 +1811,33 @@ Erstellen Sie ein neues.`,
       },
     },
     notifications: {
+      heading: "E-Mail-Benachrichtigungen",
+      description:
+        "Bleiben Sie bei Arbeitselementen auf dem Laufenden, die Sie abonniert haben. Aktivieren Sie dies, um benachrichtigt zu werden.",
       select_default_view: "Standardansicht auswählen",
       compact: "Kompakt",
       full: "Vollbild",
+    },
+    preferences: {
+      heading: "Einstellungen",
+      description: "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an",
+    },
+    security: {
+      heading: "Sicherheit",
+    },
+    api_tokens: {
+      title: "Persönliche Zugriffstoken",
+      description:
+        "Generieren Sie sichere API-Token, um Ihre Daten mit externen Systemen und Anwendungen zu integrieren.",
+    },
+    activity: {
+      heading: "Aktivität",
+      description: "Verfolgen Sie Ihre letzten Aktionen und Änderungen über alle Projekte und Arbeitselemente hinweg.",
+    },
+    connections: {
+      title: "Verbindungen",
+      heading: "Verbindungen",
+      description: "Verwalten Sie Ihre Arbeitsbereich-Verbindungseinstellungen.",
     },
   },
   workspace_settings: {
@@ -1770,6 +1878,7 @@ Erstellen Sie ein neues.`,
           },
           company_size: {
             required: "Die Unternehmensgröße ist erforderlich",
+            select_a_range: "Organisationsgröße auswählen",
           },
         },
       },
@@ -1801,12 +1910,19 @@ Erstellen Sie ein neues.`,
         },
       },
       billing_and_plans: {
+        heading: "Abrechnung und Pläne",
+        description: "Wählen Sie Ihren Plan, verwalten Sie Abonnements und führen Sie bei Bedarf ein Upgrade durch.",
         title: "Abrechnung und Pläne",
         current_plan: "Aktueller Plan",
         free_plan: "Sie nutzen den kostenlosen Plan",
         view_plans: "Pläne anzeigen",
       },
       exports: {
+        heading: "Exporte",
+        description:
+          "Exportieren Sie Ihre Projektdaten in verschiedenen Formaten und greifen Sie auf Ihre Exporthistorie mit Download-Links zu.",
+        exporting_projects: "Projekt wird exportiert",
+        format: "Format",
         title: "Exporte",
         exporting: "Wird exportiert",
         previous_exports: "Bisherige Exporte",
@@ -1828,6 +1944,8 @@ Erstellen Sie ein neues.`,
         },
       },
       webhooks: {
+        heading: "Webhooks",
+        description: "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",
         title: "Webhooks",
         add_webhook: "Webhook hinzufügen",
         modal: {
@@ -1903,15 +2021,23 @@ Erstellen Sie ein neues.`,
         },
       },
       integrations: {
+        heading: "Integrationen",
+        description:
+          "Verbinden Sie sich mit beliebten Tools und Diensten, um Ihre Arbeit über Ihr gesamtes Workflow-Ökosystem zu synchronisieren.",
         title: "Integrationen",
         page_title: "Arbeiten Sie mit Ihren Plane-Daten in verfügbaren Apps oder in Ihren eigenen.",
         page_description:
           "Sehen Sie sich alle Integrationen an, die von diesem Workspace oder von Ihnen verwendet werden.",
       },
       imports: {
+        heading: "Importe",
+        description:
+          "Verbinden und importieren Sie Daten aus Ihren bestehenden Projektmanagement-Tools, um Ihre Workflow-Integration zu optimieren.",
         title: "Importe",
       },
       worklogs: {
+        heading: "Arbeitsberichte",
+        description: "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter.",
         title: "Arbeitsberichte",
       },
       group_syncing: {
@@ -1984,6 +2110,9 @@ Erstellen Sie ein neues.`,
         description: "Konfigurieren Sie Ihre Domain und aktivieren Sie Single Sign-On",
       },
       project_states: {
+        heading: "Fortschrittsübersicht für alle Projekte anzeigen.",
+        description:
+          "Projektstatus ist eine Plane-exklusive Funktion zur Verfolgung des Fortschritts aller Ihrer Projekte nach beliebiger Projekteigenschaft.",
         title: "Projektstatus",
       },
       projects: {
@@ -1995,12 +2124,20 @@ Erstellen Sie ein neues.`,
         },
       },
       teamspaces: {
+        heading: "Teamspaces",
+        description:
+          "Sehen Sie die Arbeit Ihres Teams in einem separaten Bereich mit verknüpften Projekten, Aufgaben, Team-Diagrammen, Seiten und Ansichten.",
         title: "Teamspaces",
       },
       initiatives: {
+        heading: "Initiativen",
+        description: "Erschließen Sie die höchste Organisationsebene für Ihre gesamte Arbeit in Plane.",
         title: "Initiativen",
       },
       customers: {
+        heading: "Arbeit nach dem verwalten, was für Ihre Kunden wichtig ist.",
+        description:
+          "Bringen Sie Kundenanfragen zu Arbeitselementen, priorisieren Sie nach Anfragen und fassen Sie den Status von Arbeitselementen in Kundendatensätzen zusammen. Bald können Sie Ihr CRM- oder Support-Tool für noch besseres Arbeitsmanagement nach Kundenattributen integrieren.",
         title: "Kunden",
       },
       releases: {
@@ -2013,6 +2150,30 @@ Erstellen Sie ein neues.`,
         },
       },
 
+      templates: {
+        title: "Vorlagen",
+        heading: "Vorlagen",
+        description:
+          "Sparen Sie 80% der Zeit beim Erstellen von Projekten, Arbeitselementen und Seiten, wenn Sie Vorlagen verwenden.",
+      },
+      relations: {
+        title: "Beziehungen",
+        heading: "Beziehungen",
+        description:
+          "Erstellen und verwalten Sie Beziehungstypen, die Arbeitselemente in Ihrem Arbeitsbereich verbinden.",
+      },
+      "plane-intelligence": {
+        title: "Plane AI",
+        heading: "Plane AI",
+        description:
+          "Lassen Sie Ihre Arbeit intelligenter und schneller werden mit KI, die nativ mit Ihrer Arbeit und Wissensbasis verbunden ist.",
+      },
+      runners: {
+        title: "Plane Runner",
+        heading: "Skripte",
+        new_script: "Neues Skript",
+        description: "Automatisieren Sie Ihre Workflows mit benutzerdefinierten Skripten und Automatisierungsregeln.",
+      },
       cancel_trial: {
         title: "Kündigen Sie zuerst Ihre Testphase.",
         description:
@@ -2026,6 +2187,17 @@ Erstellen Sie ein neues.`,
       },
       applications: {
         title: "Anwendungen",
+        webhook_secret: {
+          label: "Webhook-Secret",
+          description: "Secret zur Überprüfung eingehender Webhook-Anfragen.",
+          placeholder: "Geben Sie einen zufälligen geheimen Schlüssel ein",
+        },
+        invalid_website_error: "Ungültige Website",
+        app_consent_no_access_title: "Installationsanfrage",
+        app_consent_unapproved_title: "Diese App wurde noch nicht von Plane überprüft oder genehmigt.",
+        app_consent_unapproved_description:
+          "Stellen Sie sicher, dass Sie dieser App vertrauen, bevor Sie sie mit Ihrem Arbeitsbereich verbinden.",
+        go_to_app: "Zur App",
         applicationId_copied: "Anwendungs-ID in die Zwischenablage kopiert",
         clientId_copied: "Client-ID in die Zwischenablage kopiert",
         clientSecret_copied: "Client-Secret in die Zwischenablage kopiert",
@@ -2065,7 +2237,6 @@ Erstellen Sie ein neues.`,
         app_description_error: "App-Beschreibung ist erforderlich",
         app_slug_title: "App-Slug",
         app_slug_error: "App-Slug ist erforderlich",
-        app_maker_title: "App-Entwickler",
         app_maker_error: "App-Entwickler ist erforderlich",
         webhook_url_title: "Webhook-URL",
         webhook_url_error: "Webhook-URL ist erforderlich",
@@ -2137,7 +2308,6 @@ Erstellen Sie ein neues.`,
         video_url_title: "Video-URL",
         video_url_error: "Video-URL ist erforderlich",
         invalid_video_url_error: "Ungültige Video-URL",
-        setup_url_title: "Setup-URL",
         setup_url_error: "Setup-URL ist erforderlich",
         invalid_setup_url_error: "Ungültige Setup-URL",
         configuration_url_title: "Konfigurations-URL",
@@ -2147,7 +2317,7 @@ Erstellen Sie ein neues.`,
         contact_email_error: "Kontakt-Email ist erforderlich",
         invalid_contact_email_error: "Ungültige Kontakt-Email",
         upload_attachments: "Dateien hochladen",
-        uploading_images: "Uploading {count} Image{count, plural, one {s} other {s}}",
+        uploading_images: "{count, plural, one {Ein Bild wird} other {{count} Bilder werden}} hochgeladen",
         drop_images_here: "Dateien hier ablegen",
         click_to_upload_images: "Dateien hochladen",
         invalid_file_or_exceeds_size_limit: "Ungültige Datei oder überschreitet die Größe ({size} MB)",
@@ -2272,7 +2442,8 @@ Erstellen Sie ein neues.`,
       profile: "Profil",
       security: "Sicherheit",
       activity: "Aktivität",
-      appearance: "Aussehen",
+      preferences: "Einstellungen",
+      "api-tokens": "Persönliche Zugriffstoken",
       notifications: "Benachrichtigungen",
       connections: "Verbindungen",
     },
@@ -2342,6 +2513,9 @@ Erstellen Sie ein neues.`,
       project_subscribers_description: "Wählen Sie Mitglieder aus, die Benachrichtigungen für dieses Projekt erhalten.",
     },
     states: {
+      heading: "Status",
+      description:
+        "Definieren und passen Sie Workflow-Status an, um den Fortschritt Ihrer Arbeitselemente zu verfolgen.",
       describe_this_state_for_your_members: "Beschreiben Sie diesen Status für Ihre Mitglieder.",
       empty_state: {
         title: "Keine Status für die Gruppe {groupKey}",
@@ -2349,6 +2523,9 @@ Erstellen Sie ein neues.`,
       },
     },
     labels: {
+      heading: "Labels",
+      description:
+        "Erstellen Sie benutzerdefinierte Labels, um Ihre Arbeitselemente zu kategorisieren und zu organisieren",
       label_title: "Labelname",
       label_title_is_required: "Ein Labelname ist erforderlich",
       label_max_char: "Der Labelname darf nicht mehr als 255 Zeichen enthalten",
@@ -2357,9 +2534,11 @@ Erstellen Sie ein neues.`,
       },
     },
     estimates: {
+      heading: "Schätzungen",
+      enable_description: "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
       label: "Schätzungen",
       title: "Schätzungen für mein Projekt aktivieren",
-      description: "Sie helfen dir, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
+      description: "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
       no_estimate: "Keine Schätzung",
       new: "Neues Schätzungssystem",
       create: {
@@ -2372,6 +2551,16 @@ Erstellen Sie ein neues.`,
         label: "Schätzung erstellen",
       },
       toasts: {
+        switch: {
+          success: {
+            title: "Schätzungssystem erstellt",
+            message: "Erfolgreich erstellt und aktiviert",
+          },
+          error: {
+            title: "Fehler",
+            message: "Etwas ist schiefgelaufen",
+          },
+        },
         created: {
           success: {
             title: "Schätzung erstellt",
@@ -2426,9 +2615,9 @@ Erstellen Sie ein neues.`,
         character: "Die Schätzung muss ein Zeichenwert sein.",
         empty: "Der Schätzungswert darf nicht leer sein.",
         already_exists: "Der Schätzungswert existiert bereits.",
-        unsaved_changes: "Du hast ungespeicherte Änderungen. Bitte speichere sie, bevor du auf Fertig klickst",
+        unsaved_changes: "Sie haben ungespeicherte Änderungen. Bitte speichern Sie diese, bevor Sie auf Fertig klicken",
         remove_empty:
-          "Die Schätzung darf nicht leer sein. Gib einen Wert in jedes Feld ein oder entferne die Felder, für die du keine Werte hast.",
+          "Die Schätzung darf nicht leer sein. Geben Sie einen Wert in jedes Feld ein oder entfernen Sie die Felder, für die Sie keine Werte haben.",
         fill: "Bitte füllen Sie dieses Schätzungsfeld aus",
         repeat: "Schätzungswert darf nicht wiederholt werden",
       },
@@ -2467,21 +2656,6 @@ Erstellen Sie ein neues.`,
       current: "Aktuelles Schätzsystem",
       select: "Wählen Sie ein Schätzsystem",
     },
-    automations: {
-      label: "Automatisierungen",
-      "auto-archive": {
-        title: "Geschlossene Arbeitselemente automatisch archivieren",
-        description: "Plane wird Arbeitselemente automatisch archivieren, die abgeschlossen oder abgebrochen wurden.",
-        duration: "Arbeitselemente automatisch archivieren, die seit",
-      },
-      "auto-close": {
-        title: "Arbeitselemente automatisch schließen",
-        description:
-          "Plane wird Arbeitselemente automatisch schließen, die nicht abgeschlossen oder abgebrochen wurden.",
-        duration: "Inaktive Arbeitselemente automatisch schließen seit",
-        auto_close_status: "Status der automatischen Schließung",
-      },
-    },
     empty_state: {
       labels: {
         title: "Keine Labels",
@@ -2509,19 +2683,6 @@ Erstellen Sie ein neues.`,
         disable_success: "Initiativenfunktion erfolgreich deaktiviert.",
         error: "Aktualisierung der Initiativenfunktion fehlgeschlagen!",
       },
-    },
-    customers: {
-      heading: "Kunden",
-      settings_heading: "Verwalten Sie Arbeit nach dem, was für Ihre Kunden wichtig ist.",
-      settings_sub_heading:
-        "Bringen Sie Kundenanfragen zu Arbeitsaufgaben, weisen Sie Priorität nach Anfragen zu und führen Sie den Status von Arbeitsaufgaben in Kundendatensätzen zusammen. Bald werden Sie mit Ihrem CRM oder Support-Tool für eine noch bessere Arbeitsverwaltung nach Kundenattributen integrieren können.",
-    },
-    epics: {
-      properties: {
-        title: "Eigenschaften",
-        description: "Fügen Sie benutzerdefinierte Eigenschaften zu Ihrer Epic hinzu.",
-      },
-      disabled: "Deaktiviert",
     },
     cycles: {
       auto_schedule: {
@@ -2723,6 +2884,143 @@ Erstellen Sie ein neues.`,
         success: "Projektfunktion erfolgreich aktualisiert.",
         error: "Beim Aktualisieren der Projektfunktion ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
       },
+    },
+    automations: {
+      heading: "Automatisierungen",
+      description:
+        "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren.",
+      label: "Automatisierungen",
+      "auto-archive": {
+        title: "Geschlossene Arbeitselemente automatisch archivieren",
+        description: "Plane archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
+        duration: "Arbeitselemente automatisch archivieren, die geschlossen sind seit",
+      },
+      "auto-close": {
+        title: "Arbeitselemente automatisch schließen",
+        description: "Plane schließt automatisch Arbeitselemente, die nicht abgeschlossen oder abgebrochen wurden.",
+        duration: "Arbeitselemente automatisch schließen, die inaktiv sind seit",
+        auto_close_status: "Auto-Schließ-Status",
+      },
+    },
+    workflows: {
+      toggle: {
+        title: "Workflows aktivieren",
+        description: "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",
+        toast: {
+          loading: {
+            enabling: "Workflows werden aktiviert",
+            disabling: "Workflows werden deaktiviert",
+          },
+          success: {
+            title: "Erfolg!",
+            message: "Workflows erfolgreich aktiviert.",
+          },
+          error: {
+            title: "Fehler!",
+            message: "Workflows konnten nicht aktiviert werden. Bitte versuchen Sie es erneut.",
+          },
+        },
+      },
+      heading: "Workflows",
+      description:
+        "Automatisieren Sie Übergänge von Arbeitselementen und legen Sie Regeln fest, um zu steuern, wie Aufgaben durch Ihre Projektpipeline fließen.",
+      add_button: "Neuen Workflow hinzufügen",
+      search: "Workflows suchen",
+      detail: {
+        define: "Workflow definieren",
+        add_states: "Status hinzufügen",
+      },
+      create: {
+        heading: "Neuen Workflow erstellen",
+        name: {
+          placeholder: "Einen eindeutigen Namen hinzufügen",
+          validation: {
+            max_length: "Der Name darf nicht mehr als 255 Zeichen haben",
+            required: "Name ist erforderlich",
+            invalid: "Der Name darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten",
+          },
+        },
+        description: {
+          placeholder: "Eine kurze Beschreibung hinzufügen",
+          validation: {
+            invalid: "Die Beschreibung darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten",
+          },
+        },
+        work_item_type: {
+          label: "Arbeitselementtyp",
+        },
+        success: {
+          title: "Erfolg!",
+          message: "Workflow erfolgreich erstellt.",
+        },
+        error: {
+          title: "Fehler!",
+          message: "Workflow konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+        },
+      },
+      update: {
+        success: {
+          title: "Erfolg!",
+          message: "Workflow erfolgreich aktualisiert.",
+        },
+        error: {
+          title: "Fehler!",
+          message: "Workflow konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+        },
+      },
+      delete: {
+        loading: "Workflow wird gelöscht",
+        success: {
+          title: "Erfolg!",
+          message: "Workflow erfolgreich gelöscht.",
+        },
+        error: {
+          title: "Fehler!",
+          message: "Workflow konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+        },
+      },
+      add_states: {
+        success: {
+          title: "Erfolg!",
+          message: "Status erfolgreich hinzugefügt.",
+        },
+        error: {
+          title: "Fehler!",
+          message: "Status konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+        },
+      },
+    },
+    work_item_types: {
+      heading: "Arbeitselementtypen",
+      description:
+        "Erstellen und passen Sie verschiedene Typen von Arbeitselementen mit einzigartigen Eigenschaften an",
+    },
+    customers: {
+      heading: "Kunden",
+      settings_heading: "Arbeit nach dem verwalten, was für Ihre Kunden wichtig ist.",
+      settings_sub_heading:
+        "Bringen Sie Kundenanfragen zu Arbeitselementen, priorisieren Sie nach Anfragen und fassen Sie den Status von Arbeitselementen in Kundendatensätzen zusammen. Bald können Sie Ihr CRM- oder Support-Tool für noch besseres Arbeitsmanagement nach Kundenattributen integrieren.",
+      description:
+        "Bringen Sie Kundenanfragen zu Arbeitselementen, priorisieren Sie nach Anfragen und fassen Sie den Status von Arbeitselementen in Kundendatensätzen zusammen. Bald können Sie Ihr CRM- oder Support-Tool für noch besseres Arbeitsmanagement nach Kundenattributen integrieren.",
+    },
+    epics: {
+      heading: "Epics",
+      description:
+        "Für größere Arbeitsmengen, die sich über mehrere Zyklen erstrecken und in verschiedenen Modulen existieren können",
+      properties: {
+        title: "Eigenschaften",
+        description: "Fügen Sie benutzerdefinierte Eigenschaften zu Ihrem Epic hinzu.",
+      },
+      disabled: "Deaktiviert",
+    },
+    project_updates: {
+      heading: "Projektaktualisierungen",
+      description: "Konsolidierte Nachverfolgung und Fortschrittsüberwachung für dieses Projekt",
+    },
+    templates: {
+      heading: "Vorlagen",
+      description:
+        "Sparen Sie 80% der Zeit beim Erstellen von Projekten, Arbeitselementen und Seiten, wenn Sie Vorlagen verwenden.",
     },
   },
   project_cycles: {
@@ -2952,10 +3250,39 @@ Erstellen Sie ein neues.`,
             description: "Erstellen Sie eine Ansicht mit den gewünschten Filtern.",
           },
         },
+        filter: {
+          title: "Keine passenden Ansichten",
+          description: "Keine Ansichten entsprechen den Suchkriterien.\n Erstellen Sie stattdessen eine neue Ansicht.",
+        },
       },
-      filter: {
-        title: "Keine passenden Ansichten",
-        description: "Erstellen Sie eine neue Ansicht.",
+      no_archived_issues: {
+        title: "Noch keine archivierten Arbeitselemente",
+        description:
+          "Manuell oder durch Automatisierung können Sie abgeschlossene oder abgebrochene Arbeitselemente archivieren. Finden Sie sie hier, sobald sie archiviert sind.",
+        primary_button: {
+          text: "Automatisierung einrichten",
+        },
+      },
+      issues_empty_filter: {
+        title: "Keine Arbeitselemente gefunden, die den angewendeten Filtern entsprechen",
+        secondary_button: {
+          text: "Alle Filter löschen",
+        },
+      },
+      public: {
+        title: "Noch keine öffentlichen Seiten",
+        description: "Sehen Sie hier Seiten, die mit allen in Ihrem Projekt geteilt wurden.",
+        primary_button: {
+          text: "Ihre erste Seite erstellen",
+        },
+      },
+      archived: {
+        title: "Noch keine archivierten Seiten",
+        description: "Archivieren Sie Seiten, die nicht auf Ihrem Radar sind. Greifen Sie hier bei Bedarf darauf zu.",
+      },
+      shared: {
+        title: "Noch keine geteilten Seiten",
+        description: "Seiten, die andere mit Ihnen geteilt haben, werden hier angezeigt.",
       },
     },
     delete_view: {
@@ -2963,6 +3290,13 @@ Erstellen Sie ein neues.`,
       content:
         "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden.",
     },
+  },
+  project_members: {
+    full_name: "Vollständiger Name",
+    display_name: "Anzeigename",
+    email: "E-Mail",
+    joining_date: "Beitrittsdatum",
+    role: "Rolle",
   },
   project_page: {
     empty_state: {
@@ -3246,7 +3580,7 @@ Erstellen Sie ein neues.`,
     },
     jira: {
       title: "Jira",
-      description: "Arbeitselemente und Epiks aus Jira importieren.",
+      description: "Arbeitselemente und Epics aus Jira importieren.",
     },
   },
   exporter: {
@@ -3376,23 +3710,63 @@ Erstellen Sie ein neues.`,
           description: "Fügen Sie Bilder hinzu, um sie hier zu sehen.",
         },
       },
+      comments: {
+        label: "Kommentare",
+        empty_state: {
+          title: "Keine Kommentare",
+          description: "Fügen Sie Kommentare hinzu, um sie hier zu sehen.",
+        },
+      },
     },
     open_button: "Navigationsbereich öffnen",
     close_button: "Navigationsbereich schließen",
     outline_floating_button: "Gliederung öffnen",
+    toasts: {
+      errors: {
+        wrong_name: "Der Notizname darf nicht länger als 100 Zeichen sein.",
+        already_exists: "Es existiert bereits eine Notiz ohne Beschreibung",
+      },
+      created: {
+        title: "Notiz erstellt",
+        message: "Die Notiz wurde erfolgreich erstellt",
+      },
+      not_created: {
+        title: "Notiz nicht erstellt",
+        message: "Die Notiz konnte nicht erstellt werden",
+      },
+      updated: {
+        title: "Notiz aktualisiert",
+        message: "Die Notiz wurde erfolgreich aktualisiert",
+      },
+      not_updated: {
+        title: "Notiz nicht aktualisiert",
+        message: "Die Notiz konnte nicht aktualisiert werden",
+      },
+      removed: {
+        title: "Notiz entfernt",
+        message: "Die Notiz wurde erfolgreich entfernt",
+      },
+      not_removed: {
+        title: "Notiz nicht entfernt",
+        message: "Die Notiz konnte nicht entfernt werden",
+      },
+    },
   },
   workspace_dashboards: "Däschbords",
   pi_chat: "AI Tschät",
-  in_app: "In-äpp",
+  customize_navigation: "Navigation anpassen",
+  personal: "Persönlich",
+  accordion_navigation_control: "Akkordeon-Seitenleistennavigation",
+  horizontal_navigation_bar: "Tab-Navigation",
+  show_limited_projects_on_sidebar: "Begrenzte Anzahl von Projekten in der Seitenleiste anzeigen",
+  enter_number_of_projects: "Anzahl der Projekte eingeben",
+  pin: "Anheften",
+  unpin: "Lösen",
+  milestones: "Meilensteine",
+  milestones_description:
+    "Meilensteine bieten eine Ebene, um Arbeitselemente auf gemeinsame Fertigstellungstermine auszurichten.",
+  in_app: "In-App",
   forms: "Forms",
-  choose_workspace_for_integration: "Wählen Sie einen Arbeitsbereich aus, um diese App zu verbinden",
-  integrations_description:
-    "Apps, die mit Plane arbeiten, müssen einen Arbeitsbereich verbinden, in dem Sie ein Administrator sind.",
-  create_a_new_workspace: "Neuen Arbeitsbereich erstellen",
-  learn_more_about_workspaces: "Mehr über Arbeitsbereiche erfahren",
-  no_workspaces_to_connect: "Keine Arbeitsbereiche zum Verbinden",
-  no_workspaces_to_connect_description:
-    "Sie müssen einen Arbeitsbereich erstellen, um Integrationen und Vorlagen zu verbinden",
   updates: {
     add_update: "Aktualisieren",
     add_update_placeholder: "Schreiben Sie Ihre Aktualisierung hier",
@@ -3691,7 +4065,7 @@ Erstellen Sie ein neues.`,
       project_update_success: "Initiativenprojekte erfolgreich aktualisiert.",
       project_update_error: "Fehler beim Aktualisieren der Initiativenprojekte. Bitte versuchen Sie es erneut!",
       epic_update_success:
-        "Epic{count, plural, one { erfolgreich zur Initiative hinzugefügt.} other {s erfolgreich zur Initiative hinzugefügt.}}",
+        "{count, plural, one {Epic erfolgreich zur Initiative hinzugefügt.} other {{count} Epics erfolgreich zur Initiative hinzugefügt.}}",
       epic_update_error: "Epic-Hinzufügung zur Initiative fehlgeschlagen. Bitte versuchen Sie es später erneut.",
       state_update_success: "Initiativenstatus wurde erfolgreich aktualisiert.",
       state_update_error: "Aktualisierung des Initiativenstatus fehlgeschlagen. Bitte versuchen Sie es erneut!",
@@ -3785,6 +4159,10 @@ Erstellen Sie ein neues.`,
         title: "Noch keine archivierten Seiten",
         description: "Archivieren Sie Seiten, die nicht auf Ihrem Radar sind. Greifen Sie bei Bedarf hier darauf zu.",
       },
+      shared: {
+        title: "Noch keine geteilten Seiten",
+        description: "Seiten, die andere mit Ihnen geteilt haben, werden hier angezeigt.",
+      },
     },
   },
   epics: {
@@ -3807,6 +4185,23 @@ Erstellen Sie ein neues.`,
         description: "Beginnen Sie mit dem Hinzufügen von Epics, um den Fortschritt zu verwalten und zu verfolgen.",
         primary_button: {
           text: "Epics hinzufügen",
+        },
+      },
+    },
+    duplicate: {
+      modal: {
+        description1: "Dies erstellt eine Kopie des Epics.",
+        description2: "Alle Eigenschaftsdaten werden beim Duplizieren entfernt.",
+        epics_not_enabled: "Epics nicht aktiviert",
+      },
+    },
+    toast: {
+      duplicate: {
+        success: {
+          message: "Epic erfolgreich dupliziert",
+        },
+        error: {
+          message: "Epic konnte nicht dupliziert werden",
         },
       },
     },
@@ -3923,13 +4318,238 @@ Erstellen Sie ein neues.`,
       },
     },
   },
+  power_k: {
+    actions_commands: {
+      bulk_delete_work_items: "Arbeitselemente massenweise löschen",
+    },
+    contextual_actions: {
+      work_item: {
+        title: "Arbeitselement-Aktionen",
+        indicator: "Arbeitselement",
+        change_state: "Status ändern",
+        change_priority: "Priorität ändern",
+        change_assignees: "Zuweisen an",
+        assign_to_me: "Mir zuweisen",
+        unassign_from_me: "Zuweisung aufheben",
+        change_estimate: "Schätzung ändern",
+        add_to_cycle: "Zum Zyklus hinzufügen",
+        add_to_modules: "Zu Modulen hinzufügen",
+        add_labels: "Labels hinzufügen",
+        subscribe: "Benachrichtigungen abonnieren",
+        unsubscribe: "Benachrichtigungen abbestellen",
+        delete: "Löschen",
+        copy_id: "ID kopieren",
+        copy_id_toast_success: "Arbeitselement-ID in die Zwischenablage kopiert.",
+        copy_id_toast_error: "Fehler beim Kopieren der Arbeitselement-ID in die Zwischenablage.",
+        copy_title: "Titel kopieren",
+        copy_title_toast_success: "Arbeitselement-Titel in die Zwischenablage kopiert.",
+        copy_title_toast_error: "Fehler beim Kopieren des Arbeitselement-Titels in die Zwischenablage.",
+        copy_url: "URL kopieren",
+        copy_url_toast_success: "Arbeitselement-URL in die Zwischenablage kopiert.",
+        copy_url_toast_error: "Fehler beim Kopieren der Arbeitselement-URL in die Zwischenablage.",
+      },
+      cycle: {
+        title: "Zyklus-Aktionen",
+        indicator: "Zyklus",
+        add_to_favorites: "Zu Favoriten hinzufügen",
+        remove_from_favorites: "Aus Favoriten entfernen",
+        copy_url: "URL kopieren",
+        copy_url_toast_success: "Zyklus-URL in die Zwischenablage kopiert.",
+        copy_url_toast_error: "Fehler beim Kopieren der Zyklus-URL in die Zwischenablage.",
+      },
+      module: {
+        title: "Modul-Aktionen",
+        indicator: "Modul",
+        add_remove_members: "Mitglieder hinzufügen/entfernen",
+        change_status: "Status ändern",
+        add_to_favorites: "Zu Favoriten hinzufügen",
+        remove_from_favorites: "Aus Favoriten entfernen",
+        copy_url: "URL kopieren",
+        copy_url_toast_success: "Modul-URL in die Zwischenablage kopiert.",
+        copy_url_toast_error: "Fehler beim Kopieren der Modul-URL in die Zwischenablage.",
+      },
+      page: {
+        title: "Seiten-Aktionen",
+        indicator: "Seite",
+        lock: "Sperren",
+        unlock: "Entsperren",
+        make_private: "Privat machen",
+        make_public: "Öffentlich machen",
+        archive: "Archivieren",
+        restore: "Wiederherstellen",
+        add_to_favorites: "Zu Favoriten hinzufügen",
+        remove_from_favorites: "Aus Favoriten entfernen",
+        copy_url: "URL kopieren",
+        copy_url_toast_success: "Seiten-URL in die Zwischenablage kopiert.",
+        copy_url_toast_error: "Fehler beim Kopieren der Seiten-URL in die Zwischenablage.",
+      },
+      initiative: {
+        title: "Initiativen-Aktionen",
+        indicator: "Initiative",
+        change_state: "Status ändern",
+        change_lead: "Leitung ändern",
+        copy_url: "URL kopieren",
+        copy_url_toast_success: "Initiativen-URL in die Zwischenablage kopiert.",
+        copy_url_toast_error: "Fehler beim Kopieren der Initiativen-URL in die Zwischenablage.",
+      },
+    },
+    creation_actions: {
+      create_work_item: "Neues Arbeitselement",
+      create_page: "Neue Seite",
+      create_view: "Neue Ansicht",
+      create_cycle: "Neuer Zyklus",
+      create_module: "Neues Modul",
+      create_project: "Neues Projekt",
+      create_workspace: "Neuer Arbeitsbereich",
+      create_teamspace: "Neuer Teamspace",
+      create_teamspace_view: "Neue Teamspace-Ansicht",
+      create_initiative: "Neue Initiative",
+      create_workspace_dashboard: "Neues Dashboard",
+      create_customer: "Neuer Kunde",
+      create_project_automation: "Neue Automatisierung",
+    },
+    navigation_actions: {
+      open_workspace: "Arbeitsbereich öffnen",
+      nav_home: "Zur Startseite",
+      nav_inbox: "Zum Posteingang",
+      nav_your_work: "Zu Ihrer Arbeit",
+      nav_account_settings: "Zu Kontoeinstellungen",
+      open_project: "Projekt öffnen",
+      nav_projects_list: "Zur Projektliste",
+      nav_all_workspace_work_items: "Zu allen Arbeitselementen",
+      nav_assigned_workspace_work_items: "Zu zugewiesenen Arbeitselementen",
+      nav_created_workspace_work_items: "Zu erstellten Arbeitselementen",
+      nav_subscribed_workspace_work_items: "Zu abonnierten Arbeitselementen",
+      nav_workspace_analytics: "Zu Arbeitsbereich-Analysen",
+      nav_workspace_drafts: "Zu Arbeitsbereich-Entwürfen",
+      nav_workspace_archives: "Zu Arbeitsbereich-Archiven",
+      open_workspace_setting: "Arbeitsbereichseinstellung öffnen",
+      nav_workspace_settings: "Zu Arbeitsbereichseinstellungen",
+      nav_project_work_items: "Zu Arbeitselementen",
+      open_project_cycle: "Zyklus öffnen",
+      nav_project_cycles: "Zu Zyklen",
+      open_project_module: "Modul öffnen",
+      nav_project_modules: "Zu Modulen",
+      open_project_view: "Projektansicht öffnen",
+      nav_project_views: "Zu Projektansichten",
+      nav_project_pages: "Zu Seiten",
+      nav_project_intake: "Zum Intake",
+      nav_project_archives: "Zu Projektarchiven",
+      open_project_setting: "Projekteinstellung öffnen",
+      nav_project_settings: "Zu Projekteinstellungen",
+      nav_workspace_active_cycle: "Zu allen aktiven Zyklen",
+      open_teamspace: "Teamspace öffnen",
+      nav_teamspaces_list: "Zu Teamspaces",
+      open_initiative: "Initiative öffnen",
+      nav_initiatives_list: "Zu Initiativen",
+      open_customer: "Kundendatensatz öffnen",
+      nav_customers_list: "Zu Kundendatensätzen",
+      nav_workspace_dashboards: "Zu Dashboards",
+      nav_project_overview: "Zur Projektübersicht",
+      nav_project_epics: "Zu Epics",
+    },
+    account_actions: {
+      sign_out: "Abmelden",
+      workspace_invites: "Arbeitsbereich-Einladungen",
+    },
+    miscellaneous_actions: {
+      toggle_app_sidebar: "App-Seitenleiste umschalten",
+      copy_current_page_url: "Aktuelle Seiten-URL kopieren",
+      copy_current_page_url_toast_success: "Aktuelle Seiten-URL in die Zwischenablage kopiert.",
+      copy_current_page_url_toast_error: "Fehler beim Kopieren der aktuellen Seiten-URL in die Zwischenablage.",
+      focus_top_nav_search: "Suchfeld fokussieren",
+      open_ai_assistant: "AI-Assistent öffnen",
+    },
+    preferences_actions: {
+      update_theme: "Erscheinungsbild ändern",
+      update_timezone: "Zeitzone ändern",
+      update_start_of_week: "Ersten Wochentag ändern",
+      update_language: "Sprache der Benutzeroberfläche ändern",
+      toast: {
+        theme: {
+          success: "Erscheinungsbild erfolgreich aktualisiert.",
+          error: "Erscheinungsbild konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+        },
+        timezone: {
+          success: "Zeitzone erfolgreich aktualisiert.",
+          error: "Zeitzone konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+        },
+        generic: {
+          success: "Einstellungen erfolgreich aktualisiert.",
+          error: "Einstellungen konnten nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+        },
+      },
+    },
+    help_actions: {
+      open_keyboard_shortcuts: "Tastenkombinationen öffnen",
+      open_plane_documentation: "Plane-Dokumentation öffnen",
+      join_forum: "Forum beitreten",
+      report_bug: "Fehler melden",
+      chat_with_us: "Chat mit uns",
+    },
+    page_placeholders: {
+      default: "Befehl eingeben oder suchen",
+      open_workspace: "Arbeitsbereich öffnen",
+      open_project: "Projekt öffnen",
+      open_workspace_setting: "Arbeitsbereichseinstellung öffnen",
+      open_project_cycle: "Zyklus öffnen",
+      open_project_module: "Modul öffnen",
+      open_project_view: "Projektansicht öffnen",
+      open_project_setting: "Projekteinstellung öffnen",
+      update_work_item_state: "Status ändern",
+      update_work_item_priority: "Priorität ändern",
+      update_work_item_assignee: "Zuweisen an",
+      update_work_item_estimate: "Schätzung ändern",
+      update_work_item_cycle: "Zum Zyklus hinzufügen",
+      update_work_item_module: "Zu Modulen hinzufügen",
+      update_work_item_labels: "Labels hinzufügen",
+      update_module_member: "Mitglieder ändern",
+      update_module_status: "Status ändern",
+      update_theme: "Erscheinungsbild ändern",
+      update_timezone: "Zeitzone ändern",
+      update_start_of_week: "Ersten Wochentag ändern",
+      update_language: "Sprache ändern",
+      open_teamspace: "Teamspace öffnen",
+      open_initiative: "Initiative öffnen",
+      open_customer: "Kundendatensatz öffnen",
+      change_initiative_state: "Initiativenstatus ändern",
+      change_initiative_lead: "Initiativenleitung ändern",
+    },
+    search_menu: {
+      no_results: "Keine Ergebnisse gefunden",
+      clear_search: "Suche löschen",
+      go_to_advanced_search: "Zur erweiterten Suche",
+    },
+    footer: {
+      workspace_level: "Arbeitsbereich-Ebene",
+    },
+    group_titles: {
+      actions: "Aktionen",
+      contextual: "Kontextbezogen",
+      navigation: "Navigieren",
+      create: "Erstellen",
+      general: "Allgemein",
+      settings: "Einstellungen",
+      account: "Konto",
+      miscellaneous: "Sonstiges",
+      preferences: "Einstellungen",
+      help: "Hilfe",
+    },
+  },
   work_item_types: {
     label: "Arbeitsaufgabentypen",
     label_lowercase: "arbeitsaufgabentypen",
     settings: {
-      title: "Arbeitsaufgabentypen",
+      description:
+        "Passen Sie eigene Eigenschaften an und fügen Sie sie hinzu, um sie an die Bedürfnisse Ihres Teams anzupassen.",
       properties: {
         title: "Benutzerdefinierte Eigenschaften",
+        description: "Erstellen und passen Sie Eigenschaften an.",
+        project: {
+          add_button: {
+            import_from_workspace: "Aus Arbeitsbereich importieren",
+          },
+        },
         tooltip:
           "Jeder Arbeitsaufgabentyp wird mit einem Standardsatz von Eigenschaften wie Titel, Beschreibung, Bearbeiter, Status, Priorität, Startdatum, Fälligkeitsdatum, Modul, Zyklus usw. geliefert. Sie können auch Ihre eigenen Eigenschaften anpassen und hinzufügen, um sie an die Bedürfnisse Ihres Teams anzupassen.",
         add_button: "Neue Eigenschaft hinzufügen",
@@ -4068,6 +4688,10 @@ Erstellen Sie ein neues.`,
           },
         },
         create_update: {
+          title: {
+            create: "Neue benutzerdefinierte Eigenschaft erstellen",
+            update: "Benutzerdefinierte Eigenschaft aktualisieren",
+          },
           form: {
             display_name: {
               placeholder: "Titel",
@@ -4161,6 +4785,43 @@ Erstellen Sie ein neues.`,
       },
       cant_delete_default_message:
         "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er als Standard für dieses Projekt festgelegt ist.",
+      types: {
+        title: "Typen",
+        description: "Erstellen und passen Sie Arbeitselementtypen mit Eigenschaften an.",
+        sort_options: {
+          project_count: "Anzahl der zugehörigen Projekte",
+        },
+        filter_options: {
+          show_active: "Aktive anzeigen",
+          show_inactive: "Inaktive anzeigen",
+        },
+        project: {
+          add_button: {
+            create_new: "Neu erstellen",
+            import_from_workspace: "Aus Arbeitsbereich importieren",
+          },
+        },
+      },
+      linked_properties: {
+        title: "Benutzerdefinierte Eigenschaften",
+        add_button: "Eigenschaften hinzufügen",
+        modal: {
+          title: "Eigenschaften hinzufügen",
+          empty: {
+            title: "Keine Eigenschaften verfügbar",
+            description: "Alle Eigenschaften wurden bereits mit diesem Typ verknüpft.",
+          },
+        },
+        unlink_confirmation: {
+          title: "Eigenschaft trennen",
+          description:
+            "Das Trennen dieser Eigenschaft löscht dauerhaft alle ihre Werte in jedem Arbeitselement dieses Typs. Diese Aktion kann nicht rückgängig gemacht werden.",
+          input_label: "Geben Sie",
+          input_label_suffix: "zum Fortfahren ein:",
+          confirm: "Eigenschaft trennen",
+          loading: "Wird getrennt",
+        },
+      },
     },
     create: {
       title: "Arbeitsaufgabentyp erstellen",
@@ -4173,6 +4834,7 @@ Erstellen Sie ein neues.`,
         error: {
           title: "Fehler!",
           message: {
+            default: "Arbeitselementtyp konnte nicht erstellt werden. Bitte versuchen Sie es erneut!",
             conflict: "Der Typ {name} existiert bereits. Bitte wählen Sie einen anderen Namen.",
           },
         },
@@ -4189,6 +4851,7 @@ Erstellen Sie ein neues.`,
         error: {
           title: "Fehler!",
           message: {
+            default: "Arbeitselementtyp konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut!",
             conflict: "Der Typ {name} existiert bereits. Bitte wählen Sie einen anderen Namen.",
           },
         },
@@ -4265,6 +4928,8 @@ Erstellen Sie ein neues.`,
     },
   },
   importers: {
+    teamspace: "Teamspace",
+    destination: "Ziel",
     imports: "Importe",
     logo: "Logo",
     import_message: "Importieren Sie Ihre {serviceName}-Daten in Plane-Projekte.",
@@ -4462,6 +5127,10 @@ Erstellen Sie ein neues.`,
     webhook_secret_error: "Webhook Secret ist erforderlich",
     connect_app: "App verbinden",
   },
+  bitbucket_dc_integration: {
+    name: "Bitbucket Data Center",
+    description: "Verbinden und synchronisieren Sie Ihre Bitbucket Data Center-Repositories mit Plane.",
+  },
   slack_integration: {
     name: "Slack",
     description: "Verbinden Sie Ihren Slack-Workspace mit Plane.",
@@ -4575,11 +5244,13 @@ Erstellen Sie ein neues.`,
     upload_text: "Klicken Sie hier, um Datei hochzuladen",
     drag_drop_text: "Drag and Drop",
     processing: "Verarbeite",
-    invalid: "Ungültiger Dateityp",
+    invalid_file_type: "Ungültiger Dateityp",
     missing_fields: "Fehlende Felder",
     success: "{fileName} hochgeladen!",
   },
   silo_errors: {
+    cannot_create_multiple_connections:
+      "Sie haben Ihre Organisation bereits mit einem Arbeitsbereich verbunden. Bitte trennen Sie die bestehende Verbindung, bevor Sie eine neue herstellen.",
     invalid_query_params:
       "Die angegebenen Abfrageparameter sind ungültig oder enthalten nicht die erforderlichen Felder",
     invalid_installation_account: "Das angegebene Installationskonto ist nicht gültig",
@@ -4593,6 +5264,7 @@ Erstellen Sie ein neues.`,
     invalid_app_installation_id: "Fehler beim Installieren der App",
   },
   import_status: {
+    progressing: "In Bearbeitung",
     queued: "In Warteschlange",
     created: "Erstellt",
     initiated: "Eingeleitet",
@@ -4616,7 +5288,6 @@ Erstellen Sie ein neues.`,
     state_mapping_automatic_creation: "Alle Jira-Status werden automatisch in Plane erstellt.",
     personal_access_token: "Persönlicher Zugriffstoken",
     user_email: "Benutzer-E-Mail",
-    atlassian_security_settings: "Atlassian-Sicherheitseinstellungen",
     email_description: "Dies ist die E-Mail, die mit Ihrem persönlichen Zugriffstoken verknüpft ist",
     jira_domain: "Jira-Domain",
     jira_domain_description: "Dies ist die Domain Ihrer Jira-Instanz",
@@ -4715,6 +5386,18 @@ Erstellen Sie ein neues.`,
     steps: {
       title_upload_zip: "Notion-Export ZIP hochladen",
       description_upload_zip: "Bitte laden Sie die ZIP-Datei mit Ihren Notion-Daten hoch.",
+      title_select_destination: "Ziel auswählen",
+      description_select_destination: "Bitte wählen Sie das Ziel für Ihre Notion-Daten.",
+    },
+    select_destination: {
+      destination_type: "Zieltyp",
+      select_destination_type: "Zieltyp auswählen",
+      select_project: "Projekt auswählen",
+      no_projects_found: "Keine Projekte gefunden",
+      select_teamspace: "Teamspace auswählen",
+      no_teamspaces_found: "Keine Teamspaces gefunden",
+      unknown_project: "Unbekanntes Projekt",
+      unknown_teamspace: "Unbekannter Teamspace",
     },
     upload: {
       drop_file_here: "Lassen Sie Ihre Notion zip-Datei hier fallen",
@@ -4746,6 +5429,18 @@ Erstellen Sie ein neues.`,
     steps: {
       title_upload_zip: "Confluence-Export ZIP hochladen",
       description_upload_zip: "Bitte laden Sie die ZIP-Datei mit Ihren Confluence-Daten hoch.",
+      title_select_destination: "Ziel auswählen",
+      description_select_destination: "Bitte wählen Sie das Ziel für Ihre Confluence-Daten.",
+    },
+    select_destination: {
+      destination_type: "Zieltyp",
+      select_destination_type: "Zieltyp auswählen",
+      select_project: "Projekt auswählen",
+      no_projects_found: "Keine Projekte gefunden",
+      select_teamspace: "Teamspace auswählen",
+      no_teamspaces_found: "Keine Teamspaces gefunden",
+      unknown_project: "Unbekanntes Projekt",
+      unknown_teamspace: "Unbekannter Teamspace",
     },
     upload: {
       drop_file_here: "Lassen Sie Ihre Confluence zip-Datei hier fallen",
@@ -4825,9 +5520,18 @@ Erstellen Sie ein neues.`,
           short_label: "Balken",
           long_label: "Balkendiagramm",
           chart_models: {
-            basic: "Standard",
-            stacked: "Gestapelt",
-            grouped: "Gruppiert",
+            basic: {
+              short_label: "Standard",
+              long_label: "Standard-Balken",
+            },
+            stacked: {
+              short_label: "Gestapelt",
+              long_label: "Gestapelter Balken",
+            },
+            grouped: {
+              short_label: "Gruppiert",
+              long_label: "Gruppierter Balken",
+            },
           },
           orientation: {
             label: "Ausrichtung",
@@ -4841,8 +5545,14 @@ Erstellen Sie ein neues.`,
           short_label: "Linie",
           long_label: "Liniendiagramm",
           chart_models: {
-            basic: "Standard",
-            multi_line: "Mehrere Linien",
+            basic: {
+              short_label: "Standard",
+              long_label: "Standard-Linie",
+            },
+            multi_line: {
+              short_label: "Mehrere Linien",
+              long_label: "Mehrere Linien",
+            },
           },
           line_color: "Linienfarbe",
           line_type: {
@@ -4856,9 +5566,18 @@ Erstellen Sie ein neues.`,
           short_label: "Fläche",
           long_label: "Flächendiagramm",
           chart_models: {
-            basic: "Standard",
-            stacked: "Gestapelt",
-            comparison: "Vergleich",
+            basic: {
+              short_label: "Standard",
+              long_label: "Standard-Fläche",
+            },
+            stacked: {
+              short_label: "Gestapelt",
+              long_label: "Gestapelte Fläche",
+            },
+            comparison: {
+              short_label: "Vergleich",
+              long_label: "Vergleichsfläche",
+            },
           },
           fill_color: "Füllfarbe",
         },
@@ -4866,8 +5585,14 @@ Erstellen Sie ein neues.`,
           short_label: "Donut",
           long_label: "Donutdiagramm",
           chart_models: {
-            basic: "Standard",
-            progress: "Fortschritt",
+            basic: {
+              short_label: "Standard",
+              long_label: "Standard-Donut",
+            },
+            progress: {
+              short_label: "Fortschritt",
+              long_label: "Fortschritts-Donut",
+            },
           },
           center_value: "Mittenwert",
           completed_color: "Farbe für Abgeschlossen",
@@ -4876,7 +5601,10 @@ Erstellen Sie ein neues.`,
           short_label: "Kreis",
           long_label: "Kreisdiagramm",
           chart_models: {
-            basic: "Standard",
+            basic: {
+              short_label: "Standard",
+              long_label: "Kreis",
+            },
           },
           group: {
             label: "Gruppierte Stücke",
@@ -4896,9 +5624,15 @@ Erstellen Sie ein neues.`,
             count: "Anzahl",
           },
         },
-        text: {
-          short_label: "Text",
-          long_label: "Text",
+        number: {
+          short_label: "Zahl",
+          long_label: "Zahl",
+          chart_models: {
+            basic: {
+              short_label: "Standard",
+              long_label: "Zahl",
+            },
+          },
           alignment: {
             label: "Textausrichtung",
             left: "Links",
@@ -4928,17 +5662,17 @@ Erstellen Sie ein neues.`,
         horizon: "Horizont",
         earthen: "Erdtöne",
       },
+      sections: {
+        charts: "Diagramme",
+        text: "Text",
+      },
       common: {
         add_widget: "Widget hinzufügen",
         widget_title: {
           label: "Widget benennen",
           placeholder: 'z.B. "Zu erledigen gestern", "Alle Abgeschlossen"',
         },
-        chart_type: "Diagrammtyp",
-        visualization_type: {
-          label: "Visualisierungstyp",
-          placeholder: "Visualisierungstyp hinzufügen",
-        },
+        widget_type: "Widget-Typ",
         date_group: {
           label: "Datumsgruppe",
           placeholder: "Datumsgruppe hinzufügen",
@@ -5037,7 +5771,7 @@ Erstellen Sie ein neues.`,
             y_axis_metric: "Der Metrik fehlt ein Wert.",
           },
         },
-        text: {
+        number: {
           basic: {
             y_axis_metric: "Der Metrik fehlt ein Wert.",
           },
@@ -5049,6 +5783,9 @@ Erstellen Sie ein neues.`,
           },
         },
         ask_admin: "Bitten Sie Ihren Administrator, dieses Widget zu konfigurieren.",
+      },
+      upgrade_required: {
+        title: "Dieser Widget-Typ ist in Ihrem Plan nicht enthalten.",
       },
     },
     create_modal: {
@@ -5313,10 +6050,13 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
         revenue: {
           name: "Umsatz",
           placeholder: "Dies ist der Umsatz, den Ihr Kunde jährlich generiert.",
+          placeholder_short: "Umsatz hinzufügen",
           validation: {
             min_length: "Umsatz kann nicht weniger als 0 sein.",
-            max_length: "Umsatz darf nicht mehr als 2147483647 betragen.",
           },
+        },
+        requests: {
+          name: "Anz. Anfragen",
         },
         invalid_value: "Ungültige Eigenschaftswert.",
       },
@@ -5628,6 +6368,9 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
   templates: {
     settings: {
       title: "Vorlagen",
+      new_project_template: "Neue Projektvorlage",
+      new_work_item_template: "Neue Arbeitselementvorlage",
+      new_page_template: "Neue Seitenvorlage",
       description:
         "Sparen Sie 80% der Zeit, die für die Erstellung von Projekten, Arbeitsaufgaben und Seiten aufgewendet wird, wenn Sie Vorlagen verwenden.",
       options: {
@@ -5796,12 +6539,19 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
               maxLength: "Unternehmensname sollte weniger als 255 Zeichen enthalten",
             },
           },
+          website: {
+            label: "Website-URL",
+            placeholder: "https://plane.so",
+            validation: {
+              invalid: "Ungültige URL",
+              maxLength: "URL sollte weniger als 800 Zeichen enthalten",
+            },
+          },
           contact_email: {
             label: "Support-E-Mail",
             placeholder: "help@plane.so",
             validation: {
               invalid: "Ungültige E-Mail-Adresse",
-              required: "Support-E-Mail ist erforderlich",
               maxLength: "Support-E-Mail sollte weniger als 255 Zeichen enthalten",
             },
           },
@@ -5963,8 +6713,6 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       "sub-title": "Lassen Sie das Team wissen, woran Sie arbeiten möchten.",
       name: "Name",
       email: "E-Mail",
-      about: "Worum geht es bei diesem Arbeitselement?",
-      description: "Beschreiben Sie, was passieren soll",
       description_placeholder:
         "Fügen Sie so viele Details hinzu, wie Sie möchten, damit das Team Ihre Situation und Bedürfnisse erkennt.",
       loading: "Wird erstellt",
@@ -6098,6 +6846,59 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
   },
+  page_actions: {
+    move_page: {
+      submit_button: {
+        default: "Verschieben",
+        loading: "Wird verschoben",
+      },
+      cannot_move_to_teamspace: "Private und geteilte Seiten können nicht in einen Teamspace verschoben werden.",
+      placeholders: {
+        workspace_to_all: "Nach Projekten und Teamspaces suchen",
+        workspace_to_project: "Nach Projekten suchen",
+        project_to_all: "Nach Projekten und Teamspaces suchen",
+        project_to_project: "Nach Projekten suchen",
+        teamspace_to_all: "Nach Projekten und Teamspaces suchen",
+      },
+      toasts: {
+        success: {
+          title: "Erfolg!",
+          message: "Seite erfolgreich verschoben.",
+        },
+        error: {
+          title: "Fehler!",
+          message: "Seite konnte nicht verschoben werden. Bitte versuchen Sie es später erneut.",
+        },
+      },
+    },
+  },
+  wiki: {
+    upgrade_flow: {
+      title: "Upgrade zum Freischalten von Wiki",
+      description:
+        "Schalten Sie öffentliche Seiten, Versionsverlauf, geteilte Seiten, Echtzeit-Zusammenarbeit und Arbeitsbereichsseiten für Wikis, unternehmensweite Dokumente und Wissensdatenbanken mit Plane Pro frei.",
+      upgrade_button: {
+        text: "Upgrade",
+      },
+      learn_more_button: {
+        text: "Mehr erfahren",
+      },
+      download_button: {
+        text: "Daten herunterladen",
+        loading: "Wird heruntergeladen",
+      },
+      tabs: {
+        nested_pages: "Verschachtelte Seiten",
+        add_embeds: "Einbettungen hinzufügen",
+        publish_pages: "Seiten veröffentlichen",
+        comments: "Kommentare",
+      },
+    },
+    nested_pages_download_banner: {
+      title:
+        "Verschachtelte Seiten erfordern einen kostenpflichtigen Plan. Führen Sie ein Upgrade durch, um sie freizuschalten.",
+    },
+  },
   automations: {
     settings: {
       title: "Benutzerdefinierte Automatisierungen",
@@ -6132,6 +6933,10 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       handler_name: {
         add_comment: "Kommentar hinzufügen",
         change_property: "Eigenschaft ändern",
+        run_script: "Skript ausführen",
+      },
+      run_script_block: {
+        title: "Skript ausführen",
       },
       configuration: {
         label: "Konfiguration",

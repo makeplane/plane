@@ -45,7 +45,7 @@ export default {
         "Kontaktieren Sie den Administrator, um Zugriff anzufordern, damit Sie hier fortfahren können.",
       join_description: "Klicken Sie unten auf die Schaltfläche, um beizutreten.",
       cta_primary: "Projekt beitreten",
-      cta_loading: "Projekt wird beigetreten",
+      cta_loading: "Beitritt zum Projekt wird durchgeführt",
     },
     invalid_project: {
       title: "Projekt nicht gefunden",
@@ -176,7 +176,7 @@ export default {
     drafts: {
       title: "Halb geschriebene Arbeitselemente",
       description:
-        "Um dies auszuprobieren, beginnen Sie ein Arbeitselement hinzuzufügen und lassen Sie es auf halbem Weg liegen oder erstellen Sie unten Ihren ersten Entwurf. 😉",
+        "Um dies auszuprobieren, beginnen Sie, ein Arbeitselement hinzuzufügen, und lassen Sie es auf halbem Weg liegen oder erstellen Sie unten Ihren ersten Entwurf. 😉",
       cta_primary: "Entwurf-Arbeitselement erstellen",
     },
     projects_archived: {
@@ -204,7 +204,7 @@ export default {
     },
     home_widget_stickies: {
       title:
-        "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie einen Haftnotiz hinzu, um zu beginnen.",
+        "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie eine Haftnotiz hinzu, um zu beginnen.",
     },
     stickies: {
       title: "Ideen sofort festhalten",
@@ -337,6 +337,18 @@ export default {
       description:
         "Reduzieren Sie die Einrichtungszeit, indem Sie Vorlagen für Projekte, Arbeitselemente und Seiten erstellen — und starten Sie neue Arbeit in Sekunden.",
       cta_primary: "Vorlage erstellen",
+    },
+    group_syncing: {
+      title: "Noch keine Gruppenzuordnungen",
+    },
+    workflows: {
+      title: "Noch keine Workflows",
+      description: "Erstellen Sie Workflows, um den Fortschritt Ihrer Arbeitselemente zu verwalten.",
+      cta_primary: "Neuen Workflow hinzufügen",
+      states: {
+        title: "Zustände hinzufügen",
+        description: "Wählen Sie die Zustände aus, die das Arbeitselement durchläuft.",
+      },
     },
   },
 } as const;

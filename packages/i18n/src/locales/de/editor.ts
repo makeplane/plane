@@ -14,7 +14,7 @@
 export default {
   attachmentComponent: {
     uploader: {
-      drag_and_drop: "Zum Hochladen externe Dateien ziehen und ablegen",
+      drag_and_drop: "Dateien hierher ziehen oder klicken, um hochzuladen",
     },
     errors: {
       file_too_large: {
@@ -53,6 +53,26 @@ export default {
     },
     error: {
       not_valid_link: "Bitte geben Sie eine gültige URL ein.",
+    },
+  },
+  ai_block: {
+    content: {
+      placeholder: "Beschreiben Sie den Inhalt dieses Blocks",
+      generated_here: "Ihr KI-Inhalt wird hier generiert",
+    },
+    block_types: {
+      placeholder: "Blocktyp auswählen",
+      summarize_page: "Seite zusammenfassen",
+      custom_prompt: "Benutzerdefinierter Prompt",
+    },
+    actions: {
+      discard: "Verwerfen",
+      generate: "Generieren",
+      generating: "Wird generiert",
+      rewriting: "Wird umgeschrieben",
+      rewrite: "Umschreiben",
+      use_this: "Übernehmen",
+      refine: "Verfeinern",
     },
   },
 } as const;
