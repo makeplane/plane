@@ -12,46 +12,52 @@
  */
 
 /**
- * KaTeX CSS injection utility for secure and reliable styling
- * Replaces CDN-based CSS loading with bundled approach
+ * KaTeX CSS injection utility for secure and reliable styling.
  */
 
 let isKaTeXStylesInjected = false;
+let katexStylesPromise: Promise<void> | null = null;
 
 /**
- * Injects KaTeX CSS styles into the document head if not already present
- * This ensures proper math rendering without relying on external CDN
+ * Ensures KaTeX styles are loaded before math is rendered.
  */
-export function ensureKaTeXStyles(): void {
+export function ensureKaTeXStyles(): Promise<void> {
   if (isKaTeXStylesInjected) {
-    return;
+    return Promise.resolve();
   }
 
-  // Check if KaTeX styles are already loaded (from another source)
   const existingKaTeXStyles =
-    document.querySelector('link[href*="katex"]') || document.querySelector("style[data-katex]");
+    document.querySelector('link[rel="stylesheet"][href*="katex"]') ||
+    document.querySelector("style[data-katex]") ||
+    document.querySelector("style[data-katex-minimal]");
 
   if (existingKaTeXStyles) {
     isKaTeXStylesInjected = true;
-    return;
+    return Promise.resolve();
   }
 
-  // Try to load KaTeX CSS dynamically
-  try {
-    // Use dynamic import for better bundler compatibility
-    // @ts-expect-error Dynamic import
-    import("katex/dist/katex.min.css")
-      .then(() => {
-        isKaTeXStylesInjected = true;
-      })
-      .catch(() => {
-        // Fallback to inline styles if import fails
-        injectMinimalKaTeXStyles();
-      });
-  } catch (error) {
-    // Immediate fallback if dynamic import is not supported
-    injectMinimalKaTeXStyles();
+  if (katexStylesPromise) {
+    return katexStylesPromise;
   }
+
+  katexStylesPromise = import("katex/dist/katex.min.css")
+    .then(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            isKaTeXStylesInjected = true;
+            resolve();
+          });
+        })
+    )
+    .catch(() => {
+      injectMinimalKaTeXStyles();
+    })
+    .finally(() => {
+      katexStylesPromise = null;
+    });
+
+  return katexStylesPromise;
 }
 
 /**
