@@ -21,21 +21,24 @@ import { cn, Dropdown } from "@plane/ui";
 
 type Props = {
   onScriptTypeChange?: (value: ERunnerScriptType) => void;
+  scriptType?: ERunnerScriptType;
 };
 
-export function SelectScriptType({ onScriptTypeChange }: Props) {
+export function SelectScriptType({ onScriptTypeChange, scriptType }: Props) {
   const { watch } = useFormContext<RunnerScriptFormData>();
   const { t } = useTranslation();
 
   return (
     <Dropdown
       onChange={(value: string) => onScriptTypeChange?.(value as ERunnerScriptType)}
-      value={watch("script_type") ?? ERunnerScriptType.AUTOMATION}
+      value={watch("script_type") ?? scriptType ?? ERunnerScriptType.AUTOMATION}
       keyExtractor={(option) => option.data}
-      options={Object.values(ERunnerScriptType).map((type) => ({
-        data: type.toString(),
-        value: type.toString(),
-      }))}
+      options={Object.values(ERunnerScriptType)
+        .filter((type) => !scriptType || type === scriptType)
+        .map((type) => ({
+          data: type.toString(),
+          value: type.toString(),
+        }))}
       disableSearch
       buttonContainerClassName="bg-surface-1 border border-subtle-1 rounded-md px-2 py-1 w-full"
       buttonContent={(isOpen, val) => (

@@ -31,21 +31,22 @@ import { SelectScriptType } from "./select-script-type";
 type Props = {
   scriptData?: RunnerScript;
   headerAction?: React.ReactNode;
+  scriptType?: ERunnerScriptType;
   handleCancel: () => void;
   callBack?: (scriptId: string | null) => void;
 };
 
-const DEFAULT_FORM_VALUES: RunnerScriptFormData = DEFAULT_SCRIPT_FORM_DATA[ERunnerScriptType.AUTOMATION];
-
 export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScript(props: Props) {
-  const { scriptData, headerAction, callBack, handleCancel } = props;
+  const { scriptData, headerAction, callBack, handleCancel, scriptType } = props;
   const { workspaceSlug } = useParams();
   const { createScript, updateScript } = useRunners();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isReadOnly = scriptData?.is_system;
 
   const methods = useForm<RunnerScriptFormData>({
-    defaultValues: scriptData ? scriptToFormData(scriptData) : DEFAULT_FORM_VALUES,
+    defaultValues: scriptData
+      ? scriptToFormData(scriptData)
+      : DEFAULT_SCRIPT_FORM_DATA[scriptType ?? ERunnerScriptType.AUTOMATION],
   });
 
   const {
@@ -100,9 +101,9 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
     if (scriptData) {
       reset(scriptToFormData(scriptData));
     } else {
-      reset(DEFAULT_FORM_VALUES);
+      reset(DEFAULT_SCRIPT_FORM_DATA[scriptType ?? ERunnerScriptType.AUTOMATION]);
     }
-  }, [scriptData, reset]);
+  }, [scriptData, scriptType, reset]);
 
   return (
     <FormProvider {...methods}>
@@ -137,7 +138,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
           {/* Script Type */}
           <div className="flex justify-between flex-col gap-1">
             <div className="text-body-xs-medium text-primary">Script Type</div>
-            <SelectScriptType onScriptTypeChange={handleScriptTypeChange} />
+            <SelectScriptType onScriptTypeChange={handleScriptTypeChange} scriptType={scriptType} />
           </div>
           {/* Variables */}
           <VariablesField readOnly={isReadOnly} />

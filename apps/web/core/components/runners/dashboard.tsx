@@ -23,6 +23,7 @@ import { Pencil, Search, Trash2 } from "lucide-react";
 import { DeleteRunnerModal } from "./delete-runner-modal";
 import { calculateTimeAgo } from "@plane/utils";
 import { Button } from "@plane/propel/button";
+import { RUNNER_SCRIPT_TYPE_MAP } from "@plane/types";
 import type { RunnerScript } from "@plane/types";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 
@@ -126,6 +127,7 @@ export const RunnersDashboard = observer(() => {
             <TableHeader className="border-t-0 border-subtle py-4">
               <TableRow>
                 <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME)}>Name </TableHead>
+                <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME)}>Script Type </TableHead>
                 <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "w-[150px]")}>Executions </TableHead>
                 <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "w-[150px]")}>Success Rate </TableHead>
                 <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "w-[150px]")}>Last Run </TableHead>
@@ -155,6 +157,9 @@ export const RunnersDashboard = observer(() => {
                         ))}
                       </CustomMenu>
                     </div>
+                  </TableCell>
+                  <TableCell className={cn(COMMON_TABLE_CELL_CLASSNAME)}>
+                    {RUNNER_SCRIPT_TYPE_MAP[script.script_type]}
                   </TableCell>
 
                   <TableCell className={COMMON_TABLE_CELL_CLASSNAME}>{script.total_executions ?? 0}</TableCell>

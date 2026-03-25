@@ -6658,6 +6658,9 @@ the way you want to from the sources you specify.`,
         previous: "Back",
         next: "Add action",
       },
+      warning: {
+        disabled_trigger_switching: "You can't change the trigger type once created",
+      },
     },
     condition: {
       label: "Provided",

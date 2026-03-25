@@ -76,6 +76,7 @@ export const ScriptModal = observer(function ScriptModal(props: {
             }
             callBack={(scriptId) => setScriptId(scriptId)}
             handleCancel={() => handleClose()}
+            scriptType={scriptType}
           />
         </div>
       </div>

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Zap } from "lucide-react";
@@ -45,6 +45,8 @@ import {
   triggerConfigToFixedSchedule,
 } from "./schedule-config";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { useRunners } from "@/hooks/store/runners/use-runners";
+import { Tooltip } from "@plane/propel/tooltip";
 
 type Props = {
   automationId: string;
@@ -58,6 +60,7 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   const user = useUser();
   const profileTimezone = user.data?.user_timezone;
   const { getAutomationById } = useAutomations();
+  const { isRunnerAvailable } = useRunners();
   // derived values
   const automation = getAutomationById(automationId);
   const sidebarHelper = automation?.sidebarHelper;
@@ -66,6 +69,8 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   const filterExpression = conditionNode?.config?.filter_expression;
   const triggerNodeHandlerName = triggerNode?.handler_name;
   const isTimeBasedTrigger = triggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE;
+  const workspaceSlug = automation?.workspaceSlug ?? "";
+  const isRunnerHealthy = isRunnerAvailable(workspaceSlug);
   // states
   const [isCreatingUpdatingTrigger, setIsCreatingUpdatingTrigger] = useState(false);
   const [isCreatingUpdatingCondition, setIsCreatingUpdatingCondition] = useState(false);
@@ -80,7 +85,6 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
       ? triggerConfigToFixedSchedule(triggerNode.config, profileTimezone)
       : createDefaultFixedScheduleConfig(profileTimezone)
   );
-  const workspaceSlug = automation?.workspaceSlug ?? "";
   // derived states
   const selectedTriggerNodeHandlerOption = useMemo(
     () =>
@@ -89,19 +93,6 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
       ),
     [selectedTriggerNodeHandlerName]
   );
-
-  useEffect(() => {
-    if (selectedTriggerNodeHandlerName !== ETriggerNodeHandlerName.FIXED_SCHEDULE) return;
-    if (triggerNode && isTimeBasedTrigger) {
-      setFixedScheduleConfig(triggerConfigToFixedSchedule(triggerNode.config, profileTimezone));
-    } else {
-      setFixedScheduleConfig(createDefaultFixedScheduleConfig(profileTimezone));
-    }
-
-    // Intentionally omit profileTimezone and triggerNode.config: profile timezone is synced separately without
-    // resetting the form; config changes are handled on save / navigation.
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTriggerNodeHandlerName, triggerNode?.handler_name, triggerNode?.id]);
 
   const createOrUpdateTrigger = async () => {
     if (!automation || !selectedTriggerNodeHandlerName) return;
@@ -204,6 +195,21 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
     }
   };
 
+  useEffect(() => {
+    setSelectedTriggerNodeHandlerName(triggerNode?.handler_name);
+    if (isTimeBasedTrigger) {
+      if (triggerNode) {
+        setFixedScheduleConfig(triggerConfigToFixedSchedule(triggerNode.config, profileTimezone));
+      } else {
+        setFixedScheduleConfig(createDefaultFixedScheduleConfig(profileTimezone));
+      }
+    }
+
+    // Intentionally omit profileTimezone and triggerNode.config: profile timezone is synced separately without
+    // resetting the form; config changes are handled on save / navigation.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerNode?.handler_name, triggerNode?.id]);
+
   if (!automation) return null;
   return (
     <section className="flex-grow space-y-4 pt-2">
@@ -253,28 +259,48 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
               onClick={() => {
                 setSelectedTriggerNodeHandlerName(option.value);
               }}
+              disabled={triggerNode && isTimeBasedTrigger}
             >
-              <AutomationTriggerIcon iconKey={option.iconKey} />
-              <span className="truncate font-medium">{option.label}</span>
+              <Tooltip
+                tooltipContent={t("automations.trigger.warning.disabled_trigger_switching")}
+                disabled={!triggerNode || !isTimeBasedTrigger}
+              >
+                <span className="flex w-full min-w-0 items-center gap-2">
+                  <AutomationTriggerIcon iconKey={option.iconKey} />
+                  <span className="truncate font-medium">{option.label}</span>
+                </span>
+              </Tooltip>
             </CustomMenu.MenuItem>
           ))}
-          <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={"SCHEDULED_AUTOMATIONS"} fallback={null}>
-            <div className="mx-1 mt-1 border-t border-subtle-1 pt-2 pb-1">
-              <p className="text-11 font-semibold text-tertiary">{t("automations.trigger.section_time_based")}</p>
-            </div>
-            {AUTOMATION_TRIGGER_TIME_BASED_OPTIONS.map((option) => (
-              <CustomMenu.MenuItem
-                key={option.value}
-                className="flex items-center gap-2"
-                onClick={() => {
-                  setSelectedTriggerNodeHandlerName(option.value);
-                }}
-              >
-                <AutomationTriggerIcon iconKey={option.iconKey} />
-                <span className="truncate font-medium">{option.label}</span>
-              </CustomMenu.MenuItem>
-            ))}
-          </WithFeatureFlagHOC>
+          {isRunnerHealthy && (
+            <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={"PLANE_RUNNER"} fallback={null}>
+              <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={"SCHEDULED_AUTOMATIONS"} fallback={null}>
+                <div className="mx-1 mt-1 border-t border-subtle-1 pt-2 pb-1">
+                  <p className="text-11 font-semibold text-tertiary">{t("automations.trigger.section_time_based")}</p>
+                </div>
+                {AUTOMATION_TRIGGER_TIME_BASED_OPTIONS.map((option) => (
+                  <CustomMenu.MenuItem
+                    key={option.value}
+                    className="flex items-center gap-2"
+                    onClick={() => {
+                      setSelectedTriggerNodeHandlerName(option.value);
+                    }}
+                    disabled={triggerNode && !isTimeBasedTrigger}
+                  >
+                    <Tooltip
+                      tooltipContent={t("automations.trigger.warning.disabled_trigger_switching")}
+                      disabled={!triggerNode || isTimeBasedTrigger}
+                    >
+                      <span className="flex w-full min-w-0 items-center gap-2">
+                        <AutomationTriggerIcon iconKey={option.iconKey} />
+                        <span className="truncate font-medium">{option.label}</span>
+                      </span>
+                    </Tooltip>
+                  </CustomMenu.MenuItem>
+                ))}
+              </WithFeatureFlagHOC>
+            </WithFeatureFlagHOC>
+          )}
         </CustomMenu>
       </div>
       {selectedTriggerNodeHandlerOption?.value === ETriggerNodeHandlerName.FIXED_SCHEDULE ? (
