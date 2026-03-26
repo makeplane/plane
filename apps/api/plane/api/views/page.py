@@ -1,7 +1,3 @@
-# Copyright (c) 2023-present Plane Software, Inc. and contributors
-# SPDX-License-Identifier: AGPL-3.0-only
-# See the LICENSE file for details.
-
 # Django imports
 from django.db.models import Exists, OuterRef, Q
 
@@ -101,6 +97,8 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             color=serializer.validated_data.get("color", ""),
             view_props=serializer.validated_data.get("view_props", {}),
             logo_props=serializer.validated_data.get("logo_props", {}),
+            # Explicitly clear binary so the collab server reads description_html on next load
+            description_binary=None,
             owned_by=request.user,
             workspace_id=project.workspace_id,
         )
@@ -117,13 +115,8 @@ class PageListCreateAPIEndpoint(BaseAPIView):
 class PageDetailAPIEndpoint(BaseAPIView):
     """
     GET    /api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/
-           Retrieve a single page.
-
     PATCH  /api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/
-           Partially update a page (name, description_html, access, color, etc.).
-
     DELETE /api/v1/workspaces/{slug}/projects/{project_id}/pages/{page_id}/
-           Delete a page. Only the owner can delete.
     """
 
     permission_classes = [ProjectPagePermission]
@@ -159,7 +152,11 @@ class PageDetailAPIEndpoint(BaseAPIView):
         request=PageAPISerializer,
         responses={200: PageAPISerializer},
         summary="Update a page",
-        description="Partially update a page. Cannot update locked pages.",
+        description=(
+            "Partially update a page. Cannot update locked pages. "
+            "When description_html is updated, description_binary is reset so the "
+            "collaborative editor reloads the content from the new HTML on next open."
+        ),
         tags=["Pages"],
     )
     def patch(self, request, slug, project_id, page_id):
@@ -177,7 +174,15 @@ class PageDetailAPIEndpoint(BaseAPIView):
         serializer = PageAPISerializer(page, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(updated_by=request.user)
+
+        # If the caller is updating description_html, reset description_binary so
+        # the Tiptap/Yjs collab server picks up the new HTML on next document load
+        # instead of serving stale binary state.
+        save_kwargs = {"updated_by": request.user}
+        if "description_html" in request.data:
+            save_kwargs["description_binary"] = None
+
+        serializer.save(**save_kwargs)
         return Response(serializer.data)
 
     @extend_schema(
