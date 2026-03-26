@@ -4,10 +4,11 @@
   "description": "Plane Runner Host for executing isolated JS/TS scripts",
   "main": "dist/index.mjs",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsdown",
     "start": "node dist/index.mjs",
     "dev": "PORT=3300 tsdown --watch --onSuccess \"node --env-file=.env .\"",
     "test": "vitest run",
+    "test:smoke": "node tests/smoke-production.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {

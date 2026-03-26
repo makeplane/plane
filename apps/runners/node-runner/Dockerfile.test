@@ -38,4 +38,8 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --store-dir
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-CMD ["pnpm", "turbo", "run", "test", "--filter=plane-runner-host"]
+# Build first so smoke test can verify the compiled output
+RUN pnpm turbo run build --filter=plane-runner-host
+
+# Run unit tests, then smoke-test the production build
+CMD ["sh", "-c", "pnpm turbo run test --filter=plane-runner-host && node apps/runners/node-runner/tests/smoke-production.mjs"]

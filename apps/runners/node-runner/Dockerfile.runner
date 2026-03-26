@@ -76,4 +76,4 @@ USER 1001
 
 EXPOSE 3000
 
-CMD ["node", "apps/runners/node-runner/dist/index.js"]
+CMD ["node", "apps/runners/node-runner/dist/index.mjs"]

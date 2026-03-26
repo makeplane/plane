@@ -83,4 +83,4 @@ ENV NPM_CONFIG_CACHE=/tmp/.npm-cache
 
 EXPOSE 3000
 
-CMD ["node", "apps/runners/node-runner/dist/index.js"]
+CMD ["node", "apps/runners/node-runner/dist/index.mjs"]
