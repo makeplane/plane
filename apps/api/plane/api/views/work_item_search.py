@@ -53,6 +53,7 @@ from .base import BaseAPIView
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE
+from plane.utils.pql import PQLFilterBackend
 
 if settings.OPENSEARCH_ENABLED:
     from plane.ee.documents import IssueDocument
@@ -62,7 +63,7 @@ if settings.OPENSEARCH_ENABLED:
 class WorkItemAdvancedSearchEndpoint(BaseAPIView):
     """Work Item Advanced Search Endpoint"""
 
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (ComplexFilterBackend, PQLFilterBackend)
     filterset_class = IssueFilterSet
 
     permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
@@ -227,11 +228,12 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
         """Work Item Advanced Search"""
         query = request.data.get("query", False)
         filters = request.data.get("filters", False)
+        pql = request.data.get("pql", False)
         limit = request.data.get("limit", 25)
         workspace_search = request.data.get("workspace_search", False)
         project_id = request.data.get("project_id", False)
 
-        if not (query or filters):
+        if not (query or filters or pql):
             return Response([], status=status.HTTP_200_OK)
 
         q = Q()
@@ -290,6 +292,12 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
             # Pass filters from request body explicitly to ComplexFilterBackend
             backend = ComplexFilterBackend()
             issues = backend.filter_queryset(request, issues, self, filter_data=filters)
+
+        if pql:
+            # Pass PQL from request body explicitly to PQLFilterBackend
+            pql_backend = PQLFilterBackend()
+            issues = pql_backend.filter_queryset(request, issues, self, pql=pql)
+
 
         issues = issues.distinct()[: int(limit)]
 

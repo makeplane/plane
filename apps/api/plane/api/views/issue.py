@@ -192,6 +192,8 @@ from plane.utils.oauth import (
     PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE,
     PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE,
 )
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.pql import PQLFilterBackend
 
 
 def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
@@ -301,6 +303,11 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 IssueDetailSerializer(issue, fields=self.fields, expand=expand).data,
                 status=status.HTTP_200_OK,
             )
+        else:
+            return Response(
+                {"error": "Both project_identifier and issue_identifier are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class IssueListCreateAPIEndpoint(BaseAPIView):
@@ -317,6 +324,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
     }
     serializer_class = IssueSerializer
     use_read_replica = True
+    filter_backends = (ComplexFilterBackend, PQLFilterBackend)
+    filterset_class = IssueFilterSet
 
     def get_queryset(self):
         return (
@@ -389,9 +398,11 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
+        issue_queryset = self.get_queryset()
+        issue_queryset = self.filter_queryset(queryset=issue_queryset)
+
         issue_queryset = (
-            self.get_queryset()
-            .annotate(
+            issue_queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
@@ -414,6 +425,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         )
 
         total_issue_queryset = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug)
+        total_issue_queryset = self.filter_queryset(queryset=total_issue_queryset)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -2592,6 +2604,11 @@ class IssueSearchEndpoint(BaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
     }
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
+    filterset_class = IssueFilterSet
 
     @extend_schema(
         operation_id="search_work_items",
@@ -2626,21 +2643,23 @@ class IssueSearchEndpoint(BaseAPIView):
         limit = request.query_params.get("limit", 10)
         workspace_search = request.query_params.get("workspace_search", "false")
         project_id = request.query_params.get("project_id", False)
+        pql = request.query_params.get("pql", False)
 
-        if not query:
+        if not (query or pql):
             return Response({"issues": []}, status=status.HTTP_200_OK)
 
-        # Build search query
-        fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
-        for field in fields:
-            if field == "sequence_id":
-                # Match whole integers only (exclude decimal numbers)
-                sequences = re.findall(r"\b\d+\b", query)
-                for sequence_id in sequences:
-                    q |= Q(**{"sequence_id": sequence_id})
-            else:
-                q |= Q(**{f"{field}__icontains": query})
+        if query:
+            # Build search query
+            fields = ["name", "sequence_id", "project__identifier"]
+            for field in fields:
+                if field == "sequence_id":
+                    # Match whole integers only (exclude decimal numbers)
+                    sequences = re.findall(r"\b\d+\b", query)
+                    for sequence_id in sequences:
+                        q |= Q(**{"sequence_id": sequence_id})
+                else:
+                    q |= Q(**{f"{field}__icontains": query})
 
         # Filter issues
         issues = Issue.issue_objects.filter(
@@ -2654,6 +2673,12 @@ class IssueSearchEndpoint(BaseAPIView):
         # Apply project filter if not searching across workspace
         if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
+
+        # Apply additional filters from filter backends
+        if pql:
+            # Pass PQL from request body explicitly to PQLFilterBackend
+            pql_backend = PQLFilterBackend()
+            issues = pql_backend.filter_queryset(request, issues, self, pql=pql)
 
         # Get results
         issue_results = issues.distinct().values(

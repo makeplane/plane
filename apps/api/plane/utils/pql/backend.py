@@ -33,8 +33,14 @@ class PQLFilterBackend(filters.BaseFilterBackend):
 
     pql_param = "pql"
 
-    def filter_queryset(self, request, queryset, view):
-        pql_string = request.query_params.get(self.pql_param)
+    def filter_queryset(self, request, queryset, view, pql=None):
+        # Allow passing PQL from request body (e.g. for POST requests) by providing it explicitly to filter_queryset.
+        if pql is None:
+            pql_string = request.query_params.get(self.pql_param)
+        else:
+            pql_string = pql
+
+        # If no PQL string is provided, return the original queryset unmodified.
         if not pql_string:
             return queryset
 
