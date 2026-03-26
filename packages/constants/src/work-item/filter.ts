@@ -41,7 +41,7 @@ export enum EServerGroupByToFilterOptions {
   "created_by" = "created_by",
   "milestone_id" = "milestone",
   "parent_id" = "epic",
-  "type_id" = "type",
+  "type_id" = "issue_type",
 }
 
 export enum EIssueFilterType {

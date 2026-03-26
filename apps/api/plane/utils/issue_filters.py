@@ -159,6 +159,40 @@ def filter_parent(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_epic(params, issue_filter, method, prefix=""):
+    """
+    Same behavior as filter_parent.
+
+    The `epic` query parameter carries the parent/epic group key used for a single
+    epic (parent) column, for example when paginating after `group_by=parent_id`
+    has been removed from the query string. It should contain one or more comma-
+    separated values that are either:
+      - an epic/parent UUID, or
+      - the literal string "None" to represent issues with no epic/parent.
+    """
+    if method == "GET":
+        epic_value = params.get("epic")
+        if epic_value is None or epic_value == "":
+            return issue_filter
+        if not isinstance(epic_value, str):
+            return issue_filter
+        epics = [item for item in epic_value.split(",") if item != "null"]
+        if "None" in epics:
+            issue_filter[f"{prefix}parent__isnull"] = True
+        epics = filter_valid_uuids(epics)
+        if len(epics) and "" not in epics:
+            issue_filter[f"{prefix}parent__in"] = epics
+    else:
+        epic_value = params.get("epic", None)
+        if epic_value is None or epic_value == "":
+            return issue_filter
+        if not isinstance(epic_value, str):
+            return issue_filter
+        if len(epic_value) and epic_value != "null":
+            issue_filter[f"{prefix}parent__in"] = epic_value
+    return issue_filter
+
+
 def filter_labels(params, issue_filter, method, prefix=""):
     if method == "GET":
         labels = [item for item in params.get("labels").split(",") if item != "null"]
@@ -510,6 +544,7 @@ def issue_filters(query_params, method, prefix=""):
         "estimate_point": filter_estimate_point,
         "priority": filter_priority,
         "parent": filter_parent,
+        "epic": filter_epic,
         "labels": filter_labels,
         "assignees": filter_assignees,
         "mentions": filter_mentions,
