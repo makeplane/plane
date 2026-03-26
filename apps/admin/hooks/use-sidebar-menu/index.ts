@@ -20,6 +20,6 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
     coreSidebarMenuLinks.ai,
     coreSidebarMenuLinks.image,
     coreSidebarMenuLinks.monitoring,
-    coreSidebarMenuLinks.task_categories,
+    coreSidebarMenuLinks["task-categories"],
   ];
 }

@@ -21,7 +21,7 @@ export type TCoreSidebarMenuKey =
   | "ai"
   | "image"
   | "monitoring"
-  | "task_categories";
+  | "task-categories";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -84,7 +84,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     description: "System health and email metrics.",
     href: `/monitoring/`,
   },
-  task_categories: {
+  "task-categories": {
     Icon: Tag,
     name: "Task Categories",
     description: "Manage main and sub task categories for work items.",

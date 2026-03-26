@@ -1,13 +1,7 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
 export interface IMainTaskCategory {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -21,12 +15,17 @@ export interface IMainTaskCategoryCreate {
   is_active?: boolean;
 }
 
-export type IMainTaskCategoryUpdate = Partial<IMainTaskCategoryCreate>;
+export interface IMainTaskCategoryUpdate {
+  name?: string;
+  description?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}
 
 export interface ISubTaskCategory {
   id: string;
+  main_category: string;
   name: string;
-  main_category: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -34,10 +33,15 @@ export interface ISubTaskCategory {
 }
 
 export interface ISubTaskCategoryCreate {
+  main_category: string;
   name: string;
-  main_category: string | null;
   sort_order?: number;
   is_active?: boolean;
 }
 
-export type ISubTaskCategoryUpdate = Partial<ISubTaskCategoryCreate>;
+export interface ISubTaskCategoryUpdate {
+  main_category?: string;
+  name?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}

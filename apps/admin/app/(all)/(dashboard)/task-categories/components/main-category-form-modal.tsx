@@ -84,24 +84,24 @@ export const MainCategoryFormModal = observer(function MainCategoryFormModal({ o
           <Dialog.Title>{editCategory ? "Edit Main Category" : "Add Main Category"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="mt-4 space-y-3">
             <div className="space-y-1">
-              <label htmlFor="name" className="text-13 font-medium">
+              <label htmlFor="main-cat-name" className="text-13 font-medium">
                 Name *
               </label>
-              <Input id="name" {...register("name", { required: "Required" })} placeholder="Category name" />
+              <Input id="main-cat-name" {...register("name", { required: "Required" })} placeholder="Category name" />
               {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
             </div>
             <div className="space-y-1">
-              <label htmlFor="description" className="text-13 font-medium">
+              <label htmlFor="main-cat-desc" className="text-13 font-medium">
                 Description
               </label>
-              <Input id="description" {...register("description")} placeholder="Optional description" />
+              <Input id="main-cat-desc" {...register("description")} placeholder="Optional description" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="sort_order" className="text-13 font-medium">
+                <label htmlFor="main-cat-sort" className="text-13 font-medium">
                   Sort order
                 </label>
-                <Input id="sort_order" type="number" {...register("sort_order")} placeholder="0" />
+                <Input id="main-cat-sort" type="number" {...register("sort_order")} placeholder="0" />
               </div>
               <div className="space-y-1 flex flex-col justify-end">
                 <label className="flex items-center gap-2 text-13 font-medium cursor-pointer">

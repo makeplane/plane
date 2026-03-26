@@ -10,45 +10,55 @@ from .base import BaseModel
 
 
 class MainTaskCategory(BaseModel):
-    """Instance-level main task category for classifying work items.
-
-    Not scoped to any workspace or project — applies instance-wide.
-    """
+    """Instance-level main task category for work item classification."""
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")
-    sort_order = models.FloatField(default=0)
+    sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "main_task_categories"
-        ordering = ["sort_order", "name"]
         verbose_name = "Main Task Category"
         verbose_name_plural = "Main Task Categories"
+        ordering = ["sort_order", "name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="main_task_category_unique_name",
+            ),
+        ]
 
     def __str__(self):
         return self.name
 
 
 class SubTaskCategory(BaseModel):
-    """Instance-level sub task category, optionally linked to a main category."""
+    """Instance-level sub task category linked to a main category."""
 
-    name = models.CharField(max_length=255)
     main_category = models.ForeignKey(
         MainTaskCategory,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
         related_name="sub_categories",
     )
-    sort_order = models.FloatField(default=0)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, default="")
+    sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "sub_task_categories"
-        ordering = ["sort_order", "name"]
         verbose_name = "Sub Task Category"
         verbose_name_plural = "Sub Task Categories"
+        ordering = ["sort_order", "name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["main_category", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="sub_task_category_unique_name_per_main",
+            ),
+        ]
 
     def __str__(self):
-        return self.name
+        return f"{self.main_category.name} / {self.name}"

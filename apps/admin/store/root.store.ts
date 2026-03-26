@@ -47,7 +47,7 @@ export class RootStore {
     this.instanceDepartment = new InstanceDepartmentStore(this);
     this.instanceStaff = new InstanceStaffStore(this);
     this.monitoring = new MonitoringStore(this);
-    this.instanceTaskCategory = new InstanceTaskCategoryStore(this);
+    this.instanceTaskCategory = new InstanceTaskCategoryStore();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pre-existing hydrate pattern
@@ -68,6 +68,6 @@ export class RootStore {
     this.instanceDepartment = new InstanceDepartmentStore(this);
     this.instanceStaff = new InstanceStaffStore(this);
     this.monitoring = new MonitoringStore(this);
-    this.instanceTaskCategory = new InstanceTaskCategoryStore(this);
+    this.instanceTaskCategory = new InstanceTaskCategoryStore();
   }
 }

@@ -64,6 +64,8 @@ export type TBaseIssue = {
   cycle_id: string | null;
   module_ids: string[] | null;
   type_id: string | null;
+  main_task_category_id: string | null;
+  sub_task_category_id: string | null;
 
   created_at: string;
   updated_at: string;
@@ -78,10 +80,6 @@ export type TBaseIssue = {
   is_draft: boolean;
   is_epic?: boolean;
   is_intake?: boolean;
-
-  // Task category (instance-level classification)
-  main_task_category_id?: string | null;
-  sub_task_category_id?: string | null;
 };
 
 type IssueRelation = {

@@ -19,7 +19,7 @@ import { MainCategoryFormModal } from "./components/main-category-form-modal";
 import { SubCategoryFormModal } from "./components/sub-category-form-modal";
 
 const TaskCategoriesPage = observer(function TaskCategoriesPage() {
-  const { loader, fetchMainCategories, fetchSubCategories } = useInstanceTaskCategory();
+  const { loader, fetchCategories } = useInstanceTaskCategory();
 
   const [selectedMainId, setSelectedMainId] = useState<string | null>(null);
   const [mainModalOpen, setMainModalOpen] = useState(false);
@@ -27,9 +27,7 @@ const TaskCategoriesPage = observer(function TaskCategoriesPage() {
   const [editMain, setEditMain] = useState<IMainTaskCategory | null>(null);
   const [editSub, setEditSub] = useState<ISubTaskCategory | null>(null);
 
-  useSWR("INSTANCE_TASK_CATEGORIES", async () => {
-    await Promise.all([fetchMainCategories(), fetchSubCategories()]);
-  });
+  useSWR("INSTANCE_TASK_CATEGORIES", fetchCategories);
 
   const handleEditMain = (cat: IMainTaskCategory) => {
     setEditMain(cat);

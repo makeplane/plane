@@ -7,27 +7,31 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.serializers import MainTaskCategorySerializer, SubTaskCategorySerializer
-from plane.db.models import MainTaskCategory, SubTaskCategory
 from plane.api.views.base import BaseAPIView
+from plane.app.serializers.task_category import MainTaskCategorySerializer, SubTaskCategorySerializer
+from plane.db.models import MainTaskCategory, SubTaskCategory
 
 
 class MainTaskCategoryListEndpoint(BaseAPIView):
-    """Public read-only endpoint (v1): list active main task categories."""
+    """Read-only list of active main task categories for the web app (instance-level)."""
 
     def get(self, request):
-        categories = MainTaskCategory.objects.filter(is_active=True).order_by("sort_order", "name")
+        categories = MainTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True).order_by(
+            "sort_order", "name"
+        )
         serializer = MainTaskCategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SubTaskCategoryListEndpoint(BaseAPIView):
-    """Public read-only endpoint (v1): list active sub task categories."""
+    """Read-only list of active sub task categories for the web app (instance-level)."""
 
     def get(self, request):
         main_category_id = request.query_params.get("main_category")
-        qs = SubTaskCategory.objects.filter(is_active=True).order_by("sort_order", "name")
+        queryset = SubTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True).order_by(
+            "sort_order", "name"
+        )
         if main_category_id:
-            qs = qs.filter(main_category_id=main_category_id)
-        serializer = SubTaskCategorySerializer(qs, many=True)
+            queryset = queryset.filter(main_category_id=main_category_id)
+        serializer = SubTaskCategorySerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -14,22 +14,20 @@ import type {
   ISubTaskCategory,
   ISubTaskCategoryCreate,
   ISubTaskCategoryUpdate,
-  TLoader,
 } from "@plane/types";
-// root store
-import type { RootStore } from "@/store/root.store";
+import type { TLoader } from "@plane/types";
 
 export interface IInstanceTaskCategoryStore {
   // observables
   loader: TLoader;
+  hasFetched: boolean;
   mainCategories: Record<string, IMainTaskCategory>;
   subCategories: Record<string, ISubTaskCategory>;
   // computed
   mainCategoryIds: string[];
   // actions
   getSubCategoriesByMain: (mainId: string) => ISubTaskCategory[];
-  fetchMainCategories: () => Promise<IMainTaskCategory[]>;
-  fetchSubCategories: () => Promise<ISubTaskCategory[]>;
+  fetchCategories: () => Promise<void>;
   createMainCategory: (data: IMainTaskCategoryCreate) => Promise<IMainTaskCategory>;
   updateMainCategory: (id: string, data: IMainTaskCategoryUpdate) => Promise<IMainTaskCategory>;
   deleteMainCategory: (id: string) => Promise<void>;
@@ -39,23 +37,23 @@ export interface IInstanceTaskCategoryStore {
 }
 
 export class InstanceTaskCategoryStore implements IInstanceTaskCategoryStore {
-  // observables
-  loader: TLoader = "init-loader";
+  loader: TLoader = undefined;
+  hasFetched: boolean = false;
   mainCategories: Record<string, IMainTaskCategory> = {};
   subCategories: Record<string, ISubTaskCategory> = {};
 
   private service: TaskCategoryService;
 
-  constructor(_store: RootStore) {
+  constructor() {
+    this.service = new TaskCategoryService();
+
     makeObservable(this, {
       loader: observable,
+      hasFetched: observable,
       mainCategories: observable,
       subCategories: observable,
-      // computed
       mainCategoryIds: computed,
-      // actions
-      fetchMainCategories: action,
-      fetchSubCategories: action,
+      fetchCategories: action,
       createMainCategory: action,
       updateMainCategory: action,
       deleteMainCategory: action,
@@ -63,145 +61,74 @@ export class InstanceTaskCategoryStore implements IInstanceTaskCategoryStore {
       updateSubCategory: action,
       deleteSubCategory: action,
     });
-    this.service = new TaskCategoryService();
   }
 
   get mainCategoryIds(): string[] {
-    return Object.values(this.mainCategories)
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((c) => c.id);
+    return Object.keys(this.mainCategories);
   }
 
-  getSubCategoriesByMain = (mainId: string): ISubTaskCategory[] => {
-    return Object.values(this.subCategories).filter((s) => s.main_category === mainId);
-  };
+  getSubCategoriesByMain = (mainId: string): ISubTaskCategory[] =>
+    Object.values(this.subCategories).filter((s) => s.main_category === mainId);
 
-  fetchMainCategories = async (): Promise<IMainTaskCategory[]> => {
+  fetchCategories = async (): Promise<void> => {
+    this.loader = "init-loader";
     try {
-      this.loader = Object.keys(this.mainCategories).length > 0 ? "mutation" : "init-loader";
-      const data = await this.service.listMain();
+      const [mains, subs] = await Promise.all([this.service.listMain(), this.service.listSub()]);
       runInAction(() => {
-        this.mainCategories = {};
-        data.forEach((cat) => {
-          set(this.mainCategories, [cat.id], cat);
-        });
+        mains.forEach((m) => set(this.mainCategories, m.id, m));
+        subs.forEach((s) => set(this.subCategories, s.id, s));
+        this.hasFetched = true;
       });
-      return data;
-    } catch (error) {
-      console.error("Error fetching main task categories", error);
-      throw error;
     } finally {
       runInAction(() => {
-        this.loader = "loaded";
+        this.loader = undefined;
       });
-    }
-  };
-
-  fetchSubCategories = async (): Promise<ISubTaskCategory[]> => {
-    try {
-      const data = await this.service.listSub();
-      runInAction(() => {
-        this.subCategories = {};
-        data.forEach((cat) => {
-          set(this.subCategories, [cat.id], cat);
-        });
-      });
-      return data;
-    } catch (error) {
-      console.error("Error fetching sub task categories", error);
-      throw error;
     }
   };
 
   createMainCategory = async (data: IMainTaskCategoryCreate): Promise<IMainTaskCategory> => {
-    try {
-      this.loader = "mutation";
-      const cat = await this.service.createMain(data);
-      runInAction(() => {
-        set(this.mainCategories, [cat.id], cat);
-      });
-      return cat;
-    } catch (error) {
-      console.error("Error creating main task category", error);
-      throw error;
-    } finally {
-      runInAction(() => {
-        this.loader = "loaded";
-      });
-    }
+    const created = await this.service.createMain(data);
+    runInAction(() => {
+      set(this.mainCategories, created.id, created);
+    });
+    return created;
   };
 
   updateMainCategory = async (id: string, data: IMainTaskCategoryUpdate): Promise<IMainTaskCategory> => {
-    try {
-      const cat = await this.service.updateMain(id, data);
-      runInAction(() => {
-        set(this.mainCategories, [cat.id], cat);
-      });
-      return cat;
-    } catch (error) {
-      console.error("Error updating main task category", error);
-      throw error;
-    }
+    const updated = await this.service.updateMain(id, data);
+    runInAction(() => {
+      set(this.mainCategories, id, updated);
+    });
+    return updated;
   };
 
   deleteMainCategory = async (id: string): Promise<void> => {
-    try {
-      await this.service.deleteMain(id);
-      runInAction(() => {
-        delete this.mainCategories[id];
-        // also remove orphaned sub-categories
-        Object.keys(this.subCategories).forEach((subId) => {
-          if (this.subCategories[subId].main_category === id) {
-            delete this.subCategories[subId];
-          }
-        });
-      });
-    } catch (error) {
-      console.error("Error deleting main task category", error);
-      throw error;
-    }
+    await this.service.deleteMain(id);
+    runInAction(() => {
+      delete this.mainCategories[id];
+    });
   };
 
   createSubCategory = async (data: ISubTaskCategoryCreate): Promise<ISubTaskCategory> => {
-    try {
-      this.loader = "mutation";
-      const cat = await this.service.createSub(data);
-      runInAction(() => {
-        set(this.subCategories, [cat.id], cat);
-      });
-      return cat;
-    } catch (error) {
-      console.error("Error creating sub task category", error);
-      throw error;
-    } finally {
-      runInAction(() => {
-        this.loader = "loaded";
-      });
-    }
+    const created = await this.service.createSub(data);
+    runInAction(() => {
+      set(this.subCategories, created.id, created);
+    });
+    return created;
   };
 
   updateSubCategory = async (id: string, data: ISubTaskCategoryUpdate): Promise<ISubTaskCategory> => {
-    try {
-      const cat = await this.service.updateSub(id, data);
-      runInAction(() => {
-        set(this.subCategories, [cat.id], cat);
-      });
-      return cat;
-    } catch (error) {
-      console.error("Error updating sub task category", error);
-      throw error;
-    }
+    const updated = await this.service.updateSub(id, data);
+    runInAction(() => {
+      set(this.subCategories, id, updated);
+    });
+    return updated;
   };
 
   deleteSubCategory = async (id: string): Promise<void> => {
-    try {
-      await this.service.deleteSub(id);
-      runInAction(() => {
-        delete this.subCategories[id];
-      });
-    } catch (error) {
-      console.error("Error deleting sub task category", error);
-      throw error;
-    }
+    await this.service.deleteSub(id);
+    runInAction(() => {
+      delete this.subCategories[id];
+    });
   };
 }
