@@ -79,7 +79,7 @@ export class JiraReleasesStep implements IStep {
         .filter((r) => r.external_id && r.id)
         .map((r) => ({
           externalId: r.external_id!,
-          planeId: r.id!,
+          planeId: r.id,
         }));
 
       await storage.storeMapping(job.id, this.name, mappings);

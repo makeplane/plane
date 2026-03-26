@@ -323,11 +323,17 @@ export const projectRoutes: RouteConfigEntry[] = [
 
       // Release Detail
       layout("./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/layout.tsx", [
+        // Release index → redirects to scope
+        route(
+          ":workspaceSlug/releases/:releaseId",
+          "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/page.tsx"
+        ),
+
         // Release Overview
-        layout("./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/(overview)/layout.tsx", [
+        layout("./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/overview/layout.tsx", [
           route(
-            ":workspaceSlug/releases/:releaseId",
-            "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/(overview)/page.tsx"
+            ":workspaceSlug/releases/:releaseId/overview",
+            "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/overview/page.tsx"
           ),
         ]),
 

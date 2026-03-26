@@ -510,7 +510,7 @@ export class JiraIssuesStep implements IStep {
     issues: IJiraIssue[],
     knownCustomFieldMapping: TKnownFieldMapping[]
   ): Promise<Partial<ExIssue>[]> {
-    const config = job.config as JiraConfig;
+    const config = job.config;
     const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
 
     const resourceId = job.config?.resource?.id || "";

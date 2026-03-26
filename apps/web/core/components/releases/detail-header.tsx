@@ -22,7 +22,7 @@ type ReleaseDetailHeaderProps = {
 };
 
 const TABS = [
-  { key: "overview" as const, titleKey: "releases.overview", pathSuffix: "", Icon: OverviewIcon },
+  { key: "overview" as const, titleKey: "releases.overview", pathSuffix: "/overview", Icon: OverviewIcon },
   { key: "scope" as const, titleKey: "releases.scope", pathSuffix: "/scope", Icon: ScopeIcon },
 ] as const;
 

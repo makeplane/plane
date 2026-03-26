@@ -178,7 +178,7 @@ export class JiraIssuePropertiesStep implements IStep {
    */
   private transform(job: TImportJob<JiraConfig>, jiraFields: JiraIssueField[]): Partial<ExIssueProperty>[] {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
-    const config = job.config as JiraConfig;
+    const config = job.config;
     const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
     const projectId = importWorkItemTypesGlobally ? undefined : job.project_id;
 
@@ -197,7 +197,7 @@ export class JiraIssuePropertiesStep implements IStep {
     issueTypesData: TIssueTypesData
   ): Promise<Partial<ExIssueProperty>[]> {
     const { resourceId, projectId } = extractJobData(job);
-    const config = job.config as JiraConfig;
+    const config = job.config;
     const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
     const defaultProperties: Partial<ExIssueProperty>[] = [];
     const propertyData = await this.getDefaultPropertyData(job.id, storage);
@@ -374,7 +374,7 @@ export class JiraIssuePropertiesStep implements IStep {
     properties: Partial<ExIssueProperty>[]
   ): Promise<TBulkOperationResponse<ExIssueProperty>> {
     const apiClient = getAPIClientInternal();
-    const config = job.config as JiraConfig;
+    const config = job.config;
     const importWorkItemTypesGlobally = config.importWorkItemTypesGlobally ?? false;
 
     if (importWorkItemTypesGlobally) {

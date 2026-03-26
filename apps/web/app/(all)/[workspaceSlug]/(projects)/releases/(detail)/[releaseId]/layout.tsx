@@ -18,7 +18,8 @@ import type { Route } from "./+types/layout";
 
 function ReleaseDetailLayout({ params }: Route.ComponentProps) {
   const scopeMatch = useMatch("/:workspaceSlug/releases/:releaseId/scope");
-  const selectedTab = scopeMatch ? "scope" : "overview";
+  const overviewMatch = useMatch("/:workspaceSlug/releases/:releaseId/overview");
+  const selectedTab = scopeMatch ? "scope" : overviewMatch ? "overview" : "scope";
 
   return (
     <>
