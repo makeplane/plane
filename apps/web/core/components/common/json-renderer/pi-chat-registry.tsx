@@ -26,32 +26,18 @@
  */
 
 import React, { useMemo } from "react";
-import type { z } from "zod";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { PieChart } from "@plane/propel/charts/pie-chart";
 import { LineChart } from "@plane/propel/charts/line-chart";
 // local imports
-import type { TComponentRendererProps, TJsonUISpec } from "./types";
-import type {
-  barChartPropsSchema,
-  buttonPropsSchema,
-  lineChartPropsSchema,
-  pieChartPropsSchema,
-} from "./pi-chat-schema";
+import type { TJsonUISpec } from "./types";
+import { barChartPropsSchema, buttonPropsSchema, lineChartPropsSchema, pieChartPropsSchema } from "./pi-chat-schema";
 import { piChatCatalog } from "./pi-chat-catalog";
 import { defineRegistry, JSONUIProvider, Renderer } from "./renderer";
-
-// ============================================================
-// Prop types (inferred from Zod schemas)
-// ============================================================
-
-type BarChartRendererProps = TComponentRendererProps<z.infer<typeof barChartPropsSchema>>;
-type PieChartRendererProps = TComponentRendererProps<z.infer<typeof pieChartPropsSchema>>;
-type LineChartRendererProps = TComponentRendererProps<z.infer<typeof lineChartPropsSchema>>;
-type ButtonRendererProps = TComponentRendererProps<z.infer<typeof buttonPropsSchema>>;
-
+import { isObject } from "@plane/utils";
+import { ErrorBoundary } from "../error-boundary";
 // ============================================================
 // Shared UI Helpers
 // ============================================================
@@ -70,58 +56,90 @@ const ChartContainer: React.FC<{ title?: string; children: React.ReactNode }> = 
 
 export const { registry: piChatRegistry } = defineRegistry(piChatCatalog, {
   components: {
-    BarChart: ({ props }: BarChartRendererProps) => (
-      <ChartContainer title={props.title}>
-        <BarChart
-          className="h-[300px] w-full"
-          data={props.data}
-          bars={props.bars}
-          xAxis={props.xAxis}
-          yAxis={{ ...props.yAxis, offset: 0, dx: 0, position: "insideLeft", style: { textAnchor: "middle" } }}
-          barSize={props.barSize ?? 40}
-          showTooltip={props.showTooltip !== false}
-        />
-      </ChartContainer>
-    ),
+    BarChart: ({ props }) => {
+      const parsed = barChartPropsSchema.safeParse(props);
+      if (!parsed.success) {
+        console.warn("[PiChat/BarChart] Invalid props", parsed.error.flatten());
+        return null;
+      }
+      const p = parsed.data;
+      return (
+        <ChartContainer title={p.title}>
+          <BarChart
+            className="h-[300px] w-full"
+            data={p.data}
+            bars={p.bars}
+            xAxis={p.xAxis}
+            yAxis={{ ...p.yAxis, offset: 0, dx: 0, position: "insideLeft", style: { textAnchor: "middle" } }}
+            barSize={p.barSize ?? 40}
+            showTooltip={p.showTooltip !== false}
+          />
+        </ChartContainer>
+      );
+    },
 
-    PieChart: ({ props }: PieChartRendererProps) => (
-      <ChartContainer title={props.title}>
-        <PieChart
-          className="h-[300px] w-full"
-          data={props.data}
-          dataKey={props.dataKey}
-          cells={props.cells}
-          showLabel={props.showLabel !== false}
-          showTooltip={props.showTooltip !== false}
-          legend={props.legend}
-          tooltipLabel={(payload) => payload?.name ?? payload?.key ?? ""}
-        />
-      </ChartContainer>
-    ),
+    PieChart: ({ props }) => {
+      const parsed = pieChartPropsSchema.safeParse(props);
+      if (!parsed.success) {
+        console.warn("[PiChat/PieChart] Invalid props", parsed.error.flatten());
+        return null;
+      }
+      const p = parsed.data;
+      return (
+        <ChartContainer title={p.title}>
+          <PieChart
+            className="h-[300px] w-full"
+            data={p.data}
+            dataKey={p.dataKey}
+            cells={p.cells}
+            showLabel={p.showLabel}
+            showTooltip={p.showTooltip !== false}
+            legend={p.legend}
+            tooltipLabel={(payload) => payload?.name ?? payload?.key ?? ""}
+          />
+        </ChartContainer>
+      );
+    },
 
-    LineChart: ({ props }: LineChartRendererProps) => (
-      <ChartContainer title={props.title}>
-        <LineChart
-          className="h-[300px] w-full"
-          data={props.data}
-          lines={props.lines}
-          xAxis={props.xAxis}
-          yAxis={{ ...props.yAxis, offset: 0, position: "center", style: { textAnchor: "middle" } }}
-          showTooltip={props.showTooltip !== false}
-        />
-      </ChartContainer>
-    ),
+    LineChart: ({ props }) => {
+      const parsed = lineChartPropsSchema.safeParse(props);
+      if (!parsed.success) {
+        console.warn("[PiChat/LineChart] Invalid props", parsed.error.flatten());
+        return null;
+      }
+      const p = parsed.data;
+      return (
+        <ChartContainer title={p.title}>
+          <LineChart
+            className="h-[300px] w-full"
+            data={p.data}
+            lines={p.lines}
+            xAxis={p.xAxis}
+            yAxis={{ ...p.yAxis, offset: 0, position: "center", style: { textAnchor: "middle" } }}
+            showTooltip={p.showTooltip !== false}
+          />
+        </ChartContainer>
+      );
+    },
 
-    Button: ({ props, emit }: ButtonRendererProps) => (
-      <Button
-        variant={props.variant ?? "primary"}
-        size={props.size ?? "base"}
-        disabled={props.disabled}
-        onClick={() => emit?.("press")}
-      >
-        {props.label}
-      </Button>
-    ),
+    Button: ({ props, emit }) => {
+      const parsed = buttonPropsSchema.safeParse(props);
+      if (!parsed.success) {
+        console.warn("[PiChat/Button] Invalid props", parsed.error.flatten());
+        return null;
+      }
+      const p = parsed.data;
+      return (
+        <Button
+          variant={p.variant ?? "primary"}
+          size={p.size ?? "base"}
+          disabled={p.disabled}
+          onClick={() => emit?.("press")}
+        >
+          {p.label}
+        </Button>
+      );
+    },
   },
 });
 
@@ -144,12 +162,11 @@ export const PiJsonRenderer: React.FC<{ jsonString: string }> = ({ jsonString })
       const parsed: unknown = JSON.parse(jsonString);
       // Validate that the parsed JSON has the expected spec shape
       if (
-        typeof parsed === "object" &&
-        parsed !== null &&
+        isObject(parsed) &&
         "root" in parsed &&
         "elements" in parsed &&
-        typeof (parsed as TJsonUISpec).root === "string" &&
-        typeof (parsed as TJsonUISpec).elements === "object"
+        typeof parsed.root === "string" &&
+        isObject(parsed.elements)
       ) {
         return parsed as TJsonUISpec;
       }
@@ -160,11 +177,14 @@ export const PiJsonRenderer: React.FC<{ jsonString: string }> = ({ jsonString })
   }, [jsonString]);
 
   if (!spec) return null;
-
   return (
-    <JSONUIProvider registry={piChatRegistry}>
-      <Renderer spec={spec} registry={piChatRegistry} />
-    </JSONUIProvider>
+    <ErrorBoundary
+      fallback={<div className="border border-subtle-1 bg-layer-1 p-4 rounded-lg">Error rendering JSON UI</div>}
+    >
+      <JSONUIProvider registry={piChatRegistry}>
+        <Renderer spec={spec} registry={piChatRegistry} />
+      </JSONUIProvider>
+    </ErrorBoundary>
   );
 };
 
