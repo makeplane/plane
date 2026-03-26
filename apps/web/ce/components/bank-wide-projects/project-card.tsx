@@ -37,6 +37,8 @@ export const BankWideProjectCard = function BankWideProjectCard({ project }: Pro
     <Link
       ref={projectCardRef}
       to={`/${project.workspace_slug}/projects/${project.id}/issues/`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="flex flex-col justify-between group/project-card border border-subtle bg-layer-2 hover:shadow-raised-200 hover:border-strong w-full rounded-lg overflow-hidden duration-300 transition-all"
     >
       {/* Cover image section */}
