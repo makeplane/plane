@@ -62,11 +62,16 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
-  const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
+  const canManageIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
+  const isEditingAllowed = canManageIssue && !readOnly;
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isDeletingAllowed = isEditingAllowed;
+  const isDeletingAllowed = canManageIssue;
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 

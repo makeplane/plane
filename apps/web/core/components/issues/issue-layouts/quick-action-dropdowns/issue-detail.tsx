@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // plane imports
 import {
   ARCHIVABLE_STATE_GROUPS,
@@ -60,7 +60,6 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
   } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -77,19 +76,19 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
-  const isEditingAllowed =
-    allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      issue.project_id ?? undefined
-    ) && !readOnly;
+  const canManageIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
+  const isEditingAllowed = canManageIssue && !readOnly;
 
   const isArchivingAllowed = !issue.archived_at && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isRestoringAllowed = !!issue.archived_at && isEditingAllowed;
 
-  const isDeletingAllowed = isEditingAllowed;
+  const isDeletingAllowed = canManageIssue;
 
   const duplicateIssuePayload = omit(
     {

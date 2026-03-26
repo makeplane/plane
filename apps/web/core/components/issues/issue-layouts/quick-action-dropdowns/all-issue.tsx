@@ -5,7 +5,12 @@ import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import {
+  ARCHIVABLE_STATE_GROUPS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -15,6 +20,7 @@ import { cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 // helper
@@ -45,12 +51,19 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // router
   const { workspaceSlug } = useParams();
+  const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   // derived values
   const stateDetails = getStateById(issue.state_id);
-  const isEditingAllowed = !readOnly;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+  const canManageIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
+  const isEditingAllowed = canManageIssue && !readOnly;
   // auth
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
@@ -72,7 +85,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
     activeLayout: "Global issues",
     isEditingAllowed,
     isArchivingAllowed,
-    isDeletingAllowed: isEditingAllowed,
+    isDeletingAllowed: canManageIssue,
     isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal,

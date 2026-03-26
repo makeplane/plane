@@ -41,10 +41,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   // auth
-  const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
-  const isRestoringAllowed =
-    handleRestore && allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const canManageIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
+  const isEditingAllowed = canManageIssue && !readOnly;
+  const isRestoringAllowed = handleRestore && canManageIssue;
 
   // Menu items and modals using helper
   const menuItemProps: MenuItemFactoryProps = {
@@ -52,7 +56,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
     workspaceSlug: workspaceSlug?.toString(),
     activeLayout,
     isEditingAllowed,
-    isDeletingAllowed: isEditingAllowed,
+    isDeletingAllowed: canManageIssue,
     isRestoringAllowed: !!isRestoringAllowed,
     setIssueToEdit: () => {},
     setCreateUpdateIssueModal: () => {},

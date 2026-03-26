@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -6,7 +6,7 @@ import { ArchiveIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
-import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { copyUrlToClipboard, generateWorkItemLink, isDateTimePast } from "@plane/utils";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 
@@ -242,7 +242,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     action: () => {
       setDeleteIssueModal(true);
     },
-    shouldRender: isDeletingAllowed,
+    shouldRender: isDeletingAllowed && !isDateTimePast(issue.start_date, issue.start_time),
   });
 
   return {
@@ -287,7 +287,7 @@ export const useWorkItemDetailMenuItems = (props: MenuItemFactoryProps): TContex
       factory.createRestoreMenuItem(),
       factory.createDeleteMenuItem(),
     ],
-    [factory]
+    [factory, props.workspaceSlug]
   );
 };
 
@@ -309,14 +309,15 @@ export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuI
 
 export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
   const factory = useMenuItemFactory(props);
+  const { cycleId, issue, setCreateUpdateIssueModal, setIssueToEdit } = props;
 
-  const customEditAction = () => {
-    props.setIssueToEdit({
-      ...props.issue,
-      cycle_id: props.cycleId ?? null,
+  const customEditAction = useCallback(() => {
+    setIssueToEdit({
+      ...issue,
+      cycle_id: cycleId ?? null,
     });
-    props.setCreateUpdateIssueModal(true);
-  };
+    setCreateUpdateIssueModal(true);
+  }, [cycleId, issue, setCreateUpdateIssueModal, setIssueToEdit]);
 
   return useMemo(
     () => [
@@ -328,20 +329,21 @@ export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMen
       factory.createArchiveMenuItem(),
       factory.createDeleteMenuItem(),
     ],
-    [factory, props.cycleId]
+    [factory, customEditAction]
   );
 };
 
 export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
   const factory = useMenuItemFactory(props);
+  const { issue, moduleId, setCreateUpdateIssueModal, setIssueToEdit } = props;
 
-  const customEditAction = () => {
-    props.setIssueToEdit({
-      ...props.issue,
-      module_ids: props.moduleId ? [props.moduleId] : [],
+  const customEditAction = useCallback(() => {
+    setIssueToEdit({
+      ...issue,
+      module_ids: moduleId ? [moduleId] : [],
     });
-    props.setCreateUpdateIssueModal(true);
-  };
+    setCreateUpdateIssueModal(true);
+  }, [issue, moduleId, setCreateUpdateIssueModal, setIssueToEdit]);
 
   return useMemo(
     () => [
@@ -353,7 +355,7 @@ export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMe
       factory.createArchiveMenuItem(),
       factory.createDeleteMenuItem(),
     ],
-    [factory, props.moduleId]
+    [factory, customEditAction]
   );
 };
 
