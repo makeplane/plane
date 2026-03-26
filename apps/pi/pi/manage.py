@@ -68,6 +68,8 @@ app.command("check-embedding-model")(embedding.check_embedding_model)
 app.command("init-embedding-model")(embedding.init_embedding_model)
 app.command("create-embedding-model")(embedding.create_embedding_model)
 app.command("validate-embedding-model")(embedding.validate_embedding_model)
+app.command("check-embedding-dimension")(embedding.check_embedding_dimension)
+app.command("list-supported-embedding-models")(embedding.list_supported_embedding_models)
 
 
 # LLM commands

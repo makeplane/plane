@@ -872,11 +872,17 @@ class VectorStore:
         # Get the correct parameter name for the active model
         param_name = get_embedding_param_from_active_model()
 
-        # Use provided test input or a default that respects batch capability
+        # Use provided test input or a default
         if test_input is None:
             default = "Test embedding generation"
-            texts = default if not active_model_supports_batch() else [default]
+            texts = [default] if active_model_supports_batch() else default
         else:
-            texts = test_input
+            # Coerce input to match model's batch capability requirement
+            if not active_model_supports_batch() and isinstance(test_input, list):
+                texts = test_input[0] if test_input else "Test"
+            elif active_model_supports_batch() and isinstance(test_input, str):
+                texts = [test_input]
+            else:
+                texts = test_input
 
         return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_predict", body={"parameters": {param_name: texts}})

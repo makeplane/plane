@@ -211,6 +211,15 @@ def validate_embedding_model_id(model_id: Optional[str] = None) -> tuple[bool, s
 
         embedding_dim = len(embedding_data)
 
+        # Compare actual dimension against configured value
+        configured_dim = settings.vector_db.EMBEDDING_DIMENSION
+        if embedding_dim != configured_dim:
+            return False, (
+                f"Dimension mismatch: model produces {embedding_dim}-dim vectors "
+                f"but OPENSEARCH_EMBEDDING_DIMENSION is configured as {configured_dim}. "
+                f"Update the env var or run index migration."
+            )
+
         return True, f"Valid embedding model: {name} (ID: {ml_model_id}, dimension: {embedding_dim}, state: {state}, algorithm: {algorithm})"
     except Exception as e:
         error_msg = str(e)

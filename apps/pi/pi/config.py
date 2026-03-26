@@ -117,32 +117,8 @@ class VectorDB:
 
     # Model Configuration
     ML_MODEL_ID: str = os.getenv("OPENSEARCH_ML_MODEL_ID", "")
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "cohere/embed-v4.0")
-
-    # EMBEDDING_DIMENSION: If explicitly set via env var, use that value.
-    # Otherwise, derive from the configured EMBEDDING_MODEL for consistency.
-    @property
-    def EMBEDDING_DIMENSION(self) -> int:
-        """
-        Get embedding dimension, preferring explicit env var, else deriving from model config.
-        """
-        # Check if explicitly overridden via environment variable
-        explicit_dim = os.getenv("OPENSEARCH_EMBEDDING_DIMENSION")
-        if explicit_dim:
-            try:
-                return int(explicit_dim)
-            except ValueError:
-                pass  # Fall through to model-based lookup
-
-        # Derive from configured embedding model
-        try:
-            from pi.core.embedding_config import get_embedding_model_config
-
-            config = get_embedding_model_config(self.EMBEDDING_MODEL)
-            return config["dimension"]
-        except (ImportError, ValueError):
-            # Fallback if import fails or model not found
-            return 1536
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "")
+    EMBEDDING_DIMENSION: int = int(os.getenv("OPENSEARCH_EMBEDDING_DIMENSION", "1536"))
 
     @staticmethod
     def generate_index_name(suffix: str) -> str:
@@ -562,7 +538,7 @@ class Celery:
                 else:
                     vhost = "/" + parsed.path.lstrip("/")
 
-        host = host or str(secret.get(os.getenv("RABBITMQ_HOST_KEY"), ""))
+        host = (host or str(secret.get(os.getenv("RABBITMQ_HOST_KEY"), ""))) or ""
         port = int(port or secret.get(os.getenv("RABBITMQ_PORT_KEY"), _default_port_for_scheme(scheme)))
         vhost = vhost or str(secret.get(os.getenv("RABBITMQ_VHOST_KEY"), "/")) or "/"
 

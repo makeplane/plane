@@ -13,12 +13,12 @@
 Base classes and shared utilities for Plane API tools.
 """
 
+import re
 import time
 from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Tuple
-import re
 
 from pi import logger
 
@@ -234,7 +234,7 @@ class PlaneToolBase:
         """Generate a project identifier from name (letters and numbers only)."""
 
         # Remove everything except letters and numbers
-        cleaned_name = re.sub(r'[^A-Za-z0-9]', '', name)
+        cleaned_name = re.sub(r"[^A-Za-z0-9]", "", name)
 
         # Take first 4 characters and uppercase
         base_identifier = cleaned_name[:4].upper()

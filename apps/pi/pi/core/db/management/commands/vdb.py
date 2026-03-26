@@ -40,7 +40,7 @@ def confirm_action(prompt: str) -> bool:
 
 
 @app.command("create-docs-embed-pipeline")
-def create_docs_embed_pipeline():
+def create_docs_embed_pipeline(force: bool = typer.Option(False, "--force", "-f", help="Force overwrite pipeline even if it exists")):
     """
     Create the docs embedding pipeline in OpenSearch.
 
@@ -63,12 +63,15 @@ def create_docs_embed_pipeline():
     try:
         vdb = VectorStore()
 
-        # Check if pipeline already exists
+        # Check if pipeline already exists unless forced
         try:
             vdb.os.ingest.get_pipeline(id=pipeline_name)
-            typer.echo(f"Pipeline '{pipeline_name}' already exists")
-            typer.echo("  Use OpenSearch API to update if needed")
-            return
+            if force:
+                typer.echo(f"Pipeline '{pipeline_name}' already exists. Overwriting due to --force...")
+            else:
+                typer.echo(f"Pipeline '{pipeline_name}' already exists")
+                typer.echo("  Use --force to overwrite it with the current OPENSEARCH_ML_MODEL_ID")
+                return
         except Exception:
             # Pipeline doesn't exist, create it
             pass
@@ -107,7 +110,10 @@ def create_docs_embed_pipeline():
 
 
 @app.command("create-vector-pipeline")
-def create_vector_pipeline(pipeline_name: str = typer.Option(..., "--pipeline-name", "-p", help="Pipeline identifier (e.g., docs_pipeline)")):
+def create_vector_pipeline(
+    pipeline_name: str = typer.Option(..., "--pipeline-name", "-p", help="Pipeline identifier (e.g., docs_pipeline)"),
+    force: bool = typer.Option(False, "--force", "-f", help="Force overwrite pipeline even if it exists"),
+):
     """
     Create an OpenSearch ingest pipeline by name.
 
@@ -134,12 +140,15 @@ def create_vector_pipeline(pipeline_name: str = typer.Option(..., "--pipeline-na
     try:
         vdb = VectorStore()
 
-        # Check if pipeline already exists
+        # Check if pipeline already exists unless forced
         try:
             vdb.os.ingest.get_pipeline(id=actual_pipeline_name)
-            typer.echo(f"Pipeline '{actual_pipeline_name}' already exists")
-            typer.echo("  Use OpenSearch API to update if needed")
-            return
+            if force:
+                typer.echo(f"Pipeline '{actual_pipeline_name}' already exists. Overwriting due to --force...")
+            else:
+                typer.echo(f"Pipeline '{actual_pipeline_name}' already exists")
+                typer.echo("  Use --force to overwrite it with the current OPENSEARCH_ML_MODEL_ID")
+                return
         except Exception:
             pass
 
@@ -207,9 +216,9 @@ def check_vector_pipeline(pipeline_name: str = typer.Option(..., "--pipeline-nam
 
 
 @app.command("init-vector-pipelines")
-def init_vector_pipelines():
+def init_vector_pipelines(force: bool = typer.Option(False, "--force", "-f", help="(Deprecated) Pipelines now always overwrite")):
     """
-    Initialize all required OpenSearch pipelines (create if not present).
+    Initialize all required OpenSearch pipelines (creates or updates them).
 
     Example:
         python -m pi.manage init-vector-pipelines
@@ -229,20 +238,13 @@ def init_vector_pipelines():
 
         try:
             vdb = VectorStore()
-
-            typer.echo(f"Checking pipeline '{actual_pipeline_name}'...")
-            try:
-                vdb.os.ingest.get_pipeline(id=actual_pipeline_name)
-                typer.echo(f"Pipeline '{actual_pipeline_name}' already exists")
-            except Exception:
-                typer.echo(f"Creating pipeline '{actual_pipeline_name}'...")
-                get_body_fn = config["get_body"]
-                pipeline_body: dict = get_body_fn(ml_model_id)  # type: ignore[operator]
-                vdb.os.ingest.put_pipeline(id=actual_pipeline_name, body=pipeline_body)
-                typer.echo(f"Created pipeline '{actual_pipeline_name}'")
+            get_body_fn = config["get_body"]
+            pipeline_body = get_body_fn(ml_model_id)
+            vdb.os.ingest.put_pipeline(id=actual_pipeline_name, body=pipeline_body)
+            typer.echo(f"  ✅ Synced pipeline '{actual_pipeline_name}'")
 
         except Exception as e:
-            typer.echo(f"Failed to initialize {pipeline_key}: {e}")
+            typer.echo(f"  ❌ Failed to initialize {pipeline_key}: {e}")
             # Continue with other pipelines
 
     typer.echo("-" * 40)

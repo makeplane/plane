@@ -217,6 +217,23 @@ class Command(BaseCommand):
                 self.stderr.write("  - document update/delete (data modifications)")
                 return
 
+        # Detect if docs_semantic needs syncing for index schema operations.
+        # Sync when: no --indices (all indices) or docs_semantic is in --indices.
+        # Also strip docs_semantic from args since the opensearch registry doesn't know it.
+        docs_sync_action = None
+        if (
+            len(opensearch_args) >= 2
+            and opensearch_args[0] == "index"
+            and opensearch_args[1] in ("create", "rebuild", "delete")
+        ):
+            if "--indices" not in opensearch_args:
+                # No filter → all indices → include docs_semantic
+                docs_sync_action = opensearch_args[1]
+            elif "docs_semantic" in opensearch_args:
+                docs_sync_action = opensearch_args[1]
+                # Remove docs_semantic from args so opensearch cmd doesn't error
+                opensearch_args = [a for a in opensearch_args if a != "docs_semantic"]
+
         if background:
             from plane.ee.bgtasks.search_index_update_task import (
                 run_search_index_command,
@@ -224,8 +241,7 @@ class Command(BaseCommand):
 
             print("Running opensearch command in background with args:", opensearch_args)
 
-            # Pass vectorization flag to the background task
-            run_search_index_command.delay(*opensearch_args, vectorize=vectorize)
+            run_search_index_command.delay(*opensearch_args, vectorize=vectorize, docs_sync_action=docs_sync_action)
 
             self.stdout.write(self.style.SUCCESS("\nIndexing task queued in background."))
 
@@ -237,3 +253,9 @@ class Command(BaseCommand):
         else:
             print("Running opensearch command with args:", opensearch_args)
             call_command("opensearch", *opensearch_args)
+
+            if docs_sync_action:
+                from plane.ee.documents.entities.plane_docs import sync_index as sync_docs_semantic
+                sync_docs_semantic(docs_sync_action)
+
+

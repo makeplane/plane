@@ -30,6 +30,7 @@ from .cycle import CycleDocument
 from .page import PageDocument
 from .issue_view import IssueViewDocument
 from .teamspace import TeamspaceDocument
+from .plane_docs import PLANE_DOCS_INDEX_NAME, PLANE_DOCS_INDEX_BODY
 
 __all__ = [
     # Issue-related documents
@@ -43,4 +44,9 @@ __all__ = [
     "PageDocument",
     "IssueViewDocument",
     "TeamspaceDocument",
+    # Documentation index constants (no Django model — managed via direct OS client)
+    "PLANE_DOCS_INDEX_NAME",
+    "PLANE_DOCS_INDEX_BODY",
 ]
+
+

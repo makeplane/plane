@@ -21,5 +21,9 @@ python -m pi.manage wait-for-db
 echo "Checking for pending migrations..."
 python -m pi.manage check-migrations
 
+# Verify embedding dimension matches live OpenSearch indices
+echo "Checking embedding dimension consistency..."
+python -m pi.manage check-embedding-dimension
+
 # Start the FastAPI application
 exec python -m pi.manage runserver
