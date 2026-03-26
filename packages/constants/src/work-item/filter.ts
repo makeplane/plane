@@ -733,7 +733,7 @@ export const filterActivityOnSelectedFilters = (
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
   activity.filter((activity) => {
-    if (activity.activity_type === EActivityFilterType.DEFAULT) return true;
+    if (activity.activity_type === EActivityFilterType.DEFAULT) return filters.includes(EActivityFilterType.ACTIVITY);
     return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
 

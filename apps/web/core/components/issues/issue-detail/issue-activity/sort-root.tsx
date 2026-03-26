@@ -18,12 +18,12 @@ import { E_SORT_ORDER } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import type { IconButtonProps } from "@plane/propel/icon-button";
 
-export type TActivitySortRoot = {
+export type ActivitySortRootProps = {
   sortOrder: E_SORT_ORDER;
   toggleSort: () => void;
   variant?: IconButtonProps["variant"];
 };
-export const ActivitySortRoot = memo(function ActivitySortRoot(props: TActivitySortRoot) {
+export const ActivitySortRoot = memo(function ActivitySortRoot(props: ActivitySortRootProps) {
   const SortIcon = props.sortOrder === E_SORT_ORDER.ASC ? ArrowUpWideNarrow : ArrowDownWideNarrow;
   return <IconButton variant={props.variant || "tertiary"} icon={SortIcon} onClick={props.toggleSort} />;
 });

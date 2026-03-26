@@ -10,3 +10,6 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+
+export { DotSeparator } from "./dot-separator";
+export type { DotSeparatorProps } from "./dot-separator";

@@ -12,29 +12,36 @@
  */
 
 import { observer } from "mobx-react";
+import Link from "next/link";
+// plane imports
+import { ActivityListItem } from "@plane/blocks/activity";
+import type { ActivityItemData } from "@plane/blocks/activity";
+import { calculateTimeAgo, getIssuePropertyTypeDetails, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
+import { useActivityHighlight } from "@/hooks/use-activity-highlight";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
+import { PropertyTypeIcon } from "@/components/work-item-types/properties/property-icon";
 import { getWorkItemCustomPropertyActivityMessage } from "@/helpers/workitem/activity";
 import { useIssueTypes } from "@/plane-web/hooks/store";
-// local imports
-import { IssueActivityBlockComponent } from "./common";
 
-type TWorkItemCustomPropertiesActivity = {
+type WorkItemCustomPropertiesActivityProps = {
   activityId: string;
   ends: "top" | "bottom" | undefined;
 };
 
-export type TWorkItemCustomPropertiesActivityItem = {
+export type WorkItemCustomPropertiesActivityItemProps = {
   activityId: string;
   customPropertyId: string;
 };
 
 export const WorkItemCustomPropertiesActivity = observer(function WorkItemCustomPropertiesActivity(
-  props: TWorkItemCustomPropertiesActivity
+  props: WorkItemCustomPropertiesActivityProps
 ) {
   const { activityId, ends } = props;
-  // hooks and derived values
+  // hooks
+  const { highlightRef, isHighlighted } = useActivityHighlight(activityId);
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -44,16 +51,19 @@ export const WorkItemCustomPropertiesActivity = observer(function WorkItemCustom
       issuePropertiesActivity: { getPropertyActivityById },
     },
   } = useIssueDetail();
+  const { getWorkspaceById } = useWorkspace();
 
   // activity details
   const activityDetail = getPropertyActivityById(activityId);
   if (!activityDetail || !activityDetail.issue || !activityDetail.property) return <></>;
   // issue details
-  const issueDetail = getIssueById(activityDetail?.issue);
+  const issueDetail = getIssueById(activityDetail.issue);
   if (!issueDetail) return <></>;
   // property details
-  const propertyDetail = getIssuePropertyById(activityDetail?.property);
+  const propertyDetail = getIssuePropertyById(activityDetail.property);
   if (!propertyDetail?.id) return <></>;
+  // property type details for icon
+  const propertyTypeDetails = getIssuePropertyTypeDetails(propertyDetail.property_type, propertyDetail.relation_type);
   // activity message
   const activityMessage = getWorkItemCustomPropertyActivityMessage({
     action: activityDetail.action,
@@ -65,9 +75,33 @@ export const WorkItemCustomPropertiesActivity = observer(function WorkItemCustom
 
   if (!activityMessage) return <></>;
 
-  return (
-    <IssueActivityBlockComponent activityId={activityId} propertyId={propertyDetail.id} ends={ends}>
-      {activityMessage}
-    </IssueActivityBlockComponent>
+  // resolve workspace slug for actor URL
+  const workspaceDetail = activityDetail.workspace ? getWorkspaceById(activityDetail.workspace) : undefined;
+  const actorUrl =
+    workspaceDetail?.slug && activityDetail.actor_detail?.id
+      ? `/${workspaceDetail.slug}/profile/${activityDetail.actor_detail.id}`
+      : undefined;
+
+  const actorName = activityDetail.actor_detail?.display_name ?? "";
+  const actor = actorUrl ? (
+    <Link href={actorUrl} className="font-medium text-primary hover:underline">
+      {actorName}
+    </Link>
+  ) : (
+    <span className="font-medium text-primary">{actorName}</span>
   );
+
+  const data: ActivityItemData = {
+    actor,
+    timestamp: activityDetail.created_at ? calculateTimeAgo(activityDetail.created_at) : "",
+    tooltipTimestamp: activityDetail.created_at
+      ? `${renderFormattedDate(activityDetail.created_at)}, ${renderFormattedTime(activityDetail.created_at)}`
+      : undefined,
+    icon: propertyTypeDetails?.iconKey ? (
+      <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-3.5 text-secondary" />
+    ) : undefined,
+    customContent: activityMessage,
+  };
+
+  return <ActivityListItem data={data} ends={ends} highlightRef={highlightRef} highlighted={isHighlighted} />;
 });

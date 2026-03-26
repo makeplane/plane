@@ -151,7 +151,7 @@ export const useWorkItemCommentOperations = (
           });
           return res;
         } catch (error) {
-          console.log("Error in uploading comment asset:", error);
+          console.error("Error in uploading comment asset:", error);
           throw new Error(t("issue.comments.upload.error"));
         }
       },

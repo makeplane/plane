@@ -23,12 +23,12 @@ import { PopoverMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // constants
 
-type TActivityFilter = {
+type ActivityFilterProps = {
   selectedFilters: TActivityFilters[];
   filterOptions: TActivityFilterOption[];
 };
 
-export const ActivityFilter = observer(function ActivityFilter(props: TActivityFilter) {
+export const ActivityFilter = observer(function ActivityFilter(props: ActivityFilterProps) {
   const { selectedFilters = [], filterOptions } = props;
 
   // hooks

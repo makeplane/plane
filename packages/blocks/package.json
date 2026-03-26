@@ -15,6 +15,7 @@
     ]
   },
   "exports": {
+    "./activity": "./dist/activity/index.js",
     "./entity-detail": "./dist/entity-detail/index.js",
     "./utils": "./dist/utils/index.js",
     "./package.json": "./package.json",
@@ -42,6 +43,7 @@
     "@plane/utils": "workspace:*",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
+    "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-hook-form": "catalog:",

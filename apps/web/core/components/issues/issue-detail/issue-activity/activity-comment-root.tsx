@@ -13,21 +13,20 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import type { E_SORT_ORDER, TActivityFilters, EActivityFilterType } from "@plane/constants";
-import { BASE_ACTIVITY_FILTER_TYPES, filterActivityOnSelectedFilters } from "@plane/constants";
+import { TimelineContainer } from "@plane/blocks/activity";
+import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
+import { filterActivityOnSelectedFilters } from "@plane/constants";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TCommentsOperations } from "@plane/types";
-// components
-import { CommentCard } from "@/components/comments/card/root";
 // hooks
+import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// components
-import { IssueActivityWorklog } from "@/components/issues/worklog/activity/root";
 // local imports
-import { IssueActivityItem } from "./activity/activity-list";
-import { WorkItemCustomPropertiesActivity } from "./activity/custom-properties-activity";
+import { ActivityItem } from "./activity-item";
+import type { ActivityItemSharedProps } from "./activity-item";
 import { IssueActivityLoader } from "./loader";
 
-type TIssueActivityCommentRoot = {
+type IssueActivityCommentRootProps = {
   workspaceSlug: string;
   projectId: string;
   isIntakeIssue: boolean;
@@ -37,9 +36,12 @@ type TIssueActivityCommentRoot = {
   showAccessSpecifier?: boolean;
   disabled?: boolean;
   sortOrder: E_SORT_ORDER;
+  renderMode?: "default" | "transition";
 };
 
-export const IssueActivityCommentRoot = observer(function IssueActivityCommentRoot(props: TIssueActivityCommentRoot) {
+export const IssueActivityCommentRoot = observer(function IssueActivityCommentRoot(
+  props: IssueActivityCommentRootProps
+) {
   const {
     workspaceSlug,
     isIntakeIssue,
@@ -50,64 +52,83 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     projectId,
     disabled,
     sortOrder,
+    renderMode = "default",
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const {
-    activity: { getActivityAndCommentsByIssueId },
-    comment: { getCommentById },
+    activity: { getActivityAndCommentsByIssueId, getActivityById },
   } = useIssueDetail();
   // derived values
   const activityAndComments = getActivityAndCommentsByIssueId(issueId, sortOrder);
 
   if (!activityAndComments) return <IssueActivityLoader />;
+  if (activityAndComments.length <= 0) {
+    return (
+      <div className="py-5">
+        <EmptyStateCompact
+          assetKey="unknown"
+          title={
+            renderMode === "transition"
+              ? t("activity_empty_state.no_transitions")
+              : t("activity_empty_state.no_activity")
+          }
+        />
+      </div>
+    );
+  }
 
-  if (activityAndComments.length <= 0) return null;
+  const filteredActivities = filterActivityOnSelectedFilters(activityAndComments, selectedFilters);
 
-  const filteredActivityAndComments = filterActivityOnSelectedFilters(activityAndComments, selectedFilters);
+  // In transition mode, exclude activities without meaningful old/new values
+  const displayActivities =
+    renderMode === "transition"
+      ? filteredActivities.filter((item) => {
+          if (item.activity_type === "COMMENT" || item.activity_type === "WORKLOG") return true;
+          const data = getActivityById(item.id);
+          if (!data?.field || data.field === "description" || data.field === "name") return false;
+          return !!(data.old_value || data.new_value);
+        })
+      : filteredActivities;
+
+  if (displayActivities.length <= 0) {
+    return (
+      <div className="py-5">
+        <EmptyStateCompact
+          assetKey="unknown"
+          title={
+            renderMode === "transition"
+              ? t("activity_empty_state.no_transitions")
+              : t("activity_empty_state.no_activity")
+          }
+        />
+      </div>
+    );
+  }
+
+  const sharedProps: ActivityItemSharedProps = {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled: !!disabled,
+    showAccessSpecifier: !!showAccessSpecifier,
+    showCopyLinkOption: !isIntakeIssue,
+    activityOperations,
+    isTransition: renderMode === "transition",
+  };
 
   return (
-    <div>
-      {filteredActivityAndComments.map((activityComment, index) => {
-        const comment = getCommentById(activityComment.id);
-        return activityComment.activity_type === "COMMENT" ? (
-          <CommentCard
-            key={activityComment.id}
-            workspaceSlug={workspaceSlug}
-            entityId={issueId}
-            comment={comment}
-            activityOperations={activityOperations}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-            showAccessSpecifier={!!showAccessSpecifier}
-            showCopyLinkOption={!isIntakeIssue}
-            disabled={disabled}
-            projectId={projectId}
-            enableReplies
-          />
-        ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
-          <IssueActivityItem
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
-        ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
-          <WorkItemCustomPropertiesActivity
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
-        ) : activityComment.activity_type === "WORKLOG" ? (
-          <IssueActivityWorklog
-            key={activityComment.id}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            activityComment={activityComment}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
-        ) : (
-          <></>
-        );
-      })}
-    </div>
+    <TimelineContainer>
+      {displayActivities.map((item, index) => (
+        <ActivityItem
+          key={item.id}
+          item={item}
+          ends={index === 0 ? "top" : index === displayActivities.length - 1 ? "bottom" : undefined}
+          showConnector={index < displayActivities.length - 1}
+          {...sharedProps}
+        />
+      ))}
+    </TimelineContainer>
   );
 });

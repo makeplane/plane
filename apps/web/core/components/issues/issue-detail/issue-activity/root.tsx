@@ -11,31 +11,36 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
-import uniq from "lodash-es/uniq";
+import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import type { TActivityFilters } from "@plane/constants";
-import { E_SORT_ORDER, defaultActivityFilters, EUserPermissions } from "@plane/constants";
+import { ActivityFeed } from "@plane/blocks/activity";
+import type { TActivityFilters, TActivityFilterOptionsKey } from "@plane/constants";
+import {
+  E_SORT_ORDER,
+  defaultActivityFilters,
+  EActivityFilterType,
+  EUserPermissions,
+  ACTIVITY_FILTER_TYPE_OPTIONS,
+} from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-// i18n
 import { useTranslation } from "@plane/i18n";
-//types
 import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
+import { IssueActivityWorklogCreateButton } from "@/components/issues/worklog/activity/worklog-create-button";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane web components
-import { ActivityFilterRoot } from "@/components/issues/worklog/activity/filter-root";
-import { IssueActivityWorklogCreateButton } from "@/components/issues/worklog/activity/worklog-create-button";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+// local imports
+import { ActivityFilter } from "./activity-filter";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
 import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
 
-type TIssueActivity = {
+type IssueActivityProps = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -43,55 +48,118 @@ type TIssueActivity = {
   isIntakeIssue?: boolean;
 };
 
-export type TActivityOperations = {
+export type ActivityOperations = {
   createComment: (data: Partial<TIssueComment>) => Promise<TIssueComment>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
-export const IssueActivity = observer(function IssueActivity(props: TIssueActivity) {
+type IssueActivityTab = {
+  key: string;
+  label: string;
+  filters: TActivityFilters[];
+  renderMode?: "default" | "transition";
+};
+
+const DEFAULT_ACTIVITY_TAB = "all";
+const FILTER_VISIBLE_TABS = new Set([DEFAULT_ACTIVITY_TAB, "activity", "comment"]);
+
+export const IssueActivity = observer(function IssueActivity(props: IssueActivityProps) {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { setValue: setFilterValue, storedValue: selectedFilters } = useLocalStorage(
-    "issue_activity_filters",
-    defaultActivityFilters
-  );
   const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
   // store hooks
+  const { getProjectById } = useProject();
+  const { isWorklogsEnabledByProjectId } = useWorkspaceWorklogs();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-  const { getProjectById } = useProject();
-  const { data: currentUser } = useUser();
   // derived values
-  const issue = issueId ? getIssueById(issueId) : undefined;
+  const issue = getIssueById(issueId);
+  const isWorklogsEnabled = (projectId && isWorklogsEnabledByProjectId(projectId)) || false;
   const currentUserProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const isAdmin = currentUserProjectRole === EUserPermissions.ADMIN;
   const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
-  const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
+  const isAdmin = currentUserProjectRole === EUserPermissions.ADMIN;
+  const isAssigned = issue?.assignee_ids && currentUser?.id ? issue.assignee_ids.includes(currentUser.id) : false;
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
-  // toggle filter
-  const toggleFilter = (filter: TActivityFilters) => {
-    if (!selectedFilters) return;
-    let _filters = [];
-    if (selectedFilters.includes(filter)) {
-      if (selectedFilters.length === 1) return selectedFilters; // Ensure at least one filter is applied
-      _filters = selectedFilters.filter((f) => f !== filter);
-    } else {
-      _filters = [...selectedFilters, filter];
+
+  // Build activity tabs
+  const activityTabs: IssueActivityTab[] = useMemo(() => {
+    const allFilters = Object.keys(ACTIVITY_FILTER_TYPE_OPTIONS) as TActivityFilters[];
+    const availableFilters = allFilters.filter((f) => {
+      if ((!isWorklogsEnabled || isIntakeIssue) && f === EActivityFilterType.WORKLOG) return false;
+      return true;
+    });
+    const activityOnlyFilters = [
+      EActivityFilterType.ACTIVITY,
+      EActivityFilterType.STATE,
+      EActivityFilterType.ASSIGNEE,
+      EActivityFilterType.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
+    ];
+
+    const tabs: IssueActivityTab[] = [
+      { key: "all", label: t("common.all"), filters: availableFilters },
+      { key: "activity", label: t("common.activity"), filters: activityOnlyFilters },
+      { key: "comment", label: t("common.comments"), filters: [EActivityFilterType.COMMENT] },
+    ];
+
+    if (isWorklogsEnabled && !isIntakeIssue) {
+      tabs.push({ key: "worklog", label: t("common.worklogs"), filters: [EActivityFilterType.WORKLOG] });
     }
 
-    setFilterValue(uniq(_filters));
+    tabs.push(
+      { key: "transition", label: t("transition"), filters: [EActivityFilterType.STATE], renderMode: "transition" },
+      { key: "history", label: t("history"), filters: activityOnlyFilters, renderMode: "transition" }
+    );
+
+    return tabs;
+  }, [isWorklogsEnabled, isIntakeIssue, t]);
+
+  // Track active tab key separately (needed because multiple tabs can share the same filters)
+  const { setValue: setActiveTabKey, storedValue: activeTabKey } = useLocalStorage(
+    "issue_activity_active_tab",
+    DEFAULT_ACTIVITY_TAB
+  );
+
+  // Additional filter toggles (e.g., Assignee) — tracked separately from tab base filters
+  const [additionalFilters, setAdditionalFilters] = useState<TActivityFilters[]>([]);
+
+  const handleTabChange = (key: string) => {
+    const tab = activityTabs.find((t) => t.key === key);
+    if (tab) {
+      setActiveTabKey(key);
+      setAdditionalFilters([]);
+    }
   };
 
-  const toggleSortOrder = () => {
+  // Derive filters and render mode from active tab (single source of truth)
+  const activeTab = activityTabs.find((t) => t.key === activeTabKey);
+  const activeTabBaseFilters = activeTab?.filters ?? defaultActivityFilters;
+  const selectedFilters = [...activeTabBaseFilters, ...additionalFilters];
+  const activeRenderMode = activeTab?.renderMode ?? "default";
+
+  const toggleSort = useCallback(() => {
     setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
-  };
+  }, [sortOrder, setSortOrder]);
+
+  const showFilter = FILTER_VISIBLE_TABS.has(activeTabKey || DEFAULT_ACTIVITY_TAB);
+
+  const filterOptions = useMemo(() => {
+    const toggleableFilters = [EActivityFilterType.ASSIGNEE] as TActivityFilters[];
+    return toggleableFilters.map((key) => ({
+      ...ACTIVITY_FILTER_TYPE_OPTIONS[key as TActivityFilterOptionsKey],
+      key,
+      isSelected: additionalFilters.includes(key),
+      onClick: () => {
+        setAdditionalFilters((prev) => (prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]));
+      },
+    }));
+  }, [additionalFilters]);
 
   // helper hooks
   const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, issueId);
@@ -112,11 +180,12 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   if (!project) return <></>;
 
   return (
-    <div className="space-y-4">
-      {/* header */}
-      <div className="flex items-center justify-between">
-        <div className="text-h5-medium text-primary">{t("common.activity")}</div>
-        <div className="flex items-center gap-2">
+    <ActivityFeed
+      tabs={activityTabs}
+      activeTab={activeTabKey || DEFAULT_ACTIVITY_TAB}
+      onTabChange={handleTabChange}
+      actionsElement={
+        <>
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton
               workspaceSlug={workspaceSlug}
@@ -125,18 +194,14 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
               disabled={disabled}
             />
           )}
-          <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
-          <ActivityFilterRoot
-            selectedFilters={selectedFilters || defaultActivityFilters}
-            toggleFilter={toggleFilter}
-            isIntakeIssue={isIntakeIssue}
-            projectId={projectId}
-          />
-        </div>
-      </div>
-
-      {/* rendering activity */}
-      <div className="space-y-3">
+          {showFilter && (
+            <ActivityFilter selectedFilters={selectedFilters || defaultActivityFilters} filterOptions={filterOptions} />
+          )}
+          <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSort} />
+        </>
+      }
+    >
+      <div className="flex flex-col gap-5 py-6">
         <div className="min-h-[200px]">
           <div className="space-y-3">
             {!disabled && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}
@@ -150,11 +215,12 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
               showAccessSpecifier={!!project.anchor}
               disabled={disabled}
               sortOrder={sortOrder || E_SORT_ORDER.ASC}
+              renderMode={activeRenderMode}
             />
             {!disabled && sortOrder === E_SORT_ORDER.ASC && renderCommentCreationBox}
           </div>
         </div>
       </div>
-    </div>
+    </ActivityFeed>
   );
 });
