@@ -100,6 +100,7 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
               <tr className="border-b border-subtle">
                 <th className="px-3 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">Name</th>
                 <th className="px-4 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">Linked Workspace</th>
+                <th className="px-4 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">View</th>
               </tr>
             </thead>
             <tbody>
