@@ -13,11 +13,15 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
+import { useTheme } from "next-themes";
 import { Button } from "@plane/propel/button";
 import { API_BASE_URL } from "@plane/constants";
 import { PlaneLogo } from "@plane/propel/icons";
 // hooks
 import { getDesktopAPI, isDesktop } from "@/hooks/use-desktop";
+// assets
+import AuthImageLight from "@/app/assets/desktop/auth-light.webp?url";
+import AuthImageDark from "@/app/assets/desktop/auth-dark.webp?url";
 
 interface TokenExchangeError {
   error?: string;
@@ -117,15 +121,24 @@ type TInfoSectionProps = {
 
 function InfoSection(props: TInfoSectionProps) {
   const { title, description, action } = props;
+  // theme
+  const { resolvedTheme } = useTheme();
+  // derived values
+  const authImage = resolvedTheme?.includes("dark") ? AuthImageDark : AuthImageLight;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-9 bg-surface-1">
-      <PlaneLogo className="h-10 w-auto text-primary" />
-      <div className="flex flex-col items-center justify-center gap-2">
-        <h1 className="text-h1-semibold">{title}</h1>
-        <div className="text-body-md-regular text-secondary">{description}</div>
+    <div className="flex flex-col items-center h-screen bg-surface-1 overflow-hidden">
+      <div className="flex flex-1 flex-col items-center justify-center gap-9 pt-[5%]">
+        <PlaneLogo className="h-10 w-auto text-primary" />
+        <div className="flex flex-col items-center gap-2">
+          <h1 className="text-h1-semibold">{title}</h1>
+          <div className="text-body-sm-regular text-secondary text-center">{description}</div>
+        </div>
+        {action && <div>{action}</div>}
       </div>
-      {action && <div className="text-body-md-regular text-secondary">{action}</div>}
+      <div className="hidden sm:block w-full max-w-[82%] mx-auto">
+        <img src={authImage} alt="Plane desktop app" className="w-full rounded-t-xl shadow-lg border border-subtle" />
+      </div>
     </div>
   );
 }
