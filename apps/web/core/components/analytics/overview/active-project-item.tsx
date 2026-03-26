@@ -23,7 +23,7 @@ type Props = {
 
 function CompletionPercentage({ percentage }: { percentage: number }) {
   const percentageColor =
-    percentage > 50 ? "bg-success-primary text-success-primary" : "bg-danger-primary text-danger-primary";
+    percentage > 50 ? "bg-success-subtle text-success-primary" : "bg-danger-subtle text-danger-primary";
   return (
     <div className={cn("flex items-center gap-2 rounded-sm p-1 text-11", percentageColor)}>
       <span>{percentage}%</span>
