@@ -104,7 +104,15 @@ type Props = {
 export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
   const { workspaceSlug, initiativeId, disabled } = props;
   const {
-    initiative: { getInitiativeAnalyticsById, getInitiativeById, toggleProjectsModal, toggleEpicModal },
+    initiative: {
+      getInitiativeAnalyticsById,
+      getInitiativeById,
+      toggleProjectsModal,
+      toggleEpicModal,
+      scope: {
+        epics: { getInitiativeEpicsDetailById },
+      },
+    },
   } = useInitiatives();
 
   const { t } = useTranslation();
@@ -113,7 +121,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
 
-  const epicsCount = initiative?.epic_ids?.length ?? 0;
+  const epicsCount = getInitiativeEpicsDetailById(initiativeId)?.length ?? initiative?.epic_ids?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;
 
   const shouldShowProjectsCard = projectsCount > 0;
@@ -137,7 +145,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
           <AddScopeButton
             disabled={disabled}
             customButton={
-              <Button variant="link" size="sm" className="!p-1 hover:bg-layer-transparent-hover">
+              <Button variant="link" size="sm" className="p-1! hover:bg-layer-transparent-hover">
                 <PlusIcon className="size-4" />
               </Button>
             }
