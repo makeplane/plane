@@ -9,22 +9,22 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.serializers import MainTaskCategorySerializer, SubTaskCategorySerializer
 from plane.db.models import MainTaskCategory, SubTaskCategory
-from plane.api.views.base import BaseAPIView
+from .base import BaseAPIView
 
 
-class MainTaskCategoryListEndpoint(BaseAPIView):
-    """Public read-only endpoint (v1): list active main task categories."""
+class MainTaskCategoryEndpoint(BaseAPIView):
+    """Read-only endpoint: list active main task categories for the web app."""
 
-    def get(self, request):
+    def get(self, request, slug):
         categories = MainTaskCategory.objects.filter(is_active=True).order_by("sort_order", "name")
         serializer = MainTaskCategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class SubTaskCategoryListEndpoint(BaseAPIView):
-    """Public read-only endpoint (v1): list active sub task categories."""
+class SubTaskCategoryEndpoint(BaseAPIView):
+    """Read-only endpoint: list active sub task categories for the web app."""
 
-    def get(self, request):
+    def get(self, request, slug):
         main_category_id = request.query_params.get("main_category")
         qs = SubTaskCategory.objects.filter(is_active=True).order_by("sort_order", "name")
         if main_category_id:

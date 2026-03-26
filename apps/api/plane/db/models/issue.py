@@ -184,19 +184,20 @@ class Issue(ProjectBaseModel):
     )
     # Total time spent in minutes (aggregated from worklogs)
     time_spent = models.PositiveIntegerField(default=0)
+    # Task category classification (instance-level)
     main_task_category = models.ForeignKey(
-        "db.MainTaskCategory",
+        "MainTaskCategory",
         on_delete=models.SET_NULL,
-        related_name="issues",
         null=True,
         blank=True,
+        related_name="issues",
     )
     sub_task_category = models.ForeignKey(
-        "db.SubTaskCategory",
+        "SubTaskCategory",
         on_delete=models.SET_NULL,
-        related_name="issues",
         null=True,
         blank=True,
+        related_name="issues",
     )
     issue_objects = IssueManager()
 

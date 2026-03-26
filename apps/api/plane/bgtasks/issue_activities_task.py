@@ -3,1710 +3,1406 @@
 # See the LICENSE file for details.
 
 # Python imports
+import copy
 import json
 
+# Django imports
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Count,
+    Exists,
+    F,
+    Func,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    Sum,
+    UUIDField,
+    Value,
+)
+from django.db.models.functions import Coalesce
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third Party imports
-from celery import shared_task
-
-# Django imports
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
-
+from rest_framework import status
+from rest_framework.response import Response
 
 # Module imports
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
-from plane.db.models import (
-    CommentReaction,
-    Cycle,
-    Issue,
-    IssueActivity,
-    IssueComment,
-    IssueReaction,
-    IssueSubscriber,
-    Label,
-    Module,
-    Project,
-    State,
-    User,
-    EstimatePoint,
+from plane.app.permissions import ROLE, allow_permission
+from plane.utils.workflow_checker import check_workflow_creation, check_workflow_transition
+from plane.app.serializers import (
+    IssueCreateSerializer,
+    IssueDetailSerializer,
+    IssueListDetailSerializer,
+    IssueSerializer,
+    ProjectUserPropertySerializer,
 )
-from plane.settings.redis import redis_instance
-from plane.utils.exception_logger import log_exception
-from plane.utils.issue_relation_mapper import get_inverse_relation
-from plane.utils.uuid import is_valid_uuid
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.webhook_task import model_activity
+from plane.db.models import (
+    CycleIssue,
+    FileAsset,
+    IntakeIssue,
+    Issue,
+    IssueAssignee,
+    IssueLabel,
+    IssueLink,
+    IssueReaction,
+    IssueRelation,
+    IssueSubscriber,
+    IssueWorkLog,
+    ProjectUserProperty,
+    ModuleIssue,
+    Project,
+    ProjectMember,
+    UserRecentVisit,
+)
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.global_paginator import paginate
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
+from plane.utils.host import base_host
+from plane.utils.issue_filters import issue_filters
+from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
+from plane.utils.timezone_converter import user_timezone_converter
+
+from .. import BaseAPIView, BaseViewSet
 
 
-def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
-    if not data:
-        return set()
-    if primary_key in data:
-        return {str(x) for x in data.get(primary_key, [])}
-    return {str(x) for x in data.get(fallback_key, [])}
+class IssueListEndpoint(BaseAPIView):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        issue_ids = request.GET.get("issues", False)
+
+        if not issue_ids:
+            return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+
+        # Base queryset with basic filters
+        queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
+
+        # Apply filtering from filterset
+        queryset = self.filter_queryset(queryset)
+
+        # Apply legacy filters
+        filters = issue_filters(request.query_params, "GET")
+        issue_queryset = queryset.filter(**filters)
+
+        # Add select_related, prefetch_related if fields or expand is not None
+        if self.fields or self.expand:
+            issue_queryset = issue_queryset.select_related("workspace", "project", "state", "parent").prefetch_related(
+                "assignees", "labels", "issue_module__module"
+            )
+
+        # Add annotations
+        issue_queryset = (
+            issue_queryset.annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .distinct()
+        )
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+        # Issue queryset
+        issue_queryset, _ = order_issue_queryset(issue_queryset=issue_queryset, order_by_param=order_by_param)
+
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        # issue queryset
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
+        )
+
+        if self.fields or self.expand:
+            issues = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+                "deleted_at",
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
+        return Response(issues, status=status.HTTP_200_OK)
 
 
-# Track Changes in name
-def track_name(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("name") != requested_data.get("name"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=current_instance.get("name"),
-                new_value=requested_data.get("name"),
-                field="name",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the name to",
-                epoch=epoch,
+class IssueViewSet(BaseViewSet):
+    model = Issue
+    webhook_event = "issue"
+    search_fields = ["name"]
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    def get_serializer_class(self):
+        return IssueCreateSerializer if self.action in ["create", "update", "partial_update"] else IssueSerializer
+
+    def get_queryset(self):
+        issues = Issue.issue_objects.filter(
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        ).distinct()
+
+        return issues
+
+    def apply_annotations(self, issues):
+        issues = (
+            issues.annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                link_count=Subquery(
+                    IssueLink.objects.filter(issue=OuterRef("id"))
+                    .values("issue")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                attachment_count=Subquery(
+                    FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .values("issue_id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                sub_issues_count=Subquery(
+                    Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .values("parent")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
             )
         )
 
+        return issues
 
-# Track issue description
-def track_description(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("description_html") != requested_data.get("description_html"):
-        last_activity = IssueActivity.objects.filter(issue_id=issue_id).order_by("-created_at").first()
+    @method_decorator(gzip_page)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id):
+        extra_filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            extra_filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
+
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        query_params = request.query_params.copy()
+
+        filters = issue_filters(query_params, "GET")
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = self.get_queryset()
+
+        # Apply rich filters
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
+        issue_queryset = issue_queryset.filter(**filters, **extra_filters)
+
+        # Keeping a copy of the queryset before applying annotations
+        filtered_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
+
+        # Issue queryset
+        issue_queryset, order_by_param = order_issue_queryset(
+            issue_queryset=issue_queryset, order_by_param=order_by_param
+        )
+
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        # issue queryset
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
+        )
         if (
-            last_activity is not None
-            and last_activity.field == "description"
-            and actor_id == str(last_activity.actor_id)
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
         ):
-            last_activity.created_at = timezone.now()
-            last_activity.save(update_fields=["created_at"])
-        else:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    actor_id=actor_id,
-                    verb="updated",
-                    old_value=current_instance.get("description_html"),
-                    new_value=requested_data.get("description_html"),
-                    field="description",
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment="updated the description to",
-                    epoch=epoch,
-                )
-            )
+            issue_queryset = issue_queryset.filter(created_by=request.user)
+            filtered_issue_queryset = filtered_issue_queryset.filter(created_by=request.user)
 
-
-# Track changes in parent issue
-def track_parent(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    current_parent_id = current_instance.get("parent_id") or current_instance.get("parent")
-    requested_parent_id = requested_data.get("parent_id") or requested_data.get("parent")
-
-    # Validate UUIDs before database queries
-    if current_parent_id is not None and not is_valid_uuid(current_parent_id):
-        return
-    if requested_parent_id is not None and not is_valid_uuid(requested_parent_id):
-        return
-
-    if current_parent_id != requested_parent_id:
-        old_parent = Issue.objects.filter(pk=current_parent_id).first() if current_parent_id is not None else None
-        new_parent = Issue.objects.filter(pk=requested_parent_id).first() if requested_parent_id is not None else None
-
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=(
-                    f"{old_parent.project.identifier}-{old_parent.sequence_id}" if old_parent is not None else ""
-                ),
-                new_value=(
-                    f"{new_parent.project.identifier}-{new_parent.sequence_id}" if new_parent is not None else ""
-                ),
-                field="parent",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the parent issue to",
-                old_identifier=(old_parent.id if old_parent is not None else None),
-                new_identifier=(new_parent.id if new_parent is not None else None),
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in priority
-def track_priority(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("priority") != requested_data.get("priority"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=current_instance.get("priority"),
-                new_value=requested_data.get("priority"),
-                field="priority",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the priority to",
-                epoch=epoch,
-            )
-        )
-
-
-def track_frequency(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("frequency") != requested_data.get("frequency"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=current_instance.get("frequency"),
-                new_value=requested_data.get("frequency"),
-                field="frequency",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the frequency to",
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in state of the issue
-def track_state(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    current_state_id = current_instance.get("state_id") or current_instance.get("state")
-    requested_state_id = requested_data.get("state_id") or requested_data.get("state")
-
-    if current_state_id is not None and not is_valid_uuid(current_state_id):
-        current_state_id = None
-    if requested_state_id is not None and not is_valid_uuid(requested_state_id):
-        requested_state_id = None
-
-    if current_state_id != requested_state_id:
-        new_state = State.objects.filter(pk=requested_state_id, project_id=project_id).first()
-        old_state = State.objects.filter(pk=current_state_id, project_id=project_id).first()
-
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=old_state.name if old_state else None,
-                new_value=new_state.name if new_state else None,
-                field="state",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the state to",
-                old_identifier=old_state.id if old_state else None,
-                new_identifier=new_state.id if new_state else None,
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in issue target date
-def track_target_date(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("target_date") != requested_data.get("target_date"):
-        reason = (requested_data.get("reason") or "").strip()
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=(
-                    current_instance.get("target_date") if current_instance.get("target_date") is not None else ""
-                ),
-                new_value=(requested_data.get("target_date") if requested_data.get("target_date") is not None else ""),
-                field="target_date",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=reason,
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in issue completed date (manual edits only)
-def track_completed_at(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("completed_at") != requested_data.get("completed_at"):
-        reason = (requested_data.get("reason") or "").strip()
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=(
-                    current_instance.get("completed_at") if current_instance.get("completed_at") is not None else ""
-                ),
-                new_value=(
-                    requested_data.get("completed_at") if requested_data.get("completed_at") is not None else ""
-                ),
-                field="completed_at",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=reason,
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in issue start date
-def track_start_date(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("start_date") != requested_data.get("start_date"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=(
-                    current_instance.get("start_date") if current_instance.get("start_date") is not None else ""
-                ),
-                new_value=(requested_data.get("start_date") if requested_data.get("start_date") is not None else ""),
-                field="start_date",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the start date to ",
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in issue labels
-def track_labels(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    # Labels
-    requested_labels = extract_ids(requested_data, "label_ids", "labels")
-    current_labels = extract_ids(current_instance, "label_ids", "labels")
-
-    added_labels = requested_labels - current_labels
-    dropped_labels = current_labels - requested_labels
-
-    # Set of newly added labels
-    for added_label in added_labels:
-        # validate uuids
-        if not is_valid_uuid(added_label):
-            continue
-
-        label = Label.objects.get(pk=added_label)
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                verb="updated",
-                field="labels",
-                comment="added label ",
-                old_value="",
-                new_value=label.name,
-                new_identifier=label.id,
-                old_identifier=None,
-                epoch=epoch,
-            )
-        )
-
-    # Set of dropped labels
-    for dropped_label in dropped_labels:
-        # validate uuids
-        if not is_valid_uuid(dropped_label):
-            continue
-
-        label = Label.objects.get(pk=dropped_label)
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=label.name,
-                new_value="",
-                field="labels",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="removed label ",
-                old_identifier=label.id,
-                new_identifier=None,
-                epoch=epoch,
-            )
-        )
-
-
-# Track changes in issue assignees
-def track_assignees(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    # Assignees
-    requested_assignees = extract_ids(requested_data, "assignee_ids", "assignees")
-    current_assignees = extract_ids(current_instance, "assignee_ids", "assignees")
-
-    added_assignees = requested_assignees - current_assignees
-    dropped_assginees = current_assignees - requested_assignees
-
-    bulk_subscribers = []
-    for added_asignee in added_assignees:
-        # validate uuids
-        if not is_valid_uuid(added_asignee):
-            continue
-
-        assignee = User.objects.get(pk=added_asignee)
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value="",
-                new_value=assignee.display_name,
-                field="assignees",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="added assignee ",
-                new_identifier=assignee.id,
-                epoch=epoch,
-            )
-        )
-        bulk_subscribers.append(
-            IssueSubscriber(
-                subscriber_id=assignee.id,
-                issue_id=issue_id,
-                workspace_id=workspace_id,
-                project_id=project_id,
-                created_by_id=assignee.id,
-                updated_by_id=assignee.id,
-            )
-        )
-
-    # Create assignees subscribers to the issue and ignore if already
-    IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)
-
-    for dropped_assignee in dropped_assginees:
-        # validate uuids
-        if not is_valid_uuid(dropped_assignee):
-            continue
-
-        assignee = User.objects.get(pk=dropped_assignee)
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=assignee.display_name,
-                new_value="",
-                field="assignees",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="removed assignee ",
-                old_identifier=assignee.id,
-                epoch=epoch,
-            )
-        )
-
-
-def track_estimate_points(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
-        old_estimate = (
-            EstimatePoint.objects.filter(pk=current_instance.get("estimate_point")).first()
-            if current_instance.get("estimate_point") is not None
-            else None
-        )
-        new_estimate = (
-            EstimatePoint.objects.filter(pk=requested_data.get("estimate_point")).first()
-            if requested_data.get("estimate_point") is not None
-            else None
-        )
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="removed" if new_estimate is None else "updated",
-                old_identifier=(
-                    current_instance.get("estimate_point")
-                    if current_instance.get("estimate_point") is not None
-                    else None
-                ),
-                new_identifier=(
-                    requested_data.get("estimate_point") if requested_data.get("estimate_point") is not None else None
-                ),
-                old_value=old_estimate.value if old_estimate else None,
-                new_value=new_estimate.value if new_estimate else None,
-                field="estimate_" + new_estimate.estimate.type,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the estimate point to ",
-                epoch=epoch,
-            )
-        )
-
-
-def track_archive_at(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if current_instance.get("archived_at") != requested_data.get("archived_at"):
-        if requested_data.get("archived_at") is None:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment="has restored the issue",
-                    verb="updated",
-                    actor_id=actor_id,
-                    field="archived_at",
-                    old_value="archive",
-                    new_value="restore",
-                    epoch=epoch,
-                )
-            )
-        else:
-            if requested_data.get("automation"):
-                comment = "Plane has archived the issue"
-                new_value = "archive"
+        if group_by:
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {
+                            "error": "Group by and sub group by cannot have same parameters"  # noqa: E501
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        total_count_queryset=filtered_issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            filters=filters,
+                            queryset=filtered_issue_queryset,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            filters=filters,
+                            queryset=filtered_issue_queryset,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_intake__status=1)
+                            | Q(issue_intake__status=-1)
+                            | Q(issue_intake__status=2)
+                            | Q(issue_intake__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
             else:
-                comment = "Actor has archived the issue"
-                new_value = "manual_archive"
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment=comment,
-                    verb="updated",
-                    actor_id=actor_id,
-                    field="archived_at",
-                    old_value=None,
-                    new_value=new_value,
-                    epoch=epoch,
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    total_count_queryset=filtered_issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        project_id=project_id,
+                        filters=filters,
+                        queryset=filtered_issue_queryset,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_intake__status=1)
+                        | Q(issue_intake__status=-1)
+                        | Q(issue_intake__status=2)
+                        | Q(issue_intake__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
                 )
+        else:
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                total_count_queryset=filtered_issue_queryset,
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
-
-def track_closed_to(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    if requested_data.get("closed_to") is not None:
-        updated_state = State.objects.get(pk=requested_data.get("closed_to"), project_id=project_id)
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=None,
-                new_value=updated_state.name,
-                field="state",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="Plane updated the state to ",
-                old_identifier=None,
-                new_identifier=updated_state.id,
-                epoch=epoch,
-            )
-        )
-
-
-def create_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    issue = Issue.objects.get(pk=issue_id)
-    issue_activity = IssueActivity.objects.create(
-        issue_id=issue_id,
-        project_id=project_id,
-        workspace_id=workspace_id,
-        comment="created the issue",
-        verb="created",
-        actor_id=actor_id,
-        epoch=epoch,
-    )
-    issue_activity.created_at = issue.created_at
-    issue_activity.actor_id = issue.created_by_id
-    issue_activity.save(update_fields=["created_at", "actor_id"])
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data.get("assignee_ids") is not None:
-        track_assignees(
-            requested_data,
-            current_instance,
-            issue_id,
-            project_id,
-            workspace_id,
-            actor_id,
-            issue_activities,
-            epoch,
-        )
-
-
-
-def update_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    ISSUE_ACTIVITY_MAPPER = {
-        "name": track_name,
-        "parent_id": track_parent,
-        "priority": track_priority,
-        "frequency": track_frequency,
-        "state_id": track_state,
-        "description_html": track_description,
-        "target_date": track_target_date,
-        "start_date": track_start_date,
-        "completed_at": track_completed_at,
-        "label_ids": track_labels,
-        "assignee_ids": track_assignees,
-        "estimate_point": track_estimate_points,
-        "archived_at": track_archive_at,
-        "closed_to": track_closed_to,
-        # External endpoint keys
-        "parent": track_parent,
-        "state": track_state,
-        "assignees": track_assignees,
-        "labels": track_labels,
-    }
-
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    for key in requested_data:
-        func = ISSUE_ACTIVITY_MAPPER.get(key)
-        if func is not None:
-            func(
-                requested_data=requested_data,
-                current_instance=current_instance,
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                actor_id=actor_id,
-                issue_activities=issue_activities,
-                epoch=epoch,
-            )
-
-
-def delete_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    issue_activities.append(
-        IssueActivity(
-            project_id=project_id,
-            workspace_id=workspace_id,
-            issue_id=issue_id,
-            comment="deleted the issue",
-            verb="deleted",
-            actor_id=actor_id,
-            field="issue",
-            epoch=epoch,
-        )
-    )
-
-
-def create_comment_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created a comment",
-            verb="created",
-            actor_id=actor_id,
-            field="comment",
-            new_value=requested_data.get("comment_html", ""),
-            new_identifier=requested_data.get("id", None),
-            issue_comment_id=requested_data.get("id", None),
-            epoch=epoch,
-        )
-    )
-
-
-def update_comment_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    if current_instance.get("comment_html") != requested_data.get("comment_html"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated a comment",
-                verb="updated",
-                actor_id=actor_id,
-                field="comment",
-                old_value=current_instance.get("comment_html", ""),
-                old_identifier=current_instance.get("id"),
-                new_value=requested_data.get("comment_html", ""),
-                new_identifier=current_instance.get("id", None),
-                issue_comment_id=current_instance.get("id", None),
-                epoch=epoch,
-            )
-        )
-
-
-def delete_comment_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    issue_activities.append(
-        IssueActivity(
-            issue_comment_id=requested_data.get("comment_id", None),
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="deleted the comment",
-            verb="deleted",
-            actor_id=actor_id,
-            field="comment",
-            epoch=epoch,
-        )
-    )
-
-
-def create_cycle_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    # Updated Records:
-    updated_records = current_instance.get("updated_cycle_issues", [])
-    created_records = json.loads(current_instance.get("created_cycle_issues", []))
-
-    for updated_record in updated_records:
-        old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None)).first()
-        new_cycle = Cycle.objects.filter(pk=updated_record.get("new_cycle_id", None)).first()
-        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
-
-        issue_activities.append(
-            IssueActivity(
-                issue_id=updated_record.get("issue_id"),
-                actor_id=actor_id,
-                verb="updated",
-                old_value=old_cycle.name if old_cycle else "",
-                new_value=new_cycle.name if new_cycle else "",
-                field="cycles",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"""updated cycle from {old_cycle.name if old_cycle else ""}
-                to {new_cycle.name if new_cycle else ""}""",
-                old_identifier=old_cycle.id if old_cycle else None,
-                new_identifier=new_cycle.id if new_cycle else None,
-                epoch=epoch,
-            )
-        )
-
-    for created_record in created_records:
-        cycle = Cycle.objects.filter(pk=created_record.get("fields").get("cycle")).first()
-        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
-
-        issue_activities.append(
-            IssueActivity(
-                issue_id=created_record.get("fields").get("issue"),
-                actor_id=actor_id,
-                verb="created",
-                old_value="",
-                new_value=cycle.name,
-                field="cycles",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"added cycle {cycle.name}",
-                new_identifier=cycle.id,
-                epoch=epoch,
-            )
-        )
-
-
-def delete_cycle_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    cycle_id = requested_data.get("cycle_id", "")
-    cycle_name = requested_data.get("cycle_name", "")
-    cycle = Cycle.objects.filter(pk=cycle_id).first()
-    issues = requested_data.get("issues")
-    for issue in issues:
-        current_issue = Issue.objects.filter(pk=issue).first()
-        if current_issue:
-            current_issue.updated_at = timezone.now()
-            current_issue.save(update_fields=["updated_at"])
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue,
-                actor_id=actor_id,
-                verb="deleted",
-                old_value=cycle.name if cycle is not None else cycle_name,
-                new_value="",
-                field="cycles",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"removed this issue from {cycle.name if cycle is not None else cycle_name}",
-                old_identifier=cycle_id if cycle_id is not None else None,
-                epoch=epoch,
-            )
-        )
-
-
-def create_module_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    module = Module.objects.filter(pk=requested_data.get("module_id")).first()
-    issue = Issue.objects.filter(pk=issue_id).first()
-    if issue:
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="created",
-            old_value="",
-            new_value=module.name if module else "",
-            field="modules",
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"added module {module.name if module else ''}",
-            new_identifier=requested_data.get("module_id"),
-            epoch=epoch,
-        )
-    )
-
-
-def delete_module_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    module_name = current_instance.get("module_name")
-    current_issue = Issue.objects.filter(pk=issue_id).first()
-    if current_issue:
-        current_issue.updated_at = timezone.now()
-        current_issue.save(update_fields=["updated_at"])
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="deleted",
-            old_value=module_name,
-            new_value="",
-            field="modules",
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"removed this issue from {module_name}",
-            old_identifier=(requested_data.get("module_id") if requested_data.get("module_id") is not None else None),
-            epoch=epoch,
-        )
-    )
-
-
-def create_link_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    actor_id,
-    workspace_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created a link",
-            verb="created",
-            actor_id=actor_id,
-            field="link",
-            new_value=requested_data.get("url", ""),
-            new_identifier=requested_data.get("id", None),
-            epoch=epoch,
-        )
-    )
-
-
-def update_link_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    if current_instance.get("url") != requested_data.get("url"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated a link",
-                verb="updated",
-                actor_id=actor_id,
-                field="link",
-                old_value=current_instance.get("url", ""),
-                old_identifier=current_instance.get("id"),
-                new_value=requested_data.get("url", ""),
-                new_identifier=current_instance.get("id", None),
-                epoch=epoch,
-            )
-        )
-
-
-def delete_link_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="deleted the link",
-            verb="deleted",
-            actor_id=actor_id,
-            field="link",
-            old_value=current_instance.get("url", ""),
-            new_value="",
-            epoch=epoch,
-        )
-    )
-
-
-def create_attachment_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    actor_id,
-    workspace_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created an attachment",
-            verb="created",
-            actor_id=actor_id,
-            field="attachment",
-            new_value=current_instance.get("asset", ""),
-            new_identifier=current_instance.get("id", None),
-            epoch=epoch,
-        )
-    )
-
-
-def delete_attachment_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="deleted the attachment",
-            verb="deleted",
-            actor_id=actor_id,
-            field="attachment",
-            epoch=epoch,
-        )
-    )
-
-
-def create_issue_reaction_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data and requested_data.get("reaction") is not None:
-        issue_reaction = (
-            IssueReaction.objects.filter(
-                reaction=requested_data.get("reaction"),
-                project_id=project_id,
-                actor_id=actor_id,
-            )
-            .values_list("id", flat=True)
-            .first()
-        )
-        if issue_reaction is not None:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    actor_id=actor_id,
-                    verb="created",
-                    old_value=None,
-                    new_value=requested_data.get("reaction"),
-                    field="reaction",
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment="added the reaction",
-                    old_identifier=None,
-                    new_identifier=issue_reaction,
-                    epoch=epoch,
-                )
-            )
-
-
-def delete_issue_reaction_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    if current_instance and current_instance.get("reaction") is not None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="deleted",
-                old_value=current_instance.get("reaction"),
-                new_value=None,
-                field="reaction",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="removed the reaction",
-                old_identifier=current_instance.get("identifier"),
-                new_identifier=None,
-                epoch=epoch,
-            )
-        )
-
-
-def create_comment_reaction_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data and requested_data.get("reaction") is not None:
-        comment_reaction_id, comment_id = (
-            CommentReaction.objects.filter(
-                reaction=requested_data.get("reaction"),
-                project_id=project_id,
-                actor_id=actor_id,
-            )
-            .values_list("id", "comment__id")
-            .first()
-        )
-        comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
-        if comment is not None and comment_reaction_id is not None and comment_id is not None:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=comment.issue_id,
-                    actor_id=actor_id,
-                    verb="created",
-                    old_value=None,
-                    new_value=requested_data.get("reaction"),
-                    field="reaction",
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment="added the reaction",
-                    old_identifier=None,
-                    new_identifier=comment_reaction_id,
-                    epoch=epoch,
-                )
-            )
-
-
-def delete_comment_reaction_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    if current_instance and current_instance.get("reaction") is not None:
-        issue_id = (
-            IssueComment.objects.filter(pk=current_instance.get("comment_id"), project_id=project_id)
-            .values_list("issue_id", flat=True)
-            .first()
-        )
-        if issue_id is not None:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    actor_id=actor_id,
-                    verb="deleted",
-                    old_value=current_instance.get("reaction"),
-                    new_value=None,
-                    field="reaction",
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment="removed the reaction",
-                    old_identifier=current_instance.get("identifier"),
-                    new_identifier=None,
-                    epoch=epoch,
-                )
-            )
-
-
-def create_issue_vote_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data and requested_data.get("vote") is not None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=None,
-                new_value=requested_data.get("vote"),
-                field="vote",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="added the vote",
-                old_identifier=None,
-                new_identifier=None,
-                epoch=epoch,
-            )
-        )
-
-
-def delete_issue_vote_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    if current_instance and current_instance.get("vote") is not None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="deleted",
-                old_value=current_instance.get("vote"),
-                new_value=None,
-                field="vote",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="removed the vote",
-                old_identifier=current_instance.get("identifier"),
-                new_identifier=None,
-                epoch=epoch,
-            )
-        )
-
-
-def create_issue_relation_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    if current_instance is None and requested_data.get("issues") is not None:
-        for related_issue in requested_data.get("issues"):
-            issue = Issue.objects.get(pk=related_issue)
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    actor_id=actor_id,
-                    verb="updated",
-                    old_value="",
-                    new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field=requested_data.get("relation_type"),
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment=f"added {requested_data.get('relation_type')} relation",
-                    old_identifier=related_issue,
-                    epoch=epoch,
-                )
-            )
-            inverse_relation = get_inverse_relation(requested_data.get("relation_type"))
-            issue = Issue.objects.get(pk=issue_id)
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=related_issue,
-                    actor_id=actor_id,
-                    verb="updated",
-                    old_value="",
-                    new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field=inverse_relation,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    comment=f"added {inverse_relation} relation",
-                    old_identifier=issue_id,
-                    epoch=epoch,
-                )
-            )
-
-
-def delete_issue_relation_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    issue = Issue.objects.get(pk=requested_data.get("related_issue"))
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="deleted",
-            old_value=f"{issue.project.identifier}-{issue.sequence_id}",
-            new_value="",
-            field=requested_data.get("relation_type"),
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"deleted {requested_data.get('relation_type')} relation",
-            old_identifier=requested_data.get("related_issue"),
-            epoch=epoch,
-        )
-    )
-    issue = Issue.objects.get(pk=issue_id)
-    issue_activities.append(
-        IssueActivity(
-            issue_id=requested_data.get("related_issue"),
-            actor_id=actor_id,
-            verb="deleted",
-            old_value=f"{issue.project.identifier}-{issue.sequence_id}",
-            new_value="",
-            field=(
-                "blocking"
-                if requested_data.get("relation_type") == "blocked_by"
-                else (
-                    "blocked_by"
-                    if requested_data.get("relation_type") == "blocking"
-                    else requested_data.get("relation_type")
-                )
-            ),
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"deleted {requested_data.get('relation_type')} relation",
-            old_identifier=requested_data.get("related_issue"),
-            epoch=epoch,
-        )
-    )
-
-
-def create_draft_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="drafted the issue",
-            field="draft",
-            verb="created",
-            actor_id=actor_id,
-            epoch=epoch,
-        )
-    )
-
-
-def update_draft_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    if requested_data.get("is_draft") is not None and requested_data.get("is_draft") is False:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="created the issue",
-                verb="updated",
-                actor_id=actor_id,
-                epoch=epoch,
-            )
-        )
-    else:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the draft issue",
-                field="draft",
-                verb="updated",
-                actor_id=actor_id,
-                epoch=epoch,
-            )
-        )
-
-
-def delete_draft_issue_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    issue_activities.append(
-        IssueActivity(
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="deleted the draft issue",
-            field="draft",
-            verb="deleted",
-            actor_id=actor_id,
-            epoch=epoch,
-        )
-    )
-
-
-def create_intake_activity(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = json.loads(current_instance) if current_instance is not None else None
-    status_dict = {
-        -2: "Pending",
-        -1: "Rejected",
-        0: "Snoozed",
-        1: "Accepted",
-        2: "Duplicate",
-    }
-    if requested_data.get("status") is not None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the intake status",
-                field="intake",
-                verb=requested_data.get("status"),
-                actor_id=actor_id,
-                epoch=epoch,
-                old_value=status_dict.get(current_instance.get("status")),
-                new_value=status_dict.get(requested_data.get("status")),
-            )
-        )
-
-
-def worklog_activity_updated(
-    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
-):
-    requested = json.loads(requested_data) if requested_data else {}
-    current = json.loads(current_instance) if current_instance else {}
-    reason = requested.get("reason", "")
-
-    changes = []
-    if "duration_minutes" in requested and requested.get("duration_minutes") != current.get("duration_minutes"):
-        changes.append(f"duration: {current.get('duration_minutes')}m → {requested.get('duration_minutes')}m")
-    if "logged_at" in requested and requested.get("logged_at") != current.get("logged_at"):
-        changes.append(f"date: {current.get('logged_at')} → {requested.get('logged_at')}")
-    if "description" in requested and requested.get("description") != current.get("description"):
-        changes.append("description updated")
-
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id, project_id=project_id, workspace_id=workspace_id,
-            actor_id=actor_id, verb="updated", field="worklog",
-            old_value=", ".join(changes) if changes else "worklog updated",
-            new_value=reason, epoch=epoch,
-        )
-    )
-
-
-def worklog_activity_deleted(
-    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
-):
-    requested = json.loads(requested_data) if requested_data else {}
-    current = json.loads(current_instance) if current_instance else {}
-    reason = requested.get("reason", "")
-    duration = current.get("duration_minutes", 0)
-
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id, project_id=project_id, workspace_id=workspace_id,
-            actor_id=actor_id, verb="deleted", field="worklog",
-            old_value=f"{duration}m logged", new_value=reason, epoch=epoch,
-        )
-    )
-
-
-# Receive message from room group
-@shared_task
-def issue_activity(
-    type,
-    requested_data,
-    current_instance,
-    issue_id,
-    actor_id,
-    project_id,
-    epoch,
-    subscriber=True,
-    notification=False,
-    origin=None,
-    intake=None,
-):
-    try:
-        issue_activities = []
-
-        # check if project_id is valid
-        if not is_valid_uuid(str(project_id)):
-            return
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
-        workspace_id = project.workspace_id
 
-        if issue_id is not None:
-            if origin:
-                ri = redis_instance()
-                # set the request origin in redis
-                ri.set(str(issue_id), origin, ex=600)
-            issue = Issue.objects.filter(pk=issue_id).first()
-            if issue:
-                try:
-                    issue.updated_at = timezone.now()
-                    issue.save(update_fields=["updated_at"])
-                except Exception:
-                    pass
+        # Normalize empty strings to None for optional UUID FK fields
+        data = request.data.copy()
+        for field in ("state_id", "parent_id", "estimate_point"):
+            if data.get(field) == "":
+                data[field] = None
 
-        ACTIVITY_MAPPER = {
-            "issue.activity.created": create_issue_activity,
-            "issue.activity.updated": update_issue_activity,
-            "issue.activity.deleted": delete_issue_activity,
-            "comment.activity.created": create_comment_activity,
-            "comment.activity.updated": update_comment_activity,
-            "comment.activity.deleted": delete_comment_activity,
-            "cycle.activity.created": create_cycle_issue_activity,
-            "cycle.activity.deleted": delete_cycle_issue_activity,
-            "module.activity.created": create_module_issue_activity,
-            "module.activity.deleted": delete_module_issue_activity,
-            "link.activity.created": create_link_activity,
-            "link.activity.updated": update_link_activity,
-            "link.activity.deleted": delete_link_activity,
-            "attachment.activity.created": create_attachment_activity,
-            "attachment.activity.deleted": delete_attachment_activity,
-            "issue_relation.activity.created": create_issue_relation_activity,
-            "issue_relation.activity.deleted": delete_issue_relation_activity,
-            "issue_reaction.activity.created": create_issue_reaction_activity,
-            "issue_reaction.activity.deleted": delete_issue_reaction_activity,
-            "comment_reaction.activity.created": create_comment_reaction_activity,
-            "comment_reaction.activity.deleted": delete_comment_reaction_activity,
-            "issue_vote.activity.created": create_issue_vote_activity,
-            "issue_vote.activity.deleted": delete_issue_vote_activity,
-            "issue_draft.activity.created": create_draft_issue_activity,
-            "issue_draft.activity.updated": update_draft_issue_activity,
-            "issue_draft.activity.deleted": delete_draft_issue_activity,
-            "intake.activity.created": create_intake_activity,
-            "worklog.activity.updated": worklog_activity_updated,
-            "worklog.activity.deleted": worklog_activity_deleted,
-        }
+        # Workflow creation guard: block if workflow is live and state restricts new items
+        if data.get("state_id"):
+            is_allowed, error_msg = check_workflow_creation(project_id, data["state_id"])
+            if not is_allowed:
+                return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
 
-        func = ACTIVITY_MAPPER.get(type)
-        if func is not None:
-            func(
-                requested_data=requested_data,
-                current_instance=current_instance,
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                actor_id=actor_id,
-                issue_activities=issue_activities,
-                epoch=epoch,
+        serializer = IssueCreateSerializer(
+            data=data,
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+                "default_assignee_id": project.default_assignee_id,
+            },
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            # Track the issue
+            issue_activity.delay(
+                type="issue.activity.created",
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(serializer.data.get("id", None)),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
+            queryset = self.get_queryset()
+            queryset = self.apply_annotations(queryset)
+            issue = (
+                issue_queryset_grouper(
+                    queryset=queryset.filter(pk=serializer.data["id"]),
+                    group_by=None,
+                    sub_group_by=None,
+                )
+                .values(
+                    "id",
+                    "name",
+                    "state_id",
+                    "sort_order",
+                    "completed_at",
+                    "estimate_point",
+                    "priority",
+                    "start_date",
+                    "target_date",
+                    "sequence_id",
+                    "project_id",
+                    "parent_id",
+                    "cycle_id",
+                    "module_ids",
+                    "label_ids",
+                    "assignee_ids",
+                    "sub_issues_count",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "updated_by",
+                    "attachment_count",
+                    "link_count",
+                    "is_draft",
+                    "archived_at",
+                    "deleted_at",
+                )
+                .first()
+            )
+            datetime_fields = ["created_at", "updated_at"]
+            issue = user_timezone_converter(issue, datetime_fields, request.user.user_timezone)
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
+            )
+            return Response(issue, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Save all the values to database
-        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
+    def retrieve(self, request, slug, project_id, pk=None):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
-        if notification:
-            notifications.delay(
-                type=type,
-                issue_id=issue_id,
-                actor_id=actor_id,
-                project_id=project_id,
-                subscriber=subscriber,
-                issue_activities_created=json.dumps(
-                    IssueActivitySerializer(issue_activities_created, many=True).data,
-                    cls=DjangoJSONEncoder,
+        issue = (
+            Issue.objects.filter(
+                project_id=self.kwargs.get("project_id"),
+                workspace__slug=self.kwargs.get("slug"),
+                pk=pk,
+            )
+            .select_related("state")
+            .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
+            .annotate(
+                link_count=Subquery(
+                    IssueLink.objects.filter(issue=OuterRef("id"))
+                    .values("issue")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                attachment_count=Subquery(
+                    FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .values("issue_id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                sub_issues_count=Subquery(
+                    Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .values("parent")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    Subquery(
+                        IssueLabel.objects.filter(issue_id=OuterRef("pk"))
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("label_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 ),
-                requested_data=requested_data,
-                current_instance=current_instance,
+                assignee_ids=Coalesce(
+                    Subquery(
+                        IssueAssignee.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            assignee__member_project__is_active=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    Subquery(
+                        ModuleIssue.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            module__archived_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("module_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("issue", "actor"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-        return
-    except Exception as e:
-        log_exception(e)
-        return
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="issue",
+            entity_identifier=pk,
+            user_id=request.user.id,
+            project_id=project_id,
+        )
+
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, assignee=True, model=Issue)
+    def partial_update(self, request, slug, project_id, pk=None):
+        queryset = self.get_queryset()
+        queryset = self.apply_annotations(queryset)
+
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
+
+        issue = (
+            queryset.annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .filter(pk=pk)
+            .first()
+        )
+
+        if not issue:
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Workflow transition guard: block if workflow is live and transition is not permitted
+        new_state_id = request.data.get("state_id")
+        if new_state_id and str(new_state_id) != str(issue.state_id):
+            is_allowed, detail = check_workflow_transition(project_id, issue.state_id, new_state_id, request.user)
+            if not is_allowed:
+                return Response(
+                    {
+                        "error": "WORKFLOW_TRANSITION_BLOCKED",
+                        "message": "You are not authorized to move this work item to the selected state.",
+                        "detail": detail,
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
+
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+
+        # Validate: reason required when setting (non-null) target_date or completed_at
+        REASON_REQUIRED_FIELDS = {"target_date", "completed_at"}
+        is_setting_protected = any(
+            field in request.data and request.data[field] not in (None, "", [])
+            for field in REASON_REQUIRED_FIELDS
+        )
+        if is_setting_protected:
+            reason = (request.data.get("reason") or "").strip()
+            if not reason:
+                return Response(
+                    {"error": "A reason is required when changing the due date or completed date."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Build serializer data without transient `reason` field (not an Issue model field)
+        serializer_data = {k: v for k, v in request.data.items() if k != "reason"}
+        serializer = IssueCreateSerializer(issue, data=serializer_data, partial=True, context={"project_id": project_id})
+        if serializer.is_valid():
+            serializer.save()
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
+            # Log all the updates
+            if not is_migration_description_update:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=requested_data,
+                    actor_id=str(request.user.id),
+                    issue_id=str(pk),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=base_host(request=request, is_app=True),
+                )
+                model_activity.delay(
+                    model_name="issue",
+                    model_id=str(serializer.data.get("id", None)),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=base_host(request=request, is_app=True),
+                )
+                # updated issue description version
+                issue_description_version_task.delay(
+                    updated_issue=current_instance,
+                    issue_id=str(serializer.data.get("id", None)),
+                    user_id=request.user.id,
+                )
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
+    def destroy(self, request, slug, project_id, pk=None):
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+
+        issue.delete()
+        # delete the issue from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="issue",
+        ).delete(soft=False)
+        issue_activity.delay(
+            type="issue.activity.deleted",
+            requested_data=json.dumps({"issue_id": str(pk)}),
+            actor_id=str(request.user.id),
+            issue_id=str(pk),
+            project_id=str(project_id),
+            current_instance={},
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+            subscriber=False,
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def patch(self, request, slug, project_id):
+        try:
+            issue_property = ProjectUserProperty.objects.get(
+                user=request.user, 
+                project_id=project_id
+            )
+        except ProjectUserProperty.DoesNotExist:
+            issue_property = ProjectUserProperty.objects.create(
+                user=request.user, 
+                project_id=project_id
+            )
+
+        serializer = ProjectUserPropertySerializer(
+            issue_property, 
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        issue_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
+        serializer = ProjectUserPropertySerializer(issue_property)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BulkDeleteIssuesEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN])
+    def delete(self, request, slug, project_id):
+        issue_ids = request.data.get("issue_ids", [])
+
+        if not len(issue_ids):
+            return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        issues = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
+
+        total_issues = len(issues)
+
+        # First, delete all related cycle issues
+        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Then, delete all related module issues
+        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Finally, delete the issues themselves
+        issues.delete()
+
+        return Response(
+            {"message": f"{total_issues} issues were deleted"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class DeletedIssuesListViewSet(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
+        deleted_issues = (
+            Issue.all_objects.filter(workspace__slug=slug, project_id=project_id)
+            .filter(Q(archived_at__isnull=False) | Q(deleted_at__isnull=False))
+            .filter(**filters)
+            .values_list("id", flat=True)
+        )
+
+        return Response(deleted_issues, status=status.HTTP_200_OK)
+
+
+class IssuePaginatedViewSet(BaseViewSet):
+    def get_queryset(self):
+        workspace_slug = self.kwargs.get("slug")
+        project_id = self.kwargs.get("project_id")
+
+        issue_queryset = Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id)
+
+        return (
+            issue_queryset.select_related("state")
+            .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
+            .annotate(
+                link_count=Subquery(
+                    IssueLink.objects.filter(issue=OuterRef("id"))
+                    .values("issue")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                attachment_count=Subquery(
+                    FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .values("issue_id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                sub_issues_count=Subquery(
+                    Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .values("parent")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+        )
+
+    def process_paginated_result(self, fields, results, timezone):
+        paginated_data = results.values(*fields)
+
+        # converting the datetime fields in paginated data
+        datetime_fields = ["created_at", "updated_at"]
+        paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
+
+        return paginated_data
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id):
+        cursor = request.GET.get("cursor", None)
+        is_description_required = request.GET.get("description", "false")
+        updated_at = request.GET.get("updated_at__gt", None)
+
+        # required fields
+        required_fields = [
+            "id",
+            "name",
+            "state_id",
+            "state__group",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "is_draft",
+            "archived_at",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "link_count",
+            "attachment_count",
+            "sub_issues_count",
+        ]
+
+        if str(is_description_required).lower() == "true":
+            required_fields.append("description_html")
+
+        # querying issues
+        base_queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
+
+        base_queryset = base_queryset.order_by("updated_at")
+        queryset = self.get_queryset().order_by("updated_at")
+
+        # validation for guest user
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project_member = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        )
+        if project_member.exists() and not project.guest_view_all_features:
+            base_queryset = base_queryset.filter(created_by=request.user)
+            queryset = queryset.filter(created_by=request.user)
+
+        # filtering issues by greater then updated_at given by the user
+        if updated_at:
+            base_queryset = base_queryset.filter(updated_at__gt=updated_at)
+            queryset = queryset.filter(updated_at__gt=updated_at)
+
+        queryset = queryset.annotate(
+            label_ids=Coalesce(
+                Subquery(
+                    IssueLabel.objects.filter(issue_id=OuterRef("pk"))
+                    .values("issue_id")
+                    .annotate(arr=ArrayAgg("label_id", distinct=True))
+                    .values("arr")
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                Subquery(
+                    IssueAssignee.objects.filter(
+                        issue_id=OuterRef("pk"),
+                        assignee__member_project__is_active=True,
+                    )
+                    .values("issue_id")
+                    .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+                    .values("arr")
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                Subquery(
+                    ModuleIssue.objects.filter(
+                        issue_id=OuterRef("pk"),
+                        module__archived_at__isnull=True,
+                    )
+                    .values("issue_id")
+                    .annotate(arr=ArrayAgg("module_id", distinct=True))
+                    .values("arr")
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+
+        paginated_data = paginate(
+            base_queryset=base_queryset,
+            queryset=queryset,
+            cursor=cursor,
+            on_result=lambda results: self.process_paginated_result(
+                required_fields, results, request.user.user_timezone
+            ),
+        )
+
+        return Response(paginated_data, status=status.HTTP_200_OK)
+
+
+class IssueDetailEndpoint(BaseAPIView):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    def apply_annotations(self, issues):
+        return (
+            issues.annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "label_issue",
+                    queryset=IssueLabel.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_module",
+                    queryset=ModuleIssue.objects.all(),
+                )
+            )
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+
+        # check for the project member role, if the role is 5 then check for the guest_view_all_features
+        #  if it is true then show all the issues else show only the issues created by the user
+        permission_subquery = (
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, id=OuterRef("id"))
+            .filter(
+                Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role__gt=ROLE.GUEST.value,
+                )
+                | Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role=ROLE.GUEST.value,
+                    project__guest_view_all_features=True,
+                )
+                | Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role=ROLE.GUEST.value,
+                    project__guest_view_all_features=False,
+                    created_by=self.request.user,
+                )
+            )
+            .values("id")
+        )
+        # Main issue query
+        issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
+            Exists(permission_subquery)
+        )
+
+        # Add additional prefetch based on expand parameter
+        if self.expand:
+            if "issue_relation" in self.expand:
+                issue = issue.prefetch_related(
+                    Prefetch(
+                        "issue_relation",
+                        queryset=IssueRelation.objects.select_related("related_issue"),
+                    )
+                )
+            if "issue_related" in self.expand:
+                issue = issue.prefetch_related(
+                    Prefetch(
+                        "issue_related",
+                        queryset=IssueRelation.objects.select_related("issue"),
+                    )
+                )
+
+        # Apply filtering from filterset
+        issue = self.filter_queryset(issue)
+
+        # Apply legacy filters
+        issue = issue.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue)
+
+        # Applying annotations to the issue queryset
+        issue = self.apply_annotations(issue)
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        # Issue queryset
+        issue, order_by_param = order_issue_queryset(issue_queryset=issue, order_by_param=order_by_param)
+        return self.paginate(
+            request=request,
+            order_by=order_by_param,
+            queryset=issue,
+            total_count_queryset=total_issue_queryset,
+            on_results=lambda issue: IssueListDetailSerializer(
+                issue, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
+
+
+class IssueBulkUpdateDateEndpoint(BaseAPIView):
+    def validate_dates(self, current_start, current_target, new_start, new_target):
+        """
+        Validate that start date is before target date.
+        """
+        from datetime import datetime
+
+        start = new_start or current_start
+        target = new_target or current_target
+
+        # Convert string dates to datetime objects if they're strings
+        if isinstance(start, str):
+            start = datetime.strptime(start, "%Y-%m-%d").date()
+        if isinstance(target, str):
+            target = datetime.strptime(target, "%Y-%m-%d").date()
+
+        if start and target and start > target:
+            return False
+        return True
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        updates = request.data.get("updates", [])
+
+        issue_ids = [update["id"] for update in updates]
+        epoch = int(timezone.now().timestamp())
+
+        # Fetch all relevant issues in a single query
+        issues = list(Issue.objects.filter(id__in=issue_ids))
+        issues_dict = {str(issue.id): issue for issue in issues}
+        issues_to_update = []
+
+        for update in updates:
+            issue_id = update["id"]
+            issue = issues_dict.get(issue_id)
+
+            if not issue:
+                continue
+
+            start_date = update.get("start_date")
+            target_date = update.get("target_date")
+            validate_dates = self.validate_dates(issue.start_date, issue.target_date, start_date, target_date)
+            if not validate_dates:
+                return Response(
+                    {"message": "Start date cannot exceed target date"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if start_date:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps({"start_date": update.get("start_date")}),
+                    current_instance=json.dumps({"start_date": str(issue.start_date)}),
+                    issue_id=str(issue_id),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    epoch=epoch,
+                )
+                issue.start_date = start_date
+                issues_to_update.append(issue)
+
+            if target_date:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps({"target_date": update.get("target_date")}),
+                    current_instance=json.dumps({"target_date": str(issue.target_date)}),
+                    issue_id=str(issue_id),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    epoch=epoch,
+                )
+                issue.target_date = target_date
+                issues_to_update.append(issue)
+
+        # Bulk update issues
+        Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
+
+        return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
+
+
+class IssueMetaEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, issue_id):
+        issue = Issue.issue_objects.only("sequence_id", "project__identifier").get(
+            id=issue_id, project_id=project_id, workspace__slug=slug
+        )
+        return Response(
+            {
+                "sequence_id": issue.sequence_id,
+                "project_identifier": issue.project.identifier,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class IssueDetailIdentifierEndpoint(BaseAPIView):
+    def strict_str_to_int(self, s):
+        if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
+            raise ValueError("Invalid integer string")
+        return int(s)
+
+    def get(self, request, slug, project_identifier, issue_identifier):
+        # Check if the issue identifier is a valid integer
+        try:
+            issue_identifier = self.strict_str_to_int(issue_identifier)
+        except ValueError:
+            return Response(
+                {"error": "Invalid issue identifier"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the project
+        project = Project.objects.get(identifier__iexact=project_identifier, workspace__slug=slug)
+
+        # Check if the user is a member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Fetch the issue
+        issue = (
+            Issue.objects.filter(project_id=project.id)
+            .filter(workspace__slug=slug)
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(sequence_id=issue_identifier)
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("issue", "actor"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project.id,
+                        issue__sequence_id=issue_identifier,
+                        subscriber=request.user,
+                    )
+                )
+            )
+            .annotate(
+                is_intake=Exists(
+                    IntakeIssue.objects.filter(
+                        issue=OuterRef("id"),
+                        status__in=[-2, 0],
+                        workspace__slug=slug,
+                        project_id=project.id,
+                    )
+                )
+            )
+        ).first()
+
+        # Check if the issue exists
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project.id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="issue",
+            entity_identifier=str(issue.id),
+            user_id=str(request.user.id),
+            project_id=str(project.id),
+        )
+
+        # Serialize the issue
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)

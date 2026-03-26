@@ -43,9 +43,10 @@ export const useIssueFormValidation = (projectId?: string | null) => {
     return originalRules;
   };
 
-  // Returns rules for task category fields: skips validation when draft state or no categories exist
+  // Returns rules for task category fields: skips validation when draft or no categories exist
   const getTaskCategoryFieldRules = (originalRules: FieldRules, categoriesExist: boolean): FieldRules => {
-    if (isDraftState || !categoriesExist) return getFieldRules(originalRules);
+    if (isDraftState) return getFieldRules(originalRules);
+    if (!categoriesExist) return {};
     return originalRules;
   };
 

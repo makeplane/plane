@@ -64,7 +64,7 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
     try {
       const payload: ISubTaskCategoryCreate = {
         name: data.name,
-        main_category: data.main_category || "",
+        main_category: data.main_category || null,
         sort_order: Number(data.sort_order),
         is_active: data.is_active,
       };
@@ -90,22 +90,18 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
           <Dialog.Title>{editCategory ? "Edit Sub Category" : "Add Sub Category"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="mt-4 space-y-3">
             <div className="space-y-1">
-              <label htmlFor="sub-cat-name" className="text-13 font-medium">
+              <label htmlFor="name" className="text-13 font-medium">
                 Name *
               </label>
-              <Input
-                id="sub-cat-name"
-                {...register("name", { required: "Required" })}
-                placeholder="Sub category name"
-              />
+              <Input id="name" {...register("name", { required: "Required" })} placeholder="Sub category name" />
               {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
             </div>
             <div className="space-y-1">
-              <label htmlFor="sub-cat-main" className="text-13 font-medium">
+              <label htmlFor="main_category" className="text-13 font-medium">
                 Main Category *
               </label>
               <select
-                id="sub-cat-main"
+                id="main_category"
                 {...register("main_category", { required: "Required" })}
                 className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
               >
@@ -120,10 +116,10 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="sub-cat-sort" className="text-13 font-medium">
+                <label htmlFor="sort_order" className="text-13 font-medium">
                   Sort order
                 </label>
-                <Input id="sub-cat-sort" type="number" {...register("sort_order")} placeholder="0" />
+                <Input id="sort_order" type="number" {...register("sort_order")} placeholder="0" />
               </div>
               <div className="space-y-1 flex flex-col justify-end">
                 <label className="flex items-center gap-2 text-13 font-medium cursor-pointer">

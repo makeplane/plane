@@ -26,7 +26,7 @@ export class RootStore extends CoreRootStore {
   projectWorklog: ProjectWorklogStore;
   workflowStore: IWorkflowStore;
   moduleActivity: IModuleActivityStore;
-  taskCategoryStore: ITaskCategoryStore;
+  taskCategory: ITaskCategoryStore;
 
   constructor() {
     super();
@@ -37,6 +37,6 @@ export class RootStore extends CoreRootStore {
     this.projectWorklog = new ProjectWorklogStore();
     this.workflowStore = new WorkflowStore();
     this.moduleActivity = new ModuleActivityStore();
-    this.taskCategoryStore = new TaskCategoryStore();
+    this.taskCategory = new TaskCategoryStore();
   }
 }
