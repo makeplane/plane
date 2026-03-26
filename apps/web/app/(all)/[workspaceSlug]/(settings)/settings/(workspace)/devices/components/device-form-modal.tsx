@@ -15,12 +15,18 @@ type TDeviceFormModalProps = {
 };
 
 type TFormErrors = Partial<Record<keyof TDeviceFormValues, string>>;
+const DEVICE_NAME_PATTERN = /^[a-zA-Z ]+$/;
 
 const validateForm = (values: TDeviceFormValues): TFormErrors => {
   const errors: TFormErrors = {};
 
   if (!values.appName.trim()) errors.appName = "Application Name is required";
-  if (!values.deviceName.trim()) errors.deviceName = "Device Name is required";
+  const deviceName = values.deviceName.trim();
+  if (!deviceName) {
+    errors.deviceName = "Device Name is required";
+  } else if (!DEVICE_NAME_PATTERN.test(deviceName)) {
+    errors.deviceName = "Numbers and special characters are not allowed in Device Name";
+  }
   if (!values.deviceType.trim()) errors.deviceType = "Device type is required";
 
   const pin = values.pin.trim();
