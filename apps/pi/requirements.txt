@@ -54,7 +54,7 @@ psycopg2-binary>=2.9.3
 # file validation and security
 Pillow==12.1.1
 clamd==1.0.2
-pypdf==6.9.1
+pypdf==6.9.2
 
 # testing
 pre-commit==3.8.0
