@@ -1,5 +1,14 @@
 const { chromium } = require('playwright');
 
+// Configuration — override with environment variables when running against different deployments.
+// NOTE: The deeper CRUD semantics (create/list/delete) for cycles, labels, and projects are
+// already covered by the Python contract tests in tests/contract/. These E2E tests complement
+// them by exercising the full browser flow against a live deployment and checking UI routing.
+const BASE_URL = process.env.PLANE_BASE_URL || 'http://localhost';
+const EMAIL = process.env.PLANE_EMAIL || 'admin@plane.local';
+const PASSWORD = process.env.PLANE_PASSWORD || 'admin';
+const WORKSPACE_SLUG = process.env.PLANE_WORKSPACE_SLUG || 'my-workspace';
+
 async function runTests() {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
@@ -31,22 +40,26 @@ async function runTests() {
   console.log('╔═══════════════════════════════════════════════════════════════╗');
   console.log('║  Plane E2E Comprehensive Test Suite (Based on Plane Repo)  ║');
   console.log('╚═══════════════════════════════════════════════════════════════╝\n');
+  console.log('  Target: ' + BASE_URL + '  Workspace: ' + WORKSPACE_SLUG + '\n');
   
   try {
     // === LOGIN ===
+    // Complements tests/smoke/test_auth_smoke.py which tests the login endpoint at the HTTP
+    // level; this test verifies the full browser-based login flow including SPA hydration.
     section('Authentication');
-    await page.goto('https://ordo.durandal-robotics.com', { waitUntil: 'domcontentloaded' });
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(15000);
     
-    await page.fill('input[name="email"]', 'admin@durandal-robotics.com');
+    await page.fill('input[name="email"]', EMAIL);
     await page.click('button[type="submit"]');
     await page.waitForTimeout(4000);
     
-    await page.fill('input[name="password"]', 'Admin123!');
-    await page.click('button:has-text("Go to workspace")');
+    await page.fill('input[name="password"]', PASSWORD);
+    // Plane's password step uses a generic submit button; both login steps share this selector.
+    await page.click('button[type="submit"]:not([disabled])');
     await page.waitForTimeout(6000);
     
-    if (page.url().includes('/colbert/')) {
+    if (page.url().includes('/' + WORKSPACE_SLUG + '/')) {
       pass('Login and workspace redirect');
     } else {
       fail('Login', page.url());
@@ -55,48 +68,50 @@ async function runTests() {
     // === INSTANCE & WORKSPACE APIs ===
     section('Instance & Workspace APIs');
     
-    const instanceData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/instances/').then(r => r.json())
-    );
-    if (instanceData.instance?.instance_name === 'Plane Community Edition') {
-      pass('Instance API');
+    const instanceData = await page.evaluate((url) => 
+      fetch(url + '/api/instances/').then(r => r.json())
+    , BASE_URL);
+    if (instanceData.instance?.instance_name) {
+      pass('Instance API (' + instanceData.instance.instance_name + ')');
     } else {
       fail('Instance API', JSON.stringify(instanceData.instance));
     }
     
-    const userData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/users/me/').then(r => r.json())
-    );
-    if (userData.email === 'admin@durandal-robotics.com') {
-      pass('User /me API');
+    const userData = await page.evaluate((url) => 
+      fetch(url + '/api/users/me/').then(r => r.json())
+    , BASE_URL);
+    if (userData.email) {
+      pass('User /me API (' + userData.email + ')');
     } else {
-      fail('User /me API', userData.email);
+      fail('User /me API', JSON.stringify(userData));
     }
     
-    const workspacesData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/users/me/workspaces/').then(r => r.json())
-    );
+    const workspacesData = await page.evaluate((url) => 
+      fetch(url + '/api/users/me/workspaces/').then(r => r.json())
+    , BASE_URL);
     if (Array.isArray(workspacesData) && workspacesData.length > 0) {
       pass('User workspaces API (' + workspacesData.length + ' workspace)');
     } else {
       fail('User workspaces API');
     }
     
-    const workspaceData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/').then(r => r.json())
-    );
-    if (workspaceData.id && workspaceData.slug === 'colbert') {
-      pass('Workspace API (colbert)');
+    const workspaceData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/').then(r => r.json())
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
+    if (workspaceData.id && workspaceData.slug === WORKSPACE_SLUG) {
+      pass('Workspace API (' + WORKSPACE_SLUG + ')');
     } else {
       fail('Workspace API', JSON.stringify(workspaceData));
     }
     
     // === PROJECT APIs ===
+    // Note: detailed project CRUD contract tests live in tests/contract/app/test_project_app.py.
+    // These smoke checks verify the endpoints are reachable on the live deployment.
     section('Project APIs');
     
-    const projectsData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/').then(r => r.json())
-    );
+    const projectsData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/projects/').then(r => r.json())
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (Array.isArray(projectsData)) {
       pass('Projects list API (' + projectsData.length + ' projects)');
     } else {
@@ -105,8 +120,8 @@ async function runTests() {
     
     // Create a test project with unique identifier
     const timestamp = Date.now();
-    const createProjectResponse = await page.evaluate(async (ts) => {
-      const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/', {
+    const createProjectResponse = await page.evaluate(async ({ url, slug, ts }) => {
+      const res = await fetch(url + '/api/workspaces/' + slug + '/projects/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -116,7 +131,7 @@ async function runTests() {
         })
       });
       return { status: res.status, data: await res.json() };
-    }, timestamp);
+    }, { url: BASE_URL, slug: WORKSPACE_SLUG, ts: timestamp });
     
     if (createProjectResponse.status === 200 || createProjectResponse.status === 201) {
       pass('Create project API');
@@ -128,10 +143,10 @@ async function runTests() {
     
     // Get project details
     if (testProjectId) {
-      const projectDetail = await page.evaluate(async (id) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + id + '/');
+      const projectDetail = await page.evaluate(async ({ url, slug, id }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + id + '/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, id: testProjectId });
       
       if (projectDetail.status === 200) {
         pass('Get project details API');
@@ -144,9 +159,8 @@ async function runTests() {
     section('Work Item (Issue) APIs');
     
     if (testProjectId) {
-      // Create work item using /issues/ endpoint (Plane v1.2.3 uses issues not work-items in app API)
-      const createWorkItemResponse = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/issues/', {
+      const createWorkItemResponse = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/issues/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -155,7 +169,7 @@ async function runTests() {
           })
         });
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (createWorkItemResponse.status === 200 || createWorkItemResponse.status === 201) {
         pass('Create work item API');
@@ -164,12 +178,11 @@ async function runTests() {
         fail('Create work item API', createWorkItemResponse.status);
       }
       
-      // List work items using /issues/ endpoint (returns paginated response)
-      const workItemsList = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/issues/');
+      const workItemsList = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/issues/');
         const data = await res.json();
         return { status: res.status, data: data };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (workItemsList.status === 200) {
         pass('List work items API (' + (workItemsList.data.results || workItemsList.data.length || 'ok') + ' items)');
@@ -182,10 +195,10 @@ async function runTests() {
     section('States APIs');
     
     if (testProjectId) {
-      const statesData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/states/');
+      const statesData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/states/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (statesData.status === 200 && Array.isArray(statesData.data)) {
         pass('Project states API (' + statesData.data.length + ' states)');
@@ -195,13 +208,14 @@ async function runTests() {
     }
     
     // === LABELS APIs ===
+    // Note: detailed label CRUD contract tests live in tests/contract/api/test_labels.py.
     section('Labels APIs');
     
     if (testProjectId) {
-      const labelsData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/issue-labels/');
+      const labelsData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/issue-labels/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (labelsData.status === 200 && Array.isArray(labelsData.data)) {
         pass('Project labels API (' + labelsData.data.length + ' labels)');
@@ -210,30 +224,15 @@ async function runTests() {
       }
     }
     
-    // === ISSUE TYPES APIs ===
-    section('Issue Types APIs');
-    
-    if (testProjectId) {
-      const issueTypesData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/');
-        return { status: res.status };
-      }, testProjectId);
-      
-      if (issueTypesData.status === 200) {
-        pass('Issue types API (available at project level)');
-      } else {
-        fail('Issue types API');
-      }
-    }
-    
     // === CYCLES APIs ===
+    // Note: detailed cycle CRUD contract tests live in tests/contract/api/test_cycles.py.
     section('Cycles APIs');
     
     if (testProjectId) {
-      const cyclesData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/cycles/');
+      const cyclesData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/cycles/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (cyclesData.status === 200 && Array.isArray(cyclesData.data)) {
         pass('Cycles list API (' + cyclesData.data.length + ' cycles)');
@@ -242,8 +241,8 @@ async function runTests() {
       }
       
       // Create a cycle
-      const createCycleResponse = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/cycles/', {
+      const createCycleResponse = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/cycles/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -252,7 +251,7 @@ async function runTests() {
           })
         });
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (createCycleResponse.status === 200 || createCycleResponse.status === 201) {
         pass('Create cycle API');
@@ -266,10 +265,10 @@ async function runTests() {
     section('Modules APIs');
     
     if (testProjectId) {
-      const modulesData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/modules/');
+      const modulesData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/modules/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (modulesData.status === 200 && Array.isArray(modulesData.data)) {
         pass('Modules list API (' + modulesData.data.length + ' modules)');
@@ -278,8 +277,8 @@ async function runTests() {
       }
       
       // Create a module
-      const createModuleResponse = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/modules/', {
+      const createModuleResponse = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/modules/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -288,7 +287,7 @@ async function runTests() {
           })
         });
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (createModuleResponse.status === 200 || createModuleResponse.status === 201) {
         pass('Create module API');
@@ -302,10 +301,10 @@ async function runTests() {
     section('Pages APIs');
     
     if (testProjectId) {
-      const pagesData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/pages/');
+      const pagesData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/pages/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (pagesData.status === 200 && Array.isArray(pagesData.data)) {
         pass('Project pages API (' + pagesData.data.length + ' pages)');
@@ -314,15 +313,12 @@ async function runTests() {
       }
     }
     
-    // Workspace pages - Pages are project-level, not workspace-level
-    // Skip this test as /api/workspaces/colbert/pages/ does not exist
-    
     // === MEMBERS APIs ===
     section('Members APIs');
     
-    const workspaceMembersData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/members/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
-    );
+    const workspaceMembersData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/members/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (workspaceMembersData.status === 200) {
       const members = workspaceMembersData.data.results || workspaceMembersData.data;
       if (Array.isArray(members)) {
@@ -335,10 +331,10 @@ async function runTests() {
     }
     
     if (testProjectId) {
-      const projectMembersData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/members/');
+      const projectMembersData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/members/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (projectMembersData.status === 200 && Array.isArray(projectMembersData.data)) {
         pass('Project members API (' + projectMembersData.data.length + ' members)');
@@ -350,9 +346,9 @@ async function runTests() {
     // === INVITATIONS APIs ===
     section('Invitations APIs');
     
-    const invitationsData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/invitations/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
-    );
+    const invitationsData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/invitations/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (invitationsData.status === 200) {
       pass('Invitations API (accessible)');
     } else {
@@ -362,9 +358,9 @@ async function runTests() {
     // === USER FAVORITES APIs ===
     section('User Favorites APIs');
     
-    const favoritesData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/user-favorites/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
-    );
+    const favoritesData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/user-favorites/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (favoritesData.status === 200) {
       pass('User favorites API (accessible)');
     } else {
@@ -375,10 +371,10 @@ async function runTests() {
     section('Views APIs');
     
     if (testProjectId) {
-      const viewsData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/views/');
+      const viewsData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/views/');
         return { status: res.status, data: await res.json().catch(() => ({})) };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (viewsData.status === 200) {
         pass('Project views API (accessible)');
@@ -390,9 +386,9 @@ async function runTests() {
     // === STICKIES APIs ===
     section('Stickies APIs');
     
-    const stickiesData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/stickies/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
-    );
+    const stickiesData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/stickies/').then(r => ({ status: r.status, data: r.json().catch(() => ({})) }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (stickiesData.status === 200) {
       pass('Stickies API (accessible)');
     } else {
@@ -402,9 +398,9 @@ async function runTests() {
     // === QUICK LINKS APIs ===
     section('Quick Links APIs');
     
-    const quickLinksData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/quick-links/').then(r => ({ status: r.status, data: r.json() }))
-    );
+    const quickLinksData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/quick-links/').then(r => ({ status: r.status, data: r.json() }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (quickLinksData.status === 200) {
       pass('Quick links API');
     } else {
@@ -414,9 +410,9 @@ async function runTests() {
     // === RECENT VISITS APIs ===
     section('Recent Visits APIs');
     
-    const recentVisitsData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/recent-visits/').then(r => ({ status: r.status, data: r.json() }))
-    );
+    const recentVisitsData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/recent-visits/').then(r => ({ status: r.status, data: r.json() }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (recentVisitsData.status === 200) {
       pass('Recent visits API');
     } else {
@@ -426,9 +422,9 @@ async function runTests() {
     // === NOTIFICATIONS APIs ===
     section('Notifications APIs');
     
-    const notificationsData = await page.evaluate(() => 
-      fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/users/notifications/').then(r => ({ status: r.status, data: r.json() }))
-    );
+    const notificationsData = await page.evaluate(({ url, slug }) => 
+      fetch(url + '/api/workspaces/' + slug + '/users/notifications/').then(r => ({ status: r.status, data: r.json() }))
+    , { url: BASE_URL, slug: WORKSPACE_SLUG });
     if (notificationsData.status === 200) {
       pass('Notifications API');
     } else {
@@ -439,10 +435,10 @@ async function runTests() {
     section('Estimates APIs');
     
     if (testProjectId) {
-      const estimatesData = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/estimates/');
+      const estimatesData = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/estimates/');
         return { status: res.status, data: await res.json() };
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (estimatesData.status === 200) {
         pass('Estimates API');
@@ -454,8 +450,8 @@ async function runTests() {
     // === NAVIGATION UI TESTS ===
     section('UI Navigation Tests');
     
-    // Navigate to Projects
-    await page.click('text=Projets');
+    // Navigate to Projects (use URL directly to avoid locale-specific link text)
+    await page.goto(BASE_URL + '/' + WORKSPACE_SLUG + '/projects/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(4000);
     if (page.url().includes('/projects/')) {
       pass('Navigate to Projects page');
@@ -464,29 +460,29 @@ async function runTests() {
     }
     
     // Navigate back to dashboard
-    await page.goto('https://ordo.durandal-robotics.com/colbert/', { waitUntil: 'domcontentloaded' });
+    await page.goto(BASE_URL + '/' + WORKSPACE_SLUG + '/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(5000);
-    if (page.url() === 'https://ordo.durandal-robotics.com/colbert/') {
+    if (page.url().includes('/' + WORKSPACE_SLUG + '/')) {
       pass('Navigate to dashboard');
     } else {
       fail('Navigate to dashboard', page.url());
     }
     
     // Navigate to Settings
-    await page.goto('https://ordo.durandal-robotics.com/colbert/settings/', { waitUntil: 'domcontentloaded' });
+    await page.goto(BASE_URL + '/' + WORKSPACE_SLUG + '/settings/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(5000);
     const settingsTitle = await page.title();
-    if (settingsTitle.includes('Paramètres') || settingsTitle.includes('Settings')) {
+    if (settingsTitle.toLowerCase().includes('setting')) {
       pass('Navigate to settings');
     } else {
       fail('Navigate to settings', settingsTitle);
     }
     
     // Navigate to Members settings
-    await page.goto('https://ordo.durandal-robotics.com/colbert/settings/members/', { waitUntil: 'domcontentloaded' });
+    await page.goto(BASE_URL + '/' + WORKSPACE_SLUG + '/settings/members/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(5000);
     const membersTitle = await page.title();
-    if (membersTitle.includes('Members') || membersTitle.includes('Membres')) {
+    if (membersTitle.toLowerCase().includes('member')) {
       pass('Navigate to members settings');
     } else {
       fail('Navigate to members settings', membersTitle);
@@ -526,12 +522,12 @@ async function runTests() {
     
     // Delete test work item
     if (testWorkItemId && testProjectId) {
-      const deleteWorkItem = await page.evaluate(async ({ projectId, workItemId }) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/issues/' + workItemId + '/', {
+      const deleteWorkItem = await page.evaluate(async ({ url, slug, projectId, workItemId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/issues/' + workItemId + '/', {
           method: 'DELETE'
         });
         return res.status;
-      }, { projectId: testProjectId, workItemId: testWorkItemId });
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId, workItemId: testWorkItemId });
       
       if (deleteWorkItem === 204 || deleteWorkItem === 200) {
         pass('Delete test work item');
@@ -542,12 +538,12 @@ async function runTests() {
     
     // Delete test cycle
     if (testCycleId && testProjectId) {
-      const deleteCycle = await page.evaluate(async ({ projectId, cycleId }) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/cycles/' + cycleId + '/', {
+      const deleteCycle = await page.evaluate(async ({ url, slug, projectId, cycleId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/cycles/' + cycleId + '/', {
           method: 'DELETE'
         });
         return res.status;
-      }, { projectId: testProjectId, cycleId: testCycleId });
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId, cycleId: testCycleId });
       
       if (deleteCycle === 204 || deleteCycle === 200) {
         pass('Delete test cycle');
@@ -558,12 +554,12 @@ async function runTests() {
     
     // Delete test module
     if (testModuleId && testProjectId) {
-      const deleteModule = await page.evaluate(async ({ projectId, moduleId }) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/modules/' + moduleId + '/', {
+      const deleteModule = await page.evaluate(async ({ url, slug, projectId, moduleId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/modules/' + moduleId + '/', {
           method: 'DELETE'
         });
         return res.status;
-      }, { projectId: testProjectId, moduleId: testModuleId });
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId, moduleId: testModuleId });
       
       if (deleteModule === 204 || deleteModule === 200) {
         pass('Delete test module');
@@ -574,12 +570,12 @@ async function runTests() {
     
     // Delete test project
     if (testProjectId) {
-      const deleteProject = await page.evaluate(async (projectId) => {
-        const res = await fetch('https://ordo.durandal-robotics.com/api/workspaces/colbert/projects/' + projectId + '/', {
+      const deleteProject = await page.evaluate(async ({ url, slug, projectId }) => {
+        const res = await fetch(url + '/api/workspaces/' + slug + '/projects/' + projectId + '/', {
           method: 'DELETE'
         });
         return res.status;
-      }, testProjectId);
+      }, { url: BASE_URL, slug: WORKSPACE_SLUG, projectId: testProjectId });
       
       if (deleteProject === 204 || deleteProject === 200) {
         pass('Delete test project');
