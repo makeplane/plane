@@ -13,6 +13,8 @@ from .project.base import (
 
 from .project.worklog import ProjectWorkLogViewSet, ProjectWorklogExportView
 
+from .project.bank_wide import WorkspaceBankWideProjectsEndpoint
+
 from .project.invite import (
     UserProjectInvitationsViewset,
     ProjectInvitationsViewset,

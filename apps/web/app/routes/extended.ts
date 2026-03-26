@@ -10,6 +10,16 @@ import type { RouteConfigEntry } from "@react-router/dev/routes";
 export const extendedRoutes: RouteConfigEntry[] = [
   layout("./(all)/layout.tsx", [
     layout("./(all)/[workspaceSlug]/layout.tsx", [
+      // Nest inside (projects)/layout.tsx so it gets the workspace sidebar shell —
+      // same pattern as the "ho" route in core.ts
+      layout("./(all)/[workspaceSlug]/(projects)/layout.tsx", [
+        layout("./(all)/[workspaceSlug]/(projects)/bank-wide-projects/layout.tsx", [
+          route(
+            ":workspaceSlug/bank-wide-projects",
+            "./(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx"
+          ),
+        ]),
+      ]),
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [
         layout("./(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx", [
           layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/layout.tsx", [

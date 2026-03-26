@@ -587,6 +587,11 @@ export default {
       name: "Name",
     },
   },
+  bank_wide_projects: {
+    sidebar_label: "Bank-wide Projects",
+    title: "Bank-wide Projects",
+    empty_state: "No bank-wide projects found.",
+  },
   bank_wide_project: {
     label: "Bank-wide Project",
     settings: {

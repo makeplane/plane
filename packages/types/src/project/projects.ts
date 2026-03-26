@@ -43,6 +43,12 @@ export interface IPartialProject {
   intake_count?: number;
 }
 
+export interface IBankWideProject extends IProject {
+  workspace_slug: string;
+  workspace_name: string;
+  member_count: number;
+}
+
 export interface IProject extends IPartialProject {
   archive_in?: number;
   close_in?: number;
