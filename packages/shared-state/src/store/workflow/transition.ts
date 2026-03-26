@@ -15,6 +15,7 @@ import type {
   IWorkflowService,
   IWorkflowTransition,
   TUpdateStateTransitionPayload,
+  TWorkflowRule,
   TWorkflowStateTransition,
   TWorkflowStateType,
 } from "@plane/types";
@@ -27,6 +28,8 @@ export class WorkflowTransition implements IWorkflowTransition {
   transition_state_id: string;
   rejection_state_id?: string;
   member_ids: string[];
+  pre_rules: TWorkflowRule[];
+  post_rules: TWorkflowRule[];
   isDraft: boolean;
 
   private _snapshot: TWorkflowStateTransition;
@@ -39,11 +42,14 @@ export class WorkflowTransition implements IWorkflowTransition {
       transition_state_id: observable.ref,
       rejection_state_id: observable.ref,
       member_ids: observable,
+      pre_rules: observable,
+      post_rules: observable,
       isDraft: observable,
       asJSON: computed,
       isValid: computed,
       hasUnsavedChanges: computed,
       unsavedChangesPayload: computed,
+      totalScriptCount: computed,
       mutate: action,
       update: action,
       revertToSnapshot: action,
@@ -53,6 +59,8 @@ export class WorkflowTransition implements IWorkflowTransition {
     this.transition_state_id = data.transition_state_id;
     this.rejection_state_id = data.rejection_state_id;
     this.member_ids = data.member_ids;
+    this.pre_rules = data.pre_rules ?? [];
+    this.post_rules = data.post_rules ?? [];
     this.isDraft = data.isDraft ?? false;
     this.stateType = data.stateType ?? "transition";
     this.workflowService = _workflowService;
@@ -65,6 +73,8 @@ export class WorkflowTransition implements IWorkflowTransition {
       transition_state_id: this.transition_state_id,
       rejection_state_id: this.rejection_state_id,
       member_ids: [...this.member_ids],
+      pre_rules: this.pre_rules.map((r) => ({ ...r, config: { ...r.config } })),
+      post_rules: this.post_rules.map((r) => ({ ...r, config: { ...r.config } })),
       isDraft: this.isDraft,
     };
   }
@@ -75,6 +85,8 @@ export class WorkflowTransition implements IWorkflowTransition {
       transition_state_id: this.transition_state_id,
       rejection_state_id: this.rejection_state_id,
       member_ids: [...this.member_ids],
+      pre_rules: this.pre_rules.map((r) => ({ ...r, config: { ...r.config } })),
+      post_rules: this.post_rules.map((r) => ({ ...r, config: { ...r.config } })),
       isDraft: this.isDraft,
     };
   }
@@ -87,17 +99,23 @@ export class WorkflowTransition implements IWorkflowTransition {
     const sortedMembers = [...this.member_ids].sort();
     const sortedSnapshotMembers = [...(this._snapshot.member_ids ?? [])].sort();
     const hasMembersChanged = JSON.stringify(sortedMembers) !== JSON.stringify(sortedSnapshotMembers);
+    const hasPreRulesChanged = JSON.stringify(this.pre_rules) !== JSON.stringify(this._snapshot.pre_rules ?? []);
+    const hasPostRulesChanged = JSON.stringify(this.post_rules) !== JSON.stringify(this._snapshot.post_rules ?? []);
 
     return getChangedFields<TUpdateStateTransitionPayload>(
       {
         transition_state_id: this.transition_state_id,
         rejection_state_id: this.rejection_state_id,
         member_ids: this.member_ids,
+        pre_rules: this.pre_rules,
+        post_rules: this.post_rules,
       },
       {
         transition_state_id: this.transition_state_id !== this._snapshot.transition_state_id,
         rejection_state_id: this.rejection_state_id !== this._snapshot.rejection_state_id,
         member_ids: hasMembersChanged,
+        pre_rules: hasPreRulesChanged,
+        post_rules: hasPostRulesChanged,
       }
     );
   }
@@ -107,6 +125,12 @@ export class WorkflowTransition implements IWorkflowTransition {
       return !!this.transition_state_id && !!this.rejection_state_id && this.member_ids.length > 0;
     }
     return !!this.transition_state_id;
+  }
+
+  get totalScriptCount(): number {
+    const pre = (this.pre_rules ?? []).filter((r) => !!r.config?.["script_id"]).length;
+    const post = (this.post_rules ?? []).filter((r) => !!r.config?.["script_id"]).length;
+    return pre + post;
   }
 
   mutate(data: Partial<TWorkflowStateTransition>) {
@@ -135,6 +159,8 @@ export class WorkflowTransition implements IWorkflowTransition {
       this.transition_state_id = this._snapshot.transition_state_id;
       this.rejection_state_id = this._snapshot.rejection_state_id;
       this.member_ids = [...this._snapshot.member_ids];
+      this.pre_rules = (this._snapshot.pre_rules ?? []).map((r) => ({ ...r, config: { ...r.config } }));
+      this.post_rules = (this._snapshot.post_rules ?? []).map((r) => ({ ...r, config: { ...r.config } }));
     });
   };
 }

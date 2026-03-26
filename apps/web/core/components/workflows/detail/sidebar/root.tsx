@@ -31,12 +31,16 @@ export const WorkflowConfigSidebarRoot = observer(function WorkflowConfigSidebar
 
   if (!stateId || !state || !helper || !transition) return <></>;
 
+  const isConditionsTab = helper.selectedTab === "conditions";
+
   return (
     <aside
       className={cn(
-        "flex-shrink-0 h-full w-[320px] -mr-[320px] flex flex-col bg-surface-1 border-l border-subtle-1 space-y-6 overflow-y-scroll vertical-scrollbar scrollbar-sm transition-all",
+        "shrink-0 h-full w-[320px] -mr-[320px] flex min-h-0 flex-col bg-surface-1 border-l border-subtle-1 space-y-6 transition-all",
         {
           "mr-0": workflow.isSidebarOpen,
+          "overflow-hidden": isConditionsTab,
+          "overflow-y-scroll vertical-scrollbar scrollbar-sm": !isConditionsTab,
         }
       )}
     >

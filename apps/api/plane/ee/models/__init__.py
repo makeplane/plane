@@ -93,14 +93,20 @@ from .teamspace import (
 )
 
 from .workflow import (
+    WorkflowApprovalType,
     WorkflowStateType,
+    WorkflowTransitionHookPhase,
+    WorkflowTransitionHookType,
+    WorkflowHookExecutionStatus,
     Workflow,
     WorkflowState,
     WorkflowTransition,
+    WorkflowTransitionHook,
     WorkflowWorkItemType,
     WorkflowTransitionApprover,
     WorkflowTransitionApproval,
     WorkflowTransitionActivity,
+    WorkflowTransitionHookStatus,
 )
 
 from .job import ImportReport, ImportJob, ImportExecutionLog

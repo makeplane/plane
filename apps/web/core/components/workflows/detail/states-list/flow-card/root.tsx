@@ -37,6 +37,8 @@ import {
   shouldShowProgress,
   getFileURL,
 } from "@plane/utils";
+import { PropertyDisplay } from "./property-display";
+import { ScriptButton } from "./script-button";
 
 type Props = {
   workflow: IWorkflow;
@@ -67,7 +69,7 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
 
   // Opens the sidebar for the selected configuration tab of this transition.
   const handleOpenSidebar = useCallback(
-    (tab: "flow_type" | "states" | "members") => {
+    (tab: "flow_type" | "states" | "members" | "conditions") => {
       workflow.openSidebar(state.id, transition.id, tab);
     },
     [workflow, state.id, transition.id]
@@ -106,6 +108,8 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
             transition_state_id: transition.transition_state_id,
             rejection_state_id: transition.rejection_state_id,
             member_ids: transition.member_ids,
+            pre_rules: transition.pre_rules ?? [],
+            post_rules: transition.post_rules ?? [],
           },
           transition.id
         );
@@ -176,23 +180,6 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
   if (!state || !workflowState || !transition) return null;
 
   // Read-only property block used in view mode.
-  const PropertyDisplay = ({
-    label,
-    icon,
-    children,
-  }: {
-    label: string;
-    icon: JSX.Element;
-    children: React.ReactNode;
-  }) => (
-    <div className="flex flex-col gap-1">
-      <span className="text-body-xs-medium">{label}</span>
-      <div className="flex items-center gap-1 rounded-lg border border-subtle py-2 px-3 bg-layer-2 min-w-[170px] w-full truncate">
-        {icon}
-        {children}
-      </div>
-    </div>
-  );
 
   // Renders the flow type property ("via") for interactive/view states.
   const renderVia = () =>
@@ -311,12 +298,22 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
 
   return (
     <div className="w-full p-3 bg-layer-2 rounded-lg flex flex-col gap-2 group relative transition-all duration-300">
-      <div className="flex items-start gap-4">
-        <div className="w-1/3">{renderVia()}</div>
-        <div className="w-1/3">{showMoveTo && renderMoveTo()}</div>
-        <div className="w-1/3">{showMembers && renderMembers()}</div>
+      <div className=" items-start grid grid-cols-4 gap-2 relative">
+        <div>{renderVia()}</div>
+        <div>{showMoveTo && renderMoveTo()}</div>
+        <div>{showMembers && renderMembers()}</div>
+
+        {showMembers && (
+          <ScriptButton
+            workspaceSlug={workspaceSlug}
+            transition={transition}
+            isInteractive={isInteractive}
+            activeTab={activeTab}
+            handleOpenSidebar={handleOpenSidebar}
+          />
+        )}
         {mode === "view" && (
-          <div className="ml-auto">
+          <div className="ml-auto absolute right-0 top-0">
             <Menu ellipsis>
               <Menu.MenuItem className="flex items-center gap-2" onClick={handleEdit}>
                 <EditIcon className="size-3" />

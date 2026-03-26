@@ -31,7 +31,7 @@ export function StateFlowPropertyButton(props: Props) {
       <div
         role="button"
         className={cn(
-          "flex items-center gap-1 rounded-lg border border-subtle py-2 px-3 bg-layer-2 min-w-[170px] w-full truncate",
+          "flex items-center gap-1 rounded-lg border border-subtle py-2 px-3 bg-layer-2 w-full truncate",
           isActiveTab && "border-accent-strong"
         )}
         onClick={onClick}

@@ -200,6 +200,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             issue=issue,
             new_state_id=request.data.get("state_id"),
             user_id=request.user.id,
+            run_hooks=False,  # draft: workspace-scoped, not a real project issue yet
         ):
             return Response(
                 {"error": "State transition is not allowed"},

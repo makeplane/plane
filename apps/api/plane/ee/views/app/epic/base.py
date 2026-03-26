@@ -18,6 +18,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import (
     F,
     Func,
@@ -450,6 +451,7 @@ class EpicViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     @check_feature_flag(FeatureFlag.EPICS)
+    @transaction.atomic
     def partial_update(self, request, slug, project_id, pk=None):
         epic = self.get_queryset().filter(pk=pk).first()
 

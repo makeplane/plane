@@ -438,6 +438,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue=issue,
                 new_state_id=issue_data.get("state_id", None),
                 user_id=request.user.id,
+                run_hooks=False,  # intake: issue is pending acceptance, not a live transition
             ):
                 return Response(
                     {"error": "State transition is not allowed"},

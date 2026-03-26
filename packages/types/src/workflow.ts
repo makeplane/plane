@@ -87,16 +87,36 @@ export interface IStateTransitionTree {
 
 // WORKFLOW STATE TRANSITIONS
 
+// Config shape for a run_script rule — used by the script picker UI
+export type TWorkflowScriptConfig = {
+  script_id: string;
+  execution_variables: Record<string, string>;
+};
+
+// Generic rule — handler_name determines the config shape.
+// For "run_script": config is TWorkflowScriptConfig.
+// Future handlers (change_property, trigger_email, trigger_webhook) add their own config shape.
+export type TWorkflowRule = {
+  handler_name: string;
+  rule_type: string;
+  config: TWorkflowScriptConfig | Record<string, unknown>;
+};
+
 export type TWorkflowStateTransition = {
   id: string;
   transition_state_id: string;
   rejection_state_id?: string;
   member_ids: string[];
+  pre_rules?: TWorkflowRule[];
+  post_rules?: TWorkflowRule[];
   isDraft?: boolean;
 };
 
 export type TUpdateStateTransitionPayload = Partial<
-  Pick<TWorkflowStateTransition, "transition_state_id" | "rejection_state_id" | "member_ids">
+  Pick<
+    TWorkflowStateTransition,
+    "transition_state_id" | "rejection_state_id" | "member_ids" | "pre_rules" | "post_rules"
+  >
 >;
 
 export type TAddStateTransitionPayload = Omit<TWorkflowStateTransition, "id" | "isDraft"> & {
@@ -108,6 +128,7 @@ export interface IWorkflowTransition extends TWorkflowStateTransition {
   asJSON: TWorkflowStateTransition;
   isValid: boolean;
   hasUnsavedChanges: boolean;
+  totalScriptCount: number;
   unsavedChangesPayload: TUpdateStateTransitionPayload;
   mutate: (data: Partial<TWorkflowStateTransition>) => void;
   update: (workspaceSlug: string, projectId: string, workflowId: string) => Promise<void>;
@@ -116,12 +137,13 @@ export interface IWorkflowTransition extends TWorkflowStateTransition {
 
 // WORKFLOW STATES
 
-export type TWorkflowSidebarStep = "flow_type" | "states" | "members";
+export type TWorkflowSidebarStep = "flow_type" | "states" | "members" | "conditions";
 
 export const WORKFLOW_SIDEBAR_STEPS: { id: TWorkflowSidebarStep; label: string }[] = [
   { id: "flow_type", label: "Flow" },
   { id: "states", label: "States" },
   { id: "members", label: "Members" },
+  { id: "conditions", label: "Conditions" },
 ];
 
 export interface IWorkflowSidebarHelper {

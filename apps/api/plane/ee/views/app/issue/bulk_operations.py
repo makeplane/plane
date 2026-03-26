@@ -237,6 +237,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                     issue=issue,
                     new_state_id=properties.get("state_id"),
                     user_id=request.user.id,
+                    run_hooks=False,  # bulk: hooks fire per-issue before bulk_update commits — skip
                 ):
                     return Response(
                         {

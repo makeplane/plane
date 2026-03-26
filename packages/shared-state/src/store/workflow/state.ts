@@ -183,6 +183,8 @@ export class WorkflowState implements IWorkflowState {
       transition_state_id: data.transition_state_id,
       rejection_state_id: data.rejection_state_id,
       member_ids: data.member_ids,
+      pre_rules: data.pre_rules ?? [],
+      post_rules: data.post_rules ?? [],
     };
     const response = await this.workflowService.addStateTransition(workspaceSlug, projectId, workflowId, payload);
 

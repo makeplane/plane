@@ -30,6 +30,8 @@ from plane.ee.models import (
     Workflow,
     WorkflowState,
     WorkflowTransition,
+    WorkflowTransitionHook,
+    WorkflowTransitionHookPhase,
     WorkflowWorkItemType,
     WorkflowTransitionApprover,
 )
@@ -77,8 +79,20 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
 
         workflow_transitions_qs = list(
             WorkflowTransition.objects.filter(filter_condition).values(
-                "id", "transition_state_id", "workflow_state_id", "rejection_state_id"
+                "id",
+                "transition_state_id",
+                "workflow_state_id",
+                "rejection_state_id",
             )
+        )
+        workflow_transition_rules_qs = list(
+            WorkflowTransitionHook.objects.filter(
+                workspace__slug=slug,
+                is_enabled=True,
+                deleted_at__isnull=True,
+            )
+            .order_by("workflow_transition_id", "phase", "execution_order", "created_at")
+            .values("workflow_transition_id", "phase", "handler_name", "hook_type", "config")
         )
         workflow_transition_approvers_qs = list(
             WorkflowTransitionApprover.objects.filter(filter_condition).values("workflow_transition_id", "approver_id")
@@ -96,6 +110,17 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
         workflow_transitions_map = defaultdict(list)
         for wt in workflow_transitions_qs:
             workflow_transitions_map[wt["workflow_state_id"]].append(wt)
+
+        workflow_transition_rules_map = defaultdict(lambda: {"pre_rules": [], "post_rules": []})
+        for hook in workflow_transition_rules_qs:
+            target_key = "pre_rules" if hook["phase"] == WorkflowTransitionHookPhase.PRE else "post_rules"
+            workflow_transition_rules_map[hook["workflow_transition_id"]][target_key].append(
+                {
+                    "handler_name": hook["handler_name"],
+                    "rule_type": hook["hook_type"],
+                    "config": hook.get("config") or {},
+                }
+            )
 
         # Group work item types by workflow_id
         work_item_types_map = defaultdict(list)
@@ -130,6 +155,8 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
                                 if transition["rejection_state_id"]
                                 else None,
                                 "member_ids": workflow_transition_approvers_map.get(transition["id"], []),
+                                "pre_rules": workflow_transition_rules_map[transition["id"]]["pre_rules"],
+                                "post_rules": workflow_transition_rules_map[transition["id"]]["post_rules"],
                             }
                         )
                     states.append(

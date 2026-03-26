@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.conf import settings
 
@@ -17,9 +18,31 @@ from django.conf import settings
 from plane.db.models import ProjectBaseModel
 
 
+class WorkflowHookExecutionStatus(models.TextChoices):
+    PENDING = "pending", "Pending"
+    RUNNING = "running", "Running"
+    SUCCESS = "success", "Success"
+    FAILED = "failed", "Failed"
+
+
 class WorkflowStateType(models.TextChoices):
     TRANSITION = "transition"
     APPROVAL = "approval"
+
+
+class WorkflowApprovalType(models.TextChoices):
+    APPROVAL = "approve"
+    REJECTION = "reject"
+
+
+class WorkflowTransitionHookPhase(models.TextChoices):
+    PRE = "pre", "Pre"
+    POST = "post", "Post"
+
+
+class WorkflowTransitionHookType(models.TextChoices):
+    VALIDATION = "validation", "Validation"
+    ACTION = "action", "Action"
 
 
 class Workflow(ProjectBaseModel):
@@ -107,6 +130,78 @@ class WorkflowTransition(ProjectBaseModel):
         db_table = "workflow_transitions"
         verbose_name = "Workflow Transition"
         verbose_name_plural = "Workflow Transitions"
+
+    def _get_hooks(self, phase):
+        return list(
+            WorkflowTransitionHook.objects.filter(
+                workflow_transition=self,
+                phase=phase,
+                is_enabled=True,
+                deleted_at__isnull=True,
+            )
+            .order_by("execution_order", "created_at")
+            .values("handler_name", "config")
+        )
+
+    @property
+    def pre_rules(self):
+        return [
+            {
+                "handler_name": r["handler_name"],
+                "rule_type": WorkflowTransitionHookType.VALIDATION,
+                "config": r.get("config") or {},
+            }
+            for r in self._get_hooks(WorkflowTransitionHookPhase.PRE)
+        ]
+
+    @property
+    def post_rules(self):
+        return [
+            {
+                "handler_name": r["handler_name"],
+                "rule_type": WorkflowTransitionHookType.ACTION,
+                "config": r.get("config") or {},
+            }
+            for r in self._get_hooks(WorkflowTransitionHookPhase.POST)
+        ]
+
+
+class WorkflowTransitionHook(ProjectBaseModel):
+    SCRIPT_HANDLER_NAME = "run_script"
+
+    workflow_transition = models.ForeignKey(
+        WorkflowTransition,
+        on_delete=models.CASCADE,
+        related_name="hooks",
+    )
+    phase = models.CharField(max_length=32, choices=WorkflowTransitionHookPhase.choices)
+    name = models.CharField(max_length=255, blank=True, default="")
+    hook_type = models.CharField(max_length=32, choices=WorkflowTransitionHookType.choices)
+    execution_order = models.PositiveIntegerField(default=0)
+    is_enabled = models.BooleanField(default=True)
+    handler_name = models.CharField(
+        max_length=100,
+        help_text="Handler to execute for this hook (e.g., run_script, change_property, trigger_webhook)",
+    )
+    config = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        db_table = "workflow_transition_hooks"
+        verbose_name = "Workflow Transition Hook"
+        verbose_name_plural = "Workflow Transition Hooks"
+        ordering = ("phase", "execution_order", "created_at")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workflow_transition", "phase", "execution_order"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workflow_transition_hook_unique_order_per_phase",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["workflow_transition", "phase"]),
+            models.Index(fields=["workflow_transition", "hook_type"]),
+            models.Index(fields=["handler_name"]),
+        ]
 
 
 class WorkflowTransitionApprover(ProjectBaseModel):
@@ -212,3 +307,49 @@ class WorkflowTransitionActivity(ProjectBaseModel):
     def __str__(self):
         """Return workflow of the comment"""
         return str(self.workflow)
+
+
+class WorkflowTransitionHookStatus(ProjectBaseModel):
+    """Tracks each script execution triggered by a workflow transition hook."""
+
+    workflow_transition_hook = models.ForeignKey(
+        WorkflowTransitionHook,
+        on_delete=models.CASCADE,
+        related_name="script_executions",
+    )
+    issue = models.ForeignKey(
+        "db.Issue",
+        on_delete=models.CASCADE,
+        related_name="workflow_script_executions",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=WorkflowHookExecutionStatus.choices,
+        default=WorkflowHookExecutionStatus.PENDING,
+    )
+    started_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    input_data = models.JSONField(default=dict)
+    output_data = models.JSONField(default=dict, blank=True)
+    error_message = models.TextField(blank=True)
+    retry_count = models.PositiveIntegerField(
+        default=0,
+        validators=[MaxValueValidator(5)],
+    )
+
+    class Meta:
+        db_table = "workflow_transition_hook_statuses"
+        verbose_name = "Workflow Transition Hook Status"
+        verbose_name_plural = "Workflow Transition Hook Statuses"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["workflow_transition_hook", "status"]),
+            models.Index(fields=["issue", "status"]),
+            models.Index(fields=["status", "started_at"]),
+        ]
+
+    @property
+    def duration(self):
+        if self.started_at and self.completed_at:
+            return self.completed_at - self.started_at
+        return None

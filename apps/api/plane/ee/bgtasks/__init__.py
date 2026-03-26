@@ -26,3 +26,4 @@ from .merge_issue_type_task import (
     move_project_issue_types_to_workspace_orchestrator,
     move_project_issue_types_to_workspace_sequential,
 )
+from .workflow_post_actions_task import run_workflow_post_actions

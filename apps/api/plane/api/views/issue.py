@@ -17,7 +17,7 @@ import uuid
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponseRedirect
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import (
     Case,
     CharField,
@@ -670,6 +670,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
+    @transaction.atomic
     def put(self, request, slug, project_id):
         """Update or create work item
 
@@ -846,6 +847,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @transaction.atomic
     def patch(self, request, slug, project_id, pk):
         """Update work item
 

@@ -42,13 +42,29 @@ export const DEFAULT_WORKFLOW_TRANSITION_SCRIPT_FORM_DATA: RunnerScriptFormData 
   name: "",
   code: `// Plane Runner Script for Workflow Transition
 // Type 'Plane.' to see available APIs with full IntelliSense!
+// Pre-Validation Script Return Rules
+
+// 1. Return { success: true } → allow transition
+// 2. Return { success: false } → block transition
+// 3. throw new Error("reason") → block transition with message
 
 export async function main(input, variables) {
   const { event, context } = input;
-  const workflowTransitionId = context.workflow_transition_id;
-  const workflowTransition = await Plane.workflowTransitions.retrieve(workspaceSlug, workflowTransitionId);
-  console.log("Workflow Transition:", workflowTransition);
-  return { success: true, workflowTransition };
+  const issueId = event.entity_id;
+  const projectId = event.project_id;
+
+  // Fetch the issue by id
+  const workItem = await Plane.workItems.retrieve(workspaceSlug, projectId, issueId);
+
+  // Check if priority is set
+  const hasPriority = workItem.priority !== null && workItem.priority !== "none";
+
+  console.log("Work Item:", workItem.id, "Priority:", workItem.priority, "Has Priority:", hasPriority);
+  if (!hasPriority) {
+    console.log("priority is not right")
+    return { "success": false }
+  } 
+  return { success: true };
 }
 `,
   env_variables: [

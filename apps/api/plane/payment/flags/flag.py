@@ -142,6 +142,8 @@ class FeatureFlag(Enum):
     MANAGE_ISSUE_SUBSCRIBERS = "MANAGE_ISSUE_SUBSCRIBERS"
     # Timeline dependency
     TIMELINE_DEPENDENCY = "TIMELINE_DEPENDENCY"
+    # Workflow scripts (pre/post transition hooks)
+    WORKFLOW_CONDITIONS = "WORKFLOW_CONDITIONS"
 
 
 class AdminFeatureFlag(Enum):

@@ -10,12 +10,18 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+import logging
 import uuid
+
+# Django imports
+from django.db import transaction
 
 # Module imports
 from plane.db.models import Issue, State
+from plane.ee.bgtasks.workflow_post_actions_task import run_workflow_post_actions
 from plane.ee.models import (
     Workflow,
+    WorkflowApprovalType,
     WorkflowState,
     ProjectFeature,
     WorkflowStateType,
@@ -23,8 +29,11 @@ from plane.ee.models import (
     WorkflowWorkItemType,
     WorkflowTransitionApprover,
 )
+from plane.ee.services import WorkflowTransitionExecutor
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+
+logger = logging.getLogger(__name__)
 
 
 class WorkflowStateManager:
@@ -78,14 +87,88 @@ class WorkflowStateManager:
             is_default=True,
         ).first()
 
-    def validate_state_transition(self, issue: Issue, new_state_id: int, user_id: int) -> bool:
+    def run_transition_hooks(
+        self,
+        issue: Issue,
+        new_state_id,
+        workflow_state_id: str,
+        workflow_type: WorkflowStateType,
+        approval_type: WorkflowApprovalType = None,
+    ) -> bool:
+        """
+        Run pre-validation hooks synchronously and schedule post-action hooks.
+
+        Returns False if a pre-validation hook blocks the transition.
+        Fails open (returns True) on any unexpected error so a runner outage
+        never blocks a state change.
+
+        Callers MUST be inside @transaction.atomic — on_commit fires after
+        the outermost transaction commits, ensuring post-hooks run only after
+        serializer.save() has succeeded.
+        """
+        try:
+            executor = WorkflowTransitionExecutor()
+            transition = executor.get_transition(
+                project_id=self.project_id,
+                to_state_id=new_state_id,
+                workflow_state_id=workflow_state_id,
+                workflow_type=workflow_type,
+                approval_type=approval_type,
+            )
+            if not transition:
+                return True
+
+            # PRE: nested atomic so any DB error inside the hook rolls back
+            # the savepoint cleanly without poisoning the outer transaction.
+            try:
+                with transaction.atomic():
+                    result = executor.run_pre_validation(issue, transition)
+            except Exception as exc:
+                logger.exception(
+                    "Pre-validation hook error — failing open | issue_id=%s error=%s",
+                    issue.id,
+                    exc,
+                )
+                return True
+
+            if not result.allowed:
+                return False
+
+            # POST: schedule to run after the outer transaction commits.
+            _issue_id = str(issue.id)
+            _transition_id = str(transition.id)
+            _project_id = str(self.project_id)
+            transaction.on_commit(
+                lambda: run_workflow_post_actions.delay(
+                    issue_id=_issue_id,
+                    transition_id=_transition_id,
+                    project_id=_project_id,
+                )
+            )
+            return True
+
+        except Exception as exc:
+            logger.exception(
+                "Workflow hook error — allowing transition | issue_id=%s error=%s",
+                issue.id,
+                exc,
+            )
+            return True
+
+    def validate_state_transition(self, issue: Issue, new_state_id: int, user_id: int, run_hooks: bool = True) -> bool:
         """
         Validate if a state transition is allowed for the given issue and user.
 
         Args:
-            issue: The issue being updated
+            issue:       The issue being updated
             new_state_id: The target state ID
-            user_id: The ID of the user attempting the transition
+            user_id:     The ID of the user attempting the transition
+            run_hooks:   Whether to run pre-validation hooks and schedule post-action
+                         hooks via on_commit. Pass False for bulk operations, intake
+                         issues (pending acceptance), and draft issues where hooks
+                         should not fire. Callers that pass True MUST be wrapped in
+                         @transaction.atomic so that on_commit fires after the save,
+                         not immediately.
 
         Returns:
             bool: True if the transition is allowed, False otherwise
@@ -142,14 +225,23 @@ class WorkflowStateManager:
                 workflow_state_id=workflow_state.id,
             )
 
-            # If no approvers are defined, allow all users
-            if not allowed_approvers:
-                return True
-
-            if user_id not in allowed_approvers:
+            if allowed_approvers and user_id not in allowed_approvers:
                 return False
 
-            # Transition is allowed
+            if (
+                check_workspace_feature_flag(
+                    slug=self.slug, feature_key=FeatureFlag.WORKFLOW_CONDITIONS, user_id=user_id
+                )
+                and run_hooks
+            ):
+                return self.run_transition_hooks(
+                    issue,
+                    new_state_id,
+                    workflow_state_id=workflow_state.id,
+                    workflow_type=WorkflowStateType.TRANSITION,
+                    approval_type=None,
+                )
+
             return True
 
         else:

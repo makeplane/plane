@@ -13,6 +13,7 @@
 import json
 
 # Django imports
+from django.db import transaction
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -34,9 +35,10 @@ from plane.ee.models import (
 )
 from plane.ee.serializers import WorkflowTransitionActorSerializer
 from plane.ee.permissions import allow_permission, ROLE
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
+from plane.ee.utils.workflow import WorkflowStateManager
 from plane.app.serializers.issue import IssueSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.webhook_task import model_activity
@@ -214,29 +216,50 @@ class WorkflowWorkItemApproverEndpoint(BaseAPIView):
 
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
 
-        issue.state_id = new_state_id
-        issue.save()
+        with transaction.atomic():
+            # Run pre-validation and schedule post-actions via the shared util when
+            # the feature flag is enabled. Fails open so a runner outage never blocks an approval.
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.WORKFLOW_CONDITIONS,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                workflow_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+                if not workflow_manager.run_transition_hooks(
+                    issue,
+                    new_state_id,
+                    workflow_state_id=workflow_state.id,
+                    workflow_type=WorkflowStateType.APPROVAL,
+                    approval_type=action_type,
+                ):
+                    return Response(
+                        {"error": "Pre-validation hook blocked this transition"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        issue_activity.delay(
-            type="issue.activity.updated",
-            requested_data=json.dumps({"state_id": str(new_state_id)}),
-            actor_id=str(request.user.id),
-            issue_id=str(work_item_id),
-            project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
-        model_activity.delay(
-            model_name="issue",
-            model_id=str(work_item_id),
-            requested_data=request.data,
-            current_instance=current_instance,
-            actor_id=request.user.id,
-            slug=slug,
-            origin=base_host(request=request, is_app=True),
-        )
+            issue.state_id = new_state_id
+            issue.save()
+
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps({"state_id": str(new_state_id)}),
+                actor_id=str(request.user.id),
+                issue_id=str(work_item_id),
+                project_id=str(project_id),
+                current_instance=current_instance,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(work_item_id),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
 
         return Response(
             {"state_id": str(new_state_id)},
