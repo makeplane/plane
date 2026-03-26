@@ -24,9 +24,9 @@ Activates a deactivated user account by their email address. Use this when a use
 python manage.py activate_user user@example.com
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `email` | Yes | Email of the user to activate |
+| Argument | Required | Description                   |
+| -------- | -------- | ----------------------------- |
+| `email`  | Yes      | Email of the user to activate |
 
 ---
 
@@ -38,10 +38,10 @@ Transfers workspace ownership to a different user. The specified user is set as 
 python manage.py change_ownership --email new-owner@example.com --workspace_slug my-workspace
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--email` | Yes | New owner's email |
-| `--workspace_slug` | Yes | Workspace slug |
+| Argument           | Required | Description       |
+| ------------------ | -------- | ----------------- |
+| `--email`          | Yes      | New owner's email |
+| `--workspace_slug` | Yes      | Workspace slug    |
 
 ---
 
@@ -54,9 +54,9 @@ python manage.py clear_cache
 python manage.py clear_cache --key my_cache_key
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--key` | No | Specific cache key to clear |
+| Argument | Required | Description                 |
+| -------- | -------- | --------------------------- |
+| `--key`  | No       | Specific cache key to clear |
 
 ---
 
@@ -108,14 +108,14 @@ python manage.py copy_project \
   --background
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--source-workspace-slug` | Yes | Source workspace slug |
-| `--source-project-identifier` | Yes | Source project identifier |
-| `--target-workspace-slug` | Yes | Target workspace slug |
-| `--new-project-name` | No | Name for the copied project |
-| `--new-project-identifier` | No | Identifier for the copied project |
-| `--background` | No | Run via Celery background task |
+| Argument                      | Required | Description                       |
+| ----------------------------- | -------- | --------------------------------- |
+| `--source-workspace-slug`     | Yes      | Source workspace slug             |
+| `--source-project-identifier` | Yes      | Source project identifier         |
+| `--target-workspace-slug`     | Yes      | Target workspace slug             |
+| `--new-project-name`          | No       | Name for the copied project       |
+| `--new-project-identifier`    | No       | Identifier for the copied project |
+| `--background`                | No       | Run via Celery background task    |
 
 ---
 
@@ -158,9 +158,9 @@ python manage.py create_dummy_data
 python manage.py create_dummy_data --workspace_slug my-workspace
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--workspace_slug` | No | Target workspace slug |
+| Argument           | Required | Description           |
+| ------------------ | -------- | --------------------- |
+| `--workspace_slug` | No       | Target workspace slug |
 
 ---
 
@@ -172,9 +172,9 @@ Adds a user as an instance administrator, giving them access to the admin panel 
 python manage.py create_instance_admin admin@example.com
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `admin_email` | Yes | Email of the user to make admin |
+| Argument      | Required | Description                     |
+| ------------- | -------- | ------------------------------- |
+| `admin_email` | Yes      | Email of the user to make admin |
 
 ---
 
@@ -186,9 +186,9 @@ Creates a user profile for the given email address. If a profile already exists,
 python manage.py create_profile user@example.com
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `email` | Yes | User email address |
+| Argument | Required | Description        |
+| -------- | -------- | ------------------ |
+| `email`  | Yes      | User email address |
 
 ---
 
@@ -201,11 +201,11 @@ python manage.py create_project_member
 python manage.py create_project_member --project_id <uuid> --user_email user@example.com --role 20
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--project_id` | No | Project UUID |
-| `--user_email` | No | User email address |
-| `--role` | No | Role level in the project |
+| Argument       | Required | Description               |
+| -------------- | -------- | ------------------------- |
+| `--project_id` | No       | Project UUID              |
+| `--user_email` | No       | User email address        |
+| `--role`       | No       | Role level in the project |
 
 ---
 
@@ -217,9 +217,9 @@ Permanently deletes a user account and cleans up associated token constraints. U
 python manage.py delete_user --email user@example.com
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--email` | Yes | Email of the user to delete |
+| Argument  | Required | Description                 |
+| --------- | -------- | --------------------------- |
+| `--email` | Yes      | Email of the user to delete |
 
 ---
 
@@ -241,9 +241,9 @@ Fixes duplicate issue sequence IDs within a project using PostgreSQL advisory lo
 python manage.py fix_duplicate_sequences PROJECT-123
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `issue_identifier` | Yes | Issue identifier (e.g., `PROJECT-123`) |
+| Argument           | Required | Description                            |
+| ------------------ | -------- | -------------------------------------- |
+| `issue_identifier` | Yes      | Issue identifier (e.g., `PROJECT-123`) |
 
 ---
 
@@ -258,12 +258,12 @@ python manage.py fix_workspace_duplicate_sequences my-workspace --dry-run
 python manage.py fix_workspace_duplicate_sequences my-workspace --auto-confirm
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `workspace_slug` | Yes | Workspace slug |
-| `--project-id` | No | Limit to a specific project |
-| `--dry-run` | No | Preview changes without applying |
-| `--auto-confirm` | No | Skip confirmation prompts |
+| Argument         | Required | Description                      |
+| ---------------- | -------- | -------------------------------- |
+| `workspace_slug` | Yes      | Workspace slug                   |
+| `--project-id`   | No       | Limit to a specific project      |
+| `--dry-run`      | No       | Preview changes without applying |
+| `--auto-confirm` | No       | Skip confirmation prompts        |
 
 ---
 
@@ -275,9 +275,9 @@ Generates EntityProgress data for a specific cycle by replaying issue state acti
 python manage.py generate_cycle_progress <cycle_uuid>
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `cycle_id` | Yes | Cycle UUID |
+| Argument   | Required | Description |
+| ---------- | -------- | ----------- |
+| `cycle_id` | Yes      | Cycle UUID  |
 
 ---
 
@@ -341,12 +341,12 @@ python manage.py invalidate_passwords --csv /path/to/emails.csv --column email_a
 python manage.py invalidate_passwords --email user@example.com --dry-run
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--email` | One of `--email` or `--csv` | Comma-separated email addresses |
-| `--csv` | One of `--email` or `--csv` | Path to CSV file with emails |
-| `--column` | No | CSV column name (default: `email`) |
-| `--dry-run` | No | Preview changes without applying |
+| Argument    | Required                    | Description                        |
+| ----------- | --------------------------- | ---------------------------------- |
+| `--email`   | One of `--email` or `--csv` | Comma-separated email addresses    |
+| `--csv`     | One of `--email` or `--csv` | Path to CSV file with emails       |
+| `--column`  | No                          | CSV column name (default: `email`) |
+| `--dry-run` | No                          | Preview changes without applying   |
 
 ---
 
@@ -362,18 +362,20 @@ python manage.py license_check
 
 ## `manage_search_index`
 
-Manages the OpenSearch index with support for background execution via Celery and optional vectorization. Acts as a wrapper around OpenSearch index operations, making it easy to trigger re-indexing and vector embedding generation.
+Manages the OpenSearch index with support for background execution via Celery and optional vectorization. Acts as a wrapper around OpenSearch index operations, making it easy to trigger re-indexing and vector embedding generation. Note that the `docs_semantic` index is managed out-of-band; however, to maintain a consistent CLI experience, it is automatically included when operating on all indices, and the command natively parses `--indices docs_semantic` to allow targeting it specifically.
 
 ```bash
 python manage.py manage_search_index
 python manage.py manage_search_index --background
 python manage.py manage_search_index --background --vectorize
+python manage.py manage_search_index index rebuild --force
+python manage.py manage_search_index index rebuild --indices docs_semantic --force
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--background` | No | Run via Celery background task |
-| `--vectorize` | No | Trigger vectorization after indexing (requires `--background`) |
+| Argument       | Required | Description                                                    |
+| -------------- | -------- | -------------------------------------------------------------- |
+| `--background` | No       | Run via Celery background task                                 |
+| `--vectorize`  | No       | Trigger vectorization after indexing (requires `--background`) |
 
 ---
 
@@ -386,10 +388,10 @@ python manage.py migrate_intake_notifications
 python manage.py migrate_intake_notifications --dry-run --batch-size 500
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--dry-run` | No | Preview changes without applying |
-| `--batch-size` | No | Records per batch (default: 1000) |
+| Argument       | Required | Description                       |
+| -------------- | -------- | --------------------------------- |
+| `--dry-run`    | No       | Preview changes without applying  |
+| `--batch-size` | No       | Records per batch (default: 1000) |
 
 ---
 
@@ -404,11 +406,11 @@ python manage.py monitor_search_queue cleanup
 python manage.py monitor_search_queue force-drain
 ```
 
-| Subcommand | Description |
-|---|---|
-| `status` | Show current queue status (default) |
-| `watch` | Watch queues in real-time |
-| `cleanup` | Clean up stale queues |
+| Subcommand    | Description                           |
+| ------------- | ------------------------------------- |
+| `status`      | Show current queue status (default)   |
+| `watch`       | Watch queues in real-time             |
+| `cleanup`     | Clean up stale queues                 |
 | `force-drain` | Emergency force drain (**dangerous**) |
 
 ---
@@ -432,10 +434,10 @@ python manage.py publish_template <template_id>
 python manage.py publish_template <template_id> --action unpublish
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `template_id` | Yes | Template UUID |
-| `--action` | No | `publish` or `unpublish` (default: `publish`) |
+| Argument      | Required | Description                                   |
+| ------------- | -------- | --------------------------------------------- |
+| `template_id` | Yes      | Template UUID                                 |
+| `--action`    | No       | `publish` or `unpublish` (default: `publish`) |
 
 ---
 
@@ -447,9 +449,9 @@ Registers a community edition instance with the Plane service and syncs version 
 python manage.py register_instance <machine_signature>
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `machine_signature` | Yes | Machine signature string |
+| Argument            | Required | Description              |
+| ------------------- | -------- | ------------------------ |
+| `machine_signature` | Yes      | Machine signature string |
 
 ---
 
@@ -461,9 +463,9 @@ Registers a commercial/enterprise edition instance with the Prime server. Simila
 python manage.py register_instance_ee <machine_signature>
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `machine_signature` | Yes | Machine signature string |
+| Argument            | Required | Description              |
+| ------------------- | -------- | ------------------------ |
+| `machine_signature` | Yes      | Machine signature string |
 
 ---
 
@@ -485,9 +487,9 @@ Interactively resets a user's password. Prompts for the new password and validat
 python manage.py reset_password user@example.com
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `email` | Yes | Email of the user |
+| Argument | Required | Description       |
+| -------- | -------- | ----------------- |
+| `email`  | Yes      | Email of the user |
 
 ---
 
@@ -529,9 +531,9 @@ Splits GitHub entity connections that haven't been migrated to the new schema. T
 python manage.py split_remaining_github_econnections --entity_connections_ids_not_split id1,id2,id3
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `--entity_connections_ids_not_split` | No | Comma-separated list of connection IDs |
+| Argument                             | Required | Description                            |
+| ------------------------------------ | -------- | -------------------------------------- |
+| `--entity_connections_ids_not_split` | No       | Comma-separated list of connection IDs |
 
 ---
 
@@ -545,10 +547,10 @@ python manage.py startup commercial --machine-signature <signature>
 python manage.py startup community
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `edition` | Yes | `cloud`, `commercial`, or `community` |
-| `--machine-signature` | No | Machine signature for registration |
+| Argument              | Required | Description                           |
+| --------------------- | -------- | ------------------------------------- |
+| `edition`             | Yes      | `cloud`, `commercial`, or `community` |
+| `--machine-signature` | No       | Machine signature for registration    |
 
 ---
 
@@ -610,9 +612,9 @@ Sends a test email to a specified recipient to verify that the email configurati
 python manage.py test_email recipient@example.com
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `to_email` | Yes | Recipient email address |
+| Argument   | Required | Description             |
+| ---------- | -------- | ----------------------- |
+| `to_email` | Yes      | Recipient email address |
 
 ---
 
@@ -665,10 +667,10 @@ python manage.py update_deleted_workspace_slug my-workspace
 python manage.py update_deleted_workspace_slug my-workspace --dry-run
 ```
 
-| Argument | Required | Description |
-|---|---|---|
-| `slug` | Yes | Workspace slug to update |
-| `--dry-run` | No | Preview changes without applying |
+| Argument    | Required | Description                      |
+| ----------- | -------- | -------------------------------- |
+| `slug`      | Yes      | Workspace slug to update         |
+| `--dry-run` | No       | Preview changes without applying |
 
 ---
 
@@ -698,17 +700,17 @@ python manage.py update_marketplace_app skip-app-authorization <app_id>
 python manage.py update_marketplace_app mandate-app-authorization <app_id>
 ```
 
-| Subcommand | Description |
-|---|---|
-| `assign-owner` | Assign a workspace as app owner |
-| `publish` | Publish the app (with optional timestamp) |
-| `unpublish` | Unpublish the app |
-| `make-app-internal` | Mark app as internal |
-| `make-app-external` | Mark app as external |
-| `set-app-priority` | Set app display priority |
-| `set-app-status` | Set app status |
-| `skip-app-authorization` | Allow skipping authorization |
-| `mandate-app-authorization` | Require authorization |
+| Subcommand                  | Description                               |
+| --------------------------- | ----------------------------------------- |
+| `assign-owner`              | Assign a workspace as app owner           |
+| `publish`                   | Publish the app (with optional timestamp) |
+| `unpublish`                 | Unpublish the app                         |
+| `make-app-internal`         | Mark app as internal                      |
+| `make-app-external`         | Mark app as external                      |
+| `set-app-priority`          | Set app display priority                  |
+| `set-app-status`            | Set app status                            |
+| `skip-app-authorization`    | Allow skipping authorization              |
+| `mandate-app-authorization` | Require authorization                     |
 
 ---
 
