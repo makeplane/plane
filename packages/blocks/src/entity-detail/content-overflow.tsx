@@ -28,6 +28,7 @@ export function ContentOverflow(props: ContentOverflowProps) {
     customButton,
     showMoreLabel = "Show all",
     showLessLabel = "Show less",
+    forceExpanded = false,
   } = props;
 
   const { ref: contentRef, height: contentHeight } = useContentHeight();
@@ -79,12 +80,13 @@ export function ContentOverflow(props: ContentOverflowProps) {
 
   const isMeasured = contentHeight !== null;
   const isOverflowing = isMeasured && contentHeight > maxHeight;
+  const expanded = isExpanded || forceExpanded;
 
   // Before measurement: cap with max-height to prevent flash of full content
   // After measurement: use explicit height for smooth CSS transition
   const clipStyle: CSSProperties = isMeasured
     ? isOverflowing
-      ? { height: isExpanded ? contentHeight : maxHeight }
+      ? { height: expanded ? contentHeight : maxHeight }
       : {}
     : { maxHeight: `${maxHeight}px` };
 
@@ -93,14 +95,14 @@ export function ContentOverflow(props: ContentOverflowProps) {
       <div
         ref={containerRef}
         className={cn("relative", {
-          "overflow-hidden": !isMeasured || (isOverflowing && (!isExpanded || isTransitioning)),
+          "overflow-hidden": !isMeasured || (isOverflowing && (!expanded || isTransitioning)),
           "transition-[height] duration-300 ease-in-out": isOverflowing,
         })}
         style={clipStyle}
       >
         <div ref={contentRef}>{children}</div>
 
-        {isOverflowing && !isExpanded && (
+        {isOverflowing && !expanded && (
           <div className="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-surface-1 to-transparent pointer-events-none" />
         )}
       </div>
@@ -108,16 +110,16 @@ export function ContentOverflow(props: ContentOverflowProps) {
       {isOverflowing && (
         <div style={{ pointerEvents: isTransitioning ? "none" : "auto" }}>
           {customButton ? (
-            customButton({ toggle: handleToggle, isExpanded })
+            customButton({ toggle: handleToggle, isExpanded: expanded })
           ) : (
             <button
               type="button"
               className={cn("mt-1 text-accent-primary text-body-sm-regular", buttonClassName)}
               onClick={handleToggle}
               disabled={isTransitioning}
-              aria-expanded={isExpanded}
+              aria-expanded={expanded}
             >
-              {isExpanded ? showLessLabel : showMoreLabel}
+              {expanded ? showLessLabel : showMoreLabel}
             </button>
           )}
         </div>

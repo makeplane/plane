@@ -78,6 +78,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   const editorRef = useRef<EditorRefApi>(null);
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // hooks
   const { t } = useTranslation();
   const windowSize = useSize();
@@ -162,27 +163,31 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           buttonClassName="text-left"
           showMoreLabel={t("show_all")}
           showLessLabel={t("show_less")}
+          forceExpanded={isDescriptionExpanded}
         >
-          <DescriptionInput
-            issueSequenceId={issue.sequence_id}
-            containerClassName="-ml-6 border-none p-0! pl-6!"
-            disabled={isArchived || !isEditable}
-            editorRef={editorRef}
-            entityId={issue.id}
-            fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-            initialValue={issue.description_html}
-            key={issue.id}
-            onSubmit={async (value, isMigrationUpdate) => {
-              if (!issue.id || !issue.project_id) return;
-              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-                description_html: value.description_html,
-                ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-              });
-            }}
-            projectId={issue.project_id}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-            workspaceSlug={workspaceSlug}
-          />
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+          <div onFocus={() => setIsDescriptionExpanded(true)}>
+            <DescriptionInput
+              issueSequenceId={issue.sequence_id}
+              containerClassName="-ml-6 border-none p-0! pl-6!"
+              disabled={isArchived || !isEditable}
+              editorRef={editorRef}
+              entityId={issue.id}
+              fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+              initialValue={issue.description_html}
+              key={issue.id}
+              onSubmit={async (value, isMigrationUpdate) => {
+                if (!issue.id || !issue.project_id) return;
+                await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+                  description_html: value.description_html,
+                  ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+                });
+              }}
+              projectId={issue.project_id}
+              setIsSubmitting={(value) => setIsSubmitting(value)}
+              workspaceSlug={workspaceSlug}
+            />
+          </div>
         </ContentOverflow>
 
         <div className="flex items-center justify-between gap-2 mt-4">

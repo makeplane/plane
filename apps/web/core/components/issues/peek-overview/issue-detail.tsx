@@ -12,7 +12,7 @@
  */
 
 import type { FC } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ContentOverflow } from "@plane/blocks/entity-detail";
@@ -70,6 +70,8 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
+  // states
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -148,27 +150,31 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         buttonClassName="text-left"
         showMoreLabel={t("show_all")}
         showLessLabel={t("show_less")}
+        forceExpanded={isDescriptionExpanded}
       >
-        <DescriptionInput
-          issueSequenceId={issue.sequence_id}
-          containerClassName="-ml-3 border-none"
-          disabled={disabled || isArchived}
-          editorRef={editorRef}
-          entityId={issue.id}
-          fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-          initialValue={issueDescription}
-          key={issue.id}
-          onSubmit={async (value, isMigrationUpdate) => {
-            if (!issue.id || !issue.project_id) return;
-            await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-              description_html: value.description_html,
-              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-            });
-          }}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-          projectId={issue.project_id}
-          workspaceSlug={workspaceSlug}
-        />
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div onFocus={() => setIsDescriptionExpanded(true)}>
+          <DescriptionInput
+            issueSequenceId={issue.sequence_id}
+            containerClassName="-ml-3 border-none"
+            disabled={disabled || isArchived}
+            editorRef={editorRef}
+            entityId={issue.id}
+            fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+            initialValue={issueDescription}
+            key={issue.id}
+            onSubmit={async (value, isMigrationUpdate) => {
+              if (!issue.id || !issue.project_id) return;
+              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+                description_html: value.description_html,
+                ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+              });
+            }}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            projectId={issue.project_id}
+            workspaceSlug={workspaceSlug}
+          />
+        </div>
       </ContentOverflow>
 
       <div className="flex items-center justify-between gap-2 mt-4">

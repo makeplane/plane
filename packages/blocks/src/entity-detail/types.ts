@@ -22,4 +22,5 @@ export type ContentOverflowProps = {
   customButton?: (props: { toggle: () => void; isExpanded: boolean }) => ReactNode;
   showMoreLabel?: string;
   showLessLabel?: string;
+  forceExpanded?: boolean;
 };
