@@ -19,7 +19,7 @@ export const DEFAULT_AUTOMATION_SCRIPT_FORM_DATA: RunnerScriptFormData = {
   code: `// Plane Runner Script for Automation
 // Type 'Plane.' to see available APIs with full IntelliSense!
 
-export async function main(input, variables) {
+export async function main(input: AutomationEventInput, variables: Record<string, string>) {
   const { event, context } = input;
   const workItemId = event.payload.data.id;
   const projectId = event.project_id;
@@ -48,7 +48,7 @@ export const DEFAULT_WORKFLOW_TRANSITION_SCRIPT_FORM_DATA: RunnerScriptFormData 
 // 2. Return { success: false } → block transition
 // 3. throw new Error("reason") → block transition with message
 
-export async function main(input, variables) {
+export async function main(input: WorkflowTransitionEventInput, variables: Record<string, string>) {
   const { event, context } = input;
   const issueId = event.entity_id;
   const projectId = event.project_id;
@@ -82,7 +82,7 @@ export const DEFAULT_CRON_TRIGGER_SCRIPT_FORM_DATA: RunnerScriptFormData = {
   code: `// Plane Runner Script for Cron Trigger
 // Type 'Plane.' to see available APIs with full IntelliSense!
 
-export async function main(variables) {
+export async function main(variables: Record<string, string>) {
   console.log("Cron Trigger:", variables);
   return { success: true, variables };
 }
