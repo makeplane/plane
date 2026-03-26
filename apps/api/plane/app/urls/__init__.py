@@ -25,6 +25,7 @@ from .exporter import urlpatterns as exporter_urls
 from .department import urlpatterns as department_urls
 from .staff import urlpatterns as staff_urls
 from .workflow import urlpatterns as workflow_urls
+from .task_category import urlpatterns as task_category_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -50,4 +51,5 @@ urlpatterns = [
     *department_urls,
     *staff_urls,
     *workflow_urls,
+    *task_category_urls,
 ]
