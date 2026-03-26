@@ -113,7 +113,7 @@ export function IssueTypeLogo(props: Props) {
         )}
         {!isEpic && showWorkItemTypeName && (
           <span className="text-body-xs-medium" style={{ color: foreground }}>
-            {truncateProjectIdentifierForDisplay(issueTypeName)}
+            {truncateProjectIdentifierForDisplay(issueTypeName, 12)}
           </span>
         )}
       </span>
