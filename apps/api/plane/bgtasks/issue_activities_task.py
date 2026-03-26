@@ -32,6 +32,7 @@ from plane.db.models import (
     User,
     EstimatePoint,
 )
+from plane.db.models.task_category import MainTaskCategory, SubTaskCategory
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
@@ -615,6 +616,88 @@ def track_closed_to(
         )
 
 
+# Track changes in main task category
+def track_main_task_category(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_id = current_instance.get("main_task_category_id") or current_instance.get("main_task_category")
+    requested_id = requested_data.get("main_task_category_id") or requested_data.get("main_task_category")
+
+    if current_id is not None and not is_valid_uuid(current_id):
+        current_id = None
+    if requested_id is not None and not is_valid_uuid(requested_id):
+        requested_id = None
+
+    if current_id != requested_id:
+        old_category = MainTaskCategory.objects.filter(pk=current_id).first() if current_id else None
+        new_category = MainTaskCategory.objects.filter(pk=requested_id).first() if requested_id else None
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_category.name if old_category else None,
+                new_value=new_category.name if new_category else None,
+                field="main_task_category",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the main task category to",
+                old_identifier=old_category.id if old_category else None,
+                new_identifier=new_category.id if new_category else None,
+                epoch=epoch,
+            )
+        )
+
+
+# Track changes in sub task category
+def track_sub_task_category(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_id = current_instance.get("sub_task_category_id") or current_instance.get("sub_task_category")
+    requested_id = requested_data.get("sub_task_category_id") or requested_data.get("sub_task_category")
+
+    if current_id is not None and not is_valid_uuid(current_id):
+        current_id = None
+    if requested_id is not None and not is_valid_uuid(requested_id):
+        requested_id = None
+
+    if current_id != requested_id:
+        old_category = SubTaskCategory.objects.filter(pk=current_id).first() if current_id else None
+        new_category = SubTaskCategory.objects.filter(pk=requested_id).first() if requested_id else None
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_category.name if old_category else None,
+                new_value=new_category.name if new_category else None,
+                field="sub_task_category",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the sub task category to",
+                old_identifier=old_category.id if old_category else None,
+                new_identifier=new_category.id if new_category else None,
+                epoch=epoch,
+            )
+        )
+
+
 def create_issue_activity(
     requested_data,
     current_instance,
@@ -678,11 +761,15 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        "main_task_category_id": track_main_task_category,
+        "sub_task_category_id": track_sub_task_category,
         # External endpoint keys
         "parent": track_parent,
         "state": track_state,
         "assignees": track_assignees,
         "labels": track_labels,
+        "main_task_category": track_main_task_category,
+        "sub_task_category": track_sub_task_category,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
