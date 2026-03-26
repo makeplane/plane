@@ -146,3 +146,5 @@ from .workflow import (
     WorkflowStateConfigSerializer,
     WorkflowTransitionSerializer,
 )
+
+from .task_category import MainTaskCategorySerializer, SubTaskCategorySerializer

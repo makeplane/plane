@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -17,7 +16,6 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
 import {
@@ -36,12 +34,14 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
+import { TaskCategoryFields } from "@/components/issues/issue-modal/components/task-category-fields";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useTaskCategory } from "@/hooks/store/use-task-category";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
@@ -74,7 +74,7 @@ export interface IssueFormProps {
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   showActionButtons?: boolean;
-  dataResetProperties?: any[];
+  dataResetProperties?: unknown[];
 }
 
 export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
@@ -139,6 +139,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
   const { getStateById } = useProjectState();
+  const { fetchCategories } = useTaskCategory();
 
   // form info
   const methods = useForm<TIssue>({
@@ -169,6 +170,12 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
+  // fetch task categories once on mount
+  useEffect(() => {
+    void fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   //reset few fields on projectId change
   useEffect(() => {
     if (isDirty) {
@@ -181,7 +188,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         reset(getUpdateFormDataForReset(projectId, getValues()));
       }
     }
-    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
+    if (projectId && routeProjectId !== projectId) void fetchCycles(workspaceSlug?.toString(), projectId);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
@@ -210,7 +217,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
-      handleTemplateChange({
+      void handleTemplateChange({
         workspaceSlug: workspaceSlug?.toString(),
         reset,
         editorRef,
@@ -251,13 +258,13 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         };
 
     // this condition helps to move the issues from draft to project issues
-    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+    if (Object.prototype.hasOwnProperty.call(formData, "is_draft")) submitData.is_draft = formData.is_draft;
 
     await onSubmit(submitData, is_draft_issue)
       .then(() => {
         setGptAssistantModal(false);
         if (isCreateMoreToggleEnabled && workItemTemplateId) {
-          handleTemplateChange({
+          void handleTemplateChange({
             workspaceSlug: workspaceSlug?.toString(),
             reset,
             editorRef,
@@ -272,6 +279,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
           });
           editorRef?.current?.clearEditor();
         }
+        return undefined;
       })
       .catch((error) => {
         console.error(error);
@@ -318,6 +326,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug?.toString(),
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     projectDetails?.workspace.toString(),
     projectId ?? undefined,
     {
@@ -344,7 +353,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     setSelectedParentIssue(
       convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
     );
-  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById, setSelectedParentIssue, workspaceSlug]);
 
   // executing this useEffect when isDirty changes
   useEffect(() => {
@@ -382,7 +391,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         <div className="rounded-lg w-full">
           <form
             ref={formRef}
-            onSubmit={handleSubmit((data) => handleFormSubmit(data))}
+            onSubmit={(e) => void handleSubmit((data) => handleFormSubmit(data))(e)}
             className="flex flex-col w-full"
           >
             <div className="p-5 rounded-t-lg bg-surface-1">
@@ -419,6 +428,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       renderChevron
                     />
                   )}
+                  <TaskCategoryFields control={control} handleFormChange={handleFormChange} />
                 </div>
                 {duplicateIssues.length > 0 && (
                   <DeDupeButtonRoot
@@ -523,6 +533,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                         if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                       }}
                       role="button"
+                      tabIndex={0}
                     >
                       <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
                       <span className="text-caption-sm-regular">{t("create_more")}</span>
@@ -566,7 +577,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                         variant="primary"
                         type="button"
                         loading={isMoving}
-                        onClick={handleMoveToProjects}
+                        onClick={() => void handleMoveToProjects()}
                         disabled={isMoving}
                         size="lg"
                       >

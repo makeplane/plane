@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
 // i18n
@@ -40,8 +40,10 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
+import { useTaskCategory } from "@/hooks/store/use-task-category";
 // plane web components
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import { TaskCategoryProperty } from "@/plane-web/components/issues/issue-details/sidebar/task-category-property";
 import { DueDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/due-date-property";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
@@ -72,6 +74,13 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
   const { validateTransition } = useDraftStateTransition();
+  const { fetchCategories } = useTaskCategory();
+
+  useEffect(() => {
+    void fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -149,6 +158,15 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority ? "text-placeholder" : ""}`}
           />
         </SidebarPropertyListItem>
+
+        <TaskCategoryProperty
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          issue={issue}
+          issueOperations={issueOperations}
+          isEditable={!disabled}
+        />
 
         <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
           <div className={cn("w-full", fieldErrors.includes("frequency") && "rounded border border-red-500")}>

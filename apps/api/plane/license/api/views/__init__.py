@@ -44,3 +44,10 @@ from .monitoring import (
     ScheduledJobMonitoringEndpoint,
     WorkerHealthMonitoringEndpoint,
 )
+
+from .task_category import (
+    InstanceMainTaskCategoryEndpoint,
+    InstanceMainTaskCategoryDetailEndpoint,
+    InstanceSubTaskCategoryEndpoint,
+    InstanceSubTaskCategoryDetailEndpoint,
+)

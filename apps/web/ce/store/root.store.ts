@@ -16,6 +16,8 @@ import type { IWorkflowStore } from "./workflow.store";
 import { WorkflowStore } from "./workflow.store";
 import type { IModuleActivityStore } from "./module-activity.store";
 import { ModuleActivityStore } from "./module-activity.store";
+import type { ITaskCategoryStore } from "./task-category.store";
+import { TaskCategoryStore } from "./task-category.store";
 
 export class RootStore extends CoreRootStore {
   timelineStore: ITimelineStore;
@@ -24,6 +26,7 @@ export class RootStore extends CoreRootStore {
   projectWorklog: ProjectWorklogStore;
   workflowStore: IWorkflowStore;
   moduleActivity: IModuleActivityStore;
+  taskCategoryStore: ITaskCategoryStore;
 
   constructor() {
     super();
@@ -34,5 +37,6 @@ export class RootStore extends CoreRootStore {
     this.projectWorklog = new ProjectWorklogStore();
     this.workflowStore = new WorkflowStore();
     this.moduleActivity = new ModuleActivityStore();
+    this.taskCategoryStore = new TaskCategoryStore();
   }
 }
