@@ -6,17 +6,17 @@ FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 # **************************************************
 FROM node:22-alpine AS node
 
-FROM artifacts.plane.so/makeplane/web-commercial:${PLANE_VERSION} AS web-img
-FROM artifacts.plane.so/makeplane/backend-commercial:${PLANE_VERSION} AS backend-img
-FROM artifacts.plane.so/makeplane/space-commercial:${PLANE_VERSION} AS space-img
-FROM artifacts.plane.so/makeplane/admin-commercial:${PLANE_VERSION} AS admin-img
-FROM artifacts.plane.so/makeplane/live-commercial:${PLANE_VERSION} AS live-img
-FROM artifacts.plane.so/makeplane/silo-commercial:${PLANE_VERSION} AS silo-img
-FROM artifacts.plane.so/makeplane/proxy-commercial:${PLANE_VERSION} AS proxy-img
-FROM artifacts.plane.so/makeplane/email-commercial:${PLANE_VERSION} AS email-img
-FROM artifacts.plane.so/makeplane/monitor-commercial:${PLANE_VERSION} AS monitor-img
-FROM artifacts.plane.so/makeplane/plane-pi-commercial:${PLANE_VERSION} AS pi-img
-FROM artifacts.plane.so/makeplane/iframely:v1.2.0 AS iframely-img
+FROM makeplane/web-commercial:${PLANE_VERSION} AS web-img
+FROM makeplane/backend-commercial:${PLANE_VERSION} AS backend-img
+FROM makeplane/space-commercial:${PLANE_VERSION} AS space-img
+FROM makeplane/admin-commercial:${PLANE_VERSION} AS admin-img
+FROM makeplane/live-commercial:${PLANE_VERSION} AS live-img
+FROM makeplane/silo-commercial:${PLANE_VERSION} AS silo-img
+FROM makeplane/proxy-commercial:${PLANE_VERSION} AS proxy-img
+FROM makeplane/email-commercial:${PLANE_VERSION} AS email-img
+FROM makeplane/monitor-commercial:${PLANE_VERSION} AS monitor-img
+FROM makeplane/plane-pi-commercial:${PLANE_VERSION} AS pi-img
+FROM makeplane/iframely:v1.2.0 AS iframely-img
 
 # **************************************************
 #  STAGE 1: Runner
