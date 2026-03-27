@@ -255,4 +255,20 @@ export class WorklogService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getCrossWorkspaceCapacityDayDetails(
+    workspaceSlug: string,
+    memberId: string,
+    date: string
+  ): Promise<ICapacityDayDetailsResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/cross-workspace/capacity/day-details/`, {
+        params: { member_id: memberId, date },
+      }) as Promise<{ data: ICapacityDayDetailsResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
 }

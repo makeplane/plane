@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import IssueWorkLog, ProjectMember, WorkspaceMember
+from plane.db.models import Issue, IssueWorkLog, ProjectMember, WorkspaceMember
 
 
 def _get_week_start(raw_date_str):
@@ -31,7 +31,7 @@ def _get_week_start(raw_date_str):
 class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
     """
     My Timesheet grid across ALL workspaces the current user is a member of.
-    Only shows the current user's own worklogs, only for issues with logs in the week.
+    Shows ALL issues assigned to the user (with their logged time for the week, 0 if no logs).
 
     GET /api/workspaces/<slug>/time-tracking/cross-workspace/timesheet/
     ?week_start=YYYY-MM-DD  (optional, defaults to current week Monday)
@@ -47,53 +47,65 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
         week_end = week_start + timedelta(days=6)
 
         # All workspace IDs this user is actively a member of
-        user_workspace_ids = WorkspaceMember.objects.filter(
-            member=request.user,
-            is_active=True,
-        ).values_list("workspace_id", flat=True)
+        user_workspace_ids = list(
+            WorkspaceMember.objects.filter(
+                member=request.user,
+                is_active=True,
+            ).values_list("workspace_id", flat=True)
+        )
 
-        # Only issues with at least one worklog logged by this user in the selected week
+        # All issues assigned to this user across their workspaces
+        assigned_issues = list(
+            Issue.issue_objects.filter(
+                workspace_id__in=user_workspace_ids,
+                assignees=request.user,
+            )
+            .select_related("project", "workspace")
+            .values(
+                "id",
+                "name",
+                "sequence_id",
+                "project__identifier",
+                "project_id",
+                "workspace__slug",
+                "workspace__name",
+            )
+        )
+
+        assigned_issue_ids = [i["id"] for i in assigned_issues]
+
+        # Worklogs by this user for the week, restricted to assigned issues
         worklogs = (
             IssueWorkLog.objects.filter(
-                workspace_id__in=user_workspace_ids,
+                issue_id__in=assigned_issue_ids,
                 logged_by=request.user,
                 logged_at__range=[week_start, week_end],
             )
-            .select_related("issue__project", "issue__workspace")
-            .values(
-                "issue_id",
-                "issue__name",
-                "issue__sequence_id",
-                "issue__project__identifier",
-                "issue__project_id",
-                "issue__workspace__slug",
-                "issue__workspace__name",
-                "logged_at",
-            )
+            .values("issue_id", "logged_at")
             .annotate(total=Sum("duration_minutes"))
         )
 
         issue_days = defaultdict(lambda: defaultdict(int))
-        issue_meta = {}
         for wl in worklogs:
             iid = str(wl["issue_id"])
             day = wl["logged_at"].isoformat()
             issue_days[iid][day] += wl["total"]
-            if iid not in issue_meta:
-                issue_meta[iid] = {
-                    "issue_id": iid,
-                    "issue_name": wl["issue__name"],
-                    "issue_identifier": f"{wl['issue__project__identifier']}-{wl['issue__sequence_id']}",
-                    "project_id": str(wl["issue__project_id"]),
-                    "workspace_slug": wl["issue__workspace__slug"],
-                    "workspace_name": wl["issue__workspace__name"],
-                }
 
         rows = []
-        for iid, info in issue_meta.items():
+        for issue in assigned_issues:
+            iid = str(issue["id"])
             days = dict(issue_days[iid])
             total = sum(days.values())
-            rows.append({**info, "days": days, "total_minutes": total})
+            rows.append({
+                "issue_id": iid,
+                "issue_name": issue["name"],
+                "issue_identifier": f"{issue['project__identifier']}-{issue['sequence_id']}",
+                "project_id": str(issue["project_id"]),
+                "workspace_slug": issue["workspace__slug"],
+                "workspace_name": issue["workspace__name"],
+                "days": days,
+                "total_minutes": total,
+            })
 
         rows.sort(key=lambda r: -r["total_minutes"])
 
@@ -214,3 +226,57 @@ class CrossWorkspaceCapacityEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
+    """
+    Day-level work item details for a member across ALL user workspaces.
+    Used by the capacity heatmap popover in cross-workspace mode.
+
+    GET /api/workspaces/<slug>/time-tracking/cross-workspace/capacity/day-details/
+    ?member_id=<uuid>&date=YYYY-MM-DD
+    """
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug):
+        member_id = request.query_params.get("member_id")
+        date_str = request.query_params.get("date")
+
+        if not member_id or not date_str:
+            return Response({"error": "member_id and date are required."}, status=400)
+
+        user_workspace_ids = list(
+            WorkspaceMember.objects.filter(
+                member=request.user,
+                is_active=True,
+            ).values_list("workspace_id", flat=True)
+        )
+
+        worklogs = (
+            IssueWorkLog.objects.filter(
+                workspace_id__in=user_workspace_ids,
+                logged_by_id=member_id,
+                logged_at=date_str,
+            )
+            .select_related("issue__project", "issue__workspace")
+            .values(
+                "issue_id",
+                "issue__name",
+                "issue__sequence_id",
+                "issue__project__identifier",
+            )
+            .annotate(total=Sum("duration_minutes"))
+        )
+
+        tasks = [
+            {
+                "issue_id": str(wl["issue_id"]),
+                "issue_name": wl["issue__name"],
+                "issue_identifier": f"{wl['issue__project__identifier']}-{wl['issue__sequence_id']}",
+                "total_minutes": wl["total"],
+            }
+            for wl in worklogs
+        ]
+        tasks.sort(key=lambda t: -t["total_minutes"])
+
+        return Response({"tasks": tasks}, status=status.HTTP_200_OK)

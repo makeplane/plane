@@ -92,6 +92,7 @@ from .workspace.time_tracking import (
     ProjectAnalyticsTimesheetEndpoint,
     CrossWorkspaceTimesheetEndpoint,
     CrossWorkspaceCapacityEndpoint,
+    CrossWorkspaceCapacityDayDetailsEndpoint,
     ProjectWorkLogSummaryEndpoint,
     WorkspaceWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,

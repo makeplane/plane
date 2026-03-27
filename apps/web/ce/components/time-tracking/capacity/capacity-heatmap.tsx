@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  *
  * Capacity heatmap table — one row per member, one column per day in the date range.
- * Cells are clickable (show day-details popover) unless isCrossWorkspace is true,
- * in which case cells are rendered as plain non-interactive divs.
+ * Cells are always clickable — in cross-workspace mode they fetch day details across
+ * all user workspaces; in project mode they fetch project-scoped day details.
  */
 
 import { observer } from "mobx-react";
@@ -119,35 +119,22 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
 
                       return (
                         <td key={dateStr} className="px-1 py-1 text-center">
-                          {isCrossWorkspace ? (
-                            // Cross-workspace: plain non-clickable cell
-                            <Tooltip
-                              tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
-                              disabled={!cellInfo.tooltipKey}
-                            >
-                              <div
-                                className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm ${cellInfo.className} font-medium text-12 tracking-wide`}
-                              >
-                                {cellVal}
-                              </div>
-                            </Tooltip>
-                          ) : (
-                            // Project-scoped: clickable popover with day details
-                            <Tooltip
-                              tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
-                              disabled={!cellInfo.tooltipKey}
-                            >
-                              <CapacityDayDetailsPopover
-                                memberId={member.member_id}
-                                date={dateStr}
-                                loggedMinutes={loggedMinutes}
-                                workspaceSlug={workspaceSlug}
-                                projectId={projectId}
-                                cellClassName={cellInfo.className}
-                                cellLabel={cellVal}
-                              />
-                            </Tooltip>
-                          )}
+                          {/* Clickable popover — project-scoped or cross-workspace */}
+                          <Tooltip
+                            tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
+                            disabled={!cellInfo.tooltipKey}
+                          >
+                            <CapacityDayDetailsPopover
+                              memberId={member.member_id}
+                              date={dateStr}
+                              loggedMinutes={loggedMinutes}
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              cellClassName={cellInfo.className}
+                              cellLabel={cellVal}
+                              isCrossWorkspace={isCrossWorkspace}
+                            />
+                          </Tooltip>
                         </td>
                       );
                     })}

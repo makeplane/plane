@@ -33,6 +33,11 @@ export interface ICEWorklogStore extends IWorklogStore {
   ): Promise<ICapacityDayDetailsResponse>;
   fetchCrossWorkspaceTimesheet(workspaceSlug: string, weekStart?: string): Promise<void>;
   fetchCrossWorkspaceCapacity(workspaceSlug: string, params?: Record<string, string>): Promise<void>;
+  fetchCrossWorkspaceCapacityDayDetails(
+    workspaceSlug: string,
+    memberId: string,
+    date: string
+  ): Promise<ICapacityDayDetailsResponse>;
 }
 
 export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
@@ -55,6 +60,7 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
       fetchCapacityDayDetails: action,
       fetchCrossWorkspaceTimesheet: action,
       fetchCrossWorkspaceCapacity: action,
+      fetchCrossWorkspaceCapacityDayDetails: action,
     });
   }
 
@@ -128,5 +134,13 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
         this.isCapacityLoading = false;
       });
     }
+  };
+
+  fetchCrossWorkspaceCapacityDayDetails = async (
+    workspaceSlug: string,
+    memberId: string,
+    date: string
+  ): Promise<ICapacityDayDetailsResponse> => {
+    return this.ceService.getCrossWorkspaceCapacityDayDetails(workspaceSlug, memberId, date);
   };
 }

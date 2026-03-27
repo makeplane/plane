@@ -25,6 +25,8 @@ interface CapacityDayDetailsPopoverProps {
   cellClassName: string;
   /** Formatted label shown inside the cell (e.g. "7.5h") */
   cellLabel: string;
+  /** When true, fetches day details across all user workspaces instead of project-scoped */
+  isCrossWorkspace?: boolean;
 }
 
 export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
@@ -35,6 +37,7 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
   projectId,
   cellClassName,
   cellLabel,
+  isCrossWorkspace,
 }) => {
   const { t } = useTranslation();
   const worklogStore = useWorklog();
@@ -45,7 +48,9 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
     if (loggedMinutes === 0) return;
     setIsLoading(true);
     try {
-      const res = await worklogStore.fetchCapacityDayDetails(workspaceSlug, projectId, memberId, date);
+      const res = isCrossWorkspace
+        ? await worklogStore.fetchCrossWorkspaceCapacityDayDetails(workspaceSlug, memberId, date)
+        : await worklogStore.fetchCapacityDayDetails(workspaceSlug, projectId, memberId, date);
       setTasks(res.tasks);
     } finally {
       setIsLoading(false);
