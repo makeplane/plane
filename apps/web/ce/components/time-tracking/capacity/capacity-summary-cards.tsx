@@ -1,84 +1,55 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ *
+ * Summary cards for the Capacity tab:
+ *   - Total logged hours card
+ *   - Main Task Category count table
+ *   - Sub Task Category count table
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { PieChart, Pie, Cell, Tooltip as RechartsTooltip , ResponsiveContainer } from "recharts";
+import type { ICapacityCategoriesResponse } from "@plane/types";
+import { CategoryCountTable } from "./category-count-table";
 
 interface ICapacitySummaryCardsProps {
   totalLoggedMinutes: number;
+  categoriesData: ICapacityCategoriesResponse | null;
+  isCategoriesLoading?: boolean;
 }
 
 export const CapacitySummaryCards = observer((props: ICapacitySummaryCardsProps) => {
-  const { totalLoggedMinutes } = props;
+  const { totalLoggedMinutes, categoriesData, isCategoriesLoading } = props;
   const { t } = useTranslation();
 
   const formatHours = (minutes: number) => (minutes / 60).toFixed(1);
 
-  // Pie chart distribution - mock based on standard labels
-  const pieData = [
-    { name: "Development", value: 65 },
-    { name: "Meeting", value: 15 },
-    { name: "Design", value: 10 },
-    { name: "Bug Fixing", value: 10 },
-  ];
-  const COLORS = ["#3B82F6", "#10B981", "#8B5CF6", "#F59E0B"];
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-      <div className="flex flex-col gap-4">
-        <div className="group relative flex flex-col justify-center rounded-xl overflow-hidden border border-subtle bg-gradient-to-br from-surface-1 to-surface-2 p-4 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 h-full">
-          <div className="absolute top-0 right-0 w-12 h-12 bg-accent-primary/5 rounded-bl-[80px] transition-all group-hover:bg-accent-primary/10" />
-          <span className="text-[10px] tracking-wider font-semibold uppercase text-tertiary">
-            {t("capacity_total_logged")}
-          </span>
-          <span className="text-2xl font-bold text-primary mt-2 tracking-tight">
-            {formatHours(totalLoggedMinutes)}
-            <span className="text-sm font-medium text-secondary/60 ml-0.5">h</span>
-          </span>
-        </div>
+    <div className="flex flex-col gap-4 mb-8">
+      {/* Total logged hours */}
+      <div className="group relative flex flex-col justify-center rounded-xl overflow-hidden border border-subtle bg-gradient-to-br from-surface-1 to-surface-2 p-4 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 w-48">
+        <div className="absolute top-0 right-0 w-12 h-12 bg-accent-primary/5 rounded-bl-[80px] transition-all group-hover:bg-accent-primary/10" />
+        <span className="text-12 tracking-wide font-medium uppercase text-tertiary">{t("capacity_total_logged")}</span>
+        <span className="text-2xl font-bold text-primary mt-2 tracking-tight">
+          {formatHours(totalLoggedMinutes)}
+          <span className="text-13 font-medium text-secondary/60 ml-0.5">h</span>
+        </span>
       </div>
 
-      <div className="rounded-xl border border-subtle bg-gradient-to-b from-surface-1 to-surface-2 p-5 flex flex-col items-center col-span-1 shadow-sm hover:shadow-md transition-all duration-300">
-        <span className="text-[10px] font-bold tracking-wide uppercase text-tertiary self-start mb-4">
-          {t("capacity_category_distribution")}
-        </span>
-        <div className="h-48 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={80}
-                fill="#8884d8"
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {pieData.map((_entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <RechartsTooltip
-                contentStyle={{
-                  backgroundColor: "var(--color-surface-2)",
-                  border: "1px solid var(--color-border-subtle)",
-                  borderRadius: "6px",
-                  fontSize: "11px",
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] text-secondary mt-2">
-          {pieData.map((entry, index) => (
-            <div key={entry.name} className="flex items-center gap-1">
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-              ></span>
-              {entry.name}
-            </div>
-          ))}
-        </div>
+      {/* Category distribution — 2 tables side by side */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CategoryCountTable
+          title={t("capacity_main_task_category")}
+          categories={categoriesData?.main_task_categories ?? []}
+          isLoading={isCategoriesLoading}
+        />
+        <CategoryCountTable
+          title={t("capacity_sub_task_category")}
+          categories={categoriesData?.sub_task_categories ?? []}
+          isLoading={isCategoriesLoading}
+        />
       </div>
     </div>
   );

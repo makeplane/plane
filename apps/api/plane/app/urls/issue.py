@@ -36,6 +36,9 @@ from plane.app.views import (
     TimesheetGridEndpoint,
     TimesheetBulkUpdateEndpoint,
     ProjectCapacityEndpoint,
+    ProjectCapacityDayDetailsEndpoint,
+    ProjectCapacityCategoriesEndpoint,
+    ProjectAnalyticsTimesheetEndpoint,
 )
 
 urlpatterns = [
@@ -327,6 +330,22 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/capacity/",
         ProjectCapacityEndpoint.as_view(),
         name="project-capacity-report",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/capacity/day-details/",
+        ProjectCapacityDayDetailsEndpoint.as_view(),
+        name="project-capacity-day-details",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/capacity/categories/",
+        ProjectCapacityCategoriesEndpoint.as_view(),
+        name="project-capacity-categories",
+    ),
+    ## Analytics Timesheet
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/analytics/timesheet/",
+        ProjectAnalyticsTimesheetEndpoint.as_view(),
+        name="project-analytics-timesheet",
     ),
     ## End Issue WorkLogs
 ]

@@ -65,6 +65,50 @@ export interface ITimesheetRow {
   project_id: string;
   days: Record<string, number>; // "YYYY-MM-DD" → minutes
   total_minutes: number;
+  // Cross-workspace extensions (present when fetching cross-workspace timesheet)
+  workspace_slug?: string;
+  workspace_name?: string;
+}
+
+export interface IAnalyticsTimesheetUserBreakdown {
+  user_id: string;
+  display_name: string;
+  avatar_url: string;
+  days: Record<string, number>; // "YYYY-MM-DD" → minutes
+  total_minutes: number;
+}
+
+export interface IAnalyticsTimesheetRow extends ITimesheetRow {
+  by_user: IAnalyticsTimesheetUserBreakdown[];
+}
+
+export interface IAnalyticsTimesheetResponse {
+  week_start: string;
+  week_end: string;
+  rows: IAnalyticsTimesheetRow[];
+  daily_totals: Record<string, number>;
+  grand_total_minutes: number;
+}
+
+export interface ICategoryCount {
+  name: string;
+  count: number;
+}
+
+export interface ICapacityCategoriesResponse {
+  main_task_categories: ICategoryCount[];
+  sub_task_categories: ICategoryCount[];
+}
+
+export interface ICapacityDayTask {
+  issue_id: string;
+  issue_name: string;
+  issue_identifier: string;
+  total_minutes: number;
+}
+
+export interface ICapacityDayDetailsResponse {
+  tasks: ICapacityDayTask[];
 }
 
 export interface ITimesheetGridResponse {

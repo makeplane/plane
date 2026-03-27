@@ -42,9 +42,7 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
   const { data: staffProfile, isLoading: isProfileLoading } = useMyStaffProfile(currentWorkspace?.slug);
 
   // Check if current user is an instance admin
-  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () =>
-    userService.currentUserInstanceAdminStatus()
-  );
+  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
   const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
 
   const { data: tree, isLoading: isTreeLoading } = useSWR(
@@ -78,10 +76,10 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
     <div className="size-full py-9 px-page-x lg:px-12">
       <div className="flex justify-between items-center pb-3.5">
         <h4 className="text-h3-medium">Departments</h4>
-        <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
-          <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
+        <div className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5">
+          <SearchIcon className="h-4 w-4 text-tertiary" />
           <input
-            className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
+            className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary outline-none placeholder:text-tertiary"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -97,10 +95,12 @@ export const HoDepartmentList = observer(function HoDepartmentList() {
         <div className="divide-y-[0.5px] divide-subtle overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-subtle">
-                <th className="px-3 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">Name</th>
-                <th className="px-4 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">Linked Workspace</th>
-                <th className="px-4 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">View</th>
+              <tr className="border-b border-subtle bg-surface-1">
+                <th className="px-4 py-3 text-12 font-medium text-secondary uppercase tracking-wide">Name</th>
+                <th className="px-4 py-3 text-12 font-medium text-secondary uppercase tracking-wide">
+                  Linked Workspace
+                </th>
+                <th className="px-4 py-3 text-12 font-medium text-secondary uppercase tracking-wide">View</th>
               </tr>
             </thead>
             <tbody>

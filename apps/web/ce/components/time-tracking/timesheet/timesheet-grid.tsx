@@ -4,14 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { useWorklog } from "@/hooks/store/use-worklog";
-import { Button } from "@plane/propel/button";
-import { PlusIcon } from "@plane/propel/icons";
-import { TimesheetAddIssueModal } from "./timesheet-add-issue-modal";
 import { TimesheetWeekNavigator } from "./timesheet-week-navigator";
 import { TimesheetTable } from "./timesheet-table";
 
@@ -22,38 +20,36 @@ interface TimesheetGridProps {
 
 /**
  * Main Timesheet Grid — the "My Timesheet" tab.
- * Fetches the current user's assigned issues with daily worklog totals for a given week.
+ * Read-only view of the current user's worklogs for a given week.
+ * Supports a "Cross Workspaces" toggle to show data across all user workspaces.
  */
 export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, projectId }) => {
   const { t } = useTranslation();
   const worklogStore = useWorklog();
   const [error, setError] = useState<string | null>(null);
-  const [isAddIssueModalOpen, setIsAddIssueModalOpen] = useState(false);
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
 
   const fetchData = useCallback(
     async (weekStart?: string) => {
       setError(null);
       try {
-        await worklogStore.fetchTimesheetGrid(workspaceSlug, projectId, weekStart);
+        if (isCrossWorkspace) {
+          await worklogStore.fetchCrossWorkspaceTimesheet(workspaceSlug, weekStart);
+        } else {
+          await worklogStore.fetchTimesheetGrid(workspaceSlug, projectId, weekStart);
+        }
       } catch {
-        setError("Failed to load timesheet data.");
+        setError(t("timesheet_load_error"));
       }
     },
-    [workspaceSlug, projectId, worklogStore]
+    [workspaceSlug, projectId, worklogStore, isCrossWorkspace, t]
   );
 
-  const handleSave = useCallback(
-    async (issueId: string, date: string, minutes: number) => {
-      try {
-        await worklogStore.bulkUpdateTimesheet(workspaceSlug, projectId, [
-          { issue_id: issueId, logged_at: date, duration_minutes: minutes },
-        ]);
-      } catch {
-        setError("Failed to save timesheet.");
-      }
-    },
-    [workspaceSlug, projectId, worklogStore]
-  );
+  // Re-fetch when cross-workspace toggle changes
+  useEffect(() => {
+    void fetchData(data?.week_start);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: only re-fetch on toggle change
+  }, [isCrossWorkspace]);
 
   const data = worklogStore.timesheetData;
   const isLoading = worklogStore.isTimesheetLoading;
@@ -61,7 +57,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
 
   return (
     <div className="flex flex-col gap-4 p-6 h-full overflow-y-auto custom-scrollbar">
-      {/* Header controls (Week navigator + Add Issue) */}
+      {/* Header controls (Week navigator + Cross Workspaces toggle) */}
       <div className="flex items-center justify-between">
         <TimesheetWeekNavigator
           weekStart={data?.week_start ?? null}
@@ -69,50 +65,37 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           onInit={() => void fetchData()}
         />
 
-        <Button
-          variant="primary"
-          size="sm"
-          prependIcon={<PlusIcon className="h-3.5 w-3.5" />}
-          onClick={() => setIsAddIssueModalOpen(true)}
-          className="text-[11px] font-semibold h-7"
+        <button
+          onClick={() => setIsCrossWorkspace((v) => !v)}
+          className={cn(
+            "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
+            isCrossWorkspace
+              ? "bg-accent-subtle border-accent-primary text-accent-primary"
+              : "border-subtle text-secondary hover:text-primary"
+          )}
         >
-          {t("timesheet_add_issue")}
-        </Button>
+          {t("timesheet_cross_workspaces")}
+        </button>
       </div>
-
-      {/* Add Issue Modal */}
-      <TimesheetAddIssueModal
-        isOpen={isAddIssueModalOpen}
-        handleClose={() => setIsAddIssueModalOpen(false)}
-        projectId={projectId}
-        onSelect={(issue) => {
-          worklogStore.addEmptyTimesheetRow(
-            issue.id,
-            issue.name,
-            `${issue.project__identifier}-${issue.sequence_id}`,
-            issue.project_id
-          );
-        }}
-      />
 
       {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-xs text-secondary font-medium animate-pulse">Loading...</span>
+          <span className="text-13 text-secondary font-medium animate-pulse">Loading...</span>
         </div>
       )}
 
       {/* Error */}
       {!isLoading && error && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-xs text-red-500 font-medium">{error}</span>
+          <span className="text-13 text-danger-primary font-medium">{error}</span>
         </div>
       )}
 
       {/* Empty */}
       {!isLoading && !error && isEmpty && (
         <div className="flex items-center justify-center py-24">
-          <span className="text-xs text-secondary">{t("timesheet_no_issues")}</span>
+          <span className="text-13 text-secondary">{t("timesheet_no_issues")}</span>
         </div>
       )}
 
@@ -123,7 +106,9 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           rows={data.rows}
           dailyTotals={data.daily_totals}
           grandTotal={data.grand_total_minutes}
-          onCellSave={(issueId, date, minutes) => void handleSave(issueId, date, minutes)}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          showWorkspaceColumn={isCrossWorkspace}
         />
       )}
     </div>

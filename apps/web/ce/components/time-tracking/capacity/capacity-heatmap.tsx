@@ -1,20 +1,34 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ *
+ * Capacity heatmap table — one row per member, one column per day in the date range.
+ * Cells are always clickable — in cross-workspace mode they fetch day details across
+ * all user workspaces; in project mode they fetch project-scoped day details.
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
 import { eachDayOfInterval, parseISO, format } from "date-fns";
-
 import type { ICapacityMember } from "@plane/types";
+import { CapacityDayDetailsPopover } from "./capacity-day-details-popover";
 
 interface ICapacityHeatmapProps {
   members: ICapacityMember[];
   dateFrom: string;
   dateTo: string;
   projectDailyTotals?: Record<string, { minutes: number; issue_count: number }>;
+  workspaceSlug: string;
+  projectId: string;
+  /** When true, heatmap cells are non-clickable (cross-workspace mode) */
+  isCrossWorkspace?: boolean;
 }
 
 export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
-  const { members, dateFrom, dateTo, projectDailyTotals } = props;
+  const { members, dateFrom, dateTo, projectDailyTotals, workspaceSlug, projectId, isCrossWorkspace } = props;
   const { t } = useTranslation();
 
   const formatHours = (minutes: number) => (minutes / 60).toFixed(1);
@@ -52,12 +66,11 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
     };
   };
 
-  // Keep the entire table layout and 2D grid setup logic unchanged...
   return (
     <div className="w-full overflow-hidden rounded-xl border border-subtle bg-surface-1 shadow-sm">
       <div className="w-full overflow-x-auto custom-scrollbar">
-        <table className="w-full min-w-max text-xs text-left border-collapse">
-          <thead className="bg-surface-2/80 backdrop-blur-sm uppercase text-[10px] font-bold text-tertiary border-b border-subtle sticky top-0 z-20">
+        <table className="w-full min-w-max text-13 text-left border-collapse">
+          <thead className="bg-surface-2/80 backdrop-blur-sm uppercase text-12 font-medium text-tertiary border-b border-subtle sticky top-0 z-20">
             <tr>
               <th
                 scope="col"
@@ -78,7 +91,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           <tbody className="divide-y divide-subtle/50">
             {members.length === 0 ? (
               <tr>
-                <td colSpan={2 + days.length} className="px-4 py-8 text-center text-sm text-secondary">
+                <td colSpan={2 + days.length} className="px-4 py-8 text-center text-13 text-secondary">
                   {t("capacity_no_data")}
                 </td>
               </tr>
@@ -106,15 +119,21 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
 
                       return (
                         <td key={dateStr} className="px-1 py-1 text-center">
+                          {/* Clickable popover — project-scoped or cross-workspace */}
                           <Tooltip
                             tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
                             disabled={!cellInfo.tooltipKey}
                           >
-                            <div
-                              className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm transition-all duration-300 hover:scale-[1.15] hover:shadow-md cursor-pointer ${cellInfo.className} font-medium text-[11px] tracking-wide`}
-                            >
-                              {cellVal}
-                            </div>
+                            <CapacityDayDetailsPopover
+                              memberId={member.member_id}
+                              date={dateStr}
+                              loggedMinutes={loggedMinutes}
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              cellClassName={cellInfo.className}
+                              cellLabel={cellVal}
+                              isCrossWorkspace={isCrossWorkspace}
+                            />
                           </Tooltip>
                         </td>
                       );
@@ -127,17 +146,17 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           {members.length > 0 && (
             <tfoot className="bg-surface-2/50 border-t border-subtle font-bold text-primary">
               <tr>
-                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-[10px] text-tertiary uppercase">
+                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-12 font-medium text-tertiary uppercase">
                   {t("total_logged_time")}
                 </td>
-                <td className="px-3 py-2 text-right text-xs border-r border-subtle">
+                <td className="px-3 py-2 text-right text-13 font-bold border-r border-subtle">
                   {formatHours(members.reduce((acc, m) => acc + m.total_logged_minutes, 0))}h
                 </td>
                 {days.map((day) => {
                   const dateStr = format(day, "yyyy-MM-dd");
                   const dailyMinutes = projectDailyTotals?.[dateStr]?.minutes ?? 0;
                   return (
-                    <td key={dateStr} className="px-3 py-2 text-center text-xs text-primary font-bold">
+                    <td key={dateStr} className="px-3 py-2 text-center text-13 font-bold text-primary">
                       {dailyMinutes > 0 ? `${formatHours(dailyMinutes)}h` : "-"}
                     </td>
                   );

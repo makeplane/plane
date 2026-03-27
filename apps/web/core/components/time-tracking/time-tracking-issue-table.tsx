@@ -19,11 +19,11 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
 
   return (
     <div className="overflow-x-auto rounded-lg border border-subtle">
-      <table className="w-full text-sm">
+      <table className="w-full text-13">
         <thead>
           <tr className="border-b border-subtle bg-layer-1-hover">
-            <th className="px-4 py-3 text-left text-xs font-semibold text-tertiary uppercase tracking-wide">Issue</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-tertiary uppercase tracking-wide w-32">
+            <th className="px-4 py-3 text-left text-12 font-medium text-tertiary uppercase tracking-wide">Issue</th>
+            <th className="px-4 py-3 text-right text-12 font-medium text-tertiary uppercase tracking-wide w-32">
               Logged
             </th>
           </tr>

@@ -6,10 +6,10 @@
 
 import { useContext } from "react";
 import { StoreContext } from "@/lib/store-context";
-import type { IWorklogStore } from "@/store/worklog.store";
+import type { ICEWorklogStore } from "@/plane-web/store/worklog.store";
 
-export const useWorklog = (): IWorklogStore => {
+export const useWorklog = (): ICEWorklogStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useWorklog must be used within StoreProvider");
-  return context.worklog;
+  return (context as unknown as { worklog: ICEWorklogStore }).worklog;
 };

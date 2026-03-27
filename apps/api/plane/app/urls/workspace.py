@@ -37,6 +37,9 @@ from plane.app.views import (
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
     WorkspaceWorkLogSummaryEndpoint,
+    CrossWorkspaceTimesheetEndpoint,
+    CrossWorkspaceCapacityEndpoint,
+    CrossWorkspaceCapacityDayDetailsEndpoint,
     DashboardViewSet,
     DashboardWidgetViewSet,
     DashboardWidgetChartEndpoint,
@@ -303,5 +306,20 @@ urlpatterns = [
         "workspaces/<str:slug>/time-tracking/summary/",
         WorkspaceWorkLogSummaryEndpoint.as_view(),
         name="workspace-time-tracking-summary",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/cross-workspace/timesheet/",
+        CrossWorkspaceTimesheetEndpoint.as_view(),
+        name="cross-workspace-timesheet",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/cross-workspace/capacity/",
+        CrossWorkspaceCapacityEndpoint.as_view(),
+        name="cross-workspace-capacity",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/cross-workspace/capacity/day-details/",
+        CrossWorkspaceCapacityDayDetailsEndpoint.as_view(),
+        name="cross-workspace-capacity-day-details",
     ),
 ]
