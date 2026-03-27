@@ -50,10 +50,9 @@ class ProjectWorkLogSummaryEndpoint(BaseAPIView):
             .annotate(
                 issue_id=F("issue"),
                 issue_name=F("issue__name"),
-                estimate_time=F("issue__estimate_time"),
                 total_minutes=Sum("duration_minutes"),
             )
-            .values("issue_id", "issue_name", "estimate_time", "total_minutes")
+            .values("issue_id", "issue_name", "total_minutes")
             .order_by("-total_minutes")[:SUMMARY_RESULT_LIMIT]
         )
 
@@ -109,10 +108,9 @@ class WorkspaceWorkLogSummaryEndpoint(BaseAPIView):
             .annotate(
                 issue_id=F("issue"),
                 issue_name=F("issue__name"),
-                estimate_time=F("issue__estimate_time"),
                 total_minutes=Sum("duration_minutes"),
             )
-            .values("issue_id", "issue_name", "estimate_time", "total_minutes")
+            .values("issue_id", "issue_name", "total_minutes")
             .order_by("-total_minutes")[:SUMMARY_RESULT_LIMIT]
         )
 

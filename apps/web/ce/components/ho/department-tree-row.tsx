@@ -11,13 +11,12 @@ import { WorkspaceService } from "@/services/workspace.service";
 const workspaceService = new WorkspaceService();
 
 function HoDeptViewTags({ workspaceSlug }: { workspaceSlug: string }) {
-  const { data: views, isLoading } = useSWR(
-    `WORKSPACE_VIEWS_${workspaceSlug}`,
-    () => workspaceService.getAllViews(workspaceSlug)
+  const { data: views, isLoading } = useSWR(`WORKSPACE_VIEWS_${workspaceSlug}`, () =>
+    workspaceService.getAllViews(workspaceSlug)
   );
 
-  if (isLoading) return <span className="text-custom-text-400 text-xs">...</span>;
-  if (!views?.length) return <span className="text-custom-text-400">—</span>;
+  if (isLoading) return <span className="text-tertiary text-12">...</span>;
+  if (!views?.length) return <span className="text-tertiary text-13">—</span>;
 
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -28,7 +27,9 @@ function HoDeptViewTags({ workspaceSlug }: { workspaceSlug: string }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Badge variant="neutral" size="base">{view.name}</Badge>
+          <Badge variant="neutral" size="base">
+            {view.name}
+          </Badge>
         </a>
       ))}
     </div>
@@ -46,7 +47,7 @@ export function HoDepartmentTreeRow({ dept, depth = 0 }: Props) {
 
   return (
     <>
-      <tr className="border-b border-subtle hover:bg-custom-background-90 transition-colors">
+      <tr className="border-b border-subtle odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors">
         <td className="py-2.5 pr-4" style={{ paddingLeft: `${depth * 20 + 12}px` }}>
           <div className="flex items-center gap-1.5">
             <button
@@ -56,7 +57,7 @@ export function HoDepartmentTreeRow({ dept, depth = 0 }: Props) {
             >
               <ChevronRight className={cn("w-4 h-4 transition-transform", expanded && "rotate-90")} />
             </button>
-            <span className="font-medium text-sm text-custom-text-100">{dept.name}</span>
+            <span className="font-medium text-13 text-primary">{dept.name}</span>
           </div>
         </td>
         <td className="px-4 py-2.5 text-sm">
@@ -72,14 +73,14 @@ export function HoDepartmentTreeRow({ dept, depth = 0 }: Props) {
               {dept.linked_workspace_detail.name}
             </button>
           ) : (
-            <span className="text-custom-text-400">—</span>
+            <span className="text-13 text-tertiary">—</span>
           )}
         </td>
         <td className="px-4 py-2.5 text-sm">
           {dept.linked_workspace_detail ? (
             <HoDeptViewTags workspaceSlug={dept.linked_workspace_detail.slug} />
           ) : (
-            <span className="text-custom-text-400">—</span>
+            <span className="text-13 text-tertiary">—</span>
           )}
         </td>
       </tr>
