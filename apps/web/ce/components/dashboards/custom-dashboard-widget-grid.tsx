@@ -15,7 +15,7 @@ import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { CustomDashboardWidgetCard } from "./custom-dashboard-widget-card";
 import "react-grid-layout/css/styles.css";
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 /** Convert IDashboardWidget to react-grid-layout Layout item */
@@ -64,7 +64,7 @@ export const CustomDashboardWidgetGrid = observer(function CustomDashboardWidget
       if (!isEditMode) return;
 
       // Build position payload from layout
-      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
       const positions = currentLayout.map((item) => ({
         id: item.i,
         x_axis_coord: item.x,
@@ -72,7 +72,6 @@ export const CustomDashboardWidgetGrid = observer(function CustomDashboardWidget
         width: item.w,
         height: item.h,
       }));
-      /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
       // Debounce 500ms to reduce API calls during continuous drag/resize
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
