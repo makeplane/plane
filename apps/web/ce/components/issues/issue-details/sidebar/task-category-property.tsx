@@ -53,6 +53,7 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
           label={selectedMain?.name ?? t("task_category.select_main")}
           buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
           placement="bottom-start"
+          closeOnSelect
           disabled={!isEditable}
         >
           {mainCategoryIds.map((id) => (
@@ -75,6 +76,7 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
             }
             buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
             placement="bottom-start"
+            closeOnSelect
             disabled={!isEditable}
           >
             {subCategories.map((sub) => (
