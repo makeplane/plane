@@ -50,7 +50,7 @@
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
   },
   "scripts": {
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch --no-clean",
     "build": "tsdown",
     "check:lint": "oxlint --max-warnings=3605 .",
     "check:types": "tsc --noEmit",

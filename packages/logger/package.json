@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch --no-clean",
     "check:lint": "oxlint --max-warnings=0 .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
@@ -32,5 +32,9 @@
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "inlinedDependencies": {
+    "@types/express": "4.17.23",
+    "@types/express-serve-static-core": "4.19.6"
   }
 }

@@ -74,6 +74,10 @@
       "flatted": "3.4.2"
     },
     "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "esbuild",
+      "msgpackr-extract",
       "turbo"
     ],
     "ignoredBuiltDependencies": [

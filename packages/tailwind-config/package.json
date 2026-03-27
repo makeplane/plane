@@ -12,9 +12,11 @@
     "./index.css": "./index.css",
     "./postcss.config.js": "./postcss.config.js"
   },
-  "devDependencies": {
+  "dependencies": {
     "@tailwindcss/postcss": "4.1.17",
-    "postcss": "8.5.6",
+    "postcss": "8.5.6"
+  },
+  "devDependencies": {
     "tailwindcss": "4.1.17"
   }
 }
