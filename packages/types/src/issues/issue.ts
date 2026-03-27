@@ -4,279 +4,230 @@
  * See the LICENSE file for details.
  */
 
-import type { IProjectMemberNavigationPreferences } from "./project";
-import type { TIssue } from "./issues/issue";
-import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
-import type { CompleteOrEmpty } from "./utils";
+import type { TIssuePriorities, TIssueFrequency } from "../issues";
+import type { TStateGroups } from "../state";
+import type { TIssuePublicComment } from "./activity/issue_comment";
+import type { TIssueAttachment } from "./issue_attachment";
+import type { TIssueLink } from "./issue_link";
+import type { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
+import type { TIssueRelationTypes } from "./issue_relation";
 
-export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+export enum EIssueLayoutTypes {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  GANTT = "gantt_chart",
+  SPREADSHEET = "spreadsheet",
+}
 
-export type TIssueGroupByOptions =
-  | "state"
+export enum EIssueServiceType {
+  ISSUES = "issues",
+  EPICS = "epics",
+  WORK_ITEMS = "work-items",
+}
+
+export enum EIssuesStoreType {
+  GLOBAL = "GLOBAL",
+  PROFILE = "PROFILE",
+  TEAM = "TEAM",
+  PROJECT = "PROJECT",
+  CYCLE = "CYCLE",
+  MODULE = "MODULE",
+  TEAM_VIEW = "TEAM_VIEW",
+  PROJECT_VIEW = "PROJECT_VIEW",
+  ARCHIVED = "ARCHIVED",
+  DEFAULT = "DEFAULT",
+  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
+  EPIC = "EPIC",
+  TEAM_PROJECT_WORK_ITEMS = "TEAM_PROJECT_WORK_ITEMS",
+}
+
+export type TBaseIssue = {
+  id: string;
+  sequence_id: number;
+  name: string;
+  sort_order: number;
+
+  state_id: string | null;
+  priority: TIssuePriorities | null;
+  frequency: TIssueFrequency | null;
+  label_ids: string[];
+  assignee_ids: string[];
+  estimate_point: string | null;
+
+  sub_issues_count: number;
+  attachment_count: number;
+  link_count: number;
+
+  project_id: string | null;
+  parent_id: string | null;
+  cycle_id: string | null;
+  module_ids: string[] | null;
+  type_id: string | null;
+  main_task_category_id: string | null;
+  sub_task_category_id: string | null;
+
+  created_at: string;
+  updated_at: string;
+  start_date: string | null;
+  target_date: string | null;
+  completed_at: string | null;
+  archived_at: string | null;
+
+  created_by: string;
+  updated_by: string;
+
+  is_draft: boolean;
+  is_epic?: boolean;
+  is_intake?: boolean;
+};
+
+type IssueRelation = {
+  id: string;
+  name: string;
+  project_id: string;
+  relation_type: TIssueRelationTypes;
+  sequence_id: number;
+};
+
+export type TIssue = TBaseIssue & {
+  description_html?: string;
+  is_subscribed?: boolean;
+  parent?: Partial<TBaseIssue>;
+  issue_reactions?: TIssueReaction[];
+  issue_attachments?: TIssueAttachment[];
+  issue_link?: TIssueLink[];
+  issue_relation?: IssueRelation[];
+  issue_related?: IssueRelation[];
+  // tempId is used for optimistic updates. It is not a part of the API response.
+  tempId?: string;
+  // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
+  sourceIssueId?: string;
+  state__group?: TStateGroups | null;
+  // CE extended data from worklog annotation
+  total_logged_minutes?: number | null;
+};
+
+export type TIssueMap = {
+  [issue_id: string]: TIssue;
+};
+
+export type TIssueResponseResults =
+  | TBaseIssue[]
+  | {
+      [key: string]: {
+        results:
+          | TBaseIssue[]
+          | {
+              [key: string]: {
+                results: TBaseIssue[];
+                total_results: number;
+              };
+            };
+        total_results: number;
+      };
+    };
+
+export type TIssuesResponse = {
+  grouped_by: string;
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  total_count: number;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: TIssueResponseResults;
+  total_results: number;
+};
+
+export type TBulkIssueProperties = Pick<
+  TIssue,
+  | "state_id"
   | "priority"
-  | "labels"
-  | "created_by"
-  | "state_detail.group"
-  | "project"
-  | "assignees"
-  | "cycle"
-  | "module"
+  | "label_ids"
+  | "assignee_ids"
+  | "start_date"
   | "target_date"
-  | "team_project"
-  | null;
+  | "module_ids"
+  | "cycle_id"
+  | "estimate_point"
+>;
 
-export type TIssueOrderByOptions =
-  | "-created_at"
+export type TBulkOperationsPayload = {
+  issue_ids: string[];
+  properties: Partial<TBulkIssueProperties>;
+};
+
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+
+export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
+
+/** Payload for PATCH /issues/{id}/ — `reason` is transient (popped by backend before save) */
+export type TIssueUpdatePayload = Partial<TIssue> & { reason?: string };
+
+export interface IPublicIssue extends Pick<
+  TIssue,
+  | "description_html"
   | "created_at"
   | "updated_at"
-  | "-updated_at"
-  | "priority"
-  | "-priority"
-  | "sort_order"
-  | "state__name"
-  | "-state__name"
-  | "assignees__first_name"
-  | "-assignees__first_name"
-  | "labels__name"
-  | "-labels__name"
-  | "issue_module__module__name"
-  | "-issue_module__module__name"
-  | "issue_cycle__cycle__name"
-  | "-issue_cycle__cycle__name"
-  | "target_date"
-  | "-target_date"
-  | "estimate_point__key"
-  | "-estimate_point__key"
-  | "start_date"
-  | "-start_date"
-  | "link_count"
-  | "-link_count"
-  | "attachment_count"
-  | "-attachment_count"
-  | "sub_issues_count"
-  | "-sub_issues_count";
-
-export type TIssueGroupingFilters = "active" | "backlog";
-
-export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";
-
-export type TIssueParams =
-  | "priority"
-  | "state_group"
-  | "state"
-  | "assignees"
-  | "mentions"
   | "created_by"
-  | "subscriber"
-  | "labels"
-  | "cycle"
-  | "module"
+  | "id"
+  | "name"
+  | "priority"
+  | "state_id"
+  | "project_id"
+  | "sequence_id"
+  | "sort_order"
   | "start_date"
   | "target_date"
-  | "project"
-  | "team_project"
-  | "group_by"
-  | "sub_group_by"
-  | "order_by"
-  | "type"
-  | "sub_issue"
-  | "show_empty_groups"
-  | "cursor"
-  | "per_page"
-  | "issue_type"
-  | "layout"
-  | "expand"
-  | "filters";
-
-export type TCalendarLayouts = "month" | "week";
-
-/**
- * Keys for the work item filter properties
- */
-export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
-  "state_group",
-  "priority",
-  "start_date",
-  "target_date",
-  "assignee_id",
-  "mention_id",
-  "created_by_id",
-  "subscriber_id",
-  "label_id",
-  "state_id",
-  "cycle_id",
-  "module_id",
-  "project_id",
-  "created_at",
-  "updated_at",
-] as const;
-export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
-
-export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
-
-export type TWorkItemFilterConditionData = Partial<{
-  [K in TWorkItemFilterConditionKey]: string | boolean | number;
-}>;
-
-export type TWorkItemFilterAndGroup = {
-  [LOGICAL_OPERATOR.AND]: TWorkItemFilterConditionData[];
-};
-
-export type TWorkItemFilterGroup = TWorkItemFilterAndGroup;
-
-export type TWorkItemFilterExpressionData = TWorkItemFilterConditionData | TWorkItemFilterGroup;
-
-export type TWorkItemFilterExpression = CompleteOrEmpty<TWorkItemFilterExpressionData>;
-
-export interface IIssueFilterOptions {
-  assignees?: string[] | null;
-  mentions?: string[] | null;
-  created_by?: string[] | null;
-  labels?: string[] | null;
-  priority?: string[] | null;
-  cycle?: string[] | null;
-  module?: string[] | null;
-  project?: string[] | null;
-  team_project?: string[] | null;
-  start_date?: string[] | null;
-  state?: string[] | null;
-  state_group?: string[] | null;
-  subscriber?: string[] | null;
-  target_date?: string[] | null;
-  issue_type?: string[] | null;
+  | "cycle_id"
+  | "module_ids"
+  | "label_ids"
+  | "assignee_ids"
+  | "attachment_count"
+  | "sub_issues_count"
+  | "link_count"
+  | "estimate_point"
+> {
+  comments: TIssuePublicComment[];
+  reaction_items: IIssuePublicReaction[];
+  vote_items: IPublicVote[];
 }
 
-export interface IIssueDisplayFilterOptions {
-  calendar?: {
-    show_weekends?: boolean;
-    layout?: TCalendarLayouts;
-  };
-  group_by?: TIssueGroupByOptions;
-  sub_group_by?: TIssueGroupByOptions;
-  layout?: TIssueLayouts;
-  order_by?: TIssueOrderByOptions;
-  show_empty_groups?: boolean;
-  sub_issue?: boolean;
-}
-export interface IIssueDisplayProperties {
-  assignee?: boolean;
-  start_date?: boolean;
-  due_date?: boolean;
-  labels?: boolean;
-  key?: boolean;
-  priority?: boolean;
-  state?: boolean;
-  sub_issue_count?: boolean;
-  link?: boolean;
-  attachment_count?: boolean;
-  estimate?: boolean;
-  created_on?: boolean;
-  updated_on?: boolean;
-  modules?: boolean;
-  cycle?: boolean;
-  issue_type?: boolean;
-  // CE extended columns
-  department_name?: boolean;
-  project_name?: boolean;
-  project_lead?: boolean;
-  bank_wide_project?: boolean;
-  progress_tracking?: boolean;
-  completed_date?: boolean;
-  reference_link?: boolean;
-  total_log_time?: boolean;
-}
-
-export type TIssueKanbanFilters = {
-  group_by: string[];
-  sub_group_by: string[];
-};
-
-export interface IIssueFilters {
-  richFilters: TWorkItemFilterExpression;
-  displayFilters: IIssueDisplayFilterOptions | undefined;
-  displayProperties: IIssueDisplayProperties | undefined;
-  kanbanFilters: TIssueKanbanFilters | undefined;
-}
-
-export type TSupportedFilterForUpdate = IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters;
-
-export interface ISubWorkItemFilters extends Omit<IIssueFilters, "richFilters"> {
-  filters: IIssueFilterOptions;
-}
-
-export interface IIssueFiltersResponse {
-  rich_filters: TWorkItemFilterExpression;
-  display_filters: IIssueDisplayFilterOptions;
-  display_properties: IIssueDisplayProperties;
-}
-
-export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
-  sort_order: number;
-  preferences: {
-    pages: {
-      block_display: boolean;
+type TPublicIssueResponseResults =
+  | IPublicIssue[]
+  | {
+      [key: string]: {
+        results:
+          | IPublicIssue[]
+          | {
+              [key: string]: {
+                results: IPublicIssue[];
+                total_results: number;
+              };
+            };
+        total_results: number;
+      };
     };
-    navigation: IProjectMemberNavigationPreferences;
-  };
-}
 
-export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
-  navigation_project_limit?: number;
-  navigation_control_preference?: "ACCORDION" | "TABBED";
-  // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
-}
+export type TPublicIssuesResponse = {
+  grouped_by: string;
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  total_count: number;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: TPublicIssueResponseResults;
+};
 
-export interface IWorkspaceIssueFilterOptions {
-  assignees?: string[] | null;
-  created_by?: string[] | null;
-  labels?: string[] | null;
-  priority?: string[] | null;
-  state_group?: string[] | null;
-  subscriber?: string[] | null;
-  start_date?: string[] | null;
-  target_date?: string[] | null;
-  project?: string[] | null;
+export interface IWorkItemPeekOverview {
+  embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
+  is_draft?: boolean;
+  storeType?: EIssuesStoreType;
 }
-
-export interface IWorkspaceViewIssuesParams {
-  assignees?: string | undefined;
-  created_by?: string | undefined;
-  labels?: string | undefined;
-  priority?: string | undefined;
-  start_date?: string | undefined;
-  state?: string | undefined;
-  state_group?: string | undefined;
-  subscriber?: string | undefined;
-  target_date?: string | undefined;
-  project?: string | undefined;
-  order_by?: string | undefined;
-  sub_issue?: boolean;
-}
-
-export interface IProjectViewProps {
-  rich_filters: TWorkItemFilterExpression;
-  display_filters: IIssueDisplayFilterOptions | undefined;
-}
-
-export interface IWorkspaceViewProps {
-  rich_filters: TWorkItemFilterExpression;
-  display_filters: IIssueDisplayFilterOptions | undefined;
-  display_properties: IIssueDisplayProperties;
-}
-
-export interface IssuePaginationOptions {
-  canGroup: boolean;
-  perPageCount: number;
-  before?: string;
-  after?: string;
-  groupedBy?: TIssueGroupByOptions;
-  subGroupedBy?: TIssueGroupByOptions;
-  orderBy?: TIssueOrderByOptions;
-}
-
-export type TSpreadsheetColumn = React.FC<{
-  issue: TIssue;
-  onClose: () => void;
-  onChange: (issue: TIssue, data: Partial<TIssue>, updates: Record<string, unknown>) => void;
-  disabled: boolean;
-}>;
