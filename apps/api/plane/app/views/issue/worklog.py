@@ -64,9 +64,9 @@ class IssueWorkLogViewSet(BaseViewSet):
             return False, max(remaining, 0)
         return True, None
 
-    def _check_edit_window(self, worklog):
+    def _check_edit_window(self, worklog, tz_str="UTC"):
         """Return True if worklog is within editable window (60 working days)."""
-        min_date = get_min_allowed_date(working_days=60)
+        min_date = get_min_allowed_date(working_days=60, tz_str=tz_str)
         return worklog.logged_at >= min_date
 
     def _check_time_tracking_enabled(self, project_id):
@@ -94,7 +94,10 @@ class IssueWorkLogViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IssueWorkLogSerializer(data=request.data)
+        serializer = IssueWorkLogSerializer(
+            data=request.data,
+            context={"project_timezone": project.timezone},
+        )
         if serializer.is_valid():
             # Check daily aggregate limit
             ok, remaining = self._check_daily_limit(
@@ -128,6 +131,12 @@ class IssueWorkLogViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, issue_id, pk):
+        project = self._check_time_tracking_enabled(project_id)
+        if not project:
+            return Response(
+                {"error": "Time tracking is not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             worklog = IssueWorkLog.objects.get(
                 workspace__slug=slug,
@@ -137,8 +146,8 @@ class IssueWorkLogViewSet(BaseViewSet):
             )
         except IssueWorkLog.DoesNotExist:
             return Response({"error": "Worklog not found."}, status=status.HTTP_404_NOT_FOUND)
-        # Check 60-working-day edit window
-        if not self._check_edit_window(worklog):
+        # Check 60-working-day edit window using project timezone
+        if not self._check_edit_window(worklog, tz_str=project.timezone):
             return Response(
                 {"error": "This worklog is locked and cannot be edited. Worklogs older than 60 working days are read-only."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -151,7 +160,10 @@ class IssueWorkLogViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueWorkLogSerializer(worklog).data, cls=DjangoJSONEncoder
         )
-        serializer = IssueWorkLogSerializer(worklog, data=request.data, partial=True)
+        serializer = IssueWorkLogSerializer(
+            worklog, data=request.data, partial=True,
+            context={"project_timezone": project.timezone},
+        )
         if serializer.is_valid():
             # Check daily aggregate limit (use updated values or existing)
             effective_date = serializer.validated_data.get("logged_at", worklog.logged_at)
@@ -183,6 +195,12 @@ class IssueWorkLogViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN])
     def destroy(self, request, slug, project_id, issue_id, pk):
+        project = self._check_time_tracking_enabled(project_id)
+        if not project:
+            return Response(
+                {"error": "Time tracking is not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             worklog = IssueWorkLog.objects.get(
                 workspace__slug=slug,
@@ -192,8 +210,8 @@ class IssueWorkLogViewSet(BaseViewSet):
             )
         except IssueWorkLog.DoesNotExist:
             return Response({"error": "Worklog not found."}, status=status.HTTP_404_NOT_FOUND)
-        # Check 60-working-day edit window
-        if not self._check_edit_window(worklog):
+        # Check 60-working-day edit window using project timezone
+        if not self._check_edit_window(worklog, tz_str=project.timezone):
             return Response(
                 {"error": "This worklog is locked and cannot be deleted. Worklogs older than 60 working days are read-only."},
                 status=status.HTTP_403_FORBIDDEN,

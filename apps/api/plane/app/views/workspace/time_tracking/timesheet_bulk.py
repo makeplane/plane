@@ -63,7 +63,7 @@ class TimesheetBulkUpdateEndpoint(BaseAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Check aggregate daily limit (720min) — exclude worklogs being replaced
-        min_allowed_date = get_min_allowed_date(working_days=60)
+        min_allowed_date = get_min_allowed_date(working_days=60, tz_str=project.timezone)
         date_totals = defaultdict(int)
         replace_keys = set()
         for entry in serializer.validated_data:
