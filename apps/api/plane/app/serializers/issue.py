@@ -926,6 +926,8 @@ class IssueListDetailSerializer(serializers.Serializer):
             "total_logged_minutes": getattr(instance, "total_logged_minutes", None),
             "main_task_category_id": instance.main_task_category_id,
             "sub_task_category_id": instance.sub_task_category_id,
+            "main_task_category_name": instance.main_task_category.name if instance.main_task_category else None,
+            "sub_task_category_name": instance.sub_task_category.name if instance.sub_task_category else None,
         }
 
         # Handle expanded fields only when requested - using direct field access

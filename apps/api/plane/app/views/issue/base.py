@@ -1107,7 +1107,7 @@ class IssueDetailEndpoint(BaseAPIView):
         # Main issue query
         issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
             Exists(permission_subquery)
-        )
+        ).select_related("main_task_category", "sub_task_category")
 
         # Add additional prefetch based on expand parameter
         if self.expand:

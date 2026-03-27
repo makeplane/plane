@@ -226,7 +226,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
+        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug")).select_related(
+            "main_task_category", "sub_task_category"
+        )
 
     def _get_queryset_with_archived(self):
         """Return queryset that includes archived issues but still excludes triage/draft."""
