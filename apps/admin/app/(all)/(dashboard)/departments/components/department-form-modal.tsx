@@ -41,7 +41,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    defaultValues: { name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 0, is_active: true },
+    defaultValues: { name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 65535, is_active: true },
   });
 
   const parentId = watch("parent");
@@ -71,7 +71,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
         is_active: editDept.is_active,
       });
     } else {
-      reset({ name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 0, is_active: true });
+      reset({ name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 65535, is_active: true });
     }
   }, [editDept, reset]);
 
@@ -145,6 +145,16 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
             <div className="space-y-1">
               <label className="text-13 font-medium">Description</label>
               <Input {...register("description")} placeholder="Optional description" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-13 font-medium">Sort Order</label>
+              <Input
+                type="number"
+                {...register("sort_order", { valueAsNumber: true })}
+                placeholder="65535"
+                min={0}
+                step={1}
+              />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="secondary" onClick={onClose} type="button">Cancel</Button>

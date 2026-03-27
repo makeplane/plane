@@ -36,6 +36,10 @@ export default defineConfig(() => ({
   },
   server: {
     host: "127.0.0.1",
+    watch: {
+      // Watch workspace packages so Vite invalidates cached modules on rebuild
+      ignored: ["!**/node_modules/@plane/**"],
+    },
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));

@@ -580,6 +580,11 @@ export default {
       name: "이름",
     },
   },
+  bank_wide_projects: {
+    sidebar_label: "전행 프로젝트 목록",
+    title: "전행 프로젝트 목록",
+    empty_state: "전행 프로젝트가 없습니다.",
+  },
   bank_wide_project: {
     label: "전행 프로젝트",
     settings: {

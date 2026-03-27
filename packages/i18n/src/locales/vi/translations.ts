@@ -593,6 +593,11 @@ export default {
       name: "Tên",
     },
   },
+  bank_wide_projects: {
+    sidebar_label: "Dự án toàn hàng",
+    title: "Dự án toàn hàng",
+    empty_state: "Không tìm thấy dự án toàn hàng.",
+  },
   bank_wide_project: {
     label: "Dự án toàn ngân hàng",
     settings: {

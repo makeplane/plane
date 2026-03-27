@@ -19,8 +19,9 @@ export const SidebarItem: FC<Props> = observer(function SidebarItem({ item }) {
   const { currentWorkspace } = useWorkspace();
   const { currentWorkspaceViews, globalViewMap } = useGlobalView();
 
-  // HO is only visible in Board of Director workspaces
+  // HO and Bank-wide Projects are only visible in Board of Director workspaces
   if (item.key === "ho" && !currentWorkspace?.is_board_of_director_workspace) return null;
+  if (item.key === "bank-wide-projects" && !currentWorkspace?.is_board_of_director_workspace) return null;
 
   // Point "views" sidebar link to the Daily Status default view when loaded,
   // otherwise fall back to the index page which auto-redirects on load.
@@ -40,5 +41,5 @@ export const SidebarItem: FC<Props> = observer(function SidebarItem({ item }) {
     }
   }
 
-  return <SidebarItemBase item={resolvedItem} additionalStaticItems={["ho"]} />;
+  return <SidebarItemBase item={resolvedItem} additionalStaticItems={["ho", "bank-wide-projects"]} />;
 });
