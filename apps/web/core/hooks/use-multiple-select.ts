@@ -12,7 +12,9 @@
  */
 
 import { useCallback, useEffect, useMemo } from "react";
+import { EIssueServiceType } from "@plane/types";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 //
 import useReloadConfirmations from "./use-reload-confirmation";
@@ -45,9 +47,9 @@ export type TSelectionHelper = {
 
 export const useMultipleSelect = (props: Props) => {
   const { containerRef, disabled, entities } = props;
-  // router
-  // const router = useAppRouter();
   // store hooks
+  const { isPeekOpen: isIssuePeekOpen } = useIssueDetail();
+  const { isPeekOpen: isEpicPeekOpen } = useIssueDetail(EIssueServiceType.EPICS);
   const {
     selectedEntityIds,
     updateSelectedEntityDetails,
@@ -300,18 +302,25 @@ export const useMultipleSelect = (props: Props) => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
+      if (isIssuePeekOpen || isEpicPeekOpen) return;
       const active = document.activeElement as HTMLElement | null;
-      if (active?.matches("input, textarea, select, [contenteditable]") || active?.isContentEditable) return;
+      if (
+        active?.matches("input:not([type='checkbox']), textarea, select, [contenteditable]") ||
+        active?.isContentEditable
+      )
+        return;
 
       const activeEntityDetails = getActiveEntityDetails();
       const nextActiveEntity = getNextActiveEntity();
       const previousActiveEntity = getPreviousActiveEntity();
 
       if (e.key === "ArrowDown" && activeEntityDetails) {
+        e.preventDefault();
         if (!nextActiveEntity) return;
         handleEntitySelection(nextActiveEntity);
       }
       if (e.key === "ArrowUp" && activeEntityDetails) {
+        e.preventDefault();
         if (!previousActiveEntity) return;
         handleEntitySelection(previousActiveEntity);
       }
@@ -323,6 +332,8 @@ export const useMultipleSelect = (props: Props) => {
     };
   }, [
     disabled,
+    isIssuePeekOpen,
+    isEpicPeekOpen,
     getActiveEntityDetails,
     handleEntitySelection,
     getLastSelectedEntityDetails,
@@ -336,7 +347,11 @@ export const useMultipleSelect = (props: Props) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey) return;
       const active = document.activeElement as HTMLElement | null;
-      if (active?.matches("input, textarea, select, [contenteditable]") || active?.isContentEditable) return;
+      if (
+        active?.matches("input:not([type='checkbox']), textarea, select, [contenteditable]") ||
+        active?.isContentEditable
+      )
+        return;
       const activeEntityDetails = getActiveEntityDetails();
       // set active entity id to the first entity
       if (["ArrowUp", "ArrowDown"].includes(e.key) && !activeEntityDetails) {
