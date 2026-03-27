@@ -1,20 +1,34 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ *
+ * Capacity heatmap table — one row per member, one column per day in the date range.
+ * Cells are clickable (show day-details popover) unless isCrossWorkspace is true,
+ * in which case cells are rendered as plain non-interactive divs.
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
 import { eachDayOfInterval, parseISO, format } from "date-fns";
-
 import type { ICapacityMember } from "@plane/types";
+import { CapacityDayDetailsPopover } from "./capacity-day-details-popover";
 
 interface ICapacityHeatmapProps {
   members: ICapacityMember[];
   dateFrom: string;
   dateTo: string;
   projectDailyTotals?: Record<string, { minutes: number; issue_count: number }>;
+  workspaceSlug: string;
+  projectId: string;
+  /** When true, heatmap cells are non-clickable (cross-workspace mode) */
+  isCrossWorkspace?: boolean;
 }
 
 export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
-  const { members, dateFrom, dateTo, projectDailyTotals } = props;
+  const { members, dateFrom, dateTo, projectDailyTotals, workspaceSlug, projectId, isCrossWorkspace } = props;
   const { t } = useTranslation();
 
   const formatHours = (minutes: number) => (minutes / 60).toFixed(1);
@@ -52,7 +66,6 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
     };
   };
 
-  // Keep the entire table layout and 2D grid setup logic unchanged...
   return (
     <div className="w-full overflow-hidden rounded-xl border border-subtle bg-surface-1 shadow-sm">
       <div className="w-full overflow-x-auto custom-scrollbar">
@@ -106,16 +119,35 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
 
                       return (
                         <td key={dateStr} className="px-1 py-1 text-center">
-                          <Tooltip
-                            tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
-                            disabled={!cellInfo.tooltipKey}
-                          >
-                            <div
-                              className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm transition-all duration-300 hover:scale-[1.15] hover:shadow-md cursor-pointer ${cellInfo.className} font-medium text-12 tracking-wide`}
+                          {isCrossWorkspace ? (
+                            // Cross-workspace: plain non-clickable cell
+                            <Tooltip
+                              tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
+                              disabled={!cellInfo.tooltipKey}
                             >
-                              {cellVal}
-                            </div>
-                          </Tooltip>
+                              <div
+                                className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm ${cellInfo.className} font-medium text-12 tracking-wide`}
+                              >
+                                {cellVal}
+                              </div>
+                            </Tooltip>
+                          ) : (
+                            // Project-scoped: clickable popover with day details
+                            <Tooltip
+                              tooltipContent={cellInfo.tooltipKey ? t(cellInfo.tooltipKey) : undefined}
+                              disabled={!cellInfo.tooltipKey}
+                            >
+                              <CapacityDayDetailsPopover
+                                memberId={member.member_id}
+                                date={dateStr}
+                                loggedMinutes={loggedMinutes}
+                                workspaceSlug={workspaceSlug}
+                                projectId={projectId}
+                                cellClassName={cellInfo.className}
+                                cellLabel={cellVal}
+                              />
+                            </Tooltip>
+                          )}
                         </td>
                       );
                     })}

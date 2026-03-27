@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate } from "@plane/utils";
@@ -26,33 +33,45 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
   const worklogStore = useWorklog();
   const { capacityData, isCapacityLoading } = worklogStore;
 
-  // states for filters
+  // Filter state
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: undefined,
     to: undefined,
   });
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
+
+  // Derived date params
+  const dateFrom = dateRange.from ? renderFormattedPayloadDate(dateRange.from) || "" : "";
+  const dateTo = dateRange.to ? renderFormattedPayloadDate(dateRange.to) || "" : "";
 
   const fetchReport = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
 
     const params: Record<string, string> = {};
-    if (selectedMembers && selectedMembers.length > 0) {
-      params["member_id"] = selectedMembers.join(",");
-    }
-    if (dateRange.from) {
-      params["date_from"] = renderFormattedPayloadDate(dateRange.from) || "";
-    }
-    if (dateRange.to) {
-      params["date_to"] = renderFormattedPayloadDate(dateRange.to) || "";
-    }
+    if (selectedMembers.length > 0) params["member_id"] = selectedMembers.join(",");
+    if (dateFrom) params["date_from"] = dateFrom;
+    if (dateTo) params["date_to"] = dateTo;
 
-    void worklogStore.fetchCapacityReport(workspaceSlug, projectId, params);
-  }, [workspaceSlug, projectId, selectedMembers, dateRange, worklogStore]);
+    if (isCrossWorkspace) {
+      void worklogStore.fetchCrossWorkspaceCapacity(workspaceSlug, params);
+    } else {
+      void worklogStore.fetchCapacityReport(workspaceSlug, projectId, params);
+    }
+  }, [workspaceSlug, projectId, selectedMembers, dateFrom, dateTo, isCrossWorkspace, worklogStore]);
 
   useEffect(() => {
     fetchReport();
   }, [fetchReport]);
+
+  // Fetch category distribution (project-scoped only)
+  useEffect(() => {
+    if (isCrossWorkspace || !workspaceSlug || !projectId) return;
+    const params: Record<string, string> = {};
+    if (dateFrom) params["date_from"] = dateFrom;
+    if (dateTo) params["date_to"] = dateTo;
+    void worklogStore.fetchCapacityCategories(workspaceSlug, projectId, params);
+  }, [workspaceSlug, projectId, dateFrom, dateTo, isCrossWorkspace, worklogStore]);
 
   const handleExport = () => {
     if (!capacityData) return;
@@ -114,29 +133,51 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
             </h2>
             <p className="text-13 text-secondary mt-1.5 ml-0.5">{t("capacity_dashboard_description")}</p>
           </div>
+
+          {/* Cross Workspaces toggle */}
+          <button
+            onClick={() => setIsCrossWorkspace((v) => !v)}
+            className={cn(
+              "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
+              isCrossWorkspace
+                ? "bg-accent-subtle border-accent-primary text-accent-primary"
+                : "border-subtle text-secondary hover:text-primary"
+            )}
+          >
+            {t("timesheet_cross_workspaces")}
+          </button>
         </div>
       </div>
 
       <div className="flex-grow overflow-y-auto custom-scrollbar">
-        <div className="px-6 mb-4 text-primary">
-          <CapacitySummaryCards totalLoggedMinutes={capacityData.project_total_logged} />
-        </div>
+        {/* Category tables — hidden in cross-workspace mode (categories are project-scoped) */}
+        {!isCrossWorkspace && (
+          <div className="px-6 mb-4 text-primary">
+            <CapacitySummaryCards
+              totalLoggedMinutes={capacityData.project_total_logged}
+              categoriesData={worklogStore.categoriesData}
+            />
+          </div>
+        )}
 
-        {/* Filters Bar - Positioned above the table but below charts */}
+        {/* Filters Bar */}
         <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-12 font-medium text-secondary">{t("common.assignee")}:</span>
-              <MemberDropdown
-                value={selectedMembers}
-                onChange={(val: string[]) => setSelectedMembers(val)}
-                projectId={projectId}
-                multiple
-                buttonVariant="transparent-with-text"
-                buttonClassName="!h-7 !px-2.5 !py-0.5 text-12"
-                dropdownArrow
-              />
-            </div>
+            {/* Member filter — hidden in cross-workspace mode */}
+            {!isCrossWorkspace && (
+              <div className="flex items-center gap-2">
+                <span className="text-12 font-medium text-secondary">{t("common.assignee")}:</span>
+                <MemberDropdown
+                  value={selectedMembers}
+                  onChange={(val: string[]) => setSelectedMembers(val)}
+                  projectId={projectId}
+                  multiple
+                  buttonVariant="transparent-with-text"
+                  buttonClassName="!h-7 !px-2.5 !py-0.5 text-12"
+                  dropdownArrow
+                />
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <span className="text-12 font-medium text-secondary">{t("date_range")}:</span>
@@ -179,6 +220,9 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
             dateFrom={capacityData.date_from}
             dateTo={capacityData.date_to}
             projectDailyTotals={capacityData.project_daily_totals}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            isCrossWorkspace={isCrossWorkspace}
           />
         </div>
       </div>
