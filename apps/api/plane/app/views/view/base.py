@@ -171,7 +171,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
     def apply_annotations(self, issues):
         return (
-            issues.annotate(
+            issues.select_related("main_task_category", "sub_task_category")
+            .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
