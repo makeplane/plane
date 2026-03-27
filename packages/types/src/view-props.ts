@@ -61,7 +61,11 @@ export type TIssueOrderByOptions =
   | "completed_at"
   | "-completed_at"
   | "total_logged_minutes"
-  | "-total_logged_minutes";
+  | "-total_logged_minutes"
+  | "main_task_category__name"
+  | "-main_task_category__name"
+  | "sub_task_category__name"
+  | "-sub_task_category__name";
 
 export type TIssueGroupingFilters = "active" | "backlog";
 
@@ -189,6 +193,8 @@ export interface IIssueDisplayProperties {
   project_name?: boolean;
   project_lead?: boolean;
   bank_wide_project?: boolean;
+  main_task_category?: boolean;
+  sub_task_category?: boolean;
   progress_tracking?: boolean;
   completed_date?: boolean;
   reference_link?: boolean;

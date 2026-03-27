@@ -104,3 +104,5 @@ from .workflow import (
     WorkflowTransitionApprover,
     WorkflowActivity,
 )
+
+from .task_category import MainTaskCategory, SubTaskCategory

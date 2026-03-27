@@ -60,7 +60,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_FILTERS,
@@ -74,7 +74,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_FILTERS,
@@ -88,7 +88,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_PROPERTIES,
@@ -180,21 +180,19 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             />
           )}
           {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
-          {!viewDetails.is_locked && (
-            <FiltersDropdown title="Display" placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-                cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                moduleViewDisabled={!currentProjectDetails?.module_view}
-              />
-            </FiltersDropdown>
-          )}
+          <FiltersDropdown title="Display" placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
+              }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
+            />
+          </FiltersDropdown>
         </>
         {canUserCreateIssue && (
           <Button

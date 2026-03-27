@@ -474,6 +474,8 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "main_task_category_id",
+                    "sub_task_category_id",
                 )
                 .first()
             )
@@ -1105,7 +1107,7 @@ class IssueDetailEndpoint(BaseAPIView):
         # Main issue query
         issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
             Exists(permission_subquery)
-        )
+        ).select_related("main_task_category", "sub_task_category")
 
         # Add additional prefetch based on expand parameter
         if self.expand:

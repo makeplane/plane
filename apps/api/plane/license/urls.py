@@ -113,6 +113,8 @@ urlpatterns = [
     path("", include("plane.license.api.urls.department")),
     # Staff management
     path("", include("plane.license.api.urls.staff")),
+    # Task category management
+    path("", include("plane.license.api.urls.task_category")),
     # Monitoring
     path(
         "monitoring/email-logs/",

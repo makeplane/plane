@@ -1,23 +1,37 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
 import useSWR from "swr";
 import { Tooltip } from "@plane/propel/tooltip";
 import { UserWorklogService } from "@/plane-web/services/user-worklog.service";
+import { Clock } from "lucide-react";
 
 const userWorklogService = new UserWorklogService();
 
 const MAX_MINUTES = 720; // 12 hours
-const CIRCUMFERENCE = 97.4; // 2π × r where r = 15.5
 
-function getProgressColor(totalMinutes: number): string {
+function getProgressGradient(totalMinutes: number): { fill: string; bg: string; border: string } {
   const hours = totalMinutes / 60;
-  if (hours >= 10) return "#ef4444"; // red
-  if (hours >= 8) return "#f59e0b"; // amber
-  return "#22c55e"; // green
+  if (hours >= 10)
+    return {
+      fill: "linear-gradient(90deg, #f87171, #ef4444)",
+      bg: "linear-gradient(90deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08))",
+      border: "rgba(239, 68, 68, 0.55)",
+    };
+  if (hours >= 8)
+    return {
+      fill: "linear-gradient(90deg, #4ade80, #22c55e)",
+      bg: "linear-gradient(90deg, rgba(34,197,94,0.15), rgba(34,197,94,0.08))",
+      border: "rgba(34, 197, 94, 0.55)",
+    };
+  if (hours >= 4)
+    return {
+      fill: "linear-gradient(90deg, #60a5fa, #3b82f6)",
+      bg: "linear-gradient(90deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08))",
+      border: "rgba(59, 130, 246, 0.55)",
+    };
+  return {
+    fill: "linear-gradient(90deg, #fbbf24, #f59e0b)",
+    bg: "linear-gradient(90deg, rgba(245,158,11,0.15), rgba(245,158,11,0.08))",
+    border: "rgba(245, 158, 11, 0.55)",
+  };
 }
 
 function formatLabel(totalMinutes: number): string {
@@ -25,7 +39,8 @@ function formatLabel(totalMinutes: number): string {
   const mins = totalMinutes % 60;
   if (totalMinutes === 0) return "0h";
   if (hours === 0) return `${mins}m`;
-  return `${hours}h`;
+  if (mins === 0) return `${hours}h`;
+  return `${hours}h ${mins}m`;
 }
 
 function formatTooltip(totalMinutes: number): string {
@@ -44,42 +59,27 @@ export function DailyLogtimeIndicator() {
 
   const totalMinutes = data?.total_minutes ?? 0;
   const progress = Math.min(totalMinutes / MAX_MINUTES, 1);
-  const offset = CIRCUMFERENCE * (1 - progress);
-  const color = getProgressColor(totalMinutes);
+  const color = getProgressGradient(totalMinutes);
   const label = formatLabel(totalMinutes);
   const tooltip = formatTooltip(totalMinutes);
 
   return (
     <Tooltip tooltipContent={tooltip} position="bottom">
-      <div className="flex items-center justify-center size-8 rounded-md hover:bg-layer-1-hover cursor-default">
-        <svg viewBox="0 0 36 36" className="size-[22px]">
-          {/* Background track — white when unfilled */}
-          <circle cx="18" cy="18" r="15.5" fill="none" strokeWidth="4.5" stroke="white" />
-          {/* Progress arc */}
-          <circle
-            cx="18"
-            cy="18"
-            r="15.5"
-            fill="none"
-            strokeWidth="4.5"
-            strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            transform="rotate(-90 18 18)"
-            style={{ stroke: color, transition: "stroke-dashoffset 0.5s ease" }}
-          />
-          {/* Center time label */}
-          <text
-            x="18"
-            y="18"
-            textAnchor="middle"
-            dominantBaseline="central"
-            className="fill-custom-text-200"
-            style={{ fontSize: "8px", fontWeight: 500 }}
-          >
-            {label}
-          </text>
-        </svg>
+      <div
+        className="relative flex items-center h-7 px-3 rounded-full cursor-default overflow-hidden"
+        style={{ background: color.bg, border: `1px solid ${color.border}` }}
+      >
+        <div
+          className="absolute left-0 top-0 bottom-0 transition-all duration-500 ease-in-out"
+          style={{ width: `${progress * 100}%`, background: color.fill }}
+        />
+        <div
+          className="relative z-10 flex items-center gap-1.5 font-medium whitespace-nowrap"
+          style={{ color: "#ffffff", fontSize: "12px" }}
+        >
+          <Clock className="size-3.5" strokeWidth={2.5} />
+          <span>{label} / 12h</span>
+        </div>
       </div>
     </Tooltip>
   );

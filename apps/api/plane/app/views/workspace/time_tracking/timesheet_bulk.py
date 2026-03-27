@@ -55,12 +55,15 @@ class TimesheetBulkUpdateEndpoint(BaseAPIView):
             )
 
         # Validate entries
-        serializer = TimesheetBulkEntrySerializer(data=entries, many=True)
+        serializer = TimesheetBulkEntrySerializer(
+            data=entries, many=True,
+            context={"project_timezone": project.timezone},
+        )
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Check aggregate daily limit (720min) — exclude worklogs being replaced
-        min_allowed_date = get_min_allowed_date(working_days=60)
+        min_allowed_date = get_min_allowed_date(working_days=60, tz_str=project.timezone)
         date_totals = defaultdict(int)
         replace_keys = set()
         for entry in serializer.validated_data:

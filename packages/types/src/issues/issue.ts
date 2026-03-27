@@ -64,6 +64,8 @@ export type TBaseIssue = {
   cycle_id: string | null;
   module_ids: string[] | null;
   type_id: string | null;
+  main_task_category_id: string | null;
+  sub_task_category_id: string | null;
 
   created_at: string;
   updated_at: string;
@@ -104,6 +106,9 @@ export type TIssue = TBaseIssue & {
   state__group?: TStateGroups | null;
   // CE extended data from worklog annotation
   total_logged_minutes?: number | null;
+  // CE extended data from task category annotation
+  main_task_category_name?: string | null;
+  sub_task_category_name?: string | null;
 };
 
 export type TIssueMap = {

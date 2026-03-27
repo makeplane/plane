@@ -145,24 +145,27 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
   mutateFilters: IProjectViewIssuesFilter["mutateFilters"] = action((workspaceSlug, viewId, viewDetails) => {
     const richFilters: TWorkItemFilterExpression = viewDetails?.rich_filters;
-    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(viewDetails?.display_filters);
-    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(viewDetails?.display_properties);
-
-    // fetching the kanban toggle helpers in the local storage
-    const kanbanFilters = {
-      group_by: [],
-      sub_group_by: [],
-    };
+    const kanbanFilters = { group_by: [] as string[], sub_group_by: [] as string[] };
     const currentUserId = this.rootIssueStore.currentUserId;
-    if (currentUserId) {
-      const _kanbanFilters = this.handleIssuesLocalFilters.get(
-        EIssuesStoreType.PROJECT_VIEW,
-        workspaceSlug,
-        viewId,
-        currentUserId
-      );
-      kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
-      kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
+
+    // Read per-user localStorage overrides for this view
+    const localFilters = currentUserId
+      ? this.handleIssuesLocalFilters.get(EIssuesStoreType.PROJECT_VIEW, workspaceSlug, viewId, currentUserId)
+      : undefined;
+
+    // Merge server values with per-user local overrides (local wins)
+    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters({
+      ...(viewDetails?.display_filters ?? {}),
+      ...(localFilters?.display_filters ?? {}),
+    });
+    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties({
+      ...(viewDetails?.display_properties ?? {}),
+      ...(localFilters?.display_properties ?? {}),
+    });
+
+    if (currentUserId && localFilters) {
+      kanbanFilters.group_by = localFilters?.kanban_filters?.group_by || [];
+      kanbanFilters.sub_group_by = localFilters?.kanban_filters?.sub_group_by || [];
     }
 
     runInAction(() => {
@@ -188,7 +191,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IProjectViewIssuesFilter["updateFilterExpression"] = async (
+  updateFilterExpression: IProjectViewIssuesFilter["updateFilterExpression"] = (
     workspaceSlug,
     projectId,
     viewId,
@@ -199,7 +202,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
         set(this.filters, [viewId, "richFilters"], filters);
       });
 
-      this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
+      void this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
         workspaceSlug,
         projectId,
         viewId,
@@ -211,13 +214,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     }
   };
 
-  updateFilters: IProjectViewIssuesFilter["updateFilters"] = async (
-    workspaceSlug,
-    projectId,
-    type,
-    filters,
-    viewId
-  ) => {
+  updateFilters: IProjectViewIssuesFilter["updateFilters"] = (workspaceSlug, projectId, type, filters, viewId) => {
     try {
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId])) return;
 
@@ -262,12 +259,25 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
+          // Persist per-user display filter preferences in localStorage
+          const currentUserIdForFilters = this.rootIssueStore.currentUserId;
+          if (currentUserIdForFilters) {
+            this.handleIssuesLocalFilters.set(
+              EIssuesStoreType.PROJECT_VIEW,
+              type,
+              workspaceSlug,
+              viewId,
+              currentUserIdForFilters,
+              { display_filters: _filters.displayFilters }
+            );
+          }
+
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
             this.rootIssueStore.projectIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
+            void this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
               workspaceSlug,
               projectId,
               viewId,
@@ -290,6 +300,19 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
               );
             });
           });
+
+          // Persist per-user display property preferences in localStorage
+          const currentUserIdForProps = this.rootIssueStore.currentUserId;
+          if (currentUserIdForProps) {
+            this.handleIssuesLocalFilters.set(
+              EIssuesStoreType.PROJECT_VIEW,
+              type,
+              workspaceSlug,
+              viewId,
+              currentUserIdForProps,
+              { display_properties: _filters.displayProperties }
+            );
+          }
 
           break;
         }
@@ -326,7 +349,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           break;
       }
     } catch (error) {
-      if (viewId) this.fetchFilters(workspaceSlug, projectId, viewId);
+      if (viewId) void this.fetchFilters(workspaceSlug, projectId, viewId);
       throw error;
     }
   };

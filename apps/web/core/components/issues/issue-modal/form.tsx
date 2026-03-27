@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -17,7 +16,6 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
 import {
@@ -36,12 +34,14 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
+import { TaskCategoryFields } from "@/components/issues/issue-modal/components/task-category-fields";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useTaskCategory } from "@/hooks/store/use-task-category";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
@@ -74,9 +74,19 @@ export interface IssueFormProps {
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   showActionButtons?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataResetProperties?: any[];
 }
 
+/* eslint-disable
+  @typescript-eslint/no-floating-promises,
+  promise/always-return,
+  @typescript-eslint/no-base-to-string,
+  react-hooks/exhaustive-deps,
+  @typescript-eslint/no-misused-promises,
+  jsx-a11y/interactive-supports-focus,
+  no-prototype-builtins
+*/
 export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
@@ -139,6 +149,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
   const { getStateById } = useProjectState();
+  const { fetchCategories } = useTaskCategory();
 
   // form info
   const methods = useForm<TIssue>({
@@ -169,6 +180,12 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
+  // fetch task categories once on mount
+  useEffect(() => {
+    void fetchCategories();
+     
+  }, []);
+
   //reset few fields on projectId change
   useEffect(() => {
     if (isDirty) {
@@ -181,9 +198,9 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         reset(getUpdateFormDataForReset(projectId, getValues()));
       }
     }
-    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
+    if (projectId && routeProjectId !== projectId) void fetchCycles(workspaceSlug?.toString(), projectId);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [projectId]);
 
   // Reset form when data prop changes
@@ -191,7 +208,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     if (data) {
       reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [...dataResetProperties]);
 
   // Update the issue type id when the project id changes
@@ -205,7 +222,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [data, projectId]);
 
   useEffect(() => {
@@ -216,7 +233,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         editorRef,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [workItemTemplateId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
@@ -251,6 +268,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         };
 
     // this condition helps to move the issues from draft to project issues
+     
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
 
     await onSubmit(submitData, is_draft_issue)
@@ -352,7 +370,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
     if (isDirty && condition) onChange(watch());
     else onChange(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isDirty]);
 
   useEffect(() => {
@@ -419,6 +437,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       renderChevron
                     />
                   )}
+                  <TaskCategoryFields control={control} handleFormChange={handleFormChange} />
                 </div>
                 {duplicateIssues.length > 0 && (
                   <DeDupeButtonRoot

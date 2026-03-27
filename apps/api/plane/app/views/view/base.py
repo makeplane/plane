@@ -85,7 +85,15 @@ class WorkspaceViewViewSet(BaseViewSet):
             workspace_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
 
             if workspace_view.is_locked:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                # Locked views allow display preference updates only; block structural changes
+                _display_only_fields = {"display_properties", "display_filters"}
+                if not set(request.data.keys()).issubset(_display_only_fields):
+                    return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                serializer = IssueViewSerializer(workspace_view, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # Only update the view if owner is updating
             if workspace_view.owned_by_id != request.user.id:
@@ -171,7 +179,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
     def apply_annotations(self, issues):
         return (
-            issues.annotate(
+            issues.select_related("main_task_category", "sub_task_category")
+            .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
@@ -226,7 +235,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
+        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug")).select_related(
+            "main_task_category", "sub_task_category"
+        )
 
     def _get_queryset_with_archived(self):
         """Return queryset that includes archived issues but still excludes triage/draft."""
@@ -377,7 +388,15 @@ class IssueViewViewSet(BaseViewSet):
             issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug, project_id=project_id)
 
             if issue_view.is_locked:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                # Locked views allow display preference updates only; block structural changes
+                _display_only_fields = {"display_properties", "display_filters"}
+                if not set(request.data.keys()).issubset(_display_only_fields):
+                    return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                serializer = IssueViewSerializer(issue_view, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # Only update the view if owner is updating
             if issue_view.owned_by_id != request.user.id:

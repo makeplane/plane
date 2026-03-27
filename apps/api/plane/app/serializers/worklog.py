@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import date, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from rest_framework import serializers
 
@@ -13,9 +14,18 @@ from plane.db.models import IssueWorkLog
 MAX_DURATION_MINUTES = 720
 
 
-def get_min_allowed_date(working_days=60):
-    """Calculate date that is N working days ago (Mon-Fri only)."""
-    current = date.today()
+def _today_in_tz(tz_str):
+    """Return today's date in the given timezone string (falls back to UTC)."""
+    try:
+        tz = ZoneInfo(tz_str) if tz_str else ZoneInfo("UTC")
+    except (ZoneInfoNotFoundError, KeyError):
+        tz = ZoneInfo("UTC")
+    return datetime.now(tz).date()
+
+
+def get_min_allowed_date(working_days=60, tz_str="UTC"):
+    """Calculate date that is N working days ago (Mon-Fri only) in the given timezone."""
+    current = _today_in_tz(tz_str)
     days_counted = 0
     while days_counted < working_days:
         current -= timedelta(days=1)
@@ -66,11 +76,13 @@ class IssueWorkLogSerializer(BaseSerializer):
         return value
 
     def validate_logged_at(self, value):
-        if value > date.today():
+        tz_str = self.context.get("project_timezone", "UTC")
+        today = _today_in_tz(tz_str)
+        if value > today:
             raise serializers.ValidationError(
                 "Cannot log time for future dates."
             )
-        min_date = get_min_allowed_date()
+        min_date = get_min_allowed_date(tz_str=tz_str)
         if value < min_date:
             raise serializers.ValidationError(
                 "Cannot log time more than 60 working days ago."
@@ -115,11 +127,13 @@ class TimesheetBulkEntrySerializer(serializers.Serializer):
     duration_minutes = serializers.IntegerField(min_value=0, max_value=MAX_DURATION_MINUTES)
 
     def validate_logged_at(self, value):
-        if value > date.today():
+        tz_str = self.context.get("project_timezone", "UTC")
+        today = _today_in_tz(tz_str)
+        if value > today:
             raise serializers.ValidationError(
                 "Cannot log time for future dates."
             )
-        min_date = get_min_allowed_date()
+        min_date = get_min_allowed_date(tz_str=tz_str)
         if value < min_date:
             raise serializers.ValidationError(
                 "Cannot log time more than 60 working days ago."

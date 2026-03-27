@@ -1,16 +1,13 @@
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import type { TIssue } from "@plane/types";
-import { useModule } from "@/hooks/store/use-module";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type FieldRules = Record<string, unknown>;
 
-export const useIssueFormValidation = (projectId?: string | null) => {
+export const useIssueFormValidation = (_projectId?: string | null) => {
   const { watch, clearErrors } = useFormContext<TIssue>();
   const { getStateById } = useProjectState();
-  const { getProjectModuleIds } = useModule();
-
   const selectedStateId = watch("state_id");
   const selectedState = selectedStateId ? getStateById(selectedStateId) : undefined;
   const isDraftState = selectedState?.group === "backlog";
@@ -34,14 +31,11 @@ export const useIssueFormValidation = (projectId?: string | null) => {
     return cleared;
   };
 
-  // Returns rules for module_ids: skips validation when draft state, no projectId, or project has no modules
-  const getModuleFieldRules = (originalRules: FieldRules): FieldRules => {
-    if (isDraftState) return getFieldRules(originalRules);
-    if (!projectId) return {};
-    const moduleIds = getProjectModuleIds(projectId);
-    if (!moduleIds || moduleIds.length === 0) return {};
+  // Returns rules for task category fields: skips validation when draft state or no categories exist
+  const getTaskCategoryFieldRules = (originalRules: FieldRules, categoriesExist: boolean): FieldRules => {
+    if (isDraftState || !categoriesExist) return getFieldRules(originalRules);
     return originalRules;
   };
 
-  return { isDraftState, getFieldRules, getModuleFieldRules };
+  return { isDraftState, getFieldRules, getTaskCategoryFieldRules };
 };

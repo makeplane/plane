@@ -42,6 +42,8 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    MainTaskCategory,
+    SubTaskCategory,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -97,6 +99,18 @@ class IssueCreateSerializer(BaseSerializer):
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
+    )
+    main_task_category_id = serializers.PrimaryKeyRelatedField(
+        source="main_task_category",
+        queryset=MainTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True),
+        required=False,
+        allow_null=True,
+    )
+    sub_task_category_id = serializers.PrimaryKeyRelatedField(
+        source="sub_task_category",
+        queryset=SubTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True),
+        required=False,
+        allow_null=True,
     )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
@@ -208,6 +222,26 @@ class IssueCreateSerializer(BaseSerializer):
             ).exists()
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
+
+        # Validate task categories — only on CREATE, only when categories exist in the system
+        if not self.instance and MainTaskCategory.objects.exists():
+            state = attrs.get("state")
+            is_draft_state = state is not None and state.group == "backlog"
+            if not is_draft_state:
+                main_cat = attrs.get("main_task_category")
+                sub_cat = attrs.get("sub_task_category")
+                if not main_cat:
+                    raise serializers.ValidationError(
+                        {"main_task_category_id": "Main task category is required for non-draft issues."}
+                    )
+                if not sub_cat:
+                    raise serializers.ValidationError(
+                        {"sub_task_category_id": "Sub task category is required for non-draft issues."}
+                    )
+                if sub_cat and main_cat and str(sub_cat.main_category_id) != str(main_cat.id):
+                    raise serializers.ValidationError(
+                        {"sub_task_category_id": "Sub task category does not belong to the selected main category."}
+                    )
 
         return attrs
 
@@ -828,6 +862,8 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "main_task_category_id",
+            "sub_task_category_id",
         ]
         read_only_fields = fields
 
@@ -888,6 +924,10 @@ class IssueListDetailSerializer(serializers.Serializer):
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
             "total_logged_minutes": getattr(instance, "total_logged_minutes", None),
+            "main_task_category_id": instance.main_task_category_id,
+            "sub_task_category_id": instance.sub_task_category_id,
+            "main_task_category_name": instance.main_task_category.name if instance.main_task_category else None,
+            "sub_task_category_name": instance.sub_task_category.name if instance.sub_task_category else None,
         }
 
         # Handle expanded fields only when requested - using direct field access

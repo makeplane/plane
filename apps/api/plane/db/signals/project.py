@@ -40,6 +40,9 @@ DEFAULT_PROJECT_VIEW_DISPLAY_PROPERTIES = {
     "completed_date": True,
     "reference_link": True,
     "total_log_time": True,
+    # Task category columns — shown by default (matches getComputedDisplayProperties default)
+    "main_task_category": True,
+    "sub_task_category": True,
     # Explicitly disabled for project views
     "department_name": False,
     "project_name": False,
