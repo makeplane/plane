@@ -87,7 +87,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
 
   if (!capacityData) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-sm text-secondary">
+      <div className="flex h-full w-full items-center justify-center text-13 text-secondary">
         {t("capacity_no_data")}
       </div>
     );
@@ -112,7 +112,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
               </div>
               {t("capacity_dashboard")}
             </h2>
-            <p className="text-xs text-secondary mt-1.5 ml-0.5">{t("capacity_dashboard_description")}</p>
+            <p className="text-13 text-secondary mt-1.5 ml-0.5">{t("capacity_dashboard_description")}</p>
           </div>
         </div>
       </div>
@@ -126,20 +126,20 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
         <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-medium text-secondary">{t("common.assignee")}:</span>
+              <span className="text-12 font-medium text-secondary">{t("common.assignee")}:</span>
               <MemberDropdown
                 value={selectedMembers}
                 onChange={(val: string[]) => setSelectedMembers(val)}
                 projectId={projectId}
                 multiple
                 buttonVariant="transparent-with-text"
-                buttonClassName="!h-7 !px-2.5 !py-0.5 text-[11px]"
+                buttonClassName="!h-7 !px-2.5 !py-0.5 text-12"
                 dropdownArrow
               />
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-medium text-secondary">{t("date_range")}:</span>
+              <span className="text-12 font-medium text-secondary">{t("date_range")}:</span>
               <DateRangeDropdown
                 buttonVariant="transparent-with-text"
                 value={dateRange}
@@ -148,7 +148,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
                     range ? { from: range.from, to: range.to || undefined } : { from: undefined, to: undefined }
                   )
                 }
-                buttonClassName="!h-7 !px-2.5 !py-0.5 text-[11px]"
+                buttonClassName="!h-7 !px-2.5 !py-0.5 text-12"
                 isClearable
               />
             </div>
@@ -157,7 +157,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleExport}
-              className="px-3 py-1 rounded-md bg-accent-primary text-white text-[11px] font-semibold hover:bg-accent-primary/90 transition-colors shadow-sm"
+              className="px-3 py-1 rounded-md bg-accent-primary text-white text-12 font-medium hover:bg-accent-primary/90 transition-colors shadow-sm"
             >
               {t("export")}
             </button>
@@ -169,7 +169,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
             <div className="absolute inset-0 z-40 flex items-center justify-center bg-surface-1/60 backdrop-blur-[2px] rounded-xl transition-all">
               <div className="flex flex-col items-center gap-2">
                 <Spinner />
-                <span className="text-xs font-medium text-secondary animate-pulse">{t("common.loading")}...</span>
+                <span className="text-13 font-medium text-secondary animate-pulse">{t("common.loading")}...</span>
               </div>
             </div>
           )}

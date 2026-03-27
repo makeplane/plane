@@ -74,7 +74,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           size="sm"
           prependIcon={<PlusIcon className="h-3.5 w-3.5" />}
           onClick={() => setIsAddIssueModalOpen(true)}
-          className="text-[11px] font-semibold h-7"
+          className="text-12 font-medium h-7"
         >
           {t("timesheet_add_issue")}
         </Button>
@@ -98,21 +98,21 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
       {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-xs text-secondary font-medium animate-pulse">Loading...</span>
+          <span className="text-13 text-secondary font-medium animate-pulse">Loading...</span>
         </div>
       )}
 
       {/* Error */}
       {!isLoading && error && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-xs text-red-500 font-medium">{error}</span>
+          <span className="text-13 text-red-500 font-medium">{error}</span>
         </div>
       )}
 
       {/* Empty */}
       {!isLoading && !error && isEmpty && (
         <div className="flex items-center justify-center py-24">
-          <span className="text-xs text-secondary">{t("timesheet_no_issues")}</span>
+          <span className="text-13 text-secondary">{t("timesheet_no_issues")}</span>
         </div>
       )}
 

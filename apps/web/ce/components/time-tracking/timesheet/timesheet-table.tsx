@@ -58,11 +58,11 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({ weekStart, rows, daily
     () => [
       // Issue name column
       columnHelper.accessor("issue_identifier", {
-        header: () => <span className="text-[10px] font-bold text-tertiary uppercase tracking-wide">Issue</span>,
+        header: () => <span className="text-12 font-medium text-tertiary uppercase tracking-wide">Issue</span>,
         cell: (info) => (
           <div className="flex items-center gap-2 min-w-[180px]">
-            <span className="text-[11px] font-mono text-tertiary">{info.getValue()}</span>
-            <span className="text-xs text-primary truncate max-w-[200px]" title={info.row.original.issue_name}>
+            <span className="text-12 font-mono text-tertiary">{info.getValue()}</span>
+            <span className="text-13 text-primary truncate max-w-[200px]" title={info.row.original.issue_name}>
               {info.row.original.issue_name}
             </span>
           </div>
@@ -74,8 +74,8 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({ weekStart, rows, daily
           id: date,
           header: () => (
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[10px] font-bold text-tertiary uppercase tracking-wide">{DAY_NAMES[idx]}</span>
-              <span className="text-[10px] text-secondary">{new Date(date).getDate()}</span>
+              <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{DAY_NAMES[idx]}</span>
+              <span className="text-12 text-secondary">{new Date(date).getDate()}</span>
             </div>
           ),
           cell: (info) => (
@@ -89,10 +89,10 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({ weekStart, rows, daily
       // Total column
       columnHelper.accessor("total_minutes", {
         header: () => (
-          <span className="text-[10px] font-bold text-tertiary uppercase tracking-wide">{t("timesheet_total")}</span>
+          <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{t("timesheet_total")}</span>
         ),
         cell: (info) => (
-          <span className={cn("text-xs font-medium", info.getValue() > 0 ? "text-primary" : "text-tertiary")}>
+          <span className={cn("text-13 font-medium", info.getValue() > 0 ? "text-primary" : "text-tertiary")}>
             {formatMinutes(info.getValue())}
           </span>
         ),
@@ -110,7 +110,7 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({ weekStart, rows, daily
 
   return (
     <div className="overflow-x-auto rounded-lg border border-subtle">
-      <table className="w-full text-xs">
+      <table className="w-full text-13">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="border-b border-subtle bg-layer-1-hover">
@@ -140,15 +140,15 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({ weekStart, rows, daily
         {/* Footer with daily totals */}
         <tfoot>
           <tr className="bg-layer-1-hover border-t border-subtle">
-            <td className="px-3 py-2 text-[10px] font-bold text-tertiary uppercase tracking-wide">
+            <td className="px-3 py-2 text-12 font-medium text-tertiary uppercase tracking-wide">
               {t("timesheet_total")}
             </td>
             {weekDates.map((date) => (
-              <td key={date} className="px-3 py-2 text-center text-xs font-medium text-primary">
+              <td key={date} className="px-3 py-2 text-center text-13 font-medium text-primary">
                 {formatMinutes(dailyTotals[date] ?? 0)}
               </td>
             ))}
-            <td className="px-3 py-2 text-center text-xs font-bold text-primary">{formatMinutes(grandTotal)}</td>
+            <td className="px-3 py-2 text-center text-13 font-bold text-primary">{formatMinutes(grandTotal)}</td>
           </tr>
         </tfoot>
       </table>

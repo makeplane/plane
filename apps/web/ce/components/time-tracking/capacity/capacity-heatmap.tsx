@@ -56,8 +56,8 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
   return (
     <div className="w-full overflow-hidden rounded-xl border border-subtle bg-surface-1 shadow-sm">
       <div className="w-full overflow-x-auto custom-scrollbar">
-        <table className="w-full min-w-max text-xs text-left border-collapse">
-          <thead className="bg-surface-2/80 backdrop-blur-sm uppercase text-[10px] font-bold text-tertiary border-b border-subtle sticky top-0 z-20">
+        <table className="w-full min-w-max text-13 text-left border-collapse">
+          <thead className="bg-surface-2/80 backdrop-blur-sm uppercase text-12 font-medium text-tertiary border-b border-subtle sticky top-0 z-20">
             <tr>
               <th
                 scope="col"
@@ -78,7 +78,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           <tbody className="divide-y divide-subtle/50">
             {members.length === 0 ? (
               <tr>
-                <td colSpan={2 + days.length} className="px-4 py-8 text-center text-sm text-secondary">
+                <td colSpan={2 + days.length} className="px-4 py-8 text-center text-13 text-secondary">
                   {t("capacity_no_data")}
                 </td>
               </tr>
@@ -111,7 +111,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                             disabled={!cellInfo.tooltipKey}
                           >
                             <div
-                              className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm transition-all duration-300 hover:scale-[1.15] hover:shadow-md cursor-pointer ${cellInfo.className} font-medium text-[11px] tracking-wide`}
+                              className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm transition-all duration-300 hover:scale-[1.15] hover:shadow-md cursor-pointer ${cellInfo.className} font-medium text-12 tracking-wide`}
                             >
                               {cellVal}
                             </div>
@@ -127,17 +127,17 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           {members.length > 0 && (
             <tfoot className="bg-surface-2/50 border-t border-subtle font-bold text-primary">
               <tr>
-                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-[10px] text-tertiary uppercase">
+                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-12 font-medium text-tertiary uppercase">
                   {t("total_logged_time")}
                 </td>
-                <td className="px-3 py-2 text-right text-xs border-r border-subtle">
+                <td className="px-3 py-2 text-right text-13 font-bold border-r border-subtle">
                   {formatHours(members.reduce((acc, m) => acc + m.total_logged_minutes, 0))}h
                 </td>
                 {days.map((day) => {
                   const dateStr = format(day, "yyyy-MM-dd");
                   const dailyMinutes = projectDailyTotals?.[dateStr]?.minutes ?? 0;
                   return (
-                    <td key={dateStr} className="px-3 py-2 text-center text-xs text-primary font-bold">
+                    <td key={dateStr} className="px-3 py-2 text-center text-13 font-bold text-primary">
                       {dailyMinutes > 0 ? `${formatHours(dailyMinutes)}h` : "-"}
                     </td>
                   );

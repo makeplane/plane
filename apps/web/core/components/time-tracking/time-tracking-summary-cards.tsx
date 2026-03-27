@@ -22,7 +22,7 @@ type TKpiCardProps = {
 
 const KpiCard: FC<TKpiCardProps> = ({ label, value, valueClassName = "text-primary" }) => (
   <div className="flex flex-col gap-1 flex-1 min-w-[140px] rounded-lg border border-subtle bg-surface-1 px-5 py-4">
-    <span className="text-xs font-medium text-tertiary uppercase tracking-wide">{label}</span>
+    <span className="text-12 font-medium text-tertiary uppercase tracking-wide">{label}</span>
     <span className={`text-2xl font-semibold ${valueClassName}`}>{value}</span>
   </div>
 );

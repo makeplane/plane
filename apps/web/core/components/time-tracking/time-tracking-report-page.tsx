@@ -70,21 +70,21 @@ export const TimeTrackingReportPage: FC<TTimeTrackingReportPageProps> = ({ works
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-tertiary">Loading...</span>
+          <span className="text-13 text-tertiary">Loading...</span>
         </div>
       )}
 
       {/* Error state */}
       {!isLoading && error && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-red-500">{error}</span>
+          <span className="text-13 text-red-500">{error}</span>
         </div>
       )}
 
       {/* Empty state */}
       {!isLoading && !error && isEmpty && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-tertiary">No time logged yet.</span>
+          <span className="text-13 text-tertiary">No time logged yet.</span>
         </div>
       )}
 
