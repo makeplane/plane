@@ -51,6 +51,7 @@ export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
       width={fullScreen ? EPortalWidth.FULL : EPortalWidth.THREE_QUARTER}
       position={EPortalPosition.RIGHT}
       fullScreen={fullScreen}
+      showOverlay={false}
     >
       <div
         className={`flex h-full flex-col overflow-hidden border-subtle bg-surface-1 text-left ${

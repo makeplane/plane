@@ -106,13 +106,18 @@ export function ModalPortal({
       style={{ zIndex: MODAL_Z_INDEX }}
       role="dialog"
     >
-      {showOverlay && (
-        <div
-          className={cn("absolute inset-0 bg-black/50 transition-colors duration-300", overlayClassName)}
-          onClick={handleOverlayClick}
-          aria-hidden="true"
-        />
-      )}
+      <div
+        className={cn(
+          "absolute inset-0 transition-colors duration-300",
+          {
+            "bg-black/50": showOverlay,
+          },
+          overlayClassName
+        )}
+        onClick={handleOverlayClick}
+        aria-hidden="true"
+      />
+
       <div ref={contentRef} className={cn(modalClasses)} style={{ zIndex: MODAL_Z_INDEX + 1 }} role="document">
         {children}
       </div>
