@@ -83,19 +83,18 @@ export class TaskCategoryService extends APIService {
       });
   }
 
-  // ── Web app read-only (v1, no workspace slug — categories are instance-level) ──
+  // ── Web app read-only (workspace-scoped app endpoints — session auth) ──
 
-  async listMainForWorkspace(): Promise<IMainTaskCategory[]> {
-    return this.get("/api/v1/task-categories/main/")
+  async listMainForWorkspace(workspaceSlug: string): Promise<IMainTaskCategory[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/task-categories/main/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async listSubForWorkspace(mainCategoryId?: string): Promise<ISubTaskCategory[]> {
-    const params = mainCategoryId ? `?main_category=${mainCategoryId}` : "";
-    return this.get(`/api/v1/task-categories/sub/${params}`)
+  async listSubForWorkspace(workspaceSlug: string): Promise<ISubTaskCategory[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/task-categories/sub/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
