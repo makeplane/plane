@@ -67,17 +67,6 @@ const TaskCategoriesPage = observer(function TaskCategoriesPage() {
             Categories
             {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
           </div>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              setEditMain(null);
-              setMainModalOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4" />
-            Add Main Category
-          </Button>
         </div>
 
         {loader === "init-loader" ? (
@@ -89,7 +78,20 @@ const TaskCategoriesPage = observer(function TaskCategoriesPage() {
         ) : (
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <p className="text-13 font-medium text-secondary">Main categories</p>
+              <div className="flex items-center justify-between">
+                <span className="text-13 font-medium text-secondary">Main categories</span>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    setEditMain(null);
+                    setMainModalOpen(true);
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Main Category
+                </Button>
+              </div>
               <MainCategoryList selectedMainId={selectedMainId} onSelect={setSelectedMainId} onEdit={handleEditMain} />
             </div>
             <div className="space-y-2">

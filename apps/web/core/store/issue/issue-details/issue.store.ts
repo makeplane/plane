@@ -171,6 +171,8 @@ export class IssueStore implements IIssueStore {
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
       is_epic: issue?.is_epic,
+      main_task_category_id: issue?.main_task_category_id,
+      sub_task_category_id: issue?.sub_task_category_id,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
