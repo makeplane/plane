@@ -74,9 +74,19 @@ export interface IssueFormProps {
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   showActionButtons?: boolean;
-  dataResetProperties?: unknown[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dataResetProperties?: any[];
 }
 
+/* eslint-disable
+  @typescript-eslint/no-floating-promises,
+  promise/always-return,
+  @typescript-eslint/no-base-to-string,
+  react-hooks/exhaustive-deps,
+  @typescript-eslint/no-misused-promises,
+  jsx-a11y/interactive-supports-focus,
+  no-prototype-builtins
+*/
 export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
@@ -173,7 +183,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   // fetch task categories once on mount
   useEffect(() => {
     void fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   //reset few fields on projectId change
@@ -190,7 +200,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     }
     if (projectId && routeProjectId !== projectId) void fetchCycles(workspaceSlug?.toString(), projectId);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [projectId]);
 
   // Reset form when data prop changes
@@ -198,7 +208,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     if (data) {
       reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [...dataResetProperties]);
 
   // Update the issue type id when the project id changes
@@ -212,18 +222,18 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [data, projectId]);
 
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
-      void handleTemplateChange({
+      handleTemplateChange({
         workspaceSlug: workspaceSlug?.toString(),
         reset,
         editorRef,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [workItemTemplateId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
@@ -258,13 +268,14 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         };
 
     // this condition helps to move the issues from draft to project issues
-    if (Object.prototype.hasOwnProperty.call(formData, "is_draft")) submitData.is_draft = formData.is_draft;
+     
+    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
 
     await onSubmit(submitData, is_draft_issue)
       .then(() => {
         setGptAssistantModal(false);
         if (isCreateMoreToggleEnabled && workItemTemplateId) {
-          void handleTemplateChange({
+          handleTemplateChange({
             workspaceSlug: workspaceSlug?.toString(),
             reset,
             editorRef,
@@ -279,7 +290,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
           });
           editorRef?.current?.clearEditor();
         }
-        return undefined;
       })
       .catch((error) => {
         console.error(error);
@@ -326,7 +336,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug?.toString(),
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     projectDetails?.workspace.toString(),
     projectId ?? undefined,
     {
@@ -353,7 +362,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     setSelectedParentIssue(
       convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
     );
-  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById, setSelectedParentIssue, workspaceSlug]);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
   // executing this useEffect when isDirty changes
   useEffect(() => {
@@ -361,7 +370,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
     if (isDirty && condition) onChange(watch());
     else onChange(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isDirty]);
 
   useEffect(() => {
@@ -391,7 +400,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         <div className="rounded-lg w-full">
           <form
             ref={formRef}
-            onSubmit={(e) => void handleSubmit((data) => handleFormSubmit(data))(e)}
+            onSubmit={handleSubmit((data) => handleFormSubmit(data))}
             className="flex flex-col w-full"
           >
             <div className="p-5 rounded-t-lg bg-surface-1">
@@ -533,7 +542,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                         if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                       }}
                       role="button"
-                      tabIndex={0}
                     >
                       <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
                       <span className="text-caption-sm-regular">{t("create_more")}</span>
@@ -577,7 +585,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                         variant="primary"
                         type="button"
                         loading={isMoving}
-                        onClick={() => void handleMoveToProjects()}
+                        onClick={handleMoveToProjects}
                         disabled={isMoving}
                         size="lg"
                       >

@@ -4,317 +4,351 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { RefreshCw } from "lucide-react";
-// i18n
+import type { Control } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui icons
-import {
-  CycleIcon,
-  StatePropertyIcon,
-  ModuleIcon,
-  MembersPropertyIcon,
-  PriorityPropertyIcon,
-  StartDatePropertyIcon,
-  DueDatePropertyIcon,
-  LabelPropertyIcon,
-  UserCirclePropertyIcon,
-  EstimatePropertyIcon,
-  ParentPropertyIcon,
-} from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { ParentPropertyIcon } from "@plane/propel/icons";
+// types
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
+// ui
+import { CustomMenu } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate, getTabIndex, cn } from "@plane/utils";
 // components
+import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
-import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
-import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
-import { FrequencyDropdown } from "@/plane-web/components/dropdowns/frequency";
+import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
+import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useMember } from "@/hooks/store/use-member";
+// hooks
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
-import { useProjectState } from "@/hooks/store/use-project-state";
-import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
-import { useTaskCategory } from "@/hooks/store/use-task-category";
+import { useUserPermissions } from "@/hooks/store/user";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { TaskCategoryProperty } from "@/plane-web/components/issues/issue-details/sidebar/task-category-property";
-import { DueDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/due-date-property";
-import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
-import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
-import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
-import type { TIssueOperations } from "../issue-detail";
-import { IssueCycleSelect } from "../issue-detail/cycle-select";
-import { IssueLabel } from "../issue-detail/label";
-import { IssueModuleSelect } from "../issue-detail/module-select";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
-interface IPeekOverviewProperties {
+type TIssueDefaultPropertiesProps = {
+  control: Control<TIssue>;
+  id: string | undefined;
+  projectId: string | null;
   workspaceSlug: string;
-  projectId: string;
-  issueId: string;
-  disabled: boolean;
-  issueOperations: TIssueOperations;
-}
+  selectedParentIssue: ISearchIssueResponse | null;
+  startDate: string | null;
+  targetDate: string | null;
+  parentId: string | null;
+  isDraft: boolean;
+  handleFormChange: () => void;
+  setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
+  children?: React.ReactNode;
+};
 
-export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
-  const { t } = useTranslation();
-  // states
-  const [fieldErrors, setFieldErrors] = useState<string[]>([]);
-  // store hooks
-  const { getProjectById } = useProject();
+export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
   const {
-    issue: { getIssueById },
-  } = useIssueDetail();
-  const { getStateById } = useProjectState();
-  const { getUserDetails } = useMember();
-  const { validateTransition } = useDraftStateTransition();
-  const { fetchCategories } = useTaskCategory();
-
-  useEffect(() => {
-    void fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+    control,
+    id,
+    projectId,
+    workspaceSlug,
+    selectedParentIssue,
+    startDate,
+    targetDate,
+    parentId,
+    isDraft,
+    handleFormChange,
+    setSelectedParentIssue,
+    children,
+  } = props;
+  // states
+  const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
+  // form context — errors only populate after first submit (default RHF mode)
+  const {
+    formState: { errors },
+  } = useFormContext<TIssue>();
+  // store hooks
+  const { t } = useTranslation();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { getProjectById } = useProject();
+  const { isMobile } = usePlatformOS();
+  const { allowPermissions } = useUserPermissions();
   // derived values
-  const issue = getIssueById(issueId);
-  if (!issue) return <></>;
-  const createdByDetails = getUserDetails(issue?.created_by);
-  const projectDetails = getProjectById(issue.project_id);
-  const isEstimateEnabled = projectDetails?.estimate;
-  const stateDetails = getStateById(issue.state_id);
+  const projectDetails = getProjectById(projectId);
 
-  const minDate = getDate(issue.start_date);
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
+  const canCreateLabel =
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+
+  const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = getDate(issue.target_date);
+  const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <div>
-      <h6 className="text-body-xs-medium">{t("common.properties")}</h6>
-      <div className={`w-full space-y-3 mt-3 ${disabled ? "opacity-60" : ""}`}>
-        <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
-          <StateDropdown
-            value={issue?.state_id}
-            onChange={(val) => {
-              const { missingFieldKeys, missingFieldLabels } = validateTransition(issue, val, stateDetails?.group);
-              if (missingFieldKeys.length > 0) {
-                setFieldErrors(missingFieldKeys);
-                setToast({
-                  type: TOAST_TYPE.ERROR,
-                  title: t("issue.required_fields_missing"),
-                  message: missingFieldLabels.join(", "),
-                });
-                return;
-              }
-              setFieldErrors([]);
-              void issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val });
-            }}
-            projectId={projectId}
-            disabled={disabled}
-            buttonVariant="transparent-with-text"
-            className="w-full grow group"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium ${issue?.state_id ? "" : "text-placeholder"}`}
-            dropdownArrow
-            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-          />
-        </SidebarPropertyListItem>
-
-        <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
-          <div className={cn("w-full", fieldErrors.includes("assignee_ids") && "rounded border border-red-500")}>
+    <div className="flex flex-wrap items-center gap-2">
+      <Controller
+        control={control}
+        name="state_id"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <StateDropdown
+              value={value}
+              onChange={(stateId) => {
+                onChange(stateId);
+                handleFormChange();
+              }}
+              projectId={projectId ?? undefined}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("state_id")}
+              isForWorkItemCreation={!id}
+            />
+          </div>
+        )}
+      />
+      <Controller
+        control={control}
+        name="priority"
+        render={({ field: { value, onChange } }) => (
+          <div className={cn("h-7 rounded-sm", errors.priority && "outline outline-1 outline-danger-strong")}>
+            <PriorityDropdown
+              value={value}
+              onChange={(priority) => {
+                onChange(priority);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("priority")}
+            />
+          </div>
+        )}
+      />
+      <Controller
+        control={control}
+        name="assignee_ids"
+        rules={{ validate: (v) => (v && v.length > 0) || t("assignee_is_required") }}
+        render={({ field: { value, onChange } }) => (
+          <div className={cn("h-7 rounded-sm", errors.assignee_ids && "outline outline-1 outline-danger-strong")}>
             <MemberDropdown
-              value={issue?.assignee_ids ?? undefined}
-              onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-              disabled={disabled}
-              projectId={projectId}
-              placeholder={t("issue.add.assignee")}
+              projectId={projectId ?? undefined}
+              value={value}
+              onChange={(assigneeIds) => {
+                onChange(assigneeIds);
+                handleFormChange();
+              }}
+              buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
+              buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
+              placeholder={t("assignees")}
               multiple
-              buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
-              className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={`text-body-xs-medium justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
-              hideIcon={issue.assignee_ids?.length === 0}
-              dropdownArrow
-              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              tabIndex={getIndex("assignee_ids")}
             />
           </div>
-        </SidebarPropertyListItem>
-
-        <SidebarPropertyListItem icon={PriorityPropertyIcon} label={t("common.priority")}>
-          <PriorityDropdown
-            value={issue?.priority}
-            onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-            disabled={disabled}
-            buttonVariant="transparent-with-text"
-            className="w-full h-7.5 grow rounded-sm"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority ? "text-placeholder" : ""}`}
-          />
-        </SidebarPropertyListItem>
-
-        <TaskCategoryProperty
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          issue={issue}
-          issueOperations={issueOperations}
-          isEditable={!disabled}
-        />
-
-        <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
-          <div className={cn("w-full", fieldErrors.includes("frequency") && "rounded border border-red-500")}>
-            <FrequencyDropdown
-              value={issue?.frequency}
-              onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
-              disabled={disabled}
-              buttonVariant="transparent-with-text"
-              className="group w-full grow"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName="text-body-xs-medium"
-              dropdownArrow
-              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-            />
-          </div>
-        </SidebarPropertyListItem>
-
-        {createdByDetails && (
-          <SidebarPropertyListItem
-            icon={UserCirclePropertyIcon}
-            label={t("common.created_by")}
-            childrenClassName="px-2"
-          >
-            <ButtonAvatars
-              showTooltip
-              userIds={createdByDetails?.display_name.includes("-intake") ? null : createdByDetails?.id}
-            />
-            <span className="grow truncate text-body-xs-medium text-secondary leading-5">
-              {createdByDetails?.display_name.includes("-intake") ? "Plane" : createdByDetails?.display_name}
-            </span>
-          </SidebarPropertyListItem>
         )}
-
-        <SidebarPropertyListItem icon={StartDatePropertyIcon} label={t("common.order_by.start_date")}>
-          <div className={cn("w-full", fieldErrors.includes("start_date") && "rounded border border-red-500")}>
+      />
+      <Controller
+        control={control}
+        name="label_ids"
+        rules={{ validate: (v) => (v && v.length > 0) || t("label_is_required") }}
+        render={({ field: { value, onChange } }) => (
+          <div className={cn("h-7 rounded-sm", errors.label_ids && "outline outline-1 outline-danger-strong")}>
+            <IssueLabelSelect
+              value={value}
+              onChange={(labelIds) => {
+                onChange(labelIds);
+                handleFormChange();
+              }}
+              projectId={projectId ?? undefined}
+              tabIndex={getIndex("label_ids")}
+              createLabelEnabled={!!canCreateLabel}
+            />
+          </div>
+        )}
+      />
+      <Controller
+        control={control}
+        name="start_date"
+        rules={{ required: t("start_date_is_required") }}
+        render={({ field: { value, onChange } }) => (
+          <div className={cn("h-7 rounded-sm", errors.start_date && "outline outline-1 outline-danger-strong")}>
             <DateDropdown
-              value={issue.start_date}
-              onChange={(val) =>
-                void issueOperations.update(workspaceSlug, projectId, issueId, {
-                  start_date: val ? renderFormattedPayloadDate(val) : null,
-                })
-              }
-              placeholder={t("issue.add.start_date")}
-              buttonVariant="transparent-with-text"
+              value={value}
+              onChange={(date) => {
+                onChange(date ? renderFormattedPayloadDate(date) : null);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
               maxDate={maxDate ?? undefined}
-              disabled={disabled}
-              className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={`text-body-xs-medium ${issue?.start_date ? "" : "text-placeholder"}`}
-              hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+              placeholder={t("start_date")}
+              tabIndex={getIndex("start_date")}
             />
           </div>
-        </SidebarPropertyListItem>
-
-        <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-          <DueDateProperty
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            issueOperations={issueOperations}
-            isEditable={!disabled}
-            stateGroup={stateDetails?.group}
-            minDate={minDate ?? undefined}
-            hasFieldError={fieldErrors.includes("target_date")}
-            issue={issue}
-          />
-        </SidebarPropertyListItem>
-
-        <CompletedAtProperty issueId={issueId} />
-
-        {isEstimateEnabled && (
-          <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
-            <EstimateDropdown
-              value={issue.estimate_point ?? undefined}
-              onChange={(val) =>
-                void issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
-              }
-              projectId={projectId}
-              disabled={disabled}
-              buttonVariant="transparent-with-text"
-              className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={`text-body-xs-medium ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
-              placeholder="None"
-              hideIcon
-              dropdownArrow
-              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-            />
-          </SidebarPropertyListItem>
         )}
-
-        {projectDetails?.module_view && (
-          <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
-            <div className={cn("w-full", fieldErrors.includes("module_ids") && "rounded border border-red-500")}>
-              <IssueModuleSelect
-                className="w-full grow"
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                issueOperations={issueOperations}
-                disabled={disabled}
+      />
+      <Controller
+        control={control}
+        name="target_date"
+        rules={{ required: t("due_date_is_required") }}
+        render={({ field: { value, onChange } }) => (
+          <div className={cn("h-7 rounded-sm", errors.target_date && "outline outline-1 outline-danger-strong")}>
+            <DateDropdown
+              value={value}
+              onChange={(date) => {
+                onChange(date ? renderFormattedPayloadDate(date) : null);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+              minDate={minDate ?? undefined}
+              placeholder={t("due_date")}
+              tabIndex={getIndex("target_date")}
+            />
+          </div>
+        )}
+      />
+      {projectDetails?.cycle_view && (
+        <Controller
+          control={control}
+          name="cycle_id"
+          render={({ field: { value, onChange } }) => (
+            <div className="h-7">
+              <CycleDropdown
+                projectId={projectId ?? undefined}
+                onChange={(cycleId) => {
+                  onChange(cycleId);
+                  handleFormChange();
+                }}
+                placeholder={t("cycle.label", { count: 1 })}
+                value={value}
+                buttonVariant="border-with-text"
+                tabIndex={getIndex("cycle_id")}
               />
             </div>
-          </SidebarPropertyListItem>
-        )}
-
-        {projectDetails?.cycle_view && (
-          <SidebarPropertyListItem
-            icon={CycleIcon}
-            label={t("common.cycle")}
-            appendElement={<TransferHopInfo workItem={issue} />}
+          )}
+        />
+      )}
+      {projectDetails?.module_view && workspaceSlug && (
+        <Controller
+          control={control}
+          name="module_ids"
+          render={({ field: { value, onChange } }) => (
+            <div className="h-7">
+              <ModuleDropdown
+                projectId={projectId ?? undefined}
+                value={value ?? []}
+                onChange={(moduleIds) => {
+                  onChange(moduleIds);
+                  handleFormChange();
+                }}
+                placeholder={t("modules")}
+                buttonVariant="border-with-text"
+                tabIndex={getIndex("module_ids")}
+                multiple
+                showCount
+              />
+            </div>
+          )}
+        />
+      )}
+      {projectId && areEstimateEnabledByProjectId(projectId) && (
+        <Controller
+          control={control}
+          name="estimate_point"
+          render={({ field: { value, onChange } }) => (
+            <div className="h-7">
+              <EstimateDropdown
+                value={value || undefined}
+                onChange={(estimatePoint) => {
+                  onChange(estimatePoint);
+                  handleFormChange();
+                }}
+                projectId={projectId}
+                buttonVariant="border-with-text"
+                tabIndex={getIndex("estimate_point")}
+                placeholder={t("estimate")}
+              />
+            </div>
+          )}
+        />
+      )}
+      <div className="h-7">
+        {parentId ? (
+          <CustomMenu
+            customButton={
+              <button
+                type="button"
+                className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
+              >
+                {selectedParentIssue?.project_id && (
+                  <IssueIdentifier
+                    projectId={selectedParentIssue.project_id}
+                    issueTypeId={selectedParentIssue.type_id}
+                    projectIdentifier={selectedParentIssue?.project__identifier}
+                    issueSequenceId={selectedParentIssue.sequence_id}
+                    size="xs"
+                  />
+                )}
+              </button>
+            }
+            placement="bottom-start"
+            className="h-full w-full"
+            customButtonClassName="h-full"
+            tabIndex={getIndex("parent_id")}
           >
-            <IssueCycleSelect
-              className="w-full grow h-7.5"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              disabled={disabled}
-            />
-          </SidebarPropertyListItem>
-        )}
-
-        <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
-          <IssueParentSelectRoot
-            className="w-full h-7.5 grow"
-            disabled={disabled}
-            issueId={issueId}
-            issueOperations={issueOperations}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
-        </SidebarPropertyListItem>
-
-        <SidebarPropertyListItem icon={LabelPropertyIcon} label={t("common.labels")}>
-          <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
-        </SidebarPropertyListItem>
-
-        {projectDetails?.is_time_tracking_enabled !== false && (
-          <IssueWorklogProperty
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            disabled={disabled}
-          />
+            <>
+              <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
+                {t("change_parent_issue")}
+              </CustomMenu.MenuItem>
+              <Controller
+                control={control}
+                name="parent_id"
+                render={({ field: { onChange } }) => (
+                  <CustomMenu.MenuItem
+                    className="!p-1"
+                    onClick={() => {
+                      onChange(null);
+                      handleFormChange();
+                    }}
+                  >
+                    {t("remove_parent_issue")}
+                  </CustomMenu.MenuItem>
+                )}
+              />
+            </>
+          </CustomMenu>
+        ) : (
+          <button
+            type="button"
+            className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
+            onClick={() => setParentIssueListModalOpen(true)}
+          >
+            <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+            <span className="whitespace-nowrap">{t("add_parent")}</span>
+          </button>
         )}
       </div>
+      {children}
+      <Controller
+        control={control}
+        name="parent_id"
+        render={({ field: { onChange } }) => (
+          <ParentIssuesListModal
+            isOpen={parentIssueListModalOpen}
+            handleClose={() => setParentIssueListModalOpen(false)}
+            onChange={(issue) => {
+              onChange(issue.id);
+              handleFormChange();
+              setSelectedParentIssue(issue);
+            }}
+            projectId={projectId ?? undefined}
+            issueId={isDraft ? undefined : id}
+          />
+        )}
+      />
     </div>
   );
 });

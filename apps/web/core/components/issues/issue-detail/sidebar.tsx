@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
 // i18n
@@ -24,7 +24,7 @@ import {
   ParentPropertyIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
@@ -40,15 +40,13 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
-import { useTaskCategory } from "@/hooks/store/use-task-category";
 // plane web components
 // components
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { DueDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/due-date-property";
+import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
-import { TaskCategoryProperty } from "@/plane-web/components/issues/issue-details/sidebar/task-category-property";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
@@ -77,15 +75,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
   const { validateTransition } = useDraftStateTransition();
-  const { fetchCategories } = useTaskCategory();
   const issue = getIssueById(issueId);
-
-  // ensure categories are loaded when the sidebar opens
-  useEffect(() => {
-    void fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   if (!issue) return <></>;
 
   const createdByDetails = getUserDetails(issue.created_by);
@@ -168,29 +158,18 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            <TaskCategoryProperty
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issue={issue}
-              issueOperations={issueOperations}
-              isEditable={isEditable}
-            />
-
             <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
-              <div className={cn("w-full", fieldErrors.includes("frequency") && "rounded border border-red-500")}>
-                <FrequencyDropdown
-                  value={issue?.frequency}
-                  onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
-                  disabled={!isEditable}
-                  buttonVariant="transparent-with-text"
-                  className="group w-full grow"
-                  buttonContainerClassName="w-full text-left h-7.5"
-                  buttonClassName="text-body-xs-regular"
-                  dropdownArrow
-                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-                />
-              </div>
+              <FrequencyDropdown
+                value={issue?.frequency}
+                onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
+                disabled={!isEditable}
+                buttonVariant="transparent-with-text"
+                className="group w-full grow"
+                buttonContainerClassName="w-full text-left h-7.5"
+                buttonClassName="text-body-xs-regular"
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
             </SidebarPropertyListItem>
 
             {createdByDetails && (
@@ -225,17 +204,34 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-              <DueDateProperty
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                issueOperations={issueOperations}
-                isEditable={isEditable}
-                issue={issue}
-                stateGroup={stateDetails?.group}
-                minDate={minDate ?? undefined}
-                hasFieldError={fieldErrors.includes("target_date")}
-              />
+              <div
+                className={cn(
+                  "flex items-center gap-2 w-full",
+                  fieldErrors.includes("target_date") && "rounded border border-red-500"
+                )}
+              >
+                <DateDropdown
+                  placeholder={t("issue.add.due_date")}
+                  value={issue.target_date}
+                  onChange={(val) =>
+                    void issueOperations.update(workspaceSlug, projectId, issueId, {
+                      target_date: val ? renderFormattedPayloadDate(val) : null,
+                    })
+                  }
+                  minDate={minDate ?? undefined}
+                  disabled={!isEditable}
+                  buttonVariant="transparent-with-text"
+                  className="group w-full grow"
+                  buttonContainerClassName="w-full text-left h-7.5"
+                  buttonClassName={cn("text-body-xs-regular", {
+                    "text-placeholder": !issue.target_date,
+                    "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+                  })}
+                  hideIcon
+                  clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"
+                />
+                {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
+              </div>
             </SidebarPropertyListItem>
 
             <CompletedAtProperty issueId={issueId} />
@@ -263,16 +259,14 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {projectDetails?.module_view && (
               <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
-                <div className={cn("w-full", fieldErrors.includes("module_ids") && "rounded border border-red-500")}>
-                  <IssueModuleSelect
-                    className="w-full grow"
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                    issueId={issueId}
-                    issueOperations={issueOperations}
-                    disabled={!isEditable}
-                  />
-                </div>
+                <IssueModuleSelect
+                  className="w-full grow"
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  issueOperations={issueOperations}
+                  disabled={!isEditable}
+                />
               </SidebarPropertyListItem>
             )}
 
@@ -313,14 +307,12 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            {projectDetails?.is_time_tracking_enabled !== false && (
-              <IssueWorklogProperty
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                disabled={!isEditable}
-              />
-            )}
+            <IssueWorklogProperty
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              disabled={!isEditable}
+            />
           </div>
         </div>
       </div>

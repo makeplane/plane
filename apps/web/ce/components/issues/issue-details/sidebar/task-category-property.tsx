@@ -52,7 +52,6 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
         <CustomMenu
           label={selectedMain?.name ?? t("task_category.select_main")}
           buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
-          buttonContainerClassName="w-full"
           placement="bottom-start"
           disabled={!isEditable}
         >
@@ -75,7 +74,6 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
                 : t("task_category.select_sub")
             }
             buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
-            buttonContainerClassName="w-full"
             placement="bottom-start"
             disabled={!isEditable}
           >

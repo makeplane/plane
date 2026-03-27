@@ -474,6 +474,8 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "main_task_category_id",
+                    "sub_task_category_id",
                 )
                 .first()
             )

@@ -72,8 +72,11 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
                 </td>
                 <td className="px-3 py-2 text-center text-secondary">{cat.sort_order}</td>
                 <td className="px-3 py-2 text-right">
-                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                  <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    role="presentation"
+                    className="flex items-center justify-end gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Button variant="ghost" size="sm" onClick={() => onEdit(cat)}>
                       <Pencil className="w-3.5 h-3.5" />
                     </Button>

@@ -862,6 +862,8 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "main_task_category_id",
+            "sub_task_category_id",
         ]
         read_only_fields = fields
 
@@ -922,6 +924,8 @@ class IssueListDetailSerializer(serializers.Serializer):
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
             "total_logged_minutes": getattr(instance, "total_logged_minutes", None),
+            "main_task_category_id": instance.main_task_category_id,
+            "sub_task_category_id": instance.sub_task_category_id,
         }
 
         # Handle expanded fields only when requested - using direct field access

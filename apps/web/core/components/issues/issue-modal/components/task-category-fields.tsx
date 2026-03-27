@@ -6,6 +6,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import type { Control } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
 // types
@@ -24,15 +25,16 @@ type TTaskCategoryFieldsProps = {
 
 export const TaskCategoryFields = observer(function TaskCategoryFields(props: TTaskCategoryFieldsProps) {
   const { control, handleFormChange } = props;
+  const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
 
   // store hooks
   const { mainCategoryIds, mainCategories, getSubCategoriesByMain, fetchCategories } = useTaskCategory();
   const { getTaskCategoryFieldRules } = useIssueFormValidation();
 
   useEffect(() => {
-    void fetchCategories();
+    if (workspaceSlug) void fetchCategories(workspaceSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [workspaceSlug]);
 
   // form context
   const {

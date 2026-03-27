@@ -238,8 +238,6 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "completed_date", titleTranslationKey: "spreadsheet.columns.completed_date" },
   { key: "reference_link", titleTranslationKey: "spreadsheet.columns.reference_link" },
   { key: "total_log_time", titleTranslationKey: "spreadsheet.columns.total_log_time" },
-  { key: "created_on", titleTranslationKey: "common.sort.created_on" },
-  { key: "updated_on", titleTranslationKey: "common.sort.updated_on" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [

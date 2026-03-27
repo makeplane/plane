@@ -14,7 +14,7 @@ export interface ITaskCategoryStore {
   mainCategoryIds: string[];
   // actions
   getSubCategoriesByMain: (mainId: string) => ISubTaskCategory[];
-  fetchCategories: () => Promise<void>;
+  fetchCategories: (workspaceSlug: string) => Promise<void>;
 }
 
 export class TaskCategoryStore implements ITaskCategoryStore {
@@ -56,7 +56,7 @@ export class TaskCategoryStore implements ITaskCategoryStore {
   };
 
   /** Fetch main and sub categories. Guards against repeat calls via hasFetched. */
-  fetchCategories = async (): Promise<void> => {
+  fetchCategories = async (workspaceSlug: string): Promise<void> => {
     if (this.hasFetched) return;
 
     runInAction(() => {
@@ -65,8 +65,8 @@ export class TaskCategoryStore implements ITaskCategoryStore {
 
     try {
       const [mainList, subList] = await Promise.all([
-        this.service.listMainForWorkspace(),
-        this.service.listSubForWorkspace(),
+        this.service.listMainForWorkspace(workspaceSlug),
+        this.service.listSubForWorkspace(workspaceSlug),
       ]);
 
       runInAction(() => {
