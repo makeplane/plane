@@ -3390,6 +3390,8 @@ export default {
       project_name: "프로젝트",
       project_lead: "팀/프로젝트 리드",
       bank_wide_project: "전행 프로젝트",
+      main_task_category: "메인 업무 카테고리",
+      sub_task_category: "서브 업무 카테고리",
       progress_tracking: "진행 추적",
       completed_date: "완료일",
       reference_link: "참조 링크",

@@ -3444,6 +3444,8 @@ export default {
       project_name: "Project",
       project_lead: "Team/Project Lead",
       bank_wide_project: "Bank-wide Project",
+      main_task_category: "Main Task Category",
+      sub_task_category: "Sub Task Category",
       progress_tracking: "Progress Tracking",
       completed_date: "Completed Date",
       reference_link: "Reference Links",

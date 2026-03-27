@@ -3440,6 +3440,8 @@ export default {
       project_name: "Dự án",
       project_lead: "Trưởng nhóm/dự án",
       bank_wide_project: "Dự án toàn hàng",
+      main_task_category: "Danh mục công việc chính",
+      sub_task_category: "Danh mục công việc phụ",
       progress_tracking: "Theo dõi tiến độ",
       completed_date: "Ngày hoàn thành",
       reference_link: "Liên kết tham chiếu",

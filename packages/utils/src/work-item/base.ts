@@ -315,6 +315,8 @@ export const getComputedDisplayProperties = (
   department_name: displayProperties?.department_name ?? true,
   project_name: displayProperties?.project_name ?? true,
   bank_wide_project: displayProperties?.bank_wide_project ?? true,
+  main_task_category: displayProperties?.main_task_category ?? true,
+  sub_task_category: displayProperties?.sub_task_category ?? true,
   progress_tracking: displayProperties?.progress_tracking ?? true,
   completed_date: displayProperties?.completed_date ?? true,
   reference_link: displayProperties?.reference_link ?? true,
