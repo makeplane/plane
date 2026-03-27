@@ -38,13 +38,18 @@ EOF
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])" 2>/dev/null)
+    if ! command -v python3 &> /dev/null; then
+        echo "python3 is required but not installed. Please install Python 3 and try again." >&2
+        exit 1
+    fi
+    local latest_release
+    latest_release=$(curl -fsSL "https://api.github.com/repos/$GH_REPO/releases/latest" | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])" 2>/dev/null)
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
     fi
 
-    echo $latest_release    
+    echo "$latest_release"
 }
 
 # Function to read stack name from env file
