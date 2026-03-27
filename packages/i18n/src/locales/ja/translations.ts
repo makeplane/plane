@@ -1251,6 +1251,12 @@ export default {
       deselect_all: "すべての選択を解除",
     },
     open_in_full_screen: "作業項目をフルスクリーンで開く",
+    vote: {
+      click_to_upvote: "クリックして賛成票を投じる",
+      click_to_downvote: "クリックして反対票を投じる",
+      click_to_view_upvotes: "クリックして賛成票を表示",
+      click_to_view_downvotes: "クリックして反対票を表示",
+    },
   },
   attachment: {
     error: "ファイルを添付できませんでした。もう一度アップロードしてください。",

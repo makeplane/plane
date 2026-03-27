@@ -1261,6 +1261,12 @@ có thể được lưu trữ`,
       deselect_all: "Bỏ chọn tất cả",
     },
     open_in_full_screen: "Mở mục công việc trong chế độ toàn màn hình",
+    vote: {
+      click_to_upvote: "Nhấp để bỏ phiếu thuận",
+      click_to_downvote: "Nhấp để bỏ phiếu chống",
+      click_to_view_upvotes: "Nhấp để xem phiếu thuận",
+      click_to_view_downvotes: "Nhấp để xem phiếu chống",
+    },
   },
   attachment: {
     error: "Không thể đính kèm tệp. Vui lòng tải lên lại.",

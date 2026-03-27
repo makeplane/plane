@@ -1261,6 +1261,12 @@ pot fi arhivate`,
       deselect_all: "Deselează tot",
     },
     open_in_full_screen: "Deschide activitatea pe tot ecranul",
+    vote: {
+      click_to_upvote: "Clic pentru a vota pozitiv",
+      click_to_downvote: "Clic pentru a vota negativ",
+      click_to_view_upvotes: "Clic pentru a vedea voturile pozitive",
+      click_to_view_downvotes: "Clic pentru a vedea voturile negative",
+    },
   },
   attachment: {
     error: "Fișierul nu a putut fi atașat. Încearcă să încarci din nou.",

@@ -1261,6 +1261,12 @@ iş öğeleri arşivlenebilir`,
       deselect_all: "Tümünü seçme",
     },
     open_in_full_screen: "İş öğesini tam ekranda aç",
+    vote: {
+      click_to_upvote: "Olumlu oy vermek için tıklayın",
+      click_to_downvote: "Olumsuz oy vermek için tıklayın",
+      click_to_view_upvotes: "Olumlu oyları görüntülemek için tıklayın",
+      click_to_view_downvotes: "Olumsuz oyları görüntülemek için tıklayın",
+    },
   },
   attachment: {
     error: "Dosya eklenemedi. Tekrar yüklemeyi deneyin.",

@@ -1256,6 +1256,12 @@ mogą być zarchiwizowane`,
       deselect_all: "Odznacz wszystko",
     },
     open_in_full_screen: "Otwórz element pracy na pełnym ekranie",
+    vote: {
+      click_to_upvote: "Kliknij, aby zagłosować za",
+      click_to_downvote: "Kliknij, aby zagłosować przeciw",
+      click_to_view_upvotes: "Kliknij, aby zobaczyć głosy za",
+      click_to_view_downvotes: "Kliknij, aby zobaczyć głosy przeciw",
+    },
   },
   attachment: {
     error: "Nie udało się dodać pliku. Spróbuj ponownie.",

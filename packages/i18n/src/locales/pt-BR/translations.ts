@@ -1268,6 +1268,12 @@ podem ser arquivados`,
       deselect_all: "Desmarcar tudo",
     },
     open_in_full_screen: "Abrir item de trabalho em tela cheia",
+    vote: {
+      click_to_upvote: "Clique para votar a favor",
+      click_to_downvote: "Clique para votar contra",
+      click_to_view_upvotes: "Clique para ver os votos a favor",
+      click_to_view_downvotes: "Clique para ver os votos contra",
+    },
   },
   attachment: {
     error: "Não foi possível anexar o arquivo. Tente enviar novamente.",

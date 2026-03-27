@@ -1244,6 +1244,12 @@ export default {
       deselect_all: "모두 선택 해제",
     },
     open_in_full_screen: "작업 항목을 전체 화면으로 열기",
+    vote: {
+      click_to_upvote: "클릭하여 추천",
+      click_to_downvote: "클릭하여 비추천",
+      click_to_view_upvotes: "클릭하여 추천 목록 보기",
+      click_to_view_downvotes: "클릭하여 비추천 목록 보기",
+    },
   },
   attachment: {
     error: "파일을 첨부할 수 없습니다. 다시 업로드하세요.",

@@ -1258,6 +1258,12 @@ export default {
       deselect_all: "Снять выделение со всех",
     },
     open_in_full_screen: "Открыть рабочий элемент в полном экране",
+    vote: {
+      click_to_upvote: "Нажмите, чтобы проголосовать за",
+      click_to_downvote: "Нажмите, чтобы проголосовать против",
+      click_to_view_upvotes: "Нажмите, чтобы посмотреть голоса за",
+      click_to_view_downvotes: "Нажмите, чтобы посмотреть голоса против",
+    },
   },
   attachment: {
     error: "Ошибка прикрепления файла",

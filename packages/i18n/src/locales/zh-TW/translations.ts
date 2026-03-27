@@ -1239,6 +1239,12 @@ export default {
       deselect_all: "取消全選",
     },
     open_in_full_screen: "以全螢幕開啟工作事項",
+    vote: {
+      click_to_upvote: "點擊贊成",
+      click_to_downvote: "點擊反對",
+      click_to_view_upvotes: "點擊查看贊成票",
+      click_to_view_downvotes: "點擊查看反對票",
+    },
   },
   attachment: {
     error: "無法附加檔案。請重新上傳。",

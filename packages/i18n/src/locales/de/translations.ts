@@ -1359,6 +1359,12 @@ Epics können archiviert werden`,
         },
       },
     },
+    vote: {
+      click_to_upvote: "Klicken zum Hochstimmen",
+      click_to_downvote: "Klicken zum Runterstimmen",
+      click_to_view_upvotes: "Klicken um Hochstimmen anzuzeigen",
+      click_to_view_downvotes: "Klicken um Runterstimmen anzuzeigen",
+    },
   },
   attachment: {
     error: "Datei konnte nicht angehängt werden. Bitte versuchen Sie es erneut.",

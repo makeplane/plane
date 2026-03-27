@@ -1257,6 +1257,12 @@ pracovné položky`,
       deselect_all: "Zrušiť výber všetkého",
     },
     open_in_full_screen: "Otvoriť pracovnú položku na celú obrazovku",
+    vote: {
+      click_to_upvote: "Kliknite pre hlasovanie hore",
+      click_to_downvote: "Kliknite pre hlasovanie dole",
+      click_to_view_upvotes: "Kliknite pre zobrazenie hlasov hore",
+      click_to_view_downvotes: "Kliknite pre zobrazenie hlasov dole",
+    },
   },
   attachment: {
     error: "Súbor sa nedá pripojiť. Skúste to prosím znova.",

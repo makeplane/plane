@@ -1259,6 +1259,12 @@ possono essere archiviati`,
       deselect_all: "Deseleziona tutto",
     },
     open_in_full_screen: "Apri l'elemento di lavoro a schermo intero",
+    vote: {
+      click_to_upvote: "Clicca per votare a favore",
+      click_to_downvote: "Clicca per votare contro",
+      click_to_view_upvotes: "Clicca per vedere i voti a favore",
+      click_to_view_downvotes: "Clicca per vedere i voti contro",
+    },
   },
   attachment: {
     error: "Impossibile allegare il file. Riprova a caricarlo.",

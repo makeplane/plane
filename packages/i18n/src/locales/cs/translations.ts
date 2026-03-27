@@ -1255,6 +1255,12 @@ pracovní položky`,
       deselect_all: "Zrušit výběr všeho",
     },
     open_in_full_screen: "Otevřít pracovní položku na celou obrazovku",
+    vote: {
+      click_to_upvote: "Klikněte pro hlasování nahoru",
+      click_to_downvote: "Klikněte pro hlasování dolů",
+      click_to_view_upvotes: "Klikněte pro zobrazení hlasů nahoru",
+      click_to_view_downvotes: "Klikněte pro zobrazení hlasů dolů",
+    },
   },
   attachment: {
     error: "Soubor nelze připojit. Zkuste to prosím znovu.",

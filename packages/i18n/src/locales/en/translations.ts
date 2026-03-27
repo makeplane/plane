@@ -1155,6 +1155,12 @@ work items can be archived`,
         },
       },
     },
+    vote: {
+      click_to_upvote: "Click to upvote",
+      click_to_downvote: "Click to downvote",
+      click_to_view_upvotes: "Click to view upvotes",
+      click_to_view_downvotes: "Click to view downvotes",
+    },
   },
   attachment: {
     error: "File could not be attached. Try uploading again.",

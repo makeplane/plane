@@ -1267,6 +1267,12 @@ terminés ou annulés peuvent être archivés`,
       deselect_all: "Tout désélectionner",
     },
     open_in_full_screen: "Ouvrir l’élément de travail en plein écran",
+    vote: {
+      click_to_upvote: "Cliquez pour voter pour",
+      click_to_downvote: "Cliquez pour voter contre",
+      click_to_view_upvotes: "Cliquez pour voir les votes pour",
+      click_to_view_downvotes: "Cliquez pour voir les votes contre",
+    },
   },
   attachment: {
     error: "Le fichier n’a pas pu être joint. Essayez de le télécharger à nouveau.",

@@ -1270,6 +1270,12 @@ o cancelados pueden ser archivados`,
       deselect_all: "Deseleccionar todo",
     },
     open_in_full_screen: "Abrir elemento de trabajo en pantalla completa",
+    vote: {
+      click_to_upvote: "Haz clic para votar a favor",
+      click_to_downvote: "Haz clic para votar en contra",
+      click_to_view_upvotes: "Haz clic para ver los votos a favor",
+      click_to_view_downvotes: "Haz clic para ver los votos en contra",
+    },
   },
   attachment: {
     error: "No se pudo adjuntar el archivo. Intenta subirlo de nuevo.",

@@ -15,6 +15,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/propel/utils";
 import type { IUser } from "@plane/types";
 // hooks
@@ -35,6 +37,7 @@ type IssueVotesProps = {
 
 export const IssueVotes = observer(function IssueVotes(props: IssueVotesProps) {
   const { workspaceSlug, projectId, issueId, currentUser, disabled = false, toggleVotingMembersModal } = props;
+  const { t } = useTranslation();
   const userId = currentUser.id;
 
   const [isModalOpen, setIsModalOpen] = useState<TVotes | undefined>(undefined);
@@ -74,61 +77,66 @@ export const IssueVotes = observer(function IssueVotes(props: IssueVotesProps) {
 
       {/* upvote button */}
       <div className="flex items-center gap-1.5">
-        <span
-          aria-label="Upvote"
-          aria-disabled={isDisabled}
-          tabIndex={0}
-          role="button"
-          className={cn(
-            "flex items-center justify-center shrink-0 size-6 rounded-full cursor-pointer",
-            isUpVotedByUser ? "border-none text-label-indigo-text bg-label-indigo-bg" : "border-inverse bg-layer-3"
-          )}
-          onClick={() => !isDisabled && handleVote(1)}
-          onKeyDown={(e) => e.key === "Enter" && !isDisabled && handleVote(1)}
-        >
-          <ArrowUp className="size-4" />
-        </span>
+        <Tooltip tooltipContent={t("issue.vote.click_to_upvote")} disabled={isDisabled}>
+          <button
+            aria-label="Upvote"
+            aria-disabled={isDisabled}
+            tabIndex={0}
+            className={cn(
+              "flex items-center justify-center shrink-0 size-6 rounded-full cursor-pointer",
+              isUpVotedByUser ? "border-none text-label-indigo-text bg-label-indigo-bg" : "border-inverse bg-layer-3"
+            )}
+            onClick={() => !isDisabled && handleVote(1)}
+            onKeyDown={(e) => e.key === "Enter" && !isDisabled && handleVote(1)}
+          >
+            <ArrowUp className="size-4" />
+          </button>
+        </Tooltip>
 
-        <span
-          aria-label="Upvote members"
-          tabIndex={0}
-          role="button"
-          className={cn("cursor-pointer", isUpVotedByUser && "text-label-indigo-text")}
-          onClick={() => openVotingMembersModal("upVotes")}
-          onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("upVotes")}
-        >
-          {upVotesCount}
-        </span>
+        <Tooltip tooltipContent={t("issue.vote.click_to_view_upvotes")}>
+          <button
+            aria-label="Upvote members"
+            tabIndex={0}
+            className={cn("cursor-pointer", isUpVotedByUser && "text-label-indigo-text")}
+            onClick={() => openVotingMembersModal("upVotes")}
+            onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("upVotes")}
+          >
+            {upVotesCount}
+          </button>
+        </Tooltip>
       </div>
 
       {/* downvote button */}
       <div className="flex items-center gap-1.5">
-        <span
-          aria-label="Downvote"
-          aria-disabled={isDisabled}
-          tabIndex={0}
-          role="button"
-          className={cn(
-            "flex items-center justify-center shrink-0 size-6 rounded-full cursor-pointer",
-            isDownVotedByUser ? "border-none text-label-crimson-text bg-label-crimson-bg" : "border-inverse bg-layer-3"
-          )}
-          onClick={() => !isDisabled && handleVote(-1)}
-          onKeyDown={(e) => e.key === "Enter" && !isDisabled && handleVote(-1)}
-        >
-          <ArrowDown className="size-4" />
-        </span>
+        <Tooltip tooltipContent={t("issue.vote.click_to_downvote")} disabled={isDisabled}>
+          <button
+            aria-label="Downvote"
+            aria-disabled={isDisabled}
+            tabIndex={0}
+            className={cn(
+              "flex items-center justify-center shrink-0 size-6 rounded-full cursor-pointer",
+              isDownVotedByUser
+                ? "border-none text-label-crimson-text bg-label-crimson-bg"
+                : "border-inverse bg-layer-3"
+            )}
+            onClick={() => !isDisabled && handleVote(-1)}
+            onKeyDown={(e) => e.key === "Enter" && !isDisabled && handleVote(-1)}
+          >
+            <ArrowDown className="size-4" />
+          </button>
+        </Tooltip>
 
-        <span
-          aria-label="Downvote members"
-          aria-disabled={isDisabled}
-          tabIndex={0}
-          role="button"
-          className={cn("cursor-pointer", isDownVotedByUser && "text-label-crimson-text")}
-          onClick={() => openVotingMembersModal("downVotes")}
-          onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("downVotes")}
-        >
-          {downVotesCount}
-        </span>
+        <Tooltip tooltipContent={t("issue.vote.click_to_view_downvotes")}>
+          <button
+            aria-label="Downvote members"
+            tabIndex={0}
+            className={cn("cursor-pointer", isDownVotedByUser && "text-label-crimson-text")}
+            onClick={() => openVotingMembersModal("downVotes")}
+            onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("downVotes")}
+          >
+            {downVotesCount}
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

@@ -1258,6 +1258,12 @@ yang dapat diarsipkan`,
       deselect_all: "Batalkan pilihan semua item kerja",
     },
     open_in_full_screen: "Buka item kerja dalam layar penuh",
+    vote: {
+      click_to_upvote: "Klik untuk memberi suara naik",
+      click_to_downvote: "Klik untuk memberi suara turun",
+      click_to_view_upvotes: "Klik untuk melihat suara naik",
+      click_to_view_downvotes: "Klik untuk melihat suara turun",
+    },
   },
   attachment: {
     error: "File tidak dapat dilampirkan. Coba unggah lagi.",

@@ -1238,6 +1238,12 @@ export default {
       deselect_all: "取消全选",
     },
     open_in_full_screen: "在全屏中打开工作项",
+    vote: {
+      click_to_upvote: "点击赞成",
+      click_to_downvote: "点击反对",
+      click_to_view_upvotes: "点击查看赞成票",
+      click_to_view_downvotes: "点击查看反对票",
+    },
   },
   attachment: {
     error: "无法附加文件。请重新上传。",
