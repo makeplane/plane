@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { CalendarCheck, CalendarDays, PencilLine, Trash2 } from "lucide-react";
+import { CalendarCheck, CalendarDays, LayoutGrid, PencilLine, Tag, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -100,6 +100,48 @@ export const AdditionalActivityRoot = observer(function AdditionalActivityRoot(p
                 {t("issue.activity_reason")}: &quot;{activity.comment}&quot;
               </span>
             </>
+          )}
+        </span>
+      </IssueActivityBlockComponent>
+    );
+  }
+
+  // Main task category change
+  if (field === "main_task_category") {
+    return (
+      <IssueActivityBlockComponent
+        activityId={activityId}
+        icon={<LayoutGrid className="h-3.5 w-3.5 text-secondary" />}
+        ends={ends}
+      >
+        <span>
+          {activity.new_value ? (
+            <>
+              set the main category to <span className="font-medium text-primary">{activity.new_value}</span>
+            </>
+          ) : (
+            "removed the main category"
+          )}
+        </span>
+      </IssueActivityBlockComponent>
+    );
+  }
+
+  // Sub task category change
+  if (field === "sub_task_category") {
+    return (
+      <IssueActivityBlockComponent
+        activityId={activityId}
+        icon={<Tag className="h-3.5 w-3.5 text-secondary" />}
+        ends={ends}
+      >
+        <span>
+          {activity.new_value ? (
+            <>
+              set the sub category to <span className="font-medium text-primary">{activity.new_value}</span>
+            </>
+          ) : (
+            "removed the sub category"
           )}
         </span>
       </IssueActivityBlockComponent>

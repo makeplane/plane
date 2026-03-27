@@ -24,9 +24,9 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
   const { mainCategoryIds, mainCategories, getSubCategoriesByMain, fetchCategories } = useTaskCategory();
 
   useEffect(() => {
-    void fetchCategories();
+    void fetchCategories(workspaceSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [workspaceSlug]);
 
   if (mainCategoryIds.length === 0) return null;
 
