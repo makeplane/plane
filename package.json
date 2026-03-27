@@ -45,7 +45,7 @@
       "valibot": "1.2.0",
       "glob": "11.1.0",
       "js-yaml": "4.1.1",
-      "brace-expansion": "2.0.2",
+      "brace-expansion": "5.0.5",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
       "@babel/helpers": "7.26.10",
@@ -71,7 +71,10 @@
       "ajv@6": "6.14.0",
       "ajv@8": "8.18.0",
       "undici@7": "7.24.0",
-      "flatted": "3.4.2"
+      "flatted": "3.4.2",
+      "picomatch": "2.3.2",
+      "yaml@1": "1.10.3",
+      "yaml@2": "2.8.3"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
