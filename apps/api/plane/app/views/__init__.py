@@ -89,6 +89,9 @@ from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 from .workspace.time_tracking import (
+    ProjectAnalyticsTimesheetEndpoint,
+    CrossWorkspaceTimesheetEndpoint,
+    CrossWorkspaceCapacityEndpoint,
     ProjectWorkLogSummaryEndpoint,
     WorkspaceWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,
@@ -274,7 +277,11 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
 
-from .capacity import ProjectCapacityEndpoint
+from .capacity import (
+    ProjectCapacityEndpoint,
+    ProjectCapacityDayDetailsEndpoint,
+    ProjectCapacityCategoriesEndpoint,
+)
 
 from .workflow import (
     ProjectWorkflowViewSet,
