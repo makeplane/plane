@@ -62,7 +62,8 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
           >
             <CustomMenu
               label={value ? (mainCategories[value]?.name ?? "Category") : "Category"}
-              buttonClassName="h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
+              noBorder
+              buttonClassName="h-7 rounded-sm border-[0.5px] border-strong px-2 text-caption-sm-regular hover:bg-layer-1"
               placement="bottom-start"
               closeOnSelect
             >
@@ -100,7 +101,8 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
               >
                 <CustomMenu
                   label={value ? (subMap[value]?.name ?? "Sub-category") : "Sub-category"}
-                  buttonClassName="h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
+                  noBorder
+                  buttonClassName="h-7 rounded-sm border-[0.5px] border-strong px-2 text-caption-sm-regular hover:bg-layer-1"
                   placement="bottom-start"
                   closeOnSelect
                 >

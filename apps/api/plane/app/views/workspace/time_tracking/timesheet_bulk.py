@@ -55,7 +55,10 @@ class TimesheetBulkUpdateEndpoint(BaseAPIView):
             )
 
         # Validate entries
-        serializer = TimesheetBulkEntrySerializer(data=entries, many=True)
+        serializer = TimesheetBulkEntrySerializer(
+            data=entries, many=True,
+            context={"project_timezone": project.timezone},
+        )
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
