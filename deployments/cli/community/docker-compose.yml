@@ -115,7 +115,7 @@ services:
     volumes:
       - logs_api:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env, *proxy-env]
     depends_on:
       - plane-db
       - plane-redis
@@ -131,7 +131,7 @@ services:
     volumes:
       - logs_worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env, *proxy-env]
     depends_on:
       - api
       - plane-db
@@ -148,7 +148,7 @@ services:
     volumes:
       - logs_beat-worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env, *proxy-env]
     depends_on:
       - api
       - plane-db
@@ -165,7 +165,7 @@ services:
     volumes:
       - logs_migrator:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env, *proxy-env]
     depends_on:
       - plane-db
       - plane-redis
