@@ -12,9 +12,11 @@ x-redis-env: &redis-env
   REDIS_PORT: ${REDIS_PORT:-6379}
   REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
 
-x-minio-env: &minio-env
-  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
-  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+x-storage-env: &storage-env
+  RUSTFS_ACCESS_KEY: ${AWS_ACCESS_KEY_ID:-access-key}
+  RUSTFS_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+  RUSTFS_VOLUMES: /data
+  RUSTFS_ADDRESS: 0.0.0.0:9000
 
 x-aws-s3-env: &aws-s3-env
   AWS_REGION: ${AWS_REGION:-}
@@ -113,7 +115,7 @@ services:
     volumes:
       - logs_api:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
     depends_on:
       - plane-db
       - plane-redis
@@ -129,7 +131,7 @@ services:
     volumes:
       - logs_worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
     depends_on:
       - api
       - plane-db
@@ -146,7 +148,7 @@ services:
     volumes:
       - logs_beat-worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
     depends_on:
       - api
       - plane-db
@@ -163,7 +165,7 @@ services:
     volumes:
       - logs_migrator:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *redis-env, *storage-env, *aws-s3-env, *proxy-env]
     depends_on:
       - plane-db
       - plane-redis
@@ -203,16 +205,15 @@ services:
 
   # Comment this if you using any external s3 compatible storage
   plane-minio:
-    image: minio/minio:latest
-    command: server /export --console-address ":9090"
+    image: rustfs/rustfs:1.0.0-alpha.90
     deploy:
       replicas: 1
       restart_policy:
         condition: any
     environment:
-      <<: *minio-env
+      <<: *storage-env
     volumes:
-      - uploads:/export
+      - uploads:/data
 
   # Comment this if you already have a reverse proxy running
   proxy:
