@@ -1,7 +1,11 @@
 ---
-name: research
-description: Research technical solutions, analyze architectures, gather requirements thoroughly. Use for technology evaluation, best practices research, solution design, scalability/security/maintainability analysis.
+name: ck:research
+description: "Research technical solutions, analyze architectures, gather requirements thoroughly. Use for technology evaluation, best practices research, solution design, scalability/security/maintainability analysis."
 license: MIT
+argument-hint: "[topic]"
+metadata:
+  author: claudekit
+  version: "1.0.0"
 ---
 
 # Research
@@ -14,6 +18,7 @@ Always honoring **YAGNI**, **KISS**, and **DRY** principles.
 ### Phase 1: Scope Definition
 
 First, you will clearly define the research scope by:
+
 - Identifying key terms and concepts to investigate
 - Determining the recency requirements (how current must information be)
 - Establishing evaluation criteria for sources
@@ -36,7 +41,7 @@ You will employ a multi-source research strategy:
    - **IMPORTANT:** You are allowed to perform at most **5 researches (max 5 tool calls)**, user might request less than this amount, **strictly respect it**, think carefully based on the task before performing each related research topic.
 
 2. **Deep Content Analysis**:
-   - When you found a potential Github repository URL, use `docs-seeker` skill to find read it.
+   - When you found a potential Github repository URL, use `ck:docs-seeker` skill to find read it.
    - Focus on official documentation, API references, and technical specifications
    - Analyze README files from popular GitHub repositories
    - Review changelog and release notes for version-specific information
@@ -54,6 +59,7 @@ You will employ a multi-source research strategy:
 ### Phase 3: Analysis and Synthesis
 
 You will analyze gathered information by:
+
 - Identifying common patterns and best practices
 - Evaluating pros and cons of different approaches
 - Assessing maturity and stability of technologies
@@ -63,6 +69,7 @@ You will analyze gathered information by:
 ### Phase 4: Report Generation
 
 **Notes:**
+
 - Research reports are saved using `Report:` path from `## Naming` section.
 - If `## Naming` section is not available, ask main agent to provide the output path.
 
@@ -72,9 +79,11 @@ You will create a comprehensive markdown report with the following structure:
 # Research Report: [Topic]
 
 ## Executive Summary
+
 [2-3 paragraph overview of key findings and recommendations]
 
 ## Research Methodology
+
 - Sources consulted: [number]
 - Date range of materials: [earliest to most recent]
 - Key search terms used: [list]
@@ -82,63 +91,80 @@ You will create a comprehensive markdown report with the following structure:
 ## Key Findings
 
 ### 1. Technology Overview
+
 [Comprehensive description of the technology/topic]
 
 ### 2. Current State & Trends
+
 [Latest developments, version information, adoption trends]
 
 ### 3. Best Practices
+
 [Detailed list of recommended practices with explanations]
 
 ### 4. Security Considerations
+
 [Security implications, vulnerabilities, and mitigation strategies]
 
 ### 5. Performance Insights
+
 [Performance characteristics, optimization techniques, benchmarks]
 
 ## Comparative Analysis
+
 [If applicable, comparison of different solutions/approaches]
 
 ## Implementation Recommendations
 
 ### Quick Start Guide
+
 [Step-by-step getting started instructions]
 
 ### Code Examples
+
 [Relevant code snippets with explanations]
 
 ### Common Pitfalls
+
 [Mistakes to avoid and their solutions]
 
 ## Resources & References
 
 ### Official Documentation
+
 - [Linked list of official docs]
 
 ### Recommended Tutorials
+
 - [Curated list with descriptions]
 
 ### Community Resources
+
 - [Forums, Discord servers, Stack Overflow tags]
 
 ### Further Reading
+
 - [Advanced topics and deep dives]
 
 ## Appendices
 
 ### A. Glossary
+
 [Technical terms and definitions]
 
 ### B. Version Compatibility Matrix
+
 [If applicable]
 
 ### C. Raw Research Notes
+
 [Optional: detailed notes from research process]
 ```
 
 ## Quality Standards
 
 You will ensure all research meets these criteria:
+
 - **Accuracy**: Information is verified across multiple sources
 - **Currency**: Prioritize information from the last 12 months unless historical context is needed
 - **Completeness**: Cover all aspects requested by the user
@@ -156,7 +182,10 @@ You will ensure all research meets these criteria:
 
 ## Output Requirements
 
+**IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.
+
 Your final report must:
+
 1. Be saved using the `Report:` path from `## Naming` section with a descriptive filename
 2. Include a timestamp of when the research was conducted
 3. Provide clear section navigation with a table of contents for longer reports

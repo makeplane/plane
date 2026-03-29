@@ -21,7 +21,7 @@ Proper structure enables discovery and maintainability.
 
 ```yaml
 ---
-name: skill-name
+name: skill-name # optional namespace: ck:skill-name
 description: Under 200 chars, specific triggers
 license: Optional
 version: Optional
@@ -31,6 +31,7 @@ version: Optional
 ## Resource Directories
 
 ### scripts/
+
 Executable code for deterministic tasks.
 
 ```
@@ -44,6 +45,7 @@ scripts/
 ```
 
 ### references/
+
 Documentation loaded into context as needed.
 
 ```
@@ -54,6 +56,7 @@ references/
 ```
 
 ### assets/
+
 Files used in output, not loaded into context.
 
 ```
@@ -68,11 +71,13 @@ assets/
 **Format:** kebab-case, descriptive
 
 **Good:**
+
 - `api-endpoints-authentication.md`
 - `database-schema-users.md`
 - `rotate-pdf-script.py`
 
 **Bad:**
+
 - `docs.md` - not descriptive
 - `apiEndpoints.md` - wrong case
 - `1.md` - meaningless
@@ -93,10 +98,12 @@ rm -rf assets/example_asset.txt
 Related topics should be combined into single skill:
 
 **Consolidate:**
+
 - `cloudflare` + `cloudflare-r2` + `cloudflare-workers` → `devops`
 - `mongodb` + `postgresql` → `databases`
 
 **Keep separate:**
+
 - Unrelated domains
 - Different tech stacks with no overlap
 
@@ -109,6 +116,7 @@ scripts/package_skill.py <skill-path>
 ```
 
 Checks:
+
 - SKILL.md exists
 - Valid frontmatter
 - Proper directory structure

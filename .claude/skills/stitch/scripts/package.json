@@ -1,0 +1,17 @@
+{
+  "name": "stitch-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ClaudeKit Stitch skill SDK wrapper scripts",
+  "scripts": {
+    "generate": "tsx stitch-generate.ts",
+    "export": "tsx stitch-export.ts",
+    "quota": "tsx stitch-quota.ts"
+  },
+  "dependencies": {
+    "@google/stitch-sdk": ">=0.0.3 <1.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0"
+  }
+}

@@ -1,74 +1,58 @@
 # Development Rules
 
-**Principles:** YAGNI / KISS / DRY — always.
+**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
+**IMPORTANT:** You ALWAYS follow these principles: **YAGNI (You Aren't Gonna Need It) - KISS (Keep It Simple, Stupid) - DRY (Don't Repeat Yourself)**
 
-## Standards
+## General
 
-- kebab-case file names (descriptive, self-documenting for LLM tools)
-- Code files <200 lines, components <150 lines
-- Follow codebase structure and code standards in `./docs`
-- Real implementations only — no mocks, simulations, or fake data
+- **File Naming**: Use kebab-case for file names with a meaningful name that describes the purpose of the file, doesn't matter if the file name is long, just make sure when LLMs read the file names while using Grep or other tools, they can understand the purpose of the file right away without reading the file content.
+- **File Size Management**: Keep individual code files under 200 lines for optimal context management
+  - Split large files into smaller, focused components/modules
+  - Use composition over inheritance for complex widgets
+  - Extract utility functions into separate modules
+  - Create dedicated service classes for business logic
+- When looking for docs, activate `docs-seeker` skill (`context7` reference) for exploring latest docs.
+- Use `gh` bash command to interact with Github features if needed
+- Use `psql` bash command to query Postgres database for debugging if needed
+- Use `ai-multimodal` skill for describing details of images, videos, documents, etc. if needed
+- Use `ai-multimodal` skill and `imagemagick` skill for generating and editing images, videos, documents, etc. if needed
+- Use `sequential-thinking` and `debug` skills for sequential thinking, analyzing code, debugging, etc. if needed
+- **[IMPORTANT]** Follow the codebase structure and code standards in `./docs` during implementation.
+- **[IMPORTANT]** Do not just simulate the implementation or mocking them, always implement the real code.
 
-## Tools
+## Code Quality Guidelines
 
-- `docs-seeker` skill for latest library/framework docs
-- `gh` for GitHub, `psql` for Postgres debugging
-- `ai-multimodal` for image/video/doc analysis
-- `sequential-thinking` / `debug` skills for complex debugging
+- Read and follow codebase structure and code standards in `./docs`
+- Don't be too harsh on code linting, but **make sure there are no syntax errors and code are compilable**
+- Prioritize functionality and readability over strict style enforcement and code formatting
+- Use reasonable code quality standards that enhance developer productivity
+- Use try catch error handling & cover security standards
+- Use `code-reviewer` agent to review code after every implementation
 
-## Code Quality
+## Pre-commit/Push Rules
 
-- Functionality + readability over strict style enforcement
-- No syntax errors — code must compile
-- Try-catch error handling, cover security standards
-- Use `code-reviewer` agent after every implementation
+- Run linting before commit
+- Run tests before push (DO NOT ignore failed tests just to pass the build or github actions)
+- Keep commits focused on the actual code changes
+- **DO NOT** commit and push any confidential information (such as dotenv files, API keys, database credentials, etc.) to git repository!
+- Create clean, professional commit messages without AI references. Use conventional commit format.
 
-## Post-Implementation Verification (MANDATORY)
+## Code Implementation
 
-After EVERY implementation, run these checks before marking done:
-
-1. **Compile check**: `pnpm check:lint` (frontend) or Python import test (backend)
-2. **Import verification**: Grep your new imports against actual `package.json` / `requirements.txt`
-3. **Pattern check**: Grep codebase for similar patterns to verify yours matches existing convention
-4. **No new files without need**: If you created a new file, verify no existing file serves the same purpose
-
-❌ WRONG — Skipping verification:
-
-```
-"I've implemented the feature" (without running lint/compile)
-```
-
-✅ CORRECT — Verified implementation:
-
-```
-1. Implemented feature
-2. Ran pnpm check:lint — 0 errors
-3. Verified imports exist in package.json
-4. Grepped similar patterns — matches convention
-```
-
-## Pre-commit
-
-- Run linting before commit, tests before push
-- Never commit secrets (.env, API keys, credentials)
-- Conventional commit format, no AI references
-- Never ignore failing tests
-- **Real data only** — no mocks/stubs/fakes to pass tests (unless testing external API boundaries)
-- **Test behavior, not implementation** — tests should verify outcomes, not internal method calls
-- If a test requires >3 mocks, the code under test likely needs refactoring
-
-## ESLint
-
-- Config: Root `eslint.config.mjs` (v9 flat config, single file for monorepo)
-- **Typed linting** enabled — type-aware checks catch unsafe `any`, floating promises
-- Fix: `pnpm fix:lint` | Check: `pnpm check:lint`
-- Import style: prefer top-level type imports (`import type { X } from "y"`)
-
-❌ WRONG — `import { SomeType } from "module"` (when only used as type)
-✅ CORRECT — `import type { SomeType } from "module"`
-
-## Implementation
-
+- Write clean, readable, and maintainable code
 - Follow established architectural patterns
+- Implement features according to specifications
 - Handle edge cases and error scenarios
-- Update existing files directly — never create "enhanced" copies
+- **DO NOT** create new enhanced files, update to the existing files directly.
+
+## Visual Aids
+
+- Use `/ck:preview --explain` when explaining unfamiliar code patterns or complex logic
+- Use `/ck:preview --diagram` for architecture diagrams and data flow visualization
+- Use `/ck:preview --slides` for step-by-step walkthroughs and presentations
+- Use `/ck:preview --ascii` for terminal-friendly diagrams (no browser needed to understand)
+- Add `--html` to any generation flag for self-contained HTML output (opens in browser, no server needed)
+- **Plan context:** Active plan determined from `## Plan Context` in hook injection; visuals save to `{plan_dir}/visuals/`
+- If no active plan, fallback to `plans/visuals/` directory
+- For Mermaid diagrams, use `/mermaidjs-v11` skill for v11 syntax rules
+- See `primary-workflow.md` → Step 6 for workflow integration

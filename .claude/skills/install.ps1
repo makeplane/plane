@@ -778,7 +778,32 @@ function Setup-PythonEnv {
         return  # Don't exit, return and let final report show
     }
 
-    # Create virtual environment
+    # Create virtual environment with uv fallback
+    function New-Venv {
+        param([string]$TargetDir)
+        # Try standard venv first
+        & $pythonCmd -m venv $TargetDir 2>$null
+        if ($LASTEXITCODE -eq 0) { return $true }
+
+        # Try uv venv if available (handles uv-managed Python)
+        if (Get-Command uv -ErrorAction SilentlyContinue) {
+            Write-Warning "Standard venv creation failed, trying uv venv..."
+            & uv venv $TargetDir 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                # Bootstrap pip in uv venv
+                $venvPy = Join-Path $TargetDir "Scripts\python.exe"
+                $getPip = Join-Path $env:TEMP "get-pip.py"
+                Invoke-WebRequest -Uri "https://bootstrap.pypa.io/get-pip.py" -OutFile $getPip -ErrorAction SilentlyContinue
+                if (Test-Path $getPip) {
+                    & $venvPy $getPip 2>$null
+                    Remove-Item $getPip -ErrorAction SilentlyContinue
+                }
+                return $true
+            }
+        }
+        return $false
+    }
+
     if (Test-Path $VenvDir) {
         # Verify venv is valid
         $activateScript = Join-Path $VenvDir "Scripts\Activate.ps1"
@@ -788,13 +813,17 @@ function Setup-PythonEnv {
         } else {
             Write-Warning "Virtual environment is corrupted. Recreating..."
             Remove-Item -Recurse -Force $VenvDir
-            & $pythonCmd -m venv $VenvDir
-            Write-Success "Virtual environment recreated"
+            if (New-Venv -TargetDir $VenvDir) {
+                Write-Success "Virtual environment recreated"
+            } else {
+                Write-Error "Failed to create virtual environment"
+                Track-Failure -Category "critical" -Name "Python venv" -Reason "venv creation failed"
+                return
+            }
         }
     } else {
         Write-Info "Creating virtual environment at $VenvDir..."
-        & $pythonCmd -m venv $VenvDir
-        if ($LASTEXITCODE -eq 0) {
+        if (New-Venv -TargetDir $VenvDir) {
             Write-Success "Virtual environment created"
         } else {
             Write-Error "Failed to create virtual environment"
@@ -900,7 +929,7 @@ function Setup-PythonEnv {
         }
     }
 
-    # Install .claude/scripts requirements (contains pyyaml for generate_catalogs.py)
+    # Install .claude/scripts requirements (contains pyyaml for scan_skills.py)
     $scriptsReqPath = Join-Path $ScriptDir "..\scripts\requirements.txt"
     if (Test-Path $scriptsReqPath) {
         $scriptsLogFile = Join-Path $LogDir "install-scripts.log"

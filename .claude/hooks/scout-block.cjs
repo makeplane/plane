@@ -22,102 +22,131 @@
  * Core logic extracted to lib/scout-checker.cjs for OpenCode plugin reuse.
  */
 
-const fs = require('fs');
-const path = require('path');
-
-// Import shared scout checking logic
-const {
-  checkScoutBlock,
-  isBuildCommand,
-  isVenvExecutable,
-  isAllowedCommand
-} = require('./lib/scout-checker.cjs');
-const { isHookEnabled } = require('./lib/ck-config-utils.cjs');
-
-// Early exit if hook disabled in config
-if (!isHookEnabled('scout-block')) {
-  process.exit(0);
-}
-
-// Import formatters (kept local as they're Claude-specific output)
-const { formatBlockedError } = require('./scout-block/error-formatter.cjs');
-const { formatBroadPatternError } = require('./scout-block/broad-pattern-detector.cjs');
-
+// Crash wrapper — catches require() failures and logs them
 try {
-  // Read stdin synchronously
-  const hookInput = fs.readFileSync(0, 'utf-8');
+  const fs = require("fs");
+  const path = require("path");
 
-  // Validate input not empty
-  if (!hookInput || hookInput.trim().length === 0) {
-    console.error('ERROR: Empty input');
-    process.exit(2);
+  // Import shared scout checking logic
+  const { checkScoutBlock, isBuildCommand, isVenvExecutable, isAllowedCommand } = require("./lib/scout-checker.cjs");
+  const { isHookEnabled } = require("./lib/ck-config-utils.cjs");
+
+  // Early exit if hook disabled in config
+  if (!isHookEnabled("scout-block")) {
+    process.exit(0);
   }
 
-  // Parse JSON
-  let data;
+  // Import formatters (kept local as they're Claude-specific output)
+  const { formatBlockedError } = require("./scout-block/error-formatter.cjs");
+  const { formatBroadPatternError } = require("./scout-block/broad-pattern-detector.cjs");
+
+  const { createHookTimer, logHookCrash } = require("./lib/hook-logger.cjs");
+
   try {
-    data = JSON.parse(hookInput);
-  } catch (parseError) {
-    // Fail-open for unparseable input
-    console.error('WARN: JSON parse failed, allowing operation');
-    process.exit(0);
-  }
+    const timer = createHookTimer("scout-block", { event: "PreToolUse" });
+    // Read stdin synchronously
+    const hookInput = fs.readFileSync(0, "utf-8");
 
-  // Validate structure
-  if (!data.tool_input || typeof data.tool_input !== 'object') {
-    // Fail-open for invalid structure
-    console.error('WARN: Invalid JSON structure, allowing operation');
-    process.exit(0);
-  }
-
-  const toolInput = data.tool_input;
-  const toolName = data.tool_name || 'unknown';
-  const claudeDir = path.dirname(__dirname); // Go up from hooks/ to .claude/
-
-  // Use shared scout checker
-  const result = checkScoutBlock({
-    toolName,
-    toolInput,
-    options: {
-      claudeDir,
-      ckignorePath: path.join(claudeDir, '.ckignore'),
-      checkBroadPatterns: true
+    // Validate input not empty
+    if (!hookInput || hookInput.trim().length === 0) {
+      console.error("ERROR: Empty input");
+      timer.end({ status: "error", exit: 2, note: "empty-input" });
+      process.exit(2);
     }
-  });
 
-  // Handle allowed commands
-  if (result.isAllowedCommand) {
+    // Parse JSON
+    let data;
+    try {
+      data = JSON.parse(hookInput);
+    } catch (parseError) {
+      // Fail-open for unparseable input
+      console.error("WARN: JSON parse failed, allowing operation");
+      timer.end({ status: "warn", exit: 0, note: "json-parse-failed", error: parseError.message });
+      process.exit(0);
+    }
+
+    // Validate structure
+    if (!data.tool_input || typeof data.tool_input !== "object") {
+      // Fail-open for invalid structure
+      console.error("WARN: Invalid JSON structure, allowing operation");
+      timer.end({ status: "warn", exit: 0, note: "invalid-structure" });
+      process.exit(0);
+    }
+
+    const toolInput = data.tool_input;
+    const toolName = data.tool_name || "unknown";
+    const claudeDir = path.dirname(__dirname); // Go up from hooks/ to .claude/
+
+    // Use shared scout checker
+    const result = checkScoutBlock({
+      toolName,
+      toolInput,
+      options: {
+        claudeDir,
+        ckignorePath: path.join(claudeDir, ".ckignore"),
+        checkBroadPatterns: true,
+      },
+    });
+
+    // Handle allowed commands
+    if (result.isAllowedCommand) {
+      timer.end({ tool: toolName, status: "ok", exit: 0, note: "allowed-command" });
+      process.exit(0);
+    }
+
+    // Handle broad pattern blocks
+    if (result.blocked && result.isBroadPattern) {
+      const errorMsg = formatBroadPatternError(
+        {
+          blocked: true,
+          reason: result.reason,
+          suggestions: result.suggestions,
+        },
+        claudeDir
+      );
+      console.error(errorMsg);
+      timer.end({
+        tool: toolName,
+        status: "block",
+        exit: 2,
+        target: result.pattern || toolInput.path || toolInput.file_path || "",
+        note: result.reason || "broad-pattern",
+      });
+      process.exit(2);
+    }
+
+    // Handle pattern blocks
+    if (result.blocked) {
+      const errorMsg = formatBlockedError({
+        path: result.path,
+        pattern: result.pattern,
+        tool: toolName,
+        claudeDir: claudeDir,
+      });
+      console.error(errorMsg);
+      timer.end({
+        tool: toolName,
+        status: "block",
+        exit: 2,
+        target: result.path || "",
+        note: result.pattern || "blocked-path",
+      });
+      process.exit(2);
+    }
+
+    // All paths allowed
+    timer.end({ tool: toolName, status: "ok", exit: 0 });
+    process.exit(0);
+  } catch (error) {
+    // Fail-open for unexpected errors
+    console.error("WARN: Hook error, allowing operation -", error.message);
+    logHookCrash("scout-block", error, { event: "PreToolUse" });
     process.exit(0);
   }
-
-  // Handle broad pattern blocks
-  if (result.blocked && result.isBroadPattern) {
-    const errorMsg = formatBroadPatternError({
-      blocked: true,
-      reason: result.reason,
-      suggestions: result.suggestions
-    }, claudeDir);
-    console.error(errorMsg);
-    process.exit(2);
-  }
-
-  // Handle pattern blocks
-  if (result.blocked) {
-    const errorMsg = formatBlockedError({
-      path: result.path,
-      pattern: result.pattern,
-      tool: toolName,
-      claudeDir: claudeDir
-    });
-    console.error(errorMsg);
-    process.exit(2);
-  }
-
-  // All paths allowed
-  process.exit(0);
-
-} catch (error) {
-  // Fail-open for unexpected errors
-  console.error('WARN: Hook error, allowing operation -', error.message);
-  process.exit(0);
+} catch (e) {
+  try {
+    const { logHookCrash } = require("./lib/hook-logger.cjs");
+    logHookCrash("scout-block", e, { event: "PreToolUse" });
+  } catch (_) {}
+  process.exit(0); // fail-open
 }

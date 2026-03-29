@@ -1,8 +1,11 @@
 ---
-name: web-frameworks
+name: ck:web-frameworks
 description: Build with Next.js (App Router, RSC, SSR, ISR), Turborepo monorepos. Use for React apps, server rendering, build optimization, caching strategies, shared dependencies.
 license: MIT
-version: 1.0.0
+argument-hint: "[framework] [feature]"
+metadata:
+  author: claudekit
+  version: "1.0.0"
 ---
 
 # Web Frameworks Skill Group
@@ -32,6 +35,7 @@ This skill group combines three powerful tools for web development:
 ### Single Application: Next.js + RemixIcon
 
 Use when building a standalone application:
+
 - E-commerce sites
 - Marketing websites
 - SaaS applications
@@ -39,6 +43,7 @@ Use when building a standalone application:
 - Blogs and content platforms
 
 **Setup:**
+
 ```bash
 npx create-next-app@latest my-app
 cd my-app
@@ -48,6 +53,7 @@ npm install remixicon
 ### Monorepo: Next.js + Turborepo + RemixIcon
 
 Use when building multiple applications with shared code:
+
 - Microfrontends
 - Multi-tenant platforms
 - Internal tools with shared component library
@@ -55,6 +61,7 @@ Use when building multiple applications with shared code:
 - Design system with documentation site
 
 **Setup:**
+
 ```bash
 npx create-turbo@latest my-monorepo
 # Then configure Next.js apps in apps/ directory
@@ -63,12 +70,12 @@ npx create-turbo@latest my-monorepo
 
 ### Framework Features Comparison
 
-| Feature | Next.js | Turborepo | RemixIcon |
-|---------|---------|-----------|-----------|
-| Primary Use | Web framework | Build system | UI icons |
-| Best For | SSR/SSG apps | Monorepos | Consistent iconography |
-| Performance | Built-in optimization | Caching & parallel tasks | Lightweight fonts/SVG |
-| TypeScript | Full support | Full support | Type definitions available |
+| Feature     | Next.js               | Turborepo                | RemixIcon                  |
+| ----------- | --------------------- | ------------------------ | -------------------------- |
+| Primary Use | Web framework         | Build system             | UI icons                   |
+| Best For    | SSR/SSG apps          | Monorepos                | Consistent iconography     |
+| Performance | Built-in optimization | Caching & parallel tasks | Lightweight fonts/SVG      |
+| TypeScript  | Full support          | Full support             | Type definitions available |
 
 ## Quick Start
 
@@ -127,17 +134,20 @@ import { RiHomeLine, RiSearchFill } from "@remixicon/react"
 ## Reference Navigation
 
 **Next.js References:**
+
 - [App Router Architecture](./references/nextjs-app-router.md) - Routing, layouts, pages, parallel routes
 - [Server Components](./references/nextjs-server-components.md) - RSC patterns, client vs server, streaming
 - [Data Fetching](./references/nextjs-data-fetching.md) - fetch API, caching, revalidation, loading states
 - [Optimization](./references/nextjs-optimization.md) - Images, fonts, scripts, bundle analysis, PPR
 
 **Turborepo References:**
+
 - [Setup & Configuration](./references/turborepo-setup.md) - Installation, workspace config, package structure
 - [Task Pipelines](./references/turborepo-pipelines.md) - Dependencies, parallel execution, task ordering
 - [Caching Strategies](./references/turborepo-caching.md) - Local cache, remote cache, cache invalidation
 
 **RemixIcon References:**
+
 - [Integration Guide](./references/remix-icon-integration.md) - Installation, usage, customization, accessibility
 
 ## Common Patterns & Workflows
@@ -159,6 +169,7 @@ my-monorepo/
 ```
 
 **turbo.json:**
+
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
@@ -183,7 +194,7 @@ my-monorepo/
 
 ```tsx
 // packages/ui/src/button.tsx
-import { RiLoader4Line } from "@remixicon/react"
+import { RiLoader4Line } from "@remixicon/react";
 
 export function Button({ children, loading, icon }) {
   return (
@@ -191,15 +202,15 @@ export function Button({ children, loading, icon }) {
       {loading ? <RiLoader4Line className="animate-spin" /> : icon}
       {children}
     </button>
-  )
+  );
 }
 
 // apps/web/app/page.tsx
-import { Button } from "@repo/ui/button"
-import { RiHomeLine } from "@remixicon/react"
+import { Button } from "@repo/ui/button";
+import { RiHomeLine } from "@remixicon/react";
 
 export default function Page() {
-  return <Button icon={<RiHomeLine />}>Home</Button>
+  return <Button icon={<RiHomeLine />}>Home</Button>;
 }
 ```
 
@@ -207,28 +218,28 @@ export default function Page() {
 
 ```tsx
 // app/posts/[slug]/page.tsx
-import { notFound } from 'next/navigation'
+import { notFound } from "next/navigation";
 
 // Static generation at build time
 export async function generateStaticParams() {
-  const posts = await getPosts()
-  return posts.map(post => ({ slug: post.slug }))
+  const posts = await getPosts();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 // Revalidate every hour
 async function getPost(slug: string) {
   const res = await fetch(`https://api.example.com/posts/${slug}`, {
-    next: { revalidate: 3600 }
-  })
-  if (!res.ok) return null
-  return res.json()
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) return null;
+  return res.json();
 }
 
 export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug)
-  if (!post) notFound()
+  const post = await getPost(params.slug);
+  if (!post) notFound();
 
-  return <article>{post.content}</article>
+  return <article>{post.content}</article>;
 }
 ```
 
@@ -236,7 +247,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
 
 ```yaml
 # .github/workflows/ci.yml
-name: CI
+name: ck:CI
 on: [push, pull_request]
 
 jobs:
@@ -262,6 +273,7 @@ Python utilities in `scripts/` directory:
 **turborepo-migrate.py** - Convert existing monorepo to Turborepo
 
 Usage examples:
+
 ```bash
 # Initialize new Next.js app with TypeScript and recommended setup
 python scripts/nextjs-init.py --name my-app --typescript --app-router
@@ -277,6 +289,7 @@ pytest
 ## Best Practices
 
 **Next.js:**
+
 - Default to Server Components, use Client Components only when needed
 - Implement proper loading and error states
 - Use Image component for automatic optimization
@@ -284,6 +297,7 @@ pytest
 - Leverage caching strategies (force-cache, revalidate, no-store)
 
 **Turborepo:**
+
 - Structure monorepo with clear separation (apps/, packages/)
 - Define task dependencies correctly (^build for topological)
 - Configure outputs for proper caching
@@ -291,6 +305,7 @@ pytest
 - Use filters to run tasks on changed packages only
 
 **RemixIcon:**
+
 - Use line style for minimal interfaces, fill for emphasis
 - Maintain 24x24 grid alignment for crisp rendering
 - Provide aria-labels for accessibility

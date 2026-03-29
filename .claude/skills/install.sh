@@ -655,6 +655,16 @@ install_node_deps() {
         print_success "plans-kanban dependencies installed"
     fi
 
+    # stitch (@google/stitch-sdk)
+    if [ -d "$SCRIPT_DIR/stitch/scripts" ] && [ -f "$SCRIPT_DIR/stitch/scripts/package.json" ]; then
+        print_info "Installing Stitch SDK dependencies..."
+        if (cd "$SCRIPT_DIR/stitch/scripts" && npm install --quiet); then
+            print_success "Stitch SDK dependencies installed"
+        else
+            print_warning "Stitch SDK install failed (optional)"
+        fi
+    fi
+
     # Optional: Shopify CLI (ask user unless auto-confirming)
     if [ -d "$SCRIPT_DIR/shopify" ]; then
         if [[ "$SKIP_CONFIRM" == "true" ]]; then
@@ -688,19 +698,9 @@ setup_python_env() {
         PYTHON_PATH=$(which python3)
         print_success "Python3 found ($PYTHON_VERSION)"
 
-        # Check for broken UV Python installation
+        # Detect UV-managed Python — warn but don't exit (create_venv handles fallback)
         if [[ "$PYTHON_PATH" == *"/.local/share/uv/"* ]]; then
-            # Verify UV Python works by testing venv creation
-            if ! python3 -c "import sys; sys.exit(0 if '/install' not in sys.base_prefix else 1)" 2>/dev/null; then
-                print_error "UV Python installation is broken (corrupted sys.base_prefix)"
-                print_info "Please reinstall Python using Homebrew:"
-                print_info "  brew install python@3.12"
-                print_info "  export PATH=\"/opt/homebrew/bin:\$PATH\""
-                print_info "Or fix UV Python:"
-                print_info "  uv python uninstall 3.12"
-                print_info "  uv python install 3.12"
-                exit 1
-            fi
+            print_info "UV-managed Python detected (venv creation will use uv if needed)"
         fi
     else
         print_error "Python3 not found. Please install Python 3.7+"
@@ -714,9 +714,32 @@ setup_python_env() {
             return 0
         fi
 
+        # Try uv venv if available (handles uv-managed Python where python3 -m venv breaks)
+        if command_exists uv; then
+            print_warning "Standard venv creation failed, trying uv venv..."
+            if uv venv "$VENV_DIR" 2>/dev/null; then
+                # uv venv doesn't include pip — bootstrap it
+                if ! curl -sS https://bootstrap.pypa.io/get-pip.py | "$VENV_DIR/bin/python3" 2>/dev/null; then
+                    print_warning "Could not bootstrap pip via get-pip.py, trying uv pip..."
+                    if ! uv pip install pip --python "$VENV_DIR/bin/python3" 2>/dev/null; then
+                        print_error "Failed to install pip in uv venv"
+                        rm -rf "$VENV_DIR"
+                        return 1
+                    fi
+                fi
+                return 0
+            fi
+        fi
+
         # If ensurepip fails (common on macOS), create without pip and bootstrap manually
         print_warning "Standard venv creation failed, trying without ensurepip..."
-        if python3 -m venv --without-pip "$VENV_DIR"; then
+        if python3 -m venv --without-pip "$VENV_DIR" 2>/dev/null; then
+            # Verify the venv Python works (uv-managed Python may create broken venvs)
+            if ! "$VENV_DIR/bin/python3" -c "import sys" 2>/dev/null; then
+                print_warning "Venv Python is broken (cannot import stdlib), skipping..."
+                rm -rf "$VENV_DIR"
+                return 1
+            fi
             # Bootstrap pip manually with error handling
             source "$VENV_DIR/bin/activate"
             if ! curl -sS https://bootstrap.pypa.io/get-pip.py | python3; then
@@ -840,7 +863,7 @@ setup_python_env() {
         fi
     done
 
-    # Install .claude/scripts requirements (contains pyyaml for generate_catalogs.py)
+    # Install .claude/scripts requirements (contains pyyaml for scan_skills.py)
     local SCRIPTS_REQ="$SCRIPT_DIR/../scripts/requirements.txt"
     if [ -f "$SCRIPTS_REQ" ]; then
         local SCRIPTS_LOG="$LOG_DIR/install-scripts.log"

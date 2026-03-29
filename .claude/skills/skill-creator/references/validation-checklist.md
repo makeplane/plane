@@ -5,15 +5,18 @@ Quick validation before packaging. Run `scripts/package_skill.py` for automated 
 ## Critical (Must Pass)
 
 ### Metadata
-- [ ] `name`: kebab-case, descriptive
+
+- [ ] `name`: namespaced `namespace:skill-name` (or `skill-name` for legacy), descriptive
 - [ ] `description`: under 200 characters, specific triggers, not generic
 
 ### Size Limits
-- [ ] SKILL.md: under 150 lines
-- [ ] Each reference file: under 150 lines
+
+- [ ] SKILL.md: under 300 lines
+- [ ] Each reference file: under 300 lines
 - [ ] No info duplication between SKILL.md and references
 
 ### Structure
+
 - [ ] SKILL.md exists with valid YAML frontmatter
 - [ ] Unused example files deleted
 - [ ] File names: kebab-case, self-documenting
@@ -29,12 +32,14 @@ Quick validation before packaging. Run `scripts/package_skill.py` for automated 
 ## Quality
 
 ### Writing Style
+
 - [ ] Imperative form: "To accomplish X, do Y"
 - [ ] Third-person metadata: "This skill should be used when..."
 - [ ] Concise, no fluff
 
 ### Practical Utility
-- [ ] Teaches *how* to do tasks, not *what* tools are
+
+- [ ] Teaches _how_ to do tasks, not _what_ tools are
 - [ ] Based on real workflows
 - [ ] Includes concrete trigger phrases/examples
 
@@ -53,6 +58,7 @@ scripts/package_skill.py <path/to/skill-folder>
 ```
 
 Checks performed:
+
 - YAML frontmatter format
 - Required fields present
 - Description length (<200 chars)
@@ -72,11 +78,13 @@ When a skill requires subagent delegation (via Task tool):
 5. **Forbid direct implementation** - "DO NOT implement X yourself - DELEGATE to subagent"
 
 **Anti-pattern (weak):**
+
 ```
 - Use `tester` agent for testing
 ```
 
 **Correct pattern (enforceable):**
+
 ```
 - **MUST** spawn `tester` subagent: `Task(subagent_type="tester", prompt="Run tests", description="Test")`
 - DO NOT run tests yourself - DELEGATE

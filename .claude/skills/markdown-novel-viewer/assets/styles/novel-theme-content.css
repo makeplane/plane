@@ -42,10 +42,17 @@ body:not(.has-plan) .main-content {
   max-width: var(--content-width);
   margin: 0 auto;
   padding-bottom: 4rem;
+  /* Allow code blocks to visually overflow beyond content width */
+  overflow: visible;
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   margin: 2rem 0 1rem;
@@ -72,7 +79,7 @@ h2 {
 
 h2::before,
 h2::after {
-  content: '';
+  content: "";
   width: 20px;
   height: 1px;
   background: var(--border);
@@ -82,7 +89,9 @@ h3 {
   font-size: 1.25rem;
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
   font-size: 1rem;
   text-align: left;
 }
@@ -95,7 +104,9 @@ a {
   color: var(--link);
   text-decoration: underline;
   text-decoration-color: var(--border);
-  transition: color 0.2s, text-decoration-color 0.2s;
+  transition:
+    color 0.2s,
+    text-decoration-color 0.2s;
 }
 
 a:hover {
@@ -104,7 +115,8 @@ a:hover {
 }
 
 /* Lists */
-ul, ol {
+ul,
+ol {
   margin: 1rem 0;
   padding-left: 1.5rem;
 }
@@ -113,7 +125,8 @@ li {
   margin-bottom: 0.5rem;
 }
 
-li > ul, li > ol {
+li > ul,
+li > ol {
   margin: 0.5rem 0;
 }
 
@@ -144,7 +157,8 @@ input[type="checkbox"] {
   border-top: 1px solid var(--border);
 }
 
-.nav-prev, .nav-next {
+.nav-prev,
+.nav-next {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -156,7 +170,8 @@ input[type="checkbox"] {
   transition: all 0.2s;
 }
 
-.nav-prev:hover, .nav-next:hover {
+.nav-prev:hover,
+.nav-next:hover {
   background: var(--bg-secondary);
   color: var(--accent);
   border-color: var(--accent);

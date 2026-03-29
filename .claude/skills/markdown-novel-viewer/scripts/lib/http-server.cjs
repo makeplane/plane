@@ -414,7 +414,7 @@ function createHttpServer(options) {
               <li><code>/browse?dir=/path/to/dir</code> - Browse directory</li>
             </ul>
           </div>
-          <p>Use the <code>/preview</code> command to start viewing files.</p>
+          <p>Use the <code>/ck:preview</code> skill invocation to start viewing files.</p>
         </body>
         </html>
       `

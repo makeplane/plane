@@ -1,8 +1,11 @@
 ---
-name: better-auth
+name: ck:better-auth
 description: Add authentication with Better Auth (TypeScript). Use for email/password, OAuth providers (Google, GitHub), 2FA/MFA, passkeys/WebAuthn, sessions, RBAC, rate limiting.
 license: MIT
-version: 2.0.0
+argument-hint: "[auth-method or feature]"
+metadata:
+  author: claudekit
+  version: "2.0.0"
 ---
 
 # Better Auth Skill
@@ -30,6 +33,7 @@ npm install better-auth
 ### Environment Setup
 
 Create `.env`:
+
 ```env
 BETTER_AUTH_SECRET=<generated-secret-32-chars-min>
 BETTER_AUTH_URL=http://localhost:3000
@@ -48,14 +52,14 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true
+    autoSignIn: true,
   },
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -69,6 +73,7 @@ npx @better-auth/cli migrate   # Apply migrations (Kysely only)
 ### Mount API Handler
 
 **Next.js App Router:**
+
 ```ts
 // app/api/auth/[...all]/route.ts
 import { auth } from "@/lib/auth";
@@ -87,7 +92,7 @@ Create `auth-client.ts`:
 import { createAuthClient } from "better-auth/client";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
 });
 ```
 
@@ -98,13 +103,13 @@ export const authClient = createAuthClient({
 await authClient.signUp.email({
   email: "user@example.com",
   password: "secure123",
-  name: "John Doe"
+  name: "John Doe",
 });
 
 // Sign in
 await authClient.signIn.email({
   email: "user@example.com",
-  password: "secure123"
+  password: "secure123",
 });
 
 // OAuth
@@ -117,43 +122,48 @@ const { data: session } = await authClient.getSession(); // Vanilla JS
 
 ## Feature Selection Matrix
 
-| Feature | Plugin Required | Use Case | Reference |
-|---------|----------------|----------|-----------|
-| Email/Password | No (built-in) | Basic auth | [email-password-auth.md](./references/email-password-auth.md) |
-| OAuth (GitHub, Google, etc.) | No (built-in) | Social login | [oauth-providers.md](./references/oauth-providers.md) |
-| Email Verification | No (built-in) | Verify email addresses | [email-password-auth.md](./references/email-password-auth.md#email-verification) |
-| Password Reset | No (built-in) | Forgot password flow | [email-password-auth.md](./references/email-password-auth.md#password-reset) |
-| Two-Factor Auth (2FA/TOTP) | Yes (`twoFactor`) | Enhanced security | [advanced-features.md](./references/advanced-features.md#two-factor-authentication) |
-| Passkeys/WebAuthn | Yes (`passkey`) | Passwordless auth | [advanced-features.md](./references/advanced-features.md#passkeys-webauthn) |
-| Magic Link | Yes (`magicLink`) | Email-based login | [advanced-features.md](./references/advanced-features.md#magic-link) |
-| Username Auth | Yes (`username`) | Username login | [email-password-auth.md](./references/email-password-auth.md#username-authentication) |
-| Organizations/Multi-tenant | Yes (`organization`) | Team/org features | [advanced-features.md](./references/advanced-features.md#organizations) |
-| Rate Limiting | No (built-in) | Prevent abuse | [advanced-features.md](./references/advanced-features.md#rate-limiting) |
-| Session Management | No (built-in) | User sessions | [advanced-features.md](./references/advanced-features.md#session-management) |
+| Feature                      | Plugin Required      | Use Case               | Reference                                                                             |
+| ---------------------------- | -------------------- | ---------------------- | ------------------------------------------------------------------------------------- |
+| Email/Password               | No (built-in)        | Basic auth             | [email-password-auth.md](./references/email-password-auth.md)                         |
+| OAuth (GitHub, Google, etc.) | No (built-in)        | Social login           | [oauth-providers.md](./references/oauth-providers.md)                                 |
+| Email Verification           | No (built-in)        | Verify email addresses | [email-password-auth.md](./references/email-password-auth.md#email-verification)      |
+| Password Reset               | No (built-in)        | Forgot password flow   | [email-password-auth.md](./references/email-password-auth.md#password-reset)          |
+| Two-Factor Auth (2FA/TOTP)   | Yes (`twoFactor`)    | Enhanced security      | [advanced-features.md](./references/advanced-features.md#two-factor-authentication)   |
+| Passkeys/WebAuthn            | Yes (`passkey`)      | Passwordless auth      | [advanced-features.md](./references/advanced-features.md#passkeys-webauthn)           |
+| Magic Link                   | Yes (`magicLink`)    | Email-based login      | [advanced-features.md](./references/advanced-features.md#magic-link)                  |
+| Username Auth                | Yes (`username`)     | Username login         | [email-password-auth.md](./references/email-password-auth.md#username-authentication) |
+| Organizations/Multi-tenant   | Yes (`organization`) | Team/org features      | [advanced-features.md](./references/advanced-features.md#organizations)               |
+| Rate Limiting                | No (built-in)        | Prevent abuse          | [advanced-features.md](./references/advanced-features.md#rate-limiting)               |
+| Session Management           | No (built-in)        | User sessions          | [advanced-features.md](./references/advanced-features.md#session-management)          |
 
 ## Auth Method Selection Guide
 
 **Choose Email/Password when:**
+
 - Building standard web app with traditional auth
 - Need full control over user credentials
 - Targeting users who prefer email-based accounts
 
 **Choose OAuth when:**
+
 - Want quick signup with minimal friction
 - Users already have social accounts
 - Need access to social profile data
 
 **Choose Passkeys when:**
+
 - Want passwordless experience
 - Targeting modern browsers/devices
 - Security is top priority
 
 **Choose Magic Link when:**
+
 - Want passwordless without WebAuthn complexity
 - Targeting email-first users
 - Need temporary access links
 
 **Combine Multiple Methods when:**
+
 - Want flexibility for different user preferences
 - Building enterprise apps with various auth requirements
 - Need progressive enhancement (start simple, add more options)
@@ -161,6 +171,7 @@ const { data: session } = await authClient.getSession(); // Vanilla JS
 ## Core Architecture
 
 Better Auth uses client-server architecture:
+
 1. **Server** (`better-auth`): Handles auth logic, database ops, API routes
 2. **Client** (`better-auth/client`): Provides hooks/methods for frontend
 3. **Plugins**: Extend both server/client functionality
@@ -185,11 +196,13 @@ Better Auth uses client-server architecture:
 ## Reference Documentation
 
 ### Core Authentication
+
 - [Email/Password Authentication](./references/email-password-auth.md) - Email/password setup, verification, password reset, username auth
 - [OAuth Providers](./references/oauth-providers.md) - Social login setup, provider configuration, token management
 - [Database Integration](./references/database-integration.md) - Database adapters, schema setup, migrations
 
 ### Advanced Features
+
 - [Advanced Features](./references/advanced-features.md) - 2FA/MFA, passkeys, magic links, organizations, rate limiting, session management
 
 ## Scripts

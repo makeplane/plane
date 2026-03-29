@@ -14,9 +14,9 @@
  * Exit: Always 0 (non-blocking, warn-only mode)
  */
 
-const fs = require("fs");
-const path = require("path");
-const { spawnSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 // Patterns
 const CODE_REF_PATTERN = /`([A-Za-z_][A-Za-z0-9_]*(?:\(\))?)`/g;
@@ -25,105 +25,33 @@ const ENV_PATTERN = /`([A-Z][A-Z0-9_]{2,})`|\$([A-Z][A-Z0-9_]{2,})/g;
 
 // Common code terms to ignore (not actual code refs)
 const IGNORE_CODE_REFS = new Set([
-  "true",
-  "false",
-  "null",
-  "undefined",
-  "string",
-  "number",
-  "boolean",
-  "object",
-  "array",
-  "function",
-  "async",
-  "await",
-  "const",
-  "let",
-  "var",
-  "if",
-  "else",
-  "for",
-  "while",
-  "return",
-  "import",
-  "export",
-  "default",
-  "npm",
-  "npx",
-  "node",
-  "yarn",
-  "pnpm",
-  "git",
-  "bash",
-  "sh",
-  "zsh",
-  "GET",
-  "POST",
-  "PUT",
-  "DELETE",
-  "PATCH",
-  "HEAD",
-  "OPTIONS",
-  "JSON",
-  "XML",
-  "HTML",
-  "CSS",
-  "SQL",
-  "API",
-  "URL",
-  "URI",
-  "HTTP",
-  "HTTPS",
-  "OK",
-  "ERROR",
-  "WARNING",
-  "INFO",
-  "DEBUG",
-  "TRACE",
-  "README",
-  "LICENSE",
-  "CHANGELOG",
-  "TODO",
-  "FIXME",
-  "NOTE",
-  "HACK",
-  "dev",
-  "prod",
-  "test",
-  "staging",
-  "production",
-  "development",
-  "src",
-  "lib",
-  "dist",
-  "build",
-  "docs",
-  "tests",
-  "config",
-  "index",
-  "main",
-  "app",
-  "server",
-  "client",
-  "utils",
-  "helpers",
+  'true', 'false', 'null', 'undefined', 'string', 'number', 'boolean',
+  'object', 'array', 'function', 'async', 'await', 'const', 'let', 'var',
+  'if', 'else', 'for', 'while', 'return', 'import', 'export', 'default',
+  'npm', 'npx', 'node', 'yarn', 'pnpm', 'git', 'bash', 'sh', 'zsh',
+  'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS',
+  'JSON', 'XML', 'HTML', 'CSS', 'SQL', 'API', 'URL', 'URI', 'HTTP', 'HTTPS',
+  'OK', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE',
+  'README', 'LICENSE', 'CHANGELOG', 'TODO', 'FIXME', 'NOTE', 'HACK',
+  'dev', 'prod', 'test', 'staging', 'production', 'development',
+  'src', 'lib', 'dist', 'build', 'docs', 'tests', 'config',
+  'index', 'main', 'app', 'server', 'client', 'utils', 'helpers'
 ]);
 
 // Common env var prefixes to ignore (not project-specific)
-const IGNORE_ENV_PREFIXES = ["NODE_", "PATH", "HOME", "USER", "SHELL", "TERM", "PWD", "CI"];
+const IGNORE_ENV_PREFIXES = ['NODE_', 'PATH', 'HOME', 'USER', 'SHELL', 'TERM', 'PWD', 'CI'];
 
 // Markdown template variables (not actual env vars)
-const IGNORE_ENV_VARS = new Set(["ARGUMENTS"]);
+const IGNORE_ENV_VARS = new Set(['ARGUMENTS']);
 
 /**
  * Find all markdown files in directory.
  */
 function findMarkdownFiles(dir) {
   if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => path.join(dir, f));
+  return fs.readdirSync(dir)
+    .filter(f => f.endsWith('.md'))
+    .map(f => path.join(dir, f));
 }
 
 /**
@@ -132,18 +60,18 @@ function findMarkdownFiles(dir) {
 function extractCodeRefs(content, filepath) {
   const refs = [];
   let match;
-  const lines = content.split("\n");
+  const lines = content.split('\n');
 
   lines.forEach((line, idx) => {
     // Skip code blocks
-    if (line.trim().startsWith("```")) return;
+    if (line.trim().startsWith('```')) return;
 
     while ((match = CODE_REF_PATTERN.exec(line)) !== null) {
       const ref = match[1];
       // Filter out common terms
-      if (IGNORE_CODE_REFS.has(ref.replace("()", "").toLowerCase())) continue;
+      if (IGNORE_CODE_REFS.has(ref.replace('()', '').toLowerCase())) continue;
       // Only check function calls and PascalCase classes
-      if (ref.endsWith("()") || /^[A-Z][a-z]/.test(ref)) {
+      if (ref.endsWith('()') || /^[A-Z][a-z]/.test(ref)) {
         refs.push({ ref, file: filepath, line: idx + 1 });
       }
     }
@@ -158,13 +86,13 @@ function extractCodeRefs(content, filepath) {
 function extractLinks(content, filepath) {
   const links = [];
   let match;
-  const lines = content.split("\n");
+  const lines = content.split('\n');
 
   lines.forEach((line, idx) => {
     while ((match = LINK_PATTERN.exec(line)) !== null) {
       const href = match[2];
       // Skip external links and anchors
-      if (href.startsWith("http") || href.startsWith("#") || href.startsWith("mailto:")) continue;
+      if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:')) continue;
       links.push({ href, file: filepath, line: idx + 1, text: match[1] });
     }
   });
@@ -178,16 +106,16 @@ function extractLinks(content, filepath) {
 function extractEnvVars(content, filepath) {
   const vars = [];
   let match;
-  const lines = content.split("\n");
+  const lines = content.split('\n');
 
   lines.forEach((line, idx) => {
     // Skip code blocks
-    if (line.trim().startsWith("```")) return;
+    if (line.trim().startsWith('```')) return;
 
     while ((match = ENV_PATTERN.exec(line)) !== null) {
       const envVar = match[1] || match[2];
       // Filter common system vars and template variables
-      if (IGNORE_ENV_PREFIXES.some((p) => envVar.startsWith(p))) continue;
+      if (IGNORE_ENV_PREFIXES.some(p => envVar.startsWith(p))) continue;
       if (IGNORE_ENV_VARS.has(envVar)) continue;
       vars.push({ envVar, file: filepath, line: idx + 1 });
     }
@@ -200,24 +128,24 @@ function extractEnvVars(content, filepath) {
  * Check if code reference exists in source directories.
  */
 function checkCodeRefExists(ref, srcDirs) {
-  const name = ref.replace("()", "");
+  const name = ref.replace('()', '');
   const patterns = [
     `function ${name}`,
     `const ${name}`,
     `class ${name}`,
     `def ${name}`,
     `export.*${name}`,
-    `${name}:`, // object methods
+    `${name}:`  // object methods
   ];
 
   for (const srcDir of srcDirs) {
     if (!fs.existsSync(srcDir)) continue;
     for (const pattern of patterns) {
       // Use spawnSync with args array to prevent command injection
-      const result = spawnSync("grep", ["-rl", pattern, srcDir], {
-        encoding: "utf8",
-        stdio: ["pipe", "pipe", "pipe"],
-        timeout: 5000,
+      const result = spawnSync('grep', ['-rl', pattern, srcDir], {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout: 5000
       });
       if (result.status === 0 && result.stdout.trim()) {
         return true;
@@ -232,7 +160,7 @@ function checkCodeRefExists(ref, srcDirs) {
  */
 function checkLinkExists(href, sourceFile) {
   const sourceDir = path.dirname(sourceFile);
-  const targetPath = path.resolve(sourceDir, href.split("#")[0]);
+  const targetPath = path.resolve(sourceDir, href.split('#')[0]);
   return fs.existsSync(targetPath);
 }
 
@@ -240,13 +168,13 @@ function checkLinkExists(href, sourceFile) {
  * Load env vars from .env.example.
  */
 function loadEnvExample(projectRoot) {
-  const envPath = path.join(projectRoot, ".env.example");
+  const envPath = path.join(projectRoot, '.env.example');
   if (!fs.existsSync(envPath)) return new Set();
 
-  const content = fs.readFileSync(envPath, "utf8");
+  const content = fs.readFileSync(envPath, 'utf8');
   const vars = new Set();
 
-  content.split("\n").forEach((line) => {
+  content.split('\n').forEach(line => {
     const match = line.match(/^([A-Z][A-Z0-9_]+)=/);
     if (match) vars.add(match[1]);
   });
@@ -261,7 +189,7 @@ function validate(docsDir, srcDirs, projectRoot) {
   const issues = {
     codeRefs: [],
     links: [],
-    envVars: [],
+    envVars: []
   };
   const stats = {
     filesChecked: 0,
@@ -270,7 +198,7 @@ function validate(docsDir, srcDirs, projectRoot) {
     envVarsChecked: 0,
     codeRefsValid: 0,
     linksValid: 0,
-    envVarsValid: 0,
+    envVarsValid: 0
   };
 
   const mdFiles = findMarkdownFiles(docsDir);
@@ -286,7 +214,7 @@ function validate(docsDir, srcDirs, projectRoot) {
   for (const filepath of mdFiles) {
     let content;
     try {
-      content = fs.readFileSync(filepath, "utf8");
+      content = fs.readFileSync(filepath, 'utf8');
     } catch (err) {
       // File deleted during validation - skip
       continue;
@@ -328,14 +256,14 @@ function validate(docsDir, srcDirs, projectRoot) {
   }
 
   // Generate report
-  console.log("\n## Docs Validation Report\n");
+  console.log('\n## Docs Validation Report\n');
   console.log(`**Files Checked:** ${stats.filesChecked}`);
-  console.log(`**Scan Date:** ${new Date().toISOString().split("T")[0]}\n`);
+  console.log(`**Scan Date:** ${new Date().toISOString().split('T')[0]}\n`);
 
   const hasIssues = issues.codeRefs.length || issues.links.length || issues.envVars.length;
 
   if (hasIssues) {
-    console.log("### Potential Issues\n");
+    console.log('### Potential Issues\n');
 
     if (issues.codeRefs.length) {
       console.log(`⚠️ **Code References** (${issues.codeRefs.length} issues)`);
@@ -345,7 +273,7 @@ function validate(docsDir, srcDirs, projectRoot) {
       if (issues.codeRefs.length > 10) {
         console.log(`- ... and ${issues.codeRefs.length - 10} more`);
       }
-      console.log("");
+      console.log('');
     }
 
     if (issues.links.length) {
@@ -356,7 +284,7 @@ function validate(docsDir, srcDirs, projectRoot) {
       if (issues.links.length > 10) {
         console.log(`- ... and ${issues.links.length - 10} more`);
       }
-      console.log("");
+      console.log('');
     }
 
     if (issues.envVars.length) {
@@ -367,18 +295,18 @@ function validate(docsDir, srcDirs, projectRoot) {
       if (issues.envVars.length > 10) {
         console.log(`- ... and ${issues.envVars.length - 10} more`);
       }
-      console.log("");
+      console.log('');
     }
   }
 
-  console.log("### Verified OK\n");
+  console.log('### Verified OK\n');
   if (stats.codeRefsValid > 0) console.log(`✅ ${stats.codeRefsValid} code references validated`);
   if (stats.linksValid > 0) console.log(`✅ ${stats.linksValid} internal links working`);
   if (stats.envVarsValid > 0) console.log(`✅ ${stats.envVarsValid} config keys confirmed`);
   if (stats.codeRefsValid === 0 && stats.linksValid === 0 && stats.envVarsValid === 0) {
-    console.log("ℹ️ No validatable references found");
+    console.log('ℹ️ No validatable references found');
   }
-  console.log("");
+  console.log('');
 }
 
 /**
@@ -386,15 +314,15 @@ function validate(docsDir, srcDirs, projectRoot) {
  */
 function parseArgs(args) {
   const result = {
-    docsDir: "docs",
-    srcDirs: ["src", "lib", "app", "scripts", ".claude"],
+    docsDir: 'docs',
+    srcDirs: ['src', 'lib', 'app', 'scripts', '.claude']
   };
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === "--src" && args[i + 1]) {
-      result.srcDirs = args[++i].split(",");
-    } else if (!arg.startsWith("-")) {
+    if (arg === '--src' && args[i + 1]) {
+      result.srcDirs = args[++i].split(',');
+    } else if (!arg.startsWith('-')) {
       result.docsDir = arg;
     }
   }
@@ -406,7 +334,7 @@ function parseArgs(args) {
 const args = parseArgs(process.argv.slice(2));
 const projectRoot = process.cwd();
 const docsDir = path.resolve(projectRoot, args.docsDir);
-const srcDirs = args.srcDirs.map((d) => path.resolve(projectRoot, d));
+const srcDirs = args.srcDirs.map(d => path.resolve(projectRoot, d));
 
 validate(docsDir, srcDirs, projectRoot);
 

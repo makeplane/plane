@@ -6,7 +6,41 @@ Scan .claude/skills directory and extract skill metadata.
 import re
 from pathlib import Path
 from typing import Dict, List
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError:
+    raise SystemExit(
+        "PyYAML is required. Install with: python3 -m pip install -r .claude/scripts/requirements.txt"
+    )
+
+# Exact mappings for high-signal CK skills to avoid falling into "other".
+EXACT_CATEGORY_MAP = {
+    "ask": "utilities",
+    "code-review": "utilities",
+    "coding-level": "utilities",
+    "debug": "utilities",
+    "docs": "utilities",
+    "journal": "utilities",
+    "plan": "utilities",
+    "research": "utilities",
+    "sequential-thinking": "utilities",
+    "test": "utilities",
+    "watzup": "utilities",
+    "find-skills": "dev-tools",
+    "git": "dev-tools",
+    "kanban": "dev-tools",
+    "plans-kanban": "dev-tools",
+    "scout": "dev-tools",
+    "use-mcp": "dev-tools",
+    "worktree": "dev-tools",
+    "preview": "utilities",
+    "project-management": "utilities",
+    "bootstrap": "utilities",
+    "brainstorm": "utilities",
+    "cook": "utilities",
+    "fix": "utilities",
+    "team": "dev-tools",
+}
 
 def extract_frontmatter(content: str) -> Dict:
     """Extract YAML frontmatter from markdown content."""
@@ -72,14 +106,21 @@ def scan_skills(base_path: Path) -> List[Dict]:
             # Categorize based on content/name
             category = categorize_skill(skill_name, description, content)
 
-            skills.append({
+            skill_entry = {
                 'name': skill_name,
                 'path': str(skill_file.relative_to(Path('.claude/skills'))),
                 'description': description,
                 'category': category,
                 'has_scripts': (skill_dir / 'scripts').exists(),
                 'has_references': (skill_dir / 'references').exists()
-            })
+            }
+
+            # Include argument-hint if present in frontmatter
+            argument_hint = frontmatter.get('argument-hint', '')
+            if argument_hint:
+                skill_entry['argument_hint'] = str(argument_hint)
+
+            skills.append(skill_entry)
         except Exception as e:
             print(f"Error processing {skill_file}: {e}")
 
@@ -88,8 +129,8 @@ def scan_skills(base_path: Path) -> List[Dict]:
 def categorize_skill(name: str, description: str, content: str) -> str:
     """Categorize skill based on name and content."""
     lower_name = name.lower()
-    lower_desc = description.lower()
-    lower_content = content[:500].lower()
+    if lower_name in EXACT_CATEGORY_MAP:
+        return EXACT_CATEGORY_MAP[lower_name]
 
     # AI/ML
     if any(x in lower_name for x in ['ai-', 'gemini', 'multimodal', 'adk']):
@@ -177,8 +218,9 @@ def main():
             refs = '📚' if skill['has_references'] else '  '
             print(f"  {scripts}{refs} {skill['name']:30} {skill['description'][:80]}")
 
-    # Output YAML for processing (generate_catalogs.py reads YAML)
+    # Output YAML to scripts directory
     output_path = Path('.claude/scripts/skills_data.yaml')
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(yaml.dump(skills, allow_unicode=True, default_flow_style=False))
     print(f"\n✓ Saved metadata to {output_path}")
 

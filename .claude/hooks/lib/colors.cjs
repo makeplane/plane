@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
 /**
  * ANSI Terminal Colors - Cross-platform color support for statusline
@@ -8,13 +8,13 @@
  */
 
 // ANSI escape codes (8-color basic palette)
-const RESET = '\x1b[0m';
-const DIM = '\x1b[2m';
-const RED = '\x1b[31m';
-const GREEN = '\x1b[32m';
-const YELLOW = '\x1b[33m';
-const MAGENTA = '\x1b[35m';
-const CYAN = '\x1b[36m';
+const RESET = "\x1b[0m";
+const DIM = "\x1b[2m";
+const RED = "\x1b[31m";
+const GREEN = "\x1b[32m";
+const YELLOW = "\x1b[33m";
+const MAGENTA = "\x1b[35m";
+const CYAN = "\x1b[36m";
 
 // Detect color support at module load (cached)
 // Claude Code statusline runs via pipe but output displays in TTY - default to true
@@ -25,10 +25,35 @@ const shouldUseColor = (() => {
   return true;
 })();
 
+// Mutable override (set by statusline.cjs from config)
+// null = use env detection, true/false = explicit override
+let _colorOverride = null;
+
+/**
+ * Set explicit color enable/disable override (from config)
+ * Pass null to revert to env-var detection
+ * @param {boolean} enabled
+ */
+function setColorEnabled(enabled) {
+  _colorOverride = enabled;
+}
+
+/**
+ * Determine if colors should be rendered, respecting env vars and config override
+ * NO_COLOR env var always takes precedence over config override
+ * @returns {boolean}
+ */
+function isColorEnabled() {
+  // NO_COLOR env var is a hard override that always wins
+  if (process.env.NO_COLOR) return false;
+  if (_colorOverride !== null) return _colorOverride;
+  return shouldUseColor;
+}
+
 // Detect 256-color support via COLORTERM
 const has256Color = (() => {
   const ct = process.env.COLORTERM;
-  return ct === 'truecolor' || ct === '24bit' || ct === '256color';
+  return ct === "truecolor" || ct === "24bit" || ct === "256color";
 })();
 
 /**
@@ -38,16 +63,28 @@ const has256Color = (() => {
  * @returns {string} Colorized text or plain text if colors disabled
  */
 function colorize(text, code) {
-  if (!shouldUseColor) return String(text);
+  if (!isColorEnabled()) return String(text);
   return `${code}${text}${RESET}`;
 }
 
-function green(text) { return colorize(text, GREEN); }
-function yellow(text) { return colorize(text, YELLOW); }
-function red(text) { return colorize(text, RED); }
-function cyan(text) { return colorize(text, CYAN); }
-function magenta(text) { return colorize(text, MAGENTA); }
-function dim(text) { return colorize(text, DIM); }
+function green(text) {
+  return colorize(text, GREEN);
+}
+function yellow(text) {
+  return colorize(text, YELLOW);
+}
+function red(text) {
+  return colorize(text, RED);
+}
+function cyan(text) {
+  return colorize(text, CYAN);
+}
+function magenta(text) {
+  return colorize(text, MAGENTA);
+}
+function dim(text) {
+  return colorize(text, DIM);
+}
 
 /**
  * Get color code based on context percentage threshold
@@ -72,12 +109,12 @@ function coloredBar(percent, width = 12) {
   const filled = Math.round((clamped / 100) * width);
   const empty = width - filled;
 
-  if (!shouldUseColor) {
-    return '▰'.repeat(filled) + '▱'.repeat(empty);
+  if (!isColorEnabled()) {
+    return "▰".repeat(filled) + "▱".repeat(empty);
   }
 
   const color = getContextColor(percent);
-  return `${color}${'▰'.repeat(filled)}${DIM}${'▱'.repeat(empty)}${RESET}`;
+  return `${color}${"▰".repeat(filled)}${DIM}${"▱".repeat(empty)}${RESET}`;
 }
 
 module.exports = {
@@ -91,5 +128,7 @@ module.exports = {
   getContextColor,
   coloredBar,
   shouldUseColor,
-  has256Color
+  has256Color,
+  setColorEnabled,
+  isColorEnabled,
 };

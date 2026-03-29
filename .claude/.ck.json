@@ -12,22 +12,14 @@
     "issuePrefix": "GH-",
     "reportsDir": "reports",
     "resolution": {
-      "order": [
-        "session",
-        "branch"
-      ],
+      "order": ["session", "branch"],
       "branchPattern": "(?:feat|fix|chore|refactor|docs)/(?:[^/]+/)?(.+)"
     },
     "validation": {
       "mode": "prompt",
       "minQuestions": 3,
       "maxQuestions": 8,
-      "focusAreas": [
-        "assumptions",
-        "risks",
-        "tradeoffs",
-        "architecture"
-      ]
+      "focusAreas": ["assumptions", "risks", "tradeoffs", "architecture"]
     }
   },
   "paths": {
@@ -69,7 +61,12 @@
           "node $HOME/.claude/hooks/descriptive-name.cjs",
           "node $HOME/.claude/hooks/scout-block.cjs",
           "node $HOME/.claude/hooks/privacy-block.cjs",
-          "node $HOME/.claude/hooks/post-edit-simplify-reminder.cjs"
+          "node $HOME/.claude/hooks/post-edit-simplify-reminder.cjs",
+          "node $HOME/.claude/hooks/session-state.cjs",
+          "node $HOME/.claude/hooks/team-context-inject.cjs",
+          "node $HOME/.claude/hooks/plan-format-kanban.cjs",
+          "node $HOME/.claude/hooks/task-completed-handler.cjs",
+          "node $HOME/.claude/hooks/teammate-idle-handler.cjs"
         ],
         "mcpServers": []
       }

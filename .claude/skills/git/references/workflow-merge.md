@@ -4,7 +4,7 @@ Execute via `git-manager` subagent.
 
 ## Variables
 
-- TO_BRANCH: target (defaults to `preview` — our default branch)
+- TO_BRANCH: target (defaults to `main`)
 - FROM_BRANCH: source (defaults to current branch)
 
 ## Step 1: Sync with Remote

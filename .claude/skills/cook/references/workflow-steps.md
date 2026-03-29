@@ -2,6 +2,8 @@
 
 All modes share core steps with mode-specific variations.
 
+**Task Tool Fallback:** `TaskCreate`/`TaskUpdate`/`TaskGet`/`TaskList` are CLI-only — unavailable in VSCode extension. If they error, use `TodoWrite` for progress tracking. All workflow steps remain functional without Task tools.
+
 ## Step 0: Intent Detection & Setup
 
 1. Parse input with `intent-detection.md` rules
@@ -16,7 +18,7 @@ All modes share core steps with mode-specific variations.
 **Interactive/Auto:**
 
 - Spawn multiple `researcher` agents in parallel
-- Use `/scout:ext` or `scout` agent for codebase search
+- Use `/ck:scout ext` or `scout` agent for codebase search
 - Keep reports ≤150 lines
 
 **Parallel:**
@@ -37,44 +39,28 @@ All modes share core steps with mode-specific variations.
 
 - Use `planner` agent with research context
 - Create `plan.md` + `phase-XX-*.md` files
-- **MANDATORY:** Each phase file MUST include:
-  - **Embedded Rules** section — relevant rules from `.claude/rules/` for that phase
-  - **Post-Phase Checklist** — concrete verification steps before marking phase complete
-  - See `planning` skill references for template and examples
 
 **Fast:**
 
-- Use `/plan:fast` with scout results only
-- Minimal planning, but still include embedded rules + checklist in phase files
+- Use `/ck:plan --fast` with scout results only
+- Minimal planning, focus on action
 
 **Parallel:**
 
-- Use `/plan:parallel` for dependency graph + file ownership matrix
-- Each parallel phase MUST include embedded rules for its domain
+- Use `/ck:plan --parallel` for dependency graph + file ownership matrix
 
 **Code:**
 
 - Skip - plan already exists
 - Parse existing plan for phases
-- If phase files lack embedded rules/checklist, extract from `.claude/rules/` before implementing
 
-**Post-Plan Validation (MANDATORY before review gate):**
-```
-For each phase-XX-*.md file:
-  CHECK: Sections 1-14 present in strict order? (Context Links → Next Steps)
-  CHECK: ## Embedded Rules exists with ≥3 rules?
-  CHECK: ## Post-Phase Checklist exists with ≥4 checkboxes?
-  CHECK: No extra top-level ## sections outside the 14?
-  → If ANY check fails: fix the phase file before proceeding
-```
-
-**Output:** `✓ Step 2: Plan created - [N] phases (validated: embedded rules + checklist)`
+**Output:** `✓ Step 2: Plan created - [N] phases`
 
 ### [Review Gate 2] Post-Plan (skip if auto mode)
 
 - Present plan overview with phases
 - Use `AskUserQuestion` to ask: "Validate the plan or approve plan to start implementation?" - "Validate" / "Approve" / "Abort" / "Other" ("Request revisions")
-  - "Validate": run `/plan:validate` slash command
+  - "Validate": run `/ck:plan validate` skill invocation
   - "Approve": continue to implementation
   - "Abort": stop the workflow
   - "Other": revise the plan based on user's feedback
@@ -84,19 +70,18 @@ For each phase-XX-*.md file:
 
 **IMPORTANT:**
 
-- Read plan overview and all phases, use `TaskCreate` to create Claude Tasks for each unchecked item.
-- Tasks must be broken down and defined their priority order.
-- Tasks can be blocked by other tasks.
+1. `TaskList` first — check for existing tasks (hydrated by planning skill in same session)
+2. If tasks exist → pick them up, skip re-creation
+3. If no tasks → read plan phases, `TaskCreate` for each unchecked `[ ]` item with priority order and metadata (`phase`, `planDir`, `phaseFile`)
+4. Tasks can be blocked by other tasks via `addBlockedBy`
 
 **All modes:**
 
 - Use `TaskUpdate` to mark tasks as `in_progress` immediately.
 - Execute phase tasks sequentially (Step 3.1, 3.2, etc.)
 - Use `ui-ux-designer` for frontend
-- Use `ai-multimodal` for image assets
+- Use `ck:ai-multimodal` for image assets
 - Run type checking after each file
-- **After each phase:** Run Post-Phase Checklist from phase file before proceeding
-- **Between phases (recommended):** `/clear` context to prevent attention dilution, then read next phase file
 
 **Parallel mode:**
 
@@ -161,18 +146,43 @@ For each phase-XX-*.md file:
 **All modes - MANDATORY subagents (NON-NEGOTIABLE):**
 
 1. **MUST** spawn these subagents in parallel:
-   - `Task(subagent_type="project-manager", prompt="Update plan status. Mark phase DONE.", description="Update plan")`
+   - `Task(subagent_type="project-manager", prompt="Run full sync-back for [plan-path]: reconcile all completed Claude Tasks with all phase files, backfill stale completed checkboxes across every phase, then update plan.md frontmatter/table progress. Do NOT only mark current phase.", description="Update plan")`
    - `Task(subagent_type="docs-manager", prompt="Update docs for changes.", description="Update docs")`
-2. Use `TaskUpdate` to mark Claude Tasks complete immediately.
-3. Onboarding check (API keys, env vars)
-4. **MUST** spawn git subagent: `Task(subagent_type="git-manager", prompt="Stage and commit changes", description="Commit")`
+2. Project-manager sync-back MUST include:
+
+### Status Sync (Finalize)
+
+Use CLI commands for deterministic status updates:
+
+```bash
+# Mark completed phases
+ck plan check <phase-id>
+
+# Mark in-progress phases
+ck plan check <phase-id> --start
+
+# Revert if needed
+ck plan uncheck <phase-id>
+```
+
+**Fallback:** If `ck` is not available, edit plan.md directly —
+only change the Status column cell, preserve table structure.
+
+- Sweep all `phase-XX-*.md` files in the plan directory.
+- Mark every completed item `[ ] → [x]` based on completed tasks (including earlier phases finished before current phase).
+- Update `plan.md` status/progress (`pending`/`in-progress`/`completed`) from actual checkbox state.
+- Return unresolved mappings if any completed task cannot be matched to a phase file.
+
+3. Use `TaskUpdate` to mark Claude Tasks complete after sync-back confirmation.
+4. Onboarding check (API keys, env vars)
+5. **MUST** spawn git subagent: `Task(subagent_type="git-manager", prompt="Stage and commit changes", description="Commit")`
 
 **CRITICAL:** Step 6 is INCOMPLETE without spawning all 3 subagents. DO NOT skip subagent delegation.
 
 **Auto mode:** Continue to next phase automatically, start from **Step 3**.
 **Others:** Ask user before next phase
 
-**Output:** `✓ Step 6: Finalized - 3 subagents invoked - Status updated - Committed`
+**Output:** `✓ Step 6: Finalized - 3 subagents invoked - Full-plan sync-back completed - Committed`
 
 ## Mode-Specific Flow Summary
 
@@ -196,8 +206,8 @@ code:        0 → skip → skip → 3 → [R] → 4 → [R] → 5(user) → 6
   - Step 4: `tester` (and `debugger` if failures)
   - Step 5: `code-reviewer`
   - Step 6: `project-manager`, `docs-manager`, `git-manager`
-- Use `TaskCreate` to create Claude Tasks for each unchecked item with priority order and dependencies.
-- Use `TaskUpdate` to mark Claude Tasks `in_progress` when picking up a task.
-- Use `TaskUpdate` to mark Claude Tasks `complete` immediately after finalizing the task.
+- Use `TaskCreate` to create Claude Tasks for each unchecked item with priority order and dependencies (or `TodoWrite` if Task tools unavailable).
+- Use `TaskUpdate` to mark Claude Tasks `in_progress` when picking up a task (skip if Task tools unavailable).
+- Use `TaskUpdate` to mark Claude Tasks `complete` immediately after finalizing the task (skip if Task tools unavailable).
 - All step outputs follow format: `✓ Step [N]: [status] - [metrics]`
 - **VALIDATION:** If Task tool calls = 0 at end of workflow, the workflow is INCOMPLETE.

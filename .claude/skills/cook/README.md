@@ -5,6 +5,7 @@ End-to-end feature implementation with smart intent detection.
 ## Installation
 
 Copy the `cook/` folder to your Claude skills directory:
+
 ```bash
 cp -r cook ~/.claude/skills/
 ```
@@ -12,7 +13,7 @@ cp -r cook ~/.claude/skills/
 ## Usage
 
 ```bash
-/cook <natural language task OR plan path>
+/ck:cook <natural language task OR plan path>
 ```
 
 The skill automatically detects your intent and routes to the appropriate workflow.
@@ -21,41 +22,42 @@ The skill automatically detects your intent and routes to the appropriate workfl
 
 ```bash
 # Interactive mode (default)
-/cook implement user authentication
+/ck:cook implement user authentication
 
 # Execute existing plan
-/cook plans/260120-auth
+/ck:cook plans/260120-auth
 
 # Fast mode (skip research)
-/cook quick fix for login bug
-/cook implement feature --fast
+/ck:cook quick fix for login bug
+/ck:cook implement feature --fast
 
 # Auto mode (trust me bro)
-/cook implement dashboard trust me
-/cook implement feature --auto
+/ck:cook implement dashboard trust me
+/ck:cook implement feature --auto
 
 # Parallel mode (multi-agent)
-/cook implement auth, payments, notifications
-/cook implement feature --parallel
+/ck:cook implement auth, payments, notifications
+/ck:cook implement feature --parallel
 
 # No-test mode
-/cook implement feature --no-test
+/ck:cook implement feature --no-test
 ```
 
 ## Modes
 
-| Mode | Research | Testing | Review | Use Case |
-|------|----------|---------|--------|----------|
-| interactive | ✓ | ✓ | User approval | Default, full control |
-| auto | ✓ | ✓ | Auto if score≥9.5 | Trusted, hands-off |
-| fast | ✗ | ✓ | Simplified | Quick fixes |
-| parallel | Optional | ✓ | User approval | Multi-feature work |
-| no-test | ✓ | ✗ | User approval | Speed priority |
-| code | ✗ | ✓ | User approval | Existing plans |
+| Mode        | Research | Testing | Review            | Use Case              |
+| ----------- | -------- | ------- | ----------------- | --------------------- |
+| interactive | ✓        | ✓       | User approval     | Default, full control |
+| auto        | ✓        | ✓       | Auto if score≥9.5 | Trusted, hands-off    |
+| fast        | ✗        | ✓       | Simplified        | Quick fixes           |
+| parallel    | Optional | ✓       | User approval     | Multi-feature work    |
+| no-test     | ✓        | ✗       | User approval     | Speed priority        |
+| code        | ✗        | ✓       | User approval     | Existing plans        |
 
 ## Intent Detection
 
 The skill detects mode from:
+
 1. **Explicit flags:** `--fast`, `--auto`, `--parallel`, `--no-test`
 2. **Plan paths:** `./plans/*`, `plan.md`, `phase-*.md`
 3. **Keywords:** "fast", "quick", "trust me", "auto", "no test"

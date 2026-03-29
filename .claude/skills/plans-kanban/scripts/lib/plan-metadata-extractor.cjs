@@ -10,19 +10,24 @@ const fs = require("fs");
 const path = require("path");
 const matter = require("gray-matter");
 
+// Import shared normalizeStatus from plan-table-parser (DRY — single source of truth)
+const sharedParser = require("../../../_shared/lib/plan-table-parser.cjs");
+
 /**
- * Normalize status string to standard format
+ * Normalize status string to standard format.
+ * Delegates to shared parser for core statuses (pending|in-progress|completed),
+ * then extends with metadata-specific statuses (cancelled, in-review).
  * @param {string} status - Raw status string
- * @returns {string} - Normalized status (pending|in-progress|completed|cancelled)
+ * @returns {string} - Normalized status (pending|in-progress|completed|cancelled|in-review)
  */
 function normalizeStatus(status) {
   if (!status) return "pending";
   const s = String(status).toLowerCase().trim();
-  if (s === "complete" || s === "completed" || s === "done") return "completed";
-  if (s === "in-progress" || s === "in_progress" || s === "active" || s === "wip") return "in-progress";
+  // Metadata-specific statuses not in the shared parser
   if (s === "cancelled" || s === "canceled") return "cancelled";
   if (s === "in-review" || s === "review") return "in-review";
-  return "pending";
+  // Delegate to shared parser for standard statuses
+  return sharedParser.normalizeStatus(status);
 }
 
 /**

@@ -134,7 +134,8 @@ test("resolveImages converts relative paths", () => {
   const md = "![Alt](./image.png)";
   const resolved = resolveImages(md, "/base/path");
   assertIncludes(resolved, "/file/", "Should include /file/ route");
-  assertIncludes(resolved, "/base/path", "Should include base path");
+  // Path is URL-encoded; decode to verify base path is present
+  assertIncludes(decodeURIComponent(resolved), "/base/path", "Should include base path");
 });
 
 test("resolveImages preserves absolute URLs", () => {
@@ -147,19 +148,22 @@ test("resolveImages handles reference-style definitions", () => {
   const md = "![Step 1 Initial]\n\n[Step 1 Initial]: ./screenshots/step1.png";
   const resolved = resolveImages(md, "/base/path");
   assertIncludes(resolved, "/file/", "Should include /file/ route in ref definition");
-  assertIncludes(resolved, "/base/path/screenshots/step1.png", "Should resolve relative path");
+  // Path is URL-encoded; decode to verify resolved path
+  assertIncludes(decodeURIComponent(resolved), "/base/path/screenshots/step1.png", "Should resolve relative path");
 });
 
 test("resolveImages handles reference-style with titles", () => {
   const md = '[logo]: ./images/logo.png "Company Logo"';
   const resolved = resolveImages(md, "/project");
-  assertIncludes(resolved, "/file/project/images/logo.png", "Should resolve path with title");
+  // Path is URL-encoded; decode to verify
+  assertIncludes(decodeURIComponent(resolved), "/project/images/logo.png", "Should resolve path with title");
 });
 
 test("resolveImages handles inline images with titles", () => {
   const md = '![Alt](./image.png "Title text")';
   const resolved = resolveImages(md, "/base");
-  assertIncludes(resolved, "/file/base/image.png", "Should resolve inline with title");
+  // Path is URL-encoded; decode to verify
+  assertIncludes(decodeURIComponent(resolved), "/base/image.png", "Should resolve inline with title");
 });
 
 test("addHeadingIds adds id attributes", () => {
@@ -213,9 +217,9 @@ function setupTestPlan() {
     testPlanFile,
     `# Test Plan
 
-| Phase | Name | Status | Link |
-|-------|------|--------|------|
-| 1 | Test Phase | Pending | [phase-01-test.md](./phase-01-test.md) |
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | [Test Phase](./phase-01-test.md) | Pending |
 `
   );
 
@@ -272,6 +276,48 @@ test("generateNavSidebar returns HTML", () => {
 test("generateNavSidebar returns empty for non-plan", () => {
   const html = generateNavSidebar("/tmp/random.md");
   assertEqual(html, "", "Should return empty string");
+});
+
+test("detectPlan sorts alphanumeric phase files (1a before 1b before 2)", () => {
+  const alphaDir = "/tmp/test-alpha-plan";
+  fs.mkdirSync(alphaDir, { recursive: true });
+  fs.writeFileSync(path.join(alphaDir, "plan.md"), "# Plan\n");
+  ["phase-02-core.md", "phase-01b-config.md", "phase-01a-setup.md"].forEach((f) =>
+    fs.writeFileSync(path.join(alphaDir, f), `# ${f}\n`)
+  );
+
+  const result = detectPlan(path.join(alphaDir, "plan.md"));
+  assertTrue(result.isPlan, "Should be plan");
+  assertEqual(result.phases.length, 3, "Should find 3 phases");
+  assertTrue(result.phases[0].endsWith("phase-01a-setup.md"), "1a first");
+  assertTrue(result.phases[1].endsWith("phase-01b-config.md"), "1b second");
+  assertTrue(result.phases[2].endsWith("phase-02-core.md"), "2 third");
+
+  fs.rmSync(alphaDir, { recursive: true, force: true });
+});
+
+test("generateNavSidebar uses flat list when <= 15 phases", () => {
+  const smallDir = "/tmp/test-small-plan";
+  fs.mkdirSync(smallDir, { recursive: true });
+  // Create 3 phase files + plan.md (4 total — well under 15)
+  const planContent = `# Plan
+
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | [Alpha](./phase-01-alpha.md) | Pending |
+| 2 | [Beta](./phase-02-beta.md) | Pending |
+| 3 | [Gamma](./phase-03-gamma.md) | Pending |
+`;
+  fs.writeFileSync(path.join(smallDir, "plan.md"), planContent);
+  ["phase-01-alpha.md", "phase-02-beta.md", "phase-03-gamma.md"].forEach((f) =>
+    fs.writeFileSync(path.join(smallDir, f), `# ${f}\n`)
+  );
+
+  const html = generateNavSidebar(path.join(smallDir, "plan.md"));
+  assertIncludes(html, "phase-list", "Should use flat phase-list class");
+  assertFalse(html.includes("phase-group"), "Should NOT use accordion groups");
+
+  fs.rmSync(smallDir, { recursive: true, force: true });
 });
 
 cleanupTestPlan();

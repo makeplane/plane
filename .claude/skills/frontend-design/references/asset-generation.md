@@ -1,12 +1,13 @@
 # Asset Generation Workflow
 
-Complete workflow for generating design-aligned visual assets using `ai-multimodal` skill.
+Complete workflow for generating design-aligned visual assets using `ck:ai-multimodal` skill.
 
 ## Generation Workflow
 
 ### Step 1: Define Design Context
 
 Before generating, extract from the design brief:
+
 - **Aesthetic direction**: Minimalist? Maximalist? Brutalist? Organic?
 - **Color palette**: Primary colors, accent colors, mood
 - **Typography character**: Modern sans-serif? Elegant serif? Bold display?
@@ -18,11 +19,13 @@ Before generating, extract from the design brief:
 Translate design thinking into generation prompts.
 
 **Generic (❌ Avoid)**:
+
 ```
 "Modern website hero image"
 ```
 
 **Design-Driven (✓ Use)**:
+
 ```
 "Brutalist architectural photograph, stark concrete textures,
 dramatic shadows, high contrast black and white, raw unpolished
@@ -31,6 +34,7 @@ surfaces, geometric shapes, monumental scale, inspired by
 ```
 
 **Prompt Components**:
+
 1. **Style/Movement**: "Neo-brutalism", "Art Deco", "Organic modernism"
 2. **Visual Elements**: Textures, shapes, composition style
 3. **Color Direction**: "Muted earth tones", "Vibrant neon accents", "Monochromatic"
@@ -40,7 +44,7 @@ surfaces, geometric shapes, monumental scale, inspired by
 
 ### Step 3: Generate with Appropriate Model
 
-Use `ai-multimodal` skill's image generation capabilities:
+Use `ck:ai-multimodal` skill's image generation capabilities:
 
 ```bash
 # Standard quality (most cases)
@@ -68,11 +72,13 @@ python scripts/gemini_batch_process.py \
 ```
 
 **Model Selection**:
+
 - **imagen-4.0-generate-001**: Default choice, balanced quality/speed
 - **imagen-4.0-ultra-generate-001**: Final production assets, marketing materials
 - **imagen-4.0-fast-generate-001**: Rapid prototyping, multiple variations
 
 **Aspect Ratios**:
+
 - **16:9**: Hero sections, wide banners
 - **9:16**: Mobile-first, vertical content
 - **1:1**: Square cards, social media
@@ -81,7 +87,7 @@ python scripts/gemini_batch_process.py \
 
 ### Step 4: Evaluate Against Design Standards
 
-Use `ai-multimodal` to analyze the generated asset (see `visual-analysis.md` for complete workflow):
+Use `ck:ai-multimodal` to analyze the generated asset (see `visual-analysis.md` for complete workflow):
 
 ```bash
 python scripts/gemini_batch_process.py \
@@ -101,12 +107,14 @@ python scripts/gemini_batch_process.py \
 ### Step 5: Iterate or Integrate
 
 **If evaluation score < 7/10 or doesn't meet standards**:
+
 1. Identify specific issues (color, composition, mood, technical)
 2. Refine prompt with improvements
 3. Regenerate with adjusted parameters
-4. Consider using `media-processing` skill for post-generation adjustments
+4. Consider using `ck:media-processing` skill for post-generation adjustments
 
 **If meets standards**:
+
 1. Optimize for web (compress, format conversion)
 2. Create responsive variants if needed
 3. Document asset usage guidelines
@@ -119,6 +127,7 @@ python scripts/gemini_batch_process.py \
 **Design Context**: Clean, refined interface with generous white space
 
 **Prompt Strategy**:
+
 ```
 "Subtle paper texture, off-white color (#F8F8F8), barely visible
 grain pattern, high-end stationery feel, minimal contrast,
@@ -132,6 +141,7 @@ professional and clean, 1:1 aspect ratio for tiling"
 **Design Context**: Bold, energetic landing page with vibrant colors
 
 **Prompt Strategy**:
+
 ```
 "Explosive color gradients, neon pink to electric blue,
 holographic reflections, dynamic diagonal composition,
@@ -146,6 +156,7 @@ layered transparency effects, 16:9 cinematic"
 **Design Context**: Raw, bold interface with strong typography
 
 **Prompt Strategy**:
+
 ```
 "Monochromatic geometric pattern, overlapping rectangles,
 stark black and white, high contrast, Swiss design influence,
@@ -160,6 +171,7 @@ pattern for backgrounds"
 **Design Context**: Wellness brand, calming user experience
 
 **Prompt Strategy**:
+
 ```
 "Soft botanical watercolor, sage green and cream tones,
 gentle leaf shadows, natural light quality, serene atmosphere,
@@ -173,6 +185,7 @@ minimal detail for text overlay, 3:4 portrait orientation"
 **Design Context**: Tech product with nostalgic twist
 
 **Prompt Strategy**:
+
 ```
 "80s computer graphics aesthetic, wireframe grids, cyan and magenta
 gradients, digital sunrise, Tron-inspired, geometric precision,
@@ -186,6 +199,7 @@ nostalgic future vision, 16:9 widescreen"
 **Design Context**: Content-heavy site with strong visual hierarchy
 
 **Prompt Strategy**:
+
 ```
 "High-contrast editorial photography, dramatic side lighting,
 stark shadows, black and white, fashion magazine quality,
@@ -197,25 +211,31 @@ strong vertical composition, 3:4 portrait for text layout"
 ## Prompt Engineering Best Practices
 
 ### 1. Be Specific About Style
+
 ❌ "Modern design"
 ✓ "Bauhaus-inspired geometric abstraction with primary colors"
 
 ### 2. Define Color Precisely
+
 ❌ "Colorful"
 ✓ "Vibrant sunset palette: coral (#FF6B6B), amber (#FFB84D), violet (#A66FF0)"
 
 ### 3. Specify Composition
+
 ❌ "Nice layout"
 ✓ "Rule of thirds composition, subject left-aligned, negative space right for text overlay"
 
 ### 4. Reference Movements/Artists
+
 ❌ "Artistic"
 ✓ "Inspired by Bauhaus geometric abstraction and Swiss International Style"
 
 ### 5. Technical Requirements First
+
 Always include: aspect ratio, resolution needs, intended use case
 
 ### 6. Iterate Strategically
+
 - First generation: Broad aesthetic exploration
 - Second generation: Refine color and composition
 - Third generation: Fine-tune details and mood
@@ -223,19 +243,24 @@ Always include: aspect ratio, resolution needs, intended use case
 ## Common Pitfalls to Avoid
 
 ### ❌ Generic Stock Photo Aesthetics
+
 Don't prompt: "Professional business team working together"
 Instead: Design-specific, contextual imagery that serves the interface
 
 ### ❌ Overcomplex Generated Images
+
 Generated assets that compete with UI elements create visual chaos
 Keep backgrounds subtle enough for text/button overlay
 
 ### ❌ Inconsistent Visual Language
+
 Each generated asset should feel part of the same design system
 Maintain color palette, visual style, mood consistency
 
 ### ❌ Ignoring Integration Context
+
 Assets aren't standalone—consider how they work with:
+
 - Typography overlays
 - Interactive elements (buttons, forms)
 - Navigation and UI chrome
@@ -244,16 +269,19 @@ Assets aren't standalone—consider how they work with:
 ## Responsive Asset Strategy
 
 ### Desktop-First Approach
+
 1. Generate primary asset at 16:9 (desktop hero)
 2. Generate mobile variant at 9:16 with same prompt
 3. Ensure focal point works in both orientations
 
 ### Mobile-First Approach
+
 1. Generate primary asset at 9:16 (mobile hero)
 2. Generate desktop variant at 16:9 with same prompt
 3. Test that composition scales effectively
 
 ### Variant Generation
+
 ```bash
 # Desktop (16:9)
 python scripts/gemini_batch_process.py \
@@ -283,11 +311,13 @@ python scripts/gemini_batch_process.py \
 ## Model Cost Optimization
 
 **Imagen 4 Pricing** (as of 2024):
+
 - Standard: ~$0.04 per image
 - Ultra: ~$0.08 per image
 - Fast: ~$0.02 per image
 
 **Optimization Strategy**:
+
 1. Use Fast model for exploration (3-5 variations)
 2. Select best direction, generate with Standard model
 3. Use Ultra only for final production assets

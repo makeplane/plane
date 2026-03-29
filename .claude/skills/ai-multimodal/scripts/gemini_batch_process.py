@@ -8,7 +8,7 @@ Supports all Gemini modalities:
 - Video: Summarization, Q&A, scene detection
 - Document: PDF extraction, structured output
 - Generation: Image creation via Imagen 4 or Nano Banana (Gemini native)
-  - Nano Banana Flash (gemini-2.5-flash-image): Speed/volume
+  - Nano Banana 2 (gemini-3.1-flash-image-preview): Fastest, 95% Pro quality (default)
   - Nano Banana Pro (gemini-3-pro-image-preview): Quality/4K text/reasoning
   - Imagen 4 (imagen-4.0-*): Production-grade generation
 """
@@ -59,11 +59,11 @@ except ImportError:
 
 
 # Image generation model configuration
-# Default: gemini-2.5-flash-image (Nano Banana Flash - fast, cost-effective)
+# Default: gemini-3.1-flash-image-preview (Nano Banana 2 - 3-5x faster, 95% Pro quality)
 # Alternative: imagen-4.0-generate-001 (production quality)
 # All image generation requires billing - no completely free option exists
-IMAGE_MODEL_DEFAULT = 'gemini-2.5-flash-image'  # Nano Banana Flash (~$1/1M tokens)
-IMAGE_MODEL_FALLBACK = 'gemini-2.5-flash-image'  # Fallback if Imagen fails (billing)
+IMAGE_MODEL_DEFAULT = 'gemini-3.1-flash-image-preview'  # Nano Banana 2 (fastest, near-Pro quality)
+IMAGE_MODEL_FALLBACK = 'gemini-2.5-flash-image'  # Fallback if Nano Banana 2 fails
 IMAGEN_MODELS = {
     'imagen-4.0-generate-001',
     'imagen-4.0-ultra-generate-001',
@@ -135,9 +135,9 @@ def get_default_model(task: str) -> str:
         model = os.getenv('GEMINI_IMAGE_GEN_MODEL')
         if model:
             return model
-        # Default to Nano Banana Flash (fast, cost-effective)
+        # Default to Nano Banana 2 (fastest, near-Pro quality)
         # Alternative: imagen-4.0-generate-001 for production quality
-        return 'gemini-2.5-flash-image'
+        return 'gemini-3.1-flash-image-preview'
 
     elif task == 'generate-video':
         model = os.getenv('VIDEO_GEN_MODEL')
@@ -179,6 +179,7 @@ def validate_model_task_combination(model: str, task: str) -> None:
             'imagen-4.0-generate-001',
             'imagen-4.0-ultra-generate-001',
             'imagen-4.0-fast-generate-001',
+            'gemini-3.1-flash-image-preview',
             'gemini-3-pro-image-preview',
             'gemini-2.5-flash-image',
             'gemini-2.5-flash-image-preview',

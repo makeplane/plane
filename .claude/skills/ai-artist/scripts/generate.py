@@ -53,10 +53,11 @@ except ImportError:
 
 # ============ CONFIGURATION ============
 NANO_BANANA_MODELS = {
+    "flash2": "gemini-3.1-flash-image-preview",  # Nano Banana 2 (new default)
     "flash": "gemini-2.5-flash-image",
     "pro": "gemini-3-pro-image-preview",
 }
-DEFAULT_MODEL = "flash"
+DEFAULT_MODEL = "flash2"
 ASPECT_RATIOS = ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"]
 
 
@@ -310,7 +311,7 @@ Examples:
     parser.add_argument("--mode", "-m", choices=["search", "creative", "wild", "all"],
                        default="search", help="Generation mode")
     parser.add_argument("--model", choices=list(NANO_BANANA_MODELS.keys()),
-                       default=DEFAULT_MODEL, help="Model: flash or pro")
+                       default=DEFAULT_MODEL, help="Model: flash2 (default, Nano Banana 2), flash, or pro")
     parser.add_argument("--aspect-ratio", "-ar", choices=ASPECT_RATIOS, default="1:1")
     parser.add_argument("--size", choices=["1K", "2K", "4K"], default="2K")
     parser.add_argument("--verbose", "-v", action="store_true")

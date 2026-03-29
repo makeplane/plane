@@ -2,7 +2,11 @@
 
 Comprehensive guide for image creation, editing, and composition using Imagen 4 and Gemini models ("Nano Banana").
 
-> **Nano Banana** = Google's internal name for native image generation in Gemini API. Two variants: Nano Banana (Flash - speed) and Nano Banana Pro (3 Pro - quality with reasoning).
+> **Nano Banana** = Google's internal name for native image generation in Gemini API. Three variants:
+>
+> - **Nano Banana 2** (`gemini-3.1-flash-image-preview`) - NEW DEFAULT. 3-5x faster, 95% Pro quality, web grounding, 100+ language text rendering, character consistency (5 chars/14 objects). Released Feb 2026.
+> - **Nano Banana Flash** (`gemini-2.5-flash-image`) - Previous default, still stable.
+> - **Nano Banana Pro** (`gemini-3-pro-image-preview`) - Quality with reasoning, 4K text.
 
 ## Core Capabilities
 
@@ -19,9 +23,25 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 
 ## Models
 
-### Nano Banana (Default - Recommended)
+### Nano Banana 2 (Default - Recommended)
 
-**gemini-2.5-flash-image** - Nano Banana Flash ⭐ DEFAULT
+**gemini-3.1-flash-image-preview** - Nano Banana 2 ⭐ NEW DEFAULT
+
+- Best for: General use, fast generation with near-Pro quality
+- Quality: High (95% parity with Pro)
+- Speed: 3-5x faster than previous Flash
+- Cost: ~$0.045/image (512px) to ~$0.151/image (4K); ~25-30% cheaper than Pro
+- Resolution: 512px to 4K with expanded aspect ratios
+- Text rendering: 100+ languages with proper formatting
+- Character consistency: Up to 5 characters and 14 objects
+- Reasoning levels: Minimal/High/Dynamic for complex prompts
+- Web grounding: Real-time data integration for brands, landmarks, recent events
+- Status: Preview (Feb 2026)
+
+### Nano Banana Flash (Previous Default)
+
+**gemini-2.5-flash-image** - Nano Banana Flash
+
 - Best for: Speed, high-volume generation, rapid prototyping
 - Quality: High
 - Context: 65,536 input / 32,768 output tokens
@@ -32,6 +52,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 - Status: Stable (Oct 2025)
 
 **gemini-3-pro-image-preview** - Nano Banana Pro
+
 - Best for: Professional assets, 4K text rendering, complex prompts
 - Quality: Ultra (with advanced reasoning)
 - Context: 65,536 input / 32,768 output tokens
@@ -44,6 +65,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 ### Imagen 4 (Alternative - Production)
 
 **imagen-4.0-generate-001** - Standard quality, balanced performance
+
 - Best for: Production workflows, marketing assets
 - Quality: High
 - Speed: Medium (~5-10s per image)
@@ -53,6 +75,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 - Updated: June 2025
 
 **imagen-4.0-ultra-generate-001** - Maximum quality
+
 - Best for: Final production, marketing assets, detailed artwork
 - Quality: Ultra (highest available)
 - Speed: Slow (~15-25s per image)
@@ -62,6 +85,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 - Updated: June 2025
 
 **imagen-4.0-fast-generate-001** - Fastest generation
+
 - Best for: Rapid iteration, bulk generation, real-time use
 - Quality: Good
 - Speed: Fast (~2-5s per image)
@@ -73,30 +97,34 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 ### Legacy Models
 
 **gemini-2.0-flash-preview-image-generation** - Legacy
+
 - Status: Deprecated (use Nano Banana or Imagen 4 instead)
 - Context: 32,768 input / 8,192 output tokens
 
 ## Model Comparison
 
-| Model | Quality | Speed | Cost | Best For |
-|-------|---------|-------|------|----------|
-| gemini-2.5-flash-image | ⭐⭐⭐⭐ | 🚀 Fast | 💵 Low | **DEFAULT** - General use |
-| gemini-3-pro-image | ⭐⭐⭐⭐⭐ | 💡 Medium | 💰 Medium | Text/reasoning |
-| imagen-4.0-generate | ⭐⭐⭐⭐ | 💡 Medium | 💰 Medium | Production (alternative) |
-| imagen-4.0-ultra | ⭐⭐⭐⭐⭐ | 🐢 Slow | 💰💰 High | Marketing assets |
-| imagen-4.0-fast | ⭐⭐⭐ | 🚀 Fast | 💵 Low | Bulk generation |
+| Model                          | Quality    | Speed        | Cost      | Best For                      |
+| ------------------------------ | ---------- | ------------ | --------- | ----------------------------- |
+| gemini-3.1-flash-image-preview | ⭐⭐⭐⭐½  | 🚀🚀 Fastest | 💵 Low    | **NEW DEFAULT** - General use |
+| gemini-2.5-flash-image         | ⭐⭐⭐⭐   | 🚀 Fast      | 💵 Low    | Previous default, stable      |
+| gemini-3-pro-image             | ⭐⭐⭐⭐⭐ | 💡 Medium    | 💰 Medium | Text/reasoning                |
+| imagen-4.0-generate            | ⭐⭐⭐⭐   | 💡 Medium    | 💰 Medium | Production (alternative)      |
+| imagen-4.0-ultra               | ⭐⭐⭐⭐⭐ | 🐢 Slow      | 💰💰 High | Marketing assets              |
+| imagen-4.0-fast                | ⭐⭐⭐     | 🚀 Fast      | 💵 Low    | Bulk generation               |
 
 **Selection Guide**:
-- **Default/General**: Use `gemini-2.5-flash-image` (fast, cost-effective)
+
+- **Default/General**: Use `gemini-3.1-flash-image-preview` (fastest, near-Pro quality, web grounding)
+- **Stable Alternative**: Use `gemini-2.5-flash-image` (previous default, fully stable)
 - **Production Quality**: Use `imagen-4.0-generate-001` (alternative for final assets)
 - **Marketing/Ultra Quality**: Use `imagen-4.0-ultra` for maximum quality
 - **Text-Heavy Images**: Use `gemini-3-pro-image-preview` for 4K text rendering
 - **Complex Prompts with Reasoning**: Use `gemini-3-pro-image-preview` with Thinking mode
-- **Real-time Data Integration**: Use `gemini-3-pro-image-preview` with Search grounding
+- **Real-time Data Integration**: Use `gemini-3.1-flash-image-preview` or `gemini-3-pro-image-preview` with Search grounding
 
 ## Quick Start
 
-### Basic Generation (Default - Nano Banana Flash)
+### Basic Generation (Default - Nano Banana 2)
 
 ```python
 from google import genai
@@ -105,15 +133,15 @@ import os
 
 client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
 
-# Nano Banana Flash - DEFAULT (fast, cost-effective)
+# Nano Banana 2 - NEW DEFAULT (fastest, near-Pro quality, web grounding)
 response = client.models.generate_content(
-    model='gemini-2.5-flash-image',
+    model='gemini-3.1-flash-image-preview',
     contents='A serene mountain landscape at sunset with snow-capped peaks',
     config=types.GenerateContentConfig(
         response_modalities=['IMAGE'],  # Uppercase required
         image_config=types.ImageConfig(
             aspect_ratio='16:9',
-            image_size='2K'  # 1K, 2K, 4K - uppercase K required
+            image_size='2K'  # 512px, 1K, 2K, 4K - uppercase K required
         )
     )
 )
@@ -233,12 +261,48 @@ response = client.models.generate_content(
 )
 ```
 
+### Nano Banana 2 with Web Grounding
+
+```python
+# Nano Banana 2 - real-time web integration for brands, landmarks, events
+response = client.models.generate_content(
+    model='gemini-3.1-flash-image-preview',
+    contents='Current Apple Vision Pro product shot with accurate branding',
+    config=types.GenerateContentConfig(
+        response_modalities=['IMAGE'],
+        image_config=types.ImageConfig(
+            aspect_ratio='16:9',
+            image_size='2K'
+        )
+    )
+)
+```
+
+### Nano Banana 2 with Reasoning Levels
+
+```python
+# Use reasoning levels for complex prompts
+response = client.models.generate_content(
+    model='gemini-3.1-flash-image-preview',
+    contents='A photorealistic scene of 5 diverse characters sitting around a campfire, each with distinct clothing and accessories, consistent lighting from the fire',
+    config=types.GenerateContentConfig(
+        response_modalities=['IMAGE'],
+        image_config=types.ImageConfig(
+            aspect_ratio='16:9',
+            image_size='4K'
+        )
+    )
+)
+# Nano Banana 2 auto-selects reasoning level (Minimal/High/Dynamic)
+# For explicit control, check API docs for reasoning_level parameter
+```
+
 ### Multi-Turn Refinement Chat
 
 ```python
-# Conversational image refinement
+# Conversational image refinement (works with any Nano Banana model)
 chat = client.chats.create(
-    model='gemini-2.5-flash-image',
+    model='gemini-3.1-flash-image-preview',  # or gemini-2.5-flash-image
     config=types.GenerateContentConfig(
         response_modalities=['TEXT', 'IMAGE']
     )
@@ -256,22 +320,23 @@ response3 = chat.send_message('Change the color palette to warm earth tones')
 
 ### Imagen 4 vs Nano Banana (Gemini Native)
 
-| Feature | Imagen 4 | Nano Banana (Gemini) |
-|---------|----------|---------------------|
-| Method | `generate_images()` | `generate_content()` |
-| Config | `GenerateImagesConfig` | `GenerateContentConfig` |
-| Prompt param | `prompt` (string) | `contents` (string/list) |
-| Image count | `numberOfImages` (camelCase) | N/A (single per request) |
-| Aspect ratio | `aspectRatio` (camelCase) | `aspect_ratio` (snake_case) |
-| Size | `imageSize` | `image_size` |
-| Response | `generated_images[i].image.image_bytes` | `candidates[0].content.parts[i].inline_data.data` |
-| Multi-image input | ❌ | ✅ Up to 14 references |
-| Multi-turn chat | ❌ | ✅ Conversational |
-| Search grounding | ❌ | ✅ (Pro only) |
-| Thinking mode | ❌ | ✅ (Pro only) |
-| Text rendering | Limited | 4K (Pro) |
+| Feature           | Imagen 4                                | Nano Banana (Gemini)                              |
+| ----------------- | --------------------------------------- | ------------------------------------------------- |
+| Method            | `generate_images()`                     | `generate_content()`                              |
+| Config            | `GenerateImagesConfig`                  | `GenerateContentConfig`                           |
+| Prompt param      | `prompt` (string)                       | `contents` (string/list)                          |
+| Image count       | `numberOfImages` (camelCase)            | N/A (single per request)                          |
+| Aspect ratio      | `aspectRatio` (camelCase)               | `aspect_ratio` (snake_case)                       |
+| Size              | `imageSize`                             | `image_size`                                      |
+| Response          | `generated_images[i].image.image_bytes` | `candidates[0].content.parts[i].inline_data.data` |
+| Multi-image input | ❌                                      | ✅ Up to 14 references                            |
+| Multi-turn chat   | ❌                                      | ✅ Conversational                                 |
+| Search grounding  | ❌                                      | ✅ (Pro only)                                     |
+| Thinking mode     | ❌                                      | ✅ (Pro only)                                     |
+| Text rendering    | Limited                                 | 4K (Pro)                                          |
 
 **Imagen 4** uses `generate_images()`:
+
 ```python
 response = client.models.generate_images(
     model='imagen-4.0-generate-001',
@@ -286,9 +351,10 @@ response = client.models.generate_images(
 ```
 
 **Nano Banana** uses `generate_content()`:
+
 ```python
 response = client.models.generate_content(
-    model='gemini-2.5-flash-image',  # or gemini-3-pro-image-preview
+    model='gemini-3.1-flash-image-preview',  # or gemini-2.5-flash-image, gemini-3-pro-image-preview
     contents='...',
     config=types.GenerateContentConfig(
         response_modalities=['IMAGE'],  # Uppercase required
@@ -302,24 +368,25 @@ response = client.models.generate_content(
 ```
 
 **Critical Notes**:
+
 1. `response_modalities` values MUST be uppercase: `'IMAGE'`, `'TEXT'`
 2. `image_size` value MUST have uppercase K: `'1K'`, `'2K'`, `'4K'`
 3. Imagen 4 Fast model doesn't support `imageSize` parameter
 
 ## Aspect Ratios
 
-| Ratio | Resolution (1K) | Use Case | Token Cost |
-|-------|----------------|----------|------------|
-| 1:1 | 1024×1024 | Social media, avatars, icons | 1290 |
-| 2:3 | 682×1024 | Vertical portraits | 1290 |
-| 3:2 | 1024×682 | Horizontal portraits | 1290 |
-| 3:4 | 768×1024 | Vertical posters | 1290 |
-| 4:3 | 1024×768 | Traditional media | 1290 |
-| 4:5 | 819×1024 | Instagram portrait | 1290 |
-| 5:4 | 1024×819 | Horizontal photos | 1290 |
-| 9:16 | 576×1024 | Mobile/stories/reels | 1290 |
-| 16:9 | 1024×576 | Landscapes, banners, YouTube | 1290 |
-| 21:9 | 1024×438 | Ultrawide/cinematic | 1290 |
+| Ratio | Resolution (1K) | Use Case                     | Token Cost |
+| ----- | --------------- | ---------------------------- | ---------- |
+| 1:1   | 1024×1024       | Social media, avatars, icons | 1290       |
+| 2:3   | 682×1024        | Vertical portraits           | 1290       |
+| 3:2   | 1024×682        | Horizontal portraits         | 1290       |
+| 3:4   | 768×1024        | Vertical posters             | 1290       |
+| 4:3   | 1024×768        | Traditional media            | 1290       |
+| 4:5   | 819×1024        | Instagram portrait           | 1290       |
+| 5:4   | 1024×819        | Horizontal photos            | 1290       |
+| 9:16  | 576×1024        | Mobile/stories/reels         | 1290       |
+| 16:9  | 1024×576        | Landscapes, banners, YouTube | 1290       |
+| 21:9  | 1024×438        | Ultrawide/cinematic          | 1290       |
 
 All ratios cost the same: 1,290 tokens per image (Gemini models).
 
@@ -451,6 +518,7 @@ response = client.models.generate_content(
 ### Effective Prompt Structure
 
 **Three key elements**:
+
 1. **Subject**: What to generate (be specific)
 2. **Context**: Environmental setting (lighting, location, time)
 3. **Style**: Artistic treatment (photography, illustration, etc.)
@@ -458,6 +526,7 @@ response = client.models.generate_content(
 ### Quality Modifiers
 
 **Technical terms**:
+
 - "4K", "8K", "high resolution"
 - "HDR", "high dynamic range"
 - "professional photography"
@@ -465,6 +534,7 @@ response = client.models.generate_content(
 - "ultra detailed"
 
 **Camera settings**:
+
 - "35mm lens", "50mm lens"
 - "shallow depth of field"
 - "wide angle shot"
@@ -474,6 +544,7 @@ response = client.models.generate_content(
 ### Style Keywords
 
 **Art styles**:
+
 - "oil painting", "watercolor", "sketch"
 - "digital art", "concept art"
 - "photorealistic", "hyperrealistic"
@@ -481,6 +552,7 @@ response = client.models.generate_content(
 - "cyberpunk", "steampunk", "fantasy"
 
 **Mood and atmosphere**:
+
 - "dramatic lighting", "soft lighting"
 - "moody", "bright and cheerful"
 - "mysterious", "whimsical"
@@ -489,20 +561,24 @@ response = client.models.generate_content(
 ### Subject Description
 
 **Be specific**:
+
 - ❌ "A cat"
 - ✅ "A fluffy orange tabby cat with green eyes"
 
 **Add context**:
+
 - ❌ "A building"
 - ✅ "A modern glass skyscraper reflecting sunset clouds"
 
 **Include details**:
+
 - ❌ "A person"
 - ✅ "A young woman in a red dress holding an umbrella"
 
 ### Composition and Framing
 
 **Camera angles**:
+
 - "bird's eye view", "aerial shot"
 - "low angle", "high angle"
 - "close-up", "wide shot"
@@ -510,6 +586,7 @@ response = client.models.generate_content(
 - "rule of thirds"
 
 **Perspective**:
+
 - "first person view"
 - "third person perspective"
 - "isometric view"
@@ -518,11 +595,13 @@ response = client.models.generate_content(
 ### Text in Images
 
 **Limitations**:
+
 - Maximum 25 characters total for optimal results
 - Up to 3 distinct text phrases
 - For 4K text rendering, use `gemini-3-pro-image-preview`
 
 **Text prompt template**:
+
 ```
 Image with text "[EXACT TEXT]" in [font style].
 Font: [style description].
@@ -533,6 +612,7 @@ Context: [poster/sign/label].
 ```
 
 **Example**:
+
 ```python
 response = client.models.generate_content(
     model='gemini-3-pro-image-preview',  # Use Pro for better text
@@ -548,35 +628,39 @@ response = client.models.generate_content(
 ```
 
 **Font keywords**:
+
 - "bold sans-serif", "handwritten script", "vintage letterpress"
 - "modern minimalist", "art deco", "neon sign"
 
 ### Nano Banana Prompt Techniques
 
-| Technique | Example | Purpose |
-|-----------|---------|---------|
-| ALL CAPS emphasis | `The logo MUST be centered` | Force attention to critical requirements |
-| Hex colors | `#9F2B68` instead of "dark magenta" | Exact color control |
-| Negative constraints | `NEVER include text/watermarks. DO NOT add labels.` | Explicit exclusions |
-| Realism trigger | `Natural lighting, DOF. Captured with Canon EOS 90D DSLR.` | Photography authenticity |
-| Structured edits | `Make ALL edits: - [1] - [2] - [3]` | Multi-step changes |
-| Complex logic | `Kittens MUST have heterochromatic eyes matching fur colors` | Precise conditions |
+| Technique            | Example                                                      | Purpose                                  |
+| -------------------- | ------------------------------------------------------------ | ---------------------------------------- |
+| ALL CAPS emphasis    | `The logo MUST be centered`                                  | Force attention to critical requirements |
+| Hex colors           | `#9F2B68` instead of "dark magenta"                          | Exact color control                      |
+| Negative constraints | `NEVER include text/watermarks. DO NOT add labels.`          | Explicit exclusions                      |
+| Realism trigger      | `Natural lighting, DOF. Captured with Canon EOS 90D DSLR.`   | Photography authenticity                 |
+| Structured edits     | `Make ALL edits: - [1] - [2] - [3]`                          | Multi-step changes                       |
+| Complex logic        | `Kittens MUST have heterochromatic eyes matching fur colors` | Precise conditions                       |
 
 **Prompt Templates**:
 
 **Photorealistic**:
+
 ```
 A [subject] in [location], [lens] lens. [Lighting] creates [mood]. [Details].
 [Camera angle]. Professional photography, natural lighting.
 ```
 
 **Illustration**:
+
 ```
 [Art style] illustration of [subject]. [Color palette]. [Line style].
 [Background]. [Mood].
 ```
 
 **Product**:
+
 ```
 [Product] on [surface]. Materials: [finish]. Lighting: [setup].
 Camera: [angle]. Background: [type]. Style: [commercial/lifestyle].
@@ -791,12 +875,22 @@ with open(filename, 'wb') as f:
 
 ### Cost Optimization
 
-**Token costs**:
+**Nano Banana 2 pricing (per image)**:
+| Resolution | Cost/Image | Batch (50% off) |
+|-----------|-----------|-----------------|
+| 512px | $0.045 | $0.023 |
+| 1K | $0.067 | $0.034 |
+| 2K | $0.101 | $0.051 |
+| 4K | $0.151 | $0.076 |
+
+**Flash Image token costs**:
+
 - 1 image: 1,290 tokens = $0.00129 (Flash Image at $1/1M)
 - 10 images: 12,900 tokens = $0.0129
 - 100 images: 129,000 tokens = $0.129
 
 **Strategies**:
+
 - Generate fewer iterations
 - Use text modality first to validate concept
 - Batch similar requests
@@ -831,6 +925,7 @@ if len(prompt) > 1000:
 ## Limitations
 
 ### Imagen 4 Constraints
+
 - **Language**: English prompts only
 - **Prompt length**: Maximum 480 tokens
 - **Output**: 1-4 images per request
@@ -841,6 +936,7 @@ if len(prompt) > 1000:
 - **Cannot replicate**: Specific people or copyrighted characters
 
 ### Nano Banana (Gemini) Constraints
+
 - **Language**: English prompts primary support
 - **Context**: 32K token window
 - **Multi-image**: Standard models ~3-5 refs; Pro up to 14 refs
@@ -850,6 +946,7 @@ if len(prompt) > 1000:
 - **Size format**: `image_size` must have uppercase K (`'1K'`, `'2K'`, `'4K'`)
 
 ### General Limitations
+
 - Maximum 14 input images for composition (Pro only)
 - No video or animation generation (use Veo for video)
 - No real-time generation
@@ -863,6 +960,7 @@ if len(prompt) > 1000:
 **Cause**: The `aspect_ratio` parameter must be nested inside an `image_config` object, not passed directly to `GenerateContentConfig`.
 
 **Incorrect Usage**:
+
 ```python
 # ❌ This will fail
 config = types.GenerateContentConfig(
@@ -872,6 +970,7 @@ config = types.GenerateContentConfig(
 ```
 
 **Correct Usage**:
+
 ```python
 # ✅ Correct implementation
 config = types.GenerateContentConfig(
@@ -885,6 +984,7 @@ config = types.GenerateContentConfig(
 ### Response Modality Case Sensitivity
 
 The `response_modalities` parameter expects uppercase values:
+
 - ✅ Correct: `['IMAGE']`, `['TEXT']`, `['IMAGE', 'TEXT']`
 - ❌ Wrong: `['image']`, `['text']`, `['Image']`
 
@@ -920,6 +1020,7 @@ config=types.GenerateContentConfig(
 **Problem**: Poor composition with multiple reference images
 
 **Solutions**:
+
 1. Limit to 3-5 reference images for standard models
 2. Use Pro model for up to 14 references
 3. Collage multiple style refs into single image
@@ -932,6 +1033,7 @@ config=types.GenerateContentConfig(
 **Current**: Image Generation
 
 **Related Capabilities**:
+
 - [Image Understanding](./vision-understanding.md) - Analyzing and editing reference images
 - [Video Generation](./video-generation.md) - Creating animated video content
 - [Audio Processing](./audio-processing.md) - Text-to-speech for multimedia

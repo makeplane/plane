@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirements Audit — Reference Template</title>
+<!--
+  Reference template for the ck:preview skill: data tables.
+  Rose/cranberry palette — distinctly different from terracotta (architecture)
+  and teal (mermaid) templates so agents absorb variety.
+  Key patterns demonstrated:
+  - Rose/cranberry palette (NOT indigo/violet)
+  - KPI summary cards above the table (visual hook before the data)
+  - Collapsible <details> section (replaces static callout)
+  - Depth tiers: elevated KPIs, default table, collapsible for secondary
+  - Real <table> element with sticky header, alternating rows
+  - Status indicator badges (match, gap, partial)
+  - Text wrapping in wide columns, code references in cells
+  - Summary footer row with aggregate status
+  - Staggered row animation via --i variable
+  - Both light and dark themes via prefers-color-scheme
+  - Responsive horizontal scroll wrapper
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ THEME ============ */
+  :root {
+    --font-body: 'Instrument Serif', 'Georgia', serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --font-sans: system-ui, -apple-system, sans-serif;
+
+    --bg: #fff5f5;
+    --surface: #ffffff;
+    --surface2: #fef0ee;
+    --surface-elevated: #fff8f7;
+    --border: rgba(0, 0, 0, 0.07);
+    --border-bright: rgba(0, 0, 0, 0.14);
+    --text: #1c1917;
+    --text-dim: #78716c;
+    --accent: #be123c;
+    --accent-dim: rgba(190, 18, 60, 0.06);
+    --green: #16a34a;
+    --green-dim: rgba(22, 163, 74, 0.08);
+    --red: #dc2626;
+    --red-dim: rgba(220, 38, 38, 0.08);
+    --orange: #d97706;
+    --orange-dim: rgba(217, 119, 6, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a0a0a;
+      --surface: #231414;
+      --surface2: #2e1b1b;
+      --surface-elevated: #351f1f;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-bright: rgba(255, 255, 255, 0.12);
+      --text: #fde2e2;
+      --text-dim: #c9a3a3;
+      --accent: #fb7185;
+      --accent-dim: rgba(251, 113, 133, 0.12);
+      --green: #4ade80;
+      --green-dim: rgba(74, 222, 128, 0.1);
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.1);
+      --orange: #fbbf24;
+      --orange-dim: rgba(251, 191, 36, 0.1);
+    }
+  }
+
+  /* ── Dark (manual toggle override) ── */
+  [data-theme="dark"] {
+    --bg: #1a0a0a;
+    --surface: #231414;
+    --surface2: #2e1b1b;
+    --surface-elevated: #351f1f;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-bright: rgba(255, 255, 255, 0.12);
+    --text: #fde2e2;
+    --text-dim: #c9a3a3;
+    --accent: #fb7185;
+    --accent-dim: rgba(251, 113, 133, 0.12);
+    --green: #4ade80;
+    --green-dim: rgba(74, 222, 128, 0.1);
+    --red: #f87171;
+    --red-dim: rgba(248, 113, 113, 0.1);
+    --orange: #fbbf24;
+    --orange-dim: rgba(251, 191, 36, 0.1);
+  }
+
+  /* ============ THEME TOGGLE ============ */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 300;
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: background 0.15s, color 0.15s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .theme-toggle:hover { background: var(--surface2); color: var(--text); }
+
+  /* ============ RESET + BASE ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 30% 0%, var(--accent-dim) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 100%, var(--green-dim) 0%, transparent 40%);
+    color: var(--text);
+    font-family: var(--font-sans);
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  /* ============ ANIMATION ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate {
+    animation: fadeUp 0.35s ease-out both;
+    animation-delay: calc(var(--i, 0) * 0.04s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ============ CONTAINER ============ */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* ============ HEADER ============ */
+  h1 {
+    font-family: var(--font-body);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-bottom: 32px;
+  }
+
+  /* ============ LEGEND ============ */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  /* ============ TABLE WRAPPER ============ */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ============ TABLE ============ */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  /* Header */
+  .data-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .data-table th {
+    background: var(--surface2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--border-bright);
+    white-space: nowrap;
+  }
+
+  /* Cells */
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Wide text column */
+  .data-table .wide {
+    min-width: 220px;
+    max-width: 440px;
+  }
+
+  /* Alternating rows */
+  .data-table tbody tr:nth-child(even) {
+    background: var(--accent-dim);
+  }
+
+  /* Row hover + animation stagger */
+  .data-table tbody tr {
+    transition: background 0.15s ease;
+    animation: fadeUp 0.35s ease-out both;
+    animation-delay: calc(var(--i, 0) * 0.04s);
+  }
+
+  .data-table tbody tr:hover {
+    background: var(--border);
+  }
+
+  /* Code in cells */
+  .data-table code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* Secondary text */
+  .data-table small {
+    display: block;
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  /* ============ STATUS BADGES ============ */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+
+  .status--match {
+    background: var(--green-dim);
+    color: var(--green);
+  }
+
+  .status--gap {
+    background: var(--red-dim);
+    color: var(--red);
+  }
+
+  .status--partial {
+    background: var(--orange-dim);
+    color: var(--orange);
+  }
+
+  /* Dot before status text */
+  .status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ============ FOOTER ROW ============ */
+  .data-table tfoot td {
+    background: var(--surface2);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    border-top: 2px solid var(--border-bright);
+    border-bottom: none;
+    padding: 14px 16px;
+  }
+
+  /* ============ KPI SUMMARY ============ */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: var(--surface-elevated, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .kpi-card__value {
+    font-family: var(--font-body);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi-card__value--green { color: var(--green); }
+  .kpi-card__value--red { color: var(--red); }
+  .kpi-card__value--orange { color: var(--orange); }
+
+  .kpi-card__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ============ COLLAPSIBLE ============ */
+  details.collapsible {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  details.collapsible summary {
+    padding: 14px 20px;
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    transition: background 0.15s ease;
+  }
+
+  details.collapsible summary:hover {
+    background: var(--surface-elevated, var(--surface));
+  }
+
+  details.collapsible summary::-webkit-details-marker { display: none; }
+
+  details.collapsible summary::before {
+    content: '▸';
+    font-size: 11px;
+    color: var(--text-dim);
+    transition: transform 0.15s ease;
+  }
+
+  details.collapsible[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  details.collapsible .collapsible__body {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  details.collapsible .collapsible__body strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  details.collapsible .collapsible__body code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    body { padding: 16px; }
+    h1 { font-size: 24px; }
+    .data-table th,
+    .data-table td { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
+<script>
+(function() {
+  var t = document.getElementById('themeToggle');
+  var s = localStorage.getItem('theme');
+  var i = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (s) document.documentElement.setAttribute('data-theme', i);
+  t.textContent = i === 'dark' ? '\u2600' : '\u263E';
+  t.addEventListener('click', function() {
+    var c = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var n = c === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', n);
+    localStorage.setItem('theme', n);
+    t.textContent = n === 'dark' ? '\u2600' : '\u263E';
+  });
+})();
+</script>
+
+<div class="container">
+
+  <h1 class="animate" style="--i:0">Requirements Audit</h1>
+  <p class="subtitle animate" style="--i:1">victoria's email vs. implementation plan &mdash; point-by-point review</p>
+
+  <div class="kpi-row animate" style="--i:2">
+    <div class="kpi-card">
+      <div class="kpi-card__value">14</div>
+      <div class="kpi-card__label">Items Reviewed</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__value kpi-card__value--green">13</div>
+      <div class="kpi-card__label">Match</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__value kpi-card__value--red">1</div>
+      <div class="kpi-card__label">Gap</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__value" style="color:var(--accent)">93%</div>
+      <div class="kpi-card__label">Coverage</div>
+    </div>
+  </div>
+
+  <div class="legend animate" style="--i:3">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--green)"></div> Match</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--red)"></div> Gap</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--orange)"></div> Partial</div>
+  </div>
+
+  <div class="table-wrap animate" style="--i:4">
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="wide">Request</th>
+            <th class="wide">Plan</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="--i:4">
+            <td class="wide">Template: <code>yoth-special-edition</code> only</td>
+            <td class="wide">Plan scopes everything to this template.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:5">
+            <td class="wide">EOD tomorrow (Friday), Tuesday AM launch</td>
+            <td class="wide">Plan header says same.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:6">
+            <td class="wide">Update BIS button label and pop up text</td>
+            <td class="wide">Button text + modal description configurable via settings.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:7">
+            <td class="wide">Use Stoq's API to trigger events</td>
+            <td class="wide">Uses <code>openInlineForm</code>, <code>openModal</code>, <code>removeInlineForm</code>.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:8">
+            <td class="wide">Custom button + modal with text settings in buy buttons block</td>
+            <td class="wide">Schema settings in <code>buy_buttons</code> block.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:9">
+            <td class="wide">Default values = current behavior when empty</td>
+            <td class="wide">Blank settings = Stoq default "Notify Me" behavior.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:10">
+            <td class="wide">Only display for OOS variants</td>
+            <td class="wide">DOM-based sold-out detection.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:11">
+            <td class="wide">Exclude products with <code>excludebis</code> tag</td>
+            <td class="wide">Checked in both PDP and PLP Liquid.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:12">
+            <td class="wide"><code>openInlineForm</code> to load Stoq form in modal</td>
+            <td class="wide">PDP modal uses <code>openInlineForm</code>.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:13">
+            <td class="wide">Updated Button Label: "Join the waitlist"</td>
+            <td class="wide">Pre-populated in template JSON.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:14">
+            <td class="wide">Updated Pop Up Text: "Sign up to be notified when we restock this or other embroidered styles."</td>
+            <td class="wide"><code>bis_modal_description</code> setting.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:15">
+            <td class="wide">Theme: Huha 2.0 - Giddy Up Collection D2C Launch</td>
+            <td class="wide">Clone ID <code>145580556374</code>.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:16">
+            <td class="wide">Changes made locally</td>
+            <td class="wide">Local dev + theme push.</td>
+            <td><span class="status status--match">Match</span></td>
+          </tr>
+          <tr style="--i:17">
+            <td class="wide">Run <code>stoq:restock-modal:submitted</code> when form is submitted</td>
+            <td class="wide">Not mentioned in plan.
+              <small>When using <code>openInlineForm</code> inside a custom modal, unclear if Stoq fires this event automatically or if manual dispatch is needed.</small>
+            </td>
+            <td><span class="status status--gap">Gap</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>14 items reviewed</td>
+            <td></td>
+            <td>13 match &middot; 1 gap</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <details class="collapsible animate" style="--i:19">
+    <summary>Gap Analysis Detail</summary>
+    <div class="collapsible__body">
+      <strong>Gap: <code>stoq:restock-modal:submitted</code> event.</strong>
+      Michael explicitly requests firing this event on form submission. The plan uses Stoq's <code>openInlineForm</code> inside a custom modal, but doesn't address whether Stoq dispatches this event automatically in that context. If other integrations (Klaviyo, analytics, theme JS) listen for it, missing it could silently break the submission pipeline. Recommend adding an explicit <code>dispatchEvent</code> call as a safety net.
+    </div>
+  </details>
+
+</div>
+
+</body>
+</html>

@@ -1,62 +1,62 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents (OpenCode, etc.) when working with code in this repository.
+This file provides guidance to OpenCode when working with code in this repository.
 
 ## Project Overview
 
-**Name:** Plane.so (Community Edition — Customized for Shinhan Bank Vietnam)
-**Type:** Full-stack monorepo (React + Django + WebSocket)
-**Monorepo:** pnpm + Turborepo
+**Name:** claudekit-engineer
+**Type:** Node.js/TypeScript
+**Description:** A comprehensive boilerplate template for building professional software projects with **CLI Coding Agents** (**Claude Code** and **Open Code**). This template provides a complete development environment with AI-powered agent orchestration, automated workflows, and intelligent project management.
 
 ## Role & Responsibilities
 
-Your role is to implement features that follow the established Plane.so architecture and design system strictly. Do NOT modify core architecture without explicit approval.
+Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
 
-## Critical Rules — READ FIRST
+## Workflows
 
-- `.claude/rules/plane-design-system.md` — **PRIMARY** frontend architecture rules
-- `.claude/rules/plane-backend-architecture.md` — **PRIMARY** backend architecture rules
-- `.claude/rules/development-rules.md` — Development workflow rules
-- `./docs/code-standards.md` — Coding standards
-- `./docs/design-guidelines.md` — UI design guidelines
-- `./docs/system-architecture.md` — System architecture
+- Primary workflow: `./.claude/rules/primary-workflow.md`
+- Development rules: `./.claude/rules/development-rules.md`
+- Orchestration protocols: `./.claude/rules/orchestration-protocol.md`
+- Documentation management: `./.claude/rules/documentation-management.md`
+- And other workflows: `./.claude/rules/*`
 
-## Quick Reference
+**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
+**IMPORTANT:** DO NOT modify skills in `~/.claude/skills` directory directly. **MUST** modify skills in this current working directory. Unless you are asked to do so.
+**IMPORTANT:** You must follow strictly the development rules in `./.claude/rules/development-rules.md` file.
+**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
+**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
+**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
 
-### Frontend
+## Development Principles
 
-- **Stack**: React 18 + React Router v7 + Vite + MobX + Tailwind CSS v4
-- **UI**: `@plane/propel` (subpath imports: `@plane/propel/button`), legacy `@plane/ui`
-- **Colors**: Semantic tokens ONLY (`bg-surface-1`, `text-color-primary`). NO hardcoded colors.
-- **Dark mode**: `data-theme` attribute, auto-handled by semantic tokens. NO `dark:` variants.
-- **Stores**: `makeObservable` explicit fields + `runInAction` + `set()` from MobX
-- **CE features**: `apps/web/ce/` directory. NEVER modify `core/` for CE features.
-- **i18n**: `useTranslation()` from `@plane/i18n`. Files are `.ts` modules, not JSON.
-- **Routes**: CE routes in `app/routes/extended.ts`, NOT `core.ts`
+- **YAGNI**: You Aren't Gonna Need It - avoid over-engineering
+- **KISS**: Keep It Simple, Stupid - prefer simple solutions
+- **DRY**: Don't Repeat Yourself - eliminate code duplication
 
-### Backend
+## Documentation
 
-- **Stack**: Django 4.2 + DRF 3.15 + PostgreSQL + Celery + RabbitMQ
-- **Models**: `BaseModel` (UUID pk, audit, soft delete) or `ProjectBaseModel`
-- **Managers**: `Issue.issue_objects` for user queries (NOT `Issue.objects`)
-- **Permissions**: `@allow_permission` decorator with `ROLE.ADMIN`/`MEMBER`/`GUEST`
-- **Post-mutation**: Always fire `issue_activity.delay()` + `model_activity.delay()`
+Keep all important docs in `./docs` folder:
 
-### Common Mistakes
+```
+./docs
+├── project-overview-pdr.md
+├── code-standards.md
+├── codebase-summary.md
+├── design-guidelines.md
+└── system-architecture.md
+```
 
-- ❌ Hardcoded colors (`bg-white`, `text-gray-*`)
-- ❌ Barrel imports (`@plane/propel`) — use subpath (`@plane/propel/button`)
-- ❌ `makeAutoObservable` — use `makeObservable` with explicit fields
-- ❌ CE code in `core/` — use `ce/` directory
-- ❌ Missing `observer` wrapper on MobX-connected components
-- ❌ `Issue.objects` for user queries — use `Issue.issue_objects`
-- ❌ Missing `workspace__slug` filter (data leak)
-- ❌ Missing `setToast()` after mutations
+## External Files
 
-## Principles
+Reference external instruction files in `opencode.json`:
 
-- **YAGNI / KISS / DRY**
-- File naming: kebab-case, descriptive
-- File limits: Components <150 lines, Hooks <100 lines
-- Conventional commits, no AI references
-- Never commit secrets or .env files
+```json
+{
+  "instructions": ["docs/*.md", ".opencode/agents/*.md"]
+}
+```
+
+---
+
+_Generated by ClaudeKit OpenCode Generator_
+_Date: 2026-03-28_

@@ -4,7 +4,7 @@ Execute via `git-manager` subagent.
 
 ## Variables
 
-- TO_BRANCH: target (defaults to `preview` — our default branch)
+- TO_BRANCH: target (defaults to `main`)
 - FROM_BRANCH: source (defaults to current branch)
 
 ## CRITICAL: Use REMOTE diff
@@ -18,7 +18,7 @@ PRs based on remote branches. Local diff includes unpushed changes.
 ```bash
 git fetch origin && \
 git push -u origin HEAD 2>/dev/null || true && \
-BASE=${BASE_BRANCH:-preview} && \
+BASE=${BASE_BRANCH:-main} && \
 HEAD=$(git rev-parse --abbrev-ref HEAD) && \
 echo "=== PR: $HEAD → $BASE ===" && \
 echo "=== COMMITS ===" && \

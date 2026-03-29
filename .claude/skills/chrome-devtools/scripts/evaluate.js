@@ -23,7 +23,7 @@ async function evaluate() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless !== "false",
+      headless: args.headless,
     });
 
     const page = await getPage(browser);
@@ -35,9 +35,10 @@ async function evaluate() {
       });
     }
 
-    const result = await page.evaluate((script) => {
+    const result = await page.evaluate(async (script) => {
+      // Wrap in async IIFE so user scripts can use await
       // eslint-disable-next-line no-eval
-      return eval(script);
+      return await eval(`(async () => { return ${script}; })()`);
     }, args.script);
 
     outputJSON({

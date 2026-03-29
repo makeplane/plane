@@ -23,23 +23,16 @@ Task(subagent_type="researcher", prompt="Research [topic]. Report ≤150 lines."
 Task(subagent_type="scout", prompt="Find files related to [feature] in codebase", description="Scout [feature]")
 ```
 
-- Use `/scout:ext` (preferred) or `/scout` (fallback)
+- Use `/ck:scout ext` (preferred) or `/ck:scout` (fallback)
 
 ## Planning Phase
 
 ```
-Task(subagent_type="planner", prompt="Create implementation plan based on reports: [reports]. Save to [path].
-
-BEFORE writing any phase file, MUST read: plans/templates/phase-template.md
-
-Phase files MUST follow strict 14-section order (NO reordering, NO skipping, NO extra top-level sections):
-1. Context Links → 2. Overview → 3. Key Insights → 4. Requirements → 5. Architecture (all design content as sub-headings) → 6. Related Code Files → 7. Embedded Rules (MANDATORY: ≥3 rules from .claude/rules/) → 8. Implementation Steps → 9. Post-Phase Checklist (MANDATORY: ≥4 checkboxes) → 10. Todo List → 11. Success Criteria → 12. Risk Assessment → 13. Security Considerations → 14. Next Steps
-
-After writing, self-validate: all 14 sections present? Embedded Rules ≥3? Post-Phase Checklist ≥4? No extra ## sections?", description="Plan [feature]")
+Task(subagent_type="planner", prompt="Create implementation plan based on reports: [reports]. Save to [path]", description="Plan [feature]")
 ```
 
 - Input: researcher and scout reports
-- Output: `plan.md` + `phase-XX-*.md` files (each validated: 14 sections + embedded rules + checklist)
+- Output: `plan.md` + `phase-XX-*.md` files
 
 ## UI Implementation
 
@@ -76,7 +69,7 @@ Task(subagent_type="code-reviewer", prompt="Review changes for [phase]. Check se
 ## Project Management
 
 ```
-Task(subagent_type="project-manager", prompt="Update plan status in [path]. Mark [phase] as DONE. Update roadmap.", description="Update plan")
+Task(subagent_type="project-manager", prompt="Run full sync-back in [plan-path]: reconcile completed tasks with all phase files, backfill stale completed checkboxes across all phases, update plan.md status/progress, and report unresolved mappings.", description="Update plan")
 ```
 
 ## Documentation

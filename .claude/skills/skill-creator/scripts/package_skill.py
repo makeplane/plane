@@ -10,6 +10,7 @@ Example:
     python utils/package_skill.py skills/public/my-skill ./dist
 """
 
+import fnmatch
 import sys
 import zipfile
 from pathlib import Path
@@ -19,6 +20,11 @@ from quick_validate import validate_skill
 
 # Fix Windows console encoding for Unicode output (emojis, arrows)
 configure_utf8_console()
+
+# Exclusion patterns (from official Anthropic skill-creator)
+EXCLUDE_DIRS = {'__pycache__', 'node_modules', '.git', '.DS_Store'}
+EXCLUDE_GLOBS = {'*.pyc', '*.pyo', '.DS_Store', '*.egg-info'}
+ROOT_EXCLUDE_DIRS = {'evals'}  # Only excluded at skill root level
 
 
 def package_skill(skill_path, output_dir=None):
@@ -71,13 +77,35 @@ def package_skill(skill_path, output_dir=None):
     # Create the zip file
     try:
         with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            # Walk through the skill directory
+            # Walk through the skill directory, excluding unwanted files
+            skipped = []
             for file_path in skill_path.rglob('*'):
                 if file_path.is_file():
-                    # Calculate the relative path within the zip
+                    rel = file_path.relative_to(skill_path)
+                    parts = rel.parts
+
+                    # Skip excluded directories
+                    if any(p in EXCLUDE_DIRS for p in parts):
+                        skipped.append(str(rel))
+                        continue
+
+                    # Skip root-only excluded dirs (e.g., evals/)
+                    if parts[0] in ROOT_EXCLUDE_DIRS:
+                        skipped.append(str(rel))
+                        continue
+
+                    # Skip excluded file patterns
+                    if any(fnmatch.fnmatch(file_path.name, g) for g in EXCLUDE_GLOBS):
+                        skipped.append(str(rel))
+                        continue
+
                     arcname = file_path.relative_to(skill_path.parent)
                     zipf.write(file_path, arcname)
                     print(f"  Added: {arcname}")
+
+            if skipped:
+                print(f"\n  Skipped {len(skipped)} file(s): {', '.join(skipped[:5])}"
+                      + ("..." if len(skipped) > 5 else ""))
 
         print(f"\n✅ Successfully packaged skill to: {zip_filename}")
         return zip_filename
