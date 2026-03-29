@@ -81,9 +81,12 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
   const { issueMap } = useIssues();
 
   // derived values
+  const issue = issueMap[issueId];
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
+
+  if (!issue) return null;
 
   return (
     <>
@@ -104,7 +107,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
-        defaultValue={shouldRenderByDefault || isIssueNew(issueMap[issueId])}
+        defaultValue={shouldRenderByDefault || isIssueNew(issue)}
       >
         <IssueRowDetails
           issueId={issueId}
