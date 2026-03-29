@@ -1,102 +1,122 @@
 # AGENTS.md
 
-Instructions for AI coding agents (Antigravity, OpenCode, etc.) working in this repository.
+Instructions for AI coding agents (Antigravity, OpenCode, Cursor, etc.) working in this repository.
+**Subdirectory rules:** `apps/web/AGENTS.md` (frontend), `apps/admin/AGENTS.md` (God Mode), `apps/api/AGENTS.md` (backend)
 
 ## Project Overview
 
 **Name:** Plane.so (Community Edition — Customized for Shinhan Bank Vietnam)
 **Type:** Full-stack monorepo (React + Django + WebSocket)
-**Monorepo:** pnpm + Turborepo
+**Monorepo:** pnpm 10.24+ with Turborepo 2.6+
+**Version:** v1.2.4 | **Team:** 4 developers, org: `shbvn`
 
-## Role & Responsibilities
+## Documentation — READ BEFORE IMPLEMENTING
 
-Implement features following established Plane.so architecture and design system strictly. Do NOT modify core architecture without explicit approval.
+| Document                      | Purpose                                         |
+| ----------------------------- | ----------------------------------------------- |
+| `docs/codebase-summary.md`    | Monorepo structure, module map, feature details |
+| `docs/code-standards.md`      | TypeScript/Python coding conventions            |
+| `docs/design-guidelines.md`   | UI/UX standards, theming, accessibility         |
+| `docs/system-architecture.md` | System design, data models, auth, deployment    |
 
-## Critical Rules — READ FIRST
+## Monorepo Structure
 
-- `./docs/code-standards.md` — Coding standards
-- `./docs/design-guidelines.md` — UI design guidelines
-- `./docs/system-architecture.md` — System architecture
-- `./docs/codebase-summary.md` — Monorepo structure & features
+```
+plane.so/
+├── apps/web/       # Main React SPA (38 MobX stores)
+├── apps/admin/     # Instance admin / God Mode (8 stores)
+├── apps/space/     # Public sharing portal (SSR)
+├── apps/live/      # Real-time WebSocket (Express + Hocuspocus/Y.js)
+├── apps/api/       # Django REST API backend
+├── apps/proxy/     # Caddy reverse proxy
+├── packages/       # @plane/types, constants, utils, services, hooks, propel, ui, editor, i18n
+└── docs/           # Developer documentation
+```
 
-## Quick Reference
+## CE Pattern (NON-NEGOTIABLE)
 
-### Frontend
-
-- **Stack**: React 18 + React Router v7 + Vite + MobX + Tailwind CSS v4
-- **UI**: `@plane/propel` (subpath imports: `@plane/propel/button`), legacy `@plane/ui`
-- **Colors**: Semantic tokens ONLY (`bg-surface-1`, `text-primary`, `border-subtle`). NO hardcoded colors.
-- **Dark mode**: `data-theme` attribute, auto-handled by semantic tokens. NO `dark:` variants.
-- **Stores**: `makeObservable` explicit fields + `runInAction` + `set()` from `lodash-es` (NOT MobX)
-- **Observer**: `observer()` from `mobx-react` (NOT mobx-react-lite) on all MobX-reading components
-- **CE features**: `apps/web/ce/` directory. NEVER modify `core/` for CE features.
-- **i18n**: `useTranslation()` from `@plane/i18n`. 3 languages: EN, KO, VI. Files are `.ts` modules.
-- **Routes**: CE routes in `app/routes/extended.ts`, NOT `core.ts`
-- **Tables**: TanStack React Table for read-only datasheets
-- **Charts**: Recharts for charts (donut: `innerRadius="45%"`, 8-color palette)
-
-### Backend
-
-- **Stack**: Django 4.2 + DRF 3.15 + PostgreSQL + Celery + RabbitMQ + Redis
-- **Models**: `BaseModel` (UUID pk, audit, soft delete via `deleted_at`) or `ProjectBaseModel`
-- **Managers**: `Issue.issue_objects` for user queries (NOT `Issue.objects`)
-- **Permissions**: `@allow_permission` decorator with `ROLE.ADMIN`/`MEMBER`/`GUEST`
-- **Post-mutation**: Always fire `issue_activity.delay()` + `model_activity.delay()`
-- **Query optimization**: `select_related` for FK, `prefetch_related` for reverse relations
-- **API layers**: Frontend (v0, session), Instance Admin (God Mode), External (v1, API key)
-
-### Common Mistakes
-
-- ❌ Hardcoded colors (`bg-white`, `text-gray-*`) → use semantic tokens
-- ❌ Barrel imports (`@plane/propel`) → use subpath (`@plane/propel/button`)
-- ❌ `makeAutoObservable` → use `makeObservable` with explicit fields
-- ❌ CE code in `core/` → use `ce/` directory
-- ❌ Missing `observer()` wrapper on MobX-connected components
-- ❌ `Issue.objects` for user queries → use `Issue.issue_objects`
-- ❌ Missing `workspace__slug` filter (data leak risk)
-- ❌ Missing `setToast()` after mutations
-- ❌ `set()` from MobX → use `set()` from `lodash-es`
-- ❌ `import { X } from "y"` for types → use `import type { X } from "y"`
+- New features go in `ce/` directories — **NEVER modify `core/` or `packages/ui/`**
+- Frontend CE: `apps/web/ce/` (stores, components, hooks, routes, services)
+- CE routes: `app/routes/extended.ts`, NOT `core.ts`
+- CE services use `CE` prefix: `CEMyFeatureService`
+- CE stores extend: `class RootStore extends CoreRootStore` in `ce/store/root.store.ts`
+- Import aliases: `@/*` → core, `@/plane-web/*` → ce
+- If `core/` needs changes → escalate to team lead
 
 ## Git Safety (NON-NEGOTIABLE)
 
-- **Origin**: `github.com/shbvn/plane.git`
-- **Default branch**: `preview` | **Staging**: `develop`
-- **Branch naming**: `{username}/{type}/{description}`
-- **Flow**: feature branch → develop (squash merge, PR) → preview (PR, team lead approve)
+- **Origin:** `github.com/shbvn/plane.git`
+- **Default:** `preview` | **Staging:** `develop`
+- **Branch naming:** `{username}/{type}/{description}`
+- **Flow:** feature branch → develop (squash merge, PR) → preview (PR, team lead approve)
+- **Hotfix:** branch from preview → PR to preview → sync back to develop
+- **Protection:** Both `preview` and `develop` require 1 PR review, no force push
 - ❌ NEVER pull/merge/rebase from upstream (`makeplane/plane`)
 - ❌ NEVER force push to `preview` or `develop`
-- ❌ NEVER push directly to `preview` or `develop` — PR required, 1 review
+- ❌ NEVER push directly to `preview` or `develop`
 - ❌ NEVER commit secrets (.env, API keys, credentials)
-- Conventional commits: `feat(scope):`, `fix(scope):`, `docs:`, `refactor:`, `chore:`
+- **Commits:** `feat(scope):`, `fix(scope):`, `docs:`, `refactor:`, `chore:`, `test:`, `ci:`
+- No AI references in commit messages
 
-## Build Commands
+## Build & Quality
 
-| Command                              | Purpose         |
-| ------------------------------------ | --------------- |
-| `pnpm check:lint`                    | Run ESLint      |
-| `pnpm fix:lint`                      | Auto-fix lint   |
-| `pnpm check:format`                  | Check Prettier  |
-| `pnpm format`                        | Auto-fix format |
-| `cd apps/api && python run_tests.py` | Backend tests   |
+| Command                              | Purpose                         |
+| ------------------------------------ | ------------------------------- |
+| `pnpm check:lint`                    | Run ESLint                      |
+| `pnpm fix:lint`                      | Auto-fix lint                   |
+| `pnpm check:format`                  | Check Prettier (120 char width) |
+| `pnpm format`                        | Auto-fix format                 |
+| `pnpm test`                          | Run tests (Vitest)              |
+| `cd apps/api && python run_tests.py` | Backend tests                   |
 
-## Principles
+## File Standards
 
-- **YAGNI / KISS / DRY**
-- File naming: kebab-case, descriptive
-- File limits: Code <200 lines, Components <150 lines, Hooks <100 lines
-- Conventional commits, no AI references
-- Never commit secrets or .env files
+- **Naming:** kebab-case, descriptive (long OK for self-documenting)
+- **Limits:** Code <200 lines, Components <150, Hooks <100, Django views <150
+- **Principles:** YAGNI / KISS / DRY
+- Do NOT create "enhanced" copies — update existing files directly
+- Search existing components before creating new ones
+
+## Security
+
+- ALWAYS filter queries by `workspace__slug` — prevent cross-workspace data leaks
+- `@allow_permission` on workspace/project endpoints; `InstanceAdminPermission` for God Mode
+- Input validation server-side (DRF serializers) + frontend (Zod)
+- Never expose internal IDs, stack traces, or credentials
+- Parameterized queries only — no raw SQL
+- HTML sanitization: `nh3` library
+- CSRF tokens for session auth, CORS whitelist
+
+## Common Mistakes (All Stacks)
+
+| Bad                                                   | Good                                                   |
+| ----------------------------------------------------- | ------------------------------------------------------ |
+| Hardcoded colors (`bg-white`, `text-gray-*`)          | Semantic tokens (`bg-surface-1`, `text-primary`)       |
+| `text-color-primary` / `border-color-subtle` (legacy) | `text-primary` / `border-subtle` (no `-color-` prefix) |
+| `@plane/propel` (barrel import)                       | `@plane/propel/button` (subpath)                       |
+| `makeAutoObservable`                                  | `makeObservable` with explicit fields                  |
+| CE code in `core/`                                    | CE code in `ce/` directory                             |
+| Missing `observer()` on MobX components               | Always wrap with `observer()` from `mobx-react`        |
+| `Issue.objects` for user queries                      | `Issue.issue_objects`                                  |
+| Missing `workspace__slug` filter                      | Always filter by workspace (data leak!)                |
+| Missing `setToast()` after mutations                  | Show feedback to user                                  |
+| `set()` from MobX                                     | `set()` from `lodash-es`                               |
+| `import { X } from "y"` for types                     | `import type { X } from "y"`                           |
 
 ## Key Features (v1.2.4)
 
-- **Task Categories**: Instance-level 2-tier (Main → Sub) categorization on issues
-- **Head Office (HO)**: Cross-workspace issue management with role-based access (BFS dept hierarchy)
-- **Time Tracking**: Analytics, capacity heatmap, cross-workspace timesheet, donut charts, CSV export
-- **Workspace Default Views**: 8+ custom spreadsheet columns, auto-seeding on workspace creation
-- **Department & Staff**: Hierarchical org structure, auto-join logic
-- **Workflow Enforcement**: State transitions with approvers, audit trail
+- **Task Categories:** Instance-level 2-tier (Main → Sub) categorization on issues
+- **Head Office (HO):** Cross-workspace issue management, BFS dept hierarchy
+- **Time Tracking:** Analytics, capacity heatmap, timesheet, CSV export
+- **Workspace Default Views:** 8+ custom columns, auto-seeded
+- **Department & Staff:** Hierarchical org structure, auto-join, God Mode admin
+- **Workflow Enforcement:** State transitions with approvers, audit trail
+- **Priority System:** 4 levels (urgent/high/medium/low), default: medium, "none" removed
+- **Swing SSO:** Enterprise auth via Swing portal (staff ID or token flow)
 
-## Documentation
+## ESLint & Prettier
 
-All project docs in `./docs/` — **always read `docs/codebase-summary.md` and `docs/code-standards.md` before implementing features.**
+- **ESLint:** v9 flat config at `/eslint.config.mjs`
+- **Custom plugin:** `eslint-plugin-plane` — `no-legacy-tokens` blocks `text-color-*`, `border-color-*`
+- **Prettier:** Print width **120**, tab width 2, trailing comma **es5**, plugin `@prettier/plugin-oxc`
+- **Pre-commit (Husky):** Prettier + ESLint `--max-warnings=0`
