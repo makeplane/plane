@@ -138,7 +138,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-subtle"}`}
         verticalOffset={100}
-        defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
+        defaultValue={shouldRenderByDefault || (issuesMap[issueId] ? isIssueNew(issuesMap[issueId]) : false)}
         placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
         shouldRecordHeights={isMobile}
       >
