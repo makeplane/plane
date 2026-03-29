@@ -3,7 +3,7 @@
 **Version**: 1.2.4
 **License**: AGPL-3.0
 **Type**: Open-source project management platform
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-29
 
 ## Vision & Purpose
 
@@ -54,7 +54,37 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - Version history
 - AI-assisted content generation
 
-### 6. Analytics
+### 6. Time Tracking (v1.2.4)
+
+- Log time spent on issues (worklog) with 1-720 minute/day limits
+- Daily/weekly/project-level time summaries with cross-workspace view
+- Export worklogs as CSV/XLSX with filters
+- 7-working-day edit window for entries
+- Capacity heatmap with color-coded status (green/yellow/red)
+- Per-member capacity breakdown by task
+- Recharts donut charts for category visualization
+- Feature flag gating per project
+- Daily reminder notifications via Celery
+
+### 7. Task Categories (v1.2.4)
+
+- Instance-level hierarchical classification (MainTaskCategory → SubTaskCategory)
+- Auto-required for non-draft issues when categories exist in system
+- Color-coded categories for visual organization
+- 2-tier dropdown selector in issue forms
+- Spreadsheet column support
+- Admin CRUD in God-mode panel
+
+### 8. Head Office (HO) Management (v1.2.4)
+
+- Cross-workspace issue visibility with role-based access
+- Instance Admins: See all workspaces
+- Department Managers: See managed departments + descendants (BFS traversal)
+- 18-column read-only issue datasheet
+- Aggregated work item counts by category
+- Department-scoped issue filtering and sorting
+
+### 10. Analytics
 
 - Real-time dashboards (Pro feature)
 - Custom analytics views with multiple chart types
@@ -63,42 +93,46 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - Multi-dashboard CRUD with widget configuration UI
 - Export capabilities
 
-### 7. Collaboration
+### 11. Collaboration
 
 - Real-time editing via Hocuspocus + Y.js CRDT
 - Comment threads
-- Activity tracking
+- Activity tracking with full audit trail
 - Notifications (in-app & email)
 - Mentions & @-references
+- Module activity tracking with change history
 
-### 8. Public Sharing
+### 12. Public Sharing
 
 - Public issue views via anchor links
 - Public workspace browsing
 - Read-only access for stakeholders
 
-### 9. Authentication & Authorization
+### 13. Authentication & Authorization
 
 - OAuth providers (Google, GitHub, GitLab, Gitea)
 - Magic link (email-based passwordless auth)
 - Password-based authentication
 - API tokens for programmatic access
 - RBAC with workspace/project roles
+- Swing SSO for enterprise single sign-on (v1.2.4)
 
-### 10. Organizational Hierarchy (v1.2.4)
+### 9. Organizational Hierarchy (v1.2.4)
 
-- Hierarchical department structure (up to 6 levels deep)
+- Hierarchical department structure (up to 6 levels deep) with BFS traversal for HO access
 - Staff profiles linked to users with employment status tracking
 - Organizational chart visualization (read-only workspace view)
 - Admin-managed department and staff CRUD in God-mode panel
 - Auto-join logic for bulk workspace membership synchronization
+- Department-scoped project linking and auto-member sync
 
-### 11. Integrations
+### 14. Integrations
 
 - GitHub sync (repos, issues, comments)
 - Slack notifications
 - Custom webhooks
 - Intake board for external submissions
+- RFC 3986 custom protocol support for issue links
 
 ## Architecture Overview
 
@@ -138,19 +172,19 @@ Plane is a modern, open-source project management tool designed for teams to tra
 
 ### Functional Requirements
 
-| Requirement                  | Priority | Status  | Details                                                             |
-| ---------------------------- | -------- | ------- | ------------------------------------------------------------------- |
-| Multi-workspace support      | Critical | Shipped | Users can create/manage multiple workspaces                         |
-| Role-based access control    | Critical | Shipped | Workspace & project-level roles (Owner, Admin, Member, Guest)       |
-| Issue full lifecycle         | Critical | Shipped | Create, update, assign, comment, close, archive                     |
-| Real-time collaboration      | High     | Shipped | WebSocket-based simultaneous editing                                |
-| Public sharing               | High     | Shipped | Share issues/workspaces publicly via links                          |
-| Analytics & reporting        | High     | Shipped | Dashboard views, trend charts, burn-down tracking                   |
-| OAuth authentication         | High     | Shipped | Google, GitHub, GitLab, Gitea providers                             |
-| Organizational hierarchy      | High     | Shipped | Departments, staff profiles, org charts (v1.2.4)                    |
-| File uploads                 | Medium   | Shipped | Attach files to issues, store in S3/MinIO                           |
-| API access                   | Medium   | Shipped | REST API v1 with token-based auth                                   |
-| Self-hosting                 | Critical | Shipped | Docker/Kubernetes deployment options                                |
+| Requirement               | Priority | Status  | Details                                                       |
+| ------------------------- | -------- | ------- | ------------------------------------------------------------- |
+| Multi-workspace support   | Critical | Shipped | Users can create/manage multiple workspaces                   |
+| Role-based access control | Critical | Shipped | Workspace & project-level roles (Owner, Admin, Member, Guest) |
+| Issue full lifecycle      | Critical | Shipped | Create, update, assign, comment, close, archive               |
+| Real-time collaboration   | High     | Shipped | WebSocket-based simultaneous editing                          |
+| Public sharing            | High     | Shipped | Share issues/workspaces publicly via links                    |
+| Analytics & reporting     | High     | Shipped | Dashboard views, trend charts, burn-down tracking             |
+| OAuth authentication      | High     | Shipped | Google, GitHub, GitLab, Gitea providers                       |
+| Organizational hierarchy  | High     | Shipped | Departments, staff profiles, org charts (v1.2.4)              |
+| File uploads              | Medium   | Shipped | Attach files to issues, store in S3/MinIO                     |
+| API access                | Medium   | Shipped | REST API v1 with token-based auth                             |
+| Self-hosting              | Critical | Shipped | Docker/Kubernetes deployment options                          |
 
 ### Non-Functional Requirements
 

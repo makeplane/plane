@@ -1,6 +1,6 @@
 # Plane.so Codebase Summary
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-29
 **Version**: 1.2.4
 **Structure**: pnpm + Turborepo monorepo
 
@@ -223,88 +223,23 @@ plane.so/
 - `/{BUCKET_NAME}/*` → plane-minio:9000 (S3)
 - `/*` → web:3000 (frontend)
 
-### Time Tracking / Work Log Feature
+### Time Tracking / Work Log Feature (v1.2.4)
 
-**Backend**:
+**Backend**: IssueWorkLog model with issue-level CRUD endpoints. Project-level endpoints: worklogs list, analytics timesheet (week-grid), capacity heatmap + day details, CSV export. Cross-workspace timesheet shows ALL assigned issues. Capacity heatmap color-coded (green/yellow/red).
 
-- **IssueWorkLog Model** (`plane/db/models/worklog.py`)
-  - Tracks time logged by members on issues
-  - Fields: `issue` (FK), `logged_by` (FK), `duration_minutes` (int), `description` (text), `logged_at` (date)
-  - Indexes on `(issue, logged_by)` and `(project, logged_at)` for performance
-  - Related name: `issue.issue_worklogs`
+**Frontend**: 3 MobX stores (WorklogStore, ProjectWorklogStore, CEWorklogStore). 13 components: timesheet (5), analytics (4), capacity (4). Recharts donut charts (innerRadius 45%, 8-color palette). 11 new type interfaces. Route: `/:workspaceSlug/projects/:projectId/.../worklogs`
 
-- **Project.is_time_tracking_enabled Flag** (`plane/db/models/project.py`)
-  - Boolean field defaulting to `True`
-  - Controls worklog feature availability per project
+### Task Categories System (v1.2.4)
 
-- **IssueWorkLogViewSet** (`plane/app/views/issue/worklog.py`)
-  - CRUD endpoints with permission checks (ROLE.ADMIN, ROLE.MEMBER)
-  - `create`, `partial_update`, `destroy` actions
-  - Checks `is_time_tracking_enabled` before allowing operations
-  - Logs worklog activities via `issue_activity.delay()`
+Instance-level 2-tier categorization (MainTaskCategory → SubTaskCategory). Models in `plane/db/models/task_category.py` (migrations 0158-0160). Issue model adds optional `main_task_category`, `sub_task_category` FK fields. Admin API: full CRUD at `/task-categories/main/`, `/task-categories/sub/`. Workspace API: read-only at `/workspaces/<slug>/task-categories/`. Frontend: TaskCategoryStore, task-category-property.tsx (2-tier dropdown), spreadsheet columns, i18n support.
 
-- **ProjectWorkLogViewSet** (`plane/app/views/project/worklog.py`)
-  - Lists all worklogs across a project with pagination
-  - Supports filters: `member_id`, `date_from`, `date_to`, `issue_id`
-  - Returns paginated IssueWorkLog records ordered by `-logged_at`
+### Head Office (HO) API (v1.2.4)
 
-- **ProjectWorklogExportView** (`plane/app/views/project/worklog.py`)
-  - POST: Trigger async export (CSV/XLSX) → queues `worklog_export_task` Celery task
-  - GET: List export history with pagination (via `ExporterHistory` model)
-  - Filters: `member_id`, `date_from`, `date_to` passed to backend
-  - Response: Export ID, status, presigned S3 download URL
+Cross-workspace issue management for multi-department organizations. Instance Admins see all workspaces; Department Managers see managed departments (BFS hierarchy traversal). `HoIssueListView`: 18-column read-only datasheet with filtering/sorting. `HoCategorySummaryView`: aggregated work item counts. Frontend: HoIssueStore, HoIssueService, 12 components, TanStack React Table. Endpoints: `/api/ho/issues/`, `/api/ho/category-summary/`. Access: admin app dashboard.
 
-- **Worklog Export Celery Task** (`plane/bgtasks/worklog_export_task.py`)
-  - Generates CSV/XLSX archive of project worklogs
-  - Uses `DataExporter` with `WorklogExportSerializer` for format conversion
-  - Applies filters: member_id, date range (via `export_utils.parse_date`)
-  - Creates zip file, uploads to S3, updates `ExporterHistory` status/URL
-  - Handles empty queryset gracefully (creates headers-only file)
+### Workspace Default Views (v1.2.4)
 
-- **Export Utilities** (`plane/bgtasks/export_utils.py`)
-  - Shared functions: `create_zip_file()`, `upload_to_s3()`, `parse_date()`
-  - Reused by both `export_task` and `worklog_export_task`
-
-- **WorklogExportSerializer** (`plane/utils/porters/serializers/worklog.py`)
-  - Serializes IssueWorkLog for CSV/XLSX export
-  - Flattened fields: Issue ID, Issue Name, Logged By, Duration (hours), Logged Date, Description, Project
-
-**Frontend**:
-
-- **WorklogStore** (`apps/web/core/store/worklog.store.ts`)
-  - MobX store managing worklog state per issue
-  - Methods: `fetchWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`, `fetchProjectSummary()`
-  - Helpers: `getWorklogsForIssue()`, `getTotalMinutesForIssue()`
-  - Optimistic updates with rollback on error
-
-- **WorklogService** (`apps/web/core/services/worklog.service.ts`)
-  - API integration layer for worklog endpoints
-  - Methods: `listWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`, `getProjectSummary()`
-
-- **ProjectWorklogStore** (`apps/web/ce/store/project/worklog.store.ts`)
-  - MobX store for project-level worklog management
-  - Methods: `fetchWorklogs()`, `triggerExport()`, `fetchExportHistory()`, `pollExportStatus()`
-  - Manages pagination state (current page, page size, filters)
-  - Polling mechanism for async export completion
-
-- **ProjectWorklogService** (`apps/web/ce/services/project-worklog.service.ts`)
-  - API integration for project worklog endpoints
-  - Methods: `listWorklogs()`, `triggerExport()`, `getExportHistory()`
-
-- **Components**:
-  - **WorklogModal** - Modal for creating/editing worklogs
-  - **IssueWorklogProperty** - Displays worklog data on issue detail
-  - **TimeTrackingReportPage** - Project-level time tracking report with filters/summary/table
-  - **WorklogFiltersToolbar** - Filters + Export (CSV/XLSX) dropdown
-  - **WorklogPaginationFooter** - Prev/Next pagination controls
-  - **WorklogTableColumns** - Column definitions for table display
-  - **PreviousDownloadsAccordion** - Shows export history with download links + polling
-
-- **Route**: `/:workspaceSlug/projects/:projectId/(settings)/settings/projects/[projectId]/worklogs`
-  - Page displays filterable worklog table with pagination + export options
-  - Auto-expands Previous Downloads section after triggering export
-
-- **Sidebar Nav**: "Time Tracking" sidebar item under project navigation + "Worklogs" under settings
+IssueView model `is_default` flag (migrations 0145-0146). Auto-seeded on workspace creation. Custom columns: bank-wide-project, project-lead, department, progress, completed-date, total-log-time, reference-link, project-name. Frontend: workspace-views page, default view selector, 8+ custom spreadsheet columns. Store enhancement: IssueViewStore with default view management.
 
 ## Packages (Shared Libraries)
 
@@ -492,23 +427,25 @@ apps/api/
 
 ## Key Statistics
 
-| Metric                     | Value                                      |
-| -------------------------- | ------------------------------------------ |
-| Frontend Apps              | 4 (web, admin, space, live)                |
-| Backend Apps               | 2 (api, proxy)                             |
-| Shared Packages            | 12+                                        |
-| Total Files (approx)       | 3,100+                                     |
-| Database Models            | 36 (includes IssueWorkLog, Dashboard)      |
-| Django Migrations          | 120+                                       |
-| Celery Tasks               | 36+                                        |
-| MobX Stores (web)          | 35 (includes WorklogStore, DashboardStore) |
-| MobX Stores (admin)        | 5                                          |
-| MobX Stores (space)        | 14                                         |
-| API v0 Modules             | 18 URL modules                             |
-| API v1 Modules             | 26 URL modules (includes dashboards)       |
-| Supported Languages (i18n) | 19                                         |
-| Docker Compose Services    | 13                                         |
-| Deployment Methods         | 4                                          |
+| Metric                     | Value                                                          |
+| -------------------------- | -------------------------------------------------------------- |
+| Frontend Apps              | 4 (web, admin, space, live)                                    |
+| Backend Apps               | 2 (api, proxy)                                                 |
+| Shared Packages            | 12+                                                            |
+| Total Files (approx)       | 3,200+                                                         |
+| Database Models            | 39 (adds MainTaskCategory, SubTaskCategory)                    |
+| Django Migrations          | 163+ (adds 0158-0160 task categories, 0145-0146 default views) |
+| Celery Tasks               | 36+                                                            |
+| MobX Stores (web)          | 38 (adds TaskCategoryStore, CEWorklogStore, HoIssueStore)      |
+| MobX Stores (admin)        | 5                                                              |
+| MobX Stores (space)        | 14                                                             |
+| API v0 Modules             | 18 URL modules                                                 |
+| API v1 Modules             | 28 URL modules (adds task-categories, HO endpoints)            |
+| Admin API Modules          | 5 (includes task-categories admin CRUD)                        |
+| Time-tracking Components   | 13 (timesheet, analytics, capacity)                            |
+| Supported Languages (i18n) | 19                                                             |
+| Docker Compose Services    | 13                                                             |
+| Deployment Methods         | 4                                                              |
 
 ## Dependency Management
 
@@ -682,6 +619,96 @@ apps/api/
 
 ---
 
-**Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/codebase-summary.md`
-**Lines**: ~620
-**Status**: Updated with Workflows feature documentation
+### Opinion Removal Feature (v1.2.4)
+
+**Deprecated**: Opinion model completely removed.
+
+**Removed Models**:
+
+- Opinion (formerly tracked opinion data on issues)
+- All related API endpoints
+
+**Migrations**:
+
+- Migration 0134: `0134_remove_opinion_feature.py` - Drops opinion tables
+
+**Frontend Changes**:
+
+- Opinion component removed from issue detail sidebar
+- Opinion API service methods deleted
+- No backward compatibility (feature removed entirely)
+
+---
+
+### Due Date Change Reason Tracking (v1.2.4)
+
+**Backend**:
+
+- New optional `reason` field in issue update API
+- Required when updating `target_date` or `completed_at`
+- Stored in IssueActivity for audit trail
+- Migration 0135: Adds reason column to issue-related tables
+
+**API Changes**:
+
+- PATCH `/api/v1/issues/{id}/` accepts reason in body
+- Reason logged in activity stream with timestamp and actor
+
+---
+
+### Spreadsheet Enhancements (v1.2.4)
+
+**Frontend Components** (`apps/web/core/components/spreadsheet/`):
+
+- Non-sortable columns support in spreadsheet config
+- Sort order key handling: Fixed column reordering logic
+- Custom field rendering: Enhanced type support in spreadsheet cells
+
+**API Changes**:
+
+- Spreadsheet column metadata includes `is_sortable` flag
+- GET `/api/v1/projects/{id}/views/{viewId}/` returns enhanced metadata
+
+---
+
+### Module Activity Tracking (v1.2.4)
+
+**Backend Model** (`plane/db/models/module-activity.py`):
+
+- New `ModuleActivity` model logs all module changes
+- Fields: module (FK), change_type (create/update/delete), field, old_value, new_value, actor, timestamp
+- Related name: `module.activities`
+
+**Backend API**:
+
+- Endpoint: GET `/api/v1/projects/{id}/modules/{id}/activity/`
+- Returns paginated activity stream with actor details
+- Filters: date_from, date_to, change_type
+
+**Frontend**:
+
+- Module detail page: Activity tab displays changes
+- Activity rendering: Shows field diffs with before/after values
+- MobX store: `module.store.ts` caches activity data with pagination
+
+---
+
+### Default View Per Project (v1.2.4)
+
+**Backend Model** (`plane/db/models/project.py`):
+
+- Field: `default_view` (FK to IssueView, nullable)
+- Tracks workspace's preferred view for this project
+- Auto-updated when view is marked as default
+
+**Frontend**:
+
+- Project settings: Default view dropdown selector
+- Project board: Breadcrumb respects default_view per project
+- Project lead display: Enhanced in project list views
+
+---
+
+**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/codebase-summary.md`
+**Lines**: ~730
+**Status**: Updated with v1.2.4 features (opinion removal, due date reasons, spreadsheet enhancements, module activity)

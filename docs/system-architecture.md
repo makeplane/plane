@@ -1,6 +1,6 @@
 # System Architecture
 
-**Last Updated**: 2026-03-12
+**Last Updated**: 2026-03-29
 **Version**: 1.2.4
 **Scope**: Production deployment architecture, data flows, real-time collaboration, SSO integration
 
@@ -284,6 +284,8 @@ User
 │   │   ├── user → User
 │   │   ├── department → Department (optional)
 │   │   └── employment_status (active/probation/resigned/suspended/transferred)
+│   ├── MainTaskCategory (1:N) - Instance-level task categories
+│   │   └── SubTaskCategory (1:N)
 │   ├── Project (1:N)
 │   │   ├── ProjectMember (1:N) → User
 │   │   ├── linked_department → Department (optional, for auto-sync)
@@ -293,6 +295,8 @@ User
 │   │   │   ├── IssueLabel → Label (M:N)
 │   │   │   ├── IssueCycle → Cycle (1:1 soft)
 │   │   │   ├── IssueModule → Module (1:1 soft)
+│   │   │   ├── main_task_category → MainTaskCategory (optional)
+│   │   │   ├── sub_task_category → SubTaskCategory (optional)
 │   │   │   ├── IssueComment (1:N)
 │   │   │   ├── IssueLink (1:N)
 │   │   │   ├── IssueActivity (1:N)
@@ -416,6 +420,23 @@ Option 2: Token-based from Swing Portal
 - Member - Create/edit issues
 - Guest - Read-only
 
+**Head Office (HO) Access Control** (for multi-department organizations):
+
+```
+Instance Admin
+  └─ Access all workspaces
+     └─ View all issues across all departments
+
+Department Manager
+  ├─ Manage own department
+  ├─ See assigned issues in managed dept
+  └─ BFS traversal: Managers see descendants (sub-departments)
+     └─ Useful for multi-level org hierarchies
+
+Regular Members
+  └─ Access per workspace/project role
+```
+
 **Implementation**: Permission classes in DRF check:
 
 1. Is user workspace member?
@@ -482,20 +503,20 @@ Department and Staff management has been migrated from workspace-scoped user int
 
 **Hierarchical tree structure** supporting up to 6 levels:
 
-| Field            | Type                     | Purpose                           |
-| ---------------- | ------------------------ | --------------------------------- |
-| `workspace`      | FK → Workspace           | Scope (departments per workspace) |
-| `name`           | CharField(255)           | Full department name              |
-| `code`           | CharField(20)            | Department code (unique)          |
-| `short_name`     | CharField(10, uppercase) | Short code like "IT", "HR"        |
-| `dept_code`      | CharField(4, 4 digits)   | Numeric department ID             |
-| `parent`         | Self-FK (nullable)       | Parent department (null = root)   |
-| `level`          | PositiveSmallInt (1-6)   | Depth in hierarchy                |
-| `manager`        | FK → User (nullable)     | Department manager                |
-| `linked_project` | FK → Project (nullable)  | Team project for auto-sync        |
-| `is_active`      | Boolean                  | Department status                 |
-| `linked_workspace` | FK → Workspace (nullable) | *(Legacy field for gradual migration)* |
-| `description`    | TextField                | Department description            |
+| Field              | Type                      | Purpose                                |
+| ------------------ | ------------------------- | -------------------------------------- |
+| `workspace`        | FK → Workspace            | Scope (departments per workspace)      |
+| `name`             | CharField(255)            | Full department name                   |
+| `code`             | CharField(20)             | Department code (unique)               |
+| `short_name`       | CharField(10, uppercase)  | Short code like "IT", "HR"             |
+| `dept_code`        | CharField(4, 4 digits)    | Numeric department ID                  |
+| `parent`           | Self-FK (nullable)        | Parent department (null = root)        |
+| `level`            | PositiveSmallInt (1-6)    | Depth in hierarchy                     |
+| `manager`          | FK → User (nullable)      | Department manager                     |
+| `linked_project`   | FK → Project (nullable)   | Team project for auto-sync             |
+| `is_active`        | Boolean                   | Department status                      |
+| `linked_workspace` | FK → Workspace (nullable) | _(Legacy field for gradual migration)_ |
+| `description`      | TextField                 | Department description                 |
 
 **Key Constraints**:
 
@@ -597,207 +618,74 @@ Department and Staff management has been migrated from workspace-scoped user int
 
 **Removed Routes** (Workspace Settings):
 
-- `/[workspaceSlug]/(settings)/settings/departments/` - *(Moved to god-mode)*
-- `/[workspaceSlug]/(settings)/settings/staff/` - *(Moved to god-mode)*
+- `/[workspaceSlug]/(settings)/settings/departments/` - _(Moved to god-mode)_
+- `/[workspaceSlug]/(settings)/settings/staff/` - _(Moved to god-mode)_
 
 ## Time Tracking (Work Logs)
 
-See [`worklog-specification.md`](./worklog-specification.md) for comprehensive validation rules, API details, and feature flag gating.
+**IssueWorkLog Model**: `duration_minutes` (1–720 min/day max), `logged_at` (no future dates, 7-day edit window), `logged_by` (creator; ADMIN-only edit/delete)
 
-### Quick Reference
+**Feature Flag**: `Project.is_time_tracking_enabled` gates all UI (sidebar nav, route, buttons, properties)
 
-**IssueWorkLog Model**:
+**Key Endpoints**:
 
-- `duration_minutes`: 1–1440 min per entry, max 720 min per user per day
-- `logged_at`: No future dates, within 7 working days (Mon–Fri) of today
-- `logged_by`: Team member; ADMIN-only edit/delete with 7-day edit window
+- `GET/POST /api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` - Issue-level CRUD
+- `PATCH/DELETE /api/v1/.../worklogs/{id}/` - Update/delete (ADMIN, 7-day window)
+- `GET /api/v1/.../worklogs/summary/` - Project/workspace summaries
+- `GET /api/v1/.../timesheet-grid/` - Timesheet matrix (member × date)
+- `POST /api/v1/.../bulk/` - Batch operations
+- `POST /api/workspaces/{slug}/projects/{pid}/worklogs/export/` - Async CSV/XLSX export
 
-**Key Constraints**: 12h/day limit (720 min), 7-day edit window (ADMIN only), feature flag per project, daily reminder opt-in
+**Celery Tasks**:
 
-**Project Flag**:
+- `worklog_daily_reminder` (UTC 10:00) - Daily notification opt-in via `UserNotificationPreference.worklog_reminder`
+- `worklog_export_task` - Generates archive, uploads to S3, tracks via `ExporterHistory`
 
-### Feature Flag Gating
-
-All time tracking UI is gated behind `is_time_tracking_enabled`:
-
-| Component             | Gating Method                                       | Behavior                       |
-| --------------------- | --------------------------------------------------- | ------------------------------ |
-| **Sidebar nav**       | `shouldRender: !!project?.is_time_tracking_enabled` | Menu item hidden when disabled |
-| **Route guard**       | `time-tracking/layout.tsx` check                    | Direct URL shows EmptyState    |
-| **"Log Time" button** | Check in `worklog-create-button.tsx`                | Shows info popup when disabled |
-| **Worklog property**  | Component unmount when disabled                     | Removed from issue sidebar     |
-
-**Backend enforcement** (independent of frontend):
-
-- API returns 400 error if worklog create attempted on disabled project
-- ViewSet checks `is_time_tracking_enabled` before allowing operations
-
-### API Endpoints (Core)
-
-| Endpoint                                                               | Method | Purpose                                         |
-| ---------------------------------------------------------------------- | ------ | ----------------------------------------------- |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | GET    | List worklogs for issue                         |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | POST   | Create worklog entry                            |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH  | Update worklog (ADMIN, 7-day window)            |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog (ADMIN, 7-day window)            |
-| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | GET    | Project summary (by member/issue)               |
-| `/api/v1/workspaces/{slug}/time-tracking/summary/`                     | GET    | Workspace summary                               |
-| `/api/v1/workspaces/{slug}/time-tracking/timesheet-grid/`              | GET    | Timesheet matrix (member × date)                |
-| `/api/v1/workspaces/{slug}/time-tracking/bulk/`                        | POST   | Batch create/update/delete                      |
-| `/api/workspaces/{slug}/projects/{pid}/worklogs/`                      | GET    | List project worklogs with pagination & filters |
-| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/`               | POST   | Trigger async worklog export (CSV/XLSX)         |
-| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/`               | GET    | List export history for project                 |
-
-### Celery Tasks
-
-**Daily Reminder**:
-
-- **Task**: `worklog_daily_reminder` (UTC 10:00)
-- Targets users in time-tracking-enabled projects who haven't logged today
-- Opt-out via `UserNotificationPreference.worklog_reminder`
-
-**Export Task**:
-
-- **Task**: `worklog_export_task` — generates CSV/XLSX archive with optional filters
-- Status: `queued` → `processing` → `completed` / `failed`
-- Output uploaded to S3 with presigned URL (7-day validity)
-
-### Worklog Pagination & Export
-
-| Endpoint                                                 | Method | Purpose                                                                                |
-| -------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------- |
-| `/api/workspaces/{slug}/projects/{pid}/worklogs/`        | GET    | List with pagination, filters (member_id, issue_id, date range), ordered by -logged_at |
-| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/` | POST   | Trigger async CSV/XLSX export                                                          |
-| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/` | GET    | List export history with download URLs                                                 |
+See [`worklog-specification.md`](./worklog-specification.md) for comprehensive details.
 
 ## Scalability Patterns
 
-### Horizontal Scaling
+**Horizontal Scaling**: Web, Admin, Space, Live, API are stateless; scale via replicas. Worker scales independently via Celery. Health checks: HTTP 200 on `/` (apps) or `/health` (API/Live).
 
-**Stateless Components** (scale via replicas):
+**Caching Strategy** (4 layers):
 
-| Component    | Role          | Replicas        | Health Check        |
-| ------------ | ------------- | --------------- | ------------------- |
-| Web (3000)   | Frontend SPA  | WEB_REPLICAS    | HTTP 200 on /       |
-| Admin (3000) | Admin SPA     | ADMIN_REPLICAS  | HTTP 200 on /       |
-| Space (3000) | Public portal | SPACE_REPLICAS  | HTTP 200 on /       |
-| Live (3000)  | WebSocket     | LIVE_REPLICAS   | HTTP 200 on /health |
-| API (8000)   | REST server   | API_REPLICAS    | HTTP 200 on /health |
-| Worker       | Celery tasks  | WORKER_REPLICAS | (managed by Celery) |
+1. Browser - Static assets with cache headers
+2. CDN - Edge caching (optional)
+3. Redis - Sessions, computed results, rate limiters
+4. Database - ORM query caching (select_related/prefetch_related)
 
-**Configuration** (docker-compose.yml):
+**Connection Pooling**:
 
-```yaml
-services:
-  api:
-    deploy:
-      replicas: ${API_REPLICAS:-1}
-```
-
-### Caching Strategy
-
-**Layer 1 - Browser Cache**:
-
-- Static assets (CSS, JS) with cache headers
-- Service Worker for offline support
-
-**Layer 2 - CDN Cache** (optional):
-
-- Static files cached at edge
-- Configurable TTL
-
-**Layer 3 - Redis Cache**:
-
-- Session storage
-- Computed results
-- Rate limit counters
-- Celery task results
-
-**Layer 4 - Database Query Cache**:
-
-- ORM select_related/prefetch_related
-- Materialized views (if needed)
-
-### Database Connection Pooling
-
-**PostgreSQL** (via Django):
-
-- Default pool: 5 connections
-- Maximum: 1000 (configured)
-- Min idle: monitored
-- Connection timeout: 5s
-
-**Redis** (via django-redis):
-
-- Connection pool enabled
-- Max connections: 50
+- PostgreSQL: Default 5, max 1000, timeout 5s
+- Redis: Enabled, max 50 connections
 
 ## Admin User Management System
 
-Instance administrators can manage users and workspace assignments via admin app.
+**Frontend** (`apps/admin`): User list/create/detail pages with workspace assignment & password reset dialogs
 
-**Frontend** (`apps/admin`): User list, create form, detail view with workspace assignment & password reset dialogs
+**Backend** (`plane/license/api`): InstanceUserViewSet with CRUD + password reset + workspace assignment
 
-**Backend** (`plane/license/api`): InstanceUserViewSet with CRUD + password reset + workspace assignment endpoints
+**Authorization**: All instance endpoints use `InstanceAdminPermission` (checks `user.role >= 15`)
 
-**Workflows**: Create user (auto-generate password), reset password, add user to workspace, manage workspace roles
-
-### Instance Admin Pattern
-
-**Authorization Pattern** for instance-level admin features:
-
-**Backend (Django)**:
-
-```python
-# Base pattern: BaseAPIView + InstanceAdminPermission
-from rest_framework.views import APIView
-from plane.license.permissions import InstanceAdminPermission
-
-class InstanceAdminEndpoint(BaseAPIView):
-    """Instance admin only endpoint"""
-    permission_classes = [InstanceAdminPermission]  # role >= 15
-
-    def get(self, request):
-        # Instance-level data access
-        return Response({...})
-```
-
-**Key Components**:
-
-- **BaseAPIView** - Base class for all instance endpoints (handles auth, logging)
-- **InstanceAdminPermission** - Permission class checking `user.role >= 15`
-- **Location**: `plane/license/permissions.py`
-
-**Applied to**:
-
-- User management endpoints
-- Monitoring dashboard endpoints
-- Instance configuration endpoints
+**Workflows**: Create user (auto-password), reset password, add to workspace, manage roles
 
 ## Admin Monitoring Dashboard (Phase 1)
 
-Instance administrators can monitor system health, email delivery, and background jobs.
+Instance administrators monitor health, email delivery, and background jobs at `/monitoring` (role >= 15).
 
-**Frontend** (`apps/admin/app/(all)/(dashboard)/monitoring/`): 3-tab dashboard
+**Dashboard Tabs**:
 
-- Tab 1: Issue Email Logs - Paginated list of issue notification emails (50 items/page), filterable by date range and entity type
-- Tab 2: Scheduled Jobs - Read-only list of Celery periodic tasks with schedule display, last run time, and run count
-- Tab 3: Worker Health - Live Celery worker stats (active task count, pool info, uptime), cached 30s, auto-refresh every 30s
+1. **Email Logs** - Paginated EmailNotificationLog (50 items/page, filters: date range, entity type)
+2. **Scheduled Jobs** - Celery PeriodicTask list (schedule, last run, run count)
+3. **Worker Health** - Live Celery stats (active tasks, pool info, uptime), cached 30s, frontend auto-refreshes
 
-**Backend** (`plane/license/api/monitoring.py`): 3 read-only monitoring endpoints
+**Backend Endpoints** (`plane/license/api/monitoring.py`):
 
-- `EmailLogMonitoringEndpoint` - Returns paginated EmailNotificationLog records with receiver/triggered_by details
-- `ScheduledJobMonitoringEndpoint` - Lists PeriodicTask with human-readable schedule and execution metadata
-- `WorkerHealthMonitoringEndpoint` - Queries Celery Inspect API, returns active tasks and pool info per worker
+- `EmailLogMonitoringEndpoint` - Paginated email logs with receiver/actor details
+- `ScheduledJobMonitoringEndpoint` - Periodic task list
+- `WorkerHealthMonitoringEndpoint` - Celery Inspect API query
 
-**Data Flow**:
-
-- Admin accesses `/monitoring` route → React component fetches from 3 endpoints → Displays tabbed dashboard
-- Email logs: Filters optional (date_from, date_to, entity_name), 50 items per page
-- Scheduled jobs: No filtering, displays all enabled/disabled tasks
-- Worker health: Cached 30s server-side, frontend auto-refreshes every 30s (tolerance for 60s max staleness)
-
-**Permissions**: Instance admin only (role >= 15, via `InstanceAdminPermission`)
+**Permissions**: Instance admin only (`InstanceAdminPermission`)
 
 ## Real-Time Collaboration System
 
@@ -832,115 +720,39 @@ No conflicts, no manual merging needed
 
 ## Monitoring & Observability
 
-### Logging
+**Logging**:
 
-**Request Logging** (RequestLoggerMiddleware):
+- HTTP requests: RequestLoggerMiddleware (method, path, status, duration, user_id, ip)
+- API tokens: APITokenLogMiddleware (tracked in PostgreSQL + MongoDB)
+- Application: Django (DEBUG/dev, WARNING/prod), Celery per-task
 
-- All HTTP requests logged to JSON
-- Fields: method, path, status, duration, user_id, ip
-
-**API Token Logging** (APITokenLogMiddleware):
-
-- External API requests tracked
-- Fields: token, request body, response, timestamp
-- Storage: PostgreSQL + MongoDB
-
-**Application Logging**:
-
-- Django logger at DEBUG level (dev) / WARNING (prod)
-- Celery task logging per task
-- Error tracking via Sentry (optional)
-
-### Error Tracking
-
-**Optional Integrations**:
-
-- Sentry - Error monitoring & alerting
-- Scout APM - Performance monitoring
-- PostHog - Product analytics
-- OpenTelemetry - Distributed tracing
+**Optional Integrations**: Sentry (errors), Scout APM (performance), PostHog (analytics), OpenTelemetry (tracing)
 
 ## Security Architecture
 
-### TLS/HTTPS
+**TLS/HTTPS**: Caddy auto-provisions (Let's Encrypt), DNS: CloudFlare/DigitalOcean
 
-- Caddy auto-provisions certificates (Let's Encrypt)
-- DNS providers: CloudFlare, DigitalOcean
-- ACME challenge support
+**Request Validation**: Input (Zod), rate limiting (per user/IP), CSRF tokens, CORS whitelist
 
-### Request Validation
-
-- Input validation (Zod schemas)
-- Rate limiting (per user/IP)
-- CSRF tokens (Django middleware)
-- CORS whitelist enforcement
-
-### Data Protection
-
-- Password hashing (Django default: PBKDF2)
-- Session encryption (secure cookies)
-- API tokens stored as hashes
-- HTML sanitization (nh3 library)
+**Data Protection**: Password hashing (PBKDF2), session encryption, API tokens (hashed), HTML sanitization (nh3)
 
 ## Deployment Architecture
 
-### Docker Compose (Single Server)
+**Docker Compose** (single server): 13 services (web, admin, space, live, api, worker, beat, postgres, redis, rabbitmq, minio, proxy)
 
-```
-Services:
-├─ web (port 3000)
-├─ admin (port 3000)
-├─ space (port 3000)
-├─ live (port 3000)
-├─ api (port 8000)
-├─ worker (background)
-├─ beat-worker (scheduler)
-├─ postgres (port 5432)
-├─ redis (port 6379)
-├─ rabbitmq (port 5672)
-├─ minio (port 9000)
-└─ proxy (port 80/443)
-
-Volumes:
-├─ pgdata (PostgreSQL persistence)
-├─ redisdata (Redis persistence)
-├─ uploads (MinIO storage)
-└─ logs (application logs)
-```
-
-### Kubernetes Deployment
-
-- Helm chart with customizable replicas
-- StatefulSets for database/storage
-- Deployments for stateless services
-- Horizontal Pod Autoscaler (HPA) for scaling
+**Kubernetes**: Helm chart with StatefulSets (DB/storage), Deployments (stateless), HPA for scaling
 
 ## Performance Optimization
 
-### Frontend
+**Frontend**: Code splitting (React.lazy), tree-shaking, compression (gzip/brotli), images (webp), bundle <500KB
 
-- Code splitting (React.lazy)
-- Tree-shaking (ES modules)
-- Asset compression (gzip, brotli)
-- Image optimization (webp)
-- Bundle size: <500KB (gzipped)
+**Backend**: Query optimization (select_related/prefetch_related), indexing, pagination (20 items/page), compression, caching
 
-### Backend
-
-- Query optimization (select_related, prefetch_related)
-- Database indexing on frequently queried fields
-- Pagination (default 20 items/page)
-- Response compression (gzip)
-- API response caching where applicable
-
-### Infrastructure
-
-- Load balancing (Caddy health checks)
-- Connection pooling (DB, Redis)
-- Async tasks (long-running operations)
-- Cache strategy (3-tier caching)
+**Infrastructure**: Load balancing (Caddy), connection pooling (DB/Redis), async tasks (Celery), multi-tier caching
 
 ---
 
-**Last Updated**: 2026-03-04
-**Status**: Final | **Related**: `/docs/breaking-changes.md`
+**Last Updated**: 2026-03-29
+**Version**: 1.2.4
+**Lines**: 728
+**Status**: Final (condensed to ≤800 LOC) | **Related**: `/docs/breaking-changes.md`, `/docs/worklog-specification.md`

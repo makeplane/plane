@@ -739,9 +739,31 @@ PRIORITY_CHOICES = [("urgent", "Urgent"), ("high", "High"), ("medium", "Medium")
 - Requests with `?priority=none` return HTTP 400 Bad Request (intentional breaking change)
 - Update API clients to remove "none" from priority filters
 
+### Worklog (Time Tracking) Patterns (v1.2.4)
+
+**IssueWorkLog Model** (`plane/db/models/worklog.py`):
+
+- Fields: issue, logged_by, duration_minutes (1-720 min), description, logged_at
+- Constraints: No future dates, 7-day edit window
+- Permissions: Admin can edit/delete; Member create-only
+- Activity tracking: Each change logged via Celery task
+
+**ViewSet Pattern** (`plane/app/views/worklog.py`):
+
+- `perform_create`: Set logged_by=request.user, trigger activity logging
+- `perform_update`: Check 7-day window, log changes
+
+**Frontend Store** (`apps/web/core/store/worklog.store.ts`):
+
+- Map-based state: `worklogs: Map<string, IssueWorkLog[]>`
+- Helpers: `getWorklogsForIssue()`, `getTotalMinutesForIssue()`
+- Methods: `fetchWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`
+
+**Date Validation**: Prevent future dates, enforce 7-day edit window, restrict to issue creation date or later
+
 ---
 
-**Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/code-standards.md`
-**Lines**: ~695
-**Status**: Final (Updated with Priority System standards)
-**Related**: `/docs/eslint.md` (existing ESLint documentation), `/docs/system-architecture.md` (breaking changes)
+**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/code-standards.md`
+**Lines**: ~795
+**Status**: Updated with Worklog patterns and Priority System standards
+**Related**: `/docs/eslint.md` (ESLint), `/docs/system-architecture.md` (breaking changes), `/docs/worklog-specification.md` (detailed spec)

@@ -1,7 +1,7 @@
 # Project Roadmap & Status
 
-**Last Updated**: 2026-03-04 (Worklog & Time Tracking features completed)
-**Current Version**: 1.2.3
+**Last Updated**: 2026-03-29 (Opinion removal, due date reasons, spreadsheet enhancements, module activity tracking)
+**Current Version**: 1.2.4
 **Next Release Target**: Q2 2026
 
 ## Project Status Summary
@@ -94,12 +94,60 @@
   - ✅ i18n: EN/KO/VI translations (20+ keys)
   - ✅ Phase 9 Feature Flag Gating: Sidebar nav gated, route guard with EmptyState, "Log Time" button info popup, worklog property hidden
   - ✅ Documentation: Comprehensive specification in `worklog-specification.md` + feature flag section
+- ✅ Opinion Feature Removal (Mar 2026)
+  - ✅ Complete removal of opinion model and related API endpoints
+  - ✅ Migration 0134: Drops all opinion tables from database
+  - ✅ Due date change reason tracking: Required reason field for temporal changes
+  - ✅ UX enhancement: Worklog button hidden for Done/Cancelled issues
+  - ✅ Activity log: Reasons tracked for audit trail
+- ✅ Spreadsheet & Module Enhancements (Mar 2026)
+  - ✅ Non-sortable columns support in spreadsheet view
+  - ✅ Sort order key fixes for proper column ordering
+  - ✅ Module activity tracking: ModuleActivity model for change history
+  - ✅ Frontend: Activity tab in module detail with change stream
+  - ✅ Default view enhancements with project lead display
+  - ✅ Circular dependency fix in IssueRootStore
+  - ✅ Quick-add modal refactor unified command palette
+  - ✅ Module dropdown tooltip for truncated names
+  - ✅ RFC 3986 custom protocol support for issue links
+- ✅ Task Categories System (Mar 2026)
+  - ✅ Instance-level 2-tier categorization (MainTaskCategory → SubTaskCategory)
+  - ✅ Migrations 0158-0160 for models and Issue FK additions
+  - ✅ Admin API full CRUD (instance admin only)
+  - ✅ Workspace API read-only access for members
+  - ✅ Frontend: TaskCategoryStore, 2-tier dropdown component, spreadsheet integration
+  - ✅ i18n: EN/KO/VI translations
+  - ✅ Validation: Categories required for non-draft issues when categories exist
+- ✅ Head Office (HO) API (Mar 2026)
+  - ✅ Cross-workspace issue visibility with role-based access control
+  - ✅ BFS department hierarchy traversal for manager-scoped access
+  - ✅ HoIssueListView: 18-column read-only datasheet with filtering/sorting
+  - ✅ HoCategorySummaryView: Aggregated work item counts by category
+  - ✅ Frontend: HoIssueStore, HoIssueService, 12 components, TanStack React Table
+  - ✅ Admin dashboard: New "Head Office" module
+  - ✅ Endpoints: /api/ho/issues/, /api/ho/category-summary/
+- ✅ Time-Tracking Analytics & Capacity (Mar 2026)
+  - ✅ Analytics timesheet: Week-grid view with per-user breakdown
+  - ✅ Capacity heatmap: Color-coded status (green/yellow/red)
+  - ✅ Capacity day details: Per-task breakdown for member on specific date
+  - ✅ Donut pie charts: Recharts visualization (innerRadius 45%, 8-color palette)
+  - ✅ Cross-workspace enhancement: Timesheet shows ALL assigned issues
+  - ✅ CSV export: Capacity reports exportable
+  - ✅ 13 components: timesheet (5), analytics (4), capacity (4)
+  - ✅ 11 new type interfaces in packages/types/src/worklog.ts
+- ✅ Workspace Default Views (Mar 2026)
+  - ✅ IssueView model is_default flag (migrations 0145-0146)
+  - ✅ Auto-seeding: Default views on workspace creation
+  - ✅ 8+ custom columns: bank-wide-project, project-lead, department, progress, completed-date, total-log-time, reference-link, project-name
+  - ✅ Workspace settings: Dedicated workspace-views page
+  - ✅ Default view selector in workspace header
+  - ✅ Full sorting/filtering support
 
 ## Planned Roadmap (2026)
 
-### Phase 1: Q1 2026 (Current - Mar 2026) ✅ COMPLETE
+### Phase 1: Q1 2026 (Complete - Mar 29, 2026) ✅ COMPLETE
 
-**Focus**: Developer Experience & Documentation + Pro Features + Org Structure + Enterprise Auth
+**Focus**: Developer Experience & Documentation + Pro Features + Org Structure + Enterprise Auth + Worklog
 
 **Tasks**:
 
@@ -114,6 +162,12 @@
 - ✅ Department & Staff Management (models, APIs, workspace settings UI, bulk import/export)
 - ✅ Swing SSO Authentication (5 config keys, provider, admin UI, frontend integration)
 - ✅ Admin User Management (backend APIs, admin UI, CRUD workflows)
+- ✅ Worklog (Time Tracking) complete implementation (9 phases, backend + frontend + i18n + feature flags)
+- ✅ Remove None Priority feature (4-level priority system, data migration 0131)
+- ✅ Opinion removal (complete feature sunset, data migration 0134)
+- ✅ Spreadsheet enhancements (non-sortable columns, sort order fixes)
+- ✅ Module activity tracking (activity stream + frontend rendering)
+- ✅ Default view enhancements (project lead display, default view per project)
 - 🔄 ESLint enforcement migration (deferred to Q2)
 - 🔄 TypeScript strict mode rollout (deferred to Q2)
 
