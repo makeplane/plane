@@ -1,62 +1,102 @@
 # AGENTS.md
 
-This file provides guidance to OpenCode when working with code in this repository.
+Instructions for AI coding agents (Antigravity, OpenCode, etc.) working in this repository.
 
 ## Project Overview
 
-**Name:** claudekit-engineer
-**Type:** Node.js/TypeScript
-**Description:** A comprehensive boilerplate template for building professional software projects with **CLI Coding Agents** (**Claude Code** and **Open Code**). This template provides a complete development environment with AI-powered agent orchestration, automated workflows, and intelligent project management.
+**Name:** Plane.so (Community Edition — Customized for Shinhan Bank Vietnam)
+**Type:** Full-stack monorepo (React + Django + WebSocket)
+**Monorepo:** pnpm + Turborepo
 
 ## Role & Responsibilities
 
-Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
+Implement features following established Plane.so architecture and design system strictly. Do NOT modify core architecture without explicit approval.
 
-## Workflows
+## Critical Rules — READ FIRST
 
-- Primary workflow: `./.claude/rules/primary-workflow.md`
-- Development rules: `./.claude/rules/development-rules.md`
-- Orchestration protocols: `./.claude/rules/orchestration-protocol.md`
-- Documentation management: `./.claude/rules/documentation-management.md`
-- And other workflows: `./.claude/rules/*`
+- `./docs/code-standards.md` — Coding standards
+- `./docs/design-guidelines.md` — UI design guidelines
+- `./docs/system-architecture.md` — System architecture
+- `./docs/codebase-summary.md` — Monorepo structure & features
 
-**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
-**IMPORTANT:** DO NOT modify skills in `~/.claude/skills` directory directly. **MUST** modify skills in this current working directory. Unless you are asked to do so.
-**IMPORTANT:** You must follow strictly the development rules in `./.claude/rules/development-rules.md` file.
-**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
-**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+## Quick Reference
 
-## Development Principles
+### Frontend
 
-- **YAGNI**: You Aren't Gonna Need It - avoid over-engineering
-- **KISS**: Keep It Simple, Stupid - prefer simple solutions
-- **DRY**: Don't Repeat Yourself - eliminate code duplication
+- **Stack**: React 18 + React Router v7 + Vite + MobX + Tailwind CSS v4
+- **UI**: `@plane/propel` (subpath imports: `@plane/propel/button`), legacy `@plane/ui`
+- **Colors**: Semantic tokens ONLY (`bg-surface-1`, `text-primary`, `border-subtle`). NO hardcoded colors.
+- **Dark mode**: `data-theme` attribute, auto-handled by semantic tokens. NO `dark:` variants.
+- **Stores**: `makeObservable` explicit fields + `runInAction` + `set()` from `lodash-es` (NOT MobX)
+- **Observer**: `observer()` from `mobx-react` (NOT mobx-react-lite) on all MobX-reading components
+- **CE features**: `apps/web/ce/` directory. NEVER modify `core/` for CE features.
+- **i18n**: `useTranslation()` from `@plane/i18n`. 3 languages: EN, KO, VI. Files are `.ts` modules.
+- **Routes**: CE routes in `app/routes/extended.ts`, NOT `core.ts`
+- **Tables**: TanStack React Table for read-only datasheets
+- **Charts**: Recharts for charts (donut: `innerRadius="45%"`, 8-color palette)
+
+### Backend
+
+- **Stack**: Django 4.2 + DRF 3.15 + PostgreSQL + Celery + RabbitMQ + Redis
+- **Models**: `BaseModel` (UUID pk, audit, soft delete via `deleted_at`) or `ProjectBaseModel`
+- **Managers**: `Issue.issue_objects` for user queries (NOT `Issue.objects`)
+- **Permissions**: `@allow_permission` decorator with `ROLE.ADMIN`/`MEMBER`/`GUEST`
+- **Post-mutation**: Always fire `issue_activity.delay()` + `model_activity.delay()`
+- **Query optimization**: `select_related` for FK, `prefetch_related` for reverse relations
+- **API layers**: Frontend (v0, session), Instance Admin (God Mode), External (v1, API key)
+
+### Common Mistakes
+
+- ❌ Hardcoded colors (`bg-white`, `text-gray-*`) → use semantic tokens
+- ❌ Barrel imports (`@plane/propel`) → use subpath (`@plane/propel/button`)
+- ❌ `makeAutoObservable` → use `makeObservable` with explicit fields
+- ❌ CE code in `core/` → use `ce/` directory
+- ❌ Missing `observer()` wrapper on MobX-connected components
+- ❌ `Issue.objects` for user queries → use `Issue.issue_objects`
+- ❌ Missing `workspace__slug` filter (data leak risk)
+- ❌ Missing `setToast()` after mutations
+- ❌ `set()` from MobX → use `set()` from `lodash-es`
+- ❌ `import { X } from "y"` for types → use `import type { X } from "y"`
+
+## Git Safety (NON-NEGOTIABLE)
+
+- **Origin**: `github.com/shbvn/plane.git`
+- **Default branch**: `preview` | **Staging**: `develop`
+- **Branch naming**: `{username}/{type}/{description}`
+- **Flow**: feature branch → develop (squash merge, PR) → preview (PR, team lead approve)
+- ❌ NEVER pull/merge/rebase from upstream (`makeplane/plane`)
+- ❌ NEVER force push to `preview` or `develop`
+- ❌ NEVER push directly to `preview` or `develop` — PR required, 1 review
+- ❌ NEVER commit secrets (.env, API keys, credentials)
+- Conventional commits: `feat(scope):`, `fix(scope):`, `docs:`, `refactor:`, `chore:`
+
+## Build Commands
+
+| Command                              | Purpose         |
+| ------------------------------------ | --------------- |
+| `pnpm check:lint`                    | Run ESLint      |
+| `pnpm fix:lint`                      | Auto-fix lint   |
+| `pnpm check:format`                  | Check Prettier  |
+| `pnpm format`                        | Auto-fix format |
+| `cd apps/api && python run_tests.py` | Backend tests   |
+
+## Principles
+
+- **YAGNI / KISS / DRY**
+- File naming: kebab-case, descriptive
+- File limits: Code <200 lines, Components <150 lines, Hooks <100 lines
+- Conventional commits, no AI references
+- Never commit secrets or .env files
+
+## Key Features (v1.2.4)
+
+- **Task Categories**: Instance-level 2-tier (Main → Sub) categorization on issues
+- **Head Office (HO)**: Cross-workspace issue management with role-based access (BFS dept hierarchy)
+- **Time Tracking**: Analytics, capacity heatmap, cross-workspace timesheet, donut charts, CSV export
+- **Workspace Default Views**: 8+ custom spreadsheet columns, auto-seeding on workspace creation
+- **Department & Staff**: Hierarchical org structure, auto-join logic
+- **Workflow Enforcement**: State transitions with approvers, audit trail
 
 ## Documentation
 
-Keep all important docs in `./docs` folder:
-
-```
-./docs
-├── project-overview-pdr.md
-├── code-standards.md
-├── codebase-summary.md
-├── design-guidelines.md
-└── system-architecture.md
-```
-
-## External Files
-
-Reference external instruction files in `opencode.json`:
-
-```json
-{
-  "instructions": ["docs/*.md", ".opencode/agents/*.md"]
-}
-```
-
----
-
-_Generated by ClaudeKit OpenCode Generator_
-_Date: 2026-03-28_
+All project docs in `./docs/` — **always read `docs/codebase-summary.md` and `docs/code-standards.md` before implementing features.**
