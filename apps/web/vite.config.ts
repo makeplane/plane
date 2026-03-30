@@ -22,7 +22,14 @@ viteEnv.VITE_APP_VERSION ||= process.env.VERCEL_GIT_COMMIT_SHA ?? "";
 const plugins: PluginOption[] = [
   tailwindcss(),
   reactRouter(),
-  tsconfigPaths({ projects: [path.resolve(import.meta.dirname, "tsconfig.json")] }),
+  tsconfigPaths({
+    projects: [
+      path.resolve(import.meta.dirname, "tsconfig.json"),
+      // Root tsconfig references all workspace packages, enabling path alias
+      // resolution when Vite consumes source files via "development" export condition.
+      path.resolve(import.meta.dirname, "../../tsconfig.json"),
+    ],
+  }),
 ];
 
 if (process.env.SENTRY_AUTH_TOKEN) {
