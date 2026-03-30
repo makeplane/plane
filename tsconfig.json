@@ -1,23 +1,21 @@
 {
-  "compilerOptions": {
-    "jsx": "react-jsx"
-  },
   "files": [],
   "references": [
+    { "path": "./packages/blocks" },
+    { "path": "./packages/codemods" },
+    { "path": "./packages/constants" },
     { "path": "./packages/decorators" },
     { "path": "./packages/editor" },
     { "path": "./packages/etl" },
     { "path": "./packages/hooks" },
     { "path": "./packages/i18n" },
     { "path": "./packages/logger" },
-    { "path": "./packages/mobile-editor" },
     { "path": "./packages/propel" },
     { "path": "./packages/sdk" },
     { "path": "./packages/services" },
     { "path": "./packages/shared-state" },
+    { "path": "./packages/types" },
     { "path": "./packages/ui" },
-    { "path": "./packages/utils" },
-    { "path": "./packages/constants" },
-    { "path": "./packages/types" }
+    { "path": "./packages/utils" }
   ]
 }

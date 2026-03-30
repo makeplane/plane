@@ -6,7 +6,7 @@ import { defineConfig, type PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(import.meta.dirname, ".env") });
 
 // Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
@@ -22,7 +22,7 @@ viteEnv.VITE_APP_VERSION ||= process.env.VERCEL_GIT_COMMIT_SHA ?? "";
 const plugins: PluginOption[] = [
   tailwindcss(),
   reactRouter(),
-  tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] }),
+  tsconfigPaths({ projects: [path.resolve(import.meta.dirname, "tsconfig.json")] }),
 ];
 
 if (process.env.SENTRY_AUTH_TOKEN) {
@@ -54,8 +54,8 @@ export default defineConfig({
   resolve: {
     alias: {
       // Next.js compatibility shims used within web
-      "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
-      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
+      "next/link": path.resolve(import.meta.dirname, "app/compat/next/link.tsx"),
+      "next/navigation": path.resolve(import.meta.dirname, "app/compat/next/navigation.ts"),
     },
     dedupe: ["react", "react-dom", "@headlessui/react"],
   },

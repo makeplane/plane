@@ -4,12 +4,9 @@
     "exactOptionalPropertyTypes": false,
     "noImplicitReturns": false,
     "noUncheckedIndexedAccess": false,
-    "noUnusedLocals": false,
-    "outDir": "dist",
-    "rootDir": ".",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    "noUnusedLocals": false
   },
-  "include": ["src", ".storybook/preview.ts"],
-  "exclude": ["dist", "node_modules", "*.config.ts"],
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "*.config.ts", "src/**/*.stories.tsx"],
   "references": [{ "path": "../types" }, { "path": "../constants" }, { "path": "../hooks" }, { "path": "../utils" }]
 }

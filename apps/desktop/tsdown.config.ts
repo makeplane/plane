@@ -6,15 +6,18 @@ export default defineConfig([
     outDir: "dist",
     format: "cjs",
     platform: "neutral",
-    external: ["electron", "@todesktop/runtime", "electron-store"],
-    clean: true,
+    deps: {
+      neverBundle: ["electron", "@todesktop/runtime", "electron-store"],
+    },
   },
   {
     entry: ["src/preload.ts"],
     outDir: "dist",
     format: "cjs",
     platform: "neutral",
-    external: ["electron"],
+    deps: {
+      neverBundle: ["electron"],
+    },
     copy: ["src/setup.html"],
   },
   {
@@ -22,16 +25,20 @@ export default defineConfig([
     outDir: "dist",
     format: "cjs",
     platform: "neutral",
-    external: ["electron"],
+    deps: {
+      neverBundle: ["electron"],
+    },
   },
   {
     entry: ["src/tab-bar.tsx"],
     outDir: "dist",
     format: "iife",
     platform: "browser",
-    external: [],
-    noExternal: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
-    inlineOnly: ["react", "react-dom", "scheduler"],
+    deps: {
+      neverBundle: [],
+      alwaysBundle: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
+      onlyBundle: ["react", "react-dom", "scheduler"],
+    },
     name: "PlaneTabBar",
     globalName: "PlaneTabBar",
     output: {

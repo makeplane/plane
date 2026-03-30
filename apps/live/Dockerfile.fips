@@ -23,7 +23,7 @@ RUN npm install -g pnpm@9
 FROM base AS builder
 
 WORKDIR /app
-ARG TURBO_VERSION=2.8.13
+ARG TURBO_VERSION=2.8.21
 
 RUN pnpm add -g turbo@${TURBO_VERSION}
 COPY . .

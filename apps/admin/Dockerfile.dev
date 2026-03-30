@@ -5,7 +5,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN corepack enable pnpm && pnpm add -g turbo
+ARG TURBO_VERSION=2.8.21
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 RUN pnpm install
 
 ENV VITE_ADMIN_BASE_PATH="/god-mode/"

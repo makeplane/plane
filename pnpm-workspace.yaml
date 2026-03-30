@@ -30,7 +30,7 @@ catalog:
   '@fontsource-variable/inter': 5.2.8
   '@fontsource/ibm-plex-mono': 5.2.7
   '@fontsource/inter': 5.2.8
-  '@fontsource/material-symbols-rounded': 5.2.34
+  '@fontsource/material-symbols-rounded': 5.2.39
   '@headlessui/react': ^1.7.19
   '@hocuspocus/extension-database': 2.15.2
   '@hocuspocus/extension-logger': 2.15.2
@@ -60,12 +60,12 @@ catalog:
   '@react-router/dev': 7.13.1
   '@react-router/node': 7.13.1
   '@react-router/serve': 7.13.1
-  '@sentry/cli': 3.2.0
-  '@sentry/core': 10.38.0
-  '@sentry/node': 10.38.0
-  '@sentry/opentelemetry': 10.38.0
-  '@sentry/profiling-node': 10.38.0
-  '@sentry/react-router': 10.38.0
+  '@sentry/cli': 3.2.2
+  '@sentry/core': 10.46.0
+  '@sentry/node': 10.46.0
+  '@sentry/opentelemetry': 10.46.0
+  '@sentry/profiling-node': 10.46.0
+  '@sentry/react-router': 10.46.0
   '@sentry/vite-plugin': 4.9.1
   '@shikijs/core': ^3.22.0
   '@shikijs/engine-javascript': ^3.22.0
@@ -75,16 +75,16 @@ catalog:
   '@slack/types': ^2.20.0
   '@socket.io/redis-adapter': 8.3.0
   '@socket.io/redis-emitter': 5.1.0
-  '@storybook/addon-a11y': 10.2.8
+  '@storybook/addon-a11y': 10.3.3
   '@storybook/addon-designs': 11.1.2
-  '@storybook/addon-docs': 10.2.8
-  '@storybook/addon-themes': 10.2.10
-  '@storybook/addon-vitest': 10.2.8
-  '@storybook/react-vite': 10.2.8
+  '@storybook/addon-docs': 10.3.3
+  '@storybook/addon-themes': 10.3.3
+  '@storybook/addon-vitest': 10.3.3
+  '@storybook/react-vite': 10.3.3
   '@sveltejs/acorn-typescript': ^1.0.9
   '@t3-oss/env-core': ^0.11.1
   '@tailwindcss/typography': 0.5.19
-  '@tailwindcss/vite': 4.1.18
+  '@tailwindcss/vite': 4.2.2
   '@tanstack/react-table': ^8.21.3
   '@tanstack/react-virtual': ^3.13.19
   '@tanstack/virtual-core': ^3.13.19
@@ -164,14 +164,14 @@ catalog:
   date-fns: ^4.1.0
   dd-trace: ^5.87.0
   dotenv: ^16.6.1
-  effect: 3.20.0
-  electron: 40.0.0
+  effect: 3.21.0
+  electron: 41.1.0
   electron-store: ^11.0.2
   emoji-picker-react: ^4.18.0
   emoji-regex: ^10.6.0
   eslint-plugin-jsx-a11y: 6.10.2
   eslint-plugin-react-hooks: 7.0.1
-  eslint-plugin-turbo: 2.8.13
+  eslint-plugin-turbo: 2.8.21
   export-to-csv: ^1.4.0
   express: 4.22.0
   express-winston: ^4.2.0
@@ -208,7 +208,7 @@ catalog:
   nanoid: 3.3.8
   next-themes: 0.4.6
   node-html-parser: ^6.1.13
-  oxlint: 1.50.0
+  oxlint: 1.57.0
   oxlint-tsgolint: 0.16.0
   pako: ^2.1.0
   papaparse: ^5.5.3
@@ -216,7 +216,7 @@ catalog:
   pg: ^8.18.0
   playwright: ^1.58.2
   postgres: ^3.4.8
-  posthog-js: 1.347.0
+  posthog-js: 1.364.1
   prosemirror-highlight: ^0.13.1
   prosemirror-safari-ime-span: ^1.0.2
   prosemirror-utils: ^1.2.2
@@ -229,7 +229,7 @@ catalog:
   react-dropzone: ^14.4.1
   react-fast-compare: ^3.2.2
   react-grid-layout: ^1.5.3
-  react-hook-form: 7.71.1
+  react-hook-form: 7.71.2
   react-is: ^18.3.1
   react-markdown: ^9.1.0
   react-masonry-component: ^6.3.0
@@ -244,23 +244,23 @@ catalog:
   rehype-remark: ^10.0.1
   remark-gfm: ^4.0.1
   remark-stringify: ^11.0.0
-  sanitize-html: 2.17.0
+  sanitize-html: 2.17.2
   serve: 14.2.5
   sharp: ^0.34.5
   smooth-scroll-into-view-if-needed: ^2.0.2
   socket.io: 4.8.3
   socket.io-client: ^4.8.3
   source-map-support: ^0.5.21
-  storybook: 10.2.10
+  storybook: 10.3.3
   streamdown: ^2.3.0
   swr: 2.4.0
-  tailwind-merge: 3.4.0
-  tailwindcss: 4.1.18
+  tailwind-merge: 3.5.0
+  tailwindcss: 4.2.2
   tippy.js: ^6.3.7
   tiptap-markdown: ^0.8.10
   tldjs: ^2.3.2
-  tsdown: 0.20.3
-  turbo: 2.8.13
+  tsdown: 0.21.7
+  turbo: 2.8.21
   turndown: ^7.2.2
   type-fest: ^4.41.0
   typescript: 5.9.3
@@ -285,6 +285,7 @@ cleanupUnusedCatalogs: true
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@sentry/cli'
+  - dd-trace
   - esbuild
   - electron
   - protobufjs

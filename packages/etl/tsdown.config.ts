@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: [
     "src/asana/index.ts",
+    "src/bitbucket/index.ts",
     "src/confluence/index.ts",
     "src/core/index.ts",
     "src/github/index.ts",
@@ -14,10 +15,11 @@ export default defineConfig({
     "src/flatfile/index.ts",
     "src/sentry/index.ts",
     "src/clickup/index.ts",
-    "src/bitbucket/index.ts",
   ],
   format: ["esm"],
   dts: true,
-  exports: true,
+  exports: {
+    devExports: "development",
+  },
   platform: "neutral",
 });

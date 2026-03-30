@@ -225,9 +225,6 @@ export const NavigationTour: React.FC<NavigationTourProps> = (props) => {
 
     const targetElement = document.querySelector(targetSelector);
     if (!targetElement) {
-      if (process.env.NODE_ENV === "development") {
-        console.warn(`[NavigationTour] Target element not found: ${targetSelector}`);
-      }
       setPositions(null);
       return;
     }

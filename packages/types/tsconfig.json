@@ -1,10 +1,6 @@
 {
   "extends": "@plane/typescript-config/node-library.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
-  },
+
   "include": ["src"],
   "exclude": ["dist", "node_modules", "*.config.ts"]
 }

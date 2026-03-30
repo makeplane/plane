@@ -5,10 +5,7 @@
     "noImplicitReturns": false,
     "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "outDir": "dist",
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    "noUnusedParameters": false
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules", "*.config.ts"],

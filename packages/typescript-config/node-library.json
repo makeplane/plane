@@ -3,6 +3,9 @@
   "extends": "./base.json",
   "compilerOptions": {
     "emitDeclarationOnly": true,
+    "outDir": "${configDir}/dist",
+    "rootDir": "${configDir}/src",
+    "tsBuildInfoFile": "${configDir}/dist/tsconfig.tsbuildinfo",
     "types": ["node"]
   }
 }

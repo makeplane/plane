@@ -3,11 +3,12 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: ["src/start.ts"],
   format: ["esm"],
-  dts: true,
-  clean: true,
+  dts: false,
   sourcemap: true,
   exports: { legacy: true },
-  noExternal: [/^bluebird$/],
-  inlineOnly: false,
+  deps: {
+    alwaysBundle: [/^bluebird$/],
+    onlyBundle: false,
+  },
   platform: "node",
 });

@@ -6,16 +6,13 @@
     "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "outDir": "dist",
     "paths": {
       "src/*": ["./src/*"],
       "@/*": ["./src/core/*"],
       "@/ce/*": ["./src/ce/*"],
       "@/plane-editor/*": ["./src/ee/*"],
       "@/styles/*": ["./src/styles/*"]
-    },
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    }
   },
   "include": ["src", "index.d.ts"],
   "exclude": ["dist", "node_modules", "*.config.ts"],

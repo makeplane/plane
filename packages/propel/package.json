@@ -4,7 +4,6 @@
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
-  "types": "./dist/index.d.ts",
   "imports": {
     "#*": [
       "./*",
@@ -15,55 +14,247 @@
     ]
   },
   "exports": {
-    "./accordion": "./dist/accordion/index.js",
-    "./animated-counter": "./dist/animated-counter/index.js",
-    "./avatar": "./dist/avatar/index.js",
-    "./badge": "./dist/badge/index.js",
-    "./banner": "./dist/banner/index.js",
-    "./button": "./dist/button/index.js",
-    "./calendar": "./dist/calendar/index.js",
-    "./card": "./dist/card/index.js",
-    "./charts/area-chart": "./dist/charts/area-chart/index.js",
-    "./charts/bar-chart": "./dist/charts/bar-chart/index.js",
-    "./charts/line-chart": "./dist/charts/line-chart/index.js",
-    "./charts/pie-chart": "./dist/charts/pie-chart/index.js",
-    "./charts/radar-chart": "./dist/charts/radar-chart/index.js",
-    "./charts/scatter-chart": "./dist/charts/scatter-chart/index.js",
-    "./charts/tree-map": "./dist/charts/tree-map/index.js",
-    "./code-editor": "./dist/code-editor/index.js",
-    "./collapsible": "./dist/collapsible/index.js",
-    "./combobox": "./dist/combobox/index.js",
-    "./command": "./dist/command/index.js",
-    "./context-menu": "./dist/context-menu/index.js",
-    "./dialog": "./dist/dialog/index.js",
-    "./domain/intake-form": "./dist/domain/intake-form/index.js",
-    "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
-    "./emoji-reaction": "./dist/emoji-reaction/index.js",
-    "./empty-state": "./dist/empty-state/index.js",
-    "./icon-button": "./dist/icon-button/index.js",
-    "./icons": "./dist/icons/index.js",
-    "./input": "./dist/input/index.js",
-    "./menu": "./dist/menu/index.js",
-    "./pill": "./dist/pill/index.js",
-    "./popover": "./dist/popover/index.js",
-    "./portal": "./dist/portal/index.js",
-    "./progress/circular-progress-indicator": "./dist/progress/circular-progress-indicator.js",
-    "./scrollarea": "./dist/scrollarea/index.js",
-    "./separator": "./dist/separator/index.js",
-    "./skeleton": "./dist/skeleton/index.js",
-    "./switch": "./dist/switch/index.js",
-    "./tab-navigation": "./dist/tab-navigation/index.js",
-    "./table": "./dist/table/index.js",
-    "./tabs": "./dist/tabs/index.js",
-    "./toast": "./dist/toast/index.js",
-    "./toolbar": "./dist/toolbar/index.js",
-    "./tooltip": "./dist/tooltip/index.js",
-    "./tour": "./dist/tour/index.js",
-    "./utils": "./dist/utils/index.js",
-    "./video-player": "./dist/video-player/index.js",
+    "./accordion": {
+      "development": "./src/accordion/index.ts",
+      "default": "./dist/accordion/index.js"
+    },
+    "./animated-counter": {
+      "development": "./src/animated-counter/index.ts",
+      "default": "./dist/animated-counter/index.js"
+    },
+    "./avatar": {
+      "development": "./src/avatar/index.ts",
+      "default": "./dist/avatar/index.js"
+    },
+    "./badge": {
+      "development": "./src/badge/index.ts",
+      "default": "./dist/badge/index.js"
+    },
+    "./banner": {
+      "development": "./src/banner/index.ts",
+      "default": "./dist/banner/index.js"
+    },
+    "./button": {
+      "development": "./src/button/index.ts",
+      "default": "./dist/button/index.js"
+    },
+    "./calendar": {
+      "development": "./src/calendar/index.ts",
+      "default": "./dist/calendar/index.js"
+    },
+    "./card": {
+      "development": "./src/card/index.ts",
+      "default": "./dist/card/index.js"
+    },
+    "./charts/area-chart": {
+      "development": "./src/charts/area-chart/index.ts",
+      "default": "./dist/charts/area-chart/index.js"
+    },
+    "./charts/bar-chart": {
+      "development": "./src/charts/bar-chart/index.ts",
+      "default": "./dist/charts/bar-chart/index.js"
+    },
+    "./charts/line-chart": {
+      "development": "./src/charts/line-chart/index.ts",
+      "default": "./dist/charts/line-chart/index.js"
+    },
+    "./charts/pie-chart": {
+      "development": "./src/charts/pie-chart/index.ts",
+      "default": "./dist/charts/pie-chart/index.js"
+    },
+    "./charts/radar-chart": {
+      "development": "./src/charts/radar-chart/index.ts",
+      "default": "./dist/charts/radar-chart/index.js"
+    },
+    "./charts/scatter-chart": {
+      "development": "./src/charts/scatter-chart/index.ts",
+      "default": "./dist/charts/scatter-chart/index.js"
+    },
+    "./charts/tree-map": {
+      "development": "./src/charts/tree-map/index.ts",
+      "default": "./dist/charts/tree-map/index.js"
+    },
+    "./code-editor": {
+      "development": "./src/code-editor/index.ts",
+      "default": "./dist/code-editor/index.js"
+    },
+    "./collapsible": {
+      "development": "./src/collapsible/index.ts",
+      "default": "./dist/collapsible/index.js"
+    },
+    "./combobox": {
+      "development": "./src/combobox/index.ts",
+      "default": "./dist/combobox/index.js"
+    },
+    "./command": {
+      "development": "./src/command/index.ts",
+      "default": "./dist/command/index.js"
+    },
+    "./context-menu": {
+      "development": "./src/context-menu/index.ts",
+      "default": "./dist/context-menu/index.js"
+    },
+    "./dialog": {
+      "development": "./src/dialog/index.ts",
+      "default": "./dist/dialog/index.js"
+    },
+    "./domain/intake-form": {
+      "development": "./src/domain/intake-form/index.ts",
+      "default": "./dist/domain/intake-form/index.js"
+    },
+    "./emoji-icon-picker": {
+      "development": "./src/emoji-icon-picker/index.ts",
+      "default": "./dist/emoji-icon-picker/index.js"
+    },
+    "./emoji-reaction": {
+      "development": "./src/emoji-reaction/index.ts",
+      "default": "./dist/emoji-reaction/index.js"
+    },
+    "./empty-state": {
+      "development": "./src/empty-state/index.ts",
+      "default": "./dist/empty-state/index.js"
+    },
+    "./icon-button": {
+      "development": "./src/icon-button/index.ts",
+      "default": "./dist/icon-button/index.js"
+    },
+    "./icons": {
+      "development": "./src/icons/index.ts",
+      "default": "./dist/icons/index.js"
+    },
+    "./input": {
+      "development": "./src/input/index.ts",
+      "default": "./dist/input/index.js"
+    },
+    "./menu": {
+      "development": "./src/menu/index.ts",
+      "default": "./dist/menu/index.js"
+    },
+    "./pill": {
+      "development": "./src/pill/index.ts",
+      "default": "./dist/pill/index.js"
+    },
+    "./popover": {
+      "development": "./src/popover/index.ts",
+      "default": "./dist/popover/index.js"
+    },
+    "./portal": {
+      "development": "./src/portal/index.ts",
+      "default": "./dist/portal/index.js"
+    },
+    "./progress/circular-progress-indicator": {
+      "development": "./src/progress/circular-progress-indicator.tsx",
+      "default": "./dist/progress/circular-progress-indicator.js"
+    },
+    "./scrollarea": {
+      "development": "./src/scrollarea/index.ts",
+      "default": "./dist/scrollarea/index.js"
+    },
+    "./separator": {
+      "development": "./src/separator/index.ts",
+      "default": "./dist/separator/index.js"
+    },
+    "./skeleton": {
+      "development": "./src/skeleton/index.ts",
+      "default": "./dist/skeleton/index.js"
+    },
+    "./switch": {
+      "development": "./src/switch/index.ts",
+      "default": "./dist/switch/index.js"
+    },
+    "./tab-navigation": {
+      "development": "./src/tab-navigation/index.ts",
+      "default": "./dist/tab-navigation/index.js"
+    },
+    "./table": {
+      "development": "./src/table/index.ts",
+      "default": "./dist/table/index.js"
+    },
+    "./tabs": {
+      "development": "./src/tabs/index.ts",
+      "default": "./dist/tabs/index.js"
+    },
+    "./toast": {
+      "development": "./src/toast/index.ts",
+      "default": "./dist/toast/index.js"
+    },
+    "./toolbar": {
+      "development": "./src/toolbar/index.ts",
+      "default": "./dist/toolbar/index.js"
+    },
+    "./tooltip": {
+      "development": "./src/tooltip/index.ts",
+      "default": "./dist/tooltip/index.js"
+    },
+    "./tour": {
+      "development": "./src/tour/index.ts",
+      "default": "./dist/tour/index.js"
+    },
+    "./utils": {
+      "development": "./src/utils/index.ts",
+      "default": "./dist/utils/index.js"
+    },
+    "./video-player": {
+      "development": "./src/video-player/index.ts",
+      "default": "./dist/video-player/index.js"
+    },
     "./package.json": "./package.json",
     ".": {
       "style": "./dist/styles/index.css"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      "./accordion": "./dist/accordion/index.js",
+      "./animated-counter": "./dist/animated-counter/index.js",
+      "./avatar": "./dist/avatar/index.js",
+      "./badge": "./dist/badge/index.js",
+      "./banner": "./dist/banner/index.js",
+      "./button": "./dist/button/index.js",
+      "./calendar": "./dist/calendar/index.js",
+      "./card": "./dist/card/index.js",
+      "./charts/area-chart": "./dist/charts/area-chart/index.js",
+      "./charts/bar-chart": "./dist/charts/bar-chart/index.js",
+      "./charts/line-chart": "./dist/charts/line-chart/index.js",
+      "./charts/pie-chart": "./dist/charts/pie-chart/index.js",
+      "./charts/radar-chart": "./dist/charts/radar-chart/index.js",
+      "./charts/scatter-chart": "./dist/charts/scatter-chart/index.js",
+      "./charts/tree-map": "./dist/charts/tree-map/index.js",
+      "./code-editor": "./dist/code-editor/index.js",
+      "./collapsible": "./dist/collapsible/index.js",
+      "./combobox": "./dist/combobox/index.js",
+      "./command": "./dist/command/index.js",
+      "./context-menu": "./dist/context-menu/index.js",
+      "./dialog": "./dist/dialog/index.js",
+      "./domain/intake-form": "./dist/domain/intake-form/index.js",
+      "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
+      "./emoji-reaction": "./dist/emoji-reaction/index.js",
+      "./empty-state": "./dist/empty-state/index.js",
+      "./icon-button": "./dist/icon-button/index.js",
+      "./icons": "./dist/icons/index.js",
+      "./input": "./dist/input/index.js",
+      "./menu": "./dist/menu/index.js",
+      "./pill": "./dist/pill/index.js",
+      "./popover": "./dist/popover/index.js",
+      "./portal": "./dist/portal/index.js",
+      "./progress/circular-progress-indicator": "./dist/progress/circular-progress-indicator.js",
+      "./scrollarea": "./dist/scrollarea/index.js",
+      "./separator": "./dist/separator/index.js",
+      "./skeleton": "./dist/skeleton/index.js",
+      "./switch": "./dist/switch/index.js",
+      "./tab-navigation": "./dist/tab-navigation/index.js",
+      "./table": "./dist/table/index.js",
+      "./tabs": "./dist/tabs/index.js",
+      "./toast": "./dist/toast/index.js",
+      "./toolbar": "./dist/toolbar/index.js",
+      "./tooltip": "./dist/tooltip/index.js",
+      "./tour": "./dist/tour/index.js",
+      "./utils": "./dist/utils/index.js",
+      "./video-player": "./dist/video-player/index.js",
+      "./package.json": "./package.json",
+      ".": {
+        "style": "./dist/styles/index.css"
+      }
     }
   },
   "scripts": {

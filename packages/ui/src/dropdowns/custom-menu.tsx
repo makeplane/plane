@@ -194,6 +194,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
         document.removeEventListener("mousedown", handleDocumentClick, useCaptureForOutsideClick);
       };
     }
+    return undefined;
   }, [isOpen, closeDropdown, useCaptureForOutsideClick]);
 
   let menuItems = (
@@ -366,6 +367,7 @@ function SubMenu(props: ICustomSubMenuProps) {
     if (menuContext) {
       return menuContext.registerSubmenu(closeSubmenu);
     }
+    return undefined;
   }, [menuContext, closeSubmenu]);
 
   const toggleSubmenu = () => {

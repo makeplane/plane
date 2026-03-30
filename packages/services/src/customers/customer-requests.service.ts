@@ -15,15 +15,10 @@ import { API_BASE_URL } from "@plane/constants";
 import type { TBaseIssue, TCustomerRequestCreateResponse, TCustomerRequest } from "@plane/types";
 // services
 import { APIService } from "../api.service";
-import { FileUploadService } from "../file/file-upload.service";
 
 export class CustomerRequestsService extends APIService {
-  private fileUploadService: FileUploadService;
-
   constructor() {
     super(API_BASE_URL);
-    // upload service
-    this.fileUploadService = new FileUploadService();
   }
 
   /**

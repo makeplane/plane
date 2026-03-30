@@ -5,7 +5,6 @@ export default defineConfig({
   outDir: "dist",
   format: ["esm"],
   dts: false,
-  clean: true,
   sourcemap: false,
   exports: { legacy: true },
   platform: "node",

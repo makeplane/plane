@@ -2,6 +2,7 @@
   "name": "plane-runner-host",
   "version": "2.3.0",
   "description": "Plane Runner Host for executing isolated JS/TS scripts",
+  "type": "module",
   "main": "dist/index.mjs",
   "scripts": {
     "build": "tsdown",
@@ -25,6 +26,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "tsdown": "catalog:",

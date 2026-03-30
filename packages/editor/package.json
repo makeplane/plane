@@ -12,14 +12,27 @@
   ],
   "license": "AGPL-3.0",
   "type": "module",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "style": "./dist/styles/index.css"
+      "style": "./dist/styles/index.css",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
     },
-    "./lib": "./dist/lib.js",
+    "./lib": {
+      "development": "./src/lib.ts",
+      "default": "./dist/lib.js"
+    },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "style": "./dist/styles/index.css",
+        "import": "./dist/index.js"
+      },
+      "./lib": "./dist/lib.js",
+      "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "build": "tsdown",
@@ -107,7 +120,7 @@
   },
   "peerDependencies": {
     "nanoid": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
   }
 }

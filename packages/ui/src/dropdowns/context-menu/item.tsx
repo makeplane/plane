@@ -76,6 +76,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
     if (contextMenuContext && hasNestedItems) {
       return contextMenuContext.registerSubmenu(closeNestedMenu);
     }
+    return undefined;
   }, [contextMenuContext, hasNestedItems, closeNestedMenu]);
 
   const handleItemClick = (e: React.MouseEvent) => {
@@ -155,6 +156,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
         menuElement.removeEventListener("keydown", handleKeyDown);
       };
     }
+    return undefined;
   }, [isNestedOpen, activeNestedIndex, renderedNestedItems, hasNestedItems, closeNestedMenu]);
 
   if (item.shouldRender === false) return null;

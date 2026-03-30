@@ -19,7 +19,6 @@ import type {
   TDashboard,
   TDashboardWidgetsLayoutPayload,
   TDashboardWidgetData,
-  TExternalDashboardWidgetFilterExpression,
   TWorkItemFilterExpression,
 } from "@plane/types";
 import { APIService } from "../api.service";

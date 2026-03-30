@@ -14,7 +14,8 @@
 /* oxlint-disable @typescript-eslint/no-misused-promises */
 
 import * as walk from "acorn-walk";
-import express, { Request, Response } from "express";
+import express from "express";
+import type { Request, Response } from "express";
 import { tsParser } from "./ts-parser";
 import type { ASTNode } from "./ts-parser";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "fs";

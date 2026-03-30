@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": [".npmrc", ".oxfmtrc.json", ".oxlintrc.json"],
+  "globalDependencies": [".npmrc", ".oxfmtrc.json", "eslint.config.mjs"],
   "globalEnv": [
     "API_BASE_URL",
     "APP_BASE_URL",
@@ -63,7 +63,7 @@
     "AWS_SECRET_CACHE_TTL"
   ],
   "remoteCache": {
-    "apiUrl": "https://turbo-remote-cache.plane.town",
+    "apiUrl": "https://turborepo-remote-cache.vamsi-906.workers.dev",
     "enabled": true,
     "signature": true,
     "teamSlug": "plane"
@@ -82,13 +82,14 @@
       "dependsOn": ["check:format", "check:lint", "check:types"]
     },
     "check:format": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": []
     },
     "check:lint": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": []
+      "outputs": ["node_modules/.cache/eslint/**"]
     },
     "check:types": {
       "dependsOn": ["^build"],
@@ -102,9 +103,6 @@
       "cache": false,
       "dependsOn": ["^build"],
       "persistent": true
-    },
-    "diagnose": {
-      "cache": false
     },
     "fix": {
       "cache": false,

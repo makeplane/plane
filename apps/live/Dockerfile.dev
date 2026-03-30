@@ -4,7 +4,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY . .
-RUN corepack enable pnpm && pnpm add -g turbo
+ARG TURBO_VERSION=2.8.21
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 RUN pnpm install
 EXPOSE 3003
 

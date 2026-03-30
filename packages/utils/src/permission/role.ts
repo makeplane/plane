@@ -23,6 +23,8 @@ export const getUserRole = (role: EUserPermissions | EUserWorkspaceRoles | EUser
       return "MEMBER";
     case EUserPermissions.ADMIN:
       return "ADMIN";
+    default:
+      return undefined;
   }
 };
 

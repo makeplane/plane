@@ -206,6 +206,7 @@ function ContextMenuWithoutPortal(props: ContextMenuProps) {
         document.removeEventListener("mousedown", handleDocumentClick, true);
       };
     }
+    return undefined;
   }, [isOpen, handleClose]);
 
   return (

@@ -1,4 +1,5 @@
 {
+  "extends": "@plane/typescript-config/react-router.json",
   "compilerOptions": {
     "composite": false,
     "rootDirs": [".", "./.react-router/types"],
@@ -23,6 +24,5 @@
     "noImplicitOverride": false,
     "types": ["vite/client"]
   },
-  "extends": "@plane/typescript-config/react-router.json",
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"]
 }

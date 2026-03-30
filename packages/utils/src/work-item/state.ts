@@ -60,4 +60,6 @@ export const getCurrentStateSequence = (
     }
     return (currentStateSequence + nextStateSequence) / 2;
   }
+
+  return defaultSequence;
 };

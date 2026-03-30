@@ -9,7 +9,7 @@ import { joinUrlPath } from "@plane/utils";
 
 const require = createRequire(import.meta.url);
 
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(import.meta.dirname, ".env") });
 
 // Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
@@ -29,7 +29,11 @@ export default defineConfig(() => ({
   build: {
     assetsInlineLimit: 0,
   },
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
+  plugins: [
+    tailwindcss(),
+    reactRouter(),
+    tsconfigPaths({ projects: [path.resolve(import.meta.dirname, "tsconfig.json")] }),
+  ],
   resolve: {
     alias: {
       "@atlaskit/pragmatic-drag-and-drop/combine":
@@ -41,8 +45,8 @@ export default defineConfig(() => ({
       "@atlaskit/pragmatic-drag-and-drop/private/get-element-from-point-without-honey-pot":
         require.resolve("@atlaskit/pragmatic-drag-and-drop/dist/esm/entry-point/private/get-element-from-point-without-honey-pot.js"),
       // Next.js compatibility shims used within space
-      "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
-      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
+      "next/link": path.resolve(import.meta.dirname, "app/compat/next/link.tsx"),
+      "next/navigation": path.resolve(import.meta.dirname, "app/compat/next/navigation.ts"),
     },
     dedupe: ["react", "react-dom"],
   },

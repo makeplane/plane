@@ -7,7 +7,6 @@
   "type": "module",
   "main": "./dist/start.mjs",
   "module": "./dist/start.mjs",
-  "types": "./dist/start.d.mts",
   "exports": {
     ".": "./dist/start.mjs",
     "./package.json": "./package.json"
@@ -87,5 +86,8 @@
     "typescript": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"
+  },
+  "inlinedDependencies": {
+    "bluebird": "3.7.2"
   }
 }

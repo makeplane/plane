@@ -10,20 +10,77 @@
   ],
   "type": "module",
   "exports": {
-    "./asana": "./dist/asana/index.js",
-    "./bitbucket": "./dist/bitbucket/index.js",
-    "./clickup": "./dist/clickup/index.js",
-    "./confluence": "./dist/confluence/index.js",
-    "./core": "./dist/core/index.js",
-    "./flatfile": "./dist/flatfile/index.js",
-    "./github": "./dist/github/index.js",
-    "./gitlab": "./dist/gitlab/index.js",
-    "./jira": "./dist/jira/index.js",
-    "./jira-server": "./dist/jira-server/index.js",
-    "./linear": "./dist/linear/index.js",
-    "./sentry": "./dist/sentry/index.js",
-    "./slack": "./dist/slack/index.js",
+    "./asana": {
+      "development": "./src/asana/index.ts",
+      "default": "./dist/asana/index.js"
+    },
+    "./bitbucket": {
+      "development": "./src/bitbucket/index.ts",
+      "default": "./dist/bitbucket/index.js"
+    },
+    "./clickup": {
+      "development": "./src/clickup/index.ts",
+      "default": "./dist/clickup/index.js"
+    },
+    "./confluence": {
+      "development": "./src/confluence/index.ts",
+      "default": "./dist/confluence/index.js"
+    },
+    "./core": {
+      "development": "./src/core/index.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./flatfile": {
+      "development": "./src/flatfile/index.ts",
+      "default": "./dist/flatfile/index.js"
+    },
+    "./github": {
+      "development": "./src/github/index.ts",
+      "default": "./dist/github/index.js"
+    },
+    "./gitlab": {
+      "development": "./src/gitlab/index.ts",
+      "default": "./dist/gitlab/index.js"
+    },
+    "./jira": {
+      "development": "./src/jira/index.ts",
+      "default": "./dist/jira/index.js"
+    },
+    "./jira-server": {
+      "development": "./src/jira-server/index.ts",
+      "default": "./dist/jira-server/index.js"
+    },
+    "./linear": {
+      "development": "./src/linear/index.ts",
+      "default": "./dist/linear/index.js"
+    },
+    "./sentry": {
+      "development": "./src/sentry/index.ts",
+      "default": "./dist/sentry/index.js"
+    },
+    "./slack": {
+      "development": "./src/slack/index.ts",
+      "default": "./dist/slack/index.js"
+    },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      "./asana": "./dist/asana/index.js",
+      "./bitbucket": "./dist/bitbucket/index.js",
+      "./clickup": "./dist/clickup/index.js",
+      "./confluence": "./dist/confluence/index.js",
+      "./core": "./dist/core/index.js",
+      "./flatfile": "./dist/flatfile/index.js",
+      "./github": "./dist/github/index.js",
+      "./gitlab": "./dist/gitlab/index.js",
+      "./jira": "./dist/jira/index.js",
+      "./jira-server": "./dist/jira-server/index.js",
+      "./linear": "./dist/linear/index.js",
+      "./sentry": "./dist/sentry/index.js",
+      "./slack": "./dist/slack/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "build": "tsdown",
@@ -63,6 +120,7 @@
     "@types/papaparse": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
