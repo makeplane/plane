@@ -13,11 +13,7 @@ export const useDraftStateTransition = () => {
 
   // currentStateGroup: pass the already-reactive stateDetails?.group from the component to avoid
   // a stale/undefined lookup when getStateById is called outside a MobX tracked context.
-  const validateTransition = (
-    issue: TIssue,
-    newStateId: string,
-    currentStateGroup?: string
-  ): ValidationResult => {
+  const validateTransition = (issue: TIssue, newStateId: string, currentStateGroup?: string): ValidationResult => {
     const group = currentStateGroup ?? getStateById(issue.state_id ?? "")?.group;
     const newState = getStateById(newStateId);
 
@@ -44,10 +40,6 @@ export const useDraftStateTransition = () => {
     if (!issue.frequency) {
       missingFieldKeys.push("frequency");
       missingFieldLabels.push(t("common.frequency"));
-    }
-    if (!issue.module_ids?.length) {
-      missingFieldKeys.push("module_ids");
-      missingFieldLabels.push(t("common.modules"));
     }
 
     return { missingFieldKeys, missingFieldLabels };

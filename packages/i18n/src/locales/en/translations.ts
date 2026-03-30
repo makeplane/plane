@@ -506,7 +506,6 @@ export default {
   state_is_required: "State is required",
   priority_is_required: "Priority is required",
   assignee_is_required: "Assignee is required",
-  module_is_required: "Module is required",
   label_is_required: "Label is required",
   start_date_is_required: "Start date is required",
   due_date_is_required: "Due date is required",
