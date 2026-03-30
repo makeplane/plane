@@ -19,8 +19,11 @@ import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-stat
 import { EProjectLayouts } from "@/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectCard } from "./card";
+import { useParams } from "react-router";
 
 export const BaseProjectRoot = observer(function BaseProjectRoot() {
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectById } = useProject();
   const { getFilteredProjectsByLayout } = useProjectFilter();
@@ -34,8 +37,8 @@ export const BaseProjectRoot = observer(function BaseProjectRoot() {
           {filteredProjectIds &&
             filteredProjectIds.map((projectId) => {
               const projectDetails = getProjectById(projectId);
-              if (!projectDetails) return;
-              return <ProjectCard key={projectDetails.id} project={projectDetails} />;
+              if (!projectDetails || !workspaceSlug) return;
+              return <ProjectCard key={projectDetails.id} project={projectDetails} workspaceSlug={workspaceSlug} />;
             })}
         </div>
       </ContentWrapper>

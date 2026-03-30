@@ -37,6 +37,7 @@ function InitiativeScopePage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, initiativeId } = params;
+
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -97,7 +98,6 @@ function InitiativeScopePage({ params }: Route.ComponentProps) {
           })
       : null
   );
-
   return (
     <>
       <PageHead title={pageTitle} />

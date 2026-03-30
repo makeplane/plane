@@ -44,14 +44,16 @@ export const ProjectEpicsEmptyState = observer(function ProjectEpicsEmptyState()
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
-      <CreateUpdateEpicModal
-        isOpen={isCreateIssueModalOpen}
-        onClose={() => setIsCreateIssueModalOpen(false)}
-        data={{
-          project_id: projectId.toString(),
-          type_id: projectEpicId,
-        }}
-      />
+      {projectId && (
+        <CreateUpdateEpicModal
+          isOpen={isCreateIssueModalOpen}
+          onClose={() => setIsCreateIssueModalOpen(false)}
+          data={{
+            project_id: projectId,
+            type_id: projectEpicId,
+          }}
+        />
+      )}
       <EmptyStateDetailed
         assetKey="epic"
         title={t("project_empty_state.epics.title")}

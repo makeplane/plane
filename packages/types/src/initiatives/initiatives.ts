@@ -14,6 +14,9 @@
 import type { TBaseLayoutType } from "../base-layouts";
 import type { TFileSignedURLResponse } from "../file";
 import type { EIssueLayoutTypes } from "../issues/base";
+import type { TFilterExpression, TFilterValue } from "../rich-filters/expression";
+import type { LOGICAL_OPERATOR } from "../rich-filters/operators";
+import type { TWorkItemFilterProperty, TWorkItemFilterExpression } from "../view-props";
 
 export enum EInitiativeNavigationItem {
   OVERVIEW = "overview",
@@ -65,9 +68,15 @@ export const INITIATIVE_SCOPE_TABS = {
 } as const;
 export type TInitiativeScopeTab = (typeof INITIATIVE_SCOPE_TABS)[keyof typeof INITIATIVE_SCOPE_TABS];
 
+// Grouping options for board layout
+export type TInitiativeScopeEpicGroupBy = "state_groups" | "priority" | "assignees" | "none" | undefined;
+export type TInitiativeScopeProjectGroupBy = "states" | "state_groups" | "priority" | "lead" | "none" | undefined;
+
 export interface IInitiativeScopeDisplayFiltersOptions {
   activeLayout: EIssueLayoutTypes;
   activeTab: TInitiativeScopeTab;
+  epicGroupBy?: TInitiativeScopeEpicGroupBy;
+  projectGroupBy?: TInitiativeScopeProjectGroupBy;
 }
 
 export type TInitiativeStates = "DRAFT" | "PLANNED" | "ACTIVE" | "COMPLETED" | "CLOSED";
@@ -80,3 +89,43 @@ export type TInitiativeDisplayFilters = {
 
 export type TInitiativeGroupByOptions = "lead" | "created_by" | "state" | "label_ids" | undefined;
 export type TInitiativeOrderByOptions = "-updated_at" | "-created_at";
+
+// ---------------------------------------------------------------------------
+// Initiative scope – epic filter types
+// ---------------------------------------------------------------------------
+
+export type TInitiativeScopeEpicFilterKeys = TWorkItemFilterProperty;
+export type TInitiativeScopeEpicFilterExpression = TWorkItemFilterExpression;
+
+// ---------------------------------------------------------------------------
+// Initiative scope – project filter types
+// ---------------------------------------------------------------------------
+
+export type TInitiativeScopeProjectFilterKeys = "lead" | "start_date" | "target_date" | "state_id" | "priority";
+
+export type TExternalProjectFilterAndGroup = {
+  [LOGICAL_OPERATOR.AND]: TExternalProjectFilterExpression[];
+};
+
+export type TExternalProjectFilterOrGroup = {
+  [LOGICAL_OPERATOR.OR]: TExternalProjectFilterExpression[];
+};
+
+export type TExternalProjectFilterNotGroup = {
+  [LOGICAL_OPERATOR.NOT]: TExternalProjectFilterExpression;
+};
+
+export type TExternalProjectFilterGroup =
+  | TExternalProjectFilterAndGroup
+  | TExternalProjectFilterOrGroup
+  | TExternalProjectFilterNotGroup;
+
+export type TExternalProjectFilterExpressionData =
+  | {
+      [key in TInitiativeScopeProjectFilterKeys]?: TFilterValue;
+    }
+  | TExternalProjectFilterGroup;
+
+export type TExternalProjectFilterExpression = TExternalProjectFilterExpressionData;
+
+export type TInternalProjectFilterExpression = TFilterExpression<TInitiativeScopeProjectFilterKeys>;

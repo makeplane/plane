@@ -92,7 +92,7 @@ export interface IInitiativeStore {
   setLastCollapsibleAction: (section: InitiativeCollapsible) => void;
   toggleOpenCollapsibleSection: (section: InitiativeCollapsible) => void;
   toggleProjectsModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
+  toggleEpicModal: (value?: boolean, initiativeContext?: TPeekInitiative) => Promise<void>;
   toggleDeleteAttachmentModal: (value?: boolean) => void;
   toggleInitiativeModal: (value?: string | null) => void;
   setPeekInitiative: (peekInitiative: TPeekInitiative | undefined) => void;
@@ -349,6 +349,30 @@ export class InitiativeStore implements IInitiativeStore {
     }
   };
 
+  /**
+   * When merging list response into the map, preserve detail-only fields (e.g. epic_ids)
+   * from the existing entry if the list item doesn't have them. Avoids losing selection
+   * when list fetch completes after detail fetch on refresh.
+   */
+  private mergeInitiativeFromList(
+    map: Record<string, TInitiative>,
+    initiative: TInitiative,
+    existingMap: Record<string, TInitiative> | undefined
+  ): void {
+    const existing = existingMap?.[initiative.id];
+    if (!existing) {
+      map[initiative.id] = initiative;
+      return;
+    }
+    map[initiative.id] = {
+      ...initiative,
+      // Preserve detail-only fields from the cached entry when the list response
+      // omits them (list fetch can arrive after a detail fetch on refresh).
+      epic_ids: initiative.epic_ids?.length ? initiative.epic_ids : existing.epic_ids,
+      project_ids: initiative.project_ids?.length ? initiative.project_ids : existing.project_ids,
+    };
+  }
+
   fetchInitiatives = async (
     workspaceSlug: string,
     filters?: TExternalInitiativeFilterExpression
@@ -356,16 +380,16 @@ export class InitiativeStore implements IInitiativeStore {
     try {
       runInAction(() => {
         this.initiativesLoader = true;
-        this.initiativesMap = undefined;
       });
 
       const response = await this.initiativeService.getInitiatives(workspaceSlug, filters);
 
       runInAction(() => {
+        const existingMap = this.initiativesMap;
         this.initiativesMap = {};
         response.forEach((initiative) => {
           if (!initiative) return;
-          this.initiativesMap![initiative.id] = initiative;
+          this.mergeInitiativeFromList(this.initiativesMap!, initiative, existingMap);
         });
         this.initiativesLoader = false;
       });
@@ -490,12 +514,15 @@ export class InitiativeStore implements IInitiativeStore {
         this.initiativesMap[response.id] = response;
       });
 
+      if (response?.epic_ids?.length) {
+        await this.scope.epics.fetchInitiativeEpicsDetail(workspaceSlug, initiativeId);
+      }
+
       this.initiativeLinks.fetchInitiativeLinks(workspaceSlug, initiativeId);
       this.initiativeAttachments.fetchAttachments(workspaceSlug, initiativeId);
       this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchInitiativeComments(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
-      this.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
       return response;
     } catch (error) {
       console.error("error while fetching initiative details", error);
@@ -646,7 +673,26 @@ export class InitiativeStore implements IInitiativeStore {
 
   toggleInitiativeModal = (value?: string | null) => (this.isInitiativeModalOpen = value ?? null);
   toggleProjectsModal = (value?: boolean) => (this.isProjectsModalOpen = value ?? !this.isProjectsModalOpen);
-  toggleEpicModal = (value?: boolean) => (this.isEpicModalOpen = value ?? !this.isEpicModalOpen);
+  toggleEpicModal = async (value?: boolean, initiativeContext?: TPeekInitiative) => {
+    if (value === false) {
+      runInAction(() => {
+        this.isEpicModalOpen = false;
+      });
+      return;
+    }
+
+    if (initiativeContext) {
+      await this.scope.epics.fetchInitiativeEpicsDetail(
+        initiativeContext.workspaceSlug,
+        initiativeContext.initiativeId
+      );
+    }
+
+    runInAction(() => {
+      this.isEpicModalOpen = value ?? !this.isEpicModalOpen;
+    });
+  };
+
   toggleDeleteAttachmentModal = (value?: boolean) =>
     (this.isAttachmentDeleteModalOpen = value ?? !this.isAttachmentDeleteModalOpen);
   setPeekInitiative = (peekInitiative: TPeekInitiative | undefined) => (this.peekInitiative = peekInitiative);

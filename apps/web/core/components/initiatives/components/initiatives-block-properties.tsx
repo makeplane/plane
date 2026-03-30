@@ -22,9 +22,8 @@ import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiative } from "@/types/initiative";
-// ee components
-import { EpicsDropdown } from "../../dropdowns/epics";
 // local components
+import { InitiativeEpicsField } from "./initiative-epics-field";
 import { InitiativeDateRangeDropdown } from "./initiative-date-range-dropdown";
 import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";
 import { PropertyBlockWrapper } from "./property-block-wrapper";
@@ -126,15 +125,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
       </PropertyBlockWrapper>
       {/* epics */}
       <PropertyBlockWrapper>
-        <EpicsDropdown
-          buttonContainerClassName="truncate max-w-40"
-          value={initiative.epic_ids ?? []}
-          onChange={handleEpicChange}
-          searchParams={{}}
-          multiple
-          buttonVariant="border-with-text"
-          showTooltip
-        />
+        <InitiativeEpicsField initiative={initiative} workspaceSlug={workspaceSlug} onEpicsUpdated={handleEpicChange} />
       </PropertyBlockWrapper>
       {/*  lead */}
       <PropertyBlockWrapper>

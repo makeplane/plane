@@ -35,6 +35,7 @@ import type {
   TIssuesResponse,
   TLink,
   TSearchEntityRequestPayload,
+  TPaginatedResponse,
   TSearchResponse,
   TSearchResults,
   TWidgetEntityData,
@@ -503,7 +504,7 @@ export class WorkspaceService extends APIService {
   async fetchWorkspaceEpics(
     workspaceSlug: string,
     params: TWorkspaceEpicsSearchParams
-  ): Promise<ISearchIssueResponse[]> {
+  ): Promise<TPaginatedResponse<ISearchIssueResponse[]>> {
     return this.get(`/api/workspaces/${workspaceSlug}/epics/`, { params }).then((response) => response?.data);
   }
 

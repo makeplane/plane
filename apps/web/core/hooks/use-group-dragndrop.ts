@@ -34,6 +34,7 @@ type DNDStoreType =
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.EPIC
+  | EIssuesStoreType.INITIATIVE_EPIC
   | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS
   | EIssuesStoreType.GLOBAL;
 

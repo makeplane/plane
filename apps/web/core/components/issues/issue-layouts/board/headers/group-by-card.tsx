@@ -139,12 +139,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         />
       )}
       <div
-        className={`relative flex flex-shrink-0 gap-1 py-1.5 ${
-          verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
+        className={`relative flex shrink-0 gap-1 ${
+          verticalAlignPosition ? `flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex size-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
-          {icon ? icon : <Circle width={14} strokeWidth={2} />}
+        <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-xs">
+          {icon ? icon : <Circle width={16} strokeWidth={2} />}
         </div>
 
         <div
@@ -153,7 +153,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           }`}
         >
           <div
-            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary ${
+            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary text-body-sm-medium ${
               verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
             }`}
           >
@@ -168,7 +168,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
         {group_by === "state" && <WorkFlowGroupTree groupId={column_id} typeId={issuePayload.type_id} />}
 
-        {sub_group_by === null && (
+        {!sub_group_by && (
           <button
             className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover bg-layer-transparent"
             onClick={() => handleCollapsedGroups("group_by", column_id)}

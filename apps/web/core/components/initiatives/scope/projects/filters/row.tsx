@@ -12,13 +12,11 @@
  */
 
 import { RichFiltersRow } from "@/components/rich-filters/filters-row";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
-import type { IWorkItemFilterInstance } from "@plane/shared-state";
 import { INITIATIVE_SCOPE_TABS } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { observer } from "mobx-react";
 import { useInitiativeScopeProjectFilter } from "./context-project-filter";
-import { useInitiativeScopeShared } from "./context-shared";
+import { useInitiativeScopeShared } from "../../context-shared";
 
 export const InitiativeScopeProjectFiltersRow = observer(function InitiativeScopeProjectFiltersRow() {
   const { activeTab } = useInitiativeScopeShared();
@@ -46,13 +44,4 @@ export const InitiativeScopeProjectFiltersRow = observer(function InitiativeScop
       }}
     />
   );
-});
-
-export const InitiativeScopeEpicFiltersRow = observer(function InitiativeScopeEpicFiltersRow({
-  epicFilterInstance,
-}: {
-  epicFilterInstance: IWorkItemFilterInstance["richFiltersInstance"];
-}) {
-  if (!epicFilterInstance) return null;
-  return <WorkItemFiltersRow filter={epicFilterInstance} />;
 });

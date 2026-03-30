@@ -39,10 +39,23 @@ type Props = {
   setJoinProjectModal: (value: boolean) => void;
   setArchiveRestoreProject: (value: boolean) => void;
   setDeleteProjectModal: (value: boolean) => void;
+  /** When "scope", hide archive/delete/settings from the menu */
+  menuVariant?: "full" | "scope";
+  /** Extra menu items appended after the built-in ones */
+  additionalMenuItems?: TContextMenuItem[];
 };
 
+const SCOPE_HIDDEN_MENU_KEYS = ["restore", "delete", "Archive", "settings"];
+
 export const Details = observer(function Details(props: Props) {
-  const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
+  const {
+    project,
+    workspaceSlug,
+    setArchiveRestoreProject,
+    setDeleteProjectModal,
+    menuVariant = "full",
+    additionalMenuItems,
+  } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
@@ -184,21 +197,25 @@ export const Details = observer(function Details(props: Props) {
               placement="bottom-start"
               useCaptureForOutsideClick
             >
-              {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
-                <CustomMenu.MenuItem
-                  key={item.key}
-                  onClick={() => {
-                    item.action();
-                  }}
-                >
-                  <div className="flex items-center justify-start gap-2">
-                    {item.icon && (
-                      <item.icon className={cn("h-3 w-3", item.iconClassName)} iconClassName={item.iconClassName} />
-                    )}
-                    <span>{item.title}</span>
-                  </div>
-                </CustomMenu.MenuItem>
-              ))}
+              {[...MENU_ITEMS, ...(additionalMenuItems ?? [])]
+                .filter(
+                  (item) => item.shouldRender && (menuVariant !== "scope" || !SCOPE_HIDDEN_MENU_KEYS.includes(item.key))
+                )
+                .map((item) => (
+                  <CustomMenu.MenuItem
+                    key={item.key}
+                    onClick={() => {
+                      item.action();
+                    }}
+                  >
+                    <div className="flex items-center justify-start gap-2">
+                      {item.icon && (
+                        <item.icon className={cn("h-3 w-3", item.iconClassName)} iconClassName={item.iconClassName} />
+                      )}
+                      <span>{item.title}</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                ))}
             </CustomMenu>
           )}
 

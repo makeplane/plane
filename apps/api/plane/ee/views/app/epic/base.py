@@ -780,6 +780,9 @@ class WorkspaceEpicEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
+        order_by_param = request.GET.get("order_by", "-created_at")
+        search = request.GET.get("search", None)
+
         initiative_id = request.query_params.get("initiative_id", None)
 
         epics_query = (
@@ -802,6 +805,11 @@ class WorkspaceEpicEndpoint(BaseAPIView):
 
             epics_query = epics_query.exclude(id__in=initiative_epics)
 
+        total_epic_queryset = epics_query
+
+        if search:
+            epics_query = epics_query.filter(Q(name__icontains=search))
+
         epics = (
             epics_query.select_related("workspace", "project", "state", "type")
             .annotate(state_group=F("state__group"))
@@ -817,7 +825,14 @@ class WorkspaceEpicEndpoint(BaseAPIView):
             )
         )
 
-        return Response(epics, status=status.HTTP_200_OK)
+        return self.paginate(
+            order_by=order_by_param,
+            request=request,
+            queryset=epics,
+            on_results=lambda epics: epics,
+            default_per_page=20,
+            total_count_queryset=total_epic_queryset,
+        )
 
 
 class EpicListAnalyticsEndpoint(BaseAPIView):
@@ -840,17 +855,9 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
             # get all the issues of the particular epic
             issue_ids = get_all_related_issues(epic_id)
 
-            completed_issues = (
-                issues.filter(id__in=issue_ids)
-                .filter(state__group="completed")
-                .count()
-            )
+            completed_issues = issues.filter(id__in=issue_ids).filter(state__group="completed").count()
 
-            cancelled_issues = (
-                issues.filter(id__in=issue_ids)
-                .filter(state__group="cancelled")
-                .count()
-            )
+            cancelled_issues = issues.filter(id__in=issue_ids).filter(state__group="cancelled").count()
 
             total_issues = issues.filter(id__in=issue_ids).count()
 

@@ -1908,6 +1908,7 @@ Create a new project instead`,
         heading: "See progress overview for all projects.",
         description:
           "Project States is a Plane-only feature for tracking progress of all your projects by any project property.",
+        go_to_settings: "Go to settings",
       },
       projects: {
         title: "Projects",
@@ -4142,9 +4143,17 @@ if you are sure your search is right. `,
       empty_state: {
         title: "No scope added to this initiative yet",
         description: "Link projects and epics and track that work in this space.",
+        description_projects: "Link projects and track that work in this space.",
+        description_epics: "Link epics and track that work in this space.",
         primary_button: {
           text: "Add scope",
         },
+      },
+      board: {
+        no_epics: "No epics in this initiative",
+        no_projects: "No projects in this initiative",
+        enable_project_states: "Project states not enabled",
+        enable_project_states_description: "Enable project states from workspace settings to use state-based grouping.",
       },
     },
     initiative_settings: {

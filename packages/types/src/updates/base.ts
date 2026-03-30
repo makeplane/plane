@@ -82,4 +82,4 @@ export type TUpdatesCommentIdMap = {
   [update_id: string]: string[];
 };
 
-export type TUpdateEntityType = EUpdateEntityType.EPIC | EUpdateEntityType.PROJECT | EUpdateEntityType.INITIATIVE;
+export type TUpdateEntityType = EUpdateEntityType.EPIC | EUpdateEntityType.PROJECT | EUpdateEntityType.INITIATIVE_EPIC;

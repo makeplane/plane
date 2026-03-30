@@ -38,7 +38,7 @@ export const useEpicUpdates = (workspaceSlug: string, projectId: string, epicId:
   const {
     initiative: {
       scope: {
-        epics: { fetchInitiativeEpics },
+        epics: { fetchIssuesWithExistingPagination },
       },
       fetchInitiativeAnalytics,
     },
@@ -74,7 +74,7 @@ export const useEpicUpdates = (workspaceSlug: string, projectId: string, epicId:
         }, epicId);
         if (pathName.includes("initiatives")) {
           const [workspaceSlug, _, initiativeId] = pathName.replace(/^\/+/, "").split("/");
-          fetchInitiativeEpics(workspaceSlug, initiativeId);
+          fetchIssuesWithExistingPagination(workspaceSlug, initiativeId);
           fetchInitiativeAnalytics(workspaceSlug, initiativeId);
         }
       },

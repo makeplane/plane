@@ -18,6 +18,8 @@ import type { TIssue } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
 import type { IProjectEpics, IProjectEpicsFilter } from "@/store/work-items/epic";
+import type { IInitiativeEpicStore } from "@/store/initiatives/initiative-epics.store";
+import type { IInitiativeEpicsFilterStore } from "@/store/initiatives/initiative-epics-filter.store";
 // types
 import type { ITeamIssues, ITeamIssuesFilter } from "@/store/work-items/team";
 import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/store/work-items/team-project";
@@ -95,6 +97,10 @@ export type TStoreIssues = {
   [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: defaultIssueStore & {
     issues: ITeamProjectWorkItems;
     issuesFilter: ITeamProjectWorkItemsFilter;
+  };
+  [EIssuesStoreType.INITIATIVE_EPIC]: defaultIssueStore & {
+    issues: IInitiativeEpicStore;
+    issuesFilter: IInitiativeEpicsFilterStore;
   };
   [EIssuesStoreType.RELEASE]: defaultIssueStore & {
     issues: IReleaseIssues;
@@ -175,6 +181,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.teamProjectWorkItems,
         issuesFilter: context.issue.teamProjectWorkItemsFilter,
+      }) as TStoreIssues[T];
+    case EIssuesStoreType.INITIATIVE_EPIC:
+      return merge(defaultStore, {
+        issues: context.initiativeStore.scope.epics,
+        issuesFilter: context.initiativeStore.scope.epics.filters,
       }) as TStoreIssues[T];
     case EIssuesStoreType.RELEASE:
       return merge(defaultStore, {

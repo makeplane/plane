@@ -121,5 +121,5 @@ export enum EUpdateStatus {
 export enum EUpdateEntityType {
   PROJECT = "PROJECT",
   EPIC = "EPIC",
-  INITIATIVE = "INITIATIVE",
+  INITIATIVE_EPIC = "INITIATIVE_EPIC",
 }

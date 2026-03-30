@@ -380,6 +380,9 @@ export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
 
 export type TWorkspaceEpicsSearchParams = {
   initiative_id?: string;
+  cursor?: string;
+  page_size?: number;
+  search?: string;
 };
 
 export type TWorkspaceSearchResultItem = {

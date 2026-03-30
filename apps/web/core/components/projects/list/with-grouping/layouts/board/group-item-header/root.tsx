@@ -77,11 +77,11 @@ export const ProjectBoardGroupItemHeader = observer(function ProjectBoardGroupIt
         data={details?.prePopulatedPayload}
       />
       <div
-        className={`relative flex flex-shrink-0 gap-2  ${
-          verticalAlign ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
+        className={`relative flex shrink-0 gap-2  ${
+          verticalAlign ? `flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden">
+        <div className="shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden">
           {details?.icon}
         </div>
 

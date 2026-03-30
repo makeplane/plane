@@ -19,8 +19,8 @@ import type { TInitiativeScopeTab } from "@plane/types";
 import { EGanttBlockType, EUserPermissions, INITIATIVE_SCOPE_TABS } from "@plane/types";
 import { observer } from "mobx-react";
 import { useMemo } from "react";
-import { FlatScopeGanttSidebar } from "../sidebar/root";
-import { getBlockToRender, useTimelineOperations } from "../helper";
+import { FlatScopeGanttSidebar } from "./sidebar/root";
+import { getBlockToRender, useTimelineOperations } from "./helper";
 
 type Props = {
   activeTab: TInitiativeScopeTab;

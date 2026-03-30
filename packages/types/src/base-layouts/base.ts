@@ -17,7 +17,6 @@ import type { ReactNode } from "react";
 
 export interface IBaseLayoutsBaseItem {
   id: string;
-  [key: string]: unknown;
 }
 
 export interface IBaseLayoutsBaseGroup {

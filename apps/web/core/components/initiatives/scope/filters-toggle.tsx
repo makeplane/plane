@@ -15,7 +15,7 @@ import { EIssuesStoreType, INITIATIVE_SCOPE_TABS } from "@plane/types";
 import { observer } from "mobx-react";
 import { FiltersToggle } from "@/components/rich-filters/filters-toggle";
 import { useInitiativeScopeShared } from "./context-shared";
-import { useInitiativeScopeProjectFilter } from "./context-project-filter";
+import { useInitiativeScopeProjectFilter } from "./projects/filters/context-project-filter";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 
 export const InitiativeScopeFiltersToggle = observer(function InitiativeScopeFiltersToggle({
@@ -33,7 +33,7 @@ export const InitiativeScopeFiltersToggle = observer(function InitiativeScopeFil
 
   // Show epic filter toggle when on epics tab
   if (activeTab === INITIATIVE_SCOPE_TABS.EPICS) {
-    return <WorkItemFiltersToggle entityType={EIssuesStoreType.EPIC} entityId={initiativeId} />;
+    return <WorkItemFiltersToggle entityType={EIssuesStoreType.INITIATIVE_EPIC} entityId={initiativeId} />;
   }
 
   return null;

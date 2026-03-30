@@ -14,18 +14,18 @@
 import { useMember } from "@/hooks/store/use-member";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { IUserLite } from "@plane/types";
+import type { IUserLite, TExternalProjectFilterExpression, TInitiativeScopeProjectFilterKeys } from "@plane/types";
 import { FilterInstance } from "@plane/shared-state";
 import { observer } from "mobx-react";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { InitiativeScopeProjectFilterAdapter } from "./adapters";
-import type {
-  IInitiativeScopeProjectFilterInstance,
-  TExternalProjectFilterExpression,
-  TInitiativeScopeProjectFilterKeys,
-} from "./types";
 import { useProjectScopeFilterConfigs } from "./use-scope-filter-configs";
+
+type IInitiativeScopeProjectFilterInstance = FilterInstance<
+  TInitiativeScopeProjectFilterKeys,
+  TExternalProjectFilterExpression
+>;
 
 type InitiativeScopeProjectFilterContextType = {
   filterInstance: IInitiativeScopeProjectFilterInstance | null;

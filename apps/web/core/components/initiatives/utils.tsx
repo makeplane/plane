@@ -157,8 +157,7 @@ export const getGroupList = (
 };
 
 /**
- * Retrieves detailed epic information for selected epic IDs from stores
- * Used in initiative epic selection modals to display selected epics with complete details
+ * Retrieves detailed epic information for selected epic IDs from the issue + project + state stores.
  * @param selectedEpicIds - Array of epic IDs currently selected
  * @param workspaceSlug - Workspace slug identifier
  * @returns Array of epic details formatted for search/selection interfaces

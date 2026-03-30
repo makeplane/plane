@@ -57,7 +57,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     <div className="flex flex-col gap-3">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
-          <div className="line-clamp-1 text-caption-sm-regular text-tertiary">
+          <div className=" text-caption-sm-regular text-tertiary leading-tight">
             {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issue.sequence_id)}
           </div>
         </div>

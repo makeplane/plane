@@ -13,6 +13,7 @@
 
 import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
+import { computedFn } from "mobx-utils";
 // plane constants
 import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 // types
@@ -22,25 +23,41 @@ import type {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   IIssueFilters,
+  IssuePaginationOptions,
   PQLFilterValue,
+  TIssueGroupByOptions,
   TIssueParams,
   TWorkItemFilterExpression,
 } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
+// utils
+import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // lib
 import { storage } from "@/lib/local-storage";
 // store
-import type { RootStore } from "../../../ee/store/root.store";
 import type { IBaseIssueFilterStore } from "../work-items/helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "../work-items/helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "../work-items/root.store";
 import { DEFAULT_DISPLAY_PROPERTIES } from "../work-items/details/sub_issues_filter.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 const EPIC_FILTERS_STORAGE_KEY = "initiative_epic_scope_filters";
 
 export interface IInitiativeEpicsFilterStore extends IBaseIssueFilterStore {
+  // observables
+  currentInitiativeId: string | undefined;
   // helper actions
+  setCurrentInitiativeId: (initiativeId: string | undefined) => void;
   getIssueFilters(initiativeId: string): IIssueFilters | undefined;
   getInitiativeEpicsFiltersById: (initiativeId: string) => IIssueFilters | undefined;
+  getAppliedFilters: (initiativeId: string) => Partial<Record<TIssueParams, string | boolean>> | undefined;
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    initiativeId: string,
+    cursor: string | undefined,
+    groupId: string | undefined,
+    subGroupId: string | undefined
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   updateEpicFilters: (
     workspaceSlug: string,
     filterType: EIssueFilterType,
@@ -58,6 +75,7 @@ export interface IInitiativeEpicsFilterStore extends IBaseIssueFilterStore {
 export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implements IInitiativeEpicsFilterStore {
   // observables
   filters: { [initiativeId: string]: IIssueFilters } = {};
+  currentInitiativeId: string | undefined = undefined;
   // root stores
   rootIssueStore: IIssueRootStore;
   rootStore: RootStore;
@@ -67,10 +85,12 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
     makeObservable(this, {
       // observables
       filters: observable,
+      currentInitiativeId: observable.ref,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
       // actions
+      setCurrentInitiativeId: action,
       updateEpicFilters: action,
       getInitiativeEpicsFiltersById: action,
       resetFilters: action,
@@ -80,15 +100,23 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
     this.rootStore = rootStore;
   }
 
+  // actions
+  /**
+   * @description Set the current initiative ID being viewed
+   * @param initiativeId - The initiative id
+   */
+  setCurrentInitiativeId = (initiativeId: string | undefined) => {
+    this.currentInitiativeId = initiativeId;
+  };
+
   // computed
   /**
    * @description This method is used to get the issue filters for the current initiative
    * @returns {IIssueFilters | undefined}
    */
   get issueFilters(): IIssueFilters | undefined {
-    // For initiative epics, we don't have a single current initiativeId in rootIssueStore
-    // So this computed property may not be used, but we keep it for interface compliance
-    return undefined;
+    if (!this.currentInitiativeId) return undefined;
+    return this.getIssueFilters(this.currentInitiativeId);
   }
 
   /**
@@ -96,9 +124,8 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
    * @returns {Partial<Record<TIssueParams, string | boolean>> | undefined}
    */
   get appliedFilters(): Partial<Record<TIssueParams, string | boolean>> | undefined {
-    // For initiative epics, we don't have a single current initiativeId in rootIssueStore
-    // So this computed property may not be used, but we keep it for interface compliance
-    return undefined;
+    if (!this.currentInitiativeId) return undefined;
+    return this.getAppliedFilters(this.currentInitiativeId);
   }
 
   // helpers
@@ -108,10 +135,53 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
    * @returns {IIssueFilters | undefined}
    */
   getIssueFilters(initiativeId: string): IIssueFilters | undefined {
-    const displayFilters = this.filters[initiativeId] || undefined;
-    if (isEmpty(displayFilters)) return undefined;
-    return this.computedIssueFilters(displayFilters);
+    const storedFilters = this.filters[initiativeId] || undefined;
+    if (isEmpty(storedFilters)) return undefined;
+
+    // Map epicGroupBy from initiative scope to TIssueGroupByOptions for list/kanban/gantt.
+    // When "none", pass undefined so the store returns groupedIssueIds[ALL_ISSUES] for the list.
+    const scopeDisplayFilters = this.rootStore.initiativeStore.scope.getDisplayFilters(initiativeId);
+    const epicGroupBy = scopeDisplayFilters?.epicGroupBy;
+    const group_by: TIssueGroupByOptions | undefined =
+      epicGroupBy === "none" || epicGroupBy == null
+        ? undefined
+        : epicGroupBy === "state_groups"
+          ? "state_detail.group"
+          : (epicGroupBy as TIssueGroupByOptions);
+
+    const filtersWithGroupBy: IIssueFilters = {
+      ...storedFilters,
+      displayFilters: {
+        ...storedFilters.displayFilters,
+        group_by,
+        layout: scopeDisplayFilters?.activeLayout ?? EIssueLayoutTypes.KANBAN,
+      },
+    };
+
+    return this.computedIssueFilters(filtersWithGroupBy);
   }
+
+  getAppliedFilters(initiativeId: string): Partial<Record<TIssueParams, string | boolean>> | undefined {
+    const userFilters = this.getIssueFilters(initiativeId);
+    if (!userFilters) return undefined;
+
+    const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.LIST, "issues");
+    if (!filteredParams) return undefined;
+    return this.computedFilteredParams(userFilters, filteredParams);
+  }
+
+  getFilterParams = computedFn(
+    (
+      options: IssuePaginationOptions,
+      initiativeId: string,
+      cursor: string | undefined,
+      groupId: string | undefined,
+      subGroupId: string | undefined
+    ) => {
+      const filterParams = this.getAppliedFilters(initiativeId);
+      return this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
+    }
+  );
 
   /**
    * Get stored rich filters from localStorage
@@ -232,13 +302,21 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
         case EIssueFilterType.RICH_FILTERS: {
           set(this.filters, [initiativeId, "richFilters"], filters);
           this.saveFiltersToStorage(initiativeId, { richFilters: filters as TWorkItemFilterExpression });
-          this.rootStore.initiativeStore.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
+          this.rootStore.initiativeStore.scope.epics.fetchIssuesWithExistingPagination(workspaceSlug, initiativeId);
           break;
         }
         case EIssueFilterType.PQL_FILTERS: {
           set(this.filters, [initiativeId, "pqlFilters"], filters);
           this.saveFiltersToStorage(initiativeId, { pqlFilters: filters as PQLFilterValue });
-          this.rootStore.initiativeStore.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
+          this.rootStore.initiativeStore.scope.epics.fetchIssuesWithExistingPagination(workspaceSlug, initiativeId);
+          break;
+        }
+        case EIssueFilterType.KANBAN_FILTERS: {
+          const updatedKanbanFilters = filters as Partial<IIssueFilters["kanbanFilters"]>;
+          set(this.filters, [initiativeId, "kanbanFilters"], {
+            ...currentFilters?.kanbanFilters,
+            ...updatedKanbanFilters,
+          });
           break;
         }
         default:

@@ -24,10 +24,12 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 type Props = {
   customButton?: React.ReactNode;
   disabled?: boolean;
+  workspaceSlug?: string;
+  initiativeId?: string;
 };
 
 export const AddScopeButton = observer(function AddScopeButton(props: Props) {
-  const { customButton, disabled } = props;
+  const { customButton, disabled, workspaceSlug, initiativeId } = props;
   // store hooks
   const {
     initiative: { toggleProjectsModal, toggleEpicModal },
@@ -39,7 +41,10 @@ export const AddScopeButton = observer(function AddScopeButton(props: Props) {
     {
       i18n_label: "common.epics",
       icon: <EpicIcon className="h-3 w-3" />,
-      onClick: () => toggleEpicModal(true),
+      onClick: () =>
+        workspaceSlug && initiativeId
+          ? void toggleEpicModal(true, { workspaceSlug, initiativeId })
+          : void toggleEpicModal(true),
     },
     {
       i18n_label: "common.projects",

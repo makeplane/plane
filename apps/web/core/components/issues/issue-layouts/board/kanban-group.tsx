@@ -30,6 +30,7 @@ import type {
   TSubGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
+  TIssueKanbanFilters,
 } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -44,6 +45,7 @@ import {
 import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useHasScrollbar } from "@/hooks/use-has-scrollbar";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // Plane-web
@@ -53,6 +55,18 @@ import { GroupDragOverlay } from "../group-drag-overlay";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import { KanbanIssueBlocksList } from "./blocks-list";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+
+export interface IKanbanGroupHeader {
+  icon?: React.ReactNode;
+  title?: string;
+  count?: number;
+  collapsedGroups?: TIssueKanbanFilters;
+  handleCollapsedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  issuePayload?: Partial<TIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  isGroupByCreatedBy?: boolean;
+}
 
 interface IKanbanGroup {
   groupId: string;
@@ -77,6 +91,8 @@ interface IKanbanGroup {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
   isEpic?: boolean;
+  isLastGroup?: boolean;
+  header?: IKanbanGroupHeader;
 }
 
 export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
@@ -101,6 +117,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     scrollableContainerRef,
     handleOnDrop,
     isEpic = false,
+    isLastGroup = false,
+    header,
   } = props;
   // i18n
   const { t } = useTranslation();
@@ -113,6 +131,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLSpanElement | null>(null);
   const columnRef = useRef<HTMLDivElement | null>(null);
+  const { ref: scrollRef, hasScrollbar: isScrollActive } = useHasScrollbar<HTMLDivElement>();
 
   const containerRef = sub_group_by && scrollableContainerRef ? scrollableContainerRef : columnRef;
 
@@ -298,16 +317,43 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
     (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
+  const isCollapsed = !sub_group_by && header?.collapsedGroups?.group_by?.includes(groupId);
+
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full transition-all min-h-[120px]",
-        { "bg-layer-1 rounded-sm": isDraggingOverColumn },
-        { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
+        "relative flex shrink-0 flex-col border-transparent bg-layer-1 transition-all h-full",
+        isCollapsed ? "min-w-0 w-11 pb-2" : sub_group_by ? "px-2 pb-2" : "p-2",
+        sub_group_by ? isLastGroup && "rounded-b-lg" : "rounded-lg",
+        {
+          "bg-layer-1": isDraggingOverColumn,
+        }
       )}
       ref={columnRef}
     >
+      {!sub_group_by && header?.title && header?.collapsedGroups && header?.handleCollapsedGroups && (
+        <div className="sticky top-0 z-2 w-full shrink-0 px-1 pb-1.5">
+          <HeaderGroupByCard
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            column_id={groupId}
+            icon={header.icon}
+            title={header.title}
+            count={header.count ?? 0}
+            issuePayload={header.issuePayload ?? {}}
+            disableIssueCreation={
+              disableIssueCreation ||
+              header.isGroupByCreatedBy ||
+              getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id)
+            }
+            addIssuesToView={header.addIssuesToView}
+            collapsedGroups={header.collapsedGroups}
+            handleCollapsedGroups={header.handleCollapsedGroups}
+            isEpic={isEpic}
+          />
+        </div>
+      )}
       <GroupDragOverlay
         dragColumnOrientation={sub_group_by ? "justify-start" : "justify-center"}
         canOverlayBeVisible={canOverlayBeVisible}
@@ -318,46 +364,56 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         isDraggingOverColumn={isDraggingOverColumn}
         isEpic={isEpic}
       />
-      <KanbanIssueBlocksList
-        sub_group_id={sub_group_id}
-        groupId={groupId}
-        getWorkItemById={getWorkItemById}
-        issueIds={issueIds || []}
-        displayProperties={displayProperties}
-        updateIssue={updateIssue}
-        quickActions={quickActions}
-        canEditProperties={canEditProperties}
-        scrollableContainerRef={scrollableContainerRef}
-        canDropOverIssue={!canOverlayBeVisible}
-        canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
-        isEpic={isEpic}
-      />
-
-      {shouldLoadMore &&
-        (isSubGroup ? (
-          <>{loadMore}</>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {Array.from({ length: 2 }).map((_, index) => (
-              <KanbanIssueBlockLoader key={index} />
-            ))}
-            <KanbanIssueBlockLoader ref={setIntersectionElement} />
-          </div>
-        ))}
-
-      {enableQuickIssueCreate && !disableIssueCreation && (
-        <div className="w-full bg-surface-2 py-0.5 sticky bottom-0">
-          <QuickAddIssueRoot
-            layout={EIssueLayoutTypes.KANBAN}
-            QuickAddButton={KanbanQuickAddIssueButton}
-            prePopulatedData={{
-              ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-            }}
-            quickAddCallback={quickAddCallback}
+      {!isCollapsed && (
+        <div
+          ref={scrollRef}
+          className={cn(
+            "flex-1 overflow-y-auto flex flex-col gap-y-1 vertical-scrollbar scrollbar-sm pt-1",
+            isScrollActive && "w-[calc(100%+1rem)] pr-1"
+          )}
+        >
+          <KanbanIssueBlocksList
+            sub_group_id={sub_group_id}
+            groupId={groupId}
+            getWorkItemById={getWorkItemById}
+            issueIds={issueIds || []}
+            displayProperties={displayProperties}
+            updateIssue={updateIssue}
+            quickActions={quickActions}
+            canEditProperties={canEditProperties}
+            scrollableContainerRef={scrollableContainerRef}
+            canDropOverIssue={!canOverlayBeVisible}
+            canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
             isEpic={isEpic}
-            groupBy={group_by}
-            subGroupBy={sub_group_by ?? null}
           />
+
+          {shouldLoadMore &&
+            (isSubGroup ? (
+              <>{loadMore}</>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <KanbanIssueBlockLoader key={index} />
+                ))}
+                <KanbanIssueBlockLoader ref={setIntersectionElement} />
+              </div>
+            ))}
+
+          {enableQuickIssueCreate &&
+            !disableIssueCreation &&
+            !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
+              <div className="w-full pt-1 bg-layer-1 sticky bottom-0">
+                <QuickAddIssueRoot
+                  layout={EIssueLayoutTypes.KANBAN}
+                  QuickAddButton={KanbanQuickAddIssueButton}
+                  prePopulatedData={{
+                    ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+                  }}
+                  quickAddCallback={quickAddCallback}
+                  isEpic={isEpic}
+                />
+              </div>
+            )}
         </div>
       )}
     </div>

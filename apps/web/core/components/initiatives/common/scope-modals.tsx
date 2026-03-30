@@ -38,7 +38,8 @@ export const InitiativeScopeModals = observer(function InitiativeScopeModals(pro
   const {
     initiative: {
       scope: {
-        epics: { addEpicsToInitiative, getInitiativeEpicsById },
+        epics: { addEpicsToInitiative, getInitiativeEpicsDetailById },
+        projects: { fetchInitiativeProjects },
       },
       fetchInitiativeAnalytics,
       updateInitiative,
@@ -48,18 +49,20 @@ export const InitiativeScopeModals = observer(function InitiativeScopeModals(pro
   const { joinedProjectIds } = useProject();
   // derived values
   const initiative = getInitiativeById(initiativeId);
-  const initiativeEpics = getInitiativeEpicsById(initiativeId);
+
+  const initiativeEpics =
+    (initiative?.epic_ids != null && initiative.epic_ids.length > 0
+      ? initiative.epic_ids
+      : getInitiativeEpicsDetailById(initiativeId)) ?? [];
 
   // handlers
   const handleAddEpicToInitiative = async (epicIds: string[]) => {
     try {
-      addEpicsToInitiative(workspaceSlug, initiativeId, epicIds).then(async () => {
-        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
-        setToast({
-          title: t("toast.success"),
-          type: TOAST_TYPE.SUCCESS,
-          message: t("initiatives.toast.epic_update_success", { count: epicIds.length }),
-        });
+      await addEpicsToInitiative(workspaceSlug, initiativeId, epicIds);
+      setToast({
+        title: t("toast.success"),
+        type: TOAST_TYPE.SUCCESS,
+        message: t("initiatives.toast.epic_update_success", { count: epicIds.length }),
       });
     } catch {
       setToast({
@@ -75,6 +78,7 @@ export const InitiativeScopeModals = observer(function InitiativeScopeModals(pro
 
     await updateInitiative(workspaceSlug, initiativeId, { project_ids: initiativeProjectIds })
       .then(async () => {
+        fetchInitiativeProjects(workspaceSlug, initiativeId);
         fetchInitiativeAnalytics(workspaceSlug, initiativeId);
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -91,6 +95,19 @@ export const InitiativeScopeModals = observer(function InitiativeScopeModals(pro
       });
   };
 
+  const epicModal = isEpicModalOpen ? (
+    <WorkspaceEpicsListModal
+      workspaceSlug={workspaceSlug}
+      isOpen
+      searchParams={{}}
+      selectedEpicIds={initiativeEpics ?? []}
+      handleClose={() => void toggleEpicModal(false)}
+      handleOnSubmit={async (data) => {
+        await handleAddEpicToInitiative(data.map((epic) => epic.id));
+      }}
+    />
+  ) : null;
+
   return (
     <>
       <ProjectMultiSelectModal
@@ -100,16 +117,7 @@ export const InitiativeScopeModals = observer(function InitiativeScopeModals(pro
         selectedProjectIds={initiative?.project_ids ?? []}
         projectIds={joinedProjectIds ?? []}
       />
-      <WorkspaceEpicsListModal
-        workspaceSlug={workspaceSlug}
-        isOpen={isEpicModalOpen}
-        searchParams={{}}
-        selectedEpicIds={initiativeEpics ?? []}
-        handleClose={() => toggleEpicModal(false)}
-        handleOnSubmit={async (data) => {
-          handleAddEpicToInitiative(data.map((epic) => epic.id));
-        }}
-      />
+      {epicModal}
     </>
   );
 });

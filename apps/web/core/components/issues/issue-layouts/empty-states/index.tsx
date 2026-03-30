@@ -40,6 +40,9 @@ const ProfileViewEmptyState = lazy(() =>
 const ProjectEpicsEmptyState = lazy(() =>
   import("./project-epic").then((module) => ({ default: module.ProjectEpicsEmptyState }))
 );
+const InitiativeScopeEpicsEmptyState = lazy(() =>
+  import("./initiative-scope-epic").then((module) => ({ default: module.InitiativeScopeEpicsEmptyState }))
+);
 const TeamEmptyState = lazy(() => import("./team-issues").then((module) => ({ default: module.TeamEmptyState })));
 const TeamViewEmptyState = lazy(() =>
   import("./team-view-issues").then((module) => ({ default: module.TeamViewEmptyState }))
@@ -64,6 +67,7 @@ const WORK_ITEM_LAYOUT_EMPTY_STATES: Record<EIssuesStoreType, LazyExoticComponen
   [EIssuesStoreType.TEAM]: TeamEmptyState,
   [EIssuesStoreType.TEAM_VIEW]: TeamViewEmptyState,
   [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: TeamProjectWorkItemEmptyState,
+  [EIssuesStoreType.INITIATIVE_EPIC]: InitiativeScopeEpicsEmptyState,
   [EIssuesStoreType.RELEASE]: ReleaseEmptyState,
 };
 

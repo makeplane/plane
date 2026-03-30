@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -79,7 +78,7 @@ export const InitiativeInfoActionItems = observer(function InitiativeInfoActionI
             </div>
           }
           disabled={disabled}
-          onClick={() => toggleEpicModal(true)}
+          onClick={() => void toggleEpicModal(true, { workspaceSlug, initiativeId })}
         />
       </div>
     </div>

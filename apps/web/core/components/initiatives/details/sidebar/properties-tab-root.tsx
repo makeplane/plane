@@ -52,13 +52,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
   const { workspaceSlug, initiativeId, disabled, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
 
   const {
-    initiative: {
-      getInitiativeById,
-      updateInitiative,
-      scope: {
-        epics: { getInitiativeEpicsDetailById },
-      },
-    },
+    initiative: { getInitiativeById, updateInitiative },
   } = useInitiatives();
   const { getUserDetails } = useMember();
   const {
@@ -69,7 +63,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
 
   // derived values
   const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
-  const initiativeEpicIds = getInitiativeEpicsDetailById(initiativeId) ?? initiative?.epic_ids ?? [];
+  const initiativeEpicIds = initiative?.epic_ids ?? [];
   const initiativeProjectIds = initiative?.project_ids || [];
   const initiativeLabelIds = initiative?.label_ids || [];
 
@@ -135,7 +129,12 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
           </div>
           <button
             className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer"
-            onClick={() => toggleEpicModal(true)}
+            onClick={() =>
+              void toggleEpicModal(true, {
+                workspaceSlug: workspaceSlug.toString(),
+                initiativeId: initiative.id,
+              })
+            }
           >
             {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
           </button>

@@ -11,31 +11,34 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo, useState } from "react";
-import { isEqual } from "lodash-es";
+import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Rocket, Search } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon, EpicIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
-import { Checkbox, Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { generateWorkItemLink, getTabIndex } from "@plane/utils";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { getSelectedEpicDetails } from "@/components/initiatives/utils";
-import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
-import { WorkspaceService } from "@/services/workspace.service";
-// core imports
-import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 // local imports
+import { EpicRowSkeleton } from "./epic-row-skeleton";
 import { EpicSearchModalEmptyState } from "./issue-search-modal-empty-state";
+import { SelectedEpicChip } from "./selected-epic-chip";
+import { WorkspaceEpicOption } from "./workspace-epic-option";
+import { useWorkspaceEpicsInfinite } from "@/hooks/use-workspace-epics-infinite";
+import { getSelectedEpicDetails } from "@/components/initiatives/utils";
+
+type FormValues = {
+  selectedEpics: ISearchIssueResponse[];
+};
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -46,19 +49,24 @@ type Props = {
   selectedEpicIds: string[];
 };
 
-// move this to workspace service
-const workspaceService = new WorkspaceService();
-
 export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal(props: Props) {
   const { workspaceSlug, isOpen, handleClose: onClose, handleOnSubmit, searchParams, selectedEpicIds } = props;
+
   // states
-  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [epics, setEpics] = useState<ISearchIssueResponse[]>([]);
-  const [selectedEpics, setSelectedEpics] = useState<ISearchIssueResponse[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  // store hooks
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [sentinelEl, setSentinelEl] = useState<HTMLDivElement | null>(null);
+  const epicDetails = workspaceSlug ? getSelectedEpicDetails(selectedEpicIds, workspaceSlug) : [];
+  // react-hook-form
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { isSubmitting, isDirty },
+  } = useForm<FormValues>({ defaultValues: { selectedEpics: epicDetails } });
+
+  const selectedEpics = watch("selectedEpics");
+
   const { isMobile } = usePlatformOS();
   // hooks
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
@@ -66,64 +74,54 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
 
   const { t } = useTranslation();
 
-  // handlers
-  const handleClose = () => {
-    onClose();
-    setSearchTerm("");
-    setSelectedEpics([]);
-  };
+  const apiParams = useMemo<Partial<TWorkspaceEpicsSearchParams>>(
+    () => ({
+      initiative_id: searchParams.initiative_id,
+      cursor: searchParams.cursor,
+      page_size: searchParams.page_size,
+      search: debouncedSearchTerm.trim() || undefined,
+    }),
+    [searchParams.initiative_id, searchParams.cursor, searchParams.page_size, debouncedSearchTerm]
+  );
 
-  const onSubmit = async () => {
-    setIsSubmitting(true);
-
-    await handleOnSubmit(selectedEpics).finally(() => setIsSubmitting(false));
-
-    handleClose();
-  };
-
-  // fetch epics
-  useEffect(() => {
-    if (!isOpen || !workspaceSlug) return;
-    setIsLoading(true);
-    workspaceService
-      .fetchWorkspaceEpics(workspaceSlug, {
-        ...searchParams,
-      })
-      .then((res) => setEpics(res))
-      .finally(() => {
-        setIsSearching(false);
-        setIsLoading(false);
-      });
-  }, [debouncedSearchTerm, isOpen, searchParams, workspaceSlug]);
-
-  useEffect(() => {
-    if (!isOpen || !workspaceSlug) return;
-    const _selectedEpics = getSelectedEpicDetails(selectedEpicIds, workspaceSlug);
-    setSelectedEpics(_selectedEpics);
-  }, [isOpen, workspaceSlug, selectedEpicIds]);
-
-  // filter by search term check for name and epic identifier (e.g. PROJECT-123)
-  const filteredEpics = epics.filter((epic) => {
-    const searchLower = debouncedSearchTerm.toLowerCase();
-    const epicIdentifier = `${epic.project__identifier}-${epic.sequence_id}`.toLowerCase();
-    return epic.name.toLowerCase().includes(searchLower) || epicIdentifier.includes(searchLower);
+  const { epics, hasMore, loadMore, isLoading, isValidating } = useWorkspaceEpicsInfinite({
+    workspaceSlug,
+    isOpen,
+    apiParams,
   });
 
-  const showSubmitButton = useMemo(() => {
-    const newEpicIds = selectedEpics.map((epic) => epic.id);
-    return !isEqual(newEpicIds, selectedEpicIds);
-  }, [selectedEpics, selectedEpicIds]);
+  useIntersectionObserver(scrollContainerRef, hasMore && !debouncedSearchTerm ? sentinelEl : null, loadMore, "100px");
+
+  const handleClose = () => {
+    onClose();
+  };
+
+  const onSubmit = handleSubmit(async ({ selectedEpics: epicsToSubmit }) => {
+    await handleOnSubmit(epicsToSubmit);
+    handleClose();
+  });
+
+  const filteredEpics = useMemo(() => {
+    const term = debouncedSearchTerm.trim().toLowerCase();
+    if (!term) return epics;
+    return epics.filter((epic) => {
+      const epicIdentifier = `${epic.project__identifier}-${epic.sequence_id}`.toLowerCase();
+      return epic.name.toLowerCase().includes(term) || epicIdentifier.includes(term);
+    });
+  }, [epics, debouncedSearchTerm]);
 
   return (
     <>
       <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-        <div className="relative mx-auto max-w-2xl">
+        <div className="relative mx-auto max-w-4xl">
           <Combobox
             as="div"
             onChange={(val: ISearchIssueResponse) => {
-              if (selectedEpics.some((i) => i.id === val.id))
-                setSelectedEpics((prevData) => prevData.filter((i) => i.id !== val.id));
-              else setSelectedEpics((prevData) => [...prevData, val]);
+              const current = selectedEpics;
+              const next = current.some((i) => i.id === val.id)
+                ? current.filter((i) => i.id !== val.id)
+                : [...current, val];
+              setValue("selectedEpics", next, { shouldDirty: true });
             }}
           >
             <div className="relative m-1">
@@ -144,26 +142,17 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
               {selectedEpics.length > 0 ? (
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {selectedEpics.map((epic) => (
-                    <div
+                    <SelectedEpicChip
                       key={epic.id}
-                      className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle bg-layer-1-hover py-1 pl-2 text-11 text-primary"
-                    >
-                      <IssueIdentifier
-                        projectId={epic.project_id}
-                        issueTypeId={epic.type_id}
-                        projectIdentifier={epic.project__identifier}
-                        issueSequenceId={epic.sequence_id}
-                        size="xs"
-                        variant="secondary"
-                      />
-                      <button
-                        type="button"
-                        className="group p-1"
-                        onClick={() => setSelectedEpics((prevData) => prevData.filter((i) => i.id !== epic.id))}
-                      >
-                        <CloseIcon className="h-3 w-3 text-secondary group-hover:text-primary" />
-                      </button>
-                    </div>
+                      epic={epic}
+                      onRemove={() => {
+                        setValue(
+                          "selectedEpics",
+                          selectedEpics.filter((i) => i.id !== epic.id),
+                          { shouldDirty: true }
+                        );
+                      }}
+                    />
                   ))}
                 </div>
               ) : (
@@ -173,78 +162,49 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
               )}
             </div>
 
-            <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
-              {isSearching || isLoading ? (
-                <Loader className="space-y-3 p-3">
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                </Loader>
+            <Combobox.Options static className="scroll-py-2">
+              {isLoading ? (
+                <div className="p-2 space-y-0.5" aria-label={t("common.loading")}>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <EpicRowSkeleton key={i} />
+                  ))}
+                </div>
               ) : (
                 <>
                   {filteredEpics.length === 0 ? (
                     <EpicSearchModalEmptyState
                       debouncedSearchTerm={debouncedSearchTerm}
-                      isSearching={isSearching}
+                      isSearching={false}
                       issues={filteredEpics}
                       searchTerm={searchTerm}
                     />
                   ) : (
-                    <ul className={`text-13 text-primary ${filteredEpics.length > 0 ? "p-2" : ""}`}>
-                      {filteredEpics.map((epic) => {
-                        const selected = selectedEpics.some((i) => i.id === epic.id);
-
-                        return (
-                          <Combobox.Option
+                    <div
+                      ref={scrollContainerRef}
+                      className="vertical-scrollbar scrollbar-md max-h-80 overflow-y-auto p-2"
+                    >
+                      <ul className="text-13 text-primary">
+                        {filteredEpics.map((epic) => (
+                          <WorkspaceEpicOption
                             key={epic.id}
-                            as="label"
-                            htmlFor={`epic-${epic.id}`}
-                            value={epic}
-                            className={({ active }) =>
-                              `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
-                                active ? "bg-layer-1-hover text-primary" : ""
-                              } ${selected ? "text-primary" : ""}`
-                            }
-                          >
-                            <div className="flex items-center gap-2 truncate">
-                              <Checkbox checked={selected} readOnly />
-                              <span
-                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: epic.state__color,
-                                }}
-                              />
-                              <div className="flex flex-shrink-0 items-center space-x-2">
-                                <EpicIcon className="h-4 w-4 text-tertiary" />
-                                <IdentifierText
-                                  identifier={`${epic.project__identifier}-${epic.sequence_id}`}
-                                  enableClickToCopyIdentifier
-                                  size="xs"
-                                  variant="secondary"
-                                />
-                              </div>
-                              <span className="truncate">{epic.name}</span>
+                            epic={epic}
+                            workspaceSlug={workspaceSlug}
+                            selected={selectedEpics.some((i) => i.id === epic.id)}
+                          />
+                        ))}
+                      </ul>
+                      {hasMore && !debouncedSearchTerm && (
+                        <div ref={setSentinelEl} className="pt-1 pb-2">
+                          {isValidating ? (
+                            <div className="space-y-0.5">
+                              {Array.from({ length: 2 }).map((_, i) => (
+                                <EpicRowSkeleton key={i} />
+                              ))}
                             </div>
-                            <a
-                              href={generateWorkItemLink({
-                                workspaceSlug,
-                                projectId: epic?.project_id,
-                                issueId: epic?.id,
-                                projectIdentifier: epic?.project__identifier,
-                                sequenceId: epic?.sequence_id,
-                              })}
-                              target="_blank"
-                              className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Rocket className="h-4 w-4" />
-                            </a>
-                          </Combobox.Option>
-                        );
-                      })}
-                    </ul>
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </>
               )}
@@ -254,12 +214,7 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
             <Button variant="secondary" onClick={handleClose}>
               {t("cancel")}
             </Button>
-            <Button
-              variant="primary"
-              onClick={onSubmit}
-              loading={isSubmitting}
-              disabled={!showSubmitButton || isSubmitting}
-            >
+            <Button variant="primary" onClick={onSubmit} loading={isSubmitting} disabled={!isDirty || isSubmitting}>
               {isSubmitting ? t("adding") : t("submit")}
             </Button>
           </div>

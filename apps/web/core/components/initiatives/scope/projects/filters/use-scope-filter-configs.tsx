@@ -20,7 +20,7 @@ import {
   StatePropertyIcon,
   PriorityIcon,
 } from "@plane/propel/icons";
-import type { IUserLite } from "@plane/types";
+import type { IUserLite, TInitiativeScopeProjectFilterKeys } from "@plane/types";
 import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 import {
@@ -39,7 +39,6 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { ProjectStateIcon } from "@/components/workspace-project-states/project-state-icon";
 import type { TProjectState } from "@/types/workspace-project-states";
-import type { TInitiativeScopeProjectFilterKeys } from "./types";
 import type { TCreateUserFilterParams } from "@plane/utils";
 
 interface UseProjectScopeFilterConfigsProps {

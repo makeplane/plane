@@ -26,6 +26,7 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
+import { cn } from "@plane/utils";
 // constants
 import { ContentWrapper } from "@plane/ui";
 // components
@@ -75,6 +76,7 @@ export interface IKanBan {
   showEmptyGroup?: boolean;
   subGroupIndex?: number;
   isEpic?: boolean;
+  isLastSubGroup?: boolean;
 }
 
 export const KanBan = observer(function KanBan(props: IKanBan) {
@@ -104,6 +106,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     dropErrorMessage,
     subGroupIndex = 0,
     isEpic = false,
+    isLastSubGroup = false,
   } = props;
   // i18n
   const { t } = useTranslation();
@@ -153,7 +156,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
-    <ContentWrapper className={`flex-row relative gap-4 !pt-2 !pb-0`}>
+    <ContentWrapper className={cn("flex-row relative gap-4", sub_group_by ? "p-0!" : "p-4!")}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn, groupIndex) => {
@@ -167,37 +170,17 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
           const issueLength = issueIds?.length;
           const groupHeight = issueLength * approximateCardHeight;
 
+          const isGroupCollapsed = collapsedGroups?.group_by?.includes(subList.id);
+
           return (
             <div
               key={subList.id}
-              className={`group relative flex flex-shrink-0 flex-col ${
-                groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
-              } `}
-            >
-              {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-surface-2 py-1">
-                  <HeaderGroupByCard
-                    sub_group_by={sub_group_by}
-                    group_by={group_by}
-                    column_id={subList.id}
-                    icon={subList.icon}
-                    title={subList.name}
-                    count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
-                    issuePayload={subList.payload}
-                    disableIssueCreation={
-                      disableIssueCreation ||
-                      isGroupByCreatedBy ||
-                      getIsWorkflowWorkItemCreationDisabled(subList.id, sub_group_id)
-                    }
-                    addIssuesToView={addIssuesToView}
-                    collapsedGroups={collapsedGroups}
-                    handleCollapsedGroups={handleCollapsedGroups}
-                    isEpic={isEpic}
-                  />
-                </div>
+              className={cn(
+                "group relative flex shrink-0 flex-col",
+                isGroupCollapsed ? "w-11" : groupByVisibilityToggle.showIssues && "w-[336px]"
               )}
-
-              {groupByVisibilityToggle.showIssues && (
+            >
+              {groupByVisibilityToggle.showIssues ? (
                 <RenderIfVisible
                   verticalOffset={100}
                   horizontalOffset={100}
@@ -237,8 +220,54 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     loadMoreIssues={loadMoreIssues}
                     handleOnDrop={handleOnDrop}
                     isEpic={isEpic}
+                    isLastGroup={isLastSubGroup}
+                    header={{
+                      icon: subList.icon,
+                      title: subList.name,
+                      count: getGroupIssueCount(subList.id, undefined, false) ?? 0,
+                      issuePayload: subList.payload,
+                      collapsedGroups,
+                      handleCollapsedGroups,
+                      addIssuesToView,
+                      isGroupByCreatedBy,
+                    }}
                   />
                 </RenderIfVisible>
+              ) : (
+                <KanbanGroup
+                  groupId={subList.id}
+                  getWorkItemById={getWorkItemById}
+                  groupedIssueIds={groupedIssueIds}
+                  displayProperties={displayProperties}
+                  sub_group_by={sub_group_by}
+                  group_by={group_by}
+                  orderBy={orderBy}
+                  sub_group_id={sub_group_id}
+                  isDragDisabled={isDragDisabled}
+                  isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
+                  dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
+                  updateIssue={updateIssue}
+                  quickActions={quickActions}
+                  enableQuickIssueCreate={enableQuickIssueCreate}
+                  quickAddCallback={quickAddCallback}
+                  disableIssueCreation={disableIssueCreation}
+                  canEditProperties={canEditProperties}
+                  scrollableContainerRef={scrollableContainerRef}
+                  loadMoreIssues={loadMoreIssues}
+                  handleOnDrop={handleOnDrop}
+                  isEpic={isEpic}
+                  isLastGroup={isLastSubGroup}
+                  header={{
+                    icon: subList.icon,
+                    title: subList.name,
+                    count: getGroupIssueCount(subList.id, undefined, false) ?? 0,
+                    issuePayload: subList.payload,
+                    collapsedGroups,
+                    handleCollapsedGroups,
+                    addIssuesToView,
+                    isGroupByCreatedBy,
+                  }}
+                />
               )}
             </div>
           );

@@ -30,7 +30,7 @@ type Props = {
 };
 
 const iconSizeMap = {
-  xs: 11,
+  xs: 12,
   sm: 14,
   md: 14.5,
   lg: 18,
@@ -38,7 +38,7 @@ const iconSizeMap = {
 };
 
 const containerSizeMap = {
-  xs: 15.5,
+  xs: 16,
   sm: 20,
   md: 21,
   lg: 25.5,

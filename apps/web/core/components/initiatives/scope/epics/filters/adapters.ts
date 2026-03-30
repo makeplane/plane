@@ -13,29 +13,9 @@
 
 import { SeparatorBasedFilterAdapter } from "@plane/shared-state";
 import { EQUALITY_OPERATOR } from "@plane/types";
-import type {
-  TInitiativeScopeProjectFilterKeys,
-  TExternalProjectFilterExpression,
-  TInitiativeScopeEpicFilterExpression,
-  TInitiativeScopeEpicFilterKeys,
-} from "./types";
+import type { TInitiativeScopeEpicFilterKeys, TInitiativeScopeEpicFilterExpression } from "@plane/types";
 
 const OPERATOR_SEPARATOR = "__";
-
-export class InitiativeScopeProjectFilterAdapter extends SeparatorBasedFilterAdapter<
-  TInitiativeScopeProjectFilterKeys,
-  TExternalProjectFilterExpression
-> {
-  protected config = {
-    operatorSeparator: OPERATOR_SEPARATOR,
-    defaultOperator: EQUALITY_OPERATOR.EXACT,
-    handleArrayAsCommaSeparated: true,
-  };
-
-  protected _createEmptyExpression(): TExternalProjectFilterExpression {
-    return {};
-  }
-}
 
 export class InitiativeScopeEpicFilterAdapter extends SeparatorBasedFilterAdapter<
   TInitiativeScopeEpicFilterKeys,

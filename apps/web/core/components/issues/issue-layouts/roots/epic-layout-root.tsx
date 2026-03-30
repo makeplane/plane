@@ -138,7 +138,7 @@ export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot()
         {({ filter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
             <WorkItemFiltersRowWrapper filter={filter} />
-            <div className="relative h-full w-full overflow-auto bg-layer-2">
+            <div className="relative h-full w-full overflow-auto">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (
                 <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">

@@ -21,6 +21,13 @@ import { InitiativeService } from "@/services/initiative.service";
 import type { TExternalInitiativeFilterExpression } from "@/types/initiative";
 import type { CoreRootStore } from "@/store/root.store";
 
+/** When layout is kanban, group_by cannot be undefined (None). Normalize to "state". */
+function normalizeInitiativeDisplayFilters(filters: TInitiativeDisplayFilters): TInitiativeDisplayFilters {
+  if (filters.layout !== "kanban") return filters;
+  if (filters.group_by != null && filters.group_by !== undefined) return filters;
+  return { ...filters, group_by: "state" };
+}
+
 export interface IInitiativeFilterStore {
   displayFilters: Record<string, TInitiativeDisplayFilters>;
   filters: Record<string, TExternalInitiativeFilterExpression>;
@@ -70,9 +77,10 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
     return this.getInitiativeDisplayFilters(workspaceSlug);
   }
 
-  getInitiativeDisplayFilters = computedFn(
-    (workspaceSlug: string) => this.displayFilters[workspaceSlug] ?? INITIATIVE_DEFAULT_DISPLAY_FILTERS
-  );
+  getInitiativeDisplayFilters = computedFn((workspaceSlug: string) => {
+    const filters = this.displayFilters[workspaceSlug] ?? INITIATIVE_DEFAULT_DISPLAY_FILTERS;
+    return normalizeInitiativeDisplayFilters(filters);
+  });
 
   getInitiativeFilters = computedFn((workspaceSlug: string) => this.filters[workspaceSlug]);
 
@@ -90,6 +98,8 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
       Object.keys(displayFilters).forEach((key) => {
         set(this.displayFilters, [workspaceSlug, key], displayFilters[key as keyof TInitiativeDisplayFilters]);
       });
+      const current = this.displayFilters[workspaceSlug] ?? INITIATIVE_DEFAULT_DISPLAY_FILTERS;
+      this.displayFilters[workspaceSlug] = normalizeInitiativeDisplayFilters(current);
     });
 
     try {

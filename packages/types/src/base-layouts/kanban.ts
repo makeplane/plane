@@ -24,6 +24,7 @@ export type IBaseLayoutsKanbanItem = IBaseLayoutsBaseItem;
 
 export interface IBaseLayoutsKanbanProps<T extends IBaseLayoutsKanbanItem> extends IBaseLayoutsBaseProps<T> {
   groupClassName?: string;
+  enableAutoScroll?: boolean;
 }
 
 // Kanban Column/Group Props

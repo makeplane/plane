@@ -22,6 +22,7 @@ export const isWorkspaceLevel = (type: EIssuesStoreType) =>
     EIssuesStoreType.TEAM_VIEW,
     EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS,
     EIssuesStoreType.WORKSPACE_DRAFT,
+    EIssuesStoreType.INITIATIVE_EPIC,
   ].includes(type)
     ? true
     : false;

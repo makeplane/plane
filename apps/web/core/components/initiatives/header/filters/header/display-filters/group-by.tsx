@@ -11,9 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
-import { observer } from "mobx-react";
 import type { TInitiativeDisplayFilters, TInitiativeGroupByOptions } from "@plane/types";
+import { observer } from "mobx-react";
+import { useMemo, useState } from "react";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // Plane-web
@@ -31,6 +31,16 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const selectedGroupBy = displayFilters?.group_by;
+  const layout = displayFilters?.layout;
+  const options = useMemo(
+    () =>
+      INITIATIVE_GROUP_BY_OPTIONS.filter((option) => {
+        if (!groupByOptions.includes(option.key)) return false;
+        if (layout === "kanban" && (option.key === undefined || option.key === null)) return false;
+        return true;
+      }),
+    [groupByOptions, layout]
+  );
 
   return (
     <>
@@ -41,10 +51,10 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
       />
       {previewEnabled && (
         <div>
-          {INITIATIVE_GROUP_BY_OPTIONS.filter((option) => groupByOptions.includes(option.key)).map((groupBy) => (
+          {options.map((groupBy) => (
             <FilterOption
-              key={groupBy?.key}
-              isChecked={selectedGroupBy === groupBy?.key ? true : false}
+              key={groupBy?.key ?? "none"}
+              isChecked={selectedGroupBy === groupBy?.key}
               onClick={() => handleUpdate(groupBy.key)}
               title={groupBy.title}
               multiple={false}

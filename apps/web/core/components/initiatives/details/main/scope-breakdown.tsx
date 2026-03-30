@@ -107,11 +107,11 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
     initiative: {
       getInitiativeAnalyticsById,
       getInitiativeById,
-      toggleProjectsModal,
-      toggleEpicModal,
       scope: {
         epics: { getInitiativeEpicsDetailById },
       },
+      toggleProjectsModal,
+      toggleEpicModal,
     },
   } = useInitiatives();
 
@@ -144,6 +144,8 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
           </Link>
           <AddScopeButton
             disabled={disabled}
+            workspaceSlug={workspaceSlug}
+            initiativeId={initiativeId}
             customButton={
               <Button variant="link" size="sm" className="p-1! hover:bg-layer-transparent-hover">
                 <PlusIcon className="size-4" />
@@ -158,7 +160,9 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
           heading={t("initiatives.scope.empty_state.title")}
           subHeading={t("initiatives.scope.empty_state.description")}
           icon={<ScopeIcon className="size-4" />}
-          actionElement={<AddScopeButton disabled={disabled} />}
+          actionElement={
+            <AddScopeButton disabled={disabled} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
+          }
         />
       ) : (
         <div className="grid w-full grid-cols-1 @sm:grid-cols-1 bg-layer-1 rounded-lg p-2 gap-2">
@@ -179,7 +183,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
               workspaceSlug={workspaceSlug}
               initiativeId={initiativeId}
               type="epic"
-              onAdd={toggleEpicModal}
+              onAdd={() => void toggleEpicModal(true, { workspaceSlug, initiativeId })}
               data={initiativeAnalytics?.epic}
               count={epicsCount}
             />

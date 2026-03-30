@@ -243,13 +243,14 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    if (URLProjectId !== project?.id) return;
 
-    if (URLProjectId === project?.id) {
+    // Use setTimeout to defer state update to avoid setState during render
+    const timeoutId = setTimeout(() => {
       setIsProjectListOpen(true);
       // Scroll to active project
       if (projectRef.current) {
-        timeoutId = setTimeout(() => {
+        setTimeout(() => {
           if (projectRef.current) {
             scrollIntoView(projectRef.current, {
               behavior: "smooth",
@@ -259,13 +260,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           }
         }, 200);
       }
-    }
+    }, 0);
 
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
+    return () => clearTimeout(timeoutId);
   }, [URLProjectId, project?.id, setIsProjectListOpen]);
 
   if (!project) return null;

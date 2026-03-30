@@ -18,15 +18,17 @@ import { EIssueLayoutTypes } from "@plane/types";
 import { action, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { InitiativeEpicStore } from "./initiative-epics.store";
+import type { IInitiativeEpicStore } from "./initiative-epics.store";
 import { InitiativeEpicsFilterStore } from "./initiative-epics-filter.store";
 import { InitiativeProjectsStore } from "./initiative-projects.store";
+import type { IInitiativeProjectsStore } from "./initiative-projects.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 const DISPLAY_FILTERS_STORAGE_KEY = "initiative_scope_display_filters";
 
 export interface IInitiativeScopeStore {
-  epics: InitiativeEpicStore;
-  projects: InitiativeProjectsStore;
+  epics: IInitiativeEpicStore;
+  projects: IInitiativeProjectsStore;
   updateDisplayFilters: (initiativeId: string, displayFilters: Partial<IInitiativeScopeDisplayFiltersOptions>) => void;
   getDisplayFilters: (initiativeId: string) => IInitiativeScopeDisplayFiltersOptions | undefined;
 }
@@ -37,8 +39,8 @@ const DEFAULT_DISPLAY_FILTERS: IInitiativeScopeDisplayFiltersOptions = {
 };
 
 export class InitiativeScopeStore implements IInitiativeScopeStore {
-  epics: InitiativeEpicStore;
-  projects: InitiativeProjectsStore;
+  epics: IInitiativeEpicStore;
+  projects: IInitiativeProjectsStore;
   rootStore: RootStore;
   displayFiltersMap: Map<string, IInitiativeScopeDisplayFiltersOptions> = new Map();
 
@@ -89,10 +91,27 @@ export class InitiativeScopeStore implements IInitiativeScopeStore {
     storage.set(DISPLAY_FILTERS_STORAGE_KEY, JSON.stringify(all));
   };
 
+  /**
+   * When layout is Kanban, group by cannot be "none". Normalize to state_groups (epics) or states (projects).
+   */
+  private normalizeKanbanGroupBy(
+    filters: IInitiativeScopeDisplayFiltersOptions
+  ): IInitiativeScopeDisplayFiltersOptions {
+    if (filters.activeLayout !== EIssueLayoutTypes.KANBAN) return filters;
+    return {
+      ...filters,
+      epicGroupBy: filters.epicGroupBy === "none" || filters.epicGroupBy == null ? "state_groups" : filters.epicGroupBy,
+      projectGroupBy:
+        filters.projectGroupBy === "none" || filters.projectGroupBy == null ? "states" : filters.projectGroupBy,
+    };
+  }
+
   /**Initialize filters, restoring from localStorage if available */
   initDisplayFilters = (initiativeId: string) => {
     const stored = this.getStoredDisplayFilters(initiativeId);
-    this.displayFiltersMap.set(initiativeId, stored ?? DEFAULT_DISPLAY_FILTERS);
+    const filters = this.normalizeKanbanGroupBy(stored ?? DEFAULT_DISPLAY_FILTERS);
+    this.displayFiltersMap.set(initiativeId, filters);
+    this.saveDisplayFiltersToStorage(initiativeId, filters);
   };
 
   /**
@@ -115,10 +134,11 @@ export class InitiativeScopeStore implements IInitiativeScopeStore {
   updateDisplayFilters = (initiativeId: string, displayFilters: Partial<IInitiativeScopeDisplayFiltersOptions>) => {
     const currentDisplayFilters = this.getDisplayFilters(initiativeId);
 
-    const updatedFilters = {
+    let updatedFilters: IInitiativeScopeDisplayFiltersOptions = {
       ...(currentDisplayFilters ?? DEFAULT_DISPLAY_FILTERS),
       ...displayFilters,
     };
+    updatedFilters = this.normalizeKanbanGroupBy(updatedFilters);
     this.displayFiltersMap.set(initiativeId, updatedFilters);
     this.saveDisplayFiltersToStorage(initiativeId, updatedFilters);
   };

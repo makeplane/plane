@@ -13,10 +13,10 @@
 
 // plane imports
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import { useWorkItemFilters } from "./use-work-item-filters";
+import type { WorkItemFiltersEntity } from "@plane/constants";
 
 // local imports
-import type { WorkItemFiltersEntity } from "@plane/constants";
+import { useWorkItemFilters } from "./use-work-item-filters";
 
 export const useWorkItemFilterInstance = (
   entityType: WorkItemFiltersEntity,

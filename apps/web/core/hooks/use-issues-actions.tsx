@@ -61,6 +61,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const teamWorkItemActions = useTeamWorkItemActions();
   const projectIssueActions = useProjectIssueActions();
   const projectEpicsActions = useProjectEpicsActions();
+  const initiativeEpicsActions = useInitiativeEpicsActions();
   const cycleIssueActions = useCycleIssueActions();
   const moduleIssueActions = useModuleIssueActions();
   const teamViewWorkItemActions = useTeamViewWorkItemActions();
@@ -97,6 +98,8 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return workspaceDraftIssueActions;
     case EIssuesStoreType.EPIC:
       return projectEpicsActions;
+    case EIssuesStoreType.INITIATIVE_EPIC:
+      return initiativeEpicsActions;
     case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
       return teamProjectWorkItemsActions;
     case EIssuesStoreType.RELEASE:
@@ -268,6 +271,63 @@ const useProjectEpicsActions = () => {
       updateFilters,
     }),
     [fetchIssues, fetchNextIssues, createIssue, quickAddIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
+  );
+};
+
+const useInitiativeEpicsActions = (): IssueActions => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, initiativeId: routerInitiativeId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const initiativeId = routerInitiativeId?.toString();
+  // store hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.INITIATIVE_EPIC);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions) => {
+      if (!workspaceSlug || !initiativeId) return;
+      return issues.fetchIssues(workspaceSlug, initiativeId, loadType, options);
+    },
+    [issues.fetchIssues, workspaceSlug, initiativeId]
+  );
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !initiativeId) return;
+      return issues.fetchNextIssues(workspaceSlug, initiativeId, groupId, subGroupId);
+    },
+    [issues.fetchNextIssues, workspaceSlug, initiativeId]
+  );
+  const updateIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    },
+    [issues.updateIssue, workspaceSlug]
+  );
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    },
+    [issues.removeIssue, workspaceSlug]
+  );
+  const updateFilters = useCallback(
+    async (_projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      if (!workspaceSlug || !initiativeId) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      issuesFilter.updateEpicFilters(workspaceSlug, filterType, filters as any, initiativeId);
+    },
+    [issuesFilter.updateEpicFilters, workspaceSlug, initiativeId]
+  );
+
+  return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      updateIssue,
+      removeIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, updateIssue, removeIssue, updateFilters]
   );
 };
 

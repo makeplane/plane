@@ -12,7 +12,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TEpicStats, TIssue, TIssueParams, TInitiativeDisplayFilters } from "@plane/types";
+import type { TEpicStats, TIssue, TIssueParams, TInitiativeDisplayFilters, TIssuesResponse } from "@plane/types";
 import type {
   TInitiativeComment,
   TInitiativeLink,
@@ -344,7 +344,7 @@ export class InitiativeService extends APIService {
     workspaceSlug: string,
     initiativeId: string,
     queries?: Partial<Record<TIssueParams, string | boolean>>
-  ): Promise<TIssue[]> {
+  ): Promise<TIssuesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`, {
       params: queries,
     })
@@ -369,10 +369,12 @@ export class InitiativeService extends APIService {
       });
   }
 
-  // add
-  async addEpicsToInitiative(workspaceSlug: string, initiativeId: string, epics: string[]): Promise<TIssue[]> {
+  /**
+   * POST replaces the initiative–epic links with the given list (full state, not a delta).
+   */
+  async syncInitiativeEpics(workspaceSlug: string, initiativeId: string, epicIds: string[]): Promise<TIssue[]> {
     return this.post(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`, {
-      epic_ids: epics,
+      epic_ids: epicIds,
     })
       .then((res) => res?.data)
       .catch((err) => {

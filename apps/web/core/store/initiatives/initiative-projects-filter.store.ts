@@ -16,7 +16,7 @@ import { storage } from "@/lib/local-storage";
 import type { TProjectDisplayFilters } from "@plane/types";
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
-import type { TExternalProjectFilterExpression } from "../../components/initiatives/scope/filters/types";
+import type { TExternalProjectFilterExpression } from "@plane/types";
 import type { InitiativeProjectsStore } from "./initiative-projects.store";
 
 const PROJECT_FILTERS_STORAGE_KEY = "initiative_project_scope_filters";

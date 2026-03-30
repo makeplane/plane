@@ -20,7 +20,14 @@ from django.core.serializers.json import DjangoJSONEncoder
 from celery import shared_task
 
 # Module imports
-from plane.db.models import Intake, APIToken, IntakeIssue, Issue, State, IssueAssignee
+from plane.db.models import (
+    Intake,
+    APIToken,
+    IntakeIssue,
+    Issue,
+    State,
+    IssueAssignee,
+)
 from plane.db.models.asset import FileAsset
 from plane.ee.models import IntakeSetting, IntakeResponsibility, IntakeEmail
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag

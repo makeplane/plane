@@ -89,7 +89,7 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
         }
       }}
     >
-      <ProjectCard project={project} />
+      <ProjectCard project={project} workspaceSlug={workspaceSlug} />
     </div>
   );
 });
