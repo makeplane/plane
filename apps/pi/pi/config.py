@@ -397,7 +397,7 @@ class Database:
             from urllib.parse import quote
 
             c = self._credentials_from_secret()
-            return f"postgresql://{quote(str(c["user"]))}:{quote(str(c["password"]))}" f"@{c["host"]}:{c["port"]}/{c["name"]}"
+            return f"postgresql://{quote(str(c['user']))}:{quote(str(c['password']))}@{c['host']}:{c['port']}/{c['name']}"
         from urllib.parse import quote
 
         user = quote(str(self.USER or ""), safe="")
@@ -414,7 +414,7 @@ class Database:
             from urllib.parse import quote
 
             c = self._credentials_from_secret()
-            return f"postgresql+asyncpg://{quote(str(c["user"]))}:{quote(str(c["password"]))}" f"@{c["host"]}:{c["port"]}/{c["name"]}"
+            return f"postgresql+asyncpg://{quote(str(c['user']))}:{quote(str(c['password']))}@{c['host']}:{c['port']}/{c['name']}"
         from urllib.parse import quote
 
         user = quote(str(self.USER or ""), safe="")
