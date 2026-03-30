@@ -40,6 +40,7 @@ export class TranslationStore {
         es: (await import("../locales/es/translations.json")).default,
         ja: (await import("../locales/ja/translations.json")).default,
         "zh-CN": (await import("../locales/zh-CN/translations.json")).default,
+        ru: (await import("../locales/ru/translations.json")).default,
       };
       this.translations = translations;
       this.messageCache.clear(); // Clear cache when translations change
