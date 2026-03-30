@@ -67,8 +67,18 @@ chmod +x setup.sh
 3. Start the containers
 
 ```bash
-docker compose -f docker-compose-local.yml up
+# Start all services (recommended for first-time setup)
+docker compose -f docker-compose-local.yml --profile all up
+
+# Or start only external services (postgres, redis, rabbitmq, minio)
+# if you want to run api/workers outside Docker
+docker compose -f docker-compose-local.yml --profile services up
+
+# Or start external services + api, worker, beat-worker, and migrator
+docker compose -f docker-compose-local.yml --profile api up
 ```
+
+> **Tip:** To avoid passing `--profile` every time, add `COMPOSE_PROFILES=all` to your `.env` file. Then you can simply run `docker compose -f docker-compose-local.yml up`.
 
 4. Start web apps:
 

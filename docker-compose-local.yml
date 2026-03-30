@@ -1,7 +1,18 @@
+# Docker Compose Profiles:
+#   --profile all:       All services
+#   --profile services:  Only external services (postgres, redis, rabbitmq, minio)
+#   --profile api:       API + worker + beat-worker + migrator + external services
+#
+# NOTE: Running "docker compose up" with no --profile flag starts NO services,
+# because every service is assigned to at least one profile. To default to all
+# services without passing a flag, add to your .env:
+#   COMPOSE_PROFILES=all
+
 services:
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
+    profiles: ["services", "api", "all"]
     env_file:
       - .env
     networks:
@@ -14,6 +25,7 @@ services:
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
     restart: unless-stopped
+    profiles: ["services", "api", "all"]
     networks:
       - dev_env
     volumes:
@@ -31,6 +43,7 @@ services:
   plane-minio:
     image: minio/minio
     restart: unless-stopped
+    profiles: ["services", "api", "all"]
     networks:
       - dev_env
     entrypoint: >
@@ -56,6 +69,7 @@ services:
   plane-db:
     image: postgres:15.7-alpine
     restart: unless-stopped
+    profiles: ["services", "api", "all"]
     networks:
       - dev_env
     command: postgres -c 'max_connections=1000'
@@ -75,6 +89,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: unless-stopped
+    profiles: ["api", "all"]
     networks:
       - dev_env
     volumes:
@@ -96,6 +111,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: unless-stopped
+    profiles: ["api", "all"]
     networks:
       - dev_env
     volumes:
@@ -115,6 +131,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: unless-stopped
+    profiles: ["api", "all"]
     networks:
       - dev_env
     volumes:
@@ -134,6 +151,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: "no"
+    profiles: ["api", "all"]
     networks:
       - dev_env
     volumes:
@@ -152,6 +170,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: "no"
+    profiles: ["all"]
     networks:
       - dev_env
     volumes:
@@ -170,6 +189,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: "no"
+    profiles: ["all"]
     networks:
       - dev_env
     volumes:
@@ -188,6 +208,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: "no"
+    profiles: ["all"]
     networks:
       - dev_env
     volumes:

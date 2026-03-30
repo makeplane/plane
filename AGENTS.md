@@ -72,7 +72,12 @@ pnpm --filter=web dev               # Run only web app
 
 ```bash
 # Run with Docker (recommended for local dev)
-docker compose -f docker-compose-local.yml up
+# Start all services
+docker compose -f docker-compose-local.yml --profile all up
+# External services only (postgres, redis, rabbitmq, minio)
+docker compose -f docker-compose-local.yml --profile services up
+# External services + api, worker, beat-worker
+docker compose -f docker-compose-local.yml --profile api up
 
 # Run tests
 pytest                                          # All tests
@@ -96,7 +101,9 @@ python manage.py runserver
 ## Local Development Setup
 
 1. Clone the repo and run `./setup.sh`
-2. Start backend services: `docker compose -f docker-compose-local.yml up`
+2. Start backend services: `docker compose -f docker-compose-local.yml --profile all up`
+   - Use `--profile services` for only external services (postgres, redis, rabbitmq, minio)
+   - Use `--profile api` for external services + api, worker, beat-worker, migrator
 3. Start frontend: `pnpm dev`
 4. Admin setup: http://localhost:3001/god-mode/
 5. Main app: http://localhost:3000
@@ -108,6 +115,7 @@ python manage.py runserver
 Every source file in this repository contains a copyright/license header. When reading files, **ignore these headers** — they are boilerplate and not relevant to understanding the code logic. Do **not** remove, modify, or omit them when editing existing files. When creating **new** files, include the appropriate header.
 
 **TypeScript / JavaScript / TSX / JSX:**
+
 ```ts
 /**
  * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
@@ -124,6 +132,7 @@ Every source file in this repository contains a copyright/license header. When r
 ```
 
 **Python:**
+
 ```python
 # SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
 # SPDX-License-Identifier: LicenseRef-Plane-Commercial

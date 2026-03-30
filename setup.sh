@@ -131,7 +131,10 @@ if [ "$success" = true ]; then
     echo -e "${GREEN}✓${NC} Environment setup completed successfully!\n"
     echo -e "${BOLD}Next steps:${NC}"
     echo -e "1. Review the .env files in each folder if needed"
-    echo -e "2. Start the services with: ${BOLD}docker compose -f docker-compose-local.yml up -d${NC}"
+    echo -e "2. Start the services with: ${BOLD}docker compose -f docker-compose-local.yml --profile all up -d${NC}"
+    echo -e "   Or use a specific profile:"
+    echo -e "     ${BOLD}--profile services${NC}  External services only (postgres, redis, rabbitmq, minio)"
+    echo -e "     ${BOLD}--profile api${NC}       API + worker + beat-worker + migrator + external services"
     echo -e "\n${GREEN}Happy coding! 🚀${NC}"
 else
     echo -e "${RED}✗${NC} Some issues occurred during setup. Please check the errors above.\n"
