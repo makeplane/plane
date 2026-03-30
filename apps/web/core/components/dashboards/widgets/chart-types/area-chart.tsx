@@ -31,7 +31,7 @@ const AreaChart = lazy(function AreaChart() {
 export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model, group_by } = widget ?? {};
+  const { chart_model, group_by } = widget;
   const widgetConfig = widget?.config as TAreaChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   const isComparisonModel = chart_model === EWidgetChartModels.COMPARISON;
@@ -85,8 +85,6 @@ export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidg
     }
     return parsedAreas;
   }, [baseColors, chart_model, group_by, onClick, parsedData.schema, widgetConfig]);
-
-  if (!widget) return null;
 
   return (
     <Suspense fallback={<></>}>

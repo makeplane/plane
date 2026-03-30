@@ -31,7 +31,7 @@ const BarChart = lazy(function BarChart() {
 export const DashboardBarChartWidget = observer(function DashboardBarChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model, x_axis_property } = widget ?? {};
+  const { chart_model, x_axis_property } = widget;
   const widgetConfig = widget?.config as TBarChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   // next-themes
@@ -123,8 +123,6 @@ export const DashboardBarChartWidget = observer(function DashboardBarChartWidget
     }
     return parsedBars;
   }, [baseColors, chart_model, parsedData, widgetConfig, onClick, x_axis_property]);
-
-  if (!widget) return null;
 
   return (
     <Suspense fallback={<></>}>

@@ -74,8 +74,8 @@ const parsePieChartData = (
 export const DashboardPieChartWidget = observer(function DashboardPieChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget, onClick } = props;
   // derived values
-  const { height, width, x_axis_property } = widget ?? {};
-  const widgetConfig = widget?.config as TPieChartWidgetConfig | undefined;
+  const { height, width, x_axis_property } = widget;
+  const widgetConfig = widget.config as TPieChartWidgetConfig | undefined;
   const showLabels = !!widgetConfig?.show_values && height !== 1;
   const showLegends = !!widgetConfig?.show_legends;
   const legendPosition = (width ?? 1) >= (height ?? 1) ? "right" : "bottom";
@@ -125,8 +125,6 @@ export const DashboardPieChartWidget = observer(function DashboardPieChartWidget
     }
     return parsedCells;
   }, [baseColors, onClick, pieParsedData, widgetConfig, x_axis_property]);
-
-  if (!widget) return null;
 
   return (
     <Suspense fallback={<></>}>

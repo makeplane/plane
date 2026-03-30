@@ -14,27 +14,41 @@
 import { observer } from "mobx-react";
 // plane imports
 import type { TNumberWidgetConfig } from "@plane/types";
+import { cn, getChartExpressionForNumberWidget } from "@plane/utils";
 // local imports
 import type { TWidgetComponentProps } from ".";
 
 export const DashboardNumberWidget = observer(function DashboardNumberWidget(props: TWidgetComponentProps) {
-  const { widget } = props;
+  const { isEditModeEnabled, widget, onClick } = props;
   // derived values
-  const { data, height } = widget ?? {};
-  const widgetConfig = widget?.config as TNumberWidgetConfig | undefined;
-  const selectedAlignment = widgetConfig?.text_alignment ?? "center";
+  const { data, height, y_axis_metric } = widget;
+  const widgetConfig = widget.config as TNumberWidgetConfig | undefined;
+  const { text_alignment, text_color } = widgetConfig ?? {};
   const textToDisplay = data?.data?.[0]?.count ?? 0;
-
-  if (!widget) return null;
+  const chartExpression = y_axis_metric ? getChartExpressionForNumberWidget({ y_axis_metric }) : {};
 
   return (
-    <div className="size-full flex items-center px-4">
+    <div
+      className={cn("size-full flex items-center px-4", {
+        "cursor-pointer": !isEditModeEnabled,
+      })}
+      onClick={() => onClick?.(chartExpression)}
+      role={isEditModeEnabled ? "none" : "button"}
+      tabIndex={isEditModeEnabled ? undefined : 0}
+      onKeyDown={(e) => {
+        if (["Enter", " "].includes(e.key) && !isEditModeEnabled) {
+          e.preventDefault();
+          e.stopPropagation();
+          onClick?.(chartExpression);
+        }
+      }}
+    >
       <p
         className="w-full font-semibold text-primary truncate transition-all"
         style={{
           fontSize: (height ?? 1) * 1.7 + "rem",
-          textAlign: selectedAlignment,
-          color: widgetConfig?.text_color,
+          textAlign: text_alignment ?? "center",
+          color: text_color,
         }}
       >
         {textToDisplay}

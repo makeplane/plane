@@ -62,7 +62,7 @@ export const parseDonutChartData = (
 export const DashboardDonutChartWidget = observer(function DashboardDonutChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget, onClick } = props;
   // derived values
-  const { chart_model, data, height, width, x_axis_property } = widget ?? {};
+  const { chart_model, data, height, width, x_axis_property } = widget;
   const widgetConfig = widget?.config as TDonutChartWidgetConfig | undefined;
   const isOfUnitHeight = height === 1;
   const showLabels = !isOfUnitHeight && chart_model !== EWidgetChartModels.PROGRESS;
@@ -113,7 +113,9 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
           fill: "var(--background-color-layer-1)",
           onClick: () => {
             onClick?.({
-              state_group__in: STATE_GROUPS.unstarted.key,
+              state_group__in: [STATE_GROUPS.unstarted.key, STATE_GROUPS.started.key, STATE_GROUPS.backlog.key].join(
+                ","
+              ),
             });
           },
         },
@@ -123,8 +125,6 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
     }
     return parsedCells;
   }, [baseColors, chart_model, donutParsedData, onClick, widgetConfig, x_axis_property]);
-
-  if (!widget) return null;
 
   return (
     <Suspense fallback={<></>}>

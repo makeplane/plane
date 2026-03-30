@@ -15,11 +15,12 @@ import { observer } from "mobx-react";
 // plane imports
 import { WIDGET_X_AXIS_PROPERTIES_LIST, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 // local imports
 import type { TWidgetComponentProps } from ".";
 
 export const DashboardTableChartWidget = observer(function DashboardTableChartWidget(props: TWidgetComponentProps) {
-  const { parsedData, widget, onClick } = props;
+  const { isEditModeEnabled, parsedData, widget, onClick } = props;
   // translation
   const { t } = useTranslation();
   // derived values
@@ -36,19 +37,24 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
   if (!columns.length) return null;
 
   return (
-    <div className="flex size-full flex-col overflow-hidden px-4">
+    <div className="flex size-full flex-col overflow-hidden px-4 mt-5">
       {hasGroupKeys ? (
         <>
           <table className="w-full shrink-0 border-collapse text-xs" style={{ tableLayout: "fixed" }}>
             <thead>
               <tr className="border-b border-subtle-1">
-                <th className="min-w-0 pr-3 py-3 text-left text-tertiary text-11 truncate" title={groupByLabel}>
+                <th
+                  className="min-w-0 pr-3 pb-2 text-left text-tertiary text-caption-sm-regular truncate"
+                  title={groupByLabel}
+                >
                   {groupByLabel}
                 </th>
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="min-w-0 pr-3 py-3 text-left font-medium text-tertiary text-11 truncate"
+                    className={cn("min-w-0 pr-3 pb-2 text-left text-tertiary text-caption-sm-regular truncate", {
+                      "cursor-pointer": !isEditModeEnabled,
+                    })}
                     title={col.name}
                     onClick={() => {
                       if (!x_axis_property) return;
@@ -71,7 +77,12 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
                   return (
                     <tr key={groupKey} className="transition-colors">
                       <td
-                        className="sticky left-0 z-10 min-w-0 bg-surface-1 pr-3 py-3 text-secondary truncate"
+                        className={cn(
+                          "sticky left-0 z-10 min-w-0 bg-surface-1 pr-3 py-3 text-secondary text-body-xs-regular truncate",
+                          {
+                            "cursor-pointer": !isEditModeEnabled,
+                          }
+                        )}
                         title={groupLabel}
                         onClick={() => {
                           if (!group_by) return;
@@ -87,7 +98,9 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
                         return (
                           <td
                             key={col.key}
-                            className="min-w-0 pr-3 py-3 text-primary tabular-nums truncate"
+                            className={cn("min-w-0 pr-3 py-3 text-primary tabular-nums text-body-xs-regular truncate", {
+                              "cursor-pointer": !isEditModeEnabled,
+                            })}
                             title={String(cellValue)}
                             onClick={() => {
                               if (!x_axis_property || !group_by) return;

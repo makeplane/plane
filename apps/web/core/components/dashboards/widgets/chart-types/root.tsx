@@ -186,7 +186,12 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
         isDataEmpty={data?.data.length === 0}
         widget={widget}
       >
-        <WidgetComponent parsedData={parsedData} widget={widget} onClick={handleChartClick} />
+        <WidgetComponent
+          isEditModeEnabled={isEditingEnabled}
+          parsedData={parsedData}
+          widget={widget}
+          onClick={handleChartClick}
+        />
       </DashboardWidgetContent>
     </div>
   );

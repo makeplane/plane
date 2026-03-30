@@ -36,8 +36,9 @@ import {
 import type { DashboardWidgetInstance } from "@/store/dashboards/widget";
 
 export type TWidgetComponentProps = {
+  isEditModeEnabled: boolean;
   parsedData: TDashboardWidgetData;
-  widget: DashboardWidgetInstance | undefined;
+  widget: DashboardWidgetInstance;
   onClick?: (expression?: TWorkItemFilterExpression) => void;
 };
 
