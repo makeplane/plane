@@ -1,31 +1,32 @@
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useHoIssues } from "@/hooks/store/use-ho-issues";
 
-// Column keys in display order (matches HO_DATASHEET_COLUMNS in ho-datasheet-table.tsx)
-const COLUMN_LABELS: Record<string, string> = {
-  department_name: "Department",
-  project_name: "Team / Project",
-  main_task_category: "Main Task Category",
-  sub_task_category: "Sub Task Category",
-  sub_issue_count: "Number of Sub Work Items",
-  project_lead: "Team / Project Lead",
-  assignee: "Assignee",
-  bank_wide_project: "Bank-wide Project",
-  priority: "Priority",
-  state: "Status",
-  progress_tracking: "Progress Tracking",
-  modules: "Module",
-  cycle: "Cycle",
-  start_date: "Start Date",
-  due_date: "Due Date",
-  completed_date: "Completed Date",
-  total_log_time: "Total Logtime",
-  reference_link: "Reference Link",
-};
-
 export const HoDatasheetDisplayProps = observer(function HoDatasheetDisplayProps() {
+  const { t } = useTranslation();
   const store = useHoIssues();
   const { displayProperties } = store;
+
+  const COLUMN_LABELS: Record<string, string> = {
+    department_name: t("spreadsheet.columns.department_name"),
+    project_name: t("spreadsheet.columns.project_name"),
+    main_task_category: t("spreadsheet.columns.main_task_category"),
+    sub_task_category: t("spreadsheet.columns.sub_task_category"),
+    sub_issue_count: "Number of Sub Work Items",
+    project_lead: t("spreadsheet.columns.project_lead"),
+    assignee: "Assignee",
+    bank_wide_project: t("spreadsheet.columns.bank_wide_project"),
+    priority: "Priority",
+    state: "Status",
+    progress_tracking: t("spreadsheet.columns.progress_tracking"),
+    modules: t("sidebar.modules"),
+    cycle: t("sidebar.cycles"),
+    start_date: "Start Date",
+    due_date: "Due Date",
+    completed_date: t("spreadsheet.columns.completed_date"),
+    total_log_time: t("spreadsheet.columns.total_log_time"),
+    reference_link: t("spreadsheet.columns.reference_link"),
+  };
 
   const handleToggle = (key: string) => {
     store.updateDisplayProperties({ [key]: !displayProperties[key] });
@@ -33,7 +34,7 @@ export const HoDatasheetDisplayProps = observer(function HoDatasheetDisplayProps
 
   return (
     <div className="w-[480px] rounded-md border border-subtle bg-surface-1 p-3 shadow-md">
-      <p className="mb-2 text-12 font-medium uppercase tracking-wide text-secondary">Display Properties</p>
+      <p className="mb-2 text-12 font-medium uppercase tracking-wide text-secondary">{t("ho.display_properties")}</p>
       <div className="grid grid-cols-2 gap-x-6 gap-y-1">
         {Object.entries(COLUMN_LABELS).map(([key, label]) => {
           const enabled = displayProperties[key] !== false;

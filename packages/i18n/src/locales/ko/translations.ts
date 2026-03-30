@@ -3416,7 +3416,28 @@ export default {
     main_label: "메인 카테고리",
     sub_label: "서브 카테고리",
     select_main: "메인 카테고리 선택",
-    select_sub: "서브 카테고리 선택",
+    select_sub: "메인 카테고리 선택",
     no_sub_categories: "사용 가능한 서브 카테고리가 없습니다",
+  },
+  ho: {
+    all_workspaces: "모든 워크스페이스", // TODO: native review
+    all_projects: "모든 프로젝트", // TODO: native review
+    select_workspace_first: "워크스페이스를 먼저 선택하세요", // TODO: native review
+    display: "표시", // TODO: native review
+    display_properties: "표시 속성", // TODO: native review
+    from: "시작", // TODO: native review
+    to: "종료", // TODO: native review
+    no_work_items: "작업 항목을 찾을 수 없습니다.", // TODO: native review
+    no_matching_rows: "일치하는 행이 없습니다.", // TODO: native review
+    no_data: "데이터가 없습니다.", // TODO: native review
+    load_more: "더 보기 ({loaded} / {total})", // TODO: native review
+    loading: "로딩 중...", // TODO: native review
+    category: "카테고리", // TODO: native review
+    search: "검색...", // TODO: native review
+    clear_sort: "정렬 초기화", // TODO: native review
+    ascending: "오름차순", // TODO: native review
+    descending: "내림차순", // TODO: native review
+    work_item_count: "작업 항목 수", // TODO: native review
+    work_items: "작업 항목", // TODO: native review
   },
 } as const;

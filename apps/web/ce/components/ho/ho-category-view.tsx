@@ -2,23 +2,33 @@ import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { SearchIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { useHoIssues } from "@/hooks/store/use-ho-issues";
 import type { THoCategorySummary } from "@/plane-web/services/ho-issue.service";
 import { HoCategoryTable } from "./ho-category-table";
+import { HoWorkspaceSelect } from "./ho-workspace-select";
+import { HoProjectSelect } from "./ho-project-select";
 
 type SortKey = keyof THoCategorySummary;
 
 export const HoCategoryView = observer(function HoCategoryView() {
+  const { t } = useTranslation();
   const store = useHoIssues();
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("department_name");
+  const [sortKey, setSortKey] = useState<SortKey | null>("department_name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     void store.fetchCategorySummary();
+    void store.fetchAccessibleWorkspaces();
   }, [store]);
 
-  const handleSort = (key: SortKey) => {
+  const handleSort = (key: SortKey | "clear") => {
+    if (key === "clear") {
+      setSortKey(null);
+      setSortDir("asc");
+      return;
+    }
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else {
       setSortKey(key);
@@ -36,32 +46,36 @@ export const HoCategoryView = observer(function HoCategoryView() {
     );
   }, [store.categorySummary, search]);
 
-  const sortedData = useMemo(
-    () =>
-      [...filtered].sort((a, b) => {
-        const av = a[sortKey] ?? "";
-        const bv = b[sortKey] ?? "";
-        return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
-      }),
-    [filtered, sortKey, sortDir]
-  );
+  const sortedData = useMemo(() => {
+    const data = [...filtered];
+    if (!sortKey) return data;
+
+    return data.sort((a, b) => {
+      const av = a[sortKey] ?? "";
+      const bv = b[sortKey] ?? "";
+      return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }, [filtered, sortKey, sortDir]);
 
   return (
     <div className="size-full py-9 px-page-x lg:px-12">
-      {/* Header row: title + date range + search */}
+      {/* Header row: title + filters + date range + search */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
-        <h4 className="text-h3-medium">Category</h4>
+        <h4 className="text-h3-medium">{t("ho.category")}</h4>
 
         <div className="flex flex-wrap items-center gap-2">
+          <HoWorkspaceSelect />
+          <HoProjectSelect />
+
           {/* Date range pickers (shared store state) */}
-          <span className="text-13 font-medium text-secondary">From</span>
+          <span className="text-13 font-medium text-secondary">{t("ho.from")}</span>
           <input
             type="date"
             value={store.fromDate}
             onChange={(e) => store.setDateRange(e.target.value, store.toDate)}
             className="rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary outline-none focus:border-accent-primary transition-colors"
           />
-          <span className="text-13 font-medium text-secondary">To</span>
+          <span className="text-13 font-medium text-secondary">{t("ho.to")}</span>
           <input
             type="date"
             value={store.toDate}
@@ -74,7 +88,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
             <SearchIcon className="h-4 w-4 text-tertiary" />
             <input
               className="w-full max-w-[200px] border-none bg-transparent text-13 text-primary outline-none placeholder:text-tertiary"
-              placeholder="Search..."
+              placeholder={t("ho.search")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -90,7 +104,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
         </Loader>
       ) : sortedData.length === 0 ? (
         <p className="mt-16 text-center text-body-xs-regular text-placeholder">
-          {search ? "No matching rows." : "No data found."}
+          {search ? t("ho.no_matching_rows") : t("ho.no_data")}
         </p>
       ) : (
         <HoCategoryTable data={sortedData} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />

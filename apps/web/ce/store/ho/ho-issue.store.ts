@@ -1,46 +1,19 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
-import type { THoIssue, THoCategorySummary } from "@/plane-web/services/ho-issue.service";
+import type { THoIssue, THoCategorySummary, THoAccessibleWorkspace } from "@/plane-web/services/ho-issue.service";
 import { HoIssueService } from "@/plane-web/services/ho-issue.service";
-
-/** Returns today as YYYY-MM-DD in local time. */
-function todayISO(): string {
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-export type THoDisplayProperties = Record<string, boolean>;
-
-// All 18 display columns enabled by default
-const HO_DEFAULT_DISPLAY_PROPERTIES: THoDisplayProperties = {
-  department_name: true,
-  project_name: true,
-  main_task_category: true,
-  sub_task_category: true,
-  sub_issue_count: true,
-  project_lead: true,
-  assignee: true,
-  bank_wide_project: true,
-  priority: true,
-  state: true,
-  progress_tracking: true,
-  modules: true,
-  cycle: true,
-  start_date: true,
-  due_date: true,
-  completed_date: true,
-  total_log_time: true,
-  reference_link: true,
-};
+import { todayISO, HO_DEFAULT_DISPLAY_PROPERTIES, type THoDisplayProperties } from "./ho-issue.defaults";
 
 export interface IHoIssueStore {
   // Observables
   issues: THoIssue[];
   categorySummary: THoCategorySummary[];
+  accessibleWorkspaces: THoAccessibleWorkspace[];
+  selectedWorkspaceSlug: string | null;
+  selectedProjectIds: string[];
   isLoading: boolean;
   isCategoryLoading: boolean;
+  isWorkspacesLoading: boolean;
+  isFetchingIssues: boolean;
   error: string | null;
   currentPage: number;
   totalCount: number;
@@ -53,16 +26,24 @@ export interface IHoIssueStore {
   fetchIssues: (page?: number) => Promise<void>;
   fetchNextPage: () => Promise<void>;
   fetchCategorySummary: () => Promise<void>;
+  fetchAccessibleWorkspaces: () => Promise<void>;
   updateOrderBy: (key: string) => void;
   setDateRange: (from: string, to: string) => void;
   updateDisplayProperties: (props: Partial<THoDisplayProperties>) => void;
+  setWorkspaceFilter: (slug: string | null) => void;
+  setProjectFilter: (ids: string[]) => void;
 }
 
 export class HoIssueStore implements IHoIssueStore {
   issues: THoIssue[] = [];
   categorySummary: THoCategorySummary[] = [];
+  accessibleWorkspaces: THoAccessibleWorkspace[] = [];
+  selectedWorkspaceSlug: string | null = null;
+  selectedProjectIds: string[] = [];
   isLoading = false;
   isCategoryLoading = false;
+  isWorkspacesLoading = false;
+  isFetchingIssues = false;
   error: string | null = null;
   currentPage = 1;
   totalCount = 0;
@@ -72,6 +53,7 @@ export class HoIssueStore implements IHoIssueStore {
   toDate: string = todayISO();
   displayProperties: THoDisplayProperties = { ...HO_DEFAULT_DISPLAY_PROPERTIES };
 
+  private _filterSeq = 0;
   private service: HoIssueService;
 
   constructor() {
@@ -79,8 +61,13 @@ export class HoIssueStore implements IHoIssueStore {
     makeObservable(this, {
       issues: observable,
       categorySummary: observable,
+      accessibleWorkspaces: observable,
+      selectedWorkspaceSlug: observable,
+      selectedProjectIds: observable,
       isLoading: observable,
       isCategoryLoading: observable,
+      isWorkspacesLoading: observable,
+      isFetchingIssues: observable,
       error: observable,
       currentPage: observable,
       totalCount: observable,
@@ -92,11 +79,52 @@ export class HoIssueStore implements IHoIssueStore {
       fetchIssues: action,
       fetchNextPage: action,
       fetchCategorySummary: action,
+      fetchAccessibleWorkspaces: action,
       updateOrderBy: action,
       setDateRange: action,
       updateDisplayProperties: action,
+      setWorkspaceFilter: action,
+      setProjectFilter: action,
     });
   }
+
+  private _filterParams = (): Record<string, string> => {
+    const params: Record<string, string> = {
+      order_by: this.orderBy,
+      from_date: this.fromDate,
+      to_date: this.toDate,
+    };
+    if (this.selectedWorkspaceSlug) params.workspace_slug = this.selectedWorkspaceSlug;
+    if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
+    return params;
+  };
+
+  private _fetchFiltered = async (): Promise<void> => {
+    const seq = ++this._filterSeq;
+    runInAction(() => {
+      this.isFetchingIssues = true;
+    });
+    try {
+      const [issues, summary] = await Promise.all([
+        this.service.listIssues({ page: "1", ...this._filterParams() }),
+        this.service.getCategorySummary(this._filterParams()),
+      ]);
+      if (seq !== this._filterSeq) return;
+      runInAction(() => {
+        this.issues = issues.results;
+        this.totalCount = issues.count;
+        this.nextPageUrl = issues.next;
+        this.currentPage = 1;
+        this.categorySummary = summary;
+        this.isFetchingIssues = false;
+      });
+    } catch {
+      if (seq !== this._filterSeq) return;
+      runInAction(() => {
+        this.isFetchingIssues = false;
+      });
+    }
+  };
 
   fetchIssues = async (page = 1): Promise<void> => {
     runInAction(() => {
@@ -106,9 +134,7 @@ export class HoIssueStore implements IHoIssueStore {
     try {
       const params: Record<string, string> = {
         page: String(page),
-        order_by: this.orderBy,
-        from_date: this.fromDate,
-        to_date: this.toDate,
+        ...this._filterParams(),
       };
       const res = await this.service.listIssues(params);
       runInAction(() => {
@@ -138,19 +164,39 @@ export class HoIssueStore implements IHoIssueStore {
       this.isCategoryLoading = true;
     });
     try {
-      const params: Record<string, string> = {
-        from_date: this.fromDate,
-        to_date: this.toDate,
-      };
-      const data = await this.service.getCategorySummary(params);
+      const data = await this.service.getCategorySummary(this._filterParams());
       runInAction(() => {
         this.categorySummary = data;
       });
     } catch {
-      // leave existing data intact on error
+      // non-critical
     } finally {
       runInAction(() => {
         this.isCategoryLoading = false;
+      });
+    }
+  };
+
+  fetchAccessibleWorkspaces = async (): Promise<void> => {
+    if (this.isWorkspacesLoading || this.accessibleWorkspaces.length > 0) return;
+    runInAction(() => {
+      this.isWorkspacesLoading = true;
+    });
+    try {
+      const data = await this.service.listAccessibleWorkspaces();
+      runInAction(() => {
+        this.accessibleWorkspaces = data;
+      });
+    } catch (err: unknown) {
+      const status = (err as { status?: number })?.status;
+      if (status === 401 || status === 403) {
+        console.error("[HO] fetchAccessibleWorkspaces: auth error", status);
+      } else {
+        console.error("[HO] fetchAccessibleWorkspaces failed:", err);
+      }
+    } finally {
+      runInAction(() => {
+        this.isWorkspacesLoading = false;
       });
     }
   };
@@ -164,11 +210,27 @@ export class HoIssueStore implements IHoIssueStore {
     this.fromDate = from;
     this.toDate = to;
     this.currentPage = 1;
-    void this.fetchIssues(1);
-    void this.fetchCategorySummary();
+    void this._fetchFiltered();
   };
 
   updateDisplayProperties = (props: Partial<THoDisplayProperties>): void => {
     this.displayProperties = { ...this.displayProperties, ...props };
+  };
+
+  setWorkspaceFilter = (slug: string | null): void => {
+    runInAction(() => {
+      this.selectedWorkspaceSlug = slug;
+      this.selectedProjectIds = [];
+      this.currentPage = 1;
+    });
+    void this._fetchFiltered();
+  };
+
+  setProjectFilter = (ids: string[]): void => {
+    runInAction(() => {
+      this.selectedProjectIds = ids;
+      this.currentPage = 1;
+    });
+    void this._fetchFiltered();
   };
 }

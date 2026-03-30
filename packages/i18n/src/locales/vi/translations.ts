@@ -3469,4 +3469,25 @@ export default {
     select_sub: "Chọn danh mục phụ",
     no_sub_categories: "Không có danh mục phụ khả dụng",
   },
+  ho: {
+    all_workspaces: "Tất cả không gian làm việc", // TODO: native review
+    all_projects: "Tất cả dự án", // TODO: native review
+    select_workspace_first: "Vui lòng chọn không gian làm việc trước", // TODO: review
+    display: "Hiển thị", // TODO: native review
+    display_properties: "Thuộc tính hiển thị", // TODO: native review
+    from: "Từ", // TODO: native review
+    to: "Đến", // TODO: native review
+    no_work_items: "Không tìm thấy công việc nào.", // TODO: native review
+    no_matching_rows: "Không có hàng nào khớp.", // TODO: native review
+    no_data: "Không có dữ liệu.", // TODO: native review
+    load_more: "Tải thêm ({loaded} / {total})", // TODO: native review
+    loading: "Đang tải...", // TODO: native review
+    category: "Danh mục", // TODO: native review
+    search: "Tìm kiếm...", // TODO: native review
+    clear_sort: "Xóa sắp xếp", // TODO: native review
+    ascending: "Tăng dần", // TODO: native review
+    descending: "Giảm dần", // TODO: native review
+    work_item_count: "Số lượng mục công việc", // TODO: native review
+    work_items: "Mục công việc", // TODO: native review
+  },
 } as const;
