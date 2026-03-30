@@ -46,6 +46,8 @@ from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_
 class WorkspaceInvitationsViewset(BaseViewSet):
     """Endpoint for creating, listing and  deleting workspaces"""
 
+    use_read_replica = True
+
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
@@ -210,6 +212,8 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
 
 class WorkspaceJoinEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
     """Invitation response endpoint the user can respond to the invitation"""
 
@@ -307,6 +311,8 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
 
 class UserWorkspaceInvitationsViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 

@@ -38,6 +38,8 @@ from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class MilestoneWorkItemsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectMemberPermission]
 
     @check_feature_flag(FeatureFlag.MILESTONES)
@@ -125,6 +127,8 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
 
 
 class WorkItemMilestoneEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectMemberPermission]
 
     @check_feature_flag(FeatureFlag.MILESTONES)

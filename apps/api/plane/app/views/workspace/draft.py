@@ -56,6 +56,8 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
+    use_read_replica = True
+
     model = DraftIssue
 
     def get_queryset(self):

@@ -22,6 +22,8 @@ from rest_framework.response import Response
 
 
 class WorkflowActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, workflow_id):

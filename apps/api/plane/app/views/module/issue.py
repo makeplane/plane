@@ -51,6 +51,8 @@ from plane.utils.host import base_host
 
 
 class ModuleIssueViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
     webhook_event = "module_issue"

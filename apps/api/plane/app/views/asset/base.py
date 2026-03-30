@@ -23,6 +23,8 @@ from plane.authentication.session import BaseSessionAuthentication
 
 
 class FileAssetEndpoint(BaseAPIView):
+    use_read_replica = True
+
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     """
@@ -61,6 +63,8 @@ class FileAssetEndpoint(BaseAPIView):
 
 
 class FileAssetViewSet(BaseViewSet):
+    use_read_replica = True
+
     authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def restore(self, request, workspace_id, asset_key):
@@ -72,6 +76,8 @@ class FileAssetViewSet(BaseViewSet):
 
 
 class UserAssetsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request, asset_key):

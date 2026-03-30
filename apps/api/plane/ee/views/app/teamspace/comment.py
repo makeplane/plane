@@ -35,6 +35,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     model = TeamspaceComment
     permission_classes = [TeamspacePermission]
 
@@ -119,6 +121,8 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceCommentReactionEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     serializer_class = TeamspaceCommentReactionSerializer
     model = TeamspaceCommentReaction
 

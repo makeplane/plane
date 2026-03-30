@@ -35,6 +35,8 @@ from plane.authentication.secret import SecretKeyAuthentication
 
 
 class WorkspacePageCommentViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageCommentSerializer
     model = PageComment
 
@@ -185,6 +187,8 @@ class WorkspacePageCommentViewSet(BaseViewSet):
 
 
 class WorkspacePageCommentReactionViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageCommentReactionSerializer
     model = PageCommentReaction
 
@@ -230,6 +234,8 @@ class WorkspacePageCommentReactionViewSet(BaseViewSet):
 
 
 class WorkspacePageLiveServerEndpoint(BaseViewSet):
+    use_read_replica = True
+
     authentication_classes = [SecretKeyAuthentication]
     permission_classes = [AllowAny]
 

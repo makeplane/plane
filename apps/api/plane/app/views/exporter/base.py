@@ -22,6 +22,8 @@ from plane.app.views.base import BaseAPIView
 
 
 class ExportIssuesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = ExporterHistory
     serializer_class = ExporterHistorySerializer
 

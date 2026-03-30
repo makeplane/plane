@@ -36,6 +36,8 @@ from plane.utils.asset import validate_asset_type, get_asset_size_limit
 
 
 class InitiativeAttachmentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = InitiativeAttachmentSerializer
     model = FileAsset
 

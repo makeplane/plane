@@ -35,6 +35,8 @@ class ProxyUploadEndpoint(BaseAPIView):
     with time-based validation
     """
 
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -109,6 +111,8 @@ class ProxyDownloadEndpoint(BaseAPIView):
     """
     Proxy endpoint that receives download requests and streams content from S3
     """
+
+    use_read_replica = True
 
     permission_classes = [AllowAny]
 

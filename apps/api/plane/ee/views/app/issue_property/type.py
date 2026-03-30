@@ -375,6 +375,8 @@ class WorkspaceDefaultWorkItemTypeEndpoint(BaseAPIView):
 
 
 class WorkspaceIssueTypeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
@@ -406,6 +408,8 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
 
 
 class IssueTypeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
@@ -596,6 +600,8 @@ class IssueTypeEndpoint(BaseAPIView):
 
 
 class DefaultIssueTypeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)

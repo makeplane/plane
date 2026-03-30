@@ -58,6 +58,8 @@ from plane.payment.flags.flag_decorator import get_all_workspace_feature_flags
 
 
 class OAuthApplicationEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug):
@@ -252,6 +254,8 @@ class OAuthApplicationEndpoint(BaseAPIView):
 
 
 class OAuthApplicationRegenerateSecretEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def patch(self, request, slug, pk):
@@ -274,6 +278,8 @@ class OAuthApplicationRegenerateSecretEndpoint(BaseAPIView):
 
 
 class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug):
@@ -286,6 +292,8 @@ class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
 
 
 class OAuthApplicationInstallEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug, pk):
@@ -340,6 +348,8 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
 
 
 class OAuthApplicationPublishEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug, pk):
@@ -370,6 +380,8 @@ class OAuthApplicationPublishEndpoint(BaseAPIView):
 
 
 class OAuthApplicationClientIdEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get(self, request, client_id):
         application = Application.objects.filter(client_id=client_id, deleted_at__isnull=True).first()
         if not application:
@@ -379,6 +391,8 @@ class OAuthApplicationClientIdEndpoint(BaseAPIView):
 
 
 class OAuthApplicationCategoryEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get(self, request):
         application_categories = ApplicationCategory.objects.filter(is_active=True)
         serializer = ApplicationCategorySerializer(application_categories, many=True)
@@ -386,6 +400,8 @@ class OAuthApplicationCategoryEndpoint(BaseAPIView):
 
 
 class OAuthAppInstallationDetailEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceOwnerPermission]
 
     def delete(self, request, slug, pk):
@@ -407,6 +423,8 @@ class OAuthAppInstallationDetailEndpoint(BaseAPIView):
 
 
 class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def get(self, request, slug, app_slug):
@@ -438,6 +456,8 @@ class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
 
 
 class OAuthUserAppInstallationDetailEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def delete(self, request, slug, pk):
@@ -461,6 +481,8 @@ class OAuthUserAppInstallationDetailEndpoint(BaseAPIView):
 
 
 class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, application_id):
@@ -534,6 +556,8 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
 
 
 class OAuthApplicationSupportedWorkspacesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, client_id: str) -> Response:

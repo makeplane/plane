@@ -27,6 +27,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag, check_workspa
 
 
 class EpicPropertyEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     def create_options(self, issue_property, options):

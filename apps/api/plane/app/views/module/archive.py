@@ -47,6 +47,8 @@ from .. import BaseAPIView
 
 
 class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):

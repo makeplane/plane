@@ -44,6 +44,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class WorkspaceIssueDetailEndpoint(BaseAPIView):
+    use_read_replica = True
+
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,
@@ -223,6 +225,8 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
     layout in the workspace level
     """
 
+    use_read_replica = True
+
     def validate_dates(self, current_start, current_target, new_start, new_target):
         """
         Validate that start date is before target date.
@@ -316,6 +320,8 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
 
 
 class WorkspaceIssueRetrieveEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, issue_id):
         issue = (

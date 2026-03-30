@@ -30,6 +30,8 @@ from plane.ee.serializers import TeamspaceActivitySerializer
 
 
 class TeamspaceActivityEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     model = TeamspaceActivity
     permission_classes = [TeamspacePermission]
 

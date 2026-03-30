@@ -46,6 +46,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class InitiativeActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission(

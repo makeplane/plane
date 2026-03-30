@@ -35,6 +35,8 @@ from plane.ee.serializers import EpicCommentSerializer, EpicActivitySerializer
 
 
 class EpicActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @method_decorator(gzip_page)

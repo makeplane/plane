@@ -35,6 +35,8 @@ from plane.ee.bgtasks.project_activites_task import project_activity
 
 
 class ProjectAnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id):
@@ -51,6 +53,8 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectFeatureEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         # Get all projects in the workspace
@@ -80,6 +84,8 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
 
 
 class ProjectFeatureEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id):
         project_feature = ProjectFeature.objects.filter(project_id=project_id, workspace__slug=slug).first()
@@ -107,6 +113,8 @@ class ProjectFeatureEndpoint(BaseAPIView):
 
 
 class ProjectAttributesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = ProjectAttribute
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)

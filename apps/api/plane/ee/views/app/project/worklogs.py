@@ -26,6 +26,8 @@ from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
 
 
 class ProjectWorkLogsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def get(self, request, slug, project_id):
@@ -53,6 +55,8 @@ class ProjectWorkLogsEndpoint(BaseAPIView):
 
 
 class ProjectExportWorkLogsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def get(self, request, slug, project_id):

@@ -29,6 +29,8 @@ from plane.ee.models import IntakeForm, IntakeEmail
 
 
 class ProjectInTakePublishViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectMemberPermission]
 
     models = Intake
@@ -65,6 +67,8 @@ class ProjectInTakePublishViewSet(BaseViewSet):
 
 
 class IntakeFormRegenerateViewSet(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectMemberPermission]
 
     models = IntakeForm

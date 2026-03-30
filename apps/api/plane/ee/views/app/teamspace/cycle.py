@@ -41,6 +41,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
     model = Cycle
 

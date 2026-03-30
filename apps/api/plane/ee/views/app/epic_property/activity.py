@@ -23,6 +23,8 @@ from plane.app.permissions import allow_permission, ROLE
 
 
 class EpicPropertyActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, epic_id):

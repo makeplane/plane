@@ -332,6 +332,8 @@ class ProjectWorkItemTypeEndpoint(BaseAPIView):
 
 
 class IssuePropertyEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     def create_options(self, issue_property, options):

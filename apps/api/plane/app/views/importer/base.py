@@ -53,6 +53,8 @@ from plane.app.permissions import WorkSpaceAdminPermission
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get(self, request, slug, service):
         if service == "github":
             owner = request.GET.get("owner", False)
@@ -115,6 +117,8 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
 
 class ImportServiceEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug, service):
@@ -240,6 +244,8 @@ class ImportServiceEndpoint(BaseAPIView):
 
 
 class UpdateServiceImportStatusEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def post(self, request, slug, project_id, service, importer_id):
         importer = Importer.objects.get(pk=importer_id, workspace__slug=slug, project_id=project_id, service=service)
         importer.status = request.data.get("status", "processing")
@@ -248,6 +254,8 @@ class UpdateServiceImportStatusEndpoint(BaseAPIView):
 
 
 class BulkImportIssuesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def post(self, request, slug, project_id, service):
         # Get the project
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
@@ -410,6 +418,8 @@ class BulkImportIssuesEndpoint(BaseAPIView):
 
 
 class BulkImportModulesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def post(self, request, slug, project_id, service):
         modules_data = request.data.get("modules_data", [])
         project = Project.objects.get(pk=project_id, workspace__slug=slug)

@@ -30,6 +30,8 @@ from plane.app.permissions import WorkSpaceAdminPermission
 
 
 class CustomerPropertyEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def create_options(self, customer_property, options):

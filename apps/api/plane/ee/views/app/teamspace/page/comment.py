@@ -33,6 +33,8 @@ from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 
 
 class TeamspacePageCommentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = PageCommentSerializer
     model = PageComment
 
@@ -131,6 +133,8 @@ class TeamspacePageCommentEndpoint(BaseAPIView):
 
 
 class TeamspacePageResolveCommentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [TeamspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
@@ -154,6 +158,8 @@ class TeamspacePageResolveCommentEndpoint(BaseAPIView):
 
 
 class TeamspacePageUnresolveCommentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [TeamspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
@@ -174,6 +180,8 @@ class TeamspacePageUnresolveCommentEndpoint(BaseAPIView):
 
 
 class TeamspacePageRestoreCommentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [TeamspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
@@ -188,6 +196,8 @@ class TeamspacePageRestoreCommentEndpoint(BaseAPIView):
 
 
 class TeamspacePageCommentRepliesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [TeamspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
@@ -198,6 +208,8 @@ class TeamspacePageCommentRepliesEndpoint(BaseAPIView):
 
 
 class TeamspacePageCommentReactionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = PageCommentReactionSerializer
     model = PageCommentReaction
 

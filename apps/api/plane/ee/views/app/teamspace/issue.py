@@ -47,6 +47,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
     filter_backends = (
         ComplexFilterBackend,

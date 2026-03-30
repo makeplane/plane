@@ -46,6 +46,8 @@ from plane.utils.oauth import (
 
 
 class TeamspaceViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = TeamspaceSerializer
     model = Teamspace
     permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -159,6 +161,8 @@ class TeamspaceViewSet(BaseViewSet):
 
 
 class TeamspaceProjectViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = TeamspaceSerializer
     model = Teamspace
     permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -280,6 +284,8 @@ class TeamspaceProjectViewSet(BaseViewSet):
 
 
 class TeamspaceMemberViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = TeamspaceSerializer
     model = Teamspace
     permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]

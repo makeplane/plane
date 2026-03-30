@@ -46,6 +46,8 @@ from plane.payment.flags.flag_decorator import ErrorCodes
 
 
 class AdvanceAnalyticsBaseView(BaseAPIView):
+    use_read_replica = True
+
     def initialize_workspace(self, slug: str, type: str) -> None:
         self._workspace_slug = slug
         self.filters = get_analytics_filters(
@@ -58,6 +60,8 @@ class AdvanceAnalyticsBaseView(BaseAPIView):
 
 
 class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
+    use_read_replica = True
+
     def get_filtered_counts(self, queryset: QuerySet) -> Dict[str, int]:
         def get_filtered_count() -> int:
             if self.filters["analytics_date_range"]:
@@ -270,6 +274,8 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
 
 
 class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
+    use_read_replica = True
+
     def get_project_issues_stats(self) -> QuerySet:
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -703,6 +709,8 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
 
 # TODO : Add pagination for the charts
 class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
+    use_read_replica = True
+
     def project_chart(self) -> List[Dict[str, Any]]:
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])

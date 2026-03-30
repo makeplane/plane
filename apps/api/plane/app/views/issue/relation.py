@@ -144,6 +144,8 @@ class IssueRelationViewSet(BaseViewSet):
     Deprecated: Use WorkItemRelationDependencyViewSet and WorkItemRelationRelationViewSet instead.
     """
 
+    use_read_replica = True
+
     message = "Deprecated this endpoint."
 
     def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
@@ -157,6 +159,8 @@ class IssueRelationViewSet(BaseViewSet):
 
 
 class WorkItemRelationDependencyViewSet(BaseViewSet):
+    use_read_replica = True
+
     relation_model = IssueRelation
     relation_definition_model = WorkItemRelationDefinition
     serializer_class = WorkItemRelationSerializer
@@ -335,6 +339,8 @@ class WorkItemRelationRelationViewSet(BaseViewSet):
 
     Relation types are defined per workspace via WorkItemRelationDefinition (outward/inward labels).
     """
+
+    use_read_replica = True
 
     relation_model = IssueRelation
     relation_definition_model = WorkItemRelationDefinition

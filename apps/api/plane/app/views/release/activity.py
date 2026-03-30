@@ -23,6 +23,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ReleaseActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.RELEASES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, release_id):

@@ -37,6 +37,8 @@ from plane.app.views.base import BaseAPIView
 
 
 class IssueCommentViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
@@ -170,6 +172,8 @@ class IssueCommentViewSet(BaseViewSet):
 
 
 class IssueCommentRepliesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id, pk):
         replies = IssueComment.objects.filter(
@@ -181,6 +185,8 @@ class IssueCommentRepliesEndpoint(BaseAPIView):
 
 
 class CommentReactionViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = CommentReactionSerializer
     model = CommentReaction
 

@@ -24,6 +24,8 @@ from plane.app.serializers.module import ModuleSerializer
 
 
 class WorkspaceModulesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceViewerPermission]
 
     def get(self, request, slug):

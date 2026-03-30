@@ -25,6 +25,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)

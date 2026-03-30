@@ -47,6 +47,8 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
     This viewset automatically provides `list` and `create` actions related to issue types.
     """
 
+    use_read_replica = True
+
     model = IssueType
     serializer_class = IssueTypeAPISerializer
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
@@ -220,6 +222,8 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
     `update` and `destroy` actions related to issue types.
 
     """
+
+    use_read_replica = True
 
     logo_icons = [
         "Activity",

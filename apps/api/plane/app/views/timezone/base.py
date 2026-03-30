@@ -28,6 +28,8 @@ from plane.authentication.rate_limit import AuthenticationThrottle
 
 
 class TimezoneEndpoint(APIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     throttle_classes = [AuthenticationThrottle]

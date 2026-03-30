@@ -36,6 +36,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class DraftIssuePropertyValueEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):

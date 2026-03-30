@@ -30,6 +30,8 @@ from plane.payment.flags.flag_decorator import ErrorCodes
 
 
 class PageMetaDataEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -58,6 +60,8 @@ class PageMetaDataEndpoint(BaseAPIView):
 
 
 class PagePublicEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -81,6 +85,8 @@ class PagePublicEndpoint(BaseAPIView):
 
 
 class SubPagePublicEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -113,6 +119,8 @@ class SubPagePublicEndpoint(BaseAPIView):
 
 
 class PagePublicEmbedEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -173,6 +181,8 @@ class PagePublicEmbedEndpoint(BaseAPIView):
 
 
 class PagePublicMentionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):

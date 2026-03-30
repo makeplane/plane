@@ -71,6 +71,8 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 
 
 class WorkspaceViewViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IssueViewSerializer
     model = IssueView
 
@@ -158,6 +160,8 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    use_read_replica = True
+
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,
@@ -480,6 +484,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
 
 class IssueViewViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IssueViewSerializer
     model = IssueView
 
@@ -643,6 +649,8 @@ class IssueViewViewSet(BaseViewSet):
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
+    use_read_replica = True
+
     model = UserFavorite
 
     def get_queryset(self):

@@ -35,6 +35,8 @@ from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
 
 class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     model = TeamspaceView
     permission_classes = [TeamspacePermission]
 

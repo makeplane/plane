@@ -40,6 +40,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class ProjectAdvanceAnalyticsBaseView(BaseAPIView):
+    use_read_replica = True
+
     def initialize_workspace(self, slug: str, type: str) -> None:
         self._workspace_slug = slug
         self.filters = get_analytics_filters(
@@ -52,6 +54,8 @@ class ProjectAdvanceAnalyticsBaseView(BaseAPIView):
 
 
 class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
+    use_read_replica = True
+
     def get_filtered_counts(self, queryset: QuerySet) -> Dict[str, int]:
         def get_filtered_count() -> int:
             if self.filters["analytics_date_range"]:
@@ -114,6 +118,8 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
 
 
 class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
+    use_read_replica = True
+
     def get_project_issues_stats(self) -> QuerySet:
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -213,6 +219,8 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
 
 
 class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
+    use_read_replica = True
+
     def work_item_completion_chart(self, project_id, cycle_id=None, module_id=None, epic=False) -> Dict[str, Any]:
         queryset = None
 

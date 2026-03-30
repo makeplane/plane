@@ -27,6 +27,8 @@ from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, WORKSPACES_FEATURES_READ_
 
 
 class WorkspaceFeatureAPIEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_FEATURES_READ_SCOPE]],

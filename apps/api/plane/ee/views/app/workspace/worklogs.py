@@ -30,6 +30,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceWorkLogsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
@@ -58,6 +60,8 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
 
 
 class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)

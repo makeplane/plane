@@ -67,6 +67,8 @@ from plane.ee.utils.check_user_teamspace_member import (
 
 
 class IntakeViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IntakeSerializer
     model = Intake
 
@@ -105,6 +107,8 @@ class IntakeViewSet(BaseViewSet):
 
 
 class IntakeIssueViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 
@@ -625,6 +629,8 @@ class IntakeIssueViewSet(BaseViewSet):
 
 
 class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 

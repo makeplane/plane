@@ -152,6 +152,8 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         api_key, model, provider = get_llm_config()
@@ -188,6 +190,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
 
 class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         api_key, model, provider = get_llm_config()
@@ -219,6 +223,8 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
 
 class UnsplashEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get(self, request):
         (UNSPLASH_ACCESS_KEY,) = get_configuration_value(
             [

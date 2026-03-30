@@ -49,6 +49,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class CycleIssueViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = CycleIssueSerializer
     model = CycleIssue
     filter_backends = (

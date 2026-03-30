@@ -43,6 +43,8 @@ from .. import BaseAPIView
 
 
 class CycleArchiveUnarchiveEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get_queryset(self):
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,

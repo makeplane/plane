@@ -54,6 +54,8 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
 
     """
 
+    use_read_replica = True
+
     model = IssuePropertyValue
     serializer_class = IssuePropertyValueAPISerializer
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
@@ -289,6 +291,8 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
     - PATCH: Update the property value(s) (partial update/sync)
     - DELETE: Remove the property value(s)
     """
+
+    use_read_replica = True
 
     model = IssuePropertyValue
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]

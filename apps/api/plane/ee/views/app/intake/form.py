@@ -29,6 +29,8 @@ from plane.ee.serializers.app.intake import IntakeFormSerializer, IntakeFormRead
 
 
 class IntakeFormWorkitemTypeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TYPE_INTAKE_FORM)
     def get(self, request, slug, project_id, pk=None):

@@ -27,6 +27,8 @@ from django.db.models.functions import Cast
 
 
 class IssueCustomerEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
@@ -41,6 +43,8 @@ class IssueCustomerEndpoint(BaseAPIView):
 
 
 class IssueCustomerRequestEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)

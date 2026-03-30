@@ -61,6 +61,8 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
     This viewset provides `list` and `create` on epic level
     """
 
+    use_read_replica = True
+
     model = Issue
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
@@ -219,6 +221,8 @@ class EpicDetailAPIEndpoint(BaseAPIView):
     """
     This viewset provides `retrieve` on epic level
     """
+
+    use_read_replica = True
 
     model = Issue
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]

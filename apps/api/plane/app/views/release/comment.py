@@ -29,6 +29,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ReleaseCommentViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseCommentSerializer
     model = ReleaseComment
 
@@ -92,6 +94,8 @@ class ReleaseCommentViewSet(BaseViewSet):
 
 
 class ReleaseCommentReactionViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseCommentReactionSerializer
     model = ReleaseCommentReaction
 

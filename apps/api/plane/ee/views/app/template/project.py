@@ -45,6 +45,8 @@ from .base import TemplateBaseEndpoint
 
 
 class ProjectTemplateEndpoint(TemplateBaseEndpoint):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
     def get(self, request, slug, pk=None):
@@ -251,6 +253,8 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
 
 
 class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
     def post(self, request: HttpRequest, slug: str) -> Response:

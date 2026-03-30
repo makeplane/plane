@@ -42,6 +42,8 @@ from plane.app.permissions import allow_permission, ROLE
 
 
 class AnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         x_axis = request.GET.get("x_axis", False)
@@ -199,6 +201,8 @@ class AnalyticsEndpoint(BaseAPIView):
 
 
 class AnalyticViewViewset(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
     model = AnalyticView
     serializer_class = AnalyticViewSerializer
@@ -212,6 +216,8 @@ class AnalyticViewViewset(BaseViewSet):
 
 
 class SavedAnalyticEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug, analytic_id):
         analytic_view = AnalyticView.objects.get(pk=analytic_id, workspace__slug=slug)
@@ -238,6 +244,8 @@ class SavedAnalyticEndpoint(BaseAPIView):
 
 
 class ExportAnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         x_axis = request.data.get("x_axis", False)
@@ -284,6 +292,8 @@ class ExportAnalyticsEndpoint(BaseAPIView):
 
 
 class DefaultAnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         filters = issue_filters(request.GET, "GET")
@@ -424,6 +434,8 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
 
 
 class ProjectStatsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         fields = request.GET.get("fields", "").split(",")

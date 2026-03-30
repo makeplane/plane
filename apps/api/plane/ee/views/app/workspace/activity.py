@@ -23,6 +23,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceMemberActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     filterset_fields = {"created_at": ["gt", "gte", "lt", "lte"]}
 
     @check_feature_flag(FeatureFlag.WORKSPACE_MEMBER_ACTIVITY)

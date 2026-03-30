@@ -52,6 +52,8 @@ from plane.utils.oauth import (
 
 
 class ProjectPageDetailAPIEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = Page
     serializer_class = PageDetailAPISerializer
     permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]
@@ -112,6 +114,8 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
 
 
 class PublishedPageDetailAPIEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = Page
     serializer_class = PageDetailAPISerializer
     permission_classes = [IsAuthenticated]
@@ -145,6 +149,8 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
 
 
 class ProjectPageAPIEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = Page
     serializer_class = PageCreateAPISerializer
     permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]

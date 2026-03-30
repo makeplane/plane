@@ -39,6 +39,8 @@ from plane.utils.issue_search import search_issues
 
 
 class MilestoneViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = MilestoneSerializer
     model = Milestone
     permission_classes = [ProjectMemberPermission]

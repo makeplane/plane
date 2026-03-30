@@ -53,6 +53,8 @@ from plane.utils.oauth import (
 
 
 class ReleaseViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseSerializer
     model = Release
     permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -143,6 +145,8 @@ class ReleaseViewSet(BaseViewSet):
 
 
 class ReleaseTagViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseTagSerializer
     model = ReleaseTag
     permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -195,6 +199,8 @@ class ReleaseTagViewSet(BaseViewSet):
 
 
 class ReleaseLabelViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseLabelSerializer
     model = ReleaseLabel
     permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -247,6 +253,8 @@ class ReleaseLabelViewSet(BaseViewSet):
 
 
 class ReleaseWorkItemsViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseSerializer
     model = Release
     permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -300,6 +308,8 @@ class ReleaseWorkItemsViewSet(BaseViewSet):
 
 
 class ReleaseCommentViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseCommentSerializer
     model = ReleaseComment
     permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -353,6 +363,8 @@ class ReleaseCommentViewSet(BaseViewSet):
 
 
 class ReleaseLinkViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ReleaseLinkSerializer
     model = ReleaseLink
     permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]

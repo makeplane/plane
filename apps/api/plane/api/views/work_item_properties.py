@@ -59,6 +59,8 @@ class WorkItemPropertiesAPIEndpoint(BaseAPIView):
     PATCH: Updates work item and/or custom properties
     """
 
+    use_read_replica = True
+
     model = Issue
     permission_classes = [ProjectEntityPermission]
     webhook_event = "issue"

@@ -30,6 +30,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class DashboardViewSet(BaseViewSet):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
@@ -129,6 +131,8 @@ class DashboardViewSet(BaseViewSet):
 
 
 class DashboardQuickFilterEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, dashboard_id, pk=None):

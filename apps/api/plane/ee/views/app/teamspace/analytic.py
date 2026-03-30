@@ -39,6 +39,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission, TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -95,6 +97,8 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     def get_date_range(self):
         today = timezone.now().date()
         weekday = today.weekday()
@@ -194,6 +198,8 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceProgressSummaryEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     def get(self, request, slug, team_space_id):
         project_ids = TeamspaceProject.objects.filter(
             team_space_id=team_space_id, project__archived_at__isnull=True, workspace__slug=slug
@@ -224,6 +230,8 @@ class TeamspaceProgressSummaryEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     def get_blocking_issues(self, team_member_issue_ids, assigned_issue_ids):
         # Filter the issues based on the dependency type
         blocking_issue_ids = IssueRelation.objects.filter(
@@ -378,6 +386,8 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,

@@ -28,6 +28,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class AutomatedCycleViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = AutomatedCycleSerializer
     model = CycleSettings
 

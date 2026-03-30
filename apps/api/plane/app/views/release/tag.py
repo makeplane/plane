@@ -23,6 +23,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ReleaseTagEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission]
 
     @check_feature_flag(FeatureFlag.RELEASES)

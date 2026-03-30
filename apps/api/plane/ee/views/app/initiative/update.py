@@ -34,6 +34,8 @@ from plane.db.models import Workspace
 
 
 class InitiativeUpdateViewSet(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug, initiative_id):
@@ -107,6 +109,8 @@ class InitiativeUpdateViewSet(BaseAPIView):
 
 
 class InitiativeUpdateCommentsViewSet(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug, initiative_id, update_id):
@@ -146,6 +150,8 @@ class InitiativeUpdateCommentsViewSet(BaseAPIView):
 
 
 class InitiativeUpdatesReactionViewSet(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug, initiative_id, update_id):

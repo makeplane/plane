@@ -44,6 +44,8 @@ from plane.utils.issue_search import search_issues
 
 
 class SubIssuesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @method_decorator(gzip_page)

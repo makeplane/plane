@@ -52,6 +52,8 @@ from plane.utils.oauth import (
 
 
 class InitiativeViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = InitiativeSerializer
     model = Initiative
     permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -277,6 +279,8 @@ class InitiativeViewSet(BaseViewSet):
 
 
 class InitiativeEpicsViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = InitiativeSerializer
     model = Initiative
     permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -400,6 +404,8 @@ class InitiativeEpicsViewSet(BaseViewSet):
 
 
 class InitiativeProjectsViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = InitiativeSerializer
     model = Initiative
     permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
@@ -523,6 +529,8 @@ class InitiativeProjectsViewSet(BaseViewSet):
 
 
 class InitiativeLabelViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = InitiativeLabelSerializer
     model = InitiativeLabel
     permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]

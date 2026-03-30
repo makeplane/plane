@@ -35,6 +35,8 @@ from plane.ee.utils.check_user_teamspace_member import (
 
 
 class IssueVersionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 
@@ -85,6 +87,8 @@ class IssueVersionEndpoint(BaseAPIView):
 
 
 class WorkItemDescriptionVersionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 

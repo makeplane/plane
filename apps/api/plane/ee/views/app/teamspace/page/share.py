@@ -30,6 +30,8 @@ from rest_framework.response import Response
 
 
 class TeamspacePageUserEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = PageUserSerializer
     model = PageUser
     permission_classes = [TeamspacePagePermission]

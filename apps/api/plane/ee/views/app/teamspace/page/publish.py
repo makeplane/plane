@@ -25,6 +25,8 @@ from plane.ee.permissions.page import TeamspacePagePermission
 
 
 class TeamspacePagePublishEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [TeamspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)

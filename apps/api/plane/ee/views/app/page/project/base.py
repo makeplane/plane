@@ -77,6 +77,8 @@ logger = logging.getLogger(__name__)
 
 
 class PageExtendedViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageSerializer
     model = Page
     permission_classes = [ProjectPagePermission]
@@ -726,6 +728,8 @@ class PageExtendedViewSet(BaseViewSet):
 
 
 class PageFavoriteExtendedViewSet(BaseViewSet):
+    use_read_replica = True
+
     model = UserFavorite
     permission_classes = [ProjectPagePermission]
 
@@ -751,6 +755,8 @@ class PageFavoriteExtendedViewSet(BaseViewSet):
 
 
 class PagesDescriptionExtendedViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectPagePermission]
     model = Page
 
@@ -833,6 +839,8 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
 
 
 class PageDuplicateExtendedEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):

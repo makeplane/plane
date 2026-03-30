@@ -20,6 +20,8 @@ from rest_framework import status
 
 
 class PageEmbedEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get_permissions(self):
         """
         Dynamically return permission classes based on whether project_id or team_space_id is provided.
@@ -102,6 +104,8 @@ class PageEmbedEndpoint(BaseAPIView):
 
 
 class PageMentionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get_permissions(self):
         """
         Dynamically return permission classes based on whether project_id or team_space_id is provided.
@@ -188,6 +192,8 @@ class PageFetchMetadataEndpoint(BaseAPIView):
     Returns work item embeds, work item mentions, user mentions, and page embeds in a single response.
     This endpoint is used by the live server for PDF export to avoid multiple parallel API calls.
     """
+
+    use_read_replica = True
 
     def get_permissions(self):
         """

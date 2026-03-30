@@ -95,6 +95,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class EpicViewSet(BaseViewSet):
+    use_read_replica = True
+
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,
@@ -598,6 +600,8 @@ class EpicViewSet(BaseViewSet):
 
 
 class EpicMetaListEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id):
@@ -634,6 +638,8 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
 
 
 class EpicAnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id, epic_id):
@@ -663,6 +669,8 @@ class EpicAnalyticsEndpoint(BaseAPIView):
 
 
 class EpicDetailEndpoint(BaseAPIView):
+    use_read_replica = True
+
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,
@@ -767,6 +775,8 @@ class EpicDetailEndpoint(BaseAPIView):
 
 
 class WorkspaceEpicEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
@@ -811,6 +821,8 @@ class WorkspaceEpicEndpoint(BaseAPIView):
 
 
 class EpicListAnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
@@ -855,6 +867,8 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
 
 
 class EpicMetaEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
     def get(self, request, slug, project_id, epic_id):
         epic = Issue.objects.only("sequence_id", "project__identifier").get(
@@ -870,6 +884,8 @@ class EpicMetaEndpoint(BaseAPIView):
 
 
 class EpicDetailIdentifierEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def strict_str_to_int(self, s):
         if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
             raise ValueError("Invalid integer string")
@@ -991,6 +1007,8 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
 
 
 class EpicDescriptionVersionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 

@@ -42,6 +42,8 @@ from plane.utils.oauth import (
 
 
 class WorkspacePageDetailAPIEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = Page
     serializer_class = PageDetailAPISerializer
     permission_classes = [WorkspacePagePermission, TokenHasScopeIfOAuth]
@@ -74,6 +76,8 @@ class WorkspacePageDetailAPIEndpoint(BaseAPIView):
 
 
 class WorkspacePageAPIEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = PageCreateAPISerializer
     permission_classes = [WorkspacePagePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {

@@ -84,6 +84,8 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
 
 
 class PageViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageSerializer
     model = Page
     permission_classes = [ProjectPagePermission]
@@ -497,6 +499,8 @@ class PageViewSet(BaseViewSet):
 
 
 class PageFavoriteViewSet(BaseViewSet):
+    use_read_replica = True
+
     model = UserFavorite
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -523,6 +527,8 @@ class PageFavoriteViewSet(BaseViewSet):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectPagePermission]
 
     def retrieve(self, request, slug, project_id, page_id):
@@ -604,6 +610,8 @@ class PagesDescriptionViewSet(BaseViewSet):
 
 
 class PageDuplicateEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):

@@ -49,6 +49,8 @@ if settings.OPENSEARCH_ENABLED:
 
 
 class EnhancedGlobalSearchEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def filter_issues(self, query, slug, is_epic=False):
         # permission filters
         filters = [

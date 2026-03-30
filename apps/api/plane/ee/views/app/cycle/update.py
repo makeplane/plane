@@ -27,6 +27,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class CycleUpdatesViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = UpdatesSerializer
     model = EntityUpdates
     filterset_fields = ["issue__id", "workspace__id"]

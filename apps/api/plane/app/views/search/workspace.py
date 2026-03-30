@@ -29,6 +29,8 @@ class WorkspaceSearchEndpoint(BaseAPIView):
     also show related workspace if found
     """
 
+    use_read_replica = True
+
     permission_classes = [WorkspaceEntityPermission]
 
     def filter_workspaces(self, query, slug):

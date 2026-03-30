@@ -86,6 +86,8 @@ class WorkItemTypeSchemaAPIEndpoint(BaseAPIView):
                  Example: ?include=members,labels
     """
 
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @extend_schema(

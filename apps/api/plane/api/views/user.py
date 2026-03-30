@@ -25,6 +25,8 @@ from plane.utils.oauth import READ_SCOPE, PROFILE_READ_SCOPE
 
 
 class UserEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = UserLiteSerializer
     model = User
     permission_classes = [TokenHasScopeIfOAuth]

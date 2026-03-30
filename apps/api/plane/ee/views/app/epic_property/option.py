@@ -26,6 +26,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class EpicPropertyOptionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.EPICS)

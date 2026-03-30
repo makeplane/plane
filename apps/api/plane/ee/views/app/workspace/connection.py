@@ -24,6 +24,8 @@ from plane.app.permissions.workspace import WorkspaceEntityPermission
 
 
 class WorkspaceConnectionView(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -46,6 +48,8 @@ class WorkspaceConnectionView(BaseAPIView):
 
 
 class WorkspaceUserConnectionView(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkspaceEntityPermission,
     ]

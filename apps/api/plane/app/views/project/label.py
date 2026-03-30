@@ -26,6 +26,8 @@ class ProjectLabelsEndpoint(BaseAPIView):
     Endpoint for listing and creating project labels at the workspace level.
     """
 
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         """List all project labels in the workspace."""
@@ -51,6 +53,8 @@ class ProjectLabelDetailEndpoint(BaseAPIView):
     """
     Endpoint for retrieving, updating, and deleting a single project label.
     """
+
+    use_read_replica = True
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_label_id):

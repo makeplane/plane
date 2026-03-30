@@ -36,6 +36,8 @@ from plane.ee.bgtasks.recurring_work_item_activity_task import (
 
 
 class RecurringWorkItemViewSet(TemplateBaseEndpoint):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
     def post(self, request, slug, project_id):
@@ -167,6 +169,8 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
 
 
 class RecurringWorkItemActivitiesEndpoint(TemplateBaseEndpoint):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
     def get(self, request, slug, project_id, pk):

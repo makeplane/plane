@@ -23,6 +23,8 @@ from plane.app.permissions.project import ProjectBasePermission
 
 
 class ImportReportView(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectBasePermission]
 
     @check_feature_flag(FeatureFlag.SILO)

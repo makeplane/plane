@@ -25,6 +25,8 @@ from plane.ee.utils.page_events import PageAction
 
 
 class WorkspacePagePublishEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)

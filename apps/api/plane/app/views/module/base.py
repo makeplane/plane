@@ -76,6 +76,8 @@ from plane.utils.host import base_host
 
 
 class ModuleViewSet(BaseViewSet):
+    use_read_replica = True
+
     model = Module
     webhook_event = "module"
 
@@ -768,6 +770,8 @@ class ModuleViewSet(BaseViewSet):
 
 
 class ModuleLinkViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     model = ModuleLink
@@ -794,6 +798,8 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
+    use_read_replica = True
+
     model = UserFavorite
     permission_classes = [ProjectLitePermission]
 

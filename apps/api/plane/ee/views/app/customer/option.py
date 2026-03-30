@@ -23,6 +23,8 @@ from plane.app.permissions import WorkSpaceAdminPermission
 
 
 class CustomerPropertyOptionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)

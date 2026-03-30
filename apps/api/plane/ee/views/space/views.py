@@ -51,6 +51,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class ViewsMetaDataEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -79,6 +81,8 @@ class ViewsMetaDataEndpoint(BaseAPIView):
 
 
 class ViewsPublicEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -102,6 +106,8 @@ class ViewsPublicEndpoint(BaseAPIView):
 
 
 class IssueViewsPublicEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
     filter_backends = (
         ComplexFilterBackend,

@@ -36,6 +36,8 @@ from plane.ee.bgtasks.automation_activity_task import automation_activity
 
 
 class AutomationNodeEndpoint(AutomationBaseEndpoint):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     def get(

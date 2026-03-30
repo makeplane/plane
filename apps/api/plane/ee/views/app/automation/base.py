@@ -47,6 +47,8 @@ from plane.ee.bgtasks.automation_activity_task import automation_activity
 
 
 class AutomationEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def enhance_automation_data(self, automations: list[Automation], data: list[dict]) -> list[dict]:
         # get all automation runs for the automations
         runs = AutomationRun.objects.filter(automation__in=automations).values(
@@ -213,6 +215,8 @@ class AutomationStatusEndpoint(BaseAPIView):
     This endpoint will be used to toggle the status of the automation`
     """
 
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN])
     def post(self, request, slug, project_id, pk: uuid.UUID):
@@ -247,6 +251,8 @@ class AutomationStatusEndpoint(BaseAPIView):
 
 
 class AutomationBaseEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get_automation_version(self, automation_id: uuid.UUID):
         automation = Automation.objects.get(
             id=automation_id,

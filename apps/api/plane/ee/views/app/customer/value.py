@@ -40,6 +40,8 @@ from plane.ee.utils.customer_property_validators import (
 
 
 class CustomerPropertyValueEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def query_annotator(self, query):

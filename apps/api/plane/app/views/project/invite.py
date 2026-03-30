@@ -47,6 +47,8 @@ from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class ProjectInvitationsViewset(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite
 
@@ -126,6 +128,8 @@ class ProjectInvitationsViewset(BaseViewSet):
 
 
 class UserProjectInvitationsViewset(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite
 
@@ -206,6 +210,8 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
 
 class ProjectJoinEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def post(self, request, slug, project_id, pk):

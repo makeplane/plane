@@ -37,6 +37,8 @@ from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class CustomerRequestEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
@@ -177,6 +179,8 @@ class CustomerRequestEndpoint(BaseAPIView):
 
 
 class CustomerIssuesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, customer_id):
         customer_request_id = request.query_params.get("customer_request_id")

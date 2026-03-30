@@ -33,6 +33,8 @@ from plane.app.permissions import WorkSpaceAdminPermission
 
 
 class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     serializer_class = CustomerRequestAttachmentV2Serializer

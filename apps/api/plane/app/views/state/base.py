@@ -39,6 +39,8 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 class StateViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = StateSerializer
     model = State
 
@@ -192,6 +194,8 @@ class StateViewSet(BaseViewSet):
 
 
 class IntakeStateEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()

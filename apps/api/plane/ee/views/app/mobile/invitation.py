@@ -21,6 +21,8 @@ from plane.db.models import WorkspaceMemberInvite
 
 # mobile workspace invitation endpoint
 class MobileWorkspaceInvitationEndpoint(APIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, invitation_id, email):

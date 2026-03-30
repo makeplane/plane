@@ -29,6 +29,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class IssueSubscriberViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IssueSubscriberSerializer
     model = IssueSubscriber
 

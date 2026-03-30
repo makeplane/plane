@@ -29,6 +29,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceEpicTypeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.EPICS)
@@ -59,6 +61,8 @@ class WorkspaceEpicTypeEndpoint(BaseAPIView):
 
 
 class ProjectEpicTypeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.EPICS)

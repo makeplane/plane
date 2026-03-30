@@ -42,6 +42,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag, check_workspa
 
 
 class EpicPropertyValueEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):

@@ -22,6 +22,8 @@ from plane.payment.utils.member_payment_count import workspace_member_check
 
 
 class WorkspaceInviteCheckEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     def enterprise_plan_invite_check(self, slug: str):

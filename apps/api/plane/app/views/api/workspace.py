@@ -27,6 +27,8 @@ from plane.app.permissions import WorkSpaceAdminPermission
 
 
 class WorkspaceAPITokenEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkSpaceAdminPermission,
     ]

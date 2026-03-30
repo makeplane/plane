@@ -31,6 +31,8 @@ from plane.utils.host import base_host
 
 
 class EpicsUpdateViewSet(BaseAPIView):
+    use_read_replica = True
+
     def get_queryset(self):
         return EntityUpdates.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
@@ -128,6 +130,8 @@ class EpicsUpdateViewSet(BaseAPIView):
 
 
 class EpicsUpdateCommentsViewSet(BaseAPIView):
+    use_read_replica = True
+
     def get_queryset(self):
         return EntityUpdates.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
@@ -175,6 +179,8 @@ class EpicsUpdateCommentsViewSet(BaseAPIView):
 
 
 class EpicsUpdatesReactionViewSet(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, epic_id, update_id):
         serializer = UpdateReactionSerializer(data=request.data)

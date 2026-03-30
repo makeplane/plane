@@ -38,6 +38,8 @@ from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 
 
 class WidgetEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get_queryset(self):
         return Widget.objects.filter(
             dashboard_widgets__dashboard_id=self.kwargs.get("dashboard_id"),
@@ -112,6 +114,8 @@ class WidgetEndpoint(BaseAPIView):
 
 
 class WidgetListEndpoint(BaseAPIView):
+    use_read_replica = True
+
     filterset_class = IssueFilterSet
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
@@ -212,6 +216,8 @@ class WidgetListEndpoint(BaseAPIView):
 
 
 class BulkWidgetEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
     def post(self, request, slug, dashboard_id):

@@ -21,6 +21,8 @@ from plane.app.permissions import ProjectPagePermission
 
 
 class PageVersionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectPagePermission]
 
     def get(self, request, slug, project_id, page_id, pk=None):

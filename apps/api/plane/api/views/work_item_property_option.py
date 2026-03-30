@@ -41,6 +41,8 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
     This viewset automatically provides `list` and `create` actions related to issue property options.
     """
 
+    use_read_replica = True
+
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
@@ -202,6 +204,8 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
     `update` and `destroy` actions related to issue property options.
 
     """
+
+    use_read_replica = True
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer

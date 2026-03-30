@@ -34,6 +34,8 @@ from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
 
 class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission]
     model = TeamspaceMember
     serializer_class = TeamspaceMemberSerializer

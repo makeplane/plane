@@ -43,6 +43,8 @@ from plane.utils.oauth import (
 
 
 class WorkItemWorklogEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_WRITE_SCOPE]],
@@ -197,6 +199,8 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
     """
     ViewSet to fetch total worklog duration for each unique issue.
     """
+
+    use_read_replica = True
 
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {

@@ -35,6 +35,8 @@ from plane.app.permissions import ProjectBasePermission, ProjectEntityPermission
 
 
 class GithubRepositoriesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectBasePermission]
 
     def get(self, request, slug, workspace_integration_id):
@@ -54,6 +56,8 @@ class GithubRepositoriesEndpoint(BaseAPIView):
 
 
 class GithubRepositorySyncViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectBasePermission]
 
     serializer_class = GithubRepositorySyncSerializer
@@ -132,6 +136,8 @@ class GithubRepositorySyncViewSet(BaseViewSet):
 
 
 class GithubIssueSyncViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     serializer_class = GithubIssueSyncSerializer
@@ -145,6 +151,8 @@ class GithubIssueSyncViewSet(BaseViewSet):
 
 
 class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def post(self, request, slug, project_id, repo_sync_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
@@ -173,6 +181,8 @@ class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
 
 
 class GithubCommentSyncViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     serializer_class = GithubCommentSyncSerializer

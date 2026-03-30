@@ -46,6 +46,8 @@ class IntakeFormSettingsEndpoint(BaseAPIView):
     so the frontend can display the form fields and the options for the issue properties
     """
 
+    use_read_replica = True
+
     permission_classes = [
         AllowAny,
     ]
@@ -86,6 +88,8 @@ class IntakeFormCreateWorkItemEndpoint(BaseAPIView):
     """
     This endpoint is used to create a new intake work item from the public form
     """
+
+    use_read_replica = True
 
     permission_classes = [
         AllowAny,

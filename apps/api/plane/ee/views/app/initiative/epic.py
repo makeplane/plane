@@ -50,6 +50,8 @@ from plane.utils.pql import PQLFilterBackend
 
 
 class InitiativeEpicViewSet(BaseViewSet):
+    use_read_replica = True
+
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,
@@ -304,6 +306,8 @@ class InitiativeEpicViewSet(BaseViewSet):
 
 
 class InitiativeEpicIssueViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IssueListDetailSerializer
     model = Issue
 

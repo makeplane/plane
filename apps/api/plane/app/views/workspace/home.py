@@ -22,6 +22,8 @@ from rest_framework import status
 
 
 class WorkspaceHomePreferenceViewSet(BaseAPIView):
+    use_read_replica = True
+
     model = WorkspaceHomePreference
 
     def get_serializer_class(self):

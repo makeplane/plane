@@ -33,6 +33,8 @@ from plane.ee.utils.workspace_feature import (
 
 
 class WorkspaceProjectStatesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -112,6 +114,8 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectStatesDefaultEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkspaceEntityPermission,
     ]

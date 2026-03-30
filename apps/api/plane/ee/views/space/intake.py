@@ -51,6 +51,8 @@ from plane.ee.utils.intake_email_anchor import get_anchors
 
 
 class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
@@ -82,6 +84,8 @@ class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
 
 
 class IntakePublishedIssueEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
     throttle_classes = [SpaceRateThrottle, AnchorBasedRateThrottle]
 
@@ -216,6 +220,8 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
 
 
 class IntakeEmailWebhookEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -225,6 +231,8 @@ class IntakeEmailWebhookEndpoint(BaseAPIView):
 
 
 class IntakeEmailAttachmentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [AllowAny]
 
     def post(self, request):

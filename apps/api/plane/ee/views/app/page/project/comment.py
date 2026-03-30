@@ -33,6 +33,8 @@ from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 
 
 class ProjectPageCommentViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageCommentSerializer
     model = PageComment
 
@@ -196,6 +198,8 @@ class ProjectPageCommentViewSet(BaseViewSet):
 
 
 class ProjectPageCommentReactionViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageCommentReactionSerializer
     model = PageCommentReaction
 

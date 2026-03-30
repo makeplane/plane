@@ -50,6 +50,8 @@ from plane.utils.filters.extended.filterset import InitiativeProjectFilterSet
 
 
 class InitiativeEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission]
     model = Initiative
     serializer_class = InitiativeSerializer
@@ -237,6 +239,8 @@ class InitiativeEndpoint(BaseAPIView):
 
 
 class InitiativeProjectEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission]
     model = InitiativeProject
     serializer_class = InitiativeProjectSerializer
@@ -291,6 +295,8 @@ class InitiativeProjectEndpoint(BaseAPIView):
 
 
 class InitiativeAnalyticsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def projects_issues_count(self, state, project_ids):
         return Count("id", filter=Q(state__group=state, project_id__in=project_ids))
 
@@ -465,6 +471,8 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
 
 
 class WorkspaceInitiativeAnalytics(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id=None):
@@ -537,6 +545,8 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
 
 
 class InitiativeEpicAnalytics(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, initiative_id):
@@ -579,6 +589,8 @@ class InitiativeEpicAnalytics(BaseAPIView):
 
 
 class InitiativeProgressEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, initiative_id):

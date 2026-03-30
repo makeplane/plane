@@ -77,6 +77,8 @@ logger = logging.getLogger(__name__)
 
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     def get_queryset(self):
@@ -385,6 +387,8 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageSummaryEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     def get(self, request, slug, team_space_id):
@@ -424,6 +428,8 @@ class TeamspacePageSummaryEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceSubPageEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     def get(self, request, slug, team_space_id, page_id):
@@ -448,6 +454,8 @@ class TeamspaceSubPageEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     def get(self, request, slug, team_space_id, page_id):
@@ -471,6 +479,8 @@ class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -526,6 +536,8 @@ class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -567,6 +579,8 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -604,6 +618,8 @@ class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -678,6 +694,8 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -765,6 +783,8 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageVersionEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -792,6 +812,8 @@ class TeamspacePageVersionEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspacePageFavoriteEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     model = UserFavorite
     permission_classes = [TeamspacePermission]
 

@@ -36,6 +36,8 @@ from plane.utils.asset import validate_asset_type, get_asset_size_limit
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     parser_classes = (MultiPartParser, FormParser)
@@ -91,6 +93,8 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
 
 class IssueAttachmentV2Endpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
 

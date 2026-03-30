@@ -39,6 +39,8 @@ from plane.utils.issue_type_hierarchy import validate_type_hierarchy
 
 
 class EpicIssuesEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, epic_id):

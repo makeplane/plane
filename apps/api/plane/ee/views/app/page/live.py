@@ -44,6 +44,8 @@ logger = logging.getLogger(__name__)
 
 
 class PagesLiveServerSubPagesViewSet(BaseViewSet):
+    use_read_replica = True
+
     authentication_classes = [SecretKeyAuthentication]
     permission_classes = [AllowAny]
 
@@ -78,6 +80,8 @@ class PagesLiveServerSubPagesViewSet(BaseViewSet):
 
 
 class PagesLiveServerDescriptionViewSet(BaseViewSet):
+    use_read_replica = True
+
     authentication_classes = [SecretKeyAuthentication]
     permission_classes = [AllowAny]
 

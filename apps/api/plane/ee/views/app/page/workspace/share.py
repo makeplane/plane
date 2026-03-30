@@ -32,6 +32,8 @@ from plane.bgtasks.extended.share_page_notification import share_page_notificati
 
 
 class WorkspacePageUserViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageUserSerializer
     model = PageUser
     permission_classes = [WorkspacePagePermission]

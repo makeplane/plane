@@ -32,6 +32,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class PageTemplateEndpoint(TemplateBaseEndpoint):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def get(self, request, slug, pk=None):
@@ -162,6 +164,8 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
 
 
 class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def get(self, request, slug, project_id):

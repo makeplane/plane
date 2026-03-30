@@ -31,6 +31,8 @@ from .base import BaseAPIView
 
 
 class IssueSearchEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def filter_issues_by_project(self, project_id: UUID, issues: QuerySet) -> QuerySet:
         """
         Filter issues by project

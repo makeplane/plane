@@ -32,6 +32,8 @@ from plane.utils.host import base_host
 
 
 class IssuePageViewSet(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectLitePermission]
 
     def filter_work_item_pages(self, slug, project_id, issue_id):
@@ -127,6 +129,8 @@ class IssuePageViewSet(BaseAPIView):
 
 
 class PageSearchViewSet(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectLitePermission]
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)

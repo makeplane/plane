@@ -23,6 +23,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceViewsPublishEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
@@ -94,6 +96,8 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
 
 
 class IssueViewsPublishEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectMemberPermission]
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)

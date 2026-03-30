@@ -73,6 +73,8 @@ logger = logging.getLogger(__name__)
 
 
 class WorkspacePageViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = WorkspacePageSerializer
     model = Page
     permission_classes = [WorkspacePagePermission]
@@ -573,6 +575,8 @@ class WorkspacePageViewSet(BaseViewSet):
 
 
 class WorkspacePageDuplicateEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
@@ -594,6 +598,8 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
 
 
 class WorkspacePagesDescriptionViewSet(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
@@ -683,6 +689,8 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
 
 
 class WorkspacePageVersionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
@@ -702,6 +710,8 @@ class WorkspacePageVersionEndpoint(BaseAPIView):
 
 
 class WorkspacePageFavoriteEndpoint(BaseAPIView):
+    use_read_replica = True
+
     model = UserFavorite
     permission_classes = [WorkspacePagePermission]
 
@@ -730,6 +740,8 @@ class WorkspacePageFavoriteEndpoint(BaseAPIView):
 
 
 class WorkspacePageRestoreEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)

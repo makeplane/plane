@@ -28,6 +28,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class IssueWorkLogsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
@@ -73,6 +75,8 @@ class IssueWorkLogsEndpoint(BaseAPIView):
 
 
 class IssueTotalWorkLogEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def get(self, request, slug, project_id, issue_id):
         total_worklog = IssueWorkLog.objects.filter(

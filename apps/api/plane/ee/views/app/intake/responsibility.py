@@ -24,6 +24,8 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class IntakeResponsibilityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = IntakeResponsibilitySerializer
     model = IntakeResponsibility
 

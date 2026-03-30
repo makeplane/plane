@@ -47,6 +47,8 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
     Endpoint to get the project workflow
     """
 
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
@@ -196,6 +198,8 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
 
 
 class WorkflowEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get_queryset(self, slug, project_id):
         return Workflow.objects.filter(project_id=project_id, workspace__slug=slug).annotate(
             work_item_type_ids=ArrayAgg(
@@ -292,6 +296,8 @@ class WorkflowEndpoint(BaseAPIView):
 
 
 class DefaultWorkflowEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
     def post(self, request, slug, project_id):

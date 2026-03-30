@@ -58,6 +58,8 @@ from plane.utils.filters import IssueFilterSet
 
 
 class EpicArchiveViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = IssueFlatSerializer
     model = Issue
     filter_backends = (

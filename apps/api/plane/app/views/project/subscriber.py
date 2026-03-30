@@ -25,6 +25,8 @@ from plane.bgtasks.project_subscriber_task import add_project_subscribers_to_wor
 
 
 class ProjectSubscriberEndpoint(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = ProjectSubscriberSerializer
     model = ProjectSubscriber
 

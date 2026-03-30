@@ -28,6 +28,8 @@ from .. import BaseViewSet
 
 
 class WorkItemRelationDefinitionViewSet(BaseViewSet):
+    use_read_replica = True
+
     DEFAULT_SORT_ORDER = 65535
     model = WorkItemRelationDefinition
     input_serializer_class = WorkItemRelationDefinitionInputSerializer

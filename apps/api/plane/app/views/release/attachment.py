@@ -31,6 +31,8 @@ from plane.settings.storage import S3Storage
 
 
 class ReleaseAttachmentEndpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = ReleaseAttachmentSerializer
     model = FileAsset
 

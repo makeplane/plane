@@ -30,6 +30,8 @@ from rest_framework.response import Response
 
 
 class ProjectPageUserViewSet(BaseViewSet):
+    use_read_replica = True
+
     serializer_class = PageUserSerializer
     model = PageUser
     permission_classes = [ProjectPagePermission]

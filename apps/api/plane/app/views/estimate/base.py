@@ -45,6 +45,8 @@ def generate_random_name(length=10):
 
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
@@ -60,6 +62,8 @@ class ProjectEstimatePointEndpoint(BaseAPIView):
 
 
 class BulkEstimatePointEndpoint(BaseViewSet):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
     model = Estimate
     serializer_class = EstimateSerializer
@@ -164,6 +168,8 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
 
 class EstimatePointEndpoint(BaseViewSet):
+    use_read_replica = True
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, estimate_id):
         #  TODO: add a key validation if the same key already exists

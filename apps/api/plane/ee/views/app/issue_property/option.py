@@ -161,6 +161,8 @@ class WorkspaceWorkItemPropertyOptionEndpoint(BaseAPIView):
 
 
 class IssuePropertyOptionEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)

@@ -28,6 +28,8 @@ from plane.db.models import Issue
 
 
 class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectMemberPermission]
 
     @check_feature_flag(FeatureFlag.MILESTONES)

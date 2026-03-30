@@ -27,6 +27,8 @@ from plane.app.permissions.workspace import WorkspaceEntityPermission
 
 
 class WorkspaceCredentialView(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -43,6 +45,8 @@ class WorkspaceCredentialView(BaseAPIView):
 
 
 class VerifyWorkspaceCredentialView(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [
         WorkspaceEntityPermission,
     ]

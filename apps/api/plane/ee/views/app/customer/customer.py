@@ -39,6 +39,8 @@ from plane.ee.utils.workspace_feature import (
 
 
 class CustomerEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)

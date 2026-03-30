@@ -36,6 +36,8 @@ from plane.ee.bgtasks.project_activites_task import project_activity
 
 
 class ProjectAttachmentV2Endpoint(BaseAPIView):
+    use_read_replica = True
+
     serializer_class = ProjectAttachmentSerializer
     model = FileAsset
 

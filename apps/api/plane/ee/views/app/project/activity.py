@@ -36,6 +36,8 @@ from plane.ee.serializers import ProjectActivitySerializer, ProjectMemberActivit
 
 
 class ProjectActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     permission_classes = [ProjectEntityPermission]
     filterset_fields = {"created_at": ["gt", "gte", "lt", "lte"]}
 
@@ -61,6 +63,8 @@ class ProjectActivityEndpoint(BaseAPIView):
 
 
 class ProjectMemberActivityEndpoint(BaseAPIView):
+    use_read_replica = True
+
     filterset_fields = {"created_at": ["gt", "gte", "lt", "lte"]}
 
     @allow_permission([ROLE.ADMIN])

@@ -25,6 +25,8 @@ from plane.app.serializers import WebhookSerializer, WebhookLogSerializer
 
 
 class WebhookEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -116,6 +118,8 @@ class WebhookEndpoint(BaseAPIView):
 
 
 class WebhookSecretRegenerateEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug, pk):
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
@@ -126,6 +130,8 @@ class WebhookSecretRegenerateEndpoint(BaseAPIView):
 
 
 class WebhookLogsEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, webhook_id):
         webhook_logs = WebhookLog.objects.filter(workspace__slug=slug, webhook=webhook_id)

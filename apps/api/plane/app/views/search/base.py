@@ -66,6 +66,8 @@ class GlobalSearchEndpoint(BaseAPIView):
     also show related workspace if found
     """
 
+    use_read_replica = True
+
     def filter_workspaces(self, query, _slug, _project_id, _workspace_search):
         fields = ["name"]
         q = Q()
@@ -367,6 +369,8 @@ class GlobalSearchEndpoint(BaseAPIView):
 
 
 class SearchEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get(self, request, slug):
         query = request.query_params.get("query", False)
         query_types = request.query_params.get("query_type", "user_mention").split(",")

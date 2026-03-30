@@ -37,6 +37,8 @@ from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
 
 class TeamspaceBaseEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @property
     def team_space_id(self):
         return self.kwargs.get("team_space_id")
@@ -65,6 +67,8 @@ class TeamspaceBaseEndpoint(BaseAPIView):
 
 
 class TeamspaceEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = True
+
     permission_classes = [WorkspaceUserPermission]
     model = Teamspace
     serializer_class = TeamspaceSerializer
