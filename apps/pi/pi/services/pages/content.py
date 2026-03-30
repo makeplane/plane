@@ -94,18 +94,20 @@ class PageContentService(ABC):
         """
         pass
 
-    async def fetch_page_context(self, page_id: UUID) -> Optional[str]:
+    async def fetch_page_context(self, page_id: UUID, user_id: UUID, workspace_id: UUID) -> Optional[str]:
         """
         Fetch page content context.
 
         Args:
             page_id: ID of the page
+            user_id: ID of the current user
+            workspace_id: Workspace ID
 
         Returns:
             Page content as string, or None if empty
         """
         try:
-            context_text = await get_entity_context("page", str(page_id))
+            context_text = await get_entity_context("page", str(page_id), user_id, workspace_id)
             if not context_text or not context_text.strip():
                 log.warning(f"Page {page_id} has no content")
                 return None
@@ -213,7 +215,7 @@ class PageContentService(ABC):
         """
         try:
             # 1. Fetch context
-            context_text = await self.fetch_page_context(page_id)
+            context_text = await self.fetch_page_context(page_id, user_id, workspace_id)
             if not context_text:
                 return None
 
@@ -272,7 +274,7 @@ class PageContentService(ABC):
         """
         try:
             # 1. Fetch context
-            context_text = await self.fetch_page_context(page_id)
+            context_text = await self.fetch_page_context(page_id, user_id, workspace_id)
             if not context_text:
                 return
 

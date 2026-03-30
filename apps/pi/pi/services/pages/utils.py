@@ -13,6 +13,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from uuid import UUID
 
 from fastapi.responses import JSONResponse
 from langchain_core.messages import BaseMessage
@@ -27,7 +28,7 @@ from pi.services.pages.constants import REVISION_BLOCK_TYPES
 log = logger.getChild(__name__)
 
 
-async def get_entity_context(entity_type: str, entity_id: str) -> Optional[str]:
+async def get_entity_context(entity_type: str, entity_id: str, user_id: UUID, workspace_id: UUID) -> Optional[str]:
     """
     Fetch and format the context content for a given entity.
 
@@ -39,7 +40,7 @@ async def get_entity_context(entity_type: str, entity_id: str) -> Optional[str]:
         Formatted context string or None if not found/unsupported.
     """
     if entity_type == "page" or entity_type == "wiki":
-        page_data = await get_page_content(entity_id)
+        page_data = await get_page_content(entity_id, str(user_id), str(workspace_id))
         if not page_data:
             log.warning(f"Page content not found for entity_id: {entity_id}")
             return None

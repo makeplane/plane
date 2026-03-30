@@ -2351,7 +2351,7 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
         return None
 
 
-async def get_page_content(page_id: str) -> Optional[Dict[str, Any]]:
+async def get_page_content(page_id: str, user_id: str, workspace_id: str) -> Optional[Dict[str, Any]]:
     query = """
     SELECT
         p.id,
@@ -2359,11 +2359,16 @@ async def get_page_content(page_id: str) -> Optional[Dict[str, Any]]:
         p.description_stripped,
         p.description_html
     FROM pages p
+    JOIN workspace_members wm ON wm.workspace_id = p.workspace_id
     WHERE p.id = $1
+    AND wm.member_id = $2
+    AND p.workspace_id = $3
+    AND wm.deleted_at IS NULL
+    AND wm.is_active IS TRUE
     AND p.deleted_at IS NULL;
     """
     try:
-        result = await PlaneDBPool.fetchrow(query, (page_id,))
+        result = await PlaneDBPool.fetchrow(query, (page_id, user_id, workspace_id))
         return dict(result) if result else None
     except Exception as e:
         log.error(f"Error fetching page details for {page_id}: {e}")
