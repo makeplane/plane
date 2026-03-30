@@ -1,7 +1,13 @@
+import { useState } from "react";
+import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import { Avatar } from "@plane/propel/avatar";
+import { Popover } from "@plane/propel/popover";
 import type { THoIssue } from "@/plane-web/services/ho-issue.service";
 import type { THoDisplayProperties } from "@/plane-web/store/ho/ho-issue.defaults";
-import { getProgressStatus } from "../issues/issue-layouts/progress-tracking-utils";
+import { useWorklog } from "@/hooks/store/use-worklog";
 import { renderFormattedDate, cn } from "@plane/utils";
+import { getProgressStatus } from "../issues/issue-layouts/progress-tracking-utils";
 
 /** Format total_log_time in minutes to "Xh Ym". */
 function formatLogTime(minutes: number): string {
@@ -25,7 +31,7 @@ type Props = {
 const CELL =
   "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-2.5 text-13 text-primary align-middle transition-[background-color]";
 
-export function HoDatasheetRow({
+export const HoDatasheetRow = observer(function HoDatasheetRow({
   rowIndex,
   issue,
   displayProperties,
@@ -33,6 +39,11 @@ export function HoDatasheetRow({
   isNewProjectGroup,
   isScrolled = false,
 }: Props) {
+  const { t } = useTranslation();
+  const worklogStore = useWorklog();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+
   const rowBorder = isNewDeptGroup
     ? "border-t-[1.5px] border-subtle"
     : isNewProjectGroup
@@ -41,6 +52,36 @@ export function HoDatasheetRow({
   const progress = getProgressStatus(issue.target_date);
 
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
+
+  // Aggregate worklogs by user (cached in store)
+  const worklogs = worklogStore.getWorklogsForIssue(issue.id);
+  const userTotals = Object.values(
+    worklogs.reduce<Record<string, { display_name: string; avatar_url: string; total_minutes: number }>>((acc, wl) => {
+      const uid = wl.logged_by;
+      if (!acc[uid]) {
+        acc[uid] = {
+          display_name: wl.logged_by_detail?.display_name ?? uid,
+          avatar_url: wl.logged_by_detail?.avatar_url ?? "",
+          total_minutes: 0,
+        };
+      }
+      acc[uid].total_minutes += wl.duration_minutes;
+      return acc;
+    }, {})
+  );
+
+  const handleOpenChange = async (open: boolean) => {
+    setIsOpen(open);
+    // Lazy-fetch worklogs on first open (only if not already cached)
+    if (open && worklogs.length === 0 && issue.workspace_slug && issue.project_id) {
+      setIsFetching(true);
+      try {
+        await worklogStore.fetchWorklogs(issue.workspace_slug, issue.project_id, issue.id);
+      } finally {
+        setIsFetching(false);
+      }
+    }
+  };
 
   // Match widths from header
   const COL_WIDTHS: Record<string, string> = {
@@ -153,9 +194,55 @@ export function HoDatasheetRow({
       {displayProperties.completed_date &&
         renderTd("completed_date", issue.completed_at ? renderFormattedDate(issue.completed_at) : "—")}
       {displayProperties.total_log_time &&
-        renderTd("total_log_time", formatLogTime(issue.total_log_time), "text-right")}
+        renderTd(
+          "total_log_time",
+          <Popover open={isOpen} onOpenChange={(open) => void handleOpenChange(open)}>
+            <Popover.Button
+              className={cn(
+                "w-full text-right outline-none transition-colors",
+                issue.total_log_time > 0 ? "text-accent-primary hover:underline" : "text-secondary cursor-default"
+              )}
+            >
+              {formatLogTime(issue.total_log_time)}
+            </Popover.Button>
+            {issue.total_log_time > 0 && (
+              <Popover.Panel
+                side="bottom"
+                align="end"
+                className="z-[25] min-w-52 rounded-md border border-subtle bg-surface-1 shadow-lg"
+              >
+                <div className="p-2 text-left">
+                  <p className="mb-1.5 px-1 text-11 font-medium text-tertiary">{t("worklog.member")}</p>
+                  {isFetching ? (
+                    <p className="px-1 py-2 text-11 text-tertiary">{t("loading")}</p>
+                  ) : userTotals.length === 0 ? (
+                    <p className="px-1 py-2 text-11 text-tertiary">{t("worklog.no_entries")}</p>
+                  ) : (
+                    <div className="space-y-0.5">
+                      {userTotals.map((entry) => (
+                        <div
+                          key={entry.display_name}
+                          className="flex items-center justify-between gap-3 rounded px-1 py-1 hover:bg-layer-1"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <Avatar name={entry.display_name} src={entry.avatar_url} size="xs" shape="circle" />
+                            <span className="truncate text-11 text-primary">{entry.display_name}</span>
+                          </div>
+                          <span className="flex-shrink-0 text-11 text-secondary">
+                            {formatLogTime(entry.total_minutes)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Popover.Panel>
+            )}
+          </Popover>,
+          "text-right"
+        )}
       {displayProperties.reference_link &&
         renderTd("reference_link", issue.reference_link_count > 0 ? issue.reference_link_count : "—", "text-right")}
     </tr>
   );
-}
+});
