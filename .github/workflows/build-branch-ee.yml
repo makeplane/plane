@@ -756,6 +756,7 @@ jobs:
         with:
           tag_name: ${{ env.REL_VERSION }}
           name: ${{ env.REL_VERSION }}
+          target_commitish: ${{ github.ref_name }}
           draft: false
           prerelease: ${{ env.IS_PRERELEASE }}
           generate_release_notes: true
@@ -778,6 +779,7 @@ jobs:
         with:
           tag_name: ${{ env.REL_VERSION }}
           name: ${{ env.REL_VERSION }}
+          target_commitish: ${{ github.ref_name }}
           draft: false
           prerelease: ${{ env.IS_PRERELEASE }}
           generate_release_notes: true
