@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -47,6 +47,9 @@ type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; iss
 
 export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, parentIssueId, permissions, issueServiceType = EIssueServiceType.ISSUES } = props;
+  // ref — tracks which parentIssueId is currently being fetched to avoid
+  // duplicate requests for the same id without blocking fetches for a different id
+  const fetchingIdRef = useRef<string | null>(null);
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
     create: TIssueCrudState;
@@ -103,16 +106,22 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
 
   const handleFetchSubIssues = useCallback(async () => {
     const currentSubIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
-    if (!currentSubIssueHelpers.issue_visibility.includes(parentIssueId)) {
-      try {
-        setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+    if (fetchingIdRef.current === parentIssueId || currentSubIssueHelpers.issue_visibility.includes(parentIssueId))
+      return;
+    fetchingIdRef.current = parentIssueId;
+    try {
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+      // Guard: setSubIssueHelpers is a toggle, so only call if not already set
+      const helpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
+      if (!helpers.issue_visibility.includes(parentIssueId)) {
         setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-      } catch (error) {
-        console.error("Error fetching sub-work items:", error);
-      } finally {
-        setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", "");
       }
+    } catch (error) {
+      console.error("Error fetching sub-work items:", error);
+    } finally {
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+      fetchingIdRef.current = null;
     }
   }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
 
