@@ -9,6 +9,7 @@ type ColMeta = {
   label: string;
   asc?: string;
   desc?: string;
+  width?: string;
 };
 
 const TH =
@@ -34,37 +35,41 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
       label: t("spreadsheet.columns.department_name"),
       asc: "project__workspace__name",
       desc: "-project__workspace__name",
+      width: "w-[180px]",
     },
     project_name: {
       label: t("spreadsheet.columns.project_name"),
       asc: "project__name",
       desc: "-project__name",
+      width: "w-[180px]",
     },
     main_task_category: {
       label: t("spreadsheet.columns.main_task_category"),
       asc: "main_task_category__name",
       desc: "-main_task_category__name",
+      width: "w-[180px]",
     },
     sub_task_category: {
       label: t("spreadsheet.columns.sub_task_category"),
       asc: "sub_task_category__name",
       desc: "-sub_task_category__name",
+      width: "w-[180px]",
     },
-    name: { label: t("ho.work_items") },
-    sub_issue_count: { label: "Sub Items" },
-    project_lead: { label: t("spreadsheet.columns.project_lead") },
-    assignee: { label: "Assignee" },
-    bank_wide_project: { label: t("spreadsheet.columns.bank_wide_project") },
-    priority: { label: "Priority", asc: "priority", desc: "-priority" },
-    state: { label: "Status", asc: "state__name", desc: "-state__name" },
-    progress_tracking: { label: t("spreadsheet.columns.progress_tracking") },
-    modules: { label: t("sidebar.modules") },
-    cycle: { label: t("sidebar.cycles") },
-    start_date: { label: "Start Date", asc: "start_date", desc: "-start_date" },
-    due_date: { label: "Due Date", asc: "target_date", desc: "-target_date" },
-    completed_date: { label: t("spreadsheet.columns.completed_date") },
-    total_log_time: { label: t("spreadsheet.columns.total_log_time") },
-    reference_link: { label: t("spreadsheet.columns.reference_link") },
+    name: { label: t("ho.work_items"), width: "w-[400px]" },
+    sub_issue_count: { label: "Sub Items", width: "w-[100px]" },
+    project_lead: { label: t("spreadsheet.columns.project_lead"), width: "w-[150px]" },
+    assignee: { label: "Assignee", width: "w-[180px]" },
+    bank_wide_project: { label: t("spreadsheet.columns.bank_wide_project"), width: "w-[120px]" },
+    priority: { label: "Priority", asc: "priority", desc: "-priority", width: "w-[120px]" },
+    state: { label: "Status", asc: "state__name", desc: "-state__name", width: "w-[140px]" },
+    progress_tracking: { label: t("spreadsheet.columns.progress_tracking"), width: "w-[140px]" },
+    modules: { label: t("sidebar.modules"), width: "w-[160px]" },
+    cycle: { label: t("sidebar.cycles"), width: "w-[140px]" },
+    start_date: { label: "Start Date", asc: "start_date", desc: "-start_date", width: "w-[140px]" },
+    due_date: { label: "Due Date", asc: "target_date", desc: "-target_date", width: "w-[140px]" },
+    completed_date: { label: t("spreadsheet.columns.completed_date"), width: "w-[140px]" },
+    total_log_time: { label: t("spreadsheet.columns.total_log_time"), width: "w-[120px]" },
+    reference_link: { label: t("spreadsheet.columns.reference_link"), width: "w-[100px]" },
   };
 
   const visibleKeys = Object.keys(COL_META).filter((key) => key === "name" || displayProperties[key] !== false);
@@ -82,7 +87,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
 
     if (!isSortable) {
       return (
-        <th key={key} className={cn(TH, stickyClass)}>
+        <th key={key} className={cn(TH, meta.width, stickyClass)}>
           {meta.label}
         </th>
       );
@@ -93,14 +98,14 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
       orderBy === meta.asc ? ArrowUpNarrowWide : orderBy === meta.desc ? ArrowDownWideNarrow : ChevronsUpDown;
 
     return (
-      <th key={key} className={cn(TH, stickyClass, "cursor-pointer p-0")}>
+      <th key={key} className={cn(TH, meta.width, stickyClass, "cursor-pointer p-0")}>
         <CustomMenu
           label={
             <span
               className={cn("flex h-full w-full items-center gap-1 px-4 py-3", isActive ? "text-accent-primary" : "")}
             >
-              {meta.label}
-              <SortIcon className="h-3 w-3" />
+              <span className="truncate">{meta.label}</span>
+              <SortIcon className="h-3 w-3 flex-shrink-0" />
             </span>
           }
           buttonClassName="text-12 font-semibold uppercase tracking-wider text-secondary h-full w-full"

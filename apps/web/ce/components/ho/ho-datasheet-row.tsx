@@ -23,7 +23,7 @@ type Props = {
 };
 
 const CELL =
-  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-2.5 text-13 text-primary align-middle truncate h-11 transition-[background-color]";
+  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-2.5 text-13 text-primary align-middle transition-[background-color]";
 
 export function HoDatasheetRow({
   rowIndex,
@@ -42,45 +42,41 @@ export function HoDatasheetRow({
 
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
 
-  // Ordered list of keys as defined in header
-  const ALL_KEYS = [
-    "department_name",
-    "project_name",
-    "main_task_category",
-    "sub_task_category",
-    "name",
-    "sub_issue_count",
-    "project_lead",
-    "assignee",
-    "bank_wide_project",
-    "priority",
-    "state",
-    "progress_tracking",
-    "modules",
-    "cycle",
-    "start_date",
-    "due_date",
-    "completed_date",
-    "total_log_time",
-    "reference_link",
-  ];
+  // Match widths from header
+  const COL_WIDTHS: Record<string, string> = {
+    department_name: "w-[180px]",
+    project_name: "w-[180px]",
+    main_task_category: "w-[180px]",
+    sub_task_category: "w-[180px]",
+    name: "w-[400px]",
+    sub_issue_count: "w-[100px]",
+    project_lead: "w-[150px]",
+    assignee: "w-[180px]",
+    bank_wide_project: "w-[120px]",
+    priority: "w-[120px]",
+    state: "w-[140px]",
+    progress_tracking: "w-[140px]",
+    modules: "w-[160px]",
+    cycle: "w-[140px]",
+    start_date: "w-[140px]",
+    due_date: "w-[140px]",
+    completed_date: "w-[140px]",
+    total_log_time: "w-[120px]",
+    reference_link: "w-[100px]",
+  };
 
-  const firstVisibleKey = ALL_KEYS.find((key) => key === "name" || displayProperties[key] !== false);
+  const visibleKeys = Object.keys(COL_WIDTHS).filter((key) => key === "name" || displayProperties[key] !== false);
+  const firstVisibleKey = visibleKeys[0];
 
-  const renderTd = (
-    key: string,
-    content: React.ReactNode,
-    minWidth?: string,
-    maxWidth?: string,
-    textAlign?: string
-  ) => {
+  const renderTd = (key: string, content: React.ReactNode, textAlign?: string) => {
     const isFirst = key === firstVisibleKey;
+    const width = COL_WIDTHS[key];
+
     return (
       <td
         className={cn(
           CELL,
-          minWidth,
-          maxWidth,
+          width,
           textAlign,
           isFirst
             ? cn(
@@ -101,12 +97,10 @@ export function HoDatasheetRow({
     <tr
       className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group h-11")}
     >
-      {displayProperties.department_name && renderTd("department_name", issue.department_name || "—", "min-w-[140px]")}
-      {displayProperties.project_name && renderTd("project_name", issue.project_name || "—", "min-w-[140px]")}
-      {displayProperties.main_task_category &&
-        renderTd("main_task_category", issue.main_task_category_name || "—", "min-w-[160px]")}
-      {displayProperties.sub_task_category &&
-        renderTd("sub_task_category", issue.sub_task_category_name || "—", "min-w-[160px]")}
+      {displayProperties.department_name && renderTd("department_name", issue.department_name || "—")}
+      {displayProperties.project_name && renderTd("project_name", issue.project_name || "—")}
+      {displayProperties.main_task_category && renderTd("main_task_category", issue.main_task_category_name || "—")}
+      {displayProperties.sub_task_category && renderTd("sub_task_category", issue.sub_task_category_name || "—")}
 
       {/* Work Items — always visible */}
       {renderTd(
@@ -118,14 +112,11 @@ export function HoDatasheetRow({
           className="text-accent-primary hover:underline line-clamp-1"
         >
           {issue.name}
-        </a>,
-        "min-w-[300px]",
-        "max-w-[400px]"
+        </a>
       )}
 
-      {displayProperties.sub_issue_count &&
-        renderTd("sub_issue_count", issue.sub_issues_count, "min-w-[80px]", undefined, "text-right")}
-      {displayProperties.project_lead && renderTd("project_lead", issue.project_lead || "—", "min-w-[120px]")}
+      {displayProperties.sub_issue_count && renderTd("sub_issue_count", issue.sub_issues_count, "text-right")}
+      {displayProperties.project_lead && renderTd("project_lead", issue.project_lead || "—")}
       {displayProperties.assignee &&
         renderTd(
           "assignee",
@@ -134,13 +125,10 @@ export function HoDatasheetRow({
             : issue.assignees
                 .slice(0, 3)
                 .map((a) => a.display_name)
-                .join(", ") + (issue.assignees.length > 3 ? ` +${issue.assignees.length - 3}` : ""),
-          "min-w-[140px]"
+                .join(", ") + (issue.assignees.length > 3 ? ` +${issue.assignees.length - 3}` : "")
         )}
-      {displayProperties.bank_wide_project &&
-        renderTd("bank_wide_project", issue.is_bank_wide_project ? "Yes" : "No", "min-w-[100px]")}
-      {displayProperties.priority &&
-        renderTd("priority", issue.priority || "—", "min-w-[100px]", undefined, "capitalize")}
+      {displayProperties.bank_wide_project && renderTd("bank_wide_project", issue.is_bank_wide_project ? "Yes" : "No")}
+      {displayProperties.priority && renderTd("priority", issue.priority || "—", "capitalize")}
       {displayProperties.state &&
         renderTd(
           "state",
@@ -149,36 +137,28 @@ export function HoDatasheetRow({
               <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: issue.state_color }} />
             )}
             <span className="truncate">{issue.state_name || "—"}</span>
-          </span>,
-          "min-w-[120px]"
+          </span>
         )}
       {displayProperties.progress_tracking &&
         renderTd(
           "progress_tracking",
           <span className={cn("truncate font-medium", progress?.className ?? "text-secondary")}>
             {progress?.label ?? "—"}
-          </span>,
-          "min-w-[120px]"
+          </span>
         )}
       {displayProperties.modules &&
-        renderTd("modules", issue.module_names.length ? issue.module_names.join(", ") : "—", "min-w-[140px]")}
-      {displayProperties.cycle && renderTd("cycle", issue.cycle_name || "—", "min-w-[120px]")}
+        renderTd("modules", issue.module_names.length ? issue.module_names.join(", ") : "—")}
+      {displayProperties.cycle && renderTd("cycle", issue.cycle_name || "—")}
       {displayProperties.start_date &&
-        renderTd("start_date", issue.start_date ? renderFormattedDate(issue.start_date) : "—", "min-w-[120px]")}
+        renderTd("start_date", issue.start_date ? renderFormattedDate(issue.start_date) : "—")}
       {displayProperties.due_date &&
-        renderTd("due_date", issue.target_date ? renderFormattedDate(issue.target_date) : "—", "min-w-[120px]")}
+        renderTd("due_date", issue.target_date ? renderFormattedDate(issue.target_date) : "—")}
       {displayProperties.completed_date &&
-        renderTd("completed_date", issue.completed_at ? renderFormattedDate(issue.completed_at) : "—", "min-w-[120px]")}
+        renderTd("completed_date", issue.completed_at ? renderFormattedDate(issue.completed_at) : "—")}
       {displayProperties.total_log_time &&
-        renderTd("total_log_time", formatLogTime(issue.total_log_time), "min-w-[100px]", undefined, "text-right")}
+        renderTd("total_log_time", formatLogTime(issue.total_log_time), "text-right")}
       {displayProperties.reference_link &&
-        renderTd(
-          "reference_link",
-          issue.reference_link_count > 0 ? issue.reference_link_count : "—",
-          "min-w-[80px]",
-          undefined,
-          "text-right"
-        )}
+        renderTd("reference_link", issue.reference_link_count > 0 ? issue.reference_link_count : "—", "text-right")}
     </tr>
   );
 }

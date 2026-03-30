@@ -40,12 +40,12 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
     };
   }, [handleScroll]);
 
-  const COLUMNS: { key: SortKey; label: string }[] = [
-    { key: "department_name", label: t("spreadsheet.columns.department_name") },
-    { key: "project_name", label: t("spreadsheet.columns.project_name") },
-    { key: "main_task_category_name", label: t("spreadsheet.columns.main_task_category") },
-    { key: "sub_task_category_name", label: t("spreadsheet.columns.sub_task_category") },
-    { key: "work_item_count", label: t("ho.work_item_count") },
+  const COLUMNS: { key: SortKey; label: string; width: string }[] = [
+    { key: "department_name", label: t("spreadsheet.columns.department_name"), width: "w-[200px]" },
+    { key: "project_name", label: t("spreadsheet.columns.project_name"), width: "w-[200px]" },
+    { key: "main_task_category_name", label: t("spreadsheet.columns.main_task_category"), width: "w-[220px]" },
+    { key: "sub_task_category_name", label: t("spreadsheet.columns.sub_task_category"), width: "w-[220px]" },
+    { key: "work_item_count", label: t("ho.work_item_count"), width: "w-[150px]" },
   ];
 
   return (
@@ -53,7 +53,7 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
       ref={containerRef}
       className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-200px)] bg-surface-1"
     >
-      <table className="w-full border-collapse text-left table-fixed">
+      <table className="w-full border-collapse text-left">
         <thead className="sticky top-0 z-40 bg-surface-1">
           <tr className="h-11">
             {COLUMNS.map((col, idx) => {
@@ -66,6 +66,7 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
                   key={col.key}
                   className={cn(
                     TH,
+                    col.width,
                     isFirst
                       ? cn("sticky left-0 z-30", isScrolled ? "shadow-[8px_-22px_22px_10px_rgba(0,0,0,0.05)]" : "")
                       : "z-20"
@@ -73,7 +74,7 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
                   onClick={() => onSort(col.key)}
                 >
                   <span className={`flex items-center gap-1 ${isActive ? "text-accent-primary" : ""}`}>
-                    {col.label}
+                    <span className="truncate">{col.label}</span>
                     <Icon className="h-3 w-3 flex-shrink-0" />
                   </span>
                 </th>

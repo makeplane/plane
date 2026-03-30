@@ -38,7 +38,7 @@ export function HoDatasheetTable({ issues, displayProperties, orderBy, onOrderBy
       ref={containerRef}
       className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-170px)] bg-surface-1"
     >
-      <table className="w-full border-collapse text-left table-fixed">
+      <table className="w-full border-collapse text-left">
         <HoDatasheetHeader
           displayProperties={displayProperties}
           orderBy={orderBy}
