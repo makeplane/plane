@@ -117,7 +117,7 @@ class VectorDB:
 
     # Model Configuration
     ML_MODEL_ID: str = os.getenv("OPENSEARCH_ML_MODEL_ID", "")
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "cohere/embed-v4.0")
     EMBEDDING_DIMENSION: int = int(os.getenv("OPENSEARCH_EMBEDDING_DIMENSION", "1536"))
 
     @staticmethod
