@@ -4606,6 +4606,11 @@ if you are sure your search is right. `,
             create_new: "Create new",
             import_from_workspace: "Import from workspace",
           },
+          banner: {
+            with_access: "Enable work item types to import types from workspace level",
+            without_access:
+              "Work item types are disabled. Contact workspace admin to enable them in workspace settings.",
+          },
         },
       },
       linked_properties: {

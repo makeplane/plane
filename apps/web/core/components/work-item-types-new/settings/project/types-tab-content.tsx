@@ -12,11 +12,13 @@
  */
 
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ImportIcon } from "@plane/propel/icons";
+import { AlertIcon, CloseIcon, ExternalLinkIcon, ImportIcon } from "@plane/propel/icons";
+import { EUserWorkspaceRoles } from "@plane/types";
 // local imports
 import { WorkItemTypesSettingsListHeader } from "../types-list-header";
 import { WorkItemTypeListRoot } from "../list";
@@ -27,6 +29,11 @@ import { useProjectWorkItemTypes } from "@/plane-web/hooks/store/work-item-types
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 import { useWorkspaceCustomProperties } from "@/plane-web/hooks/store/custom-properties/use-workspace-custom-properties";
 import { useCustomProperty } from "@/plane-web/hooks/store/custom-properties/use-custom-property";
+import { useFlag, useIssueTypes, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { IconButton } from "@plane/propel/icon-button";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type Props = {
   workspaceSlug: string;
@@ -38,6 +45,7 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
   const { workspaceSlug, projectId } = props;
   // states
   const [isImportTypesModalOpen, setIsImportTypesModalOpen] = useState(false);
+  const [isBannerDismissed, setBannerDismissed] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -45,7 +53,15 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
   const { getWorkItemTypesByWorkspaceSlug, getLoaderByWorkspaceSlug } = useWorkspaceWorkItemTypes();
   const { getPropertiesByWorkspaceSlug } = useWorkspaceCustomProperties();
   const { getCustomPropertiesByIds } = useCustomProperty();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const navigate = useNavigate();
   // derived values
+  const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
+  // TODO: update this to RBAC permissions
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const canAccessWorkspaceWorkItemTypesSettings =
+    useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false) && currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const projectWorkItemTypes = getWorkItemTypesByProjectId(projectId);
   const workspaceWorkItemTypes = getWorkItemTypesByWorkspaceSlug(workspaceSlug);
   const isInitializing =
@@ -76,15 +92,44 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
       <WorkItemTypesSettingsListHeader
         count={projectWorkItemTypes.length}
         actionButton={
-          <Button
-            size="lg"
-            prependIcon={<ImportIcon className="size-4" />}
-            onClick={() => setIsImportTypesModalOpen(true)}
-          >
-            {t("work_item_types.settings.types.project.add_button.import_from_workspace")}
-          </Button>
+          isWorkspaceWorkItemTypesEnabled && (
+            <Button
+              size="lg"
+              prependIcon={<ImportIcon className="size-4" />}
+              onClick={() => setIsImportTypesModalOpen(true)}
+            >
+              {t("work_item_types.settings.types.project.add_button.import_from_workspace")}
+            </Button>
+          )
         }
       />
+      {!isBannerDismissed && !isWorkspaceWorkItemTypesEnabled && (
+        // TODO-@plane/propel/banner: update this with propel banner component once it is ready
+        <div className="rounded-lg py-3 px-4 bg-warning-subtle shadow-raised-200 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <AlertIcon className="size-4 text-warning-primary" />
+            <p className="text-body-sm-medium text-warning-primary">
+              {t(
+                canAccessWorkspaceWorkItemTypesSettings
+                  ? "work_item_types.settings.types.project.banner.with_access"
+                  : "work_item_types.settings.types.project.banner.without_access"
+              )}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {canAccessWorkspaceWorkItemTypesSettings && (
+              <Button
+                variant="secondary"
+                appendIcon={<ExternalLinkIcon className="size-4" />}
+                onClick={() => navigate(`/${workspaceSlug}/settings/work-item-types`)}
+              >
+                Work item types settings
+              </Button>
+            )}
+            <IconButton icon={CloseIcon} variant="ghost" onClick={() => setBannerDismissed(true)} />
+          </div>
+        </div>
+      )}
       {/* List */}
       <WorkItemTypeListRoot
         workItemTypes={projectWorkItemTypes}

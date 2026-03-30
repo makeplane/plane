@@ -59,6 +59,7 @@ export const WorkItemTypeListRoot = observer(function WorkItemTypeListRoot(props
     return (
       <div className="w-full py-6 px-2 border border-subtle rounded-lg">
         <EmptyStateCompact
+          assetKey="work-item"
           title="No work item types added"
           description="Define work item types to categorize and organize your work."
         />
