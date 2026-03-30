@@ -4206,6 +4206,11 @@ si estás seguro de que tu búsqueda es correcta.`,
             message: "No se pudo eliminar el tipo de elemento de trabajo. ¡Inténtalo de nuevo!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "No se puede eliminar el tipo de elemento de trabajo predeterminado",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "No se puede eliminar el tipo de elemento de trabajo con elementos de trabajo asociados",
+        },
         can_disable_warning: "¿Desea desactivar el tipo en su lugar?",
       },
       cant_delete_default_message:

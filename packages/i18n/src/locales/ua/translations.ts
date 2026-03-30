@@ -4132,6 +4132,11 @@ export default {
             message: "Не вдалося видалити тип робочого елемента. Будь ласка, спробуйте ще раз!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Неможливо видалити тип робочого елемента за замовчуванням",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Неможливо видалити тип робочого елемента з пов'язаними робочими елементами",
+        },
         can_disable_warning: "Ви хочете замість цього вимкнути тип?",
       },
       cant_delete_default_message:

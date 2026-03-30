@@ -4137,6 +4137,11 @@ Utwórz nowy.`,
             message: "Nie udało się usunąć typu elementu pracy. Spróbuj ponownie!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Nie można usunąć domyślnego typu elementu pracy",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Nie można usunąć typu elementu pracy z powiązanymi elementami pracy",
+        },
         can_disable_warning: "Czy chcesz zamiast tego wyłączyć ten typ?",
       },
       cant_delete_default_message:

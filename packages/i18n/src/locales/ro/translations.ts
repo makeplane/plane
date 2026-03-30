@@ -4185,6 +4185,11 @@ văzute aici`,
             message: "Ștergerea tipului de element de lucru a eșuat. Vă rugăm să încercați din nou!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Nu se poate șterge tipul implicit de element de lucru",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Nu se poate șterge tipul de element de lucru cu elemente de lucru asociate",
+        },
         can_disable_warning: "Doriți să dezactivați tipul în schimb?",
       },
       cant_delete_default_message:

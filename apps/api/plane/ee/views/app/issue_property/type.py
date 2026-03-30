@@ -565,28 +565,33 @@ class IssueTypeEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, pk):
         # Delete an issue type
-        issue_type = IssueType.objects.get(
+        work_item_type = IssueType.objects.get(
             workspace__slug=slug,
             project_issue_types__project_id=project_id,
-            is_epic=False,
             pk=pk,
+            deleted_at__isnull=True,
+            is_epic=False,
         )
 
-        # Check if there are any issues using this issue type
-        if Issue.objects.filter(project_id=project_id, type_id=pk).exists():
+        # Check if the work item type is the default work item type
+        if work_item_type.is_default:
             return Response(
-                {"error": "Cannot delete work item type with associated work items."},
+                {"error": "Cannot delete default work item type", "code": "CANNOT_DELETE_DEFAULT_WORK_ITEM_TYPE"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the issue type is the default issue type
-        if issue_type.is_default:
+        # Check if there are any work items using this work item type
+        if Issue.objects.filter(project_id=project_id, type_id=pk, deleted_at__isnull=True).exists():
             return Response(
-                {"error": "Cannot delete default work item type"},
+                {
+                    "error": "Cannot delete work item type with associated work items.",
+                    "code": "CANNOT_DELETE_WORK_ITEM_TYPE_WITH_ASSOCIATED_WORK_ITEMS",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        issue_type.delete()
+        # Delete the work item type
+        work_item_type.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

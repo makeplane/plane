@@ -22,3 +22,13 @@ export const DEFAULT_BACKGROUND_COLORS = [
   "#5D407A",
   "#999AA0",
 ];
+
+export const WORK_ITEM_TYPE_ERROR_DETAILS: Record<string, { i18n_message: string }> = {
+  CANNOT_DELETE_DEFAULT_WORK_ITEM_TYPE: {
+    i18n_message: "work_item_types.settings.item_delete_confirmation.errors.cannot_delete_default_work_item_type",
+  },
+  CANNOT_DELETE_WORK_ITEM_TYPE_WITH_ASSOCIATED_WORK_ITEMS: {
+    i18n_message:
+      "work_item_types.settings.item_delete_confirmation.errors.cannot_delete_work_item_type_with_associated_work_items",
+  },
+};

@@ -4168,6 +4168,11 @@ jika Anda yakin pencarian Anda benar. `,
             message: "Gagal menghapus jenis item kerja. Silakan coba lagi!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Tidak dapat menghapus jenis item kerja default",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Tidak dapat menghapus jenis item kerja yang memiliki item kerja terkait",
+        },
         can_disable_warning: "Apakah Anda ingin menonaktifkan jenisnya saja?",
       },
       cant_delete_default_message:

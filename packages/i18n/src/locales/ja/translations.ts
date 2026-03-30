@@ -4151,6 +4151,11 @@ export default {
             message: "作業項目のタイプを削除できませんでした。もう一度お試しください！",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "デフォルトの作業項目タイプは削除できません",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "関連する作業項目がある作業項目タイプは削除できません",
+        },
         can_disable_warning: "代わりにタイプを無効にしますか？",
       },
       cant_delete_default_message:

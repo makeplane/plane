@@ -4047,6 +4047,10 @@ export default {
             message: "删除工作项类型失败。请再试一次！",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "无法删除默认工作项类型",
+          cannot_delete_work_item_type_with_associated_work_items: "无法删除有关联工作项的工作项类型",
+        },
         can_disable_warning: "您想改为禁用该类型吗？",
       },
       cant_delete_default_message: "无法删除此工作项类型，因为它已设置为该项目的默认类型。",

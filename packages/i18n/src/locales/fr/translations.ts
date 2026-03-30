@@ -4207,6 +4207,11 @@ si vous êtes sûr que votre recherche est correcte.`,
             message: "Échec de la suppression du type d'élément de travail. Veuillez réessayer !",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Impossible de supprimer le type d'élément de travail par défaut",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Impossible de supprimer le type d'élément de travail avec des éléments de travail associés",
+        },
         can_disable_warning: "Voulez-vous désactiver le type à la place ?",
       },
       cant_delete_default_message:

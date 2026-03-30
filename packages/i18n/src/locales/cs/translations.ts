@@ -4127,6 +4127,11 @@ Vytvořte nový.`,
             message: "Nepodařilo se odstranit typ pracovního položky. Zkuste to prosím znovu!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Výchozí typ pracovní položky nelze odstranit",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Typ pracovní položky s přidruženými pracovními položkami nelze odstranit",
+        },
         can_disable_warning: "Chcete místo toho zakázat tento typ?",
       },
       cant_delete_default_message:

@@ -4793,6 +4793,11 @@ Erstellen Sie ein neues.`,
             message: "Löschen des Arbeitselementtyps fehlgeschlagen. Bitte versuchen Sie es erneut!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Der Standard-Arbeitselementtyp kann nicht gelöscht werden",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Arbeitselementtyp mit zugeordneten Arbeitselementen kann nicht gelöscht werden",
+        },
         can_disable_warning: "Möchten Sie stattdessen den Typ deaktivieren?",
       },
       cant_delete_default_message:

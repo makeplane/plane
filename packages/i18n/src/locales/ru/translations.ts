@@ -4183,6 +4183,11 @@ export default {
             message: "Не удалось удалить тип рабочего элемента. Пожалуйста, попробуйте снова!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Невозможно удалить тип рабочего элемента по умолчанию",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Невозможно удалить тип рабочего элемента со связанными рабочими элементами",
+        },
         can_disable_warning: "Хотите отключить этот тип вместо этого?",
       },
       cant_delete_default_message:

@@ -11,17 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // plane imports
+import { WORK_ITEM_TYPE_ERROR_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
+import { cn, isApiError } from "@plane/utils";
+// plane-web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TProps = {
@@ -44,20 +44,22 @@ export const IssueTypeDeleteConfirmationModal = observer(function IssueTypeDelet
   const handleDelete = async () => {
     if (!issueTypeId) return;
     setIsDeleting(true);
-    await deleteType(issueTypeId)
-      .then(() => {
-        handleModalClose();
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("work_item_types.settings.item_delete_confirmation.toast.error.title"),
-          message: error?.error ?? t("work_item_types.settings.item_delete_confirmation.toast.error.message"),
-        });
-      })
-      .finally(() => {
-        setIsDeleting(false);
+    try {
+      await deleteType(issueTypeId);
+      handleModalClose();
+    } catch (err) {
+      const code = isApiError(err) ? err.code : undefined;
+      const i18nMessage =
+        (code && WORK_ITEM_TYPE_ERROR_DETAILS[code]?.i18n_message) ??
+        "work_item_types.settings.item_delete_confirmation.toast.error.message";
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("work_item_types.settings.item_delete_confirmation.toast.error.title"),
+        message: t(i18nMessage),
       });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (

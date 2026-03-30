@@ -4116,6 +4116,11 @@ export default {
             message: "작업 항목 유형 삭제에 실패했습니다. 다시 시도해 주세요!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "기본 작업 항목 유형은 삭제할 수 없습니다",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "연결된 작업 항목이 있는 작업 항목 유형은 삭제할 수 없습니다",
+        },
         can_disable_warning: "대신 유형을 비활성화하시겠습니까?",
       },
       cant_delete_default_message:

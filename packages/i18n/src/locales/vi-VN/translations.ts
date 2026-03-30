@@ -4148,6 +4148,11 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
             message: "Không thể xóa loại mục công việc. Vui lòng thử lại!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Không thể xóa loại mục công việc mặc định",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Không thể xóa loại mục công việc có mục công việc liên quan",
+        },
         can_disable_warning: "Bạn có muốn tắt loại này thay thế không?",
       },
       cant_delete_default_message:

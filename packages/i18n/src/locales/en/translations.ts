@@ -4634,6 +4634,11 @@ if you are sure your search is right. `,
             message: "Failed to delete work item type. Please try again!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Cannot delete default work item type",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Cannot delete work item type with associated work items",
+        },
       },
     },
     create: {

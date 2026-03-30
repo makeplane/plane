@@ -4180,6 +4180,11 @@ Crea un nuovo progetto invece`,
             message: "Impossibile eliminare il tipo di elemento di lavoro. Per favore riprova!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Impossibile eliminare il tipo di elemento di lavoro predefinito",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Impossibile eliminare il tipo di elemento di lavoro con elementi di lavoro associati",
+        },
         can_disable_warning: "Vuoi disabilitare il tipo invece?",
       },
       cant_delete_default_message:

@@ -4190,6 +4190,11 @@ se você tem certeza de que sua pesquisa está correta.`,
             message: "Falha ao excluir o tipo de item de trabalho. Por favor, tente novamente!",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "Não é possível excluir o tipo de item de trabalho padrão",
+          cannot_delete_work_item_type_with_associated_work_items:
+            "Não é possível excluir o tipo de item de trabalho com itens de trabalho associados",
+        },
         can_disable_warning: "Deseja desativar o tipo em vez disso?",
       },
       cant_delete_default_message:

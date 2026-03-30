@@ -4069,6 +4069,10 @@ export default {
             message: "刪除工作項目類型失敗。請再試一次！",
           },
         },
+        errors: {
+          cannot_delete_default_work_item_type: "無法刪除預設工作項目類型",
+          cannot_delete_work_item_type_with_associated_work_items: "無法刪除具有關聯工作項目的工作項目類型",
+        },
         can_disable_warning: "您想改為停用此類型嗎？",
       },
       cant_delete_default_message: "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。",
