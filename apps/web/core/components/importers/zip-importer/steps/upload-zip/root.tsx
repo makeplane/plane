@@ -22,9 +22,8 @@ import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CircularProgressIndicator } from "@plane/ui";
 // plane web hooks
-import { useZipImporter, useFlag } from "@/plane-web/hooks/store";
+import { useZipImporter } from "@/plane-web/hooks/store";
 import type { TZipImporterProps } from "@/types/importers/zip-importer";
-import { E_FEATURE_FLAGS } from "@plane/constants";
 import { E_IMPORTER_STEPS } from "@/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
 import { UploadState } from "@/store/importers";
@@ -49,8 +48,6 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
     workspace,
     resetImporterData,
   } = useZipImporter(driverType);
-
-  const isUrlImportEnabled = useFlag(workspace?.slug ?? "", E_FEATURE_FLAGS.ZIP_IMPORTER_URL_IMPORT);
 
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [zipUrl, setZipUrl] = useState("");
@@ -117,7 +114,7 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
   const handleOnClickNext = async () => {
     const sanitizedZipUrl = sanitizeZipUrl(zipUrl);
     // 1. Handle URL Import
-    if (isUrlImportEnabled && sanitizedZipUrl) {
+    if (sanitizedZipUrl) {
       try {
         setIsConfirming(true);
         handleImporterData(E_IMPORTER_STEPS.UPLOAD_ZIP, {
@@ -190,12 +187,8 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
   // - No file is uploaded
   // - Upload is in progress (not complete/idle/error)
   // - We're in the confirming process
-  // Next button is disabled if:
-  // - No file is uploaded
-  // - Upload is in progress (not complete/idle/error)
-  // - We're in the confirming process
   const isNextButtonDisabled =
-    (!uploadedFile && (!isUrlImportEnabled || !zipUrl)) ||
+    (!uploadedFile && !zipUrl) ||
     (uploadState !== UploadState.COMPLETE && uploadState !== UploadState.IDLE && uploadState !== UploadState.ERROR) ||
     isConfirming;
 
@@ -282,34 +275,31 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
               </button>
             </div>
           </div>
+          <>
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-subtle-1" />
+              <span className="text-13 text-tertiary font-medium uppercase">{t("common.or")}</span>
+              <div className="flex-1 h-px bg-subtle-1" />
+            </div>
 
-          {isUrlImportEnabled && (
-            <>
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-subtle-1" />
-                <span className="text-13 text-tertiary font-medium uppercase">{t("common.or")}</span>
-                <div className="flex-1 h-px bg-subtle-1" />
+            <div className="border border-subtle-1 rounded-lg p-6 bg-layer-1">
+              <h3 className="text-13 font-medium text-primary mb-2">
+                {t(`${driverType}_importer.upload.upload_from_url`)}
+              </h3>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={zipUrl}
+                  onChange={(e) => setZipUrl(e.target.value)}
+                  placeholder="https://example.com/export.zip"
+                  className="flex-1 px-3 py-2 bg-surface-1 border border-subtle-1 rounded-md text-13 focus:outline-none focus:ring-2 focus:ring-accent-strong"
+                />
               </div>
-
-              <div className="border border-subtle-1 rounded-lg p-6 bg-layer-1">
-                <h3 className="text-13 font-medium text-primary mb-2">
-                  {t(`${driverType}_importer.upload.upload_from_url`)}
-                </h3>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={zipUrl}
-                    onChange={(e) => setZipUrl(e.target.value)}
-                    placeholder="https://example.com/export.zip"
-                    className="flex-1 px-3 py-2 bg-surface-1 border border-subtle-1 rounded-md text-13 focus:outline-none focus:ring-2 focus:ring-accent-strong"
-                  />
-                </div>
-                <p className="mt-2 text-11 text-tertiary">
-                  {t(`${driverType}_importer.upload.upload_from_url_description`)}
-                </p>
-              </div>
-            </>
-          )}
+              <p className="mt-2 text-11 text-tertiary">
+                {t(`${driverType}_importer.upload.upload_from_url_description`)}
+              </p>
+            </div>
+          </>
         </>
       ) : (
         <div className="border border-subtle-1 rounded-lg p-6 bg-surface-1 shadow-raised-100">
