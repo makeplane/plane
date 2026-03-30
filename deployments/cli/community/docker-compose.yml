@@ -204,6 +204,9 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   # Comment this if you using any external s3 compatible storage
+  # NOTE: RustFS uses a different on-disk format than MinIO.
+  # Existing MinIO deployments must migrate data before switching.
+  # Admin console is available on port 9001 (was 9090 with MinIO).
   plane-minio:
     image: rustfs/rustfs:1.0.0-alpha.90
     deploy:
@@ -214,6 +217,11 @@ services:
       <<: *storage-env
     volumes:
       - uploads:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   # Comment this if you already have a reverse proxy running
   proxy:

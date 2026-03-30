@@ -140,6 +140,9 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  # NOTE: RustFS uses a different on-disk format than MinIO.
+  # Existing MinIO deployments must migrate data before switching.
+  # Admin console is available on port 9001 (was 9090 with MinIO).
   plane-minio:
     container_name: plane-minio
     image: rustfs/rustfs:1.0.0-alpha.90
@@ -151,6 +154,11 @@ services:
       RUSTFS_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
       RUSTFS_VOLUMES: /data
       RUSTFS_ADDRESS: 0.0.0.0:9000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   # Comment this if you already have a reverse proxy running
   proxy:
