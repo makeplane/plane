@@ -22,7 +22,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IUser, TUserProfile } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { Input } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { getFileURL, validateDisplayName, validatePersonName } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { CoverImage } from "@/components/common/cover-image";
@@ -35,8 +35,6 @@ import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
-// utils
-import { validateDisplayName, validatePersonName } from "@plane/utils";
 
 type TUserProfileForm = {
   avatar_url: string;
@@ -64,7 +62,6 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
   const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
-  const [isDeactivateSectionOpen, setIsDeactivateSectionOpen] = useState(false);
   // language support
   const { t } = useTranslation();
   // form info
@@ -159,12 +156,13 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     };
 
     const updateCurrentUserDetail = updateCurrentUser(userPayload).finally(() => setIsLoading(false));
-    const updateCurrentUserProfile = updateUserProfile(profilePayload).finally(() => setIsLoading(false));
+    const promises: Promise<IUser | TUserProfile | undefined>[] = [updateCurrentUserDetail];
+    if (profilePayload.role !== profile.role) {
+      const updateCurrentUserProfile = updateUserProfile(profilePayload).finally(() => setIsLoading(false));
+      promises.push(updateCurrentUserProfile);
+    }
 
-    const promises = [updateCurrentUserDetail, updateCurrentUserProfile];
-    const updateUserAndProfile = Promise.all(promises);
-
-    setPromiseToast(updateUserAndProfile, {
+    setPromiseToast(Promise.allSettled(promises), {
       loading: "Updating...",
       success: {
         title: "Success!",
@@ -175,11 +173,6 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
         message: () => `There was some error in updating your profile. Please try again.`,
       },
     });
-    updateUserAndProfile
-      .then(() => {
-        return;
-      })
-      .catch(() => {});
   };
 
   return (
@@ -224,9 +217,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                         <img
                           src={getFileURL(userAvatar)}
                           className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-                          onClick={() => setIsImageUploadModalOpen(true)}
                           alt={currentUser?.display_name}
-                          role="button"
                         />
                       </div>
                     )}
@@ -270,7 +261,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   name="first_name"
                   rules={{
                     required: "Please enter first name",
-                    validate: validatePersonName,
+                    validate: (value) => validatePersonName(value, true),
                   }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
@@ -296,7 +287,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   control={control}
                   name="last_name"
                   rules={{
-                    validate: validatePersonName,
+                    validate: (value) => validatePersonName(value, false),
                   }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
@@ -367,7 +358,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
+                      className={`w-full cursor-not-allowed rounded-md bg-surface-2! ${
                         errors.email ? "border-danger-strong" : ""
                       }`}
                       autoComplete="on"

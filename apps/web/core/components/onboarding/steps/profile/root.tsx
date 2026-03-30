@@ -182,7 +182,6 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           {userAvatar ? (
             <img
               src={getFileURL(userAvatar ?? "")}
-              onClick={() => setIsImageUploadModalOpen(true)}
               alt={user?.display_name}
               className="w-full h-full rounded-full object-cover"
             />
@@ -215,7 +214,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
             name="first_name"
             rules={{
               required: "Name is required",
-              validate: validatePersonName,
+              validate: (value) => validatePersonName(value, true),
               maxLength: {
                 value: 50,
                 message: "Name must be within 50 characters.",

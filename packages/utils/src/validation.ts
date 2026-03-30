@@ -78,9 +78,9 @@ export const TEXT_REGEX = /^[\p{L}\p{N}\s'-]+$/u;
  * validatePersonName("Jean-Paul") // returns true
  * validatePersonName("John<script>") // returns error message
  */
-export const validatePersonName = (name: string): boolean | string => {
+export const validatePersonName = (name: string, required: boolean = true): boolean | string => {
   if (!name || name.trim() === "") {
-    return "Name is required";
+    return required ? "Name is required" : true;
   }
 
   if (name.length > 50) {
