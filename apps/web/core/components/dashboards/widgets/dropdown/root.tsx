@@ -40,7 +40,7 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
     buttonContent,
     disabled = false,
     onSelect,
-    placement,
+    placement = "bottom-start",
     selectedChartModel,
     selectedChartType,
   } = props;
@@ -49,8 +49,22 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // react-popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
+    placement,
     strategy: "fixed",
+    modifiers: [
+      {
+        name: "flip",
+        options: {
+          fallbackPlacements: ["left-start", "auto"],
+        },
+      },
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 8,
+        },
+      },
+    ],
   });
   // translation
   const { t } = useTranslation();
@@ -78,9 +92,14 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Popover.Panel ref={setPopperElement} style={styles.popper} {...attributes.popper} className="fixed z-10">
+        <Popover.Panel
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+          className="fixed z-20 max-h-[90vh] overflow-y-scroll"
+        >
           {({ close }) => (
-            <div className="my-1 max-h-[90vh] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-4 text-11 shadow-raised-200 focus:outline-none min-w-64 whitespace-nowrap divide-y divide-strong">
+            <div className="m-1 h-full rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-4 text-11 shadow-raised-200 focus:outline-none min-w-64 whitespace-nowrap divide-y divide-strong">
               {WIDGET_DROPDOWN_SECTIONS.map((section, index) => (
                 <div
                   key={section.key}
