@@ -21,6 +21,7 @@ from pi.app.api.v1.endpoints import flags
 from pi.app.api.v1.endpoints import health
 from pi.app.api.v1.endpoints import oauth
 from pi.app.api.v1.endpoints import pages
+from pi.app.api.v1.endpoints import pql
 from pi.app.api.v1.endpoints import transcription
 from pi.app.api.v1.endpoints.internal import vectorize
 from pi.app.api.v1.endpoints.mobile import attachments as mobile_attachments
@@ -42,6 +43,7 @@ plane_pi_router.include_router(transcription.router, prefix="/transcription", ta
 plane_pi_router.include_router(artifacts.router, prefix="/artifacts", tags=["artifacts"])
 plane_pi_router.include_router(pages.router, prefix="/pages", tags=["pages"])
 plane_pi_router.include_router(feedback.router, prefix="/feedback", tags=["feedback"])
+plane_pi_router.include_router(pql.router, prefix="/pql", tags=["pql"])
 # Mobile endpoints
 plane_pi_router.include_router(mobile_chat.mobile_router, prefix="/mobile/chat", tags=["mobile/chat"])
 plane_pi_router.include_router(mobile_transcription.mobile_router, prefix="/mobile/transcription", tags=["mobile/transcription"])

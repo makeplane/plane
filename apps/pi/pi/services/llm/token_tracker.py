@@ -350,7 +350,9 @@ class TokenTracker:
             output_tokens = token_usage["output_tokens"]
             cached_input_tokens = token_usage["cached_input_tokens"]
             non_cached_input_tokens = total_input_tokens - cached_input_tokens
-
+            log.info(
+                f"Tracking entity LLM usage for entity {entity_type}:{entity_id} (Model: {model_key}) - Total input tokens: {total_input_tokens}, Output tokens: {output_tokens}, Cached input tokens: {cached_input_tokens}"  # noqa: E501
+            )
             # Get LLM model ID
             llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
             if not llm_model_id:

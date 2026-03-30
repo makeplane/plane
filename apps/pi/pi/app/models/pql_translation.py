@@ -12,9 +12,6 @@
 import uuid
 from typing import Optional
 
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
 from sqlmodel import Field
 
 from pi.app.models.base import TimeAuditModel
@@ -44,17 +41,3 @@ class PQLTranslation(UUIDModel, TimeAuditModel, table=True):
 
     # Latency
     latency_ms: Optional[float] = Field(default=None, nullable=True, description="Wall-clock latency in milliseconds")
-
-    # ── Token tracking (mirrors DupesTracking) ──────────────────────────
-    llm_model_id: Optional[uuid.UUID] = Field(
-        sa_column=Column(UUID(as_uuid=True), ForeignKey("llm_models.id", name="fk_pql_translations_llm_model_id"), nullable=True)
-    )
-    input_text_tokens: Optional[int] = Field(nullable=True, default=None)
-    input_text_price: Optional[float] = Field(nullable=True, default=None, description="In USD")
-    output_text_tokens: Optional[int] = Field(nullable=True, default=None)
-    output_text_price: Optional[float] = Field(nullable=True, default=None, description="In USD")
-    cached_input_text_tokens: Optional[int] = Field(nullable=True, default=None)
-    cached_input_text_price: Optional[float] = Field(nullable=True, default=None, description="In USD")
-    llm_model_pricing_id: Optional[uuid.UUID] = Field(
-        sa_column=Column(UUID(as_uuid=True), ForeignKey("llm_model_pricing.id", name="fk_pql_translations_llm_model_pricing_id"), nullable=True)
-    )

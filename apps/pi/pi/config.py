@@ -71,6 +71,7 @@ class FeatureFlags:
     AI_FILE_UPLOADS = "AI_FILE_UPLOADS"
     AI_PAGES_BLOCKS = "AI_PAGES_BLOCKS"
     AI_PAGES_SUMMARY = "AI_PAGES_SUMMARY"
+    AI_TEXT_TO_PQL = "AI_TEXT_TO_PQL"
 
 
 @dataclass
@@ -337,6 +338,8 @@ class Chat:
             "issue_views": "issue_view",
             "teams": "teamspace",
             "initiatives": "initiative",
+            "types": "type",
+            "milestones": "milestone",
         },
     )
     MAX_TOOL_CALLS_PER_AGENT_RUN: int = 5

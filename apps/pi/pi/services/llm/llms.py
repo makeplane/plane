@@ -115,6 +115,35 @@ class LLMConfig:
             api_key=api_key or settings.llm_config.CLAUDE_API_KEY,
         )
 
+    @classmethod
+    def groq(
+        cls,
+        model: str,
+        *,
+        streaming: bool = False,
+        temperature: float = 0.2,
+        seed: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        frequency_penalty: Optional[float] = None,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ) -> "LLMConfig":
+        """Create a Groq LLM configuration (OpenAI-compatible API)."""
+        # Config stores root URL (e.g. https://api.groq.com/);
+        # ChatOpenAI needs the OpenAI-compatible base: {root}/openai/v1
+        groq_root = (base_url or settings.llm_config.GROQ_BASE_URL).rstrip("/")
+        groq_chat_url = f"{groq_root}/openai/v1"
+        return cls(
+            model=model,
+            temperature=temperature,
+            streaming=streaming,
+            seed=seed,
+            max_completion_tokens=max_completion_tokens,
+            frequency_penalty=frequency_penalty,
+            base_url=groq_chat_url,
+            api_key=api_key or settings.llm_config.GROQ_API_KEY,
+        )
+
 
 class TrackedLLM(Runnable):
     """Wrapper for LLMs that automatically tracks token usage."""
@@ -548,6 +577,10 @@ def _has_claude_key() -> bool:
     return bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
 
 
+def _has_groq_key() -> bool:
+    return bool(settings.llm_config.GROQ_API_KEY and settings.llm_config.GROQ_API_KEY.strip())
+
+
 class LLMFactory:
     """Single entry point for creating LLM instances.
 
@@ -640,6 +673,14 @@ class LLMFactory:
         if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
             return _resolve_llm(settings.llm_config.CUSTOM_LLM_MODEL_KEY, streaming=streaming, temperature=temperature)
         return cls.get_default_llm(settings.llm_model.DEFAULT)
+
+    @classmethod
+    def get_pql_llm(cls) -> Any:
+        """LLM for PQL translation — prefers Groq kimi-k2, falls back to fast LLM."""
+        if _has_groq_key():
+            config = LLMConfig.groq("moonshotai/kimi-k2-instruct-0905", streaming=False, temperature=0.2)
+            return create_openai_llm(config)
+        return cls.get_fast_llm(streaming=False)
 
     # -- helpers ---------------------------------------------------------------
 

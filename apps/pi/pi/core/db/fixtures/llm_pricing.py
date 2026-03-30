@@ -137,6 +137,14 @@ PRICING_DATA = [
         "cached_text_input_price": 1.50,
         "web_search_call_price": 0.01,
     },
+    {
+        "id": "c5d6e7f8-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
+        "llm_model_id": llm_id_map["kimi-k2"],
+        "text_input_price": 1.00,
+        "text_output_price": 3.00,
+        "cached_text_input_price": 0.50,
+        "web_search_call_price": None,
+    },
 ]
 
 tracked_fields = ["text_input_price", "text_output_price", "cached_text_input_price", "web_search_call_price"]
