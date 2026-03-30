@@ -19,14 +19,14 @@ def get_all_related_issues(issue_id):
         -- Base case: Start with the given parent issue
         SELECT id, parent_id
         FROM issues
-        WHERE parent_id = %s
+        WHERE parent_id = %s AND deleted_at IS NULL AND archived_at IS NULL
 
         UNION ALL
 
         -- Recursive case: Find children of each issue
         SELECT i.id, i.parent_id
         FROM issues i
-        INNER JOIN Descendants d ON i.parent_id = d.id
+        INNER JOIN Descendants d ON i.parent_id = d.id WHERE i.deleted_at IS NULL AND i.archived_at IS NULL
     )
     SELECT id
     FROM Descendants;
@@ -47,13 +47,13 @@ def get_all_related_issues_for_epics(epic_ids):
     WITH RECURSIVE Descendants AS (
         SELECT id, parent_id, id AS root_epic_id
         FROM issues
-        WHERE id = ANY(%s)
+        WHERE id = ANY(%s) AND deleted_at IS NULL AND archived_at IS NULL
 
         UNION ALL
 
         SELECT i.id, i.parent_id, d.root_epic_id
         FROM issues i
-        JOIN Descendants d ON i.parent_id = d.id
+        JOIN Descendants d ON i.parent_id = d.id WHERE i.deleted_at IS NULL AND i.archived_at IS NULL
     )
     SELECT root_epic_id, id
     FROM Descendants
