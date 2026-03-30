@@ -12,8 +12,8 @@ type ColMeta = {
   width?: string;
 };
 
-const TH =
-  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-3 text-left text-13 font-medium text-secondary uppercase tracking-wider whitespace-nowrap bg-layer-1";
+// Simplified TH to match core: remove extra borders and padding that might conflict with CustomMenu
+const TH_CLASS = "h-11 items-center bg-layer-1 text-13 font-medium border-r-[0.5px] border-subtle select-none";
 
 type Props = {
   displayProperties: THoDisplayProperties;
@@ -85,9 +85,13 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
       ? cn("sticky left-0 z-[15] transition-shadow", isScrolled ? "shadow-[2px_0_8px_rgba(0,0,0,0.1)]" : "")
       : "z-[10]";
 
+    // Non-sortable
     if (!isSortable) {
       return (
-        <th key={key} className={cn(TH, meta.width, stickyClass)}>
+        <th
+          key={key}
+          className={cn(TH_CLASS, meta.width, stickyClass, "px-4 py-3 text-secondary uppercase tracking-wider")}
+        >
           {meta.label}
         </th>
       );
@@ -98,17 +102,24 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
       orderBy === meta.asc ? ArrowUpNarrowWide : orderBy === meta.desc ? ArrowDownWideNarrow : ChevronsUpDown;
 
     return (
-      <th key={key} className={cn(TH, meta.width, stickyClass, "cursor-pointer p-0")}>
+      <th key={key} className={cn(TH_CLASS, meta.width, stickyClass, "p-0")}>
         <CustomMenu
-          label={
-            <span
-              className={cn("flex h-full w-full items-center gap-1 px-4 py-3", isActive ? "text-accent-primary" : "")}
+          className="!w-full h-full"
+          customButtonClassName="clickable !w-full h-full flex items-center px-4"
+          customButton={
+            <div
+              className={cn(
+                "flex w-full items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary transition-colors",
+                isActive && "text-accent-primary"
+              )}
             >
-              <span className="truncate">{meta.label}</span>
-              <SortIcon className="h-3 w-3 flex-shrink-0" />
-            </span>
+              <span className="truncate uppercase tracking-wider">{meta.label}</span>
+              <div className="flex items-center gap-1">
+                {isActive && <SortIcon className="h-3 w-3 flex-shrink-0" />}
+                <ChevronsUpDown className={cn("h-3 w-3 flex-shrink-0 opacity-50", isActive && "hidden")} />
+              </div>
+            </div>
           }
-          buttonClassName="text-13 font-medium uppercase tracking-wider text-secondary h-full w-full"
           placement="bottom-start"
           closeOnSelect
         >
@@ -127,7 +138,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
             </CustomMenu.MenuItem>
           )}
           <CustomMenu.MenuItem onClick={() => onOrderBy("project__workspace__name")}>
-            {t("ho.clear_sort")}
+            <span className="flex items-center gap-2 text-red-500">{t("ho.clear_sort")}</span>
           </CustomMenu.MenuItem>
         </CustomMenu>
       </th>
@@ -135,8 +146,8 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
   };
 
   return (
-    <thead className="sticky top-0 left-0 z-[20] bg-layer-1 border-b-[0.5px] border-subtle-1">
-      <tr className="h-11">{visibleKeys.map((key) => renderTh(key))}</tr>
+    <thead className="sticky top-0 left-0 z-[20] border-b-[0.5px] border-subtle bg-layer-1">
+      <tr>{visibleKeys.map((key) => renderTh(key))}</tr>
     </thead>
   );
 });

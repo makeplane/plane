@@ -23,7 +23,12 @@ export const HoCategoryView = observer(function HoCategoryView() {
     void store.fetchAccessibleWorkspaces();
   }, [store]);
 
-  const handleSort = (key: SortKey) => {
+  const handleSort = (key: SortKey | "clear") => {
+    if (key === "clear") {
+      setSortKey("department_name");
+      setSortDir("asc");
+      return;
+    }
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else {
       setSortKey(key);
