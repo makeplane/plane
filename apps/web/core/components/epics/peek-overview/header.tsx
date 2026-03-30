@@ -228,6 +228,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             typeId={issue.type_id}
             currentStateId={issue.state_id}
             workspaceSlug={workspaceSlug}
+            serviceType={EIssueServiceType.EPICS}
           />
         )}
         {currentUser && (

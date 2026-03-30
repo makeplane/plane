@@ -24,12 +24,19 @@ import type { IIssueDetail } from "./root.store";
 export interface IIssueStoreActions {
   // actions
   fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    shouldSync?: boolean
+  ) => Promise<void>;
   updateStateViaWorkflow: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    action: "approve" | "reject"
+    action: "approve" | "reject",
+    storeUpdateFn?: (data: Partial<TIssue>) => Promise<void>
   ) => Promise<string>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -220,34 +227,39 @@ export class IssueStore implements IIssueStore {
     return issuePayload;
   };
 
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+  updateIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    shouldSync?: boolean
+  ) => {
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
 
     await Promise.all([
-      currentStore.updateIssue(workspaceSlug, projectId, issueId, data),
+      currentStore.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync),
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
     ]);
   };
 
-  updateStateViaWorkflow = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    action: "approve" | "reject"
+  updateStateViaWorkflow: IIssueStore["updateStateViaWorkflow"] = async (
+    workspaceSlug,
+    projectId,
+    issueId,
+    action,
+    storeUpdateFn
   ) => {
     try {
-      const currentStore =
-        this.serviceType === EIssueServiceType.EPICS
-          ? this.rootIssueDetailStore.rootIssueStore.projectEpics
-          : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+      // if storeUpdateFn is not provided, use the default update function
+      const updateFn = storeUpdateFn ?? ((data) => this.updateIssue(workspaceSlug, projectId, issueId, data, false));
 
       const response = await this.issueService.updateStateViaWorkflow(workspaceSlug, projectId, issueId, action);
 
       await Promise.all([
-        currentStore.updateIssue(workspaceSlug, projectId, issueId, { state_id: response.state_id }, false),
+        updateFn({ state_id: response.state_id }),
         this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
       ]);
 

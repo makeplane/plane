@@ -44,7 +44,13 @@ export interface IReleaseIssues extends IBaseIssuesStore {
   ) => Promise<TIssuesResponse | undefined>;
   addWorkItemsToStore: (items: ReleaseSearchIssueResponse[]) => void;
   // Aliases so peek overview and bulk-op modals can access them on the union type
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    shouldSync?: boolean
+  ) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;

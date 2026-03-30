@@ -41,7 +41,12 @@ export interface IssueActions {
   removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   createIssue?: (projectId: string | undefined | null, data: Partial<TIssue>) => Promise<TIssue | undefined>;
   quickAddIssue?: (projectId: string | undefined | null, data: TIssue) => Promise<TIssue | undefined>;
-  updateIssue?: (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssue?: (
+    projectId: string | undefined | null,
+    issueId: string,
+    data: Partial<TIssue>,
+    shouldSync?: boolean
+  ) => Promise<void>;
   removeIssueFromView?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   archiveIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   restoreIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
@@ -140,9 +145,9 @@ const useProjectIssueActions = () => {
     [issues.quickAddIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -222,9 +227,9 @@ const useProjectEpicsActions = () => {
     [issues.quickAddIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -244,7 +249,7 @@ const useProjectEpicsActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (_projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
     },
@@ -311,9 +316,9 @@ const useCycleIssueActions = () => {
     [issues.quickAddIssue, workspaceSlug, cycleId]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -418,9 +423,9 @@ const useModuleIssueActions = () => {
     [issues.quickAddIssue, workspaceSlug, moduleId]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -507,9 +512,9 @@ const useProfileIssueActions = () => {
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -589,9 +594,9 @@ const useProjectViewIssueActions = () => {
     [issues.quickAddIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -779,9 +784,9 @@ const useReleaseWorkItemsActions = () => {
   );
 
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -836,9 +841,9 @@ const useGlobalIssueActions = () => {
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [issues.updateIssue, workspaceSlug]
   );
@@ -974,9 +979,9 @@ export const useTeamWorkItemActions: () => IssueActions = () => {
     [workItems.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [workItems.updateIssue, workspaceSlug]
   );
@@ -1049,9 +1054,9 @@ export const useTeamViewWorkItemActions: () => IssueActions = () => {
     [workItems.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [workItems.updateIssue, workspaceSlug]
   );
@@ -1128,9 +1133,9 @@ export const useTeamProjectWorkItemsActions: () => IssueActions = () => {
     [workItems.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>, shouldSync?: boolean) => {
       if (!workspaceSlug || !projectId) return;
-      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data);
+      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
     },
     [workItems.updateIssue, workspaceSlug]
   );

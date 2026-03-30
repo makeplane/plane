@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { generateWorkItemLink } from "@plane/utils";
 // components
 import { CopyBranchNameButton } from "@/components/work-item/copy-branch-name";
@@ -139,6 +139,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
               typeId={issue.type_id}
               currentStateId={issue.state_id}
               workspaceSlug={workspaceSlug}
+              serviceType={EIssueServiceType.ISSUES}
             />
           )}
           {currentUser && (

@@ -24,6 +24,9 @@ import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 
 type Props = {
   projectId: string;
@@ -31,10 +34,11 @@ type Props = {
   currentStateId: string;
   typeId?: string | null;
   workspaceSlug: string;
+  serviceType: TIssueServiceType;
 };
 
 export const WorkItemApproveRejectActions = observer(function WorkItemApproveRejectActions(props: Props) {
-  const { projectId, workItemId, currentStateId, typeId, workspaceSlug } = props;
+  const { projectId, workItemId, currentStateId, typeId, workspaceSlug, serviceType } = props;
   // state
   const [isLoading, setIsLoading] = useState<"approve" | "reject" | null>(null);
   // hooks
@@ -43,10 +47,12 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
   const {
     updateStateViaWorkflow,
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(serviceType);
   const { getProjectIdentifierById } = useProject();
   const { isWorkflowsEnabled, isApprovalsEnabled, isApprovalPending, isCurrentUserApprover } = useWorkflows();
   const { getStateById } = useProjectState();
+  const workItemStoreType = useIssueStoreType();
+  const { updateIssue } = useIssuesActions(workItemStoreType);
   // derived values
   const projectIdentifier = getProjectIdentifierById(projectId);
   const workItemDetails = getIssueById(workItemId);
@@ -69,7 +75,13 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
       if (!workspaceSlug || isLoading) return;
       setIsLoading(action);
       try {
-        const newStateId = await updateStateViaWorkflow(workspaceSlug.toString(), projectId, workItemId, action);
+        const newStateId = await updateStateViaWorkflow(
+          workspaceSlug.toString(),
+          projectId,
+          workItemId,
+          action,
+          updateIssue ? (data: Partial<TIssue>) => updateIssue(projectId, workItemId, data, false) : undefined
+        );
         const newStateDetail = getStateById(newStateId);
         setToast({
           type: TOAST_TYPE.SUCCESS,

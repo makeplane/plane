@@ -154,6 +154,7 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
             typeId={issueDetails.type_id}
             currentStateId={issueDetails.state_id}
             workspaceSlug={workspaceSlug}
+            serviceType={EIssueServiceType.EPICS}
           />
         )}
         {epicId && projectId && currentUser && (

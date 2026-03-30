@@ -334,14 +334,20 @@ export class IssueDetail implements IIssueDetail {
     this.issue.fetchIssue(workspaceSlug, projectId, issueId);
   fetchWorkItemWithIdentifier = async (workspaceSlug: string, identifier: string) =>
     this.issue.fetchWorkItemWithIdentifier(workspaceSlug, identifier);
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
-    this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
+  updateIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>,
+    shouldSync?: boolean
+  ) => this.issue.updateIssue(workspaceSlug, projectId, issueId, data, shouldSync);
   updateStateViaWorkflow = async (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    action: "approve" | "reject"
-  ) => this.issue.updateStateViaWorkflow(workspaceSlug, projectId, issueId, action);
+    action: "approve" | "reject",
+    storeUpdateFn?: (data: Partial<TIssue>) => Promise<void>
+  ) => this.issue.updateStateViaWorkflow(workspaceSlug, projectId, issueId, action, storeUpdateFn);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.removeIssue(workspaceSlug, projectId, issueId);
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

@@ -21,7 +21,7 @@ import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/prop
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
-import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
 // components
@@ -211,6 +211,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               typeId={issueDetails?.type_id}
               currentStateId={issueDetails?.state_id}
               workspaceSlug={workspaceSlug}
+              serviceType={EIssueServiceType.ISSUES}
             />
           )}
           {currentUser && (
