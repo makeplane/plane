@@ -15,7 +15,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
   const { t } = useTranslation();
   const store = useHoIssues();
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("department_name");
+  const [sortKey, setSortKey] = useState<SortKey | null>("department_name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
 
   const handleSort = (key: SortKey | "clear") => {
     if (key === "clear") {
-      setSortKey("department_name");
+      setSortKey(null);
       setSortDir("asc");
       return;
     }
@@ -46,15 +46,16 @@ export const HoCategoryView = observer(function HoCategoryView() {
     );
   }, [store.categorySummary, search]);
 
-  const sortedData = useMemo(
-    () =>
-      [...filtered].sort((a, b) => {
-        const av = a[sortKey] ?? "";
-        const bv = b[sortKey] ?? "";
-        return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
-      }),
-    [filtered, sortKey, sortDir]
-  );
+  const sortedData = useMemo(() => {
+    const data = [...filtered];
+    if (!sortKey) return data;
+
+    return data.sort((a, b) => {
+      const av = a[sortKey] ?? "";
+      const bv = b[sortKey] ?? "";
+      return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }, [filtered, sortKey, sortDir]);
 
   return (
     <div className="size-full py-9 px-page-x lg:px-12">

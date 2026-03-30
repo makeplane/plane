@@ -137,7 +137,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
               </span>
             </CustomMenu.MenuItem>
           )}
-          <CustomMenu.MenuItem onClick={() => onOrderBy("project__workspace__name")}>
+          <CustomMenu.MenuItem onClick={() => onOrderBy("-created_at")}>
             <span className="flex items-center gap-2 text-red-500">{t("ho.clear_sort")}</span>
           </CustomMenu.MenuItem>
         </CustomMenu>

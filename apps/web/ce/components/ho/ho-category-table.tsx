@@ -12,7 +12,7 @@ const TH_CLASS = "h-11 items-center bg-layer-1 text-13 font-medium border-r-[0.5
 
 type Props = {
   data: THoCategorySummary[];
-  sortKey: SortKey;
+  sortKey: SortKey | null;
   sortDir: "asc" | "desc";
   onSort: (key: SortKey | "clear") => void;
 };
