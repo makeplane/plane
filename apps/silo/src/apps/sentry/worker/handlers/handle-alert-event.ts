@@ -21,8 +21,10 @@ import type { APIClient } from "@/services/client";
 import { getAPIClient } from "@/services/client";
 import type { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../../helpers/connection";
+import { getSentryEventDescription } from "../../helpers/helper";
 import type { ISentryTaskHandler, TSentryServices } from "../../types";
 import { ESentryEntityConnectionType } from "../../types";
+import type { TSentryEventWithException } from "@/worker/types";
 
 /**
  * Alert Event Handler is responsible for handling Sentry alert webhooks
@@ -188,9 +190,13 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     settings: ReturnType<typeof this.extractAlertSettings>,
     sentryEventAlert: SentryEventAlertWebhook
   ) {
+    const event = sentryEventAlert.data.event as TSentryEventWithException;
+    const { title } = event;
+    const description = getSentryEventDescription(event);
+
     const issue: Partial<ExIssue> = {
-      name: sentryEventAlert.data.event.title,
-      description_html: `<p>${sentryEventAlert.data.event.message}\n\n<a href="${sentryEventAlert.data.event.web_url}">View in Sentry</a></p>`,
+      name: title,
+      description_html: `<p>${description}</p>`,
       labels: settings.labels,
       assignees: settings.assigneeIds,
       state: settings.state,

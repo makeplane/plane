@@ -12,6 +12,7 @@
  */
 
 import type { TImportJob } from "@plane/types";
+import type { SentryEventAlertWebhook } from "@plane/etl/sentry";
 
 export type WorkerEventType = "initiate" | "transform" | "push" | "finished";
 export type UpdateEventType =
@@ -81,4 +82,16 @@ export type TBatchPullResult<TSource> = {
 export type TPaginationContext = {
   page: number;
   isLastPage: boolean;
+};
+
+export type TSentryEventWithException = SentryEventAlertWebhook["data"]["event"] & {
+  exception?: {
+    values?: Array<{
+      type?: string;
+      value?: string;
+      stacktrace?: {
+        frames?: Array<{ filename?: string; function?: string; lineno?: number; colno?: number }>;
+      };
+    }>;
+  };
 };
