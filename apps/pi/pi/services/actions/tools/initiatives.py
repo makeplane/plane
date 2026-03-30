@@ -75,40 +75,6 @@ INITIATIVE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
-    "list": ToolMetadata(
-        name="initiatives_list",
-        description="List initiatives in the workspace",
-        sdk_method="list_initiatives",
-        parameters=[
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="initiatives_retrieve",
-        description="Retrieve a single initiative by ID",
-        sdk_method="retrieve_initiative",
-        parameters=[
-            ToolParameter(
-                name="initiative_id",
-                type="str",
-                required=True,
-                description="Initiative ID (required)",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
     "update": ToolMetadata(
         name="initiatives_update",
         description="Update initiative details",

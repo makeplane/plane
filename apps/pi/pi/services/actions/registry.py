@@ -55,6 +55,8 @@ API_METHODS: Dict[str, Dict[str, str]] = {
         "delete": "Delete a work item",
         "create_relation": "Create a relationship between work items (blocks, relates_to, etc.)",
         "search": "Search work items across workspace by query string",
+        "advanced_search": "Filter work items by metadata with AND/OR/NOT logic (priority, state, assignee, etc.)",
+        "list_epics": "List epics in a project",
     },
     "projects": {
         "create": "Create a new project",
@@ -267,9 +269,10 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "list": "list_work_items",
         "retrieve": "retrieve_work_item",
         "delete": "delete_work_item",
-        "search": "search_work_items",
+        "advanced_search": "advanced_search_work_items",
         "create_epic": "create_work_item",  # Epic is a workitem with specific type_id
         "update_epic": "update_work_item",  # Epic is a workitem with specific type_id
+        "list_epics": "list_epics",
     },
     "projects": {
         "create": "create_project",

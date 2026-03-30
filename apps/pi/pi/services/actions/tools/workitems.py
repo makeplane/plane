@@ -22,6 +22,7 @@ import logging
 import uuid
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Tuple
 
@@ -477,7 +478,7 @@ async def _workitems_post_handler(
 
     Handles:
     - create/update/create_epic/update_epic: identifier enrichment for URL construction
-    - list: URL construction for each workitem in results
+    - advanced_search: entity URL enrichment for multi-result responses
     """
     tool_name = metadata.name
 
@@ -501,45 +502,122 @@ async def _workitems_post_handler(
                 # Generate user-friendly success message
                 result["message"] = generate_success_message(tool_name, data.get("name"))
 
-    # URL construction for list operations
-    elif tool_name == "workitems_list":
+    # Entity URL enrichment for advanced_search (multi-result)
+    elif tool_name == "workitems_advanced_search":
         if result.get("success"):
             data = result.get("data")
-            if data and isinstance(data, dict):
-                results = data.get("results", [])
-                workspace_slug = kwargs.get("workspace_slug") or context.get("workspace_slug")
-
-                if results and isinstance(results, list):
+            if isinstance(data, dict):
+                results_list: List[Dict[str, Any]] = data.get("results", [])
+                issue_ids: List[str] = [str(item["id"]) for item in results_list if item.get("id")]
+                if issue_ids:
                     try:
-                        from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-                        from pi.config import settings
+                        from pi.agents.sql_agent.helpers import construct_entity_urls_from_db
 
-                        # Get the base URL for constructing frontend URLs
-                        frontend_url = settings.plane_api.FRONTEND_URL.rstrip("/")
-
-                        # Enrich each workitem with identifier and URL
-                        for item in results:
-                            if isinstance(item, dict) and item.get("id"):
-                                try:
-                                    identifier_info = await get_issue_identifier_for_artifact(str(item["id"]))
-                                    if identifier_info:
-                                        item["project_identifier"] = identifier_info.get("project_identifier")
-                                        item["sequence_id"] = identifier_info.get("sequence_id")
-                                        item["identifier"] = identifier_info.get("identifier")
-
-                                        # Construct URL using the identifier (PROJECT-123 format)
-                                        if workspace_slug and identifier_info.get("identifier"):
-                                            item["url"] = f"{frontend_url}/{workspace_slug}/browse/{identifier_info['identifier']}/"
-
-                                        log.debug(f"Enriched workitem {item['id']} with identifier: {identifier_info.get('identifier')}")
-                                except Exception as e:
-                                    log.warning(f"Could not enrich workitem {item.get('id')} with identifier info: {e}")
-
-                        log.debug(f"Enriched {len(results)} workitems with identifiers and URLs")
+                        entity_urls = await construct_entity_urls_from_db(
+                            entity_ids={"issues": issue_ids},
+                            api_base_url="",  # Not used; URLs built from settings
+                        )
+                        if entity_urls:
+                            data["entity_urls"] = entity_urls
+                            log.debug(
+                                "Enriched advanced_search results with %d entity URLs for %d work items",
+                                len(entity_urls),
+                                len(issue_ids),
+                            )
                     except Exception as e:
-                        log.warning(f"Error enriching workitems list with identifiers: {e}")
+                        log.warning("Could not enrich advanced_search results with entity URLs: %s", e)
 
     return result
+
+
+# ============================================================================
+# ADVANCED SEARCH FILTER SANITISATION
+# ============================================================================
+
+_LOGICAL_OPERATORS = frozenset({"and", "or", "not"})
+
+
+def _sanitize_filter_node(node: Any) -> Any:
+    """Recursively fix a filter dict so that logical operators are never mixed
+    with field keys at the same level.
+
+    The Plane API requires that if a node contains a logical operator
+    (``and`` / ``or`` / ``not``), that operator must be the **only** key.
+    LLMs frequently produce a hybrid like::
+
+        {"priority": "high", "and": [{"state_group": "started"}]}
+
+    This function restructures it into::
+
+        {"and": [{"priority": "high"}, {"state_group": "started"}]}
+    """
+    if not isinstance(node, dict) or not node:
+        return node
+
+    logical_keys = [k for k in node if isinstance(k, str) and k.lower() in _LOGICAL_OPERATORS]
+    field_keys = [k for k in node if k not in logical_keys]
+
+    # Happy path: no logical operators → leaf node, nothing to fix
+    if not logical_keys:
+        return node
+
+    # Happy path: single logical operator and no field keys → valid node
+    if len(logical_keys) == 1 and not field_keys:
+        op = logical_keys[0]
+        op_lower = op.lower()
+        value = node[op]
+        if op_lower in ("and", "or") and isinstance(value, list):
+            return {op_lower: [_sanitize_filter_node(child) for child in value]}
+        if op_lower == "not" and isinstance(value, dict):
+            return {"not": _sanitize_filter_node(value)}
+        return node
+
+    # ---- Fix: logical operator(s) mixed with field keys ----
+    # Collect the field-key portion as a single leaf dict.
+    field_leaf = {k: node[k] for k in field_keys}
+
+    # Multiple logical operators mixed together is rare but possible;
+    # wrap everything under an implicit AND.
+    and_children: list = [field_leaf]
+
+    for op in logical_keys:
+        op_lower = op.lower()
+        value = node[op]
+        if op_lower in ("and", "or") and isinstance(value, list):
+            # Flatten an "and" into the top-level AND; keep "or" as a nested node
+            sanitized = [_sanitize_filter_node(child) for child in value]
+            if op_lower == "and":
+                and_children.extend(sanitized)
+            else:
+                and_children.append({"or": sanitized})
+        elif op_lower == "not" and isinstance(value, dict):
+            and_children.append({"not": _sanitize_filter_node(value)})
+        else:
+            # Unexpected shape — keep as-is so the API returns a clear error
+            and_children.append({op_lower: value})
+
+    log.info("Sanitised advanced_search filters: separated mixed field/operator keys into AND structure")
+    return {"and": and_children}
+
+
+async def _advanced_search_pre_handler(
+    metadata: ToolMetadata,
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    category: str,
+    method_key: str,
+    method_executor: Any = None,
+) -> Dict[str, Any]:
+    """Pre-processing handler for workitems_advanced_search.
+
+    Sanitises the ``filters`` dict produced by the LLM so it conforms to
+    the Plane API's structural rules (no mixing of logical operators with
+    field keys at the same level).
+    """
+    filters = kwargs.get("filters")
+    if isinstance(filters, dict) and filters:
+        kwargs["filters"] = _sanitize_filter_node(filters)
+    return kwargs
 
 
 # ============================================================================
@@ -569,7 +647,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (required - provide from conversation context)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
             ToolParameter(
                 name="description_html",
@@ -668,7 +745,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (required - provide from conversation context)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
             ToolParameter(
                 name="name",
@@ -751,224 +827,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
-    "list": ToolMetadata(
-        name="workitems_list",
-        description="List work items with filtering",
-        sdk_method="list_work_items",
-        pre_handler=_workitems_pre_handler,
-        post_handler=_workitems_post_handler,
-        parameters=[
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID (required - provide from conversation context or previous actions)",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (provide if known, otherwise auto-detected)",
-                auto_fill_from_context=True,
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="cursor",
-                type="Optional[str]",
-                required=False,
-                description="Pagination cursor for next page",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="expand",
-                type="Optional[str]",
-                required=False,
-                description="Comma-separated list of related fields to expand in response",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="external_id",
-                type="Optional[str]",
-                required=False,
-                description="External system identifier for filtering or lookup",
-            ),
-            ToolParameter(
-                name="external_source",
-                type="Optional[str]",
-                required=False,
-                description="External system source name for filtering or lookup",
-            ),
-            ToolParameter(
-                name="fields",
-                type="Optional[str]",
-                required=False,
-                description="Comma-separated list of fields to include in response",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="order_by",
-                type="Optional[str]",
-                required=False,
-                description="Field to order results by. Prefix with '-' for descending order",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="per_page",
-                type="Optional[int]",
-                required=False,
-                description="Number of work items per page (default: 20, max: 100)",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="priority",
-                type="Optional[str]",
-                required=False,
-                description="Filter by priority (high, medium, low, urgent, none)",
-            ),
-            ToolParameter(
-                name="state",
-                type="Optional[str]",
-                required=False,
-                description="Filter by state name or UUID",
-            ),
-            ToolParameter(
-                name="assignees",
-                type="List[str]",
-                required=False,
-                description="Filter by assignee user IDs",
-            ),
-            ToolParameter(
-                name="labels",
-                type="List[str]",
-                required=False,
-                description="Filter by label IDs",
-            ),
-            ToolParameter(
-                name="start_date",
-                type="Optional[str]",
-                required=False,
-                description="Filter by start date",
-            ),
-            ToolParameter(
-                name="target_date",
-                type="Optional[str]",
-                required=False,
-                description="Filter by target date",
-            ),
-            ToolParameter(
-                name="created_by",
-                type="Optional[str]",
-                required=False,
-                description="Filter by creator ID",
-            ),
-            ToolParameter(
-                name="updated_by",
-                type="Optional[str]",
-                required=False,
-                description="Filter by updater ID",
-            ),
-            ToolParameter(
-                name="type_id",
-                type="Optional[str]",
-                required=False,
-                description="Filter by issue type ID",
-            ),
-            ToolParameter(
-                name="parent",
-                type="Optional[str]",
-                required=False,
-                description="Filter by parent issue ID",
-            ),
-            ToolParameter(
-                name="is_draft",
-                type="Optional[bool]",
-                required=False,
-                description="Filter by draft status",
-            ),
-            ToolParameter(
-                name="created_at",
-                type="Optional[str]",
-                required=False,
-                description="Filter by creation time",
-            ),
-            ToolParameter(
-                name="updated_at",
-                type="Optional[str]",
-                required=False,
-                description="Filter by update time",
-            ),
-            ToolParameter(
-                name="completed_at",
-                type="Optional[str]",
-                required=False,
-                description="Filter by completion time",
-            ),
-            ToolParameter(
-                name="archived_at",
-                type="Optional[str]",
-                required=False,
-                description="Filter by archive time",
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="workitems_retrieve",
-        description="Retrieve a single work item by ID",
-        sdk_method="retrieve_work_item",
-        pre_handler=_workitems_pre_handler,
-        parameters=[
-            ToolParameter(name="issue_id", type="str", required=True, description="Work item ID (required)"),
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID (required - provide from conversation context or previous actions)",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (provide if known, otherwise auto-detected)",
-                auto_fill_from_context=True,
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="expand",
-                type="Optional[str]",
-                required=False,
-                description="Comma-separated list of related fields to expand in response",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="external_id",
-                type="Optional[str]",
-                required=False,
-                description="External system identifier for filtering or lookup",
-            ),
-            ToolParameter(
-                name="external_source",
-                type="Optional[str]",
-                required=False,
-                description="External system source name for filtering or lookup",
-            ),
-            ToolParameter(
-                name="fields",
-                type="Optional[str]",
-                required=False,
-                description="Comma-separated list of fields to include in response",
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="order_by",
-                type="Optional[str]",
-                required=False,
-                description="Field to order results by. Prefix with '-' for descending order",
-                property_transform="skip",
-            ),
-        ],
-    ),
     "delete": ToolMetadata(
         name="workitems_delete",
         description="Delete a work item/issue",
@@ -989,7 +847,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (provide if known, otherwise auto-detected)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
         ],
     ),
@@ -1027,47 +884,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (provide if known, otherwise auto-detected)",
                 auto_fill_from_context=True,
-                property_transform="skip",
-            ),
-        ],
-    ),
-    "search": ToolMetadata(
-        name="workitems_search",
-        description="Search work items by criteria",
-        sdk_method="search_work_items",
-        parameters=[
-            ToolParameter(
-                name="query",
-                type="str",
-                required=True,
-                description="Search query to filter results by name, description, or identifier (required)",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (provide if known, otherwise auto-detected)",
-                auto_fill_from_context=True,
-                property_transform="skip",
-            ),
-            ToolParameter(
-                name="limit",
-                type="Optional[int]",
-                required=False,
-                description="Maximum number of results to return",
-            ),
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID for filtering results within a specific project",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="workspace_search",
-                type="Optional[str]",
-                required=False,
-                description="Whether to search across entire workspace or within specific project",
             ),
         ],
     ),
@@ -1093,7 +909,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (required - provide from conversation context)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
             ToolParameter(
                 name="description_html",
@@ -1151,6 +966,45 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
+    "epic_list": ToolMetadata(
+        name="epic_list",
+        description="List epics in a project with filtering",
+        sdk_method="list_epics",
+        parameters=[
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="cursor",
+                type="Optional[str]",
+                required=False,
+                description="Pagination cursor for next page",
+            ),
+            ToolParameter(
+                name="per_page",
+                type="Optional[int]",
+                required=False,
+                description="Number of epics per page (default: 20, max: 100)",
+            ),
+            ToolParameter(
+                name="order_by",
+                type="Optional[str]",
+                required=False,
+                description="Field to order results by. Prefix with '-' for descending order",
+            ),
+        ],
+    ),
     "update_epic": ToolMetadata(
         name="update_epic",
         description="Update an existing epic",
@@ -1173,7 +1027,6 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (provide if known, otherwise auto-detected)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
             ToolParameter(
                 name="name",
@@ -1243,6 +1096,51 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
+    "advanced_search": ToolMetadata(
+        name="workitems_advanced_search",
+        description="PREFERRED tool for finding work items. Use this for: "
+        "(1) text/name search — find work items by title keywords (e.g. query='capex', query='login bug'), "
+        "(2) metadata filtering — filter by priority, state_group, assignee, project, cycle, module, labels, "
+        "(3) combined — text search + filters together (e.g. query='capex' with filters={'priority': 'high'}). "
+        "Faster and more accurate than structured_db_tool. Supports AND/OR/NOT filter logic.",
+        sdk_method="advanced_search_work_items",
+        pre_handler=_advanced_search_pre_handler,
+        post_handler=_workitems_post_handler,
+        parameters=[
+            ToolParameter(
+                name="query",
+                type="Optional[str]",
+                required=False,
+                description="Free-text search query to match against work item name or description ONLY.\n"
+                "Do NOT include filter logic here (e.g., avoid 'priority:high'). Use the 'filters' argument for that.",
+            ),
+            ToolParameter(
+                name="filters",
+                type="Dict[str, Any]",
+                required=False,
+                description="Filter dictionary for structured filtering.\n"
+                "Field values:\n"
+                "- priority: urgent, high, medium, low, none\n"
+                "- state_group: backlog, unstarted, started, completed, cancelled\n"
+                "- assignee_id, project_id, cycle_id, module_id, label_id: UUID strings\n"
+                "Examples: {'priority': 'urgent'}, {'priority': 'high', 'state_group': 'started'}, "
+                "{'priority__in': ['high', 'urgent']}",
+            ),
+            ToolParameter(
+                name="limit",
+                type="int",
+                required=False,
+                description="Maximum number of results to return (default: 25)",
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (required - provide from conversation context)",
+                auto_fill_from_context=True,
+            ),
+        ],
+    ),
 }
 
 
@@ -1278,36 +1176,3 @@ def get_workitem_tools(method_executor, context):
         context=context,
         tool_definitions=dynamic_tool_definitions,
     )
-
-
-# ============================================================================
-# OLD MANUAL TOOL DEFINITIONS (COMMENTED OUT - KEPT FOR COMPARISON)
-# To rollback: uncomment below and comment out the auto-generation code above
-# ============================================================================
-
-# from langchain_core.tools import tool
-#
-# def get_workitem_tools(method_executor, context):
-#     """Return LangChain tools for the workitems category using method_executor and context."""
-#
-#     @tool
-#     async def workitems_create(
-#         name: str,
-#         project_id: Optional[str] = None,
-#         description_html: Optional[str] = None,
-#         ... [TRUNCATED - See git history for full manual implementations]
-#     ):
-#         ... [All manual tool implementations omitted for brevity]
-#
-#     return [
-#         workitems_create,
-#         workitems_update,
-#         create_epic,
-#         update_epic,
-#         workitems_create_relation,
-#         workitems_delete,
-#         workitems_list,
-#         # workitems_retrieve,
-#         # workitems_search,
-#         # workitems_get_workspace
-#     ]

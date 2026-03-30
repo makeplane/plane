@@ -19,7 +19,6 @@ from typing import Dict
 from pi import logger
 from pi.services.actions.tool_generator import generate_tools_for_category
 from pi.services.actions.tool_metadata import ToolMetadata
-from pi.services.actions.tool_metadata import ToolParameter
 
 # ============================================================================
 # ACTIVITY-SPECIFIC HANDLER FUNCTIONS
@@ -65,70 +64,7 @@ async def _activity_pre_handler(
 # ACTIVITY TOOL DEFINITIONS
 # ============================================================================
 
-ACTIVITY_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
-    "list": ToolMetadata(
-        name="activity_list",
-        description="List activity for a specific work item",
-        sdk_method="list_work_item_activities",
-        pre_handler=_activity_pre_handler,
-        parameters=[
-            ToolParameter(
-                name="issue_id",
-                type="str",
-                required=True,
-                description="Work item ID (required) - activities are specific to individual work items",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="activity_retrieve",
-        description="Get a single activity by ID",
-        sdk_method="retrieve_work_item_activity",
-        pre_handler=_activity_pre_handler,
-        parameters=[
-            ToolParameter(
-                name="activity_id",
-                type="str",
-                required=True,
-                description="Activity ID (required)",
-            ),
-            ToolParameter(
-                name="issue_id",
-                type="str",
-                required=True,
-                description="Work item ID (required)",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-}
+ACTIVITY_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {}
 
 
 # ============================================================================

@@ -22,7 +22,6 @@ for all LangChain tool definitions. Tool metadata includes:
 
 from typing import Any
 from typing import List
-from typing import Literal
 from typing import Optional
 
 from pydantic import BaseModel
@@ -38,7 +37,6 @@ class ToolParameter(BaseModel):
         description: Human-readable parameter description for LLM
         default: Default value if parameter is optional
         auto_fill_from_context: Whether to auto-fill from context (workspace_slug, project_id)
-        property_transform: How to transform for UI property mapper (Phase 2 feature)
     """
 
     name: str
@@ -47,7 +45,6 @@ class ToolParameter(BaseModel):
     description: str
     default: Optional[Any] = None
     auto_fill_from_context: bool = False
-    property_transform: Literal["name", "id", "id_list", "bool", "date", "json", "int", "skip"] = "name"
 
     class Config:
         # Allow extra fields for future extensions

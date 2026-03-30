@@ -112,40 +112,6 @@ STICKY_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
-    "list": ToolMetadata(
-        name="stickies_list",
-        description="List all sticky notes in the workspace",
-        sdk_method="list_stickies",
-        parameters=[
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="stickies_retrieve",
-        description="Retrieve a single sticky note by ID",
-        sdk_method="retrieve_sticky",
-        parameters=[
-            ToolParameter(
-                name="sticky_id",
-                type="str",
-                required=True,
-                description="Sticky ID (required)",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
     "update": ToolMetadata(
         name="stickies_update",
         description="Update sticky note details",

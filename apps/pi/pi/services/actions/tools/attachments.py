@@ -78,61 +78,6 @@ def get_attachment_tools(method_executor, context):
             return PlaneToolBase.format_error_payload("Failed to create attachment", result["error"])
 
     @tool
-    async def attachments_list(issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
-        """List attachments for a work item.
-
-        Args:
-            issue_id: UUID of the work item (required)
-            project_id: UUID of the project (optional, auto-filled from context)
-            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute("attachments", "list", issue_id=issue_id, project_id=project_id, workspace_slug=workspace_slug)
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved attachments list", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to list attachments", result["error"])
-
-    @tool
-    async def attachments_retrieve(
-        attachment_id: str,
-        issue_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Get a single attachment by ID.
-
-        Args:
-            attachment_id: UUID of the attachment (required)
-            issue_id: UUID of the work item (required)
-            project_id: UUID of the project (optional, auto-filled from context)
-            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "attachments",
-            "retrieve",
-            attachment_id=attachment_id,
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved attachment", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to retrieve attachment", result["error"])
-
-    @tool
     async def attachments_update(
         attachment_id: str,
         issue_id: str,
@@ -203,4 +148,4 @@ def get_attachment_tools(method_executor, context):
         else:
             return PlaneToolBase.format_error_payload("Failed to delete attachment", result["error"])
 
-    return [attachments_create, attachments_list, attachments_retrieve, attachments_update, attachments_delete]
+    return [attachments_create, attachments_update, attachments_delete]

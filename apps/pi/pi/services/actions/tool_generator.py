@@ -21,20 +21,28 @@ from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import List
+from typing import Optional
 
 from langchain_core.tools import tool
+from pydantic import BaseModel
+from pydantic import Field
+from pydantic import create_model
 
 from pi import logger
 from pi.services.actions.tool_metadata import ToolMetadata
 from pi.services.actions.tools.base import PlaneToolBase
 from pi.services.chat.helpers.tool_utils import generate_error_message
+from pi.services.chat.helpers.tool_utils import is_uuid_like
+
+# Parameters that represent workspace-level identity and must always be
+# hard-overridden from context to prevent cross-workspace data leaks.
+# The LLM is never trusted for these values.
+_WORKSPACE_PARAMS = frozenset({"workspace_slug", "workspace_id"})
 
 log = logger.getChild(__name__)
 
 
 # Complete type mapping - no string parsing needed
-from typing import Optional
-
 _TYPE_MAP = {
     # Basic types
     "str": str,
@@ -57,6 +65,27 @@ _TYPE_MAP = {
     "Dict[str, Any]": dict,
     "Dict[str, str]": dict,
 }
+
+
+class WorkItemFilterSchema(BaseModel):
+    """Schema for work item filters."""
+
+    priority: Optional[str] = Field(
+        default=None,
+        description="Filter by priority (urgent, high, medium, low, none)",
+    )
+    state_group: Optional[str] = Field(
+        default=None,
+        description="Filter by state group (backlog, unstarted, started, completed, cancelled)",
+    )
+    assignee_id: Optional[str] = Field(default=None, description="Filter by assignee UUID")
+    project_id: Optional[str] = Field(default=None, description="Filter by project UUID")
+    cycle_id: Optional[str] = Field(default=None, description="Filter by cycle UUID")
+    module_id: Optional[str] = Field(default=None, description="Filter by module UUID")
+    label_id: Optional[str] = Field(default=None, description="Filter by label UUID")
+
+    class Config:
+        extra = "allow"
 
 
 def _parse_type_annotation(type_str: str) -> Any:
@@ -140,6 +169,47 @@ def _build_docstring(metadata: ToolMetadata) -> str:
         lines.append("")
 
     return "\n".join(lines)
+
+
+def _build_args_schema(metadata: ToolMetadata) -> type[BaseModel]:
+    """Build a dynamic Pydantic model with per-field descriptions.
+
+    This ensures the OpenAI function-calling JSON schema includes a
+    ``description`` key for every parameter, so the LLM has structured
+    guidance on what each field expects — not just a bare ``{"type": "object"}``.
+
+    Args:
+        metadata: Tool metadata
+
+    Returns:
+        A dynamically created Pydantic model class
+    """
+    field_definitions: Dict[str, Any] = {}
+
+    for param in metadata.parameters:
+        python_type = _parse_type_annotation(param.type)
+
+        # Special handling for workitems_advanced_search filters
+        # Inject a detailed model schema so the LLM knows exactly what fields to use
+        if metadata.name == "workitems_advanced_search" and param.name == "filters":
+            python_type = WorkItemFilterSchema
+
+        if param.required:
+            # Required: no default → Pydantic marks it as required in the schema
+            field_definitions[param.name] = (
+                python_type,
+                Field(description=param.description),
+            )
+        else:
+            # Optional: use param.default (usually None)
+            field_definitions[param.name] = (
+                python_type,
+                Field(default=param.default, description=param.description),
+            )
+
+    # Sanitise name for valid Python identifier
+    model_name = metadata.name.replace("-", "_").replace(" ", "_") + "Schema"
+    return create_model(model_name, **field_definitions)  # type: ignore[call-overload]
 
 
 async def _apply_pre_processing(
@@ -226,12 +296,49 @@ def generate_tool_from_metadata(
     async def tool_func(**kwargs):
         """Dynamically generated tool function."""
 
-        # Auto-fill context values for parameters marked as auto_fill_from_context
+        # Auto-fill context values for parameters marked as auto_fill_from_context.
         for param in metadata.parameters:
-            if param.auto_fill_from_context and param.name in context:
-                if param.name not in kwargs or kwargs[param.name] is None:
-                    kwargs[param.name] = context[param.name]
-                    log.debug(f"Auto-filled {param.name} = {context[param.name]} for {metadata.name}")
+            if not param.auto_fill_from_context or param.name not in context:
+                continue
+
+            context_value = context[param.name]
+            llm_provided = kwargs.get(param.name)
+
+            if param.name in _WORKSPACE_PARAMS:
+                # Workspace-level params are always hard-overridden from context
+                # to prevent cross-workspace data leaks.  The LLM sometimes
+                # confuses workspace_id (UUID) with workspace_slug (string);
+                # if a UUID is sent where a slug is expected, resolve it from
+                # context rather than allowing a mis-typed value through.
+                if llm_provided is not None and llm_provided != context_value:
+                    extra = ""
+                    if param.name == "workspace_slug" and is_uuid_like(str(llm_provided)):
+                        extra = " (LLM sent a UUID where a slug was expected)"
+                    log.warning(
+                        "Hard-overriding LLM-provided %s=%r with context value %r for %s%s",
+                        param.name,
+                        llm_provided,
+                        context_value,
+                        metadata.name,
+                        extra,
+                    )
+                kwargs[param.name] = context_value
+            else:
+                # Non-workspace params (e.g. project_id) use soft-default:
+                # only fill when the LLM did not provide a value, since the
+                # LLM may legitimately switch to a different project
+                # mentioned in the conversation.
+                if llm_provided is None or param.name not in kwargs:
+                    kwargs[param.name] = context_value
+
+            log.debug("Auto-filled %s = %s for %s", param.name, kwargs[param.name], metadata.name)
+
+        # Convert any Pydantic model instances to plain dicts.
+        # The args_schema may use Pydantic models (e.g. WorkItemFilterSchema)
+        # for structured LLM guidance, but the SDK expects plain dicts.
+        for key, value in kwargs.items():
+            if isinstance(value, BaseModel):
+                kwargs[key] = value.model_dump(exclude_none=True)
 
         # PRE-PROCESSING: Apply custom handler if provided
         if metadata.pre_handler:
@@ -305,6 +412,13 @@ def generate_tool_from_metadata(
 
     # Apply @tool decorator
     decorated_tool = tool(tool_func)
+
+    # Override the auto-generated args_schema with one that includes
+    # per-parameter descriptions so the LLM sees them in the JSON schema.
+    try:
+        decorated_tool.args_schema = _build_args_schema(metadata)  # type: ignore[assignment]
+    except Exception as e:
+        log.warning(f"Failed to build args_schema for {metadata.name}: {e}")
 
     log.debug(f"Generated tool: {metadata.name} (category={category}, method={method_key})")
 

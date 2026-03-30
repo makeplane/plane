@@ -48,7 +48,6 @@ from pi.services.actions.method_executor import MethodExecutor
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
 from pi.services.actions.registry import get_available_categories
 from pi.services.actions.registry import get_category_methods
-from pi.services.actions.tools.entity_search import get_entity_search_tools
 from pi.services.chat.helpers.action_property_mapper import map_tool_properties
 from pi.services.chat.helpers.planning_enrichment import enrich_planning_payload
 from pi.services.chat.helpers.tool_utils import TOOL_NAME_TO_CATEGORY_MAP
@@ -359,12 +358,30 @@ def build_planning_tools(
         except Exception as e:
             log.warning(f"Failed to build tools for category {cat}: {e}")
 
-    # Add all entity search tools
+    # Add unified retrieval tools (entity_list, entity_retrieve, entity_search)
+    # entity_search consolidates the 12 individual entity search tools into one
     try:
-        entity_search_tools = get_entity_search_tools(method_executor, context)
-        all_method_tools.extend(entity_search_tools)
+        from pi.services.actions.tools.unified_retrieval import get_unified_retrieval_tools
+
+        unified_tools = get_unified_retrieval_tools(method_executor=method_executor, context=context) or []
+        existing_names = {getattr(t, "name", "") for t in all_method_tools}
+        for t in unified_tools:
+            t_name = getattr(t, "name", "")
+            if t_name not in existing_names:
+                all_method_tools.append(t)
+                existing_names.add(t_name)
     except Exception as e:
-        log.warning(f"Failed to add entity search tools: {e}")
+        log.warning(f"Failed to add unified retrieval tools: {e}")
+
+    try:
+        from pi.services.actions.tools.workitems import get_workitem_tools
+
+        workitem_tools = get_workitem_tools(method_executor=method_executor, context=context) or []
+        # Only include workitems_advanced_search (filter tool)
+        workitem_tools = [t for t in workitem_tools if getattr(t, "name", "") == "workitems_advanced_search"]
+        all_method_tools.extend(workitem_tools)
+    except Exception as e:
+        log.warning(f"Failed to add workitems_advanced_search tool: {e}")
 
     method_tool_names = {getattr(t, "name", "") for t in all_method_tools}
     combined_tools = all_method_tools + [t for t in fresh_retrieval_tools if getattr(t, "name", "") not in method_tool_names]
@@ -382,6 +399,10 @@ def build_tool_orchestration_context_step(
     """Optionally build a flow step capturing orchestration context for auditability."""
     if not (enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip()):
         return None, current_step
+
+    # Ensure tool lists are deduplicated for clearer orchestration context
+    all_method_tools = list({getattr(t, "name", ""): t for t in (all_method_tools or []) if getattr(t, "name", "")}.values())
+    combined_tools = list({getattr(t, "name", ""): t for t in (combined_tools or []) if getattr(t, "name", "")}.values())
 
     step = {
         "step_order": current_step,
@@ -801,6 +822,11 @@ async def enrich_tool_query_for_display(
     return tool_query
 
 
+# ------------------------------------------------------------------
+# Placeholder resolution helpers (shared by multiple functions)
+# ------------------------------------------------------------------
+
+
 def _extract_placeholder_references(tool_args: Dict[str, Any]) -> List[Tuple[str, str, str]]:
     """Return placeholder references found in tool arguments."""
     refs: List[Tuple[str, str, str]] = []
@@ -874,6 +900,122 @@ def _maybe_build_placeholder_skip_result(
     return flow_step, tool_message, current_step + 1, tool_query, ExecutionStatus.PENDING, None
 
 
+def _extract_project_id_from_search_result(res: Any) -> Optional[str]:
+    """Extract project ID from an entity_search tool result (dict or string).
+
+    Handles three response formats:
+    - dict with ``data.id`` or ``data.projects[0].id``
+    - raw string parseable via ``ast.literal_eval``
+    - legacy ``"Result: {...}"`` string format
+    """
+    data: Optional[Dict[str, Any]] = None
+
+    if isinstance(res, dict):
+        data = res.get("data", {})
+    elif isinstance(res, str):
+        # Try direct parse first
+        try:
+            parsed = ast.literal_eval(res)
+            if isinstance(parsed, dict):
+                data = parsed.get("data", parsed)
+        except Exception:
+            # Fallback: legacy "Result:" prefix format
+            m = re.search(r"Result:\s*(\{[\s\S]*?\})", res)
+            if m:
+                try:
+                    data = ast.literal_eval(m.group(1))
+                except Exception:
+                    return None
+
+    if not isinstance(data, dict):
+        return None
+
+    # Single project result: {"id": "..."}
+    cand = data.get("id") or data.get("project_id")
+    if isinstance(cand, str):
+        return cand
+
+    # Multi-project result: {"projects": [{"id": "..."}]}
+    projs = data.get("projects", [])
+    if projs and isinstance(projs, list) and len(projs) == 1:
+        return projs[0].get("id")
+
+    return None
+
+
+async def _try_resolve_project_placeholder(
+    *,
+    tool_name: str,
+    tool_id: str,
+    tool_args: Dict[str, Any],
+    combined_tools: List[Any],
+    current_step: int,
+    tool_query: str,
+) -> Union[Tuple[Optional[Dict[str, Any]], Optional[Any], int, str, ExecutionStatus, Optional[str]], Dict[str, Any], None]:
+    """Resolve ``<id of project: X>`` placeholders in project-retrieve calls.
+
+    Returns:
+        - A full "skipped" return tuple if the placeholder cannot be resolved.
+        - The *mutated* ``tool_args`` dict (with ``project_id`` replaced) on success.
+        - ``None`` if this call is not a project-retrieve or has no placeholder.
+    """
+    # Only applies to project-retrieve calls
+    is_project_retrieve = (tool_name == "projects_retrieve") or (
+        tool_name == "entity_retrieve" and isinstance(tool_args, dict) and tool_args.get("entity_type") == "projects"
+    )
+    if not is_project_retrieve or not isinstance(tool_args, dict):
+        return None
+
+    proj_id = tool_args.get("project_id") or tool_args.get("entity_id")
+    if not isinstance(proj_id, str):
+        return None
+
+    m = re.search(r"<id of (\w+): ([^>]+)>", proj_id)
+    if not m:
+        return None
+
+    _etype, _ename = m.groups()
+    if _etype != "project" or not (isinstance(_ename, str) and _ename.strip()):
+        return None
+
+    # Locate the entity_search tool
+    search_tool = next((t for t in combined_tools if getattr(t, "name", "") == "entity_search"), None)
+    if search_tool is None:
+        return None
+
+    try:
+        # Invoke search
+        search_args = {"entity_type": "projects", "search_mode": "by_name", "name": _ename}
+        res = await (search_tool.ainvoke(search_args) if hasattr(search_tool, "ainvoke") else search_tool.invoke(search_args))
+
+        resolved_id = _extract_project_id_from_search_result(res)
+
+        if isinstance(resolved_id, str) and resolved_id:
+            # Success — mutate args and signal the caller to proceed normally
+            tool_args = dict(tool_args)
+            tool_args["project_id"] = resolved_id
+            return tool_args
+
+        # Could not resolve — fall through to generic placeholder skip
+        return _maybe_build_placeholder_skip_result(
+            tool_name=tool_name,
+            tool_id=tool_id,
+            tool_args=tool_args,
+            current_step=current_step,
+            tool_query=tool_query,
+        )
+
+    except Exception:
+        # Resolver failure — fall through to generic placeholder skip
+        return _maybe_build_placeholder_skip_result(
+            tool_name=tool_name,
+            tool_id=tool_id,
+            tool_args=tool_args,
+            current_step=current_step,
+            tool_query=tool_query,
+        )
+
+
 async def execute_retrieval_tool_and_build_step(
     *,
     tool_name: str,
@@ -909,15 +1051,38 @@ async def execute_retrieval_tool_and_build_step(
     except Exception:
         pass
 
-    placeholder_skip = _maybe_build_placeholder_skip_result(
-        tool_name=tool_name,
-        tool_id=tool_id,
-        tool_args=tool_args,
-        current_step=current_step,
-        tool_query=tool_query,
-    )
-    if placeholder_skip is not None:
-        return placeholder_skip
+    # Guard: avoid calling retrieval tools with unresolved placeholder IDs.
+    # For projects_retrieve, try to actively resolve the placeholder via entity_search first.
+    # For all other tools, immediately skip if any placeholder references are detected.
+    try:
+        placeholder_result = await _try_resolve_project_placeholder(
+            tool_name=tool_name,
+            tool_id=tool_id,
+            tool_args=tool_args,
+            combined_tools=combined_tools,
+            current_step=current_step,
+            tool_query=tool_query,
+        )
+        if isinstance(placeholder_result, tuple):
+            # Placeholder could not be resolved — return the "skipped" tuple directly
+            return placeholder_result  # type: ignore[return-value]
+        if isinstance(placeholder_result, dict):
+            # Placeholder was resolved — use the updated args
+            tool_args = placeholder_result
+        elif placeholder_result is None:
+            # Not a project-retrieve call — apply broad placeholder skip check
+            placeholder_skip = _maybe_build_placeholder_skip_result(
+                tool_name=tool_name,
+                tool_id=tool_id,
+                tool_args=tool_args,
+                current_step=current_step,
+                tool_query=tool_query,
+            )
+            if placeholder_skip is not None:
+                return placeholder_skip
+    except Exception:
+        # Non-fatal; continue with normal execution
+        pass
 
     tool_func = next((t for t in combined_tools if getattr(t, "name", "") == tool_name), None)
     result = None
@@ -1203,28 +1368,26 @@ async def auto_resolve_missing_ids(
                 return None, None
         return None, None
 
+    async def _resolve_project_name_via_entity_search(name: str) -> str | None:
+        """Use entity_search tool to resolve a project name to a UUID."""
+        resolver = next((t for t in combined_tools if getattr(t, "name", "") == "entity_search"), None)
+        if not resolver:
+            return None
+        try:
+            res = await resolver.ainvoke({"entity_type": "projects", "search_mode": "by_name", "name": name})
+            return _extract_project_id_from_search_result(res)
+        except Exception:
+            return None
+
     async def _auto_resolve_project_id_if_needed() -> bool:
         nonlocal tool_args
         pid_val = tool_args.get("project_id") if isinstance(tool_args, dict) else None
         etype, pname = _extract_placeholder_name(pid_val) if isinstance(pid_val, str) else (None, None)
         if pname and (etype == "project" or etype is None):
-            resolver = next((t for t in combined_tools if getattr(t, "name", "") == "search_project_by_name"), None)
-            if resolver:
-                try:
-                    res = await resolver.ainvoke({"name": pname, "workspace_slug": workspace_slug})
-                    m = re.search(r"\n\nResult:\s*(\{[\s\S]*?\})", str(res))
-                    if m:
-                        try:
-                            parsed = ast.literal_eval(m.group(1))
-                            if isinstance(parsed, dict):
-                                cand = parsed.get("id") or parsed.get("project_id")
-                                if isinstance(cand, str):
-                                    tool_args["project_id"] = cand
-                                    return True
-                        except Exception:
-                            pass
-                except Exception:
-                    return False
+            resolved = await _resolve_project_name_via_entity_search(pname)
+            if isinstance(resolved, str):
+                tool_args["project_id"] = resolved
+                return True
         # If not placeholder but a non-UUID string, try extracting a quoted name from the value
         if isinstance(pid_val, str):
             uuid_like = re.match(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", pid_val, flags=re.IGNORECASE)
@@ -1236,23 +1399,10 @@ async def auto_resolve_missing_ids(
                 if not candidate and len(pid_val) <= 80:
                     candidate = pid_val.strip()
                 if candidate:
-                    resolver = next((t for t in combined_tools if getattr(t, "name", "") == "search_project_by_name"), None)
-                    if resolver:
-                        try:
-                            res = await resolver.ainvoke({"name": candidate, "workspace_slug": workspace_slug})
-                            m = re.search(r"\n\nResult:\s*(\{[\s\S]*?\})", str(res))
-                            if m:
-                                try:
-                                    parsed = ast.literal_eval(m.group(1))
-                                    if isinstance(parsed, dict):
-                                        cand = parsed.get("id") or parsed.get("project_id")
-                                        if isinstance(cand, str):
-                                            tool_args["project_id"] = cand
-                                            return True
-                                except Exception:
-                                    pass
-                        except Exception:
-                            return False
+                    resolved = await _resolve_project_name_via_entity_search(candidate)
+                    if isinstance(resolved, str):
+                        tool_args["project_id"] = resolved
+                        return True
         return False
 
     try:

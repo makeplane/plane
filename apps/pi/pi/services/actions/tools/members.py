@@ -73,7 +73,6 @@ MEMBER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (auto-filled from context)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
         ],
     ),
@@ -89,7 +88,6 @@ MEMBER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Project UUID (auto-filled from context if in project chat)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
             ToolParameter(
                 name="workspace_slug",
@@ -97,7 +95,6 @@ MEMBER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 required=False,
                 description="Workspace slug (auto-filled from context)",
                 auto_fill_from_context=True,
-                property_transform="skip",
             ),
         ],
     ),

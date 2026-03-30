@@ -63,40 +63,6 @@ TEAMSPACE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
-    "list": ToolMetadata(
-        name="teamspaces_list",
-        description="List teamspaces in the workspace",
-        sdk_method="list_teamspaces",
-        parameters=[
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="teamspaces_retrieve",
-        description="Retrieve a single teamspace by ID",
-        sdk_method="retrieve_teamspace",
-        parameters=[
-            ToolParameter(
-                name="teamspace_id",
-                type="str",
-                required=True,
-                description="Teamspace ID (required)",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
     "update": ToolMetadata(
         name="teamspaces_update",
         description="Update teamspace details",

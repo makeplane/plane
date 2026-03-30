@@ -208,8 +208,8 @@ def reasoning_header_factory(stage: str, tool_name: str, tool_query: str) -> str
             f"\n\n{tool_name} ({tool_query})\n\n" if tool_query else f"\n\n{tool_name}\n\n",
         ],
         "retrieval_tool_execution": [
-            f"\n\nExecuting: {tool_name}: {tool_query}\n\n",
-            f"\n\nCalling {tool_name} for {tool_query}\n\n",
+            f"\n\nExecuting: {tool_name}: {tool_query}\n\n" if tool_query else f"\n\nExecuting: {tool_name}\n\n",
+            f"\n\nCalling {tool_name} for {tool_query}\n\n" if tool_query else f"\n\nCalling {tool_name}\n\n",
         ],
         "retrieval_tool_execution_message": [
             f"\n\nTool {tool_name} returned its output...\n\n",

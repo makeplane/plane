@@ -74,29 +74,6 @@ LINKS_TOOL_DEFINITIONS = {
         pre_handler=_resolve_project_pre_handler,
         returns_entity_type="link",
     ),
-    "list": ToolMetadata(
-        name="links_list",
-        description="List links for an issue.",
-        sdk_method="list_work_item_links",
-        parameters=[
-            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
-            ToolParameter(name="project_id", description="Project ID", required=False, type="Optional[str]", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
-        ],
-        pre_handler=_resolve_project_pre_handler,
-    ),
-    "retrieve": ToolMetadata(
-        name="links_retrieve",
-        description="Get a single link by ID.",
-        sdk_method="retrieve_work_item_link",
-        parameters=[
-            ToolParameter(name="link_id", description="UUID of the link", required=True, type="str"),
-            ToolParameter(name="issue_id", description="UUID of the work item", required=True, type="str"),
-            ToolParameter(name="project_id", description="UUID of the project", required=False, type="Optional[str]", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
-        ],
-        pre_handler=_resolve_project_pre_handler,
-    ),
     "update": ToolMetadata(
         name="links_update",
         description="Update link details.",

@@ -45,28 +45,6 @@ CYCLES_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ToolParameter(name="external_source", type="Optional[str]", required=False, description="External system source name"),
         ],
     ),
-    "list": ToolMetadata(
-        name="cycles_list",
-        description="List cycles in a project. Requires project_id.",
-        sdk_method="list_cycles",
-        parameters=[
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID (required)", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-            ToolParameter(name="per_page", type="Optional[int]", required=False, description="Number of cycles per page (default: 20)"),
-            ToolParameter(name="cursor", type="Optional[str]", required=False, description="Pagination cursor for next page"),
-            ToolParameter(name="cycle_view", type="Optional[str]", required=False, description="Filter cycles by status"),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="cycles_retrieve",
-        description="Retrieve a single cycle by ID.",
-        sdk_method="retrieve_cycle",
-        parameters=[
-            ToolParameter(name="cycle_id", type="str", required=True, description="Cycle ID (required)"),
-            ToolParameter(name="project_id", type="str", required=True, description="Project ID (required)"),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
     "update": ToolMetadata(
         name="cycles_update",
         description="Update cycle details.",

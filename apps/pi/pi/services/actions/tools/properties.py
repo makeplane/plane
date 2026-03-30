@@ -151,17 +151,6 @@ PROPERTIES_TOOL_DEFINITIONS = {
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
         ],
     ),
-    "retrieve": ToolMetadata(
-        name="properties_retrieve",
-        description="Get a single work item property by ID.",
-        sdk_method="retrieve_property",
-        parameters=[
-            ToolParameter(name="property_id", type="str", required=True, description="Property ID to retrieve"),
-            ToolParameter(name="type_id", type="str", required=True, description="Work item type ID this property belongs to"),
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
     "update": ToolMetadata(
         name="properties_update",
         description="Update work item property details.",

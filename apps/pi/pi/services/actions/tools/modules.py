@@ -45,26 +45,6 @@ MODULES_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ToolParameter(name="external_source", type="Optional[str]", required=False, description="External source name"),
         ],
     ),
-    "list": ToolMetadata(
-        name="modules_list",
-        description="List all modules in a project. Requires project_id.",
-        sdk_method="list_modules",
-        parameters=[
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID (required)", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="modules_retrieve",
-        description="Retrieve details of a specific module.",
-        sdk_method="retrieve_module",
-        returns_entity_type="module",
-        parameters=[
-            ToolParameter(name="module_id", type="str", required=True, description="Module ID (required)"),
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID (required)", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
     "update": ToolMetadata(
         name="modules_update",
         description="Update module details.",
@@ -105,15 +85,6 @@ MODULES_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
         ],
     ),
-    "list_archived": ToolMetadata(
-        name="modules_list_archived",
-        description="List archived modules in a project.",
-        sdk_method="list_archived_modules",
-        parameters=[
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID (required)", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
     "add_work_items": ToolMetadata(
         name="modules_add_work_items",
         description="Add work items to a module.",
@@ -121,16 +92,6 @@ MODULES_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
         parameters=[
             ToolParameter(name="module_id", type="str", required=True, description="Module ID (required)"),
             ToolParameter(name="issues", type="list", required=True, description="List of issue IDs to add"),
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID (required)", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
-    "list_work_items": ToolMetadata(
-        name="modules_list_work_items",
-        description="List work items in a module.",
-        sdk_method="list_module_work_items",
-        parameters=[
-            ToolParameter(name="module_id", type="str", required=True, description="Module ID (required)"),
             ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID (required)", auto_fill_from_context=True),
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
         ],

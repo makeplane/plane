@@ -516,6 +516,10 @@ TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
     "worklogs_create": {"entity_type": "worklog", "action_type": "create", "front_facing_name": "Create Work Log"},
     "worklogs_delete": {"entity_type": "worklog", "action_type": "delete", "front_facing_name": "Delete Work Log"},
     "worklogs_update": {"entity_type": "worklog", "action_type": "update", "front_facing_name": "Update Work Log"},
+    # Unified retrieval tools
+    "entity_list": {"entity_type": "entity", "action_type": "list", "front_facing_name": "List Entities"},
+    "entity_retrieve": {"entity_type": "entity", "action_type": "retrieve", "front_facing_name": "Retrieve Entity"},
+    "entity_search": {"entity_type": "entity", "action_type": "search", "front_facing_name": "Search Entity"},
 }
 
 
@@ -538,7 +542,17 @@ def is_retrieval_tool(tool_name: Any) -> bool:
     if name.endswith("_list") or name.endswith("_retrieve"):
         return True
     # Known retrieval utilities
-    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "web_search_tool", "fetch_cycle_details"}:
+    if name in {
+        "structured_db_tool",
+        "vector_search_tool",
+        "pages_search_tool",
+        "docs_search_tool",
+        "web_search_tool",
+        "fetch_cycle_details",
+        "entity_list",
+        "entity_retrieve",
+        "entity_search",
+    }:
         return True
     return False
 
@@ -569,6 +583,10 @@ TOOL_METADATA_REGISTRY: Dict[str, Dict[str, Any]] = {
     "cycles_add_work_items": {"kind": "action", "plan_only": True},
     "create_epic": {"kind": "action", "plan_only": True},
     "projects_retrieve": {"kind": "retrieval", "plan_only": False},
+    "workitems_advanced_search": {"kind": "retrieval", "plan_only": False},
+    "entity_list": {"kind": "retrieval", "plan_only": False},
+    "entity_retrieve": {"kind": "retrieval", "plan_only": False},
+    "entity_search": {"kind": "retrieval", "plan_only": False},
 }
 
 
@@ -627,6 +645,10 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "search_user_by_name": "Search User",
         "search_workitem_by_name": "Search Work-item",
         "search_workitem_by_identifier": "Search Work-item by ID",
+        "workitems_advanced_search": "Filter Work Items",
+        "entity_list": "List Entities",
+        "entity_retrieve": "Retrieve Entity",
+        "entity_search": "Search Entity",
         # Plotting Tools
         "create_pie_chart": "Generate a Pie Chart",
         "create_bar_chart": "Generate a Bar Chart",
@@ -641,6 +663,7 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "users_list": "List Users",
         "workitems_list": "List Work-items",
         "list_member_projects": "List Member Projects",
+        "worklogs_get_summary": "Worklog Summary",
         "ask_for_clarification": "Elicitation",
     }
     name_to_return = tool_to_user_map.get(tool_name, "")
@@ -1279,17 +1302,21 @@ Use retrieval tools to gather information, then plan the modifying actions based
 
 **WORKSPACE-LEVEL QUERIES (EFFICIENCY):**
 |- When query is related to workitems and spans ALL projects without specifying a particular project or projects
-|  - DO NOT: call `list_member_projects` then query each project with `structured_db_tool` separately
-|  - INSTEAD: Use ONE `structured_db_tool` call WITHOUT `project_id` parameter
-|  - Query will automatically scope to workspace via `workspace_id` (already in context)
-|  - Example WRONG: `list_member_projects` + 7x `structured_db_tool` (each with different project_id)
-|  - Example RIGHT: Single `structured_db_tool`: "list all workitems prioritized as high"
+|  - DO NOT: call `entity_list(entity_type="projects")` then query each project separately
+|  - PREFER: `workitems_advanced_search` for filter-based queries (priority, state_group, assignee, labels, etc.)
+|    - Faster and cheaper than structured_db_tool
+|    - Automatically scopes to workspace (no `project_id` needed for workspace-wide queries)
+|    - Example: `workitems_advanced_search(filters={{"priority": "high"}})` for all high-priority workitems across workspace
+|    - Example: `workitems_advanced_search(filters={{"assignee_id": "<user_id>", "state_group": "started"}})` for a user's active workitems
+|  - FALLBACK: Use `structured_db_tool` WITHOUT `project_id` only for complex aggregations, counts, cross-entity joins, or queries that `workitems_advanced_search` cannot express
+|  - Example WRONG: `entity_list(entity_type="projects")` + 7x `structured_db_tool` (each with different project_id)
+|  - Example RIGHT: `workitems_advanced_search(filters={{"priority__in": ["high", "urgent"]}})` for all high/urgent workitems
 |- For project-specific queries, include the specific `project_id`
 
 **PROJECT FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING PROJECT-SCOPED ENTITIES):**
 - Cycles, modules, pages, workitem types, views, intake, epics (a special workitem type), and time-tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
 - **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, create_epic, modules_create, pages_create_*, worklogs_create, intake_create, etc.), you MUST:
-    1. First get the project_id (UUID) (via search_project_by_name or search_project_by_identifier (Identifier looks like 'PROJ', 'WEB' etc. It is not a UUID) if not already known)
+    1. First get the project_id (UUID) (via entity_search with entity_type="projects" and search_mode="by_name" or search_mode="by_identifier" (Identifier looks like 'PROJ', 'WEB' etc. It is not a UUID) if not already known)
     2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled.
        - **WARNING**: Do NOT stop to ask for clarification on optional entity fields (e.g., description, priority) before this check.
        - **WARNING**: You must perform this check even if you think you need more information for the creaton.
@@ -1299,6 +1326,7 @@ Use retrieval tools to gather information, then plan the modifying actions based
        - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`, `create_epic`, `modules_create`, `types_create`, `worklogs_create`, `intake_create`, etc.)
     4. **CRITICAL**: After `projects_retrieve` completes, you CANNOT stop - you MUST continue invoking the modifying action tools. Do NOT return only text - you MUST invoke the action tools.
 - **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `projects_retrieve` step when creating cycles, modules, pages, types, intake items, or other project-scoped features.
+- **EXCEPTION (EXPLICIT WORKSPACE-LEVEL PAGES ONLY)**: If — and ONLY if — the user explicitly uses words like "wiki", "workspace page", "workspace-level page", "knowledge base", "kb", "handbook", or "runbook", call `pages_create_page` with `project_id='__workspace_scope__'` directly (no `projects_retrieve` or `workspaces_get_features` needed). If the user just says "create a page" without any of these workspace/wiki keywords, you MUST call `ask_for_clarification` to ask whether they want a workspace-level page (wiki) or a project page (and which project).
 - **CONSEQUENCE**: Skipping `projects_retrieve` and directly calling creation tools (e.g., worklogs_create, cycles_create, intake_create) WILL result in a 404 error if the feature is disabled. Always check first.
 - **MULTI-ACTION REQUESTS**: When handling requests with multiple actions, if ANY action requires a feature check, you MUST call `projects_retrieve` FIRST before planning any of the actions.
 - **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID:
@@ -1347,7 +1375,7 @@ Use retrieval tools to gather information, then plan the modifying actions based
     - `initiatives` feature → `initiatives_create`, `initiatives_update`, `initiatives_delete`, `initiatives_add_projects`, etc.
     - `teams` feature → `teamspaces_create`, `teamspaces_update`, `teamspaces_delete`, `teamspaces_add_members`, etc.
     - `customers` feature → `customers_create`, `customers_update`, `customers_delete`, etc.
-    - `wiki` feature → Feature toggle only (enables wiki functionality in UI, no entity operations available)
+    - `wiki` feature → Feature toggle only (enables wiki functionality in UI, no entity operations for the toggle itself). However, when a user explicitly asks to create a "wiki", "wiki page", "knowledge base", "kb", "handbook", or "runbook", use `pages_create_page` with `project_id='__workspace_scope__'` (no `workspaces_get_features` check needed). IMPORTANT: The word "page" alone does NOT imply wiki — if the user just says "create a page" without wiki/workspace keywords, ask for clarification on scope.
     - `pi` feature → Feature toggle only (enables Plane AI in UI, no entity operations available)
     - `project_grouping` feature → Feature toggle only (allows grouping projects in workspace UI, no entity operations available)
 - **Available feature flags for workspaces_update_features**:
@@ -1400,10 +1428,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
   - **YOU MUST call `ask_for_clarification`** — DO NOT just report the error to the user in text. This is MANDATORY.
 - **CRITICAL**: Always attempt fallback searches before asking for clarification
 - **MISSING PROJECT FOR PROJECT-SCOPED ENTITIES**: If you need a project list for scope selection or disambiguation:
-  - **PREFER** `list_member_projects` to get active (unarchived, undeleted) projects the user is a member of
-  - **THEN you MUST call `ask_for_clarification`** with `disambiguation_options` containing these filtered projects
-  - **DO NOT** embed the project list in your text response or answer via ππANSWERππ — you MUST route through `ask_for_clarification` so the system can persist the clarification and handle the follow-up correctly
-- **MANDATORY DISAMBIGUATION FLOW**: Even after a successful fallback search (e.g., `list_member_projects` returns results after `search_project_by_name` returned nothing), you MUST still call `ask_for_clarification` with the results as `disambiguation_options`. Never present fallback results as a text-only answer.
+  - **PREFER** `entity_list(entity_type="projects")` to get active (unarchived, undeleted) projects the user is a member of
+  - THEN call `ask_for_clarification` with `disambiguation_options` containing these filtered projects
 - **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
   - **Do not loop the same call.**
 
@@ -1411,10 +1437,10 @@ Use retrieval tools to gather information, then plan the modifying actions based
 
 **RULE 1: EXISTING ENTITIES - USE ACTUAL UUIDs (NO PLACEHOLDERS)**
 When the user mentions an EXISTING entity (one that already exists in Plane):
-- **YOU MUST**: Call the appropriate search tool FIRST to get its UUID
-  - project NAME → `search_project_by_name` → extract UUID from response
-  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → `search_project_by_identifier` → extract UUID
-  - cycle/module/label/state/user/workitem NAME/IDENTIFIER → `search_*_by_name` / `search_*_by_identifier` → extract UUID
+- **YOU MUST**: Call `entity_search` FIRST to get its UUID
+  - project NAME → `entity_search(entity_type="projects", search_mode="by_name", name="...")` → extract UUID from response
+  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → `entity_search(entity_type="projects", search_mode="by_identifier", identifier="...")` → extract UUID
+  - cycle/module/label/state/user/workitem → `entity_search(entity_type="...", search_mode="by_name"|"by_identifier", ...)` → extract UUID
   - **EXCEPTION**: User pronouns ('me', 'my', 'I', 'mine') → use User ID from USER CONTEXT directly
 - **YOU MUST**: Extract the actual UUID from the search tool response (usually in the `id` field)
 - **YOU MUST**: Use that extracted UUID directly in ALL subsequent tool calls
@@ -1422,11 +1448,11 @@ When the user mentions an EXISTING entity (one that already exists in Plane):
 - **FORBIDDEN**: Using names/identifiers directly as *_id parameters (e.g., `project_id: "Mobile"`)
 
 **CRITICAL - PROPERTY VALUES RESOLUTION:**
-When setting properties (state, labels, assignees, types) on work items in EXISTING projects, you MUST resolve names to IDs:
-- **state property**: "change state to done" → call `search_state_by_name("done", project_id=...)` → extract `state_id` → use in action
-- **labels property**: "add label 'bug'" → call `search_label_by_name("bug", project_id=...)` → extract `label_id` → use in action
-- **assignees property**: "assign to John" → call `search_user_by_name("John")` → extract `user_id` → use in action
-- **type property**: "change type to task" → call `search_type_by_name("task", project_id=...)` → extract `type_id` → use in action
+When setting properties (state, labels, assignees, types) on work items, you MUST resolve names to IDs:
+- **state property**: "change state to done" → call `entity_search(entity_type="states", search_mode="by_name", name="done", project_id=...)` → extract `state_id` → use in action
+- **labels property**: "add label 'bug'" → call `entity_search(entity_type="labels", search_mode="by_name", name="bug", project_id=...)` → extract `label_id` → use in action
+- **assignees property**: "assign to John" → call `entity_search(entity_type="users", search_mode="by_name", name="John")` → extract `user_id` → use in action
+- **type property**: "change type to task" → call `entity_search(entity_type="types", search_mode="by_name", name="task", project_id=...)` → extract `type_id` → use in action
 - **NEVER** use property names directly (e.g., `state: {{name: "backlog"}}` ❌) - always resolve to ID first (e.g., `state_id: "uuid-123-eabc3cf2e"` ✅)
 - **EXCEPTION - NEW PROJECT IN CURRENT PLAN**: If `project_id` is a placeholder for a project being created in this same plan, do NOT call `search_state_by_name`; use the state name directly in the planned action and let execution resolve it after project creation.
 
@@ -1444,13 +1470,13 @@ When planning actions that depend on entities you CREATE in the CURRENT PLAN:
 **CRITICAL EXAMPLES - MIXED EXISTING AND NEW ENTITIES:**
 
 Example 1: "Add workitems 'Login Page' and 'Logout Page' to new cycle 'Sprint 24'"
-- Step 1: search_workitem_by_name("Login Page") → Response:
+- Step 1: entity_search(entity_type="workitems", search_mode="by_name", name="Login Page") → Response:
     {{
         "id": "abc-123-uuid",
         "name": "Login Page"
     }}
     → Extract UUID: abc-123-uuid
-- Step 2: search_workitem_by_name("Logout Page") → Response:
+- Step 2: entity_search(entity_type="workitems", search_mode="by_name", name="Logout Page") → Response:
     {{
         "id": "def-456-uuid",
         "name": "Logout Page"
@@ -1463,7 +1489,7 @@ Example 1: "Add workitems 'Login Page' and 'Logout Page' to new cycle 'Sprint 24
   - ❌ WRONG: issues: ['<id of workitem: Login Page>', '<id of workitem: Logout Page>'] (these are existing!)
 
 Example 2: "Create workitem 'Fix login bug' and add it to existing module 'Backend'"
-- Step 1: search_module_by_name("Backend") → Extract UUID: "module-xyz-uuid"
+- Step 1: entity_search(entity_type="modules", search_mode="by_name", name="Backend") → Extract UUID: "module-xyz-uuid"
 - Step 2: Plan workitems_create(name="Fix login bug") → New workitem, will use placeholder
 - Step 3: Plan modules_add_work_items:
   - module_id: 'module-xyz-uuid' ✅ CORRECT (existing - use actual UUID from search)
@@ -1536,9 +1562,9 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 {RETRIEVAL_TOOL_DESCRIPTIONS}
 
 **Execution Guidelines:**
-- Use search tools for entity resolution, NOT vector_search_tool
+- Use `entity_search` for entity resolution, NOT vector_search_tool
 - Do NOT provide workspace_slug - auto-provided from context
-- search_workitem_by_identifier requires format: PROJECT-123 as input argument
+- For workitem identifier search: entity_search(entity_type="workitems", search_mode="by_identifier", identifier="PROJECT-123")
 
 **WORKFLOW DECISION TREE:**
 
@@ -1549,7 +1575,7 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
         method_prompt += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
     else:
         # Workspace-level context (no specific project)
-        method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use list_member_projects (with a high limit) to get ALL projects in the workspace\n- Iterate through projects ONLY for entities that are inherently project-scoped (cycles/modules/states/labels). For workspace-wide work-item queries, use a SINGLE structured_db_tool call WITHOUT project_id (it will scope via workspace_id)\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
+        method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use entity_list(entity_type=\"projects\") to get ALL projects in the workspace\n- Iterate through projects ONLY for entities that are inherently project-scoped (cycles/modules/states/labels). For workspace-wide work-item queries, use a SINGLE structured_db_tool call WITHOUT project_id (it will scope via workspace_id)\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
 
     if enhanced_conversation_history and enhanced_conversation_history.strip():
         method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously mentioned entity IDs and use them as parameters in your tool calls. However, if the user asks for entity DATA/details, you still MUST call the appropriate retrieval tools - conversation history provides IDs for PARAMETERS, not complete entity data."  # noqa: E501
@@ -1750,6 +1776,14 @@ def format_tool_query_for_display(tool_name: str, tool_args: dict, user_query: O
         q = tool_args.get("query", "")
         if q:
             return f'"{q}"'
+
+    # Unified entity_search tool
+    if tool_name == "entity_search":
+        entity_type = tool_args.get("entity_type", "")
+        search_name = tool_args.get("name") or tool_args.get("display_name") or tool_args.get("identifier") or ""
+        if search_name:
+            return f'"{search_name}" ({entity_type})'
+        return entity_type or "entity"
 
     # For list tools, show what's being listed
     if tool_name.endswith("_list"):
@@ -2016,7 +2050,9 @@ REQUIRED_FIELDS_BY_TOOL: Dict[str, List[str]] = {
     "pages_create_project_page": ["project_id", "name"],
     # Workspace pages don't require project_id
     "pages_create_workspace_page": ["name"],
-    # Consolidated pages tool (workspace context): force scope selection via clarification
+    # Consolidated pages tool (workspace context): project_id is required but
+    # empty/falsy values are valid (treated as workspace scope by the tool).
+    # The preflight check handles this specially for page tools.
     "pages_create_page": ["project_id", "name"],
 }
 
@@ -2062,13 +2098,14 @@ def preflight_missing_required_fields(tool_name: str, tool_args: Dict[str, Any],
         # Also treat placeholders (e.g., "<id of project: X>") and non-UUID *_id values as missing
         is_missing = False
 
-        if not val or val == "NEEDS_CLARIFICATION":
+        # Check workspace scope sentinel BEFORE the falsy check,
+        # because '' is falsy but '__workspace_scope__' is truthy and valid for page tools
+        if isinstance(val, str) and key == "project_id" and val == "__workspace_scope__":
+            is_missing = False
+        elif not val or val == "NEEDS_CLARIFICATION":
             is_missing = True
         elif key.endswith("_id"):
-            # Special sentinel allowed for pages scope
-            if isinstance(val, str) and key == "project_id" and val == "__workspace_scope__":
-                is_missing = False
-            elif isinstance(val, str):
+            if isinstance(val, str):
                 # Placeholders like "<id of project: X>" are allowed for ACTION tools during planning
                 if "<id of" in val:
                     is_missing = not _is_action
@@ -2412,10 +2449,9 @@ async def handle_missing_required_fields(
         # Enrich options with entity URLs (projects/users/cycles/modules) for better UX in clarification
         try:
             if disambig_options:
-                from pi.config import settings as _settings
+                from pi.services.chat.helpers.url_builder import build_entity_url
 
-                base_url = _settings.plane_api.FRONTEND_URL
-                if base_url and isinstance(workspace_slug, str) and workspace_slug:
+                if isinstance(workspace_slug, str) and workspace_slug:
                     enriched: List[Dict[str, Any]] = []
                     for _opt in disambig_options:
                         if isinstance(_opt, dict):
@@ -2425,13 +2461,23 @@ async def handle_missing_required_fields(
                             _proj_id = _opt2.get("project_id")
                             try:
                                 if _typ == "project" and _idv:
-                                    _opt2["url"] = f"{base_url}/{workspace_slug}/projects/{_idv}/overview/"
+                                    _opt2["url"] = build_entity_url("project", workspace_slug, entity_id=str(_idv))
                                 elif _typ == "cycle" and _idv and _proj_id:
-                                    _opt2["url"] = f"{base_url}/{workspace_slug}/projects/{_proj_id}/cycles/{_idv}/"
+                                    _opt2["url"] = build_entity_url(
+                                        "cycle",
+                                        workspace_slug,
+                                        entity_id=str(_idv),
+                                        project_id=str(_proj_id),
+                                    )
                                 elif _typ == "module" and _idv and _proj_id:
-                                    _opt2["url"] = f"{base_url}/{workspace_slug}/projects/{_proj_id}/modules/{_idv}/"
+                                    _opt2["url"] = build_entity_url(
+                                        "module",
+                                        workspace_slug,
+                                        entity_id=str(_idv),
+                                        project_id=str(_proj_id),
+                                    )
                                 elif _typ == "user" and _idv:
-                                    _opt2["url"] = f"{base_url}/{workspace_slug}/profile/{_idv}/"
+                                    _opt2["url"] = build_entity_url("profile", workspace_slug, entity_id=str(_idv))
                             except Exception:
                                 pass
                             enriched.append(_opt2)

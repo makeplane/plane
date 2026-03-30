@@ -103,34 +103,6 @@ INTAKE_TOOL_DEFINITIONS = {
         returns_entity_type="intake",
         post_handler=_intake_create_post_processor,
     ),
-    "list": ToolMetadata(
-        name="intake_list",
-        description="List intake items awaiting triage for a project.",
-        sdk_method="list_intake",
-        parameters=[
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-            ToolParameter(name="per_page", type="Optional[int]", required=False, description="Number of results per page (default: 20)"),
-            ToolParameter(name="cursor", type="Optional[str]", required=False, description="Pagination cursor"),
-        ],
-        returns_entity_type="intake",
-        post_handler=_intake_list_post_processor,
-    ),
-    "retrieve": ToolMetadata(
-        name="intake_retrieve",
-        description="Get a single intake work item by ID.",
-        sdk_method="retrieve_intake",
-        parameters=[
-            ToolParameter(
-                name="intake_issue_id",
-                type="str",
-                required=True,
-                description="The issue ID from the intake response (the 'issue' field, not the intake's own 'id' field)",
-            ),
-            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
-        ],
-    ),
     "update": ToolMetadata(
         name="intake_update",
         description="Update intake work item details before triage. Note: Assignees, dates, and comments are not supported via this specific tool/API.",  # noqa: E501

@@ -22,7 +22,6 @@ from typing import Optional
 
 from langchain_core.tools import tool
 
-from pi import settings
 from pi.core.db.plane import PlaneDBPool
 
 from .base import PlaneToolBase
@@ -370,10 +369,7 @@ def get_entity_search_tools(method_executor, context):
             if results:
                 cycles_data = []
                 cycle_names = []
-                try:
-                    api_base_url = settings.plane_api.FRONTEND_URL
-                except Exception:
-                    api_base_url = None
+                from pi.services.chat.helpers.url_builder import build_entity_url
 
                 for result in results:
                     cycle_data = {
@@ -386,11 +382,15 @@ def get_entity_search_tools(method_executor, context):
                     }
 
                     # Build cycle URL and include in response message
-                    cycle_url = None
-                    if api_base_url:
-                        ws_slug = result.get("workspace_slug") or workspace_slug
-                        if ws_slug and result.get("project_id") and result.get("id"):
-                            cycle_url = f"{api_base_url}/{ws_slug}/projects/{result['project_id']}/cycles/{result['id']}/"
+                    ws_slug = result.get("workspace_slug") or workspace_slug
+                    if ws_slug and result.get("project_id") and result.get("id"):
+                        cycle_url = build_entity_url(
+                            "cycle",
+                            ws_slug,
+                            entity_id=str(result["id"]),
+                            project_id=str(result["project_id"]),
+                        )
+                        if cycle_url:
                             cycle_data["url"] = cycle_url
 
                     cycles_data.append(cycle_data)

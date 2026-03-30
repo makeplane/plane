@@ -733,9 +733,11 @@ async def get_refs_from_chat(db: AsyncSession, chat_id: str) -> List[str]:
 async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_base_url: str) -> List[Dict[str, str]]:
     """Construct entity links using database queries for reliability and accuracy"""
     from pi.core.db.plane import PlaneDBPool
+    from pi.services.chat.helpers.url_builder import build_entity_url
+
+    _ = api_base_url
 
     entity_links: List[Dict[str, str]] = []
-    log.info(f"construct_entity_urls_from_db: Entity IDs: {entity_ids}")
 
     if not entity_ids or not any(entity_ids.values()):
         return entity_links
@@ -764,10 +766,9 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
                 sequence_id = row["sequence_id"]
                 if project_identifier and sequence_id:
                     issue_identifier = f"{project_identifier}-{sequence_id}"
-                    url = f"{api_base_url}/{row['workspace_slug']}/browse/{issue_identifier}/"
+                    url = build_entity_url("workitem", row["workspace_slug"], identifier=issue_identifier)
                     entity_link = {"name": row["name"], "id": str(row["id"]), "issue_identifier": issue_identifier, "url": url, "type": "issue"}
                     entity_links.append(entity_link)
-                    log.debug(f"construct_entity_urls_from_db: Entity (workitem) Link: {entity_link}")
 
         # Process projects
         if entity_ids.get("projects"):
@@ -786,10 +787,9 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (project_ids,))
 
             for row in rows:
-                url = f"{api_base_url}/{row['workspace_slug']}/projects/{row['id']}/overview/"
+                url = build_entity_url("project", row["workspace_slug"], entity_id=str(row["id"]), identifier=row.get("identifier"))
                 entity_link = {"name": row["name"], "id": str(row["id"]), "identifier": row["identifier"], "url": url, "type": "project"}
                 entity_links.append(entity_link)
-                log.debug(f"construct_entity_urls_from_db: Entity (project) Link: {entity_link}")
 
         # Process pages
         if entity_ids.get("pages"):
@@ -811,20 +811,22 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (page_ids,))
 
             for row in rows:
-                if row["is_global"]:
-                    # Global page: /workspace_slug/wiki/page_id/
-                    url = f"{api_base_url}/{row['workspace_slug']}/wiki/{row['id']}/"
-                else:
-                    # Project page: /workspace_slug/projects/project_id/pages/page_id/
+                project_id = None
+                if not row["is_global"]:
                     if row["project_ids"] and len(row["project_ids"]) > 0:
                         project_id = row["project_ids"][0]  # Take first project if multiple
-                        url = f"{api_base_url}/{row['workspace_slug']}/projects/{project_id}/pages/{row['id']}/"
                     else:
                         continue  # Skip if no project_id for project page
 
+                url = build_entity_url(
+                    "page",
+                    row["workspace_slug"],
+                    entity_id=str(row["id"]),
+                    project_id=str(project_id) if project_id else None,
+                    is_global=row["is_global"],
+                )
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "page"}
                 entity_links.append(entity_link)
-                log.debug(f"construct_entity_urls_from_db: Entity (page) Link: {entity_link}")
 
         # Process modules
         if entity_ids.get("modules"):
@@ -844,10 +846,9 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (module_ids,))
 
             for row in rows:
-                url = f"{api_base_url}/{row['workspace_slug']}/projects/{row['project_id']}/modules/{row['id']}/"
+                url = build_entity_url("module", row["workspace_slug"], entity_id=str(row["id"]), project_id=str(row["project_id"]))
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "module"}
                 entity_links.append(entity_link)
-                log.debug(f"construct_entity_urls_from_db: Entity (module) Link: {entity_link}")
 
         # Process cycles
         if entity_ids.get("cycles"):
@@ -867,10 +868,9 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (cycle_ids,))
 
             for row in rows:
-                url = f"{api_base_url}/{row['workspace_slug']}/projects/{row['project_id']}/cycles/{row['id']}/"
+                url = build_entity_url("cycle", row["workspace_slug"], entity_id=str(row["id"]), project_id=str(row["project_id"]))
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "cycle"}
                 entity_links.append(entity_link)
-                log.debug(f"construct_entity_urls_from_db: Entity (cycle) Link: {entity_link}")
 
     except Exception as e:
         log.error(f"Error constructing entity URLs from database: {e}")
@@ -983,6 +983,9 @@ async def construct_action_entity_url(
     import logging
 
     log = logging.getLogger(__name__)
+    from pi.services.chat.helpers.url_builder import build_entity_url
+
+    _ = api_base_url
 
     try:
         # For projects, we might not have an id initially but can resolve it
@@ -995,207 +998,132 @@ async def construct_action_entity_url(
 
         entity_id = entity_data.get("id")  # This might be None for projects initially
         entity_name = entity_data.get("name", "")
+        project_id = entity_data.get("project") or entity_data.get("project_id")
+        identifier = entity_data.get("identifier")
 
-        # Construct URLs based on entity type
-        if entity_type in ("workitem", "epic"):  # Support epics as workitems for URL construction
-            # For workitems: /workspace_slug/browse/PROJECT_IDENTIFIER-SEQUENCE_ID/
-            project_identifier = entity_data.get("project_identifier")
-            sequence_id = entity_data.get("sequence_id")
-            if project_identifier and sequence_id:
-                issue_identifier = f"{project_identifier}-{sequence_id}"
-                url = f"{api_base_url}/{workspace_slug}/browse/{issue_identifier}/"
-                return {
-                    "entity_url": url,
-                    "entity_name": entity_name,
-                    "entity_type": entity_type,
-                    "entity_id": entity_id,
-                    "issue_identifier": issue_identifier,
-                }
-            else:
-                # Try to resolve identifier from DB to build browse URL
-                try:
-                    if entity_id:
-                        from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+        # --- Pre-processing & Resolution Logic ---
 
-                        details = await get_issue_identifier_for_artifact(str(entity_id))
-                        if details and isinstance(details, dict):
-                            identifier = details.get("identifier")
-                            # Prefer DB-resolved name if available
-                            entity_name = details.get("name", entity_name)
-                            if identifier:
-                                url = f"{api_base_url}/{workspace_slug}/browse/{identifier}/"
-                                return {
-                                    "entity_url": url,
-                                    "entity_name": entity_name,
-                                    "entity_type": entity_type,
-                                    "entity_id": entity_id,
-                                    "issue_identifier": identifier,
-                                }
-                except Exception as _e:
-                    # Fall through to generic format
-                    pass
-
-                # Fallback to generic format if identifiers not available
-                project_id = entity_data.get("project")
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/issues/{entity_id}/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-
-        elif entity_type == "page":
-            # For pages: project pages vs workspace pages
-            # Try multiple field names where project_id might be
-            project_id = (
-                entity_data.get("project_id")
-                or entity_data.get("project")
-                or (entity_data.get("project_ids", [None])[0] if entity_data.get("project_ids") else None)
-            )
-
-            if project_id:
-                # Project page: /workspace_slug/projects/project_id/pages/page_id/
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/pages/{entity_id}/"
-            else:
-                # Workspace page: /workspace_slug/pages/page_id/
-                url = f"{api_base_url}/{workspace_slug}/wiki/{entity_id}/"
-
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": "page", "entity_id": entity_id}
-
-        elif entity_type == "project":
-            # For projects: /workspace_slug/projects/project_id/overview/
-            project_id = entity_data.get("id")
-
+        # 1. Project ID Resolution (Polling)
+        if entity_type == "project":
             # If project_id is missing, try to resolve it from identifier and workspace
-            if not project_id and entity_data.get("identifier"):
+            if not entity_id and identifier:
                 try:
                     from pi.app.api.v1.helpers.plane_sql_queries import get_project_id_from_identifier
                     import asyncio
 
                     # Get workspace_id from context (since it might not be in the API response)
                     workspace_id = entity_data.get("workspace")
-                    if not workspace_id:
-                        return None
+                    if workspace_id:
+                        # Poll for project ID with retries - the project might not be saved immediately
+                        max_retries = 4  # 2 seconds total (4 * 500ms)
+                        retry_delay = 0.5  # 500ms
 
-                    # Poll for project ID with retries - the project might not be saved immediately
-                    max_retries = 4  # 2 seconds total (4 * 500ms)
-                    retry_delay = 0.5  # 500ms
+                        for attempt in range(max_retries):
+                            # Call the async function directly - no event loop mess!
+                            resolved_id = await get_project_id_from_identifier(identifier, workspace_id)
 
-                    for attempt in range(max_retries):
-                        # Call the async function directly - no event loop mess!
-                        project_id = await get_project_id_from_identifier(entity_data["identifier"], workspace_id)
-
-                        if project_id:
-                            # Update entity_data with the resolved ID
-                            entity_data["id"] = project_id
-                            break
-                        else:
-                            if attempt < max_retries - 1:  # Don't sleep on last attempt
-                                await asyncio.sleep(retry_delay)
-
+                            if resolved_id:
+                                # Update entity resolved_id
+                                entity_id = resolved_id
+                                entity_data["id"] = resolved_id
+                                break
+                            else:
+                                if attempt < max_retries - 1:  # Don't sleep on last attempt
+                                    await asyncio.sleep(retry_delay)
                 except Exception as e:
                     log.error(f"Error resolving project ID from identifier: {e}")
                     return None
 
-            if project_id:
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/overview/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": "project", "entity_id": project_id}
-            else:
+            # If still no ID, we can't build URL
+            if not entity_id:
                 return None
 
-        elif entity_type in ["module", "cycle"]:
-            # For modules and cycles: /workspace_slug/projects/project_id/modules|cycles/entity_id/
-            project_id = entity_data.get("project")
-            if project_id:
-                path = "modules" if entity_type == "module" else "cycles"
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/{path}/{entity_id}/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-            else:
-                return None
+        # 2. Workitem Identifier Resolution
+        issue_identifier = None
+        if entity_type in ("workitem", "epic"):
+            project_identifier = entity_data.get("project_identifier")
+            sequence_id = entity_data.get("sequence_id")
 
-        elif entity_type in ["label", "state"]:
-            # For labels and states: /workspace_slug/projects/project_id/settings/labels|states/
-            project_id = entity_data.get("project")
-            if project_id:
-                path = "labels" if entity_type == "label" else "states"
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/settings/{path}/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-            else:
-                return None
+            if project_identifier and sequence_id:
+                issue_identifier = f"{project_identifier}-{sequence_id}"
+                identifier = issue_identifier
+            elif entity_id:
+                # Try to resolve identifier from DB
+                try:
+                    from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
 
-        elif entity_type == "workspace":
-            # For workspaces: /workspace_slug/
-            url = f"{api_base_url}/{workspace_slug}/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+                    details = await get_issue_identifier_for_artifact(str(entity_id))
+                    if details and isinstance(details, dict):
+                        ident = details.get("identifier")
+                        # Prefer DB-resolved name if available
+                        entity_name = details.get("name", entity_name)
+                        if ident:
+                            issue_identifier = ident
+                            identifier = ident
+                except Exception:
+                    pass
 
-        elif entity_type == "sticky":
-            # For stickies: /workspace_slug/stickies/
-            url = f"{api_base_url}/{workspace_slug}/stickies/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+        # 3. Page Logic (Project vs Global)
+        is_global = None
+        if entity_type == "page":
+            # Try multiple fields for project_id
+            if not project_id:
+                project_id = entity_data.get("project_ids", [None])[0] if entity_data.get("project_ids") else None
 
-        elif entity_type == "initiative":
-            # For initiatives: /workspace_slug/initiatives/
-            url = f"{api_base_url}/{workspace_slug}/initiatives/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+            # If no project_id found, assume global/workspace page
+            # build_entity_path logic handles is_global=True check usually by context,
+            # simply: if project_id -> project page, else -> workspace page
+            pass
 
-        elif entity_type == "teamspace":
-            # For teamspaces: try specific ID first, fallback to list
-            if entity_id:
-                url = f"{api_base_url}/{workspace_slug}/teamspaces/{entity_id}/"
-            else:
-                url = f"{api_base_url}/{workspace_slug}/teamspaces/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-
-        elif entity_type == "property":
-            # For properties: /workspace_slug/settings/projects/project_id/work-item-types/
-            project_id = entity_data.get("project")
-            if project_id:
-                url = f"{api_base_url}/{workspace_slug}/settings/projects/{project_id}/work-item-types/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-            else:
-                return None
-
-        elif entity_type == "customer":
-            # For customers: /workspace_slug/customers/{customer_id}/
-            url = f"{api_base_url}/{workspace_slug}/customers/{entity_id}/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-
-        elif entity_type == "intake":
-            # For intake: /workspace_slug/projects/project_id/intake/?currentTab=open&inboxIssueId=inbox_issue_id
-            project_id = entity_data.get("project")
-
-            # The 'inboxIssueId' param expects the Issue ID, not the Intake ID.
-            # Try to resolve the correct issue ID from the entity data.
+        # 4. Intake Logic
+        inbox_issue_id = None
+        if entity_type == "intake":
             inbox_issue_id = entity_data.get("issue")
             if not inbox_issue_id and isinstance(entity_data.get("issue_detail"), dict):
                 inbox_issue_id = entity_data.get("issue_detail", {}).get("id")
-
-            # Fallback to entity_id if no specific issue ID found
             if not inbox_issue_id:
                 inbox_issue_id = entity_id
 
-            if project_id:
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/intake/?currentTab=open&inboxIssueId={inbox_issue_id}"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-            else:
-                return None
+            # Resolve identifier for intake items using their issue_id
+            # so we can use the /browse/identifier/ URL format
+            issue_id_for_lookup = inbox_issue_id or entity_id
+            if issue_id_for_lookup and not identifier:
+                try:
+                    from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
 
-        elif entity_type == "customer_property":
-            # For customer properties: /workspace_slug/settings/properties/
-            # Note: Assuming customer properties are in workspace settings
-            url = f"{api_base_url}/{workspace_slug}/settings/customers/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+                    details = await get_issue_identifier_for_artifact(str(issue_id_for_lookup))
+                    if details and isinstance(details, dict):
+                        ident = details.get("identifier")
+                        entity_name = details.get("name", entity_name)
+                        if ident:
+                            identifier = ident
+                except Exception:
+                    pass
 
-        elif entity_type == "customer_request":
-            # For customer requests: /workspace_slug/customers/{customer_id}/
-            customer_id = entity_data.get("customer") or entity_data.get("customer_id")
-            if customer_id:
-                url = f"{api_base_url}/{workspace_slug}/customers/{customer_id}/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-            else:
-                # Fallback to customers list if customer_id not found
-                url = f"{api_base_url}/{workspace_slug}/customers/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+        # --- Build URL ---
+        url = build_entity_url(
+            entity_type=entity_type,
+            workspace_slug=workspace_slug,
+            entity_id=str(entity_id) if entity_id else None,
+            project_id=str(project_id) if project_id else None,
+            identifier=identifier,
+            is_global=None,  # page logic infers from project_id presence
+            customer_id=entity_data.get("customer") or entity_data.get("customer_id"),
+            inbox_issue_id=str(inbox_issue_id) if inbox_issue_id else None,
+        )
 
-        else:
-            # Unknown entity type
-            return None
+        if url:
+            result = {
+                "entity_url": url,
+                "entity_name": entity_name,
+                "entity_type": entity_type,
+                "entity_id": entity_id,
+            }
+            if issue_identifier:
+                result["issue_identifier"] = issue_identifier
+            return result
+
+        return None
 
     except Exception as e:
         log.error(f"Error constructing action entity URL: {e}")

@@ -82,45 +82,6 @@ COMMENTS_TOOL_DEFINITIONS = {
         pre_handler=_resolve_project_pre_handler,
         returns_entity_type="comment",
     ),
-    "list": ToolMetadata(
-        name="comments_list",
-        description="List comments for an issue.",
-        sdk_method="list_work_item_comments",
-        parameters=[
-            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
-            ToolParameter(
-                name="project_id", description="Project ID (optional, auto-filled)", required=False, type="Optional[str]", auto_fill_from_context=True
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                description="Workspace slug (optional, auto-filled)",
-                required=False,
-                type="Optional[str]",
-                auto_fill_from_context=True,
-            ),
-        ],
-        pre_handler=_resolve_project_pre_handler,
-    ),
-    "retrieve": ToolMetadata(
-        name="comments_retrieve",
-        description="Get a single comment by ID.",
-        sdk_method="retrieve_work_item_comment",
-        parameters=[
-            ToolParameter(name="comment_id", description="Comment ID", required=True, type="str"),
-            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
-            ToolParameter(
-                name="project_id", description="Project ID (optional, auto-filled)", required=False, type="Optional[str]", auto_fill_from_context=True
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                description="Workspace slug (optional, auto-filled)",
-                required=False,
-                type="Optional[str]",
-                auto_fill_from_context=True,
-            ),
-        ],
-        pre_handler=_resolve_project_pre_handler,
-    ),
     "update": ToolMetadata(
         name="comments_update",
         description="Update comment details.",

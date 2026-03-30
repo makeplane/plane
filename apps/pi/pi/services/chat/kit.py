@@ -391,61 +391,18 @@ Provide concise, relevant context from the attachment(s):"""
 
         entity_urls = []
         try:
+            from pi.services.chat.helpers.url_builder import build_doc_url
+
             for doc in retrieved_docs:
-                section = doc.metadata.get("section")
-                subsection = doc.metadata.get("subsection")
-                doc_id = doc.metadata.get("id")
+                metadata = getattr(doc, "metadata", None) or {}
+                subsection = metadata.get("subsection")
+                doc_id = metadata.get("id")
 
-                if not section or not subsection:
+                url = build_doc_url(metadata)
+                if not url or not subsection:
                     continue
 
-                # skip these irrelevant subsections
-                if subsection in ["new_doc", "your-work copy", "your-work copy 2", "your-work copy 3"]:
-                    continue
-                try:
-                    if "/" in section:
-                        doc_type, section_name = section.split("/", 1)
-                    elif section == "docs":
-                        doc_type = "docs"
-                        section_name = None
-                    elif "mdx" in section:
-                        doc_type = "docs"
-                        section_name = None
-                    else:
-                        doc_type = section
-                        section_name = None
-                except Exception as e:
-                    log.error(f"Error constructing entity URL for doc {doc_id}: {e}")
-                    continue
-
-                if doc_type == "api-reference":
-                    # developers.plane.so/api-reference
-                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/api-reference"
-                elif doc_type == "dev-tools":
-                    # developers.plane.so/dev-tools
-                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/dev-tools"
-                elif doc_type == "self-hosting":
-                    # developers.plane.so/self-hosting
-                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/self-hosting"
-                elif doc_type == "docs" or "/" in doc_type:
-                    # docs.plane.so (handles both root docs and nested like introduction/, core-concepts/, etc.)
-                    api_base_url = settings.vector_db.DOCS_URL_BASE
-                else:
-                    # Fallback: assume it's a docs.plane.so page
-                    api_base_url = settings.vector_db.DOCS_URL_BASE
-
-                try:
-                    if section_name:
-                        # Has nested path: api-reference/customer, introduction/quickstart, etc.
-                        url = f"{api_base_url}/{section_name}/{subsection}"
-                    else:
-                        # Single level: dev-tools, self-hosting, api-reference root, or regular docs
-                        url = f"{api_base_url}/{subsection}"
-
-                    entity_urls.append({"name": subsection, "id": doc_id, "url": url, "type": "doc"})
-                except Exception as e:
-                    log.error(f"Error constructing entity URL for doc {doc_id}: {e}")
-                    continue
+                entity_urls.append({"name": subsection, "id": doc_id, "url": url, "type": "doc"})
         except Exception as e:
             log.error(f"Error constructing entity URLs for docs search: {e}")
             return None
@@ -710,7 +667,8 @@ Provide concise, relevant context from the attachment(s):"""
             except Exception:
                 ws_slug = None
 
-            base_url = settings.plane_api.FRONTEND_URL
+            from pi.services.chat.helpers.url_builder import build_entity_url
+
             for opt in options_to_use:
                 # Elements are typed as Dict[str, Any]; no need for isinstance guard
                 opt2 = dict(opt)
@@ -719,32 +677,42 @@ Provide concise, relevant context from the attachment(s):"""
                     # Explicit handling based on known types first
                     if opt.get("email") and opt.get("id"):
                         # User-like entity by presence of email
-                        opt2["url"] = f"{base_url}/{ws_slug}/profile/{opt.get('id')}/"
+                        opt2["url"] = build_entity_url("profile", ws_slug, entity_id=str(opt.get("id")))
                         opt2["type"] = opt_type or "user"
                     elif opt_type == "user" and opt.get("id"):
-                        opt2["url"] = f"{base_url}/{ws_slug}/profile/{opt.get('id')}/"
+                        opt2["url"] = build_entity_url("profile", ws_slug, entity_id=str(opt.get("id")))
                         opt2["type"] = "user"
                     elif opt_type == "project" and opt.get("id"):
                         # Project overview URL
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('id')}/overview/"
+                        opt2["url"] = build_entity_url("project", ws_slug, entity_id=str(opt.get("id")))
                         opt2["type"] = "project"
                     elif opt_type == "cycle" and opt.get("id") and opt.get("project_id"):
                         # Cycle URL requires project_id
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('project_id')}/cycles/{opt.get('id')}/"
+                        opt2["url"] = build_entity_url(
+                            "cycle",
+                            ws_slug,
+                            entity_id=str(opt.get("id")),
+                            project_id=str(opt.get("project_id")),
+                        )
                         opt2["type"] = "cycle"
                     elif opt_type == "module" and opt.get("id") and opt.get("project_id"):
                         # Module URL requires project_id
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('project_id')}/modules/{opt.get('id')}/"
+                        opt2["url"] = build_entity_url(
+                            "module",
+                            ws_slug,
+                            entity_id=str(opt.get("id")),
+                            project_id=str(opt.get("project_id")),
+                        )
                         opt2["type"] = "module"
                     elif (opt_type == "workitem" and opt.get("identifier")) or (
                         not opt_type and opt.get("identifier") and "-" in str(opt.get("identifier"))
                     ):
                         # Work-item browse URL when identifier is of the form PROJ-SEQ
-                        opt2["url"] = f"{base_url}/{ws_slug}/browse/{opt.get('identifier')}/"
+                        opt2["url"] = build_entity_url("workitem", ws_slug, identifier=str(opt.get("identifier")))
                         opt2["type"] = "workitem"
                     elif opt.get("id") and (opt2.get("type") != "scope"):
                         # Fallback: if we have an id but no stronger signal, assume project overview
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('id')}/overview/"
+                        opt2["url"] = build_entity_url("project", ws_slug, entity_id=str(opt.get("id")))
                         opt2["type"] = opt_type or "project"
                 enhanced_options.append(opt2)
 
@@ -786,7 +754,8 @@ Provide concise, relevant context from the attachment(s):"""
 
         @tool
         async def structured_db_tool(query: str, issue_ids: Optional[List[str]] = None, page_ids: Optional[List[str]] = None) -> str:
-            """Query the structured database to get detailed information about work-items, including status, assignees, projects, modules, cycles, and everything else stored in the Plane database.
+            """Query the database for complex aggregations, counts, cross-entity joins, and custom SQL-like logic.
+            NOT for searching/filtering work items by name or metadata - use workitems_advanced_search instead.
             Can filter by specific work-item IDs or page IDs, if provided."""  # noqa: E501
             try:
                 # Use provided IDs or fall back to accumulated IDs
@@ -1213,7 +1182,7 @@ Provide concise, relevant context from the attachment(s):"""
                 self._store_agent_response("pages_search_tool", result)
 
                 # Extract and return the results text
-                return StandardAgentResponse.extract_results(result)
+                return StandardAgentResponse.format_response_with_entity_urls(result)
             except Exception as e:
                 log.error(f"Error in pages_search_tool: {str(e)}")
                 return f"Error searching for pages: {str(e)}"
@@ -1228,7 +1197,7 @@ Provide concise, relevant context from the attachment(s):"""
                 self._store_agent_response("docs_search_tool", result)
 
                 # Extract and return the results text
-                return StandardAgentResponse.extract_results(result)
+                return StandardAgentResponse.format_response_with_entity_urls(result)
             except Exception as e:
                 log.error(f"Error in docs_search_tool: {str(e)}")
                 return f"Error searching documentation: {str(e)}"
@@ -1258,7 +1227,7 @@ Provide concise, relevant context from the attachment(s):"""
                 self._store_agent_response("web_search_tool", result)
 
                 # Extract and return the results text
-                return StandardAgentResponse.extract_results(result)
+                return StandardAgentResponse.format_response_with_entity_urls(result)
             except Exception as e:
                 log.error(f"Error in web_search_tool: {str(e)}")
                 return f"Error searching the web: {str(e)}"
@@ -1347,19 +1316,22 @@ Provide concise, relevant context from the attachment(s):"""
                 db=db,
             )
             retrieval_tools.extend(plotting_tools)
-            # Add all the entity search tools
-            from pi.services.actions.tools.entity_search import get_entity_search_tools
-
+            # Add unified entity_search tool (does not require method_executor/OAuth)
+            # This replaces the 12 individual entity search tools with a single consolidated tool
             search_ctx = {
                 "workspace_id": workspace_id,
                 "workspace_slug": workspace_slug,
                 "project_id": project_id,
                 "user_id": user_id,
             }
-            entity_tools = get_entity_search_tools(method_executor=None, context=search_ctx) or []
-            retrieval_tools.extend(entity_tools)
+            from pi.services.actions.tools.unified_retrieval import get_unified_retrieval_tools
 
-            # add projects_retrieve tool till the retrieval and entity search tools are merged
+            unified_search_tools = get_unified_retrieval_tools(method_executor=None, context=search_ctx) or []
+            # Only add entity_search (entity_list/entity_retrieve need method_executor)
+            for t in unified_search_tools:
+                if getattr(t, "name", "") == "entity_search":
+                    retrieval_tools.append(t)
+
             method_executor, context, workspace_slug = await build_method_executor_and_context(
                 chatbot_instance=chatbot_instance,
                 user_id=user_id,
@@ -1372,13 +1344,26 @@ Provide concise, relevant context from the attachment(s):"""
                 db=db,
             )
 
-            # Only add project tools if method_executor is available (requires OAuth token)
+            # Only add SDK-based tools if method_executor is available (requires OAuth token)
             if method_executor:
-                project_tools = get_tools_for_category("projects", method_executor=method_executor, context=context) or []
-                project_tools = [t for t in project_tools if getattr(t, "name", "") in ["projects_retrieve"]]
-                retrieval_tools.extend(project_tools)
+                # Add unified retrieval tools (entity_list, entity_retrieve)
+                # entity_search was already added above (doesn't need method_executor)
+                from pi.services.actions.tools.unified_retrieval import get_unified_retrieval_tools
+
+                unified_tools = get_unified_retrieval_tools(method_executor=method_executor, context=context) or []
+                existing_names = {getattr(t, "name", "") for t in retrieval_tools}
+                for t in unified_tools:
+                    if getattr(t, "name", "") not in existing_names:
+                        retrieval_tools.append(t)
+
+                # Add workitems_advanced_search for fast filter queries
+                from pi.services.actions.tools.workitems import get_workitem_tools
+
+                workitem_tools = get_workitem_tools(method_executor=method_executor, context=context) or []
+                workitem_tools = [t for t in workitem_tools if getattr(t, "name", "") in ["workitems_advanced_search"]]
+                retrieval_tools.extend(workitem_tools)
             else:
-                log.info(f"ChatID: {chat_id} - Skipping project tools (no OAuth token available)")
+                log.info(f"ChatID: {chat_id} - Skipping SDK retrieval tools (no OAuth token available)")
 
             return retrieval_tools + [clarification_tool] if clarification_tool else retrieval_tools
         else:
@@ -1405,37 +1390,22 @@ Provide concise, relevant context from the attachment(s):"""
         # Get the category tools (which now include entity search tools)
         tools = get_tools_for_category(category, method_executor, context) or []
 
-        # Universally include a minimal set of entity search tools needed across most actions
-        # This prevents cases where the router selects a non-project category (e.g., workitems)
-        # but project resolution is still required (e.g., "in OG project").
+        # Add the unified entity_search tool which consolidates all individual search tools
+        # (project/cycle/module/label/state/user/workitem search by name/identifier/etc.)
         try:
-            from pi.services.actions.tools.entity_search import get_entity_search_tools
+            from pi.services.actions.tools.unified_retrieval import get_unified_retrieval_tools
 
             search_ctx = {
                 "workspace_slug": context.get("workspace_slug"),
                 "project_id": context.get("project_id"),
-                # Pass through ids so tools like list_member_projects can auto-fill
                 "workspace_id": context.get("workspace_id"),
                 "user_id": context.get("user_id"),
             }
-            entity_tools = get_entity_search_tools(method_executor, search_ctx) or []
-
-            universal_tool_names = {
-                "search_project_by_identifier",
-                "search_project_by_name",
-                "list_member_projects",
-                "search_user_by_name",
-                "search_workitem_by_identifier",
-                # Add cycle helpers for planning flows
-                "search_current_cycle",
-                "search_cycle_by_name",
-                "list_recent_cycles",
-            }
-
+            unified_tools = get_unified_retrieval_tools(method_executor=method_executor, context=search_ctx) or []
             existing = {getattr(t, "name", "") for t in tools}
-            for t in entity_tools:
+            for t in unified_tools:
                 t_name = getattr(t, "name", "")
-                if t_name in universal_tool_names and t_name not in existing:
+                if t_name == "entity_search" and t_name not in existing:
                     tools.append(t)
                     existing.add(t_name)
         except Exception:
@@ -1626,6 +1596,7 @@ Provide concise, relevant context from the attachment(s):"""
             "max_results": getattr(self.docs_retriever, "num_docs", None),
         }
 
+        log.info(f"kit.py:handle_docs_query: Entity URLs: {entity_urls}")
         return StandardAgentResponse.create_response(formatted_results, entity_urls, execution_metadata=execution_metadata)
 
     async def handle_web_search_query(

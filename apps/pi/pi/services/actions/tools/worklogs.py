@@ -95,6 +95,24 @@ async def _worklog_pre_handler(
 
 
 WORKLOGS_TOOL_DEFINITIONS = {
+    "get_summary": ToolMetadata(
+        name="worklogs_get_summary",
+        description=(
+            "Get a project-level worklog summary (total logged time and any available breakdowns) "
+            "for the entire project. This returns an aggregate summary, not individual worklog entries."
+        ),
+        sdk_method="get_project_worklog_summary",
+        parameters=[
+            ToolParameter(name="project_id", description="Project ID", required=True, type="str"),
+            ToolParameter(
+                name="workspace_slug",
+                description="Workspace slug (optional, auto-filled)",
+                required=False,
+                type="Optional[str]",
+                auto_fill_from_context=True,
+            ),
+        ],
+    ),
     "create": ToolMetadata(
         name="worklogs_create",
         description="Create a new worklog (time entry).",
@@ -118,17 +136,6 @@ WORKLOGS_TOOL_DEFINITIONS = {
         ],
         pre_handler=_worklog_pre_handler,
         returns_entity_type="worklog",
-    ),
-    "list": ToolMetadata(
-        name="worklogs_list",
-        description="List worklogs for an issue.",
-        sdk_method="list_issue_worklogs",
-        parameters=[
-            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
-            ToolParameter(name="project_id", description="Project ID", required=False, type="Optional[str]", auto_fill_from_context=True),
-            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
-        ],
-        pre_handler=_worklog_pre_handler,
     ),
     "update": ToolMetadata(
         name="worklogs_update",

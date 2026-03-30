@@ -105,40 +105,6 @@ CUSTOMER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
         ],
     ),
-    "list": ToolMetadata(
-        name="customers_list",
-        description="List all customers in the workspace",
-        sdk_method="list_customers",
-        parameters=[
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="customers_retrieve",
-        description="Retrieve a single customer by ID",
-        sdk_method="retrieve_customer",
-        parameters=[
-            ToolParameter(
-                name="customer_id",
-                type="str",
-                required=True,
-                description="Customer ID (required)",
-            ),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
     "update": ToolMetadata(
         name="customers_update",
         description="Update customer details",

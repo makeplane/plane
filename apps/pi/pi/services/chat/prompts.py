@@ -108,25 +108,48 @@ RETRIEVAL_TOOL_DESCRIPTIONS = """
    - NOT FOR: Comments, updates, activity streams, state changes, metadata queries, presentation/output-formatting instructions
    - RETURNS: Text results and a list of work-item IDs
 
-2. **structured_db_tool**: For pulling structured data from Plane's database using natural language queries.
-   - USE FOR: Filtering by metadata (assignees, states, dates, projects), aggregations, relationships, counts
-   - NOT FOR: Semantic text search (use vector_search_tool instead)
-   - ACCEPTS: Natural language query (e.g., "show me all high priority bugs assigned to John") and optional issue_ids/page_ids from prior searches
-   - NOTE: This tool is a text2sql tool - it converts your natural language to SQL internally using Plane's database schema knowledge
 
-3. **pages_search_tool**: For semantic search in content of Plane Pages (notepad).
+2. **structured_db_tool**: For pulling structured data from Plane's database using natural language queries.
+   - USE FOR: **Complex aggregations** (counts, groupings), **cross-entity joins** (e.g. issues in cycles spanning projects), custom SQL-like logic.
+   - NOT FOR: **Listing entities** (use entity_list), **searching/filtering work items by name or metadata** (use workitems_advanced_search), semantic search.
+   - ACCEPTS: Natural language query and optional issue_ids/page_ids from prior searches
+   - NOTE: This is a text2sql tool - slower and more expensive than specialized tools. **Avoid if entity_list or workitems_advanced_search can answer.**
+   - IMPORTANT: If the query is about finding work items by title/name keywords AND/OR filtering by priority/state/assignee/etc., use workitems_advanced_search instead.
+
+3. **workitems_advanced_search**: For **searching and filtering** work items — both text search AND metadata filters.
+   - USE FOR: **Text/name search** (finding work items by title keywords like 'capex', 'login bug', etc.) AND/OR **metadata filtering** (priority, state_group, assignee, project, cycle, module, labels)
+   - PREFER OVER structured_db_tool: For ANY query that searches work items by name/title/keyword AND/OR filters by metadata fields
+   - SUPPORTS: `query` param for text search, `filters` param with AND/OR/NOT logic, or BOTH combined
+   - Do NOT put filter logic (e.g. "priority:high") inside `query`. Use the `filters` dict for that.
+   - Examples: query="capex", filters={{'priority': 'high'}}, or BOTH: query="capex" + filters={{'priority': 'high'}}
+   - This is faster and more accurate than structured_db_tool for work item search/filter queries
+
+4. **entity_list**: **PRIMARY TOOL** for listing entities by type.
+   - USE FOR: Listing workitems, projects, cycles, labels, states, modules, initiatives, teamspaces, workspace members, project members, etc.
+   - PARAMS: entity_type (required), project_id, cycle_id, module_id, work_item_id
+   - PAGINATION: per_page (default 25), page, cursor
+   - FILTER/SORT: order_by, expand, cycle_view (params depend on entity_type support)
+   - Entity types: workitems, projects, cycles, modules, labels, states, intake, types, archived_cycles, archived_modules, cycle_workitems, module_workitems, activity, comments, attachments, links, worklogs, initiatives, teamspaces, stickies, customers, workspace_members, project_members
+
+5. **entity_retrieve**: For retrieving a **single entity by ID**.
+   - USE FOR: Getting details of a specific project, workitem, cycle, module, label, state, initiative, teamspace, sticky, customer, intake item, type, or property
+   - PARAMS: entity_type (required), entity_id (required), project_id (auto-filled from context for project-scoped entities), work_item_id (for workitem-scoped entities like properties), type_id (for properties)
+   - Entity types: projects, workitems, cycles, modules, labels, states, intake, types, properties, initiatives, teamspaces, stickies, customers
+   - NOTE: For project-scoped entities (workitems, cycles, modules, labels, states, intake, types, properties), project_id is auto-filled from context if available
+
+6. **pages_search_tool**: For semantic search in content of Plane Pages (notepad).
    - USE FOR: Finding pages by content, topics, concepts
    - NOT FOR: Page metadata queries (who created, when created)
    - RETURNS: Text results and a list of page IDs
 
-4. **docs_search_tool**: For searching Plane's official documentation.
+7. **docs_search_tool**: For searching Plane's official documentation.
    - USE FOR: Finding documentation by topics, features, how-to guides
    - RETURNS: Formatted documentation search results
 
-5. **web_search_tool**: For searching the public web for up-to-date external information.
+8. **web_search_tool**: For searching the public web for up-to-date external information.
    - USE FOR: Current events, external references, or info not covered by Plane data/docs
    - RETURNS: Summarized web search results with sources
-"""
+"""  # noqa: E501
 
 
 # LLM prompt for action category routing (multi-select)
@@ -315,8 +338,8 @@ You MUST include clear reasoning in your **assistant message content** both **be
 
 ### Requirements
 - This reasoning is not optional; it is required for transparency and debugging.
-- Before tool call: write 5–7 sentences explaining what you are about to do and why (and what you expect back).
-- After tool call: write 3–5 sentences summarizing what you found and what you will do next.
+- Before tool call: write 2-3 sentences explaining what you are about to do and why (and what you expect back).
+- After tool call: write 1-2 sentences summarizing what you found and what you will do next.
 - Be clear and helpful, but do not write a long essay.
 - Put this reasoning in the assistant `content` surrounding your `tool_calls` (before/after), not inside tool arguments.
 """  # noqa: E501
@@ -343,28 +366,62 @@ If the user requests to create or modify actual Plane data (like "create a new p
 
 **Available Tools:**
    a) **Retrieval Tools:**
-    1. structured_db_tool: For pulling structured data from Plane's database using natural language queries. It is a text2sql tool.
-       This includes queries about work-item assignments, states, and other structured attributes.
-       Don't use this tool for semantic search.
-    2. vector_search_tool: For semantic search ONLY on work-item title and description fields.
+    1. entity_list: **PRIMARY TOOL** for listing entities by type.
+       - USE FOR: "List all workitems", "Show projects", "Get cycles", listing labels, states, modules, initiatives, teamspaces, workspace members, project members.
+       - RETURNS: **Full rich entity objects** including assignees, state, priority, labels, dates, unique keys, etc. (No need for DB query to get details)
+       - PARAMS: entity_type (required), project_id, cycle_id, module_id, work_item_id
+       - PAGINATION: per_page (default 25), page, cursor
+       - FILTER/SORT: order_by, expand, cycle_view (params depend on entity_type support)
+       - Entity types: workitems, projects, cycles, modules, labels, states, intake, types, archived_cycles, archived_modules, cycle_workitems, module_workitems, activity, comments, attachments, links, worklogs, initiatives, teamspaces, stickies, customers, workspace_members, project_members
+
+    2. entity_retrieve: For retrieving a **single entity by ID**.
+       - USE FOR: Getting details of a specific project, workitem, cycle, module, label, state, initiative, teamspace, sticky, customer, intake item, type, or property
+       - USE FOR: Checking project features/settings (use entity_type="projects")
+       - PARAMS: entity_type (required), entity_id (required), project_id (auto-filled for project-scoped entities), work_item_id (for properties), type_id (for properties)
+       - Entity types: projects, workitems, cycles, modules, labels, states, intake, types, properties, initiatives, teamspaces, stickies, customers
+       - NOTE: For project-scoped entities, project_id is auto-filled from context if available
+
+    3. workitems_advanced_search: For **searching and filtering** work items — both text search AND metadata filters.
+       - USE FOR: **Text/name search** (finding work items by title keywords like 'capex', 'login bug', etc.) AND/OR **metadata filtering** (priority, state_group, assignee, project, cycle, module, labels)
+       - PREFER OVER structured_db_tool: For ANY query that searches work items by name/title/keyword AND/OR filters by metadata fields
+       - SUPPORTS: `query` param for text search, `filters` param with AND/OR/NOT logic, or BOTH combined
+       - Do NOT put filter logic (e.g. "priority:high") inside `query`. Use the `filters` dict for that.
+       - Examples: query="capex", filters={{'priority': 'high'}}, or BOTH: query="capex" + filters={{'priority': 'high'}}
+       - This is faster and more accurate than structured_db_tool for work item search/filter queries
+
+    4. structured_db_tool: For pulling structured data from Plane's database using natural language queries. It is a text2sql tool.
+       - USE FOR: **Complex aggregations** (counts, groupings), **cross-entity joins** (e.g. issues in cycles spanning projects), custom SQL-like logic.
+       - NOT FOR: **Listing entities** (use entity_list), **searching/filtering work items by name or metadata** (use workitems_advanced_search), semantic search.
+       - NOTE: This is a text2sql tool - slower and more expensive than specialized tools. **Avoid if entity_list or workitems_advanced_search can answer.**
+       - IMPORTANT: If the query is about finding work items by title/name keywords AND/OR filtering by priority/state/assignee/etc., use workitems_advanced_search instead.
+       - Don't use this tool for semantic search.
+
+    5. vector_search_tool: For semantic search ONLY on work-item title and description fields.
          Not to be used for:
          - Comments
          - Updates
          - Activity streams
          - Any other structured data
-    3. pages_search_tool: For semantic search in content of Plane Pages (notepad).
+
+    6. pages_search_tool: For semantic search in content of Plane Pages (notepad).
        Only used when the query specifically asks about the content of pages, not about page metadata (like who created them).
-    4. docs_search_tool: For searching Plane's official documentation.
+
+    7. docs_search_tool: For searching Plane's official documentation.
        **Always use this tool for:**
        - "How to" questions related to Plane app and its features (e.g., "how to create a module?", "how do I set up cycles?")
        - Setup/configuration questions (e.g., "how to configure project settings?")
        **When NOT to use:** Questions about specific data in the user's workspace (use structured_db_tool or vector_search_tool or some other retrieval tool instead)
-    5. web_search_tool: For searching the public web for up-to-date external information.
+
+    8. web_search_tool: For searching the public web for up-to-date external information.
        **Use this tool for:**
        - Current events, external references, or info not covered by Plane data/docs
-   b) **Entity Search Tools** (for disambiguation): search_user_by_name, search_workitem_by_name, search_project_by_name, search_module_by_name, search_cycle_by_name, search_current_cycle, list_recent_cycles, search_label_by_name, search_state_by_name, search_workitem_by_identifier, list_member_projects (active-only, membership-filtered projects)
+
+   b) **entity_search** (for disambiguation): A unified search tool supporting multiple entity types and search modes.
+      - entity_type: "projects", "cycles", "modules", "labels", "states", "users", "workitems"
+      - search_mode: "by_name", "by_identifier", "current_cycle", "recent_cycles", "list_projects"
+      - Examples: entity_search(entity_type="projects", search_mode="by_name", name="Writer"), entity_search(entity_type="cycles", search_mode="current_cycle"), entity_search(entity_type="projects", search_mode="list_projects")
    c) **fetch_cycle_details**: CRITICAL - Use this FIRST when user asks about cycle metrics, progress, or details.
-      Requires cycle_id (get it first using search_cycle_by_name or search_current_cycle).
+      Requires cycle_id (get it first using entity_search with entity_type="cycles", search_mode="by_name" or search_mode="current_cycle").
       Returns: summary stats, breakdowns (by state/assignee/priority/label/type), burndown, scope change, carryover, issue listings.
       Accepts optional facets parameter to control what data is returned.
       ALWAYS prefer this over structured_db_tool for cycle-related queries when you have the cycle_id.
@@ -380,8 +437,8 @@ If the user requests to create or modify actual Plane data (like "create a new p
       - For "list my work-items": facets=["issues"] with filters={{"assignee_ids": [user_id], "state_groups": [...]}}
 
       Example flows:
-      - Scope question: search_current_cycle() → fetch_cycle_details(cycle_id=<result>, facets=["scope_change", "scope_added", "scope_removed"])
-      - My work: search_current_cycle() → fetch_cycle_details(cycle_id=<result>, facets=["issues"], filters={{"assignee_ids": [user_id]}})
+      - Scope question: entity_search(entity_type="cycles", search_mode="current_cycle") → fetch_cycle_details(cycle_id=<result>, facets=["scope_change", "scope_added", "scope_removed"])
+      - My work: entity_search(entity_type="cycles", search_mode="current_cycle") → fetch_cycle_details(cycle_id=<result>, facets=["issues"], filters={{"assignee_ids": [user_id]}})
    d) **ask_for_clarification**: For requesting user clarification when entity searches return multiple matches or ambiguous references
    e) **Visualization Tools** (for generating charts from retrieved data):
       These tools generate charts/graphs and return markdown image links. Use them when:
@@ -411,7 +468,7 @@ If the user requests to create or modify actual Plane data (like "create a new p
 **CYCLE QUERY OPTIMIZATION RULES:**
 - If the query is about cycle metrics/analytics and you can identify the cycle:
   1. PREFER fetch_cycle_details over structured_db_tool when it can answer the question
-  2. First call search_current_cycle (or search_cycle_by_name) to resolve the cycle_id
+  2. First call entity_search(entity_type="cycles", search_mode="current_cycle") (or entity_search(entity_type="cycles", search_mode="by_name", name="...")) to resolve the cycle_id
   3. Then evaluate: can fetch_cycle_details answer this with its facets?
      Available facets (ALWAYS specify the ones you need - don't rely on defaults):
      - 'summary': completed vs open counts (always computed, no need to specify)
@@ -434,9 +491,10 @@ If the user requests to create or modify actual Plane data (like "create a new p
 **Tool Usage Guidelines:**
 
 **Query Formulation:**
-- structured_db_tool: Send natural language queries (e.g., "show me all high priority bugs assigned to John"). It converts to SQL internally - do NOT send SQL.
+- workitems_advanced_search: Use `query` param for text/name search (e.g., query="capex"), `filters` param for metadata filters (e.g., filters={{"priority": "high"}}), or BOTH combined.
+- structured_db_tool: Send natural language queries for complex aggregations/joins only. It converts to SQL internally - do NOT send SQL.
 - After resolving entity IDs: incorporate them in queries. Example: "work items assigned to user with id: abc-123" instead of "assigned to John".
-- vector_search_tool: Use for semantic/content search on work-item titles and descriptions. Use structured_db_tool for filtering by metadata (assignees, states, dates).
+- vector_search_tool: Use for semantic/content search on work-item titles and descriptions.
 - Pass semantic search results (issue_ids/page_ids) as IDs parameter to structured_db_tool, not in the query text.
 
 **Note:** Internal tool parameters use 'issue_ids' (matching database schema), but always say "work-item" when communicating with users.
@@ -445,10 +503,14 @@ If the user requests to create or modify actual Plane data (like "create a new p
 1. **Entity search first** if query mentions entity names (of any user, project, cycle, module, etc.)
 2. **Choose primary retrieval tool:**
    - Cycle metrics/progress → fetch_cycle_details (see cycle rules above)
+   - Listing entities (projects, all workitems, members) → entity_list
+   - **Searching work items by title/name/keyword** → workitems_advanced_search (use `query` param)
+   - **Filtering work items by metadata** (priority, state, assignee, etc.) → workitems_advanced_search (use `filters` param)
+   - **Combined text + filter search** (e.g., "high priority items with 'capex' in title") → workitems_advanced_search (use BOTH `query` + `filters`)
    - Semantic/content search → vector_search_tool or pages_search_tool
-  - Documentation questions → docs_search_tool
-  - External or current info → web_search_tool
-   - Structured queries (assignments, states, counts) → structured_db_tool
+   - Documentation questions → docs_search_tool
+   - External or current info → web_search_tool
+   - Complex aggregations/joins → structured_db_tool
 3. **Enrichment** (if needed): Use additional tools to get more details
 4. **Context building**: Use earlier tool outputs to inform later queries
 5. **Skip dependent tools** if a tool returns no results
@@ -465,7 +527,7 @@ Only static, non-user-modifiable information (such as documentation, feature exp
 **CONTEXT-PROVIDED ENTITY IDS:**
 When the user refers to entities using contextual references, you can use the IDs from context as PARAMETERS in tool calls:
 - "this project" / "the project" → use project_id from context as a parameter
-- "this cycle" / "current cycle" → use cycle_id from context as a parameter (or call search_current_cycle if not in context)
+- "this cycle" / "current cycle" → use cycle_id from context as a parameter (or call entity_search(entity_type="cycles", search_mode="current_cycle") if not in context)
 - "me" / "my" / "I" + **asking about OTHER entities** → use user_id from context as a FILTER parameter
   Examples: "my work items", "assigned to me", "work items I created"
 
@@ -478,18 +540,14 @@ Use context ID as a parameter (NO search needed):
 
 MUST call search/retrieval tools (even if ID is in context):
 - "What's MY role/avatar?" → Call relevant tool to GET profile data
-- "What are THIS project's settings/features?" → Call projects_retrieve with project_id to GET project data
+- "What are THIS project's settings/features?" → Call entity_retrieve(entity_type="projects", entity_id=project_id) to GET project data
 - "Show THIS cycle's metrics" → Call fetch_cycle_details with cycle_id to GET cycle data
 
 **ENTITY DISAMBIGUATION:**
 
 When query mentions entity NAMES without IDs and the UUID is NOT in context:
-1. Call appropriate search_*_by_name tool first (e.g., search_user_by_name, search_project_by_name)
-2. If search returns multiple matches: call ask_for_clarification with:
-   - `reason`: "Multiple matches found for [entity_type]"
-   - `questions`: ["Which [entity] did you mean?"]
-   - `disambiguation_options`: List the candidate entities from the search results with key details (name, id, email for users; name, id, identifier for projects; etc.)
-   - **CRITICAL**: You MUST include `disambiguation_options` from the search results — do NOT omit them. If you omit options, the system auto-populates ALL entities which may include irrelevant ones.
+1. Call entity_search with the appropriate entity_type and search_mode (e.g., entity_search(entity_type="users", search_mode="by_name", name="..."), entity_search(entity_type="projects", search_mode="by_name", name="..."))
+2. If search returns multiple matches: call ask_for_clarification with the disambiguation options
 3. If search returns no matches (e.g., "No user found", "Not found", "No project found", etc.):
    - **YOU MUST call ask_for_clarification** - DO NOT just report the error to the user
    - Use reason: "No [entity_type] found matching '[search_term]'"
@@ -501,9 +559,9 @@ When query mentions entity NAMES without IDs and the UUID is NOT in context:
 When IDs already provided: Skip entity search and use IDs directly AS PARAMETERS.
 
 Examples:
- - Query "List work items assigned to Robert" + no user_id in context → search_user_by_name("Robert") → if multiple matches → ask_for_clarification
+ - Query "List work items assigned to Robert" + no user_id in context → entity_search(entity_type="users", search_mode="by_name", name="Robert") → if multiple matches → ask_for_clarification
  - Query "List my work items" + user_id in context → use user_id as FILTER in tool call (no search needed)
- - Query "is time tracking enabled in this project?" + project_id in context → call projects_retrieve(project_id) to GET project features
+ - Query "is time tracking enabled in this project?" + project_id in context → call entity_retrieve(entity_type="projects", entity_id=project_id) to GET project features
  - Query "show me the Mobile project" + no project_id in context → search_project_by_name("Mobile") → use resolved project_id
 
 **Default Incomplete Work Scope:**
@@ -530,7 +588,7 @@ For queries about pending/open work (unless explicitly asking for completed item
 **Project Features:**
 - Cycles, modules, pages, workitem types, views, intake, and time tracking are project-level features that are enabled/disabled on a per-project basis.
 - You can use:
-   - `projects_retrieve` tool to get details about whether the project features are enabled or disabled.
+   - `entity_retrieve` tool with `entity_type="projects"` and `entity_id=<project_id>` to get details about whether the project features are enabled or disabled.
 
 **Important:**
 Only use the tools that were provided in the given tools list, in your recommended execution order.

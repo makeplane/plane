@@ -57,49 +57,6 @@ TYPE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
         ],
         returns_entity_type="type",
     ),
-    "list": ToolMetadata(
-        name="types_list",
-        description="List all work item types",
-        sdk_method="list_issue_types",
-        parameters=[
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
-    "retrieve": ToolMetadata(
-        name="types_retrieve",
-        description="Get a single type by ID",
-        sdk_method="retrieve_issue_type",
-        parameters=[
-            ToolParameter(name="type_id", type="str", required=True, description="Type ID (required)"),
-            ToolParameter(
-                name="workspace_slug",
-                type="Optional[str]",
-                required=False,
-                description="Workspace slug (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-            ToolParameter(
-                name="project_id",
-                type="Optional[str]",
-                required=False,
-                description="Project ID (auto-detected from context)",
-                auto_fill_from_context=True,
-            ),
-        ],
-    ),
     "update": ToolMetadata(
         name="types_update",
         description="Update work item type details",

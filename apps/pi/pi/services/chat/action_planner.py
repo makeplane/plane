@@ -358,6 +358,9 @@ async def execute_tools_for_build_mode(
             yield f"__FINAL_RESPONSE__{msg}"
             return
 
+        # Deduplicate tools before logging or persisting orchestration context
+        combined_tools = list({tool.name: tool for tool in combined_tools}.values())
+
         # Build the planning prompt via shared helper, pass previously derived clar_ctx
         method_prompt = build_method_prompt(
             combined_tool_query,
@@ -422,10 +425,7 @@ async def execute_tools_for_build_mode(
 
         # Re-bind LLM with the full toolset (action methods + retrieval)
         # Some LangChain/OpenAI versions default to no tool calls if not specified.
-        # deduplicate tools
-        combined_tools = list({tool.name: tool for tool in combined_tools}.values())
-
-        # Tool-level cache_control only works with native ChatAnthropic
+        # Enable prompt caching for Claude models when binding tools
         bind_kwargs = {}
         if should_cache_tool_bindings(chatbot_instance.switch_llm):
             bind_kwargs = get_claude_bind_kwargs_with_cache()
@@ -1233,6 +1233,19 @@ async def execute_tools_for_build_mode(
             if not content:
                 # Fallback if no content provided
                 content = "I wasn't able to find a suitable response. Could you please rephrase your request?"
+                # Emit final_response reasoning stage to close the frontend reasoning panel
+                try:
+                    stage = "final_response"
+                    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+                    if reasoning_container is not None:
+                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                    yield reasoning_chunk_dict
+                except Exception as e:
+                    log.warning(f"ChatID: {chat_id} - Failed to emit final_response reasoning stage in fallback: {e}")
+
+                # Yield the fallback content so the user sees it
+                yield content
+
                 # Emit final_response reasoning stage to close the frontend reasoning panel
                 try:
                     stage = "final_response"

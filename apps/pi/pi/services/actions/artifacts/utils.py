@@ -31,7 +31,6 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_by_id
 from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_name
 from pi.app.api.v1.helpers.plane_sql_queries import get_workitem_details_for_artifact
-from pi.config import settings
 from pi.services.retrievers.pg_store.action_artifact import batch_get_latest_artifact_versions
 from pi.services.retrievers.pg_store.action_artifact import get_latest_artifact_data_for_display
 
@@ -378,7 +377,7 @@ async def merge_llm_updates_with_existing_data(entity_type: str, entity_id: str,
         return llm_updates
 
 
-def construct_entity_url(entity_type: str, entity_id: str, entity_details: dict) -> Optional[str]:
+def construct_entity_url(entity_type: str, entity_id: str, entity_details: dict, workspace_slug: Optional[str] = None) -> Optional[str]:
     """
     Unified function to construct entity URLs based on entity type and details.
 
@@ -386,53 +385,42 @@ def construct_entity_url(entity_type: str, entity_id: str, entity_details: dict)
         entity_type: Type of entity (workitem, project, cycle, module, label, state, comment)
         entity_id: ID of the entity
         entity_details: Dictionary containing entity details including project_identifier
+        workspace_slug: Optional workspace slug for URL construction
 
     Returns:
-        Constructed URL string or None if unable to construct
+        Constructed relative URL path or None if unable to construct
     """
     try:
-        if entity_type == "workitem":
-            issue_identifier = entity_details.get("identifier")
-            project_identifier = entity_details.get("project_identifier")
-            if project_identifier and issue_identifier:
-                return f"/projects/{project_identifier}/issues/{issue_identifier}"
+        from pi.services.chat.helpers.url_builder import build_entity_path
 
-        elif entity_type == "project":
-            entity_identifier = entity_details.get("identifier")
-            if entity_identifier:
-                return f"/projects/{entity_identifier}"
+        # If no workspace_slug provided, fall back to old-style relative paths
+        if not workspace_slug:
+            # Legacy fallback for callers that don't pass workspace_slug
+            if entity_type == "workitem":
+                issue_identifier = entity_details.get("identifier")
+                project_identifier = entity_details.get("project_identifier")
+                if project_identifier and issue_identifier:
+                    return f"/projects/{project_identifier}/issues/{issue_identifier}"
+            elif entity_type == "project":
+                entity_identifier = entity_details.get("identifier")
+                if entity_identifier:
+                    return f"/projects/{entity_identifier}"
+            elif entity_type == "comment":
+                project_identifier = entity_details.get("project_identifier")
+                workitem_identifier = entity_details.get("workitem_identifier")
+                if project_identifier and workitem_identifier:
+                    return f"/projects/{project_identifier}/issues/{workitem_identifier}"
+            return None
 
-        elif entity_type == "cycle":
-            project_identifier = entity_details.get("project_identifier")
-            if project_identifier:
-                return f"/projects/{project_identifier}/cycles/{entity_id}"
-
-        elif entity_type == "module":
-            project_identifier = entity_details.get("project_identifier")
-            if project_identifier:
-                return f"/projects/{project_identifier}/modules/{entity_id}"
-
-        elif entity_type == "label":
-            project_identifier = entity_details.get("project_identifier")
-            if project_identifier:
-                return f"/projects/{project_identifier}/settings/labels"
-
-        elif entity_type == "state":
-            project_identifier = entity_details.get("project_identifier")
-            if project_identifier:
-                return f"/projects/{project_identifier}/settings/states"
-
-        elif entity_type == "intake":
-            project_id = entity_details.get("project_id") or entity_details.get("project")
-            if project_id:
-                return f"/projects/{project_id}/intake/?currentTab=open&inboxIssueId={entity_id}"
-
-        elif entity_type == "comment":
-            project_identifier = entity_details.get("project_identifier")
-            workitem_identifier = entity_details.get("workitem_identifier")
-            if project_identifier and workitem_identifier:
-                return f"/projects/{project_identifier}/issues/{workitem_identifier}"
-
+        project_id = entity_details.get("project_id") or entity_details.get("project")
+        return build_entity_path(
+            entity_type=entity_type,
+            workspace_slug=workspace_slug,
+            entity_id=entity_id,
+            project_id=str(project_id) if project_id else None,
+            identifier=entity_details.get("identifier") or entity_details.get("issue_identifier") or entity_details.get("workitem_identifier"),
+            inbox_issue_id=str(entity_id) if entity_type == "intake" else None,
+        )
     except Exception as e:
         log.warning(f"Error constructing URL for {entity_type} {entity_id}: {e}")
 
@@ -1489,7 +1477,9 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
 
     # Always return absolute entity_url (FE expects domain included)
     if isinstance(entity_url, str) and entity_url.startswith("/"):
-        base = str(getattr(settings.plane_api, "FRONTEND_URL", "") or "").rstrip("/")
+        from pi.services.chat.helpers.url_builder import get_frontend_url
+
+        base = get_frontend_url()
         if base:
             entity_url = f"{base}{entity_url}"
 
@@ -1629,7 +1619,9 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
 
             # Make entity_url absolute
             if isinstance(entity_url, str) and entity_url.startswith("/"):
-                base = str(getattr(settings.plane_api, "FRONTEND_URL", "") or "").rstrip("/")
+                from pi.services.chat.helpers.url_builder import get_frontend_url
+
+                base = get_frontend_url()
                 if base:
                     entity_url = f"{base}{entity_url}"
 

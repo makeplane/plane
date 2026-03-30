@@ -15,8 +15,6 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 
-from pi.config import settings
-
 
 async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], entity_type_hint: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
@@ -32,13 +30,20 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
         # Fast-path inference for entities where URL format is fully deterministic from args/context.
         # This is especially important for "relationship" tools (e.g. add work-items to cycle)
         # where the API response does not include the cycle/module payload.
-        base = str(settings.plane_api.FRONTEND_URL or "").rstrip("/")
+        from pi.services.chat.helpers.url_builder import build_entity_url
+        from pi.services.chat.helpers.url_builder import get_frontend_url
+
         project_id = args.get("project_id") or context.get("project_id")
 
         cycle_id = args.get("cycle_id")
         if workspace_slug and project_id and cycle_id:
             return {
-                "entity_url": f"{base}/{workspace_slug}/projects/{project_id}/cycles/{cycle_id}/",
+                "entity_url": build_entity_url(
+                    "cycle",
+                    workspace_slug,
+                    entity_id=str(cycle_id),
+                    project_id=str(project_id),
+                ),
                 "entity_name": None,
                 "entity_type": "cycle" if hint in {"", "cycle"} else hint,
                 "entity_id": str(cycle_id),
@@ -47,7 +52,12 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
         module_id = args.get("module_id")
         if workspace_slug and project_id and module_id:
             return {
-                "entity_url": f"{base}/{workspace_slug}/projects/{project_id}/modules/{module_id}/",
+                "entity_url": build_entity_url(
+                    "module",
+                    workspace_slug,
+                    entity_id=str(module_id),
+                    project_id=str(project_id),
+                ),
                 "entity_name": None,
                 "entity_type": "module" if hint in {"", "module"} else hint,
                 "entity_id": str(module_id),
@@ -56,7 +66,7 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
         # Project URL: /{workspace}/projects/{project}/overview/
         if workspace_slug and project_id and hint == "project":
             return {
-                "entity_url": f"{base}/{workspace_slug}/projects/{project_id}/overview/",
+                "entity_url": build_entity_url("project", workspace_slug, entity_id=str(project_id)),
                 "entity_name": None,
                 "entity_type": "project",
                 "entity_id": str(project_id),
@@ -66,7 +76,7 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
         # For intake actions (especially delete), link to the intake list page
         if workspace_slug and project_id and hint == "intake":
             return {
-                "entity_url": f"{base}/{workspace_slug}/projects/{project_id}/intake/",
+                "entity_url": build_entity_url("intake", workspace_slug, project_id=str(project_id)),
                 "entity_name": "Intake",
                 "entity_type": "intake",
                 "entity_id": str(project_id),  # No specific entity after delete
@@ -75,7 +85,7 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
         customer_id = args.get("customer_id")
         if workspace_slug and customer_id and hint == "customer":
             return {
-                "entity_url": f"{base}/{workspace_slug}/customers/{customer_id}/",
+                "entity_url": build_entity_url("customer", workspace_slug, customer_id=str(customer_id)),
                 "entity_name": None,
                 "entity_type": "customer",
                 "entity_id": str(customer_id),
@@ -86,7 +96,12 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
         if workspace_slug and issue_id:
             from pi.agents.sql_agent.helpers import construct_action_entity_url
 
-            url_info = await construct_action_entity_url({"id": str(issue_id)}, "workitem", str(workspace_slug), settings.plane_api.FRONTEND_URL)
+            url_info = await construct_action_entity_url(
+                {"id": str(issue_id)},
+                "workitem",
+                str(workspace_slug),
+                get_frontend_url(),
+            )
             if not url_info or not isinstance(url_info, dict):
                 return None
 

@@ -365,10 +365,11 @@ class PlaneSDKAdapter:
             raise
 
         except Exception as e:
-            # Check if this is a Pydantic validation error due to sparse fields
+            # Check if this is a Pydantic validation error due to sparse fields or expand
             error_msg = str(e)
-            if "validation error" in error_msg.lower() and fields_param:
-                log.warning(f"Pydantic validation failed when using fields parameter '{fields_param}', attempting raw HTTP fallback: {e}")
+            expand_param = kwargs.get("expand")
+            if "validation error" in error_msg.lower() and (fields_param or expand_param):
+                log.debug(f"Pydantic validation failed when using fields='{fields_param}' or expand='{expand_param}', using raw HTTP fallback")
 
                 # Fall back to raw HTTP request to bypass SDK's Pydantic validation
                 try:
@@ -378,6 +379,8 @@ class PlaneSDKAdapter:
                     query_params = {}
                     if fields_param:
                         query_params["fields"] = fields_param
+                    if expand_param:
+                        query_params["expand"] = expand_param
                     if kwargs.get("per_page"):
                         query_params["per_page"] = kwargs["per_page"]
                     if kwargs.get("page"):
@@ -427,6 +430,60 @@ class PlaneSDKAdapter:
                 log.error(f"Failed to list work items: {str(e)}")
                 raise
 
+    def list_epics(self, workspace_slug: str, project_id: str, **kwargs) -> Dict[str, Any]:
+        """List epics; normalize pagination to existing shape."""
+        # Note: Mimics list_work_items structure
+        try:
+            params = None
+            if kwargs:
+                # Use PaginatedQueryParams for common pagination params
+                from plane.models.query_params import PaginatedQueryParams  # type: ignore[attr-defined]
+
+                per_page = kwargs.get("per_page")
+                cursor = kwargs.get("cursor")
+                # expand/fields might be supported depending on SDK version, but basic listing uses PaginatedQueryParams
+                # The user provided code snippet suggests it might use PaginatedQueryParams which has expand/fields in BaseQueryParams
+
+                params = PaginatedQueryParams(
+                    per_page=per_page,
+                    cursor=cursor,
+                    # Add other params if supported by the SDK model
+                )
+
+                # Hack: if the SDK's PaginatedQueryParams supports expand/fields/order_by via inheritance (BaseQueryParams)
+                # we should set them. The user snippet shows PaginatedQueryParams inherits BaseQueryParams.
+                if kwargs.get("expand"):
+                    params.expand = kwargs.get("expand")
+                if kwargs.get("fields"):
+                    params.fields = kwargs.get("fields")
+                if kwargs.get("order_by"):
+                    params.order_by = kwargs.get("order_by")
+
+            # Call SDK method
+            # Assuming self.client.epics.list exists as per user request
+            response = self.client.epics.list(workspace_slug=workspace_slug, project_id=project_id, params=params)
+
+            # Successfully got response, now convert to dict
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
+                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+            }
+
+        except HttpError as e:
+            log.error(f"Failed to list epics (HTTP error): {e} ({getattr(e, "status_code", None)})")
+            raise
+
+        except Exception as e:
+            log.error(f"Failed to list epics: {str(e)}")
+            raise
+
     def delete_work_item(self, workspace_slug: str, project_id: str, issue_id: str) -> Dict[str, Any]:
         try:
             self.client.work_items.delete(workspace_slug=workspace_slug, project_id=project_id, work_item_id=issue_id)
@@ -461,47 +518,59 @@ class PlaneSDKAdapter:
             log.error(f"Failed to create work item relation: {str(e)}")
             raise
 
-    def search_work_items(self, workspace_slug: str, query: str, **kwargs) -> Dict[str, Any]:
-        """Search work items across workspace using v0.2 client.
+    def advanced_search_work_items(
+        self,
+        workspace_slug: str,
+        filters: Optional[Dict[str, Any]] = None,
+        limit: int = 25,
+        query: Optional[str] = None,
+        **kwargs,
+    ) -> Dict[str, Any]:
+        """Search and filter work items using advanced search.
+
+        Supports free-text search by name/description/identifier AND
+        AND/OR/NOT logic for complex filtering by metadata fields like
+        priority, state_group, assignee_id, project_id, cycle_id, module_id, label_id.
 
         Args:
             workspace_slug: Workspace slug
-            query: Search query string
-            **kwargs: Optional parameters like expand, fields, etc.
+            filters: Filter dictionary supporting:
+                - Simple filters: {"priority": "high", "state_group": "started"}
+                - Multiple values: {"priority__in": ["high", "urgent"]}
+                - AND logic: {"and": [{"priority": "high"}, {"state_group": "started"}]}
+                - OR logic: {"or": [{"priority": "high"}, {"priority": "urgent"}]}
+                - NOT logic: {"not": {"state_group": "completed"}}
+            limit: Maximum number of results (default: 25)
+            query: Free-text search string to match name, description, or identifier
+            **kwargs: Additional parameters
 
         Returns:
-            Dict with search results
+            Dict with filtered work items
         """
         try:
-            params = None
-            if kwargs:
-                from plane.models.query_params import RetrieveQueryParams  # type: ignore[attr-defined]
+            from plane.models.work_items import AdvancedSearchWorkItem  # type: ignore[attr-defined]
 
-                expand = kwargs.get("expand")
-                fields = kwargs.get("fields")
-                params = RetrieveQueryParams(expand=expand, fields=fields)
+            params: Dict[str, Any] = {"filters": filters or {}, "limit": limit}
+            if query:
+                params["query"] = query
+            search_params = AdvancedSearchWorkItem(**params)
+            results = self.client.work_items.advanced_search(workspace_slug, search_params)
 
-            response = self.client.work_items.search(
-                workspace_slug=workspace_slug,
-                query=query,
-                params=params,
-            )
-
-            # Extract results from search response
-            results = self._model_to_dict(getattr(response, "results", []))
-            if not isinstance(results, list):
-                results = [results] if results else []
+            # Convert results to list of dicts
+            results_list = self._safe_model_to_dict(results)
+            if not isinstance(results_list, list):
+                results_list = [results_list] if results_list else []
 
             return {
-                "results": results,
-                "count": len(results),
-                "total_results": getattr(response, "total_count", len(results)),
+                "results": results_list,
+                "count": len(results_list),
+                "total_results": len(results_list),
             }
         except HttpError as e:
-            log.error(f"Failed to search work items: {e} ({getattr(e, 'status_code', None)})")
+            log.error(f"Failed to advanced search work items: {e} ({getattr(e, "status_code", None)})")
             raise
         except Exception as e:
-            log.error(f"Failed to search work items: {str(e)}")
+            log.error(f"Failed to advanced search work items: {str(e)}")
             raise
 
     # ============================================================================
@@ -2463,11 +2532,18 @@ class PlaneSDKAdapter:
             log.error(f"Failed to create issue worklog: {str(e)}")
             raise
 
-    def list_issue_worklogs(self, workspace_slug: str, project_id: str, issue_id: Optional[str] = None) -> Dict[str, Any]:
+    def list_issue_worklogs(
+        self,
+        workspace_slug: str,
+        project_id: str,
+        issue_id: Optional[str] = None,
+        work_item_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """List issue worklogs (v0.2)."""
         try:
-            if issue_id:
-                response = self.client.work_items.work_logs.list(workspace_slug, project_id, work_item_id=issue_id)
+            effective_issue_id = issue_id or work_item_id
+            if effective_issue_id:
+                response = self.client.work_items.work_logs.list(workspace_slug, project_id, work_item_id=effective_issue_id)
             else:
                 # Best-effort: try project-level worklogs list
                 response = self.client.work_items.work_logs.list(workspace_slug, project_id, work_item_id="")
@@ -2500,10 +2576,18 @@ class PlaneSDKAdapter:
             raise
 
     def get_project_worklog_summary(self, workspace_slug: str, project_id: str) -> Dict[str, Any]:
-        """Get project worklog summary (v0.2 - not implemented yet; placeholder)."""
+        """Get project worklog summary (v0.2)."""
         try:
-            # This method may not exist in v0.2 SDK; mark as NotImplemented for now
-            raise NotImplementedError("get_project_worklog_summary not yet available in v0.2")
+            # Prefer SDK method if available; fallback to raw _get path.
+            if hasattr(self.client.projects, "get_worklog_summary"):
+                response = self.client.projects.get_worklog_summary(workspace_slug=workspace_slug, project_id=project_id)
+            else:
+                response = self.client.projects._get(f"{workspace_slug}/projects/{project_id}/total-worklogs")
+
+            result = self._model_to_dict(response)
+            if isinstance(result, list):
+                return {"results": result, "count": len(result)}
+            return result
         except Exception as e:
             log.error(f"Failed to get project worklog summary: {str(e)}")
             raise

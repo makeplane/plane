@@ -761,9 +761,11 @@ class PlaneChatBot(ChatKit):
                     final_response = "".join(string_chunks)
 
                 # Ensure we always have content to persist (prevent placeholder on refresh)
-                # Skip if clarification was already persisted as the assistant message
-                if (not final_response or not final_response.strip()) and not clarification_saved_multi:
-                    fallback_message = "I wasn't able to generate a complete response. But, if you are satisfied with the action plan, click `Confirm`, else please try again."  # noqa: E501
+                if not final_response or not final_response.strip():
+                    if mode == "build":
+                        fallback_message = "I wasn't able to generate a complete response. But, if you are satisfied with the action plan, click `Confirm`, else please try again."  # noqa: E501
+                    else:
+                        fallback_message = "I wasn't able to generate a complete response. Please try again."  # noqa: E501
                     final_response = fallback_message
                     log.warning(
                         f"ChatID: {chat_id} - Empty final_response detected. "
