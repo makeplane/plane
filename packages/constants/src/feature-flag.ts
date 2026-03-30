@@ -180,8 +180,8 @@ export enum E_FEATURE_FLAGS {
   RELEASES = "RELEASES",
   // pql
   PQL = "PQL",
-  // Issue Subscribers
-  MANAGE_ISSUE_SUBSCRIBERS = "MANAGE_ISSUE_SUBSCRIBERS",
+  // Work Item Subscribers
+  MANAGE_WORK_ITEM_SUBSCRIBERS = "MANAGE_WORK_ITEM_SUBSCRIBERS",
 }
 
 /**

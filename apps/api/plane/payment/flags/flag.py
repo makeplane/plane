@@ -138,8 +138,8 @@ class FeatureFlag(Enum):
     WORKITEM_TYPE_HIERARCHY = "WORKITEM_TYPE_HIERARCHY"
     # Custom relations
     CUSTOM_RELATIONS = "CUSTOM_RELATIONS"
-    # Manage Issue Subscribers
-    MANAGE_ISSUE_SUBSCRIBERS = "MANAGE_ISSUE_SUBSCRIBERS"
+    # Manage Work Item Subscribers
+    MANAGE_WORK_ITEM_SUBSCRIBERS = "MANAGE_WORK_ITEM_SUBSCRIBERS"
     # Timeline dependency
     TIMELINE_DEPENDENCY = "TIMELINE_DEPENDENCY"
     # Workflow scripts (pre/post transition hooks)

@@ -83,7 +83,7 @@ class IssueSubscriberViewSet(BaseViewSet):
         subscribed_users = set(list(subscribed_project_members) + list(subscribed_teamspace_members))
         return Response(subscribed_users, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.MANAGE_ISSUE_SUBSCRIBERS)
+    @check_feature_flag(FeatureFlag.MANAGE_WORK_ITEM_SUBSCRIBERS)
     def update(self, request, slug, project_id, issue_id):
         subscriber_ids = request.data.get("subscriber_ids", [])
 

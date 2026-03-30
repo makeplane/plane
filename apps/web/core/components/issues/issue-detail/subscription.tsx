@@ -46,7 +46,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   // permissions
-  const flagEnabled = useFlag(workspaceSlug, "MANAGE_ISSUE_SUBSCRIBERS");
+  const flagEnabled = useFlag(workspaceSlug, "MANAGE_WORK_ITEM_SUBSCRIBERS");
   const hasPermission = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
