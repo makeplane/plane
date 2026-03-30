@@ -1,15 +1,18 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { Loader } from "@plane/ui";
+import { Loader, Spinner } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { useHoIssues } from "@/hooks/store/use-ho-issues";
 import { HoDatasheetToolbar } from "./ho-datasheet-toolbar";
 import { HoDatasheetTable } from "./ho-datasheet-table";
 
 export const HoDatasheetView = observer(function HoDatasheetView() {
+  const { t } = useTranslation();
   const store = useHoIssues();
 
   useEffect(() => {
     void store.fetchIssues(1);
+    void store.fetchAccessibleWorkspaces();
   }, [store]);
 
   if (store.isLoading && store.issues.length === 0) {
@@ -26,11 +29,16 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="relative flex h-full flex-col">
+      {store.isFetchingIssues && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-1/50">
+          <Spinner />
+        </div>
+      )}
       <HoDatasheetToolbar />
 
       {store.issues.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-sm text-placeholder">No work items found.</div>
+        <div className="flex h-32 items-center justify-center text-sm text-placeholder">{t("ho.no_work_items")}</div>
       ) : (
         <>
           <HoDatasheetTable
@@ -48,7 +56,9 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
                 onClick={() => void store.fetchNextPage()}
                 className="rounded border border-subtle px-4 py-1.5 text-sm text-secondary hover:text-primary disabled:opacity-50"
               >
-                {store.isLoading ? "Loading…" : `Load more (${store.issues.length} / ${store.totalCount})`}
+                {store.isLoading
+                  ? t("ho.loading")
+                  : t("ho.load_more", { loaded: store.issues.length, total: store.totalCount })}
               </button>
             </div>
           )}

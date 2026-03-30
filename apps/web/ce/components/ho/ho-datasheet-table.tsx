@@ -12,7 +12,7 @@ type Props = {
 
 export function HoDatasheetTable({ issues, displayProperties, orderBy, onOrderBy }: Props) {
   return (
-    <div className="overflow-x-auto horizontal-scrollbar scrollbar-lg">
+    <div className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-170px)]">
       <table className="w-full border-collapse text-left">
         <HoDatasheetHeader displayProperties={displayProperties} orderBy={orderBy} onOrderBy={onOrderBy} />
         <tbody>
@@ -23,6 +23,7 @@ export function HoDatasheetTable({ issues, displayProperties, orderBy, onOrderBy
             return (
               <HoDatasheetRow
                 key={issue.id}
+                rowIndex={idx}
                 issue={issue}
                 displayProperties={displayProperties}
                 isNewDeptGroup={isNewDeptGroup}

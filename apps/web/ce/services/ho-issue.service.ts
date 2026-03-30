@@ -49,6 +49,20 @@ export type THoCategorySummary = {
   work_item_count: number;
 };
 
+export type THoWorkspaceProject = {
+  id: string;
+  name: string;
+  identifier: string;
+};
+
+export type THoAccessibleWorkspace = {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  projects: THoWorkspaceProject[];
+};
+
 export class HoIssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -67,6 +81,14 @@ export class HoIssueService extends APIService {
     const query = new URLSearchParams(params).toString();
     return this.get(`/api/ho/category-summary/${query ? `?${query}` : ""}`)
       .then((res: { data: THoCategorySummary[] }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listAccessibleWorkspaces(): Promise<THoAccessibleWorkspace[]> {
+    return this.get("/api/ho/workspaces/")
+      .then((res: { data: THoAccessibleWorkspace[] }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });
