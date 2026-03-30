@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from plane.app.serializers.ho import HoIssueSerializer
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Department, Issue, Project, ProjectMember, StaffProfile, Workspace
+from plane.db.models import Department, Issue, Project, ProjectMember, StaffProfile, Workspace, WorkspaceMember
 from plane.license.models import Instance, InstanceAdmin
 
 
@@ -41,14 +41,23 @@ def _get_all_descendant_dept_ids(dept_id):
 def get_accessible_workspace_ids(user):
     """Return workspace IDs the user can access in HO context.
 
-    Instance admins see all workspaces.
-    Department managers see only workspaces linked to their managed departments.
-    Returns empty list if user has neither role.
+    - Instance admins see all workspaces.
+    - Department managers see only workspaces linked to their managed departments (and descendants).
+    - Workspace members see the workspaces they belong to.
     """
     if _is_instance_admin(user):
         return list(Workspace.objects.values_list("id", flat=True))
 
-    # Collect all department IDs the user manages
+    accessible_ids = set()
+
+    # 1. Add workspaces where user is a member
+    member_ws_ids = WorkspaceMember.objects.filter(
+        member=user,
+        deleted_at__isnull=True,
+    ).values_list("workspace_id", flat=True)
+    accessible_ids.update(member_ws_ids)
+
+    # 2. Add workspaces linked to managed departments
     managed_staff = StaffProfile.objects.filter(
         user=user,
         is_department_manager=True,
@@ -60,14 +69,15 @@ def get_accessible_workspace_ids(user):
         if dept_id:
             dept_ids.extend(_get_all_descendant_dept_ids(dept_id))
 
-    if not dept_ids:
-        return []
+    if dept_ids:
+        dept_ws_ids = Department.objects.filter(
+            id__in=dept_ids,
+            linked_workspace__isnull=False,
+            deleted_at__isnull=True
+        ).values_list("linked_workspace_id", flat=True)
+        accessible_ids.update(dept_ws_ids)
 
-    return list(
-        Department.objects.filter(id__in=dept_ids, linked_workspace__isnull=False, deleted_at__isnull=True).values_list(
-            "linked_workspace_id", flat=True
-        )
-    )
+    return list(accessible_ids)
 
 
 # ---------------------------------------------------------------------------
