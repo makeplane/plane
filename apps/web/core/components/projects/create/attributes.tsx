@@ -27,6 +27,7 @@ import { MembersDropdown } from "@/components/projects/dropdowns/members";
 import { StateDropdown } from "@/components/projects/dropdowns/state";
 import { ProjectNetworkIcon } from "@/components/projects/common/project-network-icon";
 // plane web imports
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import type { TProject } from "@/types/projects";
 
@@ -46,6 +47,7 @@ function ProjectAttributes(props: Props) {
   const { control, setValue } = useFormContext<TProject>();
   // store
   const { defaultState } = useWorkspaceProjectStates();
+  const isLabelsEnabled = useFlag(workspaceSlug, "WORKSPACE_PROJECT_LABELS");
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -213,7 +215,7 @@ function ProjectAttributes(props: Props) {
           )}
         />
       )}
-      {isProjectGroupingEnabled && (
+      {isProjectGroupingEnabled && isLabelsEnabled && (
         <Controller
           control={control}
           name="label_ids"

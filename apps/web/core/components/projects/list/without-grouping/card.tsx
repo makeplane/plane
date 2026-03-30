@@ -45,6 +45,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import type { TProject } from "@/types/projects";
 
@@ -68,6 +69,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
   const { getLabelById } = useWorkspaceProjectLabels();
+  const isLabelsEnabled = useFlag(workspaceSlug?.toString(), "WORKSPACE_PROJECT_LABELS");
   // hooks
   const { isMobile } = usePlatformOS();
   // derived values
@@ -320,7 +322,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   <span className="text-13 italic text-placeholder">No Member Yet</span>
                 )}
               </Tooltip>
-              {projectLabelIds && projectLabelIds.length > 0 && (
+              {isLabelsEnabled && projectLabelIds && projectLabelIds.length > 0 && (
                 <div className="flex items-center gap-1 flex-wrap">
                   {projectLabelIds.map((labelId) => {
                     const label = getLabelById(labelId);

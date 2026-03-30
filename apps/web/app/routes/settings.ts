@@ -85,10 +85,10 @@ export const settingsRoutes: RouteConfigEntry[] = [
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/plane-intelligence/page.tsx"
       ),
 
-      // Project States
+      // Project Configuration
       route(
-        ":workspaceSlug/settings/project-states",
-        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-states/page.tsx"
+        ":workspaceSlug/settings/project-configuration",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-configuration/page.tsx"
       ),
 
       // Connections
