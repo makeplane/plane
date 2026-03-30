@@ -94,7 +94,7 @@ from .work_item_search import (
 
 from .milestone import MilestoneSerializer, MilestoneWorkItemSerializer
 
-from .epic import EpicSerializer
+from .epic import EpicSerializer, EpicCreateSerializer
 
 from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
 

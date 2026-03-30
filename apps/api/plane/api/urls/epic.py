@@ -16,6 +16,7 @@ from django.urls import path
 from plane.api.views import (
     EpicDetailAPIEndpoint,
     EpicListCreateAPIEndpoint,
+    EpicIssuesAPIEndpoint,
 )
 
 urlpatterns = [
@@ -29,5 +30,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:pk>/",
         EpicDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="epic-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/issues/",
+        EpicIssuesAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="epic-issues",
     ),
 ]

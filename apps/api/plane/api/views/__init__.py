@@ -37,7 +37,7 @@ from .cycle import (
     CycleArchiveUnarchiveAPIEndpoint,
 )
 
-from .epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint
+from .epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint, EpicIssuesAPIEndpoint
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,
