@@ -12,15 +12,21 @@ type ColMeta = {
 };
 
 const TH =
-  "border-b border-subtle px-4 py-3 text-left text-12 font-medium text-secondary uppercase tracking-wide whitespace-nowrap";
+  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-3 text-left text-12 font-semibold text-secondary uppercase tracking-wider whitespace-nowrap bg-surface-1";
 
 type Props = {
   displayProperties: THoDisplayProperties;
   orderBy: string;
   onOrderBy: (key: string) => void;
+  isScrolled?: boolean;
 };
 
-export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayProperties, orderBy, onOrderBy }: Props) {
+export const HoDatasheetHeader = observer(function HoDatasheetHeader({
+  displayProperties,
+  orderBy,
+  onOrderBy,
+  isScrolled = false,
+}: Props) {
   const { t } = useTranslation();
 
   const COL_META: Record<string, ColMeta> = {
@@ -71,8 +77,8 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
     const isFirst = key === firstVisibleKey;
 
     const stickyClass = isFirst
-      ? "sticky left-0 z-30 bg-surface-1 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]"
-      : "bg-surface-1";
+      ? cn("sticky left-0 z-30 transition-shadow", isScrolled ? "shadow-[8px_-22px_22px_10px_rgba(0,0,0,0.05)]" : "")
+      : "z-20";
 
     if (!isSortable) {
       return (
@@ -87,15 +93,17 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
       orderBy === meta.asc ? ArrowUpNarrowWide : orderBy === meta.desc ? ArrowDownWideNarrow : ChevronsUpDown;
 
     return (
-      <th key={key} className={cn(TH, stickyClass, "cursor-pointer")}>
+      <th key={key} className={cn(TH, stickyClass, "cursor-pointer p-0")}>
         <CustomMenu
           label={
-            <span className={`flex items-center gap-1 ${isActive ? "text-accent-primary" : ""}`}>
+            <span
+              className={cn("flex h-full w-full items-center gap-1 px-4 py-3", isActive ? "text-accent-primary" : "")}
+            >
               {meta.label}
               <SortIcon className="h-3 w-3" />
             </span>
           }
-          buttonClassName="text-12 font-medium uppercase tracking-wide text-secondary"
+          buttonClassName="text-12 font-semibold uppercase tracking-wider text-secondary h-full w-full"
           placement="bottom-start"
           closeOnSelect
         >
@@ -122,8 +130,8 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
   };
 
   return (
-    <thead className="sticky top-0 z-20">
-      <tr>{visibleKeys.map((key) => renderTh(key))}</tr>
+    <thead className="sticky top-0 z-40 bg-surface-1">
+      <tr className="h-11">{visibleKeys.map((key) => renderTh(key))}</tr>
     </thead>
   );
 });

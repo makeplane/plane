@@ -19,11 +19,20 @@ type Props = {
   displayProperties: THoDisplayProperties;
   isNewDeptGroup: boolean;
   isNewProjectGroup: boolean;
+  isScrolled?: boolean;
 };
 
-const CELL = "border-b-[0.5px] border-subtle px-4 py-3 text-13 text-primary align-top";
+const CELL =
+  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-2.5 text-13 text-primary align-middle truncate h-11 transition-[background-color]";
 
-export function HoDatasheetRow({ rowIndex, issue, displayProperties, isNewDeptGroup, isNewProjectGroup }: Props) {
+export function HoDatasheetRow({
+  rowIndex,
+  issue,
+  displayProperties,
+  isNewDeptGroup,
+  isNewProjectGroup,
+  isScrolled = false,
+}: Props) {
   const rowBorder = isNewDeptGroup
     ? "border-t-[1.5px] border-subtle"
     : isNewProjectGroup
@@ -73,32 +82,31 @@ export function HoDatasheetRow({ rowIndex, issue, displayProperties, isNewDeptGr
           minWidth,
           maxWidth,
           textAlign,
-          isFirst && "sticky left-0 z-[5] shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]",
-          isFirst && frozenBg
+          isFirst
+            ? cn(
+                "sticky left-0 z-10 transition-shadow",
+                isScrolled ? "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]" : ""
+              )
+            : "z-0",
+          isFirst && frozenBg,
+          isFirst && "group-hover:bg-layer-2"
         )}
       >
-        {content}
+        <div className="truncate">{content}</div>
       </td>
     );
   };
 
   return (
     <tr
-      className={cn(
-        rowBorder,
-        "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group",
-        // Force zebra row backgrounds even on hover for the frozen column if needed,
-        // but usually hover:bg-layer-2/50 on tr works if td is bg-inherit.
-        // Since we used explicit frozenBg, we need to handle hover for the frozen cell too.
-        "hover:[&>td.sticky]:bg-layer-2"
-      )}
+      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group h-11")}
     >
       {displayProperties.department_name && renderTd("department_name", issue.department_name || "—", "min-w-[140px]")}
       {displayProperties.project_name && renderTd("project_name", issue.project_name || "—", "min-w-[140px]")}
       {displayProperties.main_task_category &&
-        renderTd("main_task_category", issue.main_task_category_name || "—", "min-w-[140px]")}
+        renderTd("main_task_category", issue.main_task_category_name || "—", "min-w-[160px]")}
       {displayProperties.sub_task_category &&
-        renderTd("sub_task_category", issue.sub_task_category_name || "—", "min-w-[140px]")}
+        renderTd("sub_task_category", issue.sub_task_category_name || "—", "min-w-[160px]")}
 
       {/* Work Items — always visible */}
       {renderTd(
@@ -107,12 +115,12 @@ export function HoDatasheetRow({ rowIndex, issue, displayProperties, isNewDeptGr
           href={`/${issue.workspace_slug}/projects/${issue.project_id}/issues/${issue.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent-primary hover:underline line-clamp-2"
+          className="text-accent-primary hover:underline line-clamp-1"
         >
           {issue.name}
         </a>,
-        "min-w-[280px]",
-        "max-w-[340px]"
+        "min-w-[300px]",
+        "max-w-[400px]"
       )}
 
       {displayProperties.sub_issue_count &&
@@ -130,37 +138,39 @@ export function HoDatasheetRow({ rowIndex, issue, displayProperties, isNewDeptGr
           "min-w-[140px]"
         )}
       {displayProperties.bank_wide_project &&
-        renderTd("bank_wide_project", issue.is_bank_wide_project ? "Yes" : "No", "min-w-[80px]")}
+        renderTd("bank_wide_project", issue.is_bank_wide_project ? "Yes" : "No", "min-w-[100px]")}
       {displayProperties.priority &&
-        renderTd("priority", issue.priority || "—", "min-w-[80px]", undefined, "capitalize")}
+        renderTd("priority", issue.priority || "—", "min-w-[100px]", undefined, "capitalize")}
       {displayProperties.state &&
         renderTd(
           "state",
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1.5">
             {issue.state_color && (
               <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: issue.state_color }} />
             )}
-            {issue.state_name || "—"}
+            <span className="truncate">{issue.state_name || "—"}</span>
           </span>,
-          "min-w-[100px]"
+          "min-w-[120px]"
         )}
       {displayProperties.progress_tracking &&
         renderTd(
           "progress_tracking",
-          <span className={progress?.className ?? "text-secondary"}>{progress?.label ?? "—"}</span>,
-          "min-w-[100px]"
+          <span className={cn("truncate font-medium", progress?.className ?? "text-secondary")}>
+            {progress?.label ?? "—"}
+          </span>,
+          "min-w-[120px]"
         )}
       {displayProperties.modules &&
-        renderTd("modules", issue.module_names.length ? issue.module_names.join(", ") : "—", "min-w-[120px]")}
-      {displayProperties.cycle && renderTd("cycle", issue.cycle_name || "—", "min-w-[100px]")}
+        renderTd("modules", issue.module_names.length ? issue.module_names.join(", ") : "—", "min-w-[140px]")}
+      {displayProperties.cycle && renderTd("cycle", issue.cycle_name || "—", "min-w-[120px]")}
       {displayProperties.start_date &&
-        renderTd("start_date", issue.start_date ? renderFormattedDate(issue.start_date) : "—", "min-w-[100px]")}
+        renderTd("start_date", issue.start_date ? renderFormattedDate(issue.start_date) : "—", "min-w-[120px]")}
       {displayProperties.due_date &&
-        renderTd("due_date", issue.target_date ? renderFormattedDate(issue.target_date) : "—", "min-w-[100px]")}
+        renderTd("due_date", issue.target_date ? renderFormattedDate(issue.target_date) : "—", "min-w-[120px]")}
       {displayProperties.completed_date &&
-        renderTd("completed_date", issue.completed_at ? renderFormattedDate(issue.completed_at) : "—", "min-w-[100px]")}
+        renderTd("completed_date", issue.completed_at ? renderFormattedDate(issue.completed_at) : "—", "min-w-[120px]")}
       {displayProperties.total_log_time &&
-        renderTd("total_log_time", formatLogTime(issue.total_log_time), "min-w-[80px]", undefined, "text-right")}
+        renderTd("total_log_time", formatLogTime(issue.total_log_time), "min-w-[100px]", undefined, "text-right")}
       {displayProperties.reference_link &&
         renderTd(
           "reference_link",
