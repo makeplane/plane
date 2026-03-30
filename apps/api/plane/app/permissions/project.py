@@ -14,7 +14,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 from rest_framework.request import Request
 
 # Module import
-from plane.db.models import ProjectMember, WorkspaceMember
+from plane.db.models import Project, ProjectMember, WorkspaceMember
 from plane.ee.models import TeamspaceProject, TeamspaceMember
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -42,9 +42,23 @@ def check_teamspace_membership(view, request: Request) -> bool:
         slug=view.workspace_slug,
         user_id=request.user.id,
     ):
+        project_id = getattr(view, "project_id", None)
+        if not project_id and getattr(view, "project_identifier", None):
+            project_id = (
+                Project.objects.filter(
+                    workspace__slug=view.workspace_slug,
+                    identifier=view.project_identifier,
+                )
+                .values_list("id", flat=True)
+                .first()
+            )
+
+        if not project_id:
+            return False
+
         ## Get all the teamspace ids that the project is attached to.
         teamspace_ids = TeamspaceProject.objects.filter(
-            workspace__slug=view.workspace_slug, project_id=view.project_id
+            workspace__slug=view.workspace_slug, project_id=project_id
         ).values_list("team_space_id", flat=True)
 
         # return True if the user is a member of any of the teamspace
