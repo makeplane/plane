@@ -28,24 +28,24 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isNewProjectGroup
       <td
         className={cn(
           CELL,
-          "w-[200px] sticky left-0 z-10 transition-shadow",
-          isScrolled ? "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]" : "",
+          "min-w-[200px] sticky left-0 z-[5] transition-shadow",
+          isScrolled ? "shadow-[2px_0_8px_rgba(0,0,0,0.1)]" : "",
           frozenBg,
           "group-hover:bg-layer-2"
         )}
       >
         <div className="truncate">{row.department_name || "—"}</div>
       </td>
-      <td className={cn(CELL, "w-[200px]")}>
+      <td className={cn(CELL, "min-w-[200px]")}>
         <div className="truncate">{row.project_name || "—"}</div>
       </td>
-      <td className={cn(CELL, "w-[220px]")}>
+      <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate">{row.main_task_category_name || "—"}</div>
       </td>
-      <td className={cn(CELL, "w-[220px]")}>
+      <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate">{row.sub_task_category_name || "—"}</div>
       </td>
-      <td className={cn(CELL, "w-[150px] text-right font-semibold")}>
+      <td className={cn(CELL, "min-w-[150px] text-right font-semibold")}>
         <div className="truncate">{row.work_item_count}</div>
       </td>
     </tr>

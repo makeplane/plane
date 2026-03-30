@@ -8,7 +8,7 @@ import { HoCategoryRow } from "./ho-category-row";
 type SortKey = keyof THoCategorySummary;
 
 const TH =
-  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 bg-surface-1 px-4 py-3 text-left text-12 font-semibold text-secondary uppercase tracking-wider whitespace-nowrap cursor-pointer select-none h-11 transition-shadow";
+  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 bg-layer-1 px-4 py-3 text-left text-13 font-medium text-secondary uppercase tracking-wider whitespace-nowrap cursor-pointer select-none h-11 transition-shadow";
 
 type Props = {
   data: THoCategorySummary[];
@@ -41,11 +41,11 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
   }, [handleScroll]);
 
   const COLUMNS: { key: SortKey; label: string; width: string }[] = [
-    { key: "department_name", label: t("spreadsheet.columns.department_name"), width: "w-[200px]" },
-    { key: "project_name", label: t("spreadsheet.columns.project_name"), width: "w-[200px]" },
-    { key: "main_task_category_name", label: t("spreadsheet.columns.main_task_category"), width: "w-[220px]" },
-    { key: "sub_task_category_name", label: t("spreadsheet.columns.sub_task_category"), width: "w-[220px]" },
-    { key: "work_item_count", label: t("ho.work_item_count"), width: "w-[150px]" },
+    { key: "department_name", label: t("spreadsheet.columns.department_name"), width: "min-w-[200px]" },
+    { key: "project_name", label: t("spreadsheet.columns.project_name"), width: "min-w-[200px]" },
+    { key: "main_task_category_name", label: t("spreadsheet.columns.main_task_category"), width: "min-w-[220px]" },
+    { key: "sub_task_category_name", label: t("spreadsheet.columns.sub_task_category"), width: "min-w-[220px]" },
+    { key: "work_item_count", label: t("ho.work_item_count"), width: "min-w-[150px]" },
   ];
 
   return (
@@ -54,7 +54,7 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
       className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-200px)] bg-surface-1"
     >
       <table className="w-full border-collapse text-left">
-        <thead className="sticky top-0 z-40 bg-surface-1">
+        <thead className="sticky top-0 left-0 z-[20] bg-layer-1 border-b-[0.5px] border-subtle-1">
           <tr className="h-11">
             {COLUMNS.map((col, idx) => {
               const isActive = sortKey === col.key;
@@ -68,8 +68,8 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
                     TH,
                     col.width,
                     isFirst
-                      ? cn("sticky left-0 z-30", isScrolled ? "shadow-[8px_-22px_22px_10px_rgba(0,0,0,0.05)]" : "")
-                      : "z-20"
+                      ? cn("sticky left-0 z-[15]", isScrolled ? "shadow-[2px_0_8px_rgba(0,0,0,0.1)]" : "")
+                      : "z-[10]"
                   )}
                   onClick={() => onSort(col.key)}
                 >

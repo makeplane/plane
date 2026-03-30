@@ -44,25 +44,25 @@ export function HoDatasheetRow({
 
   // Match widths from header
   const COL_WIDTHS: Record<string, string> = {
-    department_name: "w-[180px]",
-    project_name: "w-[180px]",
-    main_task_category: "w-[180px]",
-    sub_task_category: "w-[180px]",
-    name: "w-[400px]",
-    sub_issue_count: "w-[100px]",
-    project_lead: "w-[150px]",
-    assignee: "w-[180px]",
-    bank_wide_project: "w-[120px]",
-    priority: "w-[120px]",
-    state: "w-[140px]",
-    progress_tracking: "w-[140px]",
-    modules: "w-[160px]",
-    cycle: "w-[140px]",
-    start_date: "w-[140px]",
-    due_date: "w-[140px]",
-    completed_date: "w-[140px]",
-    total_log_time: "w-[120px]",
-    reference_link: "w-[100px]",
+    department_name: "min-w-[180px]",
+    project_name: "min-w-[180px]",
+    main_task_category: "min-w-[180px]",
+    sub_task_category: "min-w-[180px]",
+    name: "min-w-[400px]",
+    sub_issue_count: "min-w-[100px]",
+    project_lead: "min-w-[150px]",
+    assignee: "min-w-[180px]",
+    bank_wide_project: "min-w-[120px]",
+    priority: "min-w-[120px]",
+    state: "min-w-[140px]",
+    progress_tracking: "min-w-[140px]",
+    modules: "min-w-[160px]",
+    cycle: "min-w-[140px]",
+    start_date: "min-w-[140px]",
+    due_date: "min-w-[140px]",
+    completed_date: "min-w-[140px]",
+    total_log_time: "min-w-[120px]",
+    reference_link: "min-w-[100px]",
   };
 
   const visibleKeys = Object.keys(COL_WIDTHS).filter((key) => key === "name" || displayProperties[key] !== false);
@@ -79,10 +79,7 @@ export function HoDatasheetRow({
           width,
           textAlign,
           isFirst
-            ? cn(
-                "sticky left-0 z-10 transition-shadow",
-                isScrolled ? "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]" : ""
-              )
+            ? cn("sticky left-0 z-[5] transition-shadow", isScrolled ? "shadow-[2px_0_8px_rgba(0,0,0,0.1)]" : "")
             : "z-0",
           isFirst && frozenBg,
           isFirst && "group-hover:bg-layer-2"

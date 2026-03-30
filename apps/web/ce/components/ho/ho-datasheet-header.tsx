@@ -13,7 +13,7 @@ type ColMeta = {
 };
 
 const TH =
-  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-3 text-left text-12 font-semibold text-secondary uppercase tracking-wider whitespace-nowrap bg-surface-1";
+  "border-b-[0.5px] border-r-[0.5px] border-subtle-1 px-4 py-3 text-left text-13 font-medium text-secondary uppercase tracking-wider whitespace-nowrap bg-layer-1";
 
 type Props = {
   displayProperties: THoDisplayProperties;
@@ -35,41 +35,41 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
       label: t("spreadsheet.columns.department_name"),
       asc: "project__workspace__name",
       desc: "-project__workspace__name",
-      width: "w-[180px]",
+      width: "min-w-[180px]",
     },
     project_name: {
       label: t("spreadsheet.columns.project_name"),
       asc: "project__name",
       desc: "-project__name",
-      width: "w-[180px]",
+      width: "min-w-[180px]",
     },
     main_task_category: {
       label: t("spreadsheet.columns.main_task_category"),
       asc: "main_task_category__name",
       desc: "-main_task_category__name",
-      width: "w-[180px]",
+      width: "min-w-[180px]",
     },
     sub_task_category: {
       label: t("spreadsheet.columns.sub_task_category"),
       asc: "sub_task_category__name",
       desc: "-sub_task_category__name",
-      width: "w-[180px]",
+      width: "min-w-[180px]",
     },
-    name: { label: t("ho.work_items"), width: "w-[400px]" },
-    sub_issue_count: { label: "Sub Items", width: "w-[100px]" },
-    project_lead: { label: t("spreadsheet.columns.project_lead"), width: "w-[150px]" },
-    assignee: { label: "Assignee", width: "w-[180px]" },
-    bank_wide_project: { label: t("spreadsheet.columns.bank_wide_project"), width: "w-[120px]" },
-    priority: { label: "Priority", asc: "priority", desc: "-priority", width: "w-[120px]" },
-    state: { label: "Status", asc: "state__name", desc: "-state__name", width: "w-[140px]" },
-    progress_tracking: { label: t("spreadsheet.columns.progress_tracking"), width: "w-[140px]" },
-    modules: { label: t("sidebar.modules"), width: "w-[160px]" },
-    cycle: { label: t("sidebar.cycles"), width: "w-[140px]" },
-    start_date: { label: "Start Date", asc: "start_date", desc: "-start_date", width: "w-[140px]" },
-    due_date: { label: "Due Date", asc: "target_date", desc: "-target_date", width: "w-[140px]" },
-    completed_date: { label: t("spreadsheet.columns.completed_date"), width: "w-[140px]" },
-    total_log_time: { label: t("spreadsheet.columns.total_log_time"), width: "w-[120px]" },
-    reference_link: { label: t("spreadsheet.columns.reference_link"), width: "w-[100px]" },
+    name: { label: t("ho.work_items"), width: "min-w-[400px]" },
+    sub_issue_count: { label: "Sub Items", width: "min-w-[100px]" },
+    project_lead: { label: t("spreadsheet.columns.project_lead"), width: "min-w-[150px]" },
+    assignee: { label: "Assignee", width: "min-w-[180px]" },
+    bank_wide_project: { label: t("spreadsheet.columns.bank_wide_project"), width: "min-w-[120px]" },
+    priority: { label: "Priority", asc: "priority", desc: "-priority", width: "min-w-[120px]" },
+    state: { label: "Status", asc: "state__name", desc: "-state__name", width: "min-w-[140px]" },
+    progress_tracking: { label: t("spreadsheet.columns.progress_tracking"), width: "min-w-[140px]" },
+    modules: { label: t("sidebar.modules"), width: "min-w-[160px]" },
+    cycle: { label: t("sidebar.cycles"), width: "min-w-[140px]" },
+    start_date: { label: "Start Date", asc: "start_date", desc: "-start_date", width: "min-w-[140px]" },
+    due_date: { label: "Due Date", asc: "target_date", desc: "-target_date", width: "min-w-[140px]" },
+    completed_date: { label: t("spreadsheet.columns.completed_date"), width: "min-w-[140px]" },
+    total_log_time: { label: t("spreadsheet.columns.total_log_time"), width: "min-w-[120px]" },
+    reference_link: { label: t("spreadsheet.columns.reference_link"), width: "min-w-[100px]" },
   };
 
   const visibleKeys = Object.keys(COL_META).filter((key) => key === "name" || displayProperties[key] !== false);
@@ -82,8 +82,8 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
     const isFirst = key === firstVisibleKey;
 
     const stickyClass = isFirst
-      ? cn("sticky left-0 z-30 transition-shadow", isScrolled ? "shadow-[8px_-22px_22px_10px_rgba(0,0,0,0.05)]" : "")
-      : "z-20";
+      ? cn("sticky left-0 z-[15] transition-shadow", isScrolled ? "shadow-[2px_0_8px_rgba(0,0,0,0.1)]" : "")
+      : "z-[10]";
 
     if (!isSortable) {
       return (
@@ -108,7 +108,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
               <SortIcon className="h-3 w-3 flex-shrink-0" />
             </span>
           }
-          buttonClassName="text-12 font-semibold uppercase tracking-wider text-secondary h-full w-full"
+          buttonClassName="text-13 font-medium uppercase tracking-wider text-secondary h-full w-full"
           placement="bottom-start"
           closeOnSelect
         >
@@ -135,7 +135,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({
   };
 
   return (
-    <thead className="sticky top-0 z-40 bg-surface-1">
+    <thead className="sticky top-0 left-0 z-[20] bg-layer-1 border-b-[0.5px] border-subtle-1">
       <tr className="h-11">{visibleKeys.map((key) => renderTh(key))}</tr>
     </thead>
   );
