@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
@@ -43,9 +42,11 @@ export const InitiativeInfoIndicatorItem = observer(function InitiativeInfoIndic
     ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const completedStateCount =
-    (initiativeAnalytics?.completed_issues || 0) + (initiativeAnalytics?.cancelled_issues || 0);
-  const completePercentage = getProgress(completedStateCount ?? 0, totalIssues);
+  const completePercentage = getProgress(
+    initiativeAnalytics?.completed_issues,
+    totalIssues,
+    initiativeAnalytics?.cancelled_issues
+  );
 
   return (
     <div className="flex-shrink-0">

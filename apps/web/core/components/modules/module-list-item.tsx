@@ -19,7 +19,7 @@ import { CheckIcon, InfoIcon } from "@plane/propel/icons";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
-import { generateQueryParams } from "@plane/utils";
+import { generateQueryParams, getProgress } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 // helpers
@@ -50,10 +50,11 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
 
   if (!moduleDetails) return null;
 
-  const completionPercentage =
-    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+  const progress = getProgress(
+    moduleDetails.completed_issues,
+    moduleDetails.total_issues,
+    moduleDetails.cancelled_issues
+  );
 
   const completedModuleCheck = moduleDetails.status === "completed";
 

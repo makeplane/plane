@@ -19,6 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
+import { getClosedIssuesLabel } from "@plane/utils";
 // assets
 import darkProgressAsset from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
 import lightProgressAsset from "@/app/assets/empty-state/active-cycle/progress-light.webp?url";
@@ -62,8 +63,8 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           <h3 className="text-14 text-tertiary font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 text-13 text-placeholder font-medium whitespace-nowrap rounded-xs px-3 py-1 ">
-              {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
+              {`${getClosedIssuesLabel(cycle.completed_issues, cycle.total_issues, cycle.cancelled_issues)} ${
+                cycle.completed_issues > 1 ? "Work items" : "Work item"
               } closed`}
             </span>
           )}

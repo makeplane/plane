@@ -36,7 +36,7 @@ import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 import { Loader, CustomSelect, TextArea } from "@plane/ui";
 // components
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { getClosedIssuesLabel, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
@@ -243,7 +243,11 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const issueCount =
     moduleDetails.total_issues === 0
       ? "0 work items"
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+      : getClosedIssuesLabel(
+          moduleDetails.completed_issues,
+          moduleDetails.total_issues,
+          moduleDetails.cancelled_issues
+        );
 
   const issueEstimatePointCount =
     moduleDetails.total_estimate_points === 0

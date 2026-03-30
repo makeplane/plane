@@ -17,6 +17,7 @@ import type { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOpti
 // local imports
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
+import { getProgress } from "./math";
 
 const collator = new Intl.Collator("en-US", { numeric: true, sensitivity: "base" });
 
@@ -42,8 +43,7 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
   if (["progress", "-progress"].includes(orderByKey))
     orderedModules = sortBy(modules, [
       (m) => {
-        let progress = (m.completed_issues + m.cancelled_issues) / m.total_issues;
-        if (isNaN(progress)) progress = 0;
+        const progress = getProgress(m.completed_issues, m.total_issues, m.cancelled_issues);
         return orderByKey === "progress" ? progress : -progress;
       },
     ]);

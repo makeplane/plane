@@ -11,5 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export const getProgress = (completed: number | undefined, total: number | undefined) =>
-  total && total > 0 ? Math.round(((completed ?? 0) / total) * 100) : 0;
+export const getProgress = (completed: number | undefined, total: number | undefined, cancelled?: number) => {
+  const adjustedTotal = Math.max((total ?? 0) - (cancelled ?? 0), 0);
+  return adjustedTotal > 0 ? Math.round(((completed ?? 0) / adjustedTotal) * 100) : 0;
+};
+
+export const getClosedIssuesLabel = (
+  completed: number | undefined,
+  total: number | undefined,
+  cancelled?: number
+): string => {
+  const adjustedTotal = Math.max((total ?? 0) - (cancelled ?? 0), 0);
+  return `${completed ?? 0}/${adjustedTotal}`;
+};

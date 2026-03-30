@@ -13,6 +13,7 @@
 
 import { action, computed, makeObservable, observable } from "mobx";
 import type { IMilestoneInstance, TDescription, TMilestone, TMilestoneProgress } from "@plane/types";
+import { getProgress } from "@plane/utils";
 
 export class MilestoneInstance implements IMilestoneInstance {
   // observables
@@ -57,12 +58,7 @@ export class MilestoneInstance implements IMilestoneInstance {
   get progress_percentage(): number {
     const { total_items, completed_items, cancelled_items } = this.progress;
 
-    if (total_items === 0) return 0;
-
-    const completedOrCancelled = completed_items + cancelled_items;
-    const percentage = (completedOrCancelled / total_items) * 100;
-
-    return Math.round(percentage);
+    return getProgress(completed_items, total_items, cancelled_items);
   }
 
   // actions

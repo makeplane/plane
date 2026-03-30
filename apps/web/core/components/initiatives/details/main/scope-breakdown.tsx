@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
+import { getProgress } from "@plane/utils";
 import { PlusIcon, ScopeIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 // plane web imports
@@ -44,8 +45,7 @@ function DataCard(props: TDataCardProps) {
     (data?.started_issues ?? 0) +
     (data?.completed_issues ?? 0) +
     (data?.cancelled_issues ?? 0);
-  const completed = (data?.completed_issues ?? 0) + (data?.cancelled_issues ?? 0);
-  const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const progress = getProgress(data?.completed_issues, total, data?.cancelled_issues);
 
   const handleControlLinkClick = () => {
     router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`);

@@ -75,11 +75,12 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
   const projectIdentifier = issue?.project_id ? project.getProjectIdentifierById(issue?.project_id) : "";
   const issueSequenceId = issue?.sequence_id;
 
-  const completedIssuesCount =
-    (initiativeEpicStats?.completed_issues ?? 0) + (initiativeEpicStats?.cancelled_issues ?? 0);
   const totalIssuesCount = initiativeEpicStats?.total_issues ?? 0;
-  const showProgress = totalIssuesCount > 0;
-  const progress = showProgress ? getProgress(completedIssuesCount, totalIssuesCount) : 0;
+  const adjustedTotalIssuesCount = Math.max(totalIssuesCount - (initiativeEpicStats?.cancelled_issues ?? 0), 0);
+  const showProgress = adjustedTotalIssuesCount > 0;
+  const progress = showProgress
+    ? getProgress(initiativeEpicStats?.completed_issues, totalIssuesCount, initiativeEpicStats?.cancelled_issues)
+    : 0;
 
   if (!issue || !issue.project_id) return <></>;
 

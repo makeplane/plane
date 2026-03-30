@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator } from "@plane/ui";
 import { cn, getProgress } from "@plane/utils";
@@ -32,15 +31,16 @@ export const IssueStats = observer(function IssueStats(props: Props) {
 
   const epicStats = getEpicStatsById(issueId);
 
-  const completedIssues = epicStats ? epicStats.completed_issues + epicStats.cancelled_issues : 0;
-
-  const progress = getProgress(completedIssues, epicStats?.total_issues);
+  const completedIssues = epicStats?.completed_issues ?? 0;
+  const totalIssues = epicStats?.total_issues ?? 0;
+  const adjustedTotalIssues = Math.max(totalIssues - (epicStats?.cancelled_issues ?? 0), 0);
+  const progress = getProgress(epicStats?.completed_issues, totalIssues, epicStats?.cancelled_issues);
 
   return (
     <div className={cn("flex gap-2 items-center", className)}>
       <CircularProgressIndicator size={size} percentage={progress} strokeWidth={3} />
       <div className="text-11 my-auto w-auto overflow-hidden truncate ">
-        {showProgressText ? (epicStats?.total_issues ? `${completedIssues}/${epicStats?.total_issues}` : `0/0`) : ""}{" "}
+        {showProgressText ? (adjustedTotalIssues ? `${completedIssues}/${adjustedTotalIssues}` : `0/0`) : ""}{" "}
         {showLabel && `Work items`}
       </div>
     </div>

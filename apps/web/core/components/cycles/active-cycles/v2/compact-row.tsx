@@ -21,7 +21,7 @@ import { Button } from "@plane/propel/button";
 import { IconButton } from "@plane/propel/icon-button";
 import { CycleGroupIcon, InfoIcon } from "@plane/propel/icons";
 import { CircularProgressIndicator } from "@plane/ui";
-import { calculateCycleProgress, renderFormattedPayloadDate } from "@plane/utils";
+import { calculateCycleProgress, getClosedIssuesLabel, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useMember } from "@/hooks/store/use-member";
@@ -140,7 +140,13 @@ export const ActiveCycleCompactRow = observer(function ActiveCycleCompactRow(pro
           <div className="flex items-center gap-1.5">
             <CircularProgressIndicator size={16} percentage={progress} strokeWidth={2} />
             <span className="text-11 text-tertiary font-medium">
-              {progress}% ({cycleDetails.completed_issues}/{cycleDetails.total_issues})
+              {progress}% (
+              {getClosedIssuesLabel(
+                cycleDetails.completed_issues,
+                cycleDetails.total_issues,
+                cycleDetails.cancelled_issues
+              )}
+              )
             </span>
           </div>
 

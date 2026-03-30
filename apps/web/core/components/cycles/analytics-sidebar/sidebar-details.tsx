@@ -25,7 +25,7 @@ import type { ICycle } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { TextArea } from "@plane/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getClosedIssuesLabel, getFileURL } from "@plane/utils";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
@@ -51,10 +51,18 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)
       ? cycleDetails?.progress_snapshot?.total_issues === 0
         ? `0 ${t("common.work_item")}`
-        : `${cycleDetails?.progress_snapshot?.completed_issues}/${cycleDetails?.progress_snapshot?.total_issues}`
+        : getClosedIssuesLabel(
+            cycleDetails?.progress_snapshot?.completed_issues,
+            cycleDetails?.progress_snapshot?.total_issues,
+            cycleDetails?.progress_snapshot?.cancelled_issues
+          )
       : cycleDetails?.total_issues === 0
         ? `0 ${t("common.work_item")}`
-        : `${cycleDetails?.completed_issues}/${cycleDetails?.total_issues}`;
+        : getClosedIssuesLabel(
+            cycleDetails?.completed_issues,
+            cycleDetails?.total_issues,
+            cycleDetails?.cancelled_issues
+          );
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
 

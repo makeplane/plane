@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 // constants
@@ -48,9 +47,7 @@ export const EpicInfoIndicatorItem = observer(function EpicInfoIndicatorItem(pro
     ? Object.values(omit(epicAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const completedIssue = epicAnalytics ? epicAnalytics.completed_issues + epicAnalytics.cancelled_issues : 0;
-
-  const completePercentage = getProgress(completedIssue, totalIssues);
+  const completePercentage = getProgress(epicAnalytics?.completed_issues, totalIssues, epicAnalytics?.cancelled_issues);
 
   if (!hasSubIssues) return <></>;
   return (
