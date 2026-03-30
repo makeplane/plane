@@ -23,6 +23,7 @@ import uuid
 from typing import Any
 from typing import Dict
 from typing import Optional
+from typing import Tuple
 
 from pi.services.actions.tool_generator import generate_tools_for_category
 from pi.services.actions.tool_metadata import ToolMetadata
@@ -41,6 +42,25 @@ RELATION_TYPES = {
     "start_after": "start_after",
     "finish_before": "finish_before",
     "finish_after": "finish_after",
+}
+
+STATE_GROUP_FALLBACKS: Dict[str, Tuple[str, ...]] = {
+    "backlog": ("backlog",),
+    "to do": ("unstarted", "backlog"),
+    "todo": ("unstarted", "backlog"),
+    "to-do": ("unstarted", "backlog"),
+    "not started": ("unstarted",),
+    "not-started": ("unstarted",),
+    "unstarted": ("unstarted",),
+    "in progress": ("started",),
+    "in-progress": ("started",),
+    "doing": ("started",),
+    "started": ("started",),
+    "done": ("completed",),
+    "complete": ("completed",),
+    "completed": ("completed",),
+    "cancelled": ("cancelled",),
+    "canceled": ("cancelled",),
 }
 
 
@@ -64,6 +84,8 @@ async def resolve_state_to_uuid(state: Optional[str], project_id: Optional[str],
     if not state:
         return None
 
+    normalized_state = " ".join(str(state).strip().lower().split())
+
     # Check if state is already a valid UUID
     try:
         uuid.UUID(state)
@@ -77,17 +99,29 @@ async def resolve_state_to_uuid(state: Optional[str], project_id: Optional[str],
         return None
 
     try:
+        from pi.app.api.v1.helpers.plane_sql_queries import search_state_by_group
         from pi.app.api.v1.helpers.plane_sql_queries import search_state_by_name
 
-        state_result = await search_state_by_name(state, project_id, workspace_slug)
+        state_result = await search_state_by_name(normalized_state, project_id, workspace_slug, raise_on_error=True)
 
         if state_result and "id" in state_result:
-            resolved_uuid = state_result["id"]
-            return resolved_uuid
-        else:
-            return None
+            return state_result["id"]
 
-    except Exception:
+        for state_group in STATE_GROUP_FALLBACKS.get(normalized_state, ()):
+            fallback_result = await search_state_by_group(state_group, project_id, workspace_slug, raise_on_error=True)
+            if fallback_result and "id" in fallback_result:
+                log.info(
+                    "Resolved state intent '%s' to project state '%s' via group '%s'",
+                    state,
+                    fallback_result.get("name"),
+                    state_group,
+                )
+                return fallback_result["id"]
+
+        return None
+
+    except Exception as e:
+        log.error(f"Error resolving state '{state}': {e}")
         return None
 
 
@@ -335,6 +369,10 @@ async def _workitems_pre_handler(
             if resolved_state:
                 kwargs["state"] = resolved_state
                 log.debug(f"Resolved state '{state}' to {resolved_state}")
+            else:
+                if not project_id:
+                    raise ValueError(f"Project ID is required to resolve state '{state}'.")
+                raise ValueError(f"Could not resolve state '{state}' for this project. " "Please use an existing state name or UUID.")
 
     # Type resolution for create/update (but NOT epics which handle it themselves)
     if tool_name in ["workitems_create", "workitems_update"]:

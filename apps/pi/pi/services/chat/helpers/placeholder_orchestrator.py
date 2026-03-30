@@ -165,9 +165,19 @@ class PlaceholderOrchestrator:
             log.info(f"Iteration {iteration}: {len(remaining)} actions remaining")
 
             # 1. Partition actions into ready vs blocked
-            ready, blocked = await self._partition_by_readiness(remaining)
+            ready, blocked, failed_due_to_dependencies = await self._partition_by_readiness(remaining)
 
-            log.info(f"Ready: {len(ready)}, Blocked: {len(blocked)}")
+            for action, failure_result in failed_due_to_dependencies:
+                failure_result["sequence"] = len(self.results) + 1
+                self.results.append(failure_result)
+                remaining.remove(action)
+
+            log.info(
+                "Ready: %s, Blocked: %s, Failed due to dependencies: %s",
+                len(ready),
+                len(blocked),
+                len(failed_due_to_dependencies),
+            )
 
             # 2. Deadlock detection
             if not ready and blocked:
@@ -225,7 +235,9 @@ class PlaceholderOrchestrator:
         log.debug(f"Orchestration complete. Executed {len(self.results)} actions successfully")
         return self.results
 
-    async def _partition_by_readiness(self, actions: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    async def _partition_by_readiness(
+        self, actions: List[Dict[str, Any]]
+    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Tuple[Dict[str, Any], Dict[str, Any]]]]:
         """
         Split actions into ready (can execute now) vs blocked (has unresolved placeholders or pending implicit dependencies).
 
@@ -233,10 +245,11 @@ class PlaceholderOrchestrator:
             actions: List of actions to partition
 
         Returns:
-            Tuple of (ready_actions, blocked_actions)
+            Tuple of (ready_actions, blocked_actions, failed_actions)
         """
         ready = []
         blocked = []
+        failed = []
 
         # Get list of tool names currently pending execution (including the ones we're checking)
         pending_tool_names: List[str] = [tool_name for a in actions if (tool_name := a.get("tool_name")) is not None]
@@ -244,18 +257,20 @@ class PlaceholderOrchestrator:
         for action in actions:
             is_blocked = False
 
-            # 1. Check for unresolved placeholders
+            # 1. Fail immediately if action depends on failed entities
+            failed_dependency = self._build_failed_dependency_result(action)
+            if failed_dependency:
+                failed.append((action, failed_dependency))
+                continue
+
+            # 2. Check for unresolved placeholders
             if await self._has_unresolved_placeholders(action):
                 is_blocked = True
 
-            # 2. Check for implicit dependencies on other PENDING actions
+            # 3. Check for implicit dependencies on other PENDING actions
             # If an action depends on a tool that is still in the 'actions' list (not executed yet),
             # it should be blocked.
             elif self._has_pending_implicit_dependency(action, pending_tool_names):
-                is_blocked = True
-
-            # 3. Check if action depends on failed entities
-            elif self._depends_on_failed_entity(action):
                 is_blocked = True
 
             if is_blocked:
@@ -263,7 +278,7 @@ class PlaceholderOrchestrator:
             else:
                 ready.append(action)
 
-        return ready, blocked
+        return ready, blocked, failed
 
     def _has_pending_implicit_dependency(self, action: Dict[str, Any], pending_tool_names: List[str]) -> bool:
         """
@@ -292,22 +307,10 @@ class PlaceholderOrchestrator:
         Returns:
             True if action has unresolved placeholders
         """
-        args = action.get("args", {})
-
-        for key, value in args.items():
-            if self._is_placeholder(value):
-                # Check if we can resolve this placeholder from current context
-                entity_type, entity_name = self._parse_placeholder(value)
-                if not self._can_resolve_from_context(entity_type, entity_name):
-                    return True
-
-            # Check lists for placeholders
-            if isinstance(value, list):
-                for item in value:
-                    if self._is_placeholder(item):
-                        entity_type, entity_name = self._parse_placeholder(item)
-                        if not self._can_resolve_from_context(entity_type, entity_name):
-                            return True
+        for _field_name, placeholder in self._iter_placeholders(action):
+            entity_type, entity_name = self._parse_placeholder(placeholder)
+            if not self._can_resolve_from_context(entity_type, entity_name):
+                return True
 
         return False
 
@@ -660,6 +663,21 @@ IMPORTANT:
         """Check if value is a placeholder string."""
         return isinstance(value, str) and "<id of" in value
 
+    def _iter_placeholders(self, action: Dict[str, Any]) -> List[Tuple[str, str]]:
+        """Return all (field_name, placeholder) pairs in an action, including list-valued arguments."""
+        placeholders: List[Tuple[str, str]] = []
+        args = action.get("args", {})
+
+        for field_name, value in args.items():
+            if self._is_placeholder(value):
+                placeholders.append((field_name, value))
+            elif isinstance(value, list):
+                for item in value:
+                    if self._is_placeholder(item):
+                        placeholders.append((field_name, item))
+
+        return placeholders
+
     def _parse_placeholder(self, placeholder: str) -> Tuple[Optional[str], Optional[str]]:
         """
         Parse placeholder string into entity type and name.
@@ -680,41 +698,35 @@ IMPORTANT:
         """Track entity that failed to create."""
         args = action.get("args", {})
         entity_name = args.get("name") or args.get("display_name")
-        entity_type = action.get("artifact_type")  # Fixed: was "entity_type", should be "artifact_type"
+        entity_type = action.get("entity_type")
 
         if entity_name and entity_type:
             failed_key = f"{entity_type}:{entity_name.lower()}"
             self.failed_entities.add(failed_key)
             log.warning(f"Tracked failed entity: {failed_key}")
 
-    def _depends_on_failed_entity(self, action: Dict[str, Any]) -> bool:
-        """Check if action depends on an entity that failed to create."""
-        args = action.get("args", {})
+    def _build_failed_dependency_result(self, action: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Create an immediate failure result when an action depends on a failed placeholder entity."""
+        for _field_name, placeholder in self._iter_placeholders(action):
+            entity_type, entity_name = self._parse_placeholder(placeholder)
+            if entity_type and entity_name:
+                failed_key = f"{entity_type}:{entity_name.lower()}"
+                if failed_key in self.failed_entities:
+                    log.error(f"Action {action.get('tool_name')} depends on failed entity: {failed_key}")
+                    return {
+                        "tool_name": action.get("tool_name"),
+                        "result": f"Cannot execute: prerequisite '{entity_name}' ({entity_type}) failed to create",
+                        "entity_info": None,
+                        "artifact_id": action.get("artifact_id"),
+                        "version_id": action.get("version_id"),
+                        "sequence": None,
+                        "artifact_type": action.get("entity_type"),
+                        "executed_at": datetime.utcnow().isoformat(),
+                        "success": False,
+                        "error": f"Prerequisite entity '{entity_name}' failed to create",
+                    }
 
-        for key, value in args.items():
-            if self._is_placeholder(value):
-                entity_type, entity_name = self._parse_placeholder(value)
-                if entity_type and entity_name:
-                    failed_key = f"{entity_type}:{entity_name.lower()}"
-                    if failed_key in self.failed_entities:
-                        log.error(f"Action {action.get('tool_name')} depends on failed entity: {failed_key}")
-                        # Create immediate failure result
-                        failure_result = {
-                            "tool_name": action.get("tool_name"),
-                            "result": f"Cannot execute: prerequisite '{entity_name}' ({entity_type}) failed to create",
-                            "entity_info": None,
-                            "artifact_id": action.get("artifact_id"),
-                            "version_id": action.get("version_id"),  # Include version_id for execution status update
-                            "sequence": len(self.results) + 1,
-                            "artifact_type": action.get("entity_type"),
-                            "executed_at": datetime.utcnow().isoformat(),
-                            "success": False,
-                            "error": f"Prerequisite entity '{entity_name}' failed to create",
-                        }
-                        self.results.append(failure_result)
-                        return True
-
-        return False
+        return None
 
     def _build_deadlock_error(self, blocked_actions: List[Dict[str, Any]]) -> str:
         """
@@ -728,10 +740,8 @@ IMPORTANT:
         """
         placeholders = []
         for action in blocked_actions:
-            args = action.get("args", {})
-            for key, value in args.items():
-                if self._is_placeholder(value):
-                    placeholders.append(value)
+            for _field_name, placeholder in self._iter_placeholders(action):
+                placeholders.append(placeholder)
 
         available_entities = list(self.execution_context.keys())
         failed_entities_list = list(self.failed_entities)

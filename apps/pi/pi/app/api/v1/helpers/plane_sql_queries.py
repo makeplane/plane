@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+import re
 import uuid
 from datetime import datetime
 from typing import Any
@@ -37,6 +38,26 @@ def is_placeholder_id(entity_id: str) -> bool:
     Returns True if the ID is a placeholder, False otherwise.
     """
     return bool(entity_id and isinstance(entity_id, str) and entity_id.startswith("<id of"))
+
+
+def _append_optional_filter(query: str, params: List[Any], clause_template: str, value: Any) -> Tuple[str, List[Any]]:
+    """Append an optional SQL filter using the next available positional parameter."""
+    if value is None:
+        return query, params
+
+    query += " " + clause_template.format(param=len(params) + 1)
+    params.append(value)
+    return query, params
+
+
+def _normalize_search_name(name: str) -> str:
+    """Collapse repeated whitespace before constructing search patterns."""
+    return re.sub(r"\s+", " ", name).strip()
+
+
+def _squash_whitespace(name: str) -> str:
+    """Lowercase and remove whitespace for space-insensitive matching."""
+    return re.sub(r"\s+", "", name).lower()
 
 
 async def get_issue_details(issue_id: str) -> Optional[Dict[str, Any]]:
@@ -594,8 +615,14 @@ async def resolve_id_to_name(entity_type: str, entity_id: str) -> Optional[str]:
 
 
 # Entity search functions for finding IDs by name
-async def search_module_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+async def search_module_by_name(
+    name: str,
+    project_id: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> Optional[Dict[str, Any]]:
     """Search for a module by name and return its details."""
+    normalized_name = _normalize_search_name(name)
     query = """
     SELECT m.id, m.name, m.project_id
     FROM modules m
@@ -605,15 +632,9 @@ async def search_module_by_name(name: str, project_id: Optional[str] = None, wor
     AND m.deleted_at IS NULL
     """
 
-    params = [f"%{name}%"]
-
-    if project_id:
-        query += " AND m.project_id = $2"
-        params.append(project_id)
-
-    if workspace_slug:
-        query += " AND w.slug = $3"
-        params.append(workspace_slug)
+    params: List[Any] = [f"%{normalized_name}%"]
+    query, params = _append_optional_filter(query, params, "AND m.project_id = ${param}", project_id)
+    query, params = _append_optional_filter(query, params, "AND w.slug = ${param}", workspace_slug)
 
     query += " LIMIT 20"
 
@@ -624,11 +645,19 @@ async def search_module_by_name(name: str, project_id: Optional[str] = None, wor
         return None
     except Exception as e:
         log.error(f"Error searching for module '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
         return None
 
 
-async def search_type_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+async def search_type_by_name(
+    name: str,
+    project_id: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> Optional[Dict[str, Any]]:
     """Search for an issue type by name and return its details."""
+    normalized_name = _normalize_search_name(name)
     query = """
     SELECT it.id, it.name, pit.project_id
     FROM issue_types it
@@ -640,15 +669,9 @@ async def search_type_by_name(name: str, project_id: Optional[str] = None, works
     AND pit.deleted_at IS NULL
     """
 
-    params = [f"%{name}%"]
-
-    if project_id:
-        query += " AND pit.project_id = $2"
-        params.append(project_id)
-
-    if workspace_slug:
-        query += " AND w.slug = $3"
-        params.append(workspace_slug)
+    params: List[Any] = [f"%{normalized_name}%"]
+    query, params = _append_optional_filter(query, params, "AND pit.project_id = ${param}", project_id)
+    query, params = _append_optional_filter(query, params, "AND w.slug = ${param}", workspace_slug)
 
     query += " LIMIT 1"
 
@@ -659,6 +682,8 @@ async def search_type_by_name(name: str, project_id: Optional[str] = None, works
         return None
     except Exception as e:
         log.error(f"Error searching for issue type '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
         return None
 
 
@@ -666,6 +691,7 @@ async def search_project_by_name(
     name: str,
     workspace_slug: Optional[str] = None,
     member_id: Optional[str] = None,
+    raise_on_error: bool = False,
 ) -> Optional[List[Dict[str, Any]]]:
     """Search for projects by name and return a list of matching projects.
 
@@ -680,7 +706,7 @@ async def search_project_by_name(
     AND p.archived_at IS NULL
     """
 
-    params = [f"%{name}%"]
+    params = [f"%{_normalize_search_name(name)}%"]
     param_index = 2
 
     if workspace_slug:
@@ -715,11 +741,19 @@ async def search_project_by_name(
         return []
     except Exception as e:
         log.error(f"Error searching for project '{name}': {e}, query: {query}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
         return None
 
 
-async def search_cycle_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+async def search_cycle_by_name(
+    name: str,
+    project_id: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> Optional[Dict[str, Any]]:
     """Search for a cycle by name and return its details."""
+    normalized_name = _normalize_search_name(name)
     query = """
     SELECT c.id, c.name, c.project_id, c.start_date, c.end_date
     FROM cycles c
@@ -729,7 +763,7 @@ async def search_cycle_by_name(name: str, project_id: Optional[str] = None, work
     AND c.deleted_at IS NULL
     """
 
-    params = [f"%{name}%"]
+    params = [f"%{normalized_name}%"]
     param_index = 2
 
     if project_id:
@@ -757,10 +791,16 @@ async def search_cycle_by_name(name: str, project_id: Optional[str] = None, work
         return None
     except Exception as e:
         log.error(f"Error searching for cycle '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
         return None
 
 
-async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = None) -> List[Dict[str, Any]]:
+async def search_current_cycle(
+    project_id: str,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> List[Dict[str, Any]]:
     """Search for the current active cycles in a project (where today's date falls within start_date and end_date).
 
     Args:
@@ -812,11 +852,19 @@ async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = 
         log.error(
             f"Error searching for current cycle in project '{project_id}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}"  # noqa E501
         )  # noqa: E501
+        if raise_on_error:
+            raise
         return []
 
 
-async def search_label_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+async def search_label_by_name(
+    name: str,
+    project_id: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> Optional[Dict[str, Any]]:
     """Search for a label by name and return its details."""
+    normalized_name = _normalize_search_name(name)
     query = """
     SELECT l.id, l.name, l.project_id, l.color
     FROM labels l
@@ -826,15 +874,9 @@ async def search_label_by_name(name: str, project_id: Optional[str] = None, work
     AND l.deleted_at IS NULL
     """
 
-    params = [f"%{name}%"]
-
-    if project_id:
-        query += " AND l.project_id = $2"
-        params.append(project_id)
-
-    if workspace_slug:
-        query += " AND w.slug = $3"
-        params.append(workspace_slug)
+    params: List[Any] = [f"%{normalized_name}%"]
+    query, params = _append_optional_filter(query, params, "AND l.project_id = ${param}", project_id)
+    query, params = _append_optional_filter(query, params, "AND w.slug = ${param}", workspace_slug)
 
     query += " LIMIT 20"
 
@@ -845,31 +887,39 @@ async def search_label_by_name(name: str, project_id: Optional[str] = None, work
         return None
     except Exception as e:
         log.error(f"Error searching for label '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
         return None
 
 
-async def search_state_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+async def search_state_by_name(
+    name: str,
+    project_id: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> Optional[Dict[str, Any]]:
     """Search for a state by name and return its details."""
+    normalized_name = _normalize_search_name(name)
+    squashed_name = _squash_whitespace(normalized_name)
     query = """
     SELECT s.id, s.name, s.project_id, s."group"
     FROM states s
     JOIN projects p ON s.project_id = p.id
     JOIN workspaces w ON p.workspace_id = w.id
-    WHERE s.name ILIKE $1
+    WHERE (
+        LOWER(s.name) = LOWER($1)
+        OR REPLACE(LOWER(s.name), ' ', '') = $2
+        OR s.name ILIKE $3
+    )
     AND s.deleted_at IS NULL
     """
 
-    params = [f"%{name}%"]
-
-    if project_id:
-        query += " AND s.project_id = $2"
-        params.append(project_id)
-
-    if workspace_slug:
-        query += " AND w.slug = $3"
-        params.append(workspace_slug)
-
-    query += " LIMIT 20"
+    params: List[Any] = [normalized_name, squashed_name, f"%{normalized_name}%"]
+    query, params = _append_optional_filter(query, params, "AND s.project_id = ${param}", project_id)
+    query, params = _append_optional_filter(query, params, "AND w.slug = ${param}", workspace_slug)
+    query += (
+        " ORDER BY CASE WHEN LOWER(s.name) = LOWER($1) THEN 0 WHEN REPLACE(LOWER(s.name), ' ', '') = $2 THEN 1 ELSE 2 END, s.sequence ASC LIMIT 20"  # noqa: E501
+    )
 
     try:
         result = await PlaneDBPool.fetchrow(query, tuple(params))
@@ -878,6 +928,41 @@ async def search_state_by_name(name: str, project_id: Optional[str] = None, work
         return None
     except Exception as e:
         log.error(f"Error searching for state '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
+        return None
+
+
+async def search_state_by_group(
+    group: str,
+    project_id: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    raise_on_error: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Search for the first state in a given state group."""
+    query = """
+    SELECT s.id, s.name, s.project_id, s."group"
+    FROM states s
+    JOIN projects p ON s.project_id = p.id
+    JOIN workspaces w ON p.workspace_id = w.id
+    WHERE s."group" = $1
+    AND s.deleted_at IS NULL
+    """
+
+    params: List[Any] = [group]
+    query, params = _append_optional_filter(query, params, "AND s.project_id = ${param}", project_id)
+    query, params = _append_optional_filter(query, params, "AND w.slug = ${param}", workspace_slug)
+    query += " ORDER BY s.sequence ASC LIMIT 1"
+
+    try:
+        result = await PlaneDBPool.fetchrow(query, tuple(params))
+        if result:
+            return {"id": str(result["id"]), "name": result["name"], "group": result["group"], "project_id": str(result["project_id"])}
+        return None
+    except Exception as e:
+        log.error(f"Error searching for state group '{group}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        if raise_on_error:
+            raise
         return None
 
 

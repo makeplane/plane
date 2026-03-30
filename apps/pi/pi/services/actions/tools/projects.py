@@ -288,7 +288,7 @@ PROJECT_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 name="timezone", type="Optional[str]", required=False, description="Timezone for the project (optional)", property_transform="name"
             ),
             ToolParameter(
-                name="time_tracking_enabled",
+                name="is_time_tracking_enabled",
                 type="Optional[bool]",
                 required=False,
                 description="Enable/disable time tracking, also called worklogs (optional)",

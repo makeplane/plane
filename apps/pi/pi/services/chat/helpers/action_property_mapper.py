@@ -157,7 +157,7 @@ def map_project_properties(tool_args: Dict[str, Any]) -> Dict[str, Any]:
     # Time Tracking Enabled: {"name": true/false}
     # Handle both variants: time_tracking_enabled and is_time_tracking_enabled
     if "time_tracking_enabled" in tool_args and tool_args["time_tracking_enabled"] is not None:
-        properties["time_tracking_enabled"] = bool(tool_args["time_tracking_enabled"])
+        properties["is_time_tracking_enabled"] = bool(tool_args["time_tracking_enabled"])
     elif "is_time_tracking_enabled" in tool_args and tool_args["is_time_tracking_enabled"] is not None:
         properties["is_time_tracking_enabled"] = bool(tool_args["is_time_tracking_enabled"])
 

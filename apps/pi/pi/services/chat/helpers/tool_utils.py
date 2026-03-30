@@ -1304,6 +1304,11 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID:
     - Do NOT call `projects_retrieve` during planning (the project doesn't exist yet to retrieve)
     - Instead, you MUST enable the required feature flag during `projects_create` itself (for features that support it) OR plan a `projects_update_features` call immediately after project creation (for features like epics)
+    - **STATE RESOLUTION FOR NEW PROJECTS**: If you are planning work items inside that newly created project:
+        - Do NOT call `search_state_by_name` during planning with `project_id="<id of project: ...>"`
+        - The project's states do not exist yet, so project-scoped state retrieval is impossible at planning time
+        - Instead, pass the requested state name directly in the planned action (for example `state: "in progress"` or `state: "to do"`)
+        - The execution layer will resolve the state name after the project has been created
     - **Example 1**: If planning to create a project AND a cycle in the same plan:
         1. Call `projects_create` with `cycle_view=True` (to enable cycles feature)
         2. Call `cycles_create` with `project_id="<id of project: project-name>"`
@@ -1417,12 +1422,13 @@ When the user mentions an EXISTING entity (one that already exists in Plane):
 - **FORBIDDEN**: Using names/identifiers directly as *_id parameters (e.g., `project_id: "Mobile"`)
 
 **CRITICAL - PROPERTY VALUES RESOLUTION:**
-When setting properties (state, labels, assignees, types) on work items, you MUST resolve names to IDs:
+When setting properties (state, labels, assignees, types) on work items in EXISTING projects, you MUST resolve names to IDs:
 - **state property**: "change state to done" → call `search_state_by_name("done", project_id=...)` → extract `state_id` → use in action
 - **labels property**: "add label 'bug'" → call `search_label_by_name("bug", project_id=...)` → extract `label_id` → use in action
 - **assignees property**: "assign to John" → call `search_user_by_name("John")` → extract `user_id` → use in action
 - **type property**: "change type to task" → call `search_type_by_name("task", project_id=...)` → extract `type_id` → use in action
 - **NEVER** use property names directly (e.g., `state: {{name: "backlog"}}` ❌) - always resolve to ID first (e.g., `state_id: "uuid-123-eabc3cf2e"` ✅)
+- **EXCEPTION - NEW PROJECT IN CURRENT PLAN**: If `project_id` is a placeholder for a project being created in this same plan, do NOT call `search_state_by_name`; use the state name directly in the planned action and let execution resolve it after project creation.
 
 
 **RULE 2: NEWLY CREATED ENTITIES - USE PLACEHOLDERS**

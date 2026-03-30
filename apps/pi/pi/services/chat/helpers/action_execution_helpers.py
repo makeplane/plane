@@ -333,6 +333,15 @@ async def load_artifacts(
                 "default_assignee",
             }
 
+            if "time_tracking_enabled" in original_tool_args and "is_time_tracking_enabled" not in tool_args:
+                tool_args["is_time_tracking_enabled"] = original_tool_args["time_tracking_enabled"]
+                log.debug(
+                    "Normalized legacy param time_tracking_enabled=%s to is_time_tracking_enabled for %s %s",
+                    original_tool_args["time_tracking_enabled"],
+                    entity_type,
+                    action,
+                )
+
             for param in NON_EDITABLE_PARAMS:
                 if param in original_tool_args and param not in tool_args:
                     tool_args[param] = original_tool_args[param]

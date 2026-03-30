@@ -16,94 +16,71 @@ This package organizes Plane API tools into logical categories for better mainta
 Each module contains tools for a specific API domain (projects, work items, cycles, etc.).
 """
 
+from importlib import import_module
 from typing import Any
-from typing import Callable
 from typing import Dict
 from typing import List
 
 from langchain_core.tools import BaseTool
 
-# Explicit mapping of categories to their provider factories
-# Import provider factories explicitly to make wiring obvious and avoid side effects
-from .activity import get_activity_tools
-from .assets import get_asset_tools
-from .attachments import get_attachment_tools
-from .comments import get_comment_tools
-from .customers import get_customer_tools
-from .cycles import get_cycle_tools
-from .initiatives import get_initiative_tools
-from .intake import get_intake_tools
-from .labels import get_label_tools
-from .links import get_link_tools
-from .members import get_member_tools
-from .modules import get_module_tools
-from .pages import get_page_tools
-from .projects import get_project_tools
-from .properties import get_property_tools
-from .states import get_state_tools
-from .stickies import get_sticky_tools
-from .teamspaces import get_teamspace_tools
-from .types import get_type_tools
-from .users import get_user_tools
-from .workitems import get_workitem_tools
-from .worklogs import get_worklog_tools
-from .workspaces import get_workspace_tools
-
-CATEGORY_TO_PROVIDER: Dict[str, Callable] = {
-    "activity": get_activity_tools,
-    "activities": get_activity_tools,
-    "assets": get_asset_tools,
-    "asset": get_asset_tools,
-    "attachments": get_attachment_tools,
-    "attachment": get_attachment_tools,
-    "comments": get_comment_tools,
-    "comment": get_comment_tools,
-    "customers": get_customer_tools,
-    "customer": get_customer_tools,
-    "cycles": get_cycle_tools,
-    "cycle": get_cycle_tools,
-    "intake": get_intake_tools,
-    "intakes": get_intake_tools,
-    "initiatives": get_initiative_tools,
-    "initiative": get_initiative_tools,
-    "labels": get_label_tools,
-    "label": get_label_tools,
-    "links": get_link_tools,
-    "link": get_link_tools,
-    "members": get_member_tools,
-    "member": get_member_tools,
-    "modules": get_module_tools,
-    "module": get_module_tools,
-    "pages": get_page_tools,
-    "page": get_page_tools,
-    "projects": get_project_tools,
-    "project": get_project_tools,
-    "properties": get_property_tools,
-    "property": get_property_tools,
-    "states": get_state_tools,
-    "state": get_state_tools,
-    "stickies": get_sticky_tools,
-    "sticky": get_sticky_tools,
-    "teamspaces": get_teamspace_tools,
-    "teamspace": get_teamspace_tools,
-    "types": get_type_tools,
-    "type": get_type_tools,
-    "users": get_user_tools,
-    "user": get_user_tools,
-    "workitems": get_workitem_tools,
-    "workitem": get_workitem_tools,
-    "worklogs": get_worklog_tools,
-    "worklog": get_worklog_tools,
-    "workspaces": get_workspace_tools,
-    "workspace": get_workspace_tools,
+CATEGORY_TO_PROVIDER: Dict[str, str] = {
+    "activity": "pi.services.actions.tools.activity:get_activity_tools",
+    "activities": "pi.services.actions.tools.activity:get_activity_tools",
+    "assets": "pi.services.actions.tools.assets:get_asset_tools",
+    "asset": "pi.services.actions.tools.assets:get_asset_tools",
+    "attachments": "pi.services.actions.tools.attachments:get_attachment_tools",
+    "attachment": "pi.services.actions.tools.attachments:get_attachment_tools",
+    "comments": "pi.services.actions.tools.comments:get_comment_tools",
+    "comment": "pi.services.actions.tools.comments:get_comment_tools",
+    "customers": "pi.services.actions.tools.customers:get_customer_tools",
+    "customer": "pi.services.actions.tools.customers:get_customer_tools",
+    "cycles": "pi.services.actions.tools.cycles:get_cycle_tools",
+    "cycle": "pi.services.actions.tools.cycles:get_cycle_tools",
+    "intake": "pi.services.actions.tools.intake:get_intake_tools",
+    "intakes": "pi.services.actions.tools.intake:get_intake_tools",
+    "initiatives": "pi.services.actions.tools.initiatives:get_initiative_tools",
+    "initiative": "pi.services.actions.tools.initiatives:get_initiative_tools",
+    "labels": "pi.services.actions.tools.labels:get_label_tools",
+    "label": "pi.services.actions.tools.labels:get_label_tools",
+    "links": "pi.services.actions.tools.links:get_link_tools",
+    "link": "pi.services.actions.tools.links:get_link_tools",
+    "members": "pi.services.actions.tools.members:get_member_tools",
+    "member": "pi.services.actions.tools.members:get_member_tools",
+    "modules": "pi.services.actions.tools.modules:get_module_tools",
+    "module": "pi.services.actions.tools.modules:get_module_tools",
+    "pages": "pi.services.actions.tools.pages:get_page_tools",
+    "page": "pi.services.actions.tools.pages:get_page_tools",
+    "projects": "pi.services.actions.tools.projects:get_project_tools",
+    "project": "pi.services.actions.tools.projects:get_project_tools",
+    "properties": "pi.services.actions.tools.properties:get_property_tools",
+    "property": "pi.services.actions.tools.properties:get_property_tools",
+    "states": "pi.services.actions.tools.states:get_state_tools",
+    "state": "pi.services.actions.tools.states:get_state_tools",
+    "stickies": "pi.services.actions.tools.stickies:get_sticky_tools",
+    "sticky": "pi.services.actions.tools.stickies:get_sticky_tools",
+    "teamspaces": "pi.services.actions.tools.teamspaces:get_teamspace_tools",
+    "teamspace": "pi.services.actions.tools.teamspaces:get_teamspace_tools",
+    "types": "pi.services.actions.tools.types:get_type_tools",
+    "type": "pi.services.actions.tools.types:get_type_tools",
+    "users": "pi.services.actions.tools.users:get_user_tools",
+    "user": "pi.services.actions.tools.users:get_user_tools",
+    "workitems": "pi.services.actions.tools.workitems:get_workitem_tools",
+    "workitem": "pi.services.actions.tools.workitems:get_workitem_tools",
+    "worklogs": "pi.services.actions.tools.worklogs:get_worklog_tools",
+    "worklog": "pi.services.actions.tools.worklogs:get_worklog_tools",
+    "workspaces": "pi.services.actions.tools.workspaces:get_workspace_tools",
+    "workspace": "pi.services.actions.tools.workspaces:get_workspace_tools",
 }
 
 
 def get_tools_for_category(category: str, method_executor, context: Dict[str, Any]) -> List[BaseTool]:
     """Return the LangChain tools for a category using the explicit provider mapping."""
-    provider = CATEGORY_TO_PROVIDER.get(category)
-    if not provider:
+    provider_path = CATEGORY_TO_PROVIDER.get(category)
+    if not provider_path:
         return []
+
+    module_path, provider_name = provider_path.split(":", 1)
+    provider = getattr(import_module(module_path), provider_name)
     return provider(method_executor, context)
 
 

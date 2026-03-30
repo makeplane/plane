@@ -23,8 +23,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
-from pi.services.actions import MethodExecutor
-from pi.services.actions import PlaneActionsExecutor
+from pi.services.actions.method_executor import MethodExecutor
+from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
 from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENCY_RULES
 from pi.services.chat.helpers.action_execution_helpers import format_response

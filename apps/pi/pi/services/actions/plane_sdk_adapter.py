@@ -557,14 +557,43 @@ class PlaneSDKAdapter:
                 filtered_kwargs = self._filter_payload(kwargs)
                 data.update(filtered_kwargs)
 
+            post_create_updates = {}
+            for field in ("is_time_tracking_enabled",):
+                if field in data and data[field] is not None:
+                    post_create_updates[field] = data.pop(field)
+
             project = self.client.projects.create(workspace_slug=workspace_slug, data=CreateProject(**data))
 
             result = self._model_to_dict(project)
-            if isinstance(result, dict):
-                return result
-            else:
-                # Fallback if conversion didn't return a dict
-                return {"data": result}
+            if not isinstance(result, dict):
+                result = {"data": result}
+
+            if post_create_updates:
+                project_id = result.get("id")
+                if project_id:
+                    try:
+                        self.client.projects.update(
+                            workspace_slug=workspace_slug,
+                            project_id=project_id,
+                            data=UpdateProject(**post_create_updates),
+                        )
+                        log.debug(
+                            "Applied post-create updates %s to project %s",
+                            list(post_create_updates.keys()),
+                            project_id,
+                        )
+                    except Exception as update_err:
+                        log.error(
+                            "Failed to apply post-create updates %s to project %s: %s",
+                            post_create_updates,
+                            project_id,
+                            update_err,
+                        )
+                        raise RuntimeError(
+                            f"Project '{name}' was created but post-create updates failed for {list(post_create_updates.keys())}: {update_err}"
+                        ) from update_err
+
+            return result
 
         except HttpError as e:
             log.error(f"Failed to create project: {e} ({getattr(e, 'status_code', None)})")

@@ -14,6 +14,7 @@ Entity Search Tools for Plane
 Provides search functionality for all major entities using database queries.
 """
 
+import re
 import uuid
 from typing import Any
 from typing import Dict
@@ -33,9 +34,51 @@ from .base import PlaneToolBase
 def get_entity_search_tools(method_executor, context):
     """Return LangChain tools for entity search helpers using method_executor and context."""
 
+    def _parse_placeholder_reference(value: Optional[str]) -> tuple[Optional[str], Optional[str]]:
+        """Extract placeholder entity info from a value like '<id of project: My Project>'."""
+        if not isinstance(value, str):
+            return None, None
+
+        match = re.match(r"<id of (\w+): (.+)>", value.strip())
+        if not match:
+            return None, None
+
+        return match.group(1), match.group(2).strip()
+
+    def _build_placeholder_skip_payload(tool_name: str, project_id: Optional[str], target_name: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Return a structured skipped payload when a project-scoped search references an unresolved project placeholder."""
+        entity_type, entity_name = _parse_placeholder_reference(project_id)
+        if entity_type != "project" or not entity_name:
+            return None
+
+        object_suffix = f" for '{target_name}'" if target_name else ""
+        if tool_name == "search_state_by_name":
+            message = (
+                f"{tool_name}{object_suffix} was skipped because project '{entity_name}' is being created in this plan. "
+                "Project-scoped state lookup can only run after the project exists."
+            )
+        else:
+            message = (
+                f"{tool_name}{object_suffix} was skipped because project '{entity_name}' is being created in this plan. "
+                "Project-scoped retrieval can only run after the project exists."
+            )
+
+        return PlaneToolBase.format_skipped_payload(
+            message,
+            meta={
+                "status": "skipped",
+                "reason": "unresolved_project_placeholder",
+                "project_name": entity_name,
+                "tool_name": tool_name,
+            },
+        )
+
     async def _normalize_project_id(project_id: Optional[str], workspace_slug: Optional[str]) -> Optional[str]:
         """Return UUID string for project_id; if an identifier is provided, resolve it using workspace scope."""
         if not project_id:
+            return None
+        entity_type, _entity_name = _parse_placeholder_reference(project_id)
+        if entity_type == "project":
             return None
         try:
             uuid.UUID(str(project_id))
@@ -70,12 +113,16 @@ def get_entity_search_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = str(context["project_id"]) if context["project_id"] else None
 
+        skipped = _build_placeholder_skip_payload("search_module_by_name", project_id, name)
+        if skipped:
+            return skipped
+
         try:
             # Normalize project_id if an identifier like 'OGX' was passed
             project_id = await _normalize_project_id(project_id, workspace_slug)
             from pi.app.api.v1.helpers.plane_sql_queries import search_module_by_name
 
-            result = await search_module_by_name(name, project_id, workspace_slug)
+            result = await search_module_by_name(name, project_id, workspace_slug, raise_on_error=True)
 
             if result:
                 return PlaneToolBase.format_success_payload(
@@ -154,7 +201,7 @@ def get_entity_search_tools(method_executor, context):
         try:
             from pi.app.api.v1.helpers.plane_sql_queries import search_project_by_name
 
-            results = await search_project_by_name(name, workspace_slug, member_id=user_id)
+            results = await search_project_by_name(name, workspace_slug, member_id=user_id, raise_on_error=True)
 
             if results:
                 # Normalize to list
@@ -256,12 +303,16 @@ def get_entity_search_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = str(context["project_id"]) if context["project_id"] else None
 
+        skipped = _build_placeholder_skip_payload("search_cycle_by_name", project_id, name)
+        if skipped:
+            return skipped
+
         try:
             # Normalize project_id if an identifier like 'OGX' was passed
             project_id = await _normalize_project_id(project_id, workspace_slug)
             from pi.app.api.v1.helpers.plane_sql_queries import search_cycle_by_name
 
-            result = await search_cycle_by_name(name, project_id, workspace_slug)
+            result = await search_cycle_by_name(name, project_id, workspace_slug, raise_on_error=True)
 
             if result:
                 response_data = {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
@@ -293,6 +344,10 @@ def get_entity_search_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = str(context["project_id"]) if context["project_id"] else None
 
+        skipped = _build_placeholder_skip_payload("search_current_cycle", project_id)
+        if skipped:
+            return skipped
+
         try:
             if not project_id:
                 return PlaneToolBase.format_error_payload(
@@ -310,7 +365,7 @@ def get_entity_search_tools(method_executor, context):
 
             from pi.app.api.v1.helpers.plane_sql_queries import search_current_cycle
 
-            results = await search_current_cycle(normalized_project_id, workspace_slug)
+            results = await search_current_cycle(normalized_project_id, workspace_slug, raise_on_error=True)
 
             if results:
                 cycles_data = []
@@ -385,6 +440,10 @@ def get_entity_search_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = str(context["project_id"]) if context["project_id"] else None
 
+        skipped = _build_placeholder_skip_payload("list_recent_cycles", project_id)
+        if skipped:
+            return skipped
+
         try:
             # Normalize project_id if identifier was provided
             project_id = await _normalize_project_id(project_id, workspace_slug)
@@ -433,12 +492,16 @@ def get_entity_search_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = str(context["project_id"]) if context["project_id"] else None
 
+        skipped = _build_placeholder_skip_payload("search_label_by_name", project_id, name)
+        if skipped:
+            return skipped
+
         try:
             # Normalize project_id if an identifier like 'OGX' was passed
             project_id = await _normalize_project_id(project_id, workspace_slug)
             from pi.app.api.v1.helpers.plane_sql_queries import search_label_by_name
 
-            result = await search_label_by_name(name, project_id, workspace_slug)
+            result = await search_label_by_name(name, project_id, workspace_slug, raise_on_error=True)
 
             if result:
                 return PlaneToolBase.format_success_payload(
@@ -465,12 +528,16 @@ def get_entity_search_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = str(context["project_id"]) if context["project_id"] else None
 
+        skipped = _build_placeholder_skip_payload("search_state_by_name", project_id, name)
+        if skipped:
+            return skipped
+
         try:
             # Normalize project_id if an identifier like 'OGX' was passed
             project_id = await _normalize_project_id(project_id, workspace_slug)
             from pi.app.api.v1.helpers.plane_sql_queries import search_state_by_name
 
-            result = await search_state_by_name(name, project_id, workspace_slug)
+            result = await search_state_by_name(name, project_id, workspace_slug, raise_on_error=True)
 
             if result:
                 return PlaneToolBase.format_success_payload(

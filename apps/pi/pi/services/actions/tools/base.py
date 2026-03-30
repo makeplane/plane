@@ -74,6 +74,22 @@ class PlaneToolBase:
         return payload
 
     @staticmethod
+    def format_skipped_payload(message: str, data: Any = None, meta: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Structured payload for retrievals intentionally skipped by planner/runtime guards.
+        """
+        payload: Dict[str, Any] = {
+            "ok": True,
+            "skipped": True,
+            "message": f"Skipped: {message}",
+        }
+        if data is not None:
+            payload["data"] = data
+        if meta is not None:
+            payload["meta"] = meta
+        return payload
+
+    @staticmethod
     async def format_success_response_with_url(message: str, data: Any, entity_type: str, context: Dict[str, Any]) -> str:
         """
         Format successful operation response with entity URL information.

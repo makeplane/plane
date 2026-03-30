@@ -43,9 +43,9 @@ from pi.app.models.enums import ExecutionStatus
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
-from pi.services.actions import MethodExecutor
-from pi.services.actions import PlaneActionsExecutor
 from pi.services.actions.artifacts.utils import serialize_for_json
+from pi.services.actions.method_executor import MethodExecutor
+from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
 from pi.services.actions.registry import get_available_categories
 from pi.services.actions.registry import get_category_methods
 from pi.services.actions.tools.entity_search import get_entity_search_tools
@@ -801,6 +801,79 @@ async def enrich_tool_query_for_display(
     return tool_query
 
 
+def _extract_placeholder_references(tool_args: Dict[str, Any]) -> List[Tuple[str, str, str]]:
+    """Return placeholder references found in tool arguments."""
+    refs: List[Tuple[str, str, str]] = []
+
+    for field_name, value in tool_args.items():
+        values = value if isinstance(value, list) else [value]
+        for candidate in values:
+            if not isinstance(candidate, str):
+                continue
+            match = re.search(r"<id of (\w+): ([^>]+)>", candidate)
+            if match:
+                refs.append((field_name, match.group(1), match.group(2).strip()))
+
+    return refs
+
+
+def _build_placeholder_skip_message(tool_name: str, placeholder_refs: List[Tuple[str, str, str]]) -> str:
+    """Create a user-facing skip message for retrieval tools blocked by placeholders."""
+    field_name, entity_type, entity_name = placeholder_refs[0]
+
+    if field_name == "project_id" and entity_type == "project":
+        if tool_name == "search_state_by_name":
+            return (
+                f"Skipping {tool_name}: project '{entity_name}' is being created in this plan, "
+                "so project-scoped state search cannot run yet. The state will be resolved during execution "
+                "after the project exists."
+            )
+
+        return f"Skipping {tool_name}: project '{entity_name}' is being created in this plan, " "so this retrieval cannot run until execution."
+
+    refs_summary = ", ".join([f"{etype} '{ename}' via {fname}" for fname, etype, ename in placeholder_refs])
+    return (
+        f"Skipping {tool_name}: it references unresolved placeholders ({refs_summary}). "
+        "Retrieval can only run after those entities are created during execution."
+    )
+
+
+def _maybe_build_placeholder_skip_result(
+    *,
+    tool_name: str,
+    tool_id: str,
+    tool_args: Dict[str, Any],
+    current_step: int,
+    tool_query: str,
+) -> Optional[Tuple[Optional[Dict[str, Any]], Optional[Any], int, str, ExecutionStatus, Optional[str]]]:
+    """Return a structured skip result when a retrieval tool references unresolved placeholders."""
+    placeholder_refs = _extract_placeholder_references(tool_args)
+    if not placeholder_refs:
+        return None
+
+    message = _build_placeholder_skip_message(tool_name, placeholder_refs)
+    tool_message = ToolMessage(content=message, tool_call_id=tool_id) if tool_id else None
+    flow_step = {
+        "step_order": current_step,
+        "step_type": FlowStepType.TOOL,
+        "tool_name": tool_name,
+        "content": message,
+        "execution_data": {
+            "args": tool_args,
+            "tool_id": tool_id,
+            "skipped_due_to_placeholder": True,
+            "placeholder_references": [
+                {"field_name": field_name, "entity_type": entity_type, "entity_name": entity_name}
+                for field_name, entity_type, entity_name in placeholder_refs
+            ],
+        },
+        "is_executed": False,
+        "is_planned": False,
+        "execution_success": ExecutionStatus.PENDING,
+    }
+    return flow_step, tool_message, current_step + 1, tool_query, ExecutionStatus.PENDING, None
+
+
 async def execute_retrieval_tool_and_build_step(
     *,
     tool_name: str,
@@ -836,89 +909,15 @@ async def execute_retrieval_tool_and_build_step(
     except Exception:
         pass
 
-    # Guard: avoid calling retrieval tools with unresolved placeholder IDs
-    # Try to resolve placeholders for common cases (e.g., projects_retrieve(project_id="<id of project: X>") )
-    try:
-        if tool_name == "projects_retrieve" and isinstance(tool_args, dict):
-            proj_id = tool_args.get("project_id")
-            if isinstance(proj_id, str):
-                m = re.search(r"<id of (\w+): ([^>]+)>", proj_id)
-                if m:
-                    _etype, _ename = m.groups()
-                    if _etype == "project" and isinstance(_ename, str) and _ename.strip():
-                        # Try resolving via search_project_by_name in the same planning pass
-                        _search_tool = next((t for t in combined_tools if getattr(t, "name", "") == "search_project_by_name"), None)
-                        if _search_tool is not None:
-                            try:
-                                # Invoke search and parse id from formatted result
-                                _res = await (
-                                    _search_tool.ainvoke({"name": _ename})
-                                    if hasattr(_search_tool, "ainvoke")
-                                    else _search_tool.invoke({"name": _ename})
-                                )
-                                _proj_id = None
-                                if isinstance(_res, str) and "Result:" in _res:
-                                    try:
-                                        _section = _res.split("Result:")[-1].strip()
-                                        _dict = ast.literal_eval(_section)
-                                        if isinstance(_dict, dict):
-                                            _proj_id = _dict.get("id")
-                                    except Exception:
-                                        _proj_id = None
-                                # If resolved, replace placeholder and continue normally
-                                if isinstance(_proj_id, str) and _proj_id:
-                                    tool_args = dict(tool_args)
-                                    tool_args["project_id"] = _proj_id
-                                else:
-                                    # Could not resolve now; skip API call to avoid 404 and return an informative message
-
-                                    msg = (
-                                        f"Skipping projects_retrieve: project '{_ename}' is not found yet. "
-                                        f"If this project is being created in this plan, its details will be retrievable after execution."
-                                    )
-                                    tool_message = ToolMessage(content=msg, tool_call_id=tool_id)
-                                    # Build a minimal flow step marking the retrieval as skipped
-                                    flow_step = {
-                                        "step_order": current_step,
-                                        "step_type": FlowStepType.TOOL,
-                                        "tool_name": tool_name,
-                                        "content": msg,
-                                        "execution_data": {
-                                            "args": tool_args,
-                                            "tool_id": tool_id,
-                                            "skipped_due_to_placeholder": True,
-                                        },
-                                        "is_executed": False,
-                                        "is_planned": False,
-                                        "execution_success": ExecutionStatus.PENDING,
-                                    }
-                                    return flow_step, tool_message, current_step + 1, tool_query, ExecutionStatus.PENDING, None
-                            except Exception:
-                                # On any resolver failure, fall through to skip to avoid 404s
-
-                                msg = (
-                                    f"Skipping projects_retrieve: unable to resolve placeholder for '{_ename}'. "
-                                    f"Will retrieve after the project exists."
-                                )
-                                tool_message = ToolMessage(content=msg, tool_call_id=tool_id)
-                                flow_step = {
-                                    "step_order": current_step,
-                                    "step_type": FlowStepType.TOOL,
-                                    "tool_name": tool_name,
-                                    "content": msg,
-                                    "execution_data": {
-                                        "args": tool_args,
-                                        "tool_id": tool_id,
-                                        "skipped_due_to_placeholder": True,
-                                    },
-                                    "is_executed": False,
-                                    "is_planned": False,
-                                    "execution_success": ExecutionStatus.PENDING,
-                                }
-                                return flow_step, tool_message, current_step + 1, tool_query, ExecutionStatus.PENDING, None
-    except Exception:
-        # Non-fatal; continue with normal execution
-        pass
+    placeholder_skip = _maybe_build_placeholder_skip_result(
+        tool_name=tool_name,
+        tool_id=tool_id,
+        tool_args=tool_args,
+        current_step=current_step,
+        tool_query=tool_query,
+    )
+    if placeholder_skip is not None:
+        return placeholder_skip
 
     tool_func = next((t for t in combined_tools if getattr(t, "name", "") == tool_name), None)
     result = None
