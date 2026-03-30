@@ -65,7 +65,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
             {/* Workitem header section */}
             <div className="flex items-center gap-1 flex-grow h-full py-2.5 min-w-80">
               {canSelectIssues && (
-                <div className="flex-shrink-0 flex items-center w-3.5 mr-1">
+                <div className="flex-shrink-0 flex items-center w-3.5 absolute left-1">
                   <MultipleSelectGroupAction
                     className={cn(
                       "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
