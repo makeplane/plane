@@ -97,7 +97,7 @@ export const IssueVotes = observer(function IssueVotes(props: IssueVotesProps) {
           <button
             aria-label="Upvote members"
             tabIndex={0}
-            className={cn("cursor-pointer", isUpVotedByUser && "text-label-indigo-text")}
+            className={cn("cursor-pointer hover:underline", isUpVotedByUser && "text-label-indigo-text")}
             onClick={() => openVotingMembersModal("upVotes")}
             onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("upVotes")}
           >
@@ -130,7 +130,7 @@ export const IssueVotes = observer(function IssueVotes(props: IssueVotesProps) {
           <button
             aria-label="Downvote members"
             tabIndex={0}
-            className={cn("cursor-pointer", isDownVotedByUser && "text-label-crimson-text")}
+            className={cn("cursor-pointer hover:underline", isDownVotedByUser && "text-label-crimson-text")}
             onClick={() => openVotingMembersModal("downVotes")}
             onKeyDown={(e) => e.key === "Enter" && openVotingMembersModal("downVotes")}
           >

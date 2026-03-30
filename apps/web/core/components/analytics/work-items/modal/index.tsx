@@ -55,7 +55,7 @@ export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
     >
       <div
         className={`flex h-full flex-col overflow-hidden border-subtle bg-surface-1 text-left ${
-          fullScreen ? "rounded-lg border" : "border-l"
+          fullScreen ? "rounded-lg border" : "border-l shadow-direction-left"
         }`}
       >
         <WorkItemsModalHeader
