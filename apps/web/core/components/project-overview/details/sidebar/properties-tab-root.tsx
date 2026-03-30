@@ -75,6 +75,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
   const { t } = useTranslation();
   // derived values
   const project = getProjectById(projectId.toString());
+  const isLabelsEnabled = useFlag(workspaceSlug.toString(), "WORKSPACE_PROJECT_LABELS");
 
   if (!project || !currentWorkspace) return null;
 
@@ -197,19 +198,21 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 }
               />
             </div>
-            <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
-                <span>Labels</span>
+            {isLabelsEnabled && (
+              <div className="flex h-8 items-center gap-2">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+                  <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
+                  <span>Labels</span>
+                </div>
+                <LabelsDropdown
+                  value={project.label_ids ?? []}
+                  onChange={(labelIds) => handleUpdateProject({ label_ids: labelIds })}
+                  disabled={!isEditingAllowed || isArchived}
+                  workspaceSlug={workspaceSlug.toString()}
+                  className="h-7 my-auto w-full"
+                />
               </div>
-              <LabelsDropdown
-                value={project.label_ids ?? []}
-                onChange={(labelIds) => handleUpdateProject({ label_ids: labelIds })}
-                disabled={!isEditingAllowed || isArchived}
-                workspaceSlug={workspaceSlug.toString()}
-                className="h-7 my-auto w-full"
-              />
-            </div>
+            )}
             {isInitiativesFeatureEnabled && (
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
@@ -289,7 +292,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
           title={t("workspace_empty_state.project_overview_state_sidebar.title")}
           description={t("workspace_empty_state.project_overview_state_sidebar.description")}
           customButton={
-            <Link href={`/${workspaceSlug}/settings/project-states`} className="mt-4 mx-auto">
+            <Link href={`/${workspaceSlug}/settings/project-configuration`} className="mt-4 mx-auto">
               <Button variant="primary">Enable</Button>
             </Link>
           }

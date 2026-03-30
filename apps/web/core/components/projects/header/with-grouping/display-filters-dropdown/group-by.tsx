@@ -13,10 +13,13 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // constants
 import { PROJECT_GROUP_BY_OPTIONS } from "@/constants/project";
+// plane web imports
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // types
 import type { TProjectGroupBy } from "@/types/workspace-project-filters";
 
@@ -27,8 +30,14 @@ type TDisplayFilterGroupBy = {
 
 export const DisplayFilterGroupBy = observer(function DisplayFilterGroupBy(props: TDisplayFilterGroupBy) {
   const { filterValue, handleUpdate } = props;
+  const { workspaceSlug } = useParams();
+  const isLabelsEnabled = useFlag(workspaceSlug?.toString(), "WORKSPACE_PROJECT_LABELS");
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
+
+  const groupByOptions = isLabelsEnabled
+    ? PROJECT_GROUP_BY_OPTIONS
+    : PROJECT_GROUP_BY_OPTIONS.filter((o) => o.key !== "labels");
 
   return (
     <>
@@ -39,7 +48,7 @@ export const DisplayFilterGroupBy = observer(function DisplayFilterGroupBy(props
       />
       {previewEnabled && (
         <div>
-          {PROJECT_GROUP_BY_OPTIONS.map((groupBy) => (
+          {groupByOptions.map((groupBy) => (
             <FilterOption
               key={groupBy?.key}
               isChecked={filterValue === groupBy?.key ? true : false}

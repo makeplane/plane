@@ -29,6 +29,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import type { TProject } from "@/types/projects";
 import type { EProjectPriority } from "@/types/workspace-project-states";
 // local imports
@@ -61,6 +62,7 @@ export const Attributes = observer(function Attributes(props: Props) {
     containerClass = "",
     displayProperties,
   } = props;
+  const isLabelsEnabled = useFlag(workspaceSlug, "WORKSPACE_PROJECT_LABELS");
   // store hooks
   const { getUserDetails } = useMember();
   const { t } = useTranslation();
@@ -188,7 +190,7 @@ export const Attributes = observer(function Attributes(props: Props) {
           </div>
         </Tooltip>
       )}
-      {displayProperties["labels"] && (
+      {displayProperties["labels"] && isLabelsEnabled && (
         <Tooltip tooltipContent="Labels" position="top">
           <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
             <LabelsDropdown

@@ -115,9 +115,9 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
   project_states: {
     key: "project_states",
     i18n_label: "workspace_settings.settings.projects.title",
-    href: `/settings/project-states`,
+    href: `/settings/project-configuration`,
     access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-states/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-configuration/`,
   },
   teamspaces: {
     key: "teamspaces",
