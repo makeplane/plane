@@ -226,21 +226,36 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        if workspace_role in [5] and int(request.data.get("role", project_member.role)) in [15, 20]:
-            return Response(
-                {"error": "You cannot add a user with role higher than the workspace role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if "role" in request.data:
+            # Only Admins can modify roles
+            if requested_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
+                return Response(
+                    {"error": "You do not have permission to update roles"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
-        if (
-            "role" in request.data
-            and int(request.data.get("role", project_member.role)) > requested_project_member.role
-            and not is_workspace_admin
-        ):
-            return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            # Cannot modify a member whose role is equal to or higher than your own
+            if project_member.role >= requested_project_member.role and not is_workspace_admin:
+                return Response(
+                    {"error": "You cannot update the role of a member with a role equal to or higher than your own"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            new_role = int(request.data.get("role"))
+
+            # Cannot assign a role equal to or higher than your own
+            if new_role >= requested_project_member.role and not is_workspace_admin:
+                return Response(
+                    {"error": "You cannot assign a role equal to or higher than your own"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            # Cannot assign a role higher than the target's workspace role
+            if workspace_role in [5] and new_role in [15, 20]:
+                return Response(
+                    {"error": "You cannot add a user with role higher than the workspace role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
