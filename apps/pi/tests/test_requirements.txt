@@ -1,6 +1,5 @@
 # Requirements for V1 vs V2 API comparison testing
 
-requests>=2.31.0
+requests==2.33.0
 deepdiff>=6.7.1
 colorama>=0.4.6
-

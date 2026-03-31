@@ -63,7 +63,13 @@
       "undici@7": ">=7.24.0",
       "got": ">=11.8.5",
       "flatted": ">=3.4.2",
-      "socket.io-parser": ">=4.2.6"
+      "socket.io-parser": ">=4.2.6",
+      "handlebars": ">=4.7.9",
+      "path-to-regexp": ">=8.4.0",
+      "picomatch@2": ">=2.3.2",
+      "picomatch@4": ">=4.0.4",
+      "yaml": ">=2.8.3",
+      "brace-expansion": ">=5.0.5"
     },
     "onlyBuiltDependencies": [
       "@datadog/native-appsec",

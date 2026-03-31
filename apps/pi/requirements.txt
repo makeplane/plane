@@ -1,7 +1,7 @@
 # base
 fastapi==0.111.1
 uvicorn==0.38.0
-requests==2.32.5
+requests==2.33.0
 plane-sdk==0.2.5
 pydantic==2.10.6
 openai==2.24.0
@@ -9,7 +9,7 @@ html2text==2024.2.26
 python-json-logger==3.3.0
 sqlglot==27.2.0
 aenum==3.1.15
-cryptography==46.0.5
+cryptography==46.0.6
 groq==0.31.0
 redis==7.1.0
 boto3==1.42.5
