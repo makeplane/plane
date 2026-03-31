@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import * as dotenv from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import { z } from "zod";
 
 dotenv.config();

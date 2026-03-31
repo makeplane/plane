@@ -27,7 +27,7 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "catalog:",
+    "dotenv": "catalog:",
     "@effect/platform": "^0.94.0",
     "@effect/platform-node": "^0.104.0",
     "@fontsource/inter": "5.2.8",

@@ -67,14 +67,15 @@
       "rollup": "4.59.0",
       "minimatch@3": "3.1.4",
       "minimatch@10": "10.2.3",
-      "serialize-javascript": "7.0.3",
+      "serialize-javascript": "7.0.5",
       "ajv@6": "6.14.0",
       "ajv@8": "8.18.0",
       "undici@7": "7.24.0",
       "flatted": "3.4.2",
       "picomatch": "2.3.2",
       "yaml@1": "1.10.3",
-      "yaml@2": "2.8.3"
+      "yaml@2": "2.8.3",
+      "path-to-regexp": "0.1.13"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

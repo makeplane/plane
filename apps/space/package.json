@@ -53,7 +53,7 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "catalog:",
+    "dotenv": "catalog:",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@react-router/dev": "catalog:",

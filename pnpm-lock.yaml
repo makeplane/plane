@@ -18,9 +18,6 @@ catalogs:
     '@bprogress/core':
       specifier: ^1.3.4
       version: 1.3.4
-    '@dotenvx/dotenvx':
-      specifier: 1.51.1
-      version: 1.51.1
     '@react-router/dev':
       specifier: 7.13.1
       version: 7.13.1
@@ -51,6 +48,9 @@ catalogs:
     axios:
       specifier: 1.13.5
       version: 1.13.5
+    dotenv:
+      specifier: 16.4.7
+      version: 16.4.7
     lucide-react:
       specifier: 0.469.0
       version: 0.469.0
@@ -110,7 +110,7 @@ overrides:
   rollup: 4.59.0
   minimatch@3: 3.1.4
   minimatch@10: 10.2.3
-  serialize-javascript: 7.0.3
+  serialize-javascript: 7.0.5
   ajv@6: 6.14.0
   ajv@8: 8.18.0
   undici@7: 7.24.0
@@ -118,6 +118,7 @@ overrides:
   picomatch: 2.3.2
   yaml@1: 1.10.3
   yaml@2: 2.8.3
+  path-to-regexp: 0.1.13
 
 importers:
 
@@ -229,9 +230,6 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.51.1
       '@plane/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
@@ -253,6 +251,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.4.7
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -265,9 +266,6 @@ importers:
 
   apps/live:
     dependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.51.1
       '@effect/platform':
         specifier: ^0.94.0
         version: 0.94.1(effect@3.20.0)
@@ -325,6 +323,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.4.7
       effect:
         specifier: 3.20.0
         version: 3.20.0
@@ -513,9 +514,6 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.51.1
       '@plane/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
@@ -540,6 +538,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.4.7
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -715,9 +716,6 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.51.1
       '@plane/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
@@ -745,6 +743,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.4.7
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -1826,16 +1827,6 @@ packages:
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
-  '@dotenvx/dotenvx@1.51.1':
-    resolution: {integrity: sha512-fqcQxcxC4LOaUlW8IkyWw8x0yirlLUkbxohz9OnWvVWjf73J5yyw7jxWnkOJaUKXZotcGEScDox9MU6rSkcDgg==}
-    hasBin: true
-
-  '@ecies/ciphers@0.2.4':
-    resolution: {integrity: sha512-t+iX+Wf5nRKyNzk8dviW3Ikb/280+aEJAnw9YXvCp2tYGPSkMki+NRY+8aNLmVFv3eNtMdvViPNOPxS8SZNP+w==}
-    engines: {bun: '>=1', deno: '>=2', node: '>=16'}
-    peerDependencies:
-      '@noble/ciphers': ^1.0.0
-
   '@effect/cluster@0.56.1':
     resolution: {integrity: sha512-gnrsH6kfrUjn+82j/bw1IR4yFqJqV8tc7xZvrbJPRgzANycc6K1hu3LMg548uYbUkTzD8YYyqrSatMO1mkQpzw==}
     peerDependencies:
@@ -2478,18 +2469,6 @@ packages:
 
   '@napi-rs/wasm-runtime@1.1.1':
     resolution: {integrity: sha512-p64ah1M1ld8xjWv3qbvFwHiFVWrq1yFvV4f7w+mzaqiR4IlSgkqhcRdHwsGgomwzBH51sRY4NEowLxnaBjcW/A==}
-
-  '@noble/ciphers@1.3.0':
-    resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==}
-    engines: {node: ^14.21.3 || >=16}
-
-  '@noble/curves@1.9.7':
-    resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
-    engines: {node: ^14.21.3 || >=16}
-
-  '@noble/hashes@1.8.0':
-    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
-    engines: {node: ^14.21.3 || >=16}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -5036,10 +5015,6 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
-  commander@11.1.0:
-    resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
-    engines: {node: '>=16'}
-
   commander@14.0.2:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
@@ -5380,8 +5355,8 @@ packages:
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
 
-  dotenv@17.2.1:
-    resolution: {integrity: sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ==}
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
   dts-resolver@2.1.3:
@@ -5399,10 +5374,6 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
-
-  eciesjs@0.4.15:
-    resolution: {integrity: sha512-r6kEJXDKecVOCj2nLMuXK/FCPeurW33+3JRpfXVbjLja3XUYFfD9I/JBreH6sUyzcm3G/YQboBjMla6poKeSdA==}
-    engines: {bun: '>=1', deno: '>=2', node: '>=16'}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -6047,10 +6018,6 @@ packages:
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
-  ignore@5.3.2:
-    resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
-    engines: {node: '>= 4'}
-
   imagesloaded@4.1.4:
     resolution: {integrity: sha512-ltiBVcYpc/TYTF5nolkMNsnREHW+ICvfQ3Yla2Sgr71YFwQ86bDwV9hgpFhFtrGPuwEx5+LqOHIrdXBdoWwwsA==}
 
@@ -6200,10 +6167,6 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
-
-  isexe@3.1.1:
-    resolution: {integrity: sha512-LpB/54B+/2J5hqQ7imZHfdU31OlgQqx7ZicVlkm9kzg9/w8GKLEcFfJl/t7DCEDueOyBAD6zCCwTO6Fzs0NoEQ==}
-    engines: {node: '>=16'}
 
   isobject@3.0.1:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
@@ -6990,10 +6953,6 @@ packages:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
 
-  object-treeify@1.1.33:
-    resolution: {integrity: sha512-EFVjAYfzWqWsBMRHPMAXLCDIJnpMhdWAqR7xG6M6a2cs6PMFpl/+Z20w9zDW4vkxOFfddegBKq9Rehd0bxWE7A==}
-    engines: {node: '>= 10'}
-
   objectorarray@1.0.5:
     resolution: {integrity: sha512-eJJDYkhJFFbBBAxeh8xW+weHlkI28n2ZdQV/J/DNfWfSKlGEf2xcfAbZTv3riEXHAhL9SVOTs2pRmXiSTf78xg==}
 
@@ -7156,11 +7115,8 @@ packages:
     resolution: {integrity: sha512-ypGJsmGtdXUOeM5u93TyeIEfEhM6s+ljAhrk5vAvSx8uyY/02OvrZnA0YNGUrPXfpJMgI1ODd3nwz8Npx4O4cg==}
     engines: {node: 20 || >=22}
 
-  path-to-regexp@0.1.12:
-    resolution: {integrity: sha512-RA1GjUVMnvYFxuqovrEqZoxxW5NUZqbwKtYz/Tt7nXerk0LbLblQmrsgdeOxV5SFHf0UDggjS/bSeOZwt1pmEQ==}
-
-  path-to-regexp@3.3.0:
-    resolution: {integrity: sha512-qyCH421YQPS2WFDxDjftfc1ZR5WKQzVzqsp4n9M2kQhVOo/ByahFoUNJfl58kOcEGfQ//7weFTDhm+ss8Ecxgw==}
+  path-to-regexp@0.1.13:
+    resolution: {integrity: sha512-A/AGNMFN3c8bOlvV9RreMdrv7jsmF9XIfDeCd87+I8RNg6s78BhJxMu69NEMHBSJFxKidViTEdruRwEk/WIKqA==}
 
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
@@ -7843,8 +7799,8 @@ packages:
   sentence-case@3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
 
-  serialize-javascript@7.0.3:
-    resolution: {integrity: sha512-h+cZ/XXarqDgCjo+YSyQU/ulDEESGGf8AMK9pPNmhNSl/FzPl6L8pMp1leca5z6NuG6tvV/auC8/43tmovowww==}
+  serialize-javascript@7.0.5:
+    resolution: {integrity: sha512-F4LcB0UqUl1zErq+1nYEEzSHJnIwb3AF2XWB94b+afhrekOUijwooAYqFyRbjYkm2PAKBabx6oYv/xDxNi8IBw==}
     engines: {node: '>=20.0.0'}
 
   serve-handler@6.1.6:
@@ -8688,11 +8644,6 @@ packages:
     engines: {node: '>= 8'}
     hasBin: true
 
-  which@4.0.0:
-    resolution: {integrity: sha512-GlaYyEb07DPxYCKhKzplCWBJtvxZcZMrL+4UkrTSJHHPyZU4mYYTv3qaOe77H7EODLSSopAUFAc6W8U4yqvscg==}
-    engines: {node: ^16.13.0 || >=18.0.0}
-    hasBin: true
-
   why-is-node-running@2.3.0:
     resolution: {integrity: sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==}
     engines: {node: '>=8'}
@@ -9227,22 +9178,6 @@ snapshots:
       kuler: 2.0.0
 
   '@date-fns/tz@1.4.1': {}
-
-  '@dotenvx/dotenvx@1.51.1':
-    dependencies:
-      commander: 11.1.0
-      dotenv: 17.2.1
-      eciesjs: 0.4.15
-      execa: 5.1.1
-      fdir: 6.5.0(picomatch@2.3.2)
-      ignore: 5.3.2
-      object-treeify: 1.1.33
-      picomatch: 2.3.2
-      which: 4.0.0
-
-  '@ecies/ciphers@0.2.4(@noble/ciphers@1.3.0)':
-    dependencies:
-      '@noble/ciphers': 1.3.0
 
   '@effect/cluster@0.56.1(@effect/platform@0.94.1(effect@3.20.0))(@effect/rpc@0.73.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)(ioredis@5.7.0))(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)(ioredis@5.7.0))(@effect/platform@0.94.1(effect@3.20.0))(@effect/rpc@0.73.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)':
     dependencies:
@@ -9798,14 +9733,6 @@ snapshots:
       '@emnapi/runtime': 1.7.1
       '@tybys/wasm-util': 0.10.1
     optional: true
-
-  '@noble/ciphers@1.3.0': {}
-
-  '@noble/curves@1.9.7':
-    dependencies:
-      '@noble/hashes': 1.8.0
-
-  '@noble/hashes@1.8.0': {}
 
   '@opentelemetry/api@1.9.0':
     optional: true
@@ -12375,8 +12302,6 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
-  commander@11.1.0: {}
-
   commander@14.0.2: {}
 
   commander@2.20.3: {}
@@ -12698,7 +12623,7 @@ snapshots:
       no-case: 3.0.4
       tslib: 2.8.1
 
-  dotenv@17.2.1: {}
+  dotenv@16.4.7: {}
 
   dts-resolver@2.1.3: {}
 
@@ -12709,13 +12634,6 @@ snapshots:
       gopd: 1.2.0
 
   eastasianwidth@0.2.0: {}
-
-  eciesjs@0.4.15:
-    dependencies:
-      '@ecies/ciphers': 0.2.4(@noble/ciphers@1.3.0)
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
 
   ee-first@1.1.1: {}
 
@@ -12930,7 +12848,7 @@ snapshots:
       methods: 1.1.2
       on-finished: 2.4.1
       parseurl: 1.3.3
-      path-to-regexp: 0.1.12
+      path-to-regexp: 0.1.13
       proxy-addr: 2.0.7
       qs: 6.14.2
       range-parser: 1.2.1
@@ -13442,8 +13360,6 @@ snapshots:
 
   ieee754@1.2.1: {}
 
-  ignore@5.3.2: {}
-
   imagesloaded@4.1.4:
     dependencies:
       ev-emitter: 1.1.1
@@ -13590,8 +13506,6 @@ snapshots:
   isbot@5.1.31: {}
 
   isexe@2.0.0: {}
-
-  isexe@3.1.1: {}
 
   isobject@3.0.1: {}
 
@@ -14606,8 +14520,6 @@ snapshots:
 
   object-keys@1.1.1: {}
 
-  object-treeify@1.1.33: {}
-
   objectorarray@1.0.5: {}
 
   obug@2.1.1: {}
@@ -14789,9 +14701,7 @@ snapshots:
       lru-cache: 11.2.1
       minipass: 7.1.2
 
-  path-to-regexp@0.1.12: {}
-
-  path-to-regexp@3.3.0: {}
+  path-to-regexp@0.1.13: {}
 
   path-type@4.0.0: {}
 
@@ -15670,7 +15580,7 @@ snapshots:
       tslib: 2.8.1
       upper-case-first: 2.0.2
 
-  serialize-javascript@7.0.3: {}
+  serialize-javascript@7.0.5: {}
 
   serve-handler@6.1.6:
     dependencies:
@@ -15679,7 +15589,7 @@ snapshots:
       mime-types: 2.1.18
       minimatch: 3.1.4
       path-is-inside: 1.0.2
-      path-to-regexp: 3.3.0
+      path-to-regexp: 0.1.13
       range-parser: 1.2.0
 
   serve-static@1.16.2:
@@ -15975,7 +15885,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.3
-      serialize-javascript: 7.0.3
+      serialize-javascript: 7.0.5
       terser: 5.43.1
       webpack: 5.104.1(@swc/core@1.13.5(@swc/helpers@0.5.17))
     optionalDependencies:
@@ -16600,10 +16510,6 @@ snapshots:
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
-
-  which@4.0.0:
-    dependencies:
-      isexe: 3.1.1
 
   why-is-node-running@2.3.0:
     dependencies:
