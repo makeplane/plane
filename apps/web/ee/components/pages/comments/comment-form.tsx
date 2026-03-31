@@ -228,7 +228,7 @@ export const PageCommentForm = observer(function PageCommentForm(props: CommentB
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       className={cn(
-        "relative w-full ",
+        "relative w-full min-w-0 overflow-hidden",
         comment && "px-2 -mx-2",
         isReply || !comment ? "border border-subtle-1 rounded-sm p-2" : "",
         isFocused && editable ? "border-2 border-accent-strong rounded-sm py-2" : ""

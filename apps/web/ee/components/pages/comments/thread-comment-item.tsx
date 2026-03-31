@@ -147,9 +147,11 @@ export const PageThreadCommentItem = observer(
       >
         {/* Reference Text Quote */}
         {referenceText && (
-          <div className="flex gap-1 p-1 rounded-sm bg-layer-1">
+          <div className="flex min-w-0 gap-1 overflow-hidden rounded-sm bg-layer-1 p-1">
             <div className="w-0.5 self-stretch rounded-sm bg-[#FFBF66]" />
-            <p className="flex-1 text-13 text-tertiary leading-4">{referenceText}</p>
+            <p className="min-w-0 flex-1 break-words whitespace-pre-wrap text-13 leading-4 text-tertiary">
+              {referenceText}
+            </p>
           </div>
         )}
 

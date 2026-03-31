@@ -141,9 +141,11 @@ export const PageCommentCreationHandler = observer(function PageCommentCreationH
     <div ref={newCommentBoxRef} className="my-4 animate-expand-down space-y-3 group px-3.5">
       {/* Reference Text Quote with Overlay Cancel Button */}
       {referenceText && (
-        <div className="relative flex gap-1 p-[4px] rounded bg-surface-2">
+        <div className="relative flex min-w-0 gap-1 overflow-hidden rounded bg-surface-2 p-[4px]">
           <div className="w-0.5 self-stretch rounded-sm bg-[#FFBF66]" />
-          <p className="flex-1 text-13 text-tertiary leading-4 pr-6">{referenceText}</p>
+          <p className="min-w-0 flex-1 break-words whitespace-pre-wrap pr-6 text-13 leading-4 text-tertiary">
+            {referenceText}
+          </p>
           <button
             type="button"
             onClick={handleCancel}
