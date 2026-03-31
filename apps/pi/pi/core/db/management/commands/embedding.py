@@ -588,3 +588,185 @@ def validate_embedding_model():
         typer.echo("  1. Set OPENSEARCH_ML_MODEL_ID environment variable, OR")
         typer.echo("  2. Create an embedding model: python -m pi.manage create-embedding-model")
         raise typer.Exit(code=1)
+
+
+def _extract_embedding_from_predict(response: dict) -> list[float] | None:
+    """Walk the _predict response to find the first embedding vector (list of floats).
+
+    OpenSearch ML _predict responses vary by model / connector but common shapes are:
+        - inference_results[0].output[0].data  (list of floats)
+        - inference_results[0].output[0].dataAsMap.embedding (list)
+    We do a recursive search for the first ``list[float]`` with length > 1.
+    """
+
+    def _find_float_list(obj, depth: int = 0) -> list[float] | None:
+        if depth > 10:
+            return None
+        if isinstance(obj, list):
+            # Check if this is a list of numbers (the embedding)
+            if len(obj) > 1 and all(isinstance(v, (int, float)) for v in obj[:5]):
+                return obj
+            # Otherwise recurse into list items
+            for item in obj:
+                result = _find_float_list(item, depth + 1)
+                if result is not None:
+                    return result
+        elif isinstance(obj, dict):
+            for value in obj.values():
+                result = _find_float_list(value, depth + 1)
+                if result is not None:
+                    return result
+        return None
+
+    return _find_float_list(response)
+
+
+@app.command("check-embedding-dimension")
+def check_embedding_dimension():
+    configured_dim = settings.vector_db.EMBEDDING_DIMENSION
+
+    typer.echo("")
+    typer.echo("=" * 60)
+    typer.echo("Checking embedding dimension consistency...")
+    typer.echo("=" * 60)
+
+    typer.echo("")
+    typer.echo("[ Step 1 ] Config")
+    typer.echo(f"  OPENSEARCH_EMBEDDING_DIMENSION: {configured_dim}")
+
+    knn_indices = [
+        settings.vector_db.ISSUE_INDEX,
+        settings.vector_db.PAGES_INDEX,
+        settings.vector_db.DOCS_INDEX,
+    ]
+
+    try:
+        vdb = VectorStore()
+    except Exception as exc:
+        log.error("Could not connect to OpenSearch for dimension check: %s", exc, exc_info=True)
+        typer.echo("")
+        typer.echo("[ Error ] Could not connect to OpenSearch")
+        typer.echo(f"  {exc}")
+        typer.echo("")
+        typer.echo("  Please verify:")
+        typer.echo("    - OPENSEARCH_URL is correctly configured")
+        typer.echo("    - OpenSearch service is running and reachable")
+        raise typer.Exit(code=1)
+
+    mismatches: list[str] = []
+    checked = 0
+    model_check_skipped = False
+
+    # ── Step 2: Index mapping dimensions ──
+    typer.echo("")
+    typer.echo("[ Step 2 ] Index mapping dimensions")
+
+    for index_name in knn_indices:
+        try:
+            if not vdb.os.indices.exists(index=index_name):
+                typer.echo(f"  {index_name}: does not exist (skipping)")
+                continue
+
+            checked += 1
+
+            mapping = vdb.os.indices.get_mapping(index=index_name)
+            properties = mapping[index_name]["mappings"].get("properties", {})
+
+            for field_name, field_def in properties.items():
+                if field_def.get("type") == "knn_vector":
+                    index_dim = field_def.get("dimension")
+                    if index_dim and int(index_dim) != configured_dim:
+                        msg = f"{index_name}.{field_name}: index has dimension={index_dim}, config has {configured_dim}"
+                        mismatches.append(msg)
+                        typer.echo(f"  {index_name}: MISMATCH — index dimension={index_dim}, config={configured_dim}")
+
+        except Exception as exc:
+            log.warning("Failed to check dimension for index %s: %s", index_name, exc)
+            typer.echo(f"  {index_name}: could not read mapping ({exc})")
+
+    if checked == 0:
+        typer.echo("  No KNN indices exist yet")
+    elif len(mismatches) == 0:
+        typer.echo(f"  Result: {checked} index(es) match configured dimension")
+
+    # ── Step 3: ML model dimension ──
+    typer.echo("")
+    typer.echo("[ Step 3 ] ML model output dimension")
+
+    embedding_model_key = settings.vector_db.EMBEDDING_MODEL
+    ml_model_id = ML_MODEL_ID
+
+    if not embedding_model_key or not embedding_model_key.strip():
+        model_check_skipped = True
+        log.warning("EMBEDDING_MODEL is not set")
+        typer.echo("  ❌ EMBEDDING_MODEL is required")
+        raise typer.Exit(code=1)
+
+    if not ml_model_id:
+        model_check_skipped = True
+        log.warning("No ML model ID available")
+
+        typer.echo("  ⚠ No ML model ID found")
+
+        typer.echo("  You must either:")
+        typer.echo("    - Set OPENSEARCH_ML_MODEL_ID (required for Cloud OpenSearch)")
+        typer.echo("    - OR run: python -m pi.manage create-embedding-model --force (self-hosted OpenSearch)")
+
+    else:
+        typer.echo(f"  ML Model ID: {ml_model_id}")
+        try:
+            predict_response = vdb.test_ml_model(ml_model_id, test_input=["hi"])
+            embedding = _extract_embedding_from_predict(predict_response)
+
+            if embedding is not None:
+                model_dim = len(embedding)
+                if model_dim != configured_dim:
+                    msg = f"ML model {ml_model_id}: model produces dimension={model_dim}, config has {configured_dim}"
+                    mismatches.append(msg)
+                    typer.echo(f"  Result: MISMATCH — model dimension={model_dim}, config={configured_dim}")
+                else:
+                    typer.echo(f"  Result: OK (dimension={model_dim})")
+            else:
+                typer.echo("  Warning: Could not extract embedding vector")
+
+        except Exception as exc:
+            typer.echo(f"  Warning: Could not run model inference ({exc})")
+
+    vdb.os.close()
+
+    typer.echo("")
+    typer.echo("=" * 60)
+    typer.echo("[ Result ]")
+    typer.echo("=" * 60)
+
+    if mismatches:
+        typer.echo("  DIMENSION MISMATCH DETECTED")
+        for m in mismatches:
+            typer.echo(f"    - {m}")
+
+    elif model_check_skipped:
+        typer.echo(f"  Index dimensions match config ({configured_dim})")
+        typer.echo("  Model dimension check skipped")
+
+    else:
+        typer.echo(f"  All checks passed — dimension={configured_dim}")
+
+    raise typer.Exit(code=0)
+
+
+@app.command("list-supported-embedding-models")
+def list_supported_embedding_models():
+    """
+    List all supported embedding models from the registry.
+    """
+
+    from pi.core.embedding_config import EMBEDDING_MODELS
+
+    typer.echo("")
+    typer.echo("Supported Embedding Models")
+    typer.echo("=" * 60)
+
+    for key, cfg in sorted(EMBEDDING_MODELS.items()):
+        typer.echo(f"{key}")
+        typer.echo(f"  dimension:       {cfg["dimension"]}")
+        typer.echo("")

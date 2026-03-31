@@ -9,8 +9,19 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from typing import Any
+from typing import Callable
+from typing import TypedDict
+
 from pi import settings
 from pi.core.embedding_config import get_embedding_param_from_active_model
+
+
+class PipelineConfig(TypedDict):
+    name: str
+    get_body: Callable[[str], dict[str, Any]]
+    description: str
+
 
 # Index configurations
 # Each key is the index name, value is a dict with:
@@ -125,7 +136,7 @@ def get_pipeline_body(ml_model_id: str) -> dict:
 # - name: actual pipeline name from config
 # - get_body: function to get pipeline body (requires ml_model_id)
 
-PIPELINE_CONFIGS = {
+PIPELINE_CONFIGS: dict[str, PipelineConfig] = {
     "docs_pipeline": {
         "name": settings.vector_db.DOCS_PIPELINE_NAME,
         "get_body": get_pipeline_body,

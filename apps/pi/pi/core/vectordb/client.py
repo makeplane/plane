@@ -23,6 +23,7 @@ from opensearchpy._async.client import AsyncOpenSearch
 
 from pi import logger
 from pi import settings
+from pi.core.embedding_config import active_model_supports_batch
 from pi.core.embedding_config import get_embedding_param_from_active_model
 from pi.core.vectordb.utils import build_issue_semantic_query
 from pi.core.vectordb.utils import build_issue_text_search_query
@@ -793,7 +794,15 @@ class VectorStore:
         # Get the correct parameter name for the active model
         param_name = get_embedding_param_from_active_model()
 
-        # Use provided test input or default
-        texts = test_input if test_input is not None else ["Test embedding generation"]
+        # Use provided test input or a default
+        if test_input is None:
+            default = "Test embedding generation"
+            texts = [default] if active_model_supports_batch() else default
+        else:
+            # Coerce list input to match model's batch capability (single string vs batch).
+            if not active_model_supports_batch():
+                texts = test_input[0] if test_input else "Test"
+            else:
+                texts = test_input
 
         return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_predict", body={"parameters": {param_name: texts}})

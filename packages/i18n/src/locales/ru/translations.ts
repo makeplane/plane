@@ -4701,6 +4701,8 @@ export default {
     upload: {
       drop_file_here: "Перетащите ваш zip-файл Notion сюда",
       upload_title: "Загрузить экспорт Notion",
+      upload_from_url: "Импорт по URL-адресу",
+      upload_from_url_description: "Вставьте общедоступный URL-адрес вашего ZIP-экспорта, чтобы продолжить.",
       drag_drop_description: "Перетащите ваш zip-файл экспорта Notion или нажмите для просмотра",
       file_type_restriction: "Поддерживаются только .zip файлы, экспортированные из Notion",
       select_file: "Выбрать файл",
@@ -4729,6 +4731,8 @@ export default {
     upload: {
       drop_file_here: "Перетащите ваш zip-файл Confluence сюда",
       upload_title: "Загрузить экспорт Confluence",
+      upload_from_url: "Импорт по URL-адресу",
+      upload_from_url_description: "Вставьте общедоступный URL-адрес вашего ZIP-экспорта, чтобы продолжить.",
       drag_drop_description: "Перетащите ваш zip-файл экспорта Confluence или нажмите для просмотра",
       file_type_restriction: "Поддерживаются только .zip файлы, экспортированные из Confluence",
       select_file: "Выбрать файл",

@@ -15,9 +15,9 @@
  * Input Validation Utilities
  * Following OWASP Input Validation best practices using allowlist approach
  *
- * Security: Blocks injection-risk characters: < > ' " % # { } [ ] * ^ !
- * These patterns are designed to prevent XSS, SQL injection, template injection,
- * and other security vulnerabilities while maintaining good UX
+ * Security is enforced via allowlist regex patterns that define exactly which
+ * characters are permitted for each field type. Output escaping (React JSX,
+ * Django templates, nh3 for rich text) provides the primary XSS defense.
  */
 
 // =============================================================================
@@ -79,10 +79,6 @@ export const validatePersonName = (name: string): boolean | string => {
     return "Name must be 50 characters or less";
   }
 
-  if (hasInjectionRiskChars(name)) {
-    return "Names cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
-  }
-
   if (!PERSON_NAME_REGEX.test(name)) {
     return "Names can only contain letters, spaces, hyphens, and apostrophes";
   }
@@ -107,10 +103,6 @@ export const validateDisplayName = (displayName: string): boolean | string => {
 
   if (displayName.length > 50) {
     return "Display name must be 50 characters or less";
-  }
-
-  if (hasInjectionRiskChars(displayName)) {
-    return "Display name cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
   }
 
   if (!DISPLAY_NAME_REGEX.test(displayName)) {
@@ -139,10 +131,6 @@ export const validateCompanyName = (companyName: string, required: boolean = fal
     return "Company name must be 80 characters or less";
   }
 
-  if (hasInjectionRiskChars(companyName)) {
-    return "Company name cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
-  }
-
   if (!COMPANY_NAME_REGEX.test(companyName)) {
     return "Company name can only contain letters, numbers, spaces, hyphens, and underscores";
   }
@@ -167,10 +155,6 @@ export const validateWorkspaceName = (workspaceName: string, required: boolean =
 
   if (workspaceName.length > 80) {
     return "Workspace name must be 80 characters or less";
-  }
-
-  if (hasInjectionRiskChars(workspaceName)) {
-    return "Workspace name cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
   }
 
   if (!COMPANY_NAME_REGEX.test(workspaceName)) {
@@ -198,26 +182,9 @@ export const validateSlug = (slug: string): boolean | string => {
     return "Slug must be 48 characters or less";
   }
 
-  if (hasInjectionRiskChars(slug)) {
-    return "Slug cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
-  }
-
   if (!SLUG_REGEX.test(slug)) {
     return "Slug can only contain letters, numbers, hyphens, and underscores";
   }
 
   return true;
-};
-
-/**
- * @description Checks if a string contains any injection-risk characters
- * @param {string} input - String to check
- * @returns {boolean} true if injection-risk characters found
- * @example
- * hasInjectionRiskChars("Hello World") // returns false
- * hasInjectionRiskChars("Hello<script>") // returns true
- */
-export const hasInjectionRiskChars = (input: string): boolean => {
-  const injectionRiskPattern = /[<>'"{}[\]*^!#%]/;
-  return injectionRiskPattern.test(input);
 };

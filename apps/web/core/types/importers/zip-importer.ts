@@ -30,6 +30,7 @@ export type TImporterDataPayload = {
   };
   [E_IMPORTER_STEPS.UPLOAD_ZIP]: {
     zipFile: File | undefined;
+    zipUrl: string | undefined;
   };
 };
 
@@ -68,6 +69,7 @@ type TDocImporterDestination =
 export type TDocImporterJobConfig = {
   fileId: string;
   fileName: string;
+  fileUrl?: string;
   metadata?: {
     rootNodeUrl?: string;
   };

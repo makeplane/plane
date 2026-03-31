@@ -135,11 +135,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
       }
 
       const config = job.config as TDocImporterJobConfig;
-      if (!config.fileId) {
-        throw new Error(`Job ${jobId} has no fileId`);
-      }
-
-      const fileId = config.fileId;
+      const { fileId } = this.getFileInfoFromConfig(config);
 
       // Get the services required for the migration
       const zipManager = await this.getZipManager(fileId);
@@ -222,6 +218,36 @@ export abstract class NotionMigratorBase extends TaskHandler {
 
     await manager.initialize(fileId);
     return manager;
+  }
+
+  /**
+   * Gets the fileId and fileName from the config
+   * @param config - The config to get the fileId and fileName from
+   * @returns The fileId and fileName
+   */
+  protected getFileInfoFromConfig(config: TDocImporterJobConfig): { fileId: string; fileName: string } {
+    // If fileId and fileName are provided, we can use them directly
+    if (config.fileId && config.fileName) {
+      return { fileId: config.fileId, fileName: config.fileName };
+    }
+
+    // If fileUrl is provided, we can extract the fileId and fileName from it
+    if (config.fileUrl) {
+      try {
+        const parsedUrl = new URL(config.fileUrl);
+        // Remove the hostname and the query string from the URL
+        const urlWithoutHostname = parsedUrl.pathname.replace(/^\/+/, "").replace(/\/+$/, "");
+        if (!urlWithoutHostname) {
+          throw new Error("Derived empty URL from fileUrl");
+          // Remove the leading and trailing slashes so we get a clean S3 object key
+        }
+        return { fileId: urlWithoutHostname, fileName: urlWithoutHostname };
+      } catch (error) {
+        throw new Error("Invalid fileUrl in config");
+      }
+    }
+
+    throw new Error("Invalid config");
   }
 
   /**

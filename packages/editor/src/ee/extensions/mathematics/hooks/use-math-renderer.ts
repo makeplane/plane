@@ -29,16 +29,28 @@ export const useMathRenderer = <T extends HTMLElement = HTMLElement>(
   const { displayMode = false, throwOnError = false } = options;
 
   useEffect(() => {
-    if (!mathRef.current) return;
+    let isDisposed = false;
 
-    // Ensure KaTeX styles are loaded before rendering
-    ensureKaTeXStyles();
+    const renderMath = async () => {
+      if (!mathRef.current) return;
 
-    katex.render(latex, mathRef.current, {
-      displayMode,
-      throwOnError,
-      strict: "warn", // Allow more LaTeX constructs
-    });
+      // Ensure KaTeX styles are loaded before rendering.
+      await ensureKaTeXStyles();
+
+      if (!mathRef.current || isDisposed) return;
+
+      katex.render(latex, mathRef.current, {
+        displayMode,
+        throwOnError,
+        strict: "warn", // Allow more LaTeX constructs
+      });
+    };
+
+    void renderMath();
+
+    return () => {
+      isDisposed = true;
+    };
   }, [displayMode, latex, throwOnError]);
 
   return { mathRef };

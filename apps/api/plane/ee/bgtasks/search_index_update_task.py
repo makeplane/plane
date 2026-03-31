@@ -108,8 +108,9 @@ def run_search_index_command(*args, **kwargs):
 
     from django.core.management import call_command
 
-    # Extract vectorization flag from kwargs
+    # Extract custom kwargs
     vectorize = kwargs.pop("vectorize", False)
+    docs_sync_action = kwargs.pop("docs_sync_action", None)
 
     print("Running opensearch command with args:", args)
     print(f"Vectorize after completion: {vectorize}")
@@ -119,6 +120,11 @@ def run_search_index_command(*args, **kwargs):
 
     call_command("opensearch", *args, **kwargs)
     print("OpenSearch command completed")
+
+    # Sync docs_semantic index (not in django-opensearch-dsl registry)
+    if docs_sync_action:
+        from plane.ee.documents.entities.plane_docs import sync_index as sync_docs_semantic
+        sync_docs_semantic(docs_sync_action)
 
     # Trigger vectorization if requested
     if vectorize:
