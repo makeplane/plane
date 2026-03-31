@@ -151,12 +151,13 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     };
 
     const updateCurrentUserDetail = updateCurrentUser(userPayload).finally(() => setIsLoading(false));
-    const updateCurrentUserProfile = updateUserProfile(profilePayload).finally(() => setIsLoading(false));
+    const promises: Promise<IUser | TUserProfile | undefined>[] = [updateCurrentUserDetail];
+    if (profilePayload.role !== profile.role) {
+      const updateCurrentUserProfile = updateUserProfile(profilePayload).finally(() => setIsLoading(false));
+      promises.push(updateCurrentUserProfile);
+    }
 
-    const promises = [updateCurrentUserDetail, updateCurrentUserProfile];
-    const updateUserAndProfile = Promise.all(promises);
-
-    setPromiseToast(updateUserAndProfile, {
+    setPromiseToast(Promise.allSettled(promises), {
       loading: "Updating...",
       success: {
         title: "Success!",
@@ -167,11 +168,6 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
         message: () => `There was some error in updating your profile. Please try again.`,
       },
     });
-    updateUserAndProfile
-      .then(() => {
-        return;
-      })
-      .catch(() => {});
   };
 
   return (
