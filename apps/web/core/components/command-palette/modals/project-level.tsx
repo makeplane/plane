@@ -32,7 +32,7 @@ const CreateUpdateProjectViewModal = lazy(() =>
   import("@/components/views/modal").then((module) => ({ default: module.CreateUpdateProjectViewModal }))
 );
 const CreateUpdateAutomationModal = lazy(() =>
-  import("@/components/automations/modals/create-update-modal").then((module) => ({
+  import("@/components/automations/modals/create-update").then((module) => ({
     default: module.CreateUpdateAutomationModal,
   }))
 );
@@ -105,6 +105,7 @@ export const ProjectLevelModals = observer(function ProjectLevelModals(props: TP
         isOpen={createUpdateModalConfig.isOpen}
         data={createUpdateModalConfig.payload ?? undefined}
         onClose={() => setCreateUpdateModalConfig({ isOpen: false, payload: null })}
+        projectId={projectId}
       />
     </Suspense>
   );

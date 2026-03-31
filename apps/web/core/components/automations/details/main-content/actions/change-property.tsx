@@ -21,14 +21,14 @@ import { getAutomationChangePropertyTypeLabel } from "@plane/utils";
 import { useAutomationActionConfig } from "@/plane-web/hooks/automations/use-automation-action-config";
 
 type Props = {
+  automationId: string;
   config: TChangePropertyActionConfig;
-  projectId: string;
 };
 
 export function AutomationDetailsMainContentChangePropertyBlock(props: Props) {
-  const { config, projectId } = props;
+  const { automationId, config } = props;
   const { configurationMap } = useAutomationActionConfig({
-    projectId,
+    automationId,
   });
   const propertyValue = useMemo(() => {
     if (!config.property_value) return null;
@@ -61,7 +61,7 @@ export function AutomationDetailsMainContentChangePropertyBlock(props: Props) {
 
   return (
     <div className="flex gap-2">
-      <span className="flex-shrink-0 size-12 rounded-full bg-layer-1 grid place-items-center">
+      <span className="shrink-0 size-12 rounded-full bg-layer-1 grid place-items-center">
         <PencilLine className="size-5 text-tertiary" />
       </span>
       <div className="text-13 text-tertiary font-medium">

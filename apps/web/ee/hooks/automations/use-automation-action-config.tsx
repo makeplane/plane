@@ -11,18 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { DueDatePropertyIcon, PriorityIcon, StartDatePropertyIcon, StateGroupIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
-import type { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption, IUserLite, TFilterOptionsType } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useAutomations } from "../store/automations/use-automations";
 
 export enum EConfigurationComponentType {
   SINGLE_SELECT = "single_select",
@@ -30,15 +33,37 @@ export enum EConfigurationComponentType {
   DATE_PICKER = "date_picker",
 }
 
-type TSingleSelectConfiguration = {
-  component_type: EConfigurationComponentType.SINGLE_SELECT;
+type TCustomSearchSelectOptionGroup = {
+  id: string;
+  label: React.ReactNode;
   options: ICustomSearchSelectOption[];
 };
 
+type TSingleSelectConfiguration = {
+  component_type: EConfigurationComponentType.SINGLE_SELECT;
+} & (
+  | {
+      optionsType: Extract<TFilterOptionsType, "flat-list">;
+      options: ICustomSearchSelectOption[];
+    }
+  | {
+      optionsType: Extract<TFilterOptionsType, "group">;
+      groups: TCustomSearchSelectOptionGroup[];
+    }
+);
+
 type TMultiSelectConfiguration = {
   component_type: EConfigurationComponentType.MULTI_SELECT;
-  options: ICustomSearchSelectOption[];
-};
+} & (
+  | {
+      optionsType: Extract<TFilterOptionsType, "flat-list">;
+      options: ICustomSearchSelectOption[];
+    }
+  | {
+      optionsType: Extract<TFilterOptionsType, "group">;
+      groups: TCustomSearchSelectOptionGroup[];
+    }
+);
 
 type TDatePickerConfiguration = {
   component_type: EConfigurationComponentType.DATE_PICKER;
@@ -58,62 +83,144 @@ type TChangePropertyConfigurationMap = {
 };
 
 type TArgs = {
-  projectId: string;
+  automationId: string;
 };
 
 export const useAutomationActionConfig = (args: TArgs) => {
-  const { projectId } = args;
+  const { automationId } = args;
   // store hooks
+  const { getAutomationById } = useAutomations();
+  const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
   const {
-    project: { getProjectMemberIds, getProjectMemberDetails },
+    getUserDetails,
+    project: { getProjectMemberIds },
   } = useMember();
   const { getProjectLabels } = useLabel();
   // derived values
-  const projectStates = getProjectStates(projectId);
-  const projectMemberIds = getProjectMemberIds(projectId, false);
-  const projectLabels = getProjectLabels(projectId);
+  const automation = getAutomationById(automationId);
+  const projectIds = useMemo(() => automation?.project_ids ?? [], [automation?.project_ids]);
+  const isGlobal = !!automation?.is_global;
 
-  const stateConfig: TChangePropertyConfiguration = useMemo(
-    () => ({
-      supported_change_types: [EAutomationChangeType.UPDATE],
-      component_type: EConfigurationComponentType.SINGLE_SELECT,
-      options:
-        projectStates?.map((state) => ({
+  // ---- Group label with project logo ----
+
+  const getProjectGroupLabel = useCallback(
+    (projectId: string): React.ReactNode => {
+      const projectDetails = getProjectById(projectId);
+      return (
+        <span className="flex items-center gap-1.5 truncate">
+          <span className="shrink-0 size-4 grid place-items-center">
+            <Logo logo={projectDetails?.logo_props} size={16} />
+          </span>
+          {projectDetails?.name}
+        </span>
+      );
+    },
+    [getProjectById]
+  );
+
+  // ---- Grouped options — one group per project ----
+
+  const stateGroups = useMemo<TCustomSearchSelectOptionGroup[]>(
+    () =>
+      projectIds.map((projectId) => ({
+        id: projectId,
+        label: getProjectGroupLabel(projectId),
+        options: (getProjectStates(projectId) ?? []).map((state) => ({
           value: state.id,
           query: state.name,
           content: (
             <div className="flex items-center gap-2">
               <StateGroupIcon stateGroup={state.group} color={state.color} />
-              <span className="flex-grow truncate">{state.name}</span>
+              <span className="grow truncate">{state.name}</span>
             </div>
           ),
-        })) ?? [],
+        })),
+      })),
+    [projectIds, getProjectGroupLabel, getProjectStates]
+  );
+
+  const labelGroups = useMemo<TCustomSearchSelectOptionGroup[]>(
+    () =>
+      projectIds.map((projectId) => ({
+        id: projectId,
+        label: getProjectGroupLabel(projectId),
+        options: (getProjectLabels(projectId) ?? []).map((label) => ({
+          value: label.id,
+          query: label.name,
+          content: (
+            <div className="flex items-center justify-start gap-2 overflow-hidden">
+              <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: label.color }} />
+              <div className="line-clamp-1 inline-block truncate">{label.name}</div>
+            </div>
+          ),
+        })),
+      })),
+    [projectIds, getProjectGroupLabel, getProjectLabels]
+  );
+
+  const memberGroups = useMemo<TCustomSearchSelectOptionGroup[]>(
+    () =>
+      projectIds.map((projectId) => ({
+        id: projectId,
+        label: getProjectGroupLabel(projectId),
+        options: (getProjectMemberIds(projectId, false) ?? [])
+          .map((userId) => {
+            const user = getUserDetails(userId);
+            if (!user) return null;
+            return {
+              value: user.id,
+              query: user.display_name,
+              content: (
+                <div className="flex items-center gap-2">
+                  <Avatar name={user.display_name} src={getFileURL(user.avatar_url)} showTooltip={false} />
+                  {user.display_name}
+                </div>
+              ),
+            };
+          })
+          .filter((m): m is NonNullable<typeof m> => !!m),
+      })),
+    [projectIds, getProjectGroupLabel, getProjectMemberIds, getUserDetails]
+  );
+
+  // ---- Action configs ----
+
+  const stateConfig: TChangePropertyConfiguration = useMemo(() => {
+    const selectProps = isGlobal
+      ? { optionsType: "group" as const, groups: stateGroups }
+      : { optionsType: "flat-list" as const, options: stateGroups[0]?.options ?? [] };
+
+    return {
+      supported_change_types: [EAutomationChangeType.UPDATE],
+      component_type: EConfigurationComponentType.SINGLE_SELECT,
+      ...selectProps,
       getPreviewContent: (value: string[]) => {
-        const state = projectStates?.find((state) => state.id === value[0]);
+        const allStates = projectIds.flatMap((id) => getProjectStates(id) ?? []);
+        const state = allStates.find((s) => s.id === value[0]);
         if (!state) return null;
         return (
           <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
             <StateGroupIcon stateGroup={state.group} color={state.color} />
-            <span className="flex-grow truncate">{state.name}</span>
+            <span className="grow truncate">{state.name}</span>
           </div>
         );
       },
-    }),
-    [projectStates]
-  );
+    };
+  }, [isGlobal, stateGroups, projectIds, getProjectStates]);
 
   const priorityConfig: TChangePropertyConfiguration = useMemo(
     () => ({
       supported_change_types: [EAutomationChangeType.UPDATE],
       component_type: EConfigurationComponentType.SINGLE_SELECT,
+      optionsType: "flat-list",
       options: ISSUE_PRIORITIES.map((priority) => ({
         value: priority.key,
         query: priority.key,
         content: (
           <div className="flex items-center gap-2">
             <PriorityIcon priority={priority.key} size={14} withContainer />
-            <span className="flex-grow truncate">{priority.title}</span>
+            <span className="grow truncate">{priority.title}</span>
           </div>
         ),
       })),
@@ -123,7 +230,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
         return (
           <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
             <PriorityIcon priority={priority.key} size={14} withContainer />
-            <span className="flex-grow truncate">{priority.title}</span>
+            <span className="grow truncate">{priority.title}</span>
           </div>
         );
       },
@@ -131,45 +238,29 @@ export const useAutomationActionConfig = (args: TArgs) => {
     []
   );
 
-  const assigneeConfig: TChangePropertyConfiguration = useMemo(
-    () => ({
+  const assigneeConfig: TChangePropertyConfiguration = useMemo(() => {
+    const selectProps = isGlobal
+      ? { optionsType: "group" as const, groups: memberGroups }
+      : { optionsType: "flat-list" as const, options: memberGroups[0]?.options ?? [] };
+
+    return {
       supported_change_types: [EAutomationChangeType.ADD, EAutomationChangeType.REMOVE],
       component_type: EConfigurationComponentType.MULTI_SELECT,
-      options:
-        projectMemberIds
-          ?.map((userId) => {
-            if (!projectId) return;
-            const memberDetails = getProjectMemberDetails(userId, projectId.toString());
-            return {
-              value: `${memberDetails?.member?.id}`,
-              query: `${memberDetails?.member?.display_name}`,
-              content: (
-                <div className="flex items-center gap-2">
-                  <Avatar
-                    name={memberDetails?.member?.display_name}
-                    src={getFileURL(memberDetails?.member?.avatar_url ?? "")}
-                    showTooltip={false}
-                  />
-                  {memberDetails?.member?.display_name}
-                </div>
-              ),
-            };
-          })
-          .filter((o) => o !== undefined) ?? [],
+      ...selectProps,
       getPreviewContent: (value: string[]) => {
-        const members = value.map((id) => getProjectMemberDetails(id, projectId)).filter((m) => m !== undefined);
+        const members = value.map((id) => getUserDetails(id)).filter((m): m is IUserLite => !!m);
         return (
           <>
             {members.map((member, index) => (
-              <div key={member?.id} className="shrink-0">
+              <div key={member.id} className="shrink-0">
                 <div className="inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
                   <Avatar
-                    name={member?.member?.display_name}
-                    src={getFileURL(member?.member?.avatar_url ?? "")}
+                    name={member.display_name}
+                    src={getFileURL(member.avatar_url)}
                     showTooltip={false}
                     size="sm"
                   />
-                  {member?.member?.display_name}
+                  {member.display_name}
                 </div>
                 {index !== members.length - 1 && <span className="mr-1">,</span>}
               </div>
@@ -177,45 +268,30 @@ export const useAutomationActionConfig = (args: TArgs) => {
           </>
         );
       },
-    }),
-    [projectMemberIds, getProjectMemberDetails, projectId]
-  );
+    };
+  }, [isGlobal, memberGroups, getUserDetails]);
 
-  const labelsConfig: TChangePropertyConfiguration = useMemo(
-    () => ({
+  const labelsConfig: TChangePropertyConfiguration = useMemo(() => {
+    const selectProps = isGlobal
+      ? { optionsType: "group" as const, groups: labelGroups }
+      : { optionsType: "flat-list" as const, options: labelGroups[0]?.options ?? [] };
+
+    return {
       supported_change_types: [EAutomationChangeType.ADD, EAutomationChangeType.REMOVE],
       component_type: EConfigurationComponentType.MULTI_SELECT,
-      options: (projectLabels ?? []).map((label) => ({
-        value: label.id,
-        query: label.name,
-        content: (
-          <div className="flex items-center justify-start gap-2 overflow-hidden">
-            <span
-              className="size-2.5 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: label.color,
-              }}
-            />
-            <div className="line-clamp-1 inline-block truncate">{label.name}</div>
-          </div>
-        ),
-      })),
+      ...selectProps,
       getPreviewContent: (value: string[]) => {
+        const allLabels = projectIds.flatMap((id) => getProjectLabels(id) ?? []);
         const labels = value
-          .map((id) => projectLabels?.find((label) => label.id === id))
-          .filter((l) => l !== undefined);
+          .map((id) => allLabels.find((label) => label.id === id))
+          .filter((l): l is NonNullable<typeof l> => !!l);
         return (
           <>
             {labels.map((label, index) => (
               <div key={label.id} className="shrink-0">
                 <div className="inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
-                  <span
-                    className="size-2.5 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: label.color,
-                    }}
-                  />
-                  <span className="flex-grow truncate">{label.name}</span>
+                  <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: label.color }} />
+                  <span className="grow truncate">{label.name}</span>
                 </div>
                 {index !== labels.length - 1 && <span className="mr-1">,</span>}
               </div>
@@ -223,9 +299,8 @@ export const useAutomationActionConfig = (args: TArgs) => {
           </>
         );
       },
-    }),
-    [projectLabels]
-  );
+    };
+  }, [isGlobal, labelGroups, projectIds, getProjectLabels]);
 
   const startDateConfig: TChangePropertyConfiguration = useMemo(
     () => ({
@@ -235,7 +310,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
       getPreviewContent: (value: string[]) => (
         <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
           <StartDatePropertyIcon className="shrink-0 size-3.5" />
-          <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
+          <span className="grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
         </div>
       ),
     }),
@@ -250,7 +325,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
       getPreviewContent: (value: string[]) => (
         <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
           <DueDatePropertyIcon className="shrink-0 size-3.5" />
-          <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
+          <span className="grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
         </div>
       ),
     }),

@@ -86,7 +86,6 @@ type TProps = {
   onCancel?: () => void | Promise<void>;
   onDelete: () => void | Promise<void>;
   onSubmit: (data: TAutomationActionFormData) => void | Promise<void>;
-  projectId: string;
   workspaceId: string;
   workspaceSlug: string;
   /** When set, the action handler dropdown only offers run script (fixed-schedule automations). */
@@ -104,7 +103,6 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
       onDelete,
       onSubmit,
       type,
-      projectId,
       workspaceId,
       workspaceSlug,
       isTimeBasedTrigger = false,
@@ -252,7 +250,6 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
                 automationId={automationId}
                 editorRef={editorRef}
                 selectedHandlerName={selectedHandlerName}
-                projectId={projectId}
                 workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 isTimeBasedTrigger={isTimeBasedTrigger}

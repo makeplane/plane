@@ -9,10 +9,16 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .base import AutomationEndpoint, AutomationBaseEndpoint, AutomationStatusEndpoint
-from .node import AutomationNodeEndpoint
-from .edge import AutomationEdgeEndpoint
-from .activity import AutomationActivityEndpoint
+from .base import (
+    AutomationEndpoint,
+    AutomationBaseEndpoint,
+    AutomationStatusEndpoint,
+    WorkspaceAutomationsEndpoint,
+    WorkspaceAutomationStatusEndpoint,
+)
+from .node import AutomationNodeEndpoint, WorkspaceAutomationNodeEndpoint
+from .edge import AutomationEdgeEndpoint, WorkspaceAutomationEdgeEndpoint
+from .activity import AutomationActivityEndpoint, WorkspaceAutomationActivityEndpoint
 
 __all__ = [
     "AutomationEndpoint",
@@ -20,4 +26,9 @@ __all__ = [
     "AutomationNodeEndpoint",
     "AutomationEdgeEndpoint",
     "AutomationActivityEndpoint",
+    "WorkspaceAutomationsEndpoint",
+    "WorkspaceAutomationStatusEndpoint",
+    "WorkspaceAutomationNodeEndpoint",
+    "WorkspaceAutomationEdgeEndpoint",
+    "WorkspaceAutomationActivityEndpoint",
 ]

@@ -56,7 +56,7 @@ export const WorkspaceWorklogFilterUsers = observer(function WorkspaceWorklogFil
         ? `${selectedIds?.length} Users`
         : "Users";
 
-  const dropdownOptions = memberIds?.map((userId) => {
+  const dropdownOptions = (memberIds ?? [])?.map((userId) => {
     const userDetails = projectId ? getProjectMemberDetails(userId, projectId) : getWorkspaceMemberDetails(userId);
     return {
       value: userDetails?.member?.id,
@@ -70,7 +70,7 @@ export const WorkspaceWorklogFilterUsers = observer(function WorkspaceWorklogFil
             size="sm"
             showTooltip={false}
           />
-          <span className="flex-grow truncate">{userDetails?.member?.display_name}</span>
+          <span className="grow truncate">{userDetails?.member?.display_name}</span>
         </div>
       ),
     };

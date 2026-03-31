@@ -39,7 +39,8 @@ export type TWorkspaceSettingsTabs =
   | "scripts"
   | "access-tokens"
   | "work_item_types"
-  | "relations";
+  | "relations"
+  | "automations";
 
 export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;

@@ -59,10 +59,21 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
         # Get the workspace slug
         workspace_id = event_data.get("workspace_id")
         logger.info(f"Executing automation task for event in Workspace : {workspace_id}")
-        workspace = Workspace.objects.get(id=workspace_id)
+
+        try:
+            workspace = Workspace.objects.get(id=workspace_id)
+        except Workspace.DoesNotExist:
+            return {
+                "success": False,
+                "event_id": event_id,
+                "error": f"Workspace {workspace_id} does not exist",
+            }
 
         # Check if the automation quota is exceeded
         is_automation_enabled = check_workspace_feature_flag(
+            feature_key=FeatureFlag.WORKSPACE_AUTOMATIONS,
+            slug=workspace.slug, 
+        ) or check_workspace_feature_flag(
             feature_key=FeatureFlag.PROJECT_AUTOMATIONS,
             slug=workspace.slug,
         )
@@ -222,10 +233,13 @@ def execute_scheduled_automation(
             logger.info(f"Scheduled automation {automation_id} is not active, skipping")
             return {"success": False, "error": "Automation not active"}
 
+
+        feature_flag = FeatureFlag.WORKSPACE_AUTOMATIONS if automation.is_global else FeatureFlag.PROJECT_AUTOMATIONS
         is_enabled = check_workspace_feature_flag(
-            feature_key=FeatureFlag.PROJECT_AUTOMATIONS,
+            feature_key=feature_flag,
             slug=automation.workspace.slug,
         )
+
         if not is_enabled:
             logger.info(f"Automations not enabled for workspace {automation.workspace.slug}")
             return {"success": False, "error": "Feature not enabled"}

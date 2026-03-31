@@ -23,10 +23,17 @@ from plane.ee.models import (
     AutomationRun,
     NodeExecution,
     AutomationActivity,
+    AutomationProjectAssociation,
 )
 
 
 class AutomationWriteSerializer(BaseSerializer):
+    project_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        write_only=True,
+        required=False,
+    )
+
     # validate payload here check scope
     def validate_scope(self, value):
         if value not in AutomationScopeChoices.values:
@@ -51,6 +58,8 @@ class AutomationWriteSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "project_ids",
+            "is_global",
         ]
         read_only_fields = [
             "id",
@@ -65,10 +74,72 @@ class AutomationWriteSerializer(BaseSerializer):
             "updated_at",
             "status",
             "is_enabled",
+            "is_global",
         ]
+
+    def create(self, validated_data):
+        project_ids = validated_data.pop("project_ids", [])
+        automation = super().create(validated_data)
+        # Handle project associations
+        AutomationProjectAssociation.objects.bulk_create(
+            [
+                AutomationProjectAssociation(
+                    automation=automation,
+                    project_id=project_id,
+                    workspace=automation.workspace,
+                    created_by=automation.created_by,
+                )
+                for project_id in project_ids
+            ]
+        )
+        return automation
+    
+    def update(self, instance, validated_data):
+        project_ids = validated_data.pop("project_ids", None)
+        automation = super().update(instance, validated_data)
+
+        if project_ids is not None:
+            # Update project associations
+            existing_project_ids = set(
+                (project_id) for project_id in AutomationProjectAssociation.objects.filter(
+                    automation=automation,
+                ).values_list("project_id", flat=True)
+            )
+            new_project_ids = set(project_ids)
+
+            added_project_ids = new_project_ids - existing_project_ids
+            removed_project_ids = existing_project_ids - new_project_ids 
+
+            # Add new associations
+            AutomationProjectAssociation.objects.bulk_create(
+                [
+                    AutomationProjectAssociation(
+                        automation=automation,
+                        project_id=project_id,
+                        workspace=automation.workspace,
+                        created_by=automation.updated_by,
+                    )
+                    for project_id in added_project_ids
+                ]
+            )
+
+            # Soft delete removed associations
+            AutomationProjectAssociation.objects.filter(
+                automation=automation,
+                project_id__in=removed_project_ids,
+            ).delete()
+
+        return automation
 
 
 class AutomationReadSerializer(BaseSerializer):
+    project_ids = serializers.SerializerMethodField()
+
+    def get_project_ids(self, obj):
+        if obj.project:
+            return [obj.project_id]
+        return [assoc.project_id for assoc in getattr(obj, "project_associations", [])]
+
     class Meta:
         model = Automation
         fields = [
@@ -82,12 +153,13 @@ class AutomationReadSerializer(BaseSerializer):
             "last_run_at",
             "bot_user",
             "workspace",
-            "project",
             "created_by",
             "updated_by",
             "deleted_at",
             "created_at",
             "updated_at",
+            "project_ids",
+            "is_global",
         ]
         read_only_fields = fields
 
@@ -95,6 +167,7 @@ class AutomationReadSerializer(BaseSerializer):
 class AutomationDetailReadSerializer(AutomationReadSerializer):
     nodes = serializers.SerializerMethodField()
     edges = serializers.SerializerMethodField()
+    project_ids = serializers.SerializerMethodField()
 
     def get_nodes(self, obj):
         return AutomationNodeReadSerializer(obj.nodes, many=True).data
@@ -102,15 +175,22 @@ class AutomationDetailReadSerializer(AutomationReadSerializer):
     def get_edges(self, obj):
         return AutomationEdgeReadSerializer(obj.edges, many=True).data
 
+    def get_project_ids(self, obj):
+        if obj.project:
+            return [obj.project_id]
+        return [assoc.project_id for assoc in getattr(obj, "project_associations", [])]
+
     class Meta:
         model = Automation
         fields = AutomationReadSerializer.Meta.fields + [
             "nodes",
             "edges",
+            "project_ids",
         ]
         read_only_fields = AutomationReadSerializer.Meta.read_only_fields + [
             "nodes",
             "edges",
+            "project_ids",
         ]
 
 

@@ -29,6 +29,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class AutomationRunEndpoint(AutomationBaseEndpoint):
+
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
@@ -53,6 +54,33 @@ class AutomationRunEndpoint(AutomationBaseEndpoint):
 
         runs = AutomationRun.objects.filter(
             project_id=project_id,
+            workspace__slug=slug,
+            automation_id=automation_id,
+        )
+        serializer = AutomationRunReadSerializer(runs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class WorkspaceAutomationRunEndpoint(AutomationBaseEndpoint):
+    @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(
+        self,
+        request: Request,
+        slug: str,
+        automation_id: uuid.UUID,
+        pk=None,
+    ):
+        if pk:
+            run = AutomationRun.objects.get(
+                id=pk,
+                workspace__slug=slug,
+                automation_id=automation_id,
+            )
+            serializer = AutomationRunReadSerializer(run)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        runs = AutomationRun.objects.filter(
             workspace__slug=slug,
             automation_id=automation_id,
         )

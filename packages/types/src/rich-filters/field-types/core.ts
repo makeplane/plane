@@ -13,7 +13,7 @@
 
 import type { TFilterValue } from "../expression";
 import type { TSupportedOperators } from "../operators";
-import type { TBaseFilterFieldConfig, IFilterOption } from "./shared";
+import type { TBaseFilterFieldConfig, IFilterOption, IFilterOptionGroup, TFilterOptionsType } from "./shared";
 
 /**
  * Core filter types
@@ -58,28 +58,46 @@ export type TDateRangeFilterFieldConfig<V extends TFilterValue> = TBaseDateFilte
 // -------- SELECT FILTER CONFIGURATIONS --------
 
 /**
+ * The resolved value from `getOptions` for a given `optionsType`.
+ * - flat-list: plain array of options
+ * - group: array of option groups
+ */
+type TGetOptionsResult<V extends TFilterValue, T extends TFilterOptionsType> = T extends "group"
+  ? IFilterOptionGroup<V>[]
+  : IFilterOption<V>[];
+
+/**
  * Single-select filter configuration - dropdown with one selectable option.
  * - defaultValue: Initial selected value
+ * - optionsType: Controls whether options are flat or grouped (default: "flat-list")
  * - getOptions: Options as static array or async function
  */
-export type TSingleSelectFilterFieldConfig<V extends TFilterValue> = TBaseFilterFieldConfig & {
+export type TSingleSelectFilterFieldConfig<
+  V extends TFilterValue,
+  T extends TFilterOptionsType = "flat-list",
+> = TBaseFilterFieldConfig & {
   type: typeof CORE_FILTER_FIELD_TYPE.SINGLE_SELECT;
+  optionsType?: T;
   defaultValue?: V;
-  getOptions: IFilterOption<V>[] | (() => IFilterOption<V>[] | Promise<IFilterOption<V>[]>);
+  getOptions: TGetOptionsResult<V, T> | (() => TGetOptionsResult<V, T> | Promise<TGetOptionsResult<V, T>>);
 };
 
 /**
  * Multi-select filter configuration - allows selecting multiple options.
  * - defaultValue: Initial selected values array
+ * - optionsType: Controls whether options are flat or grouped (default: "flat-list")
  * - getOptions: Options as static array or async function
  * - singleValueOperator: Operator to show when single value is selected
  */
-export type TMultiSelectFilterFieldConfig<V extends TFilterValue> = TBaseFilterFieldConfig & {
+export type TMultiSelectFilterFieldConfig<
+  V extends TFilterValue,
+  T extends TFilterOptionsType = "flat-list",
+> = TBaseFilterFieldConfig & {
   type: typeof CORE_FILTER_FIELD_TYPE.MULTI_SELECT;
+  optionsType?: T;
   defaultValue?: V[];
-  getOptions: IFilterOption<V>[] | (() => IFilterOption<V>[] | Promise<IFilterOption<V>[]>);
   singleValueOperator: TSupportedOperators;
-};
+} & Pick<TSingleSelectFilterFieldConfig<V, T>, "getOptions">;
 
 // -------- ASYNC MULTI SELECT --------
 
@@ -120,5 +138,7 @@ export type TCoreFilterFieldConfigs<V extends TFilterValue = TFilterValue> =
   | TDateFilterFieldConfig<V>
   | TDateRangeFilterFieldConfig<V>
   | TSingleSelectFilterFieldConfig<V>
+  | TSingleSelectFilterFieldConfig<V, "group">
   | TMultiSelectFilterFieldConfig<V>
+  | TMultiSelectFilterFieldConfig<V, "group">
   | TAsyncMultiSelectFilterFieldConfig<V>;

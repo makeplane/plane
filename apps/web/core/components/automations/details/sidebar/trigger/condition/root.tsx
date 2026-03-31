@@ -43,7 +43,8 @@ export const AutomationDetailsSidebarTriggerConditionRoot = observer(
 
     return (
       <AutomationConditionFilterHOC
-        projectId={automation.project}
+        isGlobal={!!automation.is_global}
+        projectIds={automation.project_ids}
         workspaceSlug={automation.workspaceSlug}
         initialFilterExpression={initialFilterExpression}
         updateFilterExpression={updateFilterExpression}

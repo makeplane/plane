@@ -13,6 +13,7 @@
 
 // FIXME: fix this!!!
 import type { ICustomSearchSelectOption } from "@plane/types";
+import type React from "react";
 
 type Placement =
   | "top"
@@ -74,13 +75,27 @@ export interface ICustomSelectProps extends IDropdownProps {
   onChange: any;
 }
 
-interface CustomSearchSelectProps {
+export interface ICustomSearchSelectGroup {
+  id: string;
+  label: React.ReactNode;
+  options: ICustomSearchSelectOption[];
+}
+
+interface CustomSearchSelectBaseProps {
   footerOption?: React.ReactNode;
   onChange: any;
   onClose?: () => void;
   noResultsMessage?: string;
-  options?: ICustomSearchSelectOption[];
 }
+
+// Exactly one of options / groupedOptions must be provided
+type FlatOptionsProps = {
+  options: ICustomSearchSelectOption[];
+};
+
+type GroupedOptionsProps = {
+  groupedOptions: ICustomSearchSelectGroup[];
+};
 
 interface SingleValueProps {
   multiple?: false;
@@ -93,7 +108,8 @@ interface MultipleValuesProps {
 }
 
 export type ICustomSearchSelectProps = IDropdownProps &
-  CustomSearchSelectProps &
+  CustomSearchSelectBaseProps &
+  (FlatOptionsProps | GroupedOptionsProps) &
   (SingleValueProps | MultipleValuesProps) & {
     searchQuery?: string;
     onSearchQueryChange?: (query: string) => void;

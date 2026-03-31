@@ -47,7 +47,8 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
   // store hooks
   const {
     getAutomationById,
-    projectAutomations: { setCreateUpdateModalConfig },
+    projectAutomations: { setCreateUpdateModalConfig: setProjectCreateUpdateModalConfig },
+    workspaceAutomations: { setCreateUpdateModalConfig: setWorkspaceCreateUpdateModalConfig },
   } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
@@ -59,6 +60,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
     await deleteAutomation(automation.id).then(() => {
       setIsDeleteModalOpen(false);
       router.push(automation.settingsLink);
+      return;
     });
   };
 
@@ -66,7 +68,11 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
     {
       key: "edit",
       action: () => {
-        setCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
+        if (automation.is_global) {
+          setWorkspaceCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
+        } else {
+          setProjectCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
+        }
       },
       title: t("common.actions.edit"),
       icon: EditIcon,

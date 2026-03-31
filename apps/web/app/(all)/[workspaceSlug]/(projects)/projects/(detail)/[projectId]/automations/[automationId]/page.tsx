@@ -23,6 +23,9 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web components
 import { AutomationDetailsMainContentRoot } from "@/components/automations/details/main-content/root";
 import { AutomationDetailsSidebarRoot } from "@/components/automations/details/sidebar/root";
+// plane web imports
+import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
+// local imports
 import type { Route } from "./+types/page";
 
 function AutomationDetailsPage({ params }: Route.ComponentProps) {
@@ -31,9 +34,13 @@ function AutomationDetailsPage({ params }: Route.ComponentProps) {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails } = useProject();
+  const {
+    projectAutomations: { getFetchStatusById },
+  } = useAutomations();
   // derived values
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
   const hasProjectAdminPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const isLoaded = getFetchStatusById(automationId);
 
   if (workspaceUserInfo && !hasProjectAdminPermissions) {
     return <NotAuthorizedView section="settings" isProjectView />;
@@ -43,7 +50,7 @@ function AutomationDetailsPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       <div className="size-full flex overflow-hidden bg-surface-2">
-        <AutomationDetailsMainContentRoot automationId={automationId} />
+        <AutomationDetailsMainContentRoot automationId={automationId} isLoaded={isLoaded} />
         <AutomationDetailsSidebarRoot automationId={automationId} />
       </div>
     </>

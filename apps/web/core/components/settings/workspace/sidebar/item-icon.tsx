@@ -25,6 +25,7 @@ import {
   Timer,
   Users,
   Webhook,
+  Zap,
 } from "lucide-react";
 // plane imports
 import type { ISvgIcons } from "@plane/propel/icons";
@@ -65,4 +66,5 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   "access-tokens": KeyRound,
   scripts: FileCode,
   work_item_types: WorkItemsIcon,
+  automations: Zap,
 };

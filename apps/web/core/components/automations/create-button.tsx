@@ -20,10 +20,11 @@ import { useAutomations } from "@/plane-web/hooks/store/automations/use-automati
 
 type TProps = {
   variant?: TButtonVariant;
+  onCreateClick?: () => void;
 };
 
 export function CreateAutomationButton(props: TProps) {
-  const { variant = "primary" } = props;
+  const { variant = "primary", onCreateClick } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -35,7 +36,11 @@ export function CreateAutomationButton(props: TProps) {
     <Button
       variant={variant}
       onClick={() => {
-        setCreateUpdateModalConfig({ isOpen: true, payload: null });
+        if (onCreateClick) {
+          onCreateClick();
+        } else {
+          setCreateUpdateModalConfig({ isOpen: true, payload: null });
+        }
       }}
     >
       {t("automations.settings.create_automation")}

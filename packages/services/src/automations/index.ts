@@ -12,3 +12,4 @@
  */
 
 export * from "./project-automations.service";
+export * from "./workspace-automations.service";

@@ -32,7 +32,12 @@ import type {
   TCreateTriggerResponse,
 } from "@plane/types";
 import { EAutomationNodeType, EAutomationStatus } from "@plane/types";
-import { generateConditionPayload, getAutomationSettingsPath, joinUrlPath } from "@plane/utils";
+import {
+  generateConditionPayload,
+  getProjectAutomationSettingsPath,
+  getWorkspaceAutomationSettingsPath,
+  joinUrlPath,
+} from "@plane/utils";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
@@ -134,10 +139,11 @@ export class AutomationInstance implements IAutomationInstance {
   description: TAutomation["description"];
   id: TAutomation["id"];
   is_enabled: TAutomation["is_enabled"];
+  is_global: TAutomation["is_global"];
   last_run_at: TAutomation["last_run_at"];
   last_run_status: TAutomation["last_run_status"];
   name: TAutomation["name"];
-  project: TAutomation["project"];
+  private _response_project_ids: TAutomation["project_ids"];
   run_count: TAutomation["run_count"];
   scope: TAutomation["scope"];
   status: TAutomation["status"];
@@ -153,10 +159,10 @@ export class AutomationInstance implements IAutomationInstance {
   edges: IAutomationInstance["edges"];
   // actions
   sidebarHelper: IAutomationDetailSidebarHelper;
-  private helpers: TAutomationHelpers;
+  #helpers: TAutomationHelpers;
   // root store
   activity: AutomationActivityStore;
-  private rootStore: RootStore;
+  #rootStore: RootStore;
 
   constructor(store: RootStore, automation: TAutomation, helpers: TAutomationHelpers) {
     // initialize automation properties
@@ -166,10 +172,11 @@ export class AutomationInstance implements IAutomationInstance {
     this.description = automation.description;
     this.id = automation.id;
     this.is_enabled = automation.is_enabled;
+    this.is_global = automation.is_global;
     this.last_run_at = automation.last_run_at;
     this.last_run_status = automation.last_run_status;
     this.name = automation.name;
-    this.project = automation.project;
+    this._response_project_ids = automation.project_ids;
     this.run_count = automation.run_count;
     this.scope = automation.scope;
     this.status = automation.status;
@@ -184,13 +191,13 @@ export class AutomationInstance implements IAutomationInstance {
     this.actions = new Map();
     this.edges = new Map();
     // initialize helpers
-    this.helpers = helpers;
+    this.#helpers = helpers;
     this.sidebarHelper = new AutomationDetailSidebarHelper(this);
     // initialize root store
     this.activity = new AutomationActivityStore(helpers.activityHelpers);
-    this.rootStore = store;
+    this.#rootStore = store;
 
-    makeObservable(this, {
+    makeObservable<AutomationInstance, "_response_project_ids">(this, {
       // observables
       average_run_time: observable.ref,
       created_at: observable.ref,
@@ -198,10 +205,11 @@ export class AutomationInstance implements IAutomationInstance {
       description: observable.ref,
       id: observable.ref,
       is_enabled: observable.ref,
+      is_global: observable.ref,
       last_run_at: observable.ref,
       last_run_status: observable.ref,
       name: observable.ref,
-      project: observable.ref,
+      _response_project_ids: observable,
       run_count: observable.ref,
       scope: observable.ref,
       status: observable.ref,
@@ -226,6 +234,7 @@ export class AutomationInstance implements IAutomationInstance {
       allActions: computed,
       allConditions: computed,
       allEdges: computed,
+      project_ids: computed,
       // actions
       mutate: action,
       update: action,
@@ -242,25 +251,38 @@ export class AutomationInstance implements IAutomationInstance {
 
   // derived properties
   get workspaceSlug() {
-    const workspaceSlug = this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+    const workspaceSlug = this.#rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
     if (!workspaceSlug) throw new Error("Workspace not found");
     return workspaceSlug;
   }
 
   // permissions
   get canCurrentUserEdit() {
-    return this.helpers.permissions.canCurrentUserEdit;
+    return this.#helpers.permissions.canCurrentUserEdit;
   }
 
   get canCurrentUserDelete() {
-    return this.helpers.permissions.canCurrentUserDelete;
+    return this.#helpers.permissions.canCurrentUserDelete;
   }
 
   get isDeleteDisabled() {
     return this.is_enabled;
   }
 
-  // helpers
+  get project_ids() {
+    if (!this._response_project_ids?.length) {
+      const {
+        project: { totalProjectIds },
+      } = this.#rootStore.projectRoot;
+      return totalProjectIds ?? [];
+    }
+    return this._response_project_ids;
+  }
+
+  set project_ids(projectIds: string[]) {
+    this._response_project_ids = projectIds;
+  }
+
   get asJSON() {
     return {
       average_run_time: this.average_run_time,
@@ -269,10 +291,11 @@ export class AutomationInstance implements IAutomationInstance {
       description: this.description,
       id: this.id,
       is_enabled: this.is_enabled,
+      is_global: this.is_global,
       last_run_at: this.last_run_at,
       last_run_status: this.last_run_status,
       name: this.name,
-      project: this.project,
+      project_ids: this.project_ids,
       run_count: this.run_count,
       scope: this.scope,
       status: this.status,
@@ -285,14 +308,20 @@ export class AutomationInstance implements IAutomationInstance {
   }
 
   get settingsLink() {
-    return getAutomationSettingsPath({
-      workspaceSlug: this.workspaceSlug,
-      projectId: this.project,
-    });
+    return this.is_global
+      ? getWorkspaceAutomationSettingsPath({
+          workspaceSlug: this.workspaceSlug,
+        })
+      : getProjectAutomationSettingsPath({
+          workspaceSlug: this.workspaceSlug,
+          projectId: this.project_ids[0],
+        });
   }
 
   get redirectionLink() {
-    return joinUrlPath(this.workspaceSlug, "projects", this.project, "automations", this.id);
+    return this.is_global
+      ? joinUrlPath(this.workspaceSlug, "settings", "automations", this.id)
+      : joinUrlPath(this.workspaceSlug, "projects", this.project_ids[0], "automations", this.id);
   }
 
   get allActions() {
@@ -420,7 +449,7 @@ export class AutomationInstance implements IAutomationInstance {
     try {
       // optimistically update
       this.mutate(data);
-      const res = await this.helpers.actions.update(this.id, data);
+      const res = await this.#helpers.actions.update(this.id, data);
       return res;
     } catch (error) {
       // revert changes
@@ -436,7 +465,7 @@ export class AutomationInstance implements IAutomationInstance {
       if (!this.isTriggerNodeAvailable || !this.isAnyActionNodeAvailable) {
         throw new Error("Automation must have at least one trigger and one action to be enabled.");
       }
-      await this.helpers.actions.updateStatus(this.id, true);
+      await this.#helpers.actions.updateStatus(this.id, true);
       runInAction(() => {
         this.mutate({
           is_enabled: true,
@@ -451,7 +480,7 @@ export class AutomationInstance implements IAutomationInstance {
 
   disable: IAutomationInstance["disable"] = async () => {
     try {
-      await this.helpers.actions.updateStatus(this.id, false);
+      await this.#helpers.actions.updateStatus(this.id, false);
       runInAction(() => {
         this.mutate({
           is_enabled: false,
@@ -470,7 +499,7 @@ export class AutomationInstance implements IAutomationInstance {
     previousNodeId?: string
   ): Promise<T> => {
     try {
-      const res = await this.helpers.actions.createNode<T>({
+      const res = await this.#helpers.actions.createNode<T>({
         ...payload,
         node_type: nodeType,
       });
@@ -478,7 +507,7 @@ export class AutomationInstance implements IAutomationInstance {
         this.createEdge(previousNodeId, res.id);
       }
       runInAction(() => {
-        this.addOrUpdateNode(res, this.helpers.nodeHelpers);
+        this.addOrUpdateNode(res, this.#helpers.nodeHelpers);
       });
       return res;
     } catch (error) {
@@ -603,7 +632,7 @@ export class AutomationInstance implements IAutomationInstance {
       const { edgeIdsToRemove, edgesToCreate } = this._getEdgeChangesForNodeDeletion(actionNodeId);
 
       // Delete the action node
-      await this.helpers.actions.deleteNode(actionNodeId);
+      await this.#helpers.actions.deleteNode(actionNodeId);
 
       // Create new edges
       const edgesToCreatePromises = edgesToCreate.map((edge) => this.createEdge(edge.sourceNodeId, edge.targetNodeId));
@@ -622,7 +651,7 @@ export class AutomationInstance implements IAutomationInstance {
 
   createEdge: IAutomationInstance["createEdge"] = async (sourceNodeId, targetNodeId) => {
     try {
-      const res = await this.helpers.actions.createEdge(sourceNodeId, targetNodeId);
+      const res = await this.#helpers.actions.createEdge(sourceNodeId, targetNodeId);
       runInAction(() => {
         this.addOrUpdateEdge({ id: res.id, source_node: sourceNodeId, target_node: targetNodeId });
       });
@@ -635,7 +664,7 @@ export class AutomationInstance implements IAutomationInstance {
 
   deleteEdge: IAutomationInstance["deleteEdge"] = async (edgeId) => {
     try {
-      await this.helpers.actions.deleteEdge(edgeId);
+      await this.#helpers.actions.deleteEdge(edgeId);
       runInAction(() => {
         this.edges.delete(edgeId);
       });

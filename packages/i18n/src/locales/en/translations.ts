@@ -6874,6 +6874,25 @@ the way you want to from the sources you specify.`,
         sub_description: "Get 80% of your admin time back when you use Automations.",
       },
     },
+    global_automations: {
+      project_select: {
+        label: "Select projects to run this automation on",
+        all_projects: {
+          label: "All projects",
+          description: "Automation will run for all projects in the workspace.",
+        },
+        select_projects: {
+          label: "Select projects",
+          description: "Automation will run for selected projects in the workspace.",
+          placeholder: "Select projects",
+        },
+      },
+      settings: {
+        sidebar_label: "Automations",
+        title: "Automations",
+        description: "Standardize processes across your workspace with global automations.",
+      },
+    },
   },
   page_actions: {
     move_page: {

@@ -183,6 +183,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/work-item-types/`,
   },
+  automations: {
+    key: "automations",
+    i18n_label: "automations.global_automations.settings.sidebar_label",
+    href: `/settings/automations`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,
+  },
 };
 
 export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
@@ -214,6 +221,7 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["relations"],
     WORKSPACE_SETTINGS["plane-intelligence"],
     WORKSPACE_SETTINGS["work_item_types"],
+    WORKSPACE_SETTINGS["automations"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"], WORKSPACE_SETTINGS["access-tokens"]],
 };

@@ -23,23 +23,20 @@ import { AutomationDetailsMainContentTriggerRoot } from "./trigger/root";
 
 type TProps = {
   automationId: string;
+  isLoaded: boolean;
 };
 
 export const AutomationDetailsMainContentRoot = observer(function AutomationDetailsMainContentRoot(props: TProps) {
-  const { automationId } = props;
+  const { automationId, isLoaded } = props;
   // store hooks
-  const {
-    getAutomationById,
-    projectAutomations: { getFetchStatusById },
-  } = useAutomations();
+  const { getAutomationById } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
-  const isAutomationLoaded = getFetchStatusById(automationId);
 
   return (
-    <main className="@container flex-shrink-0 flex-grow flex justify-center px-page-x py-6 overflow-y-scroll vertical-scrollbar scrollbar-sm">
-      <div className="@lg:w-4/5 @4xl:w-3/5 space-y-6">
-        {isAutomationLoaded ? (
+    <main className="@container shrink-0 grow flex justify-center px-page-x py-6 overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <div className="w-full @sm:w-4/5 @4xl:w-3/5 space-y-6">
+        {isLoaded ? (
           <>
             <AutomationDetailsMainContentHeader automationId={automationId} />
             {/* <AutomationDetailsMainContentScopeRoot automationId={automationId} /> */}

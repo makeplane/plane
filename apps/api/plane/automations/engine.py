@@ -21,10 +21,13 @@ import logging
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List
 
+# Django imports
 from django.db import transaction, connection
 from django.db.models import F
 from django.utils import timezone
+from django.db.models import Q
 
+# Module imports
 from plane.automations.registry import NodeRegistry, BaseAutomationNode
 from plane.ee.models import (
     Automation,
@@ -374,8 +377,11 @@ class AutomationExecutionEngine:
                 .prefetch_related("current_version__nodes")
             )
 
-            if project_id:
-                active_automations = active_automations.filter(project_id=project_id)
+            # Fetch all the automations that do not have any entry in the AutomationProjectAssociation and those that
+            # are associated with the project_id in the event
+            active_automations = active_automations.filter(
+                Q(automation_projects__project_id=project_id) | Q(automation_projects__isnull=True)
+            ).distinct()
 
             # IF there are no active automations, return early
             if not active_automations.exists():

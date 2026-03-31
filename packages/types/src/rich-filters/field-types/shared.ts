@@ -49,3 +49,24 @@ export interface IFilterOption<V extends TFilterValue> {
   disabled?: boolean;
   description?: string;
 }
+
+/**
+ * A named group of options for grouped select/multi-select filters.
+ * - id: Unique identifier for the group
+ * - label: Display label for the group header
+ * - icon: Optional icon for the group
+ * - options: The options belonging to this group
+ */
+export interface IFilterOptionGroup<V extends TFilterValue> {
+  id: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  options: IFilterOption<V>[];
+}
+
+/**
+ * Controls how options are structured in a select filter.
+ * - flat-list: A plain array of options (default, backward-compatible)
+ * - group: Options are organized into named groups
+ */
+export type TFilterOptionsType = "flat-list" | "group";

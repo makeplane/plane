@@ -12,7 +12,13 @@
  */
 
 // plane imports
-import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue, TWorkItemMeta } from "@plane/types";
+import type {
+  TSupportedFilterFieldConfigs,
+  IFilterOption,
+  IFilterOptionGroup,
+  TFilterValue,
+  TWorkItemMeta,
+} from "@plane/types";
 import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // local imports
 import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
@@ -21,18 +27,33 @@ import { WorkItemsIcon } from "@plane/propel/icons";
 type TLoadOptionsProps<V extends TFilterValue> = {
   config: TSupportedFilterFieldConfigs<V>;
   setOptions: (options: IFilterOption<V>[]) => void;
+  setGroups?: (groups: IFilterOptionGroup<V>[]) => void;
   setLoading?: (loading: boolean) => void;
 };
 
+/**
+ * Type guard that distinguishes grouped options from flat options by checking
+ * for the `options` array property unique to `IFilterOptionGroup`.
+ */
+const isFilterOptionGroups = <V extends TFilterValue>(
+  result: IFilterOption<V>[] | IFilterOptionGroup<V>[]
+): result is IFilterOptionGroup<V>[] => result.length > 0 && "options" in result[0] && Array.isArray(result[0].options);
+
 export const loadOptions = async <V extends TFilterValue>(props: TLoadOptionsProps<V>) => {
-  const { config, setOptions, setLoading } = props;
+  const { config, setOptions, setGroups, setLoading } = props;
 
   // if the config has a getOptions function, load the options
   if ("getOptions" in config && typeof config.getOptions === "function") {
     setLoading?.(true);
     try {
       const result = await config.getOptions();
-      setOptions(result);
+      if (isFilterOptionGroups(result)) {
+        setGroups?.(result);
+        // also keep a flat list for SelectedOptionsDisplay lookups
+        setOptions(result.flatMap((group) => group.options));
+      } else {
+        setOptions(result);
+      }
     } catch (error) {
       console.error("Failed to load options:", error);
     } finally {
@@ -40,6 +61,13 @@ export const loadOptions = async <V extends TFilterValue>(props: TLoadOptionsPro
     }
   }
 };
+
+export const getFormattedGroupedOptions = <V extends TFilterValue>(groups: IFilterOptionGroup<V>[]) =>
+  groups.map((group) => ({
+    id: group.id,
+    label: group.label,
+    options: getFormattedOptions(group.options),
+  }));
 
 export const getFormattedOptions = <V extends TFilterValue>(options: IFilterOption<V>[]) =>
   options.map((option) => ({

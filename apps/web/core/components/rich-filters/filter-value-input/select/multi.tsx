@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import type {
   SingleOrArray,
   IFilterOption,
+  IFilterOptionGroup,
   TFilterProperty,
   TMultiSelectFilterFieldConfig,
   TFilterConditionNodeForDisplay,
@@ -25,7 +26,12 @@ import { CustomSearchSelect } from "@plane/ui";
 import { toFilterArray, getFilterValueLength } from "@plane/utils";
 // local imports
 import { SelectedOptionsDisplay } from "./selected-options-display";
-import { getCommonCustomSearchSelectProps, getFormattedOptions, loadOptions } from "./shared";
+import {
+  getCommonCustomSearchSelectProps,
+  getFormattedOptions,
+  getFormattedGroupedOptions,
+  loadOptions,
+} from "./shared";
 
 type TMultiSelectFilterValueInputProps<P extends TFilterProperty> = {
   config: TMultiSelectFilterFieldConfig<string>;
@@ -40,24 +46,28 @@ export const MultiSelectFilterValueInput = observer(function MultiSelectFilterVa
   const { config, condition, isDisabled, onChange } = props;
   // states
   const [options, setOptions] = useState<IFilterOption<string>[]>([]);
+  const [groups, setGroups] = useState<IFilterOptionGroup<string>[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   // derived values
   const formattedOptions = useMemo(() => getFormattedOptions<string>(options), [options]);
+  const formattedGroups = useMemo(() => getFormattedGroupedOptions<string>(groups), [groups]);
 
   useEffect(() => {
-    loadOptions({ config, setOptions, setLoading });
+    loadOptions({ config, setOptions, setGroups, setLoading });
   }, [config]);
 
   const handleSelectChange = (values: string[]) => {
     onChange(values);
   };
 
+  const optionsProps = formattedGroups.length > 0 ? { groupedOptions: formattedGroups } : { options: formattedOptions };
+
   return (
     <CustomSearchSelect
       {...getCommonCustomSearchSelectProps(isDisabled)}
       value={toFilterArray(condition.value)}
       onChange={handleSelectChange}
-      options={formattedOptions}
+      {...optionsProps}
       multiple
       disabled={loading || isDisabled}
       customButton={<SelectedOptionsDisplay<string> selectedValue={condition.value} options={options} />}

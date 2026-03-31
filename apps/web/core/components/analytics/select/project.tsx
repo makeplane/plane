@@ -31,7 +31,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
   const { value, onChange, projectIds } = props;
   const { getProjectById } = useProject();
 
-  const options = projectIds?.map((projectId) => {
+  const options = (projectIds ?? [])?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
 
     return {
@@ -44,7 +44,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
           ) : (
             <ProjectIcon className="h-4 w-4" />
           )}
-          <span className="flex-grow truncate">{projectDetails?.name}</span>
+          <span className="grow truncate">{projectDetails?.name}</span>
         </div>
       ),
     };

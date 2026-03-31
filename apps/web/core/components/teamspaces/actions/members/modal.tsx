@@ -99,6 +99,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
           title: "Success!",
           message: `Team members added successfully.`,
         });
+        return;
       })
       .catch((error) => {
         setToast({
@@ -112,7 +113,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
       });
   };
 
-  const options = uninvitedPeople
+  const options = (uninvitedPeople ?? [])
     ?.map((userId) => {
       const memberDetails = getWorkspaceMemberDetails(userId);
       if (!memberDetails?.member) return;
@@ -123,7 +124,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
         } ${memberDetails?.member.display_name.toLowerCase()}`,
         content: (
           <div className="flex w-full items-center gap-2">
-            <div className="flex-shrink-0 pt-0.5">
+            <div className="shrink-0 pt-0.5">
               <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
             </div>
             <div className="truncate">
@@ -134,13 +135,11 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
         ),
       };
     })
-    .filter((option) => !!option) as
-    | {
-        value: string;
-        query: string;
-        content: React.ReactNode;
-      }[]
-    | undefined;
+    .filter((option) => !!option) as {
+    value: string;
+    query: string;
+    content: React.ReactNode;
+  }[];
 
   if (!isModalOpen) return null;
 
@@ -162,7 +161,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
                 key={memberId}
                 className="group mb-1 flex items-center justify-between gap-x-4 text-body-xs-regular w-full"
               >
-                <div className="flex flex-col gap-1 flex-grow w-full">
+                <div className="flex flex-col gap-1 grow w-full">
                   <CustomSearchSelect
                     value={memberId}
                     customButton={
@@ -197,7 +196,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
                     optionsClassName="w-48"
                   />
                 </div>
-                <div className="flex items-center justify-between gap-2 flex-shrink-0 ">
+                <div className="flex items-center justify-between gap-2 shrink-0">
                   {memberIdsToInvite.length > 1 && (
                     <div className="flex-item flex w-6">
                       <button

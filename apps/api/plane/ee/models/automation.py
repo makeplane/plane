@@ -24,7 +24,7 @@ from datetime import datetime
 from croniter import croniter
 
 # Module imports
-from plane.db.models import ProjectBaseModel
+from plane.db.models import ProjectOptionalBaseModel, WorkspaceBaseModel
 from plane.db.models import User, WorkspaceMember, BotTypeEnum
 
 
@@ -64,7 +64,7 @@ class RunStatusChoices(models.TextChoices):
     CANCELLED = "cancelled", "Cancelled"
 
 
-class Automation(ProjectBaseModel):
+class Automation(ProjectOptionalBaseModel):
     """Main automation container"""
 
     name = models.CharField(max_length=255, help_text="Human-readable automation name")
@@ -107,6 +107,11 @@ class Automation(ProjectBaseModel):
         help_text="The bot user for this automation",
     )
 
+    is_global = models.BooleanField(
+        default=False,
+        help_text="Whether this automation is global (not tied to a specific project)",
+    )
+
     def can_execute(self):
         """Check if automation can be executed"""
         return self.is_enabled and self.status == AutomationStatusChoices.PUBLISHED and self.current_version is not None
@@ -116,12 +121,14 @@ class Automation(ProjectBaseModel):
         latest_version = self.versions.order_by("-version_number").first()
         new_version_number = (latest_version.version_number + 1) if latest_version else 1
 
+        workspace = self.project.workspace if self.project else self.workspace
+
         return AutomationVersion.objects.create(
             automation=self,
             version_number=new_version_number,
             name=self.name,
             description=self.description,
-            project=self.project,
+            workspace=workspace,
         )
 
     def publish_version(self, version, user=None):
@@ -187,15 +194,16 @@ class Automation(ProjectBaseModel):
 
             from plane.app.permissions import ROLE
 
+            workspace = self.project.workspace if self.project else self.workspace
             # Add user to the workspace
             WorkspaceMember.objects.create(
                 member=bot,
-                workspace_id=self.project.workspace_id,
+                workspace=workspace,
                 role=ROLE.MEMBER.value,
                 is_active=True,
             )
-            self.bot_user = bot
 
+            self.bot_user = bot
         # set the status to draft if not set
         super().save(*args, **kwargs)
 
@@ -209,7 +217,12 @@ class Automation(ProjectBaseModel):
                 fields=["project", "name"],
                 condition=models.Q(deleted_at__isnull=True),
                 name="automation_unique_project_name_when_not_deleted",
-            )
+            ),
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=models.Q(deleted_at__isnull=True, project__isnull=True),
+                name="automation_unique_workspace_name_when_not_deleted",
+            ),
         ]
         indexes = [
             models.Index(fields=["workspace", "status", "is_enabled"]),
@@ -220,7 +233,7 @@ class Automation(ProjectBaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
 
-class AutomationVersion(ProjectBaseModel):
+class AutomationVersion(ProjectOptionalBaseModel):
     """Immutable snapshot of automation configuration"""
 
     automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="versions")
@@ -270,7 +283,7 @@ class AutomationVersion(ProjectBaseModel):
         return f"{self.automation.name} v{self.version_number}"
 
 
-class AutomationNode(ProjectBaseModel):
+class AutomationNode(ProjectOptionalBaseModel):
     """Individual node (trigger/action/condition) in automation graph"""
 
     version = models.ForeignKey(AutomationVersion, on_delete=models.CASCADE, related_name="nodes")
@@ -372,7 +385,7 @@ class AutomationNode(ProjectBaseModel):
         return f"{self.name} ({self.node_type}) - {self.version}"
 
 
-class AutomationEdge(ProjectBaseModel):
+class AutomationEdge(ProjectOptionalBaseModel):
     """Simple directed connection between automation nodes"""
 
     version = models.ForeignKey(AutomationVersion, on_delete=models.CASCADE, related_name="edges")
@@ -411,7 +424,7 @@ class AutomationEdge(ProjectBaseModel):
         return f"{self.source_node.name} -> {self.target_node.name}"
 
 
-class AutomationRun(ProjectBaseModel):
+class AutomationRun(ProjectOptionalBaseModel):
     """Individual execution instance of an automation"""
 
     automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="runs")
@@ -517,7 +530,7 @@ class AutomationRun(ProjectBaseModel):
         return None
 
 
-class NodeExecution(ProjectBaseModel):
+class NodeExecution(ProjectOptionalBaseModel):
     """Execution record for individual nodes within an automation run"""
 
     run = models.ForeignKey(AutomationRun, on_delete=models.CASCADE, related_name="node_executions")
@@ -598,7 +611,7 @@ class NodeExecution(ProjectBaseModel):
         return None
 
 
-class AutomationActivity(ProjectBaseModel):
+class AutomationActivity(ProjectOptionalBaseModel):
     """Activity record for automation"""
 
     automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="activities")
@@ -664,6 +677,32 @@ class AutomationActivity(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.automation.name} - {self.verb} - {self.field}"
+
+
+class AutomationProjectAssociation(WorkspaceBaseModel):
+    """
+    Bridge model to link Automations to Projects
+    when creating automations directly under a workspace
+    """
+
+    automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="automation_projects")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="project_automations")
+
+    class Meta:
+        db_table = "automation_project_associations"
+        verbose_name = "Automation Project Association"
+        verbose_name_plural = "Automation Project Associations"
+        ordering = ("created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["automation", "project"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="automation_project_unique_automation_project",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.automation.name} - {self.project.name}"
 
 
 class ProcessedAutomationEvent(models.Model):

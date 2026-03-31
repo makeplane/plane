@@ -40,10 +40,11 @@ export type TAutomation = {
   description: string | null;
   id: string;
   is_enabled: boolean;
+  is_global: boolean;
   last_run_at: Date | null;
   last_run_status: EAutomationRunStatus | null;
   name: string;
-  project: string;
+  project_ids: string[];
   run_count: number;
   scope: EAutomationScope;
   status: EAutomationStatus;

@@ -11,12 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { CircleUserRound, SignalHigh, Tag, Users } from "lucide-react";
 // plane imports
 import { DoubleCircleIcon, LayersIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
-import type { IUserLite, TAutomationConditionFilterProperty, TFilterConfig } from "@plane/types";
+import type {
+  IFilterOption,
+  IFilterOptionGroup,
+  IUserLite,
+  TAutomationConditionFilterProperty,
+  TFilterConfig,
+  TOperatorConfigMap,
+} from "@plane/types";
+import { COLLECTION_OPERATOR } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   getAssigneeFilterConfig,
   getCreatedByFilterConfig,
@@ -30,6 +39,7 @@ import {
 import { useFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
@@ -37,13 +47,40 @@ import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-lo
 import { useIssueTypes } from "../store/issue-types/use-issue-types";
 
 type TArgs = {
-  projectId: string;
+  isGlobal: boolean;
+  projectIds: string[];
   workspaceSlug: string;
 };
 
+// ---- Helpers to override the IN operator's getOptions ----
+
+const overrideInOperatorOptions = <P extends TAutomationConditionFilterProperty>(
+  config: TFilterConfig<P>,
+  patch: object
+): TFilterConfig<P> => {
+  const inEntry = config.supportedOperatorConfigsMap.get(COLLECTION_OPERATOR.IN);
+  if (!inEntry || !("getOptions" in inEntry)) return config;
+
+  const newMap: TOperatorConfigMap = new Map(config.supportedOperatorConfigsMap);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  newMap.set(COLLECTION_OPERATOR.IN, { ...inEntry, ...patch } as any);
+  return { ...config, supportedOperatorConfigsMap: newMap };
+};
+
+const withGroupedOptions = <P extends TAutomationConditionFilterProperty>(
+  config: TFilterConfig<P>,
+  groups: IFilterOptionGroup<string>[]
+): TFilterConfig<P> => overrideInOperatorOptions(config, { optionsType: "group", getOptions: () => groups });
+
+const withFlatOptions = <P extends TAutomationConditionFilterProperty>(
+  config: TFilterConfig<P>,
+  options: IFilterOption<string>[]
+): TFilterConfig<P> => overrideInOperatorOptions(config, { getOptions: () => options });
+
 export const useAutomationConfig = (args: TArgs) => {
-  const { projectId, workspaceSlug } = args;
+  const { isGlobal, projectIds, workspaceSlug } = args;
   // store hooks
+  const { getProjectById } = useProject();
   const { getProjectLabels } = useLabel();
   const { getProjectStates } = useProjectState();
   const {
@@ -53,92 +90,156 @@ export const useAutomationConfig = (args: TArgs) => {
   const { isWorkItemTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
   // derived values
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
-  const members = getProjectMemberIds(projectId, false)
-    ?.map((memberId) => getUserDetails(memberId))
-    .filter((member) => member) as IUserLite[];
-  const projectWorkItemStates = getProjectStates(projectId);
-  const projectLabels = getProjectLabels(projectId);
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
-  const workItemTypesMap = projectId ? getProjectIssueTypes(projectId, false) : {};
-  const workItemTypes = Object.values(workItemTypesMap).filter((workItemType) => workItemType && workItemType.id);
+  const isAnyWorkItemTypeEnabled = projectIds.some((id) => isWorkItemTypeEnabledForProject(workspaceSlug, id));
 
-  const stateFilterConfig = useMemo(
-    () =>
-      getStateFilterConfig<TAutomationConditionFilterProperty>("payload.data.state_id")({
-        isEnabled: true,
-        filterIcon: DoubleCircleIcon,
-        getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
-        states: projectWorkItemStates ?? [],
-        ...operatorConfigs,
-      }),
-    [projectWorkItemStates, operatorConfigs]
+  const getProjectGroupLabel = useCallback(
+    (projectId: string): React.ReactNode => {
+      const projectDetails = getProjectById(projectId);
+      return (
+        <span className="flex items-center gap-1.5 truncate">
+          <span className="shrink-0 size-4 grid place-items-center">
+            <Logo logo={projectDetails?.logo_props} size={16} />
+          </span>
+          {projectDetails?.name}
+        </span>
+      );
+    },
+    [getProjectById]
   );
 
-  const workItemTypeFilterConfig = useMemo(
+  const stateGroups = useMemo<IFilterOptionGroup<string>[]>(
     () =>
-      getWorkItemTypeFilterConfig<TAutomationConditionFilterProperty>("payload.data.type_id")({
-        isEnabled: isWorkItemTypeEnabled,
-        filterIcon: LayersIcon,
-        getOptionIcon: (workItemType) => (
-          <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} isDefault={workItemType?.is_default} size="xs" />
-        ),
-        workItemTypes,
-        ...operatorConfigs,
-      }),
-    [isWorkItemTypeEnabled, workItemTypes, operatorConfigs]
+      projectIds.map((projectId) => ({
+        id: projectId,
+        label: getProjectGroupLabel(projectId),
+        options: (getProjectStates(projectId) ?? []).map((state) => ({
+          id: state.id,
+          label: state.name,
+          value: state.id,
+          icon: <StateGroupIcon stateGroup={state.group} color={state.color} />,
+        })),
+      })),
+    [projectIds, getProjectGroupLabel, getProjectStates]
   );
 
-  const labelFilterConfig = useMemo(
+  const workItemTypeGroups = useMemo<IFilterOptionGroup<string>[]>(
     () =>
-      getLabelFilterConfig<TAutomationConditionFilterProperty>("payload.data.label_ids")({
-        isEnabled: true,
-        filterIcon: Tag,
-        labels: projectLabels ?? [],
-        getOptionIcon: (color) => (
-          <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
-        ),
-        ...operatorConfigs,
-      }),
-    [projectLabels, operatorConfigs]
+      projectIds.map((projectId) => ({
+        id: projectId,
+        label: getProjectGroupLabel(projectId),
+        options: Object.values(getProjectIssueTypes(projectId, false) ?? {})
+          .filter((t): t is NonNullable<typeof t> => !!t?.id)
+          .map((t) => ({
+            id: t.id ?? "",
+            label: t.name ?? "",
+            value: t.id ?? "",
+            icon: <IssueTypeLogo icon_props={t.logo_props?.icon} isDefault={t.is_default} size="xs" />,
+          })),
+      })),
+    [projectIds, getProjectGroupLabel, getProjectIssueTypes]
   );
 
-  const assigneeFilterConfig = useMemo(
+  const labelGroups = useMemo<IFilterOptionGroup<string>[]>(
     () =>
-      getAssigneeFilterConfig<TAutomationConditionFilterProperty>("payload.data.assignee_ids")({
-        isEnabled: true,
-        filterIcon: Users,
-        members: members ?? [],
-        getOptionIcon: (memberDetails) => (
-          <Avatar
-            name={memberDetails.display_name}
-            src={getFileURL(memberDetails.avatar_url)}
-            showTooltip={false}
-            size="sm"
-          />
-        ),
-        ...operatorConfigs,
-      }),
-    [members, operatorConfigs]
+      projectIds.map((projectId) => ({
+        id: projectId,
+        label: getProjectGroupLabel(projectId),
+        options: (getProjectLabels(projectId) ?? []).map((label) => ({
+          id: label.id,
+          label: label.name,
+          value: label.id,
+          icon: <span className="flex shrink-0 size-2.5 rounded-full" style={{ backgroundColor: label.color }} />,
+        })),
+      })),
+    [projectIds, getProjectGroupLabel, getProjectLabels]
   );
 
-  const createdByFilterConfig = useMemo(
+  const memberGroups = useMemo<IFilterOptionGroup<string>[]>(
     () =>
-      getCreatedByFilterConfig<TAutomationConditionFilterProperty>("payload.data.created_by_id")({
-        isEnabled: true,
-        filterIcon: CircleUserRound,
-        members: members ?? [],
-        getOptionIcon: (memberDetails) => (
-          <Avatar
-            name={memberDetails.display_name}
-            src={getFileURL(memberDetails.avatar_url)}
-            showTooltip={false}
-            size="sm"
-          />
-        ),
-        ...operatorConfigs,
+      projectIds.map((projectId) => {
+        const members = (getProjectMemberIds(projectId, false) ?? [])
+          .map((id) => getUserDetails(id))
+          .filter((m): m is IUserLite => !!m);
+        return {
+          id: projectId,
+          label: getProjectGroupLabel(projectId),
+          options: members.map((m) => ({
+            id: m.id,
+            label: m.display_name,
+            value: m.id,
+            icon: <Avatar name={m.display_name} src={getFileURL(m.avatar_url)} showTooltip={false} size="sm" />,
+          })),
+        };
       }),
-    [members, operatorConfigs]
+    [projectIds, getProjectGroupLabel, getProjectMemberIds, getUserDetails]
   );
+
+  // ---- Filter configs ----
+  // isGlobal → grouped (one collapsible section per project)
+  // !isGlobal → flat options taken from the single project's group
+
+  const stateFilterConfig = useMemo(() => {
+    const base = getStateFilterConfig<TAutomationConditionFilterProperty>("payload.data.state_id")({
+      isEnabled: true,
+      filterIcon: DoubleCircleIcon,
+      getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
+      states: [],
+      ...operatorConfigs,
+    });
+    return isGlobal ? withGroupedOptions(base, stateGroups) : withFlatOptions(base, stateGroups[0]?.options ?? []);
+  }, [isGlobal, stateGroups, operatorConfigs]);
+
+  const workItemTypeFilterConfig = useMemo(() => {
+    const base = getWorkItemTypeFilterConfig<TAutomationConditionFilterProperty>("payload.data.type_id")({
+      isEnabled: isAnyWorkItemTypeEnabled,
+      filterIcon: LayersIcon,
+      getOptionIcon: (t) => <IssueTypeLogo icon_props={t.logo_props?.icon} isDefault={t.is_default} size="xs" />,
+      workItemTypes: [],
+      ...operatorConfigs,
+    });
+    return isGlobal
+      ? withGroupedOptions(base, workItemTypeGroups)
+      : withFlatOptions(base, workItemTypeGroups[0]?.options ?? []);
+  }, [isGlobal, isAnyWorkItemTypeEnabled, workItemTypeGroups, operatorConfigs]);
+
+  const labelFilterConfig = useMemo(() => {
+    const base = getLabelFilterConfig<TAutomationConditionFilterProperty>("payload.data.label_ids")({
+      isEnabled: true,
+      filterIcon: Tag,
+      labels: [],
+      getOptionIcon: (color) => (
+        <span className="flex shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
+      ),
+      ...operatorConfigs,
+    });
+    return isGlobal ? withGroupedOptions(base, labelGroups) : withFlatOptions(base, labelGroups[0]?.options ?? []);
+  }, [isGlobal, labelGroups, operatorConfigs]);
+
+  const assigneeFilterConfig = useMemo(() => {
+    const base = getAssigneeFilterConfig<TAutomationConditionFilterProperty>("payload.data.assignee_ids")({
+      isEnabled: true,
+      filterIcon: Users,
+      members: [],
+      getOptionIcon: (m) => (
+        <Avatar name={m.display_name} src={getFileURL(m.avatar_url)} showTooltip={false} size="sm" />
+      ),
+      ...operatorConfigs,
+    });
+    return isGlobal ? withGroupedOptions(base, memberGroups) : withFlatOptions(base, memberGroups[0]?.options ?? []);
+  }, [isGlobal, memberGroups, operatorConfigs]);
+
+  const createdByFilterConfig = useMemo(() => {
+    const base = getCreatedByFilterConfig<TAutomationConditionFilterProperty>("payload.data.created_by_id")({
+      isEnabled: true,
+      filterIcon: CircleUserRound,
+      members: [],
+      getOptionIcon: (m) => (
+        <Avatar name={m.display_name} src={getFileURL(m.avatar_url)} showTooltip={false} size="sm" />
+      ),
+      ...operatorConfigs,
+    });
+    return isGlobal ? withGroupedOptions(base, memberGroups) : withFlatOptions(base, memberGroups[0]?.options ?? []);
+  }, [isGlobal, memberGroups, operatorConfigs]);
 
   const priorityFilterConfig = useMemo(
     () =>

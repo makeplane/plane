@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CustomSearchSelect } from "@plane/ui";
 import { truncateProjectIdentifierForDisplay } from "@plane/utils";
@@ -45,17 +44,17 @@ export const WorkspaceWorklogFilterProjects = observer(function WorkspaceWorklog
         ? `${selectedIds?.length} Projects`
         : "Projects";
 
-  const dropdownOptions = workspaceProjectIds?.map((projectId) => {
+  const dropdownOptions = (workspaceProjectIds ?? [])?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
     return {
       value: projectDetails?.id,
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2 truncate max-w-[300px]">
-          <span className="text-[0.65rem] text-secondary flex-shrink-0">
+          <span className="text-[0.65rem] text-secondary shrink-0">
             {truncateProjectIdentifierForDisplay(projectDetails?.identifier || "")}
           </span>
-          <span className="flex-grow truncate">{projectDetails?.name}</span>
+          <span className="grow truncate">{projectDetails?.name}</span>
         </div>
       ),
     };

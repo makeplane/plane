@@ -74,7 +74,9 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
                 buttonClassName={cn(dropdownButtonClassName, {
                   [errorClassName]: Boolean(propertyValueError),
                 })}
-                options={configuration.options}
+                {...(configuration.optionsType === "group"
+                  ? { groupedOptions: configuration.groups }
+                  : { options: configuration.options })}
                 value={value?.[0] || ""}
                 onChange={(property_value: string) => onChange([property_value])}
                 label={
@@ -93,7 +95,9 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
                 buttonClassName={cn(dropdownButtonClassName, {
                   [errorClassName]: Boolean(propertyValueError),
                 })}
-                options={configuration.options}
+                {...(configuration.optionsType === "group"
+                  ? { groupedOptions: configuration.groups }
+                  : { options: configuration.options })}
                 value={value || []}
                 onChange={(property_value: string[]) => onChange(property_value)}
                 label={

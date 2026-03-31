@@ -16,3 +16,4 @@ export * from "./custom-menu";
 export * from "./custom-select";
 export * from "./custom-search-select";
 export * from "./combo-box";
+export type { ICustomSearchSelectGroup } from "./helper";

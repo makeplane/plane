@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 // plane imports
 import type {
   IFilterOption,
+  IFilterOptionGroup,
   TFilterProperty,
   TSingleSelectFilterFieldConfig,
   TFilterConditionNodeForDisplay,
@@ -23,7 +24,12 @@ import type {
 import { CustomSearchSelect } from "@plane/ui";
 // local imports
 import { SelectedOptionsDisplay } from "./selected-options-display";
-import { getCommonCustomSearchSelectProps, getFormattedOptions, loadOptions } from "./shared";
+import {
+  getCommonCustomSearchSelectProps,
+  getFormattedOptions,
+  getFormattedGroupedOptions,
+  loadOptions,
+} from "./shared";
 
 type TSingleSelectFilterValueInputProps<P extends TFilterProperty> = {
   config: TSingleSelectFilterFieldConfig<string>;
@@ -38,12 +44,14 @@ export const SingleSelectFilterValueInput = observer(function SingleSelectFilter
   const { config, condition, onChange, isDisabled } = props;
   // states
   const [options, setOptions] = useState<IFilterOption<string>[]>([]);
+  const [groups, setGroups] = useState<IFilterOptionGroup<string>[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   // derived values
   const formattedOptions = useMemo(() => getFormattedOptions<string>(options), [options]);
+  const formattedGroups = useMemo(() => getFormattedGroupedOptions<string>(groups), [groups]);
 
   useEffect(() => {
-    loadOptions({ config, setOptions, setLoading });
+    loadOptions({ config, setOptions, setGroups, setLoading });
   }, [config]);
 
   const handleSelectChange = (value: string) => {
@@ -54,12 +62,14 @@ export const SingleSelectFilterValueInput = observer(function SingleSelectFilter
     }
   };
 
+  const optionsProps = formattedGroups.length > 0 ? { groupedOptions: formattedGroups } : { options: formattedOptions };
+
   return (
     <CustomSearchSelect
       {...getCommonCustomSearchSelectProps(isDisabled)}
       value={condition.value}
       onChange={handleSelectChange}
-      options={formattedOptions}
+      {...optionsProps}
       multiple={false}
       disabled={loading || isDisabled}
       customButton={

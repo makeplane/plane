@@ -212,10 +212,10 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
 
   if (!automation) return null;
   return (
-    <section className="flex-grow space-y-4 pt-2">
+    <section className="grow space-y-4 pt-2">
       <div className="space-y-2 px-4">
         <div className="flex items-center gap-1 text-tertiary">
-          <span className="flex-shrink-0 size-4 grid place-items-center">
+          <span className="shrink-0 size-4 grid place-items-center">
             <Zap className="size-3" />
           </span>
           <p className="text-11 font-medium">{t("automations.trigger.input_label")}</p>
@@ -235,7 +235,7 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
                 }
               )}
             >
-              <span className="flex flex-grow items-center gap-2">
+              <span className="flex grow items-center gap-2">
                 {selectedTriggerNodeHandlerOption ? (
                   <>
                     <AutomationTriggerIcon iconKey={selectedTriggerNodeHandlerOption.iconKey} />
@@ -245,7 +245,7 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
                   t("automations.trigger.input_placeholder")
                 )}
               </span>
-              <ChevronDownIcon className="flex-shrink-0 size-3" />
+              <ChevronDownIcon className="shrink-0 size-3" />
             </span>
           }
         >

@@ -92,7 +92,7 @@ export const OptionValueSelect = observer(function OptionValueSelect(props: TOpt
     }
   };
 
-  const customSearchOptions = sortedActivePropertyOptions?.map((option) => ({
+  const customSearchOptions = (sortedActivePropertyOptions ?? [])?.map((option) => ({
     value: option.id,
     query: option.name ?? "",
     content: option.name,
@@ -122,7 +122,7 @@ export const OptionValueSelect = observer(function OptionValueSelect(props: TOpt
       <>
         <span className="text-body-xs-regular truncate whitespace-nowrap">{getDisplayName()}</span>
         {!isDisabled && (
-          <ChevronDownIcon className={cn("flex-shrink-0 h-3.5 w-3.5 hidden group-hover:inline")} aria-hidden="true" />
+          <ChevronDownIcon className={cn("shrink-0 h-3.5 w-3.5 hidden group-hover:inline")} aria-hidden="true" />
         )}
       </>
     ),

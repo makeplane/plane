@@ -14,7 +14,7 @@
 import type { Editor } from "@tiptap/react";
 import { Ampersand, CircleIcon, Diamond, Ellipsis, SquareFunction } from "lucide-react";
 // plane imports
-import type { TAllAvailableOperatorsForDisplay } from "@plane/types";
+import type { IFilterOption, IFilterOptionGroup, TAllAvailableOperatorsForDisplay, TFilterValue } from "@plane/types";
 // local imports
 import type { AppendCharacter, CompOp, FieldDef, Suggestion, SuggestionContext } from "../extensions/pql-editor/types";
 import { FUNCTION_DEFS } from "../extensions/pql-editor/plugins/grammar";
@@ -235,7 +235,12 @@ async function resolveOptionsFromConfig(
 
   try {
     const raw = typeof opConfig.getOptions === "function" ? await opConfig.getOptions() : opConfig.getOptions;
-    return raw.map((opt, i) => ({
+    // flatten grouped options into a flat list
+    const isGrouped = (
+      arr: IFilterOption<TFilterValue>[] | IFilterOptionGroup<TFilterValue>[]
+    ): arr is IFilterOptionGroup<TFilterValue>[] => arr.length > 0 && "options" in arr[0];
+    const options = isGrouped(raw) ? raw.flatMap((g) => g.options) : raw;
+    return options.map((opt, i) => ({
       kind: "value" as const,
       ...(opt.icon ? { iconNode: opt.icon } : { icon: CircleIcon }),
       label: opt.label,

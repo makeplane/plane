@@ -16,7 +16,7 @@ import { joinUrlPath } from "../string";
 
 // ------------ Settings path ------------
 
-export type TAutomationSettingsPathProps = {
+type ProjectAutomationSettingsPathProps = {
   workspaceSlug: string;
   projectId: string;
 };
@@ -27,5 +27,17 @@ export type TAutomationSettingsPathProps = {
  * @params projectId - The ID of the project
  * @returns The base path for the automation settings page
  */
-export const getAutomationSettingsPath = (props: TAutomationSettingsPathProps) =>
+export const getProjectAutomationSettingsPath = (props: ProjectAutomationSettingsPathProps) =>
   joinUrlPath(props.workspaceSlug, "settings", "projects", props.projectId, "automations");
+
+type WorkspaceAutomationSettingsPathProps = {
+  workspaceSlug: string;
+};
+
+/**
+ * Gets the base path for the workspace automation settings page
+ * @params workspaceSlug - The slug of the workspace
+ * @returns The base path for the workspace automation settings page
+ */
+export const getWorkspaceAutomationSettingsPath = (props: WorkspaceAutomationSettingsPathProps) =>
+  joinUrlPath(props.workspaceSlug, "settings", "automations");

@@ -83,6 +83,7 @@ from .workspace import (
     WorkspaceUserLink,
     WorkspaceHomePreference,
     WorkspaceUserPreference,
+    WorkspaceBaseModel,
 )
 
 from .favorite import UserFavorite

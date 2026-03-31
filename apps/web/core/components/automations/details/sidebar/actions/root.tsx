@@ -50,7 +50,6 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
   const { getAutomationById } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
-  const projectId = automation?.project;
   const workspaceId = automation?.workspace;
   const workspaceSlug = automation?.workspaceSlug;
   const actionNodes = automation?.allActions;
@@ -163,7 +162,8 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
     }
   };
 
-  if (!projectId || !workspaceId || !workspaceSlug) return null;
+  if (!workspaceId || !workspaceSlug) return null;
+
   return (
     <>
       <DeleteAutomationNodeConfirmationModal
@@ -172,7 +172,7 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
         handleDelete={() => handleDeleteAction()}
         isOpen={!!selectedActionToDelete}
       />
-      <section className="flex-grow space-y-2">
+      <section className="grow space-y-2">
         {actionNodes?.map((actionNode, index) => (
           <AutomationDetailsSidebarActionsFormRoot
             key={actionNode.id}
@@ -182,7 +182,6 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
             isSubmitting={isCreatingUpdatingAction}
             onDelete={() => setSelectedActionToDelete(actionNode.id)}
             onSubmit={(data) => handleUpdateAction(actionNode, data)}
-            projectId={projectId}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
             type={EAutomationActionFormType.EXISTING}
@@ -201,13 +200,12 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
             onCancel={() => setIsActionFormOpen(false)}
             onDelete={() => setIsActionFormOpen(false)}
             onSubmit={handleCreateAction}
-            projectId={projectId}
             workspaceId={automation?.workspace}
             workspaceSlug={automation?.workspaceSlug}
             type={EAutomationActionFormType.NEW}
           />
         ) : (
-          <section className="flex-grow px-4 pt-2">
+          <section className="grow px-4 pt-2">
             <Button
               variant="secondary"
               onClick={() => {

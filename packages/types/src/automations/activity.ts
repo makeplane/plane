@@ -23,9 +23,10 @@ export type TAutomationActivityField =
   | `automation.${keyof TAutomationActivityKeys}`
   | `automation.node.${EAutomationNodeType}`
   | `automation.node.${EAutomationNodeType}.${keyof TAutomationNodeActivityKeys}`
-  | "automation.run_history";
+  | "automation.run_history"
+  | "project_ids";
 
-export type TAutomationActivityVerb = "created" | "updated" | "deleted";
+export type TAutomationActivityVerb = "created" | "updated" | "deleted" | "removed" | "added";
 
 export type TAutomationRunStatus = "pending" | "running" | "success" | "failed" | "cancelled";
 

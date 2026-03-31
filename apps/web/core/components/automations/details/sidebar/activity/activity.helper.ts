@@ -11,21 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type React from "react";
 import { Filter, Repeat, Workflow, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
+import type { ISvgIcons } from "@plane/propel/icons";
+import { ProjectIcon } from "@plane/propel/icons";
 import { EAutomationNodeType } from "@plane/types";
 import type { TAutomationActivity, TAutomationActivityKeys, TAutomationNodeActivityKeys } from "@plane/types";
+// lib
+import { store } from "@/lib/store-context";
 
 type TActivityListItemDetails = {
   descriptionContent?: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon | React.FC<ISvgIcons>;
   titleContent: string;
-};
-
-type TArgs = {
-  activityId: string;
-  automationId: string;
 };
 
 const getNodeIcon = (nodeType: EAutomationNodeType): LucideIcon => {
@@ -114,6 +114,18 @@ const getAutomationNodePropertyItemDetails = (
   };
 };
 
+const getAutomationProjectIdsItemDetails = (activityDetails: TAutomationActivity): TActivityListItemDetails | null => {
+  if (!["removed", "added"].includes(activityDetails?.verb)) return null;
+  const getProjectById = store.projectRoot.project.getProjectById;
+
+  return {
+    icon: ProjectIcon,
+    titleContent: activityDetails?.verb === "removed" ? "removed a project" : "added a project",
+    descriptionContent:
+      getProjectById(activityDetails?.new_value)?.name ?? getProjectById(activityDetails?.old_value)?.name ?? undefined,
+  };
+};
+
 export const getAutomationActivityListItemDetails = (
   activityDetails: TAutomationActivity
 ): TActivityListItemDetails | null => {
@@ -126,6 +138,8 @@ export const getAutomationActivityListItemDetails = (
 
   if (activityField === "automation") {
     activityItemDetails = getAutomationItemDetails(activityDetails);
+  } else if (activityField === "project_ids") {
+    activityItemDetails = getAutomationProjectIdsItemDetails(activityDetails);
   } else if (activityFieldParts.length === 2 && (activityFieldParts[1] as keyof TAutomationActivityKeys)) {
     activityItemDetails = getAutomationPropertyItemDetails(
       activityDetails,

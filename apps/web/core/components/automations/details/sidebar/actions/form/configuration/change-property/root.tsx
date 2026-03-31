@@ -27,13 +27,13 @@ import { PropertyNameSelect } from "./property-name-select";
 import { PropertyValueSelect } from "./property-value-select";
 
 type TProps = {
+  automationId: string;
   isDisabled?: boolean;
-  projectId: string;
 };
 
 export const AutomationActionChangePropertyConfiguration = observer(
   function AutomationActionChangePropertyConfiguration(props: TProps) {
-    const { isDisabled, projectId } = props;
+    const { automationId, isDisabled } = props;
     // form hooks
     const { watch, setValue } = useFormContext<TAutomationActionFormData>();
     // derived values
@@ -41,7 +41,7 @@ export const AutomationActionChangePropertyConfiguration = observer(
     const selectedPropertyChangeType = watch("config.change_type");
     // config
     const { configurationMap } = useAutomationActionConfig({
-      projectId,
+      automationId,
     });
 
     const selectedPropertyConfig = useMemo(

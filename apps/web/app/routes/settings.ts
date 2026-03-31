@@ -291,6 +291,20 @@ export const settingsRoutes: RouteConfigEntry[] = [
         ":workspaceSlug/settings/work-item-types",
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/work-item-types/page.tsx"
       ),
+
+      // Automations
+      layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/automations/layout.tsx", [
+        route(
+          ":workspaceSlug/settings/automations",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/automations/page.tsx"
+        ),
+        layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/automations/[automationId]/layout.tsx", [
+          route(
+            ":workspaceSlug/settings/automations/:automationId",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/automations/[automationId]/page.tsx"
+          ),
+        ]),
+      ]),
     ]),
 
     // ====================================================================

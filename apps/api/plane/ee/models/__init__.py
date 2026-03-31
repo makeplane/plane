@@ -157,6 +157,7 @@ from .automation import (
     AutomationScopeChoices,
     AutomationActivity,
     ProcessedAutomationEvent,
+    AutomationProjectAssociation,
 )
 
 from .cycle import AutomatedCycleLog, CycleSettings

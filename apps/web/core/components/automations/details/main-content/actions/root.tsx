@@ -78,7 +78,7 @@ export const AutomationDetailsMainContentActionsRoot = observer(function Automat
                 {actionNode.handler_name === EActionNodeHandlerName.CHANGE_PROPERTY && (
                   <AutomationDetailsMainContentChangePropertyBlock
                     config={actionNode.config as TChangePropertyActionConfig} // TODO: Check if we can avoid this type assertion
-                    projectId={automation.project}
+                    automationId={automationId}
                   />
                 )}
                 {actionNode.handler_name === EActionNodeHandlerName.RUN_SCRIPT && (

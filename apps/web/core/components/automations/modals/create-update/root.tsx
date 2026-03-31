@@ -11,10 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -26,31 +25,36 @@ import { EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
+import { CreateUpdateAutomationModalProjectSelect } from "./project-select";
+import { useEffect } from "react";
 
 type Props = {
   data?: Partial<TAutomation>;
   isOpen: boolean;
   onClose: () => void;
+  projectId?: string;
 };
 
 const defaultValues: Partial<TAutomation> = {
   name: "",
   description: "",
   scope: EAutomationScope.WORK_ITEM,
+  project_ids: [],
 };
 
 export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomationModal(props: Props) {
-  const { data, isOpen, onClose } = props;
+  const { data, isOpen, onClose, projectId } = props;
   // app router
   const router = useAppRouter();
-  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
-  const workspaceSlug = workspaceSlugParam?.toString();
-  const projectId = projectIdParam?.toString();
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     getAutomationById,
-    projectAutomations: { canCurrentUserCreateAutomation, createAutomation },
+    projectAutomations: { canCurrentUserCreateAutomation, createAutomation: createProjectAutomation },
+    workspaceAutomations: { canCreate: canCreateWorkspaceAutomation, createAutomation: createWorkspaceAutomation },
   } = useAutomations();
+  // derived values
+  const canCreate = projectId ? canCurrentUserCreateAutomation : canCreateWorkspaceAutomation;
   // form info
   const {
     control,
@@ -70,17 +74,20 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
   };
 
   const handleCreate = async (payload: Partial<TAutomation>) => {
-    if (!canCurrentUserCreateAutomation) return;
+    if (!canCreate || !workspaceSlug) return;
     try {
-      const res = await createAutomation(workspaceSlug, projectId, payload);
+      const res = projectId
+        ? await createProjectAutomation(workspaceSlug, projectId, payload)
+        : await createWorkspaceAutomation(workspaceSlug, payload);
       if (res?.redirectionLink) {
         router.push(res?.redirectionLink);
       }
-    } catch (error: any) {
+      handleClose();
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.create.error.title"),
-        message: error?.error || t("automations.toasts.create.error.message"),
+        message: t("automations.toasts.create.error.message"),
       });
     }
   };
@@ -90,11 +97,12 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     try {
       const automation = getAutomationById(data.id);
       await automation?.update(payload);
-    } catch (error: any) {
+      handleClose();
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.update.error.title"),
-        message: error?.error || t("automations.toasts.update.error.message"),
+        message: t("automations.toasts.update.error.message"),
       });
     }
   };
@@ -105,23 +113,21 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     } else {
       await handleCreate(payload);
     }
-    handleClose();
   };
 
-  // update form values from pre-defined data
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && data) {
       reset({
         ...defaultValues,
         ...data,
       });
     }
-  }, [data, isOpen, reset]);
+  }, [isOpen, data, reset]);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className="space-y-5 p-5">
+        <div className="space-y-4 p-5">
           <h3 className="text-18 font-medium text-secondary">
             {isEditing ? t("automations.create_modal.heading.update") : t("automations.create_modal.heading.create")}
           </h3>
@@ -166,6 +172,15 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
               />
             </div>
           </div>
+          {!projectId && (
+            <Controller
+              name="project_ids"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CreateUpdateAutomationModalProjectSelect onChange={onChange} value={value} />
+              )}
+            />
+          )}
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
           <Button variant="secondary" size="lg" onClick={handleClose}>

@@ -24,7 +24,6 @@ type TProps = {
   automationId: string;
   editorRef: React.RefObject<EditorRefApi>;
   isDisabled?: boolean;
-  projectId: string;
   selectedHandlerName: EActionNodeHandlerName;
   workspaceId: string;
   workspaceSlug: string;
@@ -32,16 +31,8 @@ type TProps = {
 };
 
 export function AutomationActionConfigurationRoot(props: TProps) {
-  const {
-    automationId,
-    editorRef,
-    isDisabled,
-    selectedHandlerName,
-    projectId,
-    workspaceId,
-    workspaceSlug,
-    isTimeBasedTrigger,
-  } = props;
+  const { automationId, editorRef, isDisabled, selectedHandlerName, workspaceId, workspaceSlug, isTimeBasedTrigger } =
+    props;
   // plane hooks
   const { t } = useTranslation();
 
@@ -58,7 +49,7 @@ export function AutomationActionConfigurationRoot(props: TProps) {
         />
       )}
       {selectedHandlerName === EActionNodeHandlerName.CHANGE_PROPERTY && (
-        <AutomationActionChangePropertyConfiguration isDisabled={isDisabled} projectId={projectId} />
+        <AutomationActionChangePropertyConfiguration automationId={automationId} isDisabled={isDisabled} />
       )}
       {selectedHandlerName === EActionNodeHandlerName.RUN_SCRIPT && (
         <AutomationActionRunScriptConfiguration workspaceSlug={workspaceSlug} isTimeBasedTrigger={isTimeBasedTrigger} />

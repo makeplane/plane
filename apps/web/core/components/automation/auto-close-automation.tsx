@@ -49,7 +49,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
 
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
 
-  const options = projectStates
+  const options = (projectStates ?? [])
     ?.filter((state) => state.group === "cancelled")
     .map((state) => ({
       value: state.id,

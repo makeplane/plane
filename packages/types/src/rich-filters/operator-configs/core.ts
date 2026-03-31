@@ -24,11 +24,13 @@ import type { CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR, CORE_EQUALITY_
 // ----------------------------- EXACT Operator -----------------------------
 export type TCoreExactOperatorConfigs =
   | TSingleSelectFilterFieldConfig<TFilterValue>
+  | TSingleSelectFilterFieldConfig<TFilterValue, "group">
   | TDateFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- IN Operator -----------------------------
 export type TCoreInOperatorConfigs =
   | TMultiSelectFilterFieldConfig<TFilterValue>
+  | TMultiSelectFilterFieldConfig<TFilterValue, "group">
   | TAsyncMultiSelectFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- RANGE Operator -----------------------------

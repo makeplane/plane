@@ -47,13 +47,12 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
   const { condition, filter, isDisabled = false, showTransition = true } = props;
   // derived values
   const filterConfig = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
-  const operatorOptions = filterConfig
-    ?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)
-    .map((option) => ({
+  const operatorOptions =
+    filterConfig?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)?.map((option) => ({
       value: option.value,
       content: option.label,
       query: option.label.toLowerCase(),
-    }));
+    })) ?? [];
   const selectedOperatorFieldConfig = filterConfig?.getOperatorConfig(condition.operator);
   const selectedOperatorOption = filterConfig?.getDisplayOperatorByValue(
     condition.operator,

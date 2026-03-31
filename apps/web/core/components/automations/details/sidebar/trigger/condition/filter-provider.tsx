@@ -28,7 +28,8 @@ type TAutomationConditionFilterHOCProps = {
         filter: IFilterInstance<TAutomationConditionFilterProperty, TAutomationConditionFilterExpression>;
       }) => React.ReactNode);
   initialFilterExpression: TAutomationConditionFilterExpression;
-  projectId: string;
+  isGlobal: boolean;
+  projectIds: string[];
   updateFilterExpression?: (updatedFilters: TAutomationConditionFilterExpression) => void;
   workspaceSlug: string;
 };
@@ -36,7 +37,7 @@ type TAutomationConditionFilterHOCProps = {
 export const AutomationConditionFilterHOC = observer(function AutomationConditionFilterHOC(
   props: TAutomationConditionFilterHOCProps
 ) {
-  const { children, projectId, initialFilterExpression, updateFilterExpression, workspaceSlug } = props;
+  const { children, isGlobal, projectIds, initialFilterExpression, updateFilterExpression, workspaceSlug } = props;
   // Create new filter instance
   const conditionFilter = useMemo(
     () =>
@@ -49,7 +50,8 @@ export const AutomationConditionFilterHOC = observer(function AutomationConditio
   );
   // config
   const { automationConfigs } = useAutomationConfig({
-    projectId,
+    isGlobal,
+    projectIds,
     workspaceSlug,
   });
   conditionFilter.configManager.registerAll(automationConfigs);

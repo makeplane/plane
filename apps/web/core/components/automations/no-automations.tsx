@@ -18,7 +18,12 @@ import { useTranslation } from "@plane/i18n";
 // local imports
 import { CreateAutomationButton } from "./create-button";
 
-export const NoAutomationsEmptyState = observer(function NoAutomationsEmptyState() {
+type TProps = {
+  onCreateClick?: () => void;
+};
+
+export const NoAutomationsEmptyState = observer(function NoAutomationsEmptyState(props: TProps) {
+  const { onCreateClick } = props;
   // plane hooks
   const { t } = useTranslation();
 
@@ -31,7 +36,7 @@ export const NoAutomationsEmptyState = observer(function NoAutomationsEmptyState
         <span className="text-13 font-medium text-secondary">{t("automations.empty_state.no_automations.title")}</span>
         <span className="text-11 text-tertiary">{t("automations.empty_state.no_automations.description")}</span>
       </p>
-      <CreateAutomationButton variant="secondary" />
+      <CreateAutomationButton variant="secondary" onCreateClick={onCreateClick} />
     </div>
   );
 });

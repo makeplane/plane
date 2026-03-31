@@ -99,6 +99,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
           type: TOAST_TYPE.SUCCESS,
           message: "Members added successfully.",
         });
+        return;
       })
       .catch((error) => {
         console.error(error);
@@ -135,7 +136,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople
+  const options = (uninvitedPeople ?? [])
     ?.map((userId) => {
       const memberDetails = getWorkspaceMemberDetails(userId);
 
@@ -158,13 +159,11 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         ),
       };
     })
-    .filter((option) => !!option) as
-    | {
-        value: string;
-        query: string;
-        content: React.ReactNode;
-      }[]
-    | undefined;
+    .filter((option) => !!option) as {
+    value: string;
+    query: string;
+    content: React.ReactNode;
+  }[];
 
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;

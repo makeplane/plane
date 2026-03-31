@@ -12,17 +12,17 @@
  */
 
 import { Combobox } from "@headlessui/react";
-
-import { InfoIcon, CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 import React, { useCallback, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { useOutsideClickDetector } from "@plane/hooks";
 // plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
+import { isObject } from "@plane/utils";
 // local imports
-import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
+import { FlatOptionsList, GroupedOptionsList } from "./custom-search-select-options";
 import type { ICustomSearchSelectProps } from "./helper";
 
 export function CustomSearchSelect(props: ICustomSearchSelectProps) {
@@ -41,7 +41,6 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     multiple = false,
     noChevron = false,
     onChange,
-    options,
     onOpen,
     onClose,
     optionsClassName = "",
@@ -53,9 +52,12 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     onSearchQueryChange,
     fetchMoreOptions,
   } = props;
+  // states
   const [internalSearchQuery, setInternalSearchQuery] = useState("");
-
+  // derived values
   const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+  const options = "options" in props ? props.options : undefined;
+  const groupedOptions = "groupedOptions" in props ? props.groupedOptions : undefined;
 
   const setSearchQuery = useCallback(
     (query: string) => {
@@ -79,10 +81,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     placement: placement ?? "bottom-start",
   });
 
-  const filteredOptions =
-    controlledSearchQuery !== undefined || searchQuery === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(searchQuery.toLowerCase()));
+  const isSearchControlled = controlledSearchQuery !== undefined;
 
   const comboboxProps: any = {
     value,
@@ -100,7 +99,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
 
   const closeDropdown = () => {
     setIsOpen(false);
-    onClose && onClose();
+    onClose?.();
   };
 
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
@@ -195,7 +194,11 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search"
-                        displayValue={(assigned: any) => assigned?.name}
+                        displayValue={(assigned) =>
+                          isObject(assigned) && "name" in assigned && typeof assigned.name === "string"
+                            ? assigned.name
+                            : ""
+                        }
                       />
                     </div>
                     <div
@@ -210,48 +213,24 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                       ref={scrollContainerRef}
                       onScroll={handleScroll}
                     >
-                      {filteredOptions ? (
-                        filteredOptions.length > 0 ? (
-                          filteredOptions.map((option) => (
-                            <Combobox.Option
-                              key={option.value}
-                              value={option.value}
-                              className={({ active }) =>
-                                cn(
-                                  "w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none",
-                                  {
-                                    "bg-layer-transparent-hover": active,
-                                    "text-placeholder opacity-60 cursor-not-allowed": option.disabled,
-                                  }
-                                )
-                              }
-                              onClick={() => {
-                                if (!multiple) closeDropdown();
-                              }}
-                              disabled={option.disabled}
-                            >
-                              {({ selected }) => (
-                                <>
-                                  <span className="flex-grow truncate">{option.content}</span>
-                                  {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-                                  {option.tooltip && (
-                                    <>
-                                      {typeof option.tooltip === "string" ? (
-                                        <Tooltip tooltipContent={option.tooltip}>
-                                          <InfoIcon className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
-                                        </Tooltip>
-                                      ) : (
-                                        option.tooltip
-                                      )}
-                                    </>
-                                  )}
-                                </>
-                              )}
-                            </Combobox.Option>
-                          ))
-                        ) : (
-                          <p className="text-placeholder italic py-1 px-1.5">{noResultsMessage}</p>
-                        )
+                      {groupedOptions ? (
+                        <GroupedOptionsList
+                          groups={groupedOptions}
+                          searchQuery={searchQuery}
+                          isSearchControlled={isSearchControlled}
+                          multiple={!!multiple}
+                          closeDropdown={closeDropdown}
+                          noResultsMessage={noResultsMessage ?? "No matches found"}
+                        />
+                      ) : options ? (
+                        <FlatOptionsList
+                          options={options}
+                          searchQuery={searchQuery}
+                          isSearchControlled={isSearchControlled}
+                          multiple={!!multiple}
+                          closeDropdown={closeDropdown}
+                          noResultsMessage={noResultsMessage ?? "No matches found"}
+                        />
                       ) : (
                         <p className="text-placeholder italic py-1 px-1.5">Loading...</p>
                       )}

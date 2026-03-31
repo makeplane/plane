@@ -21,6 +21,7 @@ import type { TIssue } from "@plane/types";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useDashboards } from "@/plane-web/hooks/store";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
 // lazy imports
 const CreateUpdateWorkItemModal = lazy(() =>
@@ -53,6 +54,11 @@ const CreateUpdateTeamspaceViewModal = lazy(() =>
 const CreateUpdateReleaseModal = lazy(() =>
   import("@/components/releases/modal/modal").then((module) => ({
     default: module.CreateUpdateReleaseModal,
+  }))
+);
+const CreateUpdateAutomationModal = lazy(() =>
+  import("@/components/automations/modals/create-update").then((module) => ({
+    default: module.CreateUpdateAutomationModal,
   }))
 );
 
@@ -95,6 +101,12 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
       updateCreateUpdateModalPayload: updateWorkspaceDashboardModalPayload,
     },
   } = useDashboards();
+  const {
+    workspaceAutomations: {
+      createUpdateModalConfig: workspaceAutomationModalConfig,
+      setCreateUpdateModalConfig: setWorkspaceAutomationModalConfig,
+    },
+  } = useAutomations();
   // derived values
   const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier) : undefined;
   const workItemDetails = workItemId ? getIssueById(workItemId) : undefined;
@@ -163,6 +175,11 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
         releaseId={createUpdateReleaseModal.releaseId}
         handleClose={() => toggleCreateReleaseModal({ isOpen: false, releaseId: undefined })}
         workspaceSlug={workspaceSlug}
+      />
+      <CreateUpdateAutomationModal
+        isOpen={workspaceAutomationModalConfig.isOpen}
+        data={workspaceAutomationModalConfig.payload ?? undefined}
+        onClose={() => setWorkspaceAutomationModalConfig({ isOpen: false, payload: null })}
       />
     </Suspense>
   );

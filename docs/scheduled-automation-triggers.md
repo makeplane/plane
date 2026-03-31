@@ -255,7 +255,7 @@ Celery task with 3 retries, exponential backoff, jitter.
 
 1. Load `Automation` with `select_related("current_version", "workspace", "project")`
 2. Validate: `is_enabled=True`, `status="published"`, `current_version` exists
-3. Check `FeatureFlag.PROJECT_AUTOMATIONS` for the workspace
+3. Check `FeatureFlag.AUTOMATIONS` for the workspace
 4. Load automation nodes via `automation_engine._load_automation_nodes(version)`
 5. Build synthetic event:
    ```python
@@ -529,7 +529,7 @@ pytest plane/tests/unit/automations/test_scheduled_tasks.py -v
 | Weekly Mon+Fri      | Set `days=["mon", "fri"]`, verify it fires on correct days                                      |
 | Cron mode           | Set `method="cron"`, `cron_expression="*/5 * * * *"` for every 5 min                            |
 | Disabled automation | Set `is_enabled=False`, verify batch scheduler skips it                                         |
-| Feature flag off    | Disable `PROJECT_AUTOMATIONS` flag, verify task returns early                                   |
+| Feature flag off    | Disable `AUTOMATIONS` flag, verify task returns early                                   |
 | Concurrent Beat     | Run `schedule_automation_triggers_batch()` twice simultaneously, verify no duplicate dispatches |
 
 ---

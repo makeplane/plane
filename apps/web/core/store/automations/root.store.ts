@@ -22,6 +22,8 @@ import type { IAutomationInstance, TAutomationHelpers } from "./automation";
 import { AutomationInstance } from "./automation";
 import type { IProjectAutomationsStore } from "./project-automations.store";
 import { ProjectAutomationsStore } from "./project-automations.store";
+import type { IWorkspaceAutomationsStore } from "./workspace-automations.store";
+import { WorkspaceAutomationsStore } from "./workspace-automations.store";
 
 export interface IAutomationsRootStore {
   // computed functions
@@ -32,6 +34,7 @@ export interface IAutomationsRootStore {
   removeAutomation: (automationId: string) => void;
   // sub-stores
   projectAutomations: IProjectAutomationsStore;
+  workspaceAutomations: IWorkspaceAutomationsStore;
 }
 
 export class AutomationsRootStore implements IAutomationsRootStore {
@@ -41,6 +44,7 @@ export class AutomationsRootStore implements IAutomationsRootStore {
   rootStore: RootStore;
   // sub-stores
   projectAutomations: ProjectAutomationsStore;
+  workspaceAutomations: WorkspaceAutomationsStore;
 
   constructor(store: RootStore) {
     makeObservable<AutomationsRootStore, "data">(this, {
@@ -54,6 +58,7 @@ export class AutomationsRootStore implements IAutomationsRootStore {
     this.rootStore = store;
     // sub-stores
     this.projectAutomations = new ProjectAutomationsStore(this, store);
+    this.workspaceAutomations = new WorkspaceAutomationsStore(this, store);
   }
 
   getAllAutomations: IAutomationsRootStore["getAllAutomations"] = computedFn(() => {
