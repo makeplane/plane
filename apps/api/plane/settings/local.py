@@ -48,7 +48,7 @@ DEFAULT_LOG_HANDLER = "console_verbose"
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "formatters": {
         "verbose": {"format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"},
         "json": {
@@ -80,6 +80,12 @@ LOGGING = {
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
+        # Celery loggers - so celery logs aren't lost when we handle setup_logging
+        "celery": {
+            "level": "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
+            "propagate": False,
+        },
         # SQL query logging - set to DEBUG to see all queries
         "django.db.backends": {
             "level": "INFO",
@@ -88,22 +94,22 @@ LOGGING = {
         },
         # Parent logger for all plane.* loggers
         "plane": {
-            "level": "DEBUG" if DEBUG else "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.api.request": {
-            "level": "DEBUG" if DEBUG else "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.api": {
-            "level": "DEBUG" if DEBUG else "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.worker": {
-            "level": "DEBUG" if DEBUG else "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
@@ -113,47 +119,47 @@ LOGGING = {
             "propagate": False,
         },
         "plane.external": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.mongo": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.migrations": {
-            "level": "DEBUG" if DEBUG else "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.silo": {
-            "level": "DEBUG" if DEBUG else "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.event_stream": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.automations.consumer": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.authentication": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.payments": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.webhook": {
-            "level": "INFO",
+            "level": LOG_LEVEL, # noqa: F405
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },

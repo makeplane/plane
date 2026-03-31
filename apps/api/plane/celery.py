@@ -11,13 +11,11 @@
 
 # Python imports
 import os
-import logging
 from datetime import timedelta
 
 # Third party imports
 from celery import Celery
-from pythonjsonlogger.json import JsonFormatter
-from celery.signals import after_setup_logger, after_setup_task_logger
+from celery.signals import setup_logging
 from celery.schedules import crontab, schedule
 
 # Module imports
@@ -88,21 +86,13 @@ app.conf.beat_schedule = {
 }
 
 
-# Setup logging
-@after_setup_logger.connect
-def setup_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
-
-
-@after_setup_task_logger.connect
-def setup_task_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+# Prevent Celery from hijacking the root logger so Django's LOGGING config
+# (which sets up plane.worker, plane.api, etc.) remains in control.
+@setup_logging.connect
+def configure_logging(*args, **kwargs):
+    import logging.config
+    from django.conf import settings
+    logging.config.dictConfig(settings.LOGGING)
 
 
 EE_JOBS = {

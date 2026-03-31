@@ -851,3 +851,5 @@ IDP_SYNC_RATE_LIMIT_DELAY = os.environ.get("IDP_SYNC_RATE_LIMIT_DELAY", 0.5)
 
 # Chat Support Identity Verification
 CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET = os.environ.get("CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET", "")
+
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
