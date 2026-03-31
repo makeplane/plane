@@ -27,6 +27,7 @@ type TUseWorkItemDetailRevalidationProps = {
     relations: KeyedMutator<TIssueRelation>;
     subWorkItems: KeyedMutator<TIssueSubIssues>;
     activity: KeyedMutator<TIssueActivity[]>;
+    stateDuration: KeyedMutator<void>;
   };
 };
 
@@ -60,6 +61,7 @@ export const useWorkItemDetailRevalidation = ({
     // TODO: Update this once sub work item events are implemented
     void mutateFn.subWorkItems();
 
-    // Always revalidate activity
+    // Always revalidate activity and state duration
     void mutateFn.activity();
+    void mutateFn.stateDuration();
   });

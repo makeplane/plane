@@ -20,7 +20,7 @@ import {
   mapActivityToPropertyValues,
   TimelineConnectorLine,
 } from "@plane/blocks/activity";
-import { FieldIcon, ActivityMessage, formatFieldValue, resolveActorInfo } from "./helpers";
+import { FieldIcon, ActivityMessage, formatFieldValue, resolveActorInfo, DurationBadge } from "./helpers";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
@@ -31,15 +31,16 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type IssueActivityTransitionItemProps = {
   activityId: string;
   ends: "top" | "bottom" | undefined;
+  isLast?: boolean;
 };
 
 export const IssueActivityTransitionItem = observer(function IssueActivityTransitionItem(
   props: IssueActivityTransitionItemProps
 ) {
-  const { activityId, ends } = props;
+  const { activityId, ends, isLast = false } = props;
   // hooks
   const {
-    activity: { getActivityById },
+    activity: { getActivityById, getStateDurationByActivityId },
   } = useIssueDetail();
   const { isMobile } = usePlatformOS();
   const { highlightRef, isHighlighted } = useActivityHighlight(activityId);
@@ -47,6 +48,14 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
   const activity = getActivityById(activityId);
 
   if (!activity) return null;
+
+  const isStateTransition = activity.field === "state";
+  const durationSeconds = isStateTransition ? getStateDurationByActivityId(activityId) : undefined;
+  const oldBadge = <DurationBadge seconds={durationSeconds} />;
+  const newBadge =
+    isLast && isStateTransition ? (
+      <DurationBadge seconds={(Date.now() - new Date(activity.created_at).getTime()) / 1000} />
+    ) : undefined;
 
   const icon = <FieldIcon field={activity.field ?? null} newValue={activity.new_value} />;
   const formattedOld = formatFieldValue(activity.field ?? null, activity.old_value);
@@ -60,7 +69,7 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
     />
   );
   const actor = resolveActorInfo(activity);
-  const { oldValue, newValue } = mapActivityToPropertyValues(formattedOld, formattedNew, icon);
+  const { oldValue, newValue } = mapActivityToPropertyValues(formattedOld, formattedNew, icon, oldBadge, newBadge);
   const showConnector = ends !== "bottom";
 
   const actorDisplay = actor.url ? (

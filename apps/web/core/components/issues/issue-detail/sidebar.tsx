@@ -51,6 +51,7 @@ import { DateAlert } from "@/components/issues/issue-detail/date-alert";
 import { TransferHopInfo } from "@/components/issues/issue-detail/transfer-hop-info";
 import { IssueWorklogProperty } from "@/components/issues/worklog/property";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { useCurrentStateDuration, DurationBadge } from "@/components/issues/issue-detail/issue-activity/helpers";
 import { WorkItemCustomPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
 // local imports
 import { IssueCycleSelect } from "./cycle-select";
@@ -95,6 +96,8 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { isMilestonesEnabled } = useMilestones();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
+  const currentStateDuration = useCurrentStateDuration(issueId);
+
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -137,6 +140,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 buttonClassName="text-body-xs-regular"
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                appendElement={<DurationBadge seconds={currentStateDuration} />}
               />
             </SidebarPropertyListItem>
 

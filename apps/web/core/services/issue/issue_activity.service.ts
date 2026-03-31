@@ -12,7 +12,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TIssueActivity, TIssueServiceType } from "@plane/types";
+import type { TIssueActivity, TIssueServiceType, TWorkItemStateDuration } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
@@ -42,6 +42,18 @@ export class IssueActivityService extends APIService {
         ...params,
       },
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getStateDuration(
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string
+  ): Promise<TWorkItemStateDuration[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/state-duration/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

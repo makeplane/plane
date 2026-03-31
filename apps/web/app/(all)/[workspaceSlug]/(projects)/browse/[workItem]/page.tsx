@@ -85,7 +85,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   useWorkItemProperties(projectId, workspaceSlug, workItemId, workItemServiceType);
 
   const {
-    activity: { fetchActivities },
+    activity: { fetchActivities, fetchStateDuration },
     comment: { fetchComments },
     subIssues: { fetchSubIssues },
     relation: { fetchRelations },
@@ -96,6 +96,12 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     projectId && workItemId ? ["workItemActivity", projectId, workItemId] : null,
     projectId && workItemId ? () => fetchActivities(workspaceSlug, projectId, workItemId) : null,
     { revalidateIfStale: false, revalidateOnFocus: true }
+  );
+
+  const { mutate: mutateWorkItemStateDuration } = useSWR(
+    projectId && workItemId ? ["workItemStateDuration", projectId, workItemId] : null,
+    projectId && workItemId ? () => fetchStateDuration(workspaceSlug, projectId, workItemId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const { mutate: mutateWorkItemComments } = useSWR(
@@ -126,6 +132,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
       relations: mutateWorkItemRelations,
       subWorkItems: mutateWorkItemSubWorkItems,
       activity: mutateWorkItemActivity,
+      stateDuration: mutateWorkItemStateDuration,
     },
   });
 

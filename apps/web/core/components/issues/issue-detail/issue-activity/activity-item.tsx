@@ -86,7 +86,7 @@ export function ActivityItem(props: ActivityItemProps) {
   const isCustomProperty = activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY";
 
   if (isBaseActivity || isCustomProperty) {
-    if (isTransition) return <IssueActivityTransitionItem activityId={id} ends={ends} />;
+    if (isTransition) return <IssueActivityTransitionItem activityId={id} ends={ends} isLast={!showConnector} />;
     if (isCustomProperty) return <WorkItemCustomPropertiesActivity activityId={id} ends={ends} />;
     return <IssueActivityItem activityId={id} ends={ends} />;
   }

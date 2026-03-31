@@ -36,6 +36,7 @@ export function PropertyValueDisplay(props: PropertyValueDisplayProps) {
         >
           {value.label}
         </span>
+        {value.badge}
       </div>
     </div>
   );

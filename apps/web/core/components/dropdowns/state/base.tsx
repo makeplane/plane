@@ -34,6 +34,7 @@ import { WorkItemStateOption } from "@/components/workflows";
 
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   alwaysAllowStateChange?: boolean;
+  appendElement?: ReactNode;
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
@@ -57,6 +58,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
   props: TWorkItemStateDropdownBaseProps
 ) {
   const {
+    appendElement,
     button,
     buttonClassName,
     buttonContainerClassName,
@@ -195,9 +197,12 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                     percentage={selectedState?.order}
                   />
                 )}
-                {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                  <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
-                )}
+                <div className="flex items-center gap-1.5 flex-grow">
+                  {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                    <span className="truncate text-left">{selectedState?.name ?? t("state")}</span>
+                  )}
+                  {appendElement}
+                </div>
                 {dropdownArrow && (
                   <ChevronDownIcon
                     className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}

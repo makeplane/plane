@@ -43,6 +43,7 @@ export type PropertyValue = {
   icon?: ReactNode;
   label: string;
   isEmpty?: boolean;
+  badge?: ReactNode;
 };
 
 export type ActivityItemData = {

@@ -449,6 +449,8 @@ export class IssueDetail implements IIssueDetail {
   // activity
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string, loaderType?: TActivityLoader) =>
     this.activity.fetchActivities(workspaceSlug, projectId, issueId, loaderType);
+  fetchStateDuration = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.activity.fetchStateDuration(workspaceSlug, projectId, issueId);
 
   // comment
   fetchComments = async (workspaceSlug: string, projectId: string, issueId: string, loaderType?: TCommentLoader) =>

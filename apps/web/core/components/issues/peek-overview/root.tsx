@@ -52,6 +52,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
     setPeekIssue,
     issue: { fetchIssue },
     fetchActivities,
+    fetchStateDuration,
   } = useIssueDetail();
   const issueStoreType = useIssueStoreType();
   const storeType = issueStoreFromProps ?? issueStoreType;
@@ -88,6 +89,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             .updateIssue(workspaceSlug, projectId, issueId, data)
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
+              fetchStateDuration(workspaceSlug, projectId, issueId);
               return;
             })
             .catch((_error) => {
@@ -228,7 +230,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       },
     }),
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [fetchIssue, is_draft, issues, fetchActivities, pathname, removeRoutePeekId, restoreIssue]
+    [fetchIssue, is_draft, issues, fetchActivities, fetchStateDuration, pathname, removeRoutePeekId, restoreIssue]
   );
 
   const { isLoading } = useSWR(
@@ -239,6 +241,12 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
+  );
+
+  useSWR(
+    peekIssue ? ["peek-state-duration", peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId] : null,
+    peekIssue ? () => fetchStateDuration(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;

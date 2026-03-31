@@ -47,6 +47,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { useCurrentStateDuration, DurationBadge } from "@/components/issues/issue-detail/issue-activity/helpers";
 import { IssueParentSelectRoot } from "@/components/issues/issue-detail/parent-select-root";
 import { DateAlert } from "@/components/issues/issue-detail/date-alert";
 import { TransferHopInfo } from "@/components/issues/issue-detail/transfer-hop-info";
@@ -92,6 +93,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const currentStateDuration = useCurrentStateDuration(issueId);
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -131,6 +133,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonClassName={`text-body-xs-medium ${issue?.state_id ? "" : "text-placeholder"}`}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+            appendElement={<DurationBadge seconds={currentStateDuration} />}
           />
         </SidebarPropertyListItem>
 

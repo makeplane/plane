@@ -21,12 +21,14 @@ import type { PropertyValue } from "../types";
 export function mapActivityToPropertyValues(
   oldVal: string | undefined,
   newVal: string | undefined,
-  icon?: ReactNode
+  icon?: ReactNode,
+  oldBadge?: ReactNode,
+  newBadge?: ReactNode
 ): { oldValue: PropertyValue; newValue: PropertyValue } {
   const oldLabel = oldVal || "";
   const newLabel = newVal || "";
   return {
-    oldValue: { icon, label: oldLabel || "None", isEmpty: !oldLabel },
-    newValue: { icon, label: newLabel || "None", isEmpty: !newLabel },
+    oldValue: { icon, label: oldLabel || "None", isEmpty: !oldLabel, badge: oldBadge },
+    newValue: { icon, label: newLabel || "None", isEmpty: !newLabel, badge: newBadge },
   };
 }

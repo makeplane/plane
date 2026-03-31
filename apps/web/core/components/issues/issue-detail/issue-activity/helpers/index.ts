@@ -18,3 +18,10 @@ export { FieldIcon } from "./field-icon";
 export { resolveActorInfo } from "./resolve-actor-info";
 export { EntityActivityContent, CustomerActivityContent, MilestoneActivityContent } from "./build-custom-content";
 export { mapActivityToItemData } from "./map-activity-to-item-data";
+export {
+  DurationBadge,
+  formatCompactDuration,
+  getDurationBadgeVariant,
+  useCurrentStateDuration,
+  ONE_DAY_SECONDS,
+} from "./duration-badge";

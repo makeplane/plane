@@ -44,6 +44,7 @@ export interface IIssueActivityStoreActions {
     issueId: string,
     loaderType?: TActivityLoader
   ) => Promise<TIssueActivity[]>;
+  fetchStateDuration: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
@@ -51,10 +52,12 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
+  stateDurationMap: Record<string, number>;
   issuePropertiesActivity: IIssuePropertiesActivityStore;
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
+  getStateDurationByActivityId: (activityId: string) => number | undefined;
   getActivityAndCommentsByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
 }
 
@@ -63,6 +66,7 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
+  stateDurationMap: Record<string, number> = {};
   issuePropertiesActivity: IssuePropertiesActivityStore;
   // services
   serviceType;
@@ -77,8 +81,10 @@ export class IssueActivityStore implements IIssueActivityStore {
       loader: observable.ref,
       activities: observable,
       activityMap: observable,
+      stateDurationMap: observable,
       // actions
       fetchActivities: action,
+      fetchStateDuration: action,
     });
     this.serviceType = serviceType;
     // services
@@ -96,6 +102,8 @@ export class IssueActivityStore implements IIssueActivityStore {
     if (!activityId) return undefined;
     return this.activityMap[activityId] ?? undefined;
   };
+
+  getStateDurationByActivityId = (activityId: string): number | undefined => this.stateDurationMap[activityId];
 
   protected buildActivityAndCommentItems(issueId: string): TIssueActivityComment[] | undefined {
     if (!issueId) return undefined;
@@ -179,6 +187,19 @@ export class IssueActivityStore implements IIssueActivityStore {
 
     return this.sortActivityComments(activityComments, sortOrder);
   });
+
+  fetchStateDuration = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const durations = await this.issueActivityService.getStateDuration(workspaceSlug, projectId, issueId);
+      runInAction(() => {
+        durations.forEach((d) => {
+          this.stateDurationMap[d.id] = d.duration_seconds;
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   fetchActivities = async (
     workspaceSlug: string,
