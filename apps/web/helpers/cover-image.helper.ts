@@ -114,8 +114,16 @@ export const getCoverImageType = (imageUrl: string): TCoverImageType => {
   // Check against the explicit set of static images
   if (isStaticCoverImage(imageUrl)) return "local_static";
 
-  // Check if it's an Unsplash image
-  if (imageUrl.includes("unsplash.com")) return "unsplash";
+  // Check if it's an Unsplash image by validating the hostname
+  try {
+    const url = new URL(imageUrl);
+    const hostname = url.hostname.toLowerCase();
+    if (hostname === "unsplash.com" || hostname.endsWith(".unsplash.com")) {
+      return "unsplash";
+    }
+  } catch {
+    // If URL parsing fails (e.g., relative path), fall through to other checks
+  }
 
   if (imageUrl.startsWith("http")) return "uploaded_asset";
 

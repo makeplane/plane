@@ -150,14 +150,26 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       role: formData.role,
     };
 
-    const updateCurrentUserDetail = updateCurrentUser(userPayload).finally(() => setIsLoading(false));
+    const updateCurrentUserDetail = updateCurrentUser(userPayload);
     const promises: Promise<IUser | TUserProfile | undefined>[] = [updateCurrentUserDetail];
     if (profilePayload.role !== profile.role) {
-      const updateCurrentUserProfile = updateUserProfile(profilePayload).finally(() => setIsLoading(false));
+      const updateCurrentUserProfile = updateUserProfile(profilePayload);
       promises.push(updateCurrentUserProfile);
     }
 
-    setPromiseToast(Promise.allSettled(promises), {
+    const updatePromise = Promise.allSettled(promises).then((results) => {
+      const rejectedResult = results.find((result) => result.status === "rejected") as
+        | PromiseRejectedResult
+        | undefined;
+      if (rejectedResult) {
+        throw rejectedResult.reason ?? new Error("Failed to update profile");
+      }
+      return results.map((result) => (result as PromiseFulfilledResult<IUser | TUserProfile | undefined>).value);
+    });
+
+    updatePromise.finally(() => setIsLoading(false));
+
+    setPromiseToast(updatePromise, {
       loading: "Updating...",
       success: {
         title: "Success!",
