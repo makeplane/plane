@@ -32,12 +32,9 @@ from pi.app.models.enums import MessageMetaStepType
 # Import new modular tools from actions service
 from pi.services.actions.tools import get_tools_for_category
 from pi.services.chat.utils import get_current_timestamp_context
-from pi.services.llm import llms
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.error_handling import streaming_error_handler
 from pi.services.llm.llms import LLMFactory
-from pi.services.llm.llms import _is_custom_model
-from pi.services.llm.llms import create_custom_llm
 
 # from pi.services.retrievers import thread_store
 from pi.services.retrievers import pg_store
@@ -165,90 +162,19 @@ class ChatKit(AttachmentMixin):
 
         self.token = token
 
-        # Use factory to create tracked tool LLM
-        from pi.services.llm.llms import LLMConfig
-        from pi.services.llm.llms import create_anthropic_llm
-        from pi.services.llm.llms import create_openai_llm
-
-        _anthropic_models = settings.llm_config.USER_VISIBLE_MODELS_ANTHROPIC
-
-        tool_llm_streaming = False
         if not switch_llm:
             switch_llm = settings.llm_model.GPT_4_1
-            TOOL_LLM = settings.llm_model.GPT_4_1
-            tool_config = LLMConfig.openai(TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
-        elif _is_custom_model(switch_llm):
-            # Custom self-hosted model (checked first to avoid name collisions
-            # with built-in model names, e.g. CUSTOM_LLM_MODEL_KEY=claude-sonnet-4-6)
-            TOOL_LLM = settings.llm_config.CUSTOM_LLM_MODEL_KEY
-            tool_config = LLMConfig(
-                model=TOOL_LLM,
-                base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
-                api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
-                temperature=None,
-                streaming=tool_llm_streaming,
-            )
-        else:
-            if switch_llm in _anthropic_models:
-                # Direct Anthropic API model
-                TOOL_LLM = switch_llm
-                tool_config = LLMConfig.anthropic(TOOL_LLM, streaming=tool_llm_streaming, temperature=0.2)
-
-            elif switch_llm == "gpt-5-standard":
-                # This is GPT-5 Standard with medium reasoning
-                TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
-                tool_config = LLMConfig.openai(
-                    TOOL_LLM,
-                    streaming=tool_llm_streaming,
-                    reasoning_effort="medium",
-                    use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
-                )
-            elif switch_llm == "gpt-5-fast":
-                # This is GPT-5 Fast with low reasoning
-                TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
-                tool_config = LLMConfig.openai(
-                    TOOL_LLM,
-                    streaming=tool_llm_streaming,
-                    reasoning_effort="low",
-                    use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
-                )
-            elif switch_llm == "gpt-5.1":
-                # This is GPT-5.1
-                TOOL_LLM = "gpt-5.1"
-                tool_config = LLMConfig.openai(TOOL_LLM, streaming=False)
-            else:
-                # This is a regular OpenAI model
-                TOOL_LLM = switch_llm
-                tool_config = LLMConfig.openai(TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
 
         # Initialize LLMs using LLMFactory with centralized model name mapping
-        self.llm = llms.LLMFactory.get_default_llm(switch_llm)
-        self.stream_llm = llms.LLMFactory.get_stream_llm(switch_llm)
-        self.decomposer_llm = llms.LLMFactory.get_decomposer_llm(switch_llm)
-        self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name=switch_llm)
+        self.llm = LLMFactory.get_default_llm(switch_llm)
+        self.stream_llm = LLMFactory.get_stream_llm(switch_llm)
+        self.decomposer_llm = LLMFactory.get_decomposer_llm(switch_llm)
+        self.fast_llm = LLMFactory.get_fast_llm(streaming=False, model_name=switch_llm)
 
         self.switch_llm = switch_llm
         # Get chat LLM - reasoning effort is now determined by model name
-        self.chat_llm = llms.LLMFactory.get_chat_llm(switch_llm)
-
-        # Log key model info
-        getattr(self.chat_llm, "model_name", "unknown")
-        if switch_llm == "gpt-5-standard":
-            pass
-        elif switch_llm == "gpt-5-fast":
-            pass
-
-        # Create tool LLM with appropriate factory (Anthropic vs OpenAI)
-        is_direct_anthropic = switch_llm in _anthropic_models or tool_config.model in _anthropic_models
-
-        if _is_custom_model(switch_llm):
-            self.tool_llm = llms.LazyLLM(lambda cfg=tool_config: create_custom_llm(cfg))
-        elif is_direct_anthropic:
-            # Use ChatAnthropic for direct Anthropic models (supports prompt caching)
-            self.tool_llm = llms.LazyLLM(lambda: create_anthropic_llm(tool_config))
-        else:
-            # Use ChatOpenAI for OpenAI and LiteLLM models
-            self.tool_llm = llms.LazyLLM(lambda: create_openai_llm(tool_config))
+        self.chat_llm = LLMFactory.get_chat_llm(switch_llm)
+        self.tool_llm = LLMFactory.get_tool_llm(switch_llm)
         self.issue_retriever = IssueRetriever(
             num_docs=settings.chat.NUM_SIMILAR_DOCS, chunk_similarity_threshold=settings.vector_db.ISSUE_VECTOR_SEARCH_CUTOFF
         )

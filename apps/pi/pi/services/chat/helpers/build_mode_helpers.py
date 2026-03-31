@@ -51,9 +51,9 @@ from pi.services.actions.registry import get_category_methods
 from pi.services.chat.helpers.action_property_mapper import map_tool_properties
 from pi.services.chat.helpers.planning_enrichment import enrich_planning_payload
 from pi.services.chat.helpers.tool_utils import TOOL_NAME_TO_CATEGORY_MAP
+from pi.services.chat.helpers.tool_utils import build_reasoning_display_text
 from pi.services.chat.helpers.tool_utils import category_display_name
 from pi.services.chat.helpers.tool_utils import clean_tool_args_for_storage
-from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import handle_missing_required_fields
 from pi.services.chat.prompts import action_category_router_prompt
 from pi.services.chat.utils import standardize_flow_step_content
@@ -440,7 +440,7 @@ def build_planner_tool_selection_step(response, *, current_step: int) -> Tuple[O
                     _id = getattr(_tc, "id", "")
                 selected_calls.append({"name": _name, "args": _args, "id": _id})
 
-            reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
+            reasoning_text = build_reasoning_display_text(response)
 
             step = {
                 "step_order": current_step,

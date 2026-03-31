@@ -146,21 +146,13 @@ async def _perform_table_selection_llm_call(
 ) -> Any:
     """Perform the actual LLM call for table selection with error handling.
 
-    Note: For GPT-5 table selection, automatically uses gpt-5-fast instead of gpt-5-standard
-    to prevent token limit issues with large schema context. SQL generation keeps original model.
+    Uses the selected SQL-agent model directly. SQL generation keeps the same model.
     """
 
     # Create model instance dynamically and set tracking context
     # Use the provided model or fall back to the global one
     if llm_model:
-        # For GPT-5 table selection, automatically reduce to fast variant to prevent token limits
-        # Table selection involves large schema context which can hit token limits with standard reasoning
-        effective_model = llm_model
-        if llm_model == "gpt-5-standard":
-            effective_model = "gpt-5-fast"
-            log.info("Table selection: Automatically using gpt-5-fast instead of gpt-5-standard to prevent token limits")
-
-        table_selection_model_instance = LLMFactory.get_sql_agent_llm("table_selection", effective_model)
+        table_selection_model_instance = LLMFactory.get_sql_agent_llm("table_selection", llm_model)
     else:
         table_selection_model_instance = table_selection_model  # type: ignore[assignment]
 
@@ -308,8 +300,7 @@ async def sql_generation(
     Returns:
         Generated SQL query as string (with markdown wrappers stripped)
 
-    Note: For GPT-5, table selection uses gpt-5-fast to prevent token limits,
-    but SQL generation uses the original model for maximum quality.
+    Note: SQL generation uses the selected model directly.
 
     Caching Strategy: The modified_sql_generator contains both static content
     (base SQL generator instructions) and dynamic content (table-specific descriptions).

@@ -34,6 +34,7 @@ llm_id_map = {
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "gpt-5.1": "e8f9a0b1-c2d3-4567-8901-abcdef123456",
     "gpt-5.2": "f9a0b1c2-d3e4-5678-9012-bcdef2345678",
+    "gpt-5.4": "16e6946f-e1bb-4341-a66e-897c4a700494",
     "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
     "gpt-5-mini": "5e5d7fa1-0a75-4318-87c6-7595c7b7133d",
     "gpt-5-nano": "0394e887-8140-4505-b4f9-5e9c59b40396",
@@ -116,6 +117,14 @@ LLMS_DATA = [
         "provider": "OpenAI",
         "model_key": "gpt-5.2",
         "max_tokens": 400000,
+    },
+    {
+        "id": llm_id_map["gpt-5.4"],
+        "name": "GPT-5.4",
+        "description": "OpenAI's GPT-5.4 model - most capable frontier model for general-purpose, coding, and multi-step agent workflows.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5.4",
+        "max_tokens": 272000,
     },
     {
         "id": llm_id_map["claude-sonnet-4-0"],

@@ -60,6 +60,7 @@ from .helpers.build_mode_helpers import run_category_router_and_persist
 from .helpers.build_mode_helpers import selected_action_categories_display
 from .helpers.tool_utils import WordBatcher
 from .helpers.tool_utils import build_method_prompt
+from .helpers.tool_utils import build_reasoning_display_text
 from .helpers.tool_utils import classify_tool
 from .helpers.tool_utils import extract_text_from_content
 from .helpers.tool_utils import format_tool_query_for_display
@@ -588,12 +589,12 @@ async def execute_tools_for_build_mode(
         if _has_tool_calls:
             # Yield reasoning chunk for the planner tool selection
             try:
-                _content_preview = extract_text_from_content(getattr(response, "content", "") or "").strip()
+                _content_preview = build_reasoning_display_text(response)
                 if _content_preview:
                     ## change point: "πspecial reasoning blockπ:
                     stage = "planner_tool_selection"
                     reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=_content_preview)
-                    if reasoning_container is not None:
+                    if reasoning_container is not None and not bool(stream_result.get("streamed_reasoning_chunks")):
                         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
                     # Avoid duplicating streamed content: if we already streamed reasoning chunks for this call,
                     # don't emit the full aggregated `response.content` again as a reasoning block.
@@ -614,16 +615,16 @@ async def execute_tools_for_build_mode(
                     else:
                         tool_names.append(getattr(_tc, "name", ""))
 
-                reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
+                reasoning_text = build_reasoning_display_text(response)
                 reason_preview = reasoning_text or "(none)"
 
                 log.debug(f"ChatID: {chat_id} - Planner selected tools: {tool_names}")
                 log.debug(f"ChatID: {chat_id} - Planner reasoning: {reason_preview}")
             else:
                 # Log when no tool calls are made
-                reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
-                log.debug(f"ChatID: {chat_id} - Planner selected tools: []")
-                log.debug(f"ChatID: {chat_id} - Planner reasoning (no tools): {reasoning_text}")
+                reasoning_text = build_reasoning_display_text(response)
+                log.info(f"ChatID: {chat_id} - Planner selected tools: []")
+                log.info(f"ChatID: {chat_id} - Planner reasoning (no tools): {reasoning_text}")
         except Exception as e:
             log.warning(f"ChatID: {chat_id} - Failed to log planner decisions: {e}")
 
@@ -1045,12 +1046,12 @@ async def execute_tools_for_build_mode(
             has_more_tool_calls = bool(getattr(response, "tool_calls", None))
             if has_more_tool_calls:
                 try:
-                    _iter_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
+                    _iter_content = build_reasoning_display_text(response)
                     if _iter_content:
                         ## change point: "πspecial reasoning blockπ:
                         stage = "planner_tool_selection"
                         reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=_iter_content)
-                        if reasoning_container is not None:
+                        if reasoning_container is not None and not bool(stream_result.get("streamed_reasoning_chunks")):
                             reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
                         # Avoid duplicating streamed content: if we already streamed reasoning chunks for this call,
                         # don't emit the full aggregated `response.content` again as a reasoning block.
@@ -1082,16 +1083,16 @@ async def execute_tools_for_build_mode(
                         else:
                             tool_names.append(getattr(_tc, "name", ""))
 
-                    reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
+                    reasoning_text = build_reasoning_display_text(response)
                     reason_preview = reasoning_text or "(none)"
 
                     log.debug(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): {tool_names}")
                     log.debug(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}): {reason_preview}")
                 else:
                     # Log when no tool calls are made in iteration
-                    reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
-                    log.debug(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): []")
-                    log.debug(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}, no tools): {reasoning_text}")
+                    reasoning_text = build_reasoning_display_text(response)
+                    log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): []")
+                    log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}, no tools): {reasoning_text}")
             except Exception as e:
                 log.warning(f"ChatID: {chat_id} - Failed to log planner decisions for iteration {iteration_count}: {e}")
 

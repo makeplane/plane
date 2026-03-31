@@ -172,6 +172,66 @@ async def get_llm_model_id_from_key(model_key: str, db: Optional[AsyncSession] =
         return None
 
 
+def _get_runtime_model_keys() -> set[str]:
+    """Build a set of currently active model keys used by runtime/UI.
+
+    Historical fixture rows remain in ``llm_models`` for usage/pricing integrity,
+    but removed frontend aliases such as ``gpt-5-fast`` or ``gpt-5-standard``
+    should not be surfaced back to the UI or reused for new runtime selection.
+    """
+    valid_keys: set[str] = set()
+
+    valid_keys.update(settings.llm_config.USER_VISIBLE_MODELS_OPENAI)
+    valid_keys.update(settings.llm_config.USER_VISIBLE_MODELS_ANTHROPIC)
+    valid_keys.update(settings.llm_config.ALL_USER_VISIBLE_MODELS)
+
+    for provider_map in (
+        settings.llm_config.PROVIDER_DEFAULT_MODELS,
+        settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST,
+        settings.llm_config.PROVIDER_DEFAULT_MODELS_LIGHTWEIGHT,
+    ):
+        valid_keys.update(str(model) for model in provider_map.values() if model)
+
+    if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
+        valid_keys.add(settings.llm_config.CUSTOM_LLM_MODEL_KEY)
+
+    return valid_keys
+
+
+def normalize_model_for_display(model_key: Optional[str]) -> str:
+    """Validate a historical model key and fall back to default if invalid.
+
+    When loading chat history, old messages may reference models that are no longer
+    active in runtime/UI (e.g., 'gpt-5-fast' or 'gpt-5-standard'). This function
+    ensures the frontend always receives a valid model key by falling back to the
+    current provider default when necessary.
+
+    Args:
+        model_key: The historical model key stored in the message (may be None/empty)
+
+    Returns:
+        A valid model key for display in the UI
+    """
+    if not model_key:
+        return settings.llm_model.DEFAULT
+
+    # Check if the model is still active in the current runtime/UI set.
+    valid_keys = _get_runtime_model_keys()
+    if model_key in valid_keys:
+        return model_key
+
+    # Model no longer exists - fall back to provider default
+    has_openai = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+    has_claude = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+
+    if has_openai:
+        return settings.llm_config.PROVIDER_DEFAULT_MODELS.get("openai", settings.llm_model.DEFAULT)
+    elif has_claude:
+        return settings.llm_config.PROVIDER_DEFAULT_MODELS.get("anthropic", settings.llm_model.DEFAULT)
+
+    return settings.llm_model.DEFAULT
+
+
 async def get_llm_pricing(llm_model_id: UUID, db: AsyncSession) -> Optional[LlmModelPricing]:
     """
     Get LLM pricing data for a given model ID.

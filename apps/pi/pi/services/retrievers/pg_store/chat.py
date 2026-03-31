@@ -44,6 +44,7 @@ from pi.app.utils.pagination import create_pagination_response
 from pi.services.chat.helpers.tool_utils import format_tool_message_for_display
 from pi.services.chat.utils import mask_uuids_in_text
 from pi.services.query_utils import parse_query
+from pi.services.retrievers.pg_store.model import normalize_model_for_display
 
 log = logger.getChild(__name__)
 
@@ -515,7 +516,7 @@ async def retrieve_chat_history(
         )
         last_message_result = await db.execute(last_assistant_message_query)
         last_assistant_message = last_message_result.scalar_one_or_none()
-        chat_llm = last_assistant_message.llm_model if last_assistant_message else ""
+        chat_llm = normalize_model_for_display(last_assistant_message.llm_model if last_assistant_message else None)
 
         # Step 6: Get attachments for all messages (only IDs)
         message_ids = [msg.id for msg in messages] if messages else []
@@ -585,7 +586,7 @@ async def retrieve_chat_history(
                             "answer": await replace_plot_attachment_urls(assistant_message.content or "", db),
                             "reasoning": assistant_message.reasoning or "",
                             "feedback": feedback,
-                            "llm": assistant_message.llm_model or "",
+                            "llm": normalize_model_for_display(assistant_message.llm_model),
                             "parsed_query": user_message.parsed_content or "",
                             "query_id": str(user_message.id),
                             "answer_id": str(assistant_message.id),
@@ -1532,7 +1533,7 @@ async def get_user_chat_threads(
             latest_messages = latest_messages_result.fetchall()
 
             # Create a lookup dictionary for O(1) access
-            chat_to_llm = {str(msg.chat_id): msg.llm_model or "" for msg in latest_messages}
+            chat_to_llm = {str(msg.chat_id): normalize_model_for_display(msg.llm_model) for msg in latest_messages}
         else:
             chat_to_llm = {}
 
@@ -1671,7 +1672,7 @@ async def get_favorite_chats(
             latest_messages = latest_messages_result.fetchall()
 
             # Create a lookup dictionary for O(1) access
-            chat_to_llm = {str(msg.chat_id): msg.llm_model or "" for msg in latest_messages}
+            chat_to_llm = {str(msg.chat_id): normalize_model_for_display(msg.llm_model) for msg in latest_messages}
         else:
             chat_to_llm = {}
 
@@ -1783,7 +1784,7 @@ async def get_user_chat_threads_paginated(
             latest_messages = latest_messages_result.fetchall()
 
             # Create a lookup dictionary for O(1) access
-            chat_to_llm = {str(msg.chat_id): msg.llm_model or "" for msg in latest_messages}
+            chat_to_llm = {str(msg.chat_id): normalize_model_for_display(msg.llm_model) for msg in latest_messages}
         else:
             chat_to_llm = {}
 

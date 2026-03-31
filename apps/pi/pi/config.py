@@ -169,11 +169,10 @@ class LLMModels:
     GPT_4O_MINI: str = "gpt-4o-mini"
     GPT_4O_SEARCH_PREVIEW: str = "gpt-4o-search-preview"  # OpenAI model with built-in web search
     LITE_LLM_CLAUDE_SONNET_4: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"
-    GPT_5_STANDARD: str = "gpt-5-standard"
-    GPT_5_FAST: str = "gpt-5-fast"
     GPT_5_1: str = "gpt-5.1"
     GPT_5_2: str = "gpt-5.2"
-    DEFAULT: str = GPT_5_2
+    GPT_5_4: str = "gpt-5.4"
+    DEFAULT: str = GPT_5_4
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
     CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
     CLAUDE_SONNET_4_6: str = "claude-sonnet-4-6"
@@ -229,10 +228,18 @@ class LLMConfig:
     COHERE_BASE_URL: str = field(default_factory=lambda: os.getenv("COHERE_BASE_URL", "https://api.cohere.ai/v1/embed"))
     GROQ_BASE_URL: str = field(default_factory=lambda: os.getenv("GROQ_BASE_URL", "https://api.groq.com/"))
 
-    USER_VISIBLE_MODELS_OPENAI: list[str] = field(default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.2"])
+    USER_VISIBLE_MODELS_OPENAI: list[str] = field(default_factory=lambda: ["gpt-4.1", "gpt-5.4", "gpt-5.2"])
     USER_VISIBLE_MODELS_ANTHROPIC: list[str] = field(default_factory=lambda: ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"])
     ALL_USER_VISIBLE_MODELS: list[str] = field(
-        default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.1", "claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"]
+        default_factory=lambda: [
+            "gpt-4.1",
+            "gpt-5.1",
+            "gpt-5.4",
+            "gpt-5.2",
+            "claude-sonnet-4-0",
+            "claude-sonnet-4-5",
+            "claude-sonnet-4-6",
+        ]
     )
 
     # Anthropic models that support prompt caching (cache_control parameter).
@@ -243,7 +250,7 @@ class LLMConfig:
     # Provider default models
     PROVIDER_DEFAULT_MODELS: dict[str, str] = field(
         default_factory=lambda: {
-            "openai": LLMModels.GPT_5_2,
+            "openai": LLMModels.GPT_5_4,
             "anthropic": LLMModels.CLAUDE_SONNET_4_6,
         }
     )
@@ -266,10 +273,9 @@ class LLMConfig:
     TESTED_FOR_WORKSPACE: list = field(
         default_factory=lambda: [
             LLMModels.GPT_4_1,
-            LLMModels.GPT_5_STANDARD,
-            LLMModels.GPT_5_FAST,
             LLMModels.GPT_5_1,
             LLMModels.GPT_5_2,
+            LLMModels.GPT_5_4,
             LLMModels.CLAUDE_SONNET_4_0,
             LLMModels.CLAUDE_SONNET_4_5,
             LLMModels.CLAUDE_SONNET_4_6,
@@ -280,9 +286,6 @@ class LLMConfig:
     ENABLE_MODEL_VERIFICATION_LOGGING: bool = (
         False  # field(default_factory=lambda: os.getenv("ENABLE_MODEL_VERIFICATION_LOGGING", "false").lower() == "true")
     )
-    # GPT-5 specific configuration
-    GPT5_USE_RESPONSES_API: bool = field(default_factory=lambda: os.getenv("GPT5_USE_RESPONSES_API", "false").lower() == "true")
-
     # SQL Agent timeout configuration
     # Timeout in seconds for SQL table selection LLM calls
     # If a call exceeds this time, it will retry with a fallback model (GPT-4o)

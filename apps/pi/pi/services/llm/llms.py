@@ -17,9 +17,11 @@ This module provides centralized LLM creation for the Plane AI application.
 from dataclasses import dataclass
 from typing import Any
 from typing import AsyncIterator
+from typing import Callable
 from typing import Dict
 from typing import Iterator
 from typing import Optional
+from typing import Tuple
 from uuid import UUID
 
 from langchain_anthropic import ChatAnthropic
@@ -51,7 +53,7 @@ class LLMConfig:
     base_url: Optional[str] = None
     api_key: Optional[str] = None
     reasoning_effort: Optional[str] = None
-    use_responses_api: Optional[bool] = None
+    tracking_model_key: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.seed is None:
@@ -68,9 +70,9 @@ class LLMConfig:
         max_completion_tokens: Optional[int] = None,
         frequency_penalty: Optional[float] = None,
         reasoning_effort: Optional[str] = None,
-        use_responses_api: Optional[bool] = None,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        tracking_model_key: Optional[str] = None,
     ) -> "LLMConfig":
         """Create an OpenAI LLM configuration."""
         return cls(
@@ -81,7 +83,7 @@ class LLMConfig:
             max_completion_tokens=max_completion_tokens,
             frequency_penalty=frequency_penalty,
             reasoning_effort=reasoning_effort,
-            use_responses_api=use_responses_api,
+            tracking_model_key=tracking_model_key,
             base_url=base_url or settings.llm_config.OPENAI_BASE_URL,
             api_key=api_key or settings.llm_config.OPENAI_API_KEY,
         )
@@ -97,9 +99,9 @@ class LLMConfig:
         max_completion_tokens: Optional[int] = None,
         frequency_penalty: Optional[float] = None,
         reasoning_effort: Optional[str] = None,
-        use_responses_api: Optional[bool] = None,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        tracking_model_key: Optional[str] = None,
     ) -> "LLMConfig":
         """Create an Anthropic LLM configuration (OpenAI-compatible gateway)."""
         return cls(
@@ -110,7 +112,7 @@ class LLMConfig:
             max_completion_tokens=max_completion_tokens,
             frequency_penalty=frequency_penalty,
             reasoning_effort=reasoning_effort,
-            use_responses_api=use_responses_api,
+            tracking_model_key=tracking_model_key,
             base_url=base_url or settings.llm_config.CLAUDE_BASE_URL,
             api_key=api_key or settings.llm_config.CLAUDE_API_KEY,
         )
@@ -330,35 +332,34 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
     if config.seed is not None and not config.model.startswith("anthropic."):
         openai_params["seed"] = config.seed
 
-    # Add GPT-5 specific parameters
+    # GPT-5 family supports configurable reasoning effort.
+    if config.reasoning_effort is not None and config.model.startswith("gpt-5"):
+        openai_params["reasoning_effort"] = config.reasoning_effort
+
+    # Base gpt-5 has more restrictive parameter support than versioned GPT-5.* models.
     if config.model == "gpt-5":
-        # GPT-5 has limited parameter support - remove unsupported parameters
         openai_params.pop("temperature", None)  # Only supports default temperature (1.0)
         openai_params.pop("frequency_penalty", None)  # Not supported for gpt-5
-        openai_params.pop("seed", None)  # Not supported with responses API
-        if config.reasoning_effort is not None:
-            openai_params["reasoning_effort"] = config.reasoning_effort
-        if config.use_responses_api is not None:
-            openai_params["use_responses_api"] = config.use_responses_api
+        openai_params.pop("seed", None)  # Not supported for gpt-5
 
     # Handle gpt-4o-search-preview - doesn't support temperature parameter
     if config.model == settings.llm_model.GPT_4O_SEARCH_PREVIEW:
         openai_params.pop("temperature", None)
         openai_params.pop("seed", None)
 
-    # Enable stream_usage for streaming models to get token usage metadata
-    if config.streaming:
-        openai_params["stream_usage"] = True
+    # Always enable stream_usage so that astream()/astream_events() calls
+    # include token usage metadata in streamed chunks, regardless of whether
+    # the model was created with streaming=True or streaming=False.
+    openai_params["stream_usage"] = True
 
     llm = ChatOpenAI(**openai_params)
 
     if track_tokens:
         # Handle GPT-5 variants - we need to determine which variant based on reasoning_effort
-        if config.model == "gpt-5":
-            if config.reasoning_effort == "low":
-                tracking_model_key = "gpt-5-fast"
-            else:  # medium or any other reasoning effort maps to standard
-                tracking_model_key = "gpt-5-standard"
+        if config.tracking_model_key:
+            tracking_model_key = config.tracking_model_key
+        elif config.model == "gpt-5":
+            tracking_model_key = "gpt-5-standard"
         else:
             tracking_model_key = config.model
 
@@ -407,9 +408,7 @@ def create_anthropic_llm(config: LLMConfig, track_tokens: bool = True, **overrid
     # via additional_kwargs, not by passing a parameter to ChatAnthropic constructor.
     # See: askmode_tool_executor.py for implementation.
 
-    # Enable stream_usage for streaming models to get token usage metadata
-    if config.streaming:
-        anthropic_params["stream_usage"] = True
+    anthropic_params["stream_usage"] = True
 
     llm = ChatAnthropic(**anthropic_params)
 
@@ -496,12 +495,6 @@ def create_custom_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
         raise
 
 
-_GPT5_REASONING_EFFORT: dict[str, str] = {
-    "gpt-5-standard": "medium",
-    "gpt-5-fast": "low",
-}
-
-
 _model_provider_map: dict[str, str] | None = None
 
 
@@ -531,10 +524,61 @@ def _get_model_provider(name: str) -> str:
     return _model_provider_map.get(name, "openai")
 
 
-_PROVIDER_FACTORY = {
+ProviderConfigFactory = Callable[..., LLMConfig]
+ProviderLLMFactory = Callable[..., Any]
+ProviderFactoryPair = Tuple[ProviderConfigFactory, ProviderLLMFactory]
+
+
+_PROVIDER_FACTORY: Dict[str, ProviderFactoryPair] = {
     "anthropic": (LLMConfig.anthropic, create_anthropic_llm),
     "openai": (LLMConfig.openai, create_openai_llm),
 }
+
+
+@dataclass(frozen=True)
+class ResolvedModelSpec:
+    """Concrete provider/config pair used to instantiate an LLM."""
+
+    provider: str
+    config: LLMConfig
+
+
+def _resolve_model_spec(
+    model_name: str,
+    *,
+    streaming: bool = False,
+    temperature: float = 0.2,
+) -> ResolvedModelSpec:
+    """Resolve a user-facing model name into a concrete provider/config pair."""
+    name = model_name.lower()
+
+    if _is_custom_model(name):
+        return ResolvedModelSpec(
+            provider="custom",
+            config=_create_custom_llm_config(streaming=streaming),
+        )
+
+    provider = _get_model_provider(name)
+    provider_factory = _PROVIDER_FACTORY.get(provider)
+    if provider_factory is None:
+        provider_factory = _PROVIDER_FACTORY["openai"]
+    config_factory, _ = provider_factory
+    return ResolvedModelSpec(
+        provider=provider,
+        config=config_factory(name, streaming=streaming, temperature=temperature),
+    )
+
+
+def _create_llm_from_spec(spec: ResolvedModelSpec, **overrides: Any) -> Any:
+    """Instantiate an LLM from a resolved provider/config pair."""
+    if spec.provider == "custom":
+        return create_custom_llm(spec.config, **overrides)
+
+    provider_factory = _PROVIDER_FACTORY.get(spec.provider)
+    if provider_factory is None:
+        provider_factory = _PROVIDER_FACTORY["openai"]
+    _, llm_factory = provider_factory
+    return llm_factory(spec.config, **overrides)
 
 
 def _resolve_llm(
@@ -548,25 +592,8 @@ def _resolve_llm(
 
     Routes: custom → provider-based (Anthropic / OpenAI) → GPT-5 special cases → OpenAI default.
     """
-    name = model_name.lower()
-
-    if _is_custom_model(name):
-        config = _create_custom_llm_config(streaming=streaming)
-        return create_custom_llm(config, **overrides)
-
-    if name in _GPT5_REASONING_EFFORT:
-        config = LLMConfig.openai(
-            "gpt-5",
-            streaming=streaming,
-            reasoning_effort=_GPT5_REASONING_EFFORT[name],
-            use_responses_api=overrides.pop("use_responses_api", settings.llm_config.GPT5_USE_RESPONSES_API),
-        )
-        return create_openai_llm(config, **overrides)
-
-    provider = _get_model_provider(name)
-    config_factory, llm_factory = _PROVIDER_FACTORY.get(provider, _PROVIDER_FACTORY["openai"])
-    config = config_factory(name, streaming=streaming, temperature=temperature)
-    return llm_factory(config, **overrides)
+    spec = _resolve_model_spec(model_name, streaming=streaming, temperature=temperature)
+    return _create_llm_from_spec(spec, **overrides)
 
 
 def _has_openai_key() -> bool:
@@ -628,18 +655,19 @@ class LLMFactory:
             return _resolve_llm(cls.get_fallback_model_name(llm_name), streaming=True, temperature=0.2)
 
     @classmethod
-    def get_sql_agent_llm(
-        cls, operation_type: str, llm_model: str = settings.llm_model.GPT_4_1, reasoning_effort: Optional[str] = None
-    ) -> BaseLanguageModel:
+    def get_tool_llm(cls, model_name: Optional[str] = None) -> Any:
+        """Non-streaming lazy LLM used for tool binding and orchestration."""
+        resolved = _resolve_model_spec(model_name or settings.llm_model.GPT_4_1, streaming=False, temperature=0.2)
+        return LazyLLM(lambda spec=resolved: _create_llm_from_spec(spec))
+
+    @classmethod
+    def get_sql_agent_llm(cls, operation_type: str, llm_model: str = settings.llm_model.GPT_4_1) -> BaseLanguageModel:
         """Non-streaming LLM tuned for SQL generation."""
         try:
             name = llm_model.lower()
             overrides: Dict[str, Any] = {"max_completion_tokens": 4096}
 
-            if name in _GPT5_REASONING_EFFORT:
-                overrides["max_completion_tokens"] = 8192
-                overrides["use_responses_api"] = False
-            elif not (_is_custom_model(name) or _get_model_provider(name) == "anthropic"):
+            if not (_is_custom_model(name) or _get_model_provider(name) == "anthropic"):
                 overrides["frequency_penalty"] = 0.2
 
             return _resolve_llm(llm_model, streaming=False, temperature=0.2, **overrides)

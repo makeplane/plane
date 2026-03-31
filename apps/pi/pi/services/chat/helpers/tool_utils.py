@@ -70,6 +70,87 @@ def extract_text_from_content(content: Any) -> str:
     return str(content)
 
 
+def _collect_reasoning_text(value: Any) -> List[str]:
+    """Recursively extract text-like fields from OpenAI reasoning summary payloads."""
+    if value is None:
+        return []
+
+    if isinstance(value, str):
+        text = value.strip()
+        return [text] if text else []
+
+    if isinstance(value, list):
+        parts: List[str] = []
+        for item in value:
+            parts.extend(_collect_reasoning_text(item))
+        return parts
+
+    if isinstance(value, dict):
+        dict_parts: List[str] = []
+        preferred_keys = ("text", "summary_text", "summary", "content")
+        used_preferred = False
+        for key in preferred_keys:
+            if key in value:
+                used_preferred = True
+                dict_parts.extend(_collect_reasoning_text(value.get(key)))
+        if not used_preferred:
+            for key, item in value.items():
+                if key in {"id", "index", "type"}:
+                    continue
+                dict_parts.extend(_collect_reasoning_text(item))
+        return dict_parts
+
+    return []
+
+
+def extract_reasoning_summary_text(message: Any, *, chunk_only: bool = False) -> str:
+    """Extract OpenAI reasoning summary text from AIMessage/AIMessageChunk metadata."""
+    metadata_sources: List[Dict[str, Any]] = []
+
+    if isinstance(message, dict):
+        additional_kwargs = message.get("additional_kwargs")
+        response_metadata = message.get("response_metadata")
+    else:
+        additional_kwargs = getattr(message, "additional_kwargs", None)
+        response_metadata = getattr(message, "response_metadata", None)
+
+    if isinstance(additional_kwargs, dict):
+        metadata_sources.append(additional_kwargs)
+    if isinstance(response_metadata, dict):
+        metadata_sources.append(response_metadata)
+
+    fragments: List[str] = []
+    for metadata in metadata_sources:
+        if "reasoning_summary_chunk" in metadata:
+            fragments.extend(_collect_reasoning_text(metadata.get("reasoning_summary_chunk")))
+        if not chunk_only and "reasoning_summary" in metadata:
+            fragments.extend(_collect_reasoning_text(metadata.get("reasoning_summary")))
+
+    deduped: List[str] = []
+    for fragment in fragments:
+        if fragment and fragment not in deduped:
+            deduped.append(fragment)
+
+    return "\n".join(deduped).strip()
+
+
+def build_reasoning_display_text(message: Any) -> str:
+    """Combine reasoning summary metadata with visible content for the reasoning UI."""
+    summary = extract_reasoning_summary_text(message)
+
+    if isinstance(message, dict):
+        content = extract_text_from_content(message.get("content"))
+    else:
+        content = extract_text_from_content(getattr(message, "content", None))
+
+    parts: List[str] = []
+    if summary:
+        parts.append(f"Reasoning summary:\n{summary}")
+    if content and content.strip():
+        parts.append(content.strip())
+    return "\n\n".join(parts).strip()
+
+
 # ------------------------------------
 # Smart Buffering Streaming Utility
 # ------------------------------------
@@ -164,6 +245,13 @@ async def stream_llm_with_delimiter(
                     accumulated = chunk
 
             # 1. Extract content from chunk (handles OpenAI string and Anthropic content blocks)
+            reasoning_summary_chunk = extract_reasoning_summary_text(chunk, chunk_only=True)
+            if reasoning_summary_chunk:
+                streamed_reasoning = True
+                batched_summary = _reasoning_batcher.add(reasoning_summary_chunk)
+                if batched_summary:
+                    yield StreamEvent(type="reasoning_chunk", content=batched_summary)
+
             chunk_text = getattr(chunk, "content", None)
             if chunk_text:
                 # Use helper to normalize between OpenAI (string) and Anthropic (list of blocks)
