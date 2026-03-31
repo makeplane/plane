@@ -19,6 +19,7 @@ from plane.app.views import (
     IssueAttachmentEndpoint,
     CommentReactionViewSet,
     IssueActivityEndpoint,
+    WorkItemStateDurationEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
     IssueListEndpoint,
@@ -157,13 +158,6 @@ all_urlpatterns = [
         name="project-issue-attachments",
     ),
     ## End Issues
-    ## Issue Activity
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/history/",
-        IssueActivityEndpoint.as_view(),
-        name="project-issue-history",
-    ),
-    ## Issue Activity
     ## IssueComments
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
@@ -354,4 +348,23 @@ workitem_search_urlpatterns = [
     # End Parent Workitem Search Endpoint
 ]
 
-urlpatterns = all_urlpatterns + issue_subscriber_urlpatterns + workitem_search_urlpatterns
+work_item_activity_url_patterns = [
+    ## Issue Activity
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/history/",
+        IssueActivityEndpoint.as_view(),
+        name="project-issue-history",
+    ),
+    ## End Issue Activity
+    ## Work Item State Duration
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/state-duration/",
+        WorkItemStateDurationEndpoint.as_view(),
+        name="work-item-state-duration",
+    ),
+    ## End Work Item State Duration
+]
+
+urlpatterns = (
+    all_urlpatterns + issue_subscriber_urlpatterns + workitem_search_urlpatterns + work_item_activity_url_patterns
+)

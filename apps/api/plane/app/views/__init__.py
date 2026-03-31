@@ -165,6 +165,8 @@ from .issue.base import (
 
 from .issue.activity import IssueActivityEndpoint
 
+from .issue.state_duration import WorkItemStateDurationEndpoint
+
 from .issue.archive import IssueArchiveViewSet
 
 from .issue.attachment import (
