@@ -6,12 +6,12 @@ FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 # **************************************************
 FROM node:22-alpine AS node
 
-FROM artifacts.plane.so/makeplane/plane-frontend:${PLANE_VERSION} AS web-img
-FROM artifacts.plane.so/makeplane/plane-backend:${PLANE_VERSION} AS backend-img
-FROM artifacts.plane.so/makeplane/plane-space:${PLANE_VERSION} AS space-img
-FROM artifacts.plane.so/makeplane/plane-admin:${PLANE_VERSION} AS admin-img
-FROM artifacts.plane.so/makeplane/plane-live:${PLANE_VERSION} AS live-img
-FROM artifacts.plane.so/makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
+FROM makeplane/plane-frontend:${PLANE_VERSION} AS web-img
+FROM makeplane/plane-backend:${PLANE_VERSION} AS backend-img
+FROM makeplane/plane-space:${PLANE_VERSION} AS space-img
+FROM makeplane/plane-admin:${PLANE_VERSION} AS admin-img
+FROM makeplane/plane-live:${PLANE_VERSION} AS live-img
+FROM makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
 
 # **************************************************
 #  STAGE 1: Runner
