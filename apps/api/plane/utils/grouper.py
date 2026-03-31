@@ -31,6 +31,8 @@ from plane.db.models import (
     IssueAssignee,
     ModuleIssue,
     IssueLabel,
+    ReleaseWorkItem,
+    Release,
 )
 from typing import Optional, Dict, Tuple, Any, Union, List
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -44,12 +46,14 @@ def issue_queryset_grouper(
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
         "module_ids": "issue_module__module_id",
+        "release_ids": "release_work_items__release_id",
     }
 
     GROUP_FILTER_MAPPER: Dict[str, Q] = {
         "assignees__id": Q(issue_assignee__deleted_at__isnull=True),
         "labels__id": Q(label_issue__deleted_at__isnull=True),
         "issue_module__module_id": Q(issue_module__deleted_at__isnull=True),
+        "release_work_items__release_id": Q(release_work_items__deleted_at__isnull=True),
     }
 
     for group_key in [group_by, sub_group_by]:
@@ -84,10 +88,20 @@ def issue_queryset_grouper(
         .values("arr")
     )
 
+    release_work_item_subquery = Subquery(
+        ReleaseWorkItem.objects.filter(
+            work_item_id=OuterRef("pk"), deleted_at__isnull=True, release__deleted_at__isnull=True
+        )
+        .values("work_item_id")
+        .annotate(arr=ArrayAgg("release_id", distinct=True))
+        .values("arr")
+    )
+
     annotations_map: Dict[str, Tuple[str, Q]] = {
         "assignee_ids": Coalesce(issue_assignee_subquery, Value([], output_field=ArrayField(UUIDField()))),
         "label_ids": Coalesce(issue_label_subquery, Value([], output_field=ArrayField(UUIDField()))),
         "module_ids": Coalesce(issue_module_subquery, Value([], output_field=ArrayField(UUIDField()))),
+        "release_ids": Coalesce(release_work_item_subquery, Value([], output_field=ArrayField(UUIDField()))),
     }
 
     default_annotations: Dict[str, Any] = {}
@@ -95,6 +109,7 @@ def issue_queryset_grouper(
     for key, expression in annotations_map.items():
         if FIELD_MAPPER.get(key) in {group_by, sub_group_by}:
             continue
+
         default_annotations[key] = expression
 
     return queryset.annotate(**default_annotations)
@@ -111,9 +126,10 @@ def issue_on_results(
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
         "issue_module__module_id": "module_ids",
+        "release_work_items__release_id": "release_ids",
     }
 
-    original_list: List[str] = ["assignee_ids", "label_ids", "module_ids"]
+    original_list: List[str] = ["assignee_ids", "label_ids", "module_ids", "release_ids"]
 
     required_fields: List[str] = [
         "id",
@@ -148,6 +164,9 @@ def issue_on_results(
             required_fields.extend(["customer_ids", "customer_request_ids"])
         if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id):
             required_fields.extend(["milestone_id"])
+
+        if check_workspace_feature_flag(feature_key=FeatureFlag.RELEASES, slug=slug, user_id=user_id):
+            required_fields.extend(["release_ids"])
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])
@@ -212,6 +231,9 @@ def issue_group_values(
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]
 
+    if field == "release_work_items__release_id":
+        return list(Release.objects.filter(workspace__slug=slug).values_list("id", flat=True)) + ["None"]
+
     if field == "cycle_id":
         queryset = Cycle.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
@@ -225,9 +247,7 @@ def issue_group_values(
         return list(queryset) + ["None"]
 
     if field == "type_id":
-        queryset = IssueType.objects.filter(
-            workspace__slug=slug, is_epic=False
-        ).values_list("id", flat=True)
+        queryset = IssueType.objects.filter(workspace__slug=slug, is_epic=False).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_issue_types__project_id=project_id))
         return list(queryset)

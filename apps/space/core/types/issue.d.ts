@@ -51,6 +51,7 @@ export interface IIssue extends Pick<
   | "cycle_id"
   | "module_ids"
   | "label_ids"
+  | "release_ids"
   | "assignee_ids"
   | "attachment_count"
   | "sub_issues_count"

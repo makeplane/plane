@@ -63,6 +63,10 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     customproperty_value__range = filters.CharFilter(method="filter_custom_property_value_range")
     customproperty_value__isnull = filters.CharFilter(method="filter_custom_property_value_isnull")
 
+    release_id = filters.UUIDFilter(method="filter_release_id")
+    release_id__in = UUIDInFilter(method="filter_release_id_in", lookup_expr="in")
+    release_id__isnull = filters.BooleanFilter(method="filter_release_id_isnull", lookup_expr="isnull")
+
     class Meta(IssueFilterSet.Meta):
         fields = IssueFilterSet.Meta.fields
         fields.update(
@@ -466,6 +470,38 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             return ~has_non_deleted_parent
         else:
             return has_non_deleted_parent
+
+    def filter_release_id(self, queryset, name, value):
+        """Filter by release ID, excluding soft deleted releases"""
+
+        return Q(
+            release_work_items__release_id=value,
+            release_work_items__deleted_at__isnull=True,
+            release_work_items__release__deleted_at__isnull=True,
+        )
+
+    def filter_release_id_in(self, queryset, name, value):
+        """Filter by release IDs (in), excluding soft deleted releases"""
+
+        return Q(
+            release_work_items__release_id__in=value,
+            release_work_items__deleted_at__isnull=True,
+            release_work_items__release__deleted_at__isnull=True,
+        )
+
+    def filter_release_id_isnull(self, queryset, name, value):
+        """Filter by release ID (is null), excluding soft deleted releases"""
+
+        has_non_deleted_release = Q(
+            release_work_items__isnull=False,
+            release_work_items__deleted_at__isnull=True,
+            release_work_items__release__deleted_at__isnull=True,
+        )
+
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_release
+        else:
+            return has_non_deleted_release
 
 
 class InitiativeFilterSet(BaseFilterSet):

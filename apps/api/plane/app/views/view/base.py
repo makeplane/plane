@@ -51,6 +51,7 @@ from plane.db.models import (
     IssueLabel,
     ModuleIssue,
     DeployBoard,
+    ReleaseWorkItem,
 )
 from plane.ee.models import MilestoneIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -347,6 +348,23 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         :1
                     ]
                 )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.RELEASES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issues = issues.annotate(
+                release_ids=Coalesce(
+                    Subquery(
+                        ReleaseWorkItem.objects.filter(work_item_id=OuterRef("pk"), release__deleted_at__isnull=True)
+                        .values("work_item_id")
+                        .annotate(arr=ArrayAgg("release_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         return issues
 

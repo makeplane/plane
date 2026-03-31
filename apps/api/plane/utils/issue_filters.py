@@ -396,6 +396,26 @@ def filter_module(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_release(params, issue_filter, method, prefix=""):
+    releases = [item for item in params.get("release").split(",") if item != "null"]
+    if method == "GET":
+        if "None" in releases:
+            issue_filter[f"{prefix}release_work_items__release_id__isnull"] = True
+
+        releases = filter_valid_uuids(releases)
+        if len(releases) and "" not in releases:
+            issue_filter[f"{prefix}release_work_items__release_id__in"] = releases
+
+    else:
+        if params.get("release", None) and len(params.get("release")) and params.get("release") != "null":
+            issue_filter[f"{prefix}release_work_items__release_id__in"] = params.get("release")
+
+    # Exclude soft-deleted links and releases (same as filter_cycle / filter_module and ReleaseFilterSet).
+    issue_filter[f"{prefix}release_work_items__deleted_at__isnull"] = True
+    issue_filter[f"{prefix}release_work_items__release__deleted_at__isnull"] = True
+    return issue_filter
+
+
 def filter_intake_status(params, issue_filter, method, prefix=""):
     if method == "GET":
         status = [item for item in params.get("intake_status").split(",") if item != "null"]
@@ -570,6 +590,7 @@ def issue_filters(query_params, method, prefix=""):
         "dependency_type": filter_dependencies,
         "is_epic": filter_is_epic,
         "is_intake_workitem": filter_is_intake_workitem,
+        "release": filter_release,
     }
 
     for key, value in ISSUE_FILTER.items():

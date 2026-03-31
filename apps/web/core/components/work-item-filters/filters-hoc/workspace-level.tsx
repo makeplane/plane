@@ -34,6 +34,7 @@ import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
+import { useReleases } from "@/hooks/store/use-releases";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
@@ -60,6 +61,10 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
     workspace: { getWorkspaceMemberIds },
   } = useMember();
   const { getWorkspaceLabelIds } = useLabel();
+  const {
+    release: { getReleaseIdsByWorkspaceSlug },
+  } = useReleases();
+  const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   // derived values
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
@@ -205,6 +210,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
         memberIds={getWorkspaceMemberIds(workspaceSlug)}
         labelIds={getWorkspaceLabelIds(workspaceSlug)}
         projectIds={joinedProjectIds}
+        releaseIds={allReleaseIds}
         viewOptions={{
           saveViewOptions,
           updateViewOptions,

@@ -39,6 +39,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
+import { useReleases } from "@/hooks/store/use-releases";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
@@ -81,6 +82,10 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   } = useMember();
   const { getProjectModuleIds } = useModule();
   const { getProjectStateIds } = useProjectState();
+  const {
+    release: { getReleaseIdsByWorkspaceSlug },
+  } = useReleases();
+  const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   const { getProjectEpicDetails, getProjectIssueTypes, isWorkItemTypeEnabledForProject, isEpicEnabledForProject } =
     useIssueTypes();
   const { getProjectMilestoneIds, isMilestonesEnabled } = useMilestones();
@@ -273,6 +278,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         labelIds={getProjectLabelIds(projectId)}
         memberIds={getProjectMemberIds(projectId, false) ?? undefined}
         moduleIds={getProjectModuleIds(projectId) ?? undefined}
+        releaseIds={allReleaseIds}
         stateIds={getProjectStateIds(projectId)}
         workItemTypeIds={isWorkItemTypeEnabled ? projectWorkItemTypeIds : undefined}
         milestoneIds={isMilestonesFeatureEnabled ? projectMilestoneIds : undefined}

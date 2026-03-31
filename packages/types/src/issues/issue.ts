@@ -223,6 +223,7 @@ export interface IPublicIssue extends Pick<
   | "module_ids"
   | "label_ids"
   | "assignee_ids"
+  | "release_ids"
   | "attachment_count"
   | "sub_issues_count"
   | "link_count"

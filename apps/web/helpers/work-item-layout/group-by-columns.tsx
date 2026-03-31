@@ -21,6 +21,7 @@ import {
   MilestoneIcon,
   ModuleIcon,
   PriorityIcon,
+  ReleaseIcon,
   StateGroupIcon,
 } from "@plane/propel/icons";
 import type { IGroupByColumn, TCycleGroups, GroupByColumnTypes, TGetColumns } from "@plane/types";
@@ -75,6 +76,7 @@ export const getGroupByColumns = ({
     milestone: getMilestoneColumns,
     epic: getEpicColumns,
     type: getWorkItemTypeColumns,
+    release: getReleaseColumns,
   };
 
   // Get and return the columns for the specified group by option
@@ -437,4 +439,32 @@ export const getWorkItemTypeColumns = (): IGroupByColumn[] | undefined => {
   });
 
   return workItemTypeColumns;
+};
+
+const getReleaseColumns = (): IGroupByColumn[] | undefined => {
+  const { getReleaseIdsByWorkspaceSlug, getReleaseById } = store.releaseStore;
+  const { workspaceSlug } = store.router;
+
+  const releaseColumns: IGroupByColumn[] = [];
+  const releaseIds = workspaceSlug ? getReleaseIdsByWorkspaceSlug(workspaceSlug) : [];
+
+  releaseIds.forEach((releaseId) => {
+    const release = getReleaseById(releaseId);
+    if (!release) return;
+    releaseColumns.push({
+      id: release.id,
+      name: release.name,
+      icon: <ReleaseIcon className="h-3.5 w-3.5" />,
+      payload: { release_ids: [release.id] },
+    });
+  });
+
+  releaseColumns.push({
+    id: "None",
+    name: "None",
+    icon: <ReleaseIcon className="h-3.5 w-3.5" />,
+    payload: {},
+  });
+
+  return releaseColumns;
 };

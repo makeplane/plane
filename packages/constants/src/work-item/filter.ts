@@ -42,6 +42,7 @@ export enum EServerGroupByToFilterOptions {
   "milestone_id" = "milestone",
   "parent_id" = "epic",
   "type_id" = "issue_type",
+  "release_work_items__release_id" = "release",
 }
 
 export enum EIssueFilterType {
@@ -197,6 +198,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "target_date",
       "name",
       "milestone_id",
+      "release_id",
     ],
     layoutOptions: {
       spreadsheet: {
@@ -234,7 +236,16 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ["key", "issue_type"],
         display_filters: {
-          group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project", "type"],
+          group_by: [
+            "state_detail.group",
+            "priority",
+            "assignees",
+            "labels",
+            "created_by",
+            "project",
+            "type",
+            "release",
+          ],
           sub_group_by: [
             "state_detail.group",
             "priority",
@@ -243,6 +254,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
             "created_by",
             "project",
             "type",
+            "release",
             null,
           ],
         },
@@ -270,6 +282,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "state_id",
       "cycle_id",
       "module_id",
+      "release_id",
       "assignee_id",
       "mention_id",
       "created_by_id",
@@ -298,6 +311,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
             "milestone",
             "epic",
             "type",
+            "release",
             null,
           ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
@@ -322,6 +336,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
             "milestone",
             "epic",
             "type",
+            "release",
           ],
           sub_group_by: [
             "state",
@@ -333,6 +348,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
             "created_by",
             "epic",
             "type",
+            "release",
             null,
           ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],

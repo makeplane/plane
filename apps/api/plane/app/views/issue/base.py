@@ -1,3 +1,4 @@
+
 # SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
 # SPDX-License-Identifier: LicenseRef-Plane-Commercial
 #
@@ -70,6 +71,7 @@ from plane.db.models import (
     ProjectMember,
     UserRecentVisit,
     IssueActivity,
+    ReleaseWorkItem,
 )
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
@@ -384,6 +386,20 @@ class IssueViewSet(BaseViewSet):
                 )
             )
 
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.RELEASES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+        ):
+            issues = issues.annotate(
+                release_ids=Coalesce(
+                    Subquery(
+                        ReleaseWorkItem.objects.filter(work_item_id=OuterRef("pk"), release__deleted_at__isnull=True)
+                        .values("work_item_id")
+                        .annotate(arr=ArrayAgg("release_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         return issues
 
     @method_decorator(gzip_page)

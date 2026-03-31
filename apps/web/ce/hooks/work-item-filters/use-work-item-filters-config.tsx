@@ -20,6 +20,7 @@ import {
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
+  ReleaseIcon,
   StatePropertyIcon,
   PriorityIcon,
   StateGroupIcon,
@@ -38,6 +39,7 @@ import type {
   IIssueLabel,
   IModule,
   IProject,
+  Release,
   TWorkItemFilterProperty,
 } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
@@ -52,6 +54,7 @@ import {
   getModuleFilterConfig,
   getPriorityFilterConfig,
   getProjectFilterConfig,
+  getReleaseFilterConfig,
   getStartDateFilterConfig,
   getStateFilterConfig,
   getStateGroupFilterConfig,
@@ -67,6 +70,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useReleases } from "@/hooks/store/use-releases";
 // plane web imports
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 
@@ -78,6 +82,7 @@ export type TWorkItemFiltersEntityProps = {
   moduleIds?: string[];
   projectId?: string;
   projectIds?: string[];
+  releaseIds?: string[];
   stateIds?: string[];
 };
 
@@ -96,8 +101,18 @@ export type TWorkItemFiltersConfig = {
 };
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
-  const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
-    props;
+  const {
+    allowedFilters,
+    cycleIds,
+    labelIds,
+    memberIds,
+    moduleIds,
+    projectId,
+    projectIds,
+    releaseIds,
+    stateIds,
+    workspaceSlug,
+  } = props;
   // store hooks
   const { loader: projectLoader, getProjectById } = useProject();
   const { getCycleById } = useCycle();
@@ -105,6 +120,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const { getModuleById } = useModule();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
+  const {
+    release: { getReleaseById },
+  } = useReleases();
   // derived values
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const filtersToShow = useMemo(() => new Set(allowedFilters), [allowedFilters]);
@@ -143,6 +161,13 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         ? (projectIds.map((projectId) => getProjectById(projectId)).filter((project) => project) as IProject[])
         : [],
     [projectIds, getProjectById]
+  );
+  const releases = useMemo(
+    () =>
+      releaseIds
+        ? (releaseIds.map((releaseId) => getReleaseById(releaseId)).filter((release) => release) as Release[])
+        : [],
+    [releaseIds, getReleaseById]
   );
   const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
 
@@ -356,6 +381,19 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [operatorConfigs]
   );
 
+  // release filter config
+  const releaseFilterConfig = useMemo(
+    () =>
+      getReleaseFilterConfig<TWorkItemFilterProperty>("release_id")({
+        isEnabled: isFilterEnabled("release_id"),
+        filterIcon: ReleaseIcon,
+        getOptionIcon: () => undefined,
+        releases,
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, releases, operatorConfigs]
+  );
+
   // project filter config
   const projectFilterConfig = useMemo(
     () =>
@@ -381,6 +419,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       labelFilterConfig,
       cycleFilterConfig,
       moduleFilterConfig,
+      releaseFilterConfig,
       startDateFilterConfig,
       targetDateFilterConfig,
       createdAtFilterConfig,
@@ -395,6 +434,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       label_id: labelFilterConfig,
       cycle_id: cycleFilterConfig,
       module_id: moduleFilterConfig,
+      release_id: releaseFilterConfig,
       assignee_id: assigneeFilterConfig,
       mention_id: mentionFilterConfig,
       created_by_id: createdByFilterConfig,

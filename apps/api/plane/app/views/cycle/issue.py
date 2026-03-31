@@ -20,6 +20,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response

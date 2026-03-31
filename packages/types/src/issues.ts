@@ -144,7 +144,8 @@ export type GroupByColumnTypes =
   | "team_project"
   | "milestone"
   | "epic"
-  | "type";
+  | "type"
+  | "release";
 
 export type TGetColumns = {
   isWorkspaceLevel?: boolean;

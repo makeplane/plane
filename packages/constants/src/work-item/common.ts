@@ -46,6 +46,7 @@ export enum EIssueGroupByToServerOptions {
   "team_project" = "project_id",
   "milestone" = "milestone_id",
   "epic" = "parent_id",
+  "release" = "release_work_items__release_id",
   "type" = "type_id",
 }
 
@@ -62,6 +63,7 @@ export enum EIssueGroupBYServerToProperty {
   "created_by" = "created_by",
   "milestone_id" = "milestone_id",
   "parent_id" = "parent_id",
+  "release_work_items__release_id" = "release_ids",
   "type_id" = "type_id",
 }
 
@@ -143,6 +145,7 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: "created_by", titleTranslationKey: "common.created_by" },
   { key: "milestone", titleTranslationKey: "common.milestones" },
   { key: "epic", titleTranslationKey: "common.epics" },
+  { key: "release", titleTranslationKey: "releases.settings.heading.title" },
   { key: "type", titleTranslationKey: "work_item_types.label" },
   { key: null, titleTranslationKey: "common.none" },
 ];

@@ -69,6 +69,7 @@ import { useRunners } from "@/plane-web/hooks/store";
 import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 import { useWorkspaceCustomProperties } from "@/plane-web/hooks/store/custom-properties/use-workspace-custom-properties";
+import { useReleases } from "@/hooks/store/use-releases";
 
 type WorkspaceAuthWrapper = {
   children: ReactNode;
@@ -113,6 +114,9 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { fetchAllWorkflows } = useWorkflows();
   const { fetchRelationDefinitions } = useRelationDefinition();
   const { fetchScripts, checkRunnerHealth } = useRunners();
+  const {
+    release: { fetchReleases },
+  } = useReleases();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -383,6 +387,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   useSWR(
     workspaceSlug ? `RUNNERS_SCRIPTS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchScripts(workspaceSlug ?? "") : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching releases
+  useSWR(
+    currentWorkspace ? `RELEASES_${workspaceSlug}` : null,
+    currentWorkspace ? () => fetchReleases(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

@@ -35,6 +35,7 @@ export type TIssueGroupByOptions =
   | "milestone"
   | "epic"
   | "type"
+  | "release"
   | null;
 
 export type TIssueOrderByOptions =
@@ -105,6 +106,7 @@ export type TIssueParams =
   | "filters"
   | "milestone"
   | "epic"
+  | "release"
   | "pql";
 
 export type TCalendarLayouts = "month" | "week";
@@ -135,6 +137,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "id",
   "epic_id",
   "parent_id",
+  "release_id",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TCustomPropertyFilterKey;
 
