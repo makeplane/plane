@@ -9,15 +9,14 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from __future__ import annotations
 import pytz
+import re
 
 # Python imports
 from datetime import timedelta
 
 # Django imports
 from django.utils import timezone
-from django.db.models import Subquery
 
 # Third Party imports
 from celery import shared_task
@@ -25,13 +24,157 @@ from django.db.models import Q
 
 # Module imports
 from plane.ee.models import CycleSettings, ProjectFeature, AutomatedCycleLog
-from plane.db.models import Cycle, Project, Workspace
-from plane.db.models import BotTypeEnum, ProjectMember
+from plane.db.models import Cycle, Workspace, Project, BotTypeEnum, ProjectMember
+from django.db.models import Subquery
 from plane.utils.exception_logger import log_exception
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.timezone_converter import convert_to_utc
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+
+def _build_cycle_name(base_title: str, sequence: int) -> str:
+    normalized_title = base_title.strip()
+    return f"{normalized_title} {sequence}"
+
+
+def _get_next_cycle_sequence(base_title: str, project_id: str, bot_id: str) -> int:
+    normalized_title = base_title.strip()
+    if not normalized_title:
+        return 1
+
+    name_pattern = re.compile(rf"^{re.escape(normalized_title)}\s+(\d+)$")
+
+    bot_cycles = Cycle.all_objects.filter(project_id=project_id).filter(
+        Q(owned_by_id=bot_id) | Q(created_by_id=bot_id)
+    )
+
+    last_bot_cycle = bot_cycles.order_by("-created_at").first()
+    if not last_bot_cycle:
+        return 1
+
+    match = name_pattern.match((last_bot_cycle.name or "").strip())
+    if match:
+        return int(match.group(1)) + 1
+
+    max_suffix = 0
+    for name in bot_cycles.values_list("name", flat=True):
+        m = name_pattern.match((name or "").strip())
+        if m:
+            max_suffix = max(max_suffix, int(m.group(1)))
+
+    return max_suffix + 1 if max_suffix > 0 else 1
+
+
+def _create_missing_future_cycles(scheduled_cycle: CycleSettings, bot_id, now):
+    """
+    Create however many future bot cycles are needed to bring the count up to
+    scheduled_cycle.number_of_cycles.  Anchors from the last upcoming cycle's
+    end_date so new cycles never overlap with existing ones.
+    """
+    project_id = scheduled_cycle.project_id
+    workspace_id = scheduled_cycle.workspace_id
+    number_of_cycles = scheduled_cycle.number_of_cycles
+    cycle_duration = scheduled_cycle.cycle_duration
+    cooldown_period = scheduled_cycle.cooldown_period
+
+    upcoming_cycles = Cycle.objects.filter(
+        project_id=project_id,
+        start_date__gt=now,
+        deleted_at__isnull=True,
+    )
+
+    number_of_cycles_diff = number_of_cycles - upcoming_cycles.count()
+    if number_of_cycles_diff <= 0:
+        return
+
+    # Anchor: end of the last upcoming cycle (any owner, to avoid overlap)
+    last_cycle = upcoming_cycles.filter(end_date__isnull=False).order_by("-end_date").first()
+    if last_cycle:
+        last_cycle_end_date = last_cycle.end_date + timedelta(days=cooldown_period)
+    else:
+        last_upcoming = upcoming_cycles.filter(start_date__isnull=False).order_by("-start_date").first()
+        last_cycle_end_date = (
+            last_upcoming.start_date + timedelta(days=cooldown_period)
+            if last_upcoming
+            else scheduled_cycle.start_date - timedelta(days=1)
+        )
+
+    base_title = scheduled_cycle.title.strip()
+    next_sequence = _get_next_cycle_sequence(base_title, project_id, bot_id)
+
+    cycles_to_create = []
+    for i in range(number_of_cycles_diff):
+        start_dt = last_cycle_end_date + timedelta(days=i * (cycle_duration + cooldown_period) + 1)
+        end_dt = start_dt + timedelta(days=cycle_duration - 1)
+
+        start_date_utc = convert_to_utc(
+            date=str(start_dt.date()),
+            project_id=project_id,
+            is_start_date=True,
+        )
+        end_date_utc = convert_to_utc(
+            date=str(end_dt.date()),
+            project_id=project_id,
+        )
+
+        cycles_to_create.append(
+            Cycle(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                owned_by_id=bot_id,
+                created_by_id=bot_id,
+                updated_by_id=bot_id,
+                name=_build_cycle_name(base_title, next_sequence),
+                start_date=start_date_utc,
+                end_date=end_date_utc,
+            )
+        )
+        next_sequence += 1
+
+    created_cycles = Cycle.objects.bulk_create(cycles_to_create, batch_size=50, ignore_conflicts=True)
+
+    if created_cycles:
+        AutomatedCycleLog.objects.bulk_create(
+            [
+                AutomatedCycleLog(
+                    automated_cycle=scheduled_cycle,
+                    cycle=cycle,
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    action="cycle_created",
+                    status="success",
+                    message=f"Cycle created successfully for {cycle.start_date.date()} - {cycle.end_date.date()}",
+                    scheduled_at=now,
+                )
+                for cycle in created_cycles
+            ],
+            batch_size=50,
+        )
+
+
+@shared_task
+def backfill_automated_cycles(automated_cycle_id: str, project_id: str):
+    """
+    Backfill upcoming bot-created cycles after a CycleSettings change.
+    Delegates to _create_missing_future_cycles so logic stays in one place.
+    """
+    try:
+        automated_cycle = CycleSettings.objects.get(id=automated_cycle_id, project_id=project_id)
+
+        bot_member = ProjectMember.objects.filter(
+            project_id=project_id,
+            member__bot_type=BotTypeEnum.CYCLE_AUTOMATION_BOT,
+        ).first()
+
+        if not bot_member:
+            return False
+
+        _create_missing_future_cycles(automated_cycle, bot_member.member_id, timezone.now())
+        return True
+    except Exception as e:
+        log_exception(e)
+        return False
+
 
 @shared_task
 def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
@@ -77,11 +220,19 @@ def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
 
         logs = []
         cycles_to_create = []
+        base_title = automated_cycle.title.strip()
+        next_sequence = _get_next_cycle_sequence(base_title, project_id, bot_id)
 
         for start_dt, end_dt in desired_windows:
             # When parallel cycles are allowed, skip the overlap check
             if not allow_parallel:
-                is_clashing = any((ec["start_date"] <= end_dt and ec["end_date"] >= start_dt) for ec in existing_cycles)
+                is_clashing = any(
+                    ec["start_date"] is not None
+                    and ec["end_date"] is not None
+                    and ec["start_date"] <= end_dt
+                    and ec["end_date"] >= start_dt
+                    for ec in existing_cycles
+                )
 
                 if is_clashing:
                     logs.append(
@@ -115,12 +266,12 @@ def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
                 owned_by_id=bot_id,
                 created_by_id=bot_id,
                 updated_by_id=bot_id,
-                name=automated_cycle.title,
+                name=_build_cycle_name(base_title, next_sequence),
                 start_date=start_dt,
                 end_date=end_dt,
             )
             cycles_to_create.append(cycle)
-
+            next_sequence += 1
         # Bulk create non-conflicting cycles
         created_cycles = Cycle.objects.bulk_create(cycles_to_create, batch_size=50, ignore_conflicts=True)
 
@@ -306,116 +457,19 @@ def maintain_future_cycles():
 
         for cycle in recently_started_cycles:
             project_id = cycle["project_id"]
-            cycle_id = cycle["id"]
 
-            project = Project.objects.get(id=project_id)
+            bot_member = ProjectMember.objects.filter(
+                project_id=project_id,
+                member__bot_type=BotTypeEnum.CYCLE_AUTOMATION_BOT,
+            ).first()
+            if not bot_member:
+                continue
 
-            # get the bot id
-            bot_id = (
-                ProjectMember.objects.filter(
-                    project_id=project_id,
-                    member__bot_type=BotTypeEnum.CYCLE_AUTOMATION_BOT,
-                )
-                .first()
-                .member_id
-            )
             scheduled_cycle = scheduled_cycles.filter(project_id=project_id).first()
+            if not scheduled_cycle:
+                continue
 
-            # get the number of cycles to create
-            number_of_cycles = scheduled_cycle.number_of_cycles
-            cycle_duration = scheduled_cycle.cycle_duration
-            cooldown_period = scheduled_cycle.cooldown_period
-            project_id = scheduled_cycle.project_id
-            workspace_id = scheduled_cycle.workspace_id
-
-            # get the upcoming cycles which are scheduled for the project
-            upcoming_cycles = Cycle.objects.filter(project_id=project_id, start_date__gt=now, deleted_at__isnull=True)
-
-            # get then end date of the last created cycle and then add the cooldown period and create the new cycle.
-            last_cycle = upcoming_cycles.order_by("-end_date").first()
-            if last_cycle:
-                last_cycle_end_date = last_cycle.end_date + timedelta(days=cooldown_period)
-            else:
-                # if there are no upcoming cycles then check for the start date and start the cycles from the next day
-                last_upcoming = upcoming_cycles.order_by("-start_date").first()
-                last_cycle_end_date = (
-                    last_upcoming.start_date + timedelta(days=cooldown_period) if last_upcoming else now
-                )
-
-                # if the last cycles is not found then check for which every is the upcoming cycle as the end date
-                # (if none of them have end date then skip the project)
-                upcoming_cycles = Cycle.objects.filter(
-                    project_id=project_id, start_date__gt=now, deleted_at__isnull=True
-                )
-                if not upcoming_cycles.exists():
-                    # create the new and the future cycles
-                    schedule_cycle(
-                        automated_cycle_id=scheduled_cycle.id,
-                        project_id=project_id,
-                        bot_id=bot_id,
-                    )
-                    continue
-
-            # check the difference between the number of cycles and the upcoming cycles
-            number_of_cycles_diff = number_of_cycles - upcoming_cycles.count()
-
-            # if its greater than create the new cycles from the last cycle end date and
-            # add the cool down period and bulk create the cycles
-
-            # first we need to check if any of the cycles exists with the same dates in the database
-            if number_of_cycles_diff > 0:
-                # Build cycles list with proper UTC conversion for each cycle
-                cycles_to_create = []
-                for i in range(number_of_cycles_diff):
-                    start_dt = last_cycle_end_date + timedelta(days=i * (cycle_duration + cooldown_period) + 1)
-                    end_dt = start_dt + timedelta(days=cycle_duration - 1)
-
-                    # Convert dates to UTC using the project's timezone
-                    start_date = convert_to_utc(
-                        date=str(start_dt.date()),
-                        project_id=project_id,
-                        is_start_date=True,
-                    )
-                    end_date = convert_to_utc(
-                        date=str(end_dt.date()),
-                        project_id=project_id,
-                    )
-
-                    cycles_to_create.append(
-                        Cycle(
-                            project_id=project_id,
-                            workspace_id=workspace_id,
-                            owned_by_id=bot_id,
-                            created_by_id=bot_id,
-                            updated_by_id=bot_id,
-                            name=scheduled_cycle.title,
-                            start_date=start_date,
-                            end_date=end_date,
-                        )
-                    )
-
-                # bulk create the cycles
-                cycles = Cycle.objects.bulk_create(
-                    cycles_to_create,
-                    batch_size=50,
-                    ignore_conflicts=True,
-                )
-
-                AutomatedCycleLog.objects.bulk_create(
-                    [
-                        AutomatedCycleLog(
-                            automated_cycle=scheduled_cycle,
-                            cycle=cycle,
-                            workspace_id=workspace_id,
-                            project_id=project_id,
-                            action="cycle_created",
-                            status="success",
-                            message=f"Cycle created successfully for {cycle.start_date.date()} - {cycle.end_date.date()}",  # noqa: E501
-                            scheduled_at=timezone.now(),
-                        )
-                        for cycle in cycles
-                    ]
-                )
+            _create_missing_future_cycles(scheduled_cycle, bot_member.member_id, now)
     except Exception as e:
         log_exception(e)
         return False
