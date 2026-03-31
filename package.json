@@ -66,7 +66,7 @@
       "socket.io-parser": ">=4.2.6",
       "handlebars": ">=4.7.9",
       "path-to-regexp": ">=8.4.0",
-      "express>path-to-regexp": "0.1.12",
+      "express>path-to-regexp": "0.1.13",
       "picomatch@2": ">=2.3.2",
       "picomatch@4": ">=4.0.4",
       "yaml": ">=2.8.3",
