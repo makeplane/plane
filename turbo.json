@@ -123,6 +123,11 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "test:e2e": {
+      "cache": false,
+      "persistent": false,
+      "env": ["CI", "E2E_*"]
     }
   }
 }

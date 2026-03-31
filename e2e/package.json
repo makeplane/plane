@@ -1,0 +1,19 @@
+{
+  "name": "@plane/e2e",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:web": "playwright test --project=web",
+    "test:e2e:admin": "playwright test --project=admin",
+    "test:e2e:space": "playwright test --project=space",
+    "test:e2e:cross-app": "playwright test --project=cross-app",
+    "test:e2e:smoke": "playwright test --grep @smoke",
+    "test:e2e:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "dotenv": "catalog:",
+    "playwright": "catalog:"
+  }
+}

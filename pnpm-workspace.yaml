@@ -2,6 +2,7 @@ packages:
   - apps/*
   - packages/*
   - apps/runners/*
+  - e2e
   - '!apps/api'
   - '!apps/proxy'
 
@@ -215,6 +216,7 @@ catalog:
   papaparse: ^5.5.3
   pdf-parse: ^2.4.5
   pg: ^8.18.0
+  '@playwright/test': ^1.58.2
   playwright: ^1.58.2
   postgres: ^3.4.8
   posthog-js: 1.364.1
