@@ -137,6 +137,10 @@ export const isApiError = (err: unknown): err is TApiErrorResponse =>
   "error" in err &&
   typeof (err as Record<string, unknown>).error === "string";
 
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 /**
  *  Calculates the final sort_order for the movedItem
  * @param data Objects in updated order

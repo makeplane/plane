@@ -13,6 +13,7 @@
 
 import { ETriggerNodeHandlerName } from "@plane/types";
 import type { TAutomationTriggerNodeConfig } from "@plane/types";
+import { isRecord } from "@plane/utils";
 
 export type TScheduleFrequency = "daily" | "weekly" | "monthly";
 
@@ -107,10 +108,10 @@ export function triggerConfigToFixedSchedule(
   config: TAutomationTriggerNodeConfig | undefined,
   userProfileTimezone?: string | null
 ): TFixedScheduleConfig {
-  if (!config || typeof config !== "object") {
+  if (!isRecord(config)) {
     return createDefaultFixedScheduleConfig(userProfileTimezone);
   }
-  const c = config as Record<string, unknown>;
+  const c = config;
 
   const rawFreq = c.frequency;
   const frequency: TScheduleFrequency =
@@ -126,7 +127,7 @@ export function triggerConfigToFixedSchedule(
 
   let days: string[] = [];
   if (frequency === "weekly" && Array.isArray(c.days) && c.days.length > 0) {
-    days = c.days as string[];
+    days = c.days.filter((d): d is string => typeof d === "string");
   }
 
   let dayOfMonth = 0;
@@ -158,8 +159,8 @@ export function triggerConfigToFixedSchedule(
 export function stripScheduleFieldsFromConfig(
   config: TAutomationTriggerNodeConfig | undefined
 ): TAutomationTriggerNodeConfig {
-  if (!config || typeof config !== "object") return {};
-  const next = { ...(config as Record<string, unknown>) };
+  if (!isRecord(config)) return {};
+  const next = { ...config };
   for (const key of SCHEDULE_CONFIG_KEYS) {
     delete next[key];
   }
@@ -176,7 +177,7 @@ export function getFixedScheduleMainContentSummary(
   profileTimezone: string | null | undefined,
   t: TFixedScheduleMainContentTranslate
 ): string | null {
-  if (!trigger || trigger.handler_name !== ETriggerNodeHandlerName.FIXED_SCHEDULE) return null;
+  if (!trigger || trigger.handler_name !== ETriggerNodeHandlerName.SCHEDULED) return null;
   const c = triggerConfigToFixedSchedule(trigger.config, profileTimezone);
   const periodLabel = t(c.period === "AM" ? "automations.trigger.schedule.am" : "automations.trigger.schedule.pm");
   const time = `${c.hour12}:${String(c.minute).padStart(2, "0")} ${periodLabel}`;

@@ -14,43 +14,55 @@
 import { useEffect, useMemo, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { Zap } from "lucide-react";
 // plane imports
 import {
-  AUTOMATION_TRIGGER_SELECT_OPTIONS,
+  AUTOMATION_TRIGGER_PLANE_EVENT_OPTIONS,
   DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION,
   AUTOMATION_TRIGGER_TIME_BASED_OPTIONS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
-// helpers
-import type { TAutomationConditionFilterExpression, TTriggerNodeHandlerName } from "@plane/types";
+import type {
+  TAutomationConditionFilterExpression,
+  TAutomationTriggerNodeConfig,
+  TTriggerNodeHandlerName,
+} from "@plane/types";
 import { EAutomationSidebarTab, ETriggerNodeHandlerName } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
-import { cn, generateConditionPayload } from "@plane/utils";
+import { generateConditionPayload } from "@plane/utils";
 // plane web imports
 import { useUser } from "@/hooks/store/user";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
+import { useRunners } from "@/hooks/store/runners/use-runners";
 // local imports
 import { AutomationDetailsSidebarActionButtons } from "../action-buttons";
 import { AutomationDetailsSidebarTriggerConditionRoot } from "./condition/root";
-import { AutomationTriggerIcon } from "./icon";
-import { AutomationDetailsSidebarTriggerSchedule } from "./schedule";
+import { AutomationDetailsSidebarTriggerSelect } from "./trigger-select";
+import { AutomationDetailsSidebarTriggerTimeBasedRoot } from "./time-based-root";
+import { isRecord } from "@plane/utils";
 import {
   createDefaultFixedScheduleConfig,
   fixedScheduleToTriggerConfig,
-  getFixedScheduleValidationErrorKey,
   isFixedScheduleConfigComplete,
   stripScheduleFieldsFromConfig,
   triggerConfigToFixedSchedule,
 } from "./schedule-config";
-import { WithFeatureFlagHOC } from "@/components/feature-flags";
-import { useRunners } from "@/hooks/store/runners/use-runners";
-import { Tooltip } from "@plane/propel/tooltip";
+import {
+  createDefaultCronScheduleConfig,
+  cronScheduleToTriggerConfig,
+  isCronScheduleConfigComplete,
+  triggerConfigToCronSchedule,
+} from "./cron-config";
 
 type Props = {
   automationId: string;
 };
+
+function getScheduleMethodFromConfig(config: TAutomationTriggerNodeConfig | undefined): "fixed" | "cron" | undefined {
+  if (!isRecord(config)) return undefined;
+  const method = config.method;
+  if (method === "cron") return "cron";
+  if (method === "fixed") return "fixed";
+  return undefined;
+}
 
 export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationDetailsSidebarTriggerRoot(props: Props) {
   const { automationId } = props;
@@ -68,7 +80,7 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   const conditionNode = automation?.allConditions?.[0];
   const filterExpression = conditionNode?.config?.filter_expression;
   const triggerNodeHandlerName = triggerNode?.handler_name;
-  const isTimeBasedTrigger = triggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE;
+  const isTimeBasedTrigger = triggerNodeHandlerName === ETriggerNodeHandlerName.SCHEDULED;
   const workspaceSlug = automation?.workspaceSlug ?? "";
   const isRunnerHealthy = isRunnerAvailable(workspaceSlug);
   // states
@@ -85,28 +97,57 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
       ? triggerConfigToFixedSchedule(triggerNode.config, profileTimezone)
       : createDefaultFixedScheduleConfig(profileTimezone)
   );
+  const [selectedScheduleMethod, setSelectedScheduleMethod] = useState<"fixed" | "cron">(() => {
+    if (triggerNode && isTimeBasedTrigger) {
+      return getScheduleMethodFromConfig(triggerNode.config) ?? "fixed";
+    }
+    return "fixed";
+  });
+  const [cronScheduleConfig, setCronScheduleConfig] = useState(() =>
+    triggerNode && isTimeBasedTrigger && getScheduleMethodFromConfig(triggerNode.config) === "cron"
+      ? triggerConfigToCronSchedule(triggerNode.config, profileTimezone)
+      : createDefaultCronScheduleConfig(profileTimezone)
+  );
   // derived states
   const selectedTriggerNodeHandlerOption = useMemo(
     () =>
-      [...AUTOMATION_TRIGGER_SELECT_OPTIONS, ...AUTOMATION_TRIGGER_TIME_BASED_OPTIONS].find(
+      [...AUTOMATION_TRIGGER_PLANE_EVENT_OPTIONS, ...AUTOMATION_TRIGGER_TIME_BASED_OPTIONS].find(
         (option) => option.value === selectedTriggerNodeHandlerName
       ),
     [selectedTriggerNodeHandlerName]
   );
+  const isTimeBasedTriggerSelected = selectedTriggerNodeHandlerOption?.value === ETriggerNodeHandlerName.SCHEDULED;
+
+  const handleScheduleMethodChange = (method: "fixed" | "cron") => {
+    if (method === selectedScheduleMethod) return;
+    setSelectedScheduleMethod(method);
+    if (method === "cron") {
+      setFixedScheduleConfig(createDefaultFixedScheduleConfig(profileTimezone));
+    } else {
+      setCronScheduleConfig(createDefaultCronScheduleConfig(profileTimezone));
+    }
+  };
 
   const createOrUpdateTrigger = async () => {
     if (!automation || !selectedTriggerNodeHandlerName) return;
 
-    // If trigger node doesn't exist, create it with the selected handler and condition.
-    const isFixedSchedule = selectedTriggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE;
-    if (isFixedSchedule && !isFixedScheduleConfigComplete(fixedScheduleConfig)) {
-      return;
-    }
+    const isScheduled = selectedTriggerNodeHandlerName === ETriggerNodeHandlerName.SCHEDULED;
+    const isCron = isScheduled && selectedScheduleMethod === "cron";
+    const isFixed = isScheduled && selectedScheduleMethod === "fixed";
+
+    if (isFixed && !isFixedScheduleConfigComplete(fixedScheduleConfig)) return;
+    if (isCron && !isCronScheduleConfigComplete(cronScheduleConfig)) return;
+
     if (!triggerNode) {
       try {
+        const config = isCron
+          ? cronScheduleToTriggerConfig(cronScheduleConfig)
+          : isFixed
+            ? fixedScheduleToTriggerConfig(fixedScheduleConfig)
+            : undefined;
         await automation.createTrigger({
           handler_name: selectedTriggerNodeHandlerName,
-          ...(isFixedSchedule ? { config: fixedScheduleToTriggerConfig(fixedScheduleConfig) } : {}),
+          ...(config ? { config } : {}),
           conditionPayload: {
             config: {
               filter_expression: selectedFilterExpression,
@@ -119,9 +160,11 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
       return;
     }
 
-    const nextTriggerConfig = isFixedSchedule
-      ? fixedScheduleToTriggerConfig(fixedScheduleConfig)
-      : stripScheduleFieldsFromConfig(triggerNode.config);
+    const nextTriggerConfig = isCron
+      ? cronScheduleToTriggerConfig(cronScheduleConfig)
+      : isFixed
+        ? fixedScheduleToTriggerConfig(fixedScheduleConfig)
+        : stripScheduleFieldsFromConfig(triggerNode.config);
 
     const handlerChanged = triggerNode.handler_name !== selectedTriggerNodeHandlerName;
     const configChanged = !isEqual(triggerNode.config, nextTriggerConfig);
@@ -141,7 +184,6 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   const createOrUpdateCondition = async () => {
     if (!automation || !selectedTriggerNodeHandlerName) return;
 
-    // If condition node doesn't exist, create it.
     if (!conditionNode) {
       try {
         const conditionPayload = generateConditionPayload({
@@ -159,7 +201,6 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
       return;
     }
 
-    // If filter expression changed, update the condition node.
     if (!isEqual(conditionNode.config.filter_expression, selectedFilterExpression)) {
       try {
         await conditionNode.update({
@@ -197,14 +238,18 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
 
   useEffect(() => {
     setSelectedTriggerNodeHandlerName(triggerNode?.handler_name);
-    if (isTimeBasedTrigger) {
-      if (triggerNode) {
-        setFixedScheduleConfig(triggerConfigToFixedSchedule(triggerNode.config, profileTimezone));
+    if (isTimeBasedTrigger && triggerNode) {
+      const method = getScheduleMethodFromConfig(triggerNode.config);
+      setSelectedScheduleMethod(method ?? "fixed");
+      if (method === "cron") {
+        setCronScheduleConfig(triggerConfigToCronSchedule(triggerNode.config, profileTimezone));
       } else {
-        setFixedScheduleConfig(createDefaultFixedScheduleConfig(profileTimezone));
+        setFixedScheduleConfig(triggerConfigToFixedSchedule(triggerNode.config, profileTimezone));
       }
+    } else if (isTimeBasedTrigger) {
+      setSelectedScheduleMethod("fixed");
+      setFixedScheduleConfig(createDefaultFixedScheduleConfig(profileTimezone));
     }
-
     // Intentionally omit profileTimezone and triggerNode.config: profile timezone is synced separately without
     // resetting the form; config changes are handled on save / navigation.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
@@ -213,101 +258,22 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   if (!automation) return null;
   return (
     <section className="grow space-y-4 pt-2">
-      <div className="space-y-2 px-4">
-        <div className="flex items-center gap-1 text-tertiary">
-          <span className="shrink-0 size-4 grid place-items-center">
-            <Zap className="size-3" />
-          </span>
-          <p className="text-11 font-medium">{t("automations.trigger.input_label")}</p>
-        </div>
-        <CustomMenu
-          className="w-full"
-          placement="bottom-start"
-          maxHeight="lg"
-          closeOnSelect
-          customButtonClassName="w-full"
-          customButton={
-            <span
-              className={cn(
-                "text-caption-sm-regular w-full px-4 h-7 rounded-md border-[0.5px] border-subtle-1 hover:bg-layer-transparent-hover text-left flex items-center gap-2 cursor-pointer transition-colors",
-                {
-                  "text-placeholder border-accent-strong": !selectedTriggerNodeHandlerName,
-                }
-              )}
-            >
-              <span className="flex grow items-center gap-2">
-                {selectedTriggerNodeHandlerOption ? (
-                  <>
-                    <AutomationTriggerIcon iconKey={selectedTriggerNodeHandlerOption.iconKey} />
-                    {selectedTriggerNodeHandlerOption.label}
-                  </>
-                ) : (
-                  t("automations.trigger.input_placeholder")
-                )}
-              </span>
-              <ChevronDownIcon className="shrink-0 size-3" />
-            </span>
-          }
-        >
-          <div className="px-1 pb-1">
-            <p className="text-11 font-semibold text-tertiary">{t("automations.trigger.section_plane_events")}</p>
-          </div>
-          {AUTOMATION_TRIGGER_SELECT_OPTIONS.map((option) => (
-            <CustomMenu.MenuItem
-              key={option.value}
-              className="flex items-center gap-2"
-              onClick={() => {
-                setSelectedTriggerNodeHandlerName(option.value);
-              }}
-              disabled={triggerNode && isTimeBasedTrigger}
-            >
-              <Tooltip
-                tooltipContent={t("automations.trigger.warning.disabled_trigger_switching")}
-                disabled={!triggerNode || !isTimeBasedTrigger}
-              >
-                <span className="flex w-full min-w-0 items-center gap-2">
-                  <AutomationTriggerIcon iconKey={option.iconKey} />
-                  <span className="truncate font-medium">{option.label}</span>
-                </span>
-              </Tooltip>
-            </CustomMenu.MenuItem>
-          ))}
-          {isRunnerHealthy && (
-            <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={"PLANE_RUNNER"} fallback={null}>
-              <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={"SCHEDULED_AUTOMATIONS"} fallback={null}>
-                <div className="mx-1 mt-1 border-t border-subtle-1 pt-2 pb-1">
-                  <p className="text-11 font-semibold text-tertiary">{t("automations.trigger.section_time_based")}</p>
-                </div>
-                {AUTOMATION_TRIGGER_TIME_BASED_OPTIONS.map((option) => (
-                  <CustomMenu.MenuItem
-                    key={option.value}
-                    className="flex items-center gap-2"
-                    onClick={() => {
-                      setSelectedTriggerNodeHandlerName(option.value);
-                    }}
-                    disabled={triggerNode && !isTimeBasedTrigger}
-                  >
-                    <Tooltip
-                      tooltipContent={t("automations.trigger.warning.disabled_trigger_switching")}
-                      disabled={!triggerNode || isTimeBasedTrigger}
-                    >
-                      <span className="flex w-full min-w-0 items-center gap-2">
-                        <AutomationTriggerIcon iconKey={option.iconKey} />
-                        <span className="truncate font-medium">{option.label}</span>
-                      </span>
-                    </Tooltip>
-                  </CustomMenu.MenuItem>
-                ))}
-              </WithFeatureFlagHOC>
-            </WithFeatureFlagHOC>
-          )}
-        </CustomMenu>
-      </div>
-      {selectedTriggerNodeHandlerOption?.value === ETriggerNodeHandlerName.FIXED_SCHEDULE ? (
-        <AutomationDetailsSidebarTriggerSchedule
-          value={fixedScheduleConfig}
-          onChange={setFixedScheduleConfig}
-          validationErrorKey={getFixedScheduleValidationErrorKey(fixedScheduleConfig)}
+      <AutomationDetailsSidebarTriggerSelect
+        selectedOption={selectedTriggerNodeHandlerOption}
+        onSelect={setSelectedTriggerNodeHandlerName}
+        isTimeBasedTrigger={isTimeBasedTrigger}
+        hasTriggerNode={!!triggerNode}
+        isRunnerHealthy={isRunnerHealthy}
+        workspaceSlug={workspaceSlug}
+      />
+      {isTimeBasedTriggerSelected ? (
+        <AutomationDetailsSidebarTriggerTimeBasedRoot
+          scheduleMethod={selectedScheduleMethod}
+          onScheduleMethodChange={handleScheduleMethodChange}
+          fixedScheduleConfig={fixedScheduleConfig}
+          onFixedScheduleChange={setFixedScheduleConfig}
+          cronScheduleConfig={cronScheduleConfig}
+          onCronScheduleChange={setCronScheduleConfig}
         />
       ) : (
         <AutomationDetailsSidebarTriggerConditionRoot
@@ -331,8 +297,12 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
             !selectedTriggerNodeHandlerName ||
             isCreatingUpdatingTrigger ||
             isCreatingUpdatingCondition ||
-            (selectedTriggerNodeHandlerName === ETriggerNodeHandlerName.FIXED_SCHEDULE &&
-              !isFixedScheduleConfigComplete(fixedScheduleConfig)),
+            (isTimeBasedTriggerSelected &&
+              selectedScheduleMethod === "fixed" &&
+              !isFixedScheduleConfigComplete(fixedScheduleConfig)) ||
+            (isTimeBasedTriggerSelected &&
+              selectedScheduleMethod === "cron" &&
+              !isCronScheduleConfigComplete(cronScheduleConfig)),
           onClick: handleNextButtonClick,
         }}
       />

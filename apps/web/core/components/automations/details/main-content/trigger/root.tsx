@@ -15,11 +15,12 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Zap } from "lucide-react";
 // plane imports
-import { AUTOMATION_TRIGGER_SELECT_OPTIONS, AUTOMATION_TRIGGER_TIME_BASED_OPTIONS } from "@plane/constants";
+import { AUTOMATION_TRIGGER_PLANE_EVENT_OPTIONS, AUTOMATION_TRIGGER_TIME_BASED_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EAutomationSidebarTab, ETriggerNodeHandlerName } from "@plane/types";
 // plane web imports
 import { getFixedScheduleMainContentSummary } from "@/components/automations/details/sidebar/trigger/schedule-config";
+import { getCronMainContentSummary } from "@/components/automations/details/sidebar/trigger/cron-config";
 import { AutomationTriggerIcon } from "@/components/automations/details/sidebar/trigger/icon";
 import { useUser } from "@/hooks/store/user";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
@@ -56,16 +57,19 @@ export const AutomationDetailsMainContentTriggerRoot = observer(function Automat
   const triggerNode = automation?.trigger;
   const selectedTriggerNodeHandlerOption = useMemo(
     () =>
-      [...AUTOMATION_TRIGGER_SELECT_OPTIONS, ...AUTOMATION_TRIGGER_TIME_BASED_OPTIONS].find(
+      [...AUTOMATION_TRIGGER_PLANE_EVENT_OPTIONS, ...AUTOMATION_TRIGGER_TIME_BASED_OPTIONS].find(
         (option) => option.value === triggerNode?.handler_name
       ),
     [triggerNode?.handler_name]
   );
-  const isFixedSchedule = triggerNode?.handler_name === ETriggerNodeHandlerName.FIXED_SCHEDULE;
-  const fixedScheduleSummary = useMemo(
-    () => getFixedScheduleMainContentSummary(triggerNode, profileTimezone, t),
-    [triggerNode, profileTimezone, t]
-  );
+  const isScheduledTrigger = triggerNode?.handler_name === ETriggerNodeHandlerName.SCHEDULED;
+  const scheduleSummary = useMemo(() => {
+    if (!isScheduledTrigger || !triggerNode) return null;
+    return (
+      getCronMainContentSummary(triggerNode, profileTimezone, t) ??
+      getFixedScheduleMainContentSummary(triggerNode, profileTimezone, t)
+    );
+  }, [triggerNode, profileTimezone, t, isScheduledTrigger]);
   return (
     <AutomationDetailsMainContentSectionWrapper title={t("automations.trigger.label")} icon={Zap} iconVariant="filled">
       {selectedTriggerNodeHandlerOption ? (
@@ -76,12 +80,12 @@ export const AutomationDetailsMainContentTriggerRoot = observer(function Automat
               sidebarHelper?.setSelectedSidebarConfig({ tab: EAutomationSidebarTab.TRIGGER, mode: "view" })
             }
           >
-            {isFixedSchedule ? (
+            {isScheduledTrigger ? (
               <>
                 <ConjunctionLabel text={t("automations.trigger.schedule.on")} />
                 <span className="flex items-center gap-1.5 text-13 font-medium text-tertiary">
                   <AutomationTriggerIcon iconKey={selectedTriggerNodeHandlerOption.iconKey} />
-                  {fixedScheduleSummary ?? selectedTriggerNodeHandlerOption.readableLabel}
+                  {scheduleSummary ?? selectedTriggerNodeHandlerOption.readableLabel}
                 </span>
               </>
             ) : (

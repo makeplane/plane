@@ -159,6 +159,7 @@ catalog:
   comlink: ^4.4.2
   compression: 1.8.1
   conf: ^15.1.0
+  cronstrue: ^3.14.0
   cookie-parser: ^1.4.7
   cors: ^2.8.6
   date-fns: ^4.1.0

@@ -23,7 +23,7 @@ export type TAutomationTriggerSelectOption = {
   value: TTriggerNodeHandlerName;
 };
 
-export const AUTOMATION_TRIGGER_SELECT_OPTIONS: TAutomationTriggerSelectOption[] = [
+export const AUTOMATION_TRIGGER_PLANE_EVENT_OPTIONS: TAutomationTriggerSelectOption[] = [
   {
     iconKey: "LayersIcon",
     label: "Work item created",
@@ -59,8 +59,8 @@ export const AUTOMATION_TRIGGER_SELECT_OPTIONS: TAutomationTriggerSelectOption[]
 export const AUTOMATION_TRIGGER_TIME_BASED_OPTIONS: TAutomationTriggerSelectOption[] = [
   {
     iconKey: "ClockIcon",
-    label: "Fixed schedule",
-    readableLabel: "A fixed schedule is triggered",
-    value: ETriggerNodeHandlerName.FIXED_SCHEDULE,
+    label: "Schedule",
+    readableLabel: "A schedule is triggered",
+    value: ETriggerNodeHandlerName.SCHEDULED,
   },
 ];

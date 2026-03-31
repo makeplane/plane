@@ -56,7 +56,7 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
   const actionNodesCount = actionNodes?.length ?? 0;
   const sidebarHelper = automation?.sidebarHelper;
   const isCreateActionButtonSelected = sidebarHelper?.selectedSidebarConfig.mode === "create";
-  const isTimeBasedTrigger = automation?.trigger?.handler_name === ETriggerNodeHandlerName.FIXED_SCHEDULE;
+  const isTimeBasedTrigger = automation?.trigger?.handler_name === ETriggerNodeHandlerName.SCHEDULED;
 
   const scrollToActionForm = useCallback((formElement: HTMLFormElement | null) => {
     setTimeout(() => {

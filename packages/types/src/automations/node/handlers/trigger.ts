@@ -17,7 +17,7 @@ export enum ETriggerNodeHandlerName {
   STATE_CHANGED = "state_changed",
   ASSIGNEE_CHANGED = "assignee_changed",
   COMMENT_CREATED = "comment_created",
-  /** Time-based (fixed schedule) trigger; API `handler_name` is `scheduled`. */
-  FIXED_SCHEDULE = "scheduled",
+  /** Time-based trigger (fixed schedule or cron); API `handler_name` is `scheduled`. */
+  SCHEDULED = "scheduled",
 }
 export type TTriggerNodeHandlerName = ETriggerNodeHandlerName;
