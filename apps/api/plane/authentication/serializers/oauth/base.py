@@ -48,6 +48,7 @@ class ApplicationSerializer(BaseSerializer):
         queryset=ApplicationCategory.objects.all(), many=True, required=False
     )
     links = ApplicationLinksSerializer(many=True, required=False)
+    configuration_url = serializers.CharField(max_length=800, required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = Application

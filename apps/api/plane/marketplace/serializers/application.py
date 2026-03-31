@@ -55,6 +55,7 @@ class ApplicationMetaSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     attachments = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
+    configuration_url = serializers.CharField(max_length=800, required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = Application

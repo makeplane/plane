@@ -197,14 +197,14 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
     }
   };
 
-  // for default apps, if the feature flag is not enabled, don't show the tile, or
-  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not owned or is not default
-  if (
-    ((isAppDefault || app.is_internal) && !isFeatureFlagEnabled) ||
-    importersSlug.includes(app.slug) ||
-    (!app.setup_url && !isAppDefault && !app.is_owned)
-  ) {
-    return null;
+  // owned apps are always visible
+  if (!app.is_owned) {
+    // hide importer tiles — they have their own UI
+    if (importersSlug.includes(app.slug)) return null;
+    // default/internal apps require a feature flag
+    if ((isAppDefault || app.is_internal) && !isFeatureFlagEnabled) return null;
+    // third-party apps require a setup url
+    if (!isAppDefault && !app.setup_url) return null;
   }
 
   return (
