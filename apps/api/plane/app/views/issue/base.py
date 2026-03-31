@@ -1118,7 +1118,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         epoch = int(timezone.now().timestamp())
 
         # Fetch all relevant issues in a single query
-        issues = list(Issue.objects.filter(id__in=issue_ids))
+        issues = list(Issue.objects.filter(id__in=issue_ids, workspace__slug=slug, project_id=project_id))
         issues_dict = {str(issue.id): issue for issue in issues}
         issues_to_update = []
 
