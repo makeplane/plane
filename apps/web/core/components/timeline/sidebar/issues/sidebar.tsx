@@ -42,6 +42,12 @@ type IssueTimelineSidebarProps = {
   showAllBlocks?: boolean;
   selectionHelpers?: TSelectionHelper;
   isEpic?: boolean;
+  /** Map of blockId → nesting level for sub-issue indentation */
+  nestingLevelMap?: Map<string, number>;
+  /** Set of currently expanded issue IDs */
+  expandedIds?: Set<string>;
+  /** Called when a sub-issue expand/collapse is toggled */
+  onToggleSubIssueExpand?: (issueId: string) => void;
 };
 
 export const IssueTimelineSidebar = observer(function IssueTimelineSidebar(props: IssueTimelineSidebarProps) {
@@ -56,6 +62,9 @@ export const IssueTimelineSidebar = observer(function IssueTimelineSidebar(props
     showAllBlocks = false,
     selectionHelpers,
     isEpic = false,
+    nestingLevelMap,
+    expandedIds,
+    onToggleSubIssueExpand,
   } = props;
 
   const { getBlockById } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
@@ -75,12 +84,22 @@ export const IssueTimelineSidebar = observer(function IssueTimelineSidebar(props
     "100% 0% 100% 0%"
   );
 
+  // Only top-level (nesting level 0) ids participate in sort-order reorder calculations.
+  const topLevelBlockIds = nestingLevelMap ? blockIds.filter((id) => (nestingLevelMap.get(id) ?? 0) === 0) : blockIds;
+
   const handleOnDrop = (
     draggingBlockId: string | undefined,
     droppedBlockId: string | undefined,
     dropAtEndOfList: boolean
   ) => {
-    handleOrderChange(draggingBlockId, droppedBlockId, dropAtEndOfList, blockIds, getBlockById, blockUpdateHandler);
+    handleOrderChange(
+      draggingBlockId,
+      droppedBlockId,
+      dropAtEndOfList,
+      topLevelBlockIds,
+      getBlockById,
+      blockUpdateHandler
+    );
   };
 
   return (
@@ -94,6 +113,9 @@ export const IssueTimelineSidebar = observer(function IssueTimelineSidebar(props
             // hide the block if it doesn't have start and target dates and showAllBlocks is false
             if (!block || (!showAllBlocks && !isBlockVisibleOnSidebar)) return;
 
+            const nestingLevel = nestingLevelMap?.get(blockId) ?? 0;
+            const isTopLevel = nestingLevel === 0;
+
             return (
               <RenderIfVisible
                 key={block.id}
@@ -106,7 +128,8 @@ export const IssueTimelineSidebar = observer(function IssueTimelineSidebar(props
                 <TimelineDnDHOC
                   id={block.id}
                   isLastChild={index === blockIds.length - 1}
-                  isDragEnabled={enableReorder}
+                  isDragEnabled={enableReorder && isTopLevel}
+                  isDropEnabled={isTopLevel}
                   onDrop={handleOnDrop}
                 >
                   {(isDragging: boolean) => (
@@ -116,6 +139,9 @@ export const IssueTimelineSidebar = observer(function IssueTimelineSidebar(props
                       isDragging={isDragging}
                       selectionHelpers={selectionHelpers}
                       isEpic={isEpic}
+                      nestingLevel={nestingLevel}
+                      isExpanded={expandedIds?.has(blockId) ?? false}
+                      onToggleSubIssueExpand={onToggleSubIssueExpand}
                     />
                   )}
                 </TimelineDnDHOC>

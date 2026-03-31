@@ -25,12 +25,13 @@ type TimelineDnDHOCProps = {
   id: string;
   isLastChild: boolean;
   isDragEnabled: boolean;
+  isDropEnabled?: boolean;
   children: (isDragging: boolean) => React.ReactNode;
   onDrop: (draggingBlockId: string | undefined, droppedBlockId: string | undefined, dropAtEndOfList: boolean) => void;
 };
 
 export const TimelineDnDHOC = observer(function TimelineDnDHOC(props: TimelineDnDHOCProps) {
-  const { id, isLastChild, children, onDrop, isDragEnabled } = props;
+  const { id, isLastChild, children, onDrop, isDragEnabled, isDropEnabled = true } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
@@ -56,7 +57,8 @@ export const TimelineDnDHOC = observer(function TimelineDnDHOC(props: TimelineDn
       }),
       dropTargetForElements({
         element,
-        canDrop: ({ source }) => source?.data?.id !== id && source?.data?.dragInstanceId === "GANTT_REORDER",
+        canDrop: ({ source }) =>
+          isDropEnabled && source?.data?.id !== id && source?.data?.dragInstanceId === "GANTT_REORDER",
         getData: ({ input, element }) => {
           const data = { id };
 
@@ -101,7 +103,7 @@ export const TimelineDnDHOC = observer(function TimelineDnDHOC(props: TimelineDn
         },
       })
     );
-  }, [isLastChild, onDrop]);
+  }, [blockRef?.current, isDropEnabled, isLastChild, onDrop]);
 
   useOutsideClickDetector(blockRef, () => blockRef?.current?.classList?.remove(HIGHLIGHT_WITH_LINE));
 

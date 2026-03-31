@@ -13,6 +13,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { ChevronRightIcon } from "@plane/propel/icons";
 import type { IGanttBlock } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -32,22 +33,47 @@ type Props = {
   isDragging: boolean;
   selectionHelpers?: TSelectionHelper;
   isEpic?: boolean;
+  /** Nesting level for sub-issue indentation (0 = top level) */
+  nestingLevel?: number;
+  /** Whether this block's sub-issues are expanded */
+  isExpanded?: boolean;
+  /** Called to toggle sub-issue expand/collapse */
+  onToggleSubIssueExpand?: (issueId: string) => void;
 };
 
 export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Props) {
-  const { block, enableSelection, isDragging, selectionHelpers, isEpic = false } = props;
+  const {
+    block,
+    enableSelection,
+    isDragging,
+    selectionHelpers,
+    isEpic = false,
+    nestingLevel = 0,
+    isExpanded = false,
+    onToggleSubIssueExpand,
+  } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
-  const { getIsIssuePeeked } = useIssueDetail();
+  const { getIsIssuePeeked, issue } = useIssueDetail();
 
   const isBlockComplete = !!block?.start_date && !!block?.target_date;
   const duration = isBlockComplete ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
 
   if (!block?.data) return null;
 
+  const issueDetail = issue.getIssueById(block.data.id);
+  const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
+  const showExpandChevron = subIssuesCount > 0 && !isEpic && !!onToggleSubIssueExpand;
+
   const isIssueSelected = selectionHelpers?.getIsEntitySelected(block.id);
   const isIssueFocused = selectionHelpers?.getIsEntityActive(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);
+
+  const handleToggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onToggleSubIssueExpand?.(block.id);
+  };
 
   return (
     <div
@@ -88,6 +114,27 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
           </div>
         )}
         <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
+          {/* Sub-issue indentation */}
+          {nestingLevel > 0 && <div className="flex-shrink-0" style={{ width: `${nestingLevel * 12}px` }} />}
+          {/* Expand/collapse chevron — only render placeholder when expansion is enabled */}
+          {onToggleSubIssueExpand && (
+            <div className="grid place-items-center size-4 flex-shrink-0">
+              {showExpandChevron && (
+                <button
+                  type="button"
+                  className="grid place-items-center size-4 rounded-xs text-placeholder hover:text-tertiary"
+                  onClick={handleToggleExpand}
+                >
+                  <ChevronRightIcon
+                    className={cn("size-4 transition-transform", {
+                      "rotate-90": isExpanded,
+                    })}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              )}
+            </div>
+          )}
           <div className="flex-grow truncate">
             <IssueTimelineSidebarBlock issueId={block.data.id} isEpic={isEpic} />
           </div>

@@ -31,6 +31,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
+import { useTimelineSubIssues } from "@/hooks/use-timeline-sub-issues";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
@@ -80,6 +81,13 @@ export const BaseTimelineRoot = observer(function BaseTimelineRoot(props: BaseTi
   }, []);
 
   const issuesIds = (issues.groupedIssueIds?.[ALL_ISSUES] as string[]) ?? [];
+  const { enrichedBlockIds, nestingLevelMap, expandedIds, toggleExpand, isExpansionEnabled } = useTimelineSubIssues(
+    issuesIds,
+    {
+      isEpic,
+      showSubIssues: appliedDisplayFilters?.sub_issue ?? false,
+    }
+  );
   const nextPageResults = issues.getPaginationData(undefined, undefined)?.nextPageResults;
 
   const { enableIssueCreation } = issues?.viewFlags || {};
@@ -139,10 +147,19 @@ export const BaseTimelineRoot = observer(function BaseTimelineRoot(props: BaseTi
             border={false}
             title={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
             loaderTitle={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
-            blockIds={issuesIds}
+            blockIds={enrichedBlockIds}
             blockUpdateHandler={updateIssueBlockStructure}
             blockToRender={(data: TIssue) => <WorkItemTimelineBlock issueId={data.id} isEpic={isEpic} />}
-            sidebarToRender={(props) => <IssueTimelineSidebar {...props} showAllBlocks isEpic={isEpic} />}
+            sidebarToRender={(props) => (
+              <IssueTimelineSidebar
+                {...props}
+                showAllBlocks
+                isEpic={isEpic}
+                nestingLevelMap={isExpansionEnabled ? nestingLevelMap : undefined}
+                expandedIds={isExpansionEnabled ? expandedIds : undefined}
+                onToggleSubIssueExpand={isExpansionEnabled ? toggleExpand : undefined}
+              />
+            )}
             enableBlockLeftResize={isAllowed}
             enableBlockRightResize={isAllowed}
             enableBlockMove={isAllowed}
