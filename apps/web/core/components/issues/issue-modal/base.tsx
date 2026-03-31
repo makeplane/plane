@@ -267,11 +267,13 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     // - cycle_id is the same as the current cycle id
     if (!("cycle_id" in payload) || isEqual(data?.cycle_id, payload.cycle_id)) return;
 
+    const slug = workspaceSlug.toString();
+
     // Removing the cycle
     const currentCycleId = data?.cycle_id;
     if (currentCycleId && payload.cycle_id === null) {
-      await issues.removeIssueFromCycle(workspaceSlug, data.project_id, currentCycleId, data.id);
-      fetchCycleDetails(workspaceSlug, data.project_id, currentCycleId).catch((error) => {
+      await issues.removeIssueFromCycle(slug, data.project_id, currentCycleId, data.id);
+      fetchCycleDetails(slug, data.project_id, currentCycleId).catch((error) => {
         console.error(error);
       });
     }
@@ -309,7 +311,13 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     }
     // update modules if there are modules to add or remove
     if (modulesToAdd.length > 0 || modulesToRemove.length > 0) {
-      await issues.changeModulesInIssue(workspaceSlug, data.project_id, data.id, modulesToAdd, modulesToRemove);
+      await issues.changeModulesInIssue(
+        workspaceSlug.toString(),
+        data.project_id,
+        data.id,
+        modulesToAdd,
+        modulesToRemove
+      );
     }
   };
 
@@ -320,20 +328,17 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
       else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
 
-      await Promise.all([
-        // handle cycle change
-        handleCycleChange(data, payload),
-        // handle module change
-        handleModuleChange(data, payload),
-        // handle other property values
-        handleCreateUpdatePropertyValues({
-          issueId: data.id,
-          issueTypeId: payload.type_id,
-          projectId: payload.project_id,
-          workspaceSlug: workspaceSlug?.toString(),
-          isDraft: isDraft,
-        }),
-      ]);
+      // Run cycle, module, and property changes sequentially to avoid
+      // optimistic store writes from racing against each other.
+      await handleCycleChange(data, payload);
+      await handleModuleChange(data, payload);
+      await handleCreateUpdatePropertyValues({
+        issueId: data.id,
+        issueTypeId: payload.type_id,
+        projectId: payload.project_id,
+        workspaceSlug: workspaceSlug?.toString(),
+        isDraft: isDraft,
+      });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
