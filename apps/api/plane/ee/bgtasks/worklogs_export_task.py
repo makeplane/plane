@@ -150,14 +150,17 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
     exporter_instance.save(update_fields=["status", "url", "key"])
 
 
+def generate_logged_by_name(worklog):
+    parts = [worklog.get("logged_by__first_name", ""), worklog.get("logged_by__last_name", "")]
+    return " ".join(filter(None, parts))
+
+
 def generate_table_row(worklog):
     return [
         worklog["project__name"],
         (f"{worklog['project__identifier']} {worklog['issue__sequence_id']} {worklog['issue__name']}"),
         (
-            f"{worklog['logged_by__first_name']} {worklog['logged_by__last_name']}"
-            if worklog["logged_by__first_name"] and worklog["logged_by__last_name"]
-            else ""
+            generate_logged_by_name(worklog)
         ),
         dateConverter(worklog["created_at"]),
         worklog["duration"],
