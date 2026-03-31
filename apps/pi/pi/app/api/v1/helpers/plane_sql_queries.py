@@ -2436,13 +2436,12 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
         return None
 
 
-async def get_page_content(page_id: str, user_id: str, workspace_id: str) -> Optional[Dict[str, Any]]:
+async def check_page_access(page_id: str, user_id: str) -> bool:
+    """
+    Verify that a page exists and the user is an active member of its workspace.
+    """
     query = """
-    SELECT
-        p.id,
-        p.name,
-        p.description_stripped,
-        p.description_html
+    SELECT 1
     FROM pages p
     JOIN workspace_members wm ON wm.workspace_id = p.workspace_id
     WHERE p.id = $1
@@ -2453,7 +2452,54 @@ async def get_page_content(page_id: str, user_id: str, workspace_id: str) -> Opt
     AND p.deleted_at IS NULL;
     """
     try:
-        result = await PlaneDBPool.fetchrow(query, (page_id, user_id, workspace_id))
+        result = await PlaneDBPool.fetchrow(query, (page_id, user_id))
+        return result is not None
+    except Exception as e:
+        log.error(f"Error checking page access for page {page_id} user {user_id}: {e}")
+        return False
+
+
+async def get_page_content(page_id: str, user_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """
+    Fetch page content by page_id.
+
+    When user_id is provided, validates that the user is an active member of
+    the workspace that owns the page. Returns None if the membership check
+    fails, preventing cross-tenant information disclosure.
+    """
+    if user_id is not None:
+        query = """
+        SELECT
+            p.id,
+            p.name,
+            p.description_stripped,
+            p.description_html,
+            p.workspace_id
+        FROM pages p
+        JOIN workspace_members wm
+            ON wm.workspace_id = p.workspace_id
+            AND wm.member_id = $2
+            AND wm.deleted_at IS NULL
+            AND wm.is_active IS TRUE
+        WHERE p.id = $1
+        AND p.deleted_at IS NULL;
+        """
+        params: tuple = (page_id, user_id)
+    else:
+        query = """
+        SELECT
+            p.id,
+            p.name,
+            p.description_stripped,
+            p.description_html,
+            p.workspace_id
+        FROM pages p
+        WHERE p.id = $1
+        AND p.deleted_at IS NULL;
+        """
+        params = (page_id,)
+    try:
+        result = await PlaneDBPool.fetchrow(query, params)
         return dict(result) if result else None
     except Exception as e:
         log.error(f"Error fetching page details for {page_id}: {e}")

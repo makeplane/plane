@@ -31,6 +31,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.api.dependencies import get_current_user
+from pi.app.api.v2.helpers.plane_sql_queries import check_page_access
 from pi.app.schemas.pages import PageAIBlockConfigResponse
 from pi.app.schemas.pages import PageAIBlockCreateRequest
 from pi.app.schemas.pages import PageAIBlockGenerateResponse
@@ -267,6 +268,11 @@ async def fetch_ai_block_config(
         return JSONResponse(status_code=404, content={"error": "Block not found"})
 
     block = result["block"]
+
+    # Verify the user has access to the page this block belongs to via workspace membership
+    if not await check_page_access(str(block.entity_id), str(current_user.id)):
+        return JSONResponse(status_code=404, content={"error": "Block not found"})
+
     feedback = result["feedback"]
     has_content = has_content_for_block(block.block_type, block.content)
 
@@ -298,6 +304,10 @@ async def get_page_ai_blocks(
 
     Uses a single optimized query to fetch all data.
     """
+    # Verify the user has access to this page via workspace membership
+    if not await check_page_access(str(page_id), str(current_user.id)):
+        return JSONResponse(status_code=404, content={"error": "Page not found"})
+
     blocks = await get_page_ai_blocks_by_page_id(db, page_id, current_user.id)
     return JSONResponse(status_code=200, content={"blocks": blocks})
 

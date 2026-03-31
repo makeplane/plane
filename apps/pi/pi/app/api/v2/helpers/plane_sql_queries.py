@@ -272,6 +272,29 @@ async def get_workspace_slug(workspace_id: str) -> Optional[str]:
         return None
 
 
+async def check_page_access(page_id: str, user_id: str) -> bool:
+    """
+    Verify that a page exists and the user is an active member of its workspace.
+    """
+    query = """
+    SELECT 1
+    FROM pages p
+    JOIN workspace_members wm
+        ON wm.workspace_id = p.workspace_id
+        AND wm.member_id = $2
+        AND wm.deleted_at IS NULL
+        AND wm.is_active IS TRUE
+    WHERE p.id = $1
+    AND p.deleted_at IS NULL;
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (page_id, user_id))
+        return result is not None
+    except Exception as e:
+        log.error(f"Error checking page access for page {page_id} user {user_id}: {e}")
+        return False
+
+
 async def resolve_workspace_id_from_project_id(project_id: str) -> Optional[str]:
     """
     Resolve workspace_id from project_id.

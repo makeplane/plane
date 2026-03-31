@@ -94,20 +94,23 @@ class PageContentService(ABC):
         """
         pass
 
-    async def fetch_page_context(self, page_id: UUID, user_id: UUID, workspace_id: UUID) -> Optional[str]:
+    async def fetch_page_context(self, page_id: UUID, user_id: Optional[UUID] = None) -> Optional[str]:
         """
         Fetch page content context.
 
         Args:
             page_id: ID of the page
-            user_id: ID of the current user
-            workspace_id: Workspace ID
+            user_id: Optional user ID for workspace membership validation
 
         Returns:
-            Page content as string, or None if empty
+            Page content as string, or None if empty or access denied
         """
         try:
-            context_text = await get_entity_context("page", str(page_id), user_id, workspace_id)
+            context_text = await get_entity_context(
+                "page",
+                str(page_id),
+                user_id=str(user_id) if user_id else None,
+            )
             if not context_text or not context_text.strip():
                 log.warning(f"Page {page_id} has no content")
                 return None
@@ -214,8 +217,8 @@ class PageContentService(ABC):
             Generated content string or None if failed
         """
         try:
-            # 1. Fetch context
-            context_text = await self.fetch_page_context(page_id, user_id, workspace_id)
+            # 1. Fetch context (with workspace membership check)
+            context_text = await self.fetch_page_context(page_id, user_id=user_id)
             if not context_text:
                 return None
 
@@ -273,8 +276,8 @@ class PageContentService(ABC):
             Content chunks as strings
         """
         try:
-            # 1. Fetch context
-            context_text = await self.fetch_page_context(page_id, user_id, workspace_id)
+            # 1. Fetch context (with workspace membership check)
+            context_text = await self.fetch_page_context(page_id, user_id=user_id)
             if not context_text:
                 return
 
