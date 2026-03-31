@@ -37,7 +37,7 @@ export const DashboardTableChartWidget = observer(function DashboardTableChartWi
   if (!columns.length) return null;
 
   return (
-    <div className="flex size-full flex-col overflow-hidden px-4 mt-5">
+    <div className="flex size-full flex-col overflow-hidden px-4 pb-2 mt-2">
       {hasGroupKeys ? (
         <>
           <table className="w-full shrink-0 border-collapse text-xs" style={{ tableLayout: "fixed" }}>

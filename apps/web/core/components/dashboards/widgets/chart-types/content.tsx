@@ -24,7 +24,6 @@ import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;
   children: React.ReactNode;
-  className?: string;
   dashboardId: string;
   isDataAvailable: boolean;
   isDataEmpty: boolean;
@@ -32,13 +31,13 @@ type Props = {
 };
 
 export function DashboardWidgetContent(props: Props) {
-  const { activeBreakpoint, children, className, dashboardId, isDataAvailable, isDataEmpty, widget } = props;
+  const { activeBreakpoint, children, dashboardId, isDataAvailable, isDataEmpty, widget } = props;
   // derived values
   const { isWidgetAvailableInCurrentPlan } = widget;
 
   return (
     <div
-      className={className}
+      className="w-full flex flex-col"
       style={{
         height: `calc(100% - ${WIDGET_HEADER_HEIGHT + WIDGET_Y_SPACING}px)`,
       }}
