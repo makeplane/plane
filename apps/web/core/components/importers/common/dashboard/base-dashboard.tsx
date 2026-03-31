@@ -15,22 +15,18 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { CircleX, Download, InfoIcon, Loader, RefreshCcw } from "lucide-react";
-import type { TJobStatus } from "@plane/etl/core";
-import { E_JOB_STATUS } from "@plane/etl/core";
+import { InfoIcon, Loader, RefreshCcw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TImportJob, TLogoProps } from "@plane/types";
+import { Table } from "@plane/ui";
 import { ModalCore } from "@plane/ui";
-import { renderFormattedDate, renderFormattedTime, getEditorAssetSrc } from "@plane/utils";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { DashboardLoaderTable } from "./loader/table";
-import { IconFieldRender } from "./icon-field-render";
-import { SyncJobStatus } from "./status";
+import { useColumns } from "./useColumns";
 
 export type TImporterConfig<T> = {
   serviceName: string;
@@ -88,19 +84,7 @@ export interface IBaseDashboardProps<T> {
 
 export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDashboardProps<T>) {
   const { config, useImporterHook } = props;
-  const {
-    serviceName,
-    swrKey,
-    modals,
-    getWorkspaceName,
-    getProjectName,
-    getPlaneProject,
-    hideBatches,
-    hideRerun,
-    hideCancel,
-    showSummary,
-    useReportForSummary,
-  } = config;
+  const { serviceName, swrKey, modals } = config;
   const { t } = useTranslation();
 
   // hooks
@@ -124,37 +108,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     currentAuth?.isAuthenticated ? async () => await fetchJobs() : null,
     { errorRetryCount: 0, refreshInterval: 30000 }
   );
-
-  // derived values
-  const isReRunDisabled = (job: any) => {
-    if (!job || !job?.status) return true;
-
-    return ![
-      E_JOB_STATUS.CREATED,
-      E_JOB_STATUS.FINISHED,
-      E_JOB_STATUS.ERROR,
-      E_JOB_STATUS.TIMED_OUT,
-      E_JOB_STATUS.CANCELLED,
-      E_JOB_STATUS.QUEUED,
-    ].includes(job?.status as E_JOB_STATUS);
-  };
-
-  const isCancelDisabled = (job: any) => {
-    if (!job || !job?.status) return true;
-
-    return [E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.TIMED_OUT, E_JOB_STATUS.CANCELLED].includes(
-      job?.status as E_JOB_STATUS
-    );
-  };
-
-  const handleSummaryRedirect = (workspaceSlug: string, assetId: string) => {
-    const source = getEditorAssetSrc({
-      workspaceSlug,
-      assetId,
-    });
-
-    window.open(source, "_blank");
-  };
 
   // handlers
   const handleRerunOpen = (jobId: string) => {
@@ -226,59 +179,22 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     }
   };
 
-  const isSummaryDisabled = (job: TImportJob<T>) => {
-    if (useReportForSummary) {
-      return job.status !== E_JOB_STATUS.FINISHED && job.status !== E_JOB_STATUS.ERROR;
-    }
-
-    return !job.report.summary_asset;
-  };
-
-  const handleDownloadSummary = (job: TImportJob<T>) => {
-    if (useReportForSummary) {
-      const summary = {
-        job_id: job.id,
-        status: job.status,
-        initiator_id: job.initiator_id,
-        workspace_id: job.workspace_id,
-        config: job.config,
-        report: {
-          total_issue_count: job.report.total_issue_count,
-          imported_issue_count: job.report.imported_issue_count,
-          errored_issue_count: job.report.errored_issue_count,
-          start_time: job.report.start_time,
-          end_time: job.report.end_time,
-        },
-        success_metadata: job.success_metadata,
-        error_metadata: job.error_metadata,
-      };
-
-      const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `import-summary-${job.id}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } else {
-      const workspaceSlug = job.workspace_slug;
-      const assetId = job.report.summary_asset as string | undefined;
-
-      if (assetId) {
-        const source = getEditorAssetSrc({
-          workspaceSlug,
-          assetId,
-        });
-
-        window.open(source, "_blank");
-      }
-    }
-  };
-
   const RerunModalComponent = modals?.rerun || RerunModal;
   const CancelModalComponent = modals?.cancel || CancelModal;
+
+  const displayData =
+    jobIds
+      ?.map((jobId, index) => {
+        const job = jobById(jobId);
+        return job ? { job, index } : null;
+      })
+      .filter((row): row is { job: TImportJob<T>; index: number } => row !== null) ?? [];
+
+  const columns = useColumns({
+    config,
+    onRerunOpen: handleRerunOpen,
+    onCancelOpen: handleCancelOpen,
+  });
 
   return (
     <>
@@ -289,43 +205,45 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
       <ModalCore isOpen={isCancelModalOpen} handleClose={handleClose}>
         <CancelModalComponent onClose={handleClose} onSubmit={handleCancelJob} isLoading={modalLoader} />
       </ModalCore>
-      <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
+      <div className="relative -mb-9 flex w-full min-h-0 flex-col gap-6 overflow-hidden max-h-[calc(100dvh-8rem)]">
         {/* header */}
-        <ImporterHeader
-          config={config}
-          actions={
-            <div className="flex-shrink-0 relative flex items-center gap-4">
-              {!config.hideDeactivate && (
-                <Button
-                  variant="error-outline"
-                  onClick={handleDeactivateAuth}
-                  className="bg-transparent"
-                  disabled={deactivateLoader}
-                >
-                  {deactivateLoader ? "Deactivating..." : "Deactivate"}
-                </Button>
-              )}
-              {!currentAuth?.sourceTokenInvalid ? (
-                <Button onClick={handleDashboardView}>{t("importers.import")}</Button>
-              ) : (
-                <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
-                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
-                    <InfoIcon height={12} width={12} />
-                    <div className="text-11">{t("importers.source_token_expired")}</div>
-                  </div>
-                </Tooltip>
-              )}
-            </div>
-          }
-        />
+        <div className="shrink-0">
+          <ImporterHeader
+            config={config}
+            actions={
+              <div className="flex-shrink-0 relative flex items-center gap-4">
+                {!config.hideDeactivate && (
+                  <Button
+                    variant="error-outline"
+                    onClick={handleDeactivateAuth}
+                    className="bg-transparent"
+                    disabled={deactivateLoader}
+                  >
+                    {deactivateLoader ? "Deactivating..." : "Deactivate"}
+                  </Button>
+                )}
+                {!currentAuth?.sourceTokenInvalid ? (
+                  <Button onClick={handleDashboardView}>{t("importers.import")}</Button>
+                ) : (
+                  <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
+                    <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
+                      <InfoIcon height={12} width={12} />
+                      <div className="text-11">{t("importers.source_token_expired")}</div>
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
+            }
+          />
+        </div>
         {/* migrations */}
-        <div className="w-full h-full space-y-3 relative flex flex-col">
+        <div className="w-full min-h-0 flex-1 flex flex-col gap-3">
           {loader ? (
             <DashboardLoaderTable />
           ) : jobIds && jobIds.length > 0 ? (
-            <div className="w-full h-full space-y-3 relative flex flex-col">
-              <div className="relative flex items-center gap-2">
-                <div className="flex-shrink-0 text-14 font-medium py-2">{t("importers.migrations")}</div>
+            <div className="w-full min-h-0 flex-1 flex flex-col gap-3">
+              <div className="shrink-0 flex items-center gap-2">
+                <div className="shrink-0 text-14 font-medium py-2">{t("importers.migrations")}</div>
                 <Button
                   variant="secondary"
                   className="whitespace-nowrap border-none !px-1"
@@ -338,128 +256,17 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                   </div>
                 </Button>
               </div>
-              <div className="w-full h-full overflow-auto">
-                <table className="w-full table-auto">
-                  <thead>
-                    <tr className="border-0 bg-layer-1 text-13 !font-medium text-left rounded-t">
-                      <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
-                      <td className="p-3 whitespace-nowrap">Plane {t("importers.project")}</td>
-                      {!config.hideWorkspace && (
-                        <td className="p-3 whitespace-nowrap">
-                          {serviceName} {t("importers.workspace")}
-                        </td>
-                      )}
-                      {!config.hideProject && (
-                        <td className="p-3 whitespace-nowrap">
-                          {serviceName} {t("importers.project")}
-                        </td>
-                      )}
-                      <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
-                      {showSummary && <td className="p-3 whitespace-nowrap text-center">Summary</td>}
-                      {!hideBatches && (
-                        <>
-                          <td className="p-3 whitespace-nowrap text-center">{t("importers.total_batches")}</td>
-                          <td className="p-3 whitespace-nowrap text-center">{t("importers.imported_batches")}</td>
-                        </>
-                      )}
-                      {!hideRerun && <td className="p-3 whitespace-nowrap text-center">{t("importers.re_run")}</td>}
-                      {!hideCancel && <td className="p-3 whitespace-nowrap text-center">{t("importers.cancel")}</td>}
-                      <td className="p-3 whitespace-nowrap text-center">{t("importers.start_time")}</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {jobIds &&
-                      jobIds.length > 0 &&
-                      jobIds.map((jobId, index) => {
-                        const job = jobById(jobId);
-                        if (!job) return null;
-
-                        return (
-                          <tr key={job.id} className="text-13 text-secondary even:bg-layer-1">
-                            <td className="p-3 whitespace-nowrap">{index + 1}</td>
-                            <td className="p-3 whitespace-nowrap">
-                              <IconFieldRender
-                                icon={(() => {
-                                  const planeProject = getPlaneProject(job);
-                                  return planeProject?.logo_props ? (
-                                    <Logo logo={planeProject.logo_props} size={16} />
-                                  ) : (
-                                    <ProjectIcon className="w-4 h-4" />
-                                  );
-                                })()}
-                                title={getPlaneProject(job)?.name || "--"}
-                              />
-                            </td>
-                            {!config.hideWorkspace && (
-                              <td className="p-3 whitespace-nowrap">
-                                <IconFieldRender title={getWorkspaceName(job) || "--"} />
-                              </td>
-                            )}
-                            {!config.hideProject && (
-                              <td className="p-3 whitespace-nowrap">
-                                <IconFieldRender title={getProjectName(job) || "--"} />
-                              </td>
-                            )}
-                            <td className="p-3 whitespace-nowrap text-center">
-                              <SyncJobStatus status={job?.status as TJobStatus} />
-                            </td>
-                            {showSummary && (
-                              <td className="p-3 whitespace-nowrap text-center">
-                                <Button
-                                  variant="secondary"
-                                  size="sm"
-                                  prependIcon={<Download className="w-3 h-3" />}
-                                  onClick={() => handleDownloadSummary(job)}
-                                  disabled={isSummaryDisabled(job)}
-                                >
-                                  Summary
-                                </Button>
-                              </td>
-                            )}
-                            {!hideBatches && (
-                              <>
-                                <td className="p-3 whitespace-nowrap text-center">
-                                  {job?.report.total_batch_count || "-"}
-                                </td>
-                                <td className="p-3 whitespace-nowrap text-center">
-                                  {job?.report.imported_batch_count || "-"}
-                                </td>
-                              </>
-                            )}
-                            {!hideRerun && (
-                              <td className="p-3 whitespace-nowrap text-center flex justify-center">
-                                <Button
-                                  variant="link"
-                                  prependIcon={<RefreshCcw className="w-3 h-3" />}
-                                  onClick={() => handleRerunOpen(job.id)}
-                                  disabled={isReRunDisabled(job)}
-                                >
-                                  {t("importers.re_run")}
-                                </Button>
-                              </td>
-                            )}
-                            {!hideCancel && (
-                              <td className="p-3 whitespace-nowrap text-center">
-                                <Button
-                                  variant="error-outline"
-                                  prependIcon={<CircleX className="w-3 h-3" />}
-                                  onClick={() => handleCancelOpen(job.id)}
-                                  disabled={isCancelDisabled(job)}
-                                >
-                                  {t("importers.cancel")}
-                                </Button>
-                              </td>
-                            )}
-                            <td className="p-3 whitespace-nowrap text-center">
-                              {job?.report.start_time
-                                ? `${renderFormattedDate(job?.report.start_time)} ${renderFormattedTime(job?.report.start_time, "12-hour")}`
-                                : "-"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
+              <div className="min-h-0 flex-1 w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-sm">
+                <Table
+                  data={displayData}
+                  columns={columns}
+                  keyExtractor={(row) => row.job.id}
+                  tableClassName="min-w-full overflow-visible border-separate border-spacing-0"
+                  thClassName="sticky top-0 z-10 border-y border-subtle bg-layer-1 text-left font-medium divide-x-0 text-placeholder"
+                  tBodyClassName="divide-y-0"
+                  tBodyTrClassName="divide-x-0 text-secondary"
+                  tHeadTrClassName="divide-x-0"
+                />
               </div>
             </div>
           ) : (

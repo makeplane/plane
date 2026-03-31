@@ -38,7 +38,7 @@ function ImporterLayout({ params }: Route.ComponentProps) {
   if (!workspaceId || !userId || !siloBaseUrl) return null;
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper hugging>
       <Link
         href={`/${workspaceSlug}/settings/imports`}
         className="flex items-center gap-2 text-13 text-tertiary font-semibold pb-4"
