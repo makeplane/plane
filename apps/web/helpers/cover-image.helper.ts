@@ -276,7 +276,7 @@ export const handleCoverImageChange = async (
     return;
   }
 
-  return;
+  return { cover_image: newImage };
 };
 
 /**

@@ -157,17 +157,23 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       promises.push(updateCurrentUserProfile);
     }
 
-    const updatePromise = Promise.allSettled(promises).then((results) => {
-      const rejectedResult = results.find((result) => result.status === "rejected") as
-        | PromiseRejectedResult
-        | undefined;
-      if (rejectedResult) {
-        throw rejectedResult.reason ?? new Error("Failed to update profile");
-      }
-      return results.map((result) => (result as PromiseFulfilledResult<IUser | TUserProfile | undefined>).value);
-    });
-
-    updatePromise.finally(() => setIsLoading(false));
+    const updatePromise = Promise.allSettled(promises)
+      .then((results) => {
+        const rejectedResult = results.find((result) => result.status === "rejected") as
+          | PromiseRejectedResult
+          | undefined;
+        if (rejectedResult) {
+          throw rejectedResult.reason ?? new Error("Failed to update profile");
+        }
+        const values = results.map(
+          (result) => (result as PromiseFulfilledResult<IUser | TUserProfile | undefined>).value
+        );
+        if (values.some((v) => v === undefined)) {
+          throw new Error("Failed to update profile");
+        }
+        return values;
+      })
+      .finally(() => setIsLoading(false));
 
     setPromiseToast(updatePromise, {
       loading: "Updating...",
