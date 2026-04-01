@@ -247,7 +247,6 @@ class HoIssueListView(BaseAPIView):
         progress = request.query_params.get("progress")
         if progress:
             from django.utils import timezone
-            from django.db.models import Q
             today = timezone.now().date()
             p_filters = Q()
             for p in progress.split(","):
@@ -365,7 +364,6 @@ class HoCategorySummaryView(BaseAPIView):
         progress = request.query_params.get("progress")
         if progress:
             from django.utils import timezone
-            from django.db.models import Q
             today = timezone.now().date()
             p_filters = Q()
             for p in progress.split(","):
