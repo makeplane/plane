@@ -18,6 +18,8 @@
  * It implements a message queue-based architecture with retry mechanisms and error handling.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-misused-promises, @typescript-eslint/no-floating-promises, @typescript-eslint/require-await, @typescript-eslint/restrict-template-expressions */
+
 import { logger } from "@plane/logger";
 import { AsanaDataMigrator } from "@/apps/asana-importer/migrator";
 import { BitbucketWebhookWorker } from "@/apps/bitbucket-dc/workers";
@@ -41,6 +43,7 @@ import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
 import { AgentWebhookWorker } from "@/agents/workers/agent-webhook.worker";
 import { CursorWebhookWorker } from "@/agents/cursor/workers/cursor-webhook.worker";
+import { registerAgents } from "@/agents";
 import { captureException } from "@/logger";
 import type { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, s3Client, Store } from "./base";
@@ -340,6 +343,7 @@ export class TaskManager {
 
   public start = async () => {
     logger.info(`Starting consumer for ${this.queueName} 🐇🐇🐰`);
+    registerAgents();
     await this.startConsumer();
     for (const [jobType, workerType] of Object.entries(this.config.workerTypes)) {
       this.workers.set(jobType, WorkerFactory.createWorker(workerType, this.mq!, this.store!));

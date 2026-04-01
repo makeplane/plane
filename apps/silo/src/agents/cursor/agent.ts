@@ -230,8 +230,7 @@ export class CursorAgent extends BaseAgent {
         workspaceConnectionId,
         workspaceId,
       });
-      const webhookSecret = env.CURSOR_WEBHOOK_SECRET || "test-webhook-secret";
-      const webhook = webhookSecret ? { url: callbackUrl, secret: webhookSecret } : { url: callbackUrl };
+      const webhook = { url: callbackUrl, secret: env.CURSOR_WEBHOOK_SECRET };
 
       const cursorAgent = await cursorApi.launchAgent({
         prompt: { text: promptText },
