@@ -19,6 +19,7 @@ export type TPageFlagHookReturnType = {
   isMovePageEnabled: boolean;
   isPageAiSummaryEnabled: boolean;
   isPageSharingEnabled: boolean;
+  isPageDocxExportEnabled: boolean;
 };
 
 export const usePageFlag = (args: TPageFlagHookArgs): TPageFlagHookReturnType => {
@@ -27,5 +28,6 @@ export const usePageFlag = (args: TPageFlagHookArgs): TPageFlagHookReturnType =>
     isMovePageEnabled: false,
     isPageAiSummaryEnabled: false,
     isPageSharingEnabled: false,
+    isPageDocxExportEnabled: false,
   };
 };
