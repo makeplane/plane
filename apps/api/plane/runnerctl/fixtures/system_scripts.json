@@ -103,12 +103,12 @@
           "description": "Work item description",
           "required": false
         }
-      ]
-    },
-    "created_at": "2025-01-01T00:00:00Z",
-    "updated_at": "2025-01-01T00:00:00Z",
-    "created_by": null,
-    "updated_by": null
+      ],
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
   },
   {
     "model": "runnerctl.Script",
@@ -140,12 +140,12 @@
           "key": "targetProjectId",
           "required": false
         }
-      ]
-    },
-    "created_at": "2025-01-01T00:00:00Z",
-    "updated_at": "2025-01-01T00:00:00Z",
-    "created_by": null,
-    "updated_by": null
+      ],
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
   },
   {
     "model": "runnerctl.Script",
@@ -177,11 +177,11 @@
           "key": "targetProjectId",
           "required": false
         }
-      ]
-    },
-    "created_at": "2025-01-01T00:00:00Z",
-    "updated_at": "2025-01-01T00:00:00Z",
-    "created_by": null,
-    "updated_by": null
+      ],
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
   }
 ]
