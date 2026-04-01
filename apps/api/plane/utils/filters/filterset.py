@@ -127,6 +127,50 @@ class BaseFilterSet(FilterSet):
 
         return qs
 
+    def filter_datetime_date_gt(self, queryset, name, value):
+        """DateTimeField date-only greater than comparison."""
+        return Q(**{f"{name}__date__gt": value})
+
+    def filter_datetime_date_gte(self, queryset, name, value):
+        """DateTimeField date-only greater than or equal comparison."""
+        return Q(**{f"{name}__date__gte": value})
+
+    def filter_datetime_date_lt(self, queryset, name, value):
+        """DateTimeField date-only less than comparison."""
+        return Q(**{f"{name}__date__lt": value})
+
+    def filter_datetime_date_lte(self, queryset, name, value):
+        """DateTimeField date-only less than or equal comparison."""
+        return Q(**{f"{name}__date__lte": value})
+
+    def filter_datetime_date_exact(self, queryset, name, value):
+        """DateTimeField date-only exact comparison."""
+        return Q(**{f"{name}__date__exact": value})
+    
+    def filter_datetime_date_range(self, queryset, name, value):
+        """DateTimeField date-only range comparison.
+        Accepts comma-separated date string: '2026-04-01,2026-04-03'
+        """
+        if not value or not isinstance(value, str):
+            return Q()
+        parts = value.split(",")
+        if len(parts) == 2:
+            start, stop = parts[0].strip(), parts[1].strip()
+            if start and stop:
+                return Q(**{f"{name}__date__range": (start, stop)})
+            elif start:
+                return Q(**{f"{name}__date__gte": start})
+            elif stop:
+                return Q(**{f"{name}__date__lte": stop})
+        return Q()
+
+    def filter_datetime_date_isnull(self, queryset, name, value):
+        """DateTimeField date-only isnull comparison."""
+        if value in (True, "true", "True", 1, "1"):
+            return Q(**{f"{name}__date__isnull": True})
+        if value in (False, "false", "False", 0, "0"):
+            return Q(**{f"{name}__date__isnull": False})
+        return Q()  # No filter if value is not a valid boolean
 
 class IssueFilterSet(BaseFilterSet):
     # Custom filter methods to handle soft delete exclusion for relations
@@ -170,7 +214,7 @@ class IssueFilterSet(BaseFilterSet):
             "start_date": ["exact", "range"],
             "target_date": ["exact", "range"],
             "created_at": ["exact", "range"],
-            "updated_at": ["exact", "range"],
+            "updated_at": ["exact", "range", "isnull"],
             "is_draft": ["exact"],
             "priority": ["exact", "in"],
             "id": ["exact", "in"],

@@ -49,6 +49,37 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     parent_id__in = UUIDInFilter(method="filter_parent_id_in", lookup_expr="in")
     parent_id__isnull = filters.BooleanFilter(method="filter_parent_id_isnull", lookup_expr="isnull")
 
+    # DateTimeField date-only comparison filters
+    created_at__gt = filters.DateFilter(field_name="created_at", lookup_expr="gt", method="filter_datetime_date_gt")
+    created_at__gte = filters.DateFilter(field_name="created_at", lookup_expr="gte", method="filter_datetime_date_gte")
+    created_at__lt = filters.DateFilter(field_name="created_at", lookup_expr="lt", method="filter_datetime_date_lt")
+    created_at__lte = filters.DateFilter(field_name="created_at", lookup_expr="lte", method="filter_datetime_date_lte")
+    created_at__exact = filters.DateFilter(
+        field_name="created_at", lookup_expr="exact", method="filter_datetime_date_exact"
+    )
+
+    updated_at__gt = filters.DateFilter(
+        field_name="last_activity_at", lookup_expr="gt", method="filter_datetime_date_gt"
+    )
+    updated_at__gte = filters.DateFilter(
+        field_name="last_activity_at", lookup_expr="gte", method="filter_datetime_date_gte"
+    )
+    updated_at__lt = filters.DateFilter(
+        field_name="last_activity_at", lookup_expr="lt", method="filter_datetime_date_lt"
+    )
+    updated_at__lte = filters.DateFilter(
+        field_name="last_activity_at", lookup_expr="lte", method="filter_datetime_date_lte"
+    )
+    updated_at__exact = filters.DateFilter(
+        field_name="last_activity_at", lookup_expr="exact", method="filter_datetime_date_exact"
+    )
+    updated_at__range = filters.CharFilter(
+        field_name="last_activity_at", method="filter_datetime_date_range"
+    )
+    updated_at__isnull = filters.BooleanFilter(
+        field_name="last_activity_at", method="filter_datetime_date_isnull", lookup_expr="isnull"
+    )
+
     customproperty_value = filters.CharFilter(method="filter_custom_property_value")
     customproperty_value__exact = filters.CharFilter(method="filter_custom_property_value_exact")
     customproperty_value__in = CharInFilter(method="filter_custom_property_value_in", lookup_expr="in")
@@ -74,8 +105,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                 "name": ["exact", "icontains", "contains", "startswith", "endswith"],
                 "start_date": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
                 "target_date": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
-                "created_at": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
-                "updated_at": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
+                "created_at": ["exact", "range", "isnull"],
             }
         )
 
@@ -303,6 +333,9 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
             property_filter = {}
 
+            # For datetime fields, we need to use the __date suffix for date-only comparisons
+            date_suffix = "__date" if property_obj.property_type == PropertyTypeEnum.DATETIME.value else ""
+
             matching_issue_queryset = IssuePropertyValue.objects.filter(**base_filters)
             # Special handling for boolean: when value is false, no record may
             # exist in IssuePropertyValue (false is the default). So instead of
@@ -334,22 +367,22 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                property_filter[f"{field_name}__gte"] = value
+                property_filter[f"{field_name}{date_suffix}__gte"] = value
             elif lookup == "gt" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                property_filter[f"{field_name}__gt"] = value
+                property_filter[f"{field_name}{date_suffix}__gt"] = value
             elif lookup == "lte" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                property_filter[f"{field_name}__lte"] = value
+                property_filter[f"{field_name}{date_suffix}__lte"] = value
             elif lookup == "lt" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                property_filter[f"{field_name}__lt"] = value
+                property_filter[f"{field_name}{date_suffix}__lt"] = value
             elif lookup == "icontains" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
                 PropertyTypeEnum.URL.value,
@@ -567,6 +600,25 @@ class InitiativeProjectFilterSet(BaseFilterSet):
     target_date = filters.CharFilter(method="filter_target_date")
     target_date__gte = filters.CharFilter(method="filter_target_date_gte", lookup_expr="gte")
     target_date__lte = filters.CharFilter(method="filter_target_date_lte", lookup_expr="lte")
+
+    # DateTimeField date-only comparison filters
+    created_at__gt = filters.DateFilter(field_name="created_at", lookup_expr="gt", method="filter_datetime_date_gt")
+    created_at__gte = filters.DateFilter(field_name="created_at", lookup_expr="gte", method="filter_datetime_date_gte")
+    created_at__lt = filters.DateFilter(field_name="created_at", lookup_expr="lt", method="filter_datetime_date_lt")
+    created_at__lte = filters.DateFilter(field_name="created_at", lookup_expr="lte", method="filter_datetime_date_lte")
+    updated_at__gt = filters.DateFilter(
+        field_name="updated_at", lookup_expr="gt", method="filter_datetime_date_gt"
+    )
+    updated_at__gte = filters.DateFilter(
+        field_name="updated_at", lookup_expr="gte", method="filter_datetime_date_gte"
+    )
+    updated_at__lt = filters.DateFilter(
+        field_name="updated_at", lookup_expr="lt", method="filter_datetime_date_lt"
+    )
+    updated_at__lte = filters.DateFilter(
+        field_name="updated_at", lookup_expr="lte", method="filter_datetime_date_lte"
+    )
+
     priority = filters.CharFilter(method="filter_priority")
     priority__in = CharInFilter(method="filter_priority_in", lookup_expr="in")
     state_id = filters.CharFilter(method="filter_state_id", lookup_expr="in")
@@ -575,8 +627,8 @@ class InitiativeProjectFilterSet(BaseFilterSet):
     class Meta:
         model = Project
         fields = {
-            "created_at": ["exact", "gte", "gt", "lte", "lt", "range"],
-            "updated_at": ["exact", "gte", "gt", "lte", "lt", "range"],
+            "created_at": ["exact", "range"],
+            "updated_at": ["exact", "range"],
             "archived_at": ["exact", "isnull"],
             "network": ["exact", "in"],
         }
