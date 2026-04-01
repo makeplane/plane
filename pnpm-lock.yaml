@@ -829,8 +829,6 @@ overrides:
   flatted: '>=3.4.2'
   socket.io-parser: '>=4.2.6'
   handlebars: '>=4.7.9'
-  path-to-regexp: '>=8.4.0'
-  express>path-to-regexp: 0.1.13
   picomatch@2: '>=2.3.2'
   picomatch@4: '>=4.0.4'
   yaml: '>=2.8.3'
@@ -12423,6 +12421,9 @@ packages:
 
   path-to-regexp@0.1.13:
     resolution: {integrity: sha512-A/AGNMFN3c8bOlvV9RreMdrv7jsmF9XIfDeCd87+I8RNg6s78BhJxMu69NEMHBSJFxKidViTEdruRwEk/WIKqA==}
+
+  path-to-regexp@3.3.0:
+    resolution: {integrity: sha512-qyCH421YQPS2WFDxDjftfc1ZR5WKQzVzqsp4n9M2kQhVOo/ByahFoUNJfl58kOcEGfQ//7weFTDhm+ss8Ecxgw==}
 
   path-to-regexp@8.4.1:
     resolution: {integrity: sha512-fvU78fIjZ+SBM9YwCknCvKOUKkLVqtWDVctl0s7xIqfmfb38t2TT4ZU2gHm+Z8xGwgW+QWEU3oQSAzIbo89Ggw==}
@@ -25721,6 +25722,8 @@ snapshots:
 
   path-to-regexp@0.1.13: {}
 
+  path-to-regexp@3.3.0: {}
+
   path-to-regexp@8.4.1: {}
 
   path-type@4.0.0: {}
@@ -26922,7 +26925,7 @@ snapshots:
       mime-types: 2.1.18
       minimatch: 10.2.4
       path-is-inside: 1.0.2
-      path-to-regexp: 8.4.1
+      path-to-regexp: 3.3.0
       range-parser: 1.2.0
 
   serve-static@1.16.3:
