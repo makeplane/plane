@@ -3488,9 +3488,22 @@ export default {
     category: "Category",
     search: "Search...",
     clear_sort: "Clear sort",
+    clear_filters_sort: "Clear filters & sort",
     ascending: "Ascending",
     descending: "Descending",
     work_item_count: "Number of Work Items",
     work_items: "Work Items",
+    priority: {
+      urgent: "Urgent",
+      high: "High",
+      medium: "Medium",
+      low: "Low",
+      none: "None",
+    },
+    progress_status: {
+      on_track: "On Track",
+      behind: "Behind",
+      no_target_date: "No Target Date",
+    },
   },
 } as const;

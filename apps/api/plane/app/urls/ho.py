@@ -3,10 +3,11 @@
 
 from django.urls import path
 
-from plane.app.views.ho import HoCategorySummaryView, HoIssueListView, HoAccessibleWorkspacesView
+from plane.app.views.ho import HoCategorySummaryView, HoIssueListView, HoAccessibleWorkspacesView, HoFilterOptionsView
 
 urlpatterns = [
     path("ho/issues/", HoIssueListView.as_view(), name="ho-issues"),
     path("ho/category-summary/", HoCategorySummaryView.as_view(), name="ho-category-summary"),
     path("ho/workspaces/", HoAccessibleWorkspacesView.as_view(), name="ho-workspaces"),
+    path("ho/filter-options/", HoFilterOptionsView.as_view(), name="ho-filter-options"),
 ]

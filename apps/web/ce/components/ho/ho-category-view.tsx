@@ -21,6 +21,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
   useEffect(() => {
     void store.fetchCategorySummary();
     void store.fetchAccessibleWorkspaces();
+    void store.fetchFilterOptions();
   }, [store]);
 
   const handleSort = (key: SortKey | "clear") => {

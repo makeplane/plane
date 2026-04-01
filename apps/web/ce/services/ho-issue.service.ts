@@ -63,6 +63,18 @@ export type THoAccessibleWorkspace = {
   projects: THoWorkspaceProject[];
 };
 
+export type THoFilterOptions = {
+  states: string[];
+  main_task_categories: string[];
+  sub_task_categories: string[];
+  cycles: string[];
+  modules: string[];
+  assignees: { id: string; display_name: string }[];
+  leads: { id: string; display_name: string }[];
+  priorities: string[];
+  progress: string[];
+};
+
 export class HoIssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -89,6 +101,15 @@ export class HoIssueService extends APIService {
   async listAccessibleWorkspaces(): Promise<THoAccessibleWorkspace[]> {
     return this.get("/api/ho/workspaces/")
       .then((res: { data: THoAccessibleWorkspace[] }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listFilterOptions(params: Record<string, string>): Promise<THoFilterOptions> {
+    const query = new URLSearchParams(params).toString();
+    return this.get(`/api/ho/filter-options/${query ? `?${query}` : ""}`)
+      .then((res: { data: THoFilterOptions }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });
