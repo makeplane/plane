@@ -499,7 +499,6 @@ export default {
   state_is_required: "상태가 필요합니다",
   priority_is_required: "우선순위가 필요합니다",
   assignee_is_required: "담당자가 필요합니다",
-  module_is_required: "모듈이 필요합니다",
   label_is_required: "레이블이 필요합니다",
   start_date_is_required: "시작 날짜가 필요합니다",
   due_date_is_required: "마감 날짜가 필요합니다",

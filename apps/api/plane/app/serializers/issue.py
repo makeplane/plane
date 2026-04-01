@@ -832,6 +832,7 @@ class IssueSerializer(DynamicBaseSerializer):
     sub_issues_count = serializers.IntegerField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
+    total_logged_minutes = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue
@@ -862,6 +863,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "total_logged_minutes",
             "main_task_category_id",
             "sub_task_category_id",
         ]

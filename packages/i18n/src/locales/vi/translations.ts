@@ -512,7 +512,6 @@ export default {
   state_is_required: "Trạng thái là bắt buộc",
   priority_is_required: "Độ ưu tiên là bắt buộc",
   assignee_is_required: "Người được phân công là bắt buộc",
-  module_is_required: "Module là bắt buộc",
   label_is_required: "Nhãn là bắt buộc",
   start_date_is_required: "Ngày bắt đầu là bắt buộc",
   due_date_is_required: "Ngày hết hạn là bắt buộc",

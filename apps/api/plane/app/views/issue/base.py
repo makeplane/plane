@@ -137,6 +137,14 @@ class IssueListEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
             .distinct()
         )
 
@@ -189,6 +197,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "total_logged_minutes",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -474,6 +483,7 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "total_logged_minutes",
                     "main_task_category_id",
                     "sub_task_category_id",
                 )
@@ -538,6 +548,14 @@ class IssueViewSet(BaseViewSet):
                     .values("parent")
                     .annotate(count=Count("id"))
                     .values("count")
+                )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
                 )
             )
             .annotate(
@@ -900,6 +918,14 @@ class IssuePaginatedViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
         )
 
     def process_paginated_result(self, fields, results, timezone):
@@ -945,6 +971,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "total_logged_minutes",
         ]
 
         if str(is_description_required).lower() == "true":
@@ -1070,6 +1097,14 @@ class IssueDetailEndpoint(BaseAPIView):
                 Prefetch(
                     "issue_module",
                     queryset=ModuleIssue.objects.all(),
+                )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
                 )
             )
         )

@@ -74,7 +74,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
             <tr>
               <th
                 scope="col"
-                className="px-3 py-2 sticky left-0 z-30 bg-surface-2 border-r border-subtle shadow-[1px_0_0_0_var(--color-border-subtle)]"
+                className="px-3 py-2 sticky left-0 z-30 bg-surface-2 border-r border-subtle shadow-[1px_0_0_0_var(--color-border-subtle)] min-w-[200px]"
               >
                 {t("capacity_member")}
               </th>
@@ -101,10 +101,10 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
 
                 return (
                   <tr key={member.member_id} className="group hover:bg-surface-2/50 transition-colors duration-200">
-                    <td className="px-3 py-2 font-medium text-primary sticky left-0 z-10 bg-surface-1 group-hover:bg-surface-2/50 transition-colors duration-200 border-r border-subtle shadow-[1px_0_0_0_var(--color-border-subtle)]">
-                      <div className="flex items-center gap-2.5">
+                    <td className="px-3 py-2 font-medium text-primary sticky left-0 z-10 bg-surface-1 group-hover:bg-surface-2/50 transition-colors duration-200 border-r border-subtle shadow-[1px_0_0_0_var(--color-border-subtle)] min-w-[200px]">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <Avatar name={member.display_name} src={member.avatar_url} size="sm" />
-                        <span className="truncate max-w-[130px] font-semibold">{member.display_name}</span>
+                        <span className="truncate max-w-[250px] font-semibold">{member.display_name}</span>
                       </div>
                     </td>
                     <td className="px-3 py-2 text-right text-primary font-bold border-r border-subtle/30">
@@ -146,7 +146,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           {members.length > 0 && (
             <tfoot className="bg-surface-2/50 border-t border-subtle font-bold text-primary">
               <tr>
-                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-12 font-medium text-tertiary uppercase">
+                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-12 font-medium text-tertiary uppercase min-w-[200px]">
                   {t("total_logged_time")}
                 </td>
                 <td className="px-3 py-2 text-right text-13 font-bold border-r border-subtle">
