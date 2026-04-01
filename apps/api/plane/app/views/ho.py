@@ -1,6 +1,7 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 
+from django.contrib.auth import get_user_model
 from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
 
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 
 from plane.app.serializers.ho import HoIssueSerializer
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Department, Issue, Project, ProjectMember, StaffProfile, Workspace, WorkspaceMember
+from plane.db.models import Department, Issue, IssueWorkLog, Project, ProjectMember, StaffProfile, Workspace, WorkspaceMember
 from plane.license.models import Instance, InstanceAdmin
 
 
@@ -504,6 +505,57 @@ class HoFilterOptionsView(BaseAPIView):
             "priorities": priorities,
             "progress": ["on_track", "behind", "no_target_date"],
         }, status=status.HTTP_200_OK)
+
+
+class HoIssueWorklogBreakdownView(BaseAPIView):
+    """GET /api/ho/issues/<issue_id>/worklogs/ — per-user worklog totals for a single HO issue.
+
+    Uses HO workspace-level permissions instead of project membership, so HO users
+    who are not project members can still see the breakdown (fixing the mismatch
+    with total_log_time shown in the datasheet which is annotated without membership filter).
+    """
+
+    def get(self, request, issue_id):
+        workspace_ids = get_accessible_workspace_ids(request.user)
+        if not workspace_ids:
+            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Verify issue belongs to an accessible workspace
+        issue_exists = Issue.objects.filter(
+            id=issue_id,
+            workspace_id__in=workspace_ids,
+            deleted_at__isnull=True,
+            archived_at__isnull=True,
+        ).exists()
+        if not issue_exists:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Aggregate total minutes per user (SoftDeletionManager already excludes deleted records)
+        breakdown = (
+            IssueWorkLog.objects.filter(issue_id=issue_id)
+            .values("logged_by")
+            .annotate(total_minutes=Sum("duration_minutes"))
+            .order_by("-total_minutes")
+        )
+
+        # Fetch user display details in one query
+        User = get_user_model()
+        user_ids = [row["logged_by"] for row in breakdown]
+        user_map = {
+            str(u.id): {"display_name": u.display_name, "avatar_url": u.avatar or ""}
+            for u in User.objects.filter(id__in=user_ids).only("id", "display_name", "avatar")
+        }
+
+        result = [
+            {
+                "user_id": str(row["logged_by"]),
+                "display_name": user_map.get(str(row["logged_by"]), {}).get("display_name", ""),
+                "avatar_url": user_map.get(str(row["logged_by"]), {}).get("avatar_url", ""),
+                "total_minutes": row["total_minutes"],
+            }
+            for row in breakdown
+        ]
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class HoAccessibleWorkspacesView(BaseAPIView):

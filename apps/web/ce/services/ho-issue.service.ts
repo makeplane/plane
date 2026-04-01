@@ -63,6 +63,13 @@ export type THoAccessibleWorkspace = {
   projects: THoWorkspaceProject[];
 };
 
+export type THoWorklogBreakdownEntry = {
+  user_id: string;
+  display_name: string;
+  avatar_url: string;
+  total_minutes: number;
+};
+
 export type THoFilterOptions = {
   states: string[];
   main_task_categories: string[];
@@ -101,6 +108,14 @@ export class HoIssueService extends APIService {
   async listAccessibleWorkspaces(): Promise<THoAccessibleWorkspace[]> {
     return this.get("/api/ho/workspaces/")
       .then((res: { data: THoAccessibleWorkspace[] }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listIssueWorklogBreakdown(issueId: string): Promise<THoWorklogBreakdownEntry[]> {
+    return this.get(`/api/ho/issues/${issueId}/worklogs/`)
+      .then((res: { data: THoWorklogBreakdownEntry[] }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });
