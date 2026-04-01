@@ -112,12 +112,16 @@ class PageDocument(BaseDocument):
         """
         Data preparation method for project_ids field
         """
+        if instance.is_global:
+            return []
         return [project.id for project in instance.projects.all()]
 
     def prepare_project_identifiers(self, instance):
         """
         Data preparation method for project_identifiers field
         """
+        if instance.is_global:
+            return []
         return [project.identifier for project in instance.projects.all()]
 
     def prepare_workspace_slug(self, instance):
@@ -130,9 +134,10 @@ class PageDocument(BaseDocument):
         """
         Data preparation method for active_member_user_ids field
         """
-        if instance.projects.count() > 0:
+        projects = list(instance.projects.all())
+        if not instance.is_global and projects:
             project_member_ids = []
-            for project in instance.projects.all():
+            for project in projects:
                 if hasattr(project, "project_members"):
                     project_member_ids.extend([member.member_id for member in project.project_members])
                 else:
