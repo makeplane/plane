@@ -29,22 +29,16 @@ export type TVersionDiffParams = {
   teamspaceId?: string;
 };
 
-export type TPdfExportStage =
-  | "queued"
-  | "fetching-content"
-  | "processing-images"
-  | "rendering-pdf"
-  | "complete"
-  | "failed";
+export type TExportStage = "fetching-content" | "rendering-pdf" | "rendering-docx" | "complete";
 
-export type TPdfExportProgress = {
-  stage: TPdfExportStage;
+export type TExportProgress = {
+  stage: TExportStage;
   progress: number;
   message: string;
 };
 
-export type TPdfExportCallbacks = {
-  onProgress?: (progress: TPdfExportProgress) => void;
+export type TExportCallbacks = {
+  onProgress?: (progress: TExportProgress) => void;
   onComplete?: (blob: Blob, fileName: string) => void;
   onError?: (error: { code: string; message: string }) => void;
 };
@@ -77,39 +71,42 @@ export class LiveService extends APIService {
         withCredentials: true,
       }
     );
-    return response.data;
+    return response.data as IframelyResponse;
   }
 
   async getContent(url: string): Promise<string> {
     const response = await this.get(`/content`, {
       params: { url: url },
     });
-    return response.data.content;
+    return (response.data as { content: string }).content;
   }
 
   /**
-   * Starts a PDF export via a single POST-based SSE stream.
+   * Starts an export (PDF or DOCX) via a single POST-based SSE stream.
    * Returns an abort function to cancel the export.
    */
-  exportToPdfWithProgress(
+  exportWithProgress(
     params: {
       pageId: string;
       workspaceSlug: string;
       projectId?: string;
       teamspaceId?: string;
       title?: string;
+      author?: string;
+      subject?: string;
       pageSize?: "A4" | "A3" | "A2" | "LETTER" | "LEGAL" | "TABLOID";
       pageOrientation?: "portrait" | "landscape";
       fileName?: string;
       noAssets?: boolean;
+      format?: "pdf" | "docx";
     },
-    callbacks: TPdfExportCallbacks
+    callbacks: TExportCallbacks
   ): () => void {
     const controller = new AbortController();
     let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
 
     const run = async () => {
-      const response = await this.post("/pdf-export", params, {
+      const response = await this.post("/export", params, {
         responseType: "stream",
         adapter: "fetch",
         signal: controller.signal,
@@ -149,16 +146,24 @@ export class LiveService extends APIService {
           if (!data) continue;
 
           if (eventType === "progress") {
-            const progress = JSON.parse(data) as TPdfExportProgress;
+            const progress = JSON.parse(data) as TExportProgress;
             callbacks.onProgress?.(progress);
           } else if (eventType === "complete") {
-            const { fileName, data: base64Data } = JSON.parse(data) as { fileName: string; data: string };
+            const {
+              fileName,
+              data: base64Data,
+              contentType,
+            } = JSON.parse(data) as {
+              fileName: string;
+              data: string;
+              contentType?: string;
+            };
             const binaryString = atob(base64Data);
             const bytes = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) {
               bytes[i] = binaryString.charCodeAt(i);
             }
-            const blob = new Blob([bytes], { type: "application/pdf" });
+            const blob = new Blob([bytes], { type: contentType || "application/pdf" });
             callbacks.onComplete?.(blob, fileName);
           } else if (eventType === "error") {
             const error = JSON.parse(data) as { code: string; message: string };
@@ -174,7 +179,7 @@ export class LiveService extends APIService {
         const text = typeof err.response.data === "string" ? err.response.data : JSON.stringify(err.response.data);
         let parsed: { code: string; message: string };
         try {
-          parsed = JSON.parse(text);
+          parsed = JSON.parse(text) as { code: string; message: string };
         } catch {
           parsed = { code: "HTTP_ERROR", message: text || `HTTP ${err.response.status}` };
         }
@@ -188,7 +193,7 @@ export class LiveService extends APIService {
     });
 
     return () => {
-      reader?.cancel();
+      void reader?.cancel();
       controller.abort();
     };
   }
@@ -207,7 +212,7 @@ export class LiveService extends APIService {
         withCredentials: true,
       }
     );
-    return response.data;
+    return response.data as TVersionDiffResponse;
   }
 }
 

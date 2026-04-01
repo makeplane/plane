@@ -33,3 +33,12 @@ export type {
   TipTapMark,
   TipTapNode,
 } from "./types";
+// Re-export export-core types for convenience
+export type {
+  ExportMetadata,
+  ExportWorkItemEmbed,
+  ExportWorkItemMention,
+  ExportUserMention,
+  ExportPageEmbed,
+  ExportFileAsset,
+} from "@/lib/export-core";

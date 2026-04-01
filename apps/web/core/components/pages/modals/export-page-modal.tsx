@@ -36,7 +36,7 @@ type Props = {
   teamspaceId?: string;
 };
 
-type TExportFormats = "pdf" | "markdown";
+type TExportFormats = "pdf" | "docx" | "markdown";
 type TPageFormats = "A4" | "A3" | "A2" | "LETTER" | "LEGAL" | "TABLOID";
 type TContentVariety = "everything" | "no-assets";
 
@@ -55,6 +55,10 @@ const EXPORT_FORMATS: {
   {
     key: "pdf",
     label: "PDF",
+  },
+  {
+    key: "docx",
+    label: "Word (DOCX)",
   },
   {
     key: "markdown",
@@ -179,30 +183,31 @@ export function ExportPageModal(props: Props) {
     }, 1000);
   };
 
-  // handle export as a PDF via SSE
-  const handleExportAsPDF = () => {
+  // handle export via live server (PDF or DOCX)
+  const handleExportViaLiveServer = (
+    exportFileName: string,
+    extraParams?: { pageSize?: TPageFormats; format?: "pdf" | "docx" }
+  ) => {
     if (!workspaceSlug) throw new Error("Workspace slug is required");
 
     setExportState("exporting");
 
-    const pdfFileName = `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`;
-
     try {
-      const abort = liveService.exportToPdfWithProgress(
+      const abort = liveService.exportWithProgress(
         {
           pageId,
           workspaceSlug: workspaceSlug.toString(),
           projectId: projectId?.toString(),
           teamspaceId,
           title: pageTitle,
-          pageSize: selectedPageFormat,
-          fileName: pdfFileName,
+          fileName: exportFileName,
           noAssets: selectedContentVariety === "no-assets",
+          ...extraParams,
         },
         {
           onProgress: () => {},
           onComplete: (blob) => {
-            initiateDownload(blob, pdfFileName);
+            initiateDownload(blob, exportFileName);
             setExportState("complete");
             setToast({
               type: TOAST_TYPE.SUCCESS,
@@ -268,9 +273,11 @@ export function ExportPageModal(props: Props) {
   // handle export
   const handleExport = () => {
     if (selectedExportFormat === "pdf") {
-      handleExportAsPDF();
-    }
-    if (selectedExportFormat === "markdown") {
+      const pdfFileName = `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`;
+      handleExportViaLiveServer(pdfFileName, { pageSize: selectedPageFormat });
+    } else if (selectedExportFormat === "docx") {
+      handleExportViaLiveServer(`${fileName}.docx`, { format: "docx" });
+    } else if (selectedExportFormat === "markdown") {
       handleExportAsMarkdown();
     }
   };
