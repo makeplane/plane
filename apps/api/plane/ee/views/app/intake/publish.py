@@ -67,7 +67,7 @@ class ProjectInTakePublishViewSet(BaseViewSet):
 
 
 class IntakeFormRegenerateViewSet(BaseAPIView):
-    use_read_replica = True
+    use_read_replica = False
 
     permission_classes = [ProjectMemberPermission]
 

@@ -53,7 +53,7 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectFeatureEndpoint(BaseAPIView):
-    use_read_replica = True
+    use_read_replica = False
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):

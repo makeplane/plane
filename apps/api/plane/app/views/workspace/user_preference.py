@@ -23,7 +23,7 @@ from rest_framework import status
 
 
 class WorkspaceUserPreferenceViewSet(BaseAPIView):
-    use_read_replica = True
+    use_read_replica = False
 
     model = WorkspaceUserPreference
 

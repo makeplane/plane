@@ -42,7 +42,7 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 class IntakeSettingEndpoint(BaseAPIView):
-    use_read_replica = True
+    use_read_replica = False
 
     def get_intake_email_domain(self):
         return settings.INTAKE_EMAIL_DOMAIN
