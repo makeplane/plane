@@ -36,6 +36,7 @@
     "@hocuspocus/extension-redis": "catalog:",
     "@hocuspocus/server": "catalog:",
     "@hocuspocus/transformer": "catalog:",
+    "@hungknguyen/docx-math-converter": "^1.1.4",
     "@plane/constants": "workspace:*",
     "@plane/decorators": "workspace:*",
     "@plane/editor": "workspace:*",
@@ -51,6 +52,7 @@
     "compression": "catalog:",
     "cookie-parser": "catalog:",
     "cors": "catalog:",
+    "docx": "^9.5.1",
     "dotenv": "catalog:",
     "effect": "catalog:",
     "emoji-datasource-google": "^16.0.0",
@@ -60,6 +62,7 @@
     "hast-util-to-mdast": "catalog:",
     "helmet": "catalog:",
     "ioredis": "catalog:",
+    "jszip": "^3.10.1",
     "mdast": "catalog:",
     "react": "catalog:",
     "rehype-parse": "catalog:",
@@ -73,7 +76,7 @@
     "y-prosemirror": "catalog:",
     "y-protocols": "catalog:",
     "yjs": "catalog:",
-    "zod": "^3.25.76"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",

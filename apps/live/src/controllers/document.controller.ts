@@ -36,7 +36,7 @@ const convertDocumentSchema = z.object({
 export class DocumentController {
   @Post("/")
   @Middleware(requireSecretKey)
-  async convertDocument(req: Request, res: Response) {
+  convertDocument(req: Request, res: Response) {
     try {
       // Validate request body
       const validatedData = convertDocumentSchema.parse(req.body as TConvertDocumentRequestBody);
@@ -55,7 +55,7 @@ export class DocumentController {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const validationErrors = error.errors.map((err) => ({
+        const validationErrors = error.issues.map((err) => ({
           path: err.path.join("."),
           message: err.message,
         }));

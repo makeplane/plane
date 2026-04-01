@@ -105,7 +105,7 @@ export class MarkdownConversionController {
             component: "markdown-conversion-controller",
             operation: "convertToMarkdown",
             ...clientInfo,
-            validationErrors: error.errors.map((err) => ({
+            validationErrors: error.issues.map((err) => ({
               path: err.path.join("."),
               message: err.message,
             })),

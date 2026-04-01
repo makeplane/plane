@@ -11,8 +11,25 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// Re-export all color constants and utilities from the shared export-core library.
-// This file is kept for backward compatibility with existing PDF imports.
+export type {
+  TipTapMark,
+  TipTapNode,
+  TipTapDocument,
+  ExportMetadata,
+  ExportWorkItemEmbed,
+  ExportWorkItemMention,
+  ExportUserMention,
+  ExportPageEmbed,
+  ExportFileAsset,
+  WalkerState,
+  NodeRenderer,
+  NodeRendererRegistry,
+  MarkRenderer,
+  MarkRendererRegistry,
+} from "./types";
+export { walkTipTapNode, walkTipTapDocument } from "./tiptap-walker";
+export type { WalkOptions } from "./tiptap-walker";
+export { applyMarks } from "./marks";
 export {
   EDITOR_TEXT_COLORS,
   EDITOR_BACKGROUND_COLORS,
@@ -37,5 +54,5 @@ export {
   getBackgroundColorHex,
   isCssVariable,
   extractColorKeyFromCssVariable,
-} from "../export-core/colors";
-export type { EditorColorKey } from "../export-core/colors";
+} from "./colors";
+export type { EditorColorKey } from "./colors";
