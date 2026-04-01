@@ -36,7 +36,6 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
 }: Props) {
   // derived values
   const isEmptyLevel = level > 0 && workItemTypes.length === 0;
-  const firstWorkItemType = workItemTypes[0];
   // translation
   const { t } = useTranslation();
 
@@ -57,43 +56,24 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
 
   return (
     <div className="bg-layer-2 border border-subtle p-3 rounded-lg flex items-center justify-between gap-2 truncate">
-      <div className="flex flex-col gap-2 truncate">
-        <div className="shrink-0 flex items-center gap-3">
-          <span
-            className={cn(
-              "shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center",
-              {
-                "text-placeholder": level === 0,
-              }
-            )}
-          >
-            {level}
-          </span>
-          <>
-            {level === 0 ? (
-              <span className="shrink-0 text-body-xs-regular text-secondary">
-                {t("work_item_type_hierarchy.levels.zero_level_description")}
-              </span>
-            ) : firstWorkItemType ? (
-              <div className="shrink-0 flex items-center gap-3">
-                <IssueTypeLogo
-                  icon_props={firstWorkItemType?.logo_props?.icon}
-                  size="sm"
-                  isDefault={firstWorkItemType?.is_default}
-                  containerClassName="shrink-0"
-                />
-                <span className="grow text-body-sm-medium truncate">{firstWorkItemType.name}</span>
-                {/* {firstWorkItemType.is_global && (
-                        <span className="shrink-0">
-                          <Badge variant="warning">{t("common.global")}</Badge>
-                        </span>
-                      )} */}
-              </div>
-            ) : null}
-          </>
-        </div>
-        {level === 0 && (
-          <div className="flex flex-wrap items-center gap-2 ml-11 mt-2">
+      <div className="flex gap-2 truncate">
+        <span
+          className={cn(
+            "shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center",
+            {
+              "text-placeholder": level === 0,
+            }
+          )}
+        >
+          {level}
+        </span>
+        <div className="flex flex-col gap-y-2 py-1">
+          {level === 0 && (
+            <span className="shrink-0 text-body-xs-regular text-secondary">
+              {t("work_item_type_hierarchy.levels.zero_level_description")}
+            </span>
+          )}
+          <div className="flex flex-wrap items-center gap-2">
             {workItemTypes.map((workItemType) => (
               <Pill
                 key={workItemType.id}
@@ -111,7 +91,7 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
               </Pill>
             ))}
           </div>
-        )}
+        </div>
       </div>
       {!isEmptyLevel && level > 0 && (
         <WorkItemTypeHierarchyLevelQuickActions level={level} workItemTypes={workItemTypes} />

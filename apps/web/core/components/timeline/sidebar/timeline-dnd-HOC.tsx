@@ -103,7 +103,7 @@ export const TimelineDnDHOC = observer(function TimelineDnDHOC(props: TimelineDn
         },
       })
     );
-  }, [blockRef?.current, isDropEnabled, isLastChild, onDrop]);
+  }, [isDropEnabled, isLastChild, onDrop]);
 
   useOutsideClickDetector(blockRef, () => blockRef?.current?.classList?.remove(HIGHLIGHT_WITH_LINE));
 

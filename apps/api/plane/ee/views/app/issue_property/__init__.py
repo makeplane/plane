@@ -22,6 +22,7 @@ from .type import (
     WorkspaceWorkItemTypeEndpoint,
     WorkspaceWorkItemTypePropertyEndpoint,
     WorkspaceDefaultWorkItemTypeEndpoint,
+    WorkitemHierarchyEndpoint,
 )
 from .value import IssuePropertyValueEndpoint
 from .merge import MergeWorkItemTypesEndpoint

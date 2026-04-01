@@ -7086,6 +7086,8 @@ si vous êtes sûr que votre recherche est correcte.`,
       title: "Ajouter un niveau de hiérarchie",
       description: "Ajouter un nouveau niveau de hiérarchie au type d'élément de travail.",
       work_item_type: "Type d'élément de travail",
+      select_placeholder: "Sélectionner les types",
+      search_placeholder: "Rechercher des types",
       empty_state: {
         title: "Tous les types d'éléments de travail sont utilisés",
         description:
@@ -7095,24 +7097,9 @@ si vous êtes sûr que votre recherche est correcte.`,
         title: "Erreur !",
         message: "{type_name} ne peut pas être ajouté au niveau {level} car cela enfreint les règles de hiérarchie.",
       },
-      not_found_toast: {
-        title: "Erreur",
-        message: "Type d'élément de travail introuvable.",
-      },
       error_toast: {
         title: "Erreur",
         message: "Impossible d'ajouter le type d'élément de travail à la hiérarchie.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Suppression du type d'élément de travail du niveau",
-      success: {
-        title: "Succès !",
-        message: "Type d'élément de travail supprimé du niveau avec succès.",
-      },
-      error: {
-        title: "Erreur !",
-        message: "Impossible de supprimer le type d'élément de travail du niveau.",
       },
     },
     work_item_modal: {

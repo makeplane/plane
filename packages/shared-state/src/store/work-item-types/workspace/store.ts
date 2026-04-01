@@ -39,6 +39,7 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
   // helpers
   #getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
   #enrichProjectTypeIds: (types: TWorkItemTypeResponse[]) => void;
+  #getWorkItemTypeById: (typeId: string) => BaseWorkItemTypeInstanceSchema | undefined;
 
   constructor(args: WorkspaceWorkItemTypesStoreArgs) {
     super({
@@ -57,11 +58,13 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
       createType: action,
       deleteType: action,
       enableWorkItemTypes: action,
+      updateHierarchy: action,
     });
 
     // helpers
     this.#getWorkspaceRoleByWorkspaceSlug = args.getWorkspaceRoleByWorkspaceSlug;
     this.#enrichProjectTypeIds = args.enrichProjectTypeIds;
+    this.#getWorkItemTypeById = args.get;
   }
 
   getLoaderByWorkspaceSlug: WorkspaceWorkItemTypesStoreSchema["getLoaderByWorkspaceSlug"] = computedFn(
@@ -145,6 +148,30 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
       });
     }
     return response;
+  };
+
+  updateHierarchy: WorkspaceWorkItemTypesStoreSchema["updateHierarchy"] = async (workspaceSlug, payload) => {
+    try {
+      await workspaceTypeService.updateHierarchy(workspaceSlug, payload);
+      const allTypesAtLevel = this.getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug).get(payload.level);
+      const addedTypes = payload.type_ids.filter((typeId) => !allTypesAtLevel?.some((t) => t.id === typeId));
+      const removedTypes = allTypesAtLevel?.filter((t) => !payload.type_ids.includes(t.id));
+      runInAction(() => {
+        addedTypes.forEach((typeId) => {
+          this.#getWorkItemTypeById(typeId)?.mutateProperties({
+            level: payload.level,
+          });
+        });
+        removedTypes?.forEach((type) => {
+          type.mutateProperties({
+            level: 0,
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Failed to update hierarchy:", error);
+      throw error;
+    }
   };
 
   // permissions

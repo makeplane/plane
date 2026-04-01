@@ -7843,6 +7843,8 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       title: "Hierarchieebene hinzufügen",
       description: "Fügen Sie dem Arbeitselement-Typ eine neue Hierarchieebene hinzu.",
       work_item_type: "Arbeitselement-Typ",
+      select_placeholder: "Typen auswählen",
+      search_placeholder: "Typen suchen",
       empty_state: {
         title: "Alle Arbeitselement-Typen werden verwendet",
         description: "Jeder in diesem Arbeitsbereich definierte Arbeitselement-Typ ist bereits Teil Ihrer Hierarchie.",
@@ -7851,24 +7853,9 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
         title: "Fehler!",
         message: "{type_name} kann nicht zur Ebene {level} hinzugefügt werden, da dies die Hierarchieregeln verletzt.",
       },
-      not_found_toast: {
-        title: "Fehler",
-        message: "Arbeitselement-Typ nicht gefunden.",
-      },
       error_toast: {
         title: "Fehler",
         message: "Arbeitselement-Typ konnte nicht zur Hierarchie hinzugefügt werden.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Arbeitselement-Typ wird von der Ebene entfernt",
-      success: {
-        title: "Erfolg!",
-        message: "Arbeitselement-Typ erfolgreich von der Ebene entfernt.",
-      },
-      error: {
-        title: "Fehler!",
-        message: "Arbeitselement-Typ konnte nicht von der Ebene entfernt werden.",
       },
     },
     work_item_modal: {

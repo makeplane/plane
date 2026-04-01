@@ -432,7 +432,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
   },
 
   table: (_node: TipTapNode, children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => {
-    const rows = children.filter((c) => c instanceof TableRow) as TableRow[];
+    const rows = children.filter((c) => c instanceof TableRow);
     if (rows.length === 0) return [];
 
     return [

@@ -6967,6 +6967,8 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       title: "Dodaj poziom hierarchii",
       description: "Dodaj nowy poziom hierarchii do typu elementu roboczego.",
       work_item_type: "Typ elementu roboczego",
+      select_placeholder: "Wybierz typy",
+      search_placeholder: "Szukaj typów",
       empty_state: {
         title: "Wszystkie typy elementów roboczych są w użyciu",
         description: "Każdy typ elementu roboczego zdefiniowany w tym obszarze roboczym jest już częścią hierarchii.",
@@ -6975,24 +6977,9 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
         title: "Błąd!",
         message: "{type_name} nie może być dodany do poziomu {level}, ponieważ narusza zasady hierarchii.",
       },
-      not_found_toast: {
-        title: "Błąd",
-        message: "Nie znaleziono typu elementu roboczego.",
-      },
       error_toast: {
         title: "Błąd",
         message: "Nie udało się dodać typu elementu roboczego do hierarchii.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Usuwanie typu elementu roboczego z poziomu",
-      success: {
-        title: "Sukces!",
-        message: "Typ elementu roboczego został pomyślnie usunięty z poziomu.",
-      },
-      error: {
-        title: "Błąd!",
-        message: "Nie udało się usunąć typu elementu roboczego z poziomu.",
       },
     },
     work_item_modal: {

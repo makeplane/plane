@@ -6809,6 +6809,8 @@ export default {
       title: "新增層級",
       description: "為工作項目類型新增一個新層級。",
       work_item_type: "工作項目類型",
+      select_placeholder: "選擇類型",
+      search_placeholder: "搜尋類型",
       empty_state: {
         title: "所有工作項目類型已在使用中",
         description: "此工作區中定義的每個工作項目類型已是您階層的一部分。",
@@ -6817,24 +6819,9 @@ export default {
         title: "錯誤！",
         message: "{type_name} 無法新增至第 {level} 層，因為這違反了層級規則。",
       },
-      not_found_toast: {
-        title: "錯誤",
-        message: "找不到工作項目類型。",
-      },
       error_toast: {
         title: "錯誤",
         message: "無法將工作項目類型新增至層級。",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "正在從層級移除工作項目類型",
-      success: {
-        title: "成功！",
-        message: "已成功從層級移除工作項目類型。",
-      },
-      error: {
-        title: "錯誤！",
-        message: "無法從層級移除工作項目類型。",
       },
     },
     work_item_modal: {

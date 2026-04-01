@@ -31,6 +31,7 @@ from plane.ee.views.app.issue_property import (
     ProjectWorkItemTypeEndpoint,
     MergeWorkItemTypesEndpoint,
     WorkspaceWorkItemTypeFormulaValidateEndpoint,
+    WorkitemHierarchyEndpoint,
 )
 
 urlpatterns = [
@@ -196,5 +197,11 @@ urlpatterns = [
         "workspaces/<str:slug>/issue-types/<uuid:issue_type_id>/issue-properties/formula-validate/",
         WorkspaceWorkItemTypeFormulaValidateEndpoint.as_view(),
         name="workspace-work-item-type-formula-validate",
+    ),
+    # Work item type hierarchy
+    path(
+        "workspaces/<str:slug>/work-item-types/hierarchy/",
+        WorkitemHierarchyEndpoint.as_view(),
+        name="workitem-hierarchy",
     ),
 ]

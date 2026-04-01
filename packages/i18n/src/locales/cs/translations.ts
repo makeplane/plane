@@ -6953,6 +6953,8 @@ Vytvořte nový.`,
       title: "Přidat úroveň hierarchie",
       description: "Přidejte novou úroveň hierarchie k typu pracovní položky.",
       work_item_type: "Typ pracovní položky",
+      select_placeholder: "Vyberte typy",
+      search_placeholder: "Hledat typy",
       empty_state: {
         title: "Všechny typy pracovních položek jsou používány",
         description:
@@ -6962,24 +6964,9 @@ Vytvořte nový.`,
         title: "Chyba!",
         message: "{type_name} nelze přidat na úroveň {level}, protože porušuje pravidla hierarchie.",
       },
-      not_found_toast: {
-        title: "Chyba",
-        message: "Typ pracovní položky nebyl nalezen.",
-      },
       error_toast: {
         title: "Chyba",
         message: "Nepodařilo se přidat typ pracovní položky do hierarchie.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Odstraňování typu pracovní položky z úrovně",
-      success: {
-        title: "Úspěch!",
-        message: "Typ pracovní položky byl úspěšně odstraněn z úrovně.",
-      },
-      error: {
-        title: "Chyba!",
-        message: "Nepodařilo se odstranit typ pracovní položky z úrovně.",
       },
     },
     work_item_modal: {

@@ -52,7 +52,7 @@ export const WorkItemTypeHierarchyAddToLevelButton = observer(function WorkItemT
       <AddWorkItemTypeHierarchyLevelModal
         handleClose={() => setIsAddLevelModalOpen(false)}
         isOpen={isAddLevelModalOpen}
-        levelToAddTo={levelToAddTo ?? maxLevel + 1}
+        level={levelToAddTo ?? maxLevel + 1}
       />
       <button
         type="button"

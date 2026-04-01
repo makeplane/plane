@@ -6960,6 +6960,8 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       title: "Thêm cấp độ phân cấp",
       description: "Thêm cấp độ phân cấp mới vào loại mục công việc.",
       work_item_type: "Loại mục công việc",
+      select_placeholder: "Chọn loại",
+      search_placeholder: "Tìm kiếm loại",
       empty_state: {
         title: "Tất cả loại mục công việc đang được sử dụng",
         description:
@@ -6969,24 +6971,9 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
         title: "Lỗi!",
         message: "{type_name} không thể thêm vào cấp độ {level} vì vi phạm quy tắc phân cấp.",
       },
-      not_found_toast: {
-        title: "Lỗi",
-        message: "Không tìm thấy loại mục công việc.",
-      },
       error_toast: {
         title: "Lỗi",
         message: "Không thể thêm loại mục công việc vào phân cấp.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Đang xóa loại mục công việc khỏi cấp độ",
-      success: {
-        title: "Thành công!",
-        message: "Đã xóa loại mục công việc khỏi cấp độ thành công.",
-      },
-      error: {
-        title: "Lỗi!",
-        message: "Không thể xóa loại mục công việc khỏi cấp độ.",
       },
     },
     work_item_modal: {

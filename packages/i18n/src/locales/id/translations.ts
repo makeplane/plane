@@ -6990,6 +6990,8 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       title: "Tambah tingkat hierarki",
       description: "Tambahkan tingkat hierarki baru ke jenis item pekerjaan.",
       work_item_type: "Jenis item pekerjaan",
+      select_placeholder: "Pilih tipe",
+      search_placeholder: "Cari tipe",
       empty_state: {
         title: "Semua jenis item pekerjaan sedang digunakan",
         description:
@@ -6999,24 +7001,9 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
         title: "Kesalahan!",
         message: "{type_name} tidak dapat ditambahkan ke tingkat {level} karena melanggar aturan hierarki.",
       },
-      not_found_toast: {
-        title: "Kesalahan",
-        message: "Jenis item pekerjaan tidak ditemukan.",
-      },
       error_toast: {
         title: "Kesalahan",
         message: "Gagal menambahkan jenis item pekerjaan ke hierarki.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Menghapus jenis item pekerjaan dari tingkat",
-      success: {
-        title: "Berhasil!",
-        message: "Jenis item pekerjaan berhasil dihapus dari tingkat.",
-      },
-      error: {
-        title: "Kesalahan!",
-        message: "Gagal menghapus jenis item pekerjaan dari tingkat.",
       },
     },
     work_item_modal: {

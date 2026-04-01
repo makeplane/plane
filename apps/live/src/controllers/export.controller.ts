@@ -243,9 +243,7 @@ export class ExportController {
       });
 
       const buffer =
-        format === "pdf"
-          ? yield* this.renderPdf(pipelineResult, input as PdfExportInput)
-          : yield* this.renderDocx(pipelineResult);
+        format === "pdf" ? yield* this.renderPdf(pipelineResult, input) : yield* this.renderDocx(pipelineResult);
 
       const baseFileName = input.fileName || pipelineResult.documentTitle || "export";
       const extension = FILE_EXTENSIONS[format];

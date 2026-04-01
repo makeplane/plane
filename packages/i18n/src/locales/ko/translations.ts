@@ -6901,6 +6901,8 @@ export default {
       title: "계층 레벨 추가",
       description: "작업 항목 유형에 새 계층 레벨을 추가합니다.",
       work_item_type: "작업 항목 유형",
+      select_placeholder: "유형 선택",
+      search_placeholder: "유형 검색",
       empty_state: {
         title: "모든 작업 항목 유형이 사용 중",
         description: "이 워크스페이스에 정의된 모든 작업 항목 유형은 이미 계층 구조의 일부입니다.",
@@ -6909,24 +6911,9 @@ export default {
         title: "오류!",
         message: "{type_name}은(는) 계층 규칙을 위반하므로 레벨 {level}에 추가할 수 없습니다.",
       },
-      not_found_toast: {
-        title: "오류",
-        message: "작업 항목 유형을 찾을 수 없습니다.",
-      },
       error_toast: {
         title: "오류",
         message: "작업 항목 유형을 계층 구조에 추가하지 못했습니다.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "레벨에서 작업 항목 유형 제거 중",
-      success: {
-        title: "성공!",
-        message: "작업 항목 유형이 레벨에서 성공적으로 제거되었습니다.",
-      },
-      error: {
-        title: "오류!",
-        message: "레벨에서 작업 항목 유형을 제거하지 못했습니다.",
       },
     },
     work_item_modal: {

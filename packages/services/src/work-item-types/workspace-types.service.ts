@@ -25,6 +25,7 @@ import type {
   CustomPropertyType,
   TWorkItemTypeResponse,
   TReorderPropertyToGlobalTypePayload,
+  TUpdateWorkItemTypeHierarchyPayload,
 } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
@@ -118,6 +119,14 @@ export class WorkspaceWorkItemTypesService extends APIService {
     return this.delete(
       `/api/workspaces/${payload.workspaceSlug}/work-item-types/${payload.typeId}/work-item-properties/${payload.propertyId}/`
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateHierarchy(workspaceSlug: string, payload: TUpdateWorkItemTypeHierarchyPayload): Promise<void> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/`, payload)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -7031,6 +7031,8 @@ export default {
       title: "Добавить уровень иерархии",
       description: "Добавьте новый уровень иерархии к типу рабочего элемента.",
       work_item_type: "Тип рабочего элемента",
+      select_placeholder: "Выбрать типы",
+      search_placeholder: "Поиск типов",
       empty_state: {
         title: "Все типы рабочих элементов используются",
         description:
@@ -7040,24 +7042,9 @@ export default {
         title: "Ошибка!",
         message: "{type_name} не может быть добавлен на уровень {level}, так как это нарушает правила иерархии.",
       },
-      not_found_toast: {
-        title: "Ошибка",
-        message: "Тип рабочего элемента не найден.",
-      },
       error_toast: {
         title: "Ошибка",
         message: "Не удалось добавить тип рабочего элемента в иерархию.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Удаление типа рабочего элемента с уровня",
-      success: {
-        title: "Успешно!",
-        message: "Тип рабочего элемента успешно удалён с уровня.",
-      },
-      error: {
-        title: "Ошибка!",
-        message: "Не удалось удалить тип рабочего элемента с уровня.",
       },
     },
     work_item_modal: {

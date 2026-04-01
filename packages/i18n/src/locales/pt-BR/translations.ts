@@ -7037,6 +7037,8 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       title: "Adicionar nível de hierarquia",
       description: "Adicionar um novo nível de hierarquia ao tipo de item de trabalho.",
       work_item_type: "Tipo de item de trabalho",
+      select_placeholder: "Selecionar tipos",
+      search_placeholder: "Pesquisar tipos",
       empty_state: {
         title: "Todos os tipos de itens de trabalho em uso",
         description: "Cada tipo de item de trabalho definido neste espaço de trabalho já faz parte da sua hierarquia.",
@@ -7045,24 +7047,9 @@ da maneira que você quiser a partir das fontes que você especificar.`,
         title: "Erro!",
         message: "{type_name} não pode ser adicionado ao nível {level} pois viola as regras de hierarquia.",
       },
-      not_found_toast: {
-        title: "Erro",
-        message: "Tipo de item de trabalho não encontrado.",
-      },
       error_toast: {
         title: "Erro",
         message: "Falha ao adicionar o tipo de item de trabalho à hierarquia.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Removendo tipo de item de trabalho do nível",
-      success: {
-        title: "Sucesso!",
-        message: "Tipo de item de trabalho removido do nível com sucesso.",
-      },
-      error: {
-        title: "Erro!",
-        message: "Falha ao remover o tipo de item de trabalho do nível.",
       },
     },
     work_item_modal: {

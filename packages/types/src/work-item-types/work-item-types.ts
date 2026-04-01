@@ -50,6 +50,11 @@ export type TWorkItemType = {
   updated_by: string | null;
 };
 
+export type TUpdateWorkItemTypeHierarchyPayload = {
+  level: number;
+  type_ids: string[];
+};
+
 // Work item type instance
 export interface BaseWorkItemTypeInstanceSchema extends TWorkItemTypeResponse {
   asJSON: TWorkItemTypeResponse;
@@ -107,6 +112,7 @@ export type WorkspaceWorkItemTypesStoreSchema = {
   createType: (payload: TCreateWorkspaceWorkItemTypePayload) => Promise<TWorkItemTypeResponse | undefined>;
   deleteType: (payload: TDeleteWorkspaceWorkItemTypePayload) => Promise<void>;
   enableWorkItemTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse | undefined>;
+  updateHierarchy: (workspaceSlug: string, payload: TUpdateWorkItemTypeHierarchyPayload) => Promise<void>;
   // permissions
   canCreate: (workspaceSlug: string) => boolean;
   canView: (workspaceSlug: string) => boolean;

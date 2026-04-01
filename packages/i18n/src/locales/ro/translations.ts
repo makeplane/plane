@@ -7039,6 +7039,8 @@ așa cum dorești din sursele pe care le specifici.`,
       title: "Adăugați nivel de ierarhie",
       description: "Adăugați un nou nivel de ierarhie tipului de element de lucru.",
       work_item_type: "Tip element de lucru",
+      select_placeholder: "Selectați tipuri",
+      search_placeholder: "Căutați tipuri",
       empty_state: {
         title: "Toate tipurile de elemente de lucru sunt utilizate",
         description:
@@ -7048,24 +7050,9 @@ așa cum dorești din sursele pe care le specifici.`,
         title: "Eroare!",
         message: "{type_name} nu poate fi adăugat la nivelul {level} deoarece încalcă regulile ierarhiei.",
       },
-      not_found_toast: {
-        title: "Eroare",
-        message: "Tipul de element de lucru nu a fost găsit.",
-      },
       error_toast: {
         title: "Eroare",
         message: "Eroare la adăugarea tipului de element de lucru în ierarhie.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Se elimină tipul de element de lucru din nivel",
-      success: {
-        title: "Succes!",
-        message: "Tipul de element de lucru a fost eliminat din nivel cu succes.",
-      },
-      error: {
-        title: "Eroare!",
-        message: "Eroare la eliminarea tipului de element de lucru din nivel.",
       },
     },
     work_item_modal: {

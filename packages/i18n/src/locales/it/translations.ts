@@ -7035,6 +7035,8 @@ Crea un nuovo progetto invece`,
       title: "Aggiungi livello di gerarchia",
       description: "Aggiungi un nuovo livello di gerarchia al tipo di elemento di lavoro.",
       work_item_type: "Tipo elemento di lavoro",
+      select_placeholder: "Seleziona tipi",
+      search_placeholder: "Cerca tipi",
       empty_state: {
         title: "Tutti i tipi di elementi di lavoro in uso",
         description:
@@ -7044,24 +7046,9 @@ Crea un nuovo progetto invece`,
         title: "Errore!",
         message: "{type_name} non può essere aggiunto al livello {level} poiché viola le regole della gerarchia.",
       },
-      not_found_toast: {
-        title: "Errore",
-        message: "Tipo di elemento di lavoro non trovato.",
-      },
       error_toast: {
         title: "Errore",
         message: "Impossibile aggiungere il tipo di elemento di lavoro alla gerarchia.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Rimozione tipo di elemento di lavoro dal livello",
-      success: {
-        title: "Successo!",
-        message: "Tipo di elemento di lavoro rimosso dal livello con successo.",
-      },
-      error: {
-        title: "Errore!",
-        message: "Impossibile rimuovere il tipo di elemento di lavoro dal livello.",
       },
     },
     work_item_modal: {

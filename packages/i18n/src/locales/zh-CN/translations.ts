@@ -6785,6 +6785,8 @@ export default {
       title: "添加层级",
       description: "为工作项类型添加新的层级。",
       work_item_type: "工作项类型",
+      select_placeholder: "选择类型",
+      search_placeholder: "搜索类型",
       empty_state: {
         title: "所有工作项类型已在使用中",
         description: "此工作区中定义的每个工作项类型已是您层级的一部分。",
@@ -6793,24 +6795,9 @@ export default {
         title: "错误！",
         message: "{type_name} 无法添加至第 {level} 层，因为这违反了层级规则。",
       },
-      not_found_toast: {
-        title: "错误",
-        message: "未找到工作项类型。",
-      },
       error_toast: {
         title: "错误",
         message: "无法将工作项类型添加至层级。",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "正在从层级移除工作项类型",
-      success: {
-        title: "成功！",
-        message: "已成功从层级移除工作项类型。",
-      },
-      error: {
-        title: "错误！",
-        message: "无法从层级移除工作项类型。",
       },
     },
     work_item_modal: {

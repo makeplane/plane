@@ -7067,6 +7067,8 @@ si estás seguro de que tu búsqueda es correcta.`,
       title: "Agregar nivel de jerarquía",
       description: "Agrega un nuevo nivel de jerarquía al tipo de elemento de trabajo.",
       work_item_type: "Tipo de elemento de trabajo",
+      select_placeholder: "Seleccionar tipos",
+      search_placeholder: "Buscar tipos",
       empty_state: {
         title: "Todos los tipos de elementos de trabajo en uso",
         description:
@@ -7076,24 +7078,9 @@ si estás seguro de que tu búsqueda es correcta.`,
         title: "¡Error!",
         message: "{type_name} no se puede agregar al nivel {level} ya que rompe las reglas de jerarquía.",
       },
-      not_found_toast: {
-        title: "Error",
-        message: "Tipo de elemento de trabajo no encontrado.",
-      },
       error_toast: {
         title: "Error",
         message: "Error al agregar el tipo de elemento de trabajo a la jerarquía.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Eliminando tipo de elemento de trabajo del nivel",
-      success: {
-        title: "¡Éxito!",
-        message: "Tipo de elemento de trabajo eliminado del nivel correctamente.",
-      },
-      error: {
-        title: "¡Error!",
-        message: "Error al eliminar el tipo de elemento de trabajo del nivel.",
       },
     },
     work_item_modal: {

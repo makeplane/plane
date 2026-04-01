@@ -7019,6 +7019,8 @@ modüller arşivlenebilir.`,
       title: "Hiyerarşi seviyesi ekle",
       description: "İş öğesi türüne yeni bir hiyerarşi seviyesi ekleyin.",
       work_item_type: "İş öğesi türü",
+      select_placeholder: "Türleri seçin",
+      search_placeholder: "Türleri ara",
       empty_state: {
         title: "Tüm iş öğesi türleri kullanımda",
         description: "Bu çalışma alanında tanımlanan her iş öğesi türü zaten hiyerarşinizin bir parçasıdır.",
@@ -7027,24 +7029,9 @@ modüller arşivlenebilir.`,
         title: "Hata!",
         message: "{type_name}, hiyerarşi kurallarını bozduğundan {level}. seviyeye eklenemiyor.",
       },
-      not_found_toast: {
-        title: "Hata",
-        message: "İş öğesi türü bulunamadı.",
-      },
       error_toast: {
         title: "Hata",
         message: "İş öğesi türü hiyerarşiye eklenemedi.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "İş öğesi türü seviyeden kaldırılıyor",
-      success: {
-        title: "Başarılı!",
-        message: "İş öğesi türü seviyeden başarıyla kaldırıldı.",
-      },
-      error: {
-        title: "Hata!",
-        message: "İş öğesi türü seviyeden kaldırılamadı.",
       },
     },
     work_item_modal: {

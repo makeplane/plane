@@ -7782,6 +7782,8 @@ the way you want to from the sources you specify.`,
       title: "Add hierarchy level",
       description: "Add a new hierarchy level to the work item type.",
       work_item_type: "Work item type",
+      select_placeholder: "Select types",
+      search_placeholder: "Search types",
       empty_state: {
         title: "All work item types in use",
         description: "Every work item type defined in this workspace is already part of your hierarchy.",
@@ -7790,24 +7792,9 @@ the way you want to from the sources you specify.`,
         title: "Error!",
         message: "{type_name} cannot be added to level {level} since it breaks the hierarchy rules.",
       },
-      not_found_toast: {
-        title: "Error",
-        message: "Work item type not found.",
-      },
       error_toast: {
         title: "Error",
         message: "Failed to add work item type to hierarchy.",
-      },
-    },
-    remove_from_level_toast: {
-      loading: "Removing work item type from level",
-      success: {
-        title: "Success!",
-        message: "Work item type removed from level successfully.",
-      },
-      error: {
-        title: "Error!",
-        message: "Failed to remove work item type from level.",
       },
     },
     work_item_modal: {
