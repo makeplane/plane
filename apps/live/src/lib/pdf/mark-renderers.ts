@@ -22,6 +22,9 @@ import {
 } from "./colors";
 import type { MarkRendererRegistry, TipTapMark } from "./types";
 
+const INLINE_CODE_FONT_SCALE = 0.85;
+const MIN_INLINE_CODE_FONT_SIZE = 5.95;
+
 export const markRenderers: MarkRendererRegistry = {
   bold: (_mark: TipTapMark, style: Style): Style => ({
     ...style,
@@ -43,13 +46,24 @@ export const markRenderers: MarkRendererRegistry = {
     textDecoration: "line-through",
   }),
 
-  code: (_mark: TipTapMark, style: Style): Style => ({
-    ...style,
-    fontFamily: "Courier",
-    fontSize: 10,
-    backgroundColor: BACKGROUND_COLORS.layer1,
-    color: CODE_COLORS.text,
-  }),
+  code: (_mark: TipTapMark, style: Style): Style => {
+    const inheritedFontSize = typeof style.fontSize === "number" ? style.fontSize : null;
+    const resolvedFontSize =
+      inheritedFontSize === null
+        ? 8
+        : Math.max(Number((inheritedFontSize * INLINE_CODE_FONT_SCALE).toFixed(2)), MIN_INLINE_CODE_FONT_SIZE);
+
+    return {
+      ...style,
+      fontFamily: "Courier",
+      fontSize: resolvedFontSize,
+      backgroundColor: BACKGROUND_COLORS.layer1,
+      color: CODE_COLORS.text,
+      paddingVertical: 0.5,
+      paddingHorizontal: 2.5,
+      borderRadius: 2,
+    };
+  },
 
   link: (_mark: TipTapMark, style: Style): Style => ({
     ...style,

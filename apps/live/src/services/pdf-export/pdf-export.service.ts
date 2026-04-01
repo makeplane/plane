@@ -35,9 +35,9 @@ export const makeLiveDocumentLayer = (agentManager: ServerAgentManager) =>
 
 const IMAGE_CONCURRENCY = 4;
 const IMAGE_TIMEOUT_MS = 8000;
-const METADATA_TIMEOUT_MS = 5000;
-const CONTENT_FETCH_TIMEOUT_MS = 7000;
-const PDF_RENDER_TIMEOUT_MS = 15000;
+const METADATA_TIMEOUT_MS = 10000;
+const CONTENT_FETCH_TIMEOUT_MS = 15000;
+const PDF_RENDER_TIMEOUT_MS = 60000;
 const IMAGE_MAX_DIMENSION = 1200;
 
 type TipTapNode = {
@@ -117,7 +117,7 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
 
             let result: PageContent | null = null;
 
-            connection.transact((doc) => {
+            await connection.transact((doc) => {
               const type = doc.getXmlFragment("default");
               const contentDoc = type.doc;
               if (!contentDoc) return;

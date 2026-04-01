@@ -112,14 +112,27 @@ export const extractColorKeyFromCssVariable = (cssVar: string): string | null =>
 export const resolveColorForPdf = (value: string | null | undefined, type: "text" | "background"): string | null => {
   if (!value) return null;
 
+  const normalizedValue = value.trim();
+  const lowerValue = normalizedValue.toLowerCase();
+
+  if (lowerValue === "transparent" || lowerValue === "none") {
+    return null;
+  }
+
   // If it's already a hex color, return it
-  if (value.startsWith("#")) {
-    return value;
+  if (
+    normalizedValue.startsWith("#") ||
+    normalizedValue.startsWith("rgb(") ||
+    normalizedValue.startsWith("rgba(") ||
+    normalizedValue.startsWith("hsl(") ||
+    normalizedValue.startsWith("hsla(")
+  ) {
+    return normalizedValue;
   }
 
   // If it's a CSS variable, extract the key and get the hex value
-  if (isCssVariable(value)) {
-    const colorKey = extractColorKeyFromCssVariable(value);
+  if (isCssVariable(normalizedValue)) {
+    const colorKey = extractColorKeyFromCssVariable(normalizedValue);
     if (colorKey) {
       return type === "text" ? getTextColorHex(colorKey) : getBackgroundColorHex(colorKey);
     }
@@ -127,9 +140,9 @@ export const resolveColorForPdf = (value: string | null | undefined, type: "text
 
   // If it's just a color key (e.g., "gray", "peach"), get the hex value
   if (type === "text") {
-    return getTextColorHex(value);
+    return getTextColorHex(normalizedValue) ?? (/^[a-z]+$/i.test(normalizedValue) ? normalizedValue : null);
   }
-  return getBackgroundColorHex(value);
+  return getBackgroundColorHex(normalizedValue) ?? (/^[a-z]+$/i.test(normalizedValue) ? normalizedValue : null);
 };
 
 // Semantic colors from tailwind-config (light theme)

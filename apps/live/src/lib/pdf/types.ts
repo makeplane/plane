@@ -12,7 +12,7 @@
  */
 
 import type { Style } from "@react-pdf/types";
-import type { ReactElement } from "react";
+import type { ReactNode } from "react";
 
 export type TipTapMark = {
   type: string;
@@ -39,7 +39,7 @@ export type PDFRenderContext = {
   metadata?: PDFExportMetadata;
 };
 
-export type PDFNodeRenderer = (node: TipTapNode, children: ReactElement[], context: PDFRenderContext) => ReactElement;
+export type PDFNodeRenderer = (node: TipTapNode, children: ReactNode[], context: PDFRenderContext) => ReactNode;
 
 export type PDFMarkRenderer = (mark: TipTapMark, currentStyle: Style) => Style;
 
@@ -62,6 +62,8 @@ export type PDFExportOptions = {
  * Metadata for resolving entity references in PDF export
  */
 export type PDFExportMetadata = {
+  /** Available content width on the rendered PDF page after page padding */
+  pageContentWidth?: number;
   /** Base URL for generating absolute links (e.g., "https://app.plane.so") */
   baseUrl?: string;
   /** Workspace slug for generating links */

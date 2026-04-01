@@ -53,6 +53,7 @@
     "cors": "catalog:",
     "dotenv": "catalog:",
     "effect": "catalog:",
+    "emoji-datasource-google": "^16.0.0",
     "express": "catalog:",
     "express-ws": "catalog:",
     "hast": "catalog:",
