@@ -65,5 +65,123 @@
       "created_by": null,
       "updated_by": null
     }
+  },
+
+  {
+    "model": "runnerctl.Script",
+    "pk": "bc2715bf-15dd-4d74-a30b-b614c3eb826d",
+    "fields": {
+      "name": "Create Work Item",
+      "script_type": "workflow_transition",
+      "description": "Create a new work item in the target project",
+      "workspace": null,
+      "project": null,
+      "is_system": true,
+      "platform": "node22",
+      "code": "export async function main(input: WorkflowTransitionEventInput, variables: Record<string, string>) {\n  const { event, context } = input;\n  const { targetProjectId, workItemTitle, workItemDescription } = variables;\n  const workflowProjectId = event.project_id;\n  const workItemProjectId = targetProjectId || workflowProjectId;\n\n  const workItem = await Functions.addWorkItem({\n    projectId: workItemProjectId,\n    name: workItemTitle,\n    description: workItemDescription\n  })\n\n  console.log(`Work Item ${workItem.id} created in project ${workItemProjectId}`);\n  return { success: true };\n}",
+      "code_type": "main_fn",
+      "build": null,
+      "function_names": ["addWorkItem"],
+      "env_variables": null,
+      "allowed_domains": null,
+      "variables": [
+        {
+          "key": "targetProjectId",
+          "type": "string",
+          "description": "Target project ID",
+          "required": false
+        },
+        {
+          "key": "workItemTitle",
+          "type": "string",
+          "description": "Work item title",
+          "required": true
+        },
+        {
+          "key": "workItemDescription",
+          "type": "string",
+          "description": "Work item description",
+          "required": false
+        }
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-01T00:00:00Z",
+    "created_by": null,
+    "updated_by": null
+  },
+  {
+    "model": "runnerctl.Script",
+    "pk": "f0d6ee37-b37b-4bd5-bccd-a8bdc2bbad3f",
+    "fields": {
+      "name": "Update Work Item State",
+      "script_type": "workflow_transition",
+      "description": "Updates the status for a given work item",
+      "workspace": null,
+      "project": null,
+      "is_system": true,
+      "platform": "node22",
+      "code": "export async function main(input: WorkflowTransitionEventInput, variables: Record<string, string>) {\n  const { event, context } = input;\n  const { targetProjectId, targetWorkItemId, stateName } = variables;\n  const workflowProjectId = event.project_id;\n  const workflowWorkItemId = event.entity_id;\n  // work item update entities\n  const workItemId = targetWorkItemId || workflowWorkItemId;\n  const workItemProjectId = targetProjectId || workflowProjectId;\n\n  const workItem = await Functions.updateWorkItemState({\n    projectId: workItemProjectId,\n    workItemId: workItemId,\n    state: stateName\n  })\n\n  console.log(`Work Item ${workItem.id} state updated to ${stateName}`);\n  return { success: true };\n}",
+      "code_type": "main_fn",
+      "build": null,
+      "function_names": ["updateWorkItemState"],
+      "env_variables": null,
+      "allowed_domains": null,
+      "variables": [
+        {
+          "key": "stateName",
+          "required": true
+        },
+        {
+          "key": "targetWorkItemId",
+          "required": false
+        },
+        {
+          "key": "targetProjectId",
+          "required": false
+        }
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-01T00:00:00Z",
+    "created_by": null,
+    "updated_by": null
+  },
+  {
+    "model": "runnerctl.Script",
+    "pk": "119c5d32-511b-40f2-9855-4f12cb5b9560",
+    "fields": {
+      "name": "Add Comment to a Work Item",
+      "script_type": "workflow_transition",
+      "description": "Adds a comment to a work item",
+      "workspace": null,
+      "project": null,
+      "is_system": true,
+      "platform": "node22",
+      "code": "export async function main(input: WorkflowTransitionEventInput, variables: Record<string, string>) {\n  const { event, context } = input;\n  const { targetProjectId, targetWorkItemId, comment } = variables;\n  const workflowProjectId = event.project_id;\n  const workflowWorkItemId = event.entity_id;\n  // work item update entities\n  const workItemId = targetWorkItemId || workflowWorkItemId;\n  const workItemProjectId = targetProjectId || workflowProjectId;\n\n  const workItem = await Functions.addComment({\n    projectId: workItemProjectId,\n    workItemId: workItemId,\n    comment: comment\n  })\n\n  console.log(`Comment added to Work Item ${workItem.id}`);\n  return { success: true };\n}",
+      "code_type": "main_fn",
+      "build": null,
+      "function_names": ["addComment"],
+      "env_variables": null,
+      "allowed_domains": null,
+      "variables": [
+        {
+          "key": "comment",
+          "required": true
+        },
+        {
+          "key": "targetWorkItemId",
+          "required": false
+        },
+        {
+          "key": "targetProjectId",
+          "required": false
+        }
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-01T00:00:00Z",
+    "created_by": null,
+    "updated_by": null
   }
 ]
