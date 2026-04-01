@@ -18,6 +18,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 export const ONE_DAY_SECONDS = 86400;
 
 export function formatCompactDuration(seconds: number): string {
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  if (seconds < ONE_DAY_SECONDS) return `${Math.floor(seconds / 3600)}h`;
   const d = Math.floor(seconds / ONE_DAY_SECONDS);
   if (d > 99) return "99+";
   return `${d}d`;
@@ -36,7 +38,6 @@ export function formatDetailedDuration(seconds: number): string {
 
 export function getDurationBadgeVariant(seconds: number): "neutral" | "warning" | "danger" | null {
   const days = Math.floor(seconds / ONE_DAY_SECONDS);
-  if (days < 1) return null;
   if (days <= 2) return "neutral";
   if (days <= 6) return "warning";
   return "danger";
@@ -48,7 +49,7 @@ type DurationBadgeProps = {
 
 export function DurationBadge(props: DurationBadgeProps) {
   const { seconds } = props;
-  if (seconds == null) return null;
+  if (seconds == null || seconds < 60) return null;
   const variant = getDurationBadgeVariant(seconds);
   if (!variant) return null;
   return (
