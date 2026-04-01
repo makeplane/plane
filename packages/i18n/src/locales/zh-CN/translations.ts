@@ -1582,6 +1582,7 @@ export default {
     },
     common: {
       months_count: "{months, plural, one{# 个月} other{# 个月}}",
+      days_count: "{days, plural, one{# 天} other{# 天}}",
     },
     empty_state: {
       general: {
@@ -2409,6 +2410,11 @@ export default {
         description: "Plane 将自动关闭尚未完成或取消的工作项。",
         duration: "自动关闭不活跃",
         auto_close_status: "自动关闭状态",
+      },
+      "auto-remind": {
+        title: "自动提醒",
+        description: "Plane 将自动通过电子邮件和应用程序通知来提醒您的团队保持进度。",
+        duration: "提前提醒",
       },
     },
     empty_state: {

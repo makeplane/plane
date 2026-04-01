@@ -1613,6 +1613,7 @@ Mulțumesc,
     },
     common: {
       months_count: "{months, plural, one{# lună} other{# luni}}",
+      days_count: "{days, plural, one{# zi} other{# zile}}",
     },
     empty_state: {
       general: {
@@ -2494,6 +2495,12 @@ Creează un proiect nou.`,
         description: "Plane va închide automat activitățile care nu au fost finalizate sau anulate.",
         duration: "Închide automat activitățile inactive de",
         auto_close_status: "Stare închidere automată",
+      },
+      "auto-remind": {
+        title: "Avertismente automate",
+        description:
+          "Plane va trimite avertizări automate prin e-mail și notificări în aplicație pentru a menține echipa pe calea termenelor.",
+        duration: "Trimite avertizare înainte",
       },
     },
     empty_state: {

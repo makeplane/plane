@@ -1584,6 +1584,7 @@ export default {
     },
     common: {
       months_count: "{months, plural, one{# 個月} other{# 個月}}",
+      days_count: "{days, plural, one{# 天} other{# 天}}",
     },
     empty_state: {
       general: {
@@ -2430,6 +2431,11 @@ export default {
         description: "Plane將自動關閉未完成或未取消的工作項目。",
         duration: "自動關閉非活動工作項目",
         auto_close_status: "自動關閉狀態",
+      },
+      "auto-remind": {
+        title: "自動提醒",
+        description: "Plane 將自動通過電子郵件和應用程式通知來提醒您的團隊保持進度。",
+        duration: "提前提醒",
       },
     },
     empty_state: {

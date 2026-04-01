@@ -169,12 +169,14 @@ export function NotificationContent({
   workspaceSlug,
   projectId,
   renderCommentBox = false,
+  isNotificationAutoReminder = false,
 }: {
   notification: TNotification;
   workspaceId: string;
   workspaceSlug: string;
   projectId: string;
   renderCommentBox?: boolean;
+  isNotificationAutoReminder?: boolean;
 }) {
   const { data, triggered_by_details: triggeredBy } = notification;
   const notificationField = data?.issue_activity.field;
@@ -222,6 +224,21 @@ export function NotificationContent({
   // Determine if connector should be shown - prefer map value, fallback to function
   const showConnector =
     contentDetails?.showConnector !== undefined ? contentDetails.showConnector : shouldShowConnector(notificationField);
+
+  // If the notification is a reminder, return the trigger name
+  if (isNotificationAutoReminder) {
+    const workItemTitle = data?.issue?.name;
+    const workItemTargetDate = data?.issue?.target_date || undefined;
+    const workItemTargetDateFormatted = workItemTargetDate ? renderFormattedDate(workItemTargetDate) : "";
+
+    return (
+      <span className="text-tertiary">
+        <span className="font-medium text-primary">Reminder: {workItemTitle}</span> is due&nbsp;
+        <span>{workItemTargetDate ? `on` : ""}</span>&nbsp;
+        <span className="font-medium text-primary">{workItemTargetDate ? `${workItemTargetDateFormatted}` : ""}</span>.
+      </span>
+    );
+  }
 
   return (
     <>

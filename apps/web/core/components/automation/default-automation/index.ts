@@ -11,4 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./default-automation";
+export * from "./automation-root";

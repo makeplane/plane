@@ -18,7 +18,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
+import { DefaultAutomationRoot } from "@/components/automation";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
@@ -73,10 +73,10 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
           description={t("project_settings.automations.description")}
         />
         <div className="mt-6">
-          <AutoArchiveAutomation handleChange={handleChange} />
-          <AutoCloseAutomation handleChange={handleChange} />
+          <DefaultAutomationRoot workspaceSlug={workspaceSlug} projectId={projectId} handleChange={handleChange} />
         </div>
       </section>
+      {/* custom  */}
       <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );

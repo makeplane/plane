@@ -1601,6 +1601,7 @@ export default {
     },
     common: {
       months_count: "{months, plural, one{# ヶ月} other{# ヶ月}}",
+      days_count: "{days, plural, one{# 日} other{# 日}}",
     },
     empty_state: {
       general: {
@@ -2470,6 +2471,12 @@ export default {
         description: "Planeは完了またはキャンセルされていない作業項目を自動的に閉じます。",
         duration: "非アクティブな作業項目を自動的に閉じる",
         auto_close_status: "自動クローズステータス",
+      },
+      "auto-remind": {
+        title: "自動リマインダー",
+        description:
+          "Planeはメールとアプリ内通知を通じて、チームが期限に沿って進めるように自動的にリマインダーを送信します。",
+        duration: "リマインダーを送信する前",
       },
     },
     empty_state: {

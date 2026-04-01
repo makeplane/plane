@@ -147,6 +147,11 @@ EE_JOBS = {
         "task": "plane.automations.tasks.schedule_automation_triggers_batch",
         "schedule": crontab(minute="*/5"),  # Every 5 minutes
     },
+    # Auto-reminder notifications for work items with upcoming target dates for every 4 hours at minute 20
+    "auto-reminder-automation": {
+        "task": "plane.ee.bgtasks.auto_reminder_automation.task.auto_reminder_automation_task",
+        "schedule": crontab(hour="*/4", minute=20),  # Every 4 hours at minute 20
+    },
 }
 
 

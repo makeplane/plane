@@ -33,6 +33,7 @@ export type TNotificationIssueLite = {
   state_name: string | undefined;
   state_group: string | undefined;
   type_id: string | undefined;
+  target_date: string | undefined;
 };
 
 export type TNotificationData = {

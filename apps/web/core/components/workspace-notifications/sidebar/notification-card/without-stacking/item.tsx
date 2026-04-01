@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Clock } from "lucide-react";
+import { BellRing, Clock } from "lucide-react";
 // plane imports
 import { Avatar } from "@plane/propel/avatar";
 import { Row } from "@plane/ui";
@@ -55,6 +55,9 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
   // derived values
   const projectId = notification?.project || undefined;
   const issueId = notification?.data?.issue?.id || undefined;
+  const sender = notification?.sender || undefined;
+  const isNotificationAutoReminder = sender === "in_app:issue_activities:target-date-reminder";
+  const isNotificationRead = notification.read_at === null;
   const workspace = getWorkspaceBySlug(workspaceSlug);
 
   const notificationField = notification?.data?.issue_activity.field || undefined;
@@ -104,25 +107,47 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
 
       <div className="relative w-full flex gap-2">
         <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-layer-1 rounded-full">
-          {notificationTriggeredBy && (
-            <Avatar
-              name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
-              src={getFileURL(notificationTriggeredBy.avatar_url)}
-              size={42}
-              shape="circle"
-              className="text-body-sm-medium bg-layer-1"
-            />
+          {isNotificationAutoReminder ? (
+            <div className="flex justify-center items-center w-10 h-10 bg-accent-primary rounded-full">
+              <BellRing
+                className={cn(
+                  "h-4 w-4 text-on-color",
+                  isNotificationRead ? "animate-notification-bell-ring animate-duration-1000" : ""
+                )}
+              />
+            </div>
+          ) : (
+            <>
+              {notificationTriggeredBy && (
+                <Avatar
+                  name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
+                  src={getFileURL(notificationTriggeredBy.avatar_url)}
+                  size={42}
+                  shape="circle"
+                  className="text-body-sm-medium bg-layer-1"
+                />
+              )}
+            </>
           )}
         </div>
 
-        <div className="w-full space-y-1 -mt-2">
+        <div className="w-full space-y-1">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-body-xs-medium text-primary">
+            <div
+              className={cn(
+                "w-full overflow-hidden whitespace-normal break-all truncate text-body-xs-medium text-primary",
+                {
+                  "line-clamp-1 -mt-2": !isNotificationAutoReminder,
+                  "line-clamp-2 h-10": isNotificationAutoReminder,
+                }
+              )}
+            >
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
+                isNotificationAutoReminder={isNotificationAutoReminder}
               />
             </div>
             <NotificationOption
@@ -132,6 +157,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
               setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
               customSnoozeModal={customSnoozeModal}
               setCustomSnoozeModal={setCustomSnoozeModal}
+              isNotificationAutoReminder={isNotificationAutoReminder}
             />
           </div>
 

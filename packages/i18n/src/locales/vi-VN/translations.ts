@@ -1611,6 +1611,7 @@ Cảm ơn,
     },
     common: {
       months_count: "{months, plural, one{# tháng} other{# tháng}}",
+      days_count: "{days, plural, one{# ngày} other{# ngày}}",
     },
     empty_state: {
       general: {
@@ -2480,6 +2481,12 @@ Tạo dự án mới`,
         description: "Plane sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
         duration: "Tự động đóng không hoạt động",
         auto_close_status: "Trạng thái tự động đóng",
+      },
+      "auto-remind": {
+        title: "Nhắc nhở tự động",
+        description:
+          "Plane sẽ tự động gửi nhắc nhở qua email và thông báo trong ứng dụng để giữ cho nhóm của bạn trên đường đến các hạn chót.",
+        duration: "Gửi nhắc nhở trước",
       },
     },
     empty_state: {

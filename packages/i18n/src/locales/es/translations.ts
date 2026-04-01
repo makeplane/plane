@@ -2505,6 +2505,12 @@ Crea un nuevo proyecto en su lugar`,
         duration: "Cerrar automáticamente elementos de trabajo inactivos durante",
         auto_close_status: "Estado de cierre automático",
       },
+      "auto-remind": {
+        title: "Recordatorios automáticos",
+        description:
+          "Plane enviará recordatorios automáticos via correo electrónico y notificaciones en la aplicación para mantener a tu equipo en el camino de los plazos.",
+        duration: "Enviar recordatorio antes",
+      },
     },
     empty_state: {
       labels: {

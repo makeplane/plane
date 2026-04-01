@@ -1613,6 +1613,7 @@ Grazie,
     },
     common: {
       months_count: "{months, plural, one {# mese} other {# mesi}}",
+      days_count: "{days, plural, one {# giorno} other {# giorni}}",
     },
     empty_state: {
       general: {
@@ -2487,6 +2488,12 @@ Crea un nuovo progetto invece`,
         description: "Plane chiuderà automaticamente gli elementi di lavoro che non sono stati completati o annullati.",
         duration: "Chiudi automaticamente gli elementi di lavoro inattivi per",
         auto_close_status: "Stato di chiusura automatica",
+      },
+      "auto-remind": {
+        title: "Promemoria automatici",
+        description:
+          "Plane invierà automaticamente promemoria via email e notifiche in-app per mantenere il tuo team in linea con le scadenze.",
+        duration: "Invia promemoria prima di",
       },
     },
     empty_state: {

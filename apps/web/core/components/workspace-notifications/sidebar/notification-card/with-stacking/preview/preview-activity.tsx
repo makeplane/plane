@@ -34,6 +34,11 @@ export function NotificationPreviewActivity(props: TNotificationPreviewActivity)
   // const notificationTriggeredBy = notification.triggered_by_details || undefined;
   const triggeredBy = notification.triggered_by_details;
 
+  // auto reminder notifications
+  const sender = notification.sender;
+  const isNotificationAutoReminder = sender === "in_app:issue_activities:target-date-reminder";
+  const isNotificationRead = notification.read_at === null;
+
   if (!workspaceSlug || !notification.id || !notification?.id || !notificationField) return <></>;
 
   return (
@@ -43,6 +48,8 @@ export function NotificationPreviewActivity(props: TNotificationPreviewActivity)
         notificationField={notificationField}
         createdAt={notification?.created_at}
         triggeredBy={triggeredBy}
+        isNotificationAutoReminder={isNotificationAutoReminder}
+        isNotificationRead={isNotificationRead}
       >
         <div className="w-full whitespace-normal truncate text-body-xs-medium">
           <NotificationContent
@@ -50,6 +57,7 @@ export function NotificationPreviewActivity(props: TNotificationPreviewActivity)
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
+            isNotificationAutoReminder={isNotificationAutoReminder}
           />
         </div>
       </IssueActivityBlock>

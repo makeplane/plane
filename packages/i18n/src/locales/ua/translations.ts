@@ -1609,6 +1609,7 @@ export default {
     },
     common: {
       months_count: "{months, plural, one{# місяць} few{# місяці} other{# місяців}}",
+      days_count: "{days, plural, one{# день} few{# дні} other{# днів}}",
     },
     empty_state: {
       general: {
@@ -2476,6 +2477,12 @@ export default {
         description: "Plane закриватиме неактивні одиниці.",
         duration: "Закривати одиниці, що неактивні понад",
         auto_close_status: "Стан для автоматичного закриття",
+      },
+      "auto-remind": {
+        title: "Автоматичні сповіщення",
+        description:
+          "Plane автоматично буде надсилати сповіщення через email та в додатку, щоб ваша команда залишалася на шляху до термінів.",
+        duration: "Надіслати сповіщення заздалегідь",
       },
     },
     empty_state: {

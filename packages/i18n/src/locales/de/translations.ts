@@ -1705,6 +1705,7 @@ Danke,
     },
     common: {
       months_count: "{months, plural, one{# Monat} few{# Monate} other{# Monate}}",
+      days_count: "{days, plural, one{# Tag} few{# Tage} other{# Tagen}}",
     },
     empty_state: {
       general: {
@@ -2668,6 +2669,29 @@ Erstellen Sie ein neues.`,
       current: "Aktuelles Schätzsystem",
       select: "Wählen Sie ein Schätzsystem",
     },
+    automations: {
+      heading: "Automatisierungen",
+      description:
+        "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren.",
+      label: "Automatisierungen",
+      "auto-archive": {
+        title: "Geschlossene Arbeitselemente automatisch archivieren",
+        description: "Plane archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
+        duration: "Arbeitselemente automatisch archivieren, die geschlossen sind seit",
+      },
+      "auto-close": {
+        title: "Arbeitselemente automatisch schließen",
+        description: "Plane schließt automatisch Arbeitselemente, die nicht abgeschlossen oder abgebrochen wurden.",
+        duration: "Arbeitselemente automatisch schließen, die inaktiv sind seit",
+        auto_close_status: "Auto-Schließ-Status",
+      },
+      "auto-remind": {
+        title: "Automatische Erinnerungen",
+        description:
+          "Plane wird automatische Erinnerungen via E-Mail und in-App-Benachrichtigungen senden, um Ihr Team auf den Lauf der Dinge zu halten.",
+        duration: "Erinnerung vor",
+      },
+    },
     empty_state: {
       labels: {
         title: "Keine Labels",
@@ -2895,23 +2919,6 @@ Erstellen Sie ein neues.`,
         loading: "Projektfunktion wird aktualisiert...",
         success: "Projektfunktion erfolgreich aktualisiert.",
         error: "Beim Aktualisieren der Projektfunktion ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
-      },
-    },
-    automations: {
-      heading: "Automatisierungen",
-      description:
-        "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren.",
-      label: "Automatisierungen",
-      "auto-archive": {
-        title: "Geschlossene Arbeitselemente automatisch archivieren",
-        description: "Plane archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
-        duration: "Arbeitselemente automatisch archivieren, die geschlossen sind seit",
-      },
-      "auto-close": {
-        title: "Arbeitselemente automatisch schließen",
-        description: "Plane schließt automatisch Arbeitselemente, die nicht abgeschlossen oder abgebrochen wurden.",
-        duration: "Arbeitselemente automatisch schließen, die inaktiv sind seit",
-        auto_close_status: "Auto-Schließ-Status",
       },
     },
     workflows: {

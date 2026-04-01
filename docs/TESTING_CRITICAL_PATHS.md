@@ -232,7 +232,7 @@ Priority tasks to test (based on impact of silent failure):
 2. `notification_task.py` — Notification delivery
 3. `webhook_task.py` — External webhook delivery
 4. `deletion_task.py` — Cascade soft-deletion
-5. `issue_automation_task.py` — Auto-close, auto-archive
+5. `issue_automation_task.py` — Auto-close, auto-archive, auto-remind
 
 Use existing pattern from `tests/unit/bg_tasks/` — call the task function directly (not `.delay()`), mock external dependencies with `conftest_external.py` fixtures.
 

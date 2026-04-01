@@ -1497,6 +1497,7 @@ Thanks,
     },
     common: {
       months_count: "{months, plural, one{# month} other{# months}}",
+      days_count: "{days, plural, one{# day} other{# days}}",
     },
     empty_state: {
       general: {
@@ -2456,6 +2457,12 @@ Create a new project instead`,
         description: "Plane will automatically close work items that haven't been completed or canceled.",
         duration: "Auto-close work items that are inactive for",
         auto_close_status: "Auto-close status",
+      },
+      "auto-remind": {
+        title: "Auto-reminders",
+        description:
+          "Plane will automatically send reminders via email and in-app notifications to keep your team on track with deadlines.",
+        duration: "Send reminder before",
       },
     },
     empty_state: {

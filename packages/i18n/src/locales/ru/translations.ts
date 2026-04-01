@@ -1608,6 +1608,7 @@ export default {
     },
     common: {
       months_count: "{months, plural, one{# месяц} other{# месяцев}}",
+      days_count: "{days, plural, one{# день} other{# дней}}",
     },
     empty_state: {
       general: {
@@ -2479,6 +2480,12 @@ export default {
         description: "Plane будет автоматически закрывать рабочие элементы, которые не были завершены или отменены.",
         duration: "Автоматическое закрытие рабочих элементов, которые неактивны в течение",
         auto_close_status: "Статус автоматического закрытия",
+      },
+      "auto-remind": {
+        title: "Автоматические напоминания",
+        description:
+          "Plane автоматически будет отправлять напоминания через email и в приложении, чтобы ваша команда оставалась на пути к срокам.",
+        duration: "Отправить напоминание заранее",
       },
     },
     empty_state: {

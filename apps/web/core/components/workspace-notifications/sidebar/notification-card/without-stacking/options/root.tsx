@@ -29,6 +29,7 @@ type TNotificationOption = {
   setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
   customSnoozeModal: boolean;
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
+  isNotificationAutoReminder: boolean;
 };
 
 export const NotificationOption = observer(function NotificationOption(props: TNotificationOption) {
@@ -39,6 +40,7 @@ export const NotificationOption = observer(function NotificationOption(props: TN
     setIsSnoozeStateModalOpen,
     customSnoozeModal,
     setCustomSnoozeModal,
+    isNotificationAutoReminder,
   } = props;
   // hooks
   const notification = useNotification(notificationId);
@@ -53,17 +55,21 @@ export const NotificationOption = observer(function NotificationOption(props: TN
         {/* read */}
         <NotificationItemReadOption workspaceSlug={workspaceSlug} notification={notification} />
 
-        {/* archive */}
-        <NotificationItemArchiveOption workspaceSlug={workspaceSlug} notification={notification} />
+        {isNotificationAutoReminder === false && (
+          <>
+            {/* archive */}
+            <NotificationItemArchiveOption workspaceSlug={workspaceSlug} notification={notification} />
 
-        {/* snooze notification */}
-        <NotificationItemSnoozeOption
-          workspaceSlug={workspaceSlug}
-          notification={notification}
-          setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
-          customSnoozeModal={customSnoozeModal}
-          setCustomSnoozeModal={setCustomSnoozeModal}
-        />
+            {/* snooze notification */}
+            <NotificationItemSnoozeOption
+              workspaceSlug={workspaceSlug}
+              notification={notification}
+              setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
+              customSnoozeModal={customSnoozeModal}
+              setCustomSnoozeModal={setCustomSnoozeModal}
+            />
+          </>
+        )}
       </div>
     </div>
   );

@@ -430,6 +430,9 @@ CELERY_IMPORTS = (
     "plane.ee.bgtasks.batched_search_update_task",
     "plane.ee.bgtasks.recurring_work_item_task",
     "plane.ee.bgtasks.cycle_automation_task",
+    # auto reminder tasks
+    "plane.ee.bgtasks.auto_reminder_automation.task",
+    "plane.ee.bgtasks.auto_reminder_automation.email",
     # silo tasks
     "plane.silo.bgtasks.toggle_issue_properties_task",
     "plane.silo.bgtasks.toggle_workspace_issue_properties_task",

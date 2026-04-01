@@ -1622,6 +1622,7 @@ Obrigado,
     },
     common: {
       months_count: "{months, plural, one{# mês} other{# meses}}",
+      days_count: "{days, plural, one{# dia} other{# dias}}",
     },
     empty_state: {
       general: {
@@ -2500,6 +2501,12 @@ Crie um novo projeto em vez disso`,
         description: "O Plane fechará automaticamente os itens de trabalho que não foram concluídos ou cancelados.",
         duration: "Fechar automaticamente itens de trabalho que estão inativos por",
         auto_close_status: "Status de fechamento automático",
+      },
+      "auto-remind": {
+        title: "Avisos automáticos",
+        description:
+          "O Plane enviará avisos automáticos via e-mail e notificações no aplicativo para manter sua equipe no caminho dos prazos.",
+        duration: "Enviar aviso antes",
       },
     },
     empty_state: {

@@ -1590,6 +1590,7 @@ export default {
     },
     common: {
       months_count: "{months, plural, one{# 개월} other{# 개월}}",
+      days_count: "{days, plural, one{# 일} other{# 일}}",
     },
     empty_state: {
       general: {
@@ -2452,6 +2453,11 @@ export default {
         description: "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
         duration: "다음 기간 동안 비활성 작업 항목 자동 닫기",
         auto_close_status: "자동 닫기 상태",
+      },
+      "auto-remind": {
+        title: "자동 알림",
+        description: "Plane은 이메일과 앱 알림을 통해 팀이 마감일에 따라 추진하도록 자동으로 알림을 보냅니다.",
+        duration: "알림 전",
       },
     },
     empty_state: {

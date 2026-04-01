@@ -145,6 +145,8 @@ class FeatureFlag(Enum):
     TIMELINE_DEPENDENCY = "TIMELINE_DEPENDENCY"
     # Workflow scripts (pre/post transition hooks)
     WORKFLOW_CONDITIONS = "WORKFLOW_CONDITIONS"
+    # Auto reminder automation
+    DUE_DATE_REMINDER = "DUE_DATE_REMINDER"
 
 
 class AdminFeatureFlag(Enum):

@@ -25,10 +25,10 @@ type Props = {
   type: "auto-close" | "auto-archive";
   initialValues: Partial<IProject>;
   handleClose: () => void;
-  handleChange: (formData: Partial<IProject>) => Promise<void>;
+  handleChange?: (formData: Partial<IProject>) => void;
 };
 
-export function SelectMonthModal({ type, initialValues, isOpen, handleClose, handleChange }: Props) {
+export function AutomationMonthModal({ type, initialValues, isOpen, handleClose, handleChange }: Props) {
   const { workspaceSlug, projectId } = useParams();
 
   const {
@@ -47,7 +47,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
 
   const onSubmit = (formData: Partial<IProject>) => {
     if (!workspaceSlug && !projectId) return;
-    handleChange(formData);
+    handleChange?.(formData);
     onClose();
   };
 

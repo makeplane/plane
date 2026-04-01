@@ -1609,6 +1609,7 @@ Terima kasih,
     },
     common: {
       months_count: "{months, plural, one{# bulan} other{# bulan}}",
+      days_count: "{days, plural, one{# hari} other{# hari}}",
     },
     empty_state: {
       general: {
@@ -2482,6 +2483,12 @@ Buat proyek baru sebagai gantinya`,
         description: "Plane akan menutup secara otomatis item kerja yang belum selesai atau dibatalkan.",
         duration: "Tutup otomatis item kerja yang tidak aktif selama",
         auto_close_status: "Status penutupan otomatis",
+      },
+      "auto-remind": {
+        title: "Pengingat otomatis",
+        description:
+          "Plane akan mengirim pengingat otomatis via email dan notifikasi dalam aplikasi untuk memantau kemajuan proyek Anda.",
+        duration: "Kirim pengingat sebelum",
       },
     },
     empty_state: {

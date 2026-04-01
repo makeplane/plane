@@ -1613,6 +1613,7 @@ Teşekkürler,
     },
     common: {
       months_count: "{months, plural, one{# ay} other{# ay}}",
+      days_count: "{days, plural, one{# gün} other{# gün}}",
     },
     empty_state: {
       general: {
@@ -2474,6 +2475,12 @@ Bunun yerine yeni bir proje oluşturun`,
         description: "Plane, tamamlanmamış veya iptal edilmemiş iş öğelerini otomatik kapatacak.",
         duration: "Şu süre etkin olmayan iş öğelerini otomatik kapat",
         auto_close_status: "Otomatik kapatma durumu",
+      },
+      "auto-remind": {
+        title: "Otomatik hatırlatmalar",
+        description:
+          "Plane, e-posta ve uygulama bildirimleri aracılığıyla otomatik olarak takımınızı zamanlama yolunda tutacaktır.",
+        duration: "Hatırlatma gönderimi öncesi",
       },
     },
     empty_state: {

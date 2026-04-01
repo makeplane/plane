@@ -1606,6 +1606,7 @@ Dziękuję,
     },
     common: {
       months_count: "{months, plural, one{# miesiąc} few{# miesiące} other{# miesięcy}}",
+      days_count: "{days, plural, one{# dzień} other{# dni}}",
     },
     empty_state: {
       general: {
@@ -2475,6 +2476,12 @@ Utwórz nowy.`,
         description: "Plane będzie automatycznie zamykał elementy, które nie zostały ukończone lub anulowane.",
         duration: "Zamknij elementy nieaktywne dłużej niż",
         auto_close_status: "Status automatycznego zamknięcia",
+      },
+      "auto-remind": {
+        title: "Automatyczne przypomnienia",
+        description:
+          "Plane automatycznie wysyła przypomnienia przez e-mail i powiadomienia w aplikacji, aby Twoja ekipa utrzymała się na ścieżce do terminów.",
+        duration: "Wyślij przypomnienie przed",
       },
     },
     empty_state: {

@@ -168,4 +168,51 @@
       transform: translateY(8px) scale(0.95);
     }
   }
+
+  /* this '--animate-notification-bell-ring' used for workspace notifications for reminders */
+  --animate-notification-bell-ring: notification-bell-ring 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  @keyframes notification-bell-ring {
+    /* burst ~0–18%: damped rotation around top center */
+    0% {
+      transform-origin: top center;
+      transform: rotate(0deg);
+    }
+    2% {
+      transform-origin: top center;
+      transform: rotate(-8deg);
+    }
+    4% {
+      transform-origin: top center;
+      transform: rotate(8deg);
+    }
+    6% {
+      transform-origin: top center;
+      transform: rotate(-6deg);
+    }
+    8% {
+      transform-origin: top center;
+      transform: rotate(6deg);
+    }
+    10% {
+      transform-origin: top center;
+      transform: rotate(-4deg);
+    }
+    12% {
+      transform-origin: top center;
+      transform: rotate(4deg);
+    }
+    14% {
+      transform-origin: top center;
+      transform: rotate(-2deg);
+    }
+    16% {
+      transform-origin: top center;
+      transform: rotate(2deg);
+    }
+    18%,
+    100% {
+      transform-origin: top center;
+      transform: rotate(0deg);
+    }
+  }
 }

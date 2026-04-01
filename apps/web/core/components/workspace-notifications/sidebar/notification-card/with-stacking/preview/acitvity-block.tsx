@@ -12,7 +12,7 @@
  */
 
 import type { ReactElement, ReactNode } from "react";
-import { ArrowRightLeft, CalendarDays, MessageSquare, Paperclip } from "lucide-react";
+import { ArrowRightLeft, BellRing, CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 // plane imports
 import {
   ArchiveIcon,
@@ -43,6 +43,8 @@ type TIssueActivityBlock = {
   ends: "top" | "bottom" | "single" | undefined;
   children: ReactNode;
   triggeredBy: IUserLite | undefined;
+  isNotificationAutoReminder: boolean;
+  isNotificationRead: boolean;
 };
 
 export const activityIconMap: Record<string, ReactElement> = {
@@ -69,7 +71,8 @@ export const activityIconMap: Record<string, ReactElement> = {
 };
 
 export function IssueActivityBlock(props: TIssueActivityBlock) {
-  const { ends, children, createdAt, notificationField, triggeredBy } = props;
+  const { ends, children, createdAt, notificationField, triggeredBy, isNotificationAutoReminder, isNotificationRead } =
+    props;
   const relationFieldNames = useRelationFieldNames();
   const getRelationOption = useRelationOptionByFieldName();
 
@@ -83,13 +86,28 @@ export function IssueActivityBlock(props: TIssueActivityBlock) {
       })}
     >
       {ends !== "single" && <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-3" aria-hidden />}
-      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-layer-3 text-secondary">
-        {notificationField === "comment"
-          ? triggeredBy && <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
-          : relationFieldNames.has(notificationField)
-            ? getRelationOption(notificationField)?.icon(14)
-            : activityIconMap[notificationField]}
-      </div>
+
+      {isNotificationAutoReminder ? (
+        <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-layer-3 text-secondary">
+          <BellRing
+            className={cn(
+              "h-3.5 w-3.5 text-custom-text-200",
+              isNotificationRead ? "animate-notification-bell-ring animate-duration-1000" : ""
+            )}
+          />
+        </div>
+      ) : (
+        <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-layer-3 text-secondary">
+          {notificationField === "comment"
+            ? triggeredBy && (
+                <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
+              )
+            : relationFieldNames.has(notificationField)
+              ? getRelationOption(notificationField)?.icon(14)
+              : activityIconMap[notificationField]}
+        </div>
+      )}
+
       <div className="w-full text-secondary flex gap-2">
         <span className="truncate"> {children} </span>
         <span className="text-tertiary">

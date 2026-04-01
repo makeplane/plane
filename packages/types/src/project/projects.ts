@@ -54,6 +54,7 @@ export interface IPartialProject {
 export interface IProject extends IPartialProject {
   archive_in?: number;
   close_in?: number;
+  auto_reminder_days?: number;
   // only for uploading the cover image
   cover_image_asset?: null;
   cover_image?: string;

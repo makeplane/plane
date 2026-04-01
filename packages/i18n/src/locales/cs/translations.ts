@@ -1604,6 +1604,7 @@ Díky,
     },
     common: {
       months_count: "{months, plural, one{# měsíc} few{# měsíce} other{# měsíců}}",
+      days_count: "{days, plural, one{# den} few{# dny} other{# dní}}",
     },
     empty_state: {
       general: {
@@ -2468,6 +2469,12 @@ Vytvořte nový.`,
         description: "Plane automaticky uzavře pracovní položky, které nebyly dokončeny nebo zrušeny.",
         duration: "Automaticky uzavřít pracovní položky, které jsou neaktivní po dobu",
         auto_close_status: "Stav automatického uzavření",
+      },
+      "auto-remind": {
+        title: "Automatické upozornění",
+        description:
+          "Plane automaticky pošle upozornění přes e-mail a v aplikaci, aby vaše tým zůstal na cestě s termíny.",
+        duration: "Odeslat upozornění před",
       },
     },
     empty_state: {
