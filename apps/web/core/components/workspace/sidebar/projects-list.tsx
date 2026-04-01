@@ -106,7 +106,9 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
 
     const updatedSortOrder = orderJoinedProjects(sourceIndex, destinationIndex, sourceId, joinedProjectsList);
     if (updatedSortOrder != undefined)
-      updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
+      updateProjectView(workspaceSlug.toString(), sourceId, {
+        sort_order: updatedSortOrder,
+      }).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -172,7 +174,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       )}
       <div
         ref={containerRef}
-        className={cn({
+        className={cn("grow", {
           "border-t border-strong": isScrolled,
         })}
       >
