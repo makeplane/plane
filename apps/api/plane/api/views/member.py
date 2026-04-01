@@ -36,7 +36,9 @@ from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.db.models import Project, ProjectMember, User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.db.models.workspace import ROLE as WORKSPACE_ROLE
 from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
-from plane.ee.models import PageUser, TeamspaceMember, WorkspaceLicense
+from plane.ee.models import PageUser, TeamspaceMember, TeamspaceProject, WorkspaceLicense
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.oauth import (
@@ -177,13 +179,28 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
                 {"error": "Provided workspace does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
-            "member_id", flat=True
+        # Get the workspace members that are present inside the project.
+        project_members = list(
+            ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug, is_active=True).values_list(
+                "member_id", flat=True
+            )
         )
 
+        # Teamspace members linked to this project can also be assigned work items,
+        # so include them in the member list shown to integrations.
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=request.user.id, slug=slug):
+            teamspace_ids = TeamspaceProject.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
+                "team_space_id", flat=True
+            )
+            teamspace_members = list(
+                TeamspaceMember.objects.filter(team_space_id__in=teamspace_ids, member__is_active=True).values_list(
+                    "member_id", flat=True
+                )
+            )
+            project_members = list(set(project_members + teamspace_members))
+
         # Get all the users that are present inside the workspace
-        users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
+        users = UserLiteSerializer(User.objects.filter(id__in=project_members, is_active=True), many=True).data
         return Response(users, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id):
