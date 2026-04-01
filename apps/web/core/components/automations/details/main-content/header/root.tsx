@@ -14,6 +14,7 @@
 import { observer } from "mobx-react";
 import { Link, useParams } from "react-router";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -33,6 +34,8 @@ export const AutomationDetailsMainContentHeader = observer(function AutomationDe
   const { getProjectById } = useProject();
   // derived values
   const automation = getAutomationById(automationId)?.asJSON;
+  // translation
+  const { t } = useTranslation();
 
   if (!automation) return null;
   return (
@@ -45,22 +48,28 @@ export const AutomationDetailsMainContentHeader = observer(function AutomationDe
         <div className="mt-4 flex gap-3 flex-wrap">
           <p className="shrink-0 text-body-sm-regular text-secondary py-1">Automation to run on projects:</p>
           <div className="shrink-0 max-w-full flex items-center gap-2 flex-wrap">
-            {automation.project_ids?.map((projectId) => {
-              const project = getProjectById(projectId);
-              if (!project) return null;
-              return (
-                <Link
-                  to={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  key={projectId}
-                  className="flex items-center gap-1 bg-layer-2 hover:bg-layer-2-hover border border-subtle p-1 rounded-md"
-                >
-                  <span className="shrink-0 size-4 grid place-items-center">
-                    <Logo logo={project.logo_props} size={14} />
-                  </span>
-                  <p className="text-caption-md-regular text-tertiary">{project.name}</p>
-                </Link>
-              );
-            })}
+            {automation.project_ids.length ? (
+              automation.project_ids.map((projectId) => {
+                const project = getProjectById(projectId);
+                if (!project) return null;
+                return (
+                  <Link
+                    to={`/${workspaceSlug}/projects/${projectId}/issues/`}
+                    key={projectId}
+                    className="flex items-center gap-1 bg-layer-2 hover:bg-layer-2-hover border border-subtle p-1 rounded-md"
+                  >
+                    <span className="shrink-0 size-4 grid place-items-center">
+                      <Logo logo={project.logo_props} size={14} />
+                    </span>
+                    <p className="text-caption-md-regular text-tertiary">{project.name}</p>
+                  </Link>
+                );
+              })
+            ) : (
+              <span className="bg-layer-2 border border-subtle p-1 rounded-md text-caption-md-regular text-tertiary">
+                {t("automations.global_automations.project_select.all_projects.label")}
+              </span>
+            )}
           </div>
         </div>
       )}

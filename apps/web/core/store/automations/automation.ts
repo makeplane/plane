@@ -86,6 +86,7 @@ export interface IAutomationInstance extends TAutomation {
   getNodeById: (id: string) => TAutomationNodeInstance | undefined;
   getNodeByTypeAndId: (nodeType: EAutomationNodeType, id: string) => TAutomationNodeInstance | undefined;
   getEdgeBySourceNodeId: (sourceNodeId: string) => TAutomationNodeEdge | undefined;
+  resolvedProjectIds: string[];
   // helper actions
   addOrUpdateTrigger: (trigger: TAutomationTriggerNode, helpers: TAutomationTriggerNodeHelpers) => void;
   addOrUpdateAction: (action: TAutomationActionNode, helpers: TAutomationActionNodeHelpers) => void;
@@ -143,7 +144,7 @@ export class AutomationInstance implements IAutomationInstance {
   last_run_at: TAutomation["last_run_at"];
   last_run_status: TAutomation["last_run_status"];
   name: TAutomation["name"];
-  private _response_project_ids: TAutomation["project_ids"];
+  project_ids: TAutomation["project_ids"];
   run_count: TAutomation["run_count"];
   scope: TAutomation["scope"];
   status: TAutomation["status"];
@@ -176,7 +177,7 @@ export class AutomationInstance implements IAutomationInstance {
     this.last_run_at = automation.last_run_at;
     this.last_run_status = automation.last_run_status;
     this.name = automation.name;
-    this._response_project_ids = automation.project_ids;
+    this.project_ids = automation.project_ids;
     this.run_count = automation.run_count;
     this.scope = automation.scope;
     this.status = automation.status;
@@ -197,7 +198,7 @@ export class AutomationInstance implements IAutomationInstance {
     this.activity = new AutomationActivityStore(helpers.activityHelpers);
     this.#rootStore = store;
 
-    makeObservable<AutomationInstance, "_response_project_ids">(this, {
+    makeObservable(this, {
       // observables
       average_run_time: observable.ref,
       created_at: observable.ref,
@@ -209,7 +210,7 @@ export class AutomationInstance implements IAutomationInstance {
       last_run_at: observable.ref,
       last_run_status: observable.ref,
       name: observable.ref,
-      _response_project_ids: observable,
+      project_ids: observable,
       run_count: observable.ref,
       scope: observable.ref,
       status: observable.ref,
@@ -234,7 +235,7 @@ export class AutomationInstance implements IAutomationInstance {
       allActions: computed,
       allConditions: computed,
       allEdges: computed,
-      project_ids: computed,
+      resolvedProjectIds: computed,
       // actions
       mutate: action,
       update: action,
@@ -269,18 +270,14 @@ export class AutomationInstance implements IAutomationInstance {
     return this.is_enabled;
   }
 
-  get project_ids() {
-    if (!this._response_project_ids?.length) {
+  get resolvedProjectIds() {
+    if (!this.project_ids?.length) {
       const {
         project: { totalProjectIds },
       } = this.#rootStore.projectRoot;
       return totalProjectIds ?? [];
     }
-    return this._response_project_ids;
-  }
-
-  set project_ids(projectIds: string[]) {
-    this._response_project_ids = projectIds;
+    return this.project_ids;
   }
 
   get asJSON() {

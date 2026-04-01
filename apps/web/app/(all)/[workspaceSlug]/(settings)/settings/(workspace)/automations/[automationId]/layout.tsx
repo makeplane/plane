@@ -18,12 +18,21 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // plane web imports
 import { WorkspaceAutomationsDetailsWrapper } from "@/components/automations/details/workspace-wrapper";
+// hooks
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // local imports
 import type { Route } from "./+types/layout";
 import { WorkspaceAutomationDetailsHeader } from "./header";
 
 function WorkspaceAutomationDetailsLayout({ params }: Route.ComponentProps) {
   const { automationId, workspaceSlug } = params;
+  // fetch all workspace labels
+  useWorkspaceIssueProperties(workspaceSlug, {
+    fetchLabels: true,
+    fetchEstimates: false,
+    fetchModules: false,
+    fetchCycles: false,
+  });
 
   return (
     <WorkspaceAutomationsDetailsWrapper automationId={automationId} workspaceSlug={workspaceSlug}>

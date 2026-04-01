@@ -52,6 +52,7 @@ export const loadOptions = async <V extends TFilterValue>(props: TLoadOptionsPro
         // also keep a flat list for SelectedOptionsDisplay lookups
         setOptions(result.flatMap((group) => group.options));
       } else {
+        setGroups?.([]);
         setOptions(result);
       }
     } catch (error) {

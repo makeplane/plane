@@ -12,12 +12,13 @@
  */
 
 import { useCallback, useMemo } from "react";
+import { useParams } from "react-router";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { DueDatePropertyIcon, PriorityIcon, StartDatePropertyIcon, StateGroupIcon } from "@plane/propel/icons";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
-import type { ICustomSearchSelectOption, IUserLite, TFilterOptionsType } from "@plane/types";
+import type { ICustomSearchSelectOption, TFilterOptionsType } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
@@ -25,6 +26,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+// local imports
 import { useAutomations } from "../store/automations/use-automations";
 
 export enum EConfigurationComponentType {
@@ -88,18 +90,20 @@ type TArgs = {
 
 export const useAutomationActionConfig = (args: TArgs) => {
   const { automationId } = args;
+  // params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getAutomationById } = useAutomations();
   const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
   const {
-    getUserDetails,
-    project: { getProjectMemberIds },
+    workspace: { getWorkspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
   const { getProjectLabels } = useLabel();
   // derived values
   const automation = getAutomationById(automationId);
-  const projectIds = useMemo(() => automation?.project_ids ?? [], [automation?.project_ids]);
+  const projectIds = useMemo(() => automation?.resolvedProjectIds ?? [], [automation?.resolvedProjectIds]);
+  const workspaceMemberIds = workspaceSlug ? getWorkspaceMemberIds(workspaceSlug) : [];
   const isGlobal = !!automation?.is_global;
 
   // ---- Group label with project logo ----
@@ -159,31 +163,6 @@ export const useAutomationActionConfig = (args: TArgs) => {
     [projectIds, getProjectGroupLabel, getProjectLabels]
   );
 
-  const memberGroups = useMemo<TCustomSearchSelectOptionGroup[]>(
-    () =>
-      projectIds.map((projectId) => ({
-        id: projectId,
-        label: getProjectGroupLabel(projectId),
-        options: (getProjectMemberIds(projectId, false) ?? [])
-          .map((userId) => {
-            const user = getUserDetails(userId);
-            if (!user) return null;
-            return {
-              value: user.id,
-              query: user.display_name,
-              content: (
-                <div className="flex items-center gap-2">
-                  <Avatar name={user.display_name} src={getFileURL(user.avatar_url)} showTooltip={false} />
-                  {user.display_name}
-                </div>
-              ),
-            };
-          })
-          .filter((m): m is NonNullable<typeof m> => !!m),
-      })),
-    [projectIds, getProjectGroupLabel, getProjectMemberIds, getUserDetails]
-  );
-
   // ---- Action configs ----
 
   const stateConfig: TChangePropertyConfiguration = useMemo(() => {
@@ -237,30 +216,46 @@ export const useAutomationActionConfig = (args: TArgs) => {
     }),
     []
   );
-
-  const assigneeConfig: TChangePropertyConfiguration = useMemo(() => {
-    const selectProps = isGlobal
-      ? { optionsType: "group" as const, groups: memberGroups }
-      : { optionsType: "flat-list" as const, options: memberGroups[0]?.options ?? [] };
-
-    return {
+  const assigneeConfig: TChangePropertyConfiguration = useMemo(
+    () => ({
       supported_change_types: [EAutomationChangeType.ADD, EAutomationChangeType.REMOVE],
       component_type: EConfigurationComponentType.MULTI_SELECT,
-      ...selectProps,
+      optionsType: "flat-list",
+      options:
+        workspaceMemberIds
+          ?.map((userId) => {
+            const memberDetails = getWorkspaceMemberDetails(userId);
+            if (!memberDetails) return;
+            return {
+              value: `${memberDetails?.member?.id}`,
+              query: `${memberDetails?.member?.display_name}`,
+              content: (
+                <div className="flex items-center gap-2">
+                  <Avatar
+                    name={memberDetails?.member?.display_name}
+                    src={getFileURL(memberDetails?.member?.avatar_url ?? "")}
+                    showTooltip={false}
+                  />
+                  {memberDetails?.member?.display_name}
+                </div>
+              ),
+            };
+          })
+          .filter((o): o is NonNullable<typeof o> => !!o) ?? [],
       getPreviewContent: (value: string[]) => {
-        const members = value.map((id) => getUserDetails(id)).filter((m): m is IUserLite => !!m);
+        const members = value.map((id) => getWorkspaceMemberDetails(id)).filter((m) => m);
         return (
           <>
             {members.map((member, index) => (
-              <div key={member.id} className="shrink-0">
+              <div key={member?.id} className="shrink-0">
                 <div className="inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
                   <Avatar
-                    name={member.display_name}
-                    src={getFileURL(member.avatar_url)}
+                    name={member?.member?.display_name}
+                    src={getFileURL(member?.member?.avatar_url ?? "")}
                     showTooltip={false}
                     size="sm"
                   />
-                  {member.display_name}
+                  {member?.member?.display_name}
                 </div>
                 {index !== members.length - 1 && <span className="mr-1">,</span>}
               </div>
@@ -268,8 +263,9 @@ export const useAutomationActionConfig = (args: TArgs) => {
           </>
         );
       },
-    };
-  }, [isGlobal, memberGroups, getUserDetails]);
+    }),
+    [workspaceMemberIds, getWorkspaceMemberDetails]
+  );
 
   const labelsConfig: TChangePropertyConfiguration = useMemo(() => {
     const selectProps = isGlobal

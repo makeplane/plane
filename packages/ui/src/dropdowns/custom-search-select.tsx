@@ -22,7 +22,7 @@ import { isObject } from "@plane/utils";
 // local imports
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
-import { FlatOptionsList, GroupedOptionsList } from "./custom-search-select-options";
+import { FlatOptionsList, GroupedOptionsList, unscopeGroupOptionValue } from "./custom-search-select-options";
 import type { ICustomSearchSelectProps } from "./helper";
 
 export function CustomSearchSelect(props: ICustomSearchSelectProps) {
@@ -83,9 +83,20 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
 
   const isSearchControlled = controlledSearchQuery !== undefined;
 
+  // When grouped options are used, option values are scoped with a group prefix to avoid
+  // cross-group hover/selection collisions. Strip the prefix before forwarding to onChange.
+  const handleChange = (val: unknown) => {
+    if (!groupedOptions) {
+      onChange(val);
+      return;
+    }
+    const unscope = (v: unknown) => (typeof v === "string" ? unscopeGroupOptionValue(v) : v);
+    onChange(Array.isArray(val) ? val.map(unscope) : unscope(val));
+  };
+
   const comboboxProps: any = {
     value,
-    onChange,
+    onChange: handleChange,
     disabled,
   };
 
@@ -221,6 +232,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                           multiple={!!multiple}
                           closeDropdown={closeDropdown}
                           noResultsMessage={noResultsMessage ?? "No matches found"}
+                          comboboxValue={value as string | string[] | null | undefined}
                         />
                       ) : options ? (
                         <FlatOptionsList

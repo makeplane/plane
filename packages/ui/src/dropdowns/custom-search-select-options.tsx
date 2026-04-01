@@ -27,12 +27,16 @@ type TOptionItemProps = {
   option: ICustomSearchSelectOption;
   multiple: boolean;
   closeDropdown: () => void;
+  // When set, replaces option.value in Combobox.Option to avoid cross-group collisions
+  scopedValue?: string;
+  // When set, overrides Headless UI's selected render prop
+  isSelected?: boolean;
 };
 
-function OptionItem({ option, multiple, closeDropdown }: TOptionItemProps) {
+function OptionItem({ option, multiple, closeDropdown, scopedValue, isSelected }: TOptionItemProps) {
   return (
     <Combobox.Option
-      value={option.value}
+      value={scopedValue ?? option.value}
       className={({ active }) =>
         cn(
           "w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none",
@@ -47,23 +51,26 @@ function OptionItem({ option, multiple, closeDropdown }: TOptionItemProps) {
       }}
       disabled={option.disabled}
     >
-      {({ selected }) => (
-        <>
-          <span className="grow truncate">{option.content}</span>
-          {selected && <CheckIcon className="size-3.5 shrink-0" />}
-          {option.tooltip && (
-            <>
-              {typeof option.tooltip === "string" ? (
-                <Tooltip tooltipContent={option.tooltip}>
-                  <InfoIcon className="size-3.5 shrink-0 cursor-pointer text-secondary" />
-                </Tooltip>
-              ) : (
-                option.tooltip
-              )}
-            </>
-          )}
-        </>
-      )}
+      {({ selected: headlessSelected }) => {
+        const selected = isSelected !== undefined ? isSelected : headlessSelected;
+        return (
+          <>
+            <span className="grow truncate">{option.content}</span>
+            {selected && <CheckIcon className="size-3.5 shrink-0" />}
+            {option.tooltip && (
+              <>
+                {typeof option.tooltip === "string" ? (
+                  <Tooltip tooltipContent={option.tooltip}>
+                    <InfoIcon className="size-3.5 shrink-0 cursor-pointer text-secondary" />
+                  </Tooltip>
+                ) : (
+                  option.tooltip
+                )}
+              </>
+            )}
+          </>
+        );
+      }}
     </Combobox.Option>
   );
 }
@@ -118,6 +125,7 @@ type TGroupedOptionsListProps = {
   multiple: boolean;
   closeDropdown: () => void;
   noResultsMessage: string;
+  comboboxValue?: string | string[] | null;
 };
 
 export function GroupedOptionsList({
@@ -127,6 +135,7 @@ export function GroupedOptionsList({
   multiple,
   closeDropdown,
   noResultsMessage,
+  comboboxValue,
 }: TGroupedOptionsListProps) {
   const filteredGroups = groups
     .map((group) => ({
@@ -145,7 +154,13 @@ export function GroupedOptionsList({
   return (
     <>
       {filteredGroups.map((group) => (
-        <GroupSection key={group.id} group={group} multiple={multiple} closeDropdown={closeDropdown} />
+        <GroupSection
+          key={group.id}
+          group={group}
+          multiple={multiple}
+          closeDropdown={closeDropdown}
+          comboboxValue={comboboxValue}
+        />
       ))}
     </>
   );
@@ -155,13 +170,25 @@ export function GroupedOptionsList({
 // Individual group section with collapsible
 // --------------------------------------------------------------------------
 
+// Separator unlikely to appear in any real option value or group ID
+const GROUP_SCOPE_SEPARATOR = "\x1f";
+
+export const scopeGroupOptionValue = (groupId: string, optionValue: string) =>
+  `${groupId}${GROUP_SCOPE_SEPARATOR}${optionValue}`;
+
+export const unscopeGroupOptionValue = (scopedValue: string) => {
+  const idx = scopedValue.indexOf(GROUP_SCOPE_SEPARATOR);
+  return idx >= 0 ? scopedValue.slice(idx + 1) : scopedValue;
+};
+
 type TGroupSectionProps = {
   group: ICustomSearchSelectGroup;
   multiple: boolean;
   closeDropdown: () => void;
+  comboboxValue?: string | string[] | null;
 };
 
-function GroupSection({ group, multiple, closeDropdown }: TGroupSectionProps) {
+function GroupSection({ group, multiple, closeDropdown, comboboxValue }: TGroupSectionProps) {
   return (
     <Collapsible defaultOpen className="py-1 last:border-b-0 border-b border-subtle">
       <CollapsibleTrigger className="group w-full flex items-center justify-between gap-1.5 px-1 py-1.5 rounded-sm hover:bg-layer-transparent-hover text-caption-md-regular! font-regular text-tertiary select-none">
@@ -171,9 +198,21 @@ function GroupSection({ group, multiple, closeDropdown }: TGroupSectionProps) {
         </span>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        {group.options.map((option) => (
-          <OptionItem key={option.value} option={option} multiple={multiple} closeDropdown={closeDropdown} />
-        ))}
+        {group.options.map((option) => {
+          const isSelected = Array.isArray(comboboxValue)
+            ? comboboxValue.includes(option.value)
+            : comboboxValue === option.value;
+          return (
+            <OptionItem
+              key={option.value}
+              option={option}
+              multiple={multiple}
+              closeDropdown={closeDropdown}
+              scopedValue={scopeGroupOptionValue(group.id, option.value)}
+              isSelected={isSelected}
+            />
+          );
+        })}
       </CollapsibleContent>
     </Collapsible>
   );

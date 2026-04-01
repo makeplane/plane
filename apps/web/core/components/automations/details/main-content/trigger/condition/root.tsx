@@ -54,7 +54,7 @@ export const AutomationDetailsMainContentTriggerCondition = observer(
         <ConjunctionLabel text={t("automations.condition.label")} />
         <AutomationConditionFilterHOC
           isGlobal={!!automation?.is_global}
-          projectIds={automation?.project_ids}
+          projectIds={automation?.resolvedProjectIds}
           workspaceSlug={automation?.workspaceSlug}
           initialFilterExpression={config?.filter_expression}
         >

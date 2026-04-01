@@ -85,10 +85,13 @@ export const useAutomationConfig = (args: TArgs) => {
   const { getProjectStates } = useProjectState();
   const {
     getUserDetails,
-    project: { getProjectMemberIds },
+    workspace: { getWorkspaceMemberIds },
   } = useMember();
   const { isWorkItemTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
   // derived values
+  const members = (getWorkspaceMemberIds(workspaceSlug) ?? [])
+    ?.map((memberId) => getUserDetails(memberId))
+    .filter((member) => member) as IUserLite[];
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const isAnyWorkItemTypeEnabled = projectIds.some((id) => isWorkItemTypeEnabledForProject(workspaceSlug, id));
 
@@ -154,26 +157,6 @@ export const useAutomationConfig = (args: TArgs) => {
     [projectIds, getProjectGroupLabel, getProjectLabels]
   );
 
-  const memberGroups = useMemo<IFilterOptionGroup<string>[]>(
-    () =>
-      projectIds.map((projectId) => {
-        const members = (getProjectMemberIds(projectId, false) ?? [])
-          .map((id) => getUserDetails(id))
-          .filter((m): m is IUserLite => !!m);
-        return {
-          id: projectId,
-          label: getProjectGroupLabel(projectId),
-          options: members.map((m) => ({
-            id: m.id,
-            label: m.display_name,
-            value: m.id,
-            icon: <Avatar name={m.display_name} src={getFileURL(m.avatar_url)} showTooltip={false} size="sm" />,
-          })),
-        };
-      }),
-    [projectIds, getProjectGroupLabel, getProjectMemberIds, getUserDetails]
-  );
-
   // ---- Filter configs ----
   // isGlobal → grouped (one collapsible section per project)
   // !isGlobal → flat options taken from the single project's group
@@ -215,31 +198,43 @@ export const useAutomationConfig = (args: TArgs) => {
     return isGlobal ? withGroupedOptions(base, labelGroups) : withFlatOptions(base, labelGroups[0]?.options ?? []);
   }, [isGlobal, labelGroups, operatorConfigs]);
 
-  const assigneeFilterConfig = useMemo(() => {
-    const base = getAssigneeFilterConfig<TAutomationConditionFilterProperty>("payload.data.assignee_ids")({
-      isEnabled: true,
-      filterIcon: Users,
-      members: [],
-      getOptionIcon: (m) => (
-        <Avatar name={m.display_name} src={getFileURL(m.avatar_url)} showTooltip={false} size="sm" />
-      ),
-      ...operatorConfigs,
-    });
-    return isGlobal ? withGroupedOptions(base, memberGroups) : withFlatOptions(base, memberGroups[0]?.options ?? []);
-  }, [isGlobal, memberGroups, operatorConfigs]);
+  const assigneeFilterConfig = useMemo(
+    () =>
+      getAssigneeFilterConfig<TAutomationConditionFilterProperty>("payload.data.assignee_ids")({
+        isEnabled: true,
+        filterIcon: Users,
+        members,
+        getOptionIcon: (memberDetails) => (
+          <Avatar
+            name={memberDetails.display_name}
+            src={getFileURL(memberDetails.avatar_url)}
+            showTooltip={false}
+            size="sm"
+          />
+        ),
+        ...operatorConfigs,
+      }),
+    [members, operatorConfigs]
+  );
 
-  const createdByFilterConfig = useMemo(() => {
-    const base = getCreatedByFilterConfig<TAutomationConditionFilterProperty>("payload.data.created_by_id")({
-      isEnabled: true,
-      filterIcon: CircleUserRound,
-      members: [],
-      getOptionIcon: (m) => (
-        <Avatar name={m.display_name} src={getFileURL(m.avatar_url)} showTooltip={false} size="sm" />
-      ),
-      ...operatorConfigs,
-    });
-    return isGlobal ? withGroupedOptions(base, memberGroups) : withFlatOptions(base, memberGroups[0]?.options ?? []);
-  }, [isGlobal, memberGroups, operatorConfigs]);
+  const createdByFilterConfig = useMemo(
+    () =>
+      getCreatedByFilterConfig<TAutomationConditionFilterProperty>("payload.data.created_by_id")({
+        isEnabled: true,
+        filterIcon: CircleUserRound,
+        members,
+        getOptionIcon: (memberDetails) => (
+          <Avatar
+            name={memberDetails.display_name}
+            src={getFileURL(memberDetails.avatar_url)}
+            showTooltip={false}
+            size="sm"
+          />
+        ),
+        ...operatorConfigs,
+      }),
+    [members, operatorConfigs]
+  );
 
   const priorityFilterConfig = useMemo(
     () =>

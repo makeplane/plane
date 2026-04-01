@@ -21,7 +21,20 @@ import { useCycle } from "./store/use-cycle";
 import { useLabel } from "./store/use-label";
 import { useModule } from "./store/use-module";
 
-export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | undefined) => {
+export const useWorkspaceIssueProperties = (
+  workspaceSlug: string | string[] | undefined,
+  options: {
+    fetchLabels?: boolean;
+    fetchEstimates?: boolean;
+    fetchModules?: boolean;
+    fetchCycles?: boolean;
+  } = {
+    fetchLabels: true,
+    fetchEstimates: true,
+    fetchModules: true,
+    fetchCycles: true,
+  }
+) => {
   const { fetchWorkspaceLabels } = useLabel();
 
   const { getWorkspaceEstimates } = useProjectEstimates();
@@ -31,29 +44,29 @@ export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | u
   const { fetchWorkspaceCycles } = useCycle();
   // fetch workspace Modules
   useSWR(
-    workspaceSlug ? WORKSPACE_MODULES(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => fetchWorkspaceModules(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchModules ? WORKSPACE_MODULES(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchModules ? () => fetchWorkspaceModules(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace Cycles
   useSWR(
-    workspaceSlug ? WORKSPACE_CYCLES(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => fetchWorkspaceCycles(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchCycles ? WORKSPACE_CYCLES(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchCycles ? () => fetchWorkspaceCycles(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace labels
   useSWR(
-    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchLabels ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchLabels ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace estimates
   useSWR(
-    workspaceSlug ? WORKSPACE_ESTIMATES(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => getWorkspaceEstimates(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchEstimates ? WORKSPACE_ESTIMATES(workspaceSlug.toString()) : null,
+    workspaceSlug && options.fetchEstimates ? () => getWorkspaceEstimates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

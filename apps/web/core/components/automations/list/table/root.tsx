@@ -13,10 +13,12 @@
 
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Table, TableBody, TableCell, TableHeader, TableRow, TableHead } from "@plane/propel/table";
 import { Avatar } from "@plane/propel/avatar";
+import { Badge } from "@plane/propel/badge";
 import { getFileURL, renderFormattedDate, formatDuration, cn } from "@plane/utils";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -25,6 +27,7 @@ import type { IAutomationInstance } from "@/store/automations/automation";
 // local imports
 import { TableEmptyState } from "./empty-state";
 import { SuccessFailureIndicator } from "./indicator";
+import { AutomationsTableProjectsCellContent } from "./projects-cell-content";
 import { AutomationRunStatusBadge } from "./status-badge";
 
 interface AutomationsTableProps {
@@ -41,6 +44,8 @@ const COMMON_TABLE_TITLE_CELL_CLASSNAME =
 
 export const AutomationsTable = observer(function AutomationsTable(props: AutomationsTableProps) {
   const { automations, onAutomationClick } = props;
+  // params
+  const { projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -54,6 +59,16 @@ export const AutomationsTable = observer(function AutomationsTable(props: Automa
           <TableHeader className="border-t-0 border-subtle py-4">
             <TableRow>
               <TableHead className={COMMON_TABLE_TITLE_HEADER_CLASSNAME}>{t("automations.table.title")}</TableHead>
+              {!projectId && (
+                <>
+                  <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "text-center")}>
+                    {t("automations.table.scope")}
+                  </TableHead>
+                  <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "text-center")}>
+                    {t("automations.table.projects")}
+                  </TableHead>
+                </>
+              )}
               <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "text-center")}>
                 {t("automations.table.last_run_on")}
               </TableHead>
@@ -101,6 +116,20 @@ export const AutomationsTable = observer(function AutomationsTable(props: Automa
                         />
                       </div>
                     </TableCell>
+                    {!projectId && (
+                      <>
+                        <TableCell className={COMMON_TABLE_CELL_CLASSNAME}>
+                          <Badge size="sm" variant={automation.is_global ? "warning" : "neutral"}>
+                            {automation.is_global
+                              ? t("automations.global_automations.table.scope.global")
+                              : t("automations.global_automations.table.scope.project.label")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className={COMMON_TABLE_CELL_CLASSNAME}>
+                          <AutomationsTableProjectsCellContent projectIds={automation.project_ids} />
+                        </TableCell>
+                      </>
+                    )}
                     <TableCell className={COMMON_TABLE_CELL_CLASSNAME}>
                       {automation.last_run_at ? (
                         renderFormattedDate(automation.last_run_at)
@@ -142,7 +171,7 @@ export const AutomationsTable = observer(function AutomationsTable(props: Automa
                 );
               })
             ) : (
-              <TableEmptyState icon={Search} title="No automations available" colSpan={8} />
+              <TableEmptyState icon={Search} title="No automations available" colSpan={projectId ? 8 : 10} />
             )}
           </TableBody>
         </Table>
