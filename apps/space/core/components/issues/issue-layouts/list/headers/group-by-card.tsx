@@ -28,7 +28,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   return (
     <>
       <div
-        className="group/list-header relative w-full shrink-0 flex items-center gap-2 py-1.5 hover:bg-layer-transparent-hover px-2 py-1"
+        className="group/list-header relative w-full shrink-0 flex items-center gap-2 py-1.5 bg-layer-1 hover:bg-layer-1-hover px-2 py-1"
         onClick={() => toggleListGroup(groupID)}
         role="button"
       >

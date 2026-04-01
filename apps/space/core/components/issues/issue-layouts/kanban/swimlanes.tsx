@@ -146,7 +146,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
   getGroupIssueCount,
 }: ISubGroupSwimlaneHeader) {
   return (
-    <div className="relative flex h-max min-h-full w-full items-center gap-2">
+    <div className="relative flex h-max min-h-full w-full items-center gap-2 bg-surface-2">
       {groupList &&
         groupList.length > 0 &&
         groupList.map((group: IGroupByColumn) => {
@@ -156,7 +156,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
 
           if (subGroupByVisibilityToggle === false) return <></>;
           return (
-            <div key={`${subGroupBy}_${group.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+            <div key={`${subGroupBy}_${group.id}`} className="flex w-[350px] shrink-0 flex-col bg-surface-2">
               <HeaderGroupByCard groupBy={groupBy} icon={group.icon} title={group.name} count={groupCount} />
             </div>
           );

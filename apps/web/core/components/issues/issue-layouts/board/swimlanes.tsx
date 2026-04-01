@@ -79,7 +79,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
   const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
   return (
-    <div className="relative flex h-max min-h-full w-full items-center gap-4">
+    <div className="relative flex h-max min-h-full w-full items-center gap-4 bg-surface-2">
       {list &&
         list.length > 0 &&
         list.map((_list: IGroupByColumn) => {
