@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { LoaderCircle } from "lucide-react";
@@ -25,6 +25,7 @@ import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui"
 import { liveService } from "@/services/live.service";
 
 // hooks
+import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 
 type Props = {
@@ -126,6 +127,13 @@ export function ExportPageModal(props: Props) {
   const abortRef = useRef<(() => void) | null>(null);
   // params
   const { workspaceSlug, projectId } = useParams();
+  // feature flags
+  const { isPageDocxExportEnabled } = usePageFlag({ workspaceSlug: workspaceSlug?.toString() ?? "" });
+  // derived values
+  const availableExportFormats = useMemo(
+    () => EXPORT_FORMATS.filter((format) => format.key !== "docx" || isPageDocxExportEnabled),
+    [isPageDocxExportEnabled]
+  );
   // form info
   const { control, reset, watch } = useForm<TFormValues>({
     defaultValues,
@@ -307,7 +315,7 @@ export function ExportPageModal(props: Props) {
                 name="export_format"
                 render={({ field: { onChange, value } }) => (
                   <CustomSelect
-                    label={EXPORT_FORMATS.find((format) => format.key === value)?.label}
+                    label={availableExportFormats.find((format) => format.key === value)?.label}
                     buttonClassName="border-none"
                     value={value}
                     onChange={(val: TExportFormats) => onChange(val)}
@@ -315,7 +323,7 @@ export function ExportPageModal(props: Props) {
                     placement="bottom-end"
                     disabled={isExporting || isCancelling}
                   >
-                    {EXPORT_FORMATS.map((format) => (
+                    {availableExportFormats.map((format) => (
                       <CustomSelect.Option key={format.key} value={format.key}>
                         {format.label}
                       </CustomSelect.Option>
