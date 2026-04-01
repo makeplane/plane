@@ -38,6 +38,7 @@ from .automation import urlpatterns as automation_patterns
 from .milestone import urlpatterns as milestone_patterns
 from .exporter import urlpatterns as exporter_patterns
 from .importer import urlpatterns as importer_patterns
+from plane.oauth_bridge.urls import urlpatterns as oauth_bridge_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -71,4 +72,5 @@ urlpatterns = [
     *milestone_patterns,
     *exporter_patterns,
     *importer_patterns,
+    *oauth_bridge_patterns,
 ]

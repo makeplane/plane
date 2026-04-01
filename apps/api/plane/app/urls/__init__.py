@@ -44,6 +44,9 @@ from plane.agents.urls.app import urlpatterns as agents_app_urls
 # runnerctl imports
 from plane.runnerctl.urls.app import urlpatterns as runnerctl_app_urls
 
+# oauth bridge imports
+from plane.oauth_bridge.urls import urlpatterns as oauth_bridge_urls
+
 urlpatterns = [
     *analytic_urls,
     *asset_urls,
@@ -72,4 +75,5 @@ urlpatterns = [
     *page_urls,
     *agents_app_urls,
     *runnerctl_app_urls,
+    *oauth_bridge_urls,
 ]

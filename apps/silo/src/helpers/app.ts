@@ -46,6 +46,7 @@ export const getSupportedIntegrations = () =>
     E_INTEGRATION_KEYS.DRAWIO,
     E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
     E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
+    E_INTEGRATION_KEYS.OAUTH_BRIDGE,
   ].filter(Boolean) as E_INTEGRATION_KEYS[];
 
 export const checkIntegrationAvailability = (key: E_INTEGRATION_KEYS) => {
@@ -62,6 +63,7 @@ export const checkIntegrationAvailability = (key: E_INTEGRATION_KEYS) => {
     case E_INTEGRATION_KEYS.GITHUB_ENTERPRISE:
     case E_INTEGRATION_KEYS.DRAWIO:
     case E_INTEGRATION_KEYS.GITLAB_ENTERPRISE:
+    case E_INTEGRATION_KEYS.OAUTH_BRIDGE:
       return true;
     default:
       return false;

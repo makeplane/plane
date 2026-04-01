@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "plane.agents",
     "plane.webhook",
     "plane.runnerctl",
+    "plane.oauth_bridge",
     # Third-party things
     "strawberry.django",
     "rest_framework",

@@ -25,6 +25,7 @@ export enum E_INTEGRATION_KEYS {
   GITLAB_ENTERPRISE = "GITLAB_ENTERPRISE",
   RUNNER = "RUNNER",
   CURSOR = "CURSOR",
+  OAUTH_BRIDGE = "OAUTH_BRIDGE",
 }
 export type TIntegrationKeys = keyof typeof E_INTEGRATION_KEYS;
 

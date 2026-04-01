@@ -221,6 +221,10 @@ export const settingsRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/integrations/cursor",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/(integrations)/cursor/page.tsx"
           ),
+          route(
+            ":workspaceSlug/settings/integrations/oauth-bridge",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/(integrations)/oauth-bridge/page.tsx"
+          ),
         ]),
       ]),
 

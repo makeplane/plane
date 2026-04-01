@@ -131,4 +131,16 @@ APPLICATIONS = {
         "resource_permissions": ["read", "write"],
         "configuration_url": "settings/integrations/cursor"
     },
+    "oauth-bridge": {
+        "key": "oauth-bridge",
+        "name": "OAuth Bridge",
+        "slug": "oauth-bridge",
+        "short_description": "Validate external IdP tokens for API access",
+        "description_html": "<p>Accept OAuth/OIDC tokens from external identity providers (e.g. Azure AD, ADFS) and map them to Plane users, enabling external apps to call the Plane API without managing separate credentials.</p>", #noqa: E501
+        "setup_url": "",
+        "redirect_uris": "",
+        "skip_authorization": True,
+        "resource_permissions": ["read", "write"],
+        "configuration_url": "settings/integrations/oauth-bridge",
+    },
 }

@@ -37,8 +37,14 @@ from rest_framework.generics import GenericAPIView
 # Module imports
 from plane.db.models.api import APIToken
 from plane.api.middleware.api_authentication import APIKeyAuthentication
-from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle, WorkspaceTokenRateThrottle
+from plane.oauth_bridge.authentication import ExternalOIDCTokenAuthentication
+from plane.api.rate_limit import (
+    ApiKeyRateThrottle,
+    ServiceTokenRateThrottle,
+    WorkspaceTokenRateThrottle,
+)
 from plane.authentication.rate_limit import OAuthTokenRateThrottle
+from plane.oauth_bridge.rate_limit import ExternalTokenRateThrottle
 from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
@@ -63,7 +69,11 @@ class TimezoneMixin:
 
 
 class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator):
-    authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
+    authentication_classes = [
+        APIKeyAuthentication,
+        OAuth2Authentication,
+        ExternalOIDCTokenAuthentication,
+    ]
     permission_classes = [
         IsAuthenticated,
         IsAuthenticatedOrTokenHasScope,
@@ -96,6 +106,11 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
             if workspace_token:
                 throttle_classes.append(WorkspaceTokenRateThrottle())
                 return throttle_classes
+
+        # External IdP token auth — apply dedicated rate throttle
+        if self.request.META.get("EXTERNAL_TOKEN_AUTH"):
+            throttle_classes.append(ExternalTokenRateThrottle())
+            return throttle_classes
 
         throttle_classes.append(ApiKeyRateThrottle())
         throttle_classes.append(OAuthTokenRateThrottle())
@@ -195,7 +210,11 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
 class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
     model = None
 
-    authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
+    authentication_classes = [
+        APIKeyAuthentication,
+        OAuth2Authentication,
+        ExternalOIDCTokenAuthentication,
+    ]
     permission_classes = [
         IsAuthenticated,
         IsAuthenticatedOrTokenHasScope,

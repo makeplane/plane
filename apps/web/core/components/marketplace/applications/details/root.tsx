@@ -21,6 +21,7 @@ import GitHubLogo from "@/app/assets/logos/integrations/github.png?url";
 import GitlabLogo from "@/app/assets/logos/integrations/gitlab.png?url";
 import SentryLogo from "@/app/assets/logos/integrations/sentry.png?url";
 import SlackLogo from "@/app/assets/logos/integrations/slack.png?url";
+import OAuthBridgeLogo from "@/app/assets/logos/integrations/oauth-bridge.svg?url";
 // plane web imports
 import { AppList } from "@/components/marketplace";
 import type { TFeatureFlags } from "@/types/feature-flag";
@@ -98,6 +99,14 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     key: "bitbucket_dc",
     title: "Bitbucket Data Center",
     logoUrl: BitbucketLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.OAUTH_BRIDGE_INTEGRATION,
+    urlSlug: "oauth-bridge",
+    key: "oauth_bridge",
+    title: "OAuth Bridge",
+    logoUrl: OAuthBridgeLogo,
     beta: true,
   },
 ];
