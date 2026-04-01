@@ -1972,6 +1972,9 @@ export default {
           start_date: "Start Date",
           due_date: "Due Date",
         },
+        pagination: {
+          showing: "Showing {from}-{to} of {total}",
+        },
       },
     },
     actions: {

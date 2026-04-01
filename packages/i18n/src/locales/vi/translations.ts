@@ -1981,6 +1981,9 @@ export default {
           start_date: "Ngày bắt đầu",
           due_date: "Ngày đến hạn",
         },
+        pagination: {
+          showing: "Hiển thị {from}-{to} / {total}",
+        },
       },
     },
     actions: {

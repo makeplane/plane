@@ -1961,6 +1961,9 @@ export default {
           start_date: "시작일",
           due_date: "마감일",
         },
+        pagination: {
+          showing: "{from}-{to} / {total} 표시 중",
+        },
       },
     },
     actions: {

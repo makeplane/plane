@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TBaseIssue, IState } from "@plane/types";
+import { cn } from "@plane/utils";
 import { Switch } from "@plane/propel/switch";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader, Card } from "@plane/ui";
@@ -22,6 +24,8 @@ import { ProjectService, ProjectStateService } from "@/services/project";
 const userService = new UserService();
 const projectService = new ProjectService();
 const stateService = new ProjectStateService();
+
+const PAGE_SIZE = 10;
 
 const formatDate = (dateStr: string | null): string => {
   if (!dateStr) return "—";
@@ -47,23 +51,29 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
   const { workspaces } = useWorkspace();
 
   const [crossWorkspaces, setCrossWorkspaces] = useState(true);
+  const [page, setPage] = useState(1);
+
   const todayStr = new Date().toISOString().split("T")[0];
 
-  const allWorkspaceSlugs = useMemo(() => Object.values(workspaces ?? {}).map((ws) => ws.slug), [workspaces]);
-
+  // Compute directly — NOT useMemo. MobX observable map mutates in-place,
+  // so the reference never changes and useMemo would return a stale [].
+  const allWorkspaceSlugs = Object.values(workspaces ?? {}).map((ws) => ws.slug);
   const workspaceSlugsToFetch = crossWorkspaces ? allWorkspaceSlugs : workspaceSlug ? [workspaceSlug.toString()] : [];
-  const swrKey =
-    workspaceSlugsToFetch.length > 0 && userId
-      ? `TODAY_ISSUES_${crossWorkspaces ? "ALL" : workspaceSlug}_${userId}`
-      : null;
+
+  // Include sorted slugs + todayStr in key so SWR re-fetches on workspace load or day change
+  const sortedSlugs = [...workspaceSlugsToFetch].sort().join(",");
+  const swrKey = sortedSlugs.length > 0 && userId ? `TODAY_ISSUES_${sortedSlugs}_${userId}_${todayStr}` : null;
 
   const { data: mergedIssues, isLoading } = useSWR(swrKey, async () => {
     if (!userId) return [];
     const uid = userId.toString();
+
+    // NOTE: start_date filter REMOVED intentionally.
+    // The `start_date;before_including;` format causes a 500 on the backend.
+    // We instead filter by start_date on the frontend below.
     const filterParams = {
       assignees: uid,
       state_group: "backlog,unstarted,started",
-      start_date: `${todayStr};before_including;`,
       order_by: "target_date",
     };
 
@@ -72,14 +82,12 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
         try {
           const ws = Object.values(workspaces ?? {}).find((w) => w.slug === slug);
 
-          // Fetch issues, projects, and states in parallel for each workspace
           const [issuesResponse, projects, states] = await Promise.all([
             userService.getUserProfileIssues(slug.toString(), uid, filterParams),
             projectService.getProjectsLite(slug.toString()).catch(() => []),
             stateService.getWorkspaceStates(slug.toString()).catch(() => []),
           ]);
 
-          // Build lookup maps
           const projectMap = new Map<string, ProjectLookup>();
           for (const p of projects) {
             projectMap.set(p.id, { name: p.name, identifier: p.identifier });
@@ -108,15 +116,21 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
     return results.flat();
   });
 
-  const issueList = useMemo(
-    () =>
-      (mergedIssues ?? []).filter((issue) => {
-        if (!issue._state) return true;
-        return !EXCLUDED_STATE_GROUPS.has(issue._state.group);
-      }),
-    [mergedIssues]
-  );
+  const issueList = (mergedIssues ?? []).filter((issue) => {
+    // Exclude completed/cancelled states
+    if (issue._state && EXCLUDED_STATE_GROUPS.has(issue._state.group)) return false;
+    // Exclude items whose start_date is in the future (null start_date = always included)
+    if (issue.start_date && issue.start_date > todayStr) return false;
+    return true;
+  });
 
+  // Reset to page 1 whenever the filtered list changes
+  useEffect(() => {
+    setPage(1);
+  }, [issueList.length]);
+
+  const totalPages = Math.max(1, Math.ceil(issueList.length / PAGE_SIZE));
+  const paginatedIssues = issueList.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const isDataReady = !isLoading && mergedIssues !== undefined;
 
   return (
@@ -131,88 +145,131 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
       <Card>
         {isDataReady ? (
           issueList.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-13">
-                <thead>
-                  <tr className="border-b border-subtle text-secondary">
-                    <th className="pb-3 pl-4 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.work_item")}
-                    </th>
-                    <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.department")}
-                    </th>
-                    <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.project")}
-                    </th>
-                    <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.state")}
-                    </th>
-                    <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.progress")}
-                    </th>
-                    <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.start_date")}
-                    </th>
-                    <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                      {t("profile.stats.today_work_items.columns.due_date")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {issueList.map((issue: EnrichedIssue) => {
-                    const project = issue._project;
-                    const state = issue._state;
-                    const detailHref = `/${issue._workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
+            <div className="space-y-3">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-13">
+                  <thead>
+                    <tr className="border-b border-subtle text-secondary">
+                      <th className="pb-3 pl-4 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.work_item")}
+                      </th>
+                      <th className="pb-3 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.department")}
+                      </th>
+                      <th className="pb-3 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.project")}
+                      </th>
+                      <th className="pb-3 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.state")}
+                      </th>
+                      <th className="pb-3 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.progress")}
+                      </th>
+                      <th className="pb-3 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.start_date")}
+                      </th>
+                      <th className="pb-3 pr-4 font-medium whitespace-nowrap">
+                        {t("profile.stats.today_work_items.columns.due_date")}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedIssues.map((issue: EnrichedIssue) => {
+                      const project = issue._project;
+                      const state = issue._state;
+                      const detailHref = `/${issue._workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
-                    return (
-                      <tr
-                        key={`${issue._workspaceSlug}-${issue.id}`}
-                        className="border-b border-subtle last:border-b-0 hover:bg-surface-2 transition-colors"
+                      return (
+                        <tr
+                          key={`${issue._workspaceSlug}-${issue.id}`}
+                          className="border-b border-subtle last:border-b-0 hover:bg-surface-2 transition-colors"
+                        >
+                          <td className="py-2.5 pl-4 pr-4">
+                            <Link
+                              href={detailHref}
+                              className="group flex items-center gap-2 hover:underline max-w-[280px] lg:max-w-[360px]"
+                            >
+                              <span className="flex-shrink-0 text-secondary text-12">
+                                {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
+                              </span>
+                              <span className="truncate text-primary font-medium">{issue.name}</span>
+                            </Link>
+                          </td>
+                          <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">{issue._workspaceName}</td>
+                          <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">{project?.name ?? "—"}</td>
+                          <td className="py-2.5 pr-4">
+                            {state ? (
+                              <span className="inline-flex items-center gap-2 text-12 text-primary">
+                                <span
+                                  className="h-2 w-2 rounded-full flex-shrink-0"
+                                  style={{ backgroundColor: state.color }}
+                                />
+                                <span className="truncate max-w-[120px]">{state.name}</span>
+                              </span>
+                            ) : (
+                              <span className="text-secondary">—</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 pr-4">
+                            <ProgressTrackingBadge targetDate={issue.target_date} />
+                          </td>
+                          <td className="py-2.5 pr-4 text-secondary text-12 whitespace-nowrap">
+                            {formatDate(issue.start_date)}
+                          </td>
+                          <td className="py-2.5 pr-4 text-secondary text-12 whitespace-nowrap">
+                            {formatDate(issue.target_date)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between px-4 pb-3 text-13 text-secondary">
+                  <span>
+                    {t("profile.stats.today_work_items.pagination.showing", {
+                      from: (page - 1) * PAGE_SIZE + 1,
+                      to: Math.min(page * PAGE_SIZE, issueList.length),
+                      total: issueList.length,
+                    })}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className={cn(
+                        "p-1 rounded hover:bg-surface-2 transition-colors",
+                        page === 1 && "opacity-40 cursor-not-allowed"
+                      )}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={cn(
+                          "min-w-[28px] h-7 px-1.5 rounded text-12 transition-colors",
+                          p === page ? "bg-custom-primary-100 text-white font-medium" : "hover:bg-surface-2"
+                        )}
                       >
-                        <td className="py-2.5 pl-4 pr-4">
-                          <Link
-                            href={detailHref}
-                            className="group flex items-center gap-2 hover:underline max-w-[280px] lg:max-w-[360px]"
-                          >
-                            <span className="flex-shrink-0 text-secondary text-12">
-                              {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
-                            </span>
-                            <span className="truncate text-primary font-medium">{issue.name}</span>
-                          </Link>
-                        </td>
-                        <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">
-                          {issue._workspaceName}
-                        </td>
-                        <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">
-                          {project?.name ?? "—"}
-                        </td>
-                        <td className="py-2.5 pr-4">
-                          {state ? (
-                            <span className="inline-flex items-center gap-2 text-12 text-primary">
-                              <span
-                                className="h-2 w-2 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: state.color }}
-                              />
-                              <span className="truncate max-w-[120px]">{state.name}</span>
-                            </span>
-                          ) : (
-                            <span className="text-secondary">—</span>
-                          )}
-                        </td>
-                        <td className="py-2.5 pr-4">
-                          <ProgressTrackingBadge targetDate={issue.target_date} />
-                        </td>
-                        <td className="py-2.5 pr-4 text-secondary text-12 whitespace-nowrap">
-                          {formatDate(issue.start_date)}
-                        </td>
-                        <td className="py-2.5 pr-4 text-secondary text-12 whitespace-nowrap">
-                          {formatDate(issue.target_date)}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        {p}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className={cn(
+                        "p-1 rounded hover:bg-surface-2 transition-colors",
+                        page === totalPages && "opacity-40 cursor-not-allowed"
+                      )}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <EmptyStateCompact
