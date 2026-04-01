@@ -28,6 +28,7 @@ import {
   convertInchesToTwip,
 } from "docx";
 import type { IRunPropertiesOptions, ParagraphChild } from "docx";
+import { gitHubEmojis, shortcodeToEmoji } from "@plane/editor/lib";
 import type { NodeRendererRegistry, TipTapNode } from "@/lib/export-core";
 import {
   resolveColorForDocx,
@@ -156,7 +157,8 @@ const renderInlineContent = (nodes: TipTapNode[] | undefined, ctx: DocxRenderCon
 
       case "emoji": {
         const name = (n.attrs?.name as string) || "";
-        const emojiChar = EMOJI_MAP[name] || `:${name}:`;
+        const emojiItem = shortcodeToEmoji(name, gitHubEmojis);
+        const emojiChar = emojiItem?.emoji || `:${name}:`;
         out.push(new TextRun({ text: emojiChar }));
         break;
       }
@@ -201,32 +203,6 @@ const renderImageFromBase64 = (base64DataUrl: string, node: TipTapNode): (Paragr
       spacing: { before: 160, after: 160 },
     }),
   ];
-};
-
-const EMOJI_MAP: Record<string, string> = {
-  "+1": "👍",
-  "-1": "👎",
-  smile: "😄",
-  laughing: "😆",
-  heart: "❤️",
-  fire: "🔥",
-  eyes: "👀",
-  rocket: "🚀",
-  star: "⭐",
-  check: "✅",
-  x: "❌",
-  warning: "⚠️",
-  bulb: "💡",
-  thumbsup: "👍",
-  thumbsdown: "👎",
-  clap: "👏",
-  wave: "👋",
-  thinking: "🤔",
-  tada: "🎉",
-  sparkles: "✨",
-  "100": "💯",
-  pray: "🙏",
-  muscle: "💪",
 };
 
 export const docxNodeTransformers: DocxNodeRendererRegistry = {
@@ -432,7 +408,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
   },
 
   table: (_node: TipTapNode, children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => {
-    const rows = children.filter((c) => c instanceof TableRow) as TableRow[];
+    const rows = children.filter((c) => c instanceof TableRow);
     if (rows.length === 0) return [];
 
     return [
@@ -444,7 +420,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
   },
 
   tableRow: (node: TipTapNode, children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => {
-    const cells = children.filter((c) => c instanceof TableCell) as TableCell[];
+    const cells = children.filter((c) => c instanceof TableCell);
     if (cells.length === 0) return [];
 
     const isHeader = node.attrs?._isHeader === true;
@@ -467,7 +443,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
       ? resolveColorForDocx(background, "background")
       : hexToDocxColor(BACKGROUND_COLORS.surface2);
 
-    const cellChildren = children.filter((c) => c instanceof Paragraph || c instanceof Table) as (Paragraph | Table)[];
+    const cellChildren = children.filter((c) => c instanceof Paragraph || c instanceof Table);
     if (cellChildren.length === 0) {
       cellChildren.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
     }
@@ -491,7 +467,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
     const width = colwidth?.[0];
     const resolvedBg = background ? resolveColorForDocx(background, "background") : undefined;
 
-    const cellChildren = children.filter((c) => c instanceof Paragraph || c instanceof Table) as (Paragraph | Table)[];
+    const cellChildren = children.filter((c) => c instanceof Paragraph || c instanceof Table);
     if (cellChildren.length === 0) {
       cellChildren.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
     }
@@ -578,7 +554,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
 
     const iconText = (node.attrs?.icon as string) || (node.attrs?.emoji as string) || "💡";
 
-    const paragraphs = children.filter((c) => c instanceof Paragraph) as Paragraph[];
+    const paragraphs = children.filter((c) => c instanceof Paragraph);
     if (paragraphs.length === 0) {
       paragraphs.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
     }
@@ -931,7 +907,8 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
 
   emoji: (node: TipTapNode, _children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => {
     const name = (node.attrs?.name as string) || "";
-    const emojiChar = EMOJI_MAP[name] || `:${name}:`;
+    const emojiItem = shortcodeToEmoji(name, gitHubEmojis);
+    const emojiChar = emojiItem?.emoji || `:${name}:`;
     return [new Paragraph({ children: [new TextRun({ text: emojiChar })] })];
   },
 
@@ -941,7 +918,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
   multiColumn: (_node: TipTapNode, children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => children,
 
   column: (_node: TipTapNode, children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => {
-    const cellChildren = children.filter((c) => c instanceof Paragraph || c instanceof Table) as (Paragraph | Table)[];
+    const cellChildren = children.filter((c) => c instanceof Paragraph || c instanceof Table);
     if (cellChildren.length === 0) {
       cellChildren.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
     }
@@ -956,7 +933,7 @@ export const docxNodeTransformers: DocxNodeRendererRegistry = {
   },
 
   columnList: (_node: TipTapNode, children: DocxBlockOutput, _ctx: DocxRenderContext): DocxBlockOutput => {
-    const cells = children.filter((c) => c instanceof TableCell) as TableCell[];
+    const cells = children.filter((c) => c instanceof TableCell);
     if (cells.length === 0) return children;
 
     const totalDxa = convertInchesToTwip(6.5);
