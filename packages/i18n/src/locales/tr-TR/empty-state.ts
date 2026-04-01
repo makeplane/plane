@@ -44,7 +44,7 @@ export default {
     work_items: {
       title: "İlk iş öğenizle başlayın.",
       description:
-        "İş öğeleri projenizin yapı taşlarıdır — sahipler atayın, öncelikleri belirleyin ve ilerlemeyi kolayca takip edin.",
+        "İş öğeleri projenizin yapı taşlarıdır, sahipler atayın, öncelikleri belirleyin ve ilerlemeyi kolayca takip edin.",
       cta_primary: "İlk iş öğenizi oluşturun",
     },
     cycles: {
@@ -89,7 +89,7 @@ export default {
       cta_primary: "İş öğesi ekle",
     },
     pages: {
-      title: "Her şeyi belgeleyin — notlardan PRD'lere",
+      title: "Her şeyi belgeleyin, notlardan PRD'lere",
       description:
         "Sayfalar bilgileri tek bir yerde yakalamanıza ve düzenlemenize olanak tanır. Toplantı notları, proje belgeleri ve PRD'ler yazın, iş öğelerini yerleştirin ve kullanıma hazır bileşenlerle yapılandırın.",
       cta_primary: "İlk Sayfanızı oluşturun",
@@ -153,7 +153,7 @@ export default {
     },
     projects_archived: {
       title: "Arşivlenmiş proje yok",
-      description: "Görünüşe göre tüm projeleriniz hala aktif—harika iş!",
+      description: "Görünüşe göre tüm projeleriniz hala aktif, harika iş!",
     },
     analytics_projects: {
       title: "Proje metriklerini burada görselleştirmek için projeler oluşturun.",
