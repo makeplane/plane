@@ -53,6 +53,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "effect": "^3.19.16",
+    "emoji-datasource-google": "^16.0.0",
     "express": "4.22.0",
     "express-ws": "^5.0.2",
     "hast": "^1.0.0",
