@@ -15,6 +15,7 @@ class UserLiteSerializer(BaseSerializer):
             "avatar",
             "avatar_url",
             "display_name",
+            "username",
             "hub_codes",
             "hub_names",
             "is_super_admin",
