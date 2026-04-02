@@ -78,7 +78,6 @@ export const StickyActionBar = observer(function StickyActionBar() {
         </Tooltip>
         {recentStickyId && (
           <Tooltip
-            className="scale-75 -mr-30 translate-x-10"
             tooltipContent={
               <div className="-m-2 max-h-[150px]">
                 <StickyNote
