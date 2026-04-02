@@ -1,10 +1,10 @@
 packages:
-  - apps/*
-  - packages/*
-  - apps/runners/*
-  - e2e
-  - '!apps/api'
-  - '!apps/proxy'
+- apps/*
+- packages/*
+- apps/runners/*
+- e2e
+- '!apps/api'
+- '!apps/proxy'
 
 catalog:
   '@atlaskit/pragmatic-drag-and-drop': 1.7.7
@@ -196,7 +196,7 @@ catalog:
   katex: ^0.16.33
   linkifyjs: ^4.3.2
   lint-staged: 16.2.7
-  lodash-es: 4.17.23
+  lodash-es: 4.18.1
   lucide-react: 0.542.0
   markdown-to-jsx: ^7.7.17
   marked: ^15.0.12
@@ -286,10 +286,10 @@ catalogMode: prefer
 cleanupUnusedCatalogs: true
 
 onlyBuiltDependencies:
-  - '@firebase/util'
-  - '@sentry/cli'
-  - dd-trace
-  - esbuild
-  - electron
-  - protobufjs
-  - turbo
+- '@firebase/util'
+- '@sentry/cli'
+- dd-trace
+- esbuild
+- electron
+- protobufjs
+- turbo
