@@ -13,6 +13,7 @@
 
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
+import type { TProjectMemberImportSummary } from "@plane/types";
 
 /**
  * @description combine the file path with the base URL
@@ -100,4 +101,44 @@ export const csvDownload = (data: Array<Array<string>> | { [key: string]: string
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+/**
+ * @description downloads a text file
+ * @param {TProjectMemberImportSummary["skipped_details"]} skippedDetails - The skipped details to be downloaded
+ */
+const formatErrorValue = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map(formatErrorValue).join(", ");
+  if (typeof value === "object" && value !== null) {
+    return Object.entries(value)
+      .map(([k, v]) => `${k}: ${formatErrorValue(v)}`)
+      .join("; ");
+  }
+  return String(value);
+};
+
+export const downloadSkippedDetails = (skippedDetails: TProjectMemberImportSummary["skipped_details"]) => {
+  const lines: string[] = ["Skipped Import Rows", "=".repeat(40), ""];
+
+  skippedDetails.forEach(({ row, errors }) => {
+    lines.push(`Row ${row}:`);
+    Object.entries(errors).forEach(([field, message]) => {
+      lines.push(`  ${field}: ${formatErrorValue(message)}`);
+    });
+    lines.push("");
+  });
+
+  if (lines.length <= 3) return;
+
+  const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "import-skipped.txt";
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };

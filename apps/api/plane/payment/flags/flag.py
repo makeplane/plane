@@ -143,6 +143,8 @@ class FeatureFlag(Enum):
     MANAGE_WORK_ITEM_SUBSCRIBERS = "MANAGE_WORK_ITEM_SUBSCRIBERS"
     # Timeline dependency
     TIMELINE_DEPENDENCY = "TIMELINE_DEPENDENCY"
+    # Project member import
+    PROJECT_MEMBERS_IMPORT = "PROJECT_MEMBERS_IMPORT"
     # Workflow scripts (pre/post transition hooks)
     WORKFLOW_CONDITIONS = "WORKFLOW_CONDITIONS"
     # Auto reminder automation

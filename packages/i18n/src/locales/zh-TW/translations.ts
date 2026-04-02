@@ -3823,6 +3823,55 @@ export default {
       },
     },
   },
+  project: {
+    members_import: {
+      title: "從CSV匯入成員",
+      description: "上傳包含以下欄位的CSV：電子郵件與角色（5=訪客，15=成員，20=管理員）。使用者必須已是工作區成員。",
+      download_sample: "下載範例CSV",
+      dropzone: {
+        active: "將CSV檔案放在這裡",
+        inactive: "拖放或點擊上傳",
+        file_type: "僅支援.csv檔案",
+      },
+      buttons: {
+        cancel: "取消",
+        import: "匯入",
+        try_again: "重試",
+        close: "關閉",
+        done: "完成",
+      },
+      progress: {
+        uploading: "上傳中...",
+        importing: "匯入中...",
+      },
+      summary: {
+        title: {
+          complete: "匯入完成",
+        },
+        message: {
+          success: "成功將{count}名成員匯入專案。",
+          no_imports: "CSV檔案中未匯入任何新成員。",
+        },
+        stats: {
+          added: "已新增",
+          reactivated: "已重新啟用",
+          already_members: "已是成員",
+          skipped: "已略過",
+        },
+        download_errors: "下載略過詳情",
+      },
+      toast: {
+        invalid_file: {
+          title: "無效檔案",
+          message: "僅支援CSV檔案。",
+        },
+        import_failed: {
+          title: "匯入失敗",
+          message: "發生錯誤。",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

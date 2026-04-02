@@ -3955,6 +3955,56 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Importer des membres depuis un CSV",
+      description:
+        "Téléchargez un CSV avec les colonnes : E-mail et Rôle (5=Invité, 15=Membre, 20=Administrateur). Les utilisateurs doivent déjà être membres de l'espace de travail.",
+      download_sample: "Télécharger un CSV d'exemple",
+      dropzone: {
+        active: "Déposez le fichier CSV ici",
+        inactive: "Glissez-déposez ou cliquez pour télécharger",
+        file_type: "Seuls les fichiers .csv sont pris en charge",
+      },
+      buttons: {
+        cancel: "Annuler",
+        import: "Importer",
+        try_again: "Réessayer",
+        close: "Fermer",
+        done: "Terminé",
+      },
+      progress: {
+        uploading: "Téléchargement...",
+        importing: "Importation...",
+      },
+      summary: {
+        title: {
+          complete: "Importation terminée",
+        },
+        message: {
+          success: "{count} membre{plural} importé{plural} avec succès dans le projet.",
+          no_imports: "Aucun nouveau membre n'a été importé depuis le fichier CSV.",
+        },
+        stats: {
+          added: "Ajoutés",
+          reactivated: "Réactivés",
+          already_members: "Déjà membres",
+          skipped: "Ignorés",
+        },
+        download_errors: "Télécharger les détails ignorés",
+      },
+      toast: {
+        invalid_file: {
+          title: "Fichier invalide",
+          message: "Seuls les fichiers CSV sont pris en charge.",
+        },
+        import_failed: {
+          title: "Échec de l'importation",
+          message: "Une erreur s'est produite.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

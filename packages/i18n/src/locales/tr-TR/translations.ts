@@ -3901,6 +3901,56 @@ modüller arşivlenebilir.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "CSV'den üye içe aktar",
+      description:
+        "Şu sütunları içeren bir CSV yükleyin: E-posta ve Rol (5=Misafir, 15=Üye, 20=Yönetici). Kullanıcılar zaten çalışma alanı üyesi olmalıdır.",
+      download_sample: "Örnek CSV indir",
+      dropzone: {
+        active: "CSV dosyasını buraya bırakın",
+        inactive: "Sürükle bırak veya yüklemek için tıklayın",
+        file_type: "Yalnızca .csv dosyaları desteklenir",
+      },
+      buttons: {
+        cancel: "İptal",
+        import: "İçe Aktar",
+        try_again: "Tekrar Dene",
+        close: "Kapat",
+        done: "Tamamlandı",
+      },
+      progress: {
+        uploading: "Yükleniyor...",
+        importing: "İçe aktarılıyor...",
+      },
+      summary: {
+        title: {
+          complete: "İçe Aktarma Tamamlandı",
+        },
+        message: {
+          success: "Projeye başarıyla {count} üye içe aktarıldı.",
+          no_imports: "CSV dosyasından yeni üye içe aktarılmadı.",
+        },
+        stats: {
+          added: "Eklendi",
+          reactivated: "Yeniden etkinleştirildi",
+          already_members: "Zaten üyeler",
+          skipped: "Atlandı",
+        },
+        download_errors: "Atlanan ayrıntıları indir",
+      },
+      toast: {
+        invalid_file: {
+          title: "Geçersiz dosya",
+          message: "Yalnızca CSV dosyaları desteklenir.",
+        },
+        import_failed: {
+          title: "İçe aktarma başarısız",
+          message: "Bir şeyler ters gitti.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

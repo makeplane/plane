@@ -11,6 +11,7 @@
 
 from .issue import IssueExportSerializer, IssueImportSerializer
 from .user import UserImportSerializer
+from .project_member import ProjectMemberImportSerializer
 
 __all__ = [
     # Export Serializers
@@ -18,4 +19,5 @@ __all__ = [
     # Import Serializers
     "IssueImportSerializer",
     "UserImportSerializer",
+    "ProjectMemberImportSerializer",
 ]

@@ -3901,6 +3901,56 @@ export default {
       },
     },
   },
+  project: {
+    members_import: {
+      title: "CSVからメンバーをインポート",
+      description:
+        "次の列を含むCSVをアップロード：メールアドレスとロール（5=ゲスト、15=メンバー、20=管理者）。ユーザーはすでにワークスペースのメンバーである必要があります。",
+      download_sample: "サンプルCSVをダウンロード",
+      dropzone: {
+        active: "CSVファイルをここにドロップ",
+        inactive: "ドラッグ＆ドロップまたはクリックしてアップロード",
+        file_type: ".csvファイルのみサポートされています",
+      },
+      buttons: {
+        cancel: "キャンセル",
+        import: "インポート",
+        try_again: "再試行",
+        close: "閉じる",
+        done: "完了",
+      },
+      progress: {
+        uploading: "アップロード中...",
+        importing: "インポート中...",
+      },
+      summary: {
+        title: {
+          complete: "インポート完了",
+        },
+        message: {
+          success: "{count}人のメンバーをプロジェクトにインポートしました。",
+          no_imports: "CSVファイルから新しいメンバーはインポートされませんでした。",
+        },
+        stats: {
+          added: "追加",
+          reactivated: "再有効化",
+          already_members: "既にメンバー",
+          skipped: "スキップ",
+        },
+        download_errors: "スキップ詳細をダウンロード",
+      },
+      toast: {
+        invalid_file: {
+          title: "無効なファイル",
+          message: "CSVファイルのみサポートされています。",
+        },
+        import_failed: {
+          title: "インポート失敗",
+          message: "問題が発生しました。",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

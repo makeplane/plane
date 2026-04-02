@@ -3869,6 +3869,56 @@ export default {
       },
     },
   },
+  project: {
+    members_import: {
+      title: "CSV에서 구성원 가져오기",
+      description:
+        "다음 열이 포함된 CSV 업로드: 이메일 및 역할(5=게스트, 15=멤버, 20=관리자). 사용자는 이미 워크스페이스 멤버여야 합니다.",
+      download_sample: "샘플 CSV 다운로드",
+      dropzone: {
+        active: "CSV 파일을 여기에 놓으세요",
+        inactive: "드래그 앤 드롭 또는 클릭하여 업로드",
+        file_type: ".csv 파일만 지원됩니다",
+      },
+      buttons: {
+        cancel: "취소",
+        import: "가져오기",
+        try_again: "다시 시도",
+        close: "닫기",
+        done: "완료",
+      },
+      progress: {
+        uploading: "업로드 중...",
+        importing: "가져오는 중...",
+      },
+      summary: {
+        title: {
+          complete: "가져오기 완료",
+        },
+        message: {
+          success: "프로젝트에 {count}명의 구성원을 가져왔습니다.",
+          no_imports: "CSV 파일에서 새 구성원을 가져오지 못했습니다.",
+        },
+        stats: {
+          added: "추가됨",
+          reactivated: "다시 활성화됨",
+          already_members: "이미 멤버",
+          skipped: "건너뜀",
+        },
+        download_errors: "건너뛴 세부 정보 다운로드",
+      },
+      toast: {
+        invalid_file: {
+          title: "잘못된 파일",
+          message: "CSV 파일만 지원됩니다.",
+        },
+        import_failed: {
+          title: "가져오기 실패",
+          message: "문제가 발생했습니다.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

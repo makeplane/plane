@@ -3939,6 +3939,56 @@ se você tem certeza de que sua pesquisa está correta.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Importar membros do CSV",
+      description:
+        "Carregue um CSV com colunas: Email e Função (5=Convidado, 15=Membro, 20=Admin). Os usuários já devem ser membros do espaço de trabalho.",
+      download_sample: "Baixar CSV de exemplo",
+      dropzone: {
+        active: "Solte o arquivo CSV aqui",
+        inactive: "Arraste e solte ou clique para fazer upload",
+        file_type: "Apenas arquivos .csv são suportados",
+      },
+      buttons: {
+        cancel: "Cancelar",
+        import: "Importar",
+        try_again: "Tentar novamente",
+        close: "Fechar",
+        done: "Concluído",
+      },
+      progress: {
+        uploading: "Enviando...",
+        importing: "Importando...",
+      },
+      summary: {
+        title: {
+          complete: "Importação concluída",
+        },
+        message: {
+          success: "{count} membr{plural} importad{plural} com sucesso para o projeto.",
+          no_imports: "Nenhum novo membro foi importado do arquivo CSV.",
+        },
+        stats: {
+          added: "Adicionados",
+          reactivated: "Reativados",
+          already_members: "Já são membros",
+          skipped: "Ignorados",
+        },
+        download_errors: "Baixar detalhes ignorados",
+      },
+      toast: {
+        invalid_file: {
+          title: "Arquivo inválido",
+          message: "Apenas arquivos CSV são suportados.",
+        },
+        import_failed: {
+          title: "Importação falhou",
+          message: "Algo deu errado.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

@@ -3934,6 +3934,56 @@ văzute aici`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Importă membri din CSV",
+      description:
+        "Încărcați un CSV cu coloanele: Email și Rol (5=Invitat, 15=Membru, 20=Administrator). Utilizatorii trebuie să fie deja membri ai spațiului de lucru.",
+      download_sample: "Descărcați CSV exemplu",
+      dropzone: {
+        active: "Plasați fișierul CSV aici",
+        inactive: "Trageți și plasați sau faceți clic pentru a încărca",
+        file_type: "Sunt acceptate doar fișiere .csv",
+      },
+      buttons: {
+        cancel: "Anulare",
+        import: "Importă",
+        try_again: "Încearcă din nou",
+        close: "Închide",
+        done: "Gata",
+      },
+      progress: {
+        uploading: "Se încarcă...",
+        importing: "Se importă...",
+      },
+      summary: {
+        title: {
+          complete: "Import finalizat",
+        },
+        message: {
+          success: "{count} membr{plural} importat{plural} cu succes în proiect.",
+          no_imports: "Nu au fost importați membri noi din fișierul CSV.",
+        },
+        stats: {
+          added: "Adăugate",
+          reactivated: "Reactivați",
+          already_members: "Deja membri",
+          skipped: "Omise",
+        },
+        download_errors: "Descarcă detaliile omise",
+      },
+      toast: {
+        invalid_file: {
+          title: "Fișier invalid",
+          message: "Sunt acceptate doar fișiere CSV.",
+        },
+        import_failed: {
+          title: "Import eșuat",
+          message: "Ceva nu a funcționat.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

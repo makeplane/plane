@@ -4344,6 +4344,56 @@ if you are sure your search is right. `,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Import Members from CSV",
+      description:
+        "Upload a CSV with columns: Email and Role (5=Guest, 15=Member, 20=Admin). Users must already be workspace members.",
+      download_sample: "Download sample CSV",
+      dropzone: {
+        active: "Drop CSV file here",
+        inactive: "Drag & drop or click to upload",
+        file_type: "Only .csv files supported",
+      },
+      buttons: {
+        cancel: "Cancel",
+        import: "Import",
+        try_again: "Try Again",
+        close: "Close",
+        done: "Done",
+      },
+      progress: {
+        uploading: "Uploading...",
+        importing: "Importing...",
+      },
+      summary: {
+        title: {
+          complete: "Import Complete",
+        },
+        message: {
+          success: "Successfully imported {count} member{plural} to the project.",
+          no_imports: "No new members were imported from the CSV file.",
+        },
+        stats: {
+          added: "Added",
+          reactivated: "Reactivated",
+          already_members: "Already Members",
+          skipped: "Skipped",
+        },
+        download_errors: "Download skipped details",
+      },
+      toast: {
+        invalid_file: {
+          title: "Invalid file",
+          message: "Only CSV files are supported.",
+        },
+        import_failed: {
+          title: "Import failed",
+          message: "Something went wrong.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

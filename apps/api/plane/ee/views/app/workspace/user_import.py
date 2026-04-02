@@ -54,7 +54,12 @@ class WorkspaceMembersImportEndpoint(BaseAPIView):
             return Response({"error": "asset_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         workspace = Workspace.objects.get(slug=slug)
-        asset = FileAsset.objects.filter(id=asset_id, workspace=workspace, is_uploaded=True).first()
+        asset = FileAsset.objects.filter(
+            id=asset_id,
+            workspace=workspace,
+            entity_type=FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
+            is_uploaded=True,
+        ).first()
         if not asset:
             return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
 

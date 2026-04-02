@@ -24,6 +24,7 @@ import type {
   TProjectFeatures,
   TProjectIssuesSearchParams,
   TProjectLink,
+  TProjectMemberImportSummary,
   TStateAnalytics,
 } from "@plane/types";
 // helpers
@@ -320,6 +321,21 @@ export class ProjectService extends APIService {
     assetId: string
   ): Promise<{ message: string; job_id: string }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/import/`, {
+      asset_id: assetId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Project member CSV import
+  async importProjectMembers(
+    workspaceSlug: string,
+    projectId: string,
+    assetId: string
+  ): Promise<TProjectMemberImportSummary> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members-import/`, {
       asset_id: assetId,
     })
       .then((response) => response?.data)

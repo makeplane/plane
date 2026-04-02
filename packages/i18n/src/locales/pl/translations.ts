@@ -3887,6 +3887,56 @@ Utwórz nowy.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Importuj członków z CSV",
+      description:
+        "Prześlij CSV z kolumnami: Email i Rola (5=Gość, 15=Członek, 20=Administrator). Użytkownicy muszą już należeć do przestrzeni roboczej.",
+      download_sample: "Pobierz przykładowy CSV",
+      dropzone: {
+        active: "Upuść plik CSV tutaj",
+        inactive: "Przeciągnij i upuść lub kliknij, aby przesłać",
+        file_type: "Obsługiwane są tylko pliki .csv",
+      },
+      buttons: {
+        cancel: "Anuluj",
+        import: "Importuj",
+        try_again: "Spróbuj ponownie",
+        close: "Zamknij",
+        done: "Gotowe",
+      },
+      progress: {
+        uploading: "Przesyłanie...",
+        importing: "Importowanie...",
+      },
+      summary: {
+        title: {
+          complete: "Import zakończony",
+        },
+        message: {
+          success: "Pomyślnie zaimportowano {count} członk{plural} do projektu.",
+          no_imports: "Z pliku CSV nie zaimportowano żadnych nowych członków.",
+        },
+        stats: {
+          added: "Dodano",
+          reactivated: "Ponownie aktywowano",
+          already_members: "Już członkowie",
+          skipped: "Pominięto",
+        },
+        download_errors: "Pobierz szczegóły pominiętych",
+      },
+      toast: {
+        invalid_file: {
+          title: "Nieprawidłowy plik",
+          message: "Obsługiwane są tylko pliki CSV.",
+        },
+        import_failed: {
+          title: "Import nie powiódł się",
+          message: "Coś poszło nie tak.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

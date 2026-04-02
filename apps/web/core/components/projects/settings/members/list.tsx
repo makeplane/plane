@@ -22,6 +22,7 @@ import { SearchIcon } from "@plane/propel/icons";
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 import { MemberListFiltersDropdown } from "@/components/projects/dropdowns/filters/member-list";
 import { SendProjectInvitationModal } from "@/components/projects/modals/send-project-invitation-modal";
+import { ProjectMembersImportModal } from "@/components/projects/settings/members/members-import-modal";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -39,6 +40,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
   const { projectId, workspaceSlug } = props;
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [importModal, setImportModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   // plane hooks
   const { t } = useTranslation();
@@ -67,6 +69,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const isProjectMembersActivityEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_MEMBER_ACTIVITY);
+  const isMembersImportEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_MEMBERS_IMPORT, false);
 
   // Handler for role filter updates
   const handleRoleFilterUpdate = (role: string) => {
@@ -94,6 +97,12 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
+      <ProjectMembersImportModal
+        isOpen={importModal}
+        onClose={() => setImportModal(false)}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+      />
       <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-subtle">
         <div className="text-14 font-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
@@ -115,6 +124,11 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
           {isAdmin && isProjectMembersActivityEnabled && (
             <Button variant="secondary" size="lg" onClick={() => toggleProjectMembersActivitySidebar(projectId, true)}>
               {t("activity")}
+            </Button>
+          )}
+          {isAdmin && isMembersImportEnabled && (
+            <Button variant="secondary" size="lg" onClick={() => setImportModal(true)}>
+              {t("common.import")}
             </Button>
           )}
           {isAdmin && (

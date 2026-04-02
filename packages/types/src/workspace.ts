@@ -352,8 +352,8 @@ export type TWorkspaceCredential = {
   target_access_token?: string | null;
   target_refresh_token?: string | null;
   target_hostname?: string | null;
-  is_pat?: boolean | false;
-  is_active?: boolean | false;
+  is_pat?: boolean;
+  is_active?: boolean;
   created_at?: string;
   updated_at?: string;
 };
@@ -371,6 +371,15 @@ export type TWorkspaceMemberImportSummary = {
   users_created: number;
   workspace_members_created: number;
   errors: Record<number, Record<string, string>> | Array<unknown>;
+};
+
+export type TProjectMemberImportSummary = {
+  total_rows: number;
+  members_added: number;
+  members_reactivated: number;
+  already_members: number;
+  skipped: number;
+  skipped_details: Array<{ row: number; errors: Record<string, string | string[] | unknown> }>;
 };
 
 // Type for verification of both source and target credentials

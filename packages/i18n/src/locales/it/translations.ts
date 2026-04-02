@@ -3928,6 +3928,56 @@ Crea un nuovo progetto invece`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Importa membri da CSV",
+      description:
+        "Carica un CSV con colonne: Email e Ruolo (5=Ospite, 15=Membro, 20=Amministratore). Gli utenti devono già essere membri dello spazio di lavoro.",
+      download_sample: "Scarica CSV di esempio",
+      dropzone: {
+        active: "Rilascia il file CSV qui",
+        inactive: "Trascina e rilascia o fai clic per caricare",
+        file_type: "Sono supportati solo file .csv",
+      },
+      buttons: {
+        cancel: "Annulla",
+        import: "Importa",
+        try_again: "Riprova",
+        close: "Chiudi",
+        done: "Fatto",
+      },
+      progress: {
+        uploading: "Caricamento...",
+        importing: "Importazione...",
+      },
+      summary: {
+        title: {
+          complete: "Importazione completata",
+        },
+        message: {
+          success: "{count} membr{plural} importat{plural} con successo nel progetto.",
+          no_imports: "Nessun nuovo membro è stato importato dal file CSV.",
+        },
+        stats: {
+          added: "Aggiunti",
+          reactivated: "Riattivati",
+          already_members: "Già membri",
+          skipped: "Ignorati",
+        },
+        download_errors: "Scarica dettagli ignorati",
+      },
+      toast: {
+        invalid_file: {
+          title: "File non valido",
+          message: "Sono supportati solo file CSV.",
+        },
+        import_failed: {
+          title: "Importazione fallita",
+          message: "Qualcosa è andato storto.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

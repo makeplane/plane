@@ -3883,6 +3883,56 @@ export default {
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Імпорт учасників з CSV",
+      description:
+        "Завантажте CSV зі стовпцями: Email та Role (5=Гість, 15=Учасник, 20=Адміністратор). Користувачі вже повинні бути учасниками робочого простору.",
+      download_sample: "Завантажити зразок CSV",
+      dropzone: {
+        active: "Перетягніть CSV файл сюди",
+        inactive: "Перетягніть або натисніть для завантаження",
+        file_type: "Підтримуються лише файли .csv",
+      },
+      buttons: {
+        cancel: "Скасувати",
+        import: "Імпортувати",
+        try_again: "Спробувати знову",
+        close: "Закрити",
+        done: "Готово",
+      },
+      progress: {
+        uploading: "Завантаження...",
+        importing: "Імпорт...",
+      },
+      summary: {
+        title: {
+          complete: "Імпорт завершено",
+        },
+        message: {
+          success: "Успішно імпортовано {count} учасник{plural} до проєкту.",
+          no_imports: "З CSV не було імпортовано нових учасників.",
+        },
+        stats: {
+          added: "Додано",
+          reactivated: "Повторно активовано",
+          already_members: "Вже учасники",
+          skipped: "Пропущено",
+        },
+        download_errors: "Завантажити деталі пропущених",
+      },
+      toast: {
+        invalid_file: {
+          title: "Недійсний файл",
+          message: "Підтримуються лише CSV файли.",
+        },
+        import_failed: {
+          title: "Імпорт не вдався",
+          message: "Щось пішло не так.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

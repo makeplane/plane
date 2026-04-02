@@ -3898,6 +3898,56 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Nhập thành viên từ CSV",
+      description:
+        "Tải lên CSV với các cột: Email và Vai trò (5=Khách, 15=Thành viên, 20=Quản trị viên). Người dùng phải đã là thành viên không gian làm việc.",
+      download_sample: "Tải xuống CSV mẫu",
+      dropzone: {
+        active: "Thả tệp CSV vào đây",
+        inactive: "Kéo & thả hoặc nhấp để tải lên",
+        file_type: "Chỉ hỗ trợ tệp .csv",
+      },
+      buttons: {
+        cancel: "Hủy",
+        import: "Nhập",
+        try_again: "Thử lại",
+        close: "Đóng",
+        done: "Hoàn tất",
+      },
+      progress: {
+        uploading: "Đang tải lên...",
+        importing: "Đang nhập...",
+      },
+      summary: {
+        title: {
+          complete: "Nhập hoàn tất",
+        },
+        message: {
+          success: "Đã nhập thành công {count} thành viên vào dự án.",
+          no_imports: "Không có thành viên mới nào được nhập từ tệp CSV.",
+        },
+        stats: {
+          added: "Đã thêm",
+          reactivated: "Đã kích hoạt lại",
+          already_members: "Đã là thành viên",
+          skipped: "Đã bỏ qua",
+        },
+        download_errors: "Tải xuống chi tiết đã bỏ qua",
+      },
+      toast: {
+        invalid_file: {
+          title: "Tệp không hợp lệ",
+          message: "Chỉ hỗ trợ tệp CSV.",
+        },
+        import_failed: {
+          title: "Nhập thất bại",
+          message: "Đã xảy ra lỗi.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

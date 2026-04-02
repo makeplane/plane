@@ -27,6 +27,7 @@ from plane.ee.views.app.project import (
     ProjectTemplateUseEndpoint,
     ProjectWorkLogsEndpoint,
     ProjectExportWorkLogsEndpoint,
+    ProjectMembersImportEndpoint,
 )
 
 urlpatterns = [
@@ -124,5 +125,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/export-worklogs/",
         ProjectExportWorkLogsEndpoint.as_view(),
         name="project-work-logs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/members-import/",
+        ProjectMembersImportEndpoint.as_view(),
+        name="project-members-import",
     ),
 ]

@@ -58,6 +58,7 @@ PROJECT_ATTACHMENT_ENTITY_TYPES = {
     FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
     FileAsset.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
     FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+    FileAsset.EntityTypeContext.PROJECT_MEMBERS_IMPORT,
 }
 
 

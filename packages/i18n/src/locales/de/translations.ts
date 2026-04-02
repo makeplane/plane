@@ -4313,6 +4313,56 @@ Erstellen Sie ein neues.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Mitglieder aus CSV importieren",
+      description:
+        "Laden Sie eine CSV mit den Spalten E-Mail und Rolle hoch (5=Gast, 15=Mitglied, 20=Admin). Benutzer müssen bereits Mitglieder des Arbeitsbereichs sein.",
+      download_sample: "Beispiel-CSV herunterladen",
+      dropzone: {
+        active: "CSV-Datei hier ablegen",
+        inactive: "Ziehen Sie eine Datei hierher oder klicken Sie zum Hochladen",
+        file_type: "Nur .csv-Dateien werden unterstützt",
+      },
+      buttons: {
+        cancel: "Abbrechen",
+        import: "Importieren",
+        try_again: "Erneut versuchen",
+        close: "Schließen",
+        done: "Fertig",
+      },
+      progress: {
+        uploading: "Hochladen...",
+        importing: "Importieren...",
+      },
+      summary: {
+        title: {
+          complete: "Import abgeschlossen",
+        },
+        message: {
+          success: "{count} Mitglied{plural} erfolgreich ins Projekt importiert.",
+          no_imports: "Aus der CSV-Datei wurden keine neuen Mitglieder importiert.",
+        },
+        stats: {
+          added: "Hinzugefügt",
+          reactivated: "Reaktiviert",
+          already_members: "Bereits Mitglieder",
+          skipped: "Übersprungen",
+        },
+        download_errors: "Übersprungene Details herunterladen",
+      },
+      toast: {
+        invalid_file: {
+          title: "Ungültige Datei",
+          message: "Nur CSV-Dateien werden unterstützt.",
+        },
+        import_failed: {
+          title: "Import fehlgeschlagen",
+          message: "Etwas ist schief gelaufen.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

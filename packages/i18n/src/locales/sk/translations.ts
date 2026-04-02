@@ -3853,6 +3853,56 @@ Vytvorte nový.`,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Importovať členov z CSV",
+      description:
+        "Nahrajte CSV so stĺpcami: E-mail a Rola (5=Hosť, 15=Člen, 20=Správca). Používatelia musia byť už členmi pracovného priestoru.",
+      download_sample: "Stiahnuť vzorové CSV",
+      dropzone: {
+        active: "Presuňte CSV súbor sem",
+        inactive: "Presuňte alebo kliknite pre nahranie",
+        file_type: "Podporované sú iba súbory .csv",
+      },
+      buttons: {
+        cancel: "Zrušiť",
+        import: "Importovať",
+        try_again: "Skúsiť znova",
+        close: "Zavrieť",
+        done: "Hotovo",
+      },
+      progress: {
+        uploading: "Nahrávanie...",
+        importing: "Importovanie...",
+      },
+      summary: {
+        title: {
+          complete: "Import dokončený",
+        },
+        message: {
+          success: "Úspešne importovaných {count} člen{plural} do projektu.",
+          no_imports: "Zo súboru CSV neboli importovaní žiadni noví členovia.",
+        },
+        stats: {
+          added: "Pridané",
+          reactivated: "Znovu aktivované",
+          already_members: "Už členovia",
+          skipped: "Preskočené",
+        },
+        download_errors: "Stiahnuť podrobnosti preskočených",
+      },
+      toast: {
+        invalid_file: {
+          title: "Neplatný súbor",
+          message: "Podporované sú iba CSV súbory.",
+        },
+        import_failed: {
+          title: "Import zlyhal",
+          message: "Niečo sa pokazilo.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

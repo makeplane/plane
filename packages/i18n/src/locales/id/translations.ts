@@ -3919,6 +3919,56 @@ jika Anda yakin pencarian Anda benar. `,
       },
     },
   },
+  project: {
+    members_import: {
+      title: "Impor anggota dari CSV",
+      description:
+        "Unggah CSV dengan kolom: Email dan Peran (5=Tamu, 15=Anggota, 20=Admin). Pengguna harus sudah menjadi anggota workspace.",
+      download_sample: "Unduh contoh CSV",
+      dropzone: {
+        active: "Letakkan file CSV di sini",
+        inactive: "Seret & lepas atau klik untuk mengunggah",
+        file_type: "Hanya file .csv yang didukung",
+      },
+      buttons: {
+        cancel: "Batal",
+        import: "Impor",
+        try_again: "Coba Lagi",
+        close: "Tutup",
+        done: "Selesai",
+      },
+      progress: {
+        uploading: "Mengunggah...",
+        importing: "Mengimpor...",
+      },
+      summary: {
+        title: {
+          complete: "Impor Selesai",
+        },
+        message: {
+          success: "Berhasil mengimpor {count} anggota ke proyek.",
+          no_imports: "Tidak ada anggota baru yang diimpor dari file CSV.",
+        },
+        stats: {
+          added: "Ditambahkan",
+          reactivated: "Diaktifkan kembali",
+          already_members: "Sudah menjadi anggota",
+          skipped: "Dilewati",
+        },
+        download_errors: "Unduh detail yang dilewati",
+      },
+      toast: {
+        invalid_file: {
+          title: "File tidak valid",
+          message: "Hanya file CSV yang didukung.",
+        },
+        import_failed: {
+          title: "Impor gagal",
+          message: "Terjadi kesalahan.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {
