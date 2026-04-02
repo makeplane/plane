@@ -1,6 +1,7 @@
 name: Deploy Storybook (Propel)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - preview

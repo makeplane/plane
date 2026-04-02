@@ -1,6 +1,7 @@
 name: Deploy Storybook (Blocks)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - preview
