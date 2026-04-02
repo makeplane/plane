@@ -54,22 +54,29 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
         # 1. Extract Bearer token
         auth_header = request.headers.get("Authorization", "")
         if not auth_header.startswith("Bearer "):
+            logger.debug("Authorization header missing or does not start with 'Bearer ' — skipping external token auth")
             return None
 
         raw_token = auth_header[len("Bearer ") :]
         if not raw_token:
+            logger.debug("Bearer token is empty — skipping external token auth")
             return None
 
         # 2. Peek at JWT headers without verifying signature
         try:
             unverified_header = jwt.get_unverified_header(raw_token)
         except Exception:
+            logger.debug("Failed to decode JWT header — skipping external token auth")
             return None
 
         # Only handle tokens with an allowed asymmetric algorithm — Plane's own
         # tokens are opaque and never reach this point, but this is a safety net.
         token_alg = unverified_header.get("alg")
         if token_alg not in ALLOWED_ALGORITHMS:
+            logger.debug(
+                "JWT with unsupported algorithm '%s' — skipping external token auth",
+                token_alg,
+            )
             return None
 
         # 3. Resolve workspace slug from URL
@@ -78,12 +85,19 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
         except Resolver404:
             workspace_slug = None
 
+        logger.debug(
+            "Attempting external token auth for workspace slug '%s' and JWT issuer '%s'",
+            workspace_slug,
+            unverified_header.get("iss"),
+        )
+
         # 4. Check OAuth Bridge is installed
         if workspace_slug:
             # Standard path: look up the specific workspace
             try:
                 workspace = Workspace.objects.get(slug=workspace_slug)
             except Workspace.DoesNotExist:
+                logger.debug("Workspace with slug %s does not exist — skipping external token auth", workspace_slug)
                 return None
 
             bridge_installed = WorkspaceAppInstallation.objects.filter(
@@ -119,10 +133,12 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
                 algorithms=list(ALLOWED_ALGORITHMS),
             )
         except Exception:
+            logger.debug("Failed to decode JWT payload — skipping external token auth")
             return None
 
         issuer = unverified_payload.get("iss")
         if not issuer:
+            logger.debug("JWT 'iss' claim is missing or empty — skipping external token auth")
             return None
 
         # Lazy import to avoid circular imports at module load time
@@ -219,7 +235,7 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
 
         logger.info(
             "External JWT auth succeeded: user=%s workspace=%s provider=%s",
-            user.email,
+            user.id,
             workspace_slug,
             provider.id,
         )

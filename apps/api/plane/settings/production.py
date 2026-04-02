@@ -51,7 +51,7 @@ LOGGING = {
         "console_json": {
             "class": "logging.StreamHandler",
             "formatter": "json",
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
         },
         "console_verbose": {
             "class": "logging.StreamHandler",
@@ -93,22 +93,22 @@ LOGGING = {
         },
         # Parent logger for all plane.* loggers
         "plane": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.api.request": {
-            "level": LOG_LEVEL, # noqa: F405 
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.api": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.worker": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
@@ -118,47 +118,52 @@ LOGGING = {
             "propagate": False,
         },
         "plane.external": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.mongo": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.migrations": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.silo": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.event_stream": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.automations.consumer": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.authentication": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.payments": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.webhook": {
-            "level": LOG_LEVEL, # noqa: F405
+            "level": LOG_LEVEL,  # noqa: F405
+            "handlers": ["console_json"],
+            "propagate": False,
+        },
+        "plane.oauth_bridge": {
+            "level": LOG_LEVEL,  # noqa: F405
             "handlers": ["console_json"],
             "propagate": False,
         },

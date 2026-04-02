@@ -163,5 +163,10 @@ LOGGING = {
             "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
+        "plane.oauth_bridge": {
+            "level": LOG_LEVEL, # noqa: F405
+            "handlers": [DEFAULT_LOG_HANDLER],
+            "propagate": False,
+        },
     },
 }
