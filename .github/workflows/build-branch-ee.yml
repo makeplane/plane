@@ -587,7 +587,7 @@ jobs:
     runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     container:
-      image: docker:20.10.7
+      image: docker:29.3.1-cli-alpine3.23
       credentials:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
