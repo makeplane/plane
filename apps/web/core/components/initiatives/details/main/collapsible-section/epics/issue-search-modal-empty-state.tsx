@@ -31,6 +31,10 @@ type Props = {
   isSearching: boolean;
 };
 
+function EmptyStateContainer({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>;
+}
+
 export function EpicSearchModalEmptyState({ issues, searchTerm, debouncedSearchTerm, isSearching }: Props) {
   // plane hooks
   const { t } = useTranslation();
@@ -38,10 +42,6 @@ export function EpicSearchModalEmptyState({ issues, searchTerm, debouncedSearchT
   // derived values
   const searchResolvedPath = resolvedTheme === "light" ? searchLight : searchDark;
   const epicsResolvedPath = resolvedTheme === "light" ? issuesLight : issuesDark;
-
-  function EmptyStateContainer({ children }: { children: React.ReactNode }) {
-    return <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>;
-  }
 
   if (issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching) {
     return (

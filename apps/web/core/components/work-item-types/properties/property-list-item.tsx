@@ -112,8 +112,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     ({ key, ...issuePropertyCreateData } = issuePropertyCreateListData);
   }
   const issuePropertyDetail = customPropertyId ? getPropertyDetail(customPropertyId) : issuePropertyCreateData;
-  // If issuePropertyDetail is not available, return null
-  if (!issuePropertyDetail) return null;
   const sortedActivePropertyOptions = customPropertyId ? getSortedActivePropertyOptions(customPropertyId) : [];
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,6 +122,8 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     useState<Partial<TIssueProperty<EIssuePropertyType>>>(issuePropertyDetail);
   const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyFormError>(defaultIssuePropertyError);
   const [isPropertyConfigValid, setIsPropertyConfigValid] = useState<boolean>(false);
+  // If issuePropertyDetail is not available, return null
+  if (!issuePropertyDetail) return null;
   // derived values
   // check if mandatory field is disabled for the property
   const isMandatoryFieldDisabled =
@@ -298,37 +298,35 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     const { property_type: _, ...updatePayload } = propertyPayload;
 
     setIsSubmitting(true);
-    await updateProperty(customPropertyId, {
-      ...updatePayload,
-      formula: formulaPayload,
-      options: optionsPayload,
-    })
-      .then(() => {
-        if (showToast)
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("work_item_types.settings.properties.toast.update.success.title"),
-            message: t("work_item_types.settings.properties.toast.update.success.message", {
-              name: issuePropertyData?.display_name,
-            }),
-          });
-      })
-      .catch((error) => {
-        if (showToast)
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("work_item_types.settings.properties.toast.update.error.title"),
-            message: error?.error ?? t("work_item_types.settings.properties.toast.update.error.message"),
-          });
-        setIssuePropertyData(issuePropertyDetail);
-      })
-      .finally(() => {
-        // reset options after mobx computed value is updated
-        requestAnimationFrame(() => {
-          resetOptions();
-        });
-        setIsSubmitting(false);
+
+    try {
+      await updateProperty(customPropertyId, {
+        ...updatePayload,
+        formula: formulaPayload,
+        options: optionsPayload,
       });
+      if (showToast)
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("work_item_types.settings.properties.toast.update.success.title"),
+          message: t("work_item_types.settings.properties.toast.update.success.message", {
+            name: issuePropertyData?.display_name,
+          }),
+        });
+    } catch (error: any) {
+      if (showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_types.settings.properties.toast.update.error.title"),
+          message: error?.error ?? t("work_item_types.settings.properties.toast.update.error.message"),
+        });
+      setIssuePropertyData(issuePropertyDetail);
+    }
+    // reset options after mobx computed value is updated
+    requestAnimationFrame(() => {
+      resetOptions();
+    });
+    setIsSubmitting(false);
   };
 
   const handleDiscard = () => {
@@ -344,29 +342,25 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
   const handleDelete = async () => {
     const propertyId = issuePropertyData?.id;
     if (!propertyId) return;
-
     setIsSubmitting(true);
-    await deleteProperty(propertyId)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("work_item_types.settings.properties.toast.delete.success.title"),
-          message: t("work_item_types.settings.properties.toast.delete.success.message", {
-            name: issuePropertyData?.display_name,
-          }),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("work_item_types.settings.properties.toast.delete.error.title"),
-          message: t("work_item_types.settings.properties.toast.delete.error.message"),
-        });
-      })
-      .finally(() => {
-        if (key) removePropertyListItem({ key, ...issuePropertyData });
-        setIsSubmitting(false);
+    try {
+      await deleteProperty(propertyId);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("work_item_types.settings.properties.toast.delete.success.title"),
+        message: t("work_item_types.settings.properties.toast.delete.success.message", {
+          name: issuePropertyData?.display_name,
+        }),
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("work_item_types.settings.properties.toast.delete.error.title"),
+        message: t("work_item_types.settings.properties.toast.delete.error.message"),
+      });
+    }
+    if (key) removePropertyListItem({ key, ...issuePropertyData });
+    setIsSubmitting(false);
   };
 
   const handleCreateUpdate = async () => {

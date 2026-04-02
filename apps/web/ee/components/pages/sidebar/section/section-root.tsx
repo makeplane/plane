@@ -52,11 +52,6 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
   // feature flag check for shared pages
   const isSharedPagesEnabled = useFlag(workspaceSlug?.toString(), "SHARED_PAGES", false);
 
-  // Don't render shared section if feature flag is disabled
-  if (sectionType === "shared" && !isSharedPagesEnabled) {
-    return null;
-  }
-
   // Get page IDs based on section type
   const pageIds = useMemo(() => {
     switch (sectionType) {
@@ -173,6 +168,11 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
       return hasChanges ? Array.from(expandedSet) : prev;
     });
   }, [currentPageId, sectionContainsActivePage, getPageById, setExpandedPageIds]);
+
+  // Don't render shared section if feature flag is disabled
+  if (sectionType === "shared" && !isSharedPagesEnabled) {
+    return null;
+  }
 
   return (
     <div

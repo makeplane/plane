@@ -95,6 +95,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const isReleasesFlag = useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES);
 
   const currentStateDuration = useCurrentStateDuration(issueId);
 
@@ -107,9 +108,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
-  const isReleasesFeatureEnabled =
-    useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES) &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+  const isReleasesFeatureEnabled = isReleasesFlag && isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());

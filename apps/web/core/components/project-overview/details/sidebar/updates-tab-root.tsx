@@ -37,13 +37,11 @@ export const ProjectOverviewSidebarUpdatesRoot = observer(function ProjectOvervi
   // derived values
   const project = getProjectById(projectId);
   const projectFeatures = getProjectFeatures(projectId);
+  const isProjectUpdatesFlag = useFlag(workspaceSlug.toString(), "PROJECT_UPDATES");
 
   if (!project) return <></>;
 
-  const isProjectUpdatesEnabled =
-    projectFeatures &&
-    projectFeatures.is_project_updates_enabled &&
-    useFlag(workspaceSlug.toString(), "PROJECT_UPDATES");
+  const isProjectUpdatesEnabled = projectFeatures && projectFeatures.is_project_updates_enabled && isProjectUpdatesFlag;
 
   return (
     <>

@@ -55,8 +55,6 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
   const initiative = getInitiativeById(initiativeId);
   const initiativeStats = getInitiativeStatsById(initiativeId);
 
-  if (!initiative) return null;
-
   const isEditable = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -75,6 +73,8 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
     },
     [workspaceSlug, initiativeId, setPeekInitiative]
   );
+
+  if (!initiative) return null;
 
   return (
     <div

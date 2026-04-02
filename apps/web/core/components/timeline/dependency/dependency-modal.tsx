@@ -54,11 +54,11 @@ const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const { getBlockById } = useTimeLineChartStore();
 
   const issueBlock = getBlockById(blockId);
+  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
 
   if (!issueBlock || !issueBlock.data) return <></>;
 
   const issueData = issueBlock.data as TIssue;
-  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
 
   const handleIssuePeekOverview = () => {
     handleClose();

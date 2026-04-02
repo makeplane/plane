@@ -42,6 +42,7 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
   // store hooks
   const { removePage } = usePageStore(storeType);
   const router = useAppRouter();
+  const { pageId: routePageId } = useParams();
   if (!page || !page.id) return null;
   // derived values
   const { id: pageId, name } = page;
@@ -50,8 +51,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
     setIsDeleting(false);
     onClose();
   };
-
-  const { pageId: routePageId } = useParams();
 
   const handleDelete = async () => {
     if (!pageId) return;

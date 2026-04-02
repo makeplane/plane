@@ -70,23 +70,33 @@ import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import type { TIssue } from "@plane/types";
 
-interface IPeekOverviewProperties {
+type IPeekOverviewProperties = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   disabled: boolean;
   issueOperations: TIssueOperations;
-}
+};
 
-export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+type IPeekOverviewWorkItemProperties = {
+  workspaceSlug: string;
+  projectId: string;
+  issue: TIssue;
+  issueOperations: TIssueOperations;
+  disabled: boolean;
+};
+
+export const PeekOverviewWorkItemProperties = observer(function PeekOverviewWorkItemProperties(
+  props: IPeekOverviewWorkItemProperties
+) {
+  const { workspaceSlug, projectId, issue, issueOperations, disabled } = props;
   const { t } = useTranslation();
+  // derived values
+  const issueId = issue.id;
   // store hooks
   const { getProjectById } = useProject();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
   const { isCustomersFeatureEnabled } = useCustomers();
@@ -94,9 +104,6 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const isReleasesFeatureFlagEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES);
   const currentStateDuration = useCurrentStateDuration(issueId);
-  // derived values
-  const issue = getIssueById(issueId);
-  if (!issue) return <></>;
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
@@ -392,5 +399,23 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         )}
       </div>
     </div>
+  );
+});
+
+export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
+  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const issue = getIssueById(issueId);
+  if (!issue) return <></>;
+  return (
+    <PeekOverviewWorkItemProperties
+      workspaceSlug={workspaceSlug}
+      projectId={projectId}
+      issue={issue}
+      issueOperations={issueOperations}
+      disabled={disabled}
+    />
   );
 });

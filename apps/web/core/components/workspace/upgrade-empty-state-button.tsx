@@ -36,9 +36,9 @@ export const UpgradeEmptyStateButton = observer(function UpgradeEmptyStateButton
   const { t } = useTranslation();
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  const isFeatureFlagEnabled = useFlag(workspaceSlug, flag);
   if (!subscriptionDetail) return null;
   // derived values
-  const isFeatureFlagEnabled = useFlag(workspaceSlug, flag);
   const isOnFreePlan = subscriptionDetail.product === EProductSubscriptionEnum.FREE;
   const isPlaneOneInstance =
     subscriptionDetail.is_self_managed && subscriptionDetail.product === EProductSubscriptionEnum.ONE;

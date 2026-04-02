@@ -62,11 +62,12 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  const isIntakeEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
+  const isIntakeFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
+
   if (!workspaceSlug || !projectId) return null;
 
   // Derived Values
-  const isIntakeEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
-  const isIntakeFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
   const isFeatureAllowed = {
     email: isIntakeEmailEnabled,
     in_app: true,

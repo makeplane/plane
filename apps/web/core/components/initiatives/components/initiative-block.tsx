@@ -56,8 +56,6 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
   const initiative = getInitiativeById(initiativeId);
   const initiativeStats = getInitiativeStatsById(initiativeId);
 
-  if (!initiative) return <></>;
-
   const isEditable = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -76,6 +74,8 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
     },
     [workspaceSlug, initiativeId, setPeekInitiative]
   );
+
+  if (!initiative) return <></>;
 
   return (
     <button

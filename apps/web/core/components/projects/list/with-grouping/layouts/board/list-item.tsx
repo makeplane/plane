@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -52,12 +51,11 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
     workspaceSlug.toString(),
     projectId
   );
-  if (!project) return <></>;
-
   useEffect(() => {
     const element = cardRef.current;
 
     if (!element) return;
+    if (!project) return;
 
     return combine(
       draggable({
@@ -68,6 +66,9 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
       })
     );
   }, [project, isDragAllowed, selectedGroupKey]);
+
+  if (!project) return <></>;
+
   return (
     <div
       className="flex whitespace-nowrap gap-2 rounded-sm w-full"

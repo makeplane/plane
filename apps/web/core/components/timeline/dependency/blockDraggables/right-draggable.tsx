@@ -52,8 +52,6 @@ export const RightDependencyDraggable = observer(function RightDependencyDraggab
     onDrag,
   } = useTimeLineChartStore();
 
-  if (!isDependencyEnabled) return <></>;
-
   const relatedBlockIds = getRelatedBlockIds(block.id);
   const isStartDateAvailable = !!block?.start_date;
   const isEndDateAvailable = !!block?.target_date;
@@ -137,6 +135,8 @@ export const RightDependencyDraggable = observer(function RightDependencyDraggab
     }
     return combine(...combineArray);
   }, [block, relatedBlockIds, isStartDateAvailable, isEndDateAvailable]);
+
+  if (!isDependencyEnabled) return <></>;
 
   return (
     <>

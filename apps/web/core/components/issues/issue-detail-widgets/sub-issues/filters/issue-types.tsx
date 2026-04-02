@@ -47,9 +47,6 @@ export const FilterIssueTypes = observer(function FilterIssueTypes(props: Props)
   const issueTypes = projectId ? getProjectIssueTypes(projectId, false) : workspaceIssueTypes;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  // Return null if issue type is not enabled for the project
-  if (!isWorkItemTypeEnabled) return null;
-
   const sortedOptions = useMemo(() => {
     const filteredOptions = (Object.values(issueTypes) || []).filter((issueType) =>
       issueType.name?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -61,6 +58,9 @@ export const FilterIssueTypes = observer(function FilterIssueTypes(props: Props)
     ]);
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
+
+  // Return null if issue type is not enabled for the project
+  if (!isWorkItemTypeEnabled) return null;
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;

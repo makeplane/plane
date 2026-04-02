@@ -108,8 +108,8 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   const isCycleEndDateValid = cycleStartDate && cycleEndDate && cycleEndDate >= cycleStartDate;
   const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
 
-  if (!cycleDetails) return <></>;
   const [isOpen, setIsOpen] = useState(true);
+  if (!cycleDetails) return <></>;
 
   return (
     <div className="border-t border-subtle space-y-4 py-5">

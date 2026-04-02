@@ -68,9 +68,11 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
     workspaceSlug ? () => getUnreadNotificationsCount(workspaceSlug.toString()) : null
   );
 
+  const isAiChatAiFlag = useAiFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT);
+  const isAiChatFlag = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT);
   const shouldRenderPiChat =
-    useAiFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT) &&
-    useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT) &&
+    isAiChatAiFlag &&
+    isAiChatFlag &&
     isPiAllowed(pathname, workspaceSlug, projectId, workItem) &&
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 

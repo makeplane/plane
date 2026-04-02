@@ -64,8 +64,6 @@ export const EpicSidebarCommentsRoot = observer(function EpicSidebarCommentsRoot
   const project = getProjectById(projectId);
   const activityComments = getActivityAndCommentsByIssueId(epicId, E_SORT_ORDER.ASC);
 
-  if (!project) return <></>;
-
   const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
     EActivityFilterType.COMMENT,
   ]);
@@ -79,6 +77,8 @@ export const EpicSidebarCommentsRoot = observer(function EpicSidebarCommentsRoot
         : [],
     [sortOrder, filteredActivityComments]
   );
+
+  if (!project) return <></>;
 
   return (
     <SidebarContentWrapper

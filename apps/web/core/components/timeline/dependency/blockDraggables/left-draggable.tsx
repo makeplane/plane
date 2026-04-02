@@ -52,9 +52,6 @@ export const LeftDependencyDraggable = observer(function LeftDependencyDraggable
     onDrop,
   } = useTimeLineChartStore();
 
-  // If feature flag is disabled return empty node
-  if (!isDependencyEnabled) return <></>;
-
   const relatedBlockIds = getRelatedBlockIds(block.id);
   const isStartDateAvailable = !!block?.start_date;
 
@@ -140,6 +137,9 @@ export const LeftDependencyDraggable = observer(function LeftDependencyDraggable
 
     return combine(...combineArray);
   }, [block, relatedBlockIds, isStartDateAvailable]);
+
+  // If feature flag is disabled return empty node
+  if (!isDependencyEnabled) return <></>;
 
   return (
     <>

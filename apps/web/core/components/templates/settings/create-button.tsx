@@ -51,6 +51,26 @@ type TCreateTemplateOption = {
   featureFlagKey: E_FEATURE_FLAGS;
 };
 
+const CreateTemplateMenuItem = observer(function CreateTemplateMenuItem({
+  option,
+  workspaceSlug,
+  currentLevel,
+}: {
+  option: TCreateTemplateOption;
+  workspaceSlug: string;
+  currentLevel: ETemplateLevel;
+}) {
+  const { t } = useTranslation();
+  const isFeatureFlagEnabled = useFlag(workspaceSlug, option.featureFlagKey);
+  const isAvailable = option.availableForLevels.includes(currentLevel);
+  if (!isAvailable || !isFeatureFlagEnabled) return null;
+  return (
+    <CustomMenu.MenuItem key={option.i18n_label} onClick={option.onClick} disabled={!isAvailable}>
+      {t(option.i18n_label)}
+    </CustomMenu.MenuItem>
+  );
+});
+
 export const CreateTemplatesButton = observer(function CreateTemplatesButton(props: TCreateTemplatesButtonProps) {
   // router
   const router = useAppRouter();
@@ -132,16 +152,14 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
       disabled={!hasAdminPermission}
       closeOnSelect
     >
-      {CREATE_TEMPLATE_OPTIONS.map((option) => {
-        const isFeatureFlagEnabled = useFlag(props.workspaceSlug, option.featureFlagKey);
-        const isAvailable = option.availableForLevels.includes(props.currentLevel);
-        if (!isAvailable || !isFeatureFlagEnabled) return null;
-        return (
-          <CustomMenu.MenuItem key={option.i18n_label} onClick={option.onClick} disabled={!isAvailable}>
-            {t(option.i18n_label)}
-          </CustomMenu.MenuItem>
-        );
-      })}
+      {CREATE_TEMPLATE_OPTIONS.map((option) => (
+        <CreateTemplateMenuItem
+          key={option.i18n_label}
+          option={option}
+          workspaceSlug={props.workspaceSlug}
+          currentLevel={props.currentLevel}
+        />
+      ))}
     </CustomMenu>
   );
 });

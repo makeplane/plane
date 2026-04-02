@@ -61,30 +61,30 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
   const teamspaceEntitiesLoader = getTeamspaceEntitiesLoaderById(teamspaceId);
   const linkedEntitiesCount = teamspaceEntities?.linked_entities.total;
   const teamspaceEntitiesCount = teamspaceEntities?.team_entities.total;
-  const userIdsWithAdminOrMemberRole = useMemo(
-    () =>
-      workspaceMemberIds?.filter((userId) => {
-        const memberDetails = getWorkspaceMemberDetails(userId);
-        return memberDetails?.role === EUserWorkspaceRoles.GUEST ? false : true;
-      }),
-    [workspaceMemberIds, getWorkspaceMemberDetails]
-  );
 
-  if (!teamspace) return null;
+  const userIdsWithAdminOrMemberRole = useMemo(() => {
+    if (!teamspace) return [];
+    workspaceMemberIds?.filter((userId) => {
+      const memberDetails = getWorkspaceMemberDetails(userId);
+      return memberDetails?.role === EUserWorkspaceRoles.GUEST ? false : true;
+    });
+  }, [workspaceMemberIds, getWorkspaceMemberDetails, teamspace]);
 
   const handleTeamspaceLeadChange = useCallback(
     (val: string | null) => {
+      if (!teamspace) return;
       if (val && val !== teamspace.lead_id) {
         updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
       } else {
         updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined });
       }
     },
-    [teamspaceId, teamspace.lead_id, updateTeamspace, workspaceSlug]
+    [teamspaceId, updateTeamspace, workspaceSlug, teamspace]
   );
 
-  const TEAM_PROPERTIES: TPropertyListItem[] = useMemo(
-    () => [
+  const TEAM_PROPERTIES: TPropertyListItem[] = useMemo(() => {
+    if (!teamspace) return [];
+    return [
       {
         key: "lead",
         label: "Lead",
@@ -106,9 +106,8 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
           />
         ),
       },
-    ],
-    [handleTeamspaceLeadChange, teamspace.lead_id, userIdsWithAdminOrMemberRole, isEditingAllowed]
-  );
+    ];
+  }, [handleTeamspaceLeadChange, userIdsWithAdminOrMemberRole, isEditingAllowed, teamspace]);
 
   const LINKED_ENTITIES: TPropertyListItem[] = useMemo(
     () => [
@@ -156,6 +155,8 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
     ],
     [teamspaceId, teamspaceEntities, workspaceSlug]
   );
+
+  if (!teamspace) return null;
 
   return (
     <div className="relative flex flex-col gap-y-2 divide-y divide-subtle-1">

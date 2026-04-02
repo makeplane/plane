@@ -25,22 +25,22 @@ type Props = {
   button?: React.ReactNode;
 };
 
+function DropdownLabel({ value, buttonClassName }: { value: string[]; buttonClassName: string }) {
+  return (
+    <div
+      className={cn(
+        "px-2 text-11 h-full flex cursor-pointer items-center gap-2 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded",
+        buttonClassName
+      )}
+    >
+      <MembersPropertyIcon className="h-3 w-3 shrink-0" />
+      <span>{value ? value.length : "Members"}</span>
+    </div>
+  );
+}
+
 export function MembersDropdown(props: Props) {
   const { value, onChange, disabled = false, buttonClassName = "", className = "", button } = props;
-
-  function DropdownLabel() {
-    return (
-      <div
-        className={cn(
-          "px-2 text-11 h-full flex cursor-pointer items-center gap-2 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded",
-          buttonClassName
-        )}
-      >
-        <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
-        <span>{value ? value.length : "Members"}</span>
-      </div>
-    );
-  }
 
   return (
     <MemberDropdown
@@ -50,7 +50,7 @@ export function MembersDropdown(props: Props) {
       }}
       buttonClassName={cn({ "hover:bg-transparent": value?.length > 0 }, buttonClassName)}
       placeholder="Members"
-      button={button || <DropdownLabel />}
+      button={button || <DropdownLabel value={value} buttonClassName={buttonClassName} />}
       className={className}
       disabled={disabled}
       buttonVariant="border-with-text"

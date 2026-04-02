@@ -48,16 +48,17 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
   const { getTeamspaceById, removeTeamspaceMember } = useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
-  if (!teamspace) return null;
 
   const members = useMemo(
     () =>
-      teamspace.member_ids
+      teamspace?.member_ids
         ?.map((memberId) => getUserDetails(memberId))
         .filter(Boolean)
-        .sort((a, b) => (a?.id === teamspace.lead_id ? -1 : b?.id === teamspace.lead_id ? 1 : 0)),
-    [teamspace.member_ids, getUserDetails, teamspace.lead_id]
+        .sort((a, b) => (a?.id === teamspace?.lead_id ? -1 : b?.id === teamspace?.lead_id ? 1 : 0)),
+    [teamspace?.member_ids, getUserDetails, teamspace?.lead_id]
   );
+
+  if (!teamspace) return null;
 
   const handleMemberLeaveOrRemove = async (memberId: string) => {
     const removeTeamspaceMemberPromise = removeTeamspaceMember(workspaceSlug?.toString(), teamspace.id, memberId);

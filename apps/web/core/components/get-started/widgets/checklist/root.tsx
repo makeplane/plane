@@ -42,7 +42,9 @@ export const GetStartedSection: FC = observer(function GetStartedSection() {
   const checklistData = getGettingStartedChecklistByWorkspaceSlug(workspaceSlug);
 
   // Feature flag and workspace feature checks for AI chat
-  const isPiChatFlagEnabled = useAiFlag(workspaceSlug, "AI_CHAT") && useFlag(workspaceSlug, "AI_CHAT");
+  const isAiChatAiFlag = useAiFlag(workspaceSlug, "AI_CHAT");
+  const isAiChatFlag = useFlag(workspaceSlug, "AI_CHAT");
+  const isPiChatFlagEnabled = isAiChatAiFlag && isAiChatFlag;
   const isAiChatAvailable = isPiChatFlagEnabled;
 
   const handleItemClick = useCallback(

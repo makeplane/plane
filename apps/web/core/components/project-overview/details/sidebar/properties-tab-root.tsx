@@ -77,6 +77,8 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
   const project = getProjectById(projectId.toString());
   const isLabelsEnabled = useFlag(workspaceSlug.toString(), "WORKSPACE_PROJECT_LABELS");
 
+  const isProjectGroupingFlag = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+
   if (!project || !currentWorkspace) return null;
 
   // derived values
@@ -85,8 +87,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
   const projectMembersIds = project.members;
 
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
-    useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlag;
 
   const isEditingAllowed = allowPermissions(
     [EUserProjectRoles.ADMIN],

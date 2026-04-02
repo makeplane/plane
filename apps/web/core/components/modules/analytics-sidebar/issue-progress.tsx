@@ -11,11 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
+// plane imports
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -23,10 +23,8 @@ import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TModulePlotType } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
-// components
-// constants
-// helpers
 import { getDate } from "@plane/utils";
+// components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
 // hooks
@@ -119,14 +117,15 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
         await fetchModuleDetails(workspaceSlug, projectId, moduleId);
       }
       setLoader(false);
-    } catch (error) {
+    } catch (_error) {
       setLoader(false);
       setPlotType(moduleId, plotType);
     }
   };
 
-  if (!moduleDetails) return <></>;
   const [isOpen, setIsOpen] = useState(isModuleDateValid ? true : false);
+
+  if (!moduleDetails) return <></>;
 
   return (
     <div className="border-t border-subtle space-y-4 py-4">
