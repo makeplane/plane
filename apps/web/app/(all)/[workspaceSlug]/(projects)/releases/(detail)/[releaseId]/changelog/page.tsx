@@ -13,6 +13,7 @@
 
 import { observer } from "mobx-react";
 // components
+import { ContentWrapper } from "@/components/core/content-wrapper";
 import { PageHead } from "@/components/core/page-title";
 import { ReleaseChangelogRoot } from "@/components/releases/changelog/changelog-root";
 // hooks
@@ -29,10 +30,10 @@ function ReleaseChangelogPage({ params }: Route.ComponentProps) {
   const pageTitle = release ? `${release.name} — Changelog` : "Changelog";
 
   return (
-    <>
+    <ContentWrapper>
       <PageHead title={pageTitle} />
       <ReleaseChangelogRoot releaseId={releaseId} workspaceSlug={workspaceSlug} />
-    </>
+    </ContentWrapper>
   );
 }
 
