@@ -64,7 +64,7 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
 
   const userIdsWithAdminOrMemberRole = useMemo(() => {
     if (!teamspace) return [];
-    workspaceMemberIds?.filter((userId) => {
+    return workspaceMemberIds?.filter((userId) => {
       const memberDetails = getWorkspaceMemberDetails(userId);
       return memberDetails?.role === EUserWorkspaceRoles.GUEST ? false : true;
     });
@@ -74,9 +74,9 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
     (val: string | null) => {
       if (!teamspace) return;
       if (val && val !== teamspace.lead_id) {
-        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
+        void updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
       } else {
-        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined });
+        void updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined });
       }
     },
     [teamspaceId, updateTeamspace, workspaceSlug, teamspace]
