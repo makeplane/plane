@@ -18,7 +18,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { RunnerScript, RunnerScriptFormData } from "@plane/types";
-import { cn, Input, Loader } from "@plane/ui";
+import { Input, Loader } from "@plane/ui";
 import { useRunners } from "@/hooks/store/runners/use-runners";
 import { LazyPlaneSDKCodeEditor } from "@/components/plane-sdk-editor/root";
 import { formDataToScriptPayload, scriptToFormData } from "./env-variables-field";
@@ -27,10 +27,12 @@ import { TestScript } from "./test-script";
 import { DEFAULT_SCRIPT_FORM_DATA } from "@plane/constants";
 import { ERunnerScriptType } from "@plane/types";
 import { SelectScriptType } from "./select-script-type";
+import { IconButton } from "@plane/propel/icon-button";
+import { X } from "lucide-react";
 
 type Props = {
   scriptData?: RunnerScript;
-  headerAction?: React.ReactNode;
+  headerAction?: boolean;
   isLoading?: boolean;
   scriptType?: ERunnerScriptType;
   handleCancel: () => void;
@@ -38,7 +40,7 @@ type Props = {
 };
 
 export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScript(props: Props) {
-  const { scriptData, headerAction, callBack, handleCancel, scriptType, isLoading = false } = props;
+  const { scriptData, headerAction = false, callBack, handleCancel, scriptType, isLoading = false } = props;
   const { workspaceSlug } = useParams();
   const { createScript, updateScript } = useRunners();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,27 +62,28 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
   const formValues = watch();
 
   const onSubmit = async (formData: RunnerScriptFormData) => {
-    if (!workspaceSlug || isReadOnly) return;
     setIsSubmitting(true);
+    let result;
     try {
-      const payload = formDataToScriptPayload(formData);
-      let result;
-      if (scriptData?.id) {
-        result = await updateScript(workspaceSlug, scriptData.id, payload);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Runner script updated successfully",
-        });
-      } else {
-        result = await createScript(workspaceSlug, payload);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Runner script created successfully",
-        });
+      if (workspaceSlug && !isReadOnly) {
+        const payload = formDataToScriptPayload(formData);
+        if (scriptData?.id) {
+          result = await updateScript(workspaceSlug, scriptData.id, payload);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success",
+            message: "Runner script updated successfully",
+          });
+        } else {
+          result = await createScript(workspaceSlug, payload);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success",
+            message: "Runner script created successfully",
+          });
+        }
       }
-      callBack?.(result?.id);
+      callBack?.(scriptData?.id || result?.id || null);
     } catch (error) {
       console.error("Error saving runner script:", error);
       setToast({
@@ -88,6 +91,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
         title: "Error",
         message: scriptData?.id ? "Failed to update runner script" : "Failed to create runner script",
       });
+      setIsSubmitting(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -108,14 +112,29 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-6 w-full" key={scriptData?.id}>
+      <div className="space-y-6 w-full" key={scriptData?.id}>
         <div className="space-y-3">
+          {headerAction && (
+            <div className="flex justify-between gap-1 border-b border-subtle pb-3">
+              <div className="text-body-md-medium text-primary">{scriptData?.name || "New Script"}</div>
+              <div className="flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="primary"
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    void handleSubmit(onSubmit)();
+                  }}
+                >
+                  Save & Use
+                </Button>
+                <IconButton variant="ghost" onClick={handleCancel} icon={X} />
+              </div>
+            </div>
+          )}
           {/* Name */}
-          <div
-            className={cn("space-y-1 flex gap-2 items-center justify-between mb-6", {
-              "border-b border-subtle pb-3": headerAction,
-            })}
-          >
+          <div className={"space-y-1 flex gap-2 items-center justify-between mb-6"}>
             {isLoading ? (
               <Loader className="w-full">
                 <Loader.Item height="28px" width="200px" />
@@ -139,7 +158,6 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
                 )}
               />
             )}
-            {headerAction}
           </div>
 
           {/* Script Type */}
@@ -186,17 +204,25 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
         </div>
 
         {/* Form Actions */}
-        {!isReadOnly && (
+        {!isReadOnly && !headerAction && (
           <div className="flex justify-end gap-3">
             <Button type="button" variant="secondary" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" loading={isSubmitting} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="primary"
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              onClick={() => {
+                void handleSubmit(onSubmit)();
+              }}
+            >
               Save
             </Button>
           </div>
         )}
-      </form>
+      </div>
     </FormProvider>
   );
 });

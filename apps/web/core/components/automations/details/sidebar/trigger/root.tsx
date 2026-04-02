@@ -277,8 +277,9 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
         />
       ) : (
         <AutomationDetailsSidebarTriggerConditionRoot
+          key={conditionNode?.id ?? automationId}
           automationId={automationId}
-          initialFilterExpression={selectedFilterExpression}
+          initialFilterExpression={filterExpression}
           updateFilterExpression={setSelectedFilterExpression}
         />
       )}
