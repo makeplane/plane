@@ -142,7 +142,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
@@ -170,7 +170,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
@@ -198,7 +198,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
@@ -226,7 +226,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
@@ -254,7 +254,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -276,7 +276,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -328,7 +328,7 @@ jobs:
           name: aio-assets-dist
 
       - name: AIO Build and Push
-        uses: makeplane/actions/build-push@v1
+        uses: makeplane/actions/build-push@v1.5.1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
