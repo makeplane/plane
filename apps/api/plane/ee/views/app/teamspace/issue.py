@@ -221,6 +221,7 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
+    use_read_replica = False
     permission_classes = [TeamspacePermission]
 
     def patch(self, request, slug, team_space_id):
