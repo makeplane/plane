@@ -103,7 +103,7 @@ overrides:
   qs: 6.14.2
   diff: 5.2.2
   webpack: 5.104.1
-  lodash-es: 4.17.23
+  lodash-es: 4.18.1
   '@isaacs/brace-expansion': 5.0.1
   lodash: 4.17.23
   markdown-it: 14.1.1
@@ -194,8 +194,8 @@ importers:
         specifier: ^5.1.31
         version: 5.1.31
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
@@ -472,8 +472,8 @@ importers:
         specifier: ^5.1.31
         version: 5.1.31
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
@@ -644,8 +644,8 @@ importers:
         specifier: ^5.1.31
         version: 5.1.31
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
@@ -937,8 +937,8 @@ importers:
         specifier: ^4.3.2
         version: 4.3.2
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       lowlight:
         specifier: ^3.0.0
         version: 3.3.0
@@ -1035,8 +1035,8 @@ importers:
         specifier: ^10.7.11
         version: 10.7.16
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -1216,8 +1216,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -1332,8 +1332,8 @@ importers:
         specifier: ^2.0.0
         version: 2.1.1
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
@@ -1456,8 +1456,8 @@ importers:
         specifier: ^10.1.2
         version: 10.1.2
       lodash-es:
-        specifier: 4.17.23
-        version: 4.17.23
+        specifier: 4.18.1
+        version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
@@ -6410,8 +6410,8 @@ packages:
     resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  lodash-es@4.17.23:
-    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
@@ -13753,7 +13753,7 @@ snapshots:
     dependencies:
       p-locate: 6.0.0
 
-  lodash-es@4.17.23: {}
+  lodash-es@4.18.1: {}
 
   lodash.debounce@4.0.8: {}
 
@@ -15021,7 +15021,7 @@ snapshots:
     dependencies:
       '@icons/material': 0.2.4(react@18.3.1)
       lodash: 4.17.23
-      lodash-es: 4.17.23
+      lodash-es: 4.18.1
       material-colors: 1.2.6
       prop-types: 15.8.1
       react: 18.3.1
