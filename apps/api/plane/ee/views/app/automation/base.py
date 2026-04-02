@@ -139,15 +139,32 @@ class AutomationEndpoint(BaseAPIView):
                     version = serializer.instance.create_new_version()
                     serializer.instance.current_version = version
                     serializer.instance.save()
-                    automation_activity.delay(
-                        type="automation.activity.created",
-                        requested_data=json.dumps(data, cls=DjangoJSONEncoder),
-                        actor_id=str(request.user.id),
-                        automation_id=str(serializer.instance.id),
-                        current_instance=None,
-                        epoch=int(timezone.now().timestamp()),
-                        slug=slug,
+                automation_activity.delay(
+                    type="automation.activity.created",
+                    requested_data=json.dumps(data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    automation_id=str(serializer.instance.id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    slug=slug,
+                )
+                automation = (
+                    Automation.objects.filter(
+                        id=serializer.instance.id,
+                        automation_projects__project_id=project_id,
+                        workspace__slug=slug,
+                        is_global=False,
                     )
+                    .prefetch_related(
+                        Prefetch(
+                            "automation_projects",
+                            queryset=AutomationProjectAssociation.objects.all(),
+                            to_attr="project_associations",
+                        )
+                    )
+                    .first()
+                )
+                serializer = AutomationDetailReadSerializer(automation)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except IntegrityError as e:
                 if "automation_unique_workspace_name_when_not_deleted" in str(e):
@@ -330,15 +347,31 @@ class WorkspaceAutomationsEndpoint(BaseAPIView):
                     version = serializer.instance.create_new_version()
                     serializer.instance.current_version = version
                     serializer.instance.save()
-                    automation_activity.delay(
-                        type="automation.activity.created",
-                        requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                        actor_id=str(request.user.id),
-                        automation_id=str(serializer.instance.id),
-                        current_instance=None,
-                        epoch=int(timezone.now().timestamp()),
-                        slug=slug,
+                automation_activity.delay(
+                    type="automation.activity.created",
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    automation_id=str(serializer.instance.id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    slug=slug,
+                )
+                automation = (
+                    Automation.objects.filter(
+                        id=serializer.instance.id,
+                        workspace__slug=slug,
+                        is_global=True,
                     )
+                    .prefetch_related(
+                        Prefetch(
+                            "automation_projects",
+                            queryset=AutomationProjectAssociation.objects.all(),
+                            to_attr="project_associations",
+                        )
+                    )
+                    .first()
+                )
+                serializer = AutomationDetailReadSerializer(automation)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except IntegrityError as e:
                 if "automation_unique_workspace_name_when_not_deleted" in str(e):

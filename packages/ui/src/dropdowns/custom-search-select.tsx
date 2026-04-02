@@ -85,13 +85,29 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
 
   // When grouped options are used, option values are scoped with a group prefix to avoid
   // cross-group hover/selection collisions. Strip the prefix before forwarding to onChange.
+  //
+  // Because the `value` prop holds unscoped IDs while Combobox.Option receives scoped values,
+  // HeadlessUI never considers a scoped option "already selected" and always appends it instead
+  // of toggling it off. After unscoping, a value that appears twice means the user re-clicked
+  // an already-selected item — treat those as deselections.
   const handleChange = (val: unknown) => {
     if (!groupedOptions) {
       onChange(val);
       return;
     }
     const unscope = (v: unknown) => (typeof v === "string" ? unscopeGroupOptionValue(v) : v);
-    onChange(Array.isArray(val) ? val.map(unscope) : unscope(val));
+    if (Array.isArray(val)) {
+      const unscoped = val.map(unscope) as string[];
+      const seen = new Set<string>();
+      const duplicates = new Set<string>();
+      for (const v of unscoped) {
+        if (seen.has(v)) duplicates.add(v);
+        else seen.add(v);
+      }
+      onChange([...new Set(unscoped.filter((v) => !duplicates.has(v)))]);
+    } else {
+      onChange(unscope(val));
+    }
   };
 
   const comboboxProps: any = {
