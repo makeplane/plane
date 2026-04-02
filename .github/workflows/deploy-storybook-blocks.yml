@@ -1,0 +1,57 @@
+name: Deploy Storybook (Blocks)
+
+on:
+  push:
+    branches:
+      - preview
+    paths:
+      - "packages/blocks/**"
+      - "packages/propel/**"
+      - "packages/ui/**"
+      - "packages/types/**"
+      - "packages/constants/**"
+      - "packages/utils/**"
+      - "packages/hooks/**"
+      - "packages/tailwindcss/**"
+      - "pnpm-lock.yaml"
+      - "package.json"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-storybook:
+    name: Build & Deploy Storybook
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.18.0"
+          cache: "pnpm"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Storybook
+        run: pnpm --filter=@plane/blocks build-storybook
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.STORYBOOK_CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy packages/blocks/storybook-static --project-name=ui-blocks --branch=preview
