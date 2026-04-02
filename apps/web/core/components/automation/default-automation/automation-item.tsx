@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import React from "react";
 import { observer } from "mobx-react";
 
 import { cn } from "@plane/utils";
@@ -35,46 +36,48 @@ function AutomationItem(props: DefaultAutomationItemProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="border border-subtle rounded-lg overflow-hidden relative">
-      {/* header */}
-      <div className="px-4 py-3">
-        <DefaultAutomationItemHeader
-          workspaceSlug={workspaceSlug}
-          automation={automation}
-          value={value}
-          handleChange={handleChange}
-        />
-      </div>
-
-      {/* content */}
+    <React.Fragment key={automation.type}>
       <FeatureFlagWrapper workspaceSlug={workspaceSlug} featureFlag={automation.feature_flag}>
-        <div
-          className={cn(
-            "grid transition-[grid-template-rows] duration-200 ease-out",
-            value !== 0 ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          )}
-        >
-          <div className="min-h-0 overflow-hidden">
-            <div className="px-4 py-3 bg-layer-1 flex flex-col gap-2">
-              {automation.content.map((content) => (
-                <div key={content.type} className="flex items-center justify-between gap-2">
-                  <div className="text-13 font-medium line-clamp-2 w-1/2 md:w-3/4">{t(content.i18n_name)}</div>
-                  <div className="w-1/2 md:w-1/4">
-                    <content.component
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      value={value}
-                      handleChange={handleChange}
-                      i18n_button_label={content.i18n_button_label ? t(content.i18n_button_label) : undefined}
-                    />
+        <div className="border border-subtle rounded-lg overflow-hidden relative">
+          {/* header */}
+          <div className="px-4 py-3">
+            <DefaultAutomationItemHeader
+              workspaceSlug={workspaceSlug}
+              automation={automation}
+              value={value}
+              handleChange={handleChange}
+            />
+          </div>
+
+          {/* content */}
+          <div
+            className={cn(
+              "grid transition-[grid-template-rows] duration-200 ease-out",
+              value !== 0 ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            )}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <div className="px-4 py-3 bg-layer-1 flex flex-col gap-2">
+                {automation.content.map((content) => (
+                  <div key={content.type} className="flex items-center justify-between gap-2">
+                    <div className="text-13 font-medium line-clamp-2 w-1/2 md:w-3/4">{t(content.i18n_name)}</div>
+                    <div className="w-1/2 md:w-1/4">
+                      <content.component
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        value={value}
+                        handleChange={handleChange}
+                        i18n_button_label={content.i18n_button_label ? t(content.i18n_button_label) : undefined}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </FeatureFlagWrapper>
-    </div>
+    </React.Fragment>
   );
 }
 
