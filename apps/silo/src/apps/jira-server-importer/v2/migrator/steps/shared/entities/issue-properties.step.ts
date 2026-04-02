@@ -66,8 +66,13 @@ export class JiraIssuePropertiesStep implements IStep {
 
     try {
       const projectId = job.config?.project?.id;
+      const projectKey = job.config?.project?.key;
       if (!projectId) {
         throw new Error("Project ID not found in job config");
+      }
+
+      if (!projectKey) {
+        logger.warn(`[${jobContext.job.id}] [${this.name}] Project key not found in job config`);
       }
 
       // Load issue types from dependency
@@ -85,7 +90,7 @@ export class JiraIssuePropertiesStep implements IStep {
       });
 
       // Pull all fields (no pagination)
-      const pulled = await this.pull(jobContext, projectId, issueTypesData);
+      const pulled = await this.pull(jobContext, projectKey, projectId, issueTypesData);
       const defaultProperties = await this.generateDefaultProperties(job, storage, issueTypesData);
       const knownCustomFieldMapping = this.extractKnownCustomFields(pulled);
       const filteredPulled = this.removeKnownCustomFields(pulled);
@@ -128,6 +133,7 @@ export class JiraIssuePropertiesStep implements IStep {
    */
   protected async pull(
     jobCtx: TJobContext,
+    projectKey: string,
     projectId: string,
     issueTypesData: TIssueTypesData
   ): Promise<JiraIssueField[]> {
@@ -138,7 +144,7 @@ export class JiraIssuePropertiesStep implements IStep {
         name: type.name,
       })) as { id: string; name: string }[];
 
-      const result = await pullIssueFieldsV2(jobCtx.sourceClient, projectId, issueTypes);
+      const result = await pullIssueFieldsV2(jobCtx.sourceClient, projectKey, projectId, issueTypes);
 
       executionLog.collect(jobCtx.job.id, {
         entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,

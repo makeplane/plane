@@ -25,6 +25,7 @@ import { logger } from "@plane/logger";
 export class JiraCloudIssuePropertiesStep extends JiraIssuePropertiesStep {
   protected async pull(
     jobCtx: TJobContext,
+    _projectKey: string,
     projectId: string,
     issueTypesData: TIssueTypesData
   ): Promise<JiraIssueField[]> {

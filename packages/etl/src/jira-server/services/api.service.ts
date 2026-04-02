@@ -30,6 +30,8 @@ import type {
 import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import type { JiraApiUser, JiraPriorityScheme, JiraProps } from "..";
 import { fetchPaginatedData, EJiraAuthenticationType } from "..";
+import { parseJiraScreensHtml, queryScreenSchemes } from "../helpers/project-screen-parser";
+import type { TJiraConsolidatedIssueTypeScreenScheme } from "../types/project-screens";
 
 export class JiraV2Service {
   private jiraClient: Version2Client;
@@ -365,6 +367,46 @@ export class JiraV2Service {
     const fields: FieldDetails[] = await this.jiraClient.issueFields.getFields();
     const customFields: FieldDetails[] = fields.filter((field) => field.custom === true);
     return customFields;
+  }
+
+  async getProjectScreenSchemes(projectKey: string): Promise<TJiraConsolidatedIssueTypeScreenScheme[]> {
+    // Get the screens html
+    const htmlData = await this.jiraClient.sendRequestFullResponse<string>({
+      method: "GET",
+      url: `${this.hostname}/plugins/servlet/project-config/${projectKey}/screens`,
+    });
+
+    const parsedRawData = parseJiraScreensHtml(htmlData.data);
+    const screenSchemes = queryScreenSchemes(parsedRawData);
+
+    return screenSchemes;
+  }
+
+  async getScreensCustomFieldsForProject(projectKey: string): Promise<FieldDetails[]> {
+    const screenSchemes = await this.getProjectScreenSchemes(projectKey);
+    const associatedScreens = screenSchemes.flatMap((scheme) => scheme.screens);
+
+    const set = new Set<string>();
+
+    await Promise.all(
+      associatedScreens.map(async (screen) => {
+        const tabs = await this.jiraClient.screenTabs.getAllScreenTabs({ screenId: screen.id });
+        await Promise.all(
+          tabs
+            .filter((tab) => tab.id != null)
+            .map(async (tab) => {
+              const fields = await this.jiraClient.screenTabFields.getAllScreenTabFields({
+                screenId: screen.id,
+                tabId: tab.id!,
+              });
+              fields.forEach((field) => field.id && set.add(field.id));
+            })
+        );
+      })
+    );
+
+    const customFields = await this.getCustomFields();
+    return customFields.filter((field) => field.id && set.has(field.id));
   }
 
   async getCustomFieldsWithContext(projectId?: string) {

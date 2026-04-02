@@ -291,6 +291,7 @@ export async function pullIssueTypesV2(
  */
 export async function pullIssueFieldsV2(
   client: JiraV2Service,
+  projectKey: string,
   projectId: string,
   projectIssueTypes: JiraIssueTypeDetails[]
 ): Promise<JiraIssueField[]> {
@@ -298,7 +299,26 @@ export async function pullIssueFieldsV2(
 
   try {
     // Get custom fields directly
-    const fieldInfos: FieldDetails[] = await client.getCustomFields();
+    const fieldInfos: FieldDetails[] = [];
+
+    const fieldInfosFromScreens = await client.getScreensCustomFieldsForProject(projectKey).catch((e: unknown) => {
+      console.error("Error fetching custom fields from screens", isAxiosError(e) ? e.response?.data : e);
+      return [] as FieldDetails[];
+    });
+
+    if (fieldInfosFromScreens.length > 0) {
+      fieldInfos.push(...fieldInfosFromScreens);
+    } else {
+      const allCustomFields = await client.getCustomFields().catch((e: unknown) => {
+        console.error("Error fetching custom fields", isAxiosError(e) ? e.response?.data : e);
+        return [] as FieldDetails[];
+      });
+      fieldInfos.push(...allCustomFields);
+    }
+
+    if (fieldInfos.length === 0) return [];
+
+    // Get custom fields with context
     const fieldsWithCtx = await client.getCustomFieldsWithContext();
 
     for (const field of fieldsWithCtx) {
