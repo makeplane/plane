@@ -73,7 +73,6 @@ export const CreateOrUpdateWorkItemTypeForm = observer(function CreateOrUpdateWo
             isOpen={isEmojiPickerOpen}
             handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
             icon_props={formData?.logo_props?.icon}
-            isDefaultIssueType={!!formData?.is_default}
             className="flex items-center justify-center shrink-0"
             iconContainerClassName="flex items-center justify-center"
             onChange={(value) => {

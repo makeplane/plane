@@ -26,10 +26,11 @@ type TIssueTypesList = {
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
   onDeleteIssueTypeIdChange: (issueTypeId: string) => void;
   onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
+  onSetDefault: (issueTypeId: string) => Promise<void>;
 };
 
 export const IssueTypesList = observer(function IssueTypesList(props: TIssueTypesList) {
-  const { onEditIssueTypeIdChange, onDeleteIssueTypeIdChange, onEnableDisableIssueType } = props;
+  const { onEditIssueTypeIdChange, onDeleteIssueTypeIdChange, onEnableDisableIssueType, onSetDefault } = props;
   // router
   const { projectId } = useParams();
   // states
@@ -83,6 +84,7 @@ export const IssueTypesList = observer(function IssueTypesList(props: TIssueType
             getWorkItemTypeById={useIssueType}
             onDeleteIssueTypeIdChange={onDeleteIssueTypeIdChange}
             onEnableDisableIssueType={onEnableDisableIssueType}
+            onSetDefault={onSetDefault}
           />
         ))}
     </div>

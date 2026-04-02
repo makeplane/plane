@@ -40,7 +40,7 @@ export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueType
   // plane hooks
   const { t } = useTranslation();
   // plane web store hooks
-  const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeById, setDefaultType } = useIssueTypes();
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
 
@@ -91,6 +91,9 @@ export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueType
             onEditIssueTypeIdChange={handleEditIssueTypeIdChange}
             onDeleteIssueTypeIdChange={handleDeleteIssueTypeIdChange}
             onEnableDisableIssueType={handleEnableDisableIssueType}
+            onSetDefault={async (issueTypeId) => {
+              await setDefaultType(workspaceSlug, projectId, issueTypeId);
+            }}
           />
         ) : (
           <IssueTypeEmptyState workspaceSlug={workspaceSlug} projectId={projectId} />

@@ -305,7 +305,7 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
         filterIcon: ViewsIcon,
         workItemTypes: joinedProjectData.workItemTypes,
         getOptionIcon: (workItemType: TIssueType) => (
-          <IssueTypeLogo icon_props={workItemType.logo_props?.icon} size="xs" isDefault={workItemType.is_default} />
+          <IssueTypeLogo icon_props={workItemType.logo_props?.icon} size="xs" />
         ),
         ...operatorConfigs,
       }),

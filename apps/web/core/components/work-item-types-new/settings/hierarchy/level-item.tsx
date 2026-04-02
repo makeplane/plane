@@ -82,11 +82,7 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
                 radius={ERadius.SQUARE}
                 className="border-subtle-1 text-tertiary gap-1.5"
               >
-                <IssueTypeLogo
-                  icon_props={workItemType?.logo_props?.icon}
-                  size="xs"
-                  isDefault={workItemType?.is_default}
-                />
+                <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" />
                 <span className="text-caption-md-regular">{workItemType.name}</span>
               </Pill>
             ))}

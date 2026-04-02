@@ -37,7 +37,7 @@ class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
-    def get(self, request, slug):
+    def get(self, request, slug, pk=None):
         # Get all issue types for the workspace
         issue_types = (
             IssueType.objects.filter(
@@ -58,7 +58,14 @@ class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
                 )
             )
             .prefetch_related("issue_type_properties")
-        ).order_by("created_at")
+        )
+
+        if pk:
+            issue_type = issue_types.get(pk=pk)
+            serializer = WorkspaceWorkItemTypeSerializer(issue_type)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        issue_types = issue_types.order_by("created_at")
         serializer = WorkspaceWorkItemTypeSerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -139,6 +146,38 @@ class WorkspaceWorkItemTypeEndpoint(BaseAPIView):
             )
 
         issue_type.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceMarkDefaultWorkItemTypeEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_WORK_ITEM_TYPES)
+    def post(self, request, slug, work_item_type_id):
+        _ = IssueType.objects.filter(workspace__slug=slug, is_epic=False, is_default=True).update(is_default=False)
+        _ = IssueType.objects.filter(workspace__slug=slug, is_epic=False, pk=work_item_type_id).update(
+            is_default=True, is_active=True
+        )
+
+        workspace = Workspace.objects.get(slug=slug)
+
+        projects = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
+        ProjectIssueType.objects.bulk_create(
+            [
+                ProjectIssueType(
+                    project_id=project_id,
+                    issue_type_id=work_item_type_id,
+                    level=0,
+                    is_default=True,
+                    workspace_id=workspace.id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
+                )
+                for project_id in projects
+            ],
+            ignore_conflicts=True,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -601,6 +640,28 @@ class IssueTypeEndpoint(BaseAPIView):
         # Delete the work item type
         work_item_type.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MarkDefaultIssueTypeEndpoint(BaseAPIView):
+    permission_classes = [ProjectEntityPermission]
+
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    def post(self, request, slug, project_id, pk):
+        IssueType.objects.filter(
+            workspace__slug=slug,
+            project_issue_types__project_id=project_id,
+            is_epic=False,
+            is_default=True,
+        ).update(is_default=False)
+
+        IssueType.objects.filter(
+            workspace__slug=slug,
+            project_issue_types__project_id=project_id,
+            is_epic=False,
+            pk=pk,
+        ).update(is_default=True, is_active=True)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class DefaultIssueTypeEndpoint(BaseAPIView):

@@ -180,9 +180,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       getWorkItemTypeFilterConfig<TWorkItemFilterProperty>("type_id")({
         isEnabled: isWorkItemTypesEnabled,
         filterIcon: LayersIcon,
-        getOptionIcon: (issueType) => (
-          <IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} size="xs" />
-        ),
+        getOptionIcon: (issueType) => <IssueTypeLogo icon_props={issueType?.logo_props?.icon} size="xs" />,
         workItemTypes: workItemTypes ?? [],
         ...operatorConfigs,
       }),
@@ -197,12 +195,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       return (
         <div className="flex items-center gap-1">
           <span>This property belongs to</span>
-          <IssueTypeLogo
-            icon_props={workItemType.logo_props?.icon}
-            isDefault={workItemType.is_default}
-            isEpic={workItemType.is_epic}
-            size="xs"
-          />
+          <IssueTypeLogo icon_props={workItemType.logo_props?.icon} isEpic={workItemType.is_epic} size="xs" />
           <span className="font-medium">{workItemType.name}</span>
           <span>work item type</span>
         </div>
@@ -219,12 +212,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       return (
         <Tooltip position="right" tooltipContent={workItemType.name} disabled={!workItemType.name}>
           <div>
-            <IssueTypeLogo
-              icon_props={workItemType.logo_props?.icon}
-              isDefault={workItemType.is_default}
-              isEpic={workItemType.is_epic}
-              size="xs"
-            />
+            <IssueTypeLogo icon_props={workItemType.logo_props?.icon} isEpic={workItemType.is_epic} size="xs" />
           </div>
         </Tooltip>
       );

@@ -139,6 +139,7 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
         actions={{
           edit: () => {},
           delete: () => Promise.resolve(),
+          setDefault: () => Promise.resolve(),
         }}
       />
       {/* Modals */}

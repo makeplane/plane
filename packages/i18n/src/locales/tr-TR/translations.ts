@@ -4165,6 +4165,14 @@ modüller arşivlenebilir.`,
         can_disable_warning: "Bunun yerine türü devre dışı bırakmak ister misiniz?",
       },
       cant_delete_default_message: "Bu iş öğesi türü mevcut iş öğeleriyle bağlantılı olduğundan silinemez.",
+      set_as_default: "Varsayılan olarak ayarla",
+      cant_set_default_inactive_message: "Varsayılan olarak ayarlamadan önce bu türü etkinleştirin",
+      set_default_confirmation: {
+        title: "Varsayılan iş öğesi türü olarak ayarla",
+        description:
+          "{name} türünü varsayılan olarak ayarlamak, bu çalışma alanındaki tüm projelere aktarılmasını sağlar. Tüm yeni iş öğeleri varsayılan olarak bu türü kullanacaktır.",
+        confirm_button: "Varsayılan olarak ayarla",
+      },
     },
     create: {
       title: "İş öğesi tipi oluştur",

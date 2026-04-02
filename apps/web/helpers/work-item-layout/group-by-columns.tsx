@@ -27,11 +27,12 @@ import {
 import type { IGroupByColumn, TCycleGroups, GroupByColumnTypes, TGetColumns } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 import { formatProjectWorkItemIdentifierForDisplay, getFileURL, getMilestoneIconProps } from "@plane/utils";
+// components
+import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 // store
 import { store } from "@/lib/store-context";
 // types
 import type { TGetGroupByColumns } from "./types";
-import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
 // We are using `as` to typecast it to the expected type.
@@ -433,7 +434,7 @@ export const getWorkItemTypeColumns = (): IGroupByColumn[] | undefined => {
     workItemTypeColumns.push({
       id: workItemType.id,
       name: workItemType.name,
-      icon: <IssueTypeLogo icon_props={workItemType.logo_props?.icon} isDefault={workItemType.is_default} />,
+      icon: <IssueTypeLogo icon_props={workItemType.logo_props?.icon} />,
       payload: { type_id: workItemType.id },
     });
   });

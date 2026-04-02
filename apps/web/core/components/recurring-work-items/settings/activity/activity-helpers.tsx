@@ -68,11 +68,7 @@ const WorkItemTypeDetail = observer(function WorkItemTypeDetail(props: TWorkItem
   return (
     <span className={cn("inline-flex gap-1 items-center font-medium text-primary", className)}>
       {workItemTypeDetail?.logo_props?.in_use && (
-        <IssueTypeLogo
-          icon_props={workItemTypeDetail?.logo_props?.icon}
-          size="xs"
-          isDefault={workItemTypeDetail?.is_default}
-        />
+        <IssueTypeLogo icon_props={workItemTypeDetail?.logo_props?.icon} size="xs" />
       )}
       {workItemTypeDetail?.name || name}
     </span>

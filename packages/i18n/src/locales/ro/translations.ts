@@ -4201,6 +4201,14 @@ văzute aici`,
       },
       cant_delete_default_message:
         "Nu se poate șterge acest tip de element de lucru deoarece este setat ca tip implicit pentru acest proiect.",
+      set_as_default: "Setează ca implicit",
+      cant_set_default_inactive_message: "Activează acest tip înainte de a-l seta ca implicit",
+      set_default_confirmation: {
+        title: "Setează ca tip implicit de element de lucru",
+        description:
+          "Setarea {name} ca implicit îl va importa în toate proiectele din acest spațiu de lucru. Toate elementele de lucru noi vor folosi acest tip în mod implicit.",
+        confirm_button: "Setează ca implicit",
+      },
     },
     create: {
       title: "Creează tip de element de lucru",

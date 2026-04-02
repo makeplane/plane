@@ -128,6 +128,7 @@ export interface IIssueTypesStore {
   ) => Promise<void | undefined>;
   createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   deleteType: (typeId: string) => Promise<void>;
+  setDefaultType: (workspaceSlug: string, projectId: string, typeId: string) => Promise<void>;
   // convert actions
   convertWorkItem: (
     workspaceSlug: string,

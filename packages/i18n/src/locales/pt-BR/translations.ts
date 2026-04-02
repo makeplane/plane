@@ -4206,6 +4206,14 @@ se você tem certeza de que sua pesquisa está correta.`,
       },
       cant_delete_default_message:
         "Não é possível excluir este tipo de item de trabalho, pois ele está definido como o tipo padrão para este projeto.",
+      set_as_default: "Definir como padrão",
+      cant_set_default_inactive_message: "Ative este tipo antes de defini-lo como padrão",
+      set_default_confirmation: {
+        title: "Definir como tipo de item de trabalho padrão",
+        description:
+          "Definir {name} como padrão irá importá-lo para todos os projetos neste espaço de trabalho. Todos os novos itens de trabalho usarão este tipo por padrão.",
+        confirm_button: "Definir como padrão",
+      },
     },
     create: {
       title: "Criar tipo de item de trabalho",

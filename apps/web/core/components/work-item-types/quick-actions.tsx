@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
+import { EditIcon, LayersIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -23,6 +23,8 @@ import type { IIssueType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
+// local imports
+import { SetDefaultConfirmationModal } from "@/components/work-item-types-new/settings/list/set-default-confirmation-modal";
 
 type Props = {
   issueTypeId: string;
@@ -30,6 +32,7 @@ type Props = {
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
   onDeleteIssueTypeIdChange: (issueTypeId: string) => void;
   onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
+  onSetDefault: (issueTypeId: string) => Promise<void>;
 };
 
 export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(props: Props) {
@@ -39,9 +42,11 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
     onEditIssueTypeIdChange,
     onDeleteIssueTypeIdChange,
     onEnableDisableIssueType,
+    onSetDefault,
   } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
+  const [isSetDefaultModalOpen, setIsSetDefaultModalOpen] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -70,6 +75,17 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
         : undefined,
       icon: TrashIcon,
       disabled: issueTypeDetail?.is_default,
+    },
+    {
+      key: "set-default",
+      action: () => {
+        setIsSetDefaultModalOpen(true);
+      },
+      title: t("work_item_types.settings.set_as_default"),
+      tooltipContent: !isIssueTypeEnabled ? t("work_item_types.settings.cant_set_default_inactive_message") : undefined,
+      icon: LayersIcon,
+      disabled: !isIssueTypeEnabled || !!issueTypeDetail?.is_default,
+      shouldRender: !issueTypeDetail?.is_default,
     },
   ];
 
@@ -109,6 +125,12 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
 
   return (
     <>
+      <SetDefaultConfirmationModal
+        isOpen={isSetDefaultModalOpen}
+        typeName={issueTypeDetail?.name ?? ""}
+        onClose={() => setIsSetDefaultModalOpen(false)}
+        onConfirm={async () => onSetDefault(issueTypeId)}
+      />
       <div className={cn("flex items-center justify-center px-2")}>
         {!issueTypeDetail?.is_default && (
           <Tooltip
@@ -132,7 +154,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
           className="ml-2"
           chevronClassName="h-4 w-4"
         >
-          {MENU_ITEMS.map((item) => (
+          {MENU_ITEMS.filter((item) => item.shouldRender !== false).map((item) => (
             <Tooltip
               key={item.key}
               tooltipContent={item.tooltipContent}

@@ -4809,6 +4809,14 @@ Erstellen Sie ein neues.`,
       },
       cant_delete_default_message:
         "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er als Standard für dieses Projekt festgelegt ist.",
+      set_as_default: "Als Standard festlegen",
+      cant_set_default_inactive_message: "Aktivieren Sie diesen Typ, bevor Sie ihn als Standard festlegen",
+      set_default_confirmation: {
+        title: "Als Standard-Arbeitselementtyp festlegen",
+        description:
+          "Wenn Sie {name} als Standard festlegen, wird er in alle Projekte in diesem Arbeitsbereich importiert. Alle neuen Arbeitselemente verwenden dann standardmäßig diesen Typ.",
+        confirm_button: "Als Standard festlegen",
+      },
       types: {
         title: "Typen",
         description: "Erstellen und passen Sie Arbeitselementtypen mit Eigenschaften an.",

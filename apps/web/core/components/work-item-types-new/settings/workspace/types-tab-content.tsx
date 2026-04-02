@@ -40,8 +40,14 @@ export const WorkspaceWorkItemTypesTypesTabContent = observer(function Workspace
   // hooks
   const { t } = useTranslation();
   const { getWorkItemType } = useWorkItemType();
-  const { createType, deleteType, getWorkItemTypesByWorkspaceSlug, getLoaderByWorkspaceSlug, canCreate } =
-    useWorkspaceWorkItemTypes();
+  const {
+    createType,
+    deleteType,
+    setDefaultType,
+    getWorkItemTypesByWorkspaceSlug,
+    getLoaderByWorkspaceSlug,
+    canCreate,
+  } = useWorkspaceWorkItemTypes();
   const { getPropertiesByWorkspaceSlug } = useWorkspaceCustomProperties();
   const { getCustomPropertiesByIds } = useCustomProperty();
 
@@ -91,6 +97,9 @@ export const WorkspaceWorkItemTypesTypesTabContent = observer(function Workspace
           edit: (typeId) => setEditingTypeId(typeId),
           delete: async (typeId) => {
             await deleteType({ workspaceSlug, typeId });
+          },
+          setDefault: async (typeId) => {
+            await setDefaultType(workspaceSlug, typeId);
           },
         }}
       />

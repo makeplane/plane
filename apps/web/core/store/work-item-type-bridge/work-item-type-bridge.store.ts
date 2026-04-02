@@ -399,4 +399,11 @@ export class WorkItemTypeBridgeStore implements IIssueTypesStore {
     issueId: string,
     convertTo: EWorkItemConversionType
   ): Promise<void> => this.oldStore.convertWorkItem(workspaceSlug, projectId, issueId, convertTo);
+
+  setDefaultType = async (workspaceSlug: string, projectId: string, typeId: string): Promise<void> => {
+    if (this.isNewSystemActive(workspaceSlug)) {
+      return this.rootStore.workItemTypesRootStore.workspaceWorkItemTypesStore.setDefaultType(workspaceSlug, typeId);
+    }
+    return this.oldStore.setDefaultType(workspaceSlug, projectId, typeId);
+  };
 }

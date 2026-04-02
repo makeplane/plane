@@ -4167,6 +4167,14 @@ export default {
       },
       cant_delete_default_message:
         "この作業項目タイプは削除できません。このプロジェクトのデフォルトの作業項目タイプとして設定されているためです。",
+      set_as_default: "デフォルトに設定",
+      cant_set_default_inactive_message: "デフォルトに設定する前にこのタイプを有効にしてください",
+      set_default_confirmation: {
+        title: "デフォルトの作業項目タイプに設定",
+        description:
+          "{name}をデフォルトに設定すると、このワークスペース内のすべてのプロジェクトにインポートされます。すべての新しい作業項目はデフォルトでこのタイプを使用します。",
+        confirm_button: "デフォルトに設定",
+      },
     },
     create: {
       title: "作業項目タイプを作成",

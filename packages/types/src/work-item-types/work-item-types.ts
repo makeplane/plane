@@ -69,6 +69,7 @@ export interface BaseWorkItemTypeInstanceSchema extends TWorkItemTypeResponse {
   canLinkProperties: boolean;
   canUnlinkProperties: boolean;
   canReorderProperties: boolean;
+  canSetAsDefault: boolean;
   // actions
   mutateProperties: (data: Partial<TWorkItemTypeResponse>) => void;
   updateType: (data: Partial<TWorkItemType>, enableOptimisticUpdate?: boolean) => Promise<void>;
@@ -111,9 +112,11 @@ export type WorkspaceWorkItemTypesStoreSchema = {
   getDefaultWorkItemTypeId: (workspaceSlug: string) => string | undefined;
   // actions
   fetchTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse[]>;
+  fetchType: (workspaceSlug: string, typeId: string) => Promise<void>;
   createType: (payload: TCreateWorkspaceWorkItemTypePayload) => Promise<TWorkItemTypeResponse | undefined>;
   deleteType: (payload: TDeleteWorkspaceWorkItemTypePayload) => Promise<void>;
   enableWorkItemTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse | undefined>;
+  setDefaultType: (workspaceSlug: string, typeId: string) => Promise<void>;
   updateHierarchy: (workspaceSlug: string, payload: TUpdateWorkItemTypeHierarchyPayload) => Promise<void>;
   // permissions
   canCreate: (workspaceSlug: string) => boolean;

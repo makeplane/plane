@@ -49,6 +49,7 @@ export class WorkspaceWorkItemTypeInstance
       canLinkProperties: computed,
       canUnlinkProperties: computed,
       canReorderProperties: computed,
+      canSetAsDefault: computed,
       // actions
       updateType: action,
       linkProperties: action,
@@ -81,6 +82,10 @@ export class WorkspaceWorkItemTypeInstance
 
   get canReorderProperties(): boolean {
     return this.canEdit;
+  }
+
+  get canSetAsDefault(): boolean {
+    return this.canEdit && !this.is_default && this.is_active;
   }
 
   // actions

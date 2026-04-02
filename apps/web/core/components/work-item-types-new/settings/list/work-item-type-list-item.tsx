@@ -30,6 +30,7 @@ import { WorkItemTypeQuickActions } from "./quick-actions";
 type WorkItemTypeItemActions = {
   edit: () => void;
   delete: () => Promise<void>;
+  setDefault: () => Promise<void>;
 };
 
 type WorkItemTypeListItemProps = {
@@ -84,7 +85,6 @@ export const WorkItemTypeListItem = observer(function WorkItemTypeListItem(props
             <IssueTypeLogo
               icon_props={workItemTypeDetail?.logo_props?.icon}
               size="xl"
-              isDefault={workItemTypeDetail?.is_default}
               containerClassName={cn(!workItemTypeDetail?.is_active && "opacity-60")}
             />
             <div className="flex flex-col items-start justify-start whitespace-normal">
@@ -123,8 +123,11 @@ export const WorkItemTypeListItem = observer(function WorkItemTypeListItem(props
               onDisable={async () => handleEnableDisable(false)}
               onDelete={actions.delete}
               onEdit={actions.edit}
+              onSetDefault={actions.setDefault}
               canEdit={workItemType.canEdit}
               canDelete={workItemType.canDelete}
+              canSetAsDefault={workItemType.canSetAsDefault}
+              typeName={workItemTypeDetail?.name ?? ""}
             />
           </div>
         </CollapsibleTrigger>

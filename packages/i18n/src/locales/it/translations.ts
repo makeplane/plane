@@ -4196,6 +4196,14 @@ Crea un nuovo progetto invece`,
       },
       cant_delete_default_message:
         "Il tipo di elemento di lavoro non può essere eliminato perché è impostato come tipo predefinito per questo progetto.",
+      set_as_default: "Imposta come predefinito",
+      cant_set_default_inactive_message: "Attiva questo tipo prima di impostarlo come predefinito",
+      set_default_confirmation: {
+        title: "Imposta come tipo di elemento di lavoro predefinito",
+        description:
+          "Impostando {name} come predefinito, verrà importato in tutti i progetti di questo spazio di lavoro. Tutti i nuovi elementi di lavoro utilizzeranno questo tipo per impostazione predefinita.",
+        confirm_button: "Imposta come predefinito",
+      },
     },
     create: {
       title: "Crea tipo di elemento di lavoro",

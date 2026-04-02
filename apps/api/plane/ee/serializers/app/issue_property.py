@@ -86,7 +86,7 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
     class Meta:
         model = IssueType
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "is_default", "deleted_at"]
+        read_only_fields = ["workspace", "project", "deleted_at", "is_default"]
 
     def get_properties(self, obj):
         return {str(itp.property_id): itp.sort_order for itp in obj.issue_type_properties.all()}
@@ -98,7 +98,7 @@ class IssueTypeSerializer(BaseSerializer):
     class Meta:
         model = IssueType
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "is_default", "deleted_at", "level"]
+        read_only_fields = ["workspace", "project", "deleted_at", "level", "is_default"]
 
 
 class IssuePropertySerializer(BaseSerializer):

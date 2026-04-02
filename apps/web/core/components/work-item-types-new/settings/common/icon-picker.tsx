@@ -35,7 +35,6 @@ export type TIssueTypeIconPicker = {
   disabled?: boolean;
   dropdownClassName?: string;
   icon_props: TLogoProps["icon"];
-  isDefaultIssueType?: boolean;
   onChange: (value: TLogoProps["icon"]) => void;
   placement?: Placement;
   size?: TIssueTypeLogoSize;
@@ -51,7 +50,6 @@ export const IssueTypeIconPicker = observer(function IssueTypeIconPicker(props: 
     disabled = false,
     dropdownClassName,
     icon_props,
-    isDefaultIssueType = false,
     onChange,
     size,
     placement = "bottom-start",
@@ -87,12 +85,7 @@ export const IssueTypeIconPicker = observer(function IssueTypeIconPicker(props: 
             disabled={disabled}
             onClick={() => handleToggle(!isOpen)}
           >
-            <IssueTypeLogo
-              icon_props={icon_props}
-              isDefault={isDefaultIssueType}
-              size={size}
-              containerClassName={iconContainerClassName}
-            />
+            <IssueTypeLogo icon_props={icon_props} size={size} containerClassName={iconContainerClassName} />
           </button>
         </Popover.Button>
         {isOpen && (

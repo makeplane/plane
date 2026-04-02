@@ -50,7 +50,6 @@ export const RecurringWorkItemListItem = observer(function RecurringWorkItemList
       <div className="flex items-center gap-2.5 w-full truncate">
         <IssueTypeLogo
           icon_props={recurringWorkItemType?.logo_props?.icon}
-          isDefault={recurringWorkItemType?.is_default}
           isEpic={recurringWorkItemType?.is_epic}
           size="lg"
         />

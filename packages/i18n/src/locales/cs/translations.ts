@@ -4143,6 +4143,14 @@ Vytvořte nový.`,
       },
       cant_delete_default_message:
         "Tento typ pracovního položky nelze odstranit, protože je nastaven jako výchozí pro tento projekt.",
+      set_as_default: "Nastavit jako výchozí",
+      cant_set_default_inactive_message: "Před nastavením jako výchozí tento typ aktivujte",
+      set_default_confirmation: {
+        title: "Nastavit jako výchozí typ pracovní položky",
+        description:
+          "Nastavením {name} jako výchozího se tento typ importuje do všech projektů v tomto pracovním prostoru. Všechny nové pracovní položky budou tento typ používat ve výchozím nastavení.",
+        confirm_button: "Nastavit jako výchozí",
+      },
     },
     create: {
       title: "Vytvořit typ pracovních položek",

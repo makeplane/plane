@@ -14,4 +14,5 @@
 export type WorkItemTypeListActions = {
   edit: (typeId: string) => void;
   delete: (typeId: string) => Promise<void>;
+  setDefault: (typeId: string) => Promise<void>;
 };

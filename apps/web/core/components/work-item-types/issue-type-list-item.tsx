@@ -43,6 +43,7 @@ type TIssueTypeListItem = {
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
   onDeleteIssueTypeIdChange: (issueTypeId: string) => void;
   onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
+  onSetDefault: (issueTypeId: string) => Promise<void>;
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   getClassName?: (isOpen: boolean) => string;
 };
@@ -59,6 +60,7 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
     onEditIssueTypeIdChange,
     onDeleteIssueTypeIdChange,
     onEnableDisableIssueType,
+    onSetDefault,
     getWorkItemTypeById,
     getClassName,
   } = props;
@@ -133,7 +135,6 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
                 <IssueTypeLogo
                   icon_props={issueTypeDetail?.logo_props?.icon}
                   size="xl"
-                  isDefault={issueTypeDetail?.is_default}
                   containerClassName={cn(!issueTypeDetail?.is_active && "opacity-60")}
                 />
                 <div className="flex flex-col items-start justify-start whitespace-normal">
@@ -162,6 +163,7 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
                   onEditIssueTypeIdChange={onEditIssueTypeIdChange}
                   onDeleteIssueTypeIdChange={onDeleteIssueTypeIdChange}
                   onEnableDisableIssueType={onEnableDisableIssueType}
+                  onSetDefault={onSetDefault}
                 />
               </div>
             </div>

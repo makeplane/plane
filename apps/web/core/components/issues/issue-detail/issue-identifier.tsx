@@ -41,7 +41,6 @@ export const IssueTypeIdentifier: FC<TIssueTypeIdentifierExtended> = observer((p
         <IssueTypeLogo
           icon_props={issueType?.logo_props?.icon}
           size={size}
-          isDefault={issueType?.is_default}
           isEpic={issueType?.is_epic}
           showWorkItemTypeName={showWorkItemTypeName}
           issueTypeName={issueType?.name}

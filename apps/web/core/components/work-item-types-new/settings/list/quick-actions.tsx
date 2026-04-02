@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
+import { EditIcon, LayersIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -22,6 +22,7 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { WorkItemTypeDeleteConfirmationModal } from "./delete-confirmation-modal";
+import { SetDefaultConfirmationModal } from "./set-default-confirmation-modal";
 
 type WorkItemTypeQuickActionsProps = {
   isDefault: boolean;
@@ -29,18 +30,33 @@ type WorkItemTypeQuickActionsProps = {
   onDisable: () => Promise<void>;
   onDelete: () => Promise<void>;
   onEdit: () => void;
+  onSetDefault: () => Promise<void>;
   canEdit: boolean;
   canDelete: boolean;
+  canSetAsDefault: boolean;
+  typeName: string;
 };
 
 export const WorkItemTypeQuickActions = observer(function WorkItemTypeQuickActions(
   props: WorkItemTypeQuickActionsProps
 ) {
-  const { isDefault, isDisabled, onDisable, onDelete, onEdit, canEdit, canDelete } = props;
+  const {
+    isDefault,
+    isDisabled,
+    onDisable,
+    onDelete,
+    onEdit,
+    onSetDefault,
+    canEdit,
+    canDelete,
+    canSetAsDefault,
+    typeName,
+  } = props;
   // plane hooks
   const { t } = useTranslation();
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isSetDefaultModalOpen, setIsSetDefaultModalOpen] = useState(false);
 
   const MENU_ITEMS: (TContextMenuItem & { tooltipContent?: string })[] = [
     {
@@ -63,6 +79,17 @@ export const WorkItemTypeQuickActions = observer(function WorkItemTypeQuickActio
       shouldRender: canDelete,
       disabled: isDefault,
     },
+    {
+      key: "set-default",
+      action: () => {
+        setIsSetDefaultModalOpen(true);
+      },
+      title: t("work_item_types.settings.set_as_default"),
+      tooltipContent: isDisabled ? t("work_item_types.settings.cant_set_default_inactive_message") : undefined,
+      icon: LayersIcon,
+      shouldRender: canSetAsDefault,
+      disabled: isDisabled,
+    },
   ];
 
   const filteredMenuItems = MENU_ITEMS.filter((item) => item.shouldRender);
@@ -71,6 +98,12 @@ export const WorkItemTypeQuickActions = observer(function WorkItemTypeQuickActio
 
   return (
     <>
+      <SetDefaultConfirmationModal
+        isOpen={isSetDefaultModalOpen}
+        typeName={typeName}
+        onClose={() => setIsSetDefaultModalOpen(false)}
+        onConfirm={onSetDefault}
+      />
       <WorkItemTypeDeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         isDefault={isDefault}

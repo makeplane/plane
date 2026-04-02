@@ -74,7 +74,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
     query: typeDetails.name ?? "",
     content: (
       <div className="flex w-full gap-2 items-center">
-        <IssueTypeLogo icon_props={typeDetails?.logo_props?.icon} isDefault={typeDetails?.is_default} />
+        <IssueTypeLogo icon_props={typeDetails?.logo_props?.icon} />
         <div
           className={cn("text-secondary truncate", {
             "text-caption-md-regular": variant === "xs",
@@ -115,11 +115,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
             />
           )}
           {selectedWorkItemTypeDetails && (
-            <IssueTypeLogo
-              icon_props={selectedWorkItemTypeDetails?.logo_props?.icon}
-              isDefault={selectedWorkItemTypeDetails?.is_default}
-              size={variant}
-            />
+            <IssueTypeLogo icon_props={selectedWorkItemTypeDetails?.logo_props?.icon} size={variant} />
           )}
           <div
             className={cn("truncate", selectedWorkItemTypeId ? "text-secondary" : "text-tertiary", {

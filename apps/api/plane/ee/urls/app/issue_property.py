@@ -16,6 +16,7 @@ from django.urls import path
 from plane.ee.views.app.issue_property import (
     WorkspaceIssueTypeEndpoint,
     IssueTypeEndpoint,
+    MarkDefaultIssueTypeEndpoint,
     DefaultIssueTypeEndpoint,
     IssuePropertyValueEndpoint,
     IssuePropertyEndpoint,
@@ -23,6 +24,7 @@ from plane.ee.views.app.issue_property import (
     IssuePropertyActivityEndpoint,
     ImportWorkItemTypesEndpoint,
     WorkspaceWorkItemTypeEndpoint,
+    WorkspaceMarkDefaultWorkItemTypeEndpoint,
     WorkspaceWorkItemPropertyEndpoint,
     IssuePropertyFormulaValidateEndpoint,
     WorkspaceWorkItemTypePropertyEndpoint,
@@ -40,6 +42,11 @@ urlpatterns = [
         "workspaces/<str:slug>/work-item-types/",
         WorkspaceWorkItemTypeEndpoint.as_view(),
         name="workspace-work-item-type-list",
+    ),
+    path(
+        "workspaces/<str:slug>/work-item-types/<uuid:work_item_type_id>/mark-default/",
+        WorkspaceMarkDefaultWorkItemTypeEndpoint.as_view(),
+        name="workspace-work-item-type-mark-default",
     ),
     path(
         "workspaces/<str:slug>/work-item-types/<uuid:pk>/",
@@ -109,6 +116,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/",
         IssueTypeEndpoint.as_view(),
         name="issue-types",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/<uuid:pk>/mark-default/",
+        MarkDefaultIssueTypeEndpoint.as_view(),
+        name="project-issue-type-mark-default",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/<uuid:pk>/",

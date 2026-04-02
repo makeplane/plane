@@ -40,7 +40,7 @@ export const ImportTypesListItem = observer(function ImportTypesListItem(props: 
       onClick={() => onToggle(workItemType.id)}
     >
       <Checkbox checked={isSelected} className="shrink-0" />
-      <IssueTypeLogo icon_props={detail.logo_props?.icon} size="xl" isDefault={detail.is_default} />
+      <IssueTypeLogo icon_props={detail.logo_props?.icon} size="xl" />
       <div className="flex flex-col items-start justify-start min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="text-body-sm-medium text-primary line-clamp-1">{detail.name}</span>

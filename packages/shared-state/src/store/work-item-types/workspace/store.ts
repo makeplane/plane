@@ -23,6 +23,7 @@ import type {
   WorkspaceWorkItemTypesStoreSchema,
 } from "@plane/types";
 import { EUserPermissions } from "@plane/types";
+import { setDefaultWorkItemType } from "@plane/utils";
 // local imports
 import type { BaseWorkItemTypesStoreArgs } from "../base.store";
 import { BaseWorkItemTypesStore } from "../base.store";
@@ -55,9 +56,11 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
     makeObservable(this, {
       // actions
       fetchTypes: action,
+      fetchType: action,
       createType: action,
       deleteType: action,
       enableWorkItemTypes: action,
+      setDefaultType: action,
       updateHierarchy: action,
     });
 
@@ -124,6 +127,14 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
     return res;
   };
 
+  fetchType: WorkspaceWorkItemTypesStoreSchema["fetchType"] = async (workspaceSlug, typeId) => {
+    const data = await this.retrieve(workspaceTypeService.retrieve.bind(workspaceTypeService, workspaceSlug, typeId));
+    runInAction(() => {
+      this.addTypeId(workspaceSlug, data.id);
+      this.#enrichProjectTypeIds([data]);
+    });
+  };
+
   createType: WorkspaceWorkItemTypesStoreSchema["createType"] = async (payload) => {
     const data = await this.create(workspaceTypeService.create.bind(workspaceTypeService, payload));
     if (data?.id) {
@@ -148,6 +159,23 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
       });
     }
     return response;
+  };
+
+  setDefaultType: WorkspaceWorkItemTypesStoreSchema["setDefaultType"] = async (workspaceSlug, typeId) => {
+    await setDefaultWorkItemType(typeId, {
+      getCurrentDefault: () => {
+        const defaultId = this.getDefaultWorkItemTypeId(workspaceSlug);
+        return defaultId ? this.args.get(defaultId) : undefined;
+      },
+      getById: (id) => this.args.get(id),
+      isDefault: (type) => !!type.is_default,
+      localUpdate: (type, isDefault) => type.mutateProperties({ is_default: isDefault }),
+      syncUpdate: () => workspaceTypeService.markDefault(workspaceSlug, typeId),
+    });
+
+    // The backend imports the new default to all projects.
+    // Re-fetch the type to get updated project_ids and enrich the project store.
+    await this.fetchType(workspaceSlug, typeId);
   };
 
   updateHierarchy: WorkspaceWorkItemTypesStoreSchema["updateHierarchy"] = async (workspaceSlug, payload) => {

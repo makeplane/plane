@@ -136,7 +136,7 @@ export const useAutomationConfig = (args: TArgs) => {
             id: t.id ?? "",
             label: t.name ?? "",
             value: t.id ?? "",
-            icon: <IssueTypeLogo icon_props={t.logo_props?.icon} isDefault={t.is_default} size="xs" />,
+            icon: <IssueTypeLogo icon_props={t.logo_props?.icon} size="xs" />,
           })),
       })),
     [projectIds, getProjectGroupLabel, getProjectIssueTypes]
@@ -176,7 +176,7 @@ export const useAutomationConfig = (args: TArgs) => {
     const base = getWorkItemTypeFilterConfig<TAutomationConditionFilterProperty>("payload.data.type_id")({
       isEnabled: isAnyWorkItemTypeEnabled,
       filterIcon: LayersIcon,
-      getOptionIcon: (t) => <IssueTypeLogo icon_props={t.logo_props?.icon} isDefault={t.is_default} size="xs" />,
+      getOptionIcon: (t) => <IssueTypeLogo icon_props={t.logo_props?.icon} size="xs" />,
       workItemTypes: [],
       ...operatorConfigs,
     });

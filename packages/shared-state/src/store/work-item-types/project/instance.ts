@@ -48,6 +48,7 @@ export class ProjectWorkItemTypeInstance extends BaseWorkItemTypeInstance implem
       canLinkProperties: computed,
       canUnlinkProperties: computed,
       canReorderProperties: computed,
+      canSetAsDefault: computed,
       // actions
       updateType: action,
       linkProperties: action,
@@ -79,6 +80,10 @@ export class ProjectWorkItemTypeInstance extends BaseWorkItemTypeInstance implem
 
   get canReorderProperties(): boolean {
     return this.canEdit;
+  }
+
+  get canSetAsDefault(): boolean {
+    return false;
   }
 
   // actions

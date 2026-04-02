@@ -23,7 +23,6 @@ type Props = {
   icon_props: TLogoProps["icon"];
   size?: TIssueTypeLogoSize;
   containerClassName?: string;
-  isDefault?: boolean;
   isEpic?: boolean;
   showWorkItemTypeName?: boolean;
   issueTypeName?: string;
@@ -50,7 +49,6 @@ export function IssueTypeLogo(props: Props) {
     icon_props,
     size = "sm",
     containerClassName,
-    isDefault = false,
     isEpic = false,
     showWorkItemTypeName = false,
     issueTypeName = "",
@@ -60,10 +58,7 @@ export function IssueTypeLogo(props: Props) {
   const LucideIcon = LUCIDE_ICONS_LIST.find(function LucideIcon(item) {
     return item.name === icon_props?.name;
   });
-  const renderDefaultIcon = isDefault && (!icon_props?.name || !icon_props?.background_color);
-
-  // if no value, return empty fragment
-  if (!icon_props?.name && !isDefault && !isEpic) return <></>;
+  const renderFallbackIcon = !isEpic && !icon_props?.name;
 
   const { foreground, background } = generateIconColors(icon_props?.background_color ?? "#000000");
 
@@ -92,7 +87,7 @@ export function IssueTypeLogo(props: Props) {
             className="text-tertiary group-hover/kanban-block:text-secondary"
             color={foreground}
           />
-        ) : renderDefaultIcon ? (
+        ) : renderFallbackIcon ? (
           <LayersIcon
             width={iconSizeMap[size]}
             height={iconSizeMap[size]}

@@ -4118,6 +4118,14 @@ Vytvorte nový.`,
       },
       cant_delete_default_message:
         "Tento typ pracovnej položky nie je možné odstrániť, pretože je nastavený ako predvolený pre tento projekt.",
+      set_as_default: "Nastaviť ako predvolený",
+      cant_set_default_inactive_message: "Pred nastavením ako predvolený tento typ aktivujte",
+      set_default_confirmation: {
+        title: "Nastaviť ako predvolený typ pracovnej položky",
+        description:
+          "Nastavením {name} ako predvoleného sa tento typ importuje do všetkých projektov v tomto pracovnom priestore. Všetky nové pracovné položky budú štandardne používať tento typ.",
+        confirm_button: "Nastaviť ako predvolený",
+      },
     },
     create: {
       title: "Vytvoriť typ pracovnej položky",

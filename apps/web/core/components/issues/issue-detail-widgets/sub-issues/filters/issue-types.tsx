@@ -86,7 +86,7 @@ export const FilterIssueTypes = observer(function FilterIssueTypes(props: Props)
                     key={issueType.id}
                     isChecked={issueType.id && appliedFilters?.includes(issueType.id) ? true : false}
                     onClick={() => issueType.id && handleUpdate(issueType.id)}
-                    icon={<IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} />}
+                    icon={<IssueTypeLogo icon_props={issueType?.logo_props?.icon} />}
                     title={
                       projectId
                         ? issueType.name

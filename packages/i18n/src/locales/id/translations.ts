@@ -4184,6 +4184,14 @@ jika Anda yakin pencarian Anda benar. `,
       },
       cant_delete_default_message:
         "Jenis item kerja ini tidak dapat dihapus karena diatur sebagai default untuk proyek ini.",
+      set_as_default: "Atur sebagai default",
+      cant_set_default_inactive_message: "Aktifkan tipe ini sebelum mengaturnya sebagai default",
+      set_default_confirmation: {
+        title: "Atur sebagai tipe item kerja default",
+        description:
+          "Mengatur {name} sebagai default akan mengimpornya ke semua proyek di ruang kerja ini. Semua item kerja baru akan menggunakan tipe ini secara default.",
+        confirm_button: "Atur sebagai default",
+      },
     },
     create: {
       title: "Buat tipe item kerja",

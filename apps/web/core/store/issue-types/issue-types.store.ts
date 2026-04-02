@@ -28,6 +28,7 @@ import type {
   TWorkItemTypesPropertiesOptions,
 } from "@plane/types";
 import { EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/types";
+import { setDefaultWorkItemType } from "@plane/utils";
 // plane web services
 import {
   epicIssueTypeService,
@@ -80,6 +81,7 @@ export class IssueTypes implements IIssueTypesStore {
       fetchAllEpicPropertiesAndOptions: action,
       createType: action,
       deleteType: action,
+      setDefaultType: action,
       convertWorkItem: action,
     });
     // root store
@@ -712,6 +714,24 @@ export class IssueTypes implements IIssueTypesStore {
       this.loader = "loaded";
       throw error;
     }
+  };
+
+  /**
+   * @description Set a work item type as the default for a project
+   * @param projectId - The project ID
+   * @param typeId - The type ID to set as default
+   */
+  setDefaultType = async (workspaceSlug: string, projectId: string, typeId: string) => {
+    await setDefaultWorkItemType(typeId, {
+      getCurrentDefault: () => this.getProjectDefaultIssueType(projectId),
+      getById: (id) => this.issueTypes[id],
+      isDefault: (type) => !!type.is_default,
+      localUpdate: (type, isDefault) => type.updateType({ is_default: isDefault }, false),
+      syncUpdate: async (type) => {
+        await issueTypeService.markDefault(workspaceSlug, projectId, typeId);
+        type.updateType({ is_default: true }, false);
+      },
+    });
   };
 
   /**

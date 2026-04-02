@@ -42,7 +42,7 @@ const IssueTypeDetail = observer(function IssueTypeDetail(props: TIssueTypeDetai
 
   return (
     <span className={cn("inline-flex gap-1 items-center font-medium text-primary", className)}>
-      <IssueTypeLogo icon_props={issueTypeDetail?.logo_props?.icon} size="xs" isDefault={issueTypeDetail?.is_default} />
+      <IssueTypeLogo icon_props={issueTypeDetail?.logo_props?.icon} size="xs" />
       {issueTypeDetail?.name}
     </span>
   );

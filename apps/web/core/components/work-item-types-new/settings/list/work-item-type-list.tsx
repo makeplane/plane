@@ -40,6 +40,7 @@ export const WorkItemTypeList = observer(function WorkItemTypeList(props: WorkIt
           actions={{
             edit: () => actions.edit(workItemType.id),
             delete: () => actions.delete(workItemType.id),
+            setDefault: () => actions.setDefault(workItemType.id),
           }}
         />
       ))}

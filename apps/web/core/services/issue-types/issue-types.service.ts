@@ -63,6 +63,14 @@ class IssueTypesService extends APIService implements IIssueTypesService {
       });
   }
 
+  async markDefault(workspaceSlug: string, projectId: string, issueTypeId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/mark-default/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteType({ workspaceSlug, projectId, issueTypeId }: TDeleteIssueTypePayload): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/`)
       .then((response) => response?.data)

@@ -38,7 +38,10 @@ interface BaseWorkItemTypesStoreSchema {
     callback: () => Promise<TWorkItemTypeResponse[]>,
     context?: TInstanceCreationContext
   ) => Promise<TWorkItemTypeResponse[]>;
-  retrieve: (data: TWorkItemTypeResponse, context?: TInstanceCreationContext) => void;
+  retrieve: (
+    callback: () => Promise<TWorkItemTypeResponse>,
+    context?: TInstanceCreationContext
+  ) => Promise<TWorkItemTypeResponse>;
   destroy: (callback: () => Promise<void>, typeId: string) => Promise<void>;
 }
 
@@ -112,15 +115,21 @@ export abstract class BaseWorkItemTypesStore {
     }
   };
 
-  protected retrieve: BaseWorkItemTypesStoreSchema["retrieve"] = async (data, context) => {
+  protected retrieve: BaseWorkItemTypesStoreSchema["retrieve"] = async (callback, context) => {
     try {
-      if (data.id) {
-        const instance = this.args.createInstance(data, context);
-        this.args.addOrMutate(data.id, instance);
+      const data = await callback();
+      if (data?.id) {
+        const existing = this.args.get(data.id);
+        if (existing) {
+          existing.mutateProperties(data);
+        } else {
+          const instance = this.args.createInstance(data, context);
+          this.args.addOrMutate(data.id, instance);
+        }
       }
       return data;
     } catch (error) {
-      console.error(`Failed to :`, error);
+      console.error("Failed to retrieve work item type:", error);
       throw error;
     }
   };

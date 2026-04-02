@@ -114,6 +114,25 @@ export const ProjectWorkItemTypes = observer(function ProjectWorkItemTypes(props
     });
   };
 
+  const handleSetDefault = async (issueTypeId: string) => {
+    const updatedWorkItemTypes = { ...workItemTypes };
+    // Unset old default
+    if (defaultWorkItemTypeId && updatedWorkItemTypes[defaultWorkItemTypeId]) {
+      updatedWorkItemTypes[defaultWorkItemTypeId] = {
+        ...updatedWorkItemTypes[defaultWorkItemTypeId],
+        is_default: false,
+      };
+    }
+    // Set new default
+    if (updatedWorkItemTypes[issueTypeId]) {
+      updatedWorkItemTypes[issueTypeId] = {
+        ...updatedWorkItemTypes[issueTypeId],
+        is_default: true,
+      };
+    }
+    setValue("project.workitem_types", updatedWorkItemTypes, { shouldDirty: true });
+  };
+
   const handleDeleteWorkItemType = async (issueTypeId: string) => {
     const issueType = getWorkItemTypeById(issueTypeId);
     if (!issueType) return;
@@ -173,6 +192,7 @@ export const ProjectWorkItemTypes = observer(function ProjectWorkItemTypes(props
                 getClassName={() => cn("bg-surface-1 hover:bg-surface-1 border border-subtle rounded-lg")}
                 onEnableDisableIssueType={handleEnableDisableWorkItemType}
                 onDeleteIssueTypeIdChange={handleDeleteIssueTypeIdChange}
+                onSetDefault={handleSetDefault}
               />
             ))}
           </div>

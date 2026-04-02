@@ -4164,6 +4164,14 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       },
       cant_delete_default_message:
         "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có.",
+      set_as_default: "Đặt làm mặc định",
+      cant_set_default_inactive_message: "Kích hoạt loại này trước khi đặt làm mặc định",
+      set_default_confirmation: {
+        title: "Đặt làm loại hạng mục công việc mặc định",
+        description:
+          "Đặt {name} làm mặc định sẽ nhập nó vào tất cả các dự án trong không gian làm việc này. Tất cả hạng mục công việc mới sẽ sử dụng loại này theo mặc định.",
+        confirm_button: "Đặt làm mặc định",
+      },
     },
     create: {
       title: "Tạo loại mục công việc",

@@ -4221,6 +4221,14 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
       cant_delete_default_message:
         "No se puede eliminar este tipo de elemento de trabajo porque está establecido como el tipo predeterminado para este proyecto.",
+      set_as_default: "Establecer como predeterminado",
+      cant_set_default_inactive_message: "Activa este tipo antes de establecerlo como predeterminado",
+      set_default_confirmation: {
+        title: "Establecer como tipo de elemento de trabajo predeterminado",
+        description:
+          "Al establecer {name} como predeterminado, se importará a todos los proyectos de este espacio de trabajo. Todos los nuevos elementos de trabajo usarán este tipo de forma predeterminada.",
+        confirm_button: "Establecer como predeterminado",
+      },
     },
     create: {
       title: "Crear tipo de elemento de trabajo",

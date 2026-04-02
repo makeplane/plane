@@ -44,12 +44,7 @@ export const EditorWorkItemMentionLogo = observer(function EditorWorkItemMention
   return (
     <>
       {isWorkItemTypeEnabled ? (
-        <IssueTypeLogo
-          icon_props={workItemType?.logo_props?.icon}
-          size="xs"
-          isDefault={workItemType?.is_default}
-          containerClassName={className}
-        />
+        <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" containerClassName={className} />
       ) : (
         <StateGroupIcon stateGroup={stateGroup ?? "backlog"} color={stateColor} className={className} />
       )}

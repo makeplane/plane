@@ -4223,6 +4223,14 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
       cant_delete_default_message:
         "Ce type d'élément de travail ne peut pas être supprimé car il est défini comme le type par défaut pour ce projet.",
+      set_as_default: "Définir par défaut",
+      cant_set_default_inactive_message: "Activez ce type avant de le définir par défaut",
+      set_default_confirmation: {
+        title: "Définir comme type d'élément de travail par défaut",
+        description:
+          "Définir {name} par défaut l'importera dans tous les projets de cet espace de travail. Tous les nouveaux éléments de travail utiliseront ce type par défaut.",
+        confirm_button: "Définir par défaut",
+      },
     },
     create: {
       title: "Créer un type d'élément de travail",

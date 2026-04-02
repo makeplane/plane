@@ -4131,6 +4131,14 @@ export default {
       },
       cant_delete_default_message:
         "이 작업 항목 유형은 삭제할 수 없습니다. 이 프로젝트의 기본 작업 항목 유형으로 설정되어 있기 때문입니다.",
+      set_as_default: "기본값으로 설정",
+      cant_set_default_inactive_message: "기본값으로 설정하기 전에 이 유형을 활성화하세요",
+      set_default_confirmation: {
+        title: "기본 작업 항목 유형으로 설정",
+        description:
+          "{name}을(를) 기본값으로 설정하면 이 워크스페이스의 모든 프로젝트에 가져옵니다. 모든 새 작업 항목은 기본적으로 이 유형을 사용합니다.",
+        confirm_button: "기본값으로 설정",
+      },
     },
     create: {
       title: "워크 아이템 타입 생성",

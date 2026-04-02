@@ -16,10 +16,12 @@ from .formula import IssuePropertyFormulaValidateEndpoint, WorkspaceWorkItemType
 from .option import WorkspaceWorkItemPropertyOptionEndpoint, IssuePropertyOptionEndpoint
 from .type import (
     IssueTypeEndpoint,
+    MarkDefaultIssueTypeEndpoint,
     DefaultIssueTypeEndpoint,
     WorkspaceIssueTypeEndpoint,
     ImportWorkItemTypesEndpoint,
     WorkspaceWorkItemTypeEndpoint,
+    WorkspaceMarkDefaultWorkItemTypeEndpoint,
     WorkspaceWorkItemTypePropertyEndpoint,
     WorkspaceDefaultWorkItemTypeEndpoint,
     WorkitemHierarchyEndpoint,

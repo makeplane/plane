@@ -4082,6 +4082,13 @@ export default {
         can_disable_warning: "您想改為停用此類型嗎？",
       },
       cant_delete_default_message: "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。",
+      set_as_default: "設為預設",
+      cant_set_default_inactive_message: "請先啟用此類型再將其設為預設",
+      set_default_confirmation: {
+        title: "設為預設工作項目類型",
+        description: "將 {name} 設為預設後，它將被匯入到此工作區的所有專案中。所有新工作項目將預設使用此類型。",
+        confirm_button: "設為預設",
+      },
     },
     create: {
       title: "創建工作項目類型",

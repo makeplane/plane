@@ -128,6 +128,7 @@ export abstract class BaseWorkItemTypeInstance implements BaseWorkItemTypeInstan
   abstract get canLinkProperties(): boolean;
   abstract get canUnlinkProperties(): boolean;
   abstract get canReorderProperties(): boolean;
+  abstract get canSetAsDefault(): boolean;
 
   mutateProperties: BaseWorkItemTypeInstanceSchema["mutateProperties"] = (data) => {
     runInAction(() => {

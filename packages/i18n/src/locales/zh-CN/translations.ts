@@ -4060,6 +4060,13 @@ export default {
         can_disable_warning: "您想改为禁用该类型吗？",
       },
       cant_delete_default_message: "无法删除此工作项类型，因为它已设置为该项目的默认类型。",
+      set_as_default: "设为默认",
+      cant_set_default_inactive_message: "请先激活此类型再将其设为默认",
+      set_default_confirmation: {
+        title: "设为默认工作项类型",
+        description: "将 {name} 设为默认后，它将被导入到此工作区的所有项目中。所有新工作项将默认使用此类型。",
+        confirm_button: "设为默认",
+      },
     },
     create: {
       title: "创建工作项类型",

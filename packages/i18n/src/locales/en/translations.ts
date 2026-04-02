@@ -4373,6 +4373,14 @@ if you are sure your search is right. `,
       description: "Customize and add your own properties to tailor it to your team's needs.",
       cant_delete_default_message:
         "This work item type cannot be deleted because it's set as the default for this project",
+      set_as_default: "Set as default",
+      cant_set_default_inactive_message: "Activate this type before setting it as default",
+      set_default_confirmation: {
+        title: "Set as default work item type",
+        description:
+          "Setting {name} as the default will import it to all projects in this workspace. All new work items will use this type by default.",
+        confirm_button: "Set as default",
+      },
       properties: {
         title: "Properties",
         description: "Create and customize properties.",

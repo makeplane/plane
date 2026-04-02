@@ -43,7 +43,7 @@ export class WorkspaceWorkItemTypesService extends APIService {
       });
   }
 
-  async retrieve(workspaceSlug: string, typeId: string): Promise<TWorkItemTypeResponse[]> {
+  async retrieve(workspaceSlug: string, typeId: string): Promise<TWorkItemTypeResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/work-item-types/${typeId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -79,6 +79,14 @@ export class WorkspaceWorkItemTypesService extends APIService {
 
   async enable(workspaceSlug: string): Promise<TWorkItemTypeResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/default-work-item-types/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async markDefault(workspaceSlug: string, typeId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/work-item-types/${typeId}/mark-default/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

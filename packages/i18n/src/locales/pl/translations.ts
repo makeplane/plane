@@ -4153,6 +4153,14 @@ Utwórz nowy.`,
       },
       cant_delete_default_message:
         "Nie można usunąć tego typu elementu pracy, ponieważ jest on ustawiony jako domyślny dla tego projektu.",
+      set_as_default: "Ustaw jako domyślny",
+      cant_set_default_inactive_message: "Aktywuj ten typ przed ustawieniem go jako domyślny",
+      set_default_confirmation: {
+        title: "Ustaw jako domyślny typ elementu pracy",
+        description:
+          "Ustawienie {name} jako domyślnego zaimportuje go do wszystkich projektów w tym obszarze roboczym. Wszystkie nowe elementy pracy będą domyślnie używać tego typu.",
+        confirm_button: "Ustaw jako domyślny",
+      },
     },
     create: {
       title: "Utwórz typ elementu pracy",
