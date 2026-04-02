@@ -35,6 +35,7 @@ import type { Route } from "./+types/root";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { GetMobileApp } from "@/components/mobile";
 // plane web imports
+import { UpdateBanner } from "@/components/common/update-banner";
 import { TrialBanner } from "@/components/workspace/license/banner/trial-banner";
 import { bootstrapInstance } from "@/lib/bootstrap/client-bootstrap";
 // store
@@ -189,6 +190,7 @@ export default function Root() {
             "desktop-app-container"
           )}
         >
+          <UpdateBanner />
           <GetMobileApp />
           {/* free trial banner */}
           <TrialBanner />

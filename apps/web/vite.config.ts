@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import * as dotenv from "dotenv";
 import { reactRouter } from "@react-router/dev/vite";
@@ -19,6 +20,35 @@ const viteEnv = Object.keys(process.env)
 // Fall back to VERCEL_GIT_COMMIT_SHA so Sentry release tracking works on Vercel
 viteEnv.VITE_APP_VERSION ||= process.env.VERCEL_GIT_COMMIT_SHA ?? "";
 
+/**
+ * Stamps public/sw.js with the current app version so the browser
+ * detects a new service worker on every deployment.
+ */
+function swVersionPlugin(): PluginOption {
+  let outDir: string;
+  return {
+    name: "sw-version",
+    apply: "build",
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir);
+    },
+    closeBundle() {
+      if (!outDir) return;
+      const swPath = path.resolve(outDir, "sw.js");
+      if (!fs.existsSync(swPath)) return;
+      const content = fs.readFileSync(swPath, "utf-8");
+      const swVersionPattern = /^\/\/\s*@sw-version.*$/m;
+      if (!swVersionPattern.test(content)) {
+        throw new Error(
+          `swVersionPlugin: "@sw-version" marker not found in ${swPath}; service worker version was not stamped.`
+        );
+      }
+      const version = viteEnv.VITE_APP_VERSION || Date.now().toString();
+      fs.writeFileSync(swPath, content.replace(swVersionPattern, `// @sw-version ${version}`));
+    },
+  };
+}
+
 const plugins: PluginOption[] = [
   tailwindcss(),
   reactRouter(),
@@ -30,6 +60,7 @@ const plugins: PluginOption[] = [
       path.resolve(import.meta.dirname, "../../tsconfig.json"),
     ],
   }),
+  swVersionPlugin(),
 ];
 
 if (process.env.SENTRY_AUTH_TOKEN) {

@@ -23,7 +23,7 @@ const meta = preview.meta({
   argTypes: {
     variant: {
       control: "select",
-      options: ["success", "error", "warning", "info"],
+      options: ["success", "error", "warning", "info", "accent"],
       description: "Visual variant of the banner",
     },
     title: {
@@ -182,6 +182,33 @@ export const Info = meta.story({
     title: "New features are available. Check out what's new!",
     icon: infoIcon,
     action: closeButton,
+  },
+});
+
+const accentIcon = (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="text-accent-primary"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
+  </svg>
+);
+
+export const Accent = meta.story({
+  args: {
+    variant: "accent",
+    title: "There is something that needs your attention",
+    icon: accentIcon,
+    dismissible: true,
   },
 });
 

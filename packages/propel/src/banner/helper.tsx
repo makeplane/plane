@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export type TBannerVariant = "success" | "error" | "warning" | "info";
+export type TBannerVariant = "success" | "error" | "warning" | "info" | "accent";
 
 export interface IBannerStyling {
   [key: string]: string;
@@ -31,6 +31,7 @@ export const bannerStyling: IBannerStyling = {
   error: "bg-danger-subtle",
   warning: "bg-warning-subtle",
   info: "bg-blue-500/10",
+  accent: "bg-accent-subtle",
 };
 
 // Base banner styles
@@ -44,9 +45,31 @@ export const getBannerStyling = (variant: TBannerVariant): string => {
   return `${bannerBaseStyles} ${variantStyles} ${sizeStyles}`;
 };
 
+// Banner icon color per variant
+const bannerIconColor: IBannerStyling = {
+  success: "",
+  error: "",
+  warning: "",
+  info: "",
+  accent: "text-accent-primary",
+};
+
+// Banner title text color per variant
+const bannerTitleColor: IBannerStyling = {
+  success: "text-secondary",
+  error: "text-secondary",
+  warning: "text-secondary",
+  info: "text-secondary",
+  accent: "text-accent-primary",
+};
+
+// Get icon styling
+export const getBannerIconStyling = (variant: TBannerVariant): string =>
+  `flex items-center justify-center flex-shrink-0 ${bannerSizeStyling.icon} ${bannerIconColor[variant]}`;
+
 // Get title styling
-export const getBannerTitleStyling = (): string =>
-  `font-medium text-secondary flex-1 min-w-0 ${bannerSizeStyling.title}`;
+export const getBannerTitleStyling = (variant: TBannerVariant): string =>
+  `font-medium flex-1 min-w-0 ${bannerTitleColor[variant]} ${bannerSizeStyling.title}`;
 
 // Get action container styling
 export const getBannerActionStyling = (): string => `flex items-center flex-shrink-0 ${bannerSizeStyling.action}`;

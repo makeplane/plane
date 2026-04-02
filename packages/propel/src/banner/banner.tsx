@@ -16,6 +16,7 @@ import { cn } from "../utils";
 import type { TBannerVariant } from "./helper";
 import {
   getBannerStyling,
+  getBannerIconStyling,
   getBannerTitleStyling,
   getBannerActionStyling,
   getBannerDismissStyling,
@@ -71,8 +72,8 @@ export const Banner = React.forwardRef(function Banner(
 
   // Get styling using helper functions
   const containerStyling = getBannerStyling(variant);
-  const iconStyling = "flex items-center justify-center flex-shrink-0 size-5";
-  const titleStyling = getBannerTitleStyling();
+  const iconStyling = getBannerIconStyling(variant);
+  const titleStyling = getBannerTitleStyling(variant);
   const actionStyling = getBannerActionStyling();
   const dismissStyling = getBannerDismissStyling();
   const dismissIconStyling = getBannerDismissIconStyling();
