@@ -54,4 +54,5 @@ jobs:
         with:
           apiToken: ${{ secrets.STORYBOOK_CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: npx
           command: pages deploy packages/propel/storybook-static --project-name=ui-kit --branch=preview
