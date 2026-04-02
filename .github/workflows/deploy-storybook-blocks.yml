@@ -48,7 +48,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build Storybook
-        run: pnpm --filter=@plane/blocks build-storybook
+        run: pnpm turbo run build-storybook --filter=@plane/blocks
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
