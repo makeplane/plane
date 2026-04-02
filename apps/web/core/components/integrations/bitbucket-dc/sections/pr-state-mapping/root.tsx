@@ -27,7 +27,6 @@ export const PRStateMappingRoot = observer(function PRStateMappingRoot() {
     workspace,
     fetchProjects,
     getProjectById,
-    data: { fetchBitbucketRepositories },
     entity: { entityIds, entityById, fetchEntities },
   } = useBitbucketDCIntegration();
 
@@ -54,19 +53,13 @@ export const PRStateMappingRoot = observer(function PRStateMappingRoot() {
     { errorRetryCount: 0 }
   );
 
-  const { isLoading: isRepositoriesLoading } = useSWR(
-    workspaceId ? `BITBUCKET_DC_INTEGRATION_REPOSITORIES_${workspaceId}` : null,
-    workspaceId ? () => fetchBitbucketRepositories() : null,
-    { errorRetryCount: 0 }
-  );
-
   const { isLoading: isEntitiesLoading } = useSWR(
     workspaceId ? `BITBUCKET_DC_INTEGRATION_ENTITY_CONNECTIONS_${workspaceId}` : null,
     workspaceId ? () => fetchEntities() : null,
     { errorRetryCount: 0 }
   );
 
-  if (isEntitiesLoading || isProjectsLoading || isRepositoriesLoading) return <MappingLoader />;
+  if (isEntitiesLoading || isProjectsLoading) return <MappingLoader />;
 
   return (
     <div className="relative border border-subtle rounded-md">

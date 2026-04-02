@@ -271,11 +271,33 @@ export class BitbucketService {
   }
 
   async getRepositoriesForProject(projectKey: string): Promise<BitbucketRepository[]> {
-    return this.getPaginatedValues<BitbucketRepository>(`/projects/${encodeURIComponent(projectKey)}/repos`);
+    return this.getPaginatedValues<BitbucketRepository>(`/projects/${encodeURIComponent(projectKey)}/repos`, {
+      permission: "REPO_READ",
+    });
   }
 
   async getRepositories(): Promise<BitbucketRepository[]> {
-    return this.getPaginatedValues<BitbucketRepository>("/repos");
+    return this.getPaginatedValues<BitbucketRepository>("/repos", { permission: "REPO_READ" });
+  }
+
+  async searchRepositories(
+    params: {
+      name?: string;
+      projectKey?: string;
+      limit?: number;
+      start?: number;
+    } = {}
+  ): Promise<BitbucketPaginatedResponse<BitbucketRepository>> {
+    const { data } = await this.client.get<BitbucketPaginatedResponse<BitbucketRepository>>("/repos", {
+      params: {
+        ...(params.name ? { name: params.name } : {}),
+        ...(params.projectKey ? { projectkey: params.projectKey } : {}),
+        permission: "REPO_READ",
+        limit: params.limit ?? 10,
+        start: params.start ?? 0,
+      },
+    });
+    return data;
   }
 
   async getCurrentUser(): Promise<BitbucketUser> {

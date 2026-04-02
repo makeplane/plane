@@ -25,6 +25,11 @@ export interface IBitbucketDataStore {
   bitbucketRepositoryIds: string[];
   bitbucketRepositoryById: (id: string) => TBitbucketRepository | undefined;
   fetchBitbucketRepositories: () => Promise<TBitbucketRepository[] | undefined>;
+  searchBitbucketRepositories: (params?: {
+    search?: string;
+    limit?: number;
+    start?: number;
+  }) => Promise<{ values: TBitbucketRepository[]; isLastPage: boolean; nextPageStart?: number } | undefined>;
 }
 
 export class BitbucketDataStore implements IBitbucketDataStore {
@@ -36,6 +41,7 @@ export class BitbucketDataStore implements IBitbucketDataStore {
       bitbucketRepositories: observable,
       bitbucketRepositoryIds: computed,
       fetchBitbucketRepositories: action,
+      searchBitbucketRepositories: action,
     });
 
     this.service = new BitbucketDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
@@ -65,6 +71,29 @@ export class BitbucketDataStore implements IBitbucketDataStore {
       if (response) {
         runInAction(() => {
           response.forEach((repo) => {
+            this.bitbucketRepositories[connectionId] = this.bitbucketRepositories[connectionId] || {};
+            this.bitbucketRepositories[connectionId][repo.id] = repo;
+          });
+        });
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  searchBitbucketRepositories = async (
+    params: { search?: string; limit?: number; start?: number } = {}
+  ): Promise<{ values: TBitbucketRepository[]; isLastPage: boolean; nextPageStart?: number } | undefined> => {
+    try {
+      const workspaceId = this.store.workspace?.id;
+      const connectionId = this.store.auth.workspaceConnectionIds[0];
+      if (!workspaceId || !connectionId) return undefined;
+
+      const response = await this.service.searchBitbucketRepositories(workspaceId, params);
+      if (response?.values) {
+        runInAction(() => {
+          response.values.forEach((repo) => {
             this.bitbucketRepositories[connectionId] = this.bitbucketRepositories[connectionId] || {};
             this.bitbucketRepositories[connectionId][repo.id] = repo;
           });

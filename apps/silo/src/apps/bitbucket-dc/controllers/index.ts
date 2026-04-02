@@ -63,6 +63,78 @@ export default class BitbucketController {
     res.send({ message: "pong" });
   }
 
+  @Get("/repositories/:workspaceId/search")
+  @useValidateUserAuthentication()
+  async searchRepositories(req: Request, res: Response) {
+    try {
+      const { workspaceId } = req.params;
+
+      if (!workspaceId) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId to be present.",
+        });
+      }
+
+      const rawSearch = typeof req.query.search === "string" ? req.query.search.trim() : "";
+      const search = rawSearch || undefined;
+
+      const parsedLimit = typeof req.query.limit === "string" ? Number.parseInt(req.query.limit, 10) : 10;
+      const limit = Number.isFinite(parsedLimit) ? Math.min(50, Math.max(1, parsedLimit)) : 10;
+
+      const parsedStart = typeof req.query.start === "string" ? Number.parseInt(req.query.start, 10) : 0;
+      const start = Number.isFinite(parsedStart) ? Math.max(0, parsedStart) : 0;
+
+      const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.BITBUCKET_DC,
+        workspace_id: workspaceId,
+      });
+
+      if (!workspaceConnections || workspaceConnections.length === 0) {
+        return res.status(200).json({ values: [], isLastPage: true, nextPageStart: undefined });
+      }
+
+      const workspaceConnection = workspaceConnections[0] as TBitbucketWorkspaceConnection;
+      const credential = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
+
+      if (!credential.source_access_token) {
+        return res.status(401).json({
+          message: "No Bitbucket credentials found for the workspace",
+        });
+      }
+
+      const baseUrl = workspaceConnection.connection_data?.baseUrl || credential.source_hostname;
+      if (!baseUrl) {
+        return res.status(400).json({
+          message: "Bitbucket base URL not found in workspace connection",
+        });
+      }
+
+      const bitbucketService = buildBitbucketService(baseUrl, credential, workspaceConnection);
+
+      const result = await bitbucketService.searchRepositories({
+        name: search,
+        limit,
+        start,
+      });
+
+      return res.status(200).json({
+        values: result.values.map((repo) => ({
+          id: repo.id,
+          slug: repo.slug,
+          name: repo.name,
+          project: {
+            key: repo.project.key,
+            name: repo.project.name,
+          },
+        })),
+        isLastPage: result.isLastPage,
+        nextPageStart: result.nextPageStart,
+      });
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
   @Get("/repositories/:workspaceId")
   @useValidateUserAuthentication()
   async getRepositories(req: Request, res: Response) {

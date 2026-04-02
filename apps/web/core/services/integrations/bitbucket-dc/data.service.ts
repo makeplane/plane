@@ -31,4 +31,24 @@ export class BitbucketDataService {
       .catch((error: unknown) => {
         throw (error as { response?: { data?: unknown } })?.response?.data;
       });
+
+  searchBitbucketRepositories = async (
+    workspaceId: string,
+    params: { search?: string; limit?: number; start?: number } = {}
+  ): Promise<{ values: TBitbucketRepository[]; isLastPage: boolean; nextPageStart?: number }> =>
+    await this.axiosInstance
+      .get<{ values: TBitbucketRepository[]; isLastPage: boolean; nextPageStart?: number }>(
+        `/repositories/${workspaceId}/search`,
+        {
+          params: {
+            ...(params.search ? { search: params.search } : {}),
+            limit: params.limit ?? 10,
+            start: params.start ?? 0,
+          },
+        }
+      )
+      .then((res) => res.data)
+      .catch((error: unknown) => {
+        throw (error as { response?: { data?: unknown } })?.response?.data;
+      });
 }
