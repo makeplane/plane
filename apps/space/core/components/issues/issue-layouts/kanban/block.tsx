@@ -18,10 +18,8 @@ import { useParams, useSearchParams } from "next/navigation";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
-// plane ui
-// plane utils
-import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -33,6 +31,7 @@ import type { IIssue } from "@/types/issue";
 import { IssueProperties } from "../properties/all-properties";
 import { getIssueBlockId } from "../utils";
 import { BlockReactions } from "./block-reactions";
+import { cn } from "@plane/utils";
 
 interface IssueBlockProps {
   issueId: string;
@@ -57,9 +56,12 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     <div className="flex flex-col gap-3">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
-          <div className=" text-caption-sm-regular text-tertiary leading-tight">
-            {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issue.sequence_id)}
-          </div>
+          <WorkItemIdentifier
+            workItem={issue}
+            projectIdentifier={project_details?.identifier || ""}
+            className="line-clamp-1 text-11 text-tertiary"
+            size="xs"
+          />
         </div>
       </WithDisplayPropertiesHOC>
 

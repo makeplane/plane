@@ -13,7 +13,7 @@
 import copy
 
 # Django imports
-from django.db.models import F, Q, Prefetch, OuterRef, Func
+from django.db.models import F, Q, Prefetch, OuterRef, Func, Subquery, UUIDField, Value
 
 # Third Party imports
 from rest_framework import status
@@ -40,6 +40,7 @@ from plane.db.models import (
     IssueLink,
     FileAsset,
 )
+from plane.ee.models import MilestoneIssue
 from plane.utils.issue_filters import issue_filters
 from plane.ee.serializers import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -115,7 +116,13 @@ class IssueViewsPublicEndpoint(BaseAPIView):
     )
     filterset_class = IssueFilterSet
 
-    def apply_annotations(self, issue_queryset):
+    def apply_annotations(self, issue_queryset, slug):
+        milestone_annotation = Value(None, output_field=UUIDField())
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug):
+            milestone_annotation = Subquery(
+                MilestoneIssue.objects.filter(issue=OuterRef("id")).values("milestone_id")[:1]
+            )
+
         return (
             issue_queryset.annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -139,6 +146,7 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(milestone_id=milestone_annotation)
             .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(
                 Prefetch(
@@ -179,17 +187,21 @@ class IssueViewsPublicEndpoint(BaseAPIView):
             # Total count queryset
             total_issue_queryset = copy.deepcopy(issue_queryset)
 
+            # Group by
+            group_by = request.GET.get("group_by", False)
+            sub_group_by = request.GET.get("sub_group_by", False)
+
+            unsupported_grouping_response = self.validate_grouping_features(group_by, sub_group_by, slug)
+            if unsupported_grouping_response:
+                return unsupported_grouping_response
+
             # Applying annotations to the issue queryset
-            issue_queryset = self.apply_annotations(issue_queryset)
+            issue_queryset = self.apply_annotations(issue_queryset, slug)
 
             # Issue queryset
             issue_queryset, order_by_param = order_issue_queryset(
                 issue_queryset=issue_queryset, order_by_param=order_by_param
             )
-
-            # Group by
-            group_by = request.GET.get("group_by", False)
-            sub_group_by = request.GET.get("sub_group_by", False)
 
             # issue queryset
             issue_queryset = issue_queryset_grouper(
@@ -286,3 +298,25 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_402_PAYMENT_REQUIRED,
             )
+
+    def validate_grouping_features(self, group_by, sub_group_by, slug):
+        for field in [group_by, sub_group_by]:
+            if field == "milestone_id" and not check_workspace_feature_flag(
+                feature_key=FeatureFlag.MILESTONES, slug=slug
+            ):
+                return Response(
+                    {"error": "Grouping by milestone requires milestones to be enabled"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if field == "type_id" and not check_workspace_feature_flag(feature_key=FeatureFlag.ISSUE_TYPES, slug=slug):
+                return Response(
+                    {"error": "Grouping by type requires work item types to be enabled"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if field == "parent_id" and not check_workspace_feature_flag(feature_key=FeatureFlag.EPICS, slug=slug):
+                return Response(
+                    {"error": "Grouping by epic requires epics to be enabled"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        return None

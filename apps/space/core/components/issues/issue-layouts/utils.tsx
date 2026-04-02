@@ -14,7 +14,15 @@
 import { isNil } from "lodash-es";
 // plane imports
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
-import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import {
+  CycleGroupIcon,
+  CycleIcon,
+  EpicIcon,
+  MilestoneIcon,
+  ModuleIcon,
+  PriorityIcon,
+  StateGroupIcon,
+} from "@plane/propel/icons";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -23,25 +31,39 @@ import type {
   TGroupedIssues,
 } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
+import { getMilestoneIconProps, getMilestoneProgressPercentage } from "@plane/utils";
 // stores
 import type { ICycleStore } from "@/store/cycle.store";
+import type { IEpicLookup } from "@/hooks/store/use-epic";
 import type { IIssueLabelStore } from "@/store/label.store";
+import type { IMilestoneLookup } from "@/hooks/store/use-milestone";
+import type { IWorkItemTypeLookup } from "@/hooks/store/use-work-item-type";
 import type { IIssueMemberStore } from "@/store/members.store";
 import type { IIssueModuleStore } from "@/store/module.store";
 import type { IStateStore } from "@/store/state.store";
+import { WorkItemTypeLogo } from "../work-item-type-logo";
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
 
+type TGroupByStores = {
+  cycle: ICycleStore;
+  epic: IEpicLookup;
+  module: IIssueModuleStore;
+  label: IIssueLabelStore;
+  projectState: IStateStore;
+  member: IIssueMemberStore;
+  milestone: IMilestoneLookup;
+  workItemType: IWorkItemTypeLookup;
+};
+
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
-  cycle: ICycleStore,
-  module: IIssueModuleStore,
-  label: IIssueLabelStore,
-  projectState: IStateStore,
-  member: IIssueMemberStore,
+  stores: TGroupByStores,
   includeNone?: boolean
 ): IGroupByColumn[] | undefined => {
+  const { cycle, epic, module, label, projectState, member, milestone, workItemType } = stores;
+
   switch (groupBy) {
     case "cycle":
       return getCycleColumns(cycle);
@@ -57,6 +79,12 @@ export const getGroupByColumns = (
       return getAssigneeColumns(member);
     case "created_by":
       return getCreatedByColumns(member) as any;
+    case "milestone":
+      return getMilestoneColumns(milestone);
+    case "epic":
+      return getEpicColumns(epic);
+    case "type":
+      return getWorkItemTypeColumns(workItemType);
     default:
       if (includeNone) return [{ id: `All Issues`, name: `All work items`, payload: {}, icon: undefined }];
   }
@@ -187,6 +215,68 @@ const getCreatedByColumns = (member: IIssueMemberStore) => {
     name: member?.member__display_name || "",
     icon: <Avatar name={member?.member__display_name} src={undefined} size="md" />,
     payload: {},
+  }));
+};
+
+const getMilestoneColumns = (milestoneStore: IMilestoneLookup): IGroupByColumn[] | undefined => {
+  const { milestones } = milestoneStore;
+
+  if (!milestones) return;
+
+  const milestoneColumns: IGroupByColumn[] = milestones.map((milestone) => ({
+    id: milestone.id,
+    name: milestone.name,
+    icon: (
+      <MilestoneIcon
+        className="h-3.5 w-3.5"
+        {...getMilestoneIconProps(getMilestoneProgressPercentage(milestone.progress))}
+      />
+    ),
+    payload: { milestone_id: milestone.id },
+  }));
+
+  milestoneColumns.push({
+    id: "None",
+    name: "None",
+    icon: <MilestoneIcon className="h-3.5 w-3.5 text-primary" />,
+    payload: {},
+  });
+
+  return milestoneColumns;
+};
+
+const getEpicColumns = (epicStore: IEpicLookup): IGroupByColumn[] | undefined => {
+  const { epics } = epicStore;
+
+  if (!epics) return;
+
+  const epicColumns: IGroupByColumn[] = epics.map((epic) => ({
+    id: epic.id,
+    name: epic.name,
+    icon: <EpicIcon className="h-3.5 w-3.5 text-primary" />,
+    payload: { parent_id: epic.id },
+  }));
+
+  epicColumns.push({
+    id: "None",
+    name: "None",
+    icon: <EpicIcon className="h-3.5 w-3.5 text-primary" />,
+    payload: {},
+  });
+
+  return epicColumns;
+};
+
+const getWorkItemTypeColumns = (workItemTypeStore: IWorkItemTypeLookup): IGroupByColumn[] | undefined => {
+  const { workItemTypes } = workItemTypeStore;
+
+  if (!workItemTypes) return;
+
+  return workItemTypes.map((workItemType) => ({
+    id: workItemType.id,
+    name: workItemType.name,
+    icon: <WorkItemTypeLogo logoProps={workItemType.logo_props} size="sm" />,
+    payload: { type_id: workItemType.id },
   }));
 };
 

@@ -20,8 +20,9 @@ import { useParams } from "next/navigation";
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
+import { cn } from "@plane/utils";
 // components
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -96,12 +97,12 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           <div className="flex items-center gap-0.5 min-w-min py-2.5 pl-6">
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
               <div className="relative flex cursor-pointer items-center text-center text-11 hover:text-primary">
-                <p className={`flex font-medium leading-7`}>
-                  {formatProjectWorkItemIdentifierForDisplay(
-                    project_details?.identifier || "",
-                    issueDetail.sequence_id
-                  )}
-                </p>
+                <WorkItemIdentifier
+                  workItem={issueDetail}
+                  projectIdentifier={project_details?.identifier || ""}
+                  identifierClassName="flex font-medium leading-7"
+                  size="xs"
+                />
               </div>
             </WithDisplayPropertiesHOC>
           </div>

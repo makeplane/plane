@@ -53,12 +53,14 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
 
   const displayFilters = viewData?.display_filters;
   const orderBy = displayFilters?.order_by ?? "-created_at";
+  const viewIssuesKey =
+    anchor && viewData ? ["PUBLIC_ISSUES", anchor, viewData.updated_at, displayFilters?.layout, orderBy] : null;
 
   const issueIds = groupedIssueIds?.[ALL_ISSUES] ?? [];
   const nextPageResults = getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
 
   useSWR(
-    anchor ? `PUBLIC_ISSUES_${anchor}` : null,
+    viewIssuesKey,
     anchor
       ? () =>
           fetchPublicIssues(anchor, "init-loader", {
@@ -67,7 +69,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
             perPageCount: 100,
           })
       : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    { revalidateIfStale: false, revalidateOnFocus: true }
   );
 
   const loadMoreIssues = useCallback(() => {

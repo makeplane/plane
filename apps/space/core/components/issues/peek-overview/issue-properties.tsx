@@ -16,15 +16,10 @@ import { useParams } from "next/navigation";
 import { LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import {
-  StatePropertyIcon,
-  StateGroupIcon,
-  PriorityPropertyIcon,
-  DueDatePropertyIcon,
-  PriorityIcon,
-} from "@plane/propel/icons";
+import { StatePropertyIcon, StateGroupIcon, PriorityPropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, formatProjectWorkItemIdentifierForDisplay, getIssuePriorityFilters } from "@plane/utils";
+import { cn, getIssuePriorityFilters } from "@plane/utils";
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
@@ -73,7 +68,11 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issueDetails.sequence_id)}
+            <WorkItemIdentifier
+              workItem={issueDetails}
+              projectIdentifier={project_details?.identifier || ""}
+              showTypeName
+            />
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">

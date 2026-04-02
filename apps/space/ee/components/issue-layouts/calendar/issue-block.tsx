@@ -19,7 +19,8 @@ import { useParams } from "next/navigation";
 // components
 import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
-import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
+import { cn } from "@plane/utils";
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
@@ -76,7 +77,7 @@ export const CalendarIssueBlock = observer(
                 }}
               />
               <div className="flex-shrink-0 text-13 md:text-11 text-tertiary">
-                {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issue.sequence_id)}
+                <WorkItemIdentifier workItem={issue} projectIdentifier={project_details?.identifier || ""} size="xs" />
               </div>
               <Tooltip tooltipContent={issue.name}>
                 <div className="truncate text-13 font-medium md:font-normal md:text-11">{issue.name}</div>

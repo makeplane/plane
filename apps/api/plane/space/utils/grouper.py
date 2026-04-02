@@ -22,6 +22,7 @@ from typing import List, Optional, Dict, Any, Union
 from plane.db.models import (
     Cycle,
     Issue,
+    IssueType,
     Label,
     Module,
     Project,
@@ -29,6 +30,7 @@ from plane.db.models import (
     State,
     WorkspaceMember,
 )
+from plane.ee.models import Milestone
 
 
 def issue_queryset_grouper(
@@ -100,6 +102,8 @@ def issue_on_results(
         "project_id",
         "parent_id",
         "cycle_id",
+        "milestone_id",
+        "type_id",
         "created_by",
         "created_at",
         "updated_at",
@@ -208,6 +212,14 @@ def issue_group_values(
             return list(queryset.filter(project_id=project_id))
         else:
             return list(queryset)
+    if field == "parent_id":
+        queryset = Issue.objects.filter(
+            Q(parent__type__isnull=False, parent__type__is_epic=True), workspace__slug=slug
+        ).values_list("parent_id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+        else:
+            return list(queryset) + ["None"]
     if field == "labels__id":
         queryset = Label.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
@@ -235,6 +247,18 @@ def issue_group_values(
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
             return list(queryset) + ["None"]
+    if field == "milestone_id":
+        queryset = Milestone.objects.filter(workspace__slug=slug).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+        else:
+            return list(queryset) + ["None"]
+    if field == "type_id":
+        queryset = IssueType.objects.filter(workspace__slug=slug, is_epic=False).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_issue_types__project_id=project_id))
+        else:
+            return list(queryset)
     if field == "project_id":
         queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         return list(queryset)

@@ -12,9 +12,8 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 import { usePublish } from "@/hooks/store/publish";
 // types
 import type { IIssue } from "@/types/issue";
@@ -36,7 +35,11 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
   return (
     <div className="space-y-2">
       <h6 className="text-14 font-medium text-placeholder">
-        {formatProjectWorkItemIdentifierForDisplay(project_details?.identifier || "", issueDetails?.sequence_id)}
+        <WorkItemIdentifier
+          workItem={issueDetails}
+          projectIdentifier={project_details?.identifier || ""}
+          showTypeName
+        />
       </h6>
       <h4 className="break-words text-20 font-medium">{issueDetails.name}</h4>
       {description && description !== "" && description !== "<p></p>" && (

@@ -17,11 +17,14 @@ from plane.space.views import (
     ProjectIssuesPublicEndpoint,
     WorkspaceProjectAnchorEndpoint,
     ProjectCyclesEndpoint,
+    ProjectEpicsEndpoint,
+    ProjectMilestonesEndpoint,
     ProjectModulesEndpoint,
     ProjectStatesEndpoint,
     ProjectLabelsEndpoint,
     ProjectMembersEndpoint,
     ProjectMetaDataEndpoint,
+    ProjectWorkItemTypesEndpoint,
 )
 
 urlpatterns = [
@@ -51,6 +54,16 @@ urlpatterns = [
         name="project-cycles",
     ),
     path(
+        "anchor/<str:anchor>/milestones/",
+        ProjectMilestonesEndpoint.as_view(),
+        name="project-milestones",
+    ),
+    path(
+        "anchor/<str:anchor>/epics/",
+        ProjectEpicsEndpoint.as_view(),
+        name="project-epics",
+    ),
+    path(
         "anchor/<str:anchor>/modules/",
         ProjectModulesEndpoint.as_view(),
         name="project-modules",
@@ -69,5 +82,10 @@ urlpatterns = [
         "anchor/<str:anchor>/members/",
         ProjectMembersEndpoint.as_view(),
         name="project-members",
+    ),
+    path(
+        "anchor/<str:anchor>/work-item-types/",
+        ProjectWorkItemTypesEndpoint.as_view(),
+        name="project-work-item-types",
     ),
 ]

@@ -28,10 +28,13 @@ import type {
 } from "@plane/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
+import { useEpic } from "@/hooks/store/use-epic";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
+import { useMilestone } from "@/hooks/store/use-milestone";
 import { useModule } from "@/hooks/store/use-module";
 import { useStates } from "@/hooks/store/use-state";
+import { useWorkItemType } from "@/hooks/store/use-work-item-type";
 //
 import { getGroupByColumns } from "../utils";
 import { KanBan } from "./default";
@@ -74,11 +77,25 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
   const member = useMember();
   const label = useLabel();
   const cycle = useCycle();
+  const epic = useEpic();
+  const milestone = useMilestone();
   const modules = useModule();
   const state = useStates();
+  const workItemType = useWorkItemType();
 
-  const groupByList = getGroupByColumns(groupBy as GroupByColumnTypes, cycle, modules, label, state, member);
-  const subGroupByList = getGroupByColumns(subGroupBy as GroupByColumnTypes, cycle, modules, label, state, member);
+  const groupByStores = {
+    cycle,
+    epic,
+    module: modules,
+    label,
+    projectState: state,
+    member,
+    milestone,
+    workItemType,
+  };
+
+  const groupByList = getGroupByColumns(groupBy as GroupByColumnTypes, groupByStores);
+  const subGroupByList = getGroupByColumns(subGroupBy as GroupByColumnTypes, groupByStores);
 
   if (!groupByList || !subGroupByList) return null;
 

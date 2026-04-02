@@ -11,9 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./project-properties.service";
-export * from "./project-types.service";
-export * from "./sites-work-item-types.service";
-export * from "./workspace-properties.service";
-export * from "./workspace-property-options.service";
-export * from "./workspace-types.service";
+export * from "./sites-epic.service";

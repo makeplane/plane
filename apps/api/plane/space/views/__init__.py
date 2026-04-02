@@ -29,11 +29,17 @@ from .intake import IntakeIssuePublicViewSet
 
 from .cycle import ProjectCyclesEndpoint
 
+from .milestone import ProjectMilestonesEndpoint
+
+from .epic import ProjectEpicsEndpoint
+
 from .module import ProjectModulesEndpoint
 
 from .state import ProjectStatesEndpoint
 
 from .label import ProjectLabelsEndpoint
+
+from .work_item_type import ProjectWorkItemTypesEndpoint
 
 from .asset import EntityAssetEndpoint, AssetRestoreEndpoint, EntityBulkAssetEndpoint
 

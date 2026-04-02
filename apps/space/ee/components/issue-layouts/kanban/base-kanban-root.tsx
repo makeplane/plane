@@ -46,9 +46,13 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: Props) {
   const groupBy = displayFilters?.group_by;
 
   const orderBy = displayFilters?.order_by;
+  const viewIssuesKey =
+    anchor && viewData
+      ? ["PUBLIC_ISSUES", anchor, viewData.updated_at, displayFilters?.layout, groupBy, subGroupBy, orderBy]
+      : null;
 
   useSWR(
-    anchor ? `PUBLIC_ISSUES_${anchor}` : null,
+    viewIssuesKey,
     anchor
       ? () =>
           fetchPublicIssues(anchor, "init-loader", {
@@ -59,7 +63,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: Props) {
             perPageCount: subGroupBy ? 10 : 30,
           })
       : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    { revalidateIfStale: false, revalidateOnFocus: true }
   );
 
   const fetchMoreIssues = useCallback(

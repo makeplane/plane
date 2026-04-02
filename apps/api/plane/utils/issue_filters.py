@@ -223,6 +223,31 @@ def filter_assignees(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_milestone(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        milestone_value = params.get("milestone")
+        if milestone_value is None or milestone_value == "":
+            return issue_filter
+        if not isinstance(milestone_value, str):
+            return issue_filter
+        milestones = [item for item in milestone_value.split(",") if item != "null"]
+        if "None" in milestones:
+            issue_filter[f"{prefix}issue_milestone__milestone__isnull"] = True
+        milestones = filter_valid_uuids(milestones)
+        if len(milestones) and "" not in milestones:
+            issue_filter[f"{prefix}issue_milestone__milestone_id__in"] = milestones
+    else:
+        milestone_value = params.get("milestone", None)
+        if milestone_value is None or milestone_value == "":
+            return issue_filter
+        if not isinstance(milestone_value, str):
+            return issue_filter
+        if len(milestone_value) and milestone_value != "null":
+            issue_filter[f"{prefix}issue_milestone__milestone_id__in"] = milestone_value
+    issue_filter[f"{prefix}issue_milestone__deleted_at__isnull"] = True
+    return issue_filter
+
+
 def filter_mentions(params, issue_filter, method, prefix=""):
     if method == "GET":
         mentions = [item for item in params.get("mentions").split(",") if item != "null"]
@@ -567,6 +592,7 @@ def issue_filters(query_params, method, prefix=""):
         "epic": filter_epic,
         "labels": filter_labels,
         "assignees": filter_assignees,
+        "milestone": filter_milestone,
         "mentions": filter_mentions,
         "created_by": filter_created_by,
         "logged_by": filter_logged_by,

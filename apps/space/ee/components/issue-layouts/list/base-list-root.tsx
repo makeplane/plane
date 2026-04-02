@@ -47,6 +47,10 @@ export const BaseListRoot = observer(function BaseListRoot(props: Props) {
   const groupBy = displayFilters?.group_by;
 
   const orderBy = displayFilters?.order_by;
+  const viewIssuesKey =
+    anchor && viewData
+      ? ["PUBLIC_ISSUES", anchor, viewData.updated_at, displayFilters?.layout, groupBy, orderBy]
+      : null;
 
   const groupedIssueIds = storeGroupedIssueIds as TGroupedIssues | undefined;
 
@@ -58,7 +62,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: Props) {
   );
 
   useSWR(
-    anchor ? `PUBLIC_ISSUES_${anchor}` : null,
+    viewIssuesKey,
     anchor
       ? () =>
           fetchPublicIssues(anchor, "init-loader", {
@@ -69,7 +73,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: Props) {
             perPageCount: 50,
           })
       : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    { revalidateIfStale: false, revalidateOnFocus: true }
   );
 
   return (

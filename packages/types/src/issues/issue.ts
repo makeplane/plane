@@ -220,6 +220,7 @@ export interface IPublicIssue extends Pick<
   | "start_date"
   | "target_date"
   | "cycle_id"
+  | "milestone_id"
   | "module_ids"
   | "label_ids"
   | "assignee_ids"
@@ -228,6 +229,7 @@ export interface IPublicIssue extends Pick<
   | "sub_issues_count"
   | "link_count"
   | "estimate_point"
+  | "type_id"
 > {
   comments: TIssuePublicComment[];
   reaction_items: IIssuePublicReaction[];

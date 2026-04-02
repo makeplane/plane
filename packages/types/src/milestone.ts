@@ -55,3 +55,9 @@ export interface IMilestoneInstance {
   updateProgress: (progress: TMilestoneProgress) => void;
   update: (data: Partial<TMilestone>) => void;
 }
+
+export type TPublicMilestone = {
+  id: string;
+  name: string;
+  progress: TMilestoneProgress;
+};

@@ -24,10 +24,13 @@ import type {
 } from "@plane/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
+import { useEpic } from "@/hooks/store/use-epic";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
+import { useMilestone } from "@/hooks/store/use-milestone";
 import { useModule } from "@/hooks/store/use-module";
 import { useStates } from "@/hooks/store/use-state";
+import { useWorkItemType } from "@/hooks/store/use-work-item-type";
 //
 import { getGroupByColumns } from "../utils";
 import { ListGroup } from "./list-group";
@@ -64,10 +67,17 @@ export const List = observer(function List(props: IList) {
   const member = useMember();
   const label = useLabel();
   const cycle = useCycle();
+  const epic = useEpic();
+  const milestone = useMilestone();
   const modules = useModule();
   const state = useStates();
+  const workItemType = useWorkItemType();
 
-  const groupList = getGroupByColumns(groupBy as GroupByColumnTypes, cycle, modules, label, state, member, true);
+  const groupList = getGroupByColumns(
+    groupBy as GroupByColumnTypes,
+    { cycle, epic, module: modules, label, projectState: state, member, milestone, workItemType },
+    true
+  );
 
   if (!groupList) return null;
 

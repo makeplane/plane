@@ -79,6 +79,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import ErrorCodes
+from plane.ee.models import MilestoneIssue
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
@@ -92,13 +93,20 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
     )
     filterset_class = IssueFilterSet
 
-    def apply_annotations(self, issue_queryset):
+    def apply_annotations(self, issue_queryset, slug):
+        milestone_annotation = Value(None, output_field=UUIDField())
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug):
+            milestone_annotation = Subquery(
+                MilestoneIssue.objects.filter(issue=OuterRef("id")).values("milestone_id")[:1]
+            )
+
         return (
             issue_queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
+            .annotate(milestone_id=milestone_annotation)
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -152,17 +160,21 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         # Total count queryset
         total_issue_queryset = copy.deepcopy(issue_queryset)
 
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        unsupported_grouping_response = self.validate_grouping_features(group_by, sub_group_by, slug)
+        if unsupported_grouping_response:
+            return unsupported_grouping_response
+
         # Applying annotations to the issue queryset
-        issue_queryset = self.apply_annotations(issue_queryset)
+        issue_queryset = self.apply_annotations(issue_queryset, slug)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
-
-        # Group by
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
         issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
@@ -245,6 +257,28 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
+
+    def validate_grouping_features(self, group_by, sub_group_by, slug):
+        for field in [group_by, sub_group_by]:
+            if field == "milestone_id" and not check_workspace_feature_flag(
+                feature_key=FeatureFlag.MILESTONES, slug=slug
+            ):
+                return Response(
+                    {"error": "Grouping by milestone requires milestones to be enabled"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if field == "type_id" and not check_workspace_feature_flag(feature_key=FeatureFlag.ISSUE_TYPES, slug=slug):
+                return Response(
+                    {"error": "Grouping by type requires work item types to be enabled"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if field == "parent_id" and not check_workspace_feature_flag(feature_key=FeatureFlag.EPICS, slug=slug):
+                return Response(
+                    {"error": "Grouping by epic requires epics to be enabled"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        return None
 
 
 class IssueCommentPublicViewSet(BaseViewSet):
@@ -743,6 +777,11 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
 
     def get(self, request, anchor, issue_id):
         deploy_board = DeployBoard.objects.get(anchor=anchor)
+        milestone_annotation = Value(None, output_field=UUIDField())
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=deploy_board.workspace.slug):
+            milestone_annotation = Subquery(
+                MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[:1]
+            )
 
         issue_queryset = (
             Issue.issue_objects.filter(
@@ -757,6 +796,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
+            .annotate(milestone_id=milestone_annotation)
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
@@ -910,6 +950,8 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                 "project_id",
                 "parent_id",
                 "cycle_id",
+                "milestone_id",
+                "type_id",
                 "created_by",
                 "state__group",
                 "vote_items",

@@ -41,6 +41,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const layout = displayFilters?.calendar?.layout ?? "month";
+  const viewUpdatedAt = viewData?.updated_at;
   const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
         after: startDate,
         groupedBy: EIssueGroupByToServerOptions["target_date"],
       });
-  }, [issues, startDate, endDate, layout, anchor]);
+  }, [issues, startDate, endDate, layout, anchor, viewUpdatedAt]);
 
   const loadMoreIssues = useCallback(
     (dateString: string) => {

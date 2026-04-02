@@ -41,3 +41,5 @@ export type TEpicMeta = {
   sequence_id: number;
   name: string;
 };
+
+export type TPublicEpic = Pick<TEpicMeta, "id" | "name">;

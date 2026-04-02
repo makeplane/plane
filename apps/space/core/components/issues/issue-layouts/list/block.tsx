@@ -20,7 +20,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
 // plane utils
-import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
+import { cn } from "@plane/utils";
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -75,7 +76,12 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           <div className="flex items-center gap-1">
             {displayProperties && displayProperties?.key && (
               <div className="shrink-0 text-11 font-medium text-tertiary px-4">
-                {formatProjectWorkItemIdentifierForDisplay(projectIdentifier || "", issue.sequence_id)}
+                <WorkItemIdentifier
+                  workItem={issue}
+                  projectIdentifier={projectIdentifier || ""}
+                  identifierClassName="font-medium"
+                  size="xs"
+                />
               </div>
             )}
           </div>

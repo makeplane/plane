@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
@@ -25,6 +26,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useStates } from "@/hooks/store/use-state";
+import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 // store
 import type { PublishStore } from "@/store/publish/publish.store";
@@ -53,6 +55,7 @@ export const ViewLayoutsRoot = observer(function ViewLayoutsRoot(props: Props) {
   const { fetchCycles } = useCycle();
   const { fetchModules } = useModule();
   const { fetchMembers } = useMember();
+  const { fetchFeatureFlags } = useFeatureFlags();
 
   const { anchor } = publishSettings;
 
@@ -61,6 +64,13 @@ export const ViewLayoutsRoot = observer(function ViewLayoutsRoot(props: Props) {
   useSWR(anchor ? `PUBLIC_CYCLES_${anchor}` : null, anchor ? () => fetchCycles(anchor) : null);
   useSWR(anchor ? `PUBLIC_MODULES_${anchor}` : null, anchor ? () => fetchModules(anchor) : null);
   useSWR(anchor ? `PUBLIC_MEMBERS_${anchor}` : null, anchor ? () => fetchMembers(anchor) : null);
+  useSWR(
+    anchor ? `PUBLIC_FEATURE_FLAGS_${anchor}` : null,
+    anchor
+      ? () =>
+          fetchFeatureFlags(anchor, [E_FEATURE_FLAGS.MILESTONES, E_FEATURE_FLAGS.ISSUE_TYPES, E_FEATURE_FLAGS.EPICS])
+      : null
+  );
 
   // derived values
   const activeLayout = viewData?.display_filters?.layout ?? "kanban";

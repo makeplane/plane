@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TMilestoneIconVariant } from "@plane/types";
+import type { TMilestoneIconVariant, TMilestoneProgress } from "@plane/types";
 
 // TODO-design-system -> update color tokens here
 const MILESTONE_VARIANT_COLORS: Record<TMilestoneIconVariant, { base: string; hover?: string }> = {
@@ -28,6 +28,17 @@ const getMilestoneVariantFromProgress = (progress: number) => {
   if (progress === 0) return "not_started_yet";
   if (progress > 0 && progress < 100) return "in_progress";
   return "started_no_progress";
+};
+
+export const getMilestoneProgressPercentage = (progress: TMilestoneProgress): number => {
+  const { total_items, completed_items, cancelled_items } = progress;
+
+  if (total_items === 0) return 0;
+
+  const completedOrCancelled = completed_items + cancelled_items;
+  const percentage = (completedOrCancelled / total_items) * 100;
+
+  return Math.round(percentage);
 };
 
 export const getMilestoneIconProps = (progress: number): { fill: string; isDone: boolean } => {

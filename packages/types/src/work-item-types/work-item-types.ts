@@ -50,6 +50,8 @@ export type TWorkItemType = {
   updated_by: string | null;
 };
 
+export type TPublicWorkItemType = Pick<TWorkItemType, "id" | "name" | "logo_props">;
+
 export type TUpdateWorkItemTypeHierarchyPayload = {
   level: number;
   type_ids: string[];

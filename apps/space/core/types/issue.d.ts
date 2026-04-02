@@ -49,6 +49,7 @@ export interface IIssue extends Pick<
   | "start_date"
   | "target_date"
   | "cycle_id"
+  | "milestone_id"
   | "module_ids"
   | "label_ids"
   | "release_ids"
@@ -57,6 +58,7 @@ export interface IIssue extends Pick<
   | "sub_issues_count"
   | "link_count"
   | "estimate_point"
+  | "type_id"
 > {
   comments: TIssuePublicComment[];
   reaction_items: IIssueReaction[];

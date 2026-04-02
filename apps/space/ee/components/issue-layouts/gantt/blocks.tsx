@@ -17,10 +17,10 @@ import { useParams } from "next/navigation";
 // ui
 import { StateGroupIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
+import { WorkItemIdentifier } from "@/components/issues/work-item-identifier";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
@@ -100,7 +100,9 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
         {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
         <div className="flex-shrink-0 text-11 text-tertiary">
-          {formatProjectWorkItemIdentifierForDisplay(projectIdentifier || "", issueDetails?.sequence_id)}
+          {issueDetails && (
+            <WorkItemIdentifier workItem={issueDetails} projectIdentifier={projectIdentifier || ""} size="xs" />
+          )}
         </div>
         <Tooltip tooltipContent={issueDetails?.name}>
           <span className="flex-grow truncate text-13 font-medium">{issueDetails?.name}</span>
