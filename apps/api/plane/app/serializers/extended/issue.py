@@ -24,6 +24,7 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+        validated_data.pop("release_ids", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]

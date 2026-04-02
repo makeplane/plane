@@ -185,6 +185,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         preloadedData = { ...preloadedData, parent_id: value };
       } else if (groupByKey === "type" && value !== "None") {
         preloadedData = { ...preloadedData, type_id: value };
+      } else if (groupByKey === "release" && value != "None") {
+        preloadedData = { ...preloadedData, release_ids: [value] };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: value };
       }

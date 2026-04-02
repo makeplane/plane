@@ -254,6 +254,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, parent_id: groupValue };
       } else if (groupByKey === "type" && groupValue !== "None") {
         preloadedData = { ...preloadedData, type_id: groupValue };
+      } else if (groupByKey === "release" && groupValue != "None") {
+        preloadedData = { ...preloadedData, release_ids: [groupValue] };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: groupValue };
       }
@@ -280,6 +282,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, parent_id: subGroupValue };
       } else if (subGroupByKey === "type" && subGroupValue !== "None") {
         preloadedData = { ...preloadedData, type_id: subGroupValue };
+      } else if (subGroupByKey === "release" && subGroupValue != "None") {
+        preloadedData = { ...preloadedData, release_ids: [subGroupValue] };
       } else {
         preloadedData = { ...preloadedData, [subGroupByKey]: subGroupValue };
       }

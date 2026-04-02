@@ -40,6 +40,7 @@ import { convertToISODateString } from "@plane/utils";
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
+import releaseService from "@/services/release.service";
 //
 import type { IIssueRootStore } from "../root.store";
 import {
@@ -119,6 +120,12 @@ export interface IBaseIssuesStore {
     projectId: string,
     workItemId: string,
     milestoneId: string | undefined
+  ) => Promise<void>;
+  addWorkItemToRelease: (
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    releaseIds: string[]
   ) => Promise<void>;
   updateIssueDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[], projectId?: string): Promise<void>;
 }
@@ -271,6 +278,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       removeIssuesFromModule: action.bound,
       changeModulesInIssue: action.bound,
       updateWorkItemMilestone: action.bound,
+      addWorkItemToRelease: action.bound,
     });
     this.rootIssueStore = _rootStore;
     this.issueFilterStore = issueFilterStore;
@@ -677,7 +685,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     projectId: string,
     data: TIssue,
     entityId?: string,
-    propertiesToIgnore?: Set<"cycle_id" | "module_id" | "milestone_id">
+    propertiesToIgnore?: Set<"cycle_id" | "module_id" | "milestone_id" | "release_ids">
   ) {
     // Add issue to store with a temporary Id
     this.addIssue(data);
@@ -700,6 +708,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     }
     if (currentMilestoneId && !propertiesToIgnore?.has("milestone_id")) {
       promiseRequests.push(this.updateWorkItemMilestone(workspaceSlug, projectId, response.id, currentMilestoneId));
+    }
+    const currentReleaseIds =
+      data.release_ids && data.release_ids.length > 0 ? data.release_ids.filter((id) => id != "None") : [];
+    if (currentReleaseIds.length > 0 && !propertiesToIgnore?.has("release_ids")) {
+      promiseRequests.push(this.addWorkItemToRelease(workspaceSlug, projectId, response.id, currentReleaseIds));
     }
     if (promiseRequests && promiseRequests.length > 0) {
       await Promise.all(promiseRequests);
@@ -1208,6 +1221,39 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         void this.issueUpdate(workspaceSlug, projectId, workItemId, { milestone_id: previousMilestoneId }, false);
       });
       console.error("Failed to add milestone to work item", error);
+    }
+  }
+
+  /**
+   * Method called to add work item to release(s)
+   * @param workspaceSlug
+   * @param projectId
+   * @param workItemId
+   * @param releaseIds
+   */
+  async addWorkItemToRelease(workspaceSlug: string, projectId: string, workItemId: string, releaseIds: string[]) {
+    const workItem = toJS(this.rootIssueStore.issues.getIssueById(workItemId));
+    const previousReleaseIds = workItem?.release_ids ?? [];
+
+    try {
+      runInAction(() => {
+        void this.issueUpdate(
+          workspaceSlug,
+          projectId,
+          workItemId,
+          { release_ids: uniq([...previousReleaseIds, ...releaseIds]) },
+          false
+        );
+      });
+      const promiseRequests = releaseIds.map((releaseId) =>
+        releaseService.addWorkItems(workspaceSlug, releaseId, [workItemId])
+      );
+      await Promise.all(promiseRequests);
+    } catch (error) {
+      runInAction(() => {
+        void this.issueUpdate(workspaceSlug, projectId, workItemId, { release_ids: previousReleaseIds }, false);
+      });
+      console.error("Failed to add work item to release", error);
     }
   }
 
