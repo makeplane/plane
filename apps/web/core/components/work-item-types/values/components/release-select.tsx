@@ -46,8 +46,12 @@ export const ReleaseValueSelect = observer(function ReleaseValueSelect(props: TR
         workspaceSlug={workspaceSlug}
         value={value}
         disabled={isDisabled}
-        className={variant === "create" ? "h-8 rounded-sm border-[0.5px] border-subtle-1" : ""}
-        buttonClassName={variant === "create" ? "h-full text-body-xs-regular hover:bg-transparent" : buttonClassName}
+        className="w-full grow group"
+        buttonContainerClassName="w-full"
+        buttonVariant={variant === "create" ? "border-with-text" : "transparent-with-text"}
+        buttonClassName={buttonClassName}
+        dropdownArrow
+        dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
         onChange={onReleaseValueChange}
         emptyLabel={t("releases.select_releases")}
       />

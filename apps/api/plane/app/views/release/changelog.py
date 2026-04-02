@@ -16,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import Workspace, ReleaseChangelog
+from plane.db.models import Workspace, ReleaseChangelog, Description
 from plane.app.serializers.release import ReleaseChangelogSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -27,40 +27,46 @@ class ReleaseChangelogEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.RELEASES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
-    def get(self, request, slug, release_id, pk=None):
-        if pk:
-            changelog = ReleaseChangelog.objects.get(pk=pk, release_id=release_id, workspace__slug=slug)
-            return Response(ReleaseChangelogSerializer(changelog).data, status=status.HTTP_200_OK)
+    def get(self, request, slug, release_id):
+        workspace = Workspace.objects.get(slug=slug)
+        try:
+            release_changelog = ReleaseChangelog.objects.get(release_id=release_id, workspace_id=workspace.id)
+        except ReleaseChangelog.DoesNotExist:
+            changelog_description = Description.objects.create(
+                workspace_id=workspace.id, description_html="<p></p>", description_json={}
+            )
+            release_changelog = ReleaseChangelog.objects.create(
+                release_id=release_id, changelog_id=changelog_description.id, workspace_id=workspace.id
+            )
 
-        changelogs = ReleaseChangelog.objects.filter(release_id=release_id, workspace__slug=slug).order_by(
-            "-created_at"
-        )
-        serializer = ReleaseChangelogSerializer(changelogs, many=True)
+        serializer = ReleaseChangelogSerializer(release_changelog)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def post(self, request, slug, release_id):
+    def patch(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
-        serializer = ReleaseChangelogSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(workspace_id=workspace.id, release_id=release_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def patch(self, request, slug, release_id, pk):
-        changelog = ReleaseChangelog.objects.get(pk=pk, release_id=release_id, workspace__slug=slug)
-        serializer = ReleaseChangelogSerializer(changelog, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            changelog = ReleaseChangelog.objects.get(release_id=release_id, workspace_id=workspace.id)
+            serializer = ReleaseChangelogSerializer(
+                changelog, data=request.data, context={"workspace_id": workspace.id}, partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ReleaseChangelog.DoesNotExist:
+            description_html = request.data.get("description_html", "<p></p>")
+            description_json = request.data.get("description_json", {})
 
-    @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def delete(self, request, slug, release_id, pk):
-        changelog = ReleaseChangelog.objects.get(pk=pk, release_id=release_id, workspace__slug=slug)
-        changelog.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            changelog_description = Description.objects.create(
+                description_html=description_html, description_json=description_json, workspace_id=workspace.id
+            )
+
+            release_changelog = ReleaseChangelog.objects.create(
+                release_id=release_id, changelog_id=changelog_description.id, workspace_id=workspace.id
+            )
+
+            return Response(ReleaseChangelogSerializer(release_changelog).data, status=status.HTTP_200_OK)

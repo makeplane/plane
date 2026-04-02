@@ -270,10 +270,10 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
       className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
-      <div id="page-content-container" className="relative w-full flex-shrink-0">
+      <div id="page-content-container" className="relative w-full shrink-0">
         {/* table of content */}
         {!isNavigationPaneOpen && (
-          <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+          <div className="page-summary-container absolute h-full right-0 top-[64px] z-5">
             <div className="sticky top-[72px]">
               <div className="group/page-toc relative px-page-x">
                 <div

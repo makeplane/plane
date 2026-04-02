@@ -113,12 +113,7 @@ urlpatterns = [
     ),
     # Release Changelogs
     path(
-        "workspaces/<str:slug>/releases/<uuid:release_id>/changelogs/",
-        ReleaseChangelogEndpoint.as_view(),
-        name="release-changelogs",
-    ),
-    path(
-        "workspaces/<str:slug>/releases/<uuid:release_id>/changelogs/<uuid:pk>/",
+        "workspaces/<str:slug>/releases/<uuid:release_id>/changelog/",
         ReleaseChangelogEndpoint.as_view(),
         name="release-changelogs",
     ),

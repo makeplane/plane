@@ -11,38 +11,63 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { action, makeObservable, observable } from "mobx";
-import type { Release, ReleaseWrite, TDocumentPayload } from "@plane/types";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import type { Release, ReleaseChangelog, ReleaseWrite } from "@plane/types";
+import { computedFn } from "mobx-utils";
 
-type TReleaseInstanceHelpers = {
+type ReleaseInstanceHelpers = {
   update: (payload: ReleaseWrite) => Promise<Release>;
   addWorkItems: (workItemIds: string[]) => Promise<void>;
   removeWorkItems: (workItemIds: string[]) => Promise<void>;
-  canEditWorkItemProperties: (projectId: string) => boolean;
+  changelog: {
+    fetch: () => Promise<ReleaseChangelog>;
+    update: (data: ReleaseChangelog["changelog"]) => Promise<ReleaseChangelog>;
+  };
+  permissions: {
+    canEditWorkItemProperties: (projectId: string) => boolean;
+    canEditChangelog: boolean;
+  };
 };
 
-export class ReleaseInstance implements Release {
-  // release fields
-  id: string;
-  name: string;
-  description: Partial<TDocumentPayload> | null | undefined;
-  release_date: string | null;
-  workspace_id: string;
-  created_by: string | null;
-  updated_by: string | null;
-  created_at: string;
-  updated_at: string;
-  label_ids: string[];
-  work_item_ids: string[];
-  completed_work_item_count: number;
-  cancelled_work_item_count: number;
-  status: Release["status"];
-  tag: string | null | undefined;
-  lead: string | null | undefined;
-  // helpers
-  private helpers: TReleaseInstanceHelpers;
+type ReleaseInstanceSchema = Release & {
+  // permissions
+  canEditWorkItemProperties: (projectId: string) => boolean;
+  canEditChangelog: boolean;
+  // actions
+  mutateProperties: (data: Partial<Release>) => void;
+  update: (payload: ReleaseWrite) => Promise<Release>;
+  addWorkItems: (workItemIds: string[]) => Promise<void>;
+  removeWorkItems: (workItemIds: string[]) => Promise<void>;
+  // changelog
+  changelog: ReleaseChangelog["changelog"] | undefined;
+  fetchChangelog: () => Promise<ReleaseChangelog>;
+  updateChangelog: (data: ReleaseChangelog["changelog"]) => Promise<ReleaseChangelog>;
+};
 
-  constructor(release: Release, helpers: TReleaseInstanceHelpers) {
+export class ReleaseInstance implements ReleaseInstanceSchema {
+  // release fields
+  id: ReleaseInstanceSchema["id"];
+  name: ReleaseInstanceSchema["name"];
+  description: ReleaseInstanceSchema["description"];
+  release_date: ReleaseInstanceSchema["release_date"];
+  workspace_id: ReleaseInstanceSchema["workspace_id"];
+  created_by: ReleaseInstanceSchema["created_by"];
+  updated_by: ReleaseInstanceSchema["updated_by"];
+  created_at: ReleaseInstanceSchema["created_at"];
+  updated_at: ReleaseInstanceSchema["updated_at"];
+  label_ids: ReleaseInstanceSchema["label_ids"];
+  work_item_ids: ReleaseInstanceSchema["work_item_ids"];
+  completed_work_item_count: ReleaseInstanceSchema["completed_work_item_count"];
+  cancelled_work_item_count: ReleaseInstanceSchema["cancelled_work_item_count"];
+  status: ReleaseInstanceSchema["status"];
+  tag: ReleaseInstanceSchema["tag"];
+  lead: ReleaseInstanceSchema["lead"];
+  // changelog
+  changelog: ReleaseInstanceSchema["changelog"];
+  // helpers
+  #helpers: ReleaseInstanceHelpers;
+
+  constructor(release: Release, helpers: ReleaseInstanceHelpers) {
     this.id = release.id;
     this.name = release.name;
     this.description = release.description;
@@ -59,7 +84,7 @@ export class ReleaseInstance implements Release {
     this.status = release.status;
     this.tag = release.tag;
     this.lead = release.lead;
-    this.helpers = helpers;
+    this.#helpers = helpers;
 
     makeObservable(this, {
       name: observable.ref,
@@ -72,7 +97,16 @@ export class ReleaseInstance implements Release {
       status: observable.ref,
       tag: observable.ref,
       lead: observable.ref,
+      changelog: observable,
+      // computed
+      canEditChangelog: computed,
+      // actions
       mutateProperties: action,
+      update: action,
+      addWorkItems: action,
+      removeWorkItems: action,
+      fetchChangelog: action,
+      updateChangelog: action,
     });
   }
 
@@ -89,11 +123,48 @@ export class ReleaseInstance implements Release {
     if (data.lead !== undefined) this.lead = data.lead;
   };
 
-  canEditWorkItemProperties = (projectId: string): boolean => this.helpers.canEditWorkItemProperties(projectId);
+  canEditWorkItemProperties: ReleaseInstanceSchema["canEditWorkItemProperties"] = computedFn(
+    (projectId: string): boolean => this.#helpers.permissions.canEditWorkItemProperties(projectId)
+  );
 
-  update = async (payload: ReleaseWrite): Promise<Release> => this.helpers.update(payload);
+  get canEditChangelog(): ReleaseInstanceSchema["canEditChangelog"] {
+    return this.#helpers.permissions.canEditChangelog;
+  }
 
-  addWorkItems = async (workItemIds: string[]): Promise<void> => this.helpers.addWorkItems(workItemIds);
+  update: ReleaseInstanceSchema["update"] = async (payload) => this.#helpers.update(payload);
 
-  removeWorkItems = async (workItemIds: string[]): Promise<void> => this.helpers.removeWorkItems(workItemIds);
+  addWorkItems: ReleaseInstanceSchema["addWorkItems"] = async (workItemIds) => this.#helpers.addWorkItems(workItemIds);
+
+  removeWorkItems: ReleaseInstanceSchema["removeWorkItems"] = async (workItemIds) =>
+    this.#helpers.removeWorkItems(workItemIds);
+
+  // changelog actions
+  fetchChangelog: ReleaseInstanceSchema["fetchChangelog"] = async () => {
+    try {
+      const changelog = await this.#helpers.changelog.fetch();
+      runInAction(() => {
+        this.changelog = changelog.changelog;
+      });
+      return changelog;
+    } catch (error) {
+      console.error("Error in fetching changelog:", error);
+      runInAction(() => {
+        this.changelog = undefined;
+      });
+      throw error;
+    }
+  };
+
+  updateChangelog: ReleaseInstanceSchema["updateChangelog"] = async (data) => {
+    try {
+      const updatedChangelog = await this.#helpers.changelog.update(data);
+      runInAction(() => {
+        this.changelog = updatedChangelog.changelog;
+      });
+      return updatedChangelog;
+    } catch (error) {
+      console.error("Error in updating changelog:", error);
+      throw error;
+    }
+  };
 }

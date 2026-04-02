@@ -37,7 +37,7 @@ export const ReleaseOverviewDescription = observer(function ReleaseOverviewDescr
         containerClassName="px-0 w-full"
         disabled={disabled}
         entityId={release.id}
-        fileAssetType={EFileAssetType.MILESTONE_DESCRIPTION}
+        fileAssetType={EFileAssetType.RELEASE_DESCRIPTION}
         initialValue={descriptionHtml}
         key={release.id}
         onSubmit={async (value) => {

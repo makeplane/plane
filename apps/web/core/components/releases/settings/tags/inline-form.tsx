@@ -60,6 +60,7 @@ export const CreateUpdateReleaseTagInline = observer(function CreateUpdateReleas
       .then(() => {
         handleClose();
         reset(defaultValues);
+        return;
       })
       .catch(() => reset(formData));
   };
@@ -71,15 +72,16 @@ export const CreateUpdateReleaseTagInline = observer(function CreateUpdateReleas
       .then(() => {
         reset(defaultValues);
         handleClose();
+        return;
       })
       .catch(() => reset(formData));
   };
 
-  const handleFormSubmit = (formData: ReleaseTagWrite) => {
+  const handleFormSubmit = async (formData: ReleaseTagWrite) => {
     if (isUpdating) {
-      handleUpdate(formData);
+      await handleUpdate(formData);
     } else {
-      handleCreate(formData);
+      await handleCreate(formData);
     }
   };
 
@@ -90,7 +92,10 @@ export const CreateUpdateReleaseTagInline = observer(function CreateUpdateReleas
 
   return (
     <>
-      <div className="flex w-full scroll-m-8 items-center gap-2 bg-surface-1 pr-3 py-2 rounded-lg">
+      <form
+        onSubmit={handleSubmit(handleFormSubmit)}
+        className="flex w-full scroll-m-8 items-center gap-2 bg-surface-1 px-3 py-2 rounded-lg"
+      >
         <div className="flex flex-1 flex-col justify-center">
           <Controller
             control={control}
@@ -115,18 +120,10 @@ export const CreateUpdateReleaseTagInline = observer(function CreateUpdateReleas
         <Button variant="secondary" onClick={handleClose} size={"xl"}>
           {t("cancel")}
         </Button>
-        <Button
-          variant="primary"
-          onClick={(e) => {
-            e.preventDefault();
-            void handleSubmit(handleFormSubmit)();
-          }}
-          loading={isSubmitting}
-          size={"xl"}
-        >
+        <Button type="submit" variant="primary" loading={isSubmitting} size={"xl"}>
           {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
         </Button>
-      </div>
+      </form>
       {errors.version?.message && <p className="p-0.5 pl-3 text-13 text-danger-primary">{errors.version.message}</p>}
     </>
   );

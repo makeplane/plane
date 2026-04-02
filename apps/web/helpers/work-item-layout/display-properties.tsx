@@ -18,6 +18,7 @@ import type { ISvgIcons } from "@plane/propel/icons";
 import {
   CycleIcon,
   ModuleIcon,
+  ReleaseIcon,
   CustomerRequestIcon,
   CustomersIcon,
   LinkIcon,
@@ -43,6 +44,7 @@ import {
   SpreadsheetLabelColumn,
   SpreadsheetModuleColumn,
   SpreadsheetCycleColumn,
+  SpreadsheetReleaseColumn,
   SpreadsheetLinkColumn,
   SpreadsheetPriorityColumn,
   SpreadsheetStartDateColumn,
@@ -143,6 +145,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   LabelPropertyIcon: LabelPropertyIcon,
   ModuleIcon: ModuleIcon,
   ContrastIcon: CycleIcon,
+  ReleaseIcon: ReleaseIcon,
   PriorityPropertyIcon: PriorityPropertyIcon,
   StartDatePropertyIcon: StartDatePropertyIcon,
   StatePropertyIcon: StatePropertyIcon,
@@ -181,4 +184,5 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   attachment_count: SpreadsheetAttachmentColumn,
   customer_count: SpreadsheetCustomerColumn,
   customer_request_count: SpreadSheetCustomerRequestColumn,
+  releases: SpreadsheetReleaseColumn,
 };

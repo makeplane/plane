@@ -219,6 +219,7 @@ export interface IIssueDisplayProperties {
   issue_type?: boolean;
   customer_request_count?: boolean;
   customer_count?: boolean;
+  releases?: boolean;
 }
 
 export type TIssueKanbanFilters = {

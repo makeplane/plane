@@ -11,17 +11,24 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export type TReleaseDropdownBaseProps = {
+import type { ReactNode } from "react";
+import type { TButtonVariants, TDropdownProps } from "../types";
+
+export type TReleaseDropdownBaseProps = Omit<TDropdownProps, "buttonVariant"> & {
+  buttonVariant: TButtonVariants;
+  button?: ReactNode;
+  dropdownArrow?: boolean;
+  dropdownArrowClassName?: string;
+  emptyLabel?: string;
+  onChange: (value: string[]) => void | Promise<void>;
+  onClose?: () => void;
   releases: {
     id: string;
     name: string;
   }[];
+  renderByDefault?: boolean;
+  showCount?: boolean;
   value: string[];
-  onChange: (value: string[]) => void | Promise<void>;
-  disabled?: boolean;
-  className?: string;
-  buttonClassName?: string;
-  emptyLabel?: string;
 };
 
 export type TReleaseDropdownProps = Omit<TReleaseDropdownBaseProps, "releases"> & {

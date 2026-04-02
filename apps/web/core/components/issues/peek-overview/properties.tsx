@@ -34,7 +34,6 @@ import {
 import {
   cn,
   getDate,
-  renderFormattedDate,
   renderFormattedDateTime,
   renderFormattedPayloadDate,
   shouldHighlightIssueDueDate,
@@ -93,6 +92,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const isReleasesFeatureFlagEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES);
   const currentStateDuration = useCurrentStateDuration(issueId);
   // derived values
   const issue = getIssueById(issueId);
@@ -103,8 +103,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const stateDetails = getStateById(issue.state_id);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
   const isReleasesFeatureEnabled =
-    useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES) &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+    isReleasesFeatureFlagEnabled && isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
 
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
@@ -366,12 +365,18 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           <SidebarPropertyListItem icon={ReleaseIcon} label={t("releases.label", { count: 2 })}>
             <ReleaseSelect
               workspaceSlug={workspaceSlug}
-              projectId={projectId}
               issueId={issueId}
-              issueOperations={issueOperations}
+              onChange={(updatedIds) =>
+                issueOperations.update(workspaceSlug, projectId, issueId, { release_ids: updatedIds })
+              }
               releaseIds={issue?.release_ids}
               disabled={disabled}
-              className="w-full grow"
+              className="w-full grow group"
+              buttonVariant="transparent-with-text"
+              buttonContainerClassName="w-full text-left h-7.5"
+              dropdownArrow
+              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              hideIcon
             />
           </SidebarPropertyListItem>
         )}

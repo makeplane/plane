@@ -17,9 +17,9 @@ import { ReleaseDetailHeader } from "@/components/releases/detail-header";
 import type { Route } from "./+types/layout";
 
 function ReleaseDetailLayout({ params }: Route.ComponentProps) {
-  const scopeMatch = useMatch("/:workspaceSlug/releases/:releaseId/scope");
+  const changelogMatch = useMatch("/:workspaceSlug/releases/:releaseId/changelog");
   const overviewMatch = useMatch("/:workspaceSlug/releases/:releaseId/overview");
-  const selectedTab = scopeMatch ? "scope" : overviewMatch ? "overview" : "scope";
+  const selectedTab = changelogMatch ? "changelog" : overviewMatch ? "overview" : "scope";
 
   return (
     <>

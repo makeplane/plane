@@ -24,6 +24,8 @@ import type { IIssueDisplayProperties } from "@plane/types";
 import { FilterHeader } from "../helpers/filter-header";
 // lib
 import { store } from "@/lib/store-context";
+import { useCustomers, useFeatureFlags, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -51,11 +53,14 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
   // derived values
   const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
+  // store hooks
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { getFeatureFlag } = useFeatureFlags();
+  const { isCustomersFeatureEnabled } = useCustomers();
   // plane web store
   const isWorkItemTypeEnabled = projectId
     ? store.workItemTypeBridge.isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString())
-    : store.featureFlags.getFeatureFlag(workspaceSlug?.toString(), "ISSUE_TYPES", false);
-  const isCustomersFeatureEnabled = store.customersStore.isCustomersFeatureEnabled;
+    : getFeatureFlag(workspaceSlug?.toString(), "ISSUE_TYPES", false);
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
@@ -72,6 +77,8 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
         return isCustomersFeatureEnabled;
       case "customer_request_count":
         return isCustomersFeatureEnabled;
+      case "releases":
+        return isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
       default:
         return true;
     }

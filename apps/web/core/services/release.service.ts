@@ -15,6 +15,7 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   ISearchIssueResponse,
   Release,
+  ReleaseChangelog,
   ReleaseLabel,
   ReleaseLabelWrite,
   ReleaseTag,
@@ -182,6 +183,26 @@ export class ReleaseService extends APIService {
       params: { search: params.search ?? "" },
     })
       .then((res) => res?.data ?? [])
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async retrieveChangelog(workspaceSlug: string, releaseId: string): Promise<ReleaseChangelog> {
+    return this.get(`/api/workspaces/${workspaceSlug}/releases/${releaseId}/changelog/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async updateChangelog(
+    workspaceSlug: string,
+    releaseId: string,
+    data: ReleaseChangelog["changelog"]
+  ): Promise<ReleaseChangelog> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/releases/${releaseId}/changelog/`, data)
+      .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });

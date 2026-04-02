@@ -155,8 +155,6 @@ export const CreateUpdateReleaseModal = observer(function CreateUpdateReleaseMod
     if (isOpen) closeAndReset();
   });
 
-  if (!isOpen) return null;
-
   return (
     <ModalCore
       isOpen={isOpen}
@@ -168,8 +166,7 @@ export const CreateUpdateReleaseModal = observer(function CreateUpdateReleaseMod
         workspaceSlug={workspaceSlug}
         releaseDetail={releaseDetail}
         control={control}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
+        handleSubmit={handleSubmit(onSubmit)}
         errors={errors}
         isSubmitting={isSubmitting}
         handleClose={closeAndReset}

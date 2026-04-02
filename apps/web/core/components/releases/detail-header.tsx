@@ -13,17 +13,19 @@
 
 import { observer } from "mobx-react";
 import { useParams, Link } from "react-router";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { ScopeIcon, OverviewIcon } from "@plane/propel/icons";
+import { ScopeIcon, OverviewIcon, PageIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type ReleaseDetailHeaderProps = {
-  selectedTab: "overview" | "scope";
+  selectedTab: "overview" | "scope" | "changelog";
 };
 
 const TABS = [
-  { key: "overview" as const, titleKey: "releases.overview", pathSuffix: "/overview", Icon: OverviewIcon },
-  { key: "scope" as const, titleKey: "releases.scope", pathSuffix: "/scope", Icon: ScopeIcon },
+  { key: "overview" as const, titleKey: "releases.overview", pathSuffix: "/overview", icon: OverviewIcon },
+  { key: "scope" as const, titleKey: "releases.scope", pathSuffix: "/scope", icon: ScopeIcon },
+  { key: "changelog" as const, titleKey: "releases.changelog", pathSuffix: "/changelog", icon: PageIcon },
 ] as const;
 
 export const ReleaseDetailHeader = observer(function ReleaseDetailHeader(props: ReleaseDetailHeaderProps) {
@@ -36,36 +38,30 @@ export const ReleaseDetailHeader = observer(function ReleaseDetailHeader(props: 
   const basePath = `/${workspaceSlug}/releases/${releaseId}`;
 
   return (
-    <div className="h-12 border-b border-subtle px-4 pt-2 flex items-center gap-1">
+    <div className="shrink-0 h-12 border-b border-subtle px-4 pt-2">
       <div className="flex items-center gap-1 h-full">
         {TABS.map((tab) => {
           const href = `${basePath}${tab.pathSuffix}`;
           const isActive = selectedTab === tab.key;
-          const Icon = tab.Icon;
+
           return (
             <Link
               key={tab.key}
               to={href}
               className={cn(
-                "relative cursor-pointer text-13 font-medium h-full transition-colors flex flex-col gap-1",
-                isActive && "border-b-2 border-primary"
+                "group relative cursor-pointer text-body-xs-medium h-full transition-colors border-b-2 border-transparent",
+                isActive && "border-strong-1"
               )}
             >
               <div
                 className={cn(
-                  "h-7 flex items-center justify-center gap-2 px-3",
-                  isActive && "bg-layer-transparent-active rounded-md"
+                  "h-7 flex items-center justify-center gap-2 px-3 rounded-md group-hover:bg-layer-transparent-hover transition-colors",
+                  isActive && "bg-layer-transparent-active group-hover:bg-layer-transparent-active"
                 )}
               >
-                <Icon className="size-4 shrink-0" />
+                <tab.icon className="size-4 shrink-0" />
                 <span>{t(tab.titleKey)}</span>
               </div>
-              <div
-                className={cn(
-                  "absolute bottom-0 left-0 right-0 h-0.5 bg-primary transition-opacity duration-200",
-                  isActive ? "opacity-100" : "opacity-0"
-                )}
-              />
             </Link>
           );
         })}

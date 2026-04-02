@@ -49,7 +49,7 @@ export const ReleaseDetailBreadcrumbHeader = observer(function ReleaseDetailBrea
             }
           />
           <Breadcrumbs.Item
-            component={<BreadcrumbLink label={release?.name ?? releaseId} href={basePath} />}
+            component={<BreadcrumbLink label={release?.name} href={basePath} />}
             showSeparator={false}
           />
         </Breadcrumbs>

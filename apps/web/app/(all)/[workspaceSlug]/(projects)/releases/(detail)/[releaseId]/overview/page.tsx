@@ -32,7 +32,7 @@ function ReleaseOverviewPage() {
   const { resolvedTheme } = useTheme();
   const { release: releaseStore } = useReleases();
 
-  const { data, isLoading, error } = useSWR(
+  const { isLoading, error } = useSWR(
     workspaceSlug && releaseId ? `RELEASE_DETAIL_${workspaceSlug}_${releaseId}` : null,
     workspaceSlug && releaseId ? () => releaseStore.fetchReleaseDetails(workspaceSlug, releaseId) : null
   );

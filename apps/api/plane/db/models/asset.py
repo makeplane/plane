@@ -72,6 +72,8 @@ class FileAsset(BaseModel):
         LICENSE_FILE = "LICENSE_FILE"
         MILESTONE_DESCRIPTION = "MILESTONE_DESCRIPTION"
         INTAKE_FORM_ATTACHMENT = "INTAKE_FORM_ATTACHMENT"
+        RELEASE_DESCRIPTION = "RELEASE_DESCRIPTION"
+        RELEASE_CHANGELOG = "RELEASE_CHANGELOG"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -154,6 +156,8 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             self.EntityTypeContext.PAGE_COMMENT_DESCRIPTION,
             self.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
+            self.EntityTypeContext.RELEASE_CHANGELOG,
+            self.EntityTypeContext.RELEASE_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 

@@ -25,5 +25,6 @@ export * from "./sub-issue-column";
 export * from "./updated-on-column";
 export * from "./module-column";
 export * from "./cycle-column";
+export * from "./release-column";
 export * from "./customers";
 export * from "./customer-requests";

@@ -97,3 +97,14 @@ export type ReleaseSearchIssueResponse = {
   state__name?: string;
   workspace__slug?: string;
 };
+
+export type ReleaseChangelog = {
+  created_at: string;
+  created_by: string;
+  changelog: Pick<TDocumentPayload, "description_html" | "description_json">;
+  id: string;
+  release: string;
+  updated_at: string;
+  updated_by: string | null;
+  workspace: string;
+};

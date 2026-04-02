@@ -198,7 +198,7 @@ export type IEditorProps = {
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
-  onChange?: (json: object, html: string, options?: { isMigrationUpdate?: boolean }) => void;
+  onChange?: (json: JSONContent, html: string, options?: { isMigrationUpdate?: boolean }) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, isEmpty: boolean) => string);

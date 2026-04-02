@@ -371,12 +371,18 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               <SidebarPropertyListItem icon={ReleaseIcon} label={t("releases.label", { count: 2 })}>
                 <ReleaseSelect
                   workspaceSlug={workspaceSlug}
-                  projectId={projectId}
                   issueId={issueId}
-                  issueOperations={issueOperations}
+                  onChange={(updatedIds) =>
+                    issueOperations.update(workspaceSlug, projectId, issueId, { release_ids: updatedIds })
+                  }
                   releaseIds={issue?.release_ids}
                   disabled={!isEditable}
-                  className="w-full grow h-7.5"
+                  className="group w-full grow h-7.5"
+                  buttonVariant="transparent-with-text"
+                  buttonContainerClassName="w-full text-left h-7.5"
+                  dropdownArrow
+                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                  hideIcon
                 />
               </SidebarPropertyListItem>
             )}

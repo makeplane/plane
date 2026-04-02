@@ -13,34 +13,53 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { Release } from "@plane/types";
+// constants
 import { RELEASES } from "@/constants/fetch-keys";
-import releaseService from "@/services/release.service";
-import type { TIssueOperations } from "./root";
+// components
 import { ReleaseDropdown } from "@/components/dropdowns/release/dropdown";
+// services
+import releaseService from "@/services/release.service";
+import type { TReleaseDropdownBaseProps } from "@/components/dropdowns/release/types";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
+  onChange: (updatedIds: string[]) => Promise<void>;
   issueId: string;
-  issueOperations: TIssueOperations;
   releaseIds?: string[];
-  disabled?: boolean;
-  className?: string;
-};
+} & Pick<
+  TReleaseDropdownBaseProps,
+  | "buttonContainerClassName"
+  | "buttonClassName"
+  | "buttonVariant"
+  | "className"
+  | "disabled"
+  | "dropdownArrow"
+  | "dropdownArrowClassName"
+  | "hideIcon"
+  | "onClose"
+  | "showCount"
+>;
 
-export const ReleaseSelect = observer(function ReleaseSelect(props: Props) {
-  const {
-    workspaceSlug,
-    projectId,
-    issueId,
-    issueOperations,
-    releaseIds: releaseIdsProp,
-    disabled = false,
-    className = "",
-  } = props;
+export const ReleaseSelect = observer(function ReleaseSelect({
+  workspaceSlug,
+  issueId,
+  onChange,
+  releaseIds: releaseIdsProp,
+  disabled = false,
+  className = "",
+  buttonClassName = "",
+  buttonVariant = "transparent-with-text",
+  buttonContainerClassName = "",
+  dropdownArrow,
+  dropdownArrowClassName = "",
+  hideIcon,
+  onClose,
+  showCount,
+}: Props) {
   const { t } = useTranslation();
 
   //TODO: make use of release store once it is implemented
@@ -50,13 +69,13 @@ export const ReleaseSelect = observer(function ReleaseSelect(props: Props) {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const derivedFromReleases = releases.filter((r) => r.work_item_ids?.includes(issueId)).map((r) => r.id);
-  const effectiveReleaseIds = releaseIdsProp ?? derivedFromReleases;
+  const effectiveReleaseIds =
+    releaseIdsProp ?? releases.filter((r) => r.work_item_ids?.includes(issueId)).map((r) => r.id);
 
   const handleChange = async (newIds: string | string[]) => {
     const ids = Array.isArray(newIds) ? newIds : newIds ? [newIds] : [];
     try {
-      await issueOperations.update(workspaceSlug, projectId, issueId, { release_ids: ids });
+      await onChange(ids);
     } catch {
       setToast({ type: TOAST_TYPE.ERROR, title: t("error.something_went_wrong") });
     }
@@ -69,6 +88,14 @@ export const ReleaseSelect = observer(function ReleaseSelect(props: Props) {
       disabled={disabled}
       onChange={handleChange}
       className={className}
+      buttonContainerClassName={buttonContainerClassName}
+      buttonClassName={buttonClassName}
+      buttonVariant={buttonVariant}
+      dropdownArrow={dropdownArrow}
+      dropdownArrowClassName={dropdownArrowClassName}
+      hideIcon={hideIcon}
+      onClose={onClose}
+      showCount={showCount}
     />
   );
 });

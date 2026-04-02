@@ -46,6 +46,8 @@ WORKSPACE_ATTACHMENT_ENTITY_TYPES = {
     FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
     FileAsset.EntityTypeContext.WORK_ITEM_IMPORT,
     FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+    FileAsset.EntityTypeContext.RELEASE_CHANGELOG,
+    FileAsset.EntityTypeContext.RELEASE_DESCRIPTION,
 }
 
 PROJECT_ATTACHMENT_ENTITY_TYPES = {
@@ -287,6 +289,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
             FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
+            FileAsset.EntityTypeContext.RELEASE_CHANGELOG,
+            FileAsset.EntityTypeContext.RELEASE_DESCRIPTION,
         ):
             return {"entity_identifier": entity_id}
 
@@ -958,6 +962,8 @@ class DuplicateAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
             FileAsset.EntityTypeContext.PAGE_COMMENT_DESCRIPTION,
+            FileAsset.EntityTypeContext.RELEASE_CHANGELOG,
+            FileAsset.EntityTypeContext.RELEASE_DESCRIPTION,
         ):
             return {"entity_identifier": entity_id}
         return {}

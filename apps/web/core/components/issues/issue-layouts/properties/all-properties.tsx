@@ -61,6 +61,7 @@ import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import type { DateRange } from "@plane/propel/calendar";
+import { ReleaseSelect } from "../../issue-detail/release-select";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -185,6 +186,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { estimate_point: value });
   };
 
+  const handleReleaseUpdate = async (releaseIds: string[]) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { release_ids: releaseIds });
+  };
+
   const workItemLink = generateWorkItemLink({
     workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
@@ -294,7 +299,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="size-3 shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
             disabled={isReadOnly}
@@ -317,7 +322,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<DueDatePropertyIcon className="h-3 w-3 shrink-0" />}
+            icon={<DueDatePropertyIcon className="size-3 shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={
               shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
@@ -435,13 +440,13 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                 if (subIssueCount) redirectToIssueDetail();
               }}
               className={cn(
-                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
+                "flex h-5 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
                 {
                   "hover:bg-layer-1 cursor-pointer": subIssueCount,
                 }
               )}
             >
-              <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+              <ViewsIcon className="size-3 shrink-0" strokeWidth={2} />
               <div className="text-caption-sm-regular">{subIssueCount}</div>
             </div>
           </Tooltip>
@@ -461,11 +466,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
+            className="flex h-5 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <Paperclip className="size-3 shrink-0" strokeWidth={2} />
             <div className="text-caption-sm-regular">{issue.attachment_count}</div>
           </div>
         </Tooltip>
@@ -484,11 +489,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
+            className="flex h-5 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkIcon className="size-3 shrink-0" strokeWidth={2} />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>
@@ -509,11 +514,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
+            className="flex h-5 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <CustomerRequestIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <CustomerRequestIcon className="size-3 shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.customer_request_ids?.length ?? 0}</div>
           </div>
         </Tooltip>
@@ -533,11 +538,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
+            className="flex h-5 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <CustomersIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <CustomersIcon className="size-3 shrink-0" strokeWidth={2} />
             <div className="text-11">{customerCount}</div>
           </div>
         </Tooltip>
@@ -555,6 +560,20 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           hideDropdownArrow
           maxRender={3}
         />
+      </WithDisplayPropertiesHOC>
+
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="releases">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <ReleaseSelect
+            workspaceSlug={workspaceSlug}
+            issueId={issue.id}
+            onChange={handleReleaseUpdate}
+            releaseIds={issue?.release_ids}
+            disabled={isReadOnly}
+            buttonClassName="text-11"
+            buttonVariant="border-with-text"
+          />
+        </div>
       </WithDisplayPropertiesHOC>
     </div>
   );

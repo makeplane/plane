@@ -282,6 +282,6 @@ class ReleaseWorkItemSearchEndpoint(BaseAPIView):
         if query:
             issues = search_issues(query, issues)
 
-        serializer = WorkitemSearchSerializer(issues[:20], many=True)
+        serializer = WorkitemSearchSerializer(issues[:30], many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

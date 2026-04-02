@@ -14,7 +14,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { Controller } from "react-hook-form";
-import type { Control, FieldErrors, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
+import type { Control, FieldErrors, UseFormSetValue } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/ui";
@@ -38,8 +38,7 @@ type Props = {
   workspaceSlug: string;
   releaseDetail?: Release;
   control: Control<ReleaseWrite>;
-  handleSubmit: UseFormHandleSubmit<ReleaseWrite>;
-  onSubmit: (data: ReleaseWrite) => Promise<void>;
+  handleSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   errors: FieldErrors<ReleaseWrite>;
   isSubmitting: boolean;
   handleClose: () => void;
@@ -47,8 +46,7 @@ type Props = {
 };
 
 export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm(props: Props) {
-  const { workspaceSlug, releaseDetail, control, handleSubmit, onSubmit, errors, isSubmitting, handleClose, setValue } =
-    props;
+  const { workspaceSlug, releaseDetail, control, handleSubmit, errors, isSubmitting, handleClose, setValue } = props;
 
   const { currentWorkspace } = useWorkspace();
   const {
@@ -72,7 +70,7 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
           workspaceSlug,
           data: {
             entity_identifier: releaseDetail?.id ?? "",
-            entity_type: EFileAssetType.MILESTONE_DESCRIPTION,
+            entity_type: EFileAssetType.RELEASE_DESCRIPTION,
           },
           file,
         });
@@ -92,7 +90,7 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
         const { asset_id } = await duplicateEditorAsset({
           assetId,
           entityId: releaseDetail?.id,
-          entityType: EFileAssetType.MILESTONE_DESCRIPTION,
+          entityType: EFileAssetType.RELEASE_DESCRIPTION,
           workspaceSlug,
         });
 
@@ -108,7 +106,7 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
   if (!workspaceSlug || !currentWorkspace) return null;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit}>
       <div className="space-y-3 p-5 pb-4">
         <h3 className="text-18 font-medium text-secondary">
           {isEdit
@@ -134,9 +132,6 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
                 placeholder={t("releases.label", { count: 1 })}
                 className="w-full text-14"
                 hasError={Boolean(errors.name)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") e.preventDefault();
-                }}
               />
               {errors.name && <div className="text-danger-primary text-11">{errors.name.message}</div>}
             </div>
@@ -151,8 +146,8 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
             <RichTextEditor
               editable
               id="release-modal-editor"
-              initialValue={!value ? "<p></p>" : value}
-              workspaceSlug={workspaceSlug.toString()}
+              initialValue={value ?? "<p></p>"}
+              workspaceSlug={workspaceSlug}
               workspaceId={currentWorkspace.id}
               dragDropEnabled={false}
               onChange={(json, html) => {
@@ -161,8 +156,7 @@ export const CreateUpdateReleaseForm = observer(function CreateUpdateReleaseForm
               }}
               placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
               searchMentionCallback={searchEntity}
-              editorClassName="text-11"
-              containerClassName="resize-none min-h-24 text-11 border-[0.5px] border-subtle rounded-md px-3 py-2"
+              containerClassName="min-h-24 border-[0.5px] border-subtle-1 rounded-md px-3 py-2"
               uploadFile={handleUploadFile}
               duplicateFile={handleDuplicateFile}
             />

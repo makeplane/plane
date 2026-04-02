@@ -344,6 +344,12 @@ export const projectRoutes: RouteConfigEntry[] = [
             "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/scope/page.tsx"
           ),
         ]),
+
+        // Release Changelog
+        route(
+          ":workspaceSlug/releases/:releaseId/changelog",
+          "./(all)/[workspaceSlug]/(projects)/releases/(detail)/[releaseId]/changelog/page.tsx"
+        ),
       ]),
     ]),
 

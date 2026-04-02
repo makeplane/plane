@@ -147,6 +147,13 @@ class ReleaseWriteSerializer(ReleaseSerializer):
                     batch_size=10,
                 )
 
+        changelog_description = Description.objects.create(
+            workspace_id=workspace_id, description_html="<p></p>", description_json={}
+        )
+        ReleaseChangelog.objects.create(
+            release_id=release.id, changelog_id=changelog_description.id, workspace_id=workspace_id
+        )
+
         return release
 
     def update(self, instance, validated_data):
@@ -341,10 +348,27 @@ class ReleaseActivitySerializer(BaseSerializer):
 
 
 class ReleaseChangelogSerializer(BaseSerializer):
+    changelog = DescriptionSerializer(read_only=True)
+    description_html = serializers.CharField(required=False, write_only=True, allow_blank=True)
+    description_json = serializers.JSONField(required=False, write_only=True)
+
     class Meta:
         model = ReleaseChangelog
         fields = "__all__"
         read_only_fields = ["workspace", "release"]
+
+    def update(self, instance, validated_data):
+        description_html = validated_data.pop("description_html", "<p></p>")
+        description_json = validated_data.pop("description_json", {})
+
+        if instance.changelog_id and description_html is not None:
+            Description.objects.filter(id=instance.changelog_id).update(
+                description_html=description_html,
+                description_json=description_json if description_json is not None else {},
+            )
+
+        instance.updated_at = timezone.now()
+        return super().update(instance, validated_data)
 
 
 class ReleaseAttachmentSerializer(BaseSerializer):

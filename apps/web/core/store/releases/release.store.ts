@@ -110,13 +110,30 @@ export class ReleaseStore implements IReleaseStore {
       removeWorkItems: async (workItemIds) => {
         await releaseService.removeWorkItems(workspaceSlug, release.id, workItemIds);
       },
-      canEditWorkItemProperties: (projectId: string) =>
-        this.rootStore.user.permission.allowPermissions(
-          [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-          EUserPermissionsLevel.PROJECT,
-          workspaceSlug,
-          projectId
+      changelog: {
+        fetch: async () => {
+          const res = await releaseService.retrieveChangelog(workspaceSlug, release.id);
+          return res;
+        },
+        update: async (data) => {
+          const res = await releaseService.updateChangelog(workspaceSlug, release.id, data);
+          return res;
+        },
+      },
+      permissions: {
+        canEditWorkItemProperties: (projectId: string) =>
+          this.rootStore.user.permission.allowPermissions(
+            [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+            EUserPermissionsLevel.PROJECT,
+            workspaceSlug,
+            projectId
+          ),
+        canEditChangelog: this.rootStore.user.permission.allowPermissions(
+          [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+          EUserPermissionsLevel.WORKSPACE,
+          workspaceSlug
         ),
+      },
     });
     this.releasesMap.set(release.id, instance);
     return instance;

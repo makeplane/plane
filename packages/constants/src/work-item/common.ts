@@ -181,6 +181,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "issue_type",
   "customer_request_count",
   "customer_count",
+  "releases",
 ];
 
 export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
@@ -244,6 +245,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "cycle", titleTranslationKey: "common.cycle" },
   { key: "customer_request_count", titleTranslationKey: "issue.display.properties.customer_request_count" },
   { key: "customer_count", titleTranslationKey: "issue.display.properties.customer_count" },
+  { key: "releases", titleTranslationKey: "issue.display.properties.releases" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -263,6 +265,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "sub_issue_count",
   "customer_request_count",
   "customer_count",
+  "releases",
 ];
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
@@ -402,6 +405,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "customer_count",
     descendingOrderTitle: "Least",
     icon: "CustomersIcon",
+  },
+  releases: {
+    i18n_title: "issue.display.properties.releases",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Old",
+    icon: "ReleaseIcon",
   },
 };
 

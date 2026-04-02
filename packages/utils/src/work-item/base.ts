@@ -298,7 +298,7 @@ export const getComputedDisplayFilters = (
  */
 export const getComputedDisplayProperties = (
   displayProperties: IIssueDisplayProperties | undefined = undefined
-): IIssueDisplayProperties => ({
+): Required<IIssueDisplayProperties> => ({
   assignee: displayProperties?.assignee ?? true,
   start_date: displayProperties?.start_date ?? true,
   due_date: displayProperties?.due_date ?? true,
@@ -317,6 +317,7 @@ export const getComputedDisplayProperties = (
   issue_type: displayProperties?.issue_type ?? true,
   customer_count: displayProperties?.customer_count ?? true,
   customer_request_count: displayProperties?.customer_request_count ?? true,
+  releases: displayProperties?.releases ?? true,
 });
 
 export const generateWorkItemLink = ({
