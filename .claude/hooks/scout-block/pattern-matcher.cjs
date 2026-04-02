@@ -6,31 +6,31 @@
  * Supports negation patterns (!) for allowlisting.
  */
 
-const Ignore = require("./vendor/ignore.cjs");
-const fs = require("fs");
-const path = require("path");
+const Ignore = require('./vendor/ignore.cjs');
+const fs = require('fs');
+const path = require('path');
 
 // Default patterns if .ckignore doesn't exist or is empty
 // Only includes directories with HEAVY file counts (1000+ files typical)
 const DEFAULT_PATTERNS = [
   // JavaScript/TypeScript - package dependencies & build outputs
-  "node_modules",
-  "dist",
-  "build",
-  ".next",
-  ".nuxt",
+  'node_modules',
+  'dist',
+  'build',
+  '.next',
+  '.nuxt',
   // Python - virtualenvs & cache
-  "__pycache__",
-  ".venv",
-  "venv",
+  '__pycache__',
+  '.venv',
+  'venv',
   // Go/PHP - vendor dependencies
-  "vendor",
+  'vendor',
   // Rust/Java - compiled outputs
-  "target",
+  'target',
   // Version control
-  ".git",
+  '.git',
   // Test coverage (can be large with reports)
-  "coverage",
+  'coverage',
 ];
 
 /**
@@ -46,15 +46,15 @@ function loadPatterns(ckignorePath) {
   }
 
   try {
-    const content = fs.readFileSync(ckignorePath, "utf-8");
+    const content = fs.readFileSync(ckignorePath, 'utf-8');
     const patterns = content
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line && !line.startsWith("#"));
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line && !line.startsWith('#'));
 
     return patterns.length > 0 ? patterns : DEFAULT_PATTERNS;
   } catch (error) {
-    console.error("WARN: Failed to read .ckignore:", error.message);
+    console.error('WARN: Failed to read .ckignore:', error.message);
     return DEFAULT_PATTERNS;
   }
 }
@@ -74,10 +74,10 @@ function createMatcher(patterns) {
   const normalizedPatterns = [];
 
   for (const p of patterns) {
-    if (p.startsWith("!")) {
+    if (p.startsWith('!')) {
       // Negation pattern - un-ignore
       const inner = p.slice(1);
-      if (inner.includes("/") || inner.includes("*")) {
+      if (inner.includes('/') || inner.includes('*')) {
         // Already has path or glob - use as-is
         normalizedPatterns.push(p);
       } else {
@@ -87,7 +87,7 @@ function createMatcher(patterns) {
       }
     } else {
       // Block pattern
-      if (p.includes("/") || p.includes("*")) {
+      if (p.includes('/') || p.includes('*')) {
         // Already has path or glob - use as-is
         normalizedPatterns.push(p);
       } else {
@@ -106,7 +106,7 @@ function createMatcher(patterns) {
   return {
     ig,
     patterns: normalizedPatterns,
-    original: patterns,
+    original: patterns
   };
 }
 
@@ -118,25 +118,25 @@ function createMatcher(patterns) {
  * @returns {Object} { blocked: boolean, pattern?: string }
  */
 function matchPath(matcher, testPath) {
-  if (!testPath || typeof testPath !== "string") {
+  if (!testPath || typeof testPath !== 'string') {
     return { blocked: false };
   }
 
   // Normalize path separators (Windows backslash to forward slash)
-  let normalized = testPath.replace(/\\/g, "/");
+  let normalized = testPath.replace(/\\/g, '/');
 
   // Remove leading ./ if present
-  if (normalized.startsWith("./")) {
+  if (normalized.startsWith('./')) {
     normalized = normalized.slice(2);
   }
 
   // Strip leading / for absolute paths (ignore lib requires relative paths)
-  while (normalized.startsWith("/")) {
+  while (normalized.startsWith('/')) {
     normalized = normalized.slice(1);
   }
 
   // Strip leading ../ segments (resolve parent references)
-  while (normalized.startsWith("../")) {
+  while (normalized.startsWith('../')) {
     normalized = normalized.slice(3);
   }
 
@@ -166,17 +166,17 @@ function matchPath(matcher, testPath) {
  */
 function findMatchingPattern(originalPatterns, path) {
   for (const p of originalPatterns) {
-    if (p.startsWith("!")) continue; // Skip negations
+    if (p.startsWith('!')) continue; // Skip negations
 
     // Simple substring check for common cases
-    const pattern = p.replace(/\*\*/g, "").replace(/\*/g, "");
+    const pattern = p.replace(/\*\*/g, '').replace(/\*/g, '');
     if (pattern && path.includes(pattern)) {
       return p;
     }
 
     // For more complex patterns, use ignore to test individually
     const tempIg = Ignore();
-    if (p.includes("/") || p.includes("*")) {
+    if (p.includes('/') || p.includes('*')) {
       tempIg.add(p);
     } else {
       tempIg.add([`**/${p}`, `**/${p}/**`, p, `${p}/**`]);
@@ -187,7 +187,7 @@ function findMatchingPattern(originalPatterns, path) {
     }
   }
 
-  return originalPatterns.find((p) => !p.startsWith("!")) || "unknown";
+  return originalPatterns.find(p => !p.startsWith('!')) || 'unknown';
 }
 
 module.exports = {
@@ -195,5 +195,5 @@ module.exports = {
   createMatcher,
   matchPath,
   findMatchingPattern,
-  DEFAULT_PATTERNS,
+  DEFAULT_PATTERNS
 };

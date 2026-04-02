@@ -24,29 +24,24 @@ Structured problem-solving via manageable, reflective thought sequences with dyn
 ## Core Process
 
 ### 1. Start with Loose Estimate
-
 ```
 Thought 1/5: [Initial analysis]
 ```
-
 Adjust dynamically as understanding evolves.
 
 ### 2. Structure Each Thought
-
 - Build on previous context explicitly
 - Address one aspect per thought
 - State assumptions, uncertainties, realizations
 - Signal what next thought should address
 
 ### 3. Apply Dynamic Adjustment
-
 - **Expand**: More complexity discovered → increase total
 - **Contract**: Simpler than expected → decrease total
 - **Revise**: New insight invalidates previous → mark revision
 - **Branch**: Multiple approaches → explore alternatives
 
 ### 4. Use Revision When Needed
-
 ```
 Thought 5/8 [REVISION of Thought 2]: [Corrected understanding]
 - Original: [What was stated]
@@ -55,29 +50,23 @@ Thought 5/8 [REVISION of Thought 2]: [Corrected understanding]
 ```
 
 ### 5. Branch for Alternatives
-
 ```
 Thought 4/7 [BRANCH A from Thought 2]: [Approach A]
 Thought 4/7 [BRANCH B from Thought 2]: [Approach B]
 ```
-
 Compare explicitly, converge with decision rationale.
 
 ### 6. Generate & Verify Hypotheses
-
 ```
 Thought 6/9 [HYPOTHESIS]: [Proposed solution]
 Thought 7/9 [VERIFICATION]: [Test results]
 ```
-
 Iterate until hypothesis verified.
 
 ### 7. Complete Only When Ready
-
 Mark final: `Thought N/N [FINAL]`
 
 Complete when:
-
 - Solution verified
 - All critical aspects addressed
 - Confidence achieved
@@ -92,7 +81,6 @@ Complete when:
 ## Scripts (Optional)
 
 Optional scripts for deterministic validation/tracking:
-
 - `scripts/process-thought.js` - Validate & track thoughts with history
 - `scripts/format-thought.js` - Format for display (box/markdown/simple)
 
@@ -101,7 +89,6 @@ See README.md for usage examples. Use when validation/persistence needed; otherw
 ## References
 
 Load when deeper understanding needed:
-
 - `references/core-patterns.md` - Revision & branching patterns
 - `references/examples-api.md` - API design example
 - `references/examples-debug.md` - Debugging example

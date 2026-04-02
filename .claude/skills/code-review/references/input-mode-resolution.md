@@ -11,15 +11,15 @@ Resolve `/code-review` arguments into a diff for the review pipeline.
 
 Parse arguments left-to-right. First match wins.
 
-| Pattern               | Mode     | Example                                |
-| --------------------- | -------- | -------------------------------------- |
-| `#\d+`                | PR       | `#123`, `#45`                          |
-| GitHub PR URL         | PR       | `https://github.com/org/repo/pull/123` |
-| `[0-9a-f]{7,40}`      | Commit   | `abc1234`, full SHA                    |
-| `--pending`           | Pending  | explicit flag                          |
-| `codebase`            | Codebase | existing mode                          |
-| _(none + context)_    | Default  | recent changes                         |
-| _(none + no context)_ | Prompt   | ask user via `AskUserQuestion`         |
+| Pattern | Mode | Example |
+|---------|------|---------|
+| `#\d+` | PR | `#123`, `#45` |
+| GitHub PR URL | PR | `https://github.com/org/repo/pull/123` |
+| `[0-9a-f]{7,40}` | Commit | `abc1234`, full SHA |
+| `--pending` | Pending | explicit flag |
+| `codebase` | Codebase | existing mode |
+| *(none + context)* | Default | recent changes |
+| *(none + no context)* | Prompt | ask user via `AskUserQuestion` |
 
 ## Resolution Commands
 
@@ -40,7 +40,6 @@ gh pr diff "$PR_NUM" --name-only
 ```
 
 **Context passed to reviewers:**
-
 - PR title and description (intent)
 - Base branch (what it merges into)
 - Full diff
@@ -64,7 +63,6 @@ git show "$COMMIT_HASH" --name-only --format=""
 ```
 
 **Context passed to reviewers:**
-
 - Commit message (intent)
 - Parent commit (what it changed from)
 - Full diff
@@ -90,7 +88,6 @@ git status --short
 ```
 
 **Context passed to reviewers:**
-
 - No commit message yet — ask user for brief intent description
 - Combined diff (staged + unstaged)
 - Changed file list for scout
@@ -102,7 +99,6 @@ Use recent changes already in conversation context. If no changes apparent, fall
 ### Prompt Mode
 
 When no arguments and no recent context, use `AskUserQuestion`:
-
 - Header: "Review Target"
 - Question: "What would you like to review?"
 - Options: Pending changes, Enter PR number, Enter commit hash, Full codebase scan, Parallel codebase audit
@@ -112,7 +108,6 @@ For PR/commit options, follow up with second `AskUserQuestion` to get the number
 ### Codebase Mode
 
 Codebase modes bypass diff resolution — they scan the full codebase instead.
-
 - `codebase` → hand off to `references/codebase-scan-workflow.md`
 - `codebase parallel` → hand off to `references/parallel-review-workflow.md`
 
@@ -132,9 +127,9 @@ Resolved diff
 
 ## Error Handling
 
-| Error              | Action                                                           |
-| ------------------ | ---------------------------------------------------------------- |
-| PR not found       | `gh pr view` fails → report "PR #N not found in this repo"       |
-| Commit not found   | `git cat-file` fails → report "Commit not found — is it pushed?" |
-| No pending changes | `git diff HEAD` empty → report "No pending changes to review"    |
-| Ambiguous input    | Could be PR or commit → prefer PR (more common), note assumption |
+| Error | Action |
+|-------|--------|
+| PR not found | `gh pr view` fails → report "PR #N not found in this repo" |
+| Commit not found | `git cat-file` fails → report "Commit not found — is it pushed?" |
+| No pending changes | `git diff HEAD` empty → report "No pending changes to review" |
+| Ambiguous input | Could be PR or commit → prefer PR (more common), note assumption |

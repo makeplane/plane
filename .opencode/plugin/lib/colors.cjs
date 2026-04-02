@@ -25,6 +25,31 @@ const shouldUseColor = (() => {
   return true;
 })();
 
+// Mutable override (set by statusline.cjs from config)
+// null = use env detection, true/false = explicit override
+let _colorOverride = null;
+
+/**
+ * Set explicit color enable/disable override (from config)
+ * Pass null to revert to env-var detection
+ * @param {boolean} enabled
+ */
+function setColorEnabled(enabled) {
+  _colorOverride = enabled;
+}
+
+/**
+ * Determine if colors should be rendered, respecting env vars and config override
+ * NO_COLOR env var always takes precedence over config override
+ * @returns {boolean}
+ */
+function isColorEnabled() {
+  // NO_COLOR env var is a hard override that always wins
+  if (process.env.NO_COLOR) return false;
+  if (_colorOverride !== null) return _colorOverride;
+  return shouldUseColor;
+}
+
 // Detect 256-color support via COLORTERM
 const has256Color = (() => {
   const ct = process.env.COLORTERM;
@@ -38,7 +63,7 @@ const has256Color = (() => {
  * @returns {string} Colorized text or plain text if colors disabled
  */
 function colorize(text, code) {
-  if (!shouldUseColor) return String(text);
+  if (!isColorEnabled()) return String(text);
   return `${code}${text}${RESET}`;
 }
 
@@ -72,7 +97,7 @@ function coloredBar(percent, width = 12) {
   const filled = Math.round((clamped / 100) * width);
   const empty = width - filled;
 
-  if (!shouldUseColor) {
+  if (!isColorEnabled()) {
     return '▰'.repeat(filled) + '▱'.repeat(empty);
   }
 
@@ -91,5 +116,7 @@ module.exports = {
   getContextColor,
   coloredBar,
   shouldUseColor,
-  has256Color
+  has256Color,
+  setColorEnabled,
+  isColorEnabled
 };

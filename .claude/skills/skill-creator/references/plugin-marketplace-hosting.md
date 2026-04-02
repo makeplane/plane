@@ -17,19 +17,17 @@ Benefits: version control, issue tracking, team collaboration.
 ## Private Repositories
 
 ### Manual Install/Update
-
 Uses existing git credential helpers. If `git clone` works in terminal, it works in Claude Code.
 Common helpers: `gh auth login` (GitHub), macOS Keychain, `git-credential-store`.
 
 ### Background Auto-Updates
-
 Runs at startup without credential helpers. Set auth tokens in environment:
 
-| Provider  | Env Variables                | Notes                      |
-| --------- | ---------------------------- | -------------------------- |
-| GitHub    | `GITHUB_TOKEN` or `GH_TOKEN` | PAT or GitHub App token    |
-| GitLab    | `GITLAB_TOKEN` or `GL_TOKEN` | PAT or project token       |
-| Bitbucket | `BITBUCKET_TOKEN`            | App password or repo token |
+| Provider | Env Variables | Notes |
+|----------|--------------|-------|
+| GitHub | `GITHUB_TOKEN` or `GH_TOKEN` | PAT or GitHub App token |
+| GitLab | `GITLAB_TOKEN` or `GL_TOKEN` | PAT or project token |
+| Bitbucket | `BITBUCKET_TOKEN` | App password or repo token |
 
 ```bash
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
@@ -68,11 +66,11 @@ Add to `.claude/settings.json` in your repo:
 
 Admins restrict allowed marketplaces via `strictKnownMarketplaces` in managed settings:
 
-| Value           | Behavior                                   |
-| --------------- | ------------------------------------------ |
-| Undefined       | No restrictions, users add any marketplace |
-| Empty `[]`      | Complete lockdown, no new marketplaces     |
-| List of sources | Users can only add matching marketplaces   |
+| Value | Behavior |
+|-------|----------|
+| Undefined | No restrictions, users add any marketplace |
+| Empty `[]` | Complete lockdown, no new marketplaces |
+| List of sources | Users can only add matching marketplaces |
 
 ### Allow Specific Only
 
@@ -90,7 +88,9 @@ Admins restrict allowed marketplaces via `strictKnownMarketplaces` in managed se
 
 ```json
 {
-  "strictKnownMarketplaces": [{ "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }]
+  "strictKnownMarketplaces": [
+    { "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }
+  ]
 }
 ```
 

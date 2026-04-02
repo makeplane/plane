@@ -13,16 +13,16 @@ Create distinctive, production-grade frontend interfaces. Implement real working
 
 Choose workflow based on input type:
 
-| Input                            | Workflow                  | Reference                                  |
-| -------------------------------- | ------------------------- | ------------------------------------------ |
-| Screenshot                       | Replicate exactly         | `./references/workflow-screenshot.md`      |
-| Video                            | Replicate with animations | `./references/workflow-video.md`           |
-| Screenshot/Video (describe only) | Document for devs         | `./references/workflow-describe.md`        |
-| 3D/WebGL request                 | Three.js immersive        | `./references/workflow-3d.md`              |
-| Quick task                       | Rapid implementation      | `./references/workflow-quick.md`           |
-| Complex/award-quality            | Full immersive            | `./references/workflow-immersive.md`       |
-| Existing project upgrade         | Redesign Audit            | `./references/redesign-audit-checklist.md` |
-| From scratch                     | Design Thinking below     | -                                          |
+| Input | Workflow | Reference |
+|-------|----------|-----------|
+| Screenshot | Replicate exactly | `./references/workflow-screenshot.md` |
+| Video | Replicate with animations | `./references/workflow-video.md` |
+| Screenshot/Video (describe only) | Document for devs | `./references/workflow-describe.md` |
+| 3D/WebGL request | Three.js immersive | `./references/workflow-3d.md` |
+| Quick task | Rapid implementation | `./references/workflow-quick.md` |
+| Complex/award-quality | Full immersive | `./references/workflow-immersive.md` |
+| Existing project upgrade | Redesign Audit | `./references/redesign-audit-checklist.md` |
+| From scratch | Design Thinking below | - |
 
 **All workflows**: Activate `ck:ui-ux-pro-max` skill FIRST for design intelligence.
 
@@ -42,11 +42,11 @@ See specific workflow files for detailed steps.
 
 Three configurable parameters that drive design decisions. Set defaults at session start or let user override via chat:
 
-| Dial               | Default | Range | Low (1-3)                                       | High (8-10)                                                              |
-| ------------------ | ------- | ----- | ----------------------------------------------- | ------------------------------------------------------------------------ |
-| `DESIGN_VARIANCE`  | 8       | 1-10  | Perfect symmetry, centered layouts, equal grids | Asymmetric, masonry, massive empty zones, fractional CSS Grid            |
-| `MOTION_INTENSITY` | 6       | 1-10  | CSS hover/active states only                    | Framer Motion scroll reveals, spring physics, perpetual micro-animations |
-| `VISUAL_DENSITY`   | 4       | 1-10  | Art gallery — huge whitespace, expensive/clean  | Cockpit — tiny paddings, 1px dividers, monospace numbers everywhere      |
+| Dial | Default | Range | Low (1-3) | High (8-10) |
+|------|---------|-------|-----------|-------------|
+| `DESIGN_VARIANCE` | 8 | 1-10 | Perfect symmetry, centered layouts, equal grids | Asymmetric, masonry, massive empty zones, fractional CSS Grid |
+| `MOTION_INTENSITY` | 6 | 1-10 | CSS hover/active states only | Framer Motion scroll reveals, spring physics, perpetual micro-animations |
+| `VISUAL_DENSITY` | 4 | 1-10 | Art gallery — huge whitespace, expensive/clean | Cockpit — tiny paddings, 1px dividers, monospace numbers everywhere |
 
 **Usage:** These values drive specific rules. At `DESIGN_VARIANCE > 4`, centered heroes are overused — force split-screen or left-aligned layouts. At `MOTION_INTENSITY > 5`, embed perpetual micro-animations. At `VISUAL_DENSITY > 7`, remove generic cards and use spacing/dividers.
 
@@ -55,7 +55,6 @@ See `./references/bento-motion-engine.md` for dial-driven SaaS dashboard impleme
 ## Design Thinking (From Scratch)
 
 Before coding, commit to a BOLD aesthetic direction:
-
 - **Purpose**: What problem does this interface solve? Who uses it?
 - **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
 - **Constraints**: Technical requirements (framework, performance, accessibility).
@@ -74,19 +73,19 @@ Before coding, commit to a BOLD aesthetic direction:
 
 ## Asset & Analysis References
 
-| Task                         | Reference                                    |
-| ---------------------------- | -------------------------------------------- |
-| Generate assets              | `./references/asset-generation.md`           |
-| Analyze quality              | `./references/visual-analysis-overview.md`   |
-| Extract guidelines           | `./references/design-extraction-overview.md` |
-| Optimization                 | `./references/technical-overview.md`         |
-| Animations                   | `./references/animejs.md`                    |
-| Magic UI (80+ components)    | `./references/magicui-components.md`         |
-| Anti-slop forbidden patterns | `./references/anti-slop-rules.md`            |
-| Redesign audit checklist     | `./references/redesign-audit-checklist.md`   |
-| Premium design patterns      | `./references/premium-design-patterns.md`    |
-| Performance guardrails       | `./references/performance-guardrails.md`     |
-| Bento motion engine (SaaS)   | `./references/bento-motion-engine.md`        |
+| Task | Reference |
+|------|-----------|
+| Generate assets | `./references/asset-generation.md` |
+| Analyze quality | `./references/visual-analysis-overview.md` |
+| Extract guidelines | `./references/design-extraction-overview.md` |
+| Optimization | `./references/technical-overview.md` |
+| Animations | `./references/animejs.md` |
+| Magic UI (80+ components) | `./references/magicui-components.md` |
+| Anti-slop forbidden patterns | `./references/anti-slop-rules.md` |
+| Redesign audit checklist | `./references/redesign-audit-checklist.md` |
+| Premium design patterns | `./references/premium-design-patterns.md` |
+| Performance guardrails | `./references/performance-guardrails.md` |
+| Bento motion engine (SaaS) | `./references/bento-motion-engine.md` |
 
 Quick start: `./references/ai-multimodal-overview.md`
 

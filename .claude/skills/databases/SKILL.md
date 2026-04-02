@@ -15,7 +15,6 @@ Unified guide for working with MongoDB (document-oriented) and PostgreSQL (relat
 ## When to Use This Skill
 
 Use when:
-
 - Designing database schemas and data models
 - Writing queries (SQL or MongoDB query language)
 - Building aggregation pipelines or complex joins
@@ -30,18 +29,15 @@ Use when:
 ## Reference Navigation
 
 ### Database Design
-
 - **[db-design.md](references/db-design.md)** - Activate when user requests: Database/table design for transactional (OLTP), analytics (OLAP), create or extend schema, design fact/dimension tables, analyze/review CSV/JSON/SQL files to create tables, or need advice on data storage structure.
 
 ### MongoDB References
-
 - **[mongodb-crud.md](references/mongodb-crud.md)** - CRUD operations, query operators, atomic updates
 - **[mongodb-aggregation.md](references/mongodb-aggregation.md)** - Aggregation pipeline, stages, operators, patterns
 - **[mongodb-indexing.md](references/mongodb-indexing.md)** - Index types, compound indexes, performance optimization
 - **[mongodb-atlas.md](references/mongodb-atlas.md)** - Atlas cloud setup, clusters, monitoring, search
 
 ### PostgreSQL References
-
 - **[postgresql-queries.md](references/postgresql-queries.md)** - SELECT, JOINs, subqueries, CTEs, window functions
 - **[postgresql-psql-cli.md](references/postgresql-psql-cli.md)** - psql commands, meta-commands, scripting
 - **[postgresql-performance.md](references/postgresql-performance.md)** - EXPLAIN, query optimization, vacuum, indexes
@@ -50,7 +46,6 @@ Use when:
 ## Python Utilities
 
 Database utility scripts in `scripts/`:
-
 - **db_migrate.py** - Generate and apply migrations for both databases (MongoDB and PostgreSQL)
 - **db_backup.py** - Backup and restore MongoDB and PostgreSQL
 - **db_performance_check.py** - Analyze slow queries and recommend indexes
@@ -69,7 +64,6 @@ python scripts/db_performance_check.py --db mongodb --threshold 100ms
 ## Best Practices
 
 **MongoDB:**
-
 - Use embedded documents for 1-to-few relationships
 - Reference documents for 1-to-many or many-to-many
 - Index frequently queried fields
@@ -78,7 +72,6 @@ python scripts/db_performance_check.py --db mongodb --threshold 100ms
 - Use Atlas for managed hosting
 
 **PostgreSQL:**
-
 - Normalize schema to 3NF, denormalize for performance
 - Use foreign keys for referential integrity
 - Index foreign keys and frequently filtered columns

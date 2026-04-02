@@ -121,10 +121,27 @@ function getPythonPaths() {
 }
 
 /**
- * Find Python binary using fast filesystem check
+ * Find Python binary using fast `which` lookup first, then filesystem check
  * @returns {string|null} Python binary path or null
  */
 function findPythonBinary() {
+  // Fast path: try `which` command first (10ms vs 2000ms per path)
+  if (process.platform !== 'win32') {
+    const whichPython3 = execSafe('which python3', 500);
+    if (whichPython3 && isValidPythonPath(whichPython3)) return whichPython3;
+
+    const whichPython = execSafe('which python', 500);
+    if (whichPython && isValidPythonPath(whichPython)) return whichPython;
+  } else {
+    // Windows: try `where` command
+    const wherePython = execSafe('where python', 500);
+    if (wherePython) {
+      const firstPath = wherePython.split('\n')[0].trim();
+      if (isValidPythonPath(firstPath)) return firstPath;
+    }
+  }
+
+  // Fallback: check known paths
   const paths = getPythonPaths();
   for (const p of paths) {
     if (isValidPythonPath(p)) return p;
@@ -157,10 +174,34 @@ function getPythonVersion() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
+ * Check if current directory is inside a git repository (fast check)
+ * Uses filesystem traversal instead of git command to avoid command failures
+ * @param {string} [startDir] - Directory to check from (defaults to cwd)
+ * @returns {boolean}
+ */
+function isGitRepo(startDir) {
+  let dir;
+  try {
+    dir = startDir || process.cwd();
+  } catch (e) {
+    // CWD deleted or inaccessible
+    return false;
+  }
+  const root = path.parse(dir).root;
+
+  while (dir !== root) {
+    if (fs.existsSync(path.join(dir, '.git'))) return true;
+    dir = path.dirname(dir);
+  }
+  return fs.existsSync(path.join(root, '.git'));
+}
+
+/**
  * Get git remote URL
  * @returns {string|null}
  */
 function getGitRemoteUrl() {
+  if (!isGitRepo()) return null;
   return execSafe('git config --get remote.origin.url');
 }
 
@@ -169,6 +210,7 @@ function getGitRemoteUrl() {
  * @returns {string|null}
  */
 function getGitBranch() {
+  if (!isGitRepo()) return null;
   return execSafe('git branch --show-current');
 }
 
@@ -177,6 +219,7 @@ function getGitBranch() {
  * @returns {string|null}
  */
 function getGitRoot() {
+  if (!isGitRepo()) return null;
   return execSafe('git rev-parse --show-toplevel');
 }
 
@@ -413,6 +456,7 @@ module.exports = {
   isValidPythonPath,
 
   // Git detection
+  isGitRepo,
   getGitRemoteUrl,
   getGitBranch,
   getGitRoot,

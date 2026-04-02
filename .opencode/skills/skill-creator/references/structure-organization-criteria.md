@@ -21,7 +21,7 @@ Proper structure enables discovery and maintainability.
 
 ```yaml
 ---
-name: skill-name
+name: skill-name  # optional namespace: ck:skill-name
 description: Under 200 chars, specific triggers
 license: Optional
 version: Optional

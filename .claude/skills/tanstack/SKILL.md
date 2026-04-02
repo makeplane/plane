@@ -28,7 +28,6 @@ npm run build                        # production build
 ```
 
 ### Project Structure
-
 ```
 src/
 ├── routes/
@@ -42,37 +41,35 @@ app.config.ts               # Nitro/Start config
 ```
 
 ### Server Function
-
 ```ts
-import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
 
-const getUser = createServerFn({ method: "GET" })
+const getUser = createServerFn({ method: 'GET' })
   .validator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => db.user.findUnique({ where: { id: data.id } }));
+  .handler(async ({ data }) => db.user.findUnique({ where: { id: data.id } }))
 ```
 
 ### Route with Loader
-
 ```ts
-export const Route = createFileRoute("/posts/$postId")({
+export const Route = createFileRoute('/posts/$postId')({
   loader: ({ params }) => getPost({ data: { id: params.postId } }),
   component: PostComponent,
-});
+})
 function PostComponent() {
-  const post = Route.useLoaderData();
-  return <div>{post.title}</div>;
+  const post = Route.useLoaderData()
+  return <div>{post.title}</div>
 }
 ```
 
 ### Middleware
-
 ```ts
-import { createMiddleware } from "@tanstack/react-start";
-export const authMiddleware = createMiddleware().server(async ({ next, context }) => {
-  const session = await getSession(context.request);
-  return next({ context: { user: session.user } });
-});
+import { createMiddleware } from '@tanstack/react-start'
+export const authMiddleware = createMiddleware()
+  .server(async ({ next, context }) => {
+    const session = await getSession(context.request)
+    return next({ context: { user: session.user } })
+  })
 ```
 
 ## TanStack Form
@@ -80,16 +77,14 @@ export const authMiddleware = createMiddleware().server(async ({ next, context }
 Headless, type-safe form library. Detailed API: `references/tanstack-form.md`
 
 ```tsx
-import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 
 const form = useForm({
-  defaultValues: { email: "", age: 0 },
+  defaultValues: { email: '', age: 0 },
   validatorAdapter: zodValidator,
-  onSubmit: async ({ value }) => {
-    await saveUser(value);
-  },
-});
+  onSubmit: async ({ value }) => { await saveUser(value) },
+})
 
 // JSX: <form.Field name="email" validators={{ onChange: z.string().email() }}>
 //   {(f) => <input value={f.state.value} onChange={e => f.handleChange(e.target.value)} />}
@@ -104,32 +99,32 @@ AI streaming + chat hooks. Detailed API: `references/tanstack-ai.md`
 
 ```tsx
 // Client
-import { useChat } from "@tanstack/react-ai";
+import { useChat } from '@tanstack/react-ai'
 const { messages, sendMessage } = useChat({
-  connection: fetchServerSentEvents("/api/chat"),
-});
+  connection: fetchServerSentEvents('/api/chat'),
+})
 
 // Server (TanStack Start)
-import { chat, toStreamResponse } from "@tanstack/ai";
-import { openaiAdapter } from "@tanstack/ai-openai";
-export const chatRoute = createAPIFileRoute("/api/chat")({
+import { chat, toStreamResponse } from '@tanstack/ai'
+import { openaiAdapter } from '@tanstack/ai-openai'
+export const chatRoute = createAPIFileRoute('/api/chat')({
   POST: async ({ request }) => {
-    const stream = chat({ adapter: openaiAdapter, messages, model: "gpt-4o" });
-    return toStreamResponse(stream);
+    const stream = chat({ adapter: openaiAdapter, messages, model: 'gpt-4o' })
+    return toStreamResponse(stream)
   },
-});
+})
 ```
 
 Supports: OpenAI, Anthropic, Google Gemini, Ollama. Features: structured output (Zod), isomorphic tools, multimodal.
 
 ## TanStack Start vs Others
 
-|             | TanStack Start            | Next.js          | Remix         |
-| ----------- | ------------------------- | ---------------- | ------------- |
-| Philosophy  | Client-first, opt-in SSR  | Server-first     | Web-standards |
-| Type Safety | Full end-to-end inference | Partial          | Partial       |
-| RSC         | Planned (not yet)         | First-class      | No            |
-| Deploy      | Nitro (anywhere)          | Vercel-optimized | Adapter-based |
+| | TanStack Start | Next.js | Remix |
+|--|--|--|--|
+| Philosophy | Client-first, opt-in SSR | Server-first | Web-standards |
+| Type Safety | Full end-to-end inference | Partial | Partial |
+| RSC | Planned (not yet) | First-class | No |
+| Deploy | Nitro (anywhere) | Vercel-optimized | Adapter-based |
 
 ## Security
 

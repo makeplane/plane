@@ -243,5 +243,5 @@ examples:
 
 Use with:
 - `brand-guidelines` skill - Align with brand voice
-- `/youtube:blog` command - Apply style to video-to-article
-- `/content:good` command - Style-aware content generation
+- video-to-article workflow - Apply extracted style to long-form output
+- `ck:copywriting` skill workflows - Style-aware content generation

@@ -37,14 +37,13 @@ function getPositionalArgs(): string[] {
 }
 
 const prompt = getPositionalArgs()[0];
-const projectId = getFlag("project") || process.env.STITCH_PROJECT_ID || "claudekit-default";
+const projectId =
+  getFlag("project") || process.env.STITCH_PROJECT_ID || "claudekit-default";
 const deviceType = (getFlag("device") as "mobile" | "desktop" | "tablet") || undefined;
 const variantCount = getFlag("variants") ? parseInt(getFlag("variants")!, 10) : 0;
 
 if (!prompt) {
-  console.error(
-    "Usage: npx tsx stitch-generate.ts <prompt> [--project <id>] [--device mobile|desktop|tablet] [--variants <count>]"
-  );
+  console.error("Usage: npx tsx stitch-generate.ts <prompt> [--project <id>] [--device mobile|desktop|tablet] [--variants <count>]");
   process.exit(1);
 }
 

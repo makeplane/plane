@@ -127,7 +127,6 @@ Remember: These journals are for the development team to learn from failures and
 ## Team Mode (when spawned as teammate)
 
 When operating as a team member:
-
 1. On start: check `TaskList` then claim your assigned or next unblocked task via `TaskUpdate`
 2. Read full task description via `TaskGet` before starting work
 3. Only create/edit journal files in `./docs/journals/` — do not modify code files

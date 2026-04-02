@@ -445,6 +445,31 @@
     setTimeout(() => initMermaidExpand(), 100);
   }
 
+  // Compute width and left offset for an expanded wrapper to fill .main-content
+  // without using viewport units (immune to sidebar state changes)
+  function applyExpandLayout(wrapper, isExpanded) {
+    if (!isExpanded) {
+      wrapper.style.width = '';
+      wrapper.style.left = '';
+      return;
+    }
+    const mainContent = document.querySelector('.main-content');
+    if (!mainContent) return;
+    const mainRect = mainContent.getBoundingClientRect();
+    const mainPadding = parseFloat(getComputedStyle(mainContent).paddingLeft) || 0;
+    const availableWidth = mainRect.width - mainPadding * 2;
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const offset = mainRect.left + mainPadding - wrapperRect.left;
+    wrapper.style.width = availableWidth + 'px';
+    wrapper.style.left = offset + 'px';
+  }
+
+  // Recalculate expanded wrappers on resize or sidebar toggle
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.mermaid-wrapper.expanded, .code-wrapper.expanded')
+      .forEach(w => applyExpandLayout(w, true));
+  });
+
   // Initialize Mermaid expand toggle buttons
   function initMermaidExpand() {
     // Find all rendered mermaid diagrams not already wrapped
@@ -469,13 +494,26 @@
         <span class="icon-collapse">⤡</span>
       `;
 
-      // Toggle handler
-      btn.addEventListener('click', () => {
+      // Toggle handler — expand to fill .main-content, re-render at new width
+      btn.addEventListener('click', async () => {
         const isExpanded = wrapper.classList.toggle('expanded');
         btn.setAttribute('aria-label', isExpanded
           ? 'Collapse diagram'
           : 'Expand diagram to full width'
         );
+        applyExpandLayout(wrapper, isExpanded);
+
+        // Re-render mermaid at the new container width for crisp output
+        const source = diagram.dataset.mermaidSource;
+        if (source && window.mermaidModule) {
+          diagram.textContent = source;
+          diagram.removeAttribute('data-processed');
+          try {
+            await window.mermaidModule.run({ nodes: [diagram], suppressErrors: false });
+          } catch (e) {
+            console.error('Mermaid re-render on expand failed:', e);
+          }
+        }
       });
 
       // Insert wrapper before diagram
@@ -486,6 +524,64 @@
 
       // Add button to wrapper
       wrapper.appendChild(btn);
+    });
+  }
+
+  // Initialize code block expand toggle buttons (for wide ASCII art)
+  function initCodeExpand() {
+    // Find all pre elements that are not mermaid and not already wrapped
+    const codeBlocks = document.querySelectorAll('pre:not(.mermaid)');
+
+    codeBlocks.forEach(pre => {
+      // Skip if already wrapped or inside mermaid error
+      if (pre.parentElement?.classList.contains('code-wrapper') ||
+          pre.parentElement?.classList.contains('mermaid-error')) {
+        return;
+      }
+
+      // Only add expand button if content is wider than container
+      // Check if scrollWidth > clientWidth (has horizontal overflow)
+      if (pre.scrollWidth <= pre.clientWidth + 10) {
+        return; // No overflow, no need for expand button
+      }
+
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-wrapper';
+
+      // Create expand button
+      const btn = document.createElement('button');
+      btn.className = 'code-expand-btn';
+      btn.setAttribute('aria-label', 'Expand code block to full width');
+      btn.innerHTML = `
+        <span class="icon-expand">⤢</span>
+        <span class="icon-collapse">⤡</span>
+      `;
+
+      // Toggle handler — expand to fill .main-content
+      btn.addEventListener('click', () => {
+        const isExpanded = wrapper.classList.toggle('expanded');
+        btn.setAttribute('aria-label', isExpanded
+          ? 'Collapse code block'
+          : 'Expand code block to full width'
+        );
+        applyExpandLayout(wrapper, isExpanded);
+      });
+
+      // Insert wrapper before pre
+      pre.parentNode.insertBefore(wrapper, pre);
+
+      // Move pre into wrapper
+      wrapper.appendChild(pre);
+
+      // Add button to wrapper
+      wrapper.appendChild(btn);
+
+      // Auto-expand overflowing code blocks to fill available width
+      // (user can collapse back via the button)
+      wrapper.classList.add('expanded');
+      btn.setAttribute('aria-label', 'Collapse code block');
+      applyExpandLayout(wrapper, true);
     });
   }
 
@@ -690,6 +786,14 @@
       // Initialize expand buttons after mermaid renders
       setTimeout(() => initMermaidExpand(), 100);
     });
+    // Initialize code block expand buttons after fonts load
+    // (font metrics affect scrollWidth used for overflow detection)
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => initCodeExpand());
+    } else {
+      // Fallback for browsers without Font Loading API
+      setTimeout(() => initCodeExpand(), 300);
+    }
 
     // Event listeners
     themeToggle?.addEventListener('click', toggleTheme);

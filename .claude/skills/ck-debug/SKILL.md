@@ -114,7 +114,6 @@ Frontend fix   → frontend-verification.md (Chrome/devtools)
 ## Red Flags
 
 Stop and follow process if thinking:
-
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "It's probably X, let me fix that"

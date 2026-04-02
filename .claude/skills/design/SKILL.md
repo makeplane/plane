@@ -25,17 +25,17 @@ Unified design skill: brand, tokens, UI, logo, CIP, slides, banners, social phot
 
 ## Sub-skill Routing
 
-| Task                          | Sub-skill                | Details                                 |
-| ----------------------------- | ------------------------ | --------------------------------------- |
-| Brand identity, voice, assets | `brand`                  | External skill                          |
-| Tokens, specs, CSS vars       | `design-system`          | External skill                          |
-| shadcn/ui, Tailwind, code     | `ui-styling`             | External skill                          |
-| Logo creation, AI generation  | Logo (built-in)          | `references/logo-design.md`             |
-| CIP mockups, deliverables     | CIP (built-in)           | `references/cip-design.md`              |
-| Presentations, pitch decks    | Slides (built-in)        | `references/slides.md`                  |
-| Banners, covers, headers      | Banner (built-in)        | `references/banner-sizes-and-styles.md` |
-| Social media images/photos    | Social Photos (built-in) | `references/social-photos-design.md`    |
-| SVG icons, icon sets          | Icon (built-in)          | `references/icon-design.md`             |
+| Task | Sub-skill | Details |
+|------|-----------|---------|
+| Brand identity, voice, assets | `brand` | External skill |
+| Tokens, specs, CSS vars | `design-system` | External skill |
+| shadcn/ui, Tailwind, code | `ui-styling` | External skill |
+| Logo creation, AI generation | Logo (built-in) | `references/logo-design.md` |
+| CIP mockups, deliverables | CIP (built-in) | `references/cip-design.md` |
+| Presentations, pitch decks | Slides (built-in) | `references/slides.md` |
+| Banners, covers, headers | Banner (built-in) | `references/banner-sizes-and-styles.md` |
+| Social media images/photos | Social Photos (built-in) | `references/social-photos-design.md` |
+| SVG icons, icon sets | Icon (built-in) | `references/icon-design.md` |
 
 ## Logo Design (Built-in)
 
@@ -121,13 +121,13 @@ Load `references/slides-create.md` for the creation workflow.
 
 ### Slides: Knowledge Base
 
-| Topic           | File                                        |
-| --------------- | ------------------------------------------- |
-| Creation Guide  | `references/slides-create.md`               |
-| Layout Patterns | `references/slides-layout-patterns.md`      |
-| HTML Template   | `references/slides-html-template.md`        |
-| Copywriting     | `references/slides-copywriting-formulas.md` |
-| Strategies      | `references/slides-strategies.md`           |
+| Topic | File |
+|-------|------|
+| Creation Guide | `references/slides-create.md` |
+| Layout Patterns | `references/slides-layout-patterns.md` |
+| HTML Template | `references/slides-html-template.md` |
+| Copywriting | `references/slides-copywriting-formulas.md` |
+| Strategies | `references/slides-strategies.md` |
 
 ## Banner Design (Built-in)
 
@@ -145,28 +145,28 @@ Load `references/banner-sizes-and-styles.md` for complete sizes and styles refer
 
 ### Banner: Quick Size Reference
 
-| Platform   | Type          | Size (px)       |
-| ---------- | ------------- | --------------- |
-| Facebook   | Cover         | 820 x 312       |
-| Twitter/X  | Header        | 1500 x 500      |
-| LinkedIn   | Personal      | 1584 x 396      |
-| YouTube    | Channel art   | 2560 x 1440     |
-| Instagram  | Story         | 1080 x 1920     |
-| Instagram  | Post          | 1080 x 1080     |
-| Google Ads | Med Rectangle | 300 x 250       |
-| Website    | Hero          | 1920 x 600-1080 |
+| Platform | Type | Size (px) |
+|----------|------|-----------|
+| Facebook | Cover | 820 x 312 |
+| Twitter/X | Header | 1500 x 500 |
+| LinkedIn | Personal | 1584 x 396 |
+| YouTube | Channel art | 2560 x 1440 |
+| Instagram | Story | 1080 x 1920 |
+| Instagram | Post | 1080 x 1080 |
+| Google Ads | Med Rectangle | 300 x 250 |
+| Website | Hero | 1920 x 600-1080 |
 
 ### Banner: Top Art Styles
 
-| Style           | Best For         |
-| --------------- | ---------------- |
-| Minimalist      | SaaS, tech       |
-| Bold Typography | Announcements    |
-| Gradient        | Modern brands    |
-| Photo-Based     | Lifestyle, e-com |
-| Geometric       | Tech, fintech    |
-| Glassmorphism   | SaaS, apps       |
-| Neon/Cyberpunk  | Gaming, events   |
+| Style | Best For |
+|-------|----------|
+| Minimalist | SaaS, tech |
+| Bold Typography | Announcements |
+| Gradient | Modern brands |
+| Photo-Based | Lifestyle, e-com |
+| Geometric | Tech, fintech |
+| Glassmorphism | SaaS, apps |
+| Neon/Cyberpunk | Gaming, events |
 
 ### Banner: Design Rules
 
@@ -202,15 +202,15 @@ python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "user profile"
 
 ### Icon: Top Styles
 
-| Style    | Best For                      |
-| -------- | ----------------------------- |
-| outlined | UI interfaces, web apps       |
-| filled   | Mobile apps, nav bars         |
-| duotone  | Marketing, landing pages      |
-| rounded  | Friendly apps, health         |
-| sharp    | Tech, fintech, enterprise     |
-| flat     | Material design, Google-style |
-| gradient | Modern brands, SaaS           |
+| Style | Best For |
+|-------|----------|
+| outlined | UI interfaces, web apps |
+| filled | Mobile apps, nav bars |
+| duotone | Marketing, landing pages |
+| rounded | Friendly apps, health |
+| sharp | Tech, fintech, enterprise |
+| flat | Material design, Google-style |
+| gradient | Modern brands, SaaS |
 
 **Model:** `gemini-3.1-pro-preview` — text-only output (SVG is XML text). No image generation API needed.
 
@@ -233,12 +233,12 @@ Load `references/social-photos-design.md` for sizes, templates, best practices.
 
 ### Social Photos: Key Sizes
 
-| Platform    | Size (px) | Platform  | Size (px) |
-| ----------- | --------- | --------- | --------- |
-| IG Post     | 1080×1080 | FB Post   | 1200×630  |
-| IG Story    | 1080×1920 | X Post    | 1200×675  |
-| IG Carousel | 1080×1350 | LinkedIn  | 1200×627  |
-| YT Thumb    | 1280×720  | Pinterest | 1000×1500 |
+| Platform | Size (px) | Platform | Size (px) |
+|----------|-----------|----------|-----------|
+| IG Post | 1080×1080 | FB Post | 1200×630 |
+| IG Story | 1080×1920 | X Post | 1200×675 |
+| IG Carousel | 1080×1350 | LinkedIn | 1200×627 |
+| YT Thumb | 1280×720 | Pinterest | 1000×1500 |
 
 ## Workflows
 
@@ -256,38 +256,38 @@ Load `references/social-photos-design.md` for sizes, templates, best practices.
 
 ## References
 
-| Topic                 | File                                        |
-| --------------------- | ------------------------------------------- |
-| Design Routing        | `references/design-routing.md`              |
-| Logo Design Guide     | `references/logo-design.md`                 |
-| Logo Styles           | `references/logo-style-guide.md`            |
-| Logo Colors           | `references/logo-color-psychology.md`       |
-| Logo Prompts          | `references/logo-prompt-engineering.md`     |
-| CIP Design Guide      | `references/cip-design.md`                  |
-| CIP Deliverables      | `references/cip-deliverable-guide.md`       |
-| CIP Styles            | `references/cip-style-guide.md`             |
-| CIP Prompts           | `references/cip-prompt-engineering.md`      |
-| Slides Create         | `references/slides-create.md`               |
-| Slides Layouts        | `references/slides-layout-patterns.md`      |
-| Slides Template       | `references/slides-html-template.md`        |
-| Slides Copy           | `references/slides-copywriting-formulas.md` |
-| Slides Strategy       | `references/slides-strategies.md`           |
-| Banner Sizes & Styles | `references/banner-sizes-and-styles.md`     |
-| Social Photos Guide   | `references/social-photos-design.md`        |
-| Icon Design Guide     | `references/icon-design.md`                 |
+| Topic | File |
+|-------|------|
+| Design Routing | `references/design-routing.md` |
+| Logo Design Guide | `references/logo-design.md` |
+| Logo Styles | `references/logo-style-guide.md` |
+| Logo Colors | `references/logo-color-psychology.md` |
+| Logo Prompts | `references/logo-prompt-engineering.md` |
+| CIP Design Guide | `references/cip-design.md` |
+| CIP Deliverables | `references/cip-deliverable-guide.md` |
+| CIP Styles | `references/cip-style-guide.md` |
+| CIP Prompts | `references/cip-prompt-engineering.md` |
+| Slides Create | `references/slides-create.md` |
+| Slides Layouts | `references/slides-layout-patterns.md` |
+| Slides Template | `references/slides-html-template.md` |
+| Slides Copy | `references/slides-copywriting-formulas.md` |
+| Slides Strategy | `references/slides-strategies.md` |
+| Banner Sizes & Styles | `references/banner-sizes-and-styles.md` |
+| Social Photos Guide | `references/social-photos-design.md` |
+| Icon Design Guide | `references/icon-design.md` |
 
 ## Scripts
 
-| Script                       | Purpose                                     |
-| ---------------------------- | ------------------------------------------- |
-| `scripts/logo/search.py`     | Search logo styles, colors, industries      |
-| `scripts/logo/generate.py`   | Generate logos with Gemini AI               |
-| `scripts/logo/core.py`       | BM25 search engine for logo data            |
-| `scripts/cip/search.py`      | Search CIP deliverables, styles, industries |
-| `scripts/cip/generate.py`    | Generate CIP mockups with Gemini            |
-| `scripts/cip/render-html.py` | Render HTML presentation from CIP mockups   |
-| `scripts/cip/core.py`        | BM25 search engine for CIP data             |
-| `scripts/icon/generate.py`   | Generate SVG icons with Gemini 3.1 Pro      |
+| Script | Purpose |
+|--------|---------|
+| `scripts/logo/search.py` | Search logo styles, colors, industries |
+| `scripts/logo/generate.py` | Generate logos with Gemini AI |
+| `scripts/logo/core.py` | BM25 search engine for logo data |
+| `scripts/cip/search.py` | Search CIP deliverables, styles, industries |
+| `scripts/cip/generate.py` | Generate CIP mockups with Gemini |
+| `scripts/cip/render-html.py` | Render HTML presentation from CIP mockups |
+| `scripts/cip/core.py` | BM25 search engine for CIP data |
+| `scripts/icon/generate.py` | Generate SVG icons with Gemini 3.1 Pro |
 
 ## Setup
 

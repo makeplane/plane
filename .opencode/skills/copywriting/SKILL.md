@@ -1,7 +1,11 @@
 ---
-name: copywriting
+name: ck:copywriting
 description: Conversion copywriting formulas, headline templates, email copy patterns, landing page structures, CTA optimization, and writing style extraction. Activate for writing high-converting copy, crafting headlines, email campaigns, landing pages, or applying custom writing styles from assets/writing-styles/ directory.
 license: MIT
+argument-hint: "[copy-type] [context]"
+metadata:
+  author: claudekit
+  version: "1.0.0"
 ---
 
 # Copywriting
@@ -16,7 +20,7 @@ Formulas, templates, patterns, and writing styles for high-converting copy.
 
 ## Writing Styles
 
-Load: `references/writing-styles.md` | Full catalog: `assets/writing-styles/default.md` (50 styles)
+Load: `references/*.md` | Default catalog: `assets/writing-styles/default.md` (50 styles)
 
 **Extract styles from multi-format files:**
 ```bash
@@ -62,7 +66,7 @@ CTAs: "Start [verb]ing" • "Get [benefit]" • "Yes, I want [benefit]"
 
 | Workflow | Purpose | Use When |
 |----------|---------|----------|
-| `references/workflow-cro.md` | CRO optimization (25 principles) | Conversion optimization requests |
+| `references/workflow-cro.md` | CRO optimization (25 principles) + plan creation workflow | Conversion optimization & CRO plan requests |
 | `references/workflow-enhance.md` | Copy enhancement | Improving existing copy |
 | `references/workflow-fast.md` | Quick copy generation | Simple, time-sensitive requests |
 | `references/workflow-good.md` | Quality copy with research | High-stakes content |
@@ -91,3 +95,7 @@ CTAs: "Start [verb]ing" • "Get [benefit]" • "Yes, I want [benefit]"
 1. Lead with benefit, not feature | 2. One CTA per piece
 3. Specificity > vague claims | 4. Read aloud—if awkward, rewrite
 5. Test headlines first | 6. Match copy to awareness level
+
+## Outputs
+
+**IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.

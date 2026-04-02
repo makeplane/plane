@@ -95,7 +95,6 @@ npx tsx scripts/stitch-export.ts <screen-id> [--format html|image|all] [--output
 ```
 
 Outputs:
-
 - `design.html` — Semantic HTML with Tailwind CSS classes
 - `design.png` — Screenshot of the design
 - `DESIGN.md` — Agent-readable design spec (colors, typography, spacing, components)
@@ -162,9 +161,9 @@ See `references/quota-management.md` for strategies.
 
 ## References
 
-| Topic             | File                                    |
-| ----------------- | --------------------------------------- |
-| SDK API           | `references/stitch-sdk-api.md`          |
-| MCP Setup         | `references/stitch-mcp-setup.md`        |
+| Topic | File |
+|-------|------|
+| SDK API | `references/stitch-sdk-api.md` |
+| MCP Setup | `references/stitch-mcp-setup.md` |
 | Pipeline Patterns | `references/design-to-code-pipeline.md` |
-| Quota Strategy    | `references/quota-management.md`        |
+| Quota Strategy | `references/quota-management.md` |

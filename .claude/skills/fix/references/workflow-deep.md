@@ -21,11 +21,9 @@ T9 = TaskCreate(subject="Finalize & docs",               activeForm="Finalizing"
 ## Steps
 
 ### Step 1: Scout Codebase (parallel with Steps 2+3)
-
 `TaskUpdate(T1, status="in_progress")`
 
 **Mandatory:** Activate `ck:scout` skill or launch 2-3 `Explore` subagents in parallel:
-
 ```
 Task("Explore", "Find error origin and affected components", "Trace error")
 Task("Explore", "Find module boundaries and dependencies", "Map deps")
@@ -40,11 +38,9 @@ See `references/parallel-exploration.md` for patterns.
 **Output:** `✓ Step 1: Scouted - [N] files, system impact: [scope]`
 
 ### Step 2: Diagnose Root Cause (parallel with Steps 1+3)
-
 `TaskUpdate(T2, status="in_progress")`
 
 **Mandatory skill chain:**
-
 1. **Capture pre-fix state:** Record ALL error messages, failing tests, stack traces, logs.
 2. Activate `ck:debug` skill (systematic-debugging + root-cause-tracing).
 3. Activate `ck:sequential-thinking` — structured hypothesis formation.
@@ -58,7 +54,6 @@ See `references/diagnosis-protocol.md` for full methodology.
 **Output:** `✓ Step 2: Diagnosed - Root cause: [summary], Evidence: [chain]`
 
 ### Step 3: Research (parallel with Steps 1+2)
-
 `TaskUpdate(T3, status="in_progress")`
 Use `researcher` subagent for external knowledge.
 
@@ -70,7 +65,6 @@ Use `researcher` subagent for external knowledge.
 **Output:** `✓ Step 3: Research complete - [key findings]`
 
 ### Step 4: Brainstorm
-
 `TaskUpdate(T4, status="in_progress")` — auto-unblocks when T1 + T2 + T3 complete.
 Activate `ck:brainstorm` skill.
 
@@ -82,7 +76,6 @@ Activate `ck:brainstorm` skill.
 **Output:** `✓ Step 4: Approach selected - [chosen approach]`
 
 ### Step 5: Plan
-
 `TaskUpdate(T5, status="in_progress")`
 Use `planner` subagent to create implementation plan.
 
@@ -95,7 +88,6 @@ Use `planner` subagent to create implementation plan.
 **Output:** `✓ Step 5: Plan created - [N] phases`
 
 ### Step 6: Implement
-
 `TaskUpdate(T6, status="in_progress")`
 Implement per plan. Use `ck:context-engineering`, `ck:sequential-thinking`, `ck:problem-solving`.
 
@@ -107,11 +99,9 @@ Implement per plan. Use `ck:context-engineering`, `ck:sequential-thinking`, `ck:
 **Output:** `✓ Step 6: Implemented - [N] files, [M] phases`
 
 ### Step 7: Verify + Prevent
-
 `TaskUpdate(T7, status="in_progress")`
 
 **Mandatory skill chain:**
-
 1. **Iron-law verify:** Re-run EXACT commands from pre-fix state. Compare before/after.
 2. **Regression test:** Add comprehensive tests. Tests MUST fail without fix, pass with fix.
 3. **Defense-in-depth:** Apply all relevant prevention layers (see `references/prevention-gate.md`).
@@ -126,7 +116,6 @@ See `references/prevention-gate.md` for prevention requirements.
 **Output:** `✓ Step 7: Verified + Prevented - [before/after], [N] tests, [M] guards`
 
 ### Step 8: Code Review
-
 `TaskUpdate(T8, status="in_progress")`
 Use `code-reviewer` subagent.
 
@@ -136,9 +125,7 @@ See `references/review-cycle.md` for mode-specific handling.
 **Output:** `✓ Step 8: Review [score]/10 - [status]`
 
 ### Step 9: Finalize
-
 `TaskUpdate(T9, status="in_progress")`
-
 - Report summary: root cause, evidence chain, changes, prevention measures, confidence score
 - Activate `ck:project-management` for task sync-back, plan status updates, and progress tracking
 - Use `docs-manager` subagent for documentation
@@ -150,17 +137,17 @@ See `references/review-cycle.md` for mode-specific handling.
 
 ## Skills/Subagents Activated
 
-| Step | Skills/Subagents                                                                      |
-| ---- | ------------------------------------------------------------------------------------- |
-| 1    | `ck:scout` OR parallel `Explore` subagents                                            |
-| 2    | `ck:debug`, `ck:sequential-thinking`, parallel `Explore`, (`ck:problem-solving` auto) |
-| 3    | `researcher` (runs parallel with steps 1+2)                                           |
-| 4    | `ck:brainstorm`                                                                       |
-| 5    | `planner`                                                                             |
-| 6    | `ck:problem-solving`, `ck:sequential-thinking`, `ck:context-engineering`              |
-| 7    | `tester`, parallel `Bash` verification                                                |
-| 8    | `code-reviewer`                                                                       |
-| 9    | `ck:project-management`, `docs-manager`, `git-manager`                                |
+| Step | Skills/Subagents |
+|------|------------------|
+| 1 | `ck:scout` OR parallel `Explore` subagents |
+| 2 | `ck:debug`, `ck:sequential-thinking`, parallel `Explore`, (`ck:problem-solving` auto) |
+| 3 | `researcher` (runs parallel with steps 1+2) |
+| 4 | `ck:brainstorm` |
+| 5 | `planner` |
+| 6 | `ck:problem-solving`, `ck:sequential-thinking`, `ck:context-engineering` |
+| 7 | `tester`, parallel `Bash` verification |
+| 8 | `code-reviewer` |
+| 9 | `ck:project-management`, `docs-manager`, `git-manager` |
 
 **Rules:** Don't skip steps. Validate before proceeding. One phase at a time.
 **Frontend:** Use `chrome`, `ck:chrome-devtools` or any relevant skills/tools to verify.

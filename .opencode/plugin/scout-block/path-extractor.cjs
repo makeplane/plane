@@ -15,6 +15,17 @@ const EXCLUDE_FLAGS = [
   '--exclude-dir' // grep --exclude-dir
 ];
 
+// Filesystem commands where bare directory names (build, dist, etc.)
+// should be extracted as paths. For non-fs commands (grep, echo, sed),
+// only tokens that look like actual paths (contain / or extension) are extracted.
+const FILESYSTEM_COMMANDS = [
+  'cd', 'ls', 'cat', 'head', 'tail', 'less', 'more',
+  'rm', 'cp', 'mv', 'find', 'touch', 'mkdir', 'rmdir',
+  'stat', 'file', 'du', 'tree', 'chmod', 'chown', 'ln',
+  'readlink', 'realpath', 'wc', 'tee', 'tar', 'zip', 'unzip',
+  'open', 'code', 'vim', 'nano', 'bat', 'rsync', 'scp', 'diff'
+];
+
 /**
  * Extract all paths from a tool_input object
  * Handles: file_path, path, pattern params and command strings
@@ -48,8 +59,12 @@ function extractFromToolInput(toolInput) {
 }
 
 /**
- * Extract path-like segments from a Bash command string
- * Handles quoted paths and filters out non-path tokens
+ * Extract path-like segments from a Bash command string.
+ *
+ * Uses pipe-segment-aware command context: for filesystem commands (cd, cat, ls, rm, etc.)
+ * bare blocked directory names are extracted with priority. For non-filesystem commands
+ * (grep, echo, sed, etc.) only tokens that structurally look like paths are extracted,
+ * preventing false positives on search terms and string arguments.
  *
  * @param {string} command - The command string
  * @returns {string[]} Array of extracted paths
@@ -65,8 +80,13 @@ function extractFromCommand(command) {
   const quotedPattern = /["']([^"']+)["']/g;
   let match;
   while ((match = quotedPattern.exec(command)) !== null) {
-    if (looksLikePath(match[1])) {
-      paths.push(normalizeExtractedPath(match[1]));
+    const content = match[1];
+
+    // Skip sed/awk regex expressions (s/pattern/replacement/flags)
+    if (/^s[\/|@#,]/.test(content)) continue;
+
+    if (looksLikePath(content)) {
+      paths.push(normalizeExtractedPath(content));
     }
   }
 
@@ -76,31 +96,72 @@ function extractFromCommand(command) {
   // Split on whitespace and extract path-like tokens
   const tokens = withoutQuotes.split(/\s+/).filter(Boolean);
 
-  // Track if next token should be skipped (value after exclude flag)
+  // Track command context per pipe segment
+  let commandName = null;
+  let isFsCommand = false;
   let skipNextToken = false;
+  let heredocDelimiter = null;
+  let nextIsHeredocDelimiter = false;
 
   for (const token of tokens) {
+    // Heredoc delimiter capture (after << or <<-)
+    if (nextIsHeredocDelimiter) {
+      heredocDelimiter = token.replace(/^['"]/, '').replace(/['"]$/, '');
+      nextIsHeredocDelimiter = false;
+      continue;
+    }
+
+    // Skip heredoc body content until closing delimiter
+    if (heredocDelimiter) {
+      if (token === heredocDelimiter) {
+        heredocDelimiter = null;
+      }
+      continue;
+    }
+
+    // Detect heredoc start: <<EOF, <<'EOF', <<"EOF", <<-EOF
+    if (token.startsWith('<<') && token.length > 2) {
+      heredocDelimiter = token.replace(/^<<-?['"]?/, '').replace(/['"]?$/, '');
+      continue;
+    }
+    if (token === '<<' || token === '<<-') {
+      nextIsHeredocDelimiter = true;
+      continue;
+    }
+
     // Skip value after exclude flags (--exclude node_modules format)
     if (skipNextToken) {
       skipNextToken = false;
       continue;
     }
 
+    // Reset command context at command/pipe boundaries
+    if (token === '&&' || token === ';' || token.startsWith('|')) {
+      commandName = null;
+      isFsCommand = false;
+      continue;
+    }
+
     // Skip flags and shell operators
     if (isSkippableToken(token)) {
-      // Check if this is an exclude flag that takes a separate value
-      // --exclude=value format already handled (whole token starts with -)
-      // --exclude value format needs to skip the next token
       if (EXCLUDE_FLAGS.includes(token)) {
         skipNextToken = true;
       }
       continue;
     }
 
-    // Priority check: if token IS a blocked directory name exactly, include it
-    // This handles cases like "cd build" where "build" is both a command word
-    // and a blocked directory name
-    if (isBlockedDirName(token)) {
+    // Determine the command for this pipe segment (first non-flag token)
+    if (commandName === null) {
+      commandName = token.toLowerCase();
+      isFsCommand = FILESYSTEM_COMMANDS.includes(commandName);
+      // Skip the command word itself
+      if (isCommandKeyword(token) || isFsCommand) continue;
+      // Non-keyword command (e.g., ./script.sh) — fall through to path check
+    }
+
+    // For filesystem commands, extract blocked dir names with priority.
+    // "cd build", "ls dist", "cat node_modules/..." — "build"/"dist" are paths here.
+    if (isFsCommand && isBlockedDirName(token)) {
       paths.push(normalizeExtractedPath(token));
       continue;
     }
@@ -153,9 +214,6 @@ function looksLikePath(str) {
 
   // Has file extension (likely a file)
   if (/\.\w{1,6}$/.test(str)) return true;
-
-  // Contains common blocked directory names
-  if (/node_modules|__pycache__|\.git|dist|build/.test(str)) return true;
 
   // Looks like a directory path
   if (/^[a-zA-Z0-9_-]+\//.test(str)) return true;
@@ -241,6 +299,9 @@ function normalizeExtractedPath(path) {
     normalized = normalized.slice(1, -1);
   }
 
+  // Strip shell metacharacters from edges (backticks, parens, braces)
+  normalized = normalized.replace(/^[`({\[]+/, '').replace(/[`)};\]]+$/, '');
+
   // Normalize path separators to forward slash
   normalized = normalized.replace(/\\/g, '/');
 
@@ -261,5 +322,6 @@ module.exports = {
   isBlockedDirName,
   normalizeExtractedPath,
   BLOCKED_DIR_NAMES,
-  EXCLUDE_FLAGS
+  EXCLUDE_FLAGS,
+  FILESYSTEM_COMMANDS
 };

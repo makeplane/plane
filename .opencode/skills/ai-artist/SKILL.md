@@ -1,8 +1,10 @@
 ---
-name: ai-artist
+name: ck:ai-artist
 description: "Generate images via Nano Banana with 129 curated prompts. Mandatory validation interview refines style/mood/colors (use --skip to bypass). 3 modes: search, creative, wild. Styles: Ukiyo-e, Bento grid, cyberpunk, cinematic, vintage patent."
-version: 3.1.0
-license: MIT
+metadata:
+  author: claudekit
+  version: 3.1.0
+argument-hint: "[concept] [--mode search|creative|wild|all] [--skip]"
 ---
 
 # AI Artist - Nano Banana Image Generation
@@ -53,7 +55,7 @@ python3 scripts/generate.py "futuristic city" -o city.png --mode all -v
 | `-o, --output` | Output path (required) |
 | `-m, --mode` | search, creative, wild, or all |
 | `-ar, --aspect-ratio` | 1:1, 16:9, 9:16, etc. |
-| `--model` | flash (fast) or pro (quality/4K) |
+| `--model` | flash2 (default, fast+quality), flash (previous), pro (quality/4K) |
 | `-v, --verbose` | Show matched prompts and details |
 | `--dry-run` | Show prompt without generating |
 | `--skip` | Bypass validation interview |

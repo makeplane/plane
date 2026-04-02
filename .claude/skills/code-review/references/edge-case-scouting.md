@@ -10,7 +10,6 @@ Proactive detection of edge cases, side effects, and potential issues before cod
 ## Purpose
 
 Code reviews catch obvious issues but miss subtle side effects. Scout detects:
-
 - Files affected by changes reviewer might not check
 - Data flow paths that could break
 - Boundary conditions and error paths
@@ -24,13 +23,11 @@ Code reviews catch obvious issues but miss subtle side effects. Scout detects:
 ## Process
 
 ### 1. Identify Changed Files
-
 ```bash
 git diff --name-only HEAD~1
 ```
 
 ### 2. Invoke Scout
-
 ```
 /ck:scout edge cases for recent changes.
 
@@ -47,15 +44,14 @@ Find:
 
 ### 3. Analyze & Act
 
-| Finding                    | Action             |
-| -------------------------- | ------------------ |
-| Affected file not in scope | Add to review      |
-| Data flow risk             | Verify or add test |
-| Edge case                  | Add test or verify |
-| Missing test               | Add before review  |
+| Finding | Action |
+|---------|--------|
+| Affected file not in scope | Add to review |
+| Data flow risk | Verify or add test |
+| Edge case | Add test or verify |
+| Missing test | Add before review |
 
 ### 4. Document for Review
-
 ```
 Scout findings:
 - {issues found}
@@ -67,7 +63,6 @@ Scout findings:
 ## Scout Prompts
 
 **Feature:**
-
 ```
 Scout edge cases for {feature}.
 Changed: {files}
@@ -75,7 +70,6 @@ Find: consumers, error states, untested inputs, performance, compatibility
 ```
 
 **Bug fix:**
-
 ```
 Scout side effects of fix in {file}.
 Bug: {description}, Fix: {approach}
@@ -83,7 +77,6 @@ Find: other paths using logic, dependent features, similar bugs
 ```
 
 **Refactor:**
-
 ```
 Scout breaking changes in {module}.
 Before: {old}, After: {new}
@@ -92,13 +85,13 @@ Find: importers, behavior diffs, removed functionality
 
 ## What Scout Catches
 
-| Issue               | Why Missed          | Scout Detects       |
-| ------------------- | ------------------- | ------------------- |
-| Indirect deps       | Not in diff         | Traces imports      |
-| Race conditions     | Hard static review  | Analyzes flow       |
-| State mutations     | Hidden side effects | Tracks data         |
-| Missing null checks | Assumed safe        | Boundary analysis   |
-| Integration breaks  | Out of scope        | Cross-module search |
+| Issue | Why Missed | Scout Detects |
+|-------|------------|---------------|
+| Indirect deps | Not in diff | Traces imports |
+| Race conditions | Hard static review | Analyzes flow |
+| State mutations | Hidden side effects | Tracks data |
+| Missing null checks | Assumed safe | Boundary analysis |
+| Integration breaks | Out of scope | Cross-module search |
 
 ## Red Flags
 

@@ -1,6 +1,11 @@
 # AGENTS.md
 
-Instructions for AI coding agents (Antigravity, OpenCode, Cursor, etc.) working in this repository.
+This file provides guidance to OpenCode when working with code in this repository.
+
+## Role & Responsibilities
+
+Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
+
 **Subdirectory rules:** `apps/web/AGENTS.md` (frontend), `apps/admin/AGENTS.md` (God Mode), `apps/api/AGENTS.md` (backend)
 
 ## Project Overview
@@ -9,6 +14,29 @@ Instructions for AI coding agents (Antigravity, OpenCode, Cursor, etc.) working 
 **Type:** Full-stack monorepo (React + Django + WebSocket)
 **Monorepo:** pnpm 10.24+ with Turborepo 2.6+
 **Version:** v1.2.4 | **Team:** 4 developers, org: `shbvn`
+**Description:** A comprehensive boilerplate template for building professional software projects with **CLI Coding Agents** (**Claude Code** and **Open Code**). This template provides a complete development environment with AI-powered agent orchestration, automated workflows, and intelligent project management.
+
+
+## Workflows
+
+- Primary workflow: `./.claude/rules/primary-workflow.md`
+- Development rules: `./.claude/rules/development-rules.md`
+- Orchestration protocols: `./.claude/rules/orchestration-protocol.md`
+- Documentation management: `./.claude/rules/documentation-management.md`
+- And other workflows: `./.claude/rules/*`
+
+**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
+**IMPORTANT:** DO NOT modify skills in `~/.claude/skills` directory directly. **MUST** modify skills in this current working directory. Unless you are asked to do so.
+**IMPORTANT:** You must follow strictly the development rules in `./.claude/rules/development-rules.md` file.
+**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
+**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
+**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+
+## Development Principles
+
+- **YAGNI**: You Aren't Gonna Need It - avoid over-engineering
+- **KISS**: Keep It Simple, Stupid - prefer simple solutions
+- **DRY**: Don't Repeat Yourself - eliminate code duplication
 
 ## Documentation — READ BEFORE IMPLEMENTING
 

@@ -19,34 +19,26 @@
  *   By default, browser stays running for session persistence
  *   Use --close true to fully close browser
  */
-import {
-  getBrowser,
-  getPage,
-  closeBrowser,
-  disconnectBrowser,
-  parseArgs,
-  outputJSON,
-  outputError,
-} from "./lib/browser.js";
-import fs from "fs/promises";
-import path from "path";
+import { getBrowser, getPage, closeBrowser, disconnectBrowser, parseArgs, outputJSON, outputError } from './lib/browser.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 async function selectRef() {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.ref) {
-    outputError(new Error("--ref is required (e.g., --ref e5)"));
+    outputError(new Error('--ref is required (e.g., --ref e5)'));
     return;
   }
 
   if (!args.action) {
-    outputError(new Error("--action is required (click, fill, screenshot, text, focus, hover)"));
+    outputError(new Error('--action is required (click, fill, screenshot, text, focus, hover)'));
     return;
   }
 
   try {
     const browser = await getBrowser({
-      headless: args.headless,
+      headless: args.headless
     });
 
     const page = await getPage(browser);
@@ -55,11 +47,11 @@ async function selectRef() {
     const element = await page.evaluateHandle((ref) => {
       const refs = window.__chromeDevToolsRefs;
       if (!refs) {
-        throw new Error("No refs available. Run aria-snapshot.js first to generate refs.");
+        throw new Error('No refs available. Run aria-snapshot.js first to generate refs.');
       }
       const el = refs.get(ref);
       if (!el) {
-        throw new Error(`Ref "${ref}" not found. Available refs: ${Array.from(refs.keys()).join(", ")}`);
+        throw new Error(`Ref "${ref}" not found. Available refs: ${Array.from(refs.keys()).join(', ')}`);
       }
       return el;
     }, args.ref);
@@ -72,50 +64,50 @@ async function selectRef() {
     let result = {
       success: true,
       ref: args.ref,
-      action: args.action,
+      action: args.action
     };
 
     // Perform action
     switch (args.action) {
-      case "click":
+      case 'click':
         await elementHandle.click();
-        result.message = "Element clicked";
+        result.message = 'Element clicked';
         break;
 
-      case "fill":
-        if (!args.value && args.value !== "") {
-          throw new Error("--value is required for fill action");
+      case 'fill':
+        if (!args.value && args.value !== '') {
+          throw new Error('--value is required for fill action');
         }
         await elementHandle.click({ clickCount: 3 }); // Select all
         await elementHandle.type(args.value);
-        result.message = "Element filled";
+        result.message = 'Element filled';
         result.value = args.value;
         break;
 
-      case "screenshot":
+      case 'screenshot':
         if (!args.output) {
-          throw new Error("--output is required for screenshot action");
+          throw new Error('--output is required for screenshot action');
         }
         const outputDir = path.dirname(args.output);
         await fs.mkdir(outputDir, { recursive: true });
         await elementHandle.screenshot({ path: args.output });
         result.output = path.resolve(args.output);
-        result.message = "Screenshot saved";
+        result.message = 'Screenshot saved';
         break;
 
-      case "text":
-        const text = await page.evaluate((el) => el.textContent?.trim(), elementHandle);
+      case 'text':
+        const text = await page.evaluate(el => el.textContent?.trim(), elementHandle);
         result.text = text;
         break;
 
-      case "focus":
+      case 'focus':
         await elementHandle.focus();
-        result.message = "Element focused";
+        result.message = 'Element focused';
         break;
 
-      case "hover":
+      case 'hover':
         await elementHandle.hover();
-        result.message = "Hovering over element";
+        result.message = 'Hovering over element';
         break;
 
       default:
@@ -126,7 +118,7 @@ async function selectRef() {
 
     // Default: disconnect to keep browser running for session persistence
     // Use --close true to fully close browser
-    if (args.close === "true") {
+    if (args.close === 'true') {
       await closeBrowser();
     } else {
       await disconnectBrowser();

@@ -1,7 +1,6 @@
 # Github Pages
 
 ## CLI
-
 ```bash
 # Install GitHub CLI
 winget install --id GitHub.cli  # Windows
@@ -13,7 +12,6 @@ npx gh-pages -d dist
 ```
 
 ## Config: .github/workflows/deploy-pages.yml
-
 ```yaml
 name: Deploy to GitHub Pages
 on:
@@ -44,19 +42,15 @@ jobs:
 ```
 
 ## Detection
-
 - `gh-pages` branch
 - `.github/workflows/` with `deploy-pages` or `pages` actions
 
 ## Free Tier
-
 - Completely free for public repos
 - 1GB repo size, 100GB bandwidth/mo, 10 builds/hr
 
 ## Rollback
-
 Revert commit and push, or re-run previous workflow
 
 ## Best For
-
 Static sites only — docs, portfolios, project pages. No server-side code.

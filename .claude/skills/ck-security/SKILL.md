@@ -29,24 +29,21 @@ Runs a structured STRIDE + OWASP security audit on a given scope. Produces a sev
 
 ## Modes
 
-| Mode        | Invocation                                  | Behavior                            |
-| ----------- | ------------------------------------------- | ----------------------------------- |
-| Audit only  | `/ck:security <scope>`                      | Scan → categorize → report          |
-| Audit + Fix | `/ck:security <scope> --fix`                | Scan → categorize → fix iteratively |
-| Bounded fix | `/ck:security <scope> --fix --iterations N` | Limit fix iterations to N           |
+| Mode | Invocation | Behavior |
+|------|-----------|----------|
+| Audit only | `/ck:security <scope>` | Scan → categorize → report |
+| Audit + Fix | `/ck:security <scope> --fix` | Scan → categorize → fix iteratively |
+| Bounded fix | `/ck:security <scope> --fix --iterations N` | Limit fix iterations to N |
 
 ---
 
 ## Audit Methodology
 
 ### 1. Scope Resolution
-
 Expand the provided glob or `full` keyword into a file list. Read all in-scope files before analysis.
 
 ### 2. STRIDE Analysis
-
 Evaluate each threat category systematically:
-
 - **S**poofing — identity/authentication weaknesses
 - **T**ampering — input validation, integrity controls
 - **R**epudiation — audit logging gaps
@@ -55,24 +52,19 @@ Evaluate each threat category systematically:
 - **E**levation of Privilege — broken access control, RBAC gaps
 
 ### 3. OWASP Top 10 Check
-
 Map findings to OWASP categories (A01–A10). See `references/stride-owasp-checklist.md` for per-category checks.
 
 ### 4. Dependency Audit
-
 Run the appropriate package audit tool for the detected stack:
-
 - Node.js: `npm audit`
 - Python: `pip-audit`
 - Go: `govulncheck`
 - Ruby: `bundle audit`
 
 ### 5. Secret Detection
-
 Scan for hardcoded API keys, passwords, tokens, and private keys using regex patterns. See `references/stride-owasp-checklist.md` → Secret Patterns.
 
 ### 6. Finding Categorization
-
 Assign each finding a severity level (see Severity Definitions below).
 
 ---
@@ -115,13 +107,13 @@ When `--fix` is provided, apply fixes iteratively after the audit:
 
 ## Severity Definitions
 
-| Severity | Description                                          | Fix Priority              |
-| -------- | ---------------------------------------------------- | ------------------------- |
-| Critical | Exploitable now, data breach or RCE risk             | Immediate — block release |
-| High     | Exploitable with moderate effort, significant impact | This sprint               |
-| Medium   | Limited exploitability or impact                     | Next sprint               |
-| Low      | Theoretical risk, defense-in-depth improvement       | Backlog                   |
-| Info     | Best practice suggestion, no direct risk             | Optional                  |
+| Severity | Description | Fix Priority |
+|----------|-------------|-------------|
+| Critical | Exploitable now, data breach or RCE risk | Immediate — block release |
+| High | Exploitable with moderate effort, significant impact | This sprint |
+| Medium | Limited exploitability or impact | Next sprint |
+| Low | Theoretical risk, defense-in-depth improvement | Backlog |
+| Info | Best practice suggestion, no direct risk | Optional |
 
 ---
 

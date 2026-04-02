@@ -1,34 +1,25 @@
 # Plugin Marketplace Sources
 
-## Source Types
+Plugin source types for `marketplace.json` plugin entries.
 
-### Relative Paths (Local)
-
-For plugins in same repository:
+## Relative Paths (Same Repo)
 
 ```json
-{
-  "name": "my-plugin",
-  "source": "./plugins/my-plugin"
-}
+{ "name": "my-plugin", "source": "./plugins/my-plugin" }
 ```
 
-**Note:** Relative paths only work when users add marketplace via Git. For URL-based distribution, use GitHub, npm, or git URL sources.
+**Note:** Only works when marketplace added via Git (GitHub/GitLab/git URL). URL-based marketplaces only download `marketplace.json`, not plugin files. Use GitHub/git sources for URL-based distribution.
 
-### GitHub Repositories
+## GitHub Repositories
 
 ```json
 {
   "name": "github-plugin",
-  "source": {
-    "source": "github",
-    "repo": "owner/plugin-repo"
-  }
+  "source": { "source": "github", "repo": "owner/plugin-repo" }
 }
 ```
 
-Pin to specific branch, tag, or commit:
-
+Pin to specific version:
 ```json
 {
   "name": "github-plugin",
@@ -41,53 +32,59 @@ Pin to specific branch, tag, or commit:
 }
 ```
 
-| Field  | Type   | Description                                          |
-|--------|--------|------------------------------------------------------|
-| `repo` | string | Required. GitHub repo in `owner/repo` format         |
-| `ref`  | string | Optional. Git branch or tag                          |
-| `sha`  | string | Optional. Full 40-char git commit SHA                |
+| Field | Type | Description |
+|-------|------|-------------|
+| `repo` | string | Required. `owner/repo` format |
+| `ref` | string | Optional. Branch or tag (defaults to repo default) |
+| `sha` | string | Optional. Full 40-char commit SHA for exact pinning |
 
-### Git Repositories (GitLab, Bitbucket, etc.)
+## Git Repositories (GitLab, Bitbucket, etc.)
 
+```json
+{
+  "name": "git-plugin",
+  "source": { "source": "url", "url": "https://gitlab.com/team/plugin.git" }
+}
+```
+
+Pin to specific version:
 ```json
 {
   "name": "git-plugin",
   "source": {
     "source": "url",
-    "url": "https://gitlab.com/team/plugin.git"
+    "url": "https://gitlab.com/team/plugin.git",
+    "ref": "main",
+    "sha": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0"
   }
 }
 ```
 
-| Field | Type   | Description                                 |
-|-------|--------|---------------------------------------------|
-| `url` | string | Required. Full git URL (must end with .git) |
-| `ref` | string | Optional. Git branch or tag                 |
-| `sha` | string | Optional. Full 40-char git commit SHA       |
+| Field | Type | Description |
+|-------|------|-------------|
+| `url` | string | Required. Full git URL (must end `.git`) |
+| `ref` | string | Optional. Branch or tag |
+| `sha` | string | Optional. Full 40-char commit SHA |
 
-## Advanced Plugin Entry Example
+## Advanced Example (All Features)
 
 ```json
 {
   "name": "enterprise-tools",
-  "source": {
-    "source": "github",
-    "repo": "company/enterprise-plugin"
-  },
+  "source": { "source": "github", "repo": "company/enterprise-plugin" },
   "description": "Enterprise workflow automation tools",
   "version": "2.1.0",
-  "commands": [
-    "./commands/core/",
-    "./commands/enterprise/"
-  ],
-  "agents": ["./agents/security-reviewer.md"],
+  "author": { "name": "Enterprise Team", "email": "enterprise@example.com" },
+  "homepage": "https://docs.example.com/plugins/enterprise-tools",
+  "license": "MIT",
+  "keywords": ["enterprise", "workflow", "automation"],
+  "category": "productivity",
+  "commands": ["./commands/core/", "./commands/enterprise/"],
+  "agents": ["./agents/security-reviewer.md", "./agents/compliance-checker.md"],
   "hooks": {
     "PostToolUse": [{
       "matcher": "Write|Edit",
-      "hooks": [{
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh"
-      }]
+      "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh" }]
     }]
   },
   "mcpServers": {
@@ -100,4 +97,7 @@ Pin to specific branch, tag, or commit:
 }
 ```
 
-**Key variable:** `${CLAUDE_PLUGIN_ROOT}` - Use in hooks and MCP configs to reference files within plugin's installation directory (plugins are copied to cache when installed).
+**Key notes:**
+- `${CLAUDE_PLUGIN_ROOT}` — references files within plugin's installation cache directory
+- `strict: false` — marketplace entry defines plugin entirely, no `plugin.json` needed
+- `commands`/`agents` — multiple directories or individual files, paths relative to plugin root

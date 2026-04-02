@@ -28,10 +28,9 @@ During the pre-creation scan, detect and mark blocking relationships between pla
 5. **Ambiguous?** → Use `AskUserQuestion` with header "Plan Dependency", present detected overlap, ask user to confirm relationship type (blocks/blockedBy/none)
 
 **Frontmatter fields** (relative plan dir paths):
-
 ```yaml
-blockedBy: [260301-1200-auth-system] # This plan waits on these plans
-blocks: [260228-0900-user-dashboard] # This plan blocks these plans
+blockedBy: [260301-1200-auth-system]     # This plan waits on these plans
+blocks: [260228-0900-user-dashboard]     # This plan blocks these plans
 ```
 
 **Status interaction:** A plan with `blockedBy` entries where ANY blocker is not `completed` → plan status should note `blocked` in its overview. When all blockers complete, the blocked plan becomes unblocked automatically on next scan.
@@ -40,12 +39,12 @@ blocks: [260228-0900-user-dashboard] # This plan blocks these plans
 
 If invoked with a task description, proceed with planning workflow. If invoked WITHOUT arguments or with unclear intent, use `AskUserQuestion` to present available operations:
 
-| Operation   | Description                           |
-| ----------- | ------------------------------------- |
+| Operation | Description |
+|-----------|-------------|
 | `(default)` | Create implementation plan for a task |
-| `archive`   | Write journal entry & archive plans   |
-| `red-team`  | Adversarial plan review               |
-| `validate`  | Critical questions interview          |
+| `archive` | Write journal entry & archive plans |
+| `red-team` | Adversarial plan review |
+| `validate` | Critical questions interview |
 
 Present as options via `AskUserQuestion` with header "Planning Operation", question "What would you like to do?".
 
@@ -53,13 +52,13 @@ Present as options via `AskUserQuestion` with header "Planning Operation", quest
 
 Default: `--auto` (analyze task complexity and auto-pick mode).
 
-| Flag         | Mode           | Research       | Red Team        | Validation      | Cook Flag    |
-| ------------ | -------------- | -------------- | --------------- | --------------- | ------------ |
-| `--auto`     | Auto-detect    | Follows mode   | Follows mode    | Follows mode    | Follows mode |
-| `--fast`     | Fast           | Skip           | Skip            | Skip            | `--auto`     |
-| `--hard`     | Hard           | 2 researchers  | Yes             | Optional        | (none)       |
-| `--parallel` | Parallel       | 2 researchers  | Yes             | Optional        | `--parallel` |
-| `--two`      | Two approaches | 2+ researchers | After selection | After selection | (none)       |
+| Flag | Mode | Research | Red Team | Validation | Cook Flag |
+|------|------|----------|----------|------------|-----------|
+| `--auto` | Auto-detect | Follows mode | Follows mode | Follows mode | Follows mode |
+| `--fast` | Fast | Skip | Skip | Skip | `--auto` |
+| `--hard` | Hard | 2 researchers | Yes | Optional | (none) |
+| `--parallel` | Parallel | 2 researchers | Yes | Optional | `--parallel` |
+| `--two` | Two approaches | 2+ researchers | After selection | After selection | (none) |
 
 Add `--no-tasks` to skip task hydration in any mode.
 
@@ -79,30 +78,24 @@ Always honoring **YAGNI**, **KISS**, and **DRY** principles.
 **Be honest, be brutal, straight to the point, and be concise.**
 
 ### 0. Scope Challenge
-
 Load: `references/scope-challenge.md`
 **Skip if:** `--fast` mode or trivial task (single file fix, <20 word description)
 
 ### 1. Research & Analysis
-
 Load: `references/research-phase.md`
 **Skip if:** Fast mode or provided with researcher reports
 
 ### 2. Codebase Understanding
-
 Load: `references/codebase-understanding.md`
 **Skip if:** Provided with scout reports
 
 ### 3. Solution Design
-
 Load: `references/solution-design.md`
 
 ### 4. Plan Creation & Organization
-
 Load: `references/plan-organization.md`
 
 ### 5. Task Breakdown & Output Standards
-
 Load: `references/output-standards.md`
 
 ## Process Flow (Authoritative)
@@ -133,9 +126,9 @@ flowchart TD
 ## Workflow Process
 
 1. **Pre-Creation Check** → Check Plan Context for active/suggested/none
-   1b. **Cross-Plan Scan** → Scan unfinished plans, detect `blockedBy`/`blocks` relationships, update both plans
-   1c. **Scope Challenge** → Run Step 0 scope questions, select mode (see `references/scope-challenge.md`)
-   **Skip if:** `--fast` mode or trivial task
+1b. **Cross-Plan Scan** → Scan unfinished plans, detect `blockedBy`/`blocks` relationships, update both plans
+1c. **Scope Challenge** → Run Step 0 scope questions, select mode (see `references/scope-challenge.md`)
+    **Skip if:** `--fast` mode or trivial task
 2. **Mode Detection** → Auto-detect or use explicit flag (see `workflow-modes.md`)
 3. **Research Phase** → Spawn researchers (skip in fast mode)
 4. **Codebase Analysis** → Read docs, scout if needed
@@ -147,7 +140,6 @@ flowchart TD
 10. **Journal** → Run `/ck:journal` to write a concise technical journal entry upon completion
 
 ## Output Requirements
-
 **IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.
 
 - DO NOT implement code - only create plans
@@ -167,7 +159,6 @@ Plan files = persistent. Tasks = session-scoped. Hydration bridges the gap.
 Load: `references/task-management.md` for hydration pattern, TaskCreate patterns, cook handoff protocol.
 
 ### Hydration Workflow
-
 1. Write plan.md + phase files (persistent layer)
 2. TaskCreate per phase with `addBlockedBy` chain (skip if Task tools unavailable)
 3. TaskCreate for critical/high-risk steps within phases (skip if Task tools unavailable)
@@ -177,7 +168,6 @@ Load: `references/task-management.md` for hydration pattern, TaskCreate patterns
 ## Active Plan State
 
 Check `## Plan Context` injected by hooks:
-
 - **"Plan: {path}"** → Active plan. Ask "Continue? [Y/n]"
 - **"Suggested: {path}"** → Branch hint only. Ask if activate or create new.
 - **"Plan: none"** → Create new using `Plan dir:` from `## Naming`
@@ -186,16 +176,15 @@ After creating plan: `node .claude/scripts/set-active-plan.cjs {plan-dir}`
 Reports: Active plans → plan-specific path. Suggested → default path.
 
 ### Important
-
 **DO NOT** create plans or reports in USER directory.
 **MUST** create plans or reports in **THE CURRENT WORKING PROJECT DIRECTORY**.
 
 ## Subcommands
 
-| Subcommand          | Reference                         | Purpose                                         |
-| ------------------- | --------------------------------- | ----------------------------------------------- |
-| `/ck:plan archive`  | `references/archive-workflow.md`  | Archive plans + write journal entries           |
-| `/ck:plan red-team` | `references/red-team-workflow.md` | Adversarial plan review with hostile reviewers  |
+| Subcommand | Reference | Purpose |
+|------------|-----------|---------|
+| `/ck:plan archive` | `references/archive-workflow.md` | Archive plans + write journal entries |
+| `/ck:plan red-team` | `references/red-team-workflow.md` | Adversarial plan review with hostile reviewers |
 | `/ck:plan validate` | `references/validate-workflow.md` | Validate plan with critical questions interview |
 
 ## Quality Standards

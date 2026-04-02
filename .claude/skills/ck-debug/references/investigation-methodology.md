@@ -48,7 +48,6 @@ gh run view <run-id> --log > /tmp/ci-logs.txt
 ```
 
 **For codebase understanding:**
-
 - Read `docs/codebase-summary.md` if exists and up-to-date (<2 days old)
 - Otherwise use `ck:repomix` to generate fresh codebase summary
 - Use `/ck:scout` or `/ck:scout ext` to find relevant files
@@ -65,7 +64,6 @@ gh run view <run-id> --log > /tmp/ci-logs.txt
 5. **Dependency mapping** - Which components depend on the failing one?
 
 **Key questions:**
-
 - Does issue correlate with specific deployments or time windows?
 - Is it intermittent or consistent?
 - Does it affect all users or a subset?
@@ -97,7 +95,6 @@ gh run view <run-id> --log > /tmp/ci-logs.txt
 ## Integration with Code-Level Debugging
 
 When investigation narrows to specific code:
-
 - Switch to `systematic-debugging.md` for the code-level fix
 - Use `root-cause-tracing.md` if error is deep in call stack
 - Apply `defense-in-depth.md` after fixing

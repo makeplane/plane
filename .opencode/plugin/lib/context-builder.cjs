@@ -265,8 +265,11 @@ function formatUsagePercent(value, label) {
  * @returns {string[]} Lines for context section
  */
 function buildContextSection(sessionId) {
+  // TEMPORARILY DISABLED
+  return [];
   if (!sessionId) return [];
 
+  // RE-ENABLED IF NEEDED IN THE FUTURE
   try {
     const contextPath = path.join(os.tmpdir(), `ck-context-${sessionId}.json`);
     if (!fs.existsSync(contextPath)) return [];
@@ -285,9 +288,12 @@ function buildContextSection(sessionId) {
 
     // Warning if high usage
     if (data.percent >= CRITICAL_THRESHOLD) {
-      lines.push(`- **CRITICAL:** Context nearly full - consider compaction or being concise, update current phase's status before the compaction.`);
+      lines.push(`- **CRITICAL:** Context nearly full. Before compaction hits:`);
+      lines.push(`  1. Update TodoWrite with current progress (completed + remaining)`);
+      lines.push(`  2. Be extremely concise — no verbose explanations`);
+      lines.push(`  3. Session state will auto-restore after compaction`);
     } else if (data.percent >= WARN_THRESHOLD) {
-      lines.push(`- **WARNING:** Context usage moderate - being concise and optimize token efficiency.`);
+      lines.push(`- **WARNING:** Context usage moderate - be concise, optimize token efficiency, keep tool outputs short.`);
     }
 
     lines.push(``);
@@ -302,6 +308,10 @@ function buildContextSection(sessionId) {
  * @returns {string[]} Lines for usage section
  */
 function buildUsageSection() {
+  // TEMPORARILY DISABLED
+  return [];
+
+  // RE-ENABLED IF NEEDED IN THE FUTURE
   const usage = readUsageCache();
   if (!usage) return [];
 
@@ -338,24 +348,23 @@ function buildUsageSection() {
  * Build rules section
  * @param {Object} params
  * @param {string} [params.devRulesPath] - Path to dev rules
- * @param {string} [params.catalogScript] - Path to catalog script
  * @param {string} [params.skillsVenv] - Path to skills venv
+ * @param {string} [params.plansPath] - Absolute plans path (Issue #476: prevents wrong subdirectory creation)
+ * @param {string} [params.docsPath] - Absolute docs path
  * @returns {string[]} Lines for rules section
  */
-function buildRulesSection({ devRulesPath, catalogScript, skillsVenv }) {
+function buildRulesSection({ devRulesPath, skillsVenv, plansPath, docsPath }) {
   const lines = [`## Rules`];
 
   if (devRulesPath) {
     lines.push(`- Read and follow development rules: "${devRulesPath}"`);
   }
 
-  lines.push(`- Markdown files are organized in: Plans → "plans/" directory, Docs → "docs/" directory`);
-  lines.push(`- **IMPORTANT:** DO NOT create markdown files out of "plans/" or "docs/" directories UNLESS the user explicitly requests it.`);
-
-  if (catalogScript) {
-    lines.push(`- Activate skills: Run \`python ${catalogScript} --skills\` to generate a skills catalog and analyze it, then activate the relevant skills that are needed for the task during the process.`);
-    lines.push(`- Execute commands: Run \`python ${catalogScript} --commands\` to generate a commands catalog and analyze it, then execute the relevant SlashCommands that are needed for the task during the process.`);
-  }
+  // Issue #476: Use absolute paths to prevent LLM confusion in multi-CLAUDE.md projects
+  const plansRef = plansPath || 'plans';
+  const docsRef = docsPath || 'docs';
+  lines.push(`- Markdown files are organized in: Plans → "${plansRef}" directory, Docs → "${docsRef}" directory`);
+  lines.push(`- **IMPORTANT:** DO NOT create markdown files outside of "${plansRef}" or "${docsRef}" UNLESS the user explicitly requests it.`);
 
   if (skillsVenv) {
     lines.push(`- Python scripts in .opencode/skills/: Use \`${skillsVenv}\``);
@@ -466,7 +475,6 @@ function buildReminder(params) {
     thinkingLanguage,
     responseLanguage,
     devRulesPath,
-    catalogScript,
     skillsVenv,
     reportsPath,
     plansPath,
@@ -492,7 +500,7 @@ function buildReminder(params) {
     ...buildSessionSection(staticEnv),
     ...(contextEnabled ? buildContextSection(sessionId) : []),
     ...(usageEnabled ? buildUsageSection() : []),
-    ...buildRulesSection({ devRulesPath, catalogScript, skillsVenv }),
+    ...buildRulesSection({ devRulesPath, skillsVenv, plansPath, docsPath }),
     ...buildModularizationSection(),
     ...buildPathsSection({ reportsPath, plansPath, docsPath, docsMaxLoc }),
     ...buildPlanContextSection({ planLine, reportsPath, gitBranch, validationMode, validationMin, validationMax }),
@@ -521,7 +529,6 @@ function buildReminderContext({ sessionId, config, staticEnv, configDirName = '.
 
   // Resolve paths
   const devRulesPath = resolveRulesPath('development-rules.md', configDirName);
-  const catalogScript = resolveScriptPath('generate_catalogs.py', configDirName);
   const skillsVenv = resolveSkillsVenv(configDirName);
 
   // Build plan context
@@ -539,7 +546,6 @@ function buildReminderContext({ sessionId, config, staticEnv, configDirName = '.
     thinkingLanguage: cfg.locale?.thinkingLanguage,
     responseLanguage: cfg.locale?.responseLanguage,
     devRulesPath,
-    catalogScript,
     skillsVenv,
     reportsPath: effectiveBaseDir ? path.join(effectiveBaseDir, planCtx.reportsPath) : planCtx.reportsPath,
     plansPath: effectiveBaseDir ? path.join(effectiveBaseDir, plansPathRel) : plansPathRel,
@@ -570,7 +576,7 @@ function buildReminderContext({ sessionId, config, staticEnv, configDirName = '.
       session: buildSessionSection(staticEnv),
       context: contextEnabled ? buildContextSection(sessionId) : [],
       usage: usageEnabled ? buildUsageSection() : [],
-      rules: buildRulesSection({ devRulesPath, catalogScript, skillsVenv }),
+      rules: buildRulesSection({ devRulesPath, skillsVenv, plansPath: params.plansPath, docsPath: params.docsPath }),
       modularization: buildModularizationSection(),
       paths: buildPathsSection({ reportsPath: params.reportsPath, plansPath: params.plansPath, docsPath: params.docsPath, docsMaxLoc: params.docsMaxLoc }),
       planContext: buildPlanContextSection(planCtx),
