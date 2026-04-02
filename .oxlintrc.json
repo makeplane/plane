@@ -202,7 +202,6 @@
     "@typescript-eslint/unbound-method": "warn",
     "@typescript-eslint/no-import-type-side-effects": "error",
     "jsx-a11y-js/interactive-supports-focus": "warn",
-    "jsx-a11y-js/no-noninteractive-element-interactions": "warn",
     "jsx-a11y-js/no-noninteractive-element-to-interactive-role": "warn",
     "react-hooks-js/immutability": "warn",
     "react-hooks-js/preserve-manual-memoization": "warn",
