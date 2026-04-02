@@ -1,0 +1,25 @@
+{
+  "name": "docs-seeker-scripts",
+  "version": "3.0.0",
+  "description": "Documentation discovery scripts for docs-seeker skill",
+  "private": true,
+  "scripts": {
+    "test": "node scripts/tests/run-tests.js",
+    "test:detect": "node scripts/tests/test-detect-topic.js",
+    "test:fetch": "node scripts/tests/test-fetch-docs.js",
+    "test:analyze": "node scripts/tests/test-analyze-llms.js"
+  },
+  "keywords": [
+    "documentation",
+    "llms.txt",
+    "context7",
+    "docs-discovery"
+  ],
+  "author": "ClaudeKit",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

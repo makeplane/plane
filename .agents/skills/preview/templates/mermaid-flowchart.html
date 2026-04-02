@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI/CD Pipeline — Reference Template</title>
+<!--
+  Reference template for the ck:preview skill: Mermaid diagrams.
+  Teal/cyan palette — distinctly different from terracotta (architecture)
+  and rose (data-table) templates so agents absorb variety.
+  Key patterns demonstrated:
+  - Teal/cyan palette (NOT indigo/violet)
+  - Dot-grid background atmosphere (different from radial gradient)
+  - Large heading (38px) for typographic contrast
+  - ESM import of Mermaid + @mermaid-js/layout-elk
+  - Mermaid theme: 'base' + full themeVariables, fontSize: 16px
+  - CSS overrides: .nodeLabel 16px, .edgeLabel 13px
+  - look: 'classic' for clean lines
+  - layout: 'elk' for better node positioning
+  - Zoom controls with scroll-to-zoom and drag-to-pan
+  - Both light and dark themes via prefers-color-scheme
+  - Staggered fade-in, reduced motion respect
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Fragment+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  /* ============ THEME ============ */
+  :root {
+    --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
+    --font-mono: 'Fragment Mono', 'SF Mono', Consolas, monospace;
+
+    --bg: #f0fdfa;
+    --surface: #ffffff;
+    --border: rgba(0, 0, 0, 0.07);
+    --text: #134e4a;
+    --text-dim: #5f8a85;
+
+    --primary: #0d9488;
+    --primary-dim: rgba(13, 148, 136, 0.08);
+    --secondary: #0369a1;
+    --tertiary: #d97706;
+    --danger: #dc2626;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #042f2e;
+      --surface: #0a3d3a;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #ccfbf1;
+      --text-dim: #5eead4;
+
+      --primary: #2dd4bf;
+      --primary-dim: rgba(45, 212, 191, 0.14);
+      --secondary: #38bdf8;
+      --tertiary: #fbbf24;
+      --danger: #f87171;
+    }
+  }
+
+  /* ── Dark (manual toggle override) ── */
+  [data-theme="dark"] {
+    --bg: #042f2e;
+    --surface: #0a3d3a;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ccfbf1;
+    --text-dim: #5eead4;
+    --primary: #2dd4bf;
+    --primary-dim: rgba(45, 212, 191, 0.14);
+    --secondary: #38bdf8;
+    --tertiary: #fbbf24;
+    --danger: #f87171;
+  }
+
+  /* ============ THEME TOGGLE ============ */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 300;
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: background 0.15s, color 0.15s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .theme-toggle:hover { background: var(--surface); color: var(--text); }
+
+  /* ============ RESET + BASE ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--text);
+    font-family: var(--font-body);
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  /* ============ ANIMATION ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate {
+    animation: fadeUp 0.4s ease-out both;
+    animation-delay: calc(var(--i, 0) * 0.06s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ============ LAYOUT ============ */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+    text-wrap: balance;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-bottom: 32px;
+  }
+
+  .description {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+
+  .description code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--primary-dim);
+    color: var(--primary);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ============ MERMAID CONTAINER ============ */
+  .mermaid-wrap {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    overflow: auto;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+
+  .zoom-controls {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 2px;
+    z-index: 10;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px;
+  }
+
+  .zoom-controls button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .zoom-controls button:hover {
+    background: var(--border);
+    color: var(--text);
+  }
+
+  .mermaid-wrap { cursor: grab; }
+  .mermaid-wrap.is-panning { cursor: grabbing; user-select: none; }
+
+  /* ============ MULTI-DIAGRAM STRUCTURE ============ */
+  .diagram-shell {
+    position: relative;
+  }
+
+  .diagram-shell__hint {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .mermaid-viewport {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+  }
+
+  .mermaid-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .zoom-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    padding: 0 6px;
+    white-space: nowrap;
+  }
+
+  /* ============ MERMAID SVG OVERRIDES ============ */
+  .mermaid .nodeLabel {
+    font-family: var(--font-body) !important;
+    font-size: 16px !important;
+  }
+
+  .mermaid .edgeLabel {
+    font-family: var(--font-mono) !important;
+    font-size: 13px !important;
+  }
+
+  .mermaid .node rect,
+  .mermaid .node circle,
+  .mermaid .node polygon {
+    stroke-width: 1.5px !important;
+  }
+
+  .mermaid .edge-pattern-solid {
+    stroke-width: 1.5px !important;
+  }
+
+  /* ============ LEGEND ============ */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* ============ CALLOUT ============ */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    margin-top: 24px;
+  }
+
+  .callout strong { color: var(--text); }
+
+  .callout code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--primary-dim);
+    color: var(--primary);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    body { padding: 16px; }
+    h1 { font-size: 22px; }
+    .mermaid-wrap { padding: 16px 12px; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
+<script>
+(function() {
+  var t = document.getElementById('themeToggle');
+  var s = localStorage.getItem('theme');
+  var i = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (s) document.documentElement.setAttribute('data-theme', i);
+  t.textContent = i === 'dark' ? '\u2600' : '\u263E';
+  t.addEventListener('click', function() {
+    var c = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var n = c === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', n);
+    localStorage.setItem('theme', n);
+    t.textContent = n === 'dark' ? '\u2600' : '\u263E';
+  });
+})();
+</script>
+
+<div class="container">
+
+  <h1 class="animate" style="--i:0">CI/CD Pipeline</h1>
+  <p class="subtitle animate" style="--i:1">github actions &rarr; staging &rarr; production</p>
+
+  <p class="description animate" style="--i:2">
+    Every push to <code>main</code> triggers the full pipeline. Tests and linting run in parallel,
+    then the build step produces a Docker image. Staging deploys automatically; production requires
+    manual approval via a GitHub environment gate.
+  </p>
+
+  <section class="diagram-shell animate" style="--i:3">
+    <p class="diagram-shell__hint">
+      Ctrl/Cmd + wheel to zoom. Scroll to pan. Drag to pan when zoomed. Double-click to fit.
+    </p>
+    <div class="mermaid-wrap">
+      <div class="zoom-controls">
+        <button type="button" data-action="zoom-in" title="Zoom in">+</button>
+        <button type="button" data-action="zoom-out" title="Zoom out">&minus;</button>
+        <button type="button" data-action="zoom-fit" title="Smart fit">&#8634;</button>
+        <button type="button" data-action="zoom-one" title="1:1 zoom">1:1</button>
+        <button type="button" data-action="zoom-expand" title="Open full size">&#x26F6;</button>
+        <span class="zoom-label">Loading...</span>
+      </div>
+      <div class="mermaid-viewport">
+        <div class="mermaid mermaid-canvas"></div>
+      </div>
+    </div>
+    <script type="text/plain" class="diagram-source">
+      graph TD
+        A[Push to main] --> B{Branch?}
+        B -->|main| C[Run Tests]
+        B -->|feature| I[Run Tests]
+        I --> J[Preview Deploy]
+        C --> D[Lint + Type Check]
+        C --> E[Unit Tests]
+        C --> F[Integration Tests]
+        D --> G[Build Docker Image]
+        E --> G
+        F --> G
+        G --> H[Deploy to Staging]
+        H --> K{Smoke Tests Pass?}
+        K -->|Yes| L[Manual Approval]
+        K -->|No| M[Alert + Rollback]
+        L --> N[Deploy to Production]
+        N --> O[Health Check]
+        O --> P[Done]
+    </script>
+  </section>
+
+  <div class="legend animate" style="--i:4">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--primary)"></div> Automated step</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--tertiary)"></div> Decision gate</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--danger)"></div> Failure path</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--secondary)"></div> Success</div>
+  </div>
+
+  <div class="callout animate" style="--i:5">
+    <strong>ELK layout.</strong> The <code>layout: 'elk'</code> engine provides better node positioning
+    for complex graphs — it requires the separate <code>@mermaid-js/layout-elk</code> package (imported above).
+    Without it, Mermaid silently falls back to dagre.
+  </div>
+
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk/dist/mermaid-layout-elk.esm.min.mjs';
+
+  const config = {
+    fitPadding: 28,
+    minHeight: 360,
+    maxHeightPx: 960,
+    maxHeightVh: 0.84,
+    maxInitialZoom: 1.8,
+    minZoom: 0.08,
+    maxZoom: 6.5,
+    zoomStep: 0.14,
+    readabilityFloor: 0.58
+  };
+
+  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+
+  let activeDrag = null;
+
+  addEventListener('mousemove', (e) => activeDrag?.onMove(e));
+  addEventListener('mouseup', () => {
+    activeDrag?.onEnd();
+    activeDrag = null;
+  });
+
+  const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+
+  mermaid.registerLayoutLoaders(elkLayouts);
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    look: 'classic',
+    layout: 'elk',
+    themeVariables: {
+      fontFamily: "'Bricolage Grotesque', system-ui, sans-serif",
+      fontSize: '16px',
+      primaryColor: isDark ? '#115e59' : '#ccfbf1',
+      primaryBorderColor: isDark ? '#2dd4bf' : '#0d9488',
+      primaryTextColor: isDark ? '#ccfbf1' : '#134e4a',
+      secondaryColor: isDark ? '#0c4a6e' : '#e0f2fe',
+      secondaryBorderColor: isDark ? '#38bdf8' : '#0369a1',
+      secondaryTextColor: isDark ? '#ccfbf1' : '#134e4a',
+      tertiaryColor: isDark ? '#2e2618' : '#fffbeb',
+      tertiaryBorderColor: isDark ? '#fbbf24' : '#d97706',
+      tertiaryTextColor: isDark ? '#ccfbf1' : '#134e4a',
+      lineColor: isDark ? '#5eead4' : '#5f8a85',
+      noteBkgColor: isDark ? '#115e59' : '#fefce8',
+      noteTextColor: isDark ? '#ccfbf1' : '#134e4a',
+      noteBorderColor: isDark ? '#fbbf24' : '#d97706',
+    }
+  });
+
+  function initDiagram(shell) {
+    const wrap = shell.querySelector('.mermaid-wrap');
+    const viewport = shell.querySelector('.mermaid-viewport');
+    const canvas = shell.querySelector('.mermaid-canvas');
+    const source = shell.querySelector('.diagram-source');
+    const label = shell.querySelector('.zoom-label');
+
+    if (!wrap || !viewport || !canvas || !source || !label) {
+      console.error('initDiagram: missing required elements in', shell);
+      return;
+    }
+
+    let zoom = 1;
+    let fitMode = 'contain';
+    let panX = 0;
+    let panY = 0;
+    let svgW = 0;
+    let svgH = 0;
+
+    let sx = 0;
+    let sy = 0;
+    let spx = 0;
+    let spy = 0;
+
+    let touchDist = 0;
+    let touchCx = 0;
+    let touchCy = 0;
+
+    function constrainPan() {
+      const vpW = viewport.clientWidth;
+      const vpH = viewport.clientHeight;
+      const rW = svgW * zoom;
+      const rH = svgH * zoom;
+      const pad = config.fitPadding;
+
+      panX = (rW + pad * 2 <= vpW)
+        ? (vpW - rW) / 2
+        : clamp(panX, vpW - rW - pad, pad);
+      panY = (rH + pad * 2 <= vpH)
+        ? (vpH - rH) / 2
+        : clamp(panY, vpH - rH - pad, pad);
+    }
+
+    function applyTransform() {
+      const svg = canvas.querySelector('svg');
+      if (!svg || !svgW) return;
+
+      constrainPan();
+      svg.style.width = (svgW * zoom) + 'px';
+      svg.style.height = (svgH * zoom) + 'px';
+      canvas.style.transform = `translate(${panX}px, ${panY}px)`;
+      label.textContent = Math.round(zoom * 100) + '% \u2014 ' + fitMode;
+    }
+
+    function canPan() {
+      const rW = svgW * zoom;
+      const rH = svgH * zoom;
+      return rW + config.fitPadding * 2 > viewport.clientWidth
+          || rH + config.fitPadding * 2 > viewport.clientHeight;
+    }
+
+    function computeSmartFit() {
+      const vpW = viewport.clientWidth;
+      const vpH = viewport.clientHeight;
+      const aW = Math.max(80, vpW - config.fitPadding * 2);
+      const aH = Math.max(80, vpH - config.fitPadding * 2);
+      const contain = Math.min(aW / svgW, aH / svgH);
+
+      let z = contain;
+      let mode = 'contain';
+      if (contain < config.readabilityFloor) {
+        const chartR = svgH / svgW;
+        const vpR = vpH / Math.max(vpW, 1);
+        if (chartR >= vpR) {
+          z = aW / svgW;
+          mode = 'width-priority';
+        } else {
+          z = aH / svgH;
+          mode = 'height-priority';
+        }
+      }
+      return { zoom: clamp(z, config.minZoom, config.maxInitialZoom), mode };
+    }
+
+    function fitDiagram() {
+      if (!svgW) return;
+      const fit = computeSmartFit();
+      zoom = fit.zoom;
+      fitMode = fit.mode;
+      panX = (viewport.clientWidth - svgW * zoom) / 2;
+      panY = (viewport.clientHeight - svgH * zoom) / 2;
+      applyTransform();
+    }
+
+    function setOneToOne() {
+      zoom = clamp(1, config.minZoom, config.maxZoom);
+      fitMode = '1:1';
+      panX = (viewport.clientWidth - svgW * zoom) / 2;
+      panY = (viewport.clientHeight - svgH * zoom) / 2;
+      applyTransform();
+    }
+
+    function zoomAround(factor, cx, cy) {
+      const next = clamp(zoom * factor, config.minZoom, config.maxZoom);
+      const ratio = next / zoom;
+      panX = cx - ratio * (cx - panX);
+      panY = cy - ratio * (cy - panY);
+      zoom = next;
+      fitMode = 'custom';
+      applyTransform();
+    }
+
+    function readSvgNaturalSize(svg) {
+      let w = 0;
+      let h = 0;
+      if (svg.viewBox?.baseVal?.width > 0) {
+        w = svg.viewBox.baseVal.width;
+        h = svg.viewBox.baseVal.height;
+      }
+      if (!w) {
+        w = parseFloat(svg.getAttribute('width')) || 0;
+        h = parseFloat(svg.getAttribute('height')) || 0;
+      }
+      if (!w) {
+        const b = svg.getBBox();
+        w = b.width;
+        h = b.height;
+      }
+      if (!w) {
+        const r = svg.getBoundingClientRect();
+        w = r.width || 1000;
+        h = r.height || 700;
+      }
+      if (!svg.getAttribute('viewBox')) {
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      }
+      return { w, h };
+    }
+
+    function setAdaptiveHeight() {
+      if (!svgW) return;
+      const usableW = Math.max(280, wrap.getBoundingClientRect().width - 2);
+      const idealH = (svgH / svgW) * usableW + config.fitPadding * 2;
+      const maxVp = Math.floor(innerHeight * config.maxHeightVh);
+      const hardMax = Math.min(config.maxHeightPx, Math.max(config.minHeight + 40, maxVp));
+      wrap.style.height = Math.round(clamp(idealH, config.minHeight, hardMax)) + 'px';
+    }
+
+    function openInNewTab() {
+      const svg = canvas.querySelector('svg');
+      if (!svg) return;
+
+      const clone = svg.cloneNode(true);
+      clone.style.width = '';
+      clone.style.height = '';
+
+      // Use the same isDark value that was used to render the Mermaid theme
+      // This ensures the background matches the baked-in SVG colors
+      const bg = isDark ? '#042f2e' : '#f0fdfa';
+
+      const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Diagram</title><style>
+      body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:${bg};padding:40px;box-sizing:border-box}
+      svg{max-width:100%;max-height:90vh;height:auto}
+      </style></head><body>${clone.outerHTML}</body></html>`;
+
+      open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
+    }
+
+    async function render() {
+      try {
+        const code = source.textContent.trim();
+        if (!code) {
+          label.textContent = 'Error: Empty source';
+          return;
+        }
+
+        const id = 'diagram-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+        const { svg } = await mermaid.render(id, code);
+        canvas.innerHTML = svg;
+
+        const svgNode = canvas.querySelector('svg');
+        if (!svgNode) {
+          label.textContent = 'Error: No SVG';
+          return;
+        }
+
+        const size = readSvgNaturalSize(svgNode);
+        svgW = size.w;
+        svgH = size.h;
+
+        svgNode.removeAttribute('width');
+        svgNode.removeAttribute('height');
+        svgNode.style.maxWidth = 'none';
+        svgNode.style.display = 'block';
+
+        setAdaptiveHeight();
+        fitDiagram();
+      } catch (err) {
+        console.error('Mermaid render failed:', err);
+        label.textContent = 'Error: ' + (err.message || 'Render failed');
+      }
+    }
+
+    const actions = {
+      'zoom-in': () => zoomAround(1 + config.zoomStep, viewport.clientWidth / 2, viewport.clientHeight / 2),
+      'zoom-out': () => zoomAround(1 / (1 + config.zoomStep), viewport.clientWidth / 2, viewport.clientHeight / 2),
+      'zoom-fit': fitDiagram,
+      'zoom-one': setOneToOne,
+      'zoom-expand': openInNewTab
+    };
+
+    Object.entries(actions).forEach(([action, handler]) => {
+      wrap.querySelector(`[data-action="${action}"]`)?.addEventListener('click', handler);
+    });
+
+    viewport.addEventListener('dblclick', fitDiagram);
+
+    viewport.addEventListener('wheel', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const factor = e.deltaY < 0 ? 1 + config.zoomStep : 1 / (1 + config.zoomStep);
+        zoomAround(factor, e.clientX - rect.left, e.clientY - rect.top);
+        return;
+      }
+      if (canPan()) {
+        e.preventDefault();
+        panX -= e.deltaX;
+        panY -= e.deltaY;
+        applyTransform();
+      }
+    }, { passive: false });
+
+    viewport.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.zoom-controls') || !canPan()) return;
+      wrap.classList.add('is-panning');
+      sx = e.clientX;
+      sy = e.clientY;
+      spx = panX;
+      spy = panY;
+      e.preventDefault();
+
+      activeDrag = {
+        onMove: (ev) => {
+          panX = spx + (ev.clientX - sx);
+          panY = spy + (ev.clientY - sy);
+          applyTransform();
+        },
+        onEnd: () => {
+          wrap.classList.remove('is-panning');
+        }
+      };
+    });
+
+    viewport.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+        spx = panX;
+        spy = panY;
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchDist = Math.sqrt(dx * dx + dy * dy);
+        const r = viewport.getBoundingClientRect();
+        touchCx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
+        touchCy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && canPan()) {
+        if (touchDist > 0) {
+          sx = e.touches[0].clientX;
+          sy = e.touches[0].clientY;
+          spx = panX;
+          spy = panY;
+          touchDist = 0;
+        }
+        e.preventDefault();
+        panX = spx + (e.touches[0].clientX - sx);
+        panY = spy + (e.touches[0].clientY - sy);
+        applyTransform();
+      } else if (e.touches.length === 2 && touchDist > 0) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        zoomAround(d / touchDist, touchCx, touchCy);
+        touchDist = d;
+      }
+    }, { passive: false });
+
+    new ResizeObserver(() => {
+      if (svgW) {
+        setAdaptiveHeight();
+        fitDiagram();
+      }
+    }).observe(wrap);
+
+    render();
+  }
+
+  document.querySelectorAll('.diagram-shell').forEach(initDiagram);
+</script>
+
+</body>
+</html>
