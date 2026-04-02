@@ -49,17 +49,17 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
           aws-region: ${{ env.AWS_VPC_REGION }}
 
       - name: Setup `packer`
-        uses: hashicorp/setup-packer@main
+        uses: hashicorp/setup-packer@v3
         id: setup
         with:
           version: latest
@@ -141,7 +141,7 @@ jobs:
           aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json || true
 
       - name: Upload Build Manifest as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ee-docker-aws-ami-manifest
           path: ${{env.CURRENT_MANIFEST_FILE}}
@@ -249,7 +249,7 @@ jobs:
           aws s3 cp ${{env.CF_OUTPUT_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-${date_string}.yaml
 
       - name: Upload Updated CloudFormation Template
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cloudformation-template
           path: ${{ env.CF_OUTPUT_FILE }}

@@ -195,7 +195,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -210,6 +213,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_flux:
     name: Build-Push Flux Docker Image
@@ -217,7 +223,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Flux Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -233,6 +242,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_node_runner:
     name: Build-Push Node Runner Docker Image
@@ -240,7 +252,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Node Runner Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -256,6 +271,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
@@ -263,7 +281,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -278,6 +299,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
@@ -285,7 +309,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -300,6 +327,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
@@ -307,7 +337,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -322,6 +355,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_silo:
     name: Build-Push Silo Docker Image
@@ -329,7 +365,10 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -344,6 +383,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          secret-envs: |
+            TURBO_TOKEN=TURBO_TOKEN
+            TURBO_REMOTE_CACHE_SIGNATURE_KEY=TURBO_REMOTE_CACHE_SIGNATURE_KEY
 
   branch_build_push_api:
     name: Build-Push API Server Docker Image
@@ -351,7 +393,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -373,7 +415,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -409,7 +451,7 @@ jobs:
           echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
 
       - name: Monitor Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -434,10 +476,10 @@ jobs:
     steps:
       - id: checkout_files
         name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Email Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -459,7 +501,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Plane PI Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -497,7 +539,7 @@ jobs:
       ]
     steps:
       - name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Prepare AIO Assets
         id: prepare_aio_assets
@@ -513,13 +555,13 @@ jobs:
           echo "AIO_BUILD_VERSION=${aio_version}" >> $GITHUB_OUTPUT
 
       - name: Upload AIO Assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: ./deployments/aio/commercial/dist
           name: aio-assets-dist
 
       - name: AIO Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: makeplane/actions/build-push@v1
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -556,7 +598,7 @@ jobs:
     steps:
       - id: checkout_files
         name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Upload artifacts
         run: |
@@ -674,69 +716,69 @@ jobs:
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
 
       - name: Upload tar artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: podman-quadlets.tar.gz
           path: ~/${{ env.ARTIFACT_SUFFIX }}/podman-quadlets.tar.gz
 
       - name: Upload docker-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docker-compose.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
 
       - name: Upload docker-compose-airgapped.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docker-compose-airgapped.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-airgapped.yml
 
       - name: Upload docker-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docker-compose-fips.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-fips.yml
 
       - name: Upload coolify-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coolify-compose.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
 
       - name: Upload coolify-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coolify-compose-fips.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose-fips.yml
 
       - name: Upload portainer-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: portainer-compose.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
 
       - name: Upload portainer-compose.yml
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: portainer-compose-fips.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose-fips.yml
 
       - name: Upload variables.env
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: variables.env
           path: ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
 
       - name: Upload variables-airgapped.env
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: variables-airgapped.env
           path: ~/${{ env.ARTIFACT_SUFFIX }}/variables-airgapped.env
@@ -768,10 +810,10 @@ jobs:
       AIRGAPPED_ARM64_BUILD: ${{ needs.branch_build_setup.outputs.arm64_build == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download podman quadlets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: podman-quadlets.tar.gz
           path: deployments/podman/commercial/
@@ -801,7 +843,7 @@ jobs:
       - name: Create Release
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
         id: create_release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
@@ -827,7 +869,7 @@ jobs:
       - name: Create Release FIPS
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
         id: create_release_fips
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:

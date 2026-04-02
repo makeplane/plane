@@ -3,3 +3,4 @@ _.file = ".env"
 
 [tools]
 node = { version = "22", postinstall = "corepack enable" }
+actionlint = "1.7.12"

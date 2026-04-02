@@ -45,7 +45,13 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --o
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN pnpm turbo run build --filter=flux
+RUN --mount=type=secret,id=TURBO_TOKEN,required=false \
+    --mount=type=secret,id=TURBO_REMOTE_CACHE_SIGNATURE_KEY,required=false \
+    --mount=type=secret,id=SENTRY_AUTH_TOKEN,required=false \
+    sh -ec 'if [ -s /run/secrets/TURBO_TOKEN ]; then export TURBO_TOKEN="$(cat /run/secrets/TURBO_TOKEN)"; fi; \
+      if [ -s /run/secrets/TURBO_REMOTE_CACHE_SIGNATURE_KEY ]; then export TURBO_REMOTE_CACHE_SIGNATURE_KEY="$(cat /run/secrets/TURBO_REMOTE_CACHE_SIGNATURE_KEY)"; fi; \
+      if [ -s /run/secrets/SENTRY_AUTH_TOKEN ]; then export SENTRY_AUTH_TOKEN="$(cat /run/secrets/SENTRY_AUTH_TOKEN)"; fi; \
+      pnpm turbo run build --filter=flux'
 
 # *****************************************************************************
 # STAGE 3: Run the project

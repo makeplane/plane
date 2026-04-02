@@ -38,7 +38,7 @@ jobs:
       issues: write
     steps:
       - name: Guidelines
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v5
         continue-on-error: true
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
@@ -50,7 +50,7 @@ jobs:
           comment-id: deploy-pr-guidelines
 
       - name: Add a comment on the PR with link to workflow run
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v5
         continue-on-error: true
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -97,16 +97,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: .
@@ -124,7 +124,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -132,16 +132,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: .
@@ -159,7 +159,7 @@ jobs:
         contents: read
     steps:
         - name: Checkout Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v6
           with:
             ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
         - name: Get commit short hash
@@ -167,16 +167,16 @@ jobs:
           run: |
             echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         - name: Login to Docker Hub
-          uses: docker/login-action@v3
+          uses: docker/login-action@v4
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
         - name: Set up QEMU
-          uses: docker/setup-qemu-action@v3
+          uses: docker/setup-qemu-action@v4
         - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
+          uses: docker/setup-buildx-action@v4
         - name: Build and push
-          uses: docker/build-push-action@v6
+          uses: docker/build-push-action@v7
           with:
             push: true
             context: .
@@ -194,7 +194,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -202,16 +202,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: .
@@ -229,7 +229,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -237,16 +237,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: .
@@ -265,7 +265,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -281,16 +281,16 @@ jobs:
           PRIVATE_KEY=$(cat private_key.pem | base64 -w 0)
           echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: ./apps/monitor
@@ -310,7 +310,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -318,16 +318,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: ./apps/api
@@ -345,7 +345,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -353,16 +353,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: ./apps/email
@@ -380,7 +380,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -388,16 +388,16 @@ jobs:
         run: |
           echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: ./apps/proxy
@@ -423,7 +423,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
@@ -441,17 +441,17 @@ jobs:
           echo "AIO_BUILD_VERSION=${aio_version}" >> $GITHUB_OUTPUT
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           context: ./deployments/aio/community
@@ -483,7 +483,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Configure AWS credentials to assume the secret role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_SECRET_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
@@ -518,7 +518,7 @@ jobs:
             } >> "$GITHUB_ENV"
 
       - name: Configure AWS credentials to assume the EKS role
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_EKS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
@@ -543,7 +543,7 @@ jobs:
           helm version
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
 
@@ -729,7 +729,7 @@ jobs:
           fi
 
       - name: Comment URL to access plane deployment
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v5
         continue-on-error: true
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
