@@ -14,6 +14,7 @@ import random
 import json
 
 # Django imports
+from django.db import transaction
 from django.db.models import OuterRef, Subquery, Exists, Q
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -27,7 +28,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace, WorkspaceMember
+from plane.db.models import Workspace, WorkspaceMember, Project, ProjectMember
 from plane.ee.models import Teamspace, TeamspaceProject, TeamspaceMember
 from plane.ee.serializers import TeamspaceSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -147,6 +148,32 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
 
         return project_ids_to_be_added, project_ids_to_be_removed
 
+    def get_accessible_project_ids(self, slug, user_id, project_ids):
+        project_ids = [str(project_id) for project_id in project_ids]
+
+        direct_project_ids = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member_id=user_id,
+            is_active=True,
+            project_id__in=project_ids,
+        ).values_list("project_id", flat=True)
+
+        teamspace_ids = TeamspaceMember.objects.filter(
+            workspace__slug=slug,
+            member_id=user_id,
+            deleted_at__isnull=True,
+        ).values_list("team_space_id", flat=True)
+
+        teamspace_project_ids = TeamspaceProject.objects.filter(
+            workspace__slug=slug,
+            team_space_id__in=teamspace_ids,
+            project_id__in=project_ids,
+        ).values_list("project_id", flat=True)
+
+        accessible_project_ids = set(map(str, direct_project_ids))
+        accessible_project_ids.update(map(str, teamspace_project_ids))
+        return accessible_project_ids
+
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id=None):
@@ -217,11 +244,19 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
     def patch(self, request, slug, team_space_id):
         try:
             # # Check if user is workspace admin or teamspace lead
-            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+            is_admin_or_lead = self.is_admin_or_teamspace_lead(request, slug, team_space_id)
+            if not is_admin_or_lead:
                 return Response(
                     {"error": "You don't have permission to edit this teamspace."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
+
+            is_workspace_admin = WorkspaceMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.ADMIN.value,
+            ).exists()
 
             # Get team space by pk
             team_space = self.get_team_space(slug, team_space_id)
@@ -233,48 +268,75 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
 
             serializer = TeamspaceSerializer(team_space, data=request.data, partial=True)
             if serializer.is_valid():
-                team_space = serializer.save()
+                with transaction.atomic():
+                    team_space = serializer.save()
 
-                # Get the lead id from request
-                lead_id = request.data.get("lead_id", None)
-                # Add the lead to the team space if provided and not the creating user
-                if (
-                    lead_id
-                    and TeamspaceMember.objects.filter(team_space=team_space, member_id=lead_id).exists() is False
-                ):
-                    TeamspaceMember.objects.create(team_space=team_space, workspace=workspace, member_id=lead_id)
+                    # Get the lead id from request
+                    lead_id = request.data.get("lead_id", None)
+                    # Add the lead to the team space if provided and not the creating user
+                    if (
+                        lead_id
+                        and TeamspaceMember.objects.filter(team_space=team_space, member_id=lead_id).exists() is False
+                    ):
+                        TeamspaceMember.objects.create(team_space=team_space, workspace=workspace, member_id=lead_id)
 
-                # Get the list of project ids for request if it exists
-                if "project_ids" in request.data:
-                    # Get the list of project ids for request
-                    project_ids = request.data.pop("project_ids", [])
+                    # Get the list of project ids for request if it exists
+                    if "project_ids" in request.data:
+                        # Get the list of project ids for request
+                        project_ids = request.data.pop("project_ids", [])
 
-                    # Update team space projects
-                    project_ids_to_be_added, project_ids_to_be_removed = self.get_add_remove_team_space_projects(
-                        slug, team_space.pk, project_ids
-                    )
+                        # Update team space projects
+                        project_ids_to_be_added, project_ids_to_be_removed = self.get_add_remove_team_space_projects(
+                            slug, team_space.pk, project_ids
+                        )
 
-                    # Create team space projects
-                    TeamspaceProject.objects.bulk_create(
-                        [
-                            TeamspaceProject(
-                                team_space=team_space,
-                                workspace=workspace,
-                                project_id=project_id,
-                                sort_order=random.randint(1, 65535),
+                        valid_workspace_project_ids = {
+                            str(project_id)
+                            for project_id in Project.objects.filter(
+                                workspace__slug=slug,
+                                id__in=project_ids_to_be_added,
+                                archived_at__isnull=True,
+                            ).values_list("id", flat=True)
+                        }
+
+                        invalid_project_ids = set(project_ids_to_be_added) - valid_workspace_project_ids
+                        if invalid_project_ids:
+                            raise ValueError("One or more provided project IDs are invalid for this workspace.")
+
+                        if not is_workspace_admin:
+                            accessible_project_ids = self.get_accessible_project_ids(
+                                slug,
+                                request.user.id,
+                                project_ids_to_be_added,
                             )
-                            for project_id in project_ids_to_be_added
-                        ],
-                        ignore_conflicts=True,
-                        batch_size=100,
-                    )
 
-                    # Delete team space projects
-                    TeamspaceProject.objects.filter(
-                        team_space_id=team_space.pk,
-                        workspace__slug=slug,
-                        project_id__in=project_ids_to_be_removed,
-                    ).delete()
+                            unauthorized_project_ids = set(project_ids_to_be_added) - accessible_project_ids
+                            if unauthorized_project_ids:
+                                raise PermissionError(
+                                    "You don't have permission to add one or more projects to this teamspace."
+                                )
+
+                        # Create team space projects
+                        TeamspaceProject.objects.bulk_create(
+                            [
+                                TeamspaceProject(
+                                    team_space=team_space,
+                                    workspace=workspace,
+                                    project_id=project_id,
+                                    sort_order=random.randint(1, 65535),
+                                )
+                                for project_id in project_ids_to_be_added
+                            ],
+                            ignore_conflicts=True,
+                            batch_size=100,
+                        )
+
+                        # Delete team space projects
+                        TeamspaceProject.objects.filter(
+                            team_space_id=team_space.pk,
+                            workspace__slug=slug,
+                            project_id__in=project_ids_to_be_removed,
+                        ).delete()
 
                 team_space_activity.delay(
                     type="team_space.activity.updated",
@@ -292,6 +354,10 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                 serializer = TeamspaceSerializer(team_space)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionError as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
         except Teamspace.DoesNotExist:
             return Response({"error": "Team space not found"}, status=status.HTTP_404_NOT_FOUND)
 
