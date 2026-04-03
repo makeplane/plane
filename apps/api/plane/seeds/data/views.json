@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "name": "Project Urgent Tasks",
+        "description": "Project Urgent Tasks",
+        "access": 1,
+        "filters": {},
+        "project_id": 1,
+        "display_filters": {"layout": "list", "calendar": {"layout": "month", "show_weekends": false}, "group_by": "state", "order_by": "sort_order", "sub_issue": false, "sub_group_by": null, "show_empty_groups": false},
+        "display_properties": {"key": true, "link": true, "cycle": true, "state": true, "labels": true, "modules": true, "assignee": true, "due_date": true, "estimate": true, "priority": true, "created_on": true, "issue_type": true, "start_date": true, "updated_on": true, "customer_count": true, "sub_issue_count": true, "attachment_count": true, "customer_request_count": true},
+        "sort_order": 75535,
+        "rich_filters": {"priority__in": "urgent"}
+    }
+]

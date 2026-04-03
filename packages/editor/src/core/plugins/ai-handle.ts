@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { NodeSelection } from "@tiptap/pm/state";
-import { EditorView } from "@tiptap/pm/view";
+import type { EditorView } from "@tiptap/pm/view";
 // extensions
-import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
+import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 // plugins
 import { nodeDOMAtCoords } from "@/plugins/drag-handle";
 
@@ -88,7 +94,7 @@ export const AIHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOpti
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     // create handle element
     const className =
-      "grid place-items-center font-medium size-5 aspect-square text-xs text-custom-text-300 hover:bg-custom-background-80 rounded-sm opacity-100 !outline-none z-[5] transition-[background-color,_opacity] duration-200 ease-linear";
+      "grid place-items-center font-medium size-5 aspect-square text-11 text-tertiary hover:bg-layer-1 rounded-xs opacity-100 !outline-none z-[5] transition-[background-color,_opacity] duration-200 ease-linear";
     aiHandleElement = document.createElement("button");
     aiHandleElement.type = "button";
     aiHandleElement.id = "ai-handle";

@@ -1,0 +1,78 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import type { TIllustrationAssetProps } from "../helper";
+
+export function NoteHorizontalStackIllustration({ className }: TIllustrationAssetProps) {
+  return (
+    <svg
+      width="51"
+      height="58"
+      viewBox="0 0 51 58"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <g opacity="0.2">
+        <path
+          d="M30.145 1.45968C29.565 1.16468 28.82 1.18968 28.01 1.59968L5.68001 12.9797C3.84501 13.9147 2.355 16.4847 2.355 18.7147V45.8897C2.355 47.1347 2.81501 48.0097 3.54001 48.3847L1.31 47.2497C0.584998 46.8797 0.125 45.9997 0.125 44.7547V17.5797C0.125 15.3447 1.615 12.7797 3.45 11.8447L25.78 0.464675C26.595 0.0496749 27.34 0.0296755 27.915 0.324675L30.145 1.45968Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M30.145 1.45965C30.87 1.82965 31.33 2.70965 31.33 3.95465V31.1296C31.33 33.3646 29.84 35.9296 28.005 36.8646L5.67499 48.2447C4.85999 48.6597 4.11499 48.6796 3.53999 48.3847C2.81499 48.0147 2.35498 47.1347 2.35498 45.8897V18.7147C2.35498 16.4797 3.84499 13.9147 5.67999 12.9797L28.01 1.59965C28.825 1.18465 29.57 1.16465 30.145 1.45965Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <g opacity="0.6">
+        <path
+          d="M39.89 5.79467C39.31 5.49967 38.565 5.52467 37.755 5.93467L15.425 17.3147C13.59 18.2497 12.1 20.8197 12.1 23.0497V50.2247C12.1 51.4697 12.56 52.3447 13.285 52.7197L11.055 51.5847C10.33 51.2147 9.87 50.3347 9.87 49.0897V21.9147C9.87 19.6797 11.36 17.1147 13.195 16.1797L35.525 4.79967C36.34 4.38467 37.085 4.36467 37.66 4.65967L39.89 5.79467Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M39.89 5.79465C40.615 6.16465 41.075 7.04464 41.075 8.28964V35.4646C41.075 37.6996 39.585 40.2646 37.75 41.1996L15.42 52.5797C14.605 52.9947 13.86 53.0146 13.285 52.7197C12.56 52.3497 12.1 51.4696 12.1 50.2246V23.0497C12.1 20.8147 13.59 18.2496 15.425 17.3146L37.755 5.93465C38.57 5.51965 39.315 5.49965 39.89 5.79465Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <path
+        d="M49.635 10.0997C49.055 9.80466 48.31 9.82966 47.5 10.2397L25.17 21.6197C23.335 22.5547 21.845 25.1247 21.845 27.3547V54.5297C21.845 55.7747 22.305 56.6497 23.03 57.0247L20.8 55.8897C20.075 55.5197 19.615 54.6397 19.615 53.3947V26.2197C19.615 23.9847 21.105 21.4197 22.94 20.4847L45.27 9.10466C46.085 8.68966 46.83 8.66966 47.405 8.96466L49.635 10.0997Z"
+        fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
+        stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+        strokeWidth="0.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M49.635 10.0996C50.36 10.4696 50.82 11.3496 50.82 12.5946V39.7696C50.82 42.0046 49.33 44.5696 47.495 45.5046L25.165 56.8846C24.35 57.2996 23.605 57.3196 23.03 57.0246C22.305 56.6546 21.845 55.7746 21.845 54.5296V27.3546C21.845 25.1196 23.335 22.5546 25.17 21.6196L47.5 10.2396C48.315 9.82464 49.06 9.80464 49.635 10.0996Z"
+        fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
+        stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+        strokeWidth="0.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M43.005 22.1696L31.91 27.8196C30.6 28.4896 29.535 30.3246 29.535 31.9196V45.4196C29.535 47.0146 30.6 47.7696 31.91 47.1046L40.625 42.6646C40.835 42.5546 41.04 42.3496 41.19 42.0947L45.15 35.2546C45.3 34.9996 45.38 34.7096 45.38 34.4496V23.8447C45.38 22.2497 44.31 21.4996 43 22.1646L43.005 22.1696ZM43.795 33.3346L41.42 34.5446C40.11 35.2146 39.04 37.0546 39.04 38.6496V41.5396L31.91 45.1747C31.475 45.3947 31.12 45.1496 31.12 44.6146V31.1146C31.12 30.5796 31.475 29.9696 31.91 29.7496L43.005 24.0996C43.445 23.8746 43.795 24.1247 43.795 24.6597V33.3396V33.3346Z"
+        fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.quaternary}
+      />
+    </svg>
+  );
+}

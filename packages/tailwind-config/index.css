@@ -1,0 +1,203 @@
+@import "tailwindcss";
+@import "./variables.css";
+@import "./animations.css";
+@source "../**/*.{ts,tsx}";
+
+* {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  font-variant-ligatures: none;
+  -webkit-font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  @apply font-body bg-canvas text-primary;
+}
+
+/* emoji icon picker */
+@utility conical-gradient {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff6b00 0deg,
+    #f7ae59 70.5deg,
+    #3f76ff 151.12deg,
+    #05c3ff 213deg,
+    #18914f 289.87deg,
+    #f6f172 329.25deg,
+    #ff6b00 360deg
+  );
+}
+
+/* progress bar */
+@utility progress-bar {
+  fill: currentColor;
+  color: var(--text-color-secondary);
+}
+
+::-webkit-input-placeholder,
+::placeholder,
+:-ms-input-placeholder {
+  @apply text-placeholder;
+}
+
+@utility vertical-lr {
+  writing-mode: vertical-lr;
+  width: fit-content;
+}
+
+@-moz-document url-prefix() {
+  * {
+    scrollbar-width: none;
+  }
+  .vertical-scrollbar,
+  .horizontal-scrollbar {
+    scrollbar-width: initial;
+    scrollbar-color: rgba(96, 100, 108, 0.1) transparent;
+
+    &:hover {
+      scrollbar-color: rgba(96, 100, 108, 0.25) transparent;
+    }
+
+    &:active {
+      scrollbar-color: rgba(96, 100, 108, 0.7) transparent;
+    }
+  }
+}
+
+/* ---------- Scrollbar utilities ----------- */
+::-webkit-scrollbar {
+  @apply hidden;
+}
+
+.vertical-scrollbar {
+  @apply overflow-y-auto;
+}
+
+.horizontal-scrollbar {
+  @apply overflow-x-auto;
+}
+
+.vertical-scrollbar,
+.horizontal-scrollbar {
+  &::-webkit-scrollbar {
+    @apply block;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-layer-transparent rounded-full;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    @apply bg-scrollbar-thumb rounded-full;
+
+    &:hover {
+      @apply bg-scrollbar-thumb-hover;
+    }
+
+    &:active {
+      @apply bg-scrollbar-thumb-active;
+    }
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    @apply bg-scrollbar-thumb-surface-hover;
+  }
+
+  &::-webkit-scrollbar-corner {
+    @apply bg-layer-transparent;
+  }
+}
+
+.vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
+  margin-top: 44px;
+}
+
+/* Scrollbar variants */
+@utility scrollbar-xs {
+  &::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-sm {
+  &::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-md {
+  &::-webkit-scrollbar {
+    height: 14px;
+    width: 14px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-lg {
+  &::-webkit-scrollbar {
+    height: 16px;
+    width: 16px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+  }
+}
+
+.hide-vertical-scrollbar::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+.hide-horizontal-scrollbar::-webkit-scrollbar {
+  height: 0 !important;
+}
+
+.hide-both-scrollbars::-webkit-scrollbar {
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* highlight class */
+@utility highlight {
+  border: 1px solid var(--border-color-accent-strong) !important;
+}
+
+@utility highlight-with-line {
+  border-left: 5px solid var(--border-color-accent-strong) !important;
+  background: var(--background-color-layer-2);
+}
+
+/* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
+@utility disable-autofill-style {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-background-clip: text;
+  }
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-placeholder;
+  }
+}

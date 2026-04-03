@@ -1,37 +1,43 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
-import { AnyExtension } from "@tiptap/core";
-import { SlashCommands } from "@/extensions";
-// plane editor types
-import { TIssueEmbedConfig } from "@/plane-editor/types";
-// types
-import { TExtensions, TUserDetails } from "@/types";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-type Props = {
-  disabledExtensions?: TExtensions[];
-  issueEmbedConfig: TIssueEmbedConfig | undefined;
-  provider: HocuspocusProvider;
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { AnyExtension } from "@tiptap/core";
+import { SlashCommands } from "@/extensions";
+// types
+import type { IEditorProps, TExtensions, TUserDetails } from "@/types";
+
+export type TDocumentEditorAdditionalExtensionsProps = Pick<
+  IEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "extendedEditorProps"
+> & {
+  isEditable: boolean;
+  provider?: HocuspocusProvider;
   userDetails: TUserDetails;
 };
 
-type ExtensionConfig = {
-  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
-  getExtension: (props: Props) => AnyExtension;
+export type TDocumentEditorAdditionalExtensionsRegistry = {
+  isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
+  getExtension: (props: TDocumentEditorAdditionalExtensionsProps) => AnyExtension;
 };
 
-const extensionRegistry: ExtensionConfig[] = [
+const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: () => SlashCommands({}),
+    getExtension: ({ disabledExtensions, flaggedExtensions }) =>
+      SlashCommands({ disabledExtensions, flaggedExtensions }),
   },
 ];
 
-export const DocumentEditorAdditionalExtensions = (_props: Props) => {
-  const { disabledExtensions = [] } = _props;
+export function DocumentEditorAdditionalExtensions(props: TDocumentEditorAdditionalExtensionsProps) {
+  const { disabledExtensions, flaggedExtensions } = props;
 
   const documentExtensions = extensionRegistry
-    .filter((config) => config.isEnabled(disabledExtensions))
-    .map((config) => config.getExtension(_props));
+    .filter((config) => config.isEnabled(disabledExtensions, flaggedExtensions))
+    .map((config) => config.getExtension(props));
 
   return documentExtensions;
-};
+}

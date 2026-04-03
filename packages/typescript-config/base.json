@@ -1,21 +1,30 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Default",
   "compilerOptions": {
-    "composite": false,
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
+    "emitDeclarationOnly": false,
     "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
-    "inlineSources": false,
+    "incremental": true,
     "isolatedModules": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "preserveWatchOutput": true,
+    "lib": ["es2023"],
+    "module": "preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true
-  },
-  "exclude": ["node_modules"]
+    "strict": true,
+    "target": "esnext",
+    "tsBuildInfoFile": ".turbo/tsconfig.tsbuildinfo",
+    "verbatimModuleSyntax": true
+  }
 }

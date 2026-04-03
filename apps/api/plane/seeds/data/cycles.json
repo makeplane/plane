@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "name": "Cycle 1: Getting Started with Plane",
+        "project_id": 1,
+        "sort_order": 1,
+        "timezone": "UTC",
+        "type": "CURRENT"
+    },
+    {
+        "id": 2,
+        "name": "Cycle 2: Collaboration & Customization",
+        "project_id": 1,
+        "sort_order": 2,
+        "timezone": "UTC",
+        "type": "UPCOMING"
+    }
+]

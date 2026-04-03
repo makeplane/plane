@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { getAttributes } from "@tiptap/core";
-import { MarkType } from "@tiptap/pm/model";
+import type { MarkType } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 type ClickHandlerOptions = {
@@ -16,7 +22,7 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
         }
 
         let a = event.target as HTMLElement;
-        const els = [];
+        const els: HTMLElement[] = [];
 
         while (a?.nodeName !== "DIV") {
           els.push(a);

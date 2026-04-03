@@ -1,16 +1,36 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // FIXME: fix this!!!
-import { Placement } from "@blueprintjs/popover2";
+import type { ICustomSearchSelectOption } from "@plane/types";
+
+type Placement =
+  | "top"
+  | "top-start"
+  | "top-end"
+  | "bottom"
+  | "bottom-start"
+  | "bottom-end"
+  | "left"
+  | "left-start"
+  | "left-end"
+  | "right"
+  | "right-start"
+  | "right-end";
 
 export interface IDropdownProps {
   customButtonClassName?: string;
   customButtonTabIndex?: number;
   buttonClassName?: string;
   className?: string;
-  customButton?: JSX.Element;
+  customButton?: React.ReactNode;
   disabled?: boolean;
   input?: boolean;
-  label?: string | JSX.Element;
-  maxHeight?: "sm" | "rg" | "md" | "lg";
+  label?: string | React.ReactNode;
+  maxHeight?: "sm" | "rg" | "md" | "lg" | "xl" | "2xl";
   noChevron?: boolean;
   chevronClassName?: string;
   onOpen?: () => void;
@@ -18,6 +38,13 @@ export interface IDropdownProps {
   placement?: Placement;
   tabIndex?: number;
   useCaptureForOutsideClick?: boolean;
+  defaultOpen?: boolean;
+}
+
+export interface IPortalProps {
+  children: React.ReactNode;
+  container?: Element | null;
+  asChild?: boolean;
 }
 
 export interface ICustomMenuDropdownProps extends IDropdownProps {
@@ -31,6 +58,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   closeOnSelect?: boolean;
   portalElement?: Element | null;
   openOnHover?: boolean;
+  ariaLabel?: string;
 }
 
 export interface ICustomSelectProps extends IDropdownProps {
@@ -40,18 +68,11 @@ export interface ICustomSelectProps extends IDropdownProps {
 }
 
 interface CustomSearchSelectProps {
-  footerOption?: JSX.Element;
+  footerOption?: React.ReactNode;
   onChange: any;
   onClose?: () => void;
-  options:
-  | {
-    value: any;
-    query: string;
-    content: React.ReactNode;
-    disabled?: boolean;
-    tooltip?: string | React.ReactNode;
-  }[]
-  | undefined;
+  noResultsMessage?: string;
+  options?: ICustomSearchSelectOption[];
 }
 
 interface SingleValueProps {
@@ -79,4 +100,28 @@ export interface ICustomSelectItemProps {
   children: React.ReactNode;
   value: any;
   className?: string;
+}
+
+// Submenu interfaces
+export interface ICustomSubMenuProps {
+  children: React.ReactNode;
+  trigger: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
+  contentClassName?: string;
+  placement?: Placement;
+}
+
+export interface ICustomSubMenuTriggerProps {
+  children: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
+}
+
+export interface ICustomSubMenuContentProps {
+  children: React.ReactNode;
+  className?: string;
+  placement?: Placement;
+  sideOffset?: number;
+  alignOffset?: number;
 }

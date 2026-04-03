@@ -1,29 +1,91 @@
 {
-  "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.24.1",
-  "license": "AGPL-3.0",
+  "name": "plane",
+  "version": "1.3.0",
   "private": true,
-  "workspaces": [
-    "web",
-    "space",
-    "admin",
-    "live",
-    "packages/*"
-  ],
+  "description": "Open-source project management that unlocks customer value",
+  "license": "AGPL-3.0",
+  "repository": "https://github.com/makeplane/plane.git",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --concurrency=13",
+    "dev": "turbo run dev --concurrency=18",
     "start": "turbo run start",
-    "lint": "turbo run lint",
-    "lint:errors": "turbo run lint:errors",
-    "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "fix": "turbo run fix",
+    "fix:format": "turbo run fix:format",
+    "fix:lint": "turbo run fix:lint",
+    "check": "turbo run check",
+    "check:lint": "turbo run check:lint",
+    "check:format": "turbo run check:format",
+    "check:types": "turbo run check:types",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "prettier": "latest",
-    "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.3.3"
+    "husky": "9.1.7",
+    "lint-staged": "16.2.7",
+    "oxfmt": "0.35.0",
+    "oxlint": "1.51.0",
+    "turbo": "2.8.12"
   },
-  "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
+      "pnpm exec oxfmt --no-error-on-unmatched-pattern"
+    ],
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
+      "pnpm exec oxlint --fix --deny-warnings"
+    ]
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
+  "pnpm": {
+    "overrides": {
+      "express": "catalog:",
+      "mdast-util-to-hast": "13.2.1",
+      "valibot": "1.2.0",
+      "glob": "11.1.0",
+      "js-yaml": "4.1.1",
+      "brace-expansion": "5.0.5",
+      "nanoid": "3.3.8",
+      "esbuild": "0.25.0",
+      "@babel/helpers": "7.26.10",
+      "@babel/runtime": "7.26.10",
+      "chokidar": "3.6.0",
+      "happy-dom": "20.0.2",
+      "tar-fs": "3.0.9",
+      "prosemirror-view": "1.40.0",
+      "@types/express": "4.17.23",
+      "typescript": "catalog:",
+      "vite": "catalog:",
+      "qs": "6.14.2",
+      "diff": "5.2.2",
+      "webpack": "5.104.1",
+      "lodash-es": "catalog:",
+      "@isaacs/brace-expansion": "5.0.1",
+      "lodash": "4.17.23",
+      "markdown-it": "14.1.1",
+      "rollup": "4.59.0",
+      "minimatch@3": "3.1.4",
+      "minimatch@10": "10.2.3",
+      "serialize-javascript": "7.0.5",
+      "ajv@6": "6.14.0",
+      "ajv@8": "8.18.0",
+      "undici@7": "7.24.0",
+      "flatted": "3.4.2",
+      "picomatch": "2.3.2",
+      "yaml@1": "1.10.3",
+      "yaml@2": "2.8.3",
+      "path-to-regexp": "0.1.13"
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "esbuild",
+      "msgpackr-extract",
+      "turbo"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp"
+    ]
+  }
 }

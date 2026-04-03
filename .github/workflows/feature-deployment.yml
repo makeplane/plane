@@ -29,29 +29,32 @@ jobs:
     steps:
       - id: set_env_variables
         name: Set Environment Variables
+        env:
+          BASE_TAG_NAME: ${{ github.event.inputs.base_tag_name }}
+          GH_TARGET_BRANCH: ${{ github.ref_name }}
         run: |
           echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
           echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
           echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
           echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
 
-          if [ "${{ github.event.inputs.base_tag_name }}" != "" ]; then
-            echo "AIO_BASE_TAG=${{ github.event.inputs.base_tag_name }}" >> $GITHUB_OUTPUT
+          if [ "$BASE_TAG_NAME" != "" ]; then
+            echo "AIO_BASE_TAG=$BASE_TAG_NAME" >> $GITHUB_OUTPUT
           else
             echo "AIO_BASE_TAG=develop" >> $GITHUB_OUTPUT
           fi
 
-          echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+          echo "TARGET_BRANCH=$GH_TARGET_BRANCH" >> $GITHUB_OUTPUT
 
-          FLAT_BRANCH_NAME=$(echo "${{ env.TARGET_BRANCH }}" | sed 's/[^a-zA-Z0-9]/-/g')
+          FLAT_BRANCH_NAME=$(echo "$GH_TARGET_BRANCH" | sed 's/[^a-zA-Z0-9]/-/g')
           echo "FLAT_BRANCH_NAME=$FLAT_BRANCH_NAME" >> $GITHUB_OUTPUT
 
       - id: checkout_files
         name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
   full_build_push:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
       BUILD_TYPE: full
@@ -63,23 +66,23 @@ jobs:
       BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
     steps:
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver: ${{ env.BUILDX_DRIVER }}
           version: ${{ env.BUILDX_VERSION }}
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build and Push to Docker Hub
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/build-push-action@v7.0.0
         with:
           context: .
           file: ./aio/Dockerfile-app
@@ -112,7 +115,7 @@ jobs:
           sudo apt-get install -y python3-pip
           pip3 install awscli
       - name: Tailscale
-        uses: tailscale/github-action@v2
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}

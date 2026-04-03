@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { API_BASE_URL } from "@plane/constants";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**
@@ -102,3 +108,5 @@ export default class WebhookService extends APIService {
       });
   }
 }
+
+export { WebhookService };

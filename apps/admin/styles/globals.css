@@ -1,0 +1,42 @@
+@import "@plane/tailwind-config/index.css";
+
+.shadow-custom {
+  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
+}
+/* backdrop filter */
+.backdrop-blur-custom {
+  @apply backdrop-filter blur-[9px];
+}
+
+/* progress bar */
+.progress-bar {
+  fill: currentColor;
+  color: var(--background-color-surface-1);
+}
+
+/* Progress Bar Styles */
+:root {
+  --bprogress-color: var(--background-color-accent-primary);
+  --bprogress-height: 2.5px !important;
+}
+
+.bprogress {
+  pointer-events: none;
+}
+
+.bprogress .bar {
+  background: linear-gradient(
+    90deg,
+    --alpha(var(--background-color-accent-primary) / 80%) 0%,
+    --alpha(var(--background-color-accent-primary) / 100%) 100%
+  ) !important;
+  will-change: width, opacity;
+}
+
+.bprogress .peg {
+  display: block;
+  box-shadow:
+    0 0 8px --alpha(var(--background-color-accent-primary) / 60%),
+    0 0 4px --alpha(var(--background-color-accent-primary) / 40%) !important;
+  will-change: transform, opacity;
+}

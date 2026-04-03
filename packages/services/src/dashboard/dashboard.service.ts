@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { API_BASE_URL } from "@plane/constants";
-import { THomeDashboardResponse, TWidget, TWidgetStatsResponse, TWidgetStatsRequestParams } from "@plane/types";
+import type { THomeDashboardResponse, TWidget, TWidgetStatsResponse, TWidgetStatsRequestParams } from "@plane/types";
 import { APIService } from "../api.service";
 
 export default class DashboardService extends APIService {
@@ -77,3 +83,5 @@ export default class DashboardService extends APIService {
       });
   }
 }
+
+export { DashboardService };

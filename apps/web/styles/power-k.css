@@ -1,0 +1,27 @@
+@layer components {
+  [cmdk-group] {
+    @apply mt-2 px-[0.45rem];
+  }
+
+  [cmdk-group-heading] {
+    @apply text-tertiary text-12 font-medium mb-2 px-[0.45rem];
+  }
+
+  [cmdk-item] {
+    @apply flex items-center justify-between cursor-pointer bg-layer-transparent text-body-xs-regular p-2 rounded-md;
+
+    &:focus,
+    &[aria-selected="true"] {
+      @apply bg-layer-transparent-active;
+    }
+
+    &[aria-disabled="true"],
+    &[data-disabled="true"] {
+      @apply bg-layer-transparent opacity-50 cursor-not-allowed;
+
+      &:focus {
+        @apply bg-layer-1/70;
+      }
+    }
+  }
+}

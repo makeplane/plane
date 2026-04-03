@@ -1,12 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { mergeAttributes } from "@tiptap/core";
-import Mention, { MentionOptions } from "@tiptap/extension-mention";
+import type { MentionOptions } from "@tiptap/extension-mention";
+import Mention from "@tiptap/extension-mention";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { Node as NodeType } from "@tiptap/pm/model";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // local types
+import type { TMentionComponentAttributes } from "./types";
 import { EMentionComponentAttributeNames } from "./types";
 
 export type TMentionExtensionOptions = MentionOptions & {
   renderComponent: TMentionHandler["renderComponent"];
+  getMentionedEntityDetails: TMentionHandler["getMentionedEntityDetails"];
 };
 
 export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions>({
@@ -36,13 +47,25 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
     return ["mention-component", mergeAttributes(HTMLAttributes)];
   },
 
-  HTMLAttributes: {
-    class: "mention",
+  renderText({ node }) {
+    return getMentionDisplayText(this.options, node);
   },
 
-  addStorage(this) {
+  addStorage() {
+    const options = this.options;
     return {
-      mentionsOpen: false,
+      markdown: {
+        serialize(state: MarkdownSerializerState, node: NodeType) {
+          state.write(getMentionDisplayText(options, node));
+        },
+      },
     };
   },
 });
+
+function getMentionDisplayText(options: TMentionExtensionOptions, node: NodeType): string {
+  const attrs = node.attrs as TMentionComponentAttributes;
+  const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
+  const mentionEntityDetails = options.getMentionedEntityDetails?.(mentionEntityId ?? "");
+  return `@${mentionEntityDetails?.display_name ?? attrs[EMentionComponentAttributeNames.ID] ?? mentionEntityId}`;
+}

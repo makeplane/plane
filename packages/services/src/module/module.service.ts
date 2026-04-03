@@ -1,13 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
 import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/types";
 // services
 import { APIService } from "../api.service";
 
 export class ModuleService extends APIService {
-  constructor(baseURL: string) {
-    super(baseURL);
-  }
-
   async workspaceModulesList(workspaceSlug: string): Promise<IModule[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/modules/`)
       .then((response) => response?.data)

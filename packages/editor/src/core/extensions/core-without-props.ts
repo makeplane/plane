@@ -1,84 +1,43 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import TextStyle from "@tiptap/extension-text-style";
-import TiptapUnderline from "@tiptap/extension-underline";
-import StarterKit from "@tiptap/starter-kit";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Underline } from "@tiptap/extension-underline";
+// plane editor imports
+import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 // extensions
-// helpers
-import { isValidHttpUrl } from "@/helpers/common";
+import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
 import { CustomCodeInlineExtension } from "./code-inline";
+import { CustomColorExtension } from "./custom-color";
+import { CustomImageExtensionConfig } from "./custom-image/extension-config";
 import { CustomLinkExtension } from "./custom-link";
+import { EmojiExtension } from "./emoji/extension";
 import { CustomHorizontalRule } from "./horizontal-rule";
-import { ImageExtensionWithoutProps } from "./image";
-import { CustomImageComponentWithoutProps } from "./image/image-component-without-props";
-import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props";
+import { ImageExtensionConfig } from "./image";
 import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
+import { CustomStarterKitExtension } from "./starter-kit";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
-import { CustomCalloutExtensionConfig } from "./callout/extension-config";
-import { CustomColorExtension } from "./custom-color";
-// plane editor extensions
-import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
+import { WorkItemEmbedExtensionConfig } from "./work-item-embed/extension-config";
 
 export const CoreEditorExtensionsWithoutProps = [
-  StarterKit.configure({
-    bulletList: {
-      HTMLAttributes: {
-        class: "list-disc pl-7 space-y-2",
-      },
-    },
-    orderedList: {
-      HTMLAttributes: {
-        class: "list-decimal pl-7 space-y-2",
-      },
-    },
-    listItem: {
-      HTMLAttributes: {
-        class: "not-prose space-y-2",
-      },
-    },
-    code: false,
-    codeBlock: false,
-    horizontalRule: false,
-    blockquote: false,
-    paragraph: {
-      HTMLAttributes: {
-        class: "editor-paragraph-block",
-      },
-    },
-    heading: {
-      HTMLAttributes: {
-        class: "editor-heading-block",
-      },
-    },
-    dropcursor: false,
+  CustomStarterKitExtension({
+    enableHistory: true,
   }),
+  EmojiExtension,
   CustomQuoteExtension,
-  CustomHorizontalRule.configure({
-    HTMLAttributes: {
-      class: "py-4 border-custom-border-400",
-    },
-  }),
-  CustomLinkExtension.configure({
-    openOnClick: true,
-    autolink: true,
-    linkOnPaste: true,
-    protocols: ["http", "https"],
-    validate: (url: string) => isValidHttpUrl(url),
-    HTMLAttributes: {
-      class:
-        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
-    },
-  }),
-  ImageExtensionWithoutProps().configure({
-    HTMLAttributes: {
-      class: "rounded-md",
-    },
-  }),
-  CustomImageComponentWithoutProps(),
-  TiptapUnderline,
+  CustomHorizontalRule,
+  CustomLinkExtension,
+  ImageExtensionConfig,
+  CustomImageExtensionConfig,
+  Underline,
   TextStyle,
   TaskList.configure({
     HTMLAttributes: {
@@ -104,4 +63,4 @@ export const CoreEditorExtensionsWithoutProps = [
   ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
-export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];
+export const DocumentEditorExtensionsWithoutProps = [WorkItemEmbedExtensionConfig];

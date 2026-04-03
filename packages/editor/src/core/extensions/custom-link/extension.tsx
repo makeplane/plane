@@ -1,16 +1,28 @@
-import { Mark, markPasteRule, mergeAttributes, PasteRuleMatch } from "@tiptap/core";
-import { Plugin } from "@tiptap/pm/state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { PasteRuleMatch } from "@tiptap/core";
+import { Mark, markPasteRule, mergeAttributes } from "@tiptap/core";
+import type { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { isValidHttpUrl } from "@/helpers/common";
+// local imports
 import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
 import { pasteHandler } from "./helpers/pasteHandler";
 
-export interface LinkProtocolOptions {
+type LinkProtocolOptions = {
   scheme: string;
   optionalSlashes?: boolean;
-}
+};
 
-export interface LinkOptions {
+type LinkOptions = {
   /**
    * If enabled, it adds links as you type.
    */
@@ -35,18 +47,18 @@ export interface LinkOptions {
   /**
    * A list of HTML attributes to be rendered.
    */
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   /**
    * A validation function that modifies link verification for the auto linker.
    * @param url - The url to be validated.
    * @returns - True if the url is valid, false otherwise.
    */
   validate?: (url: string) => boolean;
-}
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    link: {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: {
       /**
        * Set a link mark
        */
@@ -71,10 +83,19 @@ declare module "@tiptap/core" {
       unsetLink: () => ReturnType;
     };
   }
+  interface Storage {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
+  }
 }
 
-export const CustomLinkExtension = Mark.create<LinkOptions>({
-  name: "link",
+export type CustomLinkStorage = {
+  isPreviewOpen: boolean;
+  posToInsert: { from: number; to: number };
+  isBubbleMenuOpen: boolean;
+};
+
+export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
+  name: CORE_EXTENSIONS.CUSTOM_LINK,
 
   priority: 1000,
 
@@ -104,13 +125,14 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
       linkOnPaste: true,
       autolink: true,
       inclusive: false,
-      protocols: [],
+      protocols: ["http", "https"],
       HTMLAttributes: {
         target: "_blank",
         rel: "noopener noreferrer nofollow",
-        class: null,
+        class:
+          "text-accent-secondary underline underline-offset-[3px] hover:text-accent-primary transition-colors cursor-pointer",
       },
-      validate: undefined,
+      validate: (url: string) => isValidHttpUrl(url).isValid,
     };
   },
 
@@ -241,5 +263,13 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
     }
 
     return plugins;
+  },
+
+  addStorage() {
+    return {
+      isPreviewOpen: false,
+      isBubbleMenuOpen: false,
+      posToInsert: { from: 0, to: 0 },
+    };
   },
 });

@@ -1,7 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
-export interface CodeBlockOptions {
+export type CodeBlockOptions = {
   /**
    * Adds a prefix to language classes that are applied to code tags.
    * Defaults to `'language-'`.
@@ -20,12 +28,12 @@ export interface CodeBlockOptions {
   /**
    * Custom HTML attributes that should be added to the rendered HTML tag.
    */
-  HTMLAttributes: Record<string, any>;
-}
+  HTMLAttributes: Record<string, unknown>;
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    codeBlock: {
+    [CORE_EXTENSIONS.CODE_BLOCK]: {
       /**
        * Set a code block
        */
@@ -42,7 +50,7 @@ export const backtickInputRegex = /^```([a-z]+)?[\s\n]$/;
 export const tildeInputRegex = /^~~~([a-z]+)?[\s\n]$/;
 
 export const CodeBlock = Node.create<CodeBlockOptions>({
-  name: "codeBlock",
+  name: CORE_EXTENSIONS.CODE_BLOCK,
 
   addOptions() {
     return {
@@ -68,7 +76,6 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
         default: null,
         parseHTML: (element) => {
           const { languageClassPrefix } = this.options;
-          // @ts-expect-error element is a DOM element
           const classNames = [...(element.firstElementChild?.classList || [])];
           const languages = classNames
             .filter((className) => className.startsWith(languageClassPrefix))
@@ -118,7 +125,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       toggleCodeBlock:
         (attributes) =>
         ({ commands }) =>
-          commands.toggleNode(this.name, "paragraph", attributes),
+          commands.toggleNode(this.name, CORE_EXTENSIONS.PARAGRAPH, attributes),
     };
   },
 
@@ -126,7 +133,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
     return {
       "Mod-Alt-c": () => this.editor.commands.toggleCodeBlock(),
 
-      // remove code block when at start of document or code block is empty
+      // remove codeBlock when at start of document or codeBlock is empty
       Backspace: () => {
         try {
           const { empty, $anchor } = this.editor.state.selection;
@@ -259,7 +266,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
                 return false;
               }
 
-              if (this.editor.isActive("code")) {
+              if (this.editor.isActive(CORE_EXTENSIONS.CODE_INLINE)) {
                 // Check if it's an inline code block
                 event.preventDefault();
                 const text = event.clipboardData.getData("text/plain");

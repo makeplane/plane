@@ -1,22 +1,32 @@
-import { CSSProperties, useEffect, useState } from "react";
-import { Editor } from "@tiptap/react";
-// components
-import { LinkEditView, LinkInputView, LinkPreview } from "@/components/links";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export interface LinkViewProps {
-  view?: "LinkPreview" | "LinkEditView" | "LinkInputView";
+import type { Editor } from "@tiptap/react";
+import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
+// components
+import { LinkEditView, LinkPreview } from "@/components/links";
+
+export type LinkViews = "LinkPreview" | "LinkEditView";
+
+export type LinkViewProps = {
+  view?: LinkViews;
   editor: Editor;
   from: number;
   to: number;
   url: string;
+  text?: string;
   closeLinkView: () => void;
-}
+};
 
-export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
-  const [currentView, setCurrentView] = useState(props.view ?? "LinkInputView");
+export function LinkView(props: LinkViewProps & { style: CSSProperties }) {
+  const [currentView, setCurrentView] = useState<LinkViews>(props.view ?? "LinkPreview");
   const [prevFrom, setPrevFrom] = useState(props.from);
 
-  const switchView = (view: "LinkPreview" | "LinkEditView" | "LinkInputView") => {
+  const switchView = (view: LinkViews) => {
     setCurrentView(view);
   };
 
@@ -25,18 +35,12 @@ export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
       setCurrentView("LinkPreview");
       setPrevFrom(props.from);
     }
-  }, []);
+  }, [prevFrom, props.from]);
 
-  const renderView = () => {
-    switch (currentView) {
-      case "LinkPreview":
-        return <LinkPreview viewProps={props} switchView={switchView} />;
-      case "LinkEditView":
-        return <LinkEditView viewProps={props} switchView={switchView} />;
-      case "LinkInputView":
-        return <LinkInputView viewProps={props} switchView={switchView} />;
-    }
-  };
-
-  return renderView();
-};
+  return (
+    <>
+      {currentView === "LinkPreview" && <LinkPreview viewProps={props} switchView={switchView} />}
+      {currentView === "LinkEditView" && <LinkEditView viewProps={props} switchView={switchView} />}
+    </>
+  );
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Backlog",
+    "color": "#A3A3A3",
+    "sequence": 15000,
+    "group": "backlog",
+    "default": true,
+    "project_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Todo",
+    "color": "#3A3A3A",
+    "sequence": 25000,
+    "group": "unstarted",
+    "default": false,
+    "project_id": 1
+  },
+  {
+    "id": 3,
+    "name": "In Progress",
+    "color": "#F59E0B",
+    "sequence": 35000,
+    "group": "started",
+    "default": false,
+    "project_id": 1
+  },
+  {
+    "id": 4,
+    "name": "Done",
+    "color": "#16A34A",
+    "sequence": 45000,
+    "group": "completed",
+    "default": false,
+    "project_id": 1
+  },
+  {
+    "id": 5,
+    "name": "Cancelled",
+    "color": "#EF4444",
+    "sequence": 55000,
+    "group": "cancelled",
+    "default": false,
+    "project_id": 1
+  }
+]

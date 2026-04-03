@@ -1,0 +1,3 @@
+-r base.txt
+# server
+gunicorn==23.0.0

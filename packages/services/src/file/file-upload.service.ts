@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import axios from "axios";
 // api service
 import { APIService } from "../api.service";
@@ -21,10 +27,7 @@ export class FileUploadService extends APIService {
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails
    */
-  async uploadFile(
-    url: string,
-    data: FormData,
-  ): Promise<void> {
+  async uploadFile(url: string, data: FormData): Promise<void> {
     this.cancelSource = axios.CancelToken.source();
     return this.post(url, data, {
       headers: {

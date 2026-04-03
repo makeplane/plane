@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
 export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -10,7 +16,10 @@ export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   draggable?: boolean;
 };
 
-export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((props, ref) => {
+export const ControlLink = React.forwardRef(function ControlLink(
+  props: TControlLink,
+  ref: React.ForwardedRef<HTMLAnchorElement>
+) {
   const { href, onClick, children, target = "_blank", disabled = false, className, draggable = false, ...rest } = props;
   const LEFT_CLICK_EVENT_CODE = 0;
 

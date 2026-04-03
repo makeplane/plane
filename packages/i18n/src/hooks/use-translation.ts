@@ -1,11 +1,17 @@
-import { useContext } from 'react';
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useContext } from "react";
 // context
-import { TranslationContext } from '../context';
+import { TranslationContext } from "../context";
 // types
-import { ILanguageOption, TLanguage } from '../types';
+import type { ILanguageOption, TLanguage } from "../types";
 
 export type TTranslationStore = {
-  t: (key: string, params?: Record<string, any>) => string;
+  t: (key: string, params?: Record<string, unknown>) => string;
   currentLocale: TLanguage;
   changeLanguage: (lng: TLanguage) => void;
   languages: ILanguageOption[];
@@ -23,7 +29,7 @@ export type TTranslationStore = {
 export function useTranslation(): TTranslationStore {
   const store = useContext(TranslationContext);
   if (!store) {
-    throw new Error('useTranslation must be used within a TranslationProvider');
+    throw new Error("useTranslation must be used within a TranslationProvider");
   }
 
   return {
