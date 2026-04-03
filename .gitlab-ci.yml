@@ -97,7 +97,7 @@ frontend:lint:
   needs: [frontend:build]
   allow_failure: true
   script:
-    - pnpm turbo run check:lint --filter="apps/web..." --filter="apps/admin..."
+    - pnpm turbo run check:lint --filter="web..." --filter="admin..."
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
@@ -109,7 +109,7 @@ frontend:types:
   needs: [frontend:build]
   allow_failure: true
   script:
-    - pnpm turbo run check:types --filter="apps/web..." --filter="apps/admin..."
+    - pnpm turbo run check:types --filter="web..." --filter="admin..."
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
