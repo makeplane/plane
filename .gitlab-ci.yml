@@ -47,6 +47,7 @@ variables:
 # ─── Base Templates ───────────────────────────────────────────────────────────
 
 .frontend_base:
+  image: node:22-alpine
   cache:
     <<: *pnpm_cache
   before_script:
@@ -110,6 +111,7 @@ frontend:types:
 # Ruff Python lint — only when backend files change
 backend:lint:
   stage: lint
+  image: python:3.12-slim
   interruptible: true
   variables:
     PIP_CACHE_DIR: .pip-cache
@@ -131,6 +133,7 @@ backend:lint:
 # Uses GitLab CI `services:` for ephemeral postgres + valkey containers
 backend:test:docker:
   stage: test
+  image: python:3.12-slim
   interruptible: true
   services:
     - name: postgres:15-alpine
