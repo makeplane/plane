@@ -7,7 +7,6 @@
 import LogoSpinnerImg from "@/app/assets/images/logo-spinner.svg?url";
 
 export function LogoSpinner() {
-
   const logoSrc = LogoSpinnerImg;
 
   return (
