@@ -290,20 +290,21 @@ deploy:production:
 
 # ── Deploy External Test — auto on merge to develop (external gitlab.com) ─────
 # Uses a temporary VPS as deploy target to validate SSH + SCP flow end-to-end
+# Auth: password-based via sshpass (VPS_PASSWORD variable) — no SSH key needed
 deploy:external-test:
   stage: deploy
   interruptible: false
   before_script:
-    - *ssh_setup
-    - echo "$VPS_SSH_KEY" | tr -d '\r' | ssh-add -
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
   script:
-    - ssh $VPS_USER@$VPS_HOST "mkdir -p /tmp/plane-deploy"
-    - scp dist/*.tar.gz $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
-    - scp scripts/ci-deploy.sh $VPS_USER@$VPS_HOST:/tmp/ci-deploy.sh
+    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "mkdir -p /tmp/plane-deploy"
+    - sshpass -p "$VPS_PASSWORD" scp dist/*.tar.gz $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
+    - sshpass -p "$VPS_PASSWORD" scp scripts/ci-deploy.sh $VPS_USER@$VPS_HOST:/tmp/ci-deploy.sh
     # VPS uses home-based path (no sudo); internal servers use default /root/Documents/... path
-    - ssh $VPS_USER@$VPS_HOST "PLANE_DIR=/home/$VPS_USER/plane-app IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
-    - ssh $VPS_USER@$VPS_HOST "rm -f /tmp/ci-deploy.sh"
+    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "PLANE_DIR=/home/$VPS_USER/plane-app IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
+    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "rm -f /tmp/ci-deploy.sh"
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "false"
   environment:
