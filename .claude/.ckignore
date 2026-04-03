@@ -25,3 +25,4 @@ coverage
 # Allow reading these files
 !.env
 !.env.*
+!dist
