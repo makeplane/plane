@@ -40,9 +40,7 @@ export const ModuleActivityList = observer(({ workspaceSlug, projectId, moduleId
   }
 
   if (!activities || activities.length === 0) {
-    return (
-      <p className="p-1 text-sm text-tertiary">{t("module.activity.no_activities")}</p>
-    );
+    return <p className="p-1 text-sm text-tertiary">{t("module.activity.no_activities")}</p>;
   }
 
   return (

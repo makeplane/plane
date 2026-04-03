@@ -169,4 +169,3 @@ export interface ILayoutDisplayFiltersOptions {
     values: TIssueExtraOptions[];
   };
 }
-

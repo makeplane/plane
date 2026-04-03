@@ -43,7 +43,6 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
 
   const { getModuleById, restoreModule } = useModule();
 
-  
   // derived values
   const moduleDetails = getModuleById(moduleId);
   // auth

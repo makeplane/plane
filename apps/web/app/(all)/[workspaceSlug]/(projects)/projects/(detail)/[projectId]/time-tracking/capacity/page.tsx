@@ -10,14 +10,14 @@ import { CapacityDashboard } from "@/plane-web/components/time-tracking/capacity
 import type { Route } from "./+types/page";
 
 const CapacityPage = observer(({ params }: Route.ComponentProps) => {
-    const { workspaceSlug, projectId } = params;
+  const { workspaceSlug, projectId } = params;
 
-    return (
-        <>
-            <PageHead title="Capacity Dashboard" />
-            <CapacityDashboard workspaceSlug={workspaceSlug} projectId={projectId} />
-        </>
-    );
+  return (
+    <>
+      <PageHead title="Capacity Dashboard" />
+      <CapacityDashboard workspaceSlug={workspaceSlug} projectId={projectId} />
+    </>
+  );
 });
 
 export default CapacityPage;

@@ -75,7 +75,10 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
                 date_of_joining
               </code>
             </p>
-            <p>Max 500 rows. Supports CSV and Excel formats (including non-standard extensions). Default password used for new accounts.</p>
+            <p>
+              Max 500 rows. Supports CSV and Excel formats (including non-standard extensions). Default password used
+              for new accounts.
+            </p>
           </div>
 
           {/* File upload — accepts any extension; Excel detected by content */}

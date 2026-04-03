@@ -180,7 +180,11 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
             const issue = issuesMap[source.id];
             if (issue) {
               const currentStateGroup = projectState.getStateById(source.groupId)?.group;
-              const { missingFieldLabels } = validateTransitionRef.current(issue, destination.groupId, currentStateGroup);
+              const { missingFieldLabels } = validateTransitionRef.current(
+                issue,
+                destination.groupId,
+                currentStateGroup
+              );
               if (missingFieldLabels.length > 0) {
                 setToast({
                   type: TOAST_TYPE.ERROR,

@@ -20,9 +20,12 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
-  const { data: projects, isLoading, error } = useSWR(
-    currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug}` : null,
-    () => bankWideProjectsService.fetchAll(currentWorkspace!.slug)
+  const {
+    data: projects,
+    isLoading,
+    error,
+  } = useSWR(currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug}` : null, () =>
+    bankWideProjectsService.fetchAll(currentWorkspace!.slug)
   );
 
   // Group projects by workspace_slug, preserving backend order

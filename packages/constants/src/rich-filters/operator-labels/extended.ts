@@ -5,11 +5,7 @@
  */
 
 import type { TExtendedSupportedOperators } from "@plane/types";
-import {
-  EXTENDED_EQUALITY_OPERATOR,
-  EXTENDED_COLLECTION_OPERATOR,
-  EXTENDED_COMPARISON_OPERATOR,
-} from "@plane/types";
+import { EXTENDED_EQUALITY_OPERATOR, EXTENDED_COLLECTION_OPERATOR, EXTENDED_COMPARISON_OPERATOR } from "@plane/types";
 
 /**
  * Extended operator labels — generic labels for all field types

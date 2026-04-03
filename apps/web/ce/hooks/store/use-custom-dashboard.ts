@@ -6,5 +6,5 @@ import type { RootStore as _RootStore } from "@/plane-web/store/root.store";
 export const useCustomDashboard = (): IDashboardStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useCustomDashboard must be used within StoreProvider");
-  return (context).customDashboard;
+  return context.customDashboard;
 };

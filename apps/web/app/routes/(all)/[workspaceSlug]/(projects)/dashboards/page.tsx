@@ -17,8 +17,8 @@ import { PageHead } from "@/components/core/page-title";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { DashboardCard } from "./components/dashboard-card";
 import { DashboardDeleteModal } from "./components/dashboard-delete-modal";
-import { DashboardFormModal  } from "@/plane-web/components/dashboards/dashboard-form-modal";
-import type {DashboardFormPayload} from "@/plane-web/components/dashboards/dashboard-form-modal";
+import { DashboardFormModal } from "@/plane-web/components/dashboards/dashboard-form-modal";
+import type { DashboardFormPayload } from "@/plane-web/components/dashboards/dashboard-form-modal";
 import { DashboardListHeader } from "./components/dashboard-list-header";
 
 const DashboardListPage = observer(function DashboardListPage() {

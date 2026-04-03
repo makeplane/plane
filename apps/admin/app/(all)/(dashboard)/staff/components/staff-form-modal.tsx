@@ -25,7 +25,12 @@ export const StaffFormModal = observer(function StaffFormModal({ open, onClose, 
   const { staff, updateStaff } = useInstanceStaff();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<StaffFormValues>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<StaffFormValues>();
 
   useEffect(() => {
     if (staffId && staff[staffId]) {
@@ -84,8 +89,12 @@ export const StaffFormModal = observer(function StaffFormModal({ open, onClose, 
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="mt-4 space-y-4">
             <StaffFormFields register={register} errors={errors} />
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="secondary" onClick={onClose} type="button">Cancel</Button>
-              <Button variant="primary" type="submit" loading={isSubmitting}>Save changes</Button>
+              <Button variant="secondary" onClick={onClose} type="button">
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" loading={isSubmitting}>
+                Save changes
+              </Button>
             </div>
           </form>
         </div>

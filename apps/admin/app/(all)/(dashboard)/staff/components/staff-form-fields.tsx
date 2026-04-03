@@ -69,16 +69,24 @@ export const StaffFormFields = observer(function StaffFormFields({ register, err
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <label className="text-13 font-medium">Department</label>
-          <select {...register("department")} className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13">
+          <select
+            {...register("department")}
+            className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
+          >
             <option value="">— None —</option>
             {departmentIds.map((id) => (
-              <option key={id} value={id}>{departments[id]?.name}</option>
+              <option key={id} value={id}>
+                {departments[id]?.name}
+              </option>
             ))}
           </select>
         </div>
         <div className="space-y-1">
           <label className="text-13 font-medium">Status</label>
-          <select {...register("employment_status")} className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13">
+          <select
+            {...register("employment_status")}
+            className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
+          >
             <option value="active">Active</option>
             <option value="probation">Probation</option>
             <option value="resigned">Resigned</option>
@@ -102,7 +110,9 @@ export const StaffFormFields = observer(function StaffFormFields({ register, err
 
       <div className="flex items-center gap-2">
         <input type="checkbox" id="is_department_manager" {...register("is_department_manager")} className="rounded" />
-        <label htmlFor="is_department_manager" className="text-13">Department manager</label>
+        <label htmlFor="is_department_manager" className="text-13">
+          Department manager
+        </label>
       </div>
 
       <div className="space-y-1">

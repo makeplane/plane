@@ -72,9 +72,7 @@ export function StyleChartOptionsSection({
       {/* Line type selector for LINE_CHART */}
       {showLineType && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-secondary">
-            {t("analytics_dashboard.line_type")}
-          </span>
+          <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.line_type")}</span>
           <Controller
             name="config.line_type"
             control={control}
@@ -103,9 +101,7 @@ export function StyleChartOptionsSection({
       {/* Orientation toggle for BAR_CHART */}
       {showOrientation && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-secondary">
-            {t("analytics_dashboard.orientation")}
-          </span>
+          <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.orientation")}</span>
           <Controller
             name="config.orientation"
             control={control}

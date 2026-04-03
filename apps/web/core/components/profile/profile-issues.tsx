@@ -38,10 +38,18 @@ const ProfileIssuesInitFilters = observer(function ProfileIssuesInitFilters({
     const hasTargetDate = conditions.some((c) => c.property === "target_date");
 
     if (!hasStartDate) {
-      filter.addCondition(LOGICAL_OPERATOR.AND, { property: "start_date", operator: EQUALITY_OPERATOR.EXACT, value: undefined }, false);
+      filter.addCondition(
+        LOGICAL_OPERATOR.AND,
+        { property: "start_date", operator: EQUALITY_OPERATOR.EXACT, value: undefined },
+        false
+      );
     }
     if (!hasTargetDate) {
-      filter.addCondition(LOGICAL_OPERATOR.AND, { property: "target_date", operator: EQUALITY_OPERATOR.EXACT, value: undefined }, false);
+      filter.addCondition(
+        LOGICAL_OPERATOR.AND,
+        { property: "target_date", operator: EQUALITY_OPERATOR.EXACT, value: undefined },
+        false
+      );
     }
   }, [filter]);
 

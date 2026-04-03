@@ -120,9 +120,7 @@ export const WorkflowBlockerModal = observer(function WorkflowBlockerModal({ pro
         <div className="flex flex-col items-center gap-3 text-center">
           <ShieldX className="h-6 w-6 text-primary" strokeWidth={1.5} />
 
-          <h3 className="text-[14px] font-semibold text-primary">
-            {t("project_settings.workflows.blocker_title")}
-          </h3>
+          <h3 className="text-[14px] font-semibold text-primary">{t("project_settings.workflows.blocker_title")}</h3>
 
           <div className="space-y-2 mt-1 text-[12px] text-secondary w-full">
             {/* Source state */}

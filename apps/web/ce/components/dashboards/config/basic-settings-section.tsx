@@ -118,9 +118,7 @@ export const BasicSettingsSection = observer(({ control, errors, chartType }: Ba
 
       {/* Chart Model */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-secondary">
-          {t("analytics_dashboard.chart_model")}
-        </label>
+        <label className="mb-1 block text-sm font-medium text-secondary">{t("analytics_dashboard.chart_model")}</label>
         <Controller
           name="chart_model"
           control={control}

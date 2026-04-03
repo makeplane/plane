@@ -6,7 +6,12 @@
 
 // plane imports
 import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
-import { COMPARISON_OPERATOR, EQUALITY_OPERATOR, EXTENDED_COMPARISON_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
+import {
+  COMPARISON_OPERATOR,
+  EQUALITY_OPERATOR,
+  EXTENDED_COMPARISON_OPERATOR,
+  EXTENDED_EQUALITY_OPERATOR,
+} from "@plane/types";
 // local imports
 import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
 import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams, TFilterIconType } from "../shared";

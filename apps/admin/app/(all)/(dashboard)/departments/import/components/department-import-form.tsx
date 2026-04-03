@@ -16,7 +16,17 @@ import { useInstanceDepartment } from "@/hooks/store";
 
 const MAX_ROWS = 500;
 const MAX_FILE_SIZE_MB = 5;
-const TEMPLATE_HEADERS = ["name", "short_name", "dept_code", "dept_type", "code", "parent_code", "manager_email", "sort_order", "is_active"];
+const TEMPLATE_HEADERS = [
+  "name",
+  "short_name",
+  "dept_code",
+  "dept_type",
+  "code",
+  "parent_code",
+  "manager_email",
+  "sort_order",
+  "is_active",
+];
 
 async function downloadTemplate() {
   const XLSX = await import("xlsx");
@@ -100,30 +110,44 @@ export const DepartmentImportForm = observer(function DepartmentImportForm() {
       <div className="space-y-2">
         <p className="text-sm font-medium">Excel file requirements:</p>
         <p className="text-sm text-tertiary">
-          Required columns: <code className="text-primary">name</code>, <code className="text-primary">short_name</code>,{" "}
-          <code className="text-primary">dept_code</code>, <code className="text-primary">dept_type</code> (HO/BRX/OSR).
-          Optional: <code className="text-primary">code</code>, <code className="text-primary">parent_code</code>,{" "}
-          <code className="text-primary">manager_email</code>.
+          Required columns: <code className="text-primary">name</code>, <code className="text-primary">short_name</code>
+          , <code className="text-primary">dept_code</code>, <code className="text-primary">dept_type</code>{" "}
+          (HO/BRX/OSR). Optional: <code className="text-primary">code</code>,{" "}
+          <code className="text-primary">parent_code</code>, <code className="text-primary">manager_email</code>.
         </p>
-        <p className="text-sm text-tertiary">Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.</p>
+        <p className="text-sm text-tertiary">
+          Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.
+        </p>
       </div>
 
       {/* Template download */}
-      <button type="button" onClick={() => void downloadTemplate()} className="flex items-center gap-2 text-sm text-primary hover:underline w-fit">
+      <button
+        type="button"
+        onClick={() => void downloadTemplate()}
+        className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+      >
         <Download className="h-4 w-4" />
         Download template
       </button>
 
       {/* File upload */}
       <div className="space-y-2">
-        <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={(e) => void handleFileChange(e)} className="hidden" />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={(e) => void handleFileChange(e)}
+          className="hidden"
+        />
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
         >
           <Upload className="h-5 w-5 text-tertiary" />
-          <span className="text-sm">{selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}</span>
+          <span className="text-sm">
+            {selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}
+          </span>
         </button>
         {parseError && <p className="text-sm text-danger-primary">{parseError}</p>}
       </div>
@@ -135,7 +159,9 @@ export const DepartmentImportForm = observer(function DepartmentImportForm() {
             <thead className="bg-layer-1">
               <tr>
                 {["name", "short_name", "dept_code", "dept_type", "parent_code"].map((col) => (
-                  <th key={col} className="px-3 py-2 text-left font-medium text-tertiary">{col}</th>
+                  <th key={col} className="px-3 py-2 text-left font-medium text-tertiary">
+                    {col}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -160,7 +186,13 @@ export const DepartmentImportForm = observer(function DepartmentImportForm() {
       )}
 
       <div className="flex items-center gap-4">
-        <Button variant="primary" size="lg" loading={isSubmitting} disabled={parsedRows.length === 0 || isSubmitting} onClick={() => void handleSubmit()}>
+        <Button
+          variant="primary"
+          size="lg"
+          loading={isSubmitting}
+          disabled={parsedRows.length === 0 || isSubmitting}
+          onClick={() => void handleSubmit()}
+        >
           {isSubmitting ? "Importing..." : `Import ${parsedRows.length > 0 ? parsedRows.length : ""} departments`}
         </Button>
         <Link href="/departments" className={getButtonStyling("secondary", "lg")}>

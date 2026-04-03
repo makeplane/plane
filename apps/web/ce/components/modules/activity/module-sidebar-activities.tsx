@@ -28,20 +28,13 @@ export const ModuleSidebarActivities = ({ workspaceSlug, projectId, moduleId }: 
                 <span className="font-medium text-secondary">{t("module.activity.title")}</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <ChevronDownIcon
-                  className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
-                  aria-hidden="true"
-                />
+                <ChevronDownIcon className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
               </div>
             </Disclosure.Button>
             <Transition show={open}>
               <Disclosure.Panel>
                 <div className="mt-2 w-full overflow-y-auto">
-                  <ModuleActivityList
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                    moduleId={moduleId}
-                  />
+                  <ModuleActivityList workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
                 </div>
               </Disclosure.Panel>
             </Transition>

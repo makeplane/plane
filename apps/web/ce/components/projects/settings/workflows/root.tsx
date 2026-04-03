@@ -50,9 +50,7 @@ export const WorkflowSettingsRoot = observer(function WorkflowSettingsRoot({ wor
       {/* Activity log panel */}
       {showActivityLog && (
         <div className="rounded-lg border border-subtle bg-surface-1 p-4">
-          <h3 className="mb-3 text-sm font-medium text-primary">
-            {t("project_settings.workflows.view_history")}
-          </h3>
+          <h3 className="mb-3 text-sm font-medium text-primary">{t("project_settings.workflows.view_history")}</h3>
           <WorkflowActivityLog workspaceSlug={workspaceSlug} projectId={projectId} />
         </div>
       )}

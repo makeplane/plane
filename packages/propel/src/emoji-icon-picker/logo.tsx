@@ -34,7 +34,12 @@ export function Logo({ logo, size = 16, type = "material" }: Props) {
   const loadingSkeleton = <span style={{ height: size, width: size }} className="rounded-sm bg-layer-1" />;
 
   // Fallback for empty states
-  if (!logo || !logo.in_use || (logo.in_use === "emoji" && !logo.emoji?.value) || (logo.in_use === "icon" && !logo.icon?.name)) {
+  if (
+    !logo ||
+    !logo.in_use ||
+    (logo.in_use === "emoji" && !logo.emoji?.value) ||
+    (logo.in_use === "icon" && !logo.icon?.name)
+  ) {
     if (type === "lucide") {
       const FallbackIcon = LUCIDE_ICONS_LIST.find((item) => item.name === "box")?.element;
       if (FallbackIcon) return <FallbackIcon style={{ height: size, width: size }} className="text-tertiary" />;

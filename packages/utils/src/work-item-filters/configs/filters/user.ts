@@ -6,7 +6,12 @@
 
 // plane imports
 import type { TFilterProperty } from "@plane/types";
-import { EQUALITY_OPERATOR, COLLECTION_OPERATOR, EXTENDED_COLLECTION_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
+import {
+  EQUALITY_OPERATOR,
+  COLLECTION_OPERATOR,
+  EXTENDED_COLLECTION_OPERATOR,
+  EXTENDED_EQUALITY_OPERATOR,
+} from "@plane/types";
 // local imports
 import type { TCreateFilterConfig, TCreateUserFilterParams } from "../../../rich-filters";
 import { createFilterConfig, createOperatorConfigEntry, getMemberMultiSelectConfig } from "../../../rich-filters";

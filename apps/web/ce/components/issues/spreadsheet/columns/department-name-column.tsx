@@ -10,7 +10,9 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetDepartmentNameColumn = observer(function SpreadsheetDepartmentNameColumn({ issue: _issue }: Props) {
+export const SpreadsheetDepartmentNameColumn = observer(function SpreadsheetDepartmentNameColumn({
+  issue: _issue,
+}: Props) {
   const { currentWorkspace } = useWorkspace();
 
   return (

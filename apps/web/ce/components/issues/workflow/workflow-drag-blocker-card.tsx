@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-  import { ShieldX } from "lucide-react";
+import { ShieldX } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks

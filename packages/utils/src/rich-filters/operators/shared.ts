@@ -5,7 +5,12 @@
  */
 
 import type { TAllAvailableOperatorsForDisplay, TSupportedOperators } from "@plane/types";
-import { EXTENDED_EQUALITY_OPERATOR, EXTENDED_COLLECTION_OPERATOR, EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
+import {
+  EXTENDED_EQUALITY_OPERATOR,
+  EXTENDED_COLLECTION_OPERATOR,
+  EQUALITY_OPERATOR,
+  COLLECTION_OPERATOR,
+} from "@plane/types";
 
 /**
  * Result type for operator conversion

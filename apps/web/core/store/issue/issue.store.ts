@@ -161,7 +161,11 @@ export class IssueStore implements IIssueStore {
       const issue = this.issuesMap[issueId];
       if (!issue) return;
       // "all" returns both archived and un-archived issues
-      if (type === "all" || (type === "archived" && issue.archived_at) || (type === "un-archived" && !issue.archived_at)) {
+      if (
+        type === "all" ||
+        (type === "archived" && issue.archived_at) ||
+        (type === "un-archived" && !issue.archived_at)
+      ) {
         filteredIssues.push(issue);
       }
     });

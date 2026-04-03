@@ -130,7 +130,8 @@ export function TimesheetAddIssueModal({
                   key={issue.id}
                   value={issue}
                   className={({ active, selected }) =>
-                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${active ? "bg-layer-1 text-primary" : ""
+                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                      active ? "bg-layer-1 text-primary" : ""
                     } ${selected ? "text-primary" : ""}`
                   }
                 >

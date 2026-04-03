@@ -132,14 +132,22 @@ export const WorkspaceBulkImportForm = observer(function WorkspaceBulkImportForm
 
       {/* File upload */}
       <div className="space-y-2">
-        <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={(e) => void handleFileChange(e)} className="hidden" />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={(e) => void handleFileChange(e)}
+          className="hidden"
+        />
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
         >
           <Upload className="h-5 w-5 text-tertiary" />
-          <span className="text-sm">{selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}</span>
+          <span className="text-sm">
+            {selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}
+          </span>
         </button>
         {parseError && <p className="text-sm text-danger-primary">{parseError}</p>}
       </div>

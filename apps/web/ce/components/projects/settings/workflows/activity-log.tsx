@@ -29,11 +29,15 @@ export const WorkflowActivityLog = observer(function WorkflowActivityLog({ works
   }, [workspaceSlug, projectId, workflowStore]);
 
   if (isLoading) {
-    return <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_loading")}</div>;
+    return (
+      <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_loading")}</div>
+    );
   }
 
   if (activities.length === 0) {
-    return <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_empty")}</div>;
+    return (
+      <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_empty")}</div>
+    );
   }
 
   return (

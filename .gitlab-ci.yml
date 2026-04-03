@@ -29,6 +29,8 @@ variables:
   # Toggle: "false" = Docker Executor + internet (gitlab.com)
   #         "true"  = Shell Executor + air-gapped (internal GitLab)
   IS_AIRGAPPED: "false"
+  # Full git history required for turbo --affected to detect changed packages
+  GIT_DEPTH: 0
 
 # ─── Cache Templates ──────────────────────────────────────────────────────────
 

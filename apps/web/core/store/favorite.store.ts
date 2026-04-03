@@ -348,7 +348,6 @@ export class FavoriteStore implements IFavoriteStore {
             (d) => d.id === entity_identifier
           );
           if (idx !== -1) {
-             
             store.dashboards[idx].is_favorite = false;
           }
         }

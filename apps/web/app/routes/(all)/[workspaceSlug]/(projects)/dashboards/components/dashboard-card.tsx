@@ -95,9 +95,7 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
       </div>
 
       {/* Description */}
-      {dashboard.description && (
-        <p className="mb-3 line-clamp-2 text-sm text-secondary">{dashboard.description}</p>
-      )}
+      {dashboard.description && <p className="mb-3 line-clamp-2 text-sm text-secondary">{dashboard.description}</p>}
 
       {/* Footer: widget count */}
       {Array.isArray(dashboard.widgets) && (

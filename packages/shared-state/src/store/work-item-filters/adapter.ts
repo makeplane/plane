@@ -17,8 +17,19 @@ import type {
   TWorkItemFilterExpressionData,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { LOGICAL_OPERATOR, MULTI_VALUE_OPERATORS, WORK_ITEM_FILTER_PROPERTY_KEYS, EXTENDED_COMPARISON_OPERATOR } from "@plane/types";
-import { createConditionNode, createAndGroupNode, isAndGroupNode, isConditionNode, getOperatorForPayload } from "@plane/utils";
+import {
+  LOGICAL_OPERATOR,
+  MULTI_VALUE_OPERATORS,
+  WORK_ITEM_FILTER_PROPERTY_KEYS,
+  EXTENDED_COMPARISON_OPERATOR,
+} from "@plane/types";
+import {
+  createConditionNode,
+  createAndGroupNode,
+  isAndGroupNode,
+  isConditionNode,
+  getOperatorForPayload,
+} from "@plane/utils";
 // local imports
 import { FilterAdapter } from "../rich-filters/adapter";
 
