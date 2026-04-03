@@ -60,7 +60,6 @@ export function InstanceSignInForm() {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -99,13 +98,9 @@ export function InstanceSignInForm() {
     [formData.email, formData.password, isSubmitting]
   );
 
-  useEffect(() => {
-    if (errorCode) {
-      const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
-      if (errorDetail) {
-        setErrorInfo(errorDetail);
-      }
-    }
+  const errorInfo = useMemo(() => {
+    if (errorCode) return authErrorHandler(errorCode as EAdminAuthErrorCodes) ?? undefined;
+    return undefined;
   }, [errorCode]);
 
   return (

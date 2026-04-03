@@ -4,12 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { useTheme } from "next-themes";
 // assets
 import LogoSpinnerImg from "@/app/assets/images/logo-spinner.svg?url";
 
 export function InstanceLoading() {
-  const { _resolvedTheme } = useTheme();
 
   const logoSrc = LogoSpinnerImg;
 

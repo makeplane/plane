@@ -64,7 +64,7 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
     try {
       const payload: ISubTaskCategoryCreate = {
         name: data.name,
-        main_category: data.main_category || null,
+        main_category: data.main_category || "",
         sort_order: Number(data.sort_order),
         is_active: data.is_active,
       };
