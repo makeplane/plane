@@ -422,3 +422,13 @@
 {"ts":"2026-04-02T10:15:28.489Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
 {"ts":"2026-04-02T10:15:32.830Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":3,"status":"ok","exit":0,"error":""}
 {"ts":"2026-04-02T10:15:32.833Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":8,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:21:47.849Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
+{"ts":"2026-04-03T03:22:14.161Z","hook":"session-init","event":"SessionStart","tool":"","target":"","note":"clear","dur":118,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:24:51.332Z","hook":"dev-rules-reminder","event":"UserPromptSubmit","tool":"","target":"","note":"context-injected","dur":50,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:24:51.957Z","hook":"usage-context-awareness","event":"UserPromptSubmit","tool":"","target":"","note":"fetched","dur":682,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:25:01.382Z","hook":"subagent-init","event":"SubagentStart","tool":"","target":"git-manager","note":"context-injected","dur":54,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:25:03.368Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":2,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:25:03.374Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":9,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:25:03.532Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
+{"ts":"2026-04-03T03:25:06.623Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":4,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-03T03:25:06.626Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":8,"status":"ok","exit":0,"error":""}
