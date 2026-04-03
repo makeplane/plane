@@ -128,6 +128,8 @@ def issue_on_results(
         "archived_at",
         "state__group",
         "total_logged_minutes",
+        "main_task_category_id",
+        "sub_task_category_id",
     ]
 
     if group_by in FIELD_MAPPER:
