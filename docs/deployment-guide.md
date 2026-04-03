@@ -1,606 +1,734 @@
 # Deployment Guide
 
-**Last Updated**: 2026-02-13
-**Scope**: Local development, Docker Compose, Kubernetes, environment setup
-
-## Quick Start (Docker Compose)
-
-### Prerequisites
-
-- Docker & Docker Compose (v2.0+)
-- 8GB RAM minimum
-- 20GB disk space
-- Linux, macOS, or Windows (WSL2)
-
-### Installation
-
-**1. Clone repository**:
-```bash
-git clone https://github.com/makeplane/plane.git
-cd plane
-```
-
-**2. Set up environment**:
-```bash
-cd deployments/cli/community
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-**3. Start services**:
-```bash
-docker-compose up -d
-```
-
-**4. Access Plane**:
-- Web: http://localhost
-- Admin: http://localhost/god-mode
-- API: http://localhost/api/v1
-- Swagger: http://localhost/api/schema/swagger-ui
-
-### First-Time Setup
-
-After services start (wait ~30 seconds):
-
-```bash
-# Migrations run automatically via migrator service
-# Create superuser (optional, for admin access)
-docker-compose exec api python manage.py createsuperuser
-```
-
-## Environment Variables
-
-### Core Configuration
-
-| Variable | Required | Default | Purpose |
-|----------|----------|---------|---------|
-| `DOMAIN` | Yes | `http://localhost` | Public domain URL |
-| `DEBUG` | No | `0` | Django debug mode (0=prod) |
-| `SECRET_KEY` | Yes | (generated) | Django secret key |
-| `ALLOWED_HOSTS` | Yes | `localhost,127.0.0.1` | Comma-separated allowed hosts |
-
-### Database
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `DB_HOST` | `plane-db` | PostgreSQL host |
-| `DB_PORT` | `5432` | PostgreSQL port |
-| `DB_NAME` | `plane` | Database name |
-| `DB_USER` | `plane` | Database user |
-| `DB_PASSWORD` | (required) | Database password |
-
-### Cache & Sessions
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `REDIS_HOST` | `plane-redis` | Redis host |
-| `REDIS_PORT` | `6379` | Redis port |
-| `REDIS_PASSWORD` | (optional) | Redis password |
-
-### Message Queue
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `RABBITMQ_HOST` | `plane-mq` | RabbitMQ host |
-| `RABBITMQ_PORT` | `5672` | RabbitMQ port |
-| `RABBITMQ_DEFAULT_USER` | `plane` | RabbitMQ user |
-| `RABBITMQ_DEFAULT_PASS` | `plane` | RabbitMQ password |
-| `RABBITMQ_DEFAULT_VHOST` | `plane` | RabbitMQ vhost |
-
-### File Storage (S3/MinIO)
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `AWS_S3_REGION_NAME` | `us-east-1` | S3 region |
-| `AWS_STORAGE_BUCKET_NAME` | `uploads` | S3 bucket name |
-| `AWS_S3_ENDPOINT_URL` | `http://plane-minio:9000` | MinIO endpoint |
-| `AWS_ACCESS_KEY_ID` | `minioadmin` | MinIO access key |
-| `AWS_SECRET_ACCESS_KEY` | `minioadmin` | MinIO secret key |
-
-### Authentication
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `OAUTH_GOOGLE_CLIENT_ID` | (optional) | Google OAuth client ID |
-| `OAUTH_GOOGLE_CLIENT_SECRET` | (optional) | Google OAuth client secret |
-| `OAUTH_GITHUB_CLIENT_ID` | (optional) | GitHub OAuth client ID |
-| `OAUTH_GITHUB_CLIENT_SECRET` | (optional) | GitHub OAuth client secret |
-| `OAUTH_GITLAB_CLIENT_ID` | (optional) | GitLab OAuth client ID |
-| `OAUTH_GITLAB_CLIENT_SECRET` | (optional) | GitLab OAuth client secret |
-| `OAUTH_GITEA_CLIENT_ID` | (optional) | Gitea OAuth client ID |
-| `OAUTH_GITEA_CLIENT_SECRET` | (optional) | Gitea OAuth client secret |
-
-### Email (Notifications)
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `EMAIL_HOST` | `smtp.gmail.com` | SMTP server |
-| `EMAIL_PORT` | `587` | SMTP port |
-| `EMAIL_HOST_USER` | (required) | SMTP username |
-| `EMAIL_HOST_PASSWORD` | (required) | SMTP password |
-| `EMAIL_USE_TLS` | `1` | Use TLS |
-| `EMAIL_FROM` | `noreply@plane.so` | From email address |
-
-### Scaling
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `WEB_REPLICAS` | `1` | Web app instances |
-| `ADMIN_REPLICAS` | `1` | Admin app instances |
-| `SPACE_REPLICAS` | `1` | Space app instances |
-| `LIVE_REPLICAS` | `1` | Live server instances |
-| `API_REPLICAS` | `1` | API server instances |
-| `WORKER_REPLICAS` | `1` | Celery worker instances |
-| `BEAT_WORKER_REPLICAS` | `1` | Celery beat instances |
-
-## Docker Compose Services
-
-### Frontend Services
-
-**Web** (apps/web):
-- Port: 3000
-- Replicas: WEB_REPLICAS
-- Uses: React Router v7, MobX
-- Health: GET / → 200
-
-**Admin** (apps/admin):
-- Port: 3000
-- Replicas: ADMIN_REPLICAS
-- For: Instance configuration
-- Health: GET / → 200
-
-**Space** (apps/space):
-- Port: 3000
-- Replicas: SPACE_REPLICAS
-- Public sharing portal (SSR enabled)
-- Health: GET / → 200
-
-### Backend Services
-
-**API** (apps/api):
-- Port: 8000
-- Replicas: API_REPLICAS
-- Framework: Django + Gunicorn
-- Health: GET /api/health → 200
-- Runs migrations automatically
-
-**Live** (apps/live):
-- Port: 3000
-- Replicas: LIVE_REPLICAS
-- Real-time collaboration server
-- Technology: Express.js + Hocuspocus
-- WebSocket support
-
-### Worker Services
-
-**Worker** (Celery):
-- Role: Background task processor
-- Replicas: WORKER_REPLICAS
-- Processes async jobs from RabbitMQ
-- Logs to: `/logs/worker/`
-
-**Beat-Worker** (Celery Beat):
-- Role: Scheduled task scheduler
-- Replicas: BEAT_WORKER_REPLICAS
-- Manages periodic tasks
-- Logs to: `/logs/beat-worker/`
-
-**Migrator**:
-- Role: Database migration runner
-- Runs once during startup
-- Executes: `python manage.py migrate`
-- Runs: `plane/bin/docker-entrypoint-migrator.sh`
-
-### Infrastructure Services
-
-**PostgreSQL** (postgres:15.7-alpine):
-- Port: 5432
-- Volume: pgdata
-- Max connections: 1000
-- Backup: Configure external backup
-
-**Redis/Valkey** (valkey:7.2.11-alpine):
-- Port: 6379
-- Volume: redisdata
-- Purpose: Cache, sessions, Celery results
-- Persistence: AOF (append-only file)
-
-**RabbitMQ** (rabbitmq:3.13.6-management):
-- Port: 5672
-- Management UI: 15672
-- Volume: rabbitmq_data
-- Default vhost: plane
-
-**MinIO** (minio/latest):
-- Port: 9000
-- Console: 9090
-- Volume: uploads
-- Bucket: uploads
-- S3-compatible storage
-
-**Caddy** (plane-proxy):
-- Port: 80, 443
-- Role: Reverse proxy + TLS termination
-- Config: Caddyfile.ce
-- Volume: proxy_config, proxy_data
-
-## Kubernetes Deployment
-
-### Prerequisites
-
-- Kubernetes 1.25+ cluster
-- Helm 3+ installed
-- kubectl configured
-
-### Installation via Helm
-
-**1. Add Plane Helm repository**:
-```bash
-helm repo add plane https://helm.plane.so
-helm repo update
-```
-
-**2. Create namespace**:
-```bash
-kubectl create namespace plane
-```
-
-**3. Create values.yaml**:
-```yaml
-replicaCount: 3
-domain: plane.example.com
-tls:
-  enabled: true
-  issuer: letsencrypt-prod
-
-postgres:
-  enabled: true
-  volume: 20Gi
-redis:
-  enabled: true
-rabbitmq:
-  enabled: true
-minio:
-  enabled: true
-  volume: 50Gi
-```
-
-**4. Install Plane**:
-```bash
-helm install plane plane/plane \
-  --namespace plane \
-  -f values.yaml
-```
-
-**5. Verify deployment**:
-```bash
-kubectl -n plane get pods
-kubectl -n plane get svc
-```
-
-### Scaling in Kubernetes
-
-**Horizontal Pod Autoscaling**:
-```yaml
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: plane-api-hpa
-  namespace: plane
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: plane-api
-  minReplicas: 3
-  maxReplicas: 10
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-```
-
-**Apply**:
-```bash
-kubectl apply -f hpa.yaml
-```
-
-### Persistent Storage
-
-**PersistentVolumeClaim for PostgreSQL**:
-```bash
-kubectl -n plane get pvc
-# Should show: pgdata (20Gi), redisdata, uploads, etc.
-```
-
-**Backup PostgreSQL**:
-```bash
-kubectl -n plane exec postgres-0 -- \
-  pg_dump -U plane plane > backup.sql
-```
-
 ## Local Development Setup
 
 ### Prerequisites
 
-- Node.js 18+ LTS
-- Python 3.9+
-- PostgreSQL 15 (local or Docker)
-- Redis (local or Docker)
-- RabbitMQ (local or Docker)
+- **Node.js:** 22.18+
+- **Python:** 3.11+
+- **PostgreSQL:** 13+
+- **Redis:** 7+
+- **RabbitMQ:** 3.12+
+- **pnpm:** 10.24+
+- **Docker:** 24+ (optional, for containerized development)
 
-### 1. Clone & Install
+### Quick Start
 
+**1. Clone Repository**
 ```bash
-git clone https://github.com/makeplane/plane.git
+git clone https://github.com/shbvn/plane.git
 cd plane
+```
 
-# Install frontend dependencies
+**2. Setup Frontend**
+```bash
+# Install dependencies
 pnpm install
 
-# Install backend dependencies
-cd apps/api
-pip install -r requirements/local.txt
+# Create environment file
+cp apps/web/.env.example apps/web/.env.local
+
+# Start dev server
+pnpm dev:web
+# Frontend running at http://localhost:3000
 ```
 
-### 2. PostgreSQL Setup
-
-**Using Docker**:
-```bash
-docker run -d \
-  --name plane-postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=plane \
-  -p 5432:5432 \
-  postgres:15.7-alpine
-```
-
-**Local PostgreSQL**:
-```bash
-psql -U postgres -c "CREATE DATABASE plane;"
-```
-
-### 3. Environment Setup
-
-**Backend** (`apps/api/.env`):
-```env
-DEBUG=1
-SECRET_KEY=dev-secret-key-change-in-production
-DB_ENGINE=django.db.backends.postgresql
-DB_HOST=localhost
-DB_NAME=plane
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_PORT=5432
-REDIS_HOST=localhost
-REDIS_PORT=6379
-```
-
-**Frontend** (`apps/web/.env.local`):
-```env
-VITE_API_BASE_URL=http://localhost:8000
-VITE_SPACE_BASE_URL=http://localhost:3000
-```
-
-### 4. Run Services
-
-**Terminal 1 - PostgreSQL** (skip if using external):
-```bash
-# Already running in Docker
-```
-
-**Terminal 2 - Redis**:
-```bash
-docker run -d -p 6379:6379 redis:7.2-alpine
-```
-
-**Terminal 3 - Backend**:
+**3. Setup Backend**
 ```bash
 cd apps/api
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # macOS/Linux
+# or: venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create environment file
+cp .env.example .env
+
+# Run migrations
 python manage.py migrate
-python manage.py runserver 8000
+
+# Create superuser
+python manage.py createsuperuser
+
+# Start dev server
+python manage.py runserver 0.0.0.0:8000
+# Backend running at http://localhost:8000
 ```
 
-**Terminal 4 - Celery Worker**:
+**4. Setup Services (Docker Compose)**
+```bash
+# Start PostgreSQL, Redis, RabbitMQ
+docker-compose -f docker-compose.dev.yml up -d
+
+# Verify services
+docker-compose ps
+```
+
+**5. Start Celery Worker (in separate terminal)**
 ```bash
 cd apps/api
+source venv/bin/activate
 celery -A plane worker -l info
 ```
 
-**Terminal 5 - Celery Beat** (optional):
-```bash
-cd apps/api
-celery -A plane beat -l info
+### Environment Variables
+
+**Frontend (apps/web/.env.local):**
+```env
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_WORKSPACE_SLUG=workspace
+
+# Feature Flags
+NEXT_PUBLIC_ENABLE_WORKFLOWS=true
+NEXT_PUBLIC_ENABLE_TIME_TRACKING=true
+NEXT_PUBLIC_ENABLE_HO=true
+
+# Real-time (optional)
+NEXT_PUBLIC_LIVE_URL=http://localhost:3003
 ```
 
-**Terminal 6 - Frontend**:
-```bash
-cd apps/web
-pnpm dev
+**Backend (apps/api/.env):**
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/plane
+
+# Redis
+REDIS_URL=redis://localhost:6379/0
+
+# RabbitMQ
+CELERY_BROKER_URL=amqp://guest:guest@localhost:5672//
+
+# Email (SMTP)
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+EMAIL_FROM_USER=noreply@plane.so
+
+# AWS S3
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_STORAGE_BUCKET_NAME=plane-uploads
+AWS_S3_REGION_NAME=us-east-1
+
+# JWT Secret
+SECRET_KEY=your-secret-key-min-50-chars
+
+# Debug Mode
+DEBUG=True  # Set to False in production
+
+# Allowed Hosts
+ALLOWED_HOSTS=localhost,127.0.0.1,*.example.com
 ```
 
-**Terminal 7 - Live Server** (optional):
-```bash
-cd apps/live
-pnpm dev
+**Real-Time Server (apps/live/.env):**
+```env
+HOCUSPOCUS_PORT=3003
+HOCUSPOCUS_HOST=0.0.0.0
+
+# Optional: Persistence
+HOCUSPOCUS_PERSISTENCE=redis
+REDIS_URL=redis://localhost:6379/1
 ```
 
-### 5. Access Development Environment
+## Docker Containerization
 
-- Web: http://localhost:5173 (Vite dev server)
-- API: http://localhost:8000
-- Docs: http://localhost:8000/api/schema/swagger-ui
+### Multi-App Docker Compose
+
+**File: docker-compose.yml (Production)**
+
+```yaml
+version: '3.8'
+
+services:
+  # Databases
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: plane
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # Reverse Proxy
+  proxy:
+    image: caddy:latest
+    volumes:
+      - ./apps/proxy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+      - api
+      - admin
+      - space
+      - live
+
+  # Django Backend
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/plane
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672//
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Worker
+  celery_worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    command: celery -A plane worker -l info
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/plane
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672//
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  # Celery Beat Scheduler
+  celery_beat:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    command: celery -A plane beat -l info
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/plane
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672//
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  # React Frontend
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://api:8000
+        NEXT_PUBLIC_LIVE_URL: http://live:3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://api:8000
+
+  # Admin Panel
+  admin:
+    build:
+      context: ./apps/admin
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - api
+
+  # Public Projects (Guest Access)
+  space:
+    build:
+      context: ./apps/space
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - api
+
+  # Real-Time WebSocket
+  live:
+    build:
+      context: ./apps/live
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      REDIS_URL: redis://redis:6379/1
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  caddy_data:
+  caddy_config:
+```
+
+### Dockerfile Patterns
+
+**Django Backend (apps/api/Dockerfile):**
+```dockerfile
+# Build stage
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Runtime stage
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+
+# Copy application code
+COPY . .
+
+# Create non-root user
+RUN useradd -m -u 1000 plane && chown -R plane:plane /app
+USER plane
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8000/health')"
+
+# Run gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--threads", "2", \
+     "--worker-class", "gthread", "--timeout", "120", "plane.settings.asgi:application"]
+```
+
+**React Frontend (apps/web/Dockerfile):**
+```dockerfile
+# Build stage
+FROM node:22-alpine as builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy monorepo files
+COPY pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages ./packages
+
+# Copy web app
+COPY apps/web ./apps/web
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Build
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_LIVE_URL=http://localhost:3003
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_LIVE_URL=$NEXT_PUBLIC_LIVE_URL
+
+RUN cd apps/web && pnpm build
+
+# Runtime stage
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Copy built app from builder
+COPY --from=builder /app/apps/web/.next ./apps/web/.next
+COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/apps/web/package.json ./apps/web/
+
+# Install production dependencies
+RUN npm install -g pnpm && cd apps/web && pnpm install --prod
+
+# Expose port
+EXPOSE 3000
+
+# Run
+CMD ["node", "-e", "require('next').startServer({ dir: './apps/web' })"]
+```
+
+## Caddy Reverse Proxy Configuration
+
+**File: apps/proxy/Caddyfile**
+
+```caddy
+{
+  order http.handlers 100
+}
+
+# Main domain
+example.com, www.example.com {
+  # Static files caching
+  @assets {
+    path /_next/static/*
+    path /public/*
+  }
+  header @assets Cache-Control "public, max-age=31536000, immutable"
+
+  # API routing
+  @api {
+    path /api/*
+  }
+  reverse_proxy @api http://api:8000 {
+    header_upstream X-Forwarded-For {http.request.remote.host}
+    header_upstream X-Forwarded-Proto https
+  }
+
+  # WebSocket routing
+  @ws {
+    path /live/*
+    header Connection "upgrade"
+    header Upgrade websocket
+  }
+  reverse_proxy @ws http://live:3003
+
+  # React app (default)
+  reverse_proxy http://web:3000 {
+    header_upstream X-Forwarded-For {http.request.remote.host}
+    header_upstream X-Forwarded-Proto https
+  }
+
+  # Security headers
+  header -Server
+  header Strict-Transport-Security "max-age=31536000; includeSubDomains" permanent
+  header X-Content-Type-Options "nosniff"
+  header X-Frame-Options "DENY"
+  header X-XSS-Protection "1; mode=block"
+}
+
+# Admin panel (subdomain)
+admin.example.com {
+  reverse_proxy http://admin:3001
+}
+
+# Public/guest access (subdomain)
+space.example.com {
+  reverse_proxy http://space:3002
+}
+```
 
 ## Database Migrations
 
 ### Running Migrations
 
-**Docker Compose** (automatic):
+**Development:**
 ```bash
-# Runs on service startup
-# Handled by migrator service
+cd apps/api
+python manage.py migrate
 ```
 
-**Manual**:
+**Docker:**
 ```bash
 docker-compose exec api python manage.py migrate
 ```
 
-**Local Development**:
+**Production (with blue-green deployment):**
 ```bash
-cd apps/api
-python manage.py migrate
+# During deployment, run migrations before starting new containers
+docker-compose exec -T api python manage.py migrate
+
+# Then restart containers
+docker-compose up -d
 ```
 
 ### Creating Migrations
 
-After modifying models:
-
 ```bash
 cd apps/api
-python manage.py makemigrations
+
+# Create migration file
+python manage.py makemigrations --name add_workflow_blockers
+
+# Review generated file (migrations/0XXX_add_workflow_blockers.py)
+# Apply migration
 python manage.py migrate
 ```
 
-### Migration Files
+## Environment Variables Checklist
 
-Location: `apps/api/plane/db/migrations/`
+### Required (Production)
 
-Pattern: `000X_descriptive_name.py`
+- [ ] `DATABASE_URL` — PostgreSQL connection string
+- [ ] `REDIS_URL` — Redis connection string
+- [ ] `CELERY_BROKER_URL` — RabbitMQ AMQP URL
+- [ ] `SECRET_KEY` — Django secret (min 50 chars, random)
+- [ ] `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` — SMTP credentials
+- [ ] `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` — S3 credentials
+- [ ] `ALLOWED_HOSTS` — Comma-separated domain list
+- [ ] `DEBUG=False` — Disable debug mode in production
 
-## Backup & Restore
+### Optional (Feature Flags)
 
-### PostgreSQL Backup
+- [ ] `NEXT_PUBLIC_ENABLE_WORKFLOWS` — Enable Shinhan workflows
+- [ ] `NEXT_PUBLIC_ENABLE_TIME_TRACKING` — Enable time tracking
+- [ ] `NEXT_PUBLIC_ENABLE_HO` — Enable org chart (HO)
+- [ ] `NEXT_PUBLIC_LIVE_URL` — WebSocket server URL
 
-**Docker Compose**:
-```bash
-docker-compose exec plane-db pg_dump \
-  -U plane plane > backup.sql
-```
-
-**Restore**:
-```bash
-docker-compose exec -T plane-db psql \
-  -U plane plane < backup.sql
-```
-
-### MinIO Backup
-
-**Using MC (MinIO Client)**:
-```bash
-mc alias set local http://localhost:9000 minioadmin minioadmin
-mc mirror local/uploads /backup/uploads
-```
-
-### Full System Backup
+### For Local Development
 
 ```bash
-# Backup volumes
-docker run --rm -v pgdata:/data \
-  -v /backup:/backup \
-  alpine tar czf /backup/pgdata.tar.gz -C /data .
-
-# Backup all
-docker-compose exec plane-db pg_dump -U plane plane | gzip > full-backup.sql.gz
+# Create .env files from templates
+cp apps/web/.env.example apps/web/.env.local
+cp apps/api/.env.example apps/api/.env
+cp apps/live/.env.example apps/live/.env
 ```
 
-## Troubleshooting
+## Deployment Checklist
 
-### Services Won't Start
+### Pre-Deployment
 
-**Check logs**:
-```bash
-docker-compose logs api
-docker-compose logs web
-```
+- [ ] All tests passing (`pnpm test`, `python run_tests.py`)
+- [ ] Linting passes (`pnpm check:lint`)
+- [ ] Types check passes (`pnpm check:types`)
+- [ ] Database migrations ready
+- [ ] Environment variables configured
+- [ ] Docker images built and tested locally
+- [ ] Secrets not committed to Git
+- [ ] Branch coverage threshold met (>80%)
 
-**Common issues**:
-- Database not ready: Wait 30s, retry
-- Port already in use: Change LISTEN_PORT in .env
-- Out of memory: Increase Docker memory allocation
+### Deployment Steps
 
-### Database Connection Error
+1. **Build Docker Images**
+   ```bash
+   docker-compose build --no-cache
+   ```
 
-```bash
-# Test connection
-docker-compose exec api python manage.py dbshell
+2. **Push to Registry (optional, for multi-server deployments)**
+   ```bash
+   docker tag plane-api:latest registry.example.com/plane-api:latest
+   docker push registry.example.com/plane-api:latest
+   ```
 
-# Reset database (development only)
-docker-compose exec api python manage.py flush --no-input
-```
+3. **Pull Latest Code**
+   ```bash
+   git pull origin develop
+   git checkout preview
+   ```
 
-### Celery Tasks Not Running
+4. **Start Services**
+   ```bash
+   docker-compose up -d
+   ```
 
-```bash
-# Check RabbitMQ
-docker-compose logs plane-mq
+5. **Run Migrations**
+   ```bash
+   docker-compose exec -T api python manage.py migrate
+   ```
 
-# Restart workers
-docker-compose restart worker beat-worker
-```
+6. **Verify Health**
+   ```bash
+   # Check service health
+   docker-compose ps
+   
+   # Test API
+   curl http://localhost:8000/health
+   
+   # Test frontend
+   curl http://localhost/
+   ```
 
-### WebSocket Issues (Real-time Collaboration)
+7. **Monitor Logs**
+   ```bash
+   docker-compose logs -f
+   
+   # Specific service
+   docker-compose logs -f api
+   docker-compose logs -f web
+   ```
 
-```bash
-# Check Live server
-docker-compose logs live
-
-# Restart Live service
-docker-compose restart live
-```
-
-## Production Checklist
-
-- [ ] Set `DEBUG=0` in Django settings
-- [ ] Generate strong `SECRET_KEY`
-- [ ] Configure OAuth providers (Google, GitHub, etc.)
-- [ ] Set up email SMTP credentials
-- [ ] Configure domain with valid SSL certificate
-- [ ] Enable CORS only for your domain
-- [ ] Set up monitoring (Sentry, Scout APM)
-- [ ] Configure backups (PostgreSQL, MinIO)
-- [ ] Set up log aggregation
-- [ ] Configure health checks & alerts
-- [ ] Test disaster recovery procedure
-- [ ] Set resource limits on containers
-- [ ] Enable rate limiting
-- [ ] Document runbooks for operations
-
-## Performance Tuning
-
-### PostgreSQL
-
-```sql
--- Increase work_mem for queries
-ALTER SYSTEM SET work_mem = '256MB';
-
--- Increase max connections (if needed)
-ALTER SYSTEM SET max_connections = 1000;
-
-SELECT pg_reload_conf();
-```
-
-### Redis
+### Rollback Procedure
 
 ```bash
-# Increase maxmemory
-redis-cli CONFIG SET maxmemory 2gb
-redis-cli CONFIG SET maxmemory-policy allkeys-lru
+# Stop current deployment
+docker-compose down
+
+# Revert code
+git checkout previous-commit-hash
+
+# Rebuild and start
+docker-compose build --no-cache
+docker-compose up -d
+docker-compose exec -T api python manage.py migrate
 ```
 
-### Django/Gunicorn
+## Health Checks & Monitoring
+
+### Health Endpoint (Backend)
 
 ```bash
-# More workers (4x CPU cores typical)
-gunicorn -w 8 -b 0.0.0.0:8000 plane.wsgi
+# GET /health
+curl http://localhost:8000/health
+
+# Response (200 OK)
+{
+  "database": "ok",
+  "redis": "ok",
+  "rabbitmq": "ok",
+  "s3": "ok"
+}
+```
+
+### Container Health Checks
+
+**All services include HEALTHCHECK:**
+```bash
+# Check container health
+docker inspect plane-api | jq '.[0].State.Health'
+
+# Output
+{
+  "Status": "healthy",
+  "FailingStreak": 0,
+  "Log": [...]
+}
+```
+
+### Logging & Monitoring
+
+**Structured Logs (JSON):**
+```bash
+# View backend logs
+docker-compose logs api | jq .
+
+# Output
+{
+  "timestamp": "2026-04-02T10:00:00Z",
+  "level": "INFO",
+  "message": "Issue created",
+  "request_id": "abc-123",
+  "user_id": "user-123"
+}
+```
+
+**Log Aggregation (Future):**
+- Elasticsearch + Kibana for centralized logging
+- Datadog/New Relic for APM
+
+## Scaling Considerations
+
+### Horizontal Scaling
+
+**Multiple API Instances:**
+```yaml
+api:
+  deploy:
+    replicas: 3  # Run 3 instances
+
+# Load balancer routes to all instances
+```
+
+**Multiple Celery Workers:**
+```yaml
+celery_worker:
+  deploy:
+    replicas: 5  # Run 5 workers
+```
+
+### Vertical Scaling
+
+**Resource Limits (Docker):**
+```yaml
+api:
+  deploy:
+    resources:
+      limits:
+        cpus: '2'
+        memory: 4G
+      reservations:
+        cpus: '1'
+        memory: 2G
+```
+
+### Database Optimization
+
+- Read replicas for read-heavy queries
+- Connection pooling (PgBouncer)
+- Query optimization (indexing)
+- Archive old data (soft-delete policies)
+
+## Backup & Recovery
+
+### Database Backup
+
+```bash
+# Manual backup
+pg_dump -h localhost -U plane plane > backup.sql
+
+# Docker backup
+docker-compose exec postgres pg_dump -U plane plane > backup.sql
+
+# Restore
+psql -h localhost -U plane plane < backup.sql
+```
+
+### Automated Backups (Production)
+
+```yaml
+backup_service:
+  image: pg_cron
+  volumes:
+    - backup_data:/backups
+  environment:
+    DATABASE_URL: postgresql://user:password@postgres:5432/plane
+  command: >
+    pg_dump -h postgres -U plane plane | 
+    gzip > /backups/plane-$(date +%Y%m%d-%H%M%S).sql.gz
 ```
 
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/deployment-guide.md`
-**Lines**: ~520
-**Status**: Final
-**Related**: Official deployment docs at https://developers.plane.so/self-hosting
+**Last Updated:** 2026-04-02
+**Version:** 1.0

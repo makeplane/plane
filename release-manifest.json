@@ -1,6 +1,6 @@
 {
-  "version": "2.14.0",
-  "generatedAt": "2026-03-28T07:39:10.265Z",
+  "version": "2.15.1",
+  "generatedAt": "2026-03-29T18:01:29.776Z",
   "files": [
     {
       "path": ".gitignore",
@@ -598,9 +598,9 @@
     },
     {
       "path": "metadata.json",
-      "checksum": "f9c6cdc49edffdc496702e8d7aac8d02a33aafd0b7a1fc41a234d2894fac2936",
+      "checksum": "56b93e29c96c43397ad9a1e9954d17fdb888e893eb0532257b0625843f70db9d",
       "size": 3935,
-      "lastModified": "2026-03-28T05:48:01Z"
+      "lastModified": "2026-03-29T17:37:54Z"
     },
     {
       "path": "output-styles/coding-level-0-eli5.md",
@@ -7552,15 +7552,15 @@
     },
     {
       "path": "skills/worktree/SKILL.md",
-      "checksum": "cb5da20738482eaae9d494891d1aa86e9e839855852db8a3970a422045435f87",
-      "size": 2749,
-      "lastModified": "2026-03-02T12:31:40+07:00"
+      "checksum": "187d19680fc6bab191e3312567a0fd5e23cf05b81f28707010709fff7bedf10c",
+      "size": 3268,
+      "lastModified": "2026-03-29T12:23:31-04:00"
     },
     {
       "path": "skills/worktree/scripts/worktree.cjs",
-      "checksum": "a09d5fa1b8d25d8d69e888514c6710e8ee23293b73ecb7e91e1d38e1f80eb0c3",
-      "size": 30367,
-      "lastModified": "2026-02-15T10:25:12+07:00"
+      "checksum": "0548df25743734acef45a7418278ae2e934f63849039a17980fcdebe8c9eb1a7",
+      "size": 30919,
+      "lastModified": "2026-03-29T12:23:31-04:00"
     },
     {
       "path": "skills/worktree/scripts/worktree.test.cjs",
@@ -13272,13 +13272,13 @@
     },
     {
       "path": ".opencode/skills/worktree/SKILL.md",
-      "checksum": "da4eb68e096f64e368c097b800c135ea3a1dcc97131d5734f541f1535730c826",
-      "size": 2755
+      "checksum": "73c2b5f19aa7a7547c2ba541b62a7c45ee1aaa4e9cee663ce2e1a78af2e736d3",
+      "size": 3274
     },
     {
       "path": ".opencode/skills/worktree/scripts/worktree.cjs",
-      "checksum": "a09d5fa1b8d25d8d69e888514c6710e8ee23293b73ecb7e91e1d38e1f80eb0c3",
-      "size": 30367
+      "checksum": "0548df25743734acef45a7418278ae2e934f63849039a17980fcdebe8c9eb1a7",
+      "size": 30919
     },
     {
       "path": ".opencode/skills/worktree/scripts/worktree.test.cjs",
@@ -13329,7 +13329,7 @@
     },
     {
       "path": "AGENTS.md",
-      "checksum": "0f2c91200cb26bc9850371c6def8d7385b1dbb765ac1fe582e033413b7ffebca",
+      "checksum": "96278c7ceb78e0733035c7f94efb028e2fca0bf202ec70722593dbd03dbf5b51",
       "size": 2359,
       "lastModified": "2026-01-18T09:18:05-05:00"
     }

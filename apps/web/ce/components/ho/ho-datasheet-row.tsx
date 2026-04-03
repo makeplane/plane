@@ -3,11 +3,13 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/propel/avatar";
 import { Popover } from "@plane/propel/popover";
-import type { THoIssue } from "@/plane-web/services/ho-issue.service";
+import type { THoIssue, THoWorklogBreakdownEntry } from "@/plane-web/services/ho-issue.service";
+import { HoIssueService } from "@/plane-web/services/ho-issue.service";
 import type { THoDisplayProperties } from "@/plane-web/store/ho/ho-issue.defaults";
-import { useWorklog } from "@/hooks/store/use-worklog";
 import { renderFormattedDate, cn } from "@plane/utils";
 import { getProgressStatus } from "../issues/issue-layouts/progress-tracking-utils";
+
+const hoIssueService = new HoIssueService();
 
 /** Format total_log_time in minutes to "Xh Ym". */
 function formatLogTime(minutes: number): string {
@@ -40,9 +42,11 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
   isScrolled = false,
 }: Props) {
   const { t } = useTranslation();
-  const worklogStore = useWorklog();
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  // Per-user worklog breakdown fetched via HO endpoint (bypasses project membership restriction)
+  const [userTotals, setUserTotals] = useState<THoWorklogBreakdownEntry[]>([]);
+  const [fetched, setFetched] = useState(false);
 
   const rowBorder = isNewDeptGroup
     ? "border-t-[1.5px] border-subtle"
@@ -53,30 +57,15 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
 
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
 
-  // Aggregate worklogs by user (cached in store)
-  const worklogs = worklogStore.getWorklogsForIssue(issue.id);
-  const userTotals = Object.values(
-    worklogs.reduce<Record<string, { display_name: string; avatar_url: string; total_minutes: number }>>((acc, wl) => {
-      const uid = wl.logged_by;
-      if (!acc[uid]) {
-        acc[uid] = {
-          display_name: wl.logged_by_detail?.display_name ?? uid,
-          avatar_url: wl.logged_by_detail?.avatar_url ?? "",
-          total_minutes: 0,
-        };
-      }
-      acc[uid].total_minutes += wl.duration_minutes;
-      return acc;
-    }, {})
-  );
-
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
-    // Lazy-fetch worklogs on first open (only if not already cached)
-    if (open && worklogs.length === 0 && issue.workspace_slug && issue.project_id) {
+    // Lazy-fetch on first open using HO-scoped endpoint (no project membership required)
+    if (open && !fetched) {
       setIsFetching(true);
       try {
-        await worklogStore.fetchWorklogs(issue.workspace_slug, issue.project_id, issue.id);
+        const breakdown = await hoIssueService.listIssueWorklogBreakdown(issue.id);
+        setUserTotals(breakdown);
+        setFetched(true);
       } finally {
         setIsFetching(false);
       }
@@ -221,7 +210,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
                     <div className="space-y-0.5">
                       {userTotals.map((entry) => (
                         <div
-                          key={entry.display_name}
+                          key={entry.user_id}
                           className="flex items-center justify-between gap-3 rounded px-1 py-1 hover:bg-layer-1"
                         >
                           <div className="flex min-w-0 items-center gap-2">

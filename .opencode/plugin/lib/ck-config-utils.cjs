@@ -61,6 +61,7 @@ const DEFAULT_CONFIG = {
   },
   assertions: [],
   statusline: 'full',
+  statuslineColors: true,
   hooks: {
     'session-init': true,
     'subagent-init': true,
@@ -69,7 +70,10 @@ const DEFAULT_CONFIG = {
     'context-tracking': true,
     'scout-block': true,
     'privacy-block': true,
-    'post-edit-simplify-reminder': true
+    'post-edit-simplify-reminder': true,
+    'task-completed-handler': true,
+    'teammate-idle-handler': true,
+    'session-state': true
   }
 };
 
@@ -520,6 +524,7 @@ function loadConfig(options = {}) {
     result.hooks = merged.hooks || DEFAULT_CONFIG.hooks;
     // Statusline mode
     result.statusline = merged.statusline || 'full';
+    result.statuslineColors = merged.statuslineColors ?? true;
 
     return sanitizeConfig(result, projectRoot);
   } catch (e) {
@@ -538,7 +543,8 @@ function getDefaultConfig(includeProject = true, includeAssertions = true, inclu
     codingLevel: -1,  // Default: disabled (no injection, saves tokens)
     skills: { ...DEFAULT_CONFIG.skills },
     hooks: { ...DEFAULT_CONFIG.hooks },
-    statusline: 'full'
+    statusline: 'full',
+    statuslineColors: true
   };
   if (includeLocale) {
     result.locale = { ...DEFAULT_CONFIG.locale };
@@ -603,8 +609,10 @@ function getReportsPath(planPath, resolvedBy, planConfig, pathsConfig, baseDir =
   }
 
   // Return absolute path if baseDir provided
+  // Guard: if reportPath is already absolute (Issue #335 made planPath absolute),
+  // don't double-join with baseDir — path.join concatenates, not resolves
   if (baseDir) {
-    return path.join(baseDir, reportPath);
+    return path.isAbsolute(reportPath) ? reportPath : path.join(baseDir, reportPath);
   }
   return reportPath + '/';
 }

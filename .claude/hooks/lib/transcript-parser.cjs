@@ -1,31 +1,31 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Transcript Parser - Extract tool/agent/todo state from session JSONL
  * @module transcript-parser
  */
 
-const fs = require("fs");
-const readline = require("readline");
+const fs = require('fs');
+const readline = require('readline');
 
 function isNativeTaskTodo(todo) {
-  return Boolean(todo && todo._source === "native_task");
+  return Boolean(todo && todo._source === 'native_task');
 }
 
 function normalizeTodo(todo) {
-  if (!todo || typeof todo !== "object") return null;
+  if (!todo || typeof todo !== 'object') return null;
   const normalized = {
-    content: todo.content ?? "",
-    status: todo.status ?? "pending",
-    activeForm: todo.activeForm ?? null,
+    content: todo.content ?? '',
+    status: todo.status ?? 'pending',
+    activeForm: todo.activeForm ?? null
   };
   if (todo.id != null) normalized.id = todo.id;
   return normalized;
 }
 
 function extractTaskIdFromString(text) {
-  if (!text || typeof text !== "string") return null;
+  if (!text || typeof text !== 'string') return null;
   const trimmed = text.trim();
   if (!trimmed) return null;
 
@@ -44,16 +44,16 @@ function extractTaskIdFromString(text) {
 function extractTaskIdFromValue(value) {
   if (value == null) return null;
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return extractTaskIdFromString(value);
   }
 
-  if (typeof value !== "object") return null;
+  if (typeof value !== 'object') return null;
 
-  if (typeof value.taskId === "string" || typeof value.taskId === "number") {
+  if (typeof value.taskId === 'string' || typeof value.taskId === 'number') {
     return String(value.taskId);
   }
-  if (typeof value.task_id === "string" || typeof value.task_id === "number") {
+  if (typeof value.task_id === 'string' || typeof value.task_id === 'number') {
     return String(value.task_id);
   }
 
@@ -82,7 +82,7 @@ async function parseTranscript(transcriptPath) {
     tools: [],
     agents: [],
     todos: [],
-    sessionStart: null,
+    sessionStart: null
   };
 
   if (!transcriptPath || !fs.existsSync(transcriptPath)) {
@@ -97,7 +97,7 @@ async function parseTranscript(transcriptPath) {
     const fileStream = fs.createReadStream(transcriptPath);
     const rl = readline.createInterface({
       input: fileStream,
-      crlfDelay: Infinity,
+      crlfDelay: Infinity
     });
 
     for await (const line of rl) {
@@ -116,7 +116,9 @@ async function parseTranscript(transcriptPath) {
 
   result.tools = Array.from(toolMap.values()).slice(-20);
   result.agents = Array.from(agentMap.values()).slice(-10);
-  result.todos = latestTodos.map(normalizeTodo).filter(Boolean);
+  result.todos = latestTodos
+    .map(normalizeTodo)
+    .filter(Boolean);
 
   return result;
 }
@@ -142,50 +144,50 @@ function processEntry(entry, toolMap, agentMap, latestTodos, result) {
 
   for (const block of content) {
     // Handle tool_use blocks
-    if (block.type === "tool_use" && block.id && block.name) {
-      if (block.name === "Task") {
+    if (block.type === 'tool_use' && block.id && block.name) {
+      if (block.name === 'Task') {
         // Agent spawn
         agentMap.set(block.id, {
           id: block.id,
-          type: block.input?.subagent_type ?? "unknown",
+          type: block.input?.subagent_type ?? 'unknown',
           model: block.input?.model ?? null,
           description: block.input?.description ?? null,
-          status: "running",
+          status: 'running',
           startTime: timestamp,
-          endTime: null,
+          endTime: null
         });
-      } else if (block.name === "TodoWrite") {
+      } else if (block.name === 'TodoWrite') {
         // Legacy: Replace todo array (deprecated, kept for backwards compatibility)
         if (block.input?.todos && Array.isArray(block.input.todos)) {
           latestTodos.length = 0;
           latestTodos.push(
-            ...block.input.todos.map((todo) => ({
+            ...block.input.todos.map(todo => ({
               ...todo,
-              _source: "legacy_todowrite",
+              _source: 'legacy_todowrite'
             }))
           );
         }
-      } else if (block.name === "TaskCreate") {
+      } else if (block.name === 'TaskCreate') {
         // Native Task API: add new task.
         // Track by tool_use id first; hydrate real task id from matching tool_result when present.
         if (block.input?.subject) {
           latestTodos.push({
             id: block.id,
             content: block.input.subject,
-            status: "pending",
+            status: 'pending',
             activeForm: block.input.activeForm || null,
-            _source: "native_task",
-            _toolUseId: block.id,
+            _source: 'native_task',
+            _toolUseId: block.id
           });
         }
-      } else if (block.name === "TaskUpdate") {
+      } else if (block.name === 'TaskUpdate') {
         // Native Task API: Update existing task status
         // Match by taskId against native-task ids first.
         // Numeric fallback maps to native-task creation order only (not legacy TodoWrite items).
         if (block.input?.taskId && block.input?.status) {
           const taskId = String(block.input.taskId);
           const nativeTodos = latestTodos.filter(isNativeTaskTodo);
-          let task = nativeTodos.find((t) => String(t.id) === taskId);
+          let task = nativeTodos.find(t => String(t.id) === taskId);
           if (!task && /^\d+$/.test(taskId)) {
             const idx = Number(taskId) - 1;
             if (idx >= 0 && idx < nativeTodos.length) task = nativeTodos[idx];
@@ -193,7 +195,7 @@ function processEntry(entry, toolMap, agentMap, latestTodos, result) {
 
           if (task) {
             task.status = block.input.status;
-            if (Object.prototype.hasOwnProperty.call(block.input, "activeForm")) {
+            if (Object.prototype.hasOwnProperty.call(block.input, 'activeForm')) {
               task.activeForm = block.input.activeForm || null;
             }
           }
@@ -204,28 +206,30 @@ function processEntry(entry, toolMap, agentMap, latestTodos, result) {
           id: block.id,
           name: block.name,
           target: extractTarget(block.name, block.input),
-          status: "running",
+          status: 'running',
           startTime: timestamp,
-          endTime: null,
+          endTime: null
         });
       }
     }
 
     // Handle tool_result blocks
-    if (block.type === "tool_result" && block.tool_use_id) {
+    if (block.type === 'tool_result' && block.tool_use_id) {
       const tool = toolMap.get(block.tool_use_id);
       if (tool) {
-        tool.status = block.is_error ? "error" : "completed";
+        tool.status = block.is_error ? 'error' : 'completed';
         tool.endTime = timestamp;
       }
 
       const agent = agentMap.get(block.tool_use_id);
       if (agent) {
-        agent.status = "completed";
+        agent.status = 'completed';
         agent.endTime = timestamp;
       }
 
-      const createdTask = latestTodos.find((todo) => isNativeTaskTodo(todo) && todo._toolUseId === block.tool_use_id);
+      const createdTask = latestTodos.find(
+        todo => isNativeTaskTodo(todo) && todo._toolUseId === block.tool_use_id
+      );
       if (createdTask) {
         const hydratedId = extractTaskIdFromValue(block.content);
         if (hydratedId) {
@@ -246,19 +250,19 @@ function extractTarget(toolName, input) {
   if (!input) return null;
 
   switch (toolName) {
-    case "Read":
-    case "Write":
-    case "Edit":
+    case 'Read':
+    case 'Write':
+    case 'Edit':
       return input.file_path ?? input.path ?? null;
 
-    case "Glob":
-    case "Grep":
+    case 'Glob':
+    case 'Grep':
       return input.pattern ?? null;
 
-    case "Bash":
+    case 'Bash':
       const cmd = input.command;
       if (!cmd) return null;
-      return cmd.length > 30 ? cmd.slice(0, 30) + "..." : cmd;
+      return cmd.length > 30 ? cmd.slice(0, 30) + '...' : cmd;
 
     default:
       return null;
@@ -269,5 +273,5 @@ module.exports = {
   parseTranscript,
   // Export for testing
   processEntry,
-  extractTarget,
+  extractTarget
 };

@@ -13,6 +13,7 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
   useEffect(() => {
     void store.fetchIssues(1);
     void store.fetchAccessibleWorkspaces();
+    void store.fetchFilterOptions();
   }, [store]);
 
   if (store.isLoading && store.issues.length === 0) {
@@ -41,12 +42,7 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
         <div className="flex h-32 items-center justify-center text-sm text-placeholder">{t("ho.no_work_items")}</div>
       ) : (
         <>
-          <HoDatasheetTable
-            issues={store.issues}
-            displayProperties={store.displayProperties}
-            orderBy={store.orderBy}
-            onOrderBy={(key) => store.updateOrderBy(key)}
-          />
+          <HoDatasheetTable issues={store.issues} displayProperties={store.displayProperties} />
 
           {store.nextPageUrl && (
             <div className="flex justify-center py-4">

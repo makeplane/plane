@@ -1961,6 +1961,9 @@ export default {
           start_date: "시작일",
           due_date: "마감일",
         },
+        pagination: {
+          showing: "{from}-{to} / {total} 표시 중",
+        },
       },
     },
     actions: {
@@ -3434,9 +3437,22 @@ export default {
     category: "카테고리", // TODO: native review
     search: "검색...", // TODO: native review
     clear_sort: "정렬 초기화", // TODO: native review
+    clear_filters_sort: "필터 및 정렬 초기화", // TODO: native review
     ascending: "오름차순", // TODO: native review
     descending: "내림차순", // TODO: native review
     work_item_count: "작업 항목 수", // TODO: native review
     work_items: "작업 항목", // TODO: native review
+    priority: {
+      urgent: "긴급", // TODO: native review
+      high: "높음", // TODO: native review
+      medium: "중간", // TODO: native review
+      low: "낮음", // TODO: native review
+      none: "없음", // TODO: native review
+    },
+    progress_status: {
+      on_track: "정상", // TODO: native review
+      behind: "지연", // TODO: native review
+      no_target_date: "마감일 없음", // TODO: native review
+    },
   },
 } as const;

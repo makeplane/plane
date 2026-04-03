@@ -1,172 +1,421 @@
-<br /><br />
+# Plane: Project Management Platform
 
-<p align="center">
-<a href="https://plane.so">
-  <img src="https://media.docs.plane.so/logo/plane_github_readme.png" alt="Plane Logo" width="400">
-</a>
-</p>
-<p align="center"><b>Modern project management for all teams</b></p>
+> Open-source project management platform by Shinhan Bank, forked from [makeplane/plane](https://github.com/makeplane/plane).
 
-<p align="center">
-<a href="https://discord.com/invite/A92xrEGCge">
-<img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
-</a>
-<img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
-</p>
+**Status:** Production-ready with CE customizations (Workflows, Time Tracking, Org Chart)
+**Current Version:** 0.19
+**Last Updated:** 2026-04-02
 
-<p align="center">
-    <a href="https://plane.so/"><b>Website</b></a> •
-    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
-    <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
-    <a href="https://docs.plane.so/"><b>Documentation</b></a>
-</p>
+## Quick Links
 
-<p>
-    <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-top.webp"
-        alt="Plane Screens"
-        width="100%"
-      />
-    </a>
-</p>
+- **Live Demo:** https://app.plane.so (upstream)
+- **Documentation:** [docs/](./docs/)
+  - [Project Overview & PDR](./docs/project-overview-pdr.md)
+  - [Codebase Summary](./docs/codebase-summary.md)
+  - [Code Standards](./docs/code-standards.md)
+  - [System Architecture](./docs/system-architecture.md)
+  - [Design Guidelines](./docs/design-guidelines.md)
+  - [Deployment Guide](./docs/deployment-guide.md)
+  - [Project Roadmap](./docs/project-roadmap.md)
+- **Repository:** https://github.com/shbvn/plane
+- **Upstream:** https://github.com/makeplane/plane
 
-Meet [Plane](https://plane.so/), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
+## Features
 
-> Plane is evolving every day. Your suggestions, ideas, and reported bugs help us immensely. Do not hesitate to join in the conversation on [Discord](https://discord.com/invite/A92xrEGCge) or raise a GitHub issue. We read everything and respond to most.
+### Core Capabilities
 
-## 🚀 Installation
+- **Issue Management:** Multiple layouts (List, Kanban, Gantt, Calendar, Spreadsheet)
+- **Sprint Planning:** Cycles (sprints) with burndown tracking
+- **Feature Planning:** Modules for organizing features/epics
+- **Wiki Pages:** Markdown-based project documentation
+- **Custom Workflows (CE):** Shinhan-specific workflow states and validation
+- **Time Tracking (CE):** Estimate and log hours per issue
+- **Organization Chart (CE):** Shinhan org hierarchy visualization
+- **Real-Time Collaboration:** WebSocket-based live editing (Y.js CRDT)
+- **Multi-Workspace:** User-level workspace management
+- **RBAC:** Workspace/Project-level role-based access control
 
-Getting started with Plane is simple. Choose the setup that works best for you:
+### Tech Stack
 
-- **Plane Cloud**
-  Sign up for a free account on [Plane Cloud](https://app.plane.so)—it's the fastest way to get up and running without worrying about infrastructure.
+**Frontend:**
+- React 18 + Router v7
+- MobX (state management)
+- Tailwind CSS v4 (semantic color tokens)
+- Atlaskit Pragmatic DnD (drag-and-drop)
+- Next.js (app router)
 
-- **Self-host Plane**
-  Prefer full control over your data and infrastructure? Install and run Plane on your own servers. Follow our detailed [deployment guides](https://developers.plane.so/self-hosting/overview) to get started.
+**Backend:**
+- Django 4.2 + Django REST Framework
+- PostgreSQL (primary database)
+- Redis (caching, sessions)
+- RabbitMQ + Celery (async task queue)
+- Hocuspocus + Y.js (real-time collaboration)
 
-| Installation methods | Docs link                                                                                                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://developers.plane.so/self-hosting/methods/docker-compose)         |
-| Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://developers.plane.so/self-hosting/methods/kubernetes) |
+**Infrastructure:**
+- Docker + Docker Compose
+- Caddy (reverse proxy)
+- AWS S3 (file uploads)
+- pnpm (monorepo)
+- Turbo (build orchestration)
 
-`Instance admins` can configure instance settings with [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
+## Getting Started
 
-## 🌟 Features
+### Prerequisites
 
-- **Work Items**
-  Efficiently create and manage tasks with a robust rich text editor that supports file uploads. Enhance organization and tracking by adding sub-properties and referencing related issues.
+- Node.js 22.18+
+- Python 3.11+
+- PostgreSQL 13+
+- Redis 7+
+- RabbitMQ 3.12+ (optional, for async tasks)
+- Docker 24+ (recommended)
 
-- **Cycles**
-  Maintain your team’s momentum with Cycles. Track progress effortlessly using burn-down charts and other insightful tools.
+### Local Development (5 minutes)
 
-- **Modules**
-  Simplify complex projects by dividing them into smaller, manageable modules.
+**1. Clone & Install**
+```bash
+git clone https://github.com/shbvn/plane.git
+cd plane
+pnpm install
+```
 
-- **Views**
-  Customize your workflow by creating filters to display only the most relevant issues. Save and share these views with ease.
+**2. Setup Backend**
+```bash
+cd apps/api
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
 
-- **Pages**
-  Capture and organize ideas using Plane Pages, complete with AI capabilities and a rich text editor. Format text, insert images, add hyperlinks, or convert your notes into actionable items.
+**3. Setup Frontend**
+```bash
+# In another terminal
+cd apps/web
+cp .env.example .env.local
+pnpm dev
+```
 
-- **Analytics**
-  Access real-time insights across all your Plane data. Visualize trends, remove blockers, and keep your projects moving forward.
+**4. Start Services**
+```bash
+# Docker Compose (in another terminal)
+docker-compose -f docker-compose.dev.yml up
+```
 
-## 🛠️ Local development
+Visit http://localhost:3000 and log in with your superuser credentials.
 
-See [CONTRIBUTING](./CONTRIBUTING.md)
+**Full Guide:** [Deployment Guide → Local Development](./docs/deployment-guide.md#local-development-setup)
 
-## ⚙️ Built with
+## Project Structure
 
-[![React Router](https://img.shields.io/badge/-React%20Router-CA4245?logo=react-router&style=for-the-badge&logoColor=white)](https://reactrouter.com/)
-[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)](https://www.djangoproject.com/)
-[![Node JS](https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white)](https://nodejs.org/en)
+```
+plane/
+├── apps/
+│   ├── web/              # React frontend (port 3000)
+│   ├── api/              # Django backend (port 8000)
+│   ├── admin/            # Admin panel (port 3001)
+│   ├── space/            # Guest access (port 3002)
+│   ├── live/             # WebSocket server (port 3003)
+│   └── proxy/            # Caddy reverse proxy
+├── packages/             # Shared libraries (18 total)
+├── docs/                 # Project documentation
+├── plans/                # Planning & task tracking
+├── .claude/              # Claude AI context
+└── README.md             # This file
+```
 
-## 📸 Screenshots
+**Detailed Structure:** [Codebase Summary](./docs/codebase-summary.md#directory-structure)
 
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-work-items.webp"
-        alt="Plane Views"
-        width="100%"
-      />
-    </a>
-  </p>
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-cycles.webp"
-        width="100%"
-      />
-    </a>
-  </p>
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-modules.webp"
-        alt="Plane Cycles and Modules"
-        width="100%"
-      />
-    </a>
-  </p>
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-views.webp"
-        alt="Plane Analytics"
-        width="100%"
-      />
-    </a>
-  </p>
-   <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-analytics.webp"
-        alt="Plane Pages"
-        width="100%"
-      />
-    </a>
-  </p>
-</p>
+## Development Workflow
 
-## 📝 Documentation
+### Before Starting
 
-Explore Plane's [product documentation](https://docs.plane.so/) and [developer documentation](https://developers.plane.so/) to learn about features, setup, and usage.
+1. Read [Code Standards](./docs/code-standards.md)
+2. Understand [System Architecture](./docs/system-architecture.md)
+3. Follow [Design Guidelines](./docs/design-guidelines.md)
 
-## ❤️ Community
+### Development Steps
 
-Join the Plane community on [GitHub Discussions](https://github.com/orgs/makeplane/discussions) and our [Discord server](https://discord.com/invite/A92xrEGCge). We follow a [Code of conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) in all our community channels.
+1. **Create Feature Branch**
+   ```bash
+   git checkout -b {user}/feat/{feature-name}
+   ```
 
-Feel free to ask questions, report bugs, participate in discussions, share ideas, request features, or showcase your projects. We’d love to hear from you!
+2. **Code & Test**
+   ```bash
+   # Frontend
+   pnpm test
+   pnpm check:lint
+   pnpm check:format
+   
+   # Backend
+   cd apps/api && python run_tests.py
+   ```
 
-## 🛡️ Security
+3. **Commit with Conventional Format**
+   ```bash
+   git commit -m "feat(issue): add time tracking support"
+   ```
 
-If you discover a security vulnerability in Plane, please report it responsibly instead of opening a public issue. We take all legitimate reports seriously and will investigate them promptly. See [Security policy](https://github.com/makeplane/plane/blob/master/SECURITY.md) for more info.
+4. **Create Pull Request**
+   ```bash
+   git push origin {user}/feat/{feature-name}
+   # Then open PR on GitHub (develop branch)
+   ```
 
-To disclose any security issues, please email us at security@plane.so.
+5. **Code Review & Merge**
+   - Requires 1 approval
+   - CI/CD must pass (tests, linting, types)
+   - Merge to `develop`, then PR to `preview`
 
-## 🤝 Contributing
+**Detailed Workflow:** [Code Standards → Code Review Checklist](./docs/code-standards.md#code-review-checklist)
 
-There are many ways you can contribute to Plane:
+## Documentation Map
 
-- Report [bugs](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) or submit [feature requests](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+).
-- Review the [documentation](https://docs.plane.so/) and submit [pull requests](https://github.com/makeplane/docs) to improve it—whether it's fixing typos or adding new content.
-- Talk or write about Plane or any other ecosystem integration and [let us know](https://discord.com/invite/A92xrEGCge)!
-- Show your support by upvoting [popular feature requests](https://github.com/makeplane/plane/issues).
+| Document | Purpose | Audience |
+|----------|---------|----------|
+| **project-overview-pdr.md** | Project goals, requirements, constraints | PMs, Team Leads |
+| **codebase-summary.md** | File structure, key modules, concepts | All Developers |
+| **code-standards.md** | Naming, patterns, testing, review criteria | Developers |
+| **system-architecture.md** | System design, data flow, scaling | Architects, DevOps |
+| **design-guidelines.md** | UI/UX, components, Tailwind tokens | Frontend Developers |
+| **deployment-guide.md** | Local setup, Docker, production deploy | DevOps, Backend |
+| **project-roadmap.md** | Phases, milestones, timelines, metrics | All Stakeholders |
 
-Please read [CONTRIBUTING.md](https://github.com/makeplane/plane/blob/master/CONTRIBUTING.md) for details on the process for submitting pull requests to us.
+## Key Architectural Decisions
 
-### Repo activity
+### CE Pattern (Customization Extension)
 
-![Plane Repo Activity](https://repobeats.axiom.co/api/embed/2523c6ed2f77c082b7908c33e2ab208981d76c39.svg "Repobeats analytics image")
+All Shinhan-specific features live in `apps/web/ce/` and `apps/api/` — **never modify `core/`**. This ensures upstream code stays clean and merges are manageable.
 
-### We couldn't have done this without you.
+```
+core/ (upstream) + ce/ (customizations) = RootStore (composition)
+```
 
-<a href="https://github.com/makeplane/plane/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=makeplane/plane" />
-</a>
+See [System Architecture → CE Pattern](./docs/system-architecture.md#ce-pattern-customization-extension)
+
+### MobX State Management
+
+Single source of truth per feature store. Async mutations use `flow` + `runInAction`.
+
+```typescript
+issueStore.fetchIssues() // async, uses flow
+issueStore.updateIssue(id, data) // sync, uses action.bound
+```
+
+See [Code Standards → MobX Conventions](./docs/code-standards.md#mobx-store-conventions)
+
+### Multi-Layout Issue Views
+
+All layouts (List, Kanban, Gantt, Calendar, Spreadsheet) read from the same MobX store. Switching views doesn't refetch data.
+
+See [System Architecture → Issue Layouts](./docs/system-architecture.md#issue-layouts-multi-view-single-store)
+
+### API Versioning
+
+- **V0** (Session auth, internal) — Used by web UI
+- **V1** (API key auth, external) — Used by external integrations
+
+Never share serializers between versions.
+
+See [System Architecture → API Versioning](./docs/system-architecture.md#api-versioning)
+
+## API Documentation
+
+### V0 API (Internal)
+
+Used by web UI with session-based authentication.
+
+```bash
+# Example: Create an issue
+curl -X POST http://localhost:8000/api/v0/issues/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "New issue",
+    "description": "Issue description",
+    "project_id": "project-id",
+    "state_id": "state-id"
+  }'
+```
+
+### V1 API (External)
+
+Used by external integrations with API key authentication.
+
+```bash
+# Example: List issues
+curl http://localhost:8000/api/v1/issues/ \
+  -H "X-API-KEY: your-api-key"
+```
+
+**OpenAPI Docs:** http://localhost:8000/api/v1/docs/
+
+## Environment Variables
+
+### Frontend (apps/web/.env.local)
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_ENABLE_WORKFLOWS=true
+NEXT_PUBLIC_ENABLE_TIME_TRACKING=true
+NEXT_PUBLIC_ENABLE_HO=true
+```
+
+### Backend (apps/api/.env)
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/plane
+REDIS_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=amqp://guest:guest@localhost:5672//
+SECRET_KEY=your-secret-key-min-50-chars
+DEBUG=True
+```
+
+**Full List:** [Deployment Guide → Environment Variables](./docs/deployment-guide.md#environment-variables-checklist)
+
+## Testing
+
+### Run All Tests
+
+```bash
+# Frontend
+pnpm test
+
+# Backend
+cd apps/api && python run_tests.py
+
+# Combined
+pnpm test && cd apps/api && python run_tests.py
+```
+
+### Coverage Requirements
+
+- Minimum 80% for merging PRs
+- Use `--cov` flag for coverage report
+
+### Guidelines
+
+- One test per behavior (not per line of code)
+- Test both success + error paths
+- Mock external services (S3, email)
+- No hardcoded test data (use factories)
+
+**Details:** [Code Standards → Testing Standards](./docs/code-standards.md#testing-standards)
+
+## Performance Targets
+
+| Metric | Target | Current | Status |
+|--------|--------|---------|--------|
+| API p95 latency | <200ms | ~250ms | ⚠️ Optimizing |
+| Kanban render | <1s (500 issues) | ~1.2s | ⚠️ Optimizing |
+| Frontend bundle | <250KB (gzip) | ~280KB | ⚠️ Optimizing |
+| Page load | <2s | ~1.8s | ✅ Good |
+
+See [Project Roadmap → Performance & Stability](./docs/project-roadmap.md#phase-5-performance--stability-45-complete)
+
+## Troubleshooting
+
+### Backend won't start
+
+```bash
+# Check if port 8000 is in use
+lsof -i :8000
+
+# Check database connection
+python manage.py dbshell
+
+# Clear Redis cache
+redis-cli FLUSHDB
+```
+
+### Frontend won't start
+
+```bash
+# Clear Node cache
+rm -rf node_modules/.pnpm-store
+pnpm install
+
+# Clear Next.js cache
+rm -rf apps/web/.next
+pnpm dev:web
+```
+
+### WebSocket connection issues
+
+```bash
+# Check if port 3003 is open
+lsof -i :3003
+
+# Restart live server
+docker-compose restart live
+```
+
+**More:** [Deployment Guide → Troubleshooting](./docs/deployment-guide.md) (coming soon)
+
+## Contributing
+
+1. **Read** [Code Standards](./docs/code-standards.md)
+2. **Follow** [Development Workflow](./README.md#development-workflow)
+3. **Create PR** against `develop` (not `preview`)
+4. **Request review** from team lead
+5. **Merge** after approval + CI passes
+
+### Commit Message Format
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
+**Example:** `feat(workflow): add transition validation`
+
+See [Code Standards → Pre-commit/Push Rules](./docs/code-standards.md#pre-commitpush-rules)
+
+## Deployment
+
+### Local Docker
+
+```bash
+docker-compose up -d
+# Services: web (3000), api (8000), admin (3001), space (3002), live (3003)
+```
+
+### Production Checklist
+
+- [ ] All tests passing
+- [ ] Linting/formatting passes
+- [ ] Environment variables configured
+- [ ] Database migrations ready
+- [ ] Secrets not committed
+- [ ] Images built and scanned
+- [ ] Health checks passing
+
+**Full Guide:** [Deployment Guide](./docs/deployment-guide.md)
+
+## Support & Contact
+
+- **Issues:** [GitHub Issues](https://github.com/shbvn/plane/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/shbvn/plane/discussions)
+- **Team:** Internal Slack channel
+- **Docs Lead:** @docs-manager
 
 ## License
 
-This project is licensed under the [GNU Affero General Public License v3.0](https://github.com/makeplane/plane/blob/master/LICENSE.txt).
+Plane is forked from [makeplane/plane](https://github.com/makeplane/plane) under the AGPL-3.0 license. See [LICENSE](./LICENSE) for details.
+
+## Related Projects
+
+- **Upstream:** [makeplane/plane](https://github.com/makeplane/plane) — Original open-source project
+- **Web:** [apps/web/](./apps/web/) — React frontend
+- **API:** [apps/api/](./apps/api/) — Django backend
+- **Components:** [packages/propel/](./packages/propel/) — UI component library
+
+---
+
+**Last Updated:** 2026-04-02 | **Version:** 1.0

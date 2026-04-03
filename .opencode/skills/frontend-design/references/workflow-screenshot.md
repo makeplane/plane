@@ -3,13 +3,13 @@
 Replicate a design exactly from a provided screenshot.
 
 ## Prerequisites
-- Activate `ui-ux-pro-max` skill first for design intelligence
-- Have `ai-multimodal` skill ready for visual analysis
+- Activate `ck:ui-ux-pro-max` skill first for design intelligence
+- Have `ck:ai-multimodal` skill ready for visual analysis
 
 ## Workflow Steps
 
 ### 1. Analyze Screenshot Details
-Use `ai-multimodal` skill to extract:
+Use `ck:ai-multimodal` skill to extract:
 - Design style and visual trends
 - Font names (predict Google Fonts), sizes, weights
 - Color palette with exact hex codes
@@ -38,10 +38,10 @@ Use `ui-ux-designer` subagent:
 - Match screenshot precisely
 
 ### 4. Generate Assets
-Use `ai-multimodal` skill:
+Use `ck:ai-multimodal` skill:
 - Generate images, icons, backgrounds
 - Verify generated assets match design
-- Remove backgrounds if needed with `media-processing`
+- Remove backgrounds if needed with `ck:media-processing`
 
 ### 5. Verify & Report
 - Compare implementation to screenshot

@@ -1981,6 +1981,9 @@ export default {
           start_date: "Ngày bắt đầu",
           due_date: "Ngày đến hạn",
         },
+        pagination: {
+          showing: "Hiển thị {from}-{to} / {total}",
+        },
       },
     },
     actions: {
@@ -3484,9 +3487,22 @@ export default {
     category: "Danh mục", // TODO: native review
     search: "Tìm kiếm...", // TODO: native review
     clear_sort: "Xóa sắp xếp", // TODO: native review
+    clear_filters_sort: "Xóa lọc & sắp xếp", // TODO: native review
     ascending: "Tăng dần", // TODO: native review
     descending: "Giảm dần", // TODO: native review
     work_item_count: "Số lượng mục công việc", // TODO: native review
     work_items: "Mục công việc", // TODO: native review
+    priority: {
+      urgent: "Khẩn cấp", // TODO: native review
+      high: "Cao", // TODO: native review
+      medium: "Trung bình", // TODO: native review
+      low: "Thấp", // TODO: native review
+      none: "Không có", // TODO: native review
+    },
+    progress_status: {
+      on_track: "Đúng tiến độ", // TODO: native review
+      behind: "Trễ tiến độ", // TODO: native review
+      no_target_date: "Không có ngày hạn", // TODO: native review
+    },
   },
 } as const;

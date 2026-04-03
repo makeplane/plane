@@ -1,10 +1,10 @@
 # AI Multimodal Integration for Frontend Design
 
-Entry point for using the `ai-multimodal` skill to generate and analyze visual assets that align with frontend design thinking and aesthetic guidelines.
+Entry point for using the `ck:ai-multimodal` skill to generate and analyze visual assets that align with frontend design thinking and aesthetic guidelines.
 
 ## When to Use
 
-Use `ai-multimodal` in frontend design when you need to:
+Use `ck:ai-multimodal` in frontend design when you need to:
 
 **Asset Generation**:
 - Generate hero images, background assets, decorative elements
@@ -95,10 +95,10 @@ Extract design systems systematically from high-quality references:
 ## Integration with Other Skills
 
 ### With `aesthetic` Skill
-Use `aesthetic` for overall design system guidance and quality evaluation framework. Then use `frontend-design` with `ai-multimodal` for asset generation and analysis that follows those guidelines.
+Use `aesthetic` for overall design system guidance and quality evaluation framework. Then use `ck:frontend-design` with `ck:ai-multimodal` for asset generation and analysis that follows those guidelines.
 
-### With `chrome-devtools` Skill
-Use `chrome-devtools` to capture full-screen screenshots from inspiration websites for design extraction. Capture at actual viewport size, not full-page scrolls.
+### With `ck:chrome-devtools` Skill
+Use `ck:chrome-devtools` to capture full-screen screenshots from inspiration websites for design extraction. Capture at actual viewport size, not full-page scrolls.
 
 ### With `ui-styling` Skill
 Generate and analyze assets first, then implement using shadcn/ui + Tailwind with colors/styles that complement the generated imagery.
@@ -106,7 +106,7 @@ Generate and analyze assets first, then implement using shadcn/ui + Tailwind wit
 ### With `web-frameworks` Skill
 Optimize generated assets for Next.js App Router: image optimization, responsive images, lazy loading.
 
-### With `media-processing` Skill
+### With `ck:media-processing` Skill
 Post-process generated assets: resize, compress, add filters, create compositions using FFmpeg/ImageMagick.
 
 ## Navigation

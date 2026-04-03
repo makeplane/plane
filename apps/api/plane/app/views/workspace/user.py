@@ -17,6 +17,7 @@ from django.db.models import (
     IntegerField,
     OuterRef,
     Q,
+    Sum,
     Value,
     When,
     Subquery,
@@ -43,6 +44,7 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     IssueActivity,
+    IssueWorkLog,
     FileAsset,
     IssueLink,
     IssueSubscriber,
@@ -128,6 +130,14 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
         )

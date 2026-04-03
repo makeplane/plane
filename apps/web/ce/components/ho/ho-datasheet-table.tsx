@@ -7,11 +7,9 @@ import { HoDatasheetRow } from "./ho-datasheet-row";
 type Props = {
   issues: THoIssue[];
   displayProperties: THoDisplayProperties;
-  orderBy: string;
-  onOrderBy: (key: string) => void;
 };
 
-export function HoDatasheetTable({ issues, displayProperties, orderBy, onOrderBy }: Props) {
+export function HoDatasheetTable({ issues, displayProperties }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -39,12 +37,7 @@ export function HoDatasheetTable({ issues, displayProperties, orderBy, onOrderBy
       className="relative overflow-x-auto overflow-y-auto horizontal-scrollbar scrollbar-lg max-h-[calc(100vh-170px)] bg-surface-1"
     >
       <table className="w-full border-collapse text-left">
-        <HoDatasheetHeader
-          displayProperties={displayProperties}
-          orderBy={orderBy}
-          onOrderBy={onOrderBy}
-          isScrolled={isScrolled}
-        />
+        <HoDatasheetHeader displayProperties={displayProperties} isScrolled={isScrolled} />
         <tbody>
           {issues.map((issue, idx) => {
             const prev = idx > 0 ? issues[idx - 1] : null;

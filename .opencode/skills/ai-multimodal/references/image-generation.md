@@ -2,7 +2,10 @@
 
 Comprehensive guide for image creation, editing, and composition using Imagen 4 and Gemini models ("Nano Banana").
 
-> **Nano Banana** = Google's internal name for native image generation in Gemini API. Two variants: Nano Banana (Flash - speed) and Nano Banana Pro (3 Pro - quality with reasoning).
+> **Nano Banana** = Google's internal name for native image generation in Gemini API. Three variants:
+> - **Nano Banana 2** (`gemini-3.1-flash-image-preview`) - NEW DEFAULT. 3-5x faster, 95% Pro quality, web grounding, 100+ language text rendering, character consistency (5 chars/14 objects). Released Feb 2026.
+> - **Nano Banana Flash** (`gemini-2.5-flash-image`) - Previous default, still stable.
+> - **Nano Banana Pro** (`gemini-3-pro-image-preview`) - Quality with reasoning, 4K text.
 
 ## Core Capabilities
 
@@ -19,9 +22,23 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 
 ## Models
 
-### Nano Banana (Default - Recommended)
+### Nano Banana 2 (Default - Recommended)
 
-**gemini-2.5-flash-image** - Nano Banana Flash ⭐ DEFAULT
+**gemini-3.1-flash-image-preview** - Nano Banana 2 ⭐ NEW DEFAULT
+- Best for: General use, fast generation with near-Pro quality
+- Quality: High (95% parity with Pro)
+- Speed: 3-5x faster than previous Flash
+- Cost: ~$0.045/image (512px) to ~$0.151/image (4K); ~25-30% cheaper than Pro
+- Resolution: 512px to 4K with expanded aspect ratios
+- Text rendering: 100+ languages with proper formatting
+- Character consistency: Up to 5 characters and 14 objects
+- Reasoning levels: Minimal/High/Dynamic for complex prompts
+- Web grounding: Real-time data integration for brands, landmarks, recent events
+- Status: Preview (Feb 2026)
+
+### Nano Banana Flash (Previous Default)
+
+**gemini-2.5-flash-image** - Nano Banana Flash
 - Best for: Speed, high-volume generation, rapid prototyping
 - Quality: High
 - Context: 65,536 input / 32,768 output tokens
@@ -80,23 +97,25 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 
 | Model | Quality | Speed | Cost | Best For |
 |-------|---------|-------|------|----------|
-| gemini-2.5-flash-image | ⭐⭐⭐⭐ | 🚀 Fast | 💵 Low | **DEFAULT** - General use |
+| gemini-3.1-flash-image-preview | ⭐⭐⭐⭐½ | 🚀🚀 Fastest | 💵 Low | **NEW DEFAULT** - General use |
+| gemini-2.5-flash-image | ⭐⭐⭐⭐ | 🚀 Fast | 💵 Low | Previous default, stable |
 | gemini-3-pro-image | ⭐⭐⭐⭐⭐ | 💡 Medium | 💰 Medium | Text/reasoning |
 | imagen-4.0-generate | ⭐⭐⭐⭐ | 💡 Medium | 💰 Medium | Production (alternative) |
 | imagen-4.0-ultra | ⭐⭐⭐⭐⭐ | 🐢 Slow | 💰💰 High | Marketing assets |
 | imagen-4.0-fast | ⭐⭐⭐ | 🚀 Fast | 💵 Low | Bulk generation |
 
 **Selection Guide**:
-- **Default/General**: Use `gemini-2.5-flash-image` (fast, cost-effective)
+- **Default/General**: Use `gemini-3.1-flash-image-preview` (fastest, near-Pro quality, web grounding)
+- **Stable Alternative**: Use `gemini-2.5-flash-image` (previous default, fully stable)
 - **Production Quality**: Use `imagen-4.0-generate-001` (alternative for final assets)
 - **Marketing/Ultra Quality**: Use `imagen-4.0-ultra` for maximum quality
 - **Text-Heavy Images**: Use `gemini-3-pro-image-preview` for 4K text rendering
 - **Complex Prompts with Reasoning**: Use `gemini-3-pro-image-preview` with Thinking mode
-- **Real-time Data Integration**: Use `gemini-3-pro-image-preview` with Search grounding
+- **Real-time Data Integration**: Use `gemini-3.1-flash-image-preview` or `gemini-3-pro-image-preview` with Search grounding
 
 ## Quick Start
 
-### Basic Generation (Default - Nano Banana Flash)
+### Basic Generation (Default - Nano Banana 2)
 
 ```python
 from google import genai
@@ -105,15 +124,15 @@ import os
 
 client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
 
-# Nano Banana Flash - DEFAULT (fast, cost-effective)
+# Nano Banana 2 - NEW DEFAULT (fastest, near-Pro quality, web grounding)
 response = client.models.generate_content(
-    model='gemini-2.5-flash-image',
+    model='gemini-3.1-flash-image-preview',
     contents='A serene mountain landscape at sunset with snow-capped peaks',
     config=types.GenerateContentConfig(
         response_modalities=['IMAGE'],  # Uppercase required
         image_config=types.ImageConfig(
             aspect_ratio='16:9',
-            image_size='2K'  # 1K, 2K, 4K - uppercase K required
+            image_size='2K'  # 512px, 1K, 2K, 4K - uppercase K required
         )
     )
 )
@@ -233,12 +252,48 @@ response = client.models.generate_content(
 )
 ```
 
+### Nano Banana 2 with Web Grounding
+
+```python
+# Nano Banana 2 - real-time web integration for brands, landmarks, events
+response = client.models.generate_content(
+    model='gemini-3.1-flash-image-preview',
+    contents='Current Apple Vision Pro product shot with accurate branding',
+    config=types.GenerateContentConfig(
+        response_modalities=['IMAGE'],
+        image_config=types.ImageConfig(
+            aspect_ratio='16:9',
+            image_size='2K'
+        )
+    )
+)
+```
+
+### Nano Banana 2 with Reasoning Levels
+
+```python
+# Use reasoning levels for complex prompts
+response = client.models.generate_content(
+    model='gemini-3.1-flash-image-preview',
+    contents='A photorealistic scene of 5 diverse characters sitting around a campfire, each with distinct clothing and accessories, consistent lighting from the fire',
+    config=types.GenerateContentConfig(
+        response_modalities=['IMAGE'],
+        image_config=types.ImageConfig(
+            aspect_ratio='16:9',
+            image_size='4K'
+        )
+    )
+)
+# Nano Banana 2 auto-selects reasoning level (Minimal/High/Dynamic)
+# For explicit control, check API docs for reasoning_level parameter
+```
+
 ### Multi-Turn Refinement Chat
 
 ```python
-# Conversational image refinement
+# Conversational image refinement (works with any Nano Banana model)
 chat = client.chats.create(
-    model='gemini-2.5-flash-image',
+    model='gemini-3.1-flash-image-preview',  # or gemini-2.5-flash-image
     config=types.GenerateContentConfig(
         response_modalities=['TEXT', 'IMAGE']
     )
@@ -288,7 +343,7 @@ response = client.models.generate_images(
 **Nano Banana** uses `generate_content()`:
 ```python
 response = client.models.generate_content(
-    model='gemini-2.5-flash-image',  # or gemini-3-pro-image-preview
+    model='gemini-3.1-flash-image-preview',  # or gemini-2.5-flash-image, gemini-3-pro-image-preview
     contents='...',
     config=types.GenerateContentConfig(
         response_modalities=['IMAGE'],  # Uppercase required
@@ -791,7 +846,15 @@ with open(filename, 'wb') as f:
 
 ### Cost Optimization
 
-**Token costs**:
+**Nano Banana 2 pricing (per image)**:
+| Resolution | Cost/Image | Batch (50% off) |
+|-----------|-----------|-----------------|
+| 512px | $0.045 | $0.023 |
+| 1K | $0.067 | $0.034 |
+| 2K | $0.101 | $0.051 |
+| 4K | $0.151 | $0.076 |
+
+**Flash Image token costs**:
 - 1 image: 1,290 tokens = $0.00129 (Flash Image at $1/1M)
 - 10 images: 12,900 tokens = $0.0129
 - 100 images: 129,000 tokens = $0.129

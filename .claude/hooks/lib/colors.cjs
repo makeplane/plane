@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * ANSI Terminal Colors - Cross-platform color support for statusline
@@ -8,13 +8,13 @@
  */
 
 // ANSI escape codes (8-color basic palette)
-const RESET = "\x1b[0m";
-const DIM = "\x1b[2m";
-const RED = "\x1b[31m";
-const GREEN = "\x1b[32m";
-const YELLOW = "\x1b[33m";
-const MAGENTA = "\x1b[35m";
-const CYAN = "\x1b[36m";
+const RESET = '\x1b[0m';
+const DIM = '\x1b[2m';
+const RED = '\x1b[31m';
+const GREEN = '\x1b[32m';
+const YELLOW = '\x1b[33m';
+const MAGENTA = '\x1b[35m';
+const CYAN = '\x1b[36m';
 
 // Detect color support at module load (cached)
 // Claude Code statusline runs via pipe but output displays in TTY - default to true
@@ -53,7 +53,7 @@ function isColorEnabled() {
 // Detect 256-color support via COLORTERM
 const has256Color = (() => {
   const ct = process.env.COLORTERM;
-  return ct === "truecolor" || ct === "24bit" || ct === "256color";
+  return ct === 'truecolor' || ct === '24bit' || ct === '256color';
 })();
 
 /**
@@ -67,24 +67,12 @@ function colorize(text, code) {
   return `${code}${text}${RESET}`;
 }
 
-function green(text) {
-  return colorize(text, GREEN);
-}
-function yellow(text) {
-  return colorize(text, YELLOW);
-}
-function red(text) {
-  return colorize(text, RED);
-}
-function cyan(text) {
-  return colorize(text, CYAN);
-}
-function magenta(text) {
-  return colorize(text, MAGENTA);
-}
-function dim(text) {
-  return colorize(text, DIM);
-}
+function green(text) { return colorize(text, GREEN); }
+function yellow(text) { return colorize(text, YELLOW); }
+function red(text) { return colorize(text, RED); }
+function cyan(text) { return colorize(text, CYAN); }
+function magenta(text) { return colorize(text, MAGENTA); }
+function dim(text) { return colorize(text, DIM); }
 
 /**
  * Get color code based on context percentage threshold
@@ -110,11 +98,11 @@ function coloredBar(percent, width = 12) {
   const empty = width - filled;
 
   if (!isColorEnabled()) {
-    return "▰".repeat(filled) + "▱".repeat(empty);
+    return '▰'.repeat(filled) + '▱'.repeat(empty);
   }
 
   const color = getContextColor(percent);
-  return `${color}${"▰".repeat(filled)}${DIM}${"▱".repeat(empty)}${RESET}`;
+  return `${color}${'▰'.repeat(filled)}${DIM}${'▱'.repeat(empty)}${RESET}`;
 }
 
 module.exports = {
@@ -130,5 +118,5 @@ module.exports = {
   shouldUseColor,
   has256Color,
   setColorEnabled,
-  isColorEnabled,
+  isColorEnabled
 };

@@ -5,12 +5,12 @@ Quick validation before packaging. Run `scripts/package_skill.py` for automated 
 ## Critical (Must Pass)
 
 ### Metadata
-- [ ] `name`: kebab-case, descriptive
+- [ ] `name`: namespaced `namespace:skill-name` (or `skill-name` for legacy), descriptive
 - [ ] `description`: under 200 characters, specific triggers, not generic
 
 ### Size Limits
-- [ ] SKILL.md: under 150 lines
-- [ ] Each reference file: under 150 lines
+- [ ] SKILL.md: under 300 lines
+- [ ] Each reference file: under 300 lines
 - [ ] No info duplication between SKILL.md and references
 
 ### Structure

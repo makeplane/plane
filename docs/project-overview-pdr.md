@@ -1,285 +1,243 @@
-# Plane.so - Project Overview & Product Development Requirements
+# Plane: Project Overview & Product Development Requirements
 
-**Version**: 1.2.4
-**License**: AGPL-3.0
-**Type**: Open-source project management platform
-**Last Updated**: 2026-03-29
+## Executive Summary
 
-## Vision & Purpose
+**Plane** is an open-source project management platform forked from `makeplane/plane` and customized by Shinhan Bank. It provides workspace-level collaboration, issue tracking, sprint management, and customizable workflows with real-time collaboration capabilities.
 
-Plane is a modern, open-source project management tool designed for teams to track issues, run cycles (sprints), and manage product roadmaps without the friction of managing the tool itself. It prioritizes simplicity, flexibility, and collaboration while providing self-hosting capabilities for full data control.
+**Origin:** Fork of `github.com/makeplane/plane`
+**Repository:** `github.com/shbvn/plane.git`
+**Tech Stack:** React 18 + Router v7 + MobX | Django 4.2 + DRF + PostgreSQL + Celery
+**Primary Deployment:** Docker-based (Caddy reverse proxy + multi-app architecture)
+**Current Date:** 2026-04-02
 
-## Target Users
+## Core Capabilities
 
-1. **Software Development Teams** - Issue tracking, sprint planning, code organization
-2. **Product Teams** - Roadmap planning, feature tracking, release cycles
-3. **Startups & SMBs** - Affordable, self-hosted project management
-4. **Enterprise Organizations** - Compliance, data privacy, on-premise deployment
-5. **Open-source Communities** - Cost-effective collaboration platform
+### Issue Management
+- Multi-layout issue views: List, Kanban, Gantt, Calendar, Spreadsheet
+- Hierarchical organization: Workspace → Project → Issue
+- Issue states, labels, priorities, assignees, dates
+- Soft-delete support for data safety
 
-## Core Features
+### Sprint Management (Cycles)
+- Named iterations with start/end dates
+- Issue-to-cycle associations
+- Sprint analytics and burndown
 
-### 1. Work Items (Issues)
+### Feature Planning (Modules)
+- Modules for feature/epic grouping
+- Issue-to-module relationships
+- Module-level progress tracking
 
-- Rich-text editor with file uploads
-- Issue relationships (blocks, relates, duplicates)
-- Assignments, mentions, watchers
-- Comments with reactions
-- Issue versioning & history tracking
-- Sub-issues/task hierarchy
+### Custom Workflows (CE)
+- Shinhan-specific workflow states and transitions
+- Workflow blockers for validation
+- Unhandled rejection error handling for blocked transitions
 
-### 2. Cycles (Sprints)
+### Real-Time Collaboration
+- WebSocket support (apps/live, Hocuspocus + Y.js CRDT)
+- Shared document editing
+- Real-time cursor positions (planned)
 
-- Time-boxed planning
-- Issue assignment to cycles
-- Burn-down charts & progress tracking
-- Cycle metrics and reporting
+### Wiki/Pages
+- Static page creation within projects
+- Markdown-based content
 
-### 3. Modules
+### Time Tracking (CE)
+- Time estimate and logged hours per issue
+- Time analytics
 
-- Break projects into deliverable components
-- Module grouping of issues
-- Dependency management
+### Organization Chart (HO - CE)
+- Shinhan-specific org hierarchies
+- Column-specific sorting and multi-select filtering
+- Properties to show/hide (modules, cycles)
 
-### 4. Views
-
-- Customizable issue filters
-- Saved views for team workflows
-- Board, list, calendar, spreadsheet, Gantt, timeline views
-
-### 5. Pages
-
-- Wiki-style project documentation
-- Rich text editing with Tiptap
-- Version history
-- AI-assisted content generation
-
-### 6. Time Tracking (v1.2.4)
-
-- Log time spent on issues (worklog) with 1-720 minute/day limits
-- Daily/weekly/project-level time summaries with cross-workspace view
-- Export worklogs as CSV/XLSX with filters
-- 7-working-day edit window for entries
-- Capacity heatmap with color-coded status (green/yellow/red)
-- Per-member capacity breakdown by task
-- Recharts donut charts for category visualization
-- Feature flag gating per project
-- Daily reminder notifications via Celery
-
-### 7. Task Categories (v1.2.4)
-
-- Instance-level hierarchical classification (MainTaskCategory → SubTaskCategory)
-- Auto-required for non-draft issues when categories exist in system
-- Color-coded categories for visual organization
-- 2-tier dropdown selector in issue forms
-- Spreadsheet column support
-- Admin CRUD in God-mode panel
-
-### 8. Head Office (HO) Management (v1.2.4)
-
-- Cross-workspace issue visibility with role-based access
-- Instance Admins: See all workspaces
-- Department Managers: See managed departments + descendants (BFS traversal)
-- 18-column read-only issue datasheet
-- Aggregated work item counts by category
-- Department-scoped issue filtering and sorting
-
-### 10. Analytics
-
-- Real-time dashboards (Pro feature)
-- Custom analytics views with multiple chart types
-- Trend visualization via charts (line, bar, pie, scatter)
-- Dashboard favorites/pinning with unified UserFavorite system
-- Multi-dashboard CRUD with widget configuration UI
-- Export capabilities
-
-### 11. Collaboration
-
-- Real-time editing via Hocuspocus + Y.js CRDT
-- Comment threads
-- Activity tracking with full audit trail
-- Notifications (in-app & email)
-- Mentions & @-references
-- Module activity tracking with change history
-
-### 12. Public Sharing
-
-- Public issue views via anchor links
-- Public workspace browsing
-- Read-only access for stakeholders
-
-### 13. Authentication & Authorization
-
-- OAuth providers (Google, GitHub, GitLab, Gitea)
-- Magic link (email-based passwordless auth)
-- Password-based authentication
-- API tokens for programmatic access
-- RBAC with workspace/project roles
-- Swing SSO for enterprise single sign-on (v1.2.4)
-
-### 9. Organizational Hierarchy (v1.2.4)
-
-- Hierarchical department structure (up to 6 levels deep) with BFS traversal for HO access
-- Staff profiles linked to users with employment status tracking
-- Organizational chart visualization (read-only workspace view)
-- Admin-managed department and staff CRUD in God-mode panel
-- Auto-join logic for bulk workspace membership synchronization
-- Department-scoped project linking and auto-member sync
-
-### 14. Integrations
-
-- GitHub sync (repos, issues, comments)
-- Slack notifications
-- Custom webhooks
-- Intake board for external submissions
-- RFC 3986 custom protocol support for issue links
-
-## Architecture Overview
-
-### Monorepo Structure
-
-- **Apps**: web, admin, space, live, api, proxy
-- **Packages**: @plane/types, @plane/constants, @plane/utils, @plane/services, @plane/hooks, @plane/propel (UI), @plane/editor, @plane/i18n, and others
-- **Build**: pnpm + Turborepo
-
-### Tech Stack
-
-**Frontend**:
-
-- React 18, React Router v7
-- MobX for state management
-- Vite + TypeScript
-- Tailwind CSS v4
-- Hocuspocus + Y.js for real-time collaboration
-
-**Backend**:
-
-- Django 4.2 + DRF
-- PostgreSQL 15.7 (primary DB)
-- MongoDB 4.6 (API logs)
-- Celery + RabbitMQ (async tasks)
-- Redis/Valkey (cache & sessions)
-- Channels (WebSocket support)
-
-**Infrastructure**:
-
-- MinIO (S3-compatible storage)
-- Caddy (reverse proxy, auto-HTTPS)
-- Docker (containerization)
-- Multiple deployment options (Compose, Swarm, Kubernetes)
+### Analytics (CE)
+- Project analytics dashboard
+- Custom report generation
 
 ## Product Development Requirements (PDR)
 
-### Functional Requirements
+### Functional Requirements (In Scope)
 
-| Requirement               | Priority | Status  | Details                                                       |
-| ------------------------- | -------- | ------- | ------------------------------------------------------------- |
-| Multi-workspace support   | Critical | Shipped | Users can create/manage multiple workspaces                   |
-| Role-based access control | Critical | Shipped | Workspace & project-level roles (Owner, Admin, Member, Guest) |
-| Issue full lifecycle      | Critical | Shipped | Create, update, assign, comment, close, archive               |
-| Real-time collaboration   | High     | Shipped | WebSocket-based simultaneous editing                          |
-| Public sharing            | High     | Shipped | Share issues/workspaces publicly via links                    |
-| Analytics & reporting     | High     | Shipped | Dashboard views, trend charts, burn-down tracking             |
-| OAuth authentication      | High     | Shipped | Google, GitHub, GitLab, Gitea providers                       |
-| Organizational hierarchy  | High     | Shipped | Departments, staff profiles, org charts (v1.2.4)              |
-| File uploads              | Medium   | Shipped | Attach files to issues, store in S3/MinIO                     |
-| API access                | Medium   | Shipped | REST API v1 with token-based auth                             |
-| Self-hosting              | Critical | Shipped | Docker/Kubernetes deployment options                          |
+#### 1. Workspace Management
+- **Req:** Multi-workspace support per user
+- **Req:** Workspace members with ROLE.ADMIN/MEMBER/GUEST permissions
+- **Req:** Workspace slug-based routing
+- **Acceptance:** Users can create, invite, and manage workspace members
+
+#### 2. Project Management
+- **Req:** Projects within workspaces with state (active/archived)
+- **Req:** Issue hierarchies: parent/child tasks
+- **Req:** Soft-delete support with `deleted_at` tracking
+- **Acceptance:** Projects support CRUD with proper role-based access control
+
+#### 3. Issue Lifecycle
+- **Req:** States (Backlog, Todo, In Progress, Done, etc.)
+- **Req:** Custom state workflow per project
+- **Req:** Issue transitions validated via workflow rules (Shinhan)
+- **Req:** Blocked transitions raise `WORKFLOW_TRANSITION_BLOCKED` errors
+- **Acceptance:** State transitions respect workflow rules; blockers are caught via unhandled rejection handler
+
+#### 4. Multi-Layout Issue Views
+- **Req:** List, Kanban, Gantt, Calendar, Spreadsheet layouts
+- **Req:** Single MobX store, multiple UI renderers
+- **Req:** Kanban drag-and-drop with workflow state validation
+- **Acceptance:** All layouts sync with store; DnD respects workflow rules
+
+#### 5. Cycle & Module Associations
+- **Req:** Issues assigned to cycles (sprints) and modules (features)
+- **Req:** Bulk actions (assign cycles, add to module)
+- **Acceptance:** UI reflects associations; queries correctly filter by cycle/module
+
+#### 6. Real-Time Collaboration
+- **Req:** WebSocket server for live editing (apps/live)
+- **Req:** Y.js CRDT for conflict-free edits
+- **Req:** Shared document state across clients
+- **Acceptance:** Multiple users editing same page/issue concurrently with no conflicts
+
+#### 7. API Versioning
+- **Req:** V0 API (session auth, internal)
+- **Req:** V1 API (API key auth, external, OpenAPI)
+- **Acceptance:** V0 used by web UI; V1 documented and available to external integrations
+
+#### 8. CE Customizations (Shinhan)
+- **Req:** Workflows with blockers and transition validation
+- **Req:** Time tracking (estimates, logged hours)
+- **Req:** Organization chart (HO) with column sorting/filtering
+- **Acceptance:** All CE features toggle via env flags; core code unmodified
 
 ### Non-Functional Requirements
 
-| Requirement         | Target                | Details                                                         |
-| ------------------- | --------------------- | --------------------------------------------------------------- |
-| **Scalability**     | Horizontal            | Stateless services, Redis cache, DB connection pooling          |
-| **Performance**     | <2s avg response      | Pagination, caching, optimized queries                          |
-| **Availability**    | 99.5% uptime          | Health checks, graceful degradation, no single point of failure |
-| **Security**        | SOC2 Ready            | RBAC, encryption, rate limiting, audit logs                     |
-| **Data Privacy**    | GDPR Compliant        | Data sovereignty, self-hosting, encryption at rest              |
-| **Maintainability** | TypeScript throughout | 200 LOC file limit, modular architecture, comprehensive testing |
+#### Performance
+- **Req:** Sub-second response for issue list queries
+- **Req:** Kanban column rendering < 1s (Atlaskit pragmatic DnD)
+- **Req:** Concurrent WebSocket connections: 10k+ users
+- **Acceptance:** Load tests pass; no N+1 queries in ORM
 
-### Success Metrics
+#### Scalability
+- **Req:** Horizontal scaling via Celery task queue
+- **Req:** Redis caching for frequently accessed data
+- **Req:** Multi-read-replica support (middleware routes reads)
+- **Acceptance:** 100+ concurrent users per workspace
 
-1. **User Adoption**: 10K+ self-hosted deployments by 2026-Q3
-2. **API Usage**: 1M+ API requests/day from integrations
-3. **Collaboration**: 80%+ of issues have comments/activity within 7 days
-4. **Performance**: 95th percentile response time <1s
-5. **Uptime**: 99.9% SLA compliance
-6. **Community**: 500+ contributors, 50K+ GitHub stars
+#### Security
+- **Req:** Role-based access control (RBAC) at workspace/project levels
+- **Req:** API key authentication with scoping
+- **Req:** CORS whitelisting
+- **Req:** Rate limiting via middleware
+- **Acceptance:** Unauthenticated requests denied; cross-origin requests validated
 
-## Deployment Models
+#### Availability
+- **Req:** Graceful degradation if Redis unavailable
+- **Req:** Database connection pooling
+- **Req:** S3 fallback for file uploads
+- **Acceptance:** Service remains operational during partial outages
 
-1. **Plane Cloud** - SaaS multi-tenant (managed)
-2. **Docker Compose** - Single server, ideal for teams <100
-3. **Docker Swarm** - Cluster deployment with load balancing
-4. **Kubernetes** - Cloud-native with Helm charts
-5. **All-in-One** - Single container with all services (demo/PoC)
+#### Maintainability
+- **Req:** <200 LOC per code file (modular design)
+- **Req:** <150 LOC per React component
+- **Req:** Kebab-case file naming with descriptive names
+- **Req:** YAGNI/KISS/DRY principles
+- **Acceptance:** New developers understand codebase structure in <2 hours
 
-## Key Constraints & Dependencies
+### Constraints
 
-**Constraints**:
+#### Technology
+- **Django 4.2** with DRF (no migration to newer versions without planning)
+- **React 18** with Router v7 (no legacy Router usage)
+- **MobX** for state management (not Redux)
+- **Tailwind v4** with semantic color tokens
+- **pnpm 10.24+** (not npm/yarn)
+- **Turbo 2.6.3** for monorepo tasks
+- **PostgreSQL** (primary DB; soft-deletes for data preservation)
 
-- AGPL-3.0 license requires source sharing for modifications
-- PostgreSQL 15.7+ required (no legacy DB support)
-- Real-time features require WebSocket support
-- File uploads limited to 5MB per request (configurable)
-- Issue priority system: 4 levels (urgent, high, medium, low) — "none" removed in v1.2.3
+#### Architectural
+- **CE Pattern:** New features in `apps/web/ce/` and `apps/api/`; never modify `core/` except hooks/layouts
+- **API Pattern:** Separate serializers for v0/v1
+- **Store Pattern:** MobX with `makeObservable` and `runInAction` for async
+- **Type Export:** All types in `packages/types/src/` as `.ts` files (not `.d.ts`)
+- **Service Auth:** @allow_permission decorator for all views
 
-**External Dependencies**:
+#### Operational
+- **Docker-based deployment** with Caddy reverse proxy
+- **Multi-app architecture:** web (port 3000), admin (3001), space (3002), live (3003)
+- **Celery RabbitMQ broker** (no sync task processing)
+- **No force-push to preview/develop** (PR + 1 review required)
+- **Branch pattern:** {user}/{type}/{desc} → develop → preview
 
-- OAuth providers (Google, GitHub, GitLab, Gitea)
-- Email service for notifications (SMTP)
-- S3-compatible storage (MinIO or AWS S3)
-- Message broker (RabbitMQ 3.13.6+)
+### Out of Scope
 
-## Roadmap & Priorities
+- Self-hosted backend for external users (API v1 only)
+- iOS/Android native apps
+- AI-powered features
+- Advanced reporting beyond current scope
+- Custom webhook processors (webhooks sent, not processed)
 
-### Current Phase (v1.2.x)
+## Success Metrics
 
-- Stability & performance optimization
-- Community Edition feature parity
-- Enhanced analytics
-- Mobile app improvements
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Issue list load time** | <500ms | Performance monitoring |
+| **API response time (p95)** | <200ms | APM (v1 endpoints) |
+| **Test coverage** | >80% | CI/CD pipeline |
+| **Deployment time** | <10min | Docker build + push |
+| **Uptime** | 99.5% | Monitoring dashboard |
+| **Max concurrent users/workspace** | 100+ | Load test results |
 
-### Near-term (v1.3-v1.4)
+## Adoption & Release Plan
 
-- Advanced automation rules
-- Custom fields & workflows
-- Improved import/export tools
-- Better integration ecosystem
+### Current Phase
+- **Phase:** Feature development + CE customization
+- **Status:** Workflows, Time Tracking, HO (org chart) complete
+- **Next:** Analytics refinement, performance optimization
 
-### Future (v2.0)
+### Release Channels
+- **Preview:** Staging environment (develop branch)
+- **Main:** Production (preview branch)
+- **Hotfixes:** Cherry-pick to both branches
 
-- AI-powered issue summarization
-- Predictive analytics
-- Advanced resource planning
-- Mobile-first redesign
+### Support Model
+- **Internal:** Shinhan Bank internal teams
+- **External:** Community (optional, downstream of makeplane/plane)
 
-## Repository Structure
+## Dependency Management
 
-```
-plane.so/
-├── apps/
-│   ├── web/              React SPA main dashboard
-│   ├── admin/            Instance admin panel
-│   ├── space/            Public sharing portal (SSR)
-│   ├── live/             Real-time collab server
-│   ├── api/              Django REST API
-│   └── proxy/            Caddy reverse proxy
-├── packages/             Shared utilities & types
-├── docs/                 Developer documentation
-├── deployments/          Deployment configurations
-├── CONTRIBUTING.md       Contribution guidelines
-└── README.md             Getting started
-```
+### External Services
+| Service | Purpose | Status |
+|---------|---------|--------|
+| **PostgreSQL** | Primary DB | Required |
+| **Redis** | Caching/sessions | Required |
+| **RabbitMQ** | Celery broker | Required |
+| **S3-compatible** | File uploads | Required |
+| **WebSocket** | Real-time (apps/live) | Optional but recommended |
 
-## Getting Started
+### Development Tooling
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Node.js** | 22.18+ | JavaScript runtime |
+| **pnpm** | 10.24+ | Package manager |
+| **Python** | 3.11+ | Backend runtime |
+| **Docker** | Latest | Containerization |
 
-**For Users**: [Plane Cloud](https://app.plane.so) or [Self-hosted Deployment](https://developers.plane.so/self-hosting)
+## Documentation Structure
 
-**For Developers**: See [CONTRIBUTING.md](../CONTRIBUTING.md) and [docs/deployment-guide.md](./deployment-guide.md)
+- **README.md** (root) — Getting started, setup
+- **docs/codebase-summary.md** — File structure & key modules
+- **docs/code-standards.md** — Coding conventions & patterns
+- **docs/system-architecture.md** — System design & data flow
+- **docs/design-guidelines.md** — UI/UX, Tailwind, component libs
+- **docs/deployment-guide.md** — Docker, Caddy, env vars
+- **docs/project-roadmap.md** — Current development phases
+
+## Key Contacts & Roles
+
+- **Project Lead:** ngocyt001 (ngoc-feat/*)
+- **Tech Leads:** TBD
+- **Backend Owner:** apps/api/
+- **Frontend Owner:** apps/web/
+- **Devops:** Docker/Caddy/Infrastructure
 
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/project-overview-pdr.md`
-**Lines**: ~320
-**Status**: Final
+**Last Updated:** 2026-04-02
+**PDR Version:** 1.0

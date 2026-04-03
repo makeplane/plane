@@ -1,6 +1,7 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 
+from django.contrib.auth import get_user_model
 from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
 
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 
 from plane.app.serializers.ho import HoIssueSerializer
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Department, Issue, Project, ProjectMember, StaffProfile, Workspace, WorkspaceMember
+from plane.db.models import Department, Issue, IssueWorkLog, Project, ProjectMember, StaffProfile, Workspace, WorkspaceMember
 from plane.license.models import Instance, InstanceAdmin
 
 
@@ -112,8 +113,22 @@ _ALLOWED_ORDER_BY = {
     "-start_date",
     "target_date",
     "-target_date",
+    "completed_at",
+    "-completed_at",
     "created_at",
     "-created_at",
+    "name",
+    "-name",
+    "project__project_lead__display_name",
+    "-project__project_lead__display_name",
+    "is_bank_wide_project",
+    "-is_bank_wide_project",
+    "sub_issues_count",
+    "-sub_issues_count",
+    "reference_link_count",
+    "-reference_link_count",
+    "total_log_time",
+    "-total_log_time",
 }
 
 
@@ -197,6 +212,54 @@ class HoIssueListView(BaseAPIView):
         if project_ids:
             qs = qs.filter(project_id__in=project_ids)
 
+        # Apply additional filters
+        priority = request.query_params.get("priority")
+        if priority:
+            qs = qs.filter(priority__in=priority.split(","))
+
+        state = request.query_params.get("state")
+        if state:
+            qs = qs.filter(state__name__in=state.split(","))
+
+        assignees = request.query_params.get("assignees")
+        if assignees:
+            qs = qs.filter(assignees__id__in=assignees.split(",")).distinct()
+
+        main_task_category = request.query_params.get("main_task_category")
+        if main_task_category:
+            qs = qs.filter(main_task_category__name__in=main_task_category.split(","))
+
+        sub_task_category = request.query_params.get("sub_task_category")
+        if sub_task_category:
+            qs = qs.filter(sub_task_category__name__in=sub_task_category.split(","))
+
+        cycle = request.query_params.get("cycle")
+        if cycle:
+            qs = qs.filter(issue_cycle__cycle__name__in=cycle.split(","))
+
+        module = request.query_params.get("module")
+        if module:
+            qs = qs.filter(issue_module__module__name__in=module.split(","))
+
+        bank_wide = request.query_params.get("bank_wide")
+        if bank_wide:
+            qs = qs.filter(is_bank_wide_project=bank_wide.lower() == "true")
+
+        progress = request.query_params.get("progress")
+        if progress:
+            from django.utils import timezone
+            today = timezone.now().date()
+            p_filters = Q()
+            for p in progress.split(","):
+                if p == "on_track":
+                    p_filters |= Q(target_date__gte=today)
+                elif p == "behind":
+                    p_filters |= Q(target_date__lt=today)
+                elif p == "no_target_date":
+                    p_filters |= Q(target_date__isnull=True)
+            if p_filters:
+                qs = qs.filter(p_filters)
+
         qs = qs.order_by(order_by, "created_at")
 
         # Overlap filter: include issues where [start_date, target_date] overlaps [from_date, to_date]
@@ -266,6 +329,54 @@ class HoCategorySummaryView(BaseAPIView):
         if project_ids:
             qs = qs.filter(project_id__in=project_ids)
 
+        # Apply additional filters
+        priority = request.query_params.get("priority")
+        if priority:
+            qs = qs.filter(priority__in=priority.split(","))
+
+        state = request.query_params.get("state")
+        if state:
+            qs = qs.filter(state__name__in=state.split(","))
+
+        assignees = request.query_params.get("assignees")
+        if assignees:
+            qs = qs.filter(assignees__id__in=assignees.split(",")).distinct()
+
+        main_task_category = request.query_params.get("main_task_category")
+        if main_task_category:
+            qs = qs.filter(main_task_category__name__in=main_task_category.split(","))
+
+        sub_task_category = request.query_params.get("sub_task_category")
+        if sub_task_category:
+            qs = qs.filter(sub_task_category__name__in=sub_task_category.split(","))
+
+        cycle = request.query_params.get("cycle")
+        if cycle:
+            qs = qs.filter(issue_cycle__cycle__name__in=cycle.split(","))
+
+        module = request.query_params.get("module")
+        if module:
+            qs = qs.filter(issue_module__module__name__in=module.split(","))
+
+        bank_wide = request.query_params.get("bank_wide")
+        if bank_wide:
+            qs = qs.filter(is_bank_wide_project=bank_wide.lower() == "true")
+
+        progress = request.query_params.get("progress")
+        if progress:
+            from django.utils import timezone
+            today = timezone.now().date()
+            p_filters = Q()
+            for p in progress.split(","):
+                if p == "on_track":
+                    p_filters |= Q(target_date__gte=today)
+                elif p == "behind":
+                    p_filters |= Q(target_date__lt=today)
+                elif p == "no_target_date":
+                    p_filters |= Q(target_date__isnull=True)
+            if p_filters:
+                qs = qs.filter(p_filters)
+
         if from_date:
             qs = qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
         if to_date:
@@ -303,6 +414,147 @@ class HoCategorySummaryView(BaseAPIView):
             for row in summary
         ]
 
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class HoFilterOptionsView(BaseAPIView):
+    """GET /api/ho/filter-options/ - return unique values for filters."""
+
+    def get(self, request):
+        workspace_ids = get_accessible_workspace_ids(request.user)
+        if not workspace_ids:
+            return Response({}, status=status.HTTP_200_OK)
+
+        # Optional workspace/project filters to narrow down options
+        workspace_slug = request.query_params.get("workspace_slug")
+        if workspace_slug:
+            ws = Workspace.objects.filter(slug=workspace_slug, id__in=workspace_ids).first()
+            if ws:
+                workspace_ids = [ws.id]
+
+        project_ids_param = request.query_params.get("project_id")
+        project_ids = []
+        if project_ids_param:
+            raw_ids = [pid.strip() for pid in project_ids_param.split(",") if pid.strip()]
+            project_ids = list(
+                Project.objects.filter(id__in=raw_ids, workspace_id__in=workspace_ids).values_list("id", flat=True)
+            )
+
+        from_date = request.query_params.get("from_date")
+        to_date = request.query_params.get("to_date")
+
+        base_qs = Issue.objects.filter(
+            workspace_id__in=workspace_ids,
+            is_draft=False,
+            archived_at__isnull=True,
+            deleted_at__isnull=True,
+        )
+        if project_ids:
+            base_qs = base_qs.filter(project_id__in=project_ids)
+        if from_date:
+            base_qs = base_qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
+        if to_date:
+            base_qs = base_qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
+
+        # Fix for duplicates: collect IDs first then extract distinct values
+        issue_ids = base_qs.values_list("id", flat=True).distinct()
+
+        # Extract options
+        states = Issue.objects.filter(id__in=issue_ids).exclude(state__isnull=True).values_list("state__name", flat=True).distinct().order_by("state__name")
+        raw_priorities = Issue.objects.filter(id__in=issue_ids).exclude(priority__isnull=True).values_list("priority", flat=True).distinct()
+        priorities = sorted(list(set(p.lower() for p in raw_priorities if p)))
+        
+        main_cats = Issue.objects.filter(id__in=issue_ids).exclude(main_task_category__isnull=True).values_list("main_task_category__name", flat=True).distinct().order_by("main_task_category__name")
+        sub_cats = Issue.objects.filter(id__in=issue_ids).exclude(sub_task_category__isnull=True).values_list("sub_task_category__name", flat=True).distinct().order_by("sub_task_category__name")
+        
+        cycles = Issue.objects.filter(id__in=issue_ids, issue_cycle__cycle__isnull=False).values_list("issue_cycle__cycle__name", flat=True).distinct().order_by("issue_cycle__cycle__name")
+        modules = Issue.objects.filter(id__in=issue_ids, issue_module__module__isnull=False).values_list("issue_module__module__name", flat=True).distinct().order_by("issue_module__module__name")
+
+        # Assignees: list of {id, display_name}
+        assignees = (
+            StaffProfile.objects.filter(assigned_issues__id__in=issue_ids)
+            .values("id", "display_name")
+            .distinct()
+            .order_by("display_name")
+        )
+        assignees_list = [
+            {"id": str(a["id"]), "display_name": a["display_name"]}
+            for a in assignees
+        ]
+
+        # Leads: list of {id, display_name}
+        leads = (
+            StaffProfile.objects.filter(project_leads__id__in=Project.objects.filter(issues__id__in=issue_ids).distinct())
+            .values("id", "display_name")
+            .distinct()
+            .order_by("display_name")
+        )
+        leads_list = [
+            {"id": str(l["id"]), "display_name": l["display_name"]}
+            for l in leads
+        ]
+
+        return Response({
+            "states": sorted(list(set(states))),
+            "main_task_categories": sorted(list(set(main_cats))),
+            "sub_task_categories": sorted(list(set(sub_cats))),
+            "cycles": sorted(list(set(cycles))),
+            "modules": sorted(list(set(modules))),
+            "assignees": assignees_list,
+            "leads": leads_list,
+            "priorities": priorities,
+            "progress": ["on_track", "behind", "no_target_date"],
+        }, status=status.HTTP_200_OK)
+
+
+class HoIssueWorklogBreakdownView(BaseAPIView):
+    """GET /api/ho/issues/<issue_id>/worklogs/ — per-user worklog totals for a single HO issue.
+
+    Uses HO workspace-level permissions instead of project membership, so HO users
+    who are not project members can still see the breakdown (fixing the mismatch
+    with total_log_time shown in the datasheet which is annotated without membership filter).
+    """
+
+    def get(self, request, issue_id):
+        workspace_ids = get_accessible_workspace_ids(request.user)
+        if not workspace_ids:
+            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Verify issue belongs to an accessible workspace
+        issue_exists = Issue.objects.filter(
+            id=issue_id,
+            workspace_id__in=workspace_ids,
+            deleted_at__isnull=True,
+            archived_at__isnull=True,
+        ).exists()
+        if not issue_exists:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Aggregate total minutes per user (SoftDeletionManager already excludes deleted records)
+        breakdown = (
+            IssueWorkLog.objects.filter(issue_id=issue_id)
+            .values("logged_by")
+            .annotate(total_minutes=Sum("duration_minutes"))
+            .order_by("-total_minutes")
+        )
+
+        # Fetch user display details in one query
+        User = get_user_model()
+        user_ids = [row["logged_by"] for row in breakdown]
+        user_map = {
+            str(u.id): {"display_name": u.display_name, "avatar_url": u.avatar or ""}
+            for u in User.objects.filter(id__in=user_ids).only("id", "display_name", "avatar")
+        }
+
+        result = [
+            {
+                "user_id": str(row["logged_by"]),
+                "display_name": user_map.get(str(row["logged_by"]), {}).get("display_name", ""),
+                "avatar_url": user_map.get(str(row["logged_by"]), {}).get("avatar_url", ""),
+                "total_minutes": row["total_minutes"],
+            }
+            for row in breakdown
+        ]
         return Response(result, status=status.HTTP_200_OK)
 
 

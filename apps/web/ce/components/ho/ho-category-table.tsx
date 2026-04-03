@@ -1,26 +1,25 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, ChevronsUpDown } from "lucide-react";
-import { CustomMenu } from "@plane/ui";
+import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-import type { THoCategorySummary } from "@/plane-web/services/ho-issue.service";
+import { useHoIssues } from "@/hooks/store/use-ho-issues";
+import { HoHeaderFilter } from "./ho-header-filter";
 import { HoCategoryRow } from "./ho-category-row";
-
-type SortKey = keyof THoCategorySummary;
+import type { THoCategorySummary } from "@/plane-web/services/ho-issue.service";
 
 const TH_CLASS = "h-11 items-center bg-layer-1 text-13 font-medium border-r-[0.5px] border-subtle select-none";
 
 type Props = {
   data: THoCategorySummary[];
-  sortKey: SortKey | null;
-  sortDir: "asc" | "desc";
-  onSort: (key: SortKey | "clear") => void;
 };
 
-export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
+export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props) {
   const { t } = useTranslation();
+  const store = useHoIssues();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const options = store.filterOptions;
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -40,13 +39,55 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
     };
   }, [handleScroll]);
 
-  const COLUMNS: { key: SortKey; label: string; width: string }[] = [
-    { key: "department_name", label: t("spreadsheet.columns.department_name"), width: "min-w-[200px]" },
-    { key: "project_name", label: t("spreadsheet.columns.project_name"), width: "min-w-[200px]" },
-    { key: "main_task_category_name", label: t("spreadsheet.columns.main_task_category"), width: "min-w-[220px]" },
-    { key: "sub_task_category_name", label: t("spreadsheet.columns.sub_task_category"), width: "min-w-[220px]" },
-    { key: "work_item_count", label: t("ho.work_item_count"), width: "min-w-[150px]" },
+  const COLUMNS = [
+    {
+      key: "department_name",
+      label: t("spreadsheet.columns.department_name"),
+      asc: "project__workspace__name",
+      desc: "-project__workspace__name",
+      width: "min-w-[200px]",
+    },
+    {
+      key: "project_name",
+      label: t("spreadsheet.columns.project_name"),
+      asc: "project__name",
+      desc: "-project__name",
+      width: "min-w-[200px]",
+    },
+    {
+      key: "main_task_category_name",
+      label: t("spreadsheet.columns.main_task_category"),
+      asc: "main_task_category__name",
+      desc: "-main_task_category__name",
+      filterKey: "main_task_category",
+      width: "min-w-[220px]",
+    },
+    {
+      key: "sub_task_category_name",
+      label: t("spreadsheet.columns.sub_task_category"),
+      asc: "sub_task_category__name",
+      desc: "-sub_task_category__name",
+      filterKey: "sub_task_category",
+      width: "min-w-[220px]",
+    },
+    {
+      key: "work_item_count",
+      label: t("ho.work_item_count"),
+      width: "min-w-[150px]",
+    },
   ];
+
+  const getFilterOptions = (key: string) => {
+    if (!options) return undefined;
+    switch (key) {
+      case "main_task_category":
+        return options.main_task_categories?.map((c) => ({ value: c, label: c }));
+      case "sub_task_category":
+        return options.sub_task_categories?.map((c) => ({ value: c, label: c }));
+      default:
+        return undefined;
+    }
+  };
 
   return (
     <div
@@ -57,8 +98,6 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
         <thead className="sticky top-0 left-0 z-[20] border-b-[0.5px] border-subtle bg-layer-1">
           <tr className="h-11">
             {COLUMNS.map((col, idx) => {
-              const isActive = sortKey === col.key;
-              const Icon = isActive ? (sortDir === "asc" ? ArrowUpNarrowWide : ArrowDownWideNarrow) : ChevronsUpDown;
               const isFirst = idx === 0;
 
               return (
@@ -73,56 +112,14 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
                     "p-0"
                   )}
                 >
-                  <CustomMenu
-                    className="!w-full h-full"
-                    customButtonClassName="clickable !w-full h-full flex items-center px-4"
-                    customButton={
-                      <div
-                        className={cn(
-                          "flex w-full items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary transition-colors",
-                          isActive && "text-accent-primary"
-                        )}
-                      >
-                        <span className="truncate uppercase tracking-wider">{col.label}</span>
-                        <div className="flex items-center gap-1">
-                          {isActive && <Icon className="h-3 w-3 flex-shrink-0" />}
-                          <ChevronsUpDown className={cn("h-3 w-3 flex-shrink-0 opacity-50", isActive && "hidden")} />
-                        </div>
-                      </div>
-                    }
-                    placement="bottom-start"
-                    closeOnSelect
-                  >
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        if (sortKey === col.key && sortDir === "asc")
-                          onSort(col.key); // toggles to desc
-                        else onSort(col.key); // sets to asc
-                      }}
-                    >
-                      <span className="flex items-center gap-2">
-                        <ArrowUpNarrowWide className="h-3 w-3" /> {t("ho.ascending")}
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        if (sortKey === col.key && sortDir === "desc")
-                          onSort(col.key); // toggles to asc
-                        else {
-                          // this is a bit hacky with the current onSort but lets fix it properly in the parent
-                          onSort(col.key);
-                          onSort(col.key);
-                        }
-                      }}
-                    >
-                      <span className="flex items-center gap-2">
-                        <ArrowDownWideNarrow className="h-3 w-3" /> {t("ho.descending")}
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem onClick={() => onSort("clear")}>
-                      <span className="flex items-center gap-2 text-red-500">{t("ho.clear_sort")}</span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
+                  <HoHeaderFilter
+                    columnKey={col.key}
+                    label={col.label}
+                    asc={col.asc}
+                    desc={col.desc}
+                    filterKey={col.filterKey}
+                    options={getFilterOptions(col.filterKey || "")}
+                  />
                 </th>
               );
             })}
@@ -148,4 +145,4 @@ export function HoCategoryTable({ data, sortKey, sortDir, onSort }: Props) {
       </table>
     </div>
   );
-}
+});

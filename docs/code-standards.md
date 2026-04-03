@@ -1,769 +1,556 @@
 # Code Standards & Conventions
 
-**Last Updated**: 2026-03-12
-**Scope**: TypeScript, Python, configuration files across monorepo
-**Enforced By**: ESLint, Prettier, pre-commit hooks
-
-## TypeScript Standards
-
-### General Principles
-
-- **Strict Mode**: Enable `strict: true` in `tsconfig.json`
-- **No `any`**: Use explicit types; suppress with `// @ts-ignore` only as last resort
-- **Type Exports**: Always `export type` for interfaces/types to enable tree-shaking
-- **Null Safety**: Enable `strictNullChecks` and handle null/undefined explicitly
-
-### Type Definitions
-
-**Pattern - Use interfaces for object shapes**:
-
-```typescript
-// Good
-interface WorkspaceSettings {
-  name: string;
-  defaultCycleLength: number;
-}
-
-// Avoid
-type WorkspaceSettings = {
-  name: string;
-  defaultCycleLength: number;
-};
-```
-
-**Pattern - Export types from @plane/types**:
-
-```typescript
-// apps/web uses types from @plane/types
-import type { IWorkspace, IProject, IIssue } from "@plane/types";
-```
-
-**Pattern - Avoid `any` in service layer**:
-
-```typescript
-// Good
-const response = await api.get<IWorkspace>(`/workspaces/${id}/`);
-
-// Avoid
-const response = await api.get(`/workspaces/${id}/`);
-```
-
-### File Naming
-
-| Type             | Convention                  | Example                  |
-| ---------------- | --------------------------- | ------------------------ |
-| React Components | PascalCase                  | `WorkspaceSettings.tsx`  |
-| Custom Hooks     | kebab-case + prefix         | `use-workspace-store.ts` |
-| Utils/Services   | kebab-case                  | `api-service.ts`         |
-| Constants        | UPPER_SNAKE_CASE            | `WORKSPACE_ROLES.ts`     |
-| Types/Interfaces | PascalCase + interface file | `workspace-types.ts`     |
-| Store files      | kebab-case.store.ts         | `workspace.store.ts`     |
-
-### Component Patterns
-
-**Pattern - Functional components with explicit props type**:
-
-```typescript
-interface WorkspaceSelectorProps {
-  value: string;
-  onSelect: (id: string) => void;
-  disabled?: boolean;
-}
-
-export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({ value, onSelect, disabled = false }) => {
-  // Implementation
-};
-```
-
-**Pattern - Custom hooks return typed objects**:
-
-```typescript
-interface UseWorkspaceReturn {
-  workspace: IWorkspace | null;
-  loading: boolean;
-  error: Error | null;
-}
-
-export const useWorkspace = (id: string): UseWorkspaceReturn => {
-  // Implementation
-};
-```
-
-**Pattern - Avoid prop spreading; be explicit**:
-
-```typescript
-// Good
-<Button variant="primary" size="lg" onClick={handleClick} />
-
-// Avoid
-<Button {...buttonProps} />
-```
-
-### Imports
-
-**Order imports in this sequence**:
-
-```typescript
-// 1. React & external libraries
-import React, { useState } from "react";
-import { observer } from "mobx-react";
-
-// 2. Type imports (separate with `import type`)
-import type { IWorkspace } from "@plane/types";
-
-// 3. @plane/* packages (subpath imports for propel)
-import { Button } from "@plane/propel/button";
-import { cn } from "@plane/utils";
-
-// 4. Internal absolute imports (@/)
-import { useWorkspace } from "@/hooks/store/use-workspace";
-
-// 5. Local relative imports
-import { WorkspaceHeader } from "./workspace-header";
-```
-
-**Use type imports to reduce bundle**:
-
-```typescript
-// Good
-import type { IssueResponse } from "@plane/types";
-
-// Avoid
-import { IssueResponse } from "@plane/types";
-```
-
-### Error Handling
-
-**Pattern - Always handle errors in async operations**:
-
-```typescript
-try {
-  const data = await api.post("/issues/", payload);
-  return data;
-} catch (error) {
-  if (error instanceof AxiosError) {
-    console.error("API error:", error.message);
-    throw new Error("Failed to create issue");
-  }
-  throw error;
-}
-```
-
-**Pattern - Use custom error types**:
-
-```typescript
-class ValidationError extends Error {
-  constructor(
-    message: string,
-    public field: string
-  ) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
-```
-
-## React Patterns
-
-### Hooks Rules
-
-- Call hooks at top level (not in conditions)
-- Use ESLint plugin `eslint-plugin-react-hooks` to enforce
-- Custom hooks should start with `use` prefix
-
-### State Management (MobX)
-
-**Pattern - Use `set()` from lodash-es for nested updates**:
-
-```typescript
-// Good: set() from lodash-es
-import { set } from "lodash-es";
-
-const updated = set(state, "workspace.name", "New Name");
-
-// Avoid: MobX set() for nested updates
-import { set } from "mobx";
-// MobX set() is for observable objects, not plain data updates
-```
-
-**Pattern - Store structure** (always use explicit `makeObservable`, NOT `makeAutoObservable`):
-
-```typescript
-// core/store/workspace.store.ts
-import { makeObservable, observable, action, computed, runInAction } from "mobx";
-import type { CoreRootStore } from "@/store/root.store";
-
-export class WorkspaceStore {
-  workspaceMap: Record<string, IWorkspace> = {};
-  loader = false;
-
-  constructor(private rootStore: CoreRootStore) {
-    makeObservable(this, {
-      workspaceMap: observable,
-      loader: observable,
-      currentWorkspaces: computed,
-      fetchWorkspaces: action,
-    });
-  }
-
-  get currentWorkspaces() {
-    return Object.values(this.workspaceMap);
-  }
-
-  fetchWorkspaces = async () => {
-    this.loader = true;
-    try {
-      const data = await workspaceService.getAll();
-      runInAction(() => {
-        data.forEach((ws) => {
-          this.workspaceMap[ws.id] = ws;
-        });
-      });
-    } finally {
-      runInAction(() => {
-        this.loader = false;
-      });
-    }
-  };
-}
-```
-
-**Pattern - Using stores in components** (always wrap with `observer`):
-
-```typescript
-import { observer } from "mobx-react";
-import { useWorkspace } from "@/hooks/store/use-workspace";
-
-export const WorkspaceList = observer(() => {
-  const { currentWorkspaces, loader, fetchWorkspaces } = useWorkspace();
-
-  return (
-    <div>
-      {loader && <LoadingSpinner />}
-      {currentWorkspaces.map((ws) => (
-        <WorkspaceItem key={ws.id} workspace={ws} />
-      ))}
-    </div>
-  );
-});
-```
-
-### Internationalization (i18n)
-
-**Scope**: `apps/web` only
-
-**Rules**:
-
-- Use `useTranslation` + `t()` in Web app for all user-facing text
-- Do NOT use i18n in Admin app (`apps/admin`)
-- Import from `@plane/i18n` for type definitions
-
-**Pattern**:
-
-```typescript
-// apps/web - Good
-import { useTranslation } from "@plane/i18n";
-
-export const Component = () => {
-  const { t } = useTranslation();
-  return <p>{t("issue.title")}</p>;
-};
-
-// apps/admin - Wrong
-// Do NOT add i18n strings here; keep admin app English-only
-```
-
-### Performance Optimization
-
-**Pattern - Memoize expensive computations**:
-
-```typescript
-import { useMemo } from "react";
-
-export const IssueList = ({ issues }: { issues: IIssue[] }) => {
-  const groupedIssues = useMemo(() => groupBy(issues, (issue) => issue.status), [issues]);
-
-  return <div>{/* render grouped issues */}</div>;
-};
-```
-
-**Pattern - Use observer for MobX components**:
-
-```typescript
-// Automatically re-renders when observed values change
-export const IssueDetail = observer(() => {
-  const { issue: issueStore } = useStore();
-  return <div>{issueStore.current?.title}</div>;
-});
-```
-
-## Python Standards (Django Backend)
-
-### File Structure
-
-**Pattern - Django apps follow this structure**:
-
-```
-plane/app/
-├── models/              # Database models
-├── serializers/         # DRF serializers
-├── views/               # ViewSets/Views
-├── permissions/         # Permission classes
-├── urls/                # URL routing
-├── middleware/          # App middleware
-└── tests/               # Test suite
-```
-
-### Models
-
-**Pattern - Model organization**:
-
+## Core Principles
+
+**YAGNI** — You Aren't Gonna Need It (don't build for future you don't have)
+**KISS** — Keep It Simple, Stupid (avoid premature complexity)
+**DRY** — Don't Repeat Yourself (extract reusable abstractions)
+
+## File & Naming Conventions
+
+### Naming Rules
+
+| File Type | Convention | Example |
+|-----------|-----------|---------|
+| **JS/TS files** | kebab-case | `workflow-store.ts`, `use-workflow.ts` |
+| **React components** | PascalCase (directory) | `KanbanGroup/KanbanGroup.tsx` |
+| **Directories** | kebab-case | `issue-layouts/`, `workflow-services/` |
+| **Classes** | PascalCase | `WorkflowRootStore`, `IssueService` |
+| **Functions** | camelCase | `handleWorkFlowState()`, `getIssueDetails()` |
+| **Constants** | UPPER_SNAKE_CASE | `WORKFLOW_TRANSITION_BLOCKED`, `MAX_FILE_SIZE` |
+| **Interfaces/Types** | I prefix + PascalCase | `IWorkspace`, `IIssue`, `IPageBlock` |
+| **Boolean variables** | is/has/should prefix | `isLoading`, `hasAccess`, `shouldValidate` |
+
+### File Size Limits
+
+- **Code files:** <200 lines per file (split larger modules)
+- **React components:** <150 lines per component
+- **Markdown docs:** <800 lines per file (split by topic)
+- **Configuration:** No limit (but prefer YAML > JSON)
+
+**Modularization Triggers:**
+- Component exceeds 150 LOC → split by logical sections
+- Service exceeds 200 LOC → separate into domain-specific services
+- Store exceeds 300 LOC → extract into sub-stores (composition)
+- Utility file exceeds 100 LOC → group related functions into separate files
+
+### Directory Structure Rules
+
+**App routing:** All routes in `apps/web/app/` (Next.js app router)
+**Shared components:** `apps/web/core/components/` (never modify from ce/)
+**CE components:** `apps/web/ce/components/` (extensions only)
+**Core stores:** `apps/web/core/store/` (never modify)
+**CE stores:** `apps/web/ce/store/` (extends CoreRootStore)
+**Hooks:** `apps/web/core/hooks/store/` (for store access)
+**Services:** `apps/web/core/services/` (API clients)
+**Types:** `packages/types/src/` (centralized type definitions)
+
+## Backend Standards (Django/DRF)
+
+### Model Conventions
+
+**Base Models:**
 ```python
-# plane/db/models/workspace.py
-from django.db import models
-from django.contrib.auth.models import User
+from plane.db.models import BaseModel, ProjectBaseModel
 
-class Workspace(models.Model):
-    id = models.UUIDField(primary_key=True)
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+# Use ProjectBaseModel for issue-related models
+class Issue(ProjectBaseModel):
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="issues")
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey("db.User", on_delete=models.SET_NULL, null=True)
+    updated_by = models.ForeignKey("db.User", on_delete=models.SET_NULL, null=True, related_name="+")
+    
     class Meta:
-        db_table = "workspace"
-        verbose_name = "Workspace"
         ordering = ["-created_at"]
-        permissions = [
-            ("can_manage_workspace", "Can manage workspace"),
+        indexes = [
+            models.Index(fields=["project_id", "-created_at"]),
         ]
-
-    def __str__(self) -> str:
-        return self.name
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project_id", "key"],
+                condition=Q(deleted_at__isnull=True),
+                name="unique_issue_key"
+            )
+        ]
+    
+    objects = SoftDeletionManager()
 ```
 
-### Serializers
+**Key Patterns:**
+- Inherit `ProjectBaseModel` for project-scoped models
+- Include `created_by` and `updated_by` for audit trails
+- Use `SoftDeletionManager` for soft deletes
+- Add `UniqueConstraint` with soft-delete condition
+- Index frequently queried fields
+- Order by most recent first (default)
 
-**Pattern - DRF serializer with validation**:
+### View Conventions
 
+**DRF Viewset Pattern:**
 ```python
-from rest_framework import serializers
-from plane.db.models import Workspace
+from plane.utils.decorators import allow_permission
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
-class WorkspaceSerializer(serializers.ModelSerializer):
-    owner_name = serializers.CharField(source="owner.get_full_name", read_only=True)
+class IssueViewSet(ReadOnlyModelViewSet):
+    serializer_class = IssueSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # CRITICAL: Always scope to workspace + project
+        return Issue.objects.filter(
+            project__workspace__slug=self.kwargs["workspace_slug"],
+            project__slug=self.kwargs["project_slug"]
+        ).select_related("created_by", "updated_by")
+    
+    @allow_permission("workspace.member")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+    @allow_permission("project.member")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+```
 
+**Key Patterns:**
+- All queries scoped by `project__workspace__slug` (never just `project_id`)
+- Use `select_related()` for FK relationships
+- Use `prefetch_related()` for M2M/reverse relationships
+- `@allow_permission(role)` decorator for RBAC
+- Separate v0/v1 serializers (never shared)
+
+### Serializer Conventions
+
+**Pattern:**
+```python
+# apps/api/plane/app/serializers/v0/issue.py
+class IssueSerializer(serializers.ModelSerializer):
+    created_by_detail = UserLiteSerializer(source="created_by", read_only=True)
+    
     class Meta:
-        model = Workspace
-        fields = ["id", "name", "slug", "owner", "owner_name", "created_at"]
-        read_only_fields = ["id", "created_at", "owner"]
-
-    def validate_name(self, value: str) -> str:
-        if len(value) < 3:
-            raise serializers.ValidationError("Name must be at least 3 characters")
-        return value
+        model = Issue
+        fields = ["id", "title", "description", "created_by", "created_by_detail"]
+        read_only_fields = ["created_at", "updated_at"]
+    
+    def create(self, validated_data):
+        # Add current user
+        validated_data["created_by"] = self.context["request"].user
+        return super().create(validated_data)
 ```
 
-### ViewSets
+**Key Patterns:**
+- Separate nested read serializers (never use depth=)
+- Override `create()`/`update()` for custom logic
+- Mark read-only fields explicitly
+- Use `source=` for field remapping
+- Validate at serializer level, not in views
 
-**Pattern - DRF ViewSet with permissions**:
+### Celery Task Conventions
 
+**Pattern:**
 ```python
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from plane.app.permissions import IsWorkspaceMember
-
-class WorkspaceViewSet(ModelViewSet):
-    queryset = Workspace.objects.all()
-    serializer_class = WorkspaceSerializer
-    permission_classes = [IsAuthenticated, IsWorkspaceMember]
-    lookup_field = "slug"
-
-    @action(detail=True, methods=["get"])
-    def members(self, request, slug=None):
-        """List workspace members"""
-        workspace = self.get_object()
-        members = workspace.members.all()
-        serializer = MemberSerializer(members, many=True)
-        return Response(serializer.data)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-```
-
-### Celery Tasks
-
-**Pattern - Task organization**:
-
-```python
-# plane/bgtasks/issue_task.py
+# apps/api/plane/tasks/issues.py
 from celery import shared_task
-from plane.db.models import Issue
+from django.core.mail import send_mail
 
 @shared_task
-def update_issue_activity(issue_id: str, activity_type: str):
-    """Background task to log issue activity"""
+def send_issue_notification(issue_id, user_id):
+    """Send email notification for issue update."""
     try:
         issue = Issue.objects.get(id=issue_id)
-        # Process activity
-        return {"status": "success", "issue_id": issue_id}
-    except Issue.DoesNotExist:
-        return {"status": "error", "message": "Issue not found"}
+        user = User.objects.get(id=user_id)
+        
+        send_mail(
+            subject=f"Issue {issue.key} updated",
+            message=f"Title: {issue.title}",
+            from_email="noreply@plane.so",
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        return {"status": "sent"}
+    except Exception as e:
+        # Log error, retry
+        return {"status": "failed", "error": str(e)}
 ```
 
-## ESLint Configuration
+**Key Patterns:**
+- Use `@shared_task` for routing flexibility
+- Always wrap in try-except
+- Return dict with status + optional data
+- Log before retrying (Celery retries on exception)
+- No I/O operations in request handlers (offload to tasks)
 
-**Location**: `/eslint.config.mjs` (root-level, ESLint v9 flat config)
+## Frontend Standards (React/TypeScript)
 
-### Key Rules Enforced
+### Component Conventions
 
-| Rule                                      | Level | Purpose                    |
-| ----------------------------------------- | ----- | -------------------------- |
-| `@typescript-eslint/no-explicit-any`      | warn  | Prevent `any` types        |
-| `@typescript-eslint/no-floating-promises` | warn  | Catch unhandled promises   |
-| `react-hooks/rules-of-hooks`              | error | Enforce hooks rules        |
-| `react/display-name`                      | warn  | Identify components        |
-| `import/prefer-type-imports`              | warn  | Use type imports           |
-| `@typescript-eslint/no-unused-vars`       | warn  | Remove unused imports      |
-| `@plane/no-legacy-tokens`                 | error | Prevent legacy token usage |
-
-### Custom ESLint Plugin
-
-**Plugin**: `eslint-plugin-plane` (in-repo plugin)
-
-- **Rule**: `no-legacy-tokens` - Enforces short-form color tokens only
-  - Blocks: `text-color-*`, `border-color-*` (legacy naming)
-  - Requires: `text-*`, `border-*` (modern naming)
-  - Applied to: TSX/JSX className attributes, Tailwind utilities
-
-### Running ESLint
-
-```bash
-# Check for lint errors
-pnpm check:lint
-
-# Auto-fix issues
-pnpm fix:lint
-
-# Pre-commit hook (via Husky)
-# Runs automatically before git commit
-```
-
-### Suppressing Warnings
-
-Only suppress with documentation of why:
-
+**Functional Component Pattern:**
 ```typescript
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const data: any = JSON.parse(response);
+// KanbanGroup.tsx
+import React, { useState, useCallback } from "react"
+import { observer } from "mobx-react"
+import { IIssue } from "@plane/types"
+
+interface IKanbanGroupProps {
+  groupId: string
+  issues: IIssue[]
+  onDragEnter?: (sourceId: string, destId: string) => void
+}
+
+export const KanbanGroup = observer(
+  React.forwardRef<HTMLDivElement, IKanbanGroupProps>(
+    ({ groupId, issues, onDragEnter }, ref) => {
+      const [isExpanded, setIsExpanded] = useState(true)
+
+      const handleDragEnter = useCallback(
+        (e: React.DragEvent) => {
+          onDragEnter?.(sourceId, groupId)
+        },
+        [groupId, onDragEnter]
+      )
+
+      return (
+        <div ref={ref} onDragEnter={handleDragEnter}>
+          {isExpanded && issues.map((issue) => (
+            <IssueCard key={issue.id} issue={issue} />
+          ))}
+        </div>
+      )
+    }
+  )
+)
+
+KanbanGroup.displayName = "KanbanGroup"
 ```
 
-## Prettier Configuration
+**Key Patterns:**
+- Wrap components observing MobX stores with `observer()`
+- Use `React.forwardRef` for dom access
+- Type all props with interfaces
+- Use `useCallback` for event handlers
+- Set `displayName` for debugging
+- Extract constants to file top
+- Keep components <150 LOC
 
-**Location**: `.prettierrc.json` (root-level)
+### MobX Store Conventions
 
-**Key Settings**:
-
-- Print width: 100 characters
-- Tab width: 2 spaces
-- Semicolons: required
-- Trailing commas: all (ES5+)
-- Quotes: double
-
-### Running Prettier
-
-```bash
-# Format files
-pnpm format
-
-# Check formatting without changes
-pnpm check:format
-```
-
-## File Size Guidelines
-
-**Target Limits**:
-
-- **TypeScript files**: <200 lines
-- **React components**: <150 lines
-- **Custom hooks**: <100 lines
-- **Services**: <200 lines
-- **Django views**: <150 lines per view class
-
-**When to Split**:
-
-- Component has multiple sub-components → extract to separate files
-- Service has 3+ distinct domains → split into domain services
-- Hook logic >100 lines → extract helper functions to utils
-
-## Naming Conventions
-
-### Variables & Functions
-
+**Store Pattern:**
 ```typescript
-// Good: camelCase, descriptive
-const isWorkspaceActive = true;
-const getIssuesByStatus = (issues: IIssue[]) => {};
+// workflow.store.ts
+import { makeObservable, observable, action, flow, runInAction } from "mobx"
 
-// Avoid: single letters (except loops), unclear abbreviations
-const iwa = true; // unclear
-const gis = (issues: IIssue[]) => {}; // unclear
+export class WorkflowRootStore {
+  root: RootStore
+  workflows: Map<string, Workflow> = new Map()
+  isLoading = false
+  error: string | null = null
+
+  constructor(root: RootStore) {
+    this.root = root
+    makeObservable(this, {
+      workflows: observable,
+      isLoading: observable,
+      error: observable,
+      fetchWorkflows: flow, // async
+      setWorkflows: action,
+      updateWorkflow: action.bound,
+      deleteWorkflow: action,
+    })
+  }
+
+  // Async: use flow
+  *fetchWorkflows(projectId: string) {
+    this.isLoading = true
+    try {
+      const response = yield this.root.workflowService.list(projectId)
+      runInAction(() => {
+        response.forEach((w) => this.workflows.set(w.id, w))
+        this.isLoading = false
+      })
+    } catch (error) {
+      runInAction(() => {
+        this.error = error.message
+        this.isLoading = false
+      })
+    }
+  }
+
+  // Sync: use action
+  setWorkflows(workflows: Workflow[]) {
+    this.workflows.clear()
+    workflows.forEach((w) => this.workflows.set(w.id, w))
+  }
+
+  // Bound action for callbacks
+  updateWorkflow = action((id: string, data: Partial<Workflow>) => {
+    const workflow = this.workflows.get(id)
+    if (workflow) Object.assign(workflow, data)
+  })
+}
 ```
 
-### Constants
+**Key Patterns:**
+- All mutations must be `action` or `flow`
+- Async mutations use `flow` + `runInAction`
+- Use `makeObservable` with explicit action map (never `makeAutoObservable`)
+- Bound actions for event handlers (arrow functions)
+- Error state + loading state always
+- Use `Map<id, obj>` for keyed collections (not arrays)
 
+### Hook Conventions
+
+**Custom Hook Pattern:**
 ```typescript
-// Good: UPPER_SNAKE_CASE
-export const DEFAULT_PAGE_SIZE = 20;
-export const API_BASE_URL = "https://api.plane.so";
+// use-workflow.ts
+import { useContext } from "react"
+import { StoreContext } from "@/plane-web/context/store-context"
 
-// Avoid: lowercase or mixed case for constants
-export const defaultPageSize = 20;
+export function useWorkflow() {
+  const { workflowStore } = useContext(StoreContext)
+  if (!workflowStore) {
+    throw new Error("useWorkflow must be used within StoreProvider")
+  }
+  return workflowStore
+}
+
+// use-issue-form.ts
+import { useCallback } from "react"
+import { useProject } from "@/hooks/store"
+import { IIssue } from "@plane/types"
+
+export function useIssueForm(projectId: string) {
+  const { projectStore } = useProject()
+  
+  const createIssue = useCallback(
+    async (data: Partial<IIssue>) => {
+      try {
+        const issue = await projectStore.createIssue(projectId, data)
+        return issue
+      } catch (error) {
+        throw new Error(`Failed to create issue: ${error.message}`)
+      }
+    },
+    [projectId, projectStore]
+  )
+
+  return { createIssue }
+}
 ```
 
-### Database Fields
+**Key Patterns:**
+- Return objects with related functions
+- Always validate context availability
+- Use `useCallback` for stability
+- Document dependencies in `useEffect` deps
+- Throw errors clearly
+- Type return values explicitly
 
-```python
-# Good: snake_case
-class Workspace(models.Model):
-    created_at = models.DateTimeField()
-    is_active = models.BooleanField()
-    max_members = models.IntegerField()
+### Type Conventions
 
-# Avoid: camelCase
-class Workspace(models.Model):
-    createdAt = models.DateTimeField()  # Wrong
+**Type Definitions:**
+```typescript
+// packages/types/src/issue.ts
+export interface IIssue {
+  id: string
+  project_id: string
+  key: string
+  title: string
+  description: string
+  state_id: string
+  created_by: string
+  created_at: string
+  updated_at: string
+}
+
+export interface IIssueUpdate extends Partial<IIssue> {
+  id: string // Required for updates
+}
+
+export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
 ```
+
+**Key Patterns:**
+- One type per file in `packages/types/src/`
+- Export all from `packages/types/src/index.ts`
+- Use `I*` prefix for all types
+- Discriminated unions for variants
+- Utility types (Partial, Pick) sparingly
+- Comment non-obvious fields
+
+## API Standards (Both v0 & v1)
+
+### Request/Response Patterns
+
+**Success Response (200, 201):**
+```json
+{
+  "id": "uuid",
+  "title": "string",
+  "created_at": "ISO-8601"
+}
+```
+
+**Error Response (4xx, 5xx):**
+```json
+{
+  "detail": "Workspace not found",
+  "code": "WORKSPACE_NOT_FOUND",
+  "status": 404
+}
+```
+
+**Pagination:**
+```json
+{
+  "count": 100,
+  "next": "/api/v1/issues?offset=50&limit=50",
+  "previous": "/api/v1/issues?offset=0&limit=50",
+  "results": [{ "id": "...", ... }]
+}
+```
+
+### Endpoint Naming
+
+| Method | Pattern | Example |
+|--------|---------|---------|
+| **GET** | `/resource/` | `/api/v1/issues/` |
+| **GET** | `/resource/{id}/` | `/api/v1/issues/{id}/` |
+| **POST** | `/resource/` | `/api/v1/issues/` |
+| **PATCH** | `/resource/{id}/` | `/api/v1/issues/{id}/` |
+| **DELETE** | `/resource/{id}/` | `/api/v1/issues/{id}/` |
+| **Action** | `/resource/{id}/{action}/` | `/api/v1/issues/{id}/duplicate/` |
 
 ## Testing Standards
 
-### Frontend (Vitest)
+### Backend Tests
 
-**Pattern - Component test**:
-
-```typescript
-import { render, screen } from "@testing-library/react";
-import { WorkspaceSelector } from "./workspace-selector";
-
-describe("WorkspaceSelector", () => {
-  it("renders workspace list", () => {
-    const workspaces = [{ id: "1", name: "Acme" }];
-    render(<WorkspaceSelector workspaces={workspaces} />);
-    expect(screen.getByText("Acme")).toBeInTheDocument();
-  });
-});
-```
-
-### Backend (Django TestCase)
-
+**Pattern:**
 ```python
+# tests/test_issue_views.py
 from django.test import TestCase
-from plane.db.models import Workspace
+from rest_framework.test import APIClient
 
-class WorkspaceTestCase(TestCase):
+class IssueViewsTest(TestCase):
     def setUp(self):
-        self.workspace = Workspace.objects.create(
-            name="Test Workspace",
-            slug="test-workspace"
-        )
+        self.client = APIClient()
+        self.user = User.objects.create(email="test@test.com")
+        self.workspace = Workspace.objects.create(name="Test", slug="test")
+        self.project = Project.objects.create(workspace=self.workspace, name="Proj")
 
-    def test_workspace_creation(self):
-        self.assertIsNotNone(self.workspace.id)
-        self.assertEqual(self.workspace.name, "Test Workspace")
+    def test_list_issues_success(self):
+        Issue.objects.create(project=self.project, title="Test", created_by=self.user)
+        
+        self.client.force_authenticate(self.user)
+        response = self.client.get(f"/api/v0/issues/")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+
+    def test_list_issues_permission_denied(self):
+        other_user = User.objects.create(email="other@test.com")
+        
+        self.client.force_authenticate(other_user)
+        response = self.client.get(f"/api/v0/issues/")
+        
+        self.assertEqual(response.status_code, 403)
 ```
 
-## Git & Commit Standards
+**Key Patterns:**
+- One test per behavior
+- Clear assertions
+- Use `setUp()` for common data
+- Test success + error paths
+- Mock external services (S3, email)
+- No fixture files (use factories)
 
-### Commit Message Format
+### Frontend Tests
 
-Follow conventional commits:
+**Pattern:**
+```typescript
+// components/KanbanGroup.test.tsx
+import { render, screen, fireEvent } from "@testing-library/react"
+import { observer } from "mobx-react"
+import { KanbanGroup } from "./KanbanGroup"
 
+describe("KanbanGroup", () => {
+  it("renders issues in group", () => {
+    const issues = [
+      { id: "1", title: "Task 1", state_id: "todo" }
+    ]
+    
+    render(<KanbanGroup groupId="todo" issues={issues} />)
+    
+    expect(screen.getByText("Task 1")).toBeInTheDocument()
+  })
+
+  it("calls onDragEnter on drag", () => {
+    const onDragEnter = jest.fn()
+    const issues = []
+    
+    render(
+      <KanbanGroup 
+        groupId="todo" 
+        issues={issues} 
+        onDragEnter={onDragEnter} 
+      />
+    )
+    
+    fireEvent.dragEnter(screen.getByRole("group"))
+    expect(onDragEnter).toHaveBeenCalledWith(expect.any(String), "todo")
+  })
+})
 ```
-type(scope): subject
 
-body (optional)
+**Key Patterns:**
+- Test user interactions, not implementation
+- Mock stores/services as needed
+- Use `screen` for element queries
+- One behavior per test
+- Clear test names
 
-footer (optional)
-```
+## Code Review Checklist
 
-**Types**: feat, fix, docs, style, refactor, test, chore, ci
+**Before Committing:**
+- [ ] No syntax errors (compile passes)
+- [ ] Tests pass (no skipped tests)
+- [ ] No linting errors (`pnpm check:lint`)
+- [ ] <200 LOC per file (split if needed)
+- [ ] Types defined for all parameters
+- [ ] Error handling in place
+- [ ] No console.log() or debugger
+- [ ] Comments for non-obvious logic
+- [ ] Follows naming conventions
 
-**Examples**:
+**Before Creating PR:**
+- [ ] Branch name: `{user}/{feat|fix|docs}/{desc}`
+- [ ] Commit messages: conventional format (`feat:`, `fix:`, `docs:`, etc.)
+- [ ] Changelog entry if feature/fix
+- [ ] Docs updated if behavior changed
+- [ ] No secrets in code (env vars via `.env.example`)
+- [ ] No force-push (create new commits)
 
-```
-feat(workspace): add workspace archive functionality
-fix(issue): resolve duplicate comment notification bug
-docs(setup): update Docker Compose deployment guide
-chore(deps): upgrade React to v18.3
-```
+## Linting & Formatting
 
-### Pre-commit Hooks
-
-**Enabled via Husky**:
-
-1. Prettier auto-formats staged files
-2. ESLint checks with `--max-warnings=0`
-3. Type checking (if enabled)
-
-**Bypass** (use sparingly):
-
+**Run before commit:**
 ```bash
-git commit --no-verify
+# Lint check
+pnpm check:lint
+
+# Format code
+pnpm check:format
+
+# Type check
+pnpm check:types
 ```
 
-## Documentation Standards
-
-### Inline Comments
-
-**Use when WHY is non-obvious**:
-
-```typescript
-// Good: explains business logic
-// We need to delay the sync to prevent race conditions
-// when multiple issues are updated in quick succession
-await delay(500);
-
-// Avoid: restates obvious code
-const workspace = getWorkspace(id); // Get workspace by id
-```
-
-### Function/Method Documentation
-
-**Pattern - JSDoc for public APIs**:
-
-```typescript
-/**
- * Fetches issues for a workspace with optional filtering
- * @param workspaceId - The workspace ID to fetch issues for
- * @param filters - Optional filters (status, assignee, etc.)
- * @returns Promise resolving to array of issues
- * @throws {Error} If workspace not found or API fails
- */
-export const getWorkspaceIssues = (workspaceId: string, filters?: IssueFilters): Promise<IIssue[]> => {
-  // Implementation
-};
-```
-
-## Security Standards
-
-### Input Validation
-
-**Pattern - Validate all user input**:
-
-```typescript
-import { z } from "zod";
-
-const IssueSchema = z.object({
-  title: z.string().min(1).max(255),
-  description: z.string().optional(),
-  assignee_ids: z.array(z.string().uuid()).default([]),
-});
-
-const payload = IssueSchema.parse(request.body);
-```
-
-### Secrets Management
-
-**Never commit secrets**:
-
-```bash
-# Good: Use environment variables
-DB_PASSWORD=${DATABASE_PASSWORD}
-
-# Avoid: Hardcoding in code
-DB_PASSWORD="super-secret-123"
-```
-
-## Performance Standards
-
-### Bundle Size
-
-**Target**: <500KB for main app (gzipped)
-
-**Measure**: `pnpm build` output
-
-**Optimization**:
-
-- Code splitting via React.lazy()
-- Tree-shaking via ES modules
-- Avoid large dependencies without justification
-
-### Database Query Optimization
-
-**Pattern - Use select_related for foreign keys**:
-
-```python
-# Good: Fetches in single query
-issues = Issue.objects.select_related("assignee").all()
-
-# Avoid: N+1 queries
-issues = Issue.objects.all()
-for issue in issues:
-    print(issue.assignee.name)  # Query for each issue
-```
-
-## Issue Properties Standards
-
-### Priority System (v1.2.3)
-
-**Valid Priority Values**:
-
-```typescript
-// @plane/types - IIssuePriority
-type IIssuePriority = "urgent" | "high" | "medium" | "low";
-
-// Frontend constants
-const PRIORITY_OPTIONS = ["urgent", "high", "medium", "low"];
-
-// Backend choices (models)
-PRIORITY_CHOICES = [("urgent", "Urgent"), ("high", "High"), ("medium", "Medium"), ("low", "Low")];
-```
-
-**Default Priority**:
-
-- New issues default to `priority="medium"` (changed from "none" in v1.2.3)
-- Both backend and frontend enforce this default
-- Data migration (0131) converted all existing "none" → "medium"
-
-**Type Safety**:
-
-- TypeScript type `TIssuePriorities` includes "none" for backward compatibility (edge case rendering)
-- Runtime: API rejects `priority=none` filter with HTTP 400
-- PriorityIcon component still supports "none" for safety (unreachable post-migration)
-
-**API Validation**:
-
-- Backend filter validator (`filters/converters.py`) only accepts: urgent, high, medium, low
-- Requests with `?priority=none` return HTTP 400 Bad Request (intentional breaking change)
-- Update API clients to remove "none" from priority filters
-
-### Worklog (Time Tracking) Patterns (v1.2.4)
-
-**IssueWorkLog Model** (`plane/db/models/worklog.py`):
-
-- Fields: issue, logged_by, duration_minutes (1-720 min), description, logged_at
-- Constraints: No future dates, 7-day edit window
-- Permissions: Admin can edit/delete; Member create-only
-- Activity tracking: Each change logged via Celery task
-
-**ViewSet Pattern** (`plane/app/views/worklog.py`):
-
-- `perform_create`: Set logged_by=request.user, trigger activity logging
-- `perform_update`: Check 7-day window, log changes
-
-**Frontend Store** (`apps/web/core/store/worklog.store.ts`):
-
-- Map-based state: `worklogs: Map<string, IssueWorkLog[]>`
-- Helpers: `getWorklogsForIssue()`, `getTotalMinutesForIssue()`
-- Methods: `fetchWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`
-
-**Date Validation**: Prevent future dates, enforce 7-day edit window, restrict to issue creation date or later
+**ESLint Rules:**
+- No unused variables
+- No implicit any
+- No floating promises
+- Consistent naming
+- Custom @plane/plane rules (eslint-plugin-plane)
 
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/code-standards.md`
-**Lines**: ~795
-**Status**: Updated with Worklog patterns and Priority System standards
-**Related**: `/docs/eslint.md` (ESLint), `/docs/system-architecture.md` (breaking changes), `/docs/worklog-specification.md` (detailed spec)
+**Last Updated:** 2026-04-02
+**Version:** 1.0

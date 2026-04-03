@@ -1,5 +1,10 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
-import type { THoIssue, THoCategorySummary, THoAccessibleWorkspace } from "@/plane-web/services/ho-issue.service";
+import type {
+  THoIssue,
+  THoCategorySummary,
+  THoAccessibleWorkspace,
+  THoFilterOptions,
+} from "@/plane-web/services/ho-issue.service";
 import { HoIssueService } from "@/plane-web/services/ho-issue.service";
 import { todayISO, HO_DEFAULT_DISPLAY_PROPERTIES, type THoDisplayProperties } from "./ho-issue.defaults";
 
@@ -8,12 +13,26 @@ export interface IHoIssueStore {
   issues: THoIssue[];
   categorySummary: THoCategorySummary[];
   accessibleWorkspaces: THoAccessibleWorkspace[];
+  filterOptions: THoFilterOptions | null;
   selectedWorkspaceSlug: string | null;
   selectedProjectIds: string[];
+  filters: {
+    priority: string[];
+    state: string[];
+    assignees: string[];
+    leads: string[];
+    main_task_category: string[];
+    sub_task_category: string[];
+    cycle: string[];
+    module: string[];
+    bank_wide: boolean | null;
+    progress: string[];
+  };
   isLoading: boolean;
   isCategoryLoading: boolean;
   isWorkspacesLoading: boolean;
   isFetchingIssues: boolean;
+  isFilterOptionsLoading: boolean;
   error: string | null;
   currentPage: number;
   totalCount: number;
@@ -27,23 +46,40 @@ export interface IHoIssueStore {
   fetchNextPage: () => Promise<void>;
   fetchCategorySummary: () => Promise<void>;
   fetchAccessibleWorkspaces: () => Promise<void>;
+  fetchFilterOptions: () => Promise<void>;
   updateOrderBy: (key: string) => void;
   setDateRange: (from: string, to: string) => void;
   updateDisplayProperties: (props: Partial<THoDisplayProperties>) => void;
   setWorkspaceFilter: (slug: string | null) => void;
   setProjectFilter: (ids: string[]) => void;
+  updateFilters: (filters: Partial<IHoIssueStore["filters"]>) => void;
+  clearFilters: () => void;
 }
 
 export class HoIssueStore implements IHoIssueStore {
   issues: THoIssue[] = [];
   categorySummary: THoCategorySummary[] = [];
   accessibleWorkspaces: THoAccessibleWorkspace[] = [];
+  filterOptions: THoFilterOptions | null = null;
   selectedWorkspaceSlug: string | null = null;
   selectedProjectIds: string[] = [];
+  filters = {
+    priority: [],
+    state: [],
+    assignees: [],
+    leads: [],
+    main_task_category: [],
+    sub_task_category: [],
+    cycle: [],
+    module: [],
+    bank_wide: null,
+    progress: [],
+  };
   isLoading = false;
   isCategoryLoading = false;
   isWorkspacesLoading = false;
   isFetchingIssues = false;
+  isFilterOptionsLoading = false;
   error: string | null = null;
   currentPage = 1;
   totalCount = 0;
@@ -62,12 +98,15 @@ export class HoIssueStore implements IHoIssueStore {
       issues: observable,
       categorySummary: observable,
       accessibleWorkspaces: observable,
+      filterOptions: observable,
       selectedWorkspaceSlug: observable,
       selectedProjectIds: observable,
+      filters: observable,
       isLoading: observable,
       isCategoryLoading: observable,
       isWorkspacesLoading: observable,
       isFetchingIssues: observable,
+      isFilterOptionsLoading: observable,
       error: observable,
       currentPage: observable,
       totalCount: observable,
@@ -80,11 +119,14 @@ export class HoIssueStore implements IHoIssueStore {
       fetchNextPage: action,
       fetchCategorySummary: action,
       fetchAccessibleWorkspaces: action,
+      fetchFilterOptions: action,
       updateOrderBy: action,
       setDateRange: action,
       updateDisplayProperties: action,
       setWorkspaceFilter: action,
       setProjectFilter: action,
+      updateFilters: action,
+      clearFilters: action,
     });
   }
 
@@ -96,6 +138,20 @@ export class HoIssueStore implements IHoIssueStore {
     };
     if (this.selectedWorkspaceSlug) params.workspace_slug = this.selectedWorkspaceSlug;
     if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
+
+    // Additional filters
+    if (this.filters.priority.length > 0) params.priority = this.filters.priority.join(",");
+    if (this.filters.state.length > 0) params.state = this.filters.state.join(",");
+    if (this.filters.assignees.length > 0) params.assignees = this.filters.assignees.join(",");
+    if (this.filters.leads.length > 0) params.leads = this.filters.leads.join(",");
+    if (this.filters.main_task_category.length > 0)
+      params.main_task_category = this.filters.main_task_category.join(",");
+    if (this.filters.sub_task_category.length > 0) params.sub_task_category = this.filters.sub_task_category.join(",");
+    if (this.filters.cycle.length > 0) params.cycle = this.filters.cycle.join(",");
+    if (this.filters.module.length > 0) params.module = this.filters.module.join(",");
+    if (this.filters.bank_wide !== null) params.bank_wide = String(this.filters.bank_wide);
+    if (this.filters.progress.length > 0) params.progress = this.filters.progress.join(",");
+
     return params;
   };
 
@@ -201,6 +257,30 @@ export class HoIssueStore implements IHoIssueStore {
     }
   };
 
+  fetchFilterOptions = async (): Promise<void> => {
+    runInAction(() => {
+      this.isFilterOptionsLoading = true;
+    });
+    try {
+      const params = {
+        workspace_slug: this.selectedWorkspaceSlug || "",
+        project_id: this.selectedProjectIds.join(","),
+        from_date: this.fromDate,
+        to_date: this.toDate,
+      };
+      const data = await this.service.listFilterOptions(params);
+      runInAction(() => {
+        this.filterOptions = data;
+      });
+    } catch (err) {
+      console.error("[HO] fetchFilterOptions failed:", err);
+    } finally {
+      runInAction(() => {
+        this.isFilterOptionsLoading = false;
+      });
+    }
+  };
+
   updateOrderBy = (key: string): void => {
     this.orderBy = key;
     void this.fetchIssues(1);
@@ -211,6 +291,7 @@ export class HoIssueStore implements IHoIssueStore {
     this.toDate = to;
     this.currentPage = 1;
     void this._fetchFiltered();
+    void this.fetchFilterOptions();
   };
 
   updateDisplayProperties = (props: Partial<THoDisplayProperties>): void => {
@@ -224,11 +305,40 @@ export class HoIssueStore implements IHoIssueStore {
       this.currentPage = 1;
     });
     void this._fetchFiltered();
+    void this.fetchFilterOptions();
   };
 
   setProjectFilter = (ids: string[]): void => {
     runInAction(() => {
       this.selectedProjectIds = ids;
+      this.currentPage = 1;
+    });
+    void this._fetchFiltered();
+    void this.fetchFilterOptions();
+  };
+
+  updateFilters = (filters: Partial<HoIssueStore["filters"]>): void => {
+    runInAction(() => {
+      this.filters = { ...this.filters, ...filters };
+      this.currentPage = 1;
+    });
+    void this._fetchFiltered();
+  };
+
+  clearFilters = (): void => {
+    runInAction(() => {
+      this.filters = {
+        priority: [],
+        state: [],
+        assignees: [],
+        leads: [],
+        main_task_category: [],
+        sub_task_category: [],
+        cycle: [],
+        module: [],
+        bank_wide: null,
+        progress: [],
+      };
       this.currentPage = 1;
     });
     void this._fetchFiltered();
