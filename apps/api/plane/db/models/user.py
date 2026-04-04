@@ -273,6 +273,7 @@ class Account(TimeAuditModel):
         ("google", "Google"),
         ("github", "Github"),
         ("gitlab", "GitLab"),
+        ("microsoft", "Microsoft"),
     )
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)

@@ -15,6 +15,7 @@ import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
 import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
 import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
+import microsoftLogo from "@/app/assets/logos/microsoft-logo.svg?url";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 
@@ -33,7 +34,8 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       (config?.is_google_enabled ||
         config?.is_github_enabled ||
         config?.is_gitlab_enabled ||
-        config?.is_gitea_enabled)) ||
+        config?.is_gitea_enabled ||
+        config?.is_microsoft_enabled)) ||
     false;
   const oAuthOptions: TOAuthOption[] = [
     {
@@ -78,6 +80,15 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
         window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_gitea_enabled,
+    },
+    {
+      id: "microsoft",
+      text: `${oauthActionText} with Microsoft`,
+      icon: <img src={microsoftLogo} height={18} width={18} alt="Microsoft Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/microsoft/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_microsoft_enabled,
     },
   ];
 
