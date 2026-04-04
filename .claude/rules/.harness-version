@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "profile": "ai",
+  "generated": "2026-04-03T03:49:07Z",
+  "hashes": {
+    "harness-code-quality.md": "sha256:3bfacd9cdb30f828",
+    "harness-commit-convention.md": "sha256:1a53166d598930a3",
+    "harness-git-branch.md": "sha256:63a50f29d82de090",
+    "harness-security.md": "sha256:8bc023d3ad68ecbb",
+    "harness-workflow.md": "sha256:91a19902c3893c57",
+    "harness-team.md": "sha256:b1c92279796f6fce"
+  }
+}

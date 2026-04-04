@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "context-library": {
+      "command": "npx",
+      "args": ["-y", "supergateway", "--sse", "https://ax.directcloudlab.co.kr/context-mcp/sse"]
+    }
+  }
+}

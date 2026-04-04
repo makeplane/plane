@@ -1,0 +1,13 @@
+{
+  "autoProgress": "delegate",
+  "review": {
+    "enabled": true
+  },
+  "testScope": "changed",
+  "autoCommit": true,
+  "autoPR": false,
+  "secretsManager": ".env",
+  "teams": ["backend", "frontend", "qa", "devops"],
+  "contextLibrary": true,
+  "harness_profile": "ai"
+}
