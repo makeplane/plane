@@ -1,6 +1,7 @@
 node_modules
 .next
 .yarn
+_branding_tmp/
 
 ### NextJS ###
 # Dependencies

@@ -1,7 +1,7 @@
 {
-  "name": "Plane",
-  "short_name": "Plane",
-  "description": "Plane helps you plan your issues, cycles, and product modules.",
+  "name": "DirectCloud Jira",
+  "short_name": "DC Jira",
+  "description": "DirectCloud internal project management tool for work items, sprints, and roadmaps.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",

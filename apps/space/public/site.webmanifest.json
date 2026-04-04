@@ -1,7 +1,7 @@
 {
-  "name": "Plane Space",
-  "short_name": "Plane Space",
-  "description": "Plane helps you plan your work items, cycles, and product modules.",
+  "name": "DirectCloud Publish",
+  "short_name": "DC Publish",
+  "description": "DirectCloud Publish makes your project boards and roadmaps public.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",
