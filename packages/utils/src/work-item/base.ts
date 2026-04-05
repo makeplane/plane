@@ -23,7 +23,7 @@ import type {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+import type { TIssueLayouts } from "@plane/types";
 // local imports
 import { orderArrayBy } from "../array";
 import { getDate } from "../datetime";
@@ -102,7 +102,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 };
 
 export const handleIssueQueryParamsByLayout = (
-  layout: EIssueLayoutTypes | undefined,
+  layout: TIssueLayouts | undefined,
   viewType:
     | "my_issues"
     | "issues"
@@ -224,7 +224,7 @@ export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: s
 
 export const issueCountBasedOnFilters = (
   issueIds: TGroupedIssues | TUnGroupedIssues | TSubGroupedIssues,
-  layout: EIssueLayoutTypes,
+  layout: TIssueLayouts,
   groupBy: string | undefined,
   subGroupBy: string | undefined
 ): number => {
@@ -277,7 +277,7 @@ export const getComputedDisplayFilters = (
       show_weekends: filters?.calendar?.show_weekends || false,
       layout: filters?.calendar?.layout || "month",
     },
-    layout: filters?.layout || EIssueLayoutTypes.LIST,
+    layout: filters?.layout || "list",
     order_by: filters?.order_by || "sort_order",
     group_by: filters?.group_by || null,
     sub_group_by: filters?.sub_group_by || null,

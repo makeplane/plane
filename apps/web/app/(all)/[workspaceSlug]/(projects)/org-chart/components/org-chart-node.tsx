@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronRight, Users } from "lucide-react";
 import { cn } from "@plane/utils";
-import type { IOrgChartDepartment } from "@/ce/services/org-chart.service";
+import type { IOrgChartDepartment } from "@/plane-web/services/org-chart.service";
 
 type Props = {
   department: IOrgChartDepartment;

@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { OrgChartService, type IOrgChartDepartment } from "@/ce/services/org-chart.service";
+import { OrgChartService, type IOrgChartDepartment } from "@/plane-web/services/org-chart.service";
 import { OrgChartEmptyState } from "./components/org-chart-empty-state";
 import { OrgChartTree } from "./components/org-chart-tree";
 
