@@ -121,9 +121,7 @@ export function InstanceSignInForm() {
             {errorData.type && errorData?.message ? (
               <Banner type="error" message={errorData?.message} />
             ) : (
-              <>
-                {errorInfo && <AuthBanner bannerData={errorInfo} />}
-              </>
+              <>{errorInfo && <AuthBanner bannerData={errorInfo} />}</>
             )}
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
