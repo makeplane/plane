@@ -158,4 +158,4 @@ export const EmailLogsTab = observer(() => {
   );
 });
 
-EmailLogsTab.displayName = "EmailLogsTab";
+(EmailLogsTab as any).displayName = "EmailLogsTab";

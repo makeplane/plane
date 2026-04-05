@@ -121,7 +121,7 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
               ))}
             </div>
             <div className="flex justify-end gap-2 pt-1">
-              <Button variant="outline" size="sm" onClick={handleClose}>
+              <Button variant="ghost" size="sm" onClick={handleClose}>
                 Cancel
               </Button>
               <Button variant="primary" size="sm" onClick={() => void handleConfirm()} loading={loading}>

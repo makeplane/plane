@@ -183,7 +183,7 @@ export function BulkLinkModal({ open, onClose }: Props) {
         )}
 
         <div className="flex justify-end gap-2 pt-1">
-          <Button variant="outline" size="sm" onClick={onClose}>
+          <Button variant="ghost" size="sm" onClick={onClose}>
             Close
           </Button>
           <Button

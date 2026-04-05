@@ -45,6 +45,7 @@ export function SendTestEmailModal(props: Props) {
       const timer = setTimeout(resetState, 100);
       return () => clearTimeout(timer);
     }
+    return;
   }, [isOpen]);
 
   const handleSubmit = async () => {

@@ -69,23 +69,23 @@ const DepartmentsPage = observer(function DepartmentsPage() {
             {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => exportDepartments()}>
+            <Button variant="ghost" size="sm" onClick={() => exportDepartments()}>
               <Download className="w-4 h-4" />
               Export Dept
             </Button>
-            <Button variant="outline" size="sm" onClick={() => router.push("/departments/import")}>
+            <Button variant="ghost" size="sm" onClick={() => router.push("/departments/import")}>
               <Upload className="w-4 h-4" />
               Import Dept
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setRejoinModalOpen(true)}>
+            <Button variant="ghost" size="sm" onClick={() => setRejoinModalOpen(true)}>
               <RefreshCw className="w-4 h-4" />
               Rejoin
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setBulkLinkOpen(true)}>
+            <Button variant="ghost" size="sm" onClick={() => setBulkLinkOpen(true)}>
               <Link className="w-4 h-4" />
               Bulk Linked
             </Button>
-            <Button variant="outline" size="sm" onClick={() => exportWorkspaceLinked()}>
+            <Button variant="ghost" size="sm" onClick={() => exportWorkspaceLinked()}>
               <Download className="w-4 h-4" />
               Export Workspace Linked
             </Button>
