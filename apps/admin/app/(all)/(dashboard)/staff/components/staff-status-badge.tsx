@@ -12,9 +12,9 @@ type Props = {
 };
 
 const STATUS_STYLES: Record<IInstanceStaff["employment_status"], string> = {
-  active: "bg-success-subtle text-color-success-primary",
+  active: "bg-success-subtle text-success-primary",
   probation: "bg-yellow-100 text-yellow-700",
-  resigned: "bg-danger-subtle text-color-danger-primary",
+  resigned: "bg-danger-subtle text-danger-primary",
   suspended: "bg-orange-100 text-orange-700",
   transferred: "bg-blue-100 text-blue-700",
 };

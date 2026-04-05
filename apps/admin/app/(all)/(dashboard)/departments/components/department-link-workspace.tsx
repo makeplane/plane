@@ -152,14 +152,14 @@ export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace
 
       {dept.linked_workspace_detail ? (
         <div className="flex items-center gap-1">
-          <span className="text-11 px-1.5 py-0.5 rounded bg-success-subtle text-color-success-primary truncate max-w-[120px]">
+          <span className="text-11 px-1.5 py-0.5 rounded bg-success-subtle text-success-primary truncate max-w-[120px]">
             {dept.linked_workspace_detail.name}
           </span>
           <button
             type="button"
             disabled={isSubmitting}
             onClick={() => void handleUnlink()}
-            className="text-tertiary hover:text-color-danger-primary p-0.5 rounded"
+            className="text-tertiary hover:text-danger-primary p-0.5 rounded"
             title="Unlink workspace"
           >
             <Unlink className="w-3 h-3" />

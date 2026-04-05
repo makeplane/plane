@@ -96,14 +96,14 @@ export class UserStore implements IUserStore {
     }
   };
 
-  reset = async () => {
+  reset = () => {
     this.isUserLoggedIn = false;
     this.currentUser = undefined;
     this.isLoading = false;
     this.userStatus = undefined;
   };
 
-  signOut = async () => {
+  signOut = () => {
     this.store.resetOnSignOut();
   };
 }

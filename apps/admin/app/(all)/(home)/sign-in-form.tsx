@@ -58,7 +58,10 @@ export function InstanceSignInForm() {
   // state
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
-  const [formData, setFormData] = useState<TFormData>(defaultFromData);
+  const [formData, setFormData] = useState<TFormData>(() => ({
+    ...defaultFromData,
+    email: emailParam || defaultFromData.email,
+  }));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
@@ -68,10 +71,6 @@ export function InstanceSignInForm() {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
-
-  useEffect(() => {
-    if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
-  }, [emailParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {
@@ -123,7 +122,7 @@ export function InstanceSignInForm() {
               <Banner type="error" message={errorData?.message} />
             ) : (
               <>
-                {errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}
+                {errorInfo && <AuthBanner bannerData={errorInfo} />}
               </>
             )}
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />

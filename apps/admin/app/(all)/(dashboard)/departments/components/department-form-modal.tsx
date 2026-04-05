@@ -141,7 +141,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
               <div className="space-y-1">
                 <label className="text-13 font-medium">Name *</label>
                 <Input {...register("name", { required: "Required" })} placeholder="Department name" />
-                {errors.name && <p className="text-11 text-color-danger-primary">{errors.name.message}</p>}
+                {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
               </div>
               <div className="space-y-1">
                 <label className="text-13 font-medium">Code</label>
@@ -157,7 +157,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
                   {...register("dept_code", { pattern: { value: /^\d{4}$/, message: "Must be 4 digits" } })}
                   placeholder="0001"
                 />
-                {errors.dept_code && <p className="text-11 text-color-danger-primary">{errors.dept_code.message}</p>}
+                {errors.dept_code && <p className="text-11 text-danger-primary">{errors.dept_code.message}</p>}
               </div>
               <div className="space-y-1">
                 <label className="text-13 font-medium">Dept Type</label>
