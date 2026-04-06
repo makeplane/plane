@@ -24,7 +24,7 @@
     "lint-staged": "16.2.7",
     "oxfmt": "0.35.0",
     "oxlint": "1.51.0",
-    "turbo": "2.8.12"
+    "turbo": "2.9.4"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
@@ -75,7 +75,8 @@
       "picomatch": "2.3.2",
       "yaml@1": "1.10.3",
       "yaml@2": "2.8.3",
-      "path-to-regexp": "0.1.13"
+      "path-to-regexp": "0.1.13",
+      "defu": "6.1.5"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

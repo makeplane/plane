@@ -21,7 +21,7 @@ catalog:
   "@types/react": 18.3.11
   axios: 1.13.5
   express: 4.22.0
-  lodash-es: 4.17.23
+  lodash-es: 4.18.0
   lucide-react: 0.469.0
   mobx-react: 9.1.1
   mobx-utils: 6.0.8
