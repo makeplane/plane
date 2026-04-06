@@ -11,7 +11,16 @@ from rest_framework.response import Response
 
 from plane.app.serializers.ho import HoIssueSerializer
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Department, Issue, IssueWorkLog, Project, ProjectMember, StaffProfile, Workspace, WorkspaceMember
+from plane.db.models import (
+    Department,
+    Issue,
+    IssueWorkLog,
+    Project,
+    ProjectMember,
+    StaffProfile,
+    Workspace,
+    WorkspaceMember,
+)
 from plane.license.models import Instance, InstanceAdmin
 
 
@@ -460,15 +469,48 @@ class HoFilterOptionsView(BaseAPIView):
         issue_ids = base_qs.values_list("id", flat=True).distinct()
 
         # Extract options
-        states = Issue.objects.filter(id__in=issue_ids).exclude(state__isnull=True).values_list("state__name", flat=True).distinct().order_by("state__name")
-        raw_priorities = Issue.objects.filter(id__in=issue_ids).exclude(priority__isnull=True).values_list("priority", flat=True).distinct()
+        states = (
+            Issue.objects.filter(id__in=issue_ids)
+            .exclude(state__isnull=True)
+            .values_list("state__name", flat=True)
+            .distinct()
+            .order_by("state__name")
+        )
+        raw_priorities = (
+            Issue.objects.filter(id__in=issue_ids)
+            .exclude(priority__isnull=True)
+            .values_list("priority", flat=True)
+            .distinct()
+        )
         priorities = sorted(list(set(p.lower() for p in raw_priorities if p)))
-        
-        main_cats = Issue.objects.filter(id__in=issue_ids).exclude(main_task_category__isnull=True).values_list("main_task_category__name", flat=True).distinct().order_by("main_task_category__name")
-        sub_cats = Issue.objects.filter(id__in=issue_ids).exclude(sub_task_category__isnull=True).values_list("sub_task_category__name", flat=True).distinct().order_by("sub_task_category__name")
-        
-        cycles = Issue.objects.filter(id__in=issue_ids, issue_cycle__cycle__isnull=False).values_list("issue_cycle__cycle__name", flat=True).distinct().order_by("issue_cycle__cycle__name")
-        modules = Issue.objects.filter(id__in=issue_ids, issue_module__module__isnull=False).values_list("issue_module__module__name", flat=True).distinct().order_by("issue_module__module__name")
+
+        main_cats = (
+            Issue.objects.filter(id__in=issue_ids)
+            .exclude(main_task_category__isnull=True)
+            .values_list("main_task_category__name", flat=True)
+            .distinct()
+            .order_by("main_task_category__name")
+        )
+        sub_cats = (
+            Issue.objects.filter(id__in=issue_ids)
+            .exclude(sub_task_category__isnull=True)
+            .values_list("sub_task_category__name", flat=True)
+            .distinct()
+            .order_by("sub_task_category__name")
+        )
+
+        cycles = (
+            Issue.objects.filter(id__in=issue_ids, issue_cycle__cycle__isnull=False)
+            .values_list("issue_cycle__cycle__name", flat=True)
+            .distinct()
+            .order_by("issue_cycle__cycle__name")
+        )
+        modules = (
+            Issue.objects.filter(id__in=issue_ids, issue_module__module__isnull=False)
+            .values_list("issue_module__module__name", flat=True)
+            .distinct()
+            .order_by("issue_module__module__name")
+        )
 
         # Assignees: list of {id, display_name}
         assignees = (
@@ -490,8 +532,8 @@ class HoFilterOptionsView(BaseAPIView):
             .order_by("display_name")
         )
         leads_list = [
-            {"id": str(l["id"]), "display_name": l["display_name"]}
-            for l in leads
+            {"id": str(lead["id"]), "display_name": lead["display_name"]}
+            for lead in leads
         ]
 
         return Response({

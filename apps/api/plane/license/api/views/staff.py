@@ -15,11 +15,10 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.serializers.staff import (
-    MyStaffProfileSerializer,
     StaffProfileCreateSerializer,
     StaffProfileSerializer,
 )
-from plane.db.models import Department, StaffProfile, User, Workspace, WorkspaceMember
+from plane.db.models import Department, StaffProfile, User, WorkspaceMember
 from plane.license.api.views.base import BaseAPIView
 from plane.utils.exception_logger import log_exception
 

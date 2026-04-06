@@ -120,7 +120,9 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         elif tab == "projects":
             return Response(
                 {
-                    "total_projects": self.get_filtered_counts(Project.objects.filter(**self.filters["project_filters"])),
+                    "total_projects": self.get_filtered_counts(
+                        Project.objects.filter(**self.filters["project_filters"])
+                    ),
                     "on_track_updates": {"count": 0},  # Mocked until Page/Update integration
                     "off_track_updates": {"count": 0},
                     "at_risk_updates": {"count": 0},
@@ -156,8 +158,12 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                             start_date__lte=timezone.now().date(), end_date__gte=timezone.now().date()
                         )
                     ),
-                    "upcoming_cycles": self.get_filtered_counts(base_queryset.filter(start_date__gt=timezone.now().date())),
-                    "completed_cycles": self.get_filtered_counts(base_queryset.filter(end_date__lt=timezone.now().date())),
+                    "upcoming_cycles": self.get_filtered_counts(
+                        base_queryset.filter(start_date__gt=timezone.now().date())
+                    ),
+                    "completed_cycles": self.get_filtered_counts(
+                        base_queryset.filter(end_date__lt=timezone.now().date())
+                    ),
                 },
                 status=status.HTTP_200_OK,
             )
@@ -180,9 +186,15 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             return Response(
                 {
                     "total_intake": self.get_filtered_counts(base_queryset),
-                    "accepted": self.get_filtered_counts(base_queryset.filter(issue_intake__status="1")),  # 1 is accepted
-                    "declined": self.get_filtered_counts(base_queryset.filter(issue_intake__status="-1")), # -1 is declined
-                    "duplicate": self.get_filtered_counts(base_queryset.filter(issue_intake__status="-2")),# -2 is duplicate
+                    "accepted": self.get_filtered_counts(
+                        base_queryset.filter(issue_intake__status="1")
+                    ),  # 1 is accepted
+                    "declined": self.get_filtered_counts(
+                        base_queryset.filter(issue_intake__status="-1")
+                    ),  # -1 is declined
+                    "duplicate": self.get_filtered_counts(
+                        base_queryset.filter(issue_intake__status="-2")
+                    ),  # -2 is duplicate
                 },
                 status=status.HTTP_200_OK,
             )
@@ -264,11 +276,31 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     .annotate(
                         member_count=Subquery(member_count_subquery),
                         issue_count=Count("project_issue", distinct=True),
-                        started_issues=Count("project_issue", filter=Q(project_issue__state__group="started"), distinct=True),
-                        completed_issues=Count("project_issue", filter=Q(project_issue__state__group="completed"), distinct=True),
-                        backlog_issues=Count("project_issue", filter=Q(project_issue__state__group="backlog"), distinct=True),
-                        un_started_issues=Count("project_issue", filter=Q(project_issue__state__group="unstarted"), distinct=True),
-                        cancelled_issues=Count("project_issue", filter=Q(project_issue__state__group="cancelled"), distinct=True),
+                        started_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__state__group="started"),
+                            distinct=True,
+                        ),
+                        completed_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__state__group="completed"),
+                            distinct=True,
+                        ),
+                        backlog_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__state__group="backlog"),
+                            distinct=True,
+                        ),
+                        un_started_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__state__group="unstarted"),
+                            distinct=True,
+                        ),
+                        cancelled_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__state__group="cancelled"),
+                            distinct=True,
+                        ),
                     )
                     .values(
                         "id", "name", "member_count", "issue_count",
@@ -365,7 +397,11 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                         "lead__display_name": item["owned_by__display_name"],
                         "completed_issues": item["completed_issues"],
                         "total_issues": item["total_issues"],
-                        "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                        "completion_percent": (
+                            item["completed_issues"] / item["total_issues"] * 100
+                            if item["total_issues"] > 0
+                            else 0
+                        ),
                     }
                     for item in base_queryset.annotate(
                         completed_issues=Count("issue_cycle", filter=Q(issue_cycle__issue__state__group="completed")),
@@ -391,7 +427,11 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                         "lead__display_name": item["lead__display_name"],
                         "completed_issues": item["completed_issues"],
                         "total_issues": item["total_issues"],
-                        "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                        "completion_percent": (
+                            item["completed_issues"] / item["total_issues"] * 100
+                            if item["total_issues"] > 0
+                            else 0
+                        ),
                     }
                     for item in base_queryset.annotate(
                         completed_issues=Count("issue_module", filter=Q(issue_module__issue__state__group="completed")),
@@ -648,10 +688,27 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                     "count": item["total_issues"],
                     "completed_issues": item["completed_issues"],
                     "total_issues": item["total_issues"],
-                    "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
-                    "is_current": timezone.now().date() >= item["start_date"] and timezone.now().date() <= item["end_date"] if item["start_date"] and item["end_date"] else False,
-                    "is_completed": timezone.now().date() > item["end_date"] if item["end_date"] else False,
-                    "is_upcoming": timezone.now().date() < item["start_date"] if item["start_date"] else False,
+                    "completion_percent": (
+                        item["completed_issues"] / item["total_issues"] * 100
+                        if item["total_issues"] > 0
+                        else 0
+                    ),
+                    "is_current": (
+                        timezone.now().date() >= item["start_date"]
+                        and timezone.now().date() <= item["end_date"]
+                        if item["start_date"] and item["end_date"]
+                        else False
+                    ),
+                    "is_completed": (
+                        timezone.now().date() > item["end_date"]
+                        if item["end_date"]
+                        else False
+                    ),
+                    "is_upcoming": (
+                        timezone.now().date() < item["start_date"]
+                        if item["start_date"]
+                        else False
+                    ),
                 }
                 for item in base_queryset.annotate(
                     completed_issues=Count("issue_cycle", filter=Q(issue_cycle__issue__state__group="completed")),
@@ -660,11 +717,10 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                     "id", "name", "start_date", "end_date", "completed_issues", "total_issues"
                 )
             ]
-            
+
             schema = {
                 "completion_percent": "completion_percent",
             }
-            
             return Response(
                 {"data": data, "schema": schema},
                 status=status.HTTP_200_OK,
@@ -679,7 +735,11 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                     "completed_issues": item["completed_issues"],
                     "total_issues": item["total_issues"],
                     "status": item["status"],
-                    "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                    "completion_percent": (
+                        item["completed_issues"] / item["total_issues"] * 100
+                        if item["total_issues"] > 0
+                        else 0
+                    ),
                 }
                 for item in base_queryset.annotate(
                     completed_issues=Count("issue_module", filter=Q(issue_module__issue__state__group="completed")),

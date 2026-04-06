@@ -85,7 +85,13 @@ class InstanceWorkspaceModuleBulkImportEndpoint(BaseAPIView):
 
             # Validate workspace_slug
             if not workspace_slug:
-                skipped.append({"row_number": row_number, "workspace_slug": "", "project_name": project_name, "name": name, "reason": "workspace_slug is required"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": "",
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": "workspace_slug is required",
+                })
                 continue
 
             # Resolve workspace (cache per slug)
@@ -97,12 +103,24 @@ class InstanceWorkspaceModuleBulkImportEndpoint(BaseAPIView):
 
             workspace = workspace_cache[workspace_slug]
             if workspace is None:
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": name, "reason": f"Workspace '{workspace_slug}' not found"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": f"Workspace '{workspace_slug}' not found",
+                })
                 continue
 
             # Validate project_name
             if not project_name:
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": "", "name": name, "reason": "project_name is required"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": "",
+                    "name": name,
+                    "reason": "project_name is required",
+                })
                 continue
 
             # Resolve project by name (cache by "slug:project_name")
@@ -114,20 +132,44 @@ class InstanceWorkspaceModuleBulkImportEndpoint(BaseAPIView):
 
             project = project_cache[cache_key]
             if project is None:
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": name, "reason": f"Project '{project_name}' not found in workspace '{workspace_slug}'"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": f"Project '{project_name}' not found in workspace '{workspace_slug}'",
+                })
                 continue
 
             # Validate name
             if not name:
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": "", "reason": "name is required"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": "",
+                    "reason": "name is required",
+                })
                 continue
             if len(name) > 255:
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": name, "reason": "name exceeds 255 characters"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": "name exceeds 255 characters",
+                })
                 continue
 
             # Duplicate check (soft-delete aware, case-sensitive)
             if Module.objects.filter(name=name, project=project, deleted_at__isnull=True).exists():
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": name, "reason": "Module name already exists in this project"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": "Module name already exists in this project",
+                })
                 continue
 
             # Parse dates (fail-safe — invalid date → None, row continues)
@@ -152,10 +194,25 @@ class InstanceWorkspaceModuleBulkImportEndpoint(BaseAPIView):
                     "name": name,
                 })
             except IntegrityError:
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": name, "reason": "Module name already exists in this project (concurrent creation)"})
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": "Module name already exists in this project (concurrent creation)",
+                })
             except Exception:
-                logger.exception("Module bulk import failed for row %s (name=%r, project=%r, workspace=%r)", row_number, name, project_name, workspace_slug)
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "project_name": project_name, "name": name, "reason": "Unexpected error — see server logs"})
+                logger.exception(
+                    "Module bulk import failed for row %s (name=%r, project=%r, workspace=%r)",
+                    row_number, name, project_name, workspace_slug,
+                )
+                skipped.append({
+                    "row_number": row_number,
+                    "workspace_slug": workspace_slug,
+                    "project_name": project_name,
+                    "name": name,
+                    "reason": "Unexpected error — see server logs",
+                })
 
         return Response(
             {

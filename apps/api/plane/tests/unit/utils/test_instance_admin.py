@@ -3,7 +3,6 @@
 # See the LICENSE file for details.
 
 import pytest
-from plane.db.models import User
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.instance_admin import is_instance_admin
 
@@ -28,7 +27,7 @@ class TestInstanceAdminUtility:
     @pytest.mark.django_db
     def test_is_instance_admin_returns_false_for_non_admin_user(self, db, create_user):
         """Test that non-admin users return False"""
-        instance = Instance.objects.create(
+        Instance.objects.create(
             instance_name="Test Instance",
             is_setup_done=True
         )

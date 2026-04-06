@@ -741,7 +741,9 @@ class IssueViewSet(BaseViewSet):
 
         # Build serializer data without transient `reason` field (not an Issue model field)
         serializer_data = {k: v for k, v in request.data.items() if k != "reason"}
-        serializer = IssueCreateSerializer(issue, data=serializer_data, partial=True, context={"project_id": project_id})
+        serializer = IssueCreateSerializer(
+            issue, data=serializer_data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             # Check if the update is a migration description update

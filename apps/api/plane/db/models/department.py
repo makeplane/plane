@@ -71,9 +71,13 @@ class Department(BaseModel):
         ]
 
     def clean(self):
-        if self.short_name is not None and self.short_name and (len(self.short_name) < 2 or not self.short_name.isupper()):
+        if self.short_name is not None and self.short_name and (
+            len(self.short_name) < 2 or not self.short_name.isupper()
+        ):
             raise ValidationError("short_name must be uppercase, minimum 2 characters")
-        if self.dept_code is not None and self.dept_code and (len(self.dept_code) != 4 or not self.dept_code.isdigit()):
+        if self.dept_code is not None and self.dept_code and (
+            len(self.dept_code) != 4 or not self.dept_code.isdigit()
+        ):
             raise ValidationError("dept_code must be exactly 4 digits")
         # Prevent circular parent references
         if self.parent_id and self.pk:

@@ -4,8 +4,6 @@
 
 # Django imports
 from django.utils import timezone
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
 # Third Party imports

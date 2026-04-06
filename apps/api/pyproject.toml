@@ -65,9 +65,17 @@ classmethod-decorators = ["classmethod", "validator", "root_validator"]
 
 [tool.ruff.lint.per-file-ignores]
 # Ignore specific rules for tests
-"tests/*" = ["E402", "F401", "F811"]
+"**/tests/*" = ["E402", "E501", "F401", "F811"]
 # Ignore imported but unused in __init__.py files
 "__init__.py" = ["F401"]
+# seed data files: line lengths are inherent to data structures
+"**/seed_department_staff_data.py" = ["E501"]
+"**/seed_department_staff.py" = ["E501"]
+# bulk import files have long lines due to field names in error messages
+"**/workspace_project_bulk_import.py" = ["E501"]
+"**/department_bulk_import.py" = ["E501"]
+"**/user_bulk_import.py" = ["E501"]
+"**/staff.py" = ["E501"]
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

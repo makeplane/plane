@@ -156,7 +156,7 @@ class LDAPProvider(CredentialAdapter):
                 password=self.password,
                 auto_bind=True,
                 receive_timeout=10,
-            ) as conn:
+            ):
                 pass  # Successful bind = password verified
         except ldap3.core.exceptions.LDAPBindError:
             raise AuthenticationException(

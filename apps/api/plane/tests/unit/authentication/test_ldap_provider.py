@@ -159,7 +159,6 @@ class TestGetLDAPConnection:
     def test_raises_on_server_down(self):
         provider = _build_provider()
         with patch(LDAP_MOD_PATCH) as mock_ldap:
-            import builtins
 
             # Create a real exception class for SERVER_DOWN
             server_down_exc = type("SERVER_DOWN", (Exception,), {})

@@ -138,7 +138,13 @@ class Command(BaseCommand):
         for sid, ln, fn, dc, pos, grade, is_mgr, phone, joining in STAFF_DATA:
             email = f"sh{sid}@swing.shinhan.com"
             user, uc = User.objects.get_or_create(
-                email=email, defaults={"username": email, "first_name": fn, "last_name": ln, "is_password_autoset": True},
+                email=email,
+                defaults={
+                    "username": email,
+                    "first_name": fn,
+                    "last_name": ln,
+                    "is_password_autoset": True,
+                },
             )
             if uc:
                 user.set_password("Shinhan@2026")
@@ -173,15 +179,29 @@ class Command(BaseCommand):
             dept, proj = depts.get(dc), projects.get(ident)
             if not dept or not proj:
                 continue
-            for sp in StaffProfile.objects.filter(workspace=ws, department=dept, employment_status__in=["active", "probation"]):
+            for sp in StaffProfile.objects.filter(
+                workspace=ws, department=dept, employment_status__in=["active", "probation"]
+            ):
                 _, c = ProjectMember.objects.get_or_create(
-                    project=proj, member=sp.user, defaults={"role": 20 if sp.is_department_manager else 15, "workspace": ws},
+                    project=proj,
+                    member=sp.user,
+                    defaults={
+                        "role": 20 if sp.is_department_manager else 15,
+                        "workspace": ws,
+                    },
                 )
                 count += c
             parent = dept.parent
             while parent:
-                for mp in StaffProfile.objects.filter(workspace=ws, department=parent, is_department_manager=True, employment_status="active"):
-                    _, c = ProjectMember.objects.get_or_create(project=proj, member=mp.user, defaults={"role": 15, "workspace": ws})
+                for mp in StaffProfile.objects.filter(
+                    workspace=ws, department=parent,
+                    is_department_manager=True, employment_status="active",
+                ):
+                    _, c = ProjectMember.objects.get_or_create(
+                        project=proj,
+                        member=mp.user,
+                        defaults={"role": 15, "workspace": ws},
+                    )
                     count += c
                 parent = parent.parent
         self.stdout.write(self.style.SUCCESS(f"  {count} memberships."))
@@ -194,7 +214,9 @@ class Command(BaseCommand):
             for sid in sids:
                 user = users.get(sid)
                 if user:
-                    ProjectMember.objects.get_or_create(project=proj, member=user, defaults={"role": 15, "workspace": ws})
+                    ProjectMember.objects.get_or_create(
+                        project=proj, member=user, defaults={"role": 15, "workspace": ws}
+                    )
 
     def _seed_issues(self, ws, admin, projects):
         self.stdout.write("Seeding issues...")
@@ -203,8 +225,15 @@ class Command(BaseCommand):
             templates = ISSUE_TEMPLATES.get(ident, [])
             if not templates:
                 continue
-            states = list(State.objects.filter(workspace=ws, project=proj).exclude(group="cancelled").values_list("id", flat=True))
-            members = list(ProjectMember.objects.filter(project=proj, is_active=True).values_list("member_id", flat=True))
+            states = list(
+                State.objects.filter(workspace=ws, project=proj)
+                .exclude(group="cancelled")
+                .values_list("id", flat=True)
+            )
+            members = list(
+                ProjectMember.objects.filter(project=proj, is_active=True)
+                .values_list("member_id", flat=True)
+            )
             if not states or not members:
                 continue
             seq = (IssueSequence.objects.filter(project=proj).aggregate(m=Max("sequence"))["m"] or 0) + 1
@@ -222,10 +251,14 @@ class Command(BaseCommand):
                 sort += random.randint(1000, 5000)
             created = Issue.objects.bulk_create(issues, ignore_conflicts=True)
             IssueSequence.objects.bulk_create([
-                IssueSequence(issue=i, sequence=i.sequence_id, project=proj, workspace=ws) for i in created
+                IssueSequence(issue=i, sequence=i.sequence_id, project=proj, workspace=ws)
+                for i in created
             ], batch_size=100, ignore_conflicts=True)
             IssueActivity.objects.bulk_create([
-                IssueActivity(issue=i, actor=admin, project=proj, workspace=ws, comment="created the issue", verb="created", created_by=admin)
+                IssueActivity(
+                    issue=i, actor=admin, project=proj, workspace=ws,
+                    comment="created the issue", verb="created", created_by=admin,
+                )
                 for i in created
             ], batch_size=100, ignore_conflicts=True)
             assignees = []
