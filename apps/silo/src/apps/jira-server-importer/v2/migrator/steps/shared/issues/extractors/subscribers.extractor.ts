@@ -34,6 +34,12 @@ export class JiraSubscribersExtractor {
           })
           .filter((subscriber) => subscriber !== undefined);
 
+        const reporter = issue.fields.reporter?.emailAddress || issue.fields.reporter?.displayName;
+
+        if (reporter && !subscribers.includes(reporter)) {
+          subscribers.push(reporter);
+        }
+
         executionLog.collect(jobId, {
           entity_type: EExecutionLogEntityType.SUBSCRIBERS,
           phase: "PULL_ALL_SUBSCRIBERS",
