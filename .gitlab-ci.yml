@@ -201,6 +201,7 @@ backend:test:shell:
 
 build:web:
   stage: build
+  image: docker:latest
   script:
     - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
     - mkdir -p dist
@@ -214,6 +215,7 @@ build:web:
 
 build:admin:
   stage: build
+  image: docker:latest
   script:
     - docker build -t makeplane/plane-admin:$IMAGE_TAG -f apps/admin/Dockerfile.admin .
     - mkdir -p dist
@@ -227,6 +229,7 @@ build:admin:
 
 build:api:
   stage: build
+  image: docker:latest
   script:
     # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
     - docker build -t makeplane/plane-backend:$IMAGE_TAG -f apps/api/Dockerfile.api ./apps/api
