@@ -6953,7 +6953,22 @@ export default {
       add_level_button: "계층 레벨 추가",
       empty_level_placeholder: "레벨 {level}에 작업 항목 유형 추가",
       empty_level_unauthorized: "이 레벨에서 작업 항목 유형을 찾을 수 없습니다.",
-      zero_level_description: "기본적으로 모든 작업 항목 유형은 계층 구조에 할당될 때까지 레벨 0에 있습니다.",
+      quick_actions: {
+        set_as_default: {
+          label: "기본값으로 설정",
+          toast: {
+            loading: "기본값으로 설정 중...",
+            success: {
+              title: "성공!",
+              message: "계층 레벨 {level}이(가) 기본값으로 성공적으로 설정되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "계층 레벨 {level}을(를) 기본값으로 설정하지 못했습니다. 다시 시도해 주세요.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "계층 레벨 추가",
@@ -6983,6 +6998,9 @@ export default {
         title: "오류!",
         message: "작업 항목 유형은 계층 규칙을 위반하므로 업데이트할 수 없습니다.",
       },
+    },
+    work_item_type_modal: {
+      level: "계층 레벨",
     },
   },
 } as const;

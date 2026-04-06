@@ -13,14 +13,20 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { Switch } from "@plane/propel/switch";
+import { Badge } from "@plane/propel/badge";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
 import { cn } from "@plane/utils";
+// plane web imports
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+// types
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { IssueTypeLogo } from "../common/issue-type-logo";
 import { LinkedPropertiesRoot } from "../linked-properties";
@@ -44,15 +50,22 @@ export const WorkItemTypeListItem = observer(function WorkItemTypeListItem(props
   const { workItemType, availableProperties, getLinkedProperties, actions } = props;
   // state
   const [isOpen, setIsOpen] = useState(false);
+  // params
+  const { workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const isWorkItemTypeHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY", false);
+  const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
+    EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
+  );
   // derived values
   const workItemTypeDetail = workItemType.asJSON;
   const linkedProperties = getLinkedProperties(workItemType.linkedPropertyIds).map((property) => ({
     ...property,
     sort_order: workItemType.properties?.[property.id] ?? 0,
   }));
-
   // handlers
   const handleEnableDisable = async (isActive: boolean) => {
     workItemType.updateType({ is_active: isActive }).catch(() => {
@@ -112,6 +125,13 @@ export const WorkItemTypeListItem = observer(function WorkItemTypeListItem(props
             <div className="shrink-0 py-0.5 px-2 text-caption-sm-medium rounded-sm text-accent-primary bg-transparent border border-accent-strong cursor-default">
               {t("common.default")}
             </div>
+          )}
+          {isWorkItemTypeHierarchyFlagAvailable && isWorkItemHierarchyFeatureEnabled && (
+            <span className="shrink-0">
+              <Badge size="sm" variant="neutral">
+                Level {workItemTypeDetail?.level}
+              </Badge>
+            </span>
           )}
           <div className="shrink-0 flex items-center gap-2">
             {!workItemTypeDetail?.is_default && workItemType.canEnableDisable && (

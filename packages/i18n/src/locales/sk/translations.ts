@@ -6978,8 +6978,22 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       add_level_button: "Pridať úroveň hierarchie",
       empty_level_placeholder: "Pridajte typ pracovnej položky na úroveň {level}",
       empty_level_unauthorized: "Na tejto úrovni sa nenašli žiadne typy pracovných položiek.",
-      zero_level_description:
-        "Predvolene sú všetky typy pracovných položiek na úrovni 0, kým nie sú priradené k hierarchii.",
+      quick_actions: {
+        set_as_default: {
+          label: "Nastaviť ako predvolené",
+          toast: {
+            loading: "Nastavenie ako predvolené...",
+            success: {
+              title: "Úspech!",
+              message: "Úroveň hierarchie {level} bola úspešne nastavená ako predvolená.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Nepodarilo sa nastaviť úroveň hierarchie {level} ako predvolenú. Skúste to prosím znovu.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Pridať úroveň hierarchie",
@@ -7011,6 +7025,9 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
         title: "Chyba!",
         message: "Typ pracovnej položky nie je možné aktualizovať, pretože porušuje pravidlá hierarchie.",
       },
+    },
+    work_item_type_modal: {
+      level: "Úroveň hierarchie",
     },
   },
 } as const;

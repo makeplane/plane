@@ -7018,8 +7018,22 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       add_level_button: "Dodaj poziom hierarchii",
       empty_level_placeholder: "Dodaj typ elementu roboczego do poziomu {level}",
       empty_level_unauthorized: "Nie znaleziono typów elementów roboczych na tym poziomie.",
-      zero_level_description:
-        "Domyślnie wszystkie typy elementów roboczych są na poziomie 0, dopóki nie zostaną przypisane do hierarchii.",
+      quick_actions: {
+        set_as_default: {
+          label: "Ustaw jako domyślny",
+          toast: {
+            loading: "Ustawianie jako domyślny...",
+            success: {
+              title: "Sukces!",
+              message: "Poziom hierarchii {level} został ustawiony jako domyślny.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Nie udało się ustawić poziomu hierarchii {level} jako domyślnego. Spróbuj ponownie.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Dodaj poziom hierarchii",
@@ -7050,6 +7064,9 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
         title: "Błąd!",
         message: "Typ elementu roboczego nie może być zaktualizowany, ponieważ narusza zasady hierarchii.",
       },
+    },
+    work_item_type_modal: {
+      level: "Poziom hierarchii",
     },
   },
 } as const;

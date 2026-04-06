@@ -13,6 +13,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
@@ -20,7 +21,9 @@ import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TWorkItemType } from "@plane/types";
 import { EModalPosition, EModalWidth, getRandomIconName, ModalCore } from "@plane/ui";
-import { getRandomBackgroundColor } from "@plane/utils";
+import { getRandomBackgroundColor, isObject } from "@plane/utils";
+// plane web imports
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // local imports
 import { CreateOrUpdateWorkItemTypeForm } from "./form";
 import type { WorkItemTypeCreateUpdateActions, WorkItemTypeCreateUpdatePermissions } from "./types";
@@ -46,9 +49,14 @@ export const CreateOrUpdateWorkItemTypeModal = observer(function CreateOrUpdateW
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<TWorkItemType> | undefined>(undefined);
+  // params
+  const { workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { featuresByWorkspaceSlug } = useWorkspaceFeatures();
   // derived values
+  const defaultLevel = workspaceSlug ? (featuresByWorkspaceSlug(workspaceSlug)?.work_item_type_default_level ?? 0) : 0;
   const mode = workItemTypeId ? "update" : "create";
 
   useEffect(() => {
@@ -58,6 +66,7 @@ export const CreateOrUpdateWorkItemTypeModal = observer(function CreateOrUpdateW
       } else {
         setFormData({
           ...defaultFormData,
+          level: defaultLevel,
           logo_props: {
             in_use: "icon",
             icon: {
@@ -68,7 +77,7 @@ export const CreateOrUpdateWorkItemTypeModal = observer(function CreateOrUpdateW
         });
       }
     }
-  }, [workItemTypeData, isOpen]);
+  }, [workItemTypeData, isOpen, defaultLevel]);
 
   // handlers
   const handleFormDataChange = <T extends keyof TWorkItemType>(key: T, value: TWorkItemType[T]) =>
@@ -102,18 +111,29 @@ export const CreateOrUpdateWorkItemTypeModal = observer(function CreateOrUpdateW
       handleModalClearAndClose();
     } catch (error: any) {
       const toastKey = mode === "update" ? "work_item_types.update" : "work_item_types.create";
-      if (error?.code === "ISSUE_TYPE_ALREADY_EXIST") {
+      if (mode === "update" && isObject(error) && "level" in error) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t(`${toastKey}.toast.error.title`),
-          message: t(`${toastKey}.toast.error.message.conflict`, { name: formData?.name }),
+          title: t("work_item_type_hierarchy.add_level_modal.invalid_level_toast.title"),
+          message: t("work_item_type_hierarchy.add_level_modal.invalid_level_toast.message", {
+            type_name: formData?.name,
+            level: formData?.level,
+          }),
         });
       } else {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t(`${toastKey}.toast.error.title`),
-          message: t(`${toastKey}.toast.error.message.default`),
-        });
+        if (error?.code === "ISSUE_TYPE_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t(`${toastKey}.toast.error.title`),
+            message: t(`${toastKey}.toast.error.message.conflict`, { name: formData?.name }),
+          });
+        } else {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t(`${toastKey}.toast.error.title`),
+            message: t(`${toastKey}.toast.error.message.default`),
+          });
+        }
       }
     } finally {
       setIsSubmitting(false);

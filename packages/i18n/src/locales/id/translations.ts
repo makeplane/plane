@@ -7041,8 +7041,22 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       add_level_button: "Tambah tingkat hierarki",
       empty_level_placeholder: "Tambahkan jenis item pekerjaan ke tingkat {level}",
       empty_level_unauthorized: "Tidak ada jenis item pekerjaan yang ditemukan di tingkat ini.",
-      zero_level_description:
-        "Secara default, semua jenis item pekerjaan berada di tingkat 0 hingga ditetapkan ke hierarki.",
+      quick_actions: {
+        set_as_default: {
+          label: "Tetapkan sebagai default",
+          toast: {
+            loading: "Menetapkan sebagai default...",
+            success: {
+              title: "Berhasil!",
+              message: "Tingkat hierarki {level} berhasil ditetapkan sebagai default.",
+            },
+            error: {
+              title: "Error!",
+              message: "Gagal menetapkan tingkat hierarki {level} sebagai default. Silakan coba lagi.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Tambah tingkat hierarki",
@@ -7074,6 +7088,9 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
         title: "Kesalahan!",
         message: "Jenis item pekerjaan tidak dapat diperbarui karena melanggar aturan hierarki.",
       },
+    },
+    work_item_type_modal: {
+      level: "Tingkat hierarki",
     },
   },
 } as const;

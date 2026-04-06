@@ -7090,8 +7090,22 @@ așa cum dorești din sursele pe care le specifici.`,
       add_level_button: "Adăugați nivel de ierarhie",
       empty_level_placeholder: "Adăugați un tip de element de lucru la nivelul {level}",
       empty_level_unauthorized: "Nu s-au găsit tipuri de elemente de lucru la acest nivel.",
-      zero_level_description:
-        "Implicit, toate tipurile de elemente de lucru sunt la nivelul 0 până când sunt atribuite unei ierarhii.",
+      quick_actions: {
+        set_as_default: {
+          label: "Setați ca implicit",
+          toast: {
+            loading: "Setare ca implicit...",
+            success: {
+              title: "Succes!",
+              message: "Nivelul de ierarhie {level} a fost setat ca implicit cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Nu s-a putut seta nivelul de ierarhie {level} ca implicit. Vă rugăm să încercați din nou.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Adăugați nivel de ierarhie",
@@ -7123,6 +7137,9 @@ așa cum dorești din sursele pe care le specifici.`,
         title: "Eroare!",
         message: "Tipul de element de lucru nu poate fi actualizat deoarece încalcă regulile ierarhiei.",
       },
+    },
+    work_item_type_modal: {
+      level: "Nivel de ierarhie",
     },
   },
 } as const;

@@ -9,7 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 # Django imports
-
+from django.db import models
 
 # Third party imports
 from rest_framework import serializers
@@ -38,7 +38,16 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
         if "level" in data:
             # level cannot be negative
             if data["level"] < 0:
-                raise serializers.ValidationError("Level must be a non-negative integer.")
+                raise serializers.ValidationError({"level": "Level cannot be negative."})
+            
+            # the values of the levels should be in between 0 and the max level + 1 allowed for the workspace
+            max_level = IssueType.objects.filter(
+                workspace_id=self.context["workspace_id"],
+            ).aggregate(max_level=models.Max("level"))["max_level"] or 0
+            if data["level"] > max_level + 1:
+                raise serializers.ValidationError(
+                    {"level": f"Level must be between 0 and {max_level + 1} for this workspace."}
+                )
 
             # If update case, validate that existing issues of this type
             # remain valid with their parents/children

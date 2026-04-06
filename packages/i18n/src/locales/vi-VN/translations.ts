@@ -7011,8 +7011,22 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       add_level_button: "Thêm cấp độ phân cấp",
       empty_level_placeholder: "Thêm loại mục công việc vào cấp độ {level}",
       empty_level_unauthorized: "Không tìm thấy loại mục công việc nào ở cấp độ này.",
-      zero_level_description:
-        "Theo mặc định, tất cả các loại mục công việc ở cấp độ 0 cho đến khi được gán vào phân cấp.",
+      quick_actions: {
+        set_as_default: {
+          label: "Đặt làm mặc định",
+          toast: {
+            loading: "Đang đặt làm mặc định...",
+            success: {
+              title: "Thành công!",
+              message: "Cấp độ phân cấp {level} đã được đặt làm mặc định thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Không thể đặt cấp độ phân cấp {level} làm mặc định. Vui lòng thử lại.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Thêm cấp độ phân cấp",
@@ -7043,6 +7057,9 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
         title: "Lỗi!",
         message: "Loại mục công việc không thể cập nhật vì vi phạm quy tắc phân cấp.",
       },
+    },
+    work_item_type_modal: {
+      level: "Cấp độ phân cấp",
     },
   },
 } as const;

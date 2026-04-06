@@ -7137,8 +7137,22 @@ si vous êtes sûr que votre recherche est correcte.`,
       add_level_button: "Ajouter un niveau de hiérarchie",
       empty_level_placeholder: "Ajouter un type d'élément de travail au niveau {level}",
       empty_level_unauthorized: "Aucun type d'élément de travail trouvé à ce niveau.",
-      zero_level_description:
-        "Par défaut, tous les types d'éléments de travail sont au niveau 0 jusqu'à ce qu'ils soient assignés à une hiérarchie.",
+      quick_actions: {
+        set_as_default: {
+          label: "Définir par défaut",
+          toast: {
+            loading: "Définition par défaut en cours...",
+            success: {
+              title: "Succès !",
+              message: "Niveau de hiérarchie {level} défini par défaut avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Impossible de définir le niveau de hiérarchie {level} par défaut. Veuillez réessayer.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Ajouter un niveau de hiérarchie",
@@ -7170,6 +7184,9 @@ si vous êtes sûr que votre recherche est correcte.`,
         title: "Erreur !",
         message: "Le type d'élément de travail ne peut pas être mis à jour car cela enfreint les règles de hiérarchie.",
       },
+    },
+    work_item_type_modal: {
+      level: "Niveau de hiérarchie",
     },
   },
 } as const;

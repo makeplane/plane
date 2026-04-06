@@ -32,6 +32,7 @@ class WorkspaceFeature(BaseModel):
     is_release_enabled = models.BooleanField(default=False)
     is_work_item_types_enabled = models.BooleanField(default=False)
     is_workitem_hierarchy_enabled = models.BooleanField(default=False)
+    work_item_type_default_level = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         verbose_name = "Workspace Feature"

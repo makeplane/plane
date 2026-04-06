@@ -6859,7 +6859,22 @@ export default {
       add_level_button: "新增層級",
       empty_level_placeholder: "新增工作項目類型至第 {level} 層",
       empty_level_unauthorized: "此層級中未找到工作項目類型。",
-      zero_level_description: "預設情況下，所有工作項目類型在分配至層級結構之前均處於第 0 層。",
+      quick_actions: {
+        set_as_default: {
+          label: "設為預設",
+          toast: {
+            loading: "正在設為預設...",
+            success: {
+              title: "成功！",
+              message: "層級 {level} 已成功設為預設。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "無法將層級 {level} 設為預設，請重試。",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "新增層級",
@@ -6889,6 +6904,9 @@ export default {
         title: "錯誤！",
         message: "工作項目類型因違反層級規則而無法更新。",
       },
+    },
+    work_item_type_modal: {
+      level: "層級",
     },
   },
 } as const;

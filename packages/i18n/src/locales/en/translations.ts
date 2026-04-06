@@ -7848,7 +7848,22 @@ the way you want to from the sources you specify.`,
       add_level_button: "Add hierarchy level",
       empty_level_placeholder: "Add a work item type to level {level}",
       empty_level_unauthorized: "No work item types found in this level.",
-      zero_level_description: "By default, all work item types are at level 0 until they are assigned to a hierarchy.",
+      quick_actions: {
+        set_as_default: {
+          label: "Set as default",
+          toast: {
+            loading: "Setting as default...",
+            success: {
+              title: "Success!",
+              message: "Hierarchy level {level} set as default successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Failed to set hierarchy level {level} as default. Please try again.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Add hierarchy level",
@@ -7879,6 +7894,9 @@ the way you want to from the sources you specify.`,
         title: "Error!",
         message: "Work item type cannot be updated since it breaks the hierarchy rules.",
       },
+    },
+    work_item_type_modal: {
+      level: "Hierarchy level",
     },
   },
 } as const;

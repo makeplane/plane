@@ -33,7 +33,9 @@ export enum EWorkspaceFeatures {
   IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED = "is_cross_project_sub_work_items_enabled",
 }
 
-export type TWorkspaceFeature = { [key in EWorkspaceFeatures]: boolean | undefined };
+export type TWorkspaceFeature = { [key in EWorkspaceFeatures]: boolean | undefined } & {
+  work_item_type_default_level: number | undefined;
+};
 
 export type TWorkspaceFeatures = {
   workspace: string | undefined;

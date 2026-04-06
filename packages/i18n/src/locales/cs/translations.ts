@@ -7004,8 +7004,22 @@ Vytvořte nový.`,
       add_level_button: "Přidat úroveň hierarchie",
       empty_level_placeholder: "Přidejte typ pracovní položky na úroveň {level}",
       empty_level_unauthorized: "Na této úrovni nebyly nalezeny žádné typy pracovních položek.",
-      zero_level_description:
-        "Ve výchozím nastavení jsou všechny typy pracovních položek na úrovni 0, dokud nejsou přiřazeny k hierarchii.",
+      quick_actions: {
+        set_as_default: {
+          label: "Nastavit jako výchozí",
+          toast: {
+            loading: "Nastavení jako výchozí...",
+            success: {
+              title: "Úspěch!",
+              message: "Úroveň hierarchie {level} byla úspěšně nastavena jako výchozí.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Nepodařilo se nastavit úroveň hierarchie {level} jako výchozí. Zkuste to prosím znovu.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Přidat úroveň hierarchie",
@@ -7037,6 +7051,9 @@ Vytvořte nový.`,
         title: "Chyba!",
         message: "Typ pracovní položky nelze aktualizovat, protože porušuje pravidla hierarchie.",
       },
+    },
+    work_item_type_modal: {
+      level: "Úroveň hierarchie",
     },
   },
 } as const;

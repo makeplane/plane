@@ -7086,8 +7086,22 @@ Crea un nuovo progetto invece`,
       add_level_button: "Aggiungi livello di gerarchia",
       empty_level_placeholder: "Aggiungi un tipo di elemento di lavoro al livello {level}",
       empty_level_unauthorized: "Nessun tipo di elemento di lavoro trovato in questo livello.",
-      zero_level_description:
-        "Per impostazione predefinita, tutti i tipi di elementi di lavoro sono al livello 0 finché non vengono assegnati a una gerarchia.",
+      quick_actions: {
+        set_as_default: {
+          label: "Imposta come predefinito",
+          toast: {
+            loading: "Impostazione come predefinito...",
+            success: {
+              title: "Successo!",
+              message: "Livello di gerarchia {level} impostato come predefinito con successo.",
+            },
+            error: {
+              title: "Errore!",
+              message: "Impossibile impostare il livello di gerarchia {level} come predefinito. Riprovare.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Aggiungi livello di gerarchia",
@@ -7119,6 +7133,9 @@ Crea un nuovo progetto invece`,
         title: "Errore!",
         message: "Il tipo di elemento di lavoro non può essere aggiornato poiché viola le regole della gerarchia.",
       },
+    },
+    work_item_type_modal: {
+      level: "Livello di gerarchia",
     },
   },
 } as const;

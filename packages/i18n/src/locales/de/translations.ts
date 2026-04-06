@@ -7894,8 +7894,23 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       add_level_button: "Hierarchieebene hinzufügen",
       empty_level_placeholder: "Arbeitselement-Typ zu Ebene {level} hinzufügen",
       empty_level_unauthorized: "Keine Arbeitselement-Typen in dieser Ebene gefunden.",
-      zero_level_description:
-        "Standardmäßig befinden sich alle Arbeitselement-Typen auf Ebene 0, bis sie einer Hierarchie zugewiesen werden.",
+      quick_actions: {
+        set_as_default: {
+          label: "Als Standard festlegen",
+          toast: {
+            loading: "Als Standard festlegen...",
+            success: {
+              title: "Erfolg!",
+              message: "Hierarchieebene {level} erfolgreich als Standard festgelegt.",
+            },
+            error: {
+              title: "Fehler!",
+              message:
+                "Hierarchieebene {level} konnte nicht als Standard festgelegt werden. Bitte versuchen Sie es erneut.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Hierarchieebene hinzufügen",
@@ -7926,6 +7941,9 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
         title: "Fehler!",
         message: "Der Arbeitselement-Typ kann nicht aktualisiert werden, da dies die Hierarchieregeln verletzt.",
       },
+    },
+    work_item_type_modal: {
+      level: "Hierarchieebene",
     },
   },
 } as const;

@@ -12,27 +12,37 @@
  */
 
 import { useMemo, useState } from "react";
-import { PencilIcon } from "lucide-react";
+import { CheckCircle2, PencilIcon } from "lucide-react";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
+// plane web imports
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store/use-workspace-features";
 // local imports
 import { AddWorkItemTypeHierarchyLevelModal } from "./add-level-modal";
 
 type Props = {
+  defaultLevel: number;
   level: number;
   workItemTypes: BaseWorkItemTypeInstanceSchema[];
 };
 
 export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItemTypeHierarchyLevelQuickActions({
+  defaultLevel,
   level,
   workItemTypes,
 }: Props) {
   // states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // params
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { updateWorkspaceFeature } = useWorkspaceFeatures();
   // translation
   const { t } = useTranslation();
   // derived values
@@ -45,10 +55,39 @@ export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItem
         action: () => setIsEditModalOpen(true),
         shouldRender: true,
       },
+      {
+        key: "set-as-default",
+        title: t("work_item_type_hierarchy.levels.quick_actions.set_as_default.label"),
+        icon: CheckCircle2,
+        action: () => {
+          if (!workspaceSlug) return;
+          const promise = updateWorkspaceFeature(workspaceSlug, {
+            work_item_type_default_level: level,
+          });
+          setPromiseToast(promise, {
+            loading: t("work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.loading"),
+            success: {
+              title: t("work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.success.title"),
+              message: () =>
+                t("work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.success.message", {
+                  level,
+                }),
+            },
+            error: {
+              title: t("work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.error.title"),
+              message: () =>
+                t("work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.error.message", {
+                  level,
+                }),
+            },
+          });
+        },
+        shouldRender: level !== defaultLevel,
+      },
     ];
     const filteredMenuItems = allItems.filter((item) => item.shouldRender !== false);
     return filteredMenuItems;
-  }, [t]);
+  }, [defaultLevel, level, t, updateWorkspaceFeature, workspaceSlug]);
 
   if (MENU_ITEMS.length === 0) return null;
 

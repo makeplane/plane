@@ -7118,8 +7118,23 @@ si estás seguro de que tu búsqueda es correcta.`,
       add_level_button: "Agregar nivel de jerarquía",
       empty_level_placeholder: "Agrega un tipo de elemento de trabajo al nivel {level}",
       empty_level_unauthorized: "No se encontraron tipos de elementos de trabajo en este nivel.",
-      zero_level_description:
-        "Por defecto, todos los tipos de elementos de trabajo están en el nivel 0 hasta que se asignan a una jerarquía.",
+      quick_actions: {
+        set_as_default: {
+          label: "Establecer como predeterminado",
+          toast: {
+            loading: "Estableciendo como predeterminado...",
+            success: {
+              title: "¡Éxito!",
+              message: "El nivel de jerarquía {level} se ha establecido como predeterminado correctamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message:
+                "No se pudo establecer el nivel de jerarquía {level} como predeterminado. Por favor, inténtelo de nuevo.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Agregar nivel de jerarquía",
@@ -7151,6 +7166,9 @@ si estás seguro de que tu búsqueda es correcta.`,
         title: "¡Error!",
         message: "El tipo de elemento de trabajo no se puede actualizar ya que rompe las reglas de jerarquía.",
       },
+    },
+    work_item_type_modal: {
+      level: "Nivel de jerarquía",
     },
   },
 } as const;

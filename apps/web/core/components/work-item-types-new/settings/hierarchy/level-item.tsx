@@ -12,13 +12,17 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Badge } from "@plane/propel/badge";
 import { Pill, EPillSize, EPillVariant, ERadius } from "@plane/propel/pill";
 import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
+// plane web imports
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // local imports
 import { WorkItemTypeHierarchyLevelQuickActions } from "./level-quick-actions";
 import { WorkItemTypeHierarchyAddToLevelButton } from "./add-to-level-button";
@@ -34,6 +38,12 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
   level,
   workItemTypes,
 }: Props) {
+  // params
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { featuresByWorkspaceSlug } = useWorkspaceFeatures();
+  // derived values
+  const defaultLevel = workspaceSlug ? (featuresByWorkspaceSlug(workspaceSlug)?.work_item_type_default_level ?? 0) : 0;
   // derived values
   const isEmptyLevel = level > 0 && workItemTypes.length === 0;
   // translation
@@ -55,7 +65,7 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
   }
 
   return (
-    <div className="bg-layer-2 border border-subtle p-3 rounded-lg flex items-center justify-between gap-2 truncate">
+    <div className="bg-layer-2 border border-subtle p-3 rounded-lg flex items-start justify-between gap-2 truncate">
       <div className="flex gap-2 truncate">
         <span
           className={cn(
@@ -67,31 +77,33 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
         >
           {level}
         </span>
-        <div className="flex flex-col gap-y-2 py-1">
-          {level === 0 && (
-            <span className="shrink-0 text-body-xs-regular text-secondary">
-              {t("work_item_type_hierarchy.levels.zero_level_description")}
-            </span>
-          )}
-          <div className="flex flex-wrap items-center gap-2">
-            {workItemTypes.map((workItemType) => (
-              <Pill
-                key={workItemType.id}
-                size={EPillSize.MD}
-                variant={EPillVariant.DEFAULT}
-                radius={ERadius.SQUARE}
-                className="border-subtle-1 text-tertiary gap-1.5"
-              >
-                <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" />
-                <span className="text-caption-md-regular">{workItemType.name}</span>
-              </Pill>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {workItemTypes.map((workItemType) => (
+            <Pill
+              key={workItemType.id}
+              size={EPillSize.MD}
+              variant={EPillVariant.DEFAULT}
+              radius={ERadius.SQUARE}
+              className="border-subtle-1 text-tertiary gap-1.5"
+            >
+              <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" />
+              <span className="text-caption-md-regular">{workItemType.name}</span>
+            </Pill>
+          ))}
         </div>
       </div>
-      {!isEmptyLevel && level > 0 && (
-        <WorkItemTypeHierarchyLevelQuickActions level={level} workItemTypes={workItemTypes} />
-      )}
+      <div className="shrink-0 flex items-center gap-2 py-1">
+        {level === defaultLevel && (
+          <Badge size="sm" variant="neutral">
+            {t("common.default")}
+          </Badge>
+        )}
+        <WorkItemTypeHierarchyLevelQuickActions
+          defaultLevel={defaultLevel}
+          level={level}
+          workItemTypes={workItemTypes}
+        />
+      </div>
     </div>
   );
 });

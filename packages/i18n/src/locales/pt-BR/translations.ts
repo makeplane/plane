@@ -7088,8 +7088,22 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       add_level_button: "Adicionar nível de hierarquia",
       empty_level_placeholder: "Adicionar um tipo de item de trabalho ao nível {level}",
       empty_level_unauthorized: "Nenhum tipo de item de trabalho encontrado neste nível.",
-      zero_level_description:
-        "Por padrão, todos os tipos de itens de trabalho estão no nível 0 até que sejam atribuídos a uma hierarquia.",
+      quick_actions: {
+        set_as_default: {
+          label: "Definir como padrão",
+          toast: {
+            loading: "Definindo como padrão...",
+            success: {
+              title: "Sucesso!",
+              message: "Nível de hierarquia {level} definido como padrão com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Falha ao definir o nível de hierarquia {level} como padrão. Por favor, tente novamente.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Adicionar nível de hierarquia",
@@ -7120,6 +7134,9 @@ da maneira que você quiser a partir das fontes que você especificar.`,
         title: "Erro!",
         message: "O tipo de item de trabalho não pode ser atualizado pois viola as regras de hierarquia.",
       },
+    },
+    work_item_type_modal: {
+      level: "Nível de hierarquia",
     },
   },
 } as const;

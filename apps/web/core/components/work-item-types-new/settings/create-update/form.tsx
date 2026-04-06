@@ -13,16 +13,22 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { InfoIcon } from "@plane/propel/icons";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkItemType } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { cn } from "@plane/utils";
+// plane web imports
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+// types
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { IssueTypeIconPicker } from "../common/icon-picker";
+import { WorkItemTypeCreateUpdateLevelSelect } from "./level-select";
 import type { WorkItemTypeCreateUpdatePermissions } from "./types";
 
 type Props = {
@@ -39,6 +45,14 @@ export const CreateOrUpdateWorkItemTypeForm = observer(function CreateOrUpdateWo
   // state
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [errors, setErrors] = useState<{ name?: string }>({});
+  // params
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const isWorkItemTypeHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY", false);
+  const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
+    EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
+  );
   // plane hooks
   const { t } = useTranslation();
 
@@ -83,43 +97,47 @@ export const CreateOrUpdateWorkItemTypeForm = observer(function CreateOrUpdateWo
             }}
             size="xl"
           />
-          <div className="space-y-1 flew-grow w-full">
-            <div className={cn("relative w-full my-1")}>
-              <Input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                placeholder={t("work_item_types.create_update.form.name.placeholder")}
-                className={cn("w-full resize-none text-body-sm-regular border-subtle-1", {
-                  "border-danger-strong": errors?.name,
-                })}
-                hasError={Boolean(errors.name)}
-                tabIndex={1}
-                autoFocus
-                disabled={permissions?.canChangeName === false}
-              />
-              {errors?.name && (
-                <Tooltip tooltipContent={errors?.name} position="bottom">
-                  <div className="shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 flex justify-center items-center text-danger-primary absolute top-1/2 -translate-y-1/2 right-0">
-                    <InfoIcon height={14} width={14} />
-                  </div>
-                </Tooltip>
-              )}
-            </div>
+          <div className="relative grow w-full">
+            <Input
+              id="name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              placeholder={t("work_item_types.create_update.form.name.placeholder")}
+              className={cn("w-full resize-none text-body-sm-regular border-subtle-1", {
+                "border-danger-strong": errors?.name,
+              })}
+              hasError={Boolean(errors.name)}
+              tabIndex={1}
+              autoFocus
+              disabled={permissions?.canChangeName === false}
+            />
+            {errors?.name && (
+              <Tooltip tooltipContent={errors?.name} position="bottom">
+                <div className="shrink-0 size-3.5 overflow-hidden mr-3 flex justify-center items-center text-danger-primary absolute top-1/2 -translate-y-1/2 right-0">
+                  <InfoIcon height={14} width={14} />
+                </div>
+              </Tooltip>
+            )}
           </div>
         </div>
-        <div className="space-y-0.5">
-          <TextArea
-            id="description"
-            name="description"
-            value={formData.description ?? undefined}
-            onChange={(e) => handleFormDataChange("description", e.target.value)}
-            placeholder={t("work_item_types.create_update.form.description.placeholder")}
-            className="resize-none min-h-24 text-body-xs-regular"
-            tabIndex={2}
-          />
-        </div>
+        <TextArea
+          id="description"
+          name="description"
+          value={formData.description ?? undefined}
+          onChange={(e) => handleFormDataChange("description", e.target.value)}
+          placeholder={t("work_item_types.create_update.form.description.placeholder")}
+          className="resize-none min-h-24 text-body-xs-regular"
+          tabIndex={2}
+        />
+        {isWorkItemTypeHierarchyFlagAvailable && isWorkItemHierarchyFeatureEnabled && (
+          <div className="mt-4">
+            <WorkItemTypeCreateUpdateLevelSelect
+              value={formData.level}
+              onChange={(value) => handleFormDataChange("level", value)}
+            />
+          </div>
+        )}
       </div>
       <div className="mx-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
         <div className="flex items-center justify-end gap-2">

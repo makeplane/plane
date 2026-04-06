@@ -7071,7 +7071,22 @@ modüller arşivlenebilir.`,
       add_level_button: "Hiyerarşi seviyesi ekle",
       empty_level_placeholder: "{level}. seviyeye bir iş öğesi türü ekleyin",
       empty_level_unauthorized: "Bu seviyede iş öğesi türü bulunamadı.",
-      zero_level_description: "Varsayılan olarak, tüm iş öğesi türleri bir hiyerarşiye atanana kadar seviye 0'dadır.",
+      quick_actions: {
+        set_as_default: {
+          label: "Varsayılan olarak ayarla",
+          toast: {
+            loading: "Varsayılan olarak ayarlanıyor...",
+            success: {
+              title: "Başarılı!",
+              message: "{level}. hiyerarşi seviyesi varsayılan olarak başarıyla ayarlandı.",
+            },
+            error: {
+              title: "Hata!",
+              message: "{level}. hiyerarşi seviyesi varsayılan olarak ayarlanamadı. Lütfen tekrar deneyin.",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "Hiyerarşi seviyesi ekle",
@@ -7102,6 +7117,9 @@ modüller arşivlenebilir.`,
         title: "Hata!",
         message: "İş öğesi türü, hiyerarşi kurallarını bozduğundan güncellenemiyor.",
       },
+    },
+    work_item_type_modal: {
+      level: "Hiyerarşi seviyesi",
     },
   },
 } as const;

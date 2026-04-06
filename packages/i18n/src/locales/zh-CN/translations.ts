@@ -6835,7 +6835,22 @@ export default {
       add_level_button: "添加层级",
       empty_level_placeholder: "向第 {level} 层添加工作项类型",
       empty_level_unauthorized: "此层级中未找到工作项类型。",
-      zero_level_description: "默认情况下，所有工作项类型在分配到层级结构之前均处于第 0 层。",
+      quick_actions: {
+        set_as_default: {
+          label: "设为默认",
+          toast: {
+            loading: "正在设为默认...",
+            success: {
+              title: "成功！",
+              message: "层级 {level} 已成功设为默认。",
+            },
+            error: {
+              title: "错误！",
+              message: "无法将层级 {level} 设为默认，请重试。",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "添加层级",
@@ -6865,6 +6880,9 @@ export default {
         title: "错误！",
         message: "工作项类型因违反层级规则而无法更新。",
       },
+    },
+    work_item_type_modal: {
+      level: "层级",
     },
   },
 } as const;

@@ -7005,7 +7005,22 @@ export default {
       add_level_button: "階層レベルを追加",
       empty_level_placeholder: "レベル {level} に作業アイテムタイプを追加",
       empty_level_unauthorized: "このレベルに作業アイテムタイプが見つかりません。",
-      zero_level_description: "デフォルトでは、すべての作業アイテムタイプは階層に割り当てられるまでレベル0にあります。",
+      quick_actions: {
+        set_as_default: {
+          label: "デフォルトに設定",
+          toast: {
+            loading: "デフォルトに設定中...",
+            success: {
+              title: "成功！",
+              message: "階層レベル {level} がデフォルトとして設定されました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "階層レベル {level} をデフォルトに設定できませんでした。もう一度お試しください。",
+            },
+          },
+        },
+      },
     },
     add_level_modal: {
       title: "階層レベルを追加",
@@ -7035,6 +7050,9 @@ export default {
         title: "エラー！",
         message: "作業アイテムタイプは階層ルールに違反するため更新できません。",
       },
+    },
+    work_item_type_modal: {
+      level: "階層レベル",
     },
   },
 } as const;
