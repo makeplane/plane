@@ -197,11 +197,29 @@ backend:test:shell:
 # =============================================================================
 # STAGE 3: BUILD (3 dynamic images only: web, admin, api)
 # Images exported as tar.gz because servers cannot pull from any registry
+#
+# Two variants per service (mirrors test job pattern):
+#   :docker — Docker executor + DinD (gitlab.com, IS_AIRGAPPED=false)
+#   :shell  — Shell executor, docker runs on host (air-gapped, IS_AIRGAPPED=true)
 # =============================================================================
 
-build:web:
+# ─── Build Template (Docker Executor + DinD) ──────────────────────────────────
+
+.build_docker_base:
   stage: build
   image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    # DinD service hostname — must match the service alias
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+
+# ── Web ───────────────────────────────────────────────────────────────────────
+
+# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
+build:web:docker:
+  extends: .build_docker_base
   script:
     - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
     - mkdir -p dist
@@ -211,11 +229,32 @@ build:web:
       - dist/plane-frontend-*.tar.gz
     expire_in: 1 day
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview"
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "false"
 
-build:admin:
+# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
+# Docker runs on host — no DinD, no daemon connection needed
+build:web:shell:
   stage: build
-  image: docker:latest
+  script:
+    - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
+    - mkdir -p dist
+    - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
+  artifacts:
+    paths:
+      - dist/plane-frontend-*.tar.gz
+    expire_in: 1 day
+  rules:
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "true"
+
+# ── Admin ─────────────────────────────────────────────────────────────────────
+
+# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
+build:admin:docker:
+  extends: .build_docker_base
   script:
     - docker build -t makeplane/plane-admin:$IMAGE_TAG -f apps/admin/Dockerfile.admin .
     - mkdir -p dist
@@ -225,11 +264,31 @@ build:admin:
       - dist/plane-admin-*.tar.gz
     expire_in: 1 day
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview"
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "false"
 
-build:api:
+# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
+build:admin:shell:
   stage: build
-  image: docker:latest
+  script:
+    - docker build -t makeplane/plane-admin:$IMAGE_TAG -f apps/admin/Dockerfile.admin .
+    - mkdir -p dist
+    - docker save makeplane/plane-admin:$IMAGE_TAG | gzip > dist/plane-admin-$IMAGE_TAG.tar.gz
+  artifacts:
+    paths:
+      - dist/plane-admin-*.tar.gz
+    expire_in: 1 day
+  rules:
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "true"
+
+# ── API ───────────────────────────────────────────────────────────────────────
+
+# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
+build:api:docker:
+  extends: .build_docker_base
   script:
     # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
     - docker build -t makeplane/plane-backend:$IMAGE_TAG -f apps/api/Dockerfile.api ./apps/api
@@ -240,7 +299,26 @@ build:api:
       - dist/plane-backend-*.tar.gz
     expire_in: 1 day
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview"
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "false"
+
+# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
+build:api:shell:
+  stage: build
+  script:
+    # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
+    - docker build -t makeplane/plane-backend:$IMAGE_TAG -f apps/api/Dockerfile.api ./apps/api
+    - mkdir -p dist
+    - docker save makeplane/plane-backend:$IMAGE_TAG | gzip > dist/plane-backend-$IMAGE_TAG.tar.gz
+  artifacts:
+    paths:
+      - dist/plane-backend-*.tar.gz
+    expire_in: 1 day
+  rules:
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "true"
 
 # =============================================================================
 # STAGE 4: DEPLOY
