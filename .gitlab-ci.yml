@@ -354,7 +354,7 @@ deploy:test:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H $TEST_SERVER >> ~/.ssh/known_hosts
   script:
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "mkdir -p /tmp/plane-deploy"
+    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$SSH_PASSWORD_TEST" scp dist/*.tar.gz dist/.shb-version $SSH_USER_TEST@$TEST_SERVER:/tmp/plane-deploy/
     - sshpass -p "$SSH_PASSWORD_TEST" scp scripts/ci-deploy.sh $SSH_USER_TEST@$TEST_SERVER:/tmp/ci-deploy.sh
     - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
@@ -375,7 +375,7 @@ deploy:production:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
   script:
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "mkdir -p /tmp/plane-deploy"
+    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$SSH_PASSWORD_PROD" scp dist/*.tar.gz dist/.shb-version $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
     - sshpass -p "$SSH_PASSWORD_PROD" scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
     - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
@@ -399,7 +399,7 @@ deploy:external-test:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
   script:
-    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "mkdir -p /tmp/plane-deploy"
+    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$VPS_PASSWORD" scp dist/*.tar.gz dist/.shb-version $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
     - sshpass -p "$VPS_PASSWORD" scp scripts/ci-deploy.sh $VPS_USER@$VPS_HOST:/tmp/ci-deploy.sh
     # VPS uses home-based path (no sudo); internal servers use default /root/Documents/... path
