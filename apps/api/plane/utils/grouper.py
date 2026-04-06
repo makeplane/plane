@@ -126,10 +126,9 @@ def issue_on_results(
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
         "issue_module__module_id": "module_ids",
-        "release_work_items__release_id": "release_ids",
     }
 
-    original_list: List[str] = ["assignee_ids", "label_ids", "module_ids", "release_ids"]
+    original_list: List[str] = ["assignee_ids", "label_ids", "module_ids"]
 
     required_fields: List[str] = [
         "id",
