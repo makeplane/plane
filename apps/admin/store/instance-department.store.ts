@@ -274,7 +274,7 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
     try {
       const updated = await this.service.linkTaskCategories(id, taskCategoryIds);
       runInAction(() => {
-        set(this.departments, id, updated);
+        this.departments[id] = updated;
       });
       return updated;
     } catch (error) {

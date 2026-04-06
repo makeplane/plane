@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const DepartmentLinkTaskCategories = observer(function DepartmentLinkTaskCategories({ dept }: Props) {
-  const { linkTaskCategories } = useInstanceDepartment();
+  const { linkTaskCategories, departments } = useInstanceDepartment();
   const { mainCategories, mainCategoryIds } = useInstanceTaskCategory();
 
   const [open, setOpen] = useState(false);
@@ -24,10 +24,12 @@ export const DepartmentLinkTaskCategories = observer(function DepartmentLinkTask
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
 
-  const linkedCount = dept.task_category_ids?.length ?? 0;
+  // Read from observable store so MobX reactivity triggers re-render on update
+  const liveDept = departments[dept.id] ?? dept;
+  const linkedCount = liveDept.task_category_ids?.length ?? 0;
 
   const handleOpen = () => {
-    setSelectedIds(new Set(dept.task_category_ids ?? []));
+    setSelectedIds(new Set(liveDept.task_category_ids ?? []));
     setSearch("");
     setOpen(true);
   };
