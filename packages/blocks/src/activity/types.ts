@@ -21,6 +21,7 @@ export type ActivityTab = {
 };
 
 export type ReactionChip = {
+  id: string;
   emoji: ReactNode;
   count: number;
   isActive?: boolean;

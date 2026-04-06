@@ -14,8 +14,8 @@
 import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { CircleDot } from "lucide-react";
 import { Button } from "@plane/propel/button";
+import { DependencyPropertyIcon } from "@plane/propel/icons";
 import { EIssueServiceType } from "@plane/types";
 // components
 import {
@@ -55,7 +55,7 @@ export const EpicDependenciesOverviewRoot = observer(function EpicDependenciesOv
         <SectionEmptyState
           heading="No dependencies yet"
           subHeading="Start adding dependencies to manage and track the progress of the epic."
-          icon={<CircleDot className="size-4" />}
+          icon={<DependencyPropertyIcon className="size-4" />}
           actionElement={
             <DependencyActionButton
               issueId={epicId}

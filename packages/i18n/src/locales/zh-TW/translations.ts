@@ -252,6 +252,9 @@ export default {
   activity_empty_state: {
     no_activity: "尚無活動",
     no_transitions: "尚無轉換",
+    no_comments: "尚無評論",
+    no_worklogs: "尚無工時紀錄",
+    no_history: "尚無歷史紀錄",
   },
   appearance: "外觀",
   notifications: "通知",
@@ -781,6 +784,8 @@ export default {
     project_id: "專案 ID",
     project_timezone: "專案時區",
     created_on: "建立於",
+    updated_on: "更新於",
+    completed_on: "Completed on",
     update_project: "更新專案",
     identifier_already_exists: "識別碼已存在",
     add_more: "新增更多",
@@ -992,6 +997,9 @@ export default {
     templates: "模板",
     members_and_teamspaces: "成員和團隊空間",
     open_in_full_screen: "以全螢幕開啟{page}",
+    details: "詳情",
+    project_structure: "專案結構",
+    custom_properties: "自訂屬性",
   },
   chart: {
     x_axis: "X 軸",

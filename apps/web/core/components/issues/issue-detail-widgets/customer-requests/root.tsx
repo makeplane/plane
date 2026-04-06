@@ -13,30 +13,39 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { useCustomers } from "@/plane-web/hooks/store";
 // local imports
-import { CustomerRequestsCollapsibleTitle } from "./title";
+import { CustomerRequestActionButton } from "./quick-action-button";
 import { WorkItemRequestCollapsibleContent } from "./content";
 
-type TProps = {
+type Props = {
   workspaceSlug: string;
   workItemId: string;
   disabled: boolean;
 };
 
-export const CustomerRequestsCollapsible = observer(function CustomerRequestsCollapsible(props: TProps) {
+export const CustomerRequestsCollapsible = observer(function CustomerRequestsCollapsible(props: Props) {
   const { workspaceSlug, workItemId, disabled } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
-  const { openWidgets, toggleOpenWidget } = useIssueDetail();
+  const {
+    openWidgets,
+    toggleOpenWidget,
+    issue: { getIssueById },
+  } = useIssueDetail();
   const {
     workItems: { fetchWorkItemRequests },
   } = useCustomers();
 
   // derived values
   const isCollapsibleOpen = openWidgets.includes("customer_requests");
+  const issue = getIssueById(workItemId);
+  const customerRequestCount = issue?.customer_request_ids?.length ?? 0;
 
   useSWR(
     workspaceSlug && workItemId ? `WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}` : null,
@@ -45,25 +54,18 @@ export const CustomerRequestsCollapsible = observer(function CustomerRequestsCol
   );
 
   return (
-    <Collapsible
-      open={isCollapsibleOpen}
-      onOpenChange={(open) => {
-        if (open !== isCollapsibleOpen) {
-          toggleOpenWidget("customer_requests");
-        }
-      }}
+    <EntityDetailWidgetSection
+      title={t("customers.requests.label", { count: 2 })}
+      count={customerRequestCount}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleOpenWidget("customer_requests")}
+      actionElement={
+        !disabled ? (
+          <CustomerRequestActionButton workspaceSlug={workspaceSlug} workItemId={workItemId} disabled={disabled} />
+        ) : undefined
+      }
     >
-      <CollapsibleTrigger className="w-full">
-        <CustomerRequestsCollapsibleTitle
-          workspaceSlug={workspaceSlug}
-          isOpen={isCollapsibleOpen}
-          workItemId={workItemId}
-          disabled={disabled}
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <WorkItemRequestCollapsibleContent workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
-      </CollapsibleContent>
-    </Collapsible>
+      <WorkItemRequestCollapsibleContent workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
+    </EntityDetailWidgetSection>
   );
 });

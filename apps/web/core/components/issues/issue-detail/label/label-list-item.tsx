@@ -38,16 +38,18 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
   const handleLabel = async () => {
     if (values && !disabled) {
       const currentLabels = values.filter((_labelId) => _labelId !== labelId);
-      await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
+      await labelOperations.updateIssue(workspaceSlug, projectId, issueId, {
+        label_ids: currentLabels,
+      });
     }
   };
 
   if (!label) return <></>;
   return (
-    <Button variant="tertiary" size="sm" key={labelId} onClick={handleLabel} disabled={disabled}>
-      <LabelFilledIcon className="size-3" color={label.color ?? "#000000"} />
-      <span className="text-body-xs-regular">{label.name}</span>
-      {!disabled && <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger-primary" />}
+    <Button variant="tertiary" size="sm" key={labelId} onClick={handleLabel} disabled={disabled} className="truncate">
+      <LabelFilledIcon className="size-3 shrink-0" color={label.color ?? "#000000"} />
+      <span className="text-body-xs-regular truncate">{label.name}</span>
+      {!disabled && <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger-primary shrink-0" />}
     </Button>
   );
 });

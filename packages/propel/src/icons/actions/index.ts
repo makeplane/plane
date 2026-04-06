@@ -17,6 +17,8 @@ export * from "./add-workitem-icon";
 export * from "./add-reaction-icon";
 export * from "./check-icon";
 export * from "./close-icon";
+export * from "./convert-to-epic-icon";
+export * from "./convert-to-workitem-icon";
 export * from "./filter-icon";
 export * from "./filter-applied-icon";
 export * from "./copy-icon";

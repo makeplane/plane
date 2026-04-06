@@ -16,6 +16,7 @@
   },
   "exports": {
     "./activity": "./dist/activity/index.js",
+    "./common": "./dist/common/index.js",
     "./entity-detail": "./dist/entity-detail/index.js",
     "./utils": "./dist/utils/index.js",
     "./package.json": "./package.json",

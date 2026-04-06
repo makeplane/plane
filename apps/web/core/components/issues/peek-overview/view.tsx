@@ -213,7 +213,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
               {/* content */}
               <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
                 {["side-peek", "modal"].includes(peekMode) ? (
-                  <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
+                  <div className="relative flex flex-col px-8 py-5">
                     <PeekOverviewIssueDetails
                       editorRef={editorRef}
                       workspaceSlug={workspaceSlug}
@@ -226,16 +226,14 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       setIsSubmitting={(value) => setIsSubmitting(value)}
                     />
 
-                    <div className="py-2">
-                      <IssueDetailWidgets
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issueId}
-                        disabled={disabled || is_archived}
-                        issueServiceType={EIssueServiceType.ISSUES}
-                        permissions={permissions}
-                      />
-                    </div>
+                    <IssueDetailWidgets
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      issueId={issueId}
+                      disabled={disabled || is_archived}
+                      issueServiceType={EIssueServiceType.ISSUES}
+                      permissions={permissions}
+                    />
 
                     <PeekOverviewProperties
                       workspaceSlug={workspaceSlug}

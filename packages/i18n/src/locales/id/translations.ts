@@ -258,6 +258,9 @@ export default {
   activity_empty_state: {
     no_activity: "Belum ada aktivitas",
     no_transitions: "Belum ada transisi",
+    no_comments: "Belum ada komentar",
+    no_worklogs: "Belum ada catatan kerja",
+    no_history: "Belum ada riwayat",
   },
   appearance: "Tampilan",
   notifications: "Notifikasi",
@@ -799,6 +802,8 @@ export default {
     project_id: "ID proyek",
     project_timezone: "Zona waktu proyek",
     created_on: "Dibuat pada",
+    updated_on: "Diperbarui pada",
+    completed_on: "Completed on",
     update_project: "Perbarui proyek",
     identifier_already_exists: "Pengidentifikasi sudah ada",
     add_more: "Tambah lebih banyak",
@@ -1010,6 +1015,9 @@ export default {
     templates: "Templat",
     members_and_teamspaces: "Anggota & Teamspaces",
     open_in_full_screen: "Buka {page} dalam layar penuh",
+    details: "Detail",
+    project_structure: "Struktur proyek",
+    custom_properties: "Properti kustom",
   },
   chart: {
     x_axis: "Sumbu-X",

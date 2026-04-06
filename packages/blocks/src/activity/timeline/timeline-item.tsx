@@ -38,9 +38,9 @@ export function TimelineItem(props: TimelineItemProps) {
       )}
     >
       {showConnector && <TimelineConnectorLine />}
-      <TimelineItemIcon className="relative z-[4]">{icon}</TimelineItemIcon>
+      <TimelineItemIcon className="relative text-icon-tertiary z-[4]">{icon}</TimelineItemIcon>
       <div className="flex min-w-0 items-center gap-2">
-        <div className="flex items-center gap-1.5">{children}</div>
+        <div className="flex items-center gap-1.5 truncate">{children}</div>
         {timestamp && <TimelineTimestamp timestamp={timestamp} />}
       </div>
     </div>

@@ -90,7 +90,13 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
   const customButtonElement = customButton ? <>{customButton}</> : <PlusIcon className="h-4 w-4" />;
 
   return (
-    <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>
+    <CustomMenu
+      className="flex items-center"
+      customButton={customButtonElement}
+      placement="bottom-start"
+      disabled={disabled}
+      closeOnSelect
+    >
       {optionItems.map((item, index) => (
         <CustomMenu.MenuItem
           key={index}

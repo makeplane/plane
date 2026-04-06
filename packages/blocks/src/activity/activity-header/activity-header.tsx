@@ -26,9 +26,9 @@ export function ActivityHeader(props: ActivityHeaderProps) {
   const { tabs, activeTab, onTabChange, actionsElement } = props;
 
   return (
-    <div className="flex items-start gap-px border-b border-subtle">
+    <div className="flex items-center gap-px border-b border-subtle">
       {/* Tab group */}
-      <div role="tablist" className="flex flex-1 items-start gap-px min-w-0 overflow-x-auto">
+      <div role="tablist" className="flex flex-1 items-center gap-px min-w-0 overflow-x-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           return (
@@ -47,7 +47,12 @@ export function ActivityHeader(props: ActivityHeaderProps) {
               >
                 {tab.label}
               </button>
-              <div className={cn("h-[3px] w-full rounded-full", isActive ? "bg-accent-primary" : "bg-transparent")} />
+              <div
+                className={cn(
+                  "h-0.5 w-full rounded-t-sm",
+                  isActive ? "bg-(--text-color-icon-primary)" : "bg-transparent"
+                )}
+              />
             </div>
           );
         })}

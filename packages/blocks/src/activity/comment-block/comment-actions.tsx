@@ -17,7 +17,7 @@ import { cn } from "@plane/utils";
 import { SmilePlus } from "lucide-react";
 import type { ReactionChip } from "../types";
 
-type CommentActionsProps = {
+export type CommentActionsProps = {
   onReply?: () => void;
   reactions?: ReactionChip[];
   onAddReaction?: () => void;
@@ -34,9 +34,10 @@ export function CommentActions(props: CommentActionsProps) {
         </Button>
       )}
       {onReply && (reactions?.length || onAddReaction) && <div className="h-3 border-l border-subtle" />}
-      {reactions?.map((reaction, index) => (
+      {reactions?.map((reaction) => (
         <button
-          key={index}
+          key={reaction.id}
+          aria-label={`React with ${reaction.id}`}
           type="button"
           className={cn(
             "flex h-5 items-center gap-1 rounded-sm bg-layer-3 px-1.5 text-caption-md-medium text-secondary",

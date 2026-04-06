@@ -117,7 +117,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
       )}
       <Button
         variant="secondary"
-        className={cn("hover:bg-accent-primary/20!", isEditable && "rounded-l-none")}
+        className={cn("hover:bg-layer-transparent-hover!", isEditable && "rounded-l-none")}
         onClick={handleSubscriptionButtonClick}
         disabled={!hasPermission || loading}
         size="lg"

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { ContentOverflow } from "./content-overflow";
 
 const LONG_TEXT = Array(20)
@@ -22,7 +22,7 @@ const LONG_TEXT = Array(20)
 
 const SHORT_TEXT = "A short description that does not overflow.";
 
-const meta = {
+const meta = preview.meta({
   title: "EntityDetail/ContentOverflow",
   component: ContentOverflow,
   parameters: {
@@ -33,24 +33,21 @@ const meta = {
     showMoreLabel: "Show all",
     showLessLabel: "Show less",
   },
-} satisfies Meta<typeof ContentOverflow>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Overflowing: Story = {
+export const Overflowing = meta.story({
   args: {
     children: <div style={{ padding: 16, lineHeight: 1.6 }}>{LONG_TEXT}</div>,
   },
-};
+});
 
-export const NotOverflowing: Story = {
+export const NotOverflowing = meta.story({
   args: {
     children: <div style={{ padding: 16 }}>{SHORT_TEXT}</div>,
   },
-};
+});
 
-export const WithCustomButton: Story = {
+export const WithCustomButton = meta.story({
   args: {
     children: <div style={{ padding: 16, lineHeight: 1.6 }}>{LONG_TEXT}</div>,
     customButton: ({ toggle, isExpanded }) => (
@@ -59,11 +56,11 @@ export const WithCustomButton: Story = {
       </button>
     ),
   },
-};
+});
 
-export const Empty: Story = {
+export const Empty = meta.story({
   args: {
     children: null,
     fallback: <div style={{ padding: 16, color: "gray" }}>No content available</div>,
   },
-};
+});

@@ -23,5 +23,7 @@ export function formatFieldValue(field: string | null, value: string | undefined
     const n = Number(value);
     return Number.isNaN(n) ? value : convertMinutesToHoursMinutesString(n);
   }
+  // Capitalize first letter for priority values
+  if (field === "priority") return value.charAt(0).toUpperCase() + value.slice(1);
   return value;
 }

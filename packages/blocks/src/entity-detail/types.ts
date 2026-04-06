@@ -13,14 +13,15 @@
 
 import type { ReactNode } from "react";
 
-export type ContentOverflowProps = {
-  children: ReactNode;
-  maxHeight?: number;
-  buttonClassName?: string;
-  containerClassName?: string;
-  fallback?: ReactNode;
-  customButton?: (props: { toggle: () => void; isExpanded: boolean }) => ReactNode;
-  showMoreLabel?: string;
-  showLessLabel?: string;
-  forceExpanded?: boolean;
+// --- Shared data shapes ---
+
+export type VoterItem = {
+  id: string;
+  displayName: string;
+  avatarUrl?: string;
+};
+
+export type AuditRow = {
+  icon: (props: { className?: string }) => ReactNode;
+  text: string;
 };

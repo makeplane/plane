@@ -37,6 +37,7 @@ type IssueActivityCommentRootProps = {
   disabled?: boolean;
   sortOrder: E_SORT_ORDER;
   renderMode?: "default" | "transition";
+  activeTabKey?: string;
 };
 
 export const IssueActivityCommentRoot = observer(function IssueActivityCommentRoot(
@@ -53,9 +54,20 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     disabled,
     sortOrder,
     renderMode = "default",
+    activeTabKey = "all",
   } = props;
   // i18n
   const { t } = useTranslation();
+  // Map tab keys to their empty state translation keys
+  const emptyStateTitleMap: Record<string, string> = {
+    all: "activity_empty_state.no_activity",
+    activity: "activity_empty_state.no_activity",
+    comment: "activity_empty_state.no_comments",
+    worklog: "activity_empty_state.no_worklogs",
+    transition: "activity_empty_state.no_transitions",
+    history: "activity_empty_state.no_history",
+  };
+  const emptyStateTitle = t(emptyStateTitleMap[activeTabKey] ?? "activity_empty_state.no_activity");
   // store hooks
   const {
     activity: { getActivityAndCommentsByIssueId, getActivityById },
@@ -66,15 +78,8 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
   if (!activityAndComments) return <IssueActivityLoader />;
   if (activityAndComments.length <= 0) {
     return (
-      <div className="py-5">
-        <EmptyStateCompact
-          assetKey="unknown"
-          title={
-            renderMode === "transition"
-              ? t("activity_empty_state.no_transitions")
-              : t("activity_empty_state.no_activity")
-          }
-        />
+      <div className="py-6">
+        <EmptyStateCompact assetKey="unknown" title={emptyStateTitle} />
       </div>
     );
   }
@@ -94,15 +99,8 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
 
   if (displayActivities.length <= 0) {
     return (
-      <div className="py-5">
-        <EmptyStateCompact
-          assetKey="unknown"
-          title={
-            renderMode === "transition"
-              ? t("activity_empty_state.no_transitions")
-              : t("activity_empty_state.no_activity")
-          }
-        />
+      <div className="py-6">
+        <EmptyStateCompact assetKey="unknown" title={emptyStateTitle} />
       </div>
     );
   }

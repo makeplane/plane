@@ -66,7 +66,7 @@ export const DownloadNestedPagesModal = observer(function DownloadNestedPagesMod
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleDownload} loading={isDownloading}>
+          <Button variant="primary" onClick={() => void handleDownload()} loading={isDownloading}>
             {isDownloading ? "Downloading" : "Download"}
           </Button>
         </div>

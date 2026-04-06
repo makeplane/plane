@@ -150,7 +150,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     [setIsSubmitting]
   );
 
-  if (disabled) return <div className="text-20 font-medium whitespace-pre-line">{title}</div>;
+  if (disabled) return <div className="text-h3-semibold whitespace-pre-line">{title}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -158,7 +158,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         <TextArea
           id="title-input"
           className={cn(
-            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
+            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-h3-semibold outline-none ring-0",
             {
               "ring-1 ring-danger-strong mx-2.5": title?.length === 0,
             },

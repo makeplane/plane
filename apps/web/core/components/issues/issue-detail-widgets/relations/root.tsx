@@ -11,17 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// Plane-web
+import { useCustomRelationOptions } from "@/components/relations";
 // local imports
 import { RelationsCollapsibleContent } from "./content";
-import { RelationsCollapsibleTitle } from "./title";
+import { RelationActionButton } from "./quick-action-button";
 
 type Props = {
   workspaceSlug: string;
@@ -32,36 +34,38 @@ type Props = {
 
 export const RelationsCollapsible = observer(function RelationsCollapsible(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
-  const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
+  const {
+    openWidgets,
+    toggleOpenWidget,
+    relation: { getRelationCountByIssueId },
+  } = useIssueDetail(issueServiceType);
+
+  const RELATION_OPTIONS = useCustomRelationOptions();
   // derived values
   const isCollapsibleOpen = openWidgets.includes("relations");
+  const relationsCount = getRelationCountByIssueId(issueId, RELATION_OPTIONS);
 
   return (
-    <Collapsible
-      open={isCollapsibleOpen}
-      onOpenChange={(open) => {
-        if (open !== isCollapsibleOpen) {
-          toggleOpenWidget("relations");
-        }
-      }}
+    <EntityDetailWidgetSection
+      title={t("common.relations")}
+      count={relationsCount}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleOpenWidget("relations")}
+      actionElement={
+        !disabled ? (
+          <RelationActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
+        ) : undefined
+      }
     >
-      <CollapsibleTrigger className="w-full">
-        <RelationsCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <RelationsCollapsibleContent
-          workspaceSlug={workspaceSlug}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleContent>
-    </Collapsible>
+      <RelationsCollapsibleContent
+        workspaceSlug={workspaceSlug}
+        issueId={issueId}
+        disabled={disabled}
+        issueServiceType={issueServiceType}
+      />
+    </EntityDetailWidgetSection>
   );
 });

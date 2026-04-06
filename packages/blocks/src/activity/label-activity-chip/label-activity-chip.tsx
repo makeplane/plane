@@ -11,27 +11,5 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Tooltip } from "@plane/propel/tooltip";
-
-export type LabelActivityChipProps = {
-  name?: string;
-  color?: string;
-};
-
-export function LabelActivityChip(props: LabelActivityChipProps) {
-  const { name, color } = props;
-  return (
-    <Tooltip tooltipContent={name}>
-      <span className="inline-flex w-min max-w-32 cursor-default flex-shrink-0 items-center gap-2 truncate whitespace-nowrap rounded-full border border-strong px-2 py-0.5 text-11">
-        <span
-          className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: color ?? "rgb(var(--txt-icon-primary))",
-          }}
-          aria-hidden="true"
-        />
-        <span className="flex-shrink truncate font-medium text-primary">{name}</span>
-      </span>
-    </Tooltip>
-  );
-}
+export { LabelChip as LabelActivityChip } from "../../common/label-chip";
+export type { LabelChipProps as LabelActivityChipProps } from "../../common/label-chip";

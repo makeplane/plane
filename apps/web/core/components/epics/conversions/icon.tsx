@@ -11,14 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React from "react";
-import { ArrowRight } from "lucide-react";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { EpicIcon, LayersIcon } from "@plane/propel/icons";
+import { ConvertToEpicIcon, ConvertToWorkitemIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemConversionType } from "@plane/types";
+import { IconButton } from "@plane/propel/icon-button";
 
 interface ConvertWorkItemIconProps {
   handleOnClick: () => void;
@@ -29,20 +27,20 @@ interface ConvertWorkItemIconProps {
 export function ConvertWorkItemIcon(props: ConvertWorkItemIconProps) {
   const { handleOnClick, conversionType, disabled = false } = props;
   // derived values
-  const IconComponent = conversionType === EWorkItemConversionType.WORK_ITEM ? LayersIcon : EpicIcon;
+  const IconComponent =
+    conversionType === EWorkItemConversionType.WORK_ITEM ? ConvertToWorkitemIcon : ConvertToEpicIcon;
   const tooltipContent =
     conversionType === EWorkItemConversionType.WORK_ITEM ? "Convert to Work item" : "Convert to Epic";
 
   return (
     <Tooltip tooltipContent={tooltipContent}>
-      <Button
-        size="lg"
+      <IconButton
         variant="secondary"
         onClick={handleOnClick}
         disabled={disabled}
+        size="lg"
+        icon={IconComponent}
         aria-label={tooltipContent}
-        prependIcon={<ArrowRight />}
-        appendIcon={<IconComponent />}
       />
     </Tooltip>
   );

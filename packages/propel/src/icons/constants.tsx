@@ -111,6 +111,7 @@ export const PropertyIconsMap = [
     icon: <Icon name="property.overdue-date" />,
     title: "OverdueDatePropertyIcon",
   },
+  { icon: <Icon name="property.dependency" />, title: "DependencyPropertyIcon" },
   { icon: <Icon name="property.parent" />, title: "ParentPropertyIcon" },
   { icon: <Icon name="property.priority" />, title: "PriorityPropertyIcon" },
   { icon: <Icon name="property.relates-to" />, title: "RelatesToPropertyIcon" },

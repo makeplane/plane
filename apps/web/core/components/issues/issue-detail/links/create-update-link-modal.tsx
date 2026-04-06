@@ -118,7 +118,7 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
               )}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-secondary">
+              <label htmlFor="title" className="flex items-center gap-2 mb-2 text-secondary">
                 {t("common.display_title")}
                 <span className="text-caption-xs-regular block">{t("common.optional")}</span>
               </label>

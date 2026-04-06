@@ -11,16 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import type { TIssue, TIssueServiceType } from "@plane/types";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+import { EIssueServiceType } from "@plane/types";
+import { CircularProgressIndicator } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { SubIssuesCollapsibleContent } from "./content";
-import { SubIssuesCollapsibleTitle } from "./title";
+import { SubWorkItemTitleActions } from "./title-actions";
 
 type Props = {
   workspaceSlug: string;
@@ -44,37 +46,54 @@ type Props = {
 
 export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props: Props) {
   const { workspaceSlug, projectId, issueId, permissions, issueServiceType } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
-  const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
+  const {
+    openWidgets,
+    toggleOpenWidget,
+    subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
+  } = useIssueDetail(issueServiceType);
   // derived values
   const isCollapsibleOpen = openWidgets.includes("sub-work-items");
+  const subIssuesDistribution = stateDistributionByIssueId(issueId);
+  const subIssues = subIssuesByIssueId(issueId);
+  const completedCount = subIssuesDistribution?.completed?.length ?? 0;
+  const totalCount = subIssues?.length ?? 0;
+  const percentage = completedCount && totalCount ? (completedCount / totalCount) * 100 : 0;
+
+  if (!subIssues) return null;
 
   return (
-    <Collapsible
-      open={isCollapsibleOpen}
-      onOpenChange={(open) => {
-        if (open !== isCollapsibleOpen) {
-          toggleOpenWidget("sub-work-items");
-        }
-      }}
+    <EntityDetailWidgetSection
+      title={issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}
+      count={totalCount}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleOpenWidget("sub-work-items")}
+      actionElement={
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 text-tertiary text-13">
+            <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
+            <span>
+              {completedCount}/{totalCount} {t("common.done")}
+            </span>
+          </div>
+          <SubWorkItemTitleActions
+            projectId={projectId}
+            parentId={issueId}
+            disabled={!permissions.getCanAdd(projectId, issueId)}
+            issueServiceType={issueServiceType}
+          />
+        </div>
+      }
     >
-      <CollapsibleTrigger className="w-full">
-        <SubIssuesCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          parentIssueId={issueId}
-          canAdd={permissions.getCanAdd(projectId, issueId)}
-          projectId={projectId}
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <SubIssuesCollapsibleContent
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          parentIssueId={issueId}
-          permissions={permissions}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleContent>
-    </Collapsible>
+      <SubIssuesCollapsibleContent
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        parentIssueId={issueId}
+        permissions={permissions}
+        issueServiceType={issueServiceType}
+      />
+    </EntityDetailWidgetSection>
   );
 });

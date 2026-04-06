@@ -65,7 +65,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
       disabled={disabled}
       closeOnSelect
     >
-      <p className="text-11 text-tertiary font-medium mb-1">{t("description_versions.previously_edited_by")}</p>
+      <p className="text-body-xs-regular text-tertiary mb-1">{t("description_versions.previously_edited_by")}</p>
       {versions?.map((version) => (
         <DescriptionVersionsDropdownItem key={version.id} onClick={onVersionClick} version={version} />
       ))}

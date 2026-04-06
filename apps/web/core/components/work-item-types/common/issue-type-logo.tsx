@@ -12,10 +12,11 @@
  */
 
 // plane imports
+import { Badge } from "@plane/propel/badge";
 import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
 import { EpicIcon, LayersIcon } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
-import { cn, generateIconColors, truncateProjectIdentifierForDisplay } from "@plane/utils";
+import { generateIconColors, truncateProjectIdentifierForDisplay } from "@plane/utils";
 
 export type TIssueTypeLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -64,21 +65,12 @@ export function IssueTypeLogo(props: Props) {
 
   return (
     <>
-      <span
+      <Badge
+        size="base"
+        color={isEpic ? "transparent" : background}
         style={{
-          height: containerSizeMap[size],
-          minWidth: containerSizeMap[size],
           backgroundColor: isEpic ? "transparent" : background,
         }}
-        className={cn(
-          "shrink-0 flex items-center justify-center gap-2 rounded-sm bg-layer-1",
-          {
-            "bg-transparent": isEpic,
-            "px-2": !isEpic && showWorkItemTypeName,
-          },
-
-          containerClassName
-        )}
       >
         {isEpic ? (
           <EpicIcon
@@ -107,11 +99,11 @@ export function IssueTypeLogo(props: Props) {
           )
         )}
         {!isEpic && showWorkItemTypeName && (
-          <span className="text-body-xs-medium" style={{ color: foreground }}>
+          <span className="text-caption-md-medium" style={{ color: foreground }}>
             {truncateProjectIdentifierForDisplay(issueTypeName, 12)}
           </span>
         )}
-      </span>
+      </Badge>
     </>
   );
 }

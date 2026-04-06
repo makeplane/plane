@@ -15,7 +15,7 @@ import { Network, RotateCcw } from "lucide-react";
 import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { DEFAULT_FIELD_ICON_MAP } from "./field-icon-map";
 
-const ICON_CLASS = "h-3.5 w-3.5 text-secondary";
+const ICON_CLASS = "h-3.5 w-3.5";
 
 /**
  * Resolves the appropriate icon for an activity field.
@@ -23,7 +23,7 @@ const ICON_CLASS = "h-3.5 w-3.5 text-secondary";
 export function FieldIcon({ field, newValue }: { field: string | null; newValue?: string }) {
   switch (field) {
     case null:
-      return <WorkItemsIcon width={14} height={14} className="text-secondary" />;
+      return <WorkItemsIcon width={14} height={14} className="" />;
     case "archived_at":
       return newValue === "restore" ? <RotateCcw className={ICON_CLASS} /> : <ArchiveIcon className={ICON_CLASS} />;
     default:

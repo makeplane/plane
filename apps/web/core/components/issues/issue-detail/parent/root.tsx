@@ -11,20 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
-// component
 // ui
 import { ControlLink, CustomMenu } from "@plane/ui";
 // helpers
-import { generateWorkItemLink } from "@plane/utils";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -44,11 +43,12 @@ export type TIssueParentDetail = {
 export const IssueParentDetail = observer(function IssueParentDetail(props: TIssueParentDetail) {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   const { t } = useTranslation();
+  // state
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   // hooks
   const { getWorkItemById } = useIssues();
-  const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
@@ -57,11 +57,6 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
   const parentIssue = issue.parent_id ? getWorkItemById(issue.parent_id) : undefined;
   const isParentEpic = parentIssue?.is_epic;
   const projectIdentifier = getProjectIdentifierById(parentIssue?.project_id);
-
-  const issueParentState = getProjectStates(parentIssue?.project_id)?.find(
-    (state) => state?.id === parentIssue?.state_id
-  );
-  const stateColor = issueParentState?.color || undefined;
 
   if (!parentIssue) return <></>;
 
@@ -80,39 +75,45 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
   };
 
   return (
-    <>
-      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-strong bg-layer-1 px-2.5 py-1 text-11">
-        <ControlLink href={workItemLink} onClick={handleParentIssueClick}>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2.5">
-              <span className="block h-2 w-2 rounded-full" style={{ backgroundColor: stateColor }} />
-              {parentIssue.project_id && (
-                <IssueIdentifier
-                  projectId={parentIssue.project_id}
-                  issueId={parentIssue.id}
-                  size="xs"
-                  variant="secondary"
-                />
-              )}
-            </div>
-            <span className="truncate text-primary">{(parentIssue?.name ?? "").substring(0, 50)}</span>
-          </div>
-        </ControlLink>
+    <div className="group/parent flex items-center gap-0.5">
+      <ControlLink href={workItemLink} onClick={handleParentIssueClick} className="flex items-center gap-1.5">
+        {parentIssue.project_id && (
+          <IssueIdentifier
+            projectId={parentIssue.project_id}
+            issueId={parentIssue.id}
+            size="xs"
+            variant="secondary"
+            showWorkItemTypeName
+          />
+        )}
+      </ControlLink>
 
-        <CustomMenu ellipsis optionsClassName="p-1.5">
-          <div className="border-b border-strong text-11 font-medium text-secondary">{t("issue.sibling.label")}</div>
+      <CustomMenu
+        onOpen={() => setIsMenuOpen(true)}
+        onMenuClose={() => setIsMenuOpen(false)}
+        ellipsis
+        placement="bottom-end"
+        optionsClassName="p-1.5"
+        buttonClassName={cn("group-hover/parent:block transition-opacity", {
+          hidden: !isMenuOpen,
+        })}
+      >
+        <div className="border-b border-strong text-11 font-medium text-secondary">{t("issue.sibling.label")}</div>
 
-          <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
+        <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
 
-          <CustomMenu.MenuItem
-            onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: null })}
-            className="flex items-center gap-2 py-2 text-danger-primary"
-          >
-            <MinusCircle className="h-4 w-4" />
-            <span>{t("issue.remove.parent.label")}</span>
-          </CustomMenu.MenuItem>
-        </CustomMenu>
-      </div>
-    </>
+        <CustomMenu.MenuItem
+          onClick={() =>
+            issueOperations.update(workspaceSlug, projectId, issueId, {
+              parent_id: null,
+            })
+          }
+          className="flex items-center gap-2 py-2 text-danger-primary"
+        >
+          <MinusCircle className="h-4 w-4" />
+          <span>{t("issue.remove.parent.label")}</span>
+        </CustomMenu.MenuItem>
+      </CustomMenu>
+    </div>
   );
 });

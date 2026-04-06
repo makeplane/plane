@@ -19,14 +19,18 @@ import {
   TransitionRow,
   mapActivityToPropertyValues,
   TimelineConnectorLine,
+  TimelineTimestamp,
 } from "@plane/blocks/activity";
 import { FieldIcon, ActivityMessage, formatFieldValue, resolveActorInfo, DurationBadge } from "./helpers";
-import { Tooltip } from "@plane/propel/tooltip";
-import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type { TIssuePriorities } from "@plane/propel/icons";
+import { cn, calculateTimeAgo } from "@plane/utils";
 // hooks
 import { useActivityHighlight } from "@/hooks/use-activity-highlight";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EIconSize } from "@plane/constants";
 
 type IssueActivityTransitionItemProps = {
   activityId: string;
@@ -43,6 +47,7 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
     activity: { getActivityById, getStateDurationByActivityId },
   } = useIssueDetail();
   const { isMobile } = usePlatformOS();
+  const { getStateById } = useProjectState();
   const { highlightRef, isHighlighted } = useActivityHighlight(activityId);
 
   const activity = getActivityById(activityId);
@@ -51,10 +56,13 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
 
   const isStateTransition = activity.field === "state";
   const durationSeconds = isStateTransition ? getStateDurationByActivityId(activityId) : undefined;
-  const oldBadge = <DurationBadge seconds={durationSeconds} />;
+  const oldBadge = <DurationBadge seconds={durationSeconds} stateName={activity.old_value ?? undefined} />;
   const newBadge =
     isLast && isStateTransition ? (
-      <DurationBadge seconds={(Date.now() - new Date(activity.created_at).getTime()) / 1000} />
+      <DurationBadge
+        seconds={(Date.now() - new Date(activity.created_at).getTime()) / 1000}
+        stateName={activity.new_value ?? undefined}
+      />
     ) : undefined;
 
   const icon = <FieldIcon field={activity.field ?? null} newValue={activity.new_value} />;
@@ -69,8 +77,38 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
     />
   );
   const actor = resolveActorInfo(activity);
-  const { oldValue, newValue } = mapActivityToPropertyValues(formattedOld, formattedNew, icon, oldBadge, newBadge);
-  const showConnector = ends !== "bottom";
+
+  // For state transitions, use actual state icons with colors
+  const oldState = isStateTransition && activity.old_identifier ? getStateById(activity.old_identifier) : undefined;
+  const newState = isStateTransition && activity.new_identifier ? getStateById(activity.new_identifier) : undefined;
+  const oldStateIcon = oldState ? (
+    <StateGroupIcon stateGroup={oldState.group} color={oldState.color} size={EIconSize.MD} />
+  ) : undefined;
+  const newStateIcon = newState ? (
+    <StateGroupIcon stateGroup={newState.group} color={newState.color} size={EIconSize.MD} />
+  ) : undefined;
+
+  // For priority transitions, use PriorityIcon with correct colors
+  const isPriorityTransition = activity.field === "priority";
+  const oldPriorityIcon =
+    isPriorityTransition && activity.old_value ? (
+      <PriorityIcon priority={activity.old_value as TIssuePriorities} size={14} />
+    ) : undefined;
+  const newPriorityIcon =
+    isPriorityTransition && activity.new_value ? (
+      <PriorityIcon priority={activity.new_value as TIssuePriorities} size={14} />
+    ) : undefined;
+
+  const { oldValue, newValue } = mapActivityToPropertyValues(
+    formattedOld,
+    formattedNew,
+    icon,
+    oldBadge,
+    newBadge,
+    oldStateIcon ?? oldPriorityIcon,
+    newStateIcon ?? newPriorityIcon
+  );
+  const showConnector = ends !== "bottom" && !isLast;
 
   const actorDisplay = actor.url ? (
     <Link href={actor.url} className="hover:underline text-primary font-medium">
@@ -84,28 +122,28 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
     <div
       ref={highlightRef}
       className={cn(
-        "relative flex flex-col gap-2 border border-transparent transition-border duration-1000",
+        "relative flex flex-col gap-2 rounded-lg border border-transparent",
         ends !== "bottom" && "pb-6",
-        isHighlighted && "border-accent-strong"
+        isHighlighted && "animate-highlight-fade"
       )}
     >
       {/* Continuous connector line behind both TimelineItem and TransitionRow */}
       {showConnector && <TimelineConnectorLine />}
 
-      <TimelineItem icon={icon} showConnector={false} className="text-caption-sm-regular">
-        <span className="flex gap-1.5 w-full truncate text-secondary">
+      <TimelineItem
+        icon={icon}
+        showConnector={ends !== "bottom"}
+        connectorHeight="md"
+        className="text-caption-sm-regular pb-0"
+      >
+        <span className="flex items-center gap-1.5 w-full truncate text-secondary text-body-xs-medium">
           {actorDisplay}
-          <span> {message} </span>
-          <Tooltip
-            isMobile={isMobile}
-            tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
-          >
-            <span className="whitespace-nowrap text-tertiary">{calculateTimeAgo(activity.created_at)}</span>
-          </Tooltip>
+          <span className="truncate text-body-xs-regular text-secondary"> {message} </span>
+          {activity.created_at && <TimelineTimestamp timestamp={calculateTimeAgo(activity.created_at)} />}
         </span>
       </TimelineItem>
 
-      <TransitionRow oldValue={oldValue} newValue={newValue} />
+      <TransitionRow oldValue={oldValue} newValue={newValue} showConnector={showConnector} />
     </div>
   );
 });

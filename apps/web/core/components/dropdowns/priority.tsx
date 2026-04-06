@@ -137,7 +137,7 @@ function BorderButton(props: ButtonProps) {
           ))}
         {!hideText && (
           <span
-            className={cn("flex-grow truncate", {
+            className={cn("flex-grow truncate text-left", {
               "text-secondary": priority && priority !== "none",
               "text-placeholder": !priority || priority === "none",
             })}
@@ -229,7 +229,7 @@ function BackgroundButton(props: ButtonProps) {
           ))}
         {!hideText && (
           <span
-            className={cn("flex-grow truncate", {
+            className={cn("flex-grow truncate text-left", {
               "text-secondary": priority && priority !== "none",
               "text-placeholder": !priority || priority === "none",
             })}
@@ -314,7 +314,7 @@ function TransparentButton(props: ButtonProps) {
           ))}
         {!hideText && (
           <span
-            className={cn("flex-grow truncate", {
+            className={cn("flex-grow truncate text-left", {
               "text-secondary": priority && priority !== "none",
               "text-placeholder": !priority || priority === "none",
             })}

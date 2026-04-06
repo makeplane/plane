@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { Loader } from "lucide-react";
 import { PlusIcon } from "@plane/propel/icons";
 // helpers
@@ -23,7 +22,7 @@ export function IssueWorklogPropertyButton(props: TIssueWorklogPropertyButton) {
   const { content, isLoading } = props;
 
   return (
-    <div className="flex justify-between items-center text-13 py-2 rounded-sm transition-all cursor-not-allowed w-full">
+    <div className="flex justify-between items-center text-13 py-1.5 rounded-sm transition-all cursor-not-allowed w-full">
       <div
         className={cn({
           "text-tertiary": !content,

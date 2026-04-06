@@ -14,12 +14,15 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ContentOverflow } from "@plane/blocks/entity-detail";
+import { ContentOverflow, EntityDetailContentFooter } from "@plane/blocks/entity-detail";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { ParentPropertyIcon } from "@plane/propel/icons";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { getTextContent } from "@plane/utils";
+// components
+import { ParentWorkItemsListModal } from "@/components/issues/modals/add-parent/modal";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
@@ -41,6 +44,7 @@ import { IssueDetailWidgets } from "../issue-detail-widgets";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
 import { PeekOverviewProperties } from "../peek-overview/properties";
 import { IssueTitleInput } from "../title-input";
+import { DetailMetaRow } from "./detail-meta-row";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
@@ -87,6 +91,9 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   const {
     issue: { getIssueById },
     peekIssue,
+    isParentIssueModalOpen,
+    toggleParentIssueModal,
+    subIssues: { fetchSubIssues },
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -108,9 +115,23 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   useEffect(() => {
     if (isSubmitting === "submitted") {
       setShowAlert(false);
-      setTimeout(async () => setIsSubmitting("saved"), 2000);
+      const timer = setTimeout(() => setIsSubmitting("saved"), 2000);
+      return () => clearTimeout(timer);
     } else if (isSubmitting === "submitting") setShowAlert(true);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
+
+  const handleParentIssue = async (selectedIssue: { id: string; project?: { id: string } }) => {
+    try {
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        parent_id: selectedIssue.id,
+      });
+      await issueOperations.fetch(workspaceSlug, projectId, issueId, false);
+      if (selectedIssue.project?.id) await fetchSubIssues(workspaceSlug, selectedIssue.project.id, selectedIssue.id);
+      toggleParentIssueModal(null);
+    } catch {
+      console.error("Failed to update parent work item");
+    }
+  };
 
   if (!issue || !issue.project_id) return <></>;
 
@@ -118,44 +139,74 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
-        {issue.parent_id && (
-          <IssueParentDetail
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            issue={issue}
-            issueOperations={issueOperations}
-          />
-        )}
-
-        <div className="mb-2.5 flex items-center justify-between gap-4">
-          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
-          <div className="flex items-center gap-3">
-            <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
-            {duplicateIssues?.length > 0 && (
-              <DeDupeIssuePopoverRoot
-                workspaceSlug={workspaceSlug}
-                projectId={issue.project_id}
-                rootIssueId={issueId}
-                issues={duplicateIssues}
-                issueOperations={issueOperations}
-                renderDeDupeActionModals={!isPeekModeActive}
-              />
-            )}
+      <ParentWorkItemsListModal
+        projectId={projectId}
+        workItemId={issueId}
+        isOpen={isParentIssueModalOpen === issueId}
+        handleClose={() => toggleParentIssueModal(null)}
+        onChange={(selectedIssue) => handleParentIssue(selectedIssue)}
+      />
+      <div className="flex flex-col gap-4 pb-5">
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center justify-between gap-4 h-6">
+            <div className="flex items-center gap-1.5 text-body-xs-medium">
+              {issue.parent_id ? (
+                <IssueParentDetail
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  issue={issue}
+                  issueOperations={issueOperations}
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 text-body-xs-medium text-secondary hover:text-primary cursor-pointer"
+                  onClick={() => !isArchived && isEditable && toggleParentIssueModal(issueId)}
+                  disabled={isArchived || !isEditable}
+                >
+                  <ParentPropertyIcon className="size-3.5" />
+                  {t("issue.add.parent")}
+                </button>
+              )}
+              <span className="text-tertiary">/</span>
+              <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
+            </div>
+            <div className="flex items-center gap-3">
+              <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+              {duplicateIssues?.length > 0 && (
+                <DeDupeIssuePopoverRoot
+                  workspaceSlug={workspaceSlug}
+                  projectId={issue.project_id}
+                  rootIssueId={issueId}
+                  issues={duplicateIssues}
+                  issueOperations={issueOperations}
+                  renderDeDupeActionModals={!isPeekModeActive}
+                />
+              )}
+            </div>
           </div>
+
+          <IssueTitleInput
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issue.id}
+            isSubmitting={isSubmitting}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            issueOperations={issueOperations}
+            disabled={isArchived || !isEditable}
+            value={issue.name}
+            containerClassName="-ml-3"
+          />
         </div>
 
-        <IssueTitleInput
+        <DetailMetaRow
           workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issue.id}
-          isSubmitting={isSubmitting}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
+          projectId={projectId}
+          issueId={issueId}
           issueOperations={issueOperations}
-          disabled={isArchived || !isEditable}
-          value={issue.name}
-          containerClassName="-ml-3"
+          isEditable={isEditable}
+          isArchived={isArchived}
         />
 
         <ContentOverflow
@@ -164,6 +215,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           showMoreLabel={t("show_all")}
           showLessLabel={t("show_less")}
           forceExpanded={isDescriptionExpanded}
+          onCollapse={() => setIsDescriptionExpanded(false)}
         >
           {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
           <div onFocus={() => setIsDescriptionExpanded(true)}>
@@ -190,9 +242,9 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           </div>
         </ContentOverflow>
 
-        <div className="flex items-center justify-between gap-2 mt-4">
-          {currentUser && (
-            <div className="flex items-center gap-2">
+        <EntityDetailContentFooter
+          leftElement={
+            currentUser ? (
               <IssueReaction
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -201,29 +253,31 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
                 disabled={isArchived}
                 className="mt-0 shrink-0"
               />
-            </div>
-          )}
-          {isEditable && (
-            <DescriptionVersionsRoot
-              className="shrink-0"
-              entityInformation={{
-                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
-                createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
-                id: issueId,
-                isRestoreDisabled: !isEditable || isArchived,
-              }}
-              fetchHandlers={{
-                listDescriptionVersions: (issueId) =>
-                  workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
-                retrieveDescriptionVersion: (issueId, versionId) =>
-                  workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
-              }}
-              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-            />
-          )}
-        </div>
+            ) : undefined
+          }
+          rightElement={
+            isEditable ? (
+              <DescriptionVersionsRoot
+                className="shrink-0"
+                entityInformation={{
+                  createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                  createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
+                  id: issueId,
+                  isRestoreDisabled: !isEditable || isArchived,
+                }}
+                fetchHandlers={{
+                  listDescriptionVersions: (issueId) =>
+                    workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                  retrieveDescriptionVersion: (issueId, versionId) =>
+                    workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+                }}
+                handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+              />
+            ) : undefined
+          }
+        />
       </div>
 
       <IssueDetailWidgets

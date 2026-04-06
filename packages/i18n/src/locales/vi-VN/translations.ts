@@ -258,6 +258,9 @@ export default {
   activity_empty_state: {
     no_activity: "Chưa có hoạt động",
     no_transitions: "Chưa có chuyển đổi",
+    no_comments: "Chưa có bình luận",
+    no_worklogs: "Chưa có nhật ký công việc",
+    no_history: "Chưa có lịch sử",
   },
   appearance: "Giao diện",
   notifications: "Thông báo",
@@ -803,6 +806,8 @@ export default {
     project_id: "ID dự án",
     project_timezone: "Múi giờ dự án",
     created_on: "Được tạo vào",
+    updated_on: "Cập nhật vào",
+    completed_on: "Completed on",
     update_project: "Cập nhật dự án",
     identifier_already_exists: "Định danh đã tồn tại",
     add_more: "Thêm nữa",
@@ -1013,6 +1018,9 @@ export default {
     templates: "Mẫu",
     members_and_teamspaces: "Thành viên và không gian nhóm",
     open_in_full_screen: "Mở {page} trong chế độ toàn màn hình",
+    details: "Chi tiết",
+    project_structure: "Cấu trúc dự án",
+    custom_properties: "Thuộc tính tùy chỉnh",
   },
   chart: {
     x_axis: "Trục X",

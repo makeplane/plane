@@ -15,6 +15,7 @@ export * from "./boolean-icon";
 export * from "./comment-reply-icon";
 export * from "./completed-at-icon";
 export * from "./created-at-icon";
+export * from "./dependency-icon";
 export * from "./dropdown-icon";
 export * from "./due-date-icon";
 export * from "./duplicate-icon";

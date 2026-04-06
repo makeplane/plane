@@ -255,6 +255,9 @@ export default {
   activity_empty_state: {
     no_activity: "Пока нет активности",
     no_transitions: "Пока нет переходов",
+    no_comments: "Комментариев пока нет",
+    no_worklogs: "Записей о работе пока нет",
+    no_history: "Истории пока нет",
   },
   appearance: "Внешний вид",
   notifications: "Уведомления",
@@ -799,6 +802,8 @@ export default {
     project_id: "ID проекта",
     project_timezone: "Часовой пояс проекта",
     created_on: "Создано",
+    updated_on: "Обновлено",
+    completed_on: "Completed on",
     update_project: "Обновить проект",
     identifier_already_exists: "Идентификатор уже существует",
     add_more: "Добавить еще",
@@ -1009,6 +1014,9 @@ export default {
     workflows: "Рабочие процессы",
     members_and_teamspaces: "Участники и командные пространства",
     open_in_full_screen: "Открыть {page} в полном экране",
+    details: "Подробности",
+    project_structure: "Структура проекта",
+    custom_properties: "Пользовательские свойства",
   },
   chart: {
     x_axis: "Ось X",

@@ -28,7 +28,7 @@ export function TimelineTimestamp(props: TimelineTimestampProps) {
   const timestampText = <span className="text-caption-sm-regular text-tertiary whitespace-nowrap">{timestamp}</span>;
 
   return (
-    <span className={cn("flex shrink-0 items-center gap-1.5", className)}>
+    <span className={cn("flex shrink-0 items-center gap-1.5 text-caption-sm-regular text-tertiary", className)}>
       <DotSeparator />
       {tooltipContent ? (
         <Tooltip tooltipContent={tooltipContent} isMobile={isMobile}>

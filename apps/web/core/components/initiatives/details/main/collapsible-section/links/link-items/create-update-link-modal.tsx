@@ -127,9 +127,9 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
               {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-secondary">
+              <label htmlFor="title" className="flex items-center gap-2 mb-2 text-secondary">
                 {t("link.modal.title.text")}
-                <span className="text-10 block">{t("common.optional")}</span>
+                <span className="text-caption-xs-regular block">{t("common.optional")}</span>
               </label>
               <Controller
                 control={control}

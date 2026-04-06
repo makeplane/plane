@@ -256,6 +256,9 @@ export default {
   activity_empty_state: {
     no_activity: "アクティビティはまだありません",
     no_transitions: "トランジションはまだありません",
+    no_comments: "コメントはまだありません",
+    no_worklogs: "作業ログはまだありません",
+    no_history: "履歴はまだありません",
   },
   appearance: "外観",
   notifications: "通知",
@@ -795,6 +798,8 @@ export default {
     project_id: "プロジェクトID",
     project_timezone: "プロジェクトのタイムゾーン",
     created_on: "作成日",
+    updated_on: "更新日",
+    completed_on: "Completed on",
     update_project: "プロジェクトを更新",
     identifier_already_exists: "識別子は既に存在します",
     add_more: "さらに追加",
@@ -1004,6 +1009,9 @@ export default {
     workflows: "ワークフロー",
     members_and_teamspaces: "メンバーとチームスペース",
     open_in_full_screen: "{page}をフルスクリーンで開く",
+    details: "詳細",
+    project_structure: "プロジェクト構造",
+    custom_properties: "カスタムプロパティ",
   },
   chart: {
     x_axis: "エックス アクシス",

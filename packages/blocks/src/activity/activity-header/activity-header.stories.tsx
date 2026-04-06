@@ -17,6 +17,7 @@ import { Clock, Filter, SlidersHorizontal } from "lucide-react";
 import { IconButton } from "@plane/propel/icon-button";
 import { Button } from "@plane/propel/button";
 import { ActivityHeader } from "./activity-header";
+import type { ActivityHeaderProps } from "./activity-header";
 
 const meta = preview.meta({
   title: "Activity/ActivityHeader",
@@ -33,10 +34,10 @@ const defaultTabs = [
   { key: "history", label: "History" },
 ];
 
-const InteractiveHeader = (props: { initialTab: string; args: Record<string, unknown> }) => {
+function InteractiveHeader(props: { initialTab: string; args: ActivityHeaderProps }) {
   const [activeTab, setActiveTab] = useState(props.initialTab);
-  return <ActivityHeader {...(props.args as any)} activeTab={activeTab} onTabChange={setActiveTab} />;
-};
+  return <ActivityHeader {...props.args} activeTab={activeTab} onTabChange={setActiveTab} />;
+}
 
 export const Default = meta.story({
   args: {

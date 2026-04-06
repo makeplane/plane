@@ -43,8 +43,11 @@ export const IssueActivityWorklogCreateButton = observer(function IssueActivityW
   return (
     <Popover
       popoverButtonRef={popoverButtonRef}
+      buttonRefClassName="h-6"
       disabled={disabled}
-      buttonClassName={cn("w-full outline-none", { "cursor-not-allowed": disabled })}
+      buttonClassName={cn("w-full outline-none", {
+        "cursor-not-allowed": disabled,
+      })}
       button={
         <Button variant="tertiary" prependIcon={<PlusIcon />} className="border-0">
           Log work

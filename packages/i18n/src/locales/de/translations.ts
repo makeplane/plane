@@ -261,6 +261,9 @@ export default {
   activity_empty_state: {
     no_activity: "Noch keine Aktivität",
     no_transitions: "Noch keine Übergänge",
+    no_comments: "Noch keine Kommentare",
+    no_worklogs: "Noch keine Arbeitszeiten",
+    no_history: "Noch kein Verlauf",
   },
   preferences: "Einstellungen",
   language_and_time: "Sprache und Zeit",
@@ -792,6 +795,8 @@ export default {
     project_id: "Projekt-ID",
     project_timezone: "Projektzeitzone",
     created_on: "Erstellt am",
+    updated_on: "Aktualisiert am",
+    completed_on: "Completed on",
     update_project: "Projekt aktualisieren",
     identifier_already_exists: "Der Bezeichner existiert bereits",
     add_more: "Mehr hinzufügen",
@@ -1020,6 +1025,9 @@ export default {
     business: "Business",
     recurring_work_items: "Wiederkehrende Arbeitselemente",
     milestones: "Meilensteine",
+    details: "Details",
+    project_structure: "Projektstruktur",
+    custom_properties: "Benutzerdefinierte Eigenschaften",
   },
   chart: {
     x_axis: "X-Achse",

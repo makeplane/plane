@@ -254,6 +254,9 @@ export default {
   activity_empty_state: {
     no_activity: "아직 활동이 없습니다",
     no_transitions: "아직 전환이 없습니다",
+    no_comments: "아직 댓글이 없습니다",
+    no_worklogs: "아직 작업 기록이 없습니다",
+    no_history: "아직 기록이 없습니다",
   },
   appearance: "외관",
   notifications: "알림",
@@ -787,6 +790,8 @@ export default {
     project_id: "프로젝트 ID",
     project_timezone: "프로젝트 시간대",
     created_on: "생성일",
+    updated_on: "업데이트됨",
+    completed_on: "Completed on",
     update_project: "프로젝트 업데이트",
     identifier_already_exists: "식별자가 이미 존재합니다",
     add_more: "더 추가",
@@ -998,6 +1003,9 @@ export default {
     templates: "템플릿",
     members_and_teamspaces: "멤버와 팀스페이스",
     open_in_full_screen: "전체 화면으로 {page} 열기",
+    details: "세부 정보",
+    project_structure: "프로젝트 구조",
+    custom_properties: "사용자 정의 속성",
   },
   chart: {
     x_axis: "X축",

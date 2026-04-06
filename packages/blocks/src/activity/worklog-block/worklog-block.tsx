@@ -45,10 +45,10 @@ export function WorklogBlock(props: WorklogBlockProps) {
     <div
       ref={highlightRef}
       className={cn(
-        "relative flex gap-3 text-caption-sm-regular border border-transparent transition-border duration-1000",
+        "relative flex gap-3 text-caption-sm-regular rounded-lg border border-transparent",
         description ? "items-start" : "items-center",
         ends === "top" ? "pb-2" : ends === "bottom" ? "pt-2" : "py-2",
-        highlighted && "border-accent-strong"
+        highlighted && "animate-highlight-fade"
       )}
     >
       {showConnector && <TimelineConnectorLine />}

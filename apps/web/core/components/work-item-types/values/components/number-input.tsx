@@ -78,6 +78,7 @@ export const NumberValueInput = observer(function NumberValueInput(props: TNumbe
           "w-full px-2 resize-none text-body-xs-regular bg-surface-1 rounded-sm border-0",
           {
             "border-[0.5px]": variant === "create" || Boolean(error),
+            "hover:bg-layer-transparent-hover rounded-md": variant === "update" && !isDisabled,
             "cursor-not-allowed": isDisabled,
           },
           className

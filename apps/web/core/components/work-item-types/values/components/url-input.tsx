@@ -71,9 +71,9 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
     return (
       <button
         type="button"
-        className={cn("group flex items-center justify-between gap-4 px-2 py-1.5 rounded-sm outline-none", {
+        className={cn("group w-full flex items-center justify-between gap-4 px-2 py-1.5 rounded-md outline-none", {
           "cursor-not-allowed": isDisabled,
-          "hover:bg-layer-1": !isDisabled,
+          "hover:bg-layer-transparent-hover": !isDisabled,
           "bg-layer-1": isEditing,
         })}
         onClick={() => !isDisabled && setIsEditing(true)}

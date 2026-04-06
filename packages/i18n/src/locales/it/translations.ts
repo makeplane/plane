@@ -257,6 +257,9 @@ export default {
   activity_empty_state: {
     no_activity: "Nessuna attività",
     no_transitions: "Nessuna transizione",
+    no_comments: "Nessun commento ancora",
+    no_worklogs: "Nessun registro di lavoro ancora",
+    no_history: "Nessuna cronologia ancora",
   },
   appearance: "Aspetto",
   notifications: "Notifiche",
@@ -798,6 +801,8 @@ export default {
     project_id: "ID del progetto",
     project_timezone: "Fuso orario del progetto",
     created_on: "Creato il",
+    updated_on: "Aggiornato il",
+    completed_on: "Completed on",
     update_project: "Aggiorna progetto",
     identifier_already_exists: "L'identificatore esiste già",
     add_more: "Aggiungi altro",
@@ -1011,6 +1016,9 @@ export default {
     workflows: "Flussi di lavoro",
     members_and_teamspaces: "Membri e teamspaces",
     open_in_full_screen: "Apri {page} a schermo intero",
+    details: "Dettagli",
+    project_structure: "Struttura del progetto",
+    custom_properties: "Proprietà personalizzate",
   },
   chart: {
     x_axis: "Asse X",

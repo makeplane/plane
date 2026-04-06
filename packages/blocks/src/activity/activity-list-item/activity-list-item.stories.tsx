@@ -341,7 +341,7 @@ export const WorkItemCreatedViaForms = meta.story({
 
 // --- Highlighted ---
 
-export const WithHighlight = meta.story({
+export const Highlighted = meta.story({
   args: {
     data: {
       actor: actorLink("Amanda"),

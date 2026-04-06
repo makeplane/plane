@@ -25,7 +25,7 @@ export function formatCompactDuration(seconds: number): string {
   return `${d}d`;
 }
 
-export function formatDetailedDuration(seconds: number): string {
+export function formatDetailedDuration(seconds: number, stateName?: string): string {
   const d = Math.floor(seconds / ONE_DAY_SECONDS);
   const h = Math.floor((seconds % ONE_DAY_SECONDS) / 3600);
   const m = Math.floor((seconds % 3600) / 60);
@@ -33,7 +33,8 @@ export function formatDetailedDuration(seconds: number): string {
   if (d > 0) parts.push(`${d}d`);
   if (h > 0) parts.push(`${h}h`);
   if (m > 0 || parts.length === 0) parts.push(`${m}m`);
-  return `Duration: ${parts.join(" ")}`;
+  if (stateName) return `In ${stateName} for ${parts.join(" ")}`;
+  return parts.join(" ");
 }
 
 export function getDurationBadgeVariant(seconds: number): "neutral" | "warning" | "danger" | null {
@@ -45,15 +46,16 @@ export function getDurationBadgeVariant(seconds: number): "neutral" | "warning" 
 
 type DurationBadgeProps = {
   seconds: number | undefined | null;
+  stateName?: string;
 };
 
 export function DurationBadge(props: DurationBadgeProps) {
-  const { seconds } = props;
+  const { seconds, stateName } = props;
   if (seconds == null || seconds < 60) return null;
   const variant = getDurationBadgeVariant(seconds);
   if (!variant) return null;
   return (
-    <Tooltip tooltipContent={formatDetailedDuration(seconds)}>
+    <Tooltip tooltipContent={formatDetailedDuration(seconds, stateName)}>
       <Badge size="sm" variant={variant} style={{ cursor: "default" }}>
         {formatCompactDuration(seconds)}
       </Badge>

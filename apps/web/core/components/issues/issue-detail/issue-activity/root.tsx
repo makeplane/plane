@@ -104,17 +104,39 @@ export const IssueActivity = observer(function IssueActivity(props: IssueActivit
 
     const tabs: IssueActivityTab[] = [
       { key: "all", label: t("common.all"), filters: availableFilters },
-      { key: "activity", label: t("common.activity"), filters: activityOnlyFilters },
-      { key: "comment", label: t("common.comments"), filters: [EActivityFilterType.COMMENT] },
+      {
+        key: "activity",
+        label: t("common.activity"),
+        filters: activityOnlyFilters,
+      },
+      {
+        key: "comment",
+        label: t("common.comments"),
+        filters: [EActivityFilterType.COMMENT],
+      },
     ];
 
     if (isWorklogsEnabled && !isIntakeIssue) {
-      tabs.push({ key: "worklog", label: t("common.worklogs"), filters: [EActivityFilterType.WORKLOG] });
+      tabs.push({
+        key: "worklog",
+        label: t("common.worklogs"),
+        filters: [EActivityFilterType.WORKLOG],
+      });
     }
 
     tabs.push(
-      { key: "transition", label: t("transition"), filters: [EActivityFilterType.STATE], renderMode: "transition" },
-      { key: "history", label: t("history"), filters: activityOnlyFilters, renderMode: "transition" }
+      {
+        key: "transition",
+        label: t("transition"),
+        filters: [EActivityFilterType.STATE],
+        renderMode: "transition",
+      },
+      {
+        key: "history",
+        label: t("history"),
+        filters: activityOnlyFilters,
+        renderMode: "transition",
+      }
     );
 
     return tabs;
@@ -180,47 +202,59 @@ export const IssueActivity = observer(function IssueActivity(props: IssueActivit
   if (!project) return <></>;
 
   return (
-    <ActivityFeed
-      tabs={activityTabs}
-      activeTab={activeTabKey || DEFAULT_ACTIVITY_TAB}
-      onTabChange={handleTabChange}
-      actionsElement={
-        <>
-          {isWorklogButtonEnabled && (
-            <IssueActivityWorklogCreateButton
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              disabled={disabled}
-            />
-          )}
-          {showFilter && (
-            <ActivityFilter selectedFilters={selectedFilters || defaultActivityFilters} filterOptions={filterOptions} />
-          )}
-          <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSort} />
-        </>
-      }
-    >
-      <div className="flex flex-col gap-5 py-6">
-        <div className="min-h-[200px]">
-          <div className="space-y-3">
-            {!disabled && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}
-            <IssueActivityCommentRoot
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              isIntakeIssue={isIntakeIssue}
-              issueId={issueId}
-              selectedFilters={selectedFilters || defaultActivityFilters}
-              activityOperations={activityOperations}
-              showAccessSpecifier={!!project.anchor}
-              disabled={disabled}
-              sortOrder={sortOrder || E_SORT_ORDER.ASC}
-              renderMode={activeRenderMode}
-            />
-            {!disabled && sortOrder === E_SORT_ORDER.ASC && renderCommentCreationBox}
+    <div className="py-8">
+      <ActivityFeed
+        tabs={activityTabs}
+        activeTab={activeTabKey || DEFAULT_ACTIVITY_TAB}
+        onTabChange={handleTabChange}
+        actionsElement={
+          <>
+            {isWorklogButtonEnabled && (
+              <IssueActivityWorklogCreateButton
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                disabled={disabled}
+              />
+            )}
+            {showFilter && (
+              <ActivityFilter
+                selectedFilters={selectedFilters || defaultActivityFilters}
+                filterOptions={filterOptions}
+              />
+            )}
+            <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSort} />
+          </>
+        }
+      >
+        <div className="flex flex-col gap-5 py-6">
+          <div className="min-h-[200px]">
+            <div className="space-y-3">
+              {!disabled &&
+                sortOrder === E_SORT_ORDER.DESC &&
+                (activeTabKey === "all" || activeTabKey === "comment") &&
+                renderCommentCreationBox}
+              <IssueActivityCommentRoot
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                isIntakeIssue={isIntakeIssue}
+                issueId={issueId}
+                selectedFilters={selectedFilters || defaultActivityFilters}
+                activityOperations={activityOperations}
+                showAccessSpecifier={!!project.anchor}
+                disabled={disabled}
+                sortOrder={sortOrder || E_SORT_ORDER.ASC}
+                renderMode={activeRenderMode}
+                activeTabKey={activeTabKey || DEFAULT_ACTIVITY_TAB}
+              />
+              {!disabled &&
+                sortOrder === E_SORT_ORDER.ASC &&
+                (activeTabKey === "all" || activeTabKey === "comment") &&
+                renderCommentCreationBox}
+            </div>
           </div>
         </div>
-      </div>
-    </ActivityFeed>
+      </ActivityFeed>
+    </div>
   );
 });

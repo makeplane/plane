@@ -67,9 +67,9 @@ export function CommentBlock(props: CommentBlockProps) {
     <div
       ref={highlightRef}
       className={cn(
-        "relative flex w-full items-start gap-3 border border-transparent transition-border duration-1000",
+        "relative flex w-full items-start gap-3 rounded-lg border border-transparent",
         showConnector && "pb-6",
-        highlighted && "border-accent-strong"
+        highlighted && "animate-highlight-fade"
       )}
     >
       {/* Continuous connector line behind icon and card */}

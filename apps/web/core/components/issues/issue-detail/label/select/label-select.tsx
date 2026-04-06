@@ -86,7 +86,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: "left-end",
     modifiers: [
       {
         name: "preventOverflow",

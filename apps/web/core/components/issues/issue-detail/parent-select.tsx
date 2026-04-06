@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 
 import { useTranslation } from "@plane/i18n";
-import { EditIcon, CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon, ParentPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
@@ -128,7 +128,10 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
             )}
           </div>
         ) : (
-          <span className="text-body-xs-medium text-placeholder">{t("issue.add.parent")}</span>
+          <span className="flex items-center gap-1.5 text-body-xs-medium text-placeholder">
+            <ParentPropertyIcon className="size-3.5" />
+            {t("issue.add.parent")}
+          </span>
         )}
         {!disabled && (
           <span

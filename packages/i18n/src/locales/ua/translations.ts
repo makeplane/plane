@@ -257,6 +257,9 @@ export default {
   activity_empty_state: {
     no_activity: "Ще немає активності",
     no_transitions: "Ще немає переходів",
+    no_comments: "Коментарів ще немає",
+    no_worklogs: "Записів роботи ще немає",
+    no_history: "Історії ще немає",
   },
   appearance: "Зовнішній вигляд",
   notifications: "Сповіщення",
@@ -798,6 +801,8 @@ export default {
     project_id: "ID проєкту",
     project_timezone: "Часовий пояс проєкту",
     created_on: "Створено",
+    updated_on: "Оновлено",
+    completed_on: "Completed on",
     update_project: "Оновити проєкт",
     identifier_already_exists: "Такий ідентифікатор уже існує",
     add_more: "Додати ще",
@@ -1009,6 +1014,9 @@ export default {
     templates: "Темплейти",
     members_and_teamspaces: "Члени та командних просторів",
     open_in_full_screen: "Відкрити {page} на повний екран",
+    details: "Деталі",
+    project_structure: "Структура проєкту",
+    custom_properties: "Користувацькі властивості",
   },
   chart: {
     x_axis: "Вісь X",

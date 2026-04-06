@@ -12,14 +12,15 @@
  */
 
 import { observer } from "mobx-react";
+import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { PagesCollapsibleContent } from "./content";
-import { PagesCollapsibleTitle } from "./title";
+import { PagesActionButton } from "./quick-action-button";
 
-type TProps = {
+type Props = {
   workspaceSlug: string;
   workItemId: string;
   disabled: boolean;
@@ -27,8 +28,10 @@ type TProps = {
   issueServiceType: TIssueServiceType;
 };
 
-export const PagesCollapsible = observer(function PagesCollapsible(props: TProps) {
+export const PagesCollapsible = observer(function PagesCollapsible(props: Props) {
   const { workspaceSlug, workItemId, disabled, projectId, issueServiceType } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const {
     openWidgets,
@@ -43,35 +46,25 @@ export const PagesCollapsible = observer(function PagesCollapsible(props: TProps
 
   if (!projectId || count === 0) return null;
   return (
-    <Collapsible
-      open={isCollapsibleOpen}
-      onOpenChange={(open) => {
-        if (open !== isCollapsibleOpen) {
-          toggleOpenWidget("pages");
-        }
-      }}
-      className="max-h-fit"
+    <EntityDetailWidgetSection
+      title={t("issue.pages.linked_pages")}
+      count={count}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleOpenWidget("pages")}
+      actionElement={
+        !disabled ? (
+          <PagesActionButton issueServiceType={issueServiceType} disabled={disabled} workItemId={workItemId} />
+        ) : undefined
+      }
     >
-      <CollapsibleTrigger className="w-full">
-        <PagesCollapsibleTitle
-          issueServiceType={issueServiceType}
-          workspaceSlug={workspaceSlug}
-          isOpen={isCollapsibleOpen}
-          workItemId={workItemId}
-          disabled={disabled}
-          count={count}
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <PagesCollapsibleContent
-          workItemId={workItemId}
-          workspaceSlug={workspaceSlug}
-          disabled={disabled}
-          projectId={projectId}
-          data={issuePages.map((pageId) => pagesMap[pageId])}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleContent>
-    </Collapsible>
+      <PagesCollapsibleContent
+        workItemId={workItemId}
+        workspaceSlug={workspaceSlug}
+        disabled={disabled}
+        projectId={projectId}
+        data={issuePages.map((pageId) => pagesMap[pageId])}
+        issueServiceType={issueServiceType}
+      />
+    </EntityDetailWidgetSection>
   );
 });

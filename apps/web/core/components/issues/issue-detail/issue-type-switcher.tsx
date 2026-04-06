@@ -59,7 +59,7 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
   };
 
   if (!isWorkItemTypeEnabled) {
-    return <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" enableClickToCopyIdentifier />;
+    return <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="sm" enableClickToCopyIdentifier />;
   }
 
   return (
@@ -83,7 +83,7 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
         <IssueIdentifier
           issueId={issueId}
           projectId={issue.project_id}
-          size="md"
+          size="xs"
           enableClickToCopyIdentifier
           showWorkItemTypeName
         />

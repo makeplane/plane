@@ -13,8 +13,8 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { CircleX, Files } from "lucide-react";
-import { LinkIcon, PageIcon } from "@plane/propel/icons";
+import { CircleX } from "lucide-react";
+import { LinkIcon, PageIcon, WikiIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -25,6 +25,7 @@ import { calculateTimeAgo, cn, copyUrlToClipboard } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { Badge } from "@plane/propel/badge";
 
 type TProps = {
   issueServiceType: TIssueServiceType;
@@ -93,7 +94,7 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
   if (!page) return null;
 
   return (
-    <div key={page.id} className="flex flex-col gap-2 rounded-xl border border-subtle p-4 pb-2 min-h-[166px]">
+    <div key={page.id} className="flex flex-col gap-2 rounded-lg border border-subtle bg-layer-2 p-3 min-h-[166px]">
       <Link
         href={
           page.is_global
@@ -103,18 +104,22 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
         target="_blank"
         className="border-b border-subtle pb-2 flex flex-col gap-2 flex-1"
       >
-        <div className="flex gap-2 items-center max-w-full w-fit overflow-hidden bg-layer-1 p-1 rounded">
+        <Badge
+          size="base"
+          style={{
+            width: "min-content",
+          }}
+        >
           <div className="my-auto">
             {page.is_global ? (
-              <Files className="size-[14px] text-placeholder" />
+              <WikiIcon className="size-3.5 text-placeholder" />
             ) : (
               <Logo logo={project?.logo_props as TLogoProps} size={14} />
             )}
           </div>
-          <span className="text-13 font-medium text-tertiary my-auto truncate">
-            {page.is_global ? "Wiki" : project?.name}
-          </span>
-        </div>
+          <span className="truncate">{page.is_global ? "Wiki" : project?.name}</span>
+        </Badge>
+
         <div className="flex flex-col gap-2 ">
           <div className="flex gap-1 items-center">
             <div className="shrink-0">

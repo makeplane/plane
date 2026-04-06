@@ -252,6 +252,9 @@ export default {
   activity_empty_state: {
     no_activity: "暂无活动",
     no_transitions: "暂无转换",
+    no_comments: "暂无评论",
+    no_worklogs: "暂无工时记录",
+    no_history: "暂无历史记录",
   },
   appearance: "外观",
   notifications: "通知",
@@ -782,6 +785,8 @@ export default {
     project_id: "项目ID",
     project_timezone: "项目时区",
     created_on: "创建于",
+    updated_on: "更新于",
+    completed_on: "Completed on",
     update_project: "更新项目",
     identifier_already_exists: "标识符已存在",
     add_more: "添加更多",
@@ -991,6 +996,9 @@ export default {
     workflows: "工作流",
     members_and_teamspaces: "成员和团队空间",
     open_in_full_screen: "在全屏中打开{page}",
+    details: "详情",
+    project_structure: "项目结构",
+    custom_properties: "自定义属性",
   },
   chart: {
     x_axis: "X轴",

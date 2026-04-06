@@ -23,12 +23,14 @@ export function mapActivityToPropertyValues(
   newVal: string | undefined,
   icon?: ReactNode,
   oldBadge?: ReactNode,
-  newBadge?: ReactNode
+  newBadge?: ReactNode,
+  oldIcon?: ReactNode,
+  newIcon?: ReactNode
 ): { oldValue: PropertyValue; newValue: PropertyValue } {
   const oldLabel = oldVal || "";
   const newLabel = newVal || "";
   return {
-    oldValue: { icon, label: oldLabel || "None", isEmpty: !oldLabel, badge: oldBadge },
-    newValue: { icon, label: newLabel || "None", isEmpty: !newLabel, badge: newBadge },
+    oldValue: { icon: oldIcon ?? icon, label: oldLabel || "None", isEmpty: !oldLabel, badge: oldBadge },
+    newValue: { icon: newIcon ?? icon, label: newLabel || "None", isEmpty: !newLabel, badge: newBadge },
   };
 }

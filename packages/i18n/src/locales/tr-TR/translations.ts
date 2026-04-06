@@ -258,6 +258,9 @@ export default {
   activity_empty_state: {
     no_activity: "Henüz etkinlik yok",
     no_transitions: "Henüz geçiş yok",
+    no_comments: "Henüz yorum yok",
+    no_worklogs: "Henüz çalışma kaydı yok",
+    no_history: "Henüz geçmiş yok",
   },
   appearance: "Görünüm",
   notifications: "Bildirimler",
@@ -796,6 +799,8 @@ export default {
     project_id: "Proje ID",
     project_timezone: "Proje Saat Dilimi",
     created_on: "Oluşturulma tarihi",
+    updated_on: "Güncellenme tarihi",
+    completed_on: "Completed on",
     update_project: "Projeyi güncelle",
     identifier_already_exists: "Tanımlayıcı zaten var",
     add_more: "Daha fazla ekle",
@@ -1008,6 +1013,9 @@ export default {
     templates: "Şablonlar",
     members_and_teamspaces: "Üyeler ve Takım Alanları",
     open_in_full_screen: "{page} öğesini tam ekranda aç",
+    details: "Ayrıntılar",
+    project_structure: "Proje yapısı",
+    custom_properties: "Özel özellikler",
   },
   chart: {
     x_axis: "X ekseni",

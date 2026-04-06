@@ -257,6 +257,9 @@ export default {
   activity_empty_state: {
     no_activity: "Nicio activitate încă",
     no_transitions: "Nicio tranziție încă",
+    no_comments: "Niciun comentariu încă",
+    no_worklogs: "Niciun jurnal de lucru încă",
+    no_history: "Niciun istoric încă",
   },
   appearance: "Aspect",
   notifications: "Notificări",
@@ -801,6 +804,8 @@ export default {
     project_id: "ID Proiect",
     project_timezone: "Fus orar proiect",
     created_on: "Creat la",
+    updated_on: "Actualizat la",
+    completed_on: "Completed on",
     update_project: "Actualizează proiectul",
     identifier_already_exists: "Identificatorul există deja",
     add_more: "Adaugă mai mult",
@@ -1012,6 +1017,9 @@ export default {
     templates: "Șabloane",
     members_and_teamspaces: "Membri și spații de echipă",
     open_in_full_screen: "Deschide {page} pe tot ecranul",
+    details: "Detalii",
+    project_structure: "Structura proiectului",
+    custom_properties: "Proprietăți personalizate",
   },
   chart: {
     x_axis: "axa-X",

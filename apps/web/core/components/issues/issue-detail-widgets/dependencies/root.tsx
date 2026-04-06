@@ -11,16 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// Plane-web
+import { useDependencyOptions } from "@/components/relations";
 // local imports
 import { DependenciesCollapsibleContent } from "./content";
-import { DependenciesCollapsibleTitle } from "./title";
+import { DependencyActionButton } from "./quick-action-button";
 
 type Props = {
   workspaceSlug: string;
@@ -31,36 +33,38 @@ type Props = {
 
 export const DependenciesCollapsible = observer(function DependenciesCollapsible(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
-  const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
+  const {
+    openWidgets,
+    toggleOpenWidget,
+    relation: { getRelationCountByIssueId },
+  } = useIssueDetail(issueServiceType);
+
+  const DEPENDENCY_OPTIONS = useDependencyOptions();
   // derived values
   const isCollapsibleOpen = openWidgets.includes("dependencies");
+  const dependenciesCount = getRelationCountByIssueId(issueId, DEPENDENCY_OPTIONS);
 
   return (
-    <Collapsible
-      open={isCollapsibleOpen}
-      onOpenChange={(open) => {
-        if (open !== isCollapsibleOpen) {
-          toggleOpenWidget("dependencies");
-        }
-      }}
+    <EntityDetailWidgetSection
+      title={t("common.dependencies")}
+      count={dependenciesCount}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleOpenWidget("dependencies")}
+      actionElement={
+        !disabled ? (
+          <DependencyActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
+        ) : undefined
+      }
     >
-      <CollapsibleTrigger className="w-full">
-        <DependenciesCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <DependenciesCollapsibleContent
-          workspaceSlug={workspaceSlug}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleContent>
-    </Collapsible>
+      <DependenciesCollapsibleContent
+        workspaceSlug={workspaceSlug}
+        issueId={issueId}
+        disabled={disabled}
+        issueServiceType={issueServiceType}
+      />
+    </EntityDetailWidgetSection>
   );
 });

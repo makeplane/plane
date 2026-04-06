@@ -11,24 +11,35 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 import { TRANSITION_MS } from "./constants";
-import type { ContentOverflowProps } from "./types";
 import { useContentHeight } from "./use-content-height";
+
+export type ContentOverflowProps = {
+  children: ReactNode;
+  maxHeight?: number;
+  fallback?: ReactNode;
+  customButton?: (props: { toggle: () => void; isExpanded: boolean }) => ReactNode;
+  showMoreLabel?: string;
+  showLessLabel?: string;
+  forceExpanded?: boolean;
+  onCollapse?: () => void;
+  buttonClassName?: string;
+};
 
 export function ContentOverflow(props: ContentOverflowProps) {
   const {
     children,
     maxHeight = 625,
-    buttonClassName,
-    containerClassName,
     fallback = null,
     customButton,
     showMoreLabel = "Show all",
     showLessLabel = "Show less",
     forceExpanded = false,
+    onCollapse,
+    buttonClassName,
   } = props;
 
   const { ref: contentRef, height: contentHeight } = useContentHeight();
@@ -71,10 +82,14 @@ export function ContentOverflow(props: ContentOverflowProps) {
       clearTimeout(fallbackTimer.current);
     }
     setIsTransitioning(true);
-    setIsExpanded((prev) => !prev);
+    setIsExpanded((prev) => {
+      const next = !prev;
+      if (!next) onCollapse?.();
+      return next;
+    });
     // Fallback: clear transitioning state if transitionend doesn't fire
     fallbackTimer.current = setTimeout(() => setIsTransitioning(false), TRANSITION_MS + 50);
-  }, []);
+  }, [onCollapse]);
 
   if (children == null) return fallback;
 
@@ -91,7 +106,7 @@ export function ContentOverflow(props: ContentOverflowProps) {
     : { maxHeight: `${maxHeight}px` };
 
   return (
-    <div className={containerClassName}>
+    <div>
       <div
         ref={containerRef}
         className={cn("relative", {
@@ -127,5 +142,3 @@ export function ContentOverflow(props: ContentOverflowProps) {
     </div>
   );
 }
-
-ContentOverflow.displayName = "blocks.ContentOverflow";

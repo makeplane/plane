@@ -30,8 +30,8 @@ export const PagesCollapsibleContent = observer(function PagesCollapsibleContent
 
   return (
     <>
-      <div className="py-2 space-y-3 w-full @container">
-        <div className=" grid gap-4 p-2 grid-cols-1 @sm:grid-cols-2 @3xl:grid-cols-3">
+      <div className="space-y-3 w-full @container">
+        <div className=" grid gap-4 grid-cols-1 @sm:grid-cols-2 @3xl:grid-cols-3">
           {data.map((item) => (
             <PagesCollapsibleContentBlock
               key={item?.id}

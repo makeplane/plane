@@ -11,19 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
+import type { RefObject } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ContentOverflow } from "@plane/blocks/entity-detail";
+import { ContentOverflow, EntityDetailContentFooter } from "@plane/blocks/entity-detail";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { ParentPropertyIcon } from "@plane/propel/icons";
 import { EFileAssetType } from "@plane/types";
 import type { TNameDescriptionLoader } from "@plane/types";
-// components
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { ParentWorkItemsListModal } from "@/components/issues/modals/add-parent/modal";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -39,6 +40,7 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local components
+import { DetailMetaRow } from "../issue-detail/detail-meta-row";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
@@ -47,7 +49,7 @@ import { IssueTitleInput } from "../title-input";
 const workItemVersionService = new WorkItemVersionService();
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -59,14 +61,26 @@ type Props = {
 };
 
 export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
-  const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
-    props;
+  const {
+    editorRef,
+    workspaceSlug,
+    projectId,
+    issueId,
+    issueOperations,
+    disabled,
+    isArchived,
+    isSubmitting,
+    setIsSubmitting,
+  } = props;
   // hooks
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
+    isParentIssueModalOpen,
+    toggleParentIssueModal,
+    subIssues: { fetchSubIssues },
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
@@ -78,9 +92,10 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
   useEffect(() => {
     if (isSubmitting === "submitted") {
       setShowAlert(false);
-      setTimeout(async () => {
+      const timer = setTimeout(() => {
         setIsSubmitting("saved");
       }, 2000);
+      return () => clearTimeout(timer);
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
@@ -101,6 +116,17 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
     }
   );
 
+  const handleParentIssue = async (selectedIssue: { id: string; project?: { id: string } }) => {
+    try {
+      await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: selectedIssue.id });
+      await issueOperations.fetch(workspaceSlug, projectId, issueId, false);
+      if (selectedIssue.project?.id) await fetchSubIssues(workspaceSlug, selectedIssue.project.id, selectedIssue.id);
+      toggleParentIssueModal(null);
+    } catch {
+      console.error("Failed to update parent work item");
+    }
+  };
+
   if (!issue || !issue.project_id) return <></>;
 
   const issueDescription =
@@ -111,18 +137,38 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       : undefined;
 
   return (
-    <div className="space-y-2">
-      {issue.parent_id && (
-        <IssueParentDetail
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issueId}
-          issue={issue}
-          issueOperations={issueOperations}
-        />
-      )}
-      <div className="flex items-center justify-between gap-2">
-        <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+    <div className="space-y-4">
+      <ParentWorkItemsListModal
+        projectId={projectId}
+        workItemId={issueId}
+        isOpen={isParentIssueModalOpen === issueId}
+        handleClose={() => toggleParentIssueModal(null)}
+        onChange={(selectedIssue) => handleParentIssue(selectedIssue)}
+      />
+      <div className="flex items-center justify-between gap-2 min-h-6">
+        <div className="flex items-center gap-1.5 text-body-xs-medium">
+          {issue.parent_id ? (
+            <IssueParentDetail
+              workspaceSlug={workspaceSlug}
+              projectId={issue.project_id}
+              issueId={issueId}
+              issue={issue}
+              issueOperations={issueOperations}
+            />
+          ) : (
+            <button
+              type="button"
+              className="flex items-center gap-1.5 text-body-xs-medium text-secondary hover:text-primary cursor-pointer"
+              onClick={() => !isArchived && !disabled && toggleParentIssueModal(issueId)}
+              disabled={disabled || isArchived}
+            >
+              <ParentPropertyIcon className="size-3.5" />
+              {t("issue.add.parent")}
+            </button>
+          )}
+          <span className="text-tertiary">/</span>
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+        </div>
         {duplicateIssues?.length > 0 && (
           <DeDupeIssuePopoverRoot
             workspaceSlug={workspaceSlug}
@@ -145,12 +191,22 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         containerClassName="-ml-3"
       />
 
+      <DetailMetaRow
+        workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issueId}
+        issueOperations={issueOperations}
+        isEditable={!disabled}
+        isArchived={isArchived}
+      />
+
       <ContentOverflow
         maxHeight={140}
         buttonClassName="text-left"
         showMoreLabel={t("show_all")}
         showLessLabel={t("show_less")}
         forceExpanded={isDescriptionExpanded}
+        onCollapse={() => setIsDescriptionExpanded(false)}
       >
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div onFocus={() => setIsDescriptionExpanded(true)}>
@@ -177,9 +233,9 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         </div>
       </ContentOverflow>
 
-      <div className="flex items-center justify-between gap-2 mt-4">
-        {currentUser && (
-          <div className="flex items-center gap-2">
+      <EntityDetailContentFooter
+        leftElement={
+          currentUser ? (
             <IssueReaction
               workspaceSlug={workspaceSlug}
               projectId={issue.project_id}
@@ -188,38 +244,40 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
               disabled={isArchived}
               className="mt-0 shrink-0"
             />
-          </div>
-        )}
-        {!disabled && (
-          <DescriptionVersionsRoot
-            className="shrink-0"
-            entityInformation={{
-              createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
-              createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
-              id: issueId,
-              isRestoreDisabled: disabled || isArchived,
-            }}
-            fetchHandlers={{
-              listDescriptionVersions: (issueId) =>
-                workItemVersionService.listDescriptionVersions(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId
-                ),
-              retrieveDescriptionVersion: (issueId, versionId) =>
-                workItemVersionService.retrieveDescriptionVersion(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId,
-                  versionId
-                ),
-            }}
-            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-            projectId={issue.project_id}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
-      </div>
+          ) : undefined
+        }
+        rightElement={
+          !disabled ? (
+            <DescriptionVersionsRoot
+              className="shrink-0"
+              entityInformation={{
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
+                id: issueId,
+                isRestoreDisabled: disabled || isArchived,
+              }}
+              fetchHandlers={{
+                listDescriptionVersions: (issueId) =>
+                  workItemVersionService.listDescriptionVersions(
+                    workspaceSlug,
+                    issue.project_id?.toString() ?? "",
+                    issueId
+                  ),
+                retrieveDescriptionVersion: (issueId, versionId) =>
+                  workItemVersionService.retrieveDescriptionVersion(
+                    workspaceSlug,
+                    issue.project_id?.toString() ?? "",
+                    issueId,
+                    versionId
+                  ),
+              }}
+              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+              projectId={issue.project_id}
+              workspaceSlug={workspaceSlug}
+            />
+          ) : undefined
+        }
+      />
     </div>
   );
 });

@@ -11,17 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueAttachmentsCollapsibleContent } from "./content";
-import { IssueAttachmentsCollapsibleTitle } from "./title";
+import { IssueAttachmentActionButton } from "./quick-action-button";
 
 type Props = {
   workspaceSlug: string;
@@ -33,40 +32,45 @@ type Props = {
 
 export const AttachmentsCollapsible = observer(function AttachmentsCollapsible(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
-  const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
+  const {
+    openWidgets,
+    toggleOpenWidget,
+    issue: { getIssueById },
+  } = useIssueDetail(issueServiceType);
 
   // derived values
   const isCollapsibleOpen = openWidgets.includes("attachments");
+  const issue = getIssueById(issueId);
+  const attachmentCount = issue?.attachment_count ?? 0;
 
   return (
-    <Collapsible
-      open={isCollapsibleOpen}
-      onOpenChange={(open) => {
-        if (open !== isCollapsibleOpen) {
-          toggleOpenWidget("attachments");
-        }
-      }}
+    <EntityDetailWidgetSection
+      title={t("common.attachments")}
+      count={attachmentCount}
+      isOpen={isCollapsibleOpen}
+      onToggle={() => toggleOpenWidget("attachments")}
+      actionElement={
+        !disabled ? (
+          <IssueAttachmentActionButton
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
+            issueServiceType={issueServiceType}
+          />
+        ) : undefined
+      }
     >
-      <CollapsibleTrigger className="w-full">
-        <IssueAttachmentsCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <IssueAttachmentsCollapsibleContent
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      </CollapsibleContent>
-    </Collapsible>
+      <IssueAttachmentsCollapsibleContent
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        disabled={disabled}
+        issueServiceType={issueServiceType}
+      />
+    </EntityDetailWidgetSection>
   );
 });

@@ -37,6 +37,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: ActivityFi
   return (
     <PopoverMenu
       buttonClassName="outline-none"
+      buttonRefClassName="size-6"
       button={
         <>
           <IconButton variant="tertiary" icon={ListFilter} />

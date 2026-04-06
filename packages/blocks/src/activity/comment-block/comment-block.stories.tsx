@@ -48,8 +48,8 @@ export const WithReactions = meta.story({
     visibilityIcon: <Globe className="size-3.5 text-tertiary" />,
     body: "This needs a bit more work on the responsive layout. The sidebar collapses incorrectly on tablet viewports.",
     reactions: [
-      { emoji: "👍", count: 3, onClick: () => {} },
-      { emoji: "🎉", count: 1, onClick: () => {} },
+      { id: "thumbsup", emoji: "👍", count: 3, onClick: () => {} },
+      { id: "tada", emoji: "🎉", count: 1, onClick: () => {} },
     ],
     onReply: () => {},
     onAddReaction: () => {},
@@ -184,9 +184,9 @@ export const FullFeatured = meta.story({
     body: "I've completed the final review of the authentication module. All edge cases are covered. The token refresh logic now handles concurrent requests properly. Marking this as ready for QA.",
     isEdited: true,
     reactions: [
-      { emoji: "👍", count: 5, isActive: true, onClick: () => {} },
-      { emoji: "🎉", count: 3, onClick: () => {} },
-      { emoji: "❤️", count: 1, onClick: () => {} },
+      { id: "thumbsup", emoji: "👍", count: 5, isActive: true, onClick: () => {} },
+      { id: "tada", emoji: "🎉", count: 3, onClick: () => {} },
+      { id: "heart", emoji: "❤️", count: 1, onClick: () => {} },
     ],
     onReply: () => {},
     onAddReaction: () => {},

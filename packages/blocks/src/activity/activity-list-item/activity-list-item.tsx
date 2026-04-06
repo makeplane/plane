@@ -31,7 +31,7 @@ export function ActivityListItem(props: ActivityListItemProps) {
   return (
     <div
       ref={highlightRef}
-      className={cn("border border-transparent transition-border duration-1000", highlighted && "border-accent-strong")}
+      className={cn("rounded-lg border border-transparent", highlighted && "animate-highlight-fade")}
     >
       <TimelineItem
         icon={icon}
@@ -39,9 +39,9 @@ export function ActivityListItem(props: ActivityListItemProps) {
         connectorHeight="md"
         className="text-caption-sm-regular"
       >
-        <span className="flex gap-1.5 w-full truncate text-secondary">
+        <span className="flex items-center gap-1.5 w-full truncate text-secondary text-body-xs-medium">
           {actor}
-          <span> {customContent} </span>
+          <span className="truncate text-body-xs-regular text-secondary"> {customContent} </span>
           {timestamp && <TimelineTimestamp timestamp={timestamp} tooltipContent={tooltipTimestamp} />}
         </span>
       </TimelineItem>
