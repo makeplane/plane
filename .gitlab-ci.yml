@@ -5,7 +5,7 @@
 #   IS_AIRGAPPED=false (default): gitlab.com + self-hosted runner (Docker Executor, internet)
 #   IS_AIRGAPPED=true           : internal GitLab + Shell Executor (air-gapped, no internet)
 #
-# Stages: lint → test → build → deploy
+# Stages: lint → test → build → deploy → release
 # CI/CD targets only 3 dynamic services: web, admin, api
 # (space, live, proxy deployed once manually via build-shb-images.sh + deploy-shb.sh)
 # =============================================================================
@@ -15,15 +15,16 @@ stages:
   - test
   - build
   - deploy
+  - release
 
 variables:
   PNPM_STORE_PATH: .pnpm-store
   NODE_OPTIONS: "--max-old-space-size=4096"
   # Docker image tag — short commit SHA (e.g. "a1b2c3d")
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
-  # Target servers (air-gapped internal)
-  TEST_SERVER: "10.94.232.123"
-  PROD_SERVER: "10.94.125.86"
+  # Target servers — defined as CI/CD variables in GitLab (Settings → CI/CD → Variables)
+  #   TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST → UAT  (10.94.232.123)
+  #   PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD → Prod (10.94.125.86)
   # Deploy directory — must match on ALL servers (test, prod, external VPS)
   PLANE_DIR: "/opt/shb-deploy/plane-app"
   # Toggle: "false" = Docker Executor + internet (gitlab.com)
@@ -218,15 +219,23 @@ backend:test:shell:
 # ── Web ───────────────────────────────────────────────────────────────────────
 
 # Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
+# Also produces .shb-version and version.env (dotenv) for the release stage
 build:web:docker:
   extends: .build_docker_base
   script:
     - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
     - mkdir -p dist
     - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
+    # Write version files — version sourced from package.json (e.g. shb_v1.2.0)
+    - SHB_VERSION="shb_v$(grep -m1 '"version"' package.json | sed 's/.*"version": "\(.*\)".*/\1/')"
+    - echo "$SHB_VERSION" > dist/.shb-version
+    - echo "SHB_VERSION=$SHB_VERSION" > dist/version.env
   artifacts:
     paths:
       - dist/plane-frontend-*.tar.gz
+      - dist/.shb-version
+    reports:
+      dotenv: dist/version.env
     expire_in: 1 day
   rules:
     - if: >-
@@ -235,15 +244,23 @@ build:web:docker:
 
 # Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
 # Docker runs on host — no DinD, no daemon connection needed
+# Also produces .shb-version and version.env (dotenv) for the release stage
 build:web:shell:
   stage: build
   script:
     - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
     - mkdir -p dist
     - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
+    # Write version files — version sourced from package.json (e.g. shb_v1.2.0)
+    - SHB_VERSION="shb_v$(grep -m1 '"version"' package.json | sed 's/.*"version": "\(.*\)".*/\1/')"
+    - echo "$SHB_VERSION" > dist/.shb-version
+    - echo "SHB_VERSION=$SHB_VERSION" > dist/version.env
   artifacts:
     paths:
       - dist/plane-frontend-*.tar.gz
+      - dist/.shb-version
+    reports:
+      dotenv: dist/version.env
     expire_in: 1 day
   rules:
     - if: >-
@@ -325,30 +342,21 @@ build:api:shell:
 # Deploy strategy: SCP tar.gz + scripts/ci-deploy.sh to server, then SSH execute
 # =============================================================================
 
-# ── SSH helper template ───────────────────────────────────────────────────────
-
-.ssh_setup: &ssh_setup
-  - eval $(ssh-agent -s)
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-
 # ── Deploy Test — auto on merge to develop (air-gapped internal) ──────────────
+# Auth: password-based via sshpass — variables: TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST
 deploy:test:
   stage: deploy
   interruptible: false
   before_script:
-    - *ssh_setup
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H $TEST_SERVER >> ~/.ssh/known_hosts
   script:
-    # Upload images and deploy script to server
-    - ssh $SSH_USER@$TEST_SERVER "mkdir -p /tmp/plane-deploy"
-    - scp dist/*.tar.gz $SSH_USER@$TEST_SERVER:/tmp/plane-deploy/
-    - scp scripts/ci-deploy.sh $SSH_USER@$TEST_SERVER:/tmp/ci-deploy.sh
-    # Execute deploy script with IMAGE_TAG exported
-    - ssh $SSH_USER@$TEST_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
-    # Cleanup temp files
-    - ssh $SSH_USER@$TEST_SERVER "rm -f /tmp/ci-deploy.sh"
+    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "mkdir -p /tmp/plane-deploy"
+    - sshpass -p "$SSH_PASSWORD_TEST" scp dist/*.tar.gz dist/.shb-version $SSH_USER_TEST@$TEST_SERVER:/tmp/plane-deploy/
+    - sshpass -p "$SSH_PASSWORD_TEST" scp scripts/ci-deploy.sh $SSH_USER_TEST@$TEST_SERVER:/tmp/ci-deploy.sh
+    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
+    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -f /tmp/ci-deploy.sh"
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "true"
   environment:
@@ -356,26 +364,27 @@ deploy:test:
     url: https://uat-jms.shinhan.com.vn
 
 # ── Deploy Production — manual approve on merge to preview (air-gapped internal) ──
+# Auth: password-based via sshpass — variables: PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD
 deploy:production:
   stage: deploy
   interruptible: false
   before_script:
-    - *ssh_setup
-    - echo "$SSH_PRIVATE_KEY_PROD" | tr -d '\r' | ssh-add -
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER_PROD@$PROD_SERVER "mkdir -p /tmp/plane-deploy"
-    - scp dist/*.tar.gz $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
-    - scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
-    - ssh $SSH_USER_PROD@$PROD_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
-    - ssh $SSH_USER_PROD@$PROD_SERVER "rm -f /tmp/ci-deploy.sh"
+    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "mkdir -p /tmp/plane-deploy"
+    - sshpass -p "$SSH_PASSWORD_PROD" scp dist/*.tar.gz dist/.shb-version $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
+    - sshpass -p "$SSH_PASSWORD_PROD" scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
+    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
+    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -f /tmp/ci-deploy.sh"
   rules:
     - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
       when: manual
       allow_failure: false
   environment:
     name: production
-    url: http://10.94.125.86
+    url: http://$PROD_SERVER
 
 # ── Deploy External Test — auto on merge to develop (external gitlab.com) ─────
 # Uses a temporary VPS as deploy target to validate SSH + SCP flow end-to-end
@@ -389,7 +398,7 @@ deploy:external-test:
     - ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
   script:
     - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "mkdir -p /tmp/plane-deploy"
-    - sshpass -p "$VPS_PASSWORD" scp dist/*.tar.gz $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
+    - sshpass -p "$VPS_PASSWORD" scp dist/*.tar.gz dist/.shb-version $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
     - sshpass -p "$VPS_PASSWORD" scp scripts/ci-deploy.sh $VPS_USER@$VPS_HOST:/tmp/ci-deploy.sh
     # VPS uses home-based path (no sudo); internal servers use default /root/Documents/... path
     - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "PLANE_DIR=/home/$VPS_USER/plane-app IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
@@ -399,3 +408,76 @@ deploy:external-test:
   environment:
     name: external-test
     url: http://$VPS_HOST
+
+# =============================================================================
+# STAGE 5: RELEASE
+# Runs after deploy:production succeeds (manual gate).
+# Creates a git tag + GitLab Release using the version from package.json.
+# Requires CI variable: GITLAB_TOKEN (project/group access token, scope: api)
+# Tag format: shb_v{version} — e.g. shb_v1.2.0 (matches .shb-version file)
+# =============================================================================
+
+# Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
+release:production:docker:
+  stage: release
+  image: alpine:latest
+  needs:
+    - job: deploy:production
+    - job: build:web:docker
+      artifacts: true  # provides $SHB_VERSION from dotenv
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "Creating tag + release for ${SHB_VERSION} ..."
+    # Create annotated git tag via GitLab API
+    - |
+      curl --fail -s \
+        --request POST \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --data "tag_name=${SHB_VERSION}&ref=${CI_COMMIT_SHA}&message=Release ${SHB_VERSION}" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/tags"
+    # Create GitLab Release linked to the tag
+    - |
+      curl --fail -s \
+        --request POST \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "Content-Type: application/json" \
+        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Production deploy ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
+    - echo "  ✓ Released ${SHB_VERSION}"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "false"
+      when: on_success
+
+# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
+release:production:shell:
+  stage: release
+  needs:
+    - job: deploy:production
+    - job: build:web:shell
+      artifacts: true  # provides $SHB_VERSION from dotenv
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "Creating tag + release for ${SHB_VERSION} ..."
+    # Create annotated git tag via GitLab API
+    - |
+      curl --fail -s \
+        --request POST \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --data "tag_name=${SHB_VERSION}&ref=${CI_COMMIT_SHA}&message=Release ${SHB_VERSION}" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/tags"
+    # Create GitLab Release linked to the tag
+    - |
+      curl --fail -s \
+        --request POST \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "Content-Type: application/json" \
+        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Production deploy ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
+    - echo "  ✓ Released ${SHB_VERSION}"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
+      when: on_success
