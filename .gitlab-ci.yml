@@ -142,7 +142,7 @@ backend:test:docker:
   image: python:3.12-slim
   interruptible: true
   before_script:
-    - apt-get update -qq && apt-get install -y -qq libpq-dev build-essential
+    - apt-get update -qq && apt-get install -y -qq libpq-dev build-essential libldap2-dev libsasl2-dev
   services:
     - name: postgres:15-alpine
       alias: postgres

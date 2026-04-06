@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import pytest
+from django.utils import timezone
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.instance_admin import is_instance_admin
 
@@ -29,7 +30,8 @@ class TestInstanceAdminUtility:
         """Test that non-admin users return False"""
         Instance.objects.create(
             instance_name="Test Instance",
-            is_setup_done=True
+            is_setup_done=True,
+            last_checked_at=timezone.now(),
         )
         # Create user without InstanceAdmin record
         result = is_instance_admin(create_user)
@@ -40,7 +42,8 @@ class TestInstanceAdminUtility:
         """Test that users with InstanceAdmin role >= 15 return True"""
         instance = Instance.objects.create(
             instance_name="Test Instance",
-            is_setup_done=True
+            is_setup_done=True,
+            last_checked_at=timezone.now(),
         )
         InstanceAdmin.objects.create(
             instance=instance,
@@ -55,7 +58,8 @@ class TestInstanceAdminUtility:
         """Test that users with higher InstanceAdmin role return True"""
         instance = Instance.objects.create(
             instance_name="Test Instance",
-            is_setup_done=True
+            is_setup_done=True,
+            last_checked_at=timezone.now(),
         )
         InstanceAdmin.objects.create(
             instance=instance,
@@ -70,7 +74,8 @@ class TestInstanceAdminUtility:
         """Test that users with InstanceAdmin role < 15 return False"""
         instance = Instance.objects.create(
             instance_name="Test Instance",
-            is_setup_done=True
+            is_setup_done=True,
+            last_checked_at=timezone.now(),
         )
         InstanceAdmin.objects.create(
             instance=instance,
