@@ -223,12 +223,12 @@ backend:test:shell:
 build:web:docker:
   extends: .build_docker_base
   script:
-    - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
-    - mkdir -p dist
-    - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
-    # Write version files — extract version from package.json (e.g. "1.2.1" → shb_v1.2.1)
+    # Extract version from package.json — used as Docker tag + tar.gz filename
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
+    - docker build -t makeplane/plane-frontend:${SHB_VERSION} -f apps/web/Dockerfile.web .
+    - mkdir -p dist
+    - docker save makeplane/plane-frontend:${SHB_VERSION} | gzip > dist/plane-frontend-${SHB_VERSION}.tar.gz
     - echo $SHB_VERSION > dist/.shb-version
     - echo SHB_VERSION=$SHB_VERSION > dist/version.env
   artifacts:
@@ -249,12 +249,12 @@ build:web:docker:
 build:web:shell:
   stage: build
   script:
-    - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
-    - mkdir -p dist
-    - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
-    # Write version files — extract version from package.json (e.g. "1.2.1" → shb_v1.2.1)
+    # Extract version from package.json — used as Docker tag + tar.gz filename
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
+    - docker build -t makeplane/plane-frontend:${SHB_VERSION} -f apps/web/Dockerfile.web .
+    - mkdir -p dist
+    - docker save makeplane/plane-frontend:${SHB_VERSION} | gzip > dist/plane-frontend-${SHB_VERSION}.tar.gz
     - echo $SHB_VERSION > dist/.shb-version
     - echo SHB_VERSION=$SHB_VERSION > dist/version.env
   artifacts:
@@ -275,9 +275,11 @@ build:web:shell:
 build:admin:docker:
   extends: .build_docker_base
   script:
-    - docker build -t makeplane/plane-admin:$IMAGE_TAG -f apps/admin/Dockerfile.admin .
+    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
+    - SHB_VERSION=shb_v${VERSION}
+    - docker build -t makeplane/plane-admin:${SHB_VERSION} -f apps/admin/Dockerfile.admin .
     - mkdir -p dist
-    - docker save makeplane/plane-admin:$IMAGE_TAG | gzip > dist/plane-admin-$IMAGE_TAG.tar.gz
+    - docker save makeplane/plane-admin:${SHB_VERSION} | gzip > dist/plane-admin-${SHB_VERSION}.tar.gz
   artifacts:
     paths:
       - dist/plane-admin-*.tar.gz
@@ -291,9 +293,11 @@ build:admin:docker:
 build:admin:shell:
   stage: build
   script:
-    - docker build -t makeplane/plane-admin:$IMAGE_TAG -f apps/admin/Dockerfile.admin .
+    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
+    - SHB_VERSION=shb_v${VERSION}
+    - docker build -t makeplane/plane-admin:${SHB_VERSION} -f apps/admin/Dockerfile.admin .
     - mkdir -p dist
-    - docker save makeplane/plane-admin:$IMAGE_TAG | gzip > dist/plane-admin-$IMAGE_TAG.tar.gz
+    - docker save makeplane/plane-admin:${SHB_VERSION} | gzip > dist/plane-admin-${SHB_VERSION}.tar.gz
   artifacts:
     paths:
       - dist/plane-admin-*.tar.gz
@@ -309,10 +313,12 @@ build:admin:shell:
 build:api:docker:
   extends: .build_docker_base
   script:
+    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
+    - SHB_VERSION=shb_v${VERSION}
     # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
-    - docker build -t makeplane/plane-backend:$IMAGE_TAG -f apps/api/Dockerfile.api ./apps/api
+    - docker build -t makeplane/plane-backend:${SHB_VERSION} -f apps/api/Dockerfile.api ./apps/api
     - mkdir -p dist
-    - docker save makeplane/plane-backend:$IMAGE_TAG | gzip > dist/plane-backend-$IMAGE_TAG.tar.gz
+    - docker save makeplane/plane-backend:${SHB_VERSION} | gzip > dist/plane-backend-${SHB_VERSION}.tar.gz
   artifacts:
     paths:
       - dist/plane-backend-*.tar.gz
@@ -326,10 +332,12 @@ build:api:docker:
 build:api:shell:
   stage: build
   script:
+    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
+    - SHB_VERSION=shb_v${VERSION}
     # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
-    - docker build -t makeplane/plane-backend:$IMAGE_TAG -f apps/api/Dockerfile.api ./apps/api
+    - docker build -t makeplane/plane-backend:${SHB_VERSION} -f apps/api/Dockerfile.api ./apps/api
     - mkdir -p dist
-    - docker save makeplane/plane-backend:$IMAGE_TAG | gzip > dist/plane-backend-$IMAGE_TAG.tar.gz
+    - docker save makeplane/plane-backend:${SHB_VERSION} | gzip > dist/plane-backend-${SHB_VERSION}.tar.gz
   artifacts:
     paths:
       - dist/plane-backend-*.tar.gz
@@ -357,7 +365,8 @@ deploy:test:
     - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$SSH_PASSWORD_TEST" scp dist/*.tar.gz dist/.shb-version $SSH_USER_TEST@$TEST_SERVER:/tmp/plane-deploy/
     - sshpass -p "$SSH_PASSWORD_TEST" scp scripts/ci-deploy.sh $SSH_USER_TEST@$TEST_SERVER:/tmp/ci-deploy.sh
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
+    - SHB_VERSION=$(cat dist/.shb-version)
+    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
     - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -f /tmp/ci-deploy.sh"
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "true"
@@ -378,7 +387,8 @@ deploy:production:
     - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$SSH_PASSWORD_PROD" scp dist/*.tar.gz dist/.shb-version $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
     - sshpass -p "$SSH_PASSWORD_PROD" scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
+    - SHB_VERSION=$(cat dist/.shb-version)
+    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
     - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -f /tmp/ci-deploy.sh"
   rules:
     - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
@@ -402,8 +412,9 @@ deploy:external-test:
     - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$VPS_PASSWORD" scp dist/*.tar.gz dist/.shb-version $VPS_USER@$VPS_HOST:/tmp/plane-deploy/
     - sshpass -p "$VPS_PASSWORD" scp scripts/ci-deploy.sh $VPS_USER@$VPS_HOST:/tmp/ci-deploy.sh
-    # VPS uses home-based path (no sudo); internal servers use default /root/Documents/... path
-    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "PLANE_DIR=/home/$VPS_USER/plane-app IMAGE_TAG=$IMAGE_TAG bash /tmp/ci-deploy.sh"
+    - SHB_VERSION=$(cat dist/.shb-version)
+    # VPS uses home-based path (no sudo); internal servers use default path
+    - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "PLANE_DIR=/home/$VPS_USER/plane-app SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
     - sshpass -p "$VPS_PASSWORD" ssh $VPS_USER@$VPS_HOST "rm -f /tmp/ci-deploy.sh"
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "false"
