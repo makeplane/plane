@@ -28,6 +28,7 @@ from plane.db.models import DeployBoard
 from plane.utils.exception_logger import log_exception
 from plane.space.rate_limit import AnchorBasedRateThrottle, SpaceRateThrottle
 from plane.app.permissions.workspace import WorkspaceUserPermission
+from plane.ee.models.intake import IntakeForm
 
 
 class FeatureFlagProxyEndpoint(BaseAPIView):
@@ -69,6 +70,17 @@ class FeatureFlagProxySpaceEndpoint(BaseAPIView):
         AnchorBasedRateThrottle,
     ]
 
+    def get_workspace_slug_for_anchor(self, anchor):
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        if deploy_board:
+            return deploy_board.workspace.slug
+
+        intake_form = IntakeForm.objects.filter(anchor=anchor).first()
+        if intake_form:
+            return intake_form.workspace.slug
+        
+        return None
+
     @method_decorator(cache_page(60))  # cache the response for 1 minute
     def get(self, request, anchor):
         try:
@@ -78,9 +90,12 @@ class FeatureFlagProxySpaceEndpoint(BaseAPIView):
                     {"error": "flag_key is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            deploy_board = DeployBoard.objects.get(anchor=anchor)
-            workspace_slug = deploy_board.workspace.slug
+            workspace_slug = self.get_workspace_slug_for_anchor(anchor)
+            if not workspace_slug:
+                return JsonResponse(
+                    {"error": "Invalid anchor"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
             url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
             json = {"workspace_slug": workspace_slug, "flag_key": flag_key}
             headers = {
