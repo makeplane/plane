@@ -9,6 +9,10 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+import pytz
+from datetime import datetime, time
+
 # Third Party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,12 +21,12 @@ from rest_framework.response import Response
 from django.utils import timezone
 
 # Module imports
-from plane.utils.timezone_converter import convert_to_utc_with_timestamp
 from plane.ee.views.base import BaseAPIView
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import Cycle
+from plane.db.models import Cycle, Project
+from plane.ee.models import ProjectFeature
 from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 
 class CycleStartStopEndpoint(BaseAPIView):
@@ -43,8 +47,6 @@ class CycleStartStopEndpoint(BaseAPIView):
             cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, id=cycle_id)
             if cycle is None:
                 return Response({"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND)
-
-            current_datetime = convert_to_utc_with_timestamp(project_id, current_date)
 
             if action == "STOP":
                 """
@@ -67,32 +69,63 @@ class CycleStartStopEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                cycle.end_date = current_datetime
+                cycle.end_date = timezone.now()
 
             if action == "START":
-                """
-                # fetch all the upcoming cycles cycles and sort them by start date and 
-                # check if the current cycle is equal to the first cycle in the list
-                """
-                upcoming_cycles = (
-                    Cycle.objects.filter(
+                # Build the UTC bounds for the requested day in the project's timezone.
+                # Automated cycles store start_date as midnight-in-project-tz → UTC, which
+                # for timezones east of UTC (e.g. IST) is the *previous* UTC calendar day.
+                # All comparisons must use this project-tz day window, not raw UTC .date().
+                project_obj = Project.objects.get(id=project_id)
+                local_tz = pytz.timezone(project_obj.timezone)
+                date_obj = datetime.strptime(current_date, "%Y-%m-%d").date()
+                day_start_utc = local_tz.localize(datetime.combine(date_obj, time.min)).astimezone(pytz.utc)
+
+                # Check if the project has parallel cycles enabled
+                is_project_parallel = bool(
+                    ProjectFeature.objects.filter(project_id=project_id, workspace__slug=slug)
+                    .values_list("is_parallel_cycles_enabled", flat=True)
+                    .first()
+                )
+                is_flag_enabled = check_workspace_feature_flag(FeatureFlag.PARALLEL_CYCLES, slug)
+                allow_parallel = is_project_parallel and is_flag_enabled
+
+                if allow_parallel:
+                    # Parallel mode: any cycle scheduled for today or later can be started.
+                    # Use the project-tz day window instead of current UTC time so that
+                    # cycles stored as midnight-IST (= prev UTC day) are correctly found.
+                    upcoming_cycles = Cycle.objects.filter(
                         workspace__slug=slug,
                         project_id=project_id,
                         project__archived_at__isnull=True,
-                    )
-                    .filter(start_date__gt=current_datetime)
-                    .order_by("start_date")
-                ).accessible_to(request.user.id, slug)
+                        start_date__gte=day_start_utc,
+                    ).accessible_to(request.user.id, slug)
 
-                upcoming_first_cycle = upcoming_cycles.first()
+                    if not upcoming_cycles.filter(id=cycle_id).exists():
+                        return Response(
+                            {"error": "Cycle is not upcoming."},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+                else:
+                    # Non-parallel mode: the cycle must be the earliest upcoming one.
+                    # Filter by the full UTC range covering today in project timezone.
+                    upcoming_cycles = (
+                        Cycle.objects.filter(
+                            workspace__slug=slug,
+                            project_id=project_id,
+                            project__archived_at__isnull=True,
+                            start_date__gte=day_start_utc,
+                        ).order_by("start_date")
+                    ).accessible_to(request.user.id, slug)
 
-                if upcoming_first_cycle is not None and cycle_id != upcoming_first_cycle.id:
-                    return Response(
-                        {"error": "Cycle is not the next upcoming cycle."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                    upcoming_first_cycle = upcoming_cycles.first()
+                    if upcoming_first_cycle is not None and str(cycle_id) != str(upcoming_first_cycle.id):
+                        return Response(
+                            {"error": "Cycle is not the next upcoming cycle."},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
 
-                cycle.start_date = current_datetime
+                cycle.start_date = timezone.now()
 
             cycle.save()
 
