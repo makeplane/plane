@@ -2443,12 +2443,12 @@ async def check_page_access(page_id: str, user_id: str) -> bool:
     query = """
     SELECT 1
     FROM pages p
-    JOIN workspace_members wm ON wm.workspace_id = p.workspace_id
+    JOIN workspace_members wm
+        ON wm.workspace_id = p.workspace_id
+        AND wm.member_id = $2
+        AND wm.deleted_at IS NULL
+        AND wm.is_active IS TRUE
     WHERE p.id = $1
-    AND wm.member_id = $2
-    AND p.workspace_id = $3
-    AND wm.deleted_at IS NULL
-    AND wm.is_active IS TRUE
     AND p.deleted_at IS NULL;
     """
     try:
