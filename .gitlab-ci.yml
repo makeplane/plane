@@ -226,10 +226,11 @@ build:web:docker:
     - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
     - mkdir -p dist
     - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
-    # Write version files — version sourced from package.json (e.g. shb_v1.2.0)
-    - SHB_VERSION="shb_v$(grep -m1 '"version"' package.json | sed 's/.*"version": "\(.*\)".*/\1/')"
-    - echo "$SHB_VERSION" > dist/.shb-version
-    - echo "SHB_VERSION=$SHB_VERSION" > dist/version.env
+    # Write version files — extract version from package.json (e.g. "1.2.1" → shb_v1.2.1)
+    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
+    - SHB_VERSION=shb_v${VERSION}
+    - echo $SHB_VERSION > dist/.shb-version
+    - echo SHB_VERSION=$SHB_VERSION > dist/version.env
   artifacts:
     paths:
       - dist/plane-frontend-*.tar.gz
@@ -251,10 +252,11 @@ build:web:shell:
     - docker build -t makeplane/plane-frontend:$IMAGE_TAG -f apps/web/Dockerfile.web .
     - mkdir -p dist
     - docker save makeplane/plane-frontend:$IMAGE_TAG | gzip > dist/plane-frontend-$IMAGE_TAG.tar.gz
-    # Write version files — version sourced from package.json (e.g. shb_v1.2.0)
-    - SHB_VERSION="shb_v$(grep -m1 '"version"' package.json | sed 's/.*"version": "\(.*\)".*/\1/')"
-    - echo "$SHB_VERSION" > dist/.shb-version
-    - echo "SHB_VERSION=$SHB_VERSION" > dist/version.env
+    # Write version files — extract version from package.json (e.g. "1.2.1" → shb_v1.2.1)
+    - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
+    - SHB_VERSION=shb_v${VERSION}
+    - echo $SHB_VERSION > dist/.shb-version
+    - echo SHB_VERSION=$SHB_VERSION > dist/version.env
   artifacts:
     paths:
       - dist/plane-frontend-*.tar.gz
