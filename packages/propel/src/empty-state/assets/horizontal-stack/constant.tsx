@@ -37,6 +37,7 @@ import {
   RunnerScriptsHorizontalStackIllustration,
   RunnerFunctionsHorizontalStackIllustration,
   CustomPropertiesHorizontalStackIllustration,
+  SearchHorizontalStackIllustration,
 } from "./";
 
 export const HorizontalStackAssetsMap = [
@@ -83,6 +84,10 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <ProjectHorizontalStackIllustration className="w-20 h-20" />,
     title: "Project",
+  },
+  {
+    asset: <SearchHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Search",
   },
   {
     asset: <SettingsHorizontalStackIllustration className="w-20 h-20" />,

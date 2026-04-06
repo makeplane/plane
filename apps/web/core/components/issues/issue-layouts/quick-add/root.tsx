@@ -107,14 +107,19 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   const { getProjectById } = useProject();
   const { getProjectDefaultIssueType, getProjectEpicDetails, getIssueTypeById, isWorkItemTypeEnabledForProject } =
     useIssueTypes();
-  const { getCreationTypeForState, isStateCreationAllowedForType, getFirstCreationAllowedStateForType } =
-    useWorkflows();
+  const {
+    getCreationTypeForState,
+    isStateCreationAllowedForType,
+    getFirstCreationAllowedStateForType,
+    isWorkflowsEnabled,
+  } = useWorkflows();
   // derived values — resolution logic (runs always, controls both button and form visibility)
   const projectDetail = projectId ? getProjectById(projectId.toString()) : undefined;
   const isWorkItemTypeEnabled =
     workspaceSlug && projectId
       ? isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId.toString())
       : false;
+  const workflowsEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
   const defaultIssueType = projectId ? getProjectDefaultIssueType(projectId.toString()) : undefined;
   const projectEpics = projectId ? getProjectEpicDetails(projectId.toString()) : undefined;
   const defaultIssueTypeId = defaultIssueType?.id;
@@ -124,6 +129,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
       isEpic,
       prePopulatedData,
       defaultIssueTypeId,
+      workflowsEnabled,
       getCreationTypeForState,
       projectId: projectId?.toString() ?? "",
       isWorkItemTypeEnabled,

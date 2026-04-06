@@ -34,7 +34,6 @@ import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {
   handleCreateWorkflow: () => void;
-  disabled: boolean;
   showControls: boolean;
   projectId: string;
   workspaceSlug: string;
@@ -42,7 +41,7 @@ type Props = {
 
 export const WorkFlowListHeader = observer(function WorkFlowListHeader(props: Props) {
   // props
-  const { handleCreateWorkflow, disabled, showControls, projectId, workspaceSlug } = props;
+  const { handleCreateWorkflow, showControls, projectId, workspaceSlug } = props;
   // states
   const [isBannerDismissed, setBannerDismissed] = useState(false);
   // hooks
@@ -80,10 +79,9 @@ export const WorkFlowListHeader = observer(function WorkFlowListHeader(props: Pr
               value={filters.searchQuery}
               onChange={(e) => filters.setSearchQuery(e.target.value)}
               prependIcon={<SearchIcon className="size-4 text-tertiary" />}
-              disabled={disabled}
             />
 
-            <WorkFlowListFilters projectId={projectId} disabled={disabled} />
+            <WorkFlowListFilters projectId={projectId} />
             <Menu
               customButton={
                 <div className="relative">
@@ -99,7 +97,6 @@ export const WorkFlowListHeader = observer(function WorkFlowListHeader(props: Pr
                 </div>
               }
               optionsClassName="w-64"
-              disabled={disabled}
             >
               {sortOptions.map((option) => (
                 <Menu.MenuItem key={option.id} onClick={() => filters.setSortBy(option.id)}>
@@ -119,7 +116,7 @@ export const WorkFlowListHeader = observer(function WorkFlowListHeader(props: Pr
                 </Menu.MenuItem>
               ))}
             </Menu>
-            <Button size="lg" onClick={handleCreateWorkflow} disabled={disabled}>
+            <Button size="lg" onClick={handleCreateWorkflow}>
               {t("project_settings.workflows.add_button")}
             </Button>
           </div>

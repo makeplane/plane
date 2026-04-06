@@ -4012,6 +4012,59 @@ se você tem certeza de que sua pesquisa está correta.`,
           "A mudança de estado não é permitida para alguns itens de trabalho. Certifique-se de que a mudança de estado seja permitida.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Habilitar fluxos de trabalho",
+        description: "Defina fluxos de trabalho para controlar a movimentação dos itens de trabalho",
+        no_states_tooltip: "Nenhum estado foi adicionado ao fluxo de trabalho.",
+        toast: {
+          loading: {
+            enabling: "Habilitando fluxos de trabalho",
+            disabling: "Desabilitando fluxos de trabalho",
+          },
+          success: {
+            title: "Sucesso!",
+            message: "Fluxos de trabalho habilitados com sucesso.",
+          },
+          error: {
+            title: "Erro!",
+            message: "Falha ao habilitar os fluxos de trabalho. Tente novamente.",
+          },
+        },
+      },
+      heading: "Fluxos de trabalho",
+      description:
+        "Automatize as transições dos itens de trabalho e defina regras para controlar como as tarefas avançam pelo fluxo do seu projeto.",
+      add_button: "Adicionar novo fluxo de trabalho",
+      search: "Pesquisar fluxos de trabalho",
+      detail: {
+        define: "Definir fluxo de trabalho",
+        add_states: "Adicionar estados",
+        unmapped_states: {
+          title: "Estados não mapeados detectados",
+          description:
+            "Alguns itens de trabalho dos tipos selecionados estão atualmente em estados que não existem neste fluxo de trabalho.",
+          note: "Se você habilitar este fluxo de trabalho, esses itens serão movidos automaticamente para o estado inicial deste fluxo de trabalho.",
+          label: "Estados ausentes",
+          tooltip:
+            "Alguns itens de trabalho estão em estados que não estão mapeados para este fluxo de trabalho. Abra o fluxo de trabalho para revisá-lo.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Todos os estados estão em uso",
+          description:
+            "Todos os estados definidos para este projeto já estão presentes no seu fluxo de trabalho atual.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Este fluxo de trabalho se aplica a qualquer tipo de item de trabalho que não esteja atribuído a um fluxo de trabalho.",
+      },
+      create: {
+        heading: "Criar novo fluxo de trabalho",
+      },
+    },
   },
   work_item_types: {
     label: "Tipos de Item de Trabalho",

@@ -10,7 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-
+import useSWR from "swr";
 import { observer } from "mobx-react";
 import { WorkFlowListHeader } from "./header/root";
 import { useWorkflows } from "@/hooks/store/use-workflows";
@@ -34,30 +34,34 @@ export const WorkflowsListRoot = observer(function WorkflowsListRoot(props: Prop
   const { t } = useTranslation();
   const {
     getFilteredProjectWorkflows,
-    isWorkflowCreationAllowed,
-    getWorkflowMode,
+    isMultipleWorkflowModeEnabled,
+    fetchProjectWorkflows,
     loader,
     filters: { searchQuery, isFiltersChanged, reset: resetFilters, isSortChanged },
   } = useWorkflows();
 
   // derived values
   const projectWorkflows = getFilteredProjectWorkflows(projectId);
-  const isCreationAllowed = isWorkflowCreationAllowed(workspaceSlug, projectId);
-  const showListControls = getWorkflowMode(workspaceSlug, projectId) === "multiple";
+  const isMultipleModeEnabled = isMultipleWorkflowModeEnabled(workspaceSlug, projectId);
 
   useEffect(() => {
-    if (!showListControls && (searchQuery.length > 0 || isFiltersChanged || isSortChanged)) {
+    if (!isMultipleModeEnabled && (searchQuery.length > 0 || isFiltersChanged || isSortChanged)) {
       resetFilters();
     }
-  }, [showListControls, searchQuery.length, isFiltersChanged, isSortChanged, resetFilters]);
+  }, [isMultipleModeEnabled, searchQuery.length, isFiltersChanged, isSortChanged, resetFilters]);
+
+  // Fetch project workflows list
+  useSWR(`PROJECT_WORKFLOWS_${workspaceSlug}_${projectId}`, () => fetchProjectWorkflows(workspaceSlug, projectId), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
 
   return (
     <>
       <div>
         <WorkFlowListHeader
           handleCreateWorkflow={() => setCreateWorkflowModal(true)}
-          disabled={!isCreationAllowed}
-          showControls={showListControls}
+          showControls={isMultipleModeEnabled}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
         />
@@ -104,7 +108,7 @@ export const WorkflowsListRoot = observer(function WorkflowsListRoot(props: Prop
               title={t("settings_empty_state.workflows.title")}
               description={t("settings_empty_state.workflows.description")}
               actions={
-                isCreationAllowed
+                isMultipleModeEnabled
                   ? [
                       {
                         label: t("settings_empty_state.workflows.cta_primary"),

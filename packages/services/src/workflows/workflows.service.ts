@@ -15,12 +15,14 @@ import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "../api.service";
 import type {
   IWorkflowService,
+  TTransferAndDeleteStatePayload,
   TAddStatesToWorkflowPayload,
   TAddStateTransitionPayload,
   TUpdateStateTransitionPayload,
   TUpdateWorkflowStatePayload,
   TWorkflow,
   TWorkflowChangeHistory,
+  TWorkflowWorkItemTypeCheckResponse,
   TWorkflowCreatePayload,
   TWorkflowResponse,
   TWorkflowState,
@@ -36,6 +38,15 @@ export class WorkflowsService extends APIService implements IWorkflowService {
   // Fetch all workflows
   async fetchAll(workspaceSlug: string): Promise<TWorkflowResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/workflows/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Fetch project workflows
+  async fetchProjectWorkflows(workspaceSlug: string, projectId: string): Promise<TWorkflow[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflows/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -130,6 +141,26 @@ export class WorkflowsService extends APIService implements IWorkflowService {
   }
 
   /**
+   * @description Transfer work items to a new state and delete the old state from a workflow
+   */
+  async transferAndDeleteState(
+    workspaceSlug: string,
+    projectId: string,
+    workflowId: string,
+    stateId: string,
+    data: TTransferAndDeleteStatePayload
+  ): Promise<void> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workflows/${workflowId}/states/${stateId}/transfer/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
    * @description Add a transition to a state in a workflow
    */
   async addStateTransition(
@@ -202,6 +233,20 @@ export class WorkflowsService extends APIService implements IWorkflowService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflows/${workflowId}/activities/`, {
       params,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchWorkflowWorkItemTypeCheck(
+    workspaceSlug: string,
+    projectId: string,
+    workflowId: string
+  ): Promise<TWorkflowWorkItemTypeCheckResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workflows/${workflowId}/work-item-type-check/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

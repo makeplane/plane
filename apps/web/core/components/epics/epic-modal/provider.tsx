@@ -30,6 +30,7 @@ import type {
   TActiveAdditionalPropertiesProps,
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
+  TResolveStateIdForTypeChangeProps,
 } from "@/components/issues/issue-modal/context";
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 import { WorkItemConversionToastActionItem } from "@/components/common/toast-actions/work-item-conversion";
@@ -170,6 +171,9 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
       });
   };
 
+  const resolveStateIdForTypeChange = ({ currentStateId }: TResolveStateIdForTypeChangeProps) => currentStateId;
+  const resolveCreateStateId = ({ currentStateId }: { currentStateId?: string | null }) => currentStateId ?? null;
+
   /**
    * Used to handle work item conversion
    */
@@ -216,6 +220,8 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
         handleCreateUpdatePropertyValues,
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
+        resolveCreateStateId,
+        resolveStateIdForTypeChange,
         handleConvert,
         handleCreateSubWorkItem: () => Promise.resolve(),
       }}

@@ -11,16 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { observer } from "mobx-react";
+import { useMemo, useState } from "react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { observer } from "mobx-react";
-import { SelectWorkflowStatesModal } from "./select-states-modal";
-import { useState } from "react";
-import type { IWorkflow } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { IWorkflow } from "@plane/types";
+// hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+// local imports
+import { SelectWorkflowStatesModal } from "./select-states-modal";
 import { WorkflowStateCardRoot } from "./state-card/root";
+import { DependencyAlertModal } from "./delete-state/dependency-alert-modal";
+import { TransferModal } from "./delete-state/transfer-modal";
 
 type Props = {
   workspaceSlug: string;
@@ -33,8 +38,9 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
   const { workspaceSlug, projectId, workflow } = props;
   // states
   const [isSelectStatesModalOpen, setSelectStatesModal] = useState(false);
+  const [deleteTargetStateId, setDeleteTargetStateId] = useState<string | null>(null);
   // store hooks
-  const { getProjectStateIds } = useProjectState();
+  const { getProjectStateIds, getStateById } = useProjectState();
 
   // hooks
   const { t } = useTranslation();
@@ -64,6 +70,15 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
 
   // derived values
   const projectStateIds = getProjectStateIds(projectId);
+  const isDefaultWorkflow = workflow.is_default;
+  const deleteTargetDependencies = useMemo(
+    () => (deleteTargetStateId ? workflow.getStateDependencies(deleteTargetStateId) : null),
+    [deleteTargetStateId, workflow]
+  );
+  const hasDependencies = deleteTargetDependencies
+    ? deleteTargetDependencies.transitionCount > 0 || deleteTargetDependencies.approvalCount > 0
+    : false;
+  const deleteTargetStateName = deleteTargetStateId ? (getStateById(deleteTargetStateId)?.name ?? "") : "";
 
   if (!projectStateIds) return null;
 
@@ -76,9 +91,11 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
           <div className="flex items-center gap-1.5">
             <p className="text-body-md-medium">{t("project_settings.workflows.detail.define")}</p>
           </div>
-          <Button variant="secondary" onClick={() => setSelectStatesModal(true)}>
-            {t("project_settings.workflows.detail.add_states")}
-          </Button>
+          {!isDefaultWorkflow && (
+            <Button variant="secondary" onClick={() => setSelectStatesModal(true)}>
+              {t("project_settings.workflows.detail.add_states")}
+            </Button>
+          )}
         </div>
         {workflow.stateIds.length === 0 ? (
           <div className="mt-20">
@@ -98,6 +115,7 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 workflow={workflow}
+                onRequestDelete={setDeleteTargetStateId}
               />
             ))}
           </div>
@@ -109,6 +127,26 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
         handleSubmit={handleAddStates}
         existingStateIds={workflow.stateIds}
       />
+      {deleteTargetStateId && hasDependencies && deleteTargetDependencies && (
+        <DependencyAlertModal
+          isOpen
+          onClose={() => setDeleteTargetStateId(null)}
+          stateName={deleteTargetStateName}
+          transitionCount={deleteTargetDependencies.transitionCount}
+          approvalCount={deleteTargetDependencies.approvalCount}
+        />
+      )}
+      {deleteTargetStateId && !hasDependencies && (
+        <TransferModal
+          isOpen
+          onClose={() => setDeleteTargetStateId(null)}
+          stateName={deleteTargetStateName}
+          stateId={deleteTargetStateId}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          workflow={workflow}
+        />
+      )}
     </>
   );
 });

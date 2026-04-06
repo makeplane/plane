@@ -14,9 +14,11 @@
 // Horizontal Stack Asset Types
 export type HorizontalStackAssetType =
   | "customer"
+  | "custom-properties"
   | "epic"
   | "estimate"
   | "export"
+  | "group-syncing"
   | "intake"
   | "label"
   | "link"
@@ -24,6 +26,7 @@ export type HorizontalStackAssetType =
   | "note"
   | "priority"
   | "project"
+  | "search-compact"
   | "settings"
   | "script"
   | "state"
@@ -35,11 +38,9 @@ export type HorizontalStackAssetType =
   | "webhook"
   | "work-item"
   | "worklog"
-  | "workflow"
-  | "group-syncing"
-  | "runner-scripts"
   | "runner-functions"
-  | "custom-properties";
+  | "runner-scripts"
+  | "workflow";
 
 // Vertical Stack Asset Types
 export type VerticalStackAssetType =

@@ -56,7 +56,14 @@ export const WorkflowConfigSidebarContent = observer(function WorkflowConfigSide
           />
         );
       case "states":
-        return <StatesTabContent state={state} transition={transition} onNext={() => helper.selectTab("members")} />;
+        return (
+          <StatesTabContent
+            workflow={workflow}
+            state={state}
+            transition={transition}
+            onNext={() => helper.selectTab("members")}
+          />
+        );
       case "members":
         return (
           <MembersTabContent

@@ -3891,6 +3891,54 @@ export default {
         message: "某些工作項目不允許狀態變更。請確保狀態變更是允許的。",
       },
     },
+    workflows: {
+      toggle: {
+        title: "啟用工作流程",
+        description: "設定工作流程以控制工作項目的流轉",
+        no_states_tooltip: "此工作流程尚未新增任何狀態。",
+        toast: {
+          loading: {
+            enabling: "正在啟用工作流程",
+            disabling: "正在停用工作流程",
+          },
+          success: {
+            title: "成功！",
+            message: "工作流程已成功啟用。",
+          },
+          error: {
+            title: "錯誤！",
+            message: "啟用工作流程失敗。請再試一次。",
+          },
+        },
+      },
+      heading: "工作流程",
+      description: "自動化工作項目轉換，並設定規則以控制任務如何在專案流程中推進。",
+      add_button: "新增工作流程",
+      search: "搜尋工作流程",
+      detail: {
+        define: "定義工作流程",
+        add_states: "新增狀態",
+        unmapped_states: {
+          title: "偵測到未對應的狀態",
+          description: "所選類型的某些工作項目目前位於此工作流程中不存在的狀態。",
+          note: "如果您啟用此工作流程，這些項目將自動移動到此工作流程的初始狀態。",
+          label: "缺少的狀態",
+          tooltip: "某些工作項目位於未對應到此工作流程的狀態。開啟工作流程以檢視。",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "所有狀態都已在使用中",
+          description: "此專案定義的所有狀態都已存在於您目前的工作流程中。",
+        },
+      },
+      default_footer: {
+        fallback_message: "此工作流程適用於任何未指派給任何工作流程的工作項目類型。",
+      },
+      create: {
+        heading: "建立新工作流程",
+      },
+    },
   },
   work_item_types: {
     label: "工作項目類型",

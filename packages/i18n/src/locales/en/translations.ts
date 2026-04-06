@@ -2485,6 +2485,9 @@ Create a new project instead`,
       toggle: {
         title: "Enable workflows",
         description: "Set workflows to control work item movement",
+        no_states_tooltip: "No states are added to the workflow.",
+        no_work_item_types_tooltip: "No work item types are added to the workflow.",
+        no_states_or_work_item_types_tooltip: "No states or work item types are added to the workflow.",
         toast: {
           loading: {
             enabling: "Enabling workflows",
@@ -2508,6 +2511,23 @@ Create a new project instead`,
       detail: {
         define: "Define workflow",
         add_states: "Add states",
+        unmapped_states: {
+          title: "Unmapped states detected",
+          description:
+            "Some work items for the selected types are currently in states that do not exist in this workflow.",
+          note: "If you enable this workflow, these items will automatically move to the initial state for this workflow.",
+          label: "Missing states",
+          tooltip: "Some work items are in states that are not mapped to this workflow. Open the workflow to review.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "All states are in use",
+          description: "All defined states for this project are already present in your current workflow.",
+        },
+      },
+      default_footer: {
+        fallback_message: "This workflow applies to any work item type that is not assigned to a workflow.",
       },
       create: {
         heading: "Create new workflow",

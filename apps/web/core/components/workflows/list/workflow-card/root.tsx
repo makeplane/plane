@@ -11,17 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTranslation } from "@plane/i18n";
-import { observer } from "mobx-react";
-import { WorkflowActions } from "./quick-actions";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { CreateUpdateWorkflowModal } from "../create-update-workflow-modal";
 import { useState } from "react";
-import type { IWorkflow } from "@plane/types";
-import { WorkflowCardFooter } from "./footer";
-import { useWorkflows } from "@/hooks/store/use-workflows";
+import { observer } from "mobx-react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "@plane/i18n";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { IWorkflow } from "@plane/types";
 import { WorkflowChangeHistoryDrawer } from "@/components/workflows/change-history/drawer";
+import { useWorkflows } from "@/hooks/store/use-workflows";
+import { CreateUpdateWorkflowModal } from "../create-update-workflow-modal";
+import { WorkflowCardFooter } from "./footer";
+import { WorkflowActions } from "./quick-actions";
 
 type Props = {
   workflow: IWorkflow;
@@ -39,6 +39,17 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
   const { t } = useTranslation();
   const { deleteWorkflow } = useWorkflows();
   const navigate = useNavigate();
+  const hasNoStates = workflow.stateIds.length === 0;
+  const hasNoWorkItemTypes = !workflow.is_default && workflow.work_item_type_ids.length === 0;
+  const isActivationDisabled = !workflow.is_active && (hasNoStates || hasNoWorkItemTypes);
+  const activationTooltipContent = hasNoStates
+    ? hasNoWorkItemTypes
+      ? t("project_settings.workflows.toggle.no_states_or_work_item_types_tooltip")
+      : t("project_settings.workflows.toggle.no_states_tooltip")
+    : hasNoWorkItemTypes
+      ? t("project_settings.workflows.toggle.no_work_item_types_tooltip")
+      : undefined;
+
   // handlers
   const handleToggle = (isEnabled: boolean) => {
     workflow
@@ -94,6 +105,9 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
             </div>
             <WorkflowActions
               isEnabled={workflow.is_active}
+              isActivationDisabled={isActivationDisabled}
+              activationTooltipContent={activationTooltipContent}
+              hasMissingStates={workflow.missing_states ?? false}
               isDefault={workflow.is_default}
               onToggle={handleToggle}
               handleEdit={() => setUpdateModalOpen(true)}
@@ -102,7 +116,9 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
             />
           </div>
         </div>
-        {workflow.work_item_type_ids.length > 0 && <WorkflowCardFooter workItemTypeIds={workflow.work_item_type_ids} />}
+        {(workflow.is_default || workflow.work_item_type_ids.length > 0) && (
+          <WorkflowCardFooter isDefault={workflow.is_default} workItemTypeIds={workflow.work_item_type_ids} />
+        )}
       </div>
       {/* Update modal */}
       {isUpdateModalOpen && (

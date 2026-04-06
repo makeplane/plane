@@ -45,7 +45,7 @@ export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowM
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // hooks
-  const { createWorkflow, getOccupiedWorkItemTypeIds } = useWorkflows();
+  const { createWorkflow } = useWorkflows();
   const { t } = useTranslation();
   const {
     handleSubmit,
@@ -58,9 +58,6 @@ export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowM
       ...workflow?.asJSON,
     },
   });
-
-  // derived values
-  const occupiedWorkItemTypeIds = getOccupiedWorkItemTypeIds(projectId, workflow?.id);
 
   // handlers
   const handleClose = () => {
@@ -177,7 +174,7 @@ export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowM
                   selectedTypeIds={value}
                   projectId={projectId}
                   handleChange={onChange}
-                  occupiedWorkItemTypeIds={occupiedWorkItemTypeIds}
+                  workflowId={workflow?.id}
                 />
               )}
             />

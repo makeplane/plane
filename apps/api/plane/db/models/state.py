@@ -131,7 +131,25 @@ class State(ProjectBaseModel):
             if last_id is not None:
                 self.sequence = last_id + 15000
 
-        return super().save(*args, **kwargs)
+        is_adding = self._state.adding
+        super().save(*args, **kwargs)
+
+        # if a new state is been added then add it in the default workflow inside the project
+        if is_adding:
+            from plane.ee.models import Workflow, WorkflowState  # deferred to avoid circular import at module load
+
+            # get the default workflow inside the project
+            default_workflow = Workflow.objects.filter(project=self.project, is_default=True).first()
+            if default_workflow:
+                # add the state in the default workflow
+                WorkflowState.objects.create(
+                    workflow_id=default_workflow.id,
+                    state_id=self.id,
+                    project_id=self.project_id,
+                    workspace_id=self.workspace_id,
+                    created_by=self.created_by,
+                    updated_by=self.updated_by,
+                )
 
     @classmethod
     def create_triage_state(cls, project_id: str, workspace_id: str):

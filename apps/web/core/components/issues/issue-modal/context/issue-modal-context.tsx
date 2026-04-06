@@ -52,6 +52,7 @@ export type TCreateSubWorkItemProps = {
 
 export type THandleTemplateChangeProps = {
   workspaceSlug: string;
+  workflowsEnabled: boolean;
   reset: UseFormReset<TIssue>;
   editorRef: React.MutableRefObject<EditorRefApi | null>;
 };
@@ -67,6 +68,21 @@ export type THandleParentWorkItemDetailsProps = {
   parentId: string | undefined;
   parentProjectId: string | undefined;
   isParentEpic: boolean;
+};
+
+export type TResolveStateIdForTypeChangeProps = {
+  projectId: string | null;
+  workflowsEnabled: boolean;
+  currentTypeId?: string | null;
+  nextTypeId: string | null;
+  currentStateId: string | null;
+};
+
+export type TResolveCreateStateIdProps = {
+  projectId: string | null;
+  workflowsEnabled: boolean;
+  typeId?: string | null;
+  currentStateId?: string | null;
 };
 
 export type TIssueModalContext = {
@@ -87,6 +103,8 @@ export type TIssueModalContext = {
   handleCreateUpdatePropertyValues: (props: TCreateUpdatePropertyValuesProps) => Promise<void>;
   handleProjectEntitiesFetch: (props: THandleProjectEntitiesFetchProps) => Promise<void>;
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
+  resolveCreateStateId: (props: TResolveCreateStateIdProps) => string | null;
+  resolveStateIdForTypeChange: (props: TResolveStateIdForTypeChangeProps) => string | null;
   handleConvert: (workspaceSlug: string, data: Partial<TIssue>) => Promise<void>;
   handleCreateSubWorkItem: (props: TCreateSubWorkItemProps) => Promise<void>;
 };

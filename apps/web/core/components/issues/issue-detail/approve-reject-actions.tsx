@@ -14,16 +14,15 @@
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import { CheckCircleFilledIcon, CloseCircleFilledIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTranslation } from "@plane/i18n";
-// hooks
 import { useUser } from "@/hooks/store/user";
 import { useWorkflows } from "@/hooks/store/use-workflows";
-// stores
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { WorkItemApprovalPendingIndicator } from "./approval-pending-indicator";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
@@ -41,7 +40,6 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
   const { projectId, workItemId, currentStateId, typeId, workspaceSlug, serviceType } = props;
   // state
   const [isLoading, setIsLoading] = useState<"approve" | "reject" | null>(null);
-  // hooks
   const { t } = useTranslation();
   const { data: currentUser } = useUser();
   const {
@@ -49,30 +47,24 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
     issue: { getIssueById },
   } = useIssueDetail(serviceType);
   const { getProjectIdentifierById } = useProject();
-  const { isWorkflowsEnabled, isApprovalsEnabled, isApprovalPending, isCurrentUserApprover } = useWorkflows();
   const { getStateById } = useProjectState();
+  const { isApprovalPending, isCurrentUserApprover } = useWorkflows();
+  const isPending = isApprovalPending(workspaceSlug, projectId, typeId, currentStateId);
   const workItemStoreType = useIssueStoreType();
   const { updateIssue } = useIssuesActions(workItemStoreType);
   // derived values
   const projectIdentifier = getProjectIdentifierById(projectId);
   const workItemDetails = getIssueById(workItemId);
-  const isEnabled = workspaceSlug ? isWorkflowsEnabled(workspaceSlug.toString(), projectId) : false;
-  const isApprovalFeatureEnabled =
-    isEnabled && workspaceSlug ? isApprovalsEnabled(workspaceSlug.toString(), projectId) : false;
-  const isPending =
-    isApprovalFeatureEnabled && workspaceSlug
-      ? isApprovalPending(workspaceSlug.toString(), projectId, typeId, currentStateId)
-      : false;
   const canApprove = useMemo(() => {
-    return isPending && currentUser?.id && workspaceSlug
-      ? isCurrentUserApprover(workspaceSlug.toString(), projectId, typeId, currentStateId, currentUser.id)
+    return isPending && currentUser?.id
+      ? isCurrentUserApprover(workspaceSlug, projectId, typeId, currentStateId, currentUser.id)
       : false;
-  }, [isPending, currentUser?.id, workspaceSlug, projectId, typeId, currentStateId]);
+  }, [currentStateId, currentUser?.id, isCurrentUserApprover, isPending, projectId, typeId, workspaceSlug]);
 
-  // handlers
   const handleAction = useCallback(
     async (action: "approve" | "reject") => {
       if (!workspaceSlug || isLoading) return;
+
       setIsLoading(action);
       try {
         const newStateId = await updateStateViaWorkflow(
@@ -98,31 +90,43 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
         setIsLoading(null);
       }
     },
-    [workspaceSlug, projectId, workItemId, isLoading, updateStateViaWorkflow, t]
+    [
+      getStateById,
+      isLoading,
+      projectId,
+      projectIdentifier,
+      t,
+      updateStateViaWorkflow,
+      workItemDetails?.sequence_id,
+      workItemId,
+      workspaceSlug,
+      updateIssue,
+    ]
   );
 
-  if (!canApprove) return null;
+  if (!isPending) return null;
+  if (!canApprove) return <WorkItemApprovalPendingIndicator />;
 
   return (
     <div className="flex gap-2">
       <Button
-        variant="success-outline"
+        variant="secondary"
         size="lg"
-        prependIcon={<CheckIcon className="size-4" />}
         onClick={() => void handleAction("approve")}
         disabled={isLoading !== null}
         loading={isLoading === "approve"}
       >
+        <CheckCircleFilledIcon className="size-4 shrink-0 text-success-secondary" />
         Approve
       </Button>
       <Button
-        variant="error-outline"
+        variant="secondary"
         size="lg"
-        prependIcon={<CloseIcon className="size-4" />}
         onClick={() => void handleAction("reject")}
         disabled={isLoading !== null}
         loading={isLoading === "reject"}
       >
+        <CloseCircleFilledIcon className="size-4 shrink-0 text-danger-secondary" />
         Reject
       </Button>
     </div>

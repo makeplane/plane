@@ -20,6 +20,7 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 // types
 import type { TCustomerWorkItemOperations } from "@/components/customers/work-items/helper";
 
@@ -43,9 +44,14 @@ export const WorkItemPropertiesLite = observer(function WorkItemPropertiesLite(p
   const {
     issue: { getIssueById },
   } = useIssueDetail(issueServiceType);
+  const { isApprovalPending } = useWorkflows();
 
   // derived value
   const workItem = getIssueById(workItemId);
+  const isApprovalPendingState =
+    !!workItem?.project_id && !!workItem.state_id
+      ? isApprovalPending(workspaceSlug, workItem.project_id, workItem.type_id, workItem.state_id)
+      : false;
 
   // if issue is not found, return empty
   if (!workItem) return <></>;
@@ -71,18 +77,18 @@ export const WorkItemPropertiesLite = observer(function WorkItemPropertiesLite(p
 
   return (
     <div className="relative flex items-center gap-2">
-      <div className="h-5 flex-shrink-0">
+      <div className="h-5 shrink-0">
         <StateDropdown
           value={workItem.state_id}
           projectId={workItem.project_id ?? undefined}
           typeId={workItem.type_id}
           onChange={handleStateChange}
-          disabled={disabled}
+          disabled={disabled || isApprovalPendingState}
           buttonVariant="border-with-text"
         />
       </div>
 
-      <div className="h-5 flex-shrink-0">
+      <div className="h-5 shrink-0">
         <PriorityDropdown
           value={workItem.priority}
           onChange={handlePriorityChange}
@@ -92,7 +98,7 @@ export const WorkItemPropertiesLite = observer(function WorkItemPropertiesLite(p
         />
       </div>
 
-      <div className="h-5 flex-shrink-0">
+      <div className="h-5 shrink-0">
         <MemberDropdown
           value={workItem.assignee_ids}
           projectId={workItem.project_id ?? undefined}

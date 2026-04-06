@@ -15,11 +15,13 @@ import { TransitionStatesList } from "./states-list";
 import { SearchIcon } from "@plane/propel/icons";
 import { Input } from "@plane/propel/input";
 import { Button } from "@plane/propel/button";
+import { countGroupedStates, filterGroupedStates } from "@plane/utils";
 import { useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import type { IState } from "@plane/types";
 
 type Props = {
+  availableStateIds: string[];
   selectedApproveStateId?: string;
   selectedRejectStateId?: string;
   onApproveChange: (stateId: string) => void;
@@ -30,7 +32,14 @@ type Props = {
 const STATES_DISPLAY_THRESHOLD = 4;
 
 export const ApprovalStateSelection = observer(function ApprovalStateSelection(props: Props) {
-  const { selectedApproveStateId, selectedRejectStateId, onApproveChange, onRejectChange, currentStateId } = props;
+  const {
+    availableStateIds,
+    selectedApproveStateId,
+    selectedRejectStateId,
+    onApproveChange,
+    onRejectChange,
+    currentStateId,
+  } = props;
   // states
   const [approveSearchQuery, setApproveSearchQuery] = useState("");
   const [rejectSearchQuery, setRejectSearchQuery] = useState("");
@@ -38,45 +47,28 @@ export const ApprovalStateSelection = observer(function ApprovalStateSelection(p
   const [isRejectExpanded, setIsRejectExpanded] = useState(false);
   // hooks
   const { groupedProjectStates } = useProjectState();
+  const hasGroupedProjectStates = !!groupedProjectStates;
 
   const approvalExistingStateIds = [currentStateId, selectedRejectStateId].filter((id) => id !== undefined);
   const rejectExistingStateIds = [currentStateId, selectedApproveStateId].filter((id) => id !== undefined);
 
   // Filter and group approval states
   const groupedApprovalStates = useMemo(() => {
-    if (!groupedProjectStates) return {};
-
-    const grouped: Record<string, IState[]> = {};
-
-    Object.entries(groupedProjectStates).forEach(([groupKey, groupStates]) => {
-      const filtered = groupStates.filter((state) =>
-        state.name.toLowerCase().includes(approveSearchQuery.toLowerCase())
-      );
-      if (filtered.length > 0) {
-        grouped[groupKey] = filtered;
-      }
+    return filterGroupedStates({
+      groupedStates: groupedProjectStates,
+      includedStateIds: availableStateIds,
+      searchQuery: approveSearchQuery,
     });
-
-    return grouped;
-  }, [groupedProjectStates, approveSearchQuery]);
+  }, [availableStateIds, groupedProjectStates, approveSearchQuery]);
 
   // Filter and group rejection states
   const groupedRejectionStates = useMemo(() => {
-    if (!groupedProjectStates) return {};
-
-    const grouped: Record<string, IState[]> = {};
-
-    Object.entries(groupedProjectStates).forEach(([groupKey, groupStates]) => {
-      const filtered = groupStates.filter((state) =>
-        state.name.toLowerCase().includes(rejectSearchQuery.toLowerCase())
-      );
-      if (filtered.length > 0) {
-        grouped[groupKey] = filtered;
-      }
+    return filterGroupedStates({
+      groupedStates: groupedProjectStates,
+      includedStateIds: availableStateIds,
+      searchQuery: rejectSearchQuery,
     });
-
-    return grouped;
-  }, [groupedProjectStates, rejectSearchQuery]);
+  }, [availableStateIds, groupedProjectStates, rejectSearchQuery]);
 
   // Flatten approval states for counting
   const allApprovalStates = useMemo(() => {
@@ -151,6 +143,9 @@ export const ApprovalStateSelection = observer(function ApprovalStateSelection(p
     return Object.values(displayedRejectionStates).reduce((sum, states) => sum + states.length, 0);
   }, [displayedRejectionStates]);
 
+  const hasApprovalStates = countGroupedStates(groupedApprovalStates) > 0;
+  const hasRejectionStates = countGroupedStates(groupedRejectionStates) > 0;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
@@ -166,18 +161,23 @@ export const ApprovalStateSelection = observer(function ApprovalStateSelection(p
           prependIcon={<SearchIcon />}
         />
         <div className="flex flex-col">
-          {Object.entries(displayedApprovalStates).map(([groupKey, groupStates]) => (
-            <div key={`approve-${groupKey}`}>
-              <h6 className="text-caption-md-regular capitalize text-tertiary py-1.5 px-2">{groupKey}</h6>
-              <TransitionStatesList
-                states={groupStates}
-                selectedStates={selectedApproveStateId ? [selectedApproveStateId] : []}
-                onChange={onApproveChange}
-                searchQuery={approveSearchQuery}
-                disabledStateIds={approvalExistingStateIds}
-              />
-            </div>
-          ))}
+          {hasGroupedProjectStates && hasApprovalStates ? (
+            Object.entries(displayedApprovalStates).map(([groupKey, groupStates]) => (
+              <div key={`approve-${groupKey}`}>
+                <h6 className="text-caption-md-regular capitalize text-tertiary py-1.5 px-2">{groupKey}</h6>
+                <TransitionStatesList
+                  states={groupStates}
+                  selectedStates={selectedApproveStateId ? [selectedApproveStateId] : []}
+                  onChange={onApproveChange}
+                  disabledStateIds={approvalExistingStateIds}
+                />
+              </div>
+            ))
+          ) : hasGroupedProjectStates ? (
+            <p className="px-2 py-1.5 text-caption-md-regular text-placeholder">
+              {approveSearchQuery.length > 0 ? "No matching results" : "No states available"}
+            </p>
+          ) : null}
         </div>
         {shouldShowMoreApproval && (
           <Button
@@ -203,18 +203,23 @@ export const ApprovalStateSelection = observer(function ApprovalStateSelection(p
           prependIcon={<SearchIcon />}
         />
         <div className="flex flex-col">
-          {Object.entries(displayedRejectionStates).map(([groupKey, groupStates]) => (
-            <div key={`reject-${groupKey}`}>
-              <h6 className="text-caption-md-regular capitalize text-tertiary py-1.5 px-2">{groupKey}</h6>
-              <TransitionStatesList
-                states={groupStates}
-                selectedStates={selectedRejectStateId ? [selectedRejectStateId] : []}
-                onChange={onRejectChange}
-                searchQuery={rejectSearchQuery}
-                disabledStateIds={rejectExistingStateIds}
-              />
-            </div>
-          ))}
+          {hasGroupedProjectStates && hasRejectionStates ? (
+            Object.entries(displayedRejectionStates).map(([groupKey, groupStates]) => (
+              <div key={`reject-${groupKey}`}>
+                <h6 className="text-caption-md-regular capitalize text-tertiary py-1.5 px-2">{groupKey}</h6>
+                <TransitionStatesList
+                  states={groupStates}
+                  selectedStates={selectedRejectStateId ? [selectedRejectStateId] : []}
+                  onChange={onRejectChange}
+                  disabledStateIds={rejectExistingStateIds}
+                />
+              </div>
+            ))
+          ) : hasGroupedProjectStates ? (
+            <p className="px-2 py-1.5 text-caption-md-regular text-placeholder">
+              {rejectSearchQuery.length > 0 ? "No matching results" : "No states available"}
+            </p>
+          ) : null}
         </div>
         {shouldShowMoreRejection && (
           <Button

@@ -48,7 +48,7 @@ class WorkflowTransitionHookType(models.TextChoices):
 class Workflow(ProjectBaseModel):
     name = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_default = models.BooleanField(default=False)
 
     class Meta:

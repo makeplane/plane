@@ -55,7 +55,7 @@ export const WorkflowsRoot = observer(function WorkflowsRoot(props: Props) {
   return (
     <div className="flex flex-col gap-12">
       <ToggleWorkflow isEnabled={isEnabled} onToggle={handleToggleWorkflow} />
-      <WorkflowsListRoot projectId={projectId} workspaceSlug={workspaceSlug} />
+      {isEnabled ? <WorkflowsListRoot projectId={projectId} workspaceSlug={workspaceSlug} /> : null}
     </div>
   );
 });

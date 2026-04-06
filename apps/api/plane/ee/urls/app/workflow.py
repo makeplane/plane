@@ -21,6 +21,8 @@ from plane.ee.views.app.workflow import (
     DefaultWorkflowEndpoint,
     WorkflowStateTransitionsEndpoint,
     WorkflowWorkItemApproverEndpoint,
+    WorkflowStateTransferEndpoint,
+    WorkflowWorkItemTypeWorkItemsCheckEndpoint,
 )
 
 
@@ -46,6 +48,11 @@ urlpatterns = [
         name="project-workflows",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/work-item-type-check/",
+        WorkflowWorkItemTypeWorkItemsCheckEndpoint.as_view(),
+        name="project-workflows",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/",
         WorkflowStatesEndpoint.as_view(),
         name="project-workflow-states",
@@ -54,6 +61,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/<uuid:state_id>/",
         WorkflowStatesEndpoint.as_view(),
         name="project-workflow-states",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/<uuid:state_id>/transfer/",
+        WorkflowStateTransferEndpoint.as_view(),
+        name="project-workflow-state-transfer",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/state-transitions/",

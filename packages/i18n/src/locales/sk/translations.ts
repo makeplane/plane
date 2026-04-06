@@ -3924,6 +3924,58 @@ Vytvorte nový.`,
         message: "Zmena stavu nie je povolená pre niektoré pracovné položky. Uistite sa, že zmena stavu je povolená.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Povoliť pracovné postupy",
+        description: "Nastavte pracovné postupy na riadenie pohybu pracovných položiek",
+        no_states_tooltip: "Do pracovného postupu neboli pridané žiadne stavy.",
+        toast: {
+          loading: {
+            enabling: "Povoľovanie pracovných postupov",
+            disabling: "Vypínanie pracovných postupov",
+          },
+          success: {
+            title: "Úspech!",
+            message: "Pracovné postupy boli úspešne povolené.",
+          },
+          error: {
+            title: "Chyba!",
+            message: "Pracovné postupy sa nepodarilo povoliť. Skúste to znova.",
+          },
+        },
+      },
+      heading: "Pracovné postupy",
+      description:
+        "Automatizujte prechody pracovných položiek a nastavte pravidlá, ktoré riadia, ako sa úlohy pohybujú cez tok projektu.",
+      add_button: "Pridať nový pracovný postup",
+      search: "Hľadať pracovné postupy",
+      detail: {
+        define: "Definovať pracovný postup",
+        add_states: "Pridať stavy",
+        unmapped_states: {
+          title: "Zistené nenamapované stavy",
+          description:
+            "Niektoré pracovné položky vybraných typov sa momentálne nachádzajú v stavoch, ktoré v tomto pracovnom postupe neexistujú.",
+          note: "Ak povolíte tento pracovný postup, tieto položky sa automaticky presunú do počiatočného stavu tohto pracovného postupu.",
+          label: "Chýbajúce stavy",
+          tooltip:
+            "Niektoré pracovné položky sú v stavoch, ktoré nie sú namapované na tento pracovný postup. Otvorte pracovný postup a skontrolujte ho.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Všetky stavy sa používajú",
+          description: "Všetky stavy definované pre tento projekt sú už prítomné vo vašom aktuálnom pracovnom postupe.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Tento pracovný postup sa vzťahuje na každý typ pracovnej položky, ktorý nie je priradený k žiadnemu pracovnému postupu.",
+      },
+      create: {
+        heading: "Vytvoriť nový pracovný postup",
+      },
+    },
   },
   work_item_types: {
     label: "Typy pracovných položiek",

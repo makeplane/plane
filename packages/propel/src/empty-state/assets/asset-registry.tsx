@@ -47,6 +47,7 @@ import {
   RunnerFunctionsHorizontalStackIllustration,
   CustomPropertiesHorizontalStackIllustration,
   ScriptHorizontalStackIllustration,
+  SearchHorizontalStackIllustration,
 } from "./horizontal-stack";
 import { InboxIllustration, SearchIllustration } from "./illustration";
 import {
@@ -87,6 +88,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   note: NoteHorizontalStackIllustration,
   priority: PriorityHorizontalStackIllustration,
   project: ProjectHorizontalStackIllustration,
+  "search-compact": SearchHorizontalStackIllustration,
   settings: SettingsHorizontalStackIllustration,
   script: ScriptHorizontalStackIllustration,
   state: StateHorizontalStackIllustration,

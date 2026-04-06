@@ -34,7 +34,6 @@ import {
 import {
   cn,
   getDate,
-  renderFormattedDate,
   renderFormattedDateTime,
   renderFormattedPayloadDate,
   shouldHighlightIssueDueDate,
@@ -67,6 +66,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -92,6 +92,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
+  const { isApprovalPending } = useWorkflows();
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
@@ -100,6 +101,9 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const currentStateDuration = useCurrentStateDuration(issueId);
 
   const issue = getIssueById(issueId);
+  const isApprovalPendingState = issue?.state_id
+    ? isApprovalPending(workspaceSlug, projectId, issue.type_id, issue.state_id)
+    : false;
   if (!issue) return <></>;
 
   const createdByDetails = getUserDetails(issue.created_by);
@@ -132,7 +136,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   })
                 }
                 projectId={projectId?.toString() ?? ""}
-                disabled={!isEditable}
+                disabled={!isEditable || isApprovalPendingState}
                 buttonVariant="transparent-with-text"
                 className="group w-full grow"
                 buttonContainerClassName="w-full text-left h-7.5"

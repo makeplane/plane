@@ -13,12 +13,14 @@
 
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { Button } from "@plane/propel/button";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { IconButton } from "@plane/propel/icon-button";
 import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { countGroupedStates, filterGroupedStates } from "@plane/utils";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Input } from "@plane/propel/input";
 import useDebounce from "@/hooks/use-debounce";
 import { StatesSelectList } from "./states-list";
@@ -41,6 +43,24 @@ export const SelectWorkflowStatesModal = observer(function SelectWorkflowStatesM
   const { groupedProjectStates } = useProjectState();
   const { t } = useTranslation();
 
+  const availableGroupedStates = useMemo(
+    () => filterGroupedStates({ groupedStates: groupedProjectStates, excludedStateIds: existingStateIds }),
+    [existingStateIds, groupedProjectStates]
+  );
+
+  const filteredGroupedStates = useMemo(
+    () =>
+      filterGroupedStates({
+        groupedStates: groupedProjectStates,
+        excludedStateIds: existingStateIds,
+        searchQuery: debouncedSearchQuery,
+      }),
+    [debouncedSearchQuery, existingStateIds, groupedProjectStates]
+  );
+
+  const hasAvailableStates = countGroupedStates(availableGroupedStates) > 0;
+  const hasSearchResults = countGroupedStates(filteredGroupedStates) > 0;
+
   // handlers
   const handleStateSelection = (stateId: string) => {
     setSelectedStates((prev) => {
@@ -57,6 +77,7 @@ export const SelectWorkflowStatesModal = observer(function SelectWorkflowStatesM
   };
 
   const handleClose = () => {
+    setSearchQuery("");
     setSelectedStates([]);
     onClose();
   };
@@ -68,30 +89,48 @@ export const SelectWorkflowStatesModal = observer(function SelectWorkflowStatesM
           <h5 className="text-h5-medium">Select states</h5>
           <IconButton icon={CloseIcon} onClick={handleClose} size="sm" variant={"ghost"} />
         </div>
-        <Input
-          placeholder="Search states"
-          inputSize="xs"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
-          prependIcon={<SearchIcon />}
-        />
+        {hasAvailableStates && (
+          <Input
+            placeholder="Search states"
+            inputSize="xs"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
+            prependIcon={<SearchIcon />}
+          />
+        )}
         <div className="max-h-[300px] overflow-y-scroll vertical-scrollbar scrollbar-sm">
           <div className="flex flex-col">
             {groupedProjectStates ? (
-              Object.entries(groupedProjectStates).map(([groupKey, groupStates]) => {
-                return (
+              hasSearchResults ? (
+                Object.entries(filteredGroupedStates).map(([groupKey, groupStates]) => (
                   <div key={groupKey} className="flex flex-col">
                     <p className="text-caption-md-regular capitalize text-tertiary py-1.5 px-2">{groupKey}</p>
                     <StatesSelectList
                       states={groupStates}
                       onChange={handleStateSelection}
-                      existingStateIds={existingStateIds}
                       selectedStates={selectedStates}
-                      searchQuery={debouncedSearchQuery}
                     />
                   </div>
-                );
-              })
+                ))
+              ) : (
+                <div className="px-1">
+                  <div className="rounded-lg border border-subtle bg-background-secondary p-4">
+                    <EmptyStateCompact
+                      assetKey={hasAvailableStates ? "search-compact" : "state"}
+                      title={
+                        hasAvailableStates
+                          ? t("common.search.no_results.title")
+                          : t("project_settings.workflows.select_states.empty_state.title")
+                      }
+                      description={
+                        hasAvailableStates
+                          ? t("common.search.no_results.description")
+                          : t("project_settings.workflows.select_states.empty_state.description")
+                      }
+                    />
+                  </div>
+                </div>
+              )
             ) : (
               <Loader className="flex flex-col gap-2">
                 {Array.from({ length: 4 }).map((_, index) => (
@@ -106,7 +145,7 @@ export const SelectWorkflowStatesModal = observer(function SelectWorkflowStatesM
           <Button variant={"secondary"} onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant={"primary"} onClick={onSubmit}>
+          <Button variant={"primary"} onClick={onSubmit} disabled={selectedStates.length === 0}>
             Add selected
           </Button>
         </div>

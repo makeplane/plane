@@ -71,11 +71,17 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
-  const { canCreateInStateAcrossTypes, getCreationTypeForState, getFirstCreationAllowedStateForType } = useWorkflows();
+  const {
+    canCreateInStateAcrossTypes,
+    getCreationTypeForState,
+    getFirstCreationAllowedStateForType,
+    isWorkflowsEnabled,
+  } = useWorkflows();
   const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   const storeType = useIssueStoreType();
   // derived values
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+  const workflowsEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
   const isTypeActive = (typeId: string) => Boolean(getIssueTypeById(typeId)?.is_active);
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
@@ -86,6 +92,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     workItemPayload: issuePayload,
     disableIssueCreation,
     projectId: projectId?.toString(),
+    workflowsEnabled,
     canCreateInStateAcrossTypes,
     getCreationTypeForState,
     isWorkItemTypeEnabled,

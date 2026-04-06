@@ -17,7 +17,7 @@ import { AccordionCloseIcon, PlusIcon, StateGroupIcon } from "@plane/propel/icon
 import { observer } from "mobx-react";
 import { WorkflowStateCardActions } from "./actions";
 import type { IWorkflow } from "@plane/types";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { StateFlowCardRoot } from "../flow-card/root";
 import { Button } from "@plane/propel/button";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -27,10 +27,11 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   workflow: IWorkflow;
+  onRequestDelete: (stateId: string) => void;
 };
 
 export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(props: Props) {
-  const { stateId, workspaceSlug, projectId, workflow } = props;
+  const { stateId, workspaceSlug, projectId, workflow, onRequestDelete } = props;
 
   // hooks
   const { getStateById } = useProjectState();
@@ -52,19 +53,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
   };
 
   const handleDelete = () => {
-    const toastPromise = workflow.deleteState(workspaceSlug, projectId, stateId);
-
-    setPromiseToast(toastPromise, {
-      loading: "Deleting workflow state",
-      success: {
-        title: "Success",
-        message: () => "Workflow state deleted successfully",
-      },
-      error: {
-        title: "Error",
-        message: () => "Failed to delete workflow state",
-      },
-    });
+    onRequestDelete(stateId);
   };
 
   const handleAddFlow = () => {
@@ -90,6 +79,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
           handleDelete={handleDelete}
           handleToggle={handleToggleActive}
           workflowState={workflowState}
+          isDefaultWorkflow={workflow.is_default}
         />
       </CollapsibleTrigger>
       <CollapsibleContent>

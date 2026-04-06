@@ -119,6 +119,26 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
       </>
     ),
   }),
+  workflow_state_transferred_updated: (activity: TWorkflowChangeHistory) => ({
+    icon: WorkflowIcon,
+    message: (
+      <>
+        moved <span className={commonTextClassName}>{activity.comment} work items</span> from{" "}
+        <span className={commonTextClassName}>
+          {activity.old_identifier
+            ? (store.state.getStateById(activity.old_identifier)?.name ?? activity.old_value)
+            : activity.old_value}
+        </span>{" "}
+        to{" "}
+        <span className={commonTextClassName}>
+          {activity.new_identifier
+            ? (store.state.getStateById(activity.new_identifier)?.name ?? activity.new_value)
+            : activity.new_value}
+        </span>{" "}
+        due to state removal.
+      </>
+    ),
+  }),
   allow_work_item_creation_enabled: (activity: TWorkflowChangeHistory) => ({
     icon: LayersIcon,
     message: (

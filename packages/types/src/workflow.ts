@@ -53,7 +53,9 @@ export type TWorkflowChangeHistoryFields =
   // approval
   | "approved_state"
   | "rejected_state"
-  | "state_approval_approver";
+  | "state_approval_approver"
+  // transfer
+  | "workflow_state_transferred";
 
 export type TWorkflowChangeHistoryVerbs = "added" | "removed" | "enabled" | "disabled" | "updated" | "created";
 
@@ -66,6 +68,10 @@ export type TWorkflowChangeHistory = TProjectBaseActivity<TWorkflowChangeHistory
 };
 
 export type TWorkflowChangeHistorySortOrder = "asc" | "desc";
+
+export type TWorkflowWorkItemTypeCheckResponse = {
+  state_ids: string[];
+};
 
 export interface IWorkflowChangeHistoryStore {
   // observables
@@ -159,12 +165,21 @@ export type TWorkflowStateType = "transition" | "approval";
 export type TWorkflowState = {
   id: string;
   allow_issue_creation: boolean;
-  transitions: TWorkflowStateTransition[];
+  transitions?: TWorkflowStateTransition[];
   type: TWorkflowStateType;
 };
 
 export type TAddStatesToWorkflowPayload = {
   state_ids: string[];
+};
+
+export type TTransferAndDeleteStatePayload = {
+  new_state_id: string;
+};
+
+export type TWorkflowStateDependencies = {
+  transitionCount: number;
+  approvalCount: number;
 };
 
 export type TUpdateWorkflowStatePayload = {
@@ -218,6 +233,7 @@ export type TWorkflow = {
   is_active: boolean;
   work_item_type_ids: string[];
   states: TWorkflowState[];
+  missing_states?: boolean;
   created_by: string;
   created_at: string;
 };
@@ -259,11 +275,19 @@ export interface IWorkflow extends TWorkflow {
   update: (workspaceSlug: string, projectId: string, data: TWorkflowUpdatePayload) => Promise<void>;
   addStates: (workspaceSlug: string, projectId: string, data: TAddStatesToWorkflowPayload) => Promise<void>;
   deleteState: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
+  getStateDependencies: (stateId: string) => TWorkflowStateDependencies;
+  transferAndDeleteState: (
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    newStateId: string
+  ) => Promise<void>;
 }
 
 // SERVICES
 export interface IWorkflowService {
   fetchAll: (workspaceSlug: string) => Promise<TWorkflowResponse>;
+  fetchProjectWorkflows: (workspaceSlug: string, projectId: string) => Promise<TWorkflow[]>;
   createDefault: (workspaceSlug: string, projectId: string) => Promise<TWorkflow>;
   create: (workspaceSlug: string, projectId: string, data: TWorkflowCreatePayload) => Promise<TWorkflow>;
   update: (
@@ -306,6 +330,13 @@ export interface IWorkflowService {
     workflowId: string,
     transitionId: string
   ) => Promise<void>;
+  transferAndDeleteState: (
+    workspaceSlug: string,
+    projectId: string,
+    workflowId: string,
+    stateId: string,
+    data: TTransferAndDeleteStatePayload
+  ) => Promise<void>;
 
   fetchWorkflowChangeHistory: (
     workspaceSlug: string,
@@ -313,6 +344,11 @@ export interface IWorkflowService {
     workflowId: string,
     params: { created_at__gt: string } | object
   ) => Promise<TWorkflowChangeHistory[]>;
+  fetchWorkflowWorkItemTypeCheck: (
+    workspaceSlug: string,
+    projectId: string,
+    workflowId: string
+  ) => Promise<TWorkflowWorkItemTypeCheckResponse>;
 }
 
 // FILTERS

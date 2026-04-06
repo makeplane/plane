@@ -24,11 +24,12 @@ type Props = {
   handleDelete: () => void;
   handleToggle: () => void;
   workflowState: IWorkflowState;
+  isDefaultWorkflow: boolean;
 };
 
 export const WorkflowStateCardActions = observer(function WorkflowStateCardActions(props: Props) {
   //props
-  const { handleDelete, handleToggle, workflowState } = props;
+  const { handleDelete, handleToggle, workflowState, isDefaultWorkflow } = props;
 
   // derived values
   const MENU_ITEMS: TContextMenuItem[] = [
@@ -38,8 +39,11 @@ export const WorkflowStateCardActions = observer(function WorkflowStateCardActio
       icon: TrashIcon,
       action: handleDelete,
       className: "text-danger-primary",
+      shouldRender: !isDefaultWorkflow,
     },
   ];
+  const filteredMenuItems = MENU_ITEMS.filter((item) => item.shouldRender !== false);
+
   return (
     <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 shrink-0 cursor-default">
       {workflowState.transitionIds.length > 0 && (
@@ -56,16 +60,22 @@ export const WorkflowStateCardActions = observer(function WorkflowStateCardActio
           }}
         />
       </div>
-      <Menu ellipsis>
-        {MENU_ITEMS.map((item) => (
-          <Menu.MenuItem key={item.key} className={cn("flex items-center gap-2", item.className)} onClick={item.action}>
-            <div className="flex items-center gap-2">
-              {item.icon && <item.icon className="h-3 w-3" />}
-              <p className="text-caption-sm-medium">{item.title}</p>
-            </div>
-          </Menu.MenuItem>
-        ))}
-      </Menu>
+      {filteredMenuItems.length > 0 && (
+        <Menu ellipsis>
+          {filteredMenuItems.map((item) => (
+            <Menu.MenuItem
+              key={item.key}
+              className={cn("flex items-center gap-2", item.className)}
+              onClick={item.action}
+            >
+              <div className="flex items-center gap-2">
+                {item.icon && <item.icon className="h-3 w-3" />}
+                <p className="text-caption-sm-medium">{item.title}</p>
+              </div>
+            </Menu.MenuItem>
+          ))}
+        </Menu>
+      )}
     </div>
   );
 });

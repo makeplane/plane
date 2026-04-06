@@ -3950,6 +3950,58 @@ Vytvořte nový.`,
         message: "Změna stavu není povolena pro některé pracovní položky. Ujistěte se, že je změna stavu povolena.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Povolit workflow",
+        description: "Nastavte workflow pro řízení pohybu pracovních položek",
+        no_states_tooltip: "Do workflow nebyly přidány žádné stavy.",
+        toast: {
+          loading: {
+            enabling: "Povolování workflow",
+            disabling: "Vypínání workflow",
+          },
+          success: {
+            title: "Úspěch!",
+            message: "Workflow byla úspěšně povolena.",
+          },
+          error: {
+            title: "Chyba!",
+            message: "Nepodařilo se povolit workflow. Zkuste to prosím znovu.",
+          },
+        },
+      },
+      heading: "Workflow",
+      description:
+        "Automatizujte přechody pracovních položek a nastavte pravidla, která řídí, jak úkoly procházejí projektovým procesem.",
+      add_button: "Přidat nový workflow",
+      search: "Hledat workflow",
+      detail: {
+        define: "Definovat workflow",
+        add_states: "Přidat stavy",
+        unmapped_states: {
+          title: "Byly zjištěny nepřiřazené stavy",
+          description:
+            "Některé pracovní položky vybraných typů jsou aktuálně ve stavech, které v tomto workflow neexistují.",
+          note: "Pokud tento workflow povolíte, tyto položky se automaticky přesunou do výchozího stavu tohoto workflow.",
+          label: "Chybějící stavy",
+          tooltip:
+            "Některé pracovní položky jsou ve stavech, které nejsou mapovány do tohoto workflow. Otevřete workflow a zkontrolujte jej.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Všechny stavy jsou použity",
+          description: "Všechny stavy definované pro tento projekt jsou již obsaženy ve vašem aktuálním workflow.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Tento workflow se vztahuje na jakýkoli typ pracovní položky, který není přiřazen k žádnému workflow.",
+      },
+      create: {
+        heading: "Vytvořit nový workflow",
+      },
+    },
   },
   work_item_types: {
     label: "Typy pracovních položek",

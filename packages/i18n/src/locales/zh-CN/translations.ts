@@ -3869,6 +3869,54 @@ export default {
         message: "某些工作项的状态更改不被允许。请确保状态更改是被允许的。",
       },
     },
+    workflows: {
+      toggle: {
+        title: "启用工作流",
+        description: "设置工作流以控制工作项的流转",
+        no_states_tooltip: "该工作流中尚未添加任何状态。",
+        toast: {
+          loading: {
+            enabling: "正在启用工作流",
+            disabling: "正在停用工作流",
+          },
+          success: {
+            title: "成功！",
+            message: "工作流已成功启用。",
+          },
+          error: {
+            title: "错误！",
+            message: "启用工作流失败。请重试。",
+          },
+        },
+      },
+      heading: "工作流",
+      description: "自动化工作项流转，并设置规则来控制任务如何在项目流程中推进。",
+      add_button: "添加新工作流",
+      search: "搜索工作流",
+      detail: {
+        define: "定义工作流",
+        add_states: "添加状态",
+        unmapped_states: {
+          title: "检测到未映射的状态",
+          description: "所选类型的一些工作项当前处于该工作流中不存在的状态。",
+          note: "如果启用该工作流，这些工作项将自动移动到该工作流的初始状态。",
+          label: "缺失的状态",
+          tooltip: "一些工作项处于未映射到该工作流的状态。打开工作流进行查看。",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "所有状态均已在使用中",
+          description: "为该项目定义的所有状态都已存在于当前工作流中。",
+        },
+      },
+      default_footer: {
+        fallback_message: "该工作流适用于未分配给任何工作流的任何工作项类型。",
+      },
+      create: {
+        heading: "创建新工作流",
+      },
+    },
   },
   work_item_types: {
     label: "工作项类型",

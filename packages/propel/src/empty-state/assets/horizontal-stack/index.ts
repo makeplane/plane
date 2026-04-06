@@ -23,6 +23,7 @@ export * from "./members";
 export * from "./note";
 export * from "./priority";
 export * from "./project";
+export * from "./search";
 export * from "./settings";
 export * from "./script";
 export * from "./state";

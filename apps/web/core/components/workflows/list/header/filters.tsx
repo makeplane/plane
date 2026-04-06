@@ -26,11 +26,11 @@ import React, { useMemo, useState } from "react";
 
 type Props = {
   projectId: string;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export const WorkFlowListFilters = observer(function WorkFlowListFilters(props: Props) {
-  const { projectId, disabled } = props;
+  const { projectId, disabled = false } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");
   const [isStatusOpen, setIsStatusOpen] = useState(true);

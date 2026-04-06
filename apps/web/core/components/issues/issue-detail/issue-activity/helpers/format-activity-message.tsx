@@ -39,6 +39,28 @@ export function ActivityMessage({
         </>
       );
 
+    case "workflow_state_removed":
+      return (
+        <>
+          moved this work item to <Bold value={newValue} /> because the <Bold value={oldValue} /> state was removed from
+          the workflow.
+        </>
+      );
+
+    case "workflow_approved":
+      return (
+        <>
+          approved this work item. State updated to <Bold value={newValue} />.
+        </>
+      );
+
+    case "workflow_rejected":
+      return (
+        <>
+          rejected this work item. State updated to <Bold value={newValue} />.
+        </>
+      );
+
     case "priority":
       return (
         <>

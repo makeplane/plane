@@ -4028,6 +4028,57 @@ si vous êtes sûr que votre recherche est correcte.`,
           "Le changement d'état n'est pas autorisé pour certains éléments de travail. Assurez-vous que le changement d'état est autorisé.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Activer les workflows",
+        description: "Définissez des workflows pour contrôler le déplacement des éléments de travail",
+        no_states_tooltip: "Aucun état n'a été ajouté au workflow.",
+        toast: {
+          loading: {
+            enabling: "Activation des workflows",
+            disabling: "Désactivation des workflows",
+          },
+          success: {
+            title: "Succès !",
+            message: "Les workflows ont été activés avec succès.",
+          },
+          error: {
+            title: "Erreur !",
+            message: "Impossible d'activer les workflows. Veuillez réessayer.",
+          },
+        },
+      },
+      heading: "Flux de travail",
+      description:
+        "Automatisez les transitions des éléments de travail et définissez des règles pour contrôler la façon dont les tâches progressent dans le pipeline de votre projet.",
+      add_button: "Ajouter un nouveau workflow",
+      search: "Rechercher des workflows",
+      detail: {
+        define: "Définir le workflow",
+        add_states: "Ajouter des états",
+        unmapped_states: {
+          title: "États non mappés détectés",
+          description:
+            "Certains éléments de travail des types sélectionnés se trouvent actuellement dans des états qui n'existent pas dans ce workflow.",
+          note: "Si vous activez ce workflow, ces éléments seront automatiquement déplacés vers l'état initial de ce workflow.",
+          label: "États manquants",
+          tooltip:
+            "Certains éléments de travail se trouvent dans des états qui ne sont pas mappés à ce workflow. Ouvrez le workflow pour le vérifier.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Tous les états sont utilisés",
+          description: "Tous les états définis pour ce projet sont déjà présents dans votre workflow actuel.",
+        },
+      },
+      default_footer: {
+        fallback_message: "Ce workflow s'applique à tout type d'élément de travail qui n'est associé à aucun workflow.",
+      },
+      create: {
+        heading: "Créer un nouveau workflow",
+      },
+    },
   },
   work_item_types: {
     label: "Types d'éléments de travail",

@@ -3973,6 +3973,55 @@ modüller arşivlenebilir.`,
           "Bazı iş öğeleri için durum değişikliğine izin verilmiyor. Durum değişikliğine izin verildiğinden emin olun.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "İş akışlarını etkinleştir",
+        description: "İş öğesi hareketini kontrol etmek için iş akışları ayarlayın",
+        no_states_tooltip: "İş akışına eklenmiş durum yok.",
+        toast: {
+          loading: {
+            enabling: "İş akışları etkinleştiriliyor",
+            disabling: "İş akışları devre dışı bırakılıyor",
+          },
+          success: {
+            title: "Başarılı!",
+            message: "İş akışları başarıyla etkinleştirildi.",
+          },
+          error: {
+            title: "Hata!",
+            message: "İş akışları etkinleştirilemedi. Lütfen tekrar deneyin.",
+          },
+        },
+      },
+      heading: "İş akışları",
+      description:
+        "İş öğesi geçişlerini otomatikleştirin ve görevlerin proje akışınızda nasıl ilerlediğini kontrol etmek için kurallar belirleyin.",
+      add_button: "Yeni iş akışı ekle",
+      search: "İş akışlarında ara",
+      detail: {
+        define: "İş akışını tanımla",
+        add_states: "Durum ekle",
+        unmapped_states: {
+          title: "Eşlenmemiş durumlar tespit edildi",
+          description: "Seçilen türlerdeki bazı iş öğeleri şu anda bu iş akışında bulunmayan durumlarda yer alıyor.",
+          note: "Bu iş akışını etkinleştirirseniz, bu öğeler otomatik olarak bu iş akışının başlangıç durumuna taşınacaktır.",
+          label: "Eksik durumlar",
+          tooltip: "Bazı iş öğeleri bu iş akışına eşlenmemiş durumlarda bulunuyor. İncelemek için iş akışını açın.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Tüm durumlar kullanımda",
+          description: "Bu proje için tanımlanan tüm durumlar mevcut iş akışınızda zaten bulunuyor.",
+        },
+      },
+      default_footer: {
+        fallback_message: "Bu iş akışı, herhangi bir iş akışına atanmamış tüm iş öğesi türlerine uygulanır.",
+      },
+      create: {
+        heading: "Yeni iş akışı oluştur",
+      },
+    },
   },
   work_item_types: {
     label: "İş Öğesi Tipleri",

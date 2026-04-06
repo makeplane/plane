@@ -272,6 +272,93 @@ def track_state(
         )
 
 
+# Shared helper for workflow-triggered state change activities
+def _track_workflow_state_change(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+    *,
+    field,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else {}
+    new_state_id = requested_data.get("state_id")
+    new_state = State.objects.filter(pk=new_state_id, project_id=project_id).first()
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="updated",
+            new_value=new_state.name if new_state else None,
+            field=field,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            new_identifier=new_state.id if new_state else None,
+            epoch=epoch,
+        )
+    )
+
+
+def track_workflow_approved(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    _track_workflow_state_change(
+        requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch,
+        field="workflow_approved",
+    )
+
+
+def track_workflow_rejected(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    _track_workflow_state_change(
+        requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch,
+        field="workflow_rejected",
+    )
+
+
+# Track state change caused by a workflow state being removed and issues bulk-transferred
+def track_workflow_state_transfer(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else {}
+    current_instance = json.loads(current_instance) if current_instance is not None else {}
+
+    old_state_id = current_instance.get("state_id")
+    new_state_id = requested_data.get("state_id")
+
+    old_state = State.objects.filter(pk=old_state_id, project_id=project_id).first()
+    new_state = State.objects.filter(pk=new_state_id, project_id=project_id).first()
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="updated",
+            old_value=old_state.name if old_state else None,
+            new_value=new_state.name if new_state else None,
+            field="workflow_state_removed",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            old_identifier=old_state.id if old_state else None,
+            new_identifier=new_state.id if new_state else None,
+            epoch=epoch,
+        )
+    )
+
+
 # Track changes in issue target date
 def track_target_date(
     requested_data,
@@ -2057,6 +2144,9 @@ def issue_activity(
             "milestone_issue.activity.deleted": delete_milestone_issue_activity,
             "page.activity.created": create_page_activity,
             "page.activity.deleted": delete_page_activity,
+            "issue.activity.workflow_state_transferred": track_workflow_state_transfer,
+            "issue.activity.workflow_approved": track_workflow_approved,
+            "issue.activity.workflow_rejected": track_workflow_rejected,
         }
 
         func = ACTIVITY_MAPPER.get(type)

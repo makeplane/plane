@@ -12,26 +12,28 @@
 
 import { Button } from "@plane/propel/button";
 import { ChevronRightIcon } from "@plane/propel/icons";
-import type { IWorkflowState, IWorkflowTransition } from "@plane/types";
+import type { IWorkflow, IWorkflowState, IWorkflowTransition } from "@plane/types";
 import { ApprovalStateSelection } from "./approval-selection";
 import { TransitionStateSelection } from "./transition-selection";
 import { useState } from "react";
 import { observer } from "mobx-react";
 
 type Props = {
+  workflow: IWorkflow;
   state: IWorkflowState;
   transition: IWorkflowTransition;
   onNext: () => void;
 };
 
 export const StatesTabContent = observer(function StatesTabContent(props: Props) {
-  const { state, transition, onNext } = props;
+  const { workflow, state, transition, onNext } = props;
+  const isStateInWorkflow = (stateId: string | undefined) => !!stateId && workflow.stateIds.includes(stateId);
 
   const [selectedTransitionStateId, setSelectedTransitionStateId] = useState<string | undefined>(
-    transition.transition_state_id
+    isStateInWorkflow(transition.transition_state_id) ? transition.transition_state_id : undefined
   );
   const [selectedRejectionStateId, setSelectedRejectionStateId] = useState<string | undefined>(
-    transition.rejection_state_id
+    isStateInWorkflow(transition.rejection_state_id) ? transition.rejection_state_id : undefined
   );
 
   // Applies staged state selections to transition, then advances sidebar step.
@@ -53,6 +55,7 @@ export const StatesTabContent = observer(function StatesTabContent(props: Props)
       <p className="text-h6-medium">States</p>
       {state.type === "approval" ? (
         <ApprovalStateSelection
+          availableStateIds={workflow.stateIds}
           selectedApproveStateId={selectedTransitionStateId}
           selectedRejectStateId={selectedRejectionStateId}
           onApproveChange={(stateId) => setSelectedTransitionStateId(stateId)}
@@ -61,6 +64,7 @@ export const StatesTabContent = observer(function StatesTabContent(props: Props)
         />
       ) : (
         <TransitionStateSelection
+          availableStateIds={workflow.stateIds}
           selectedStateId={selectedTransitionStateId}
           onChange={(stateId) => setSelectedTransitionStateId(stateId)}
           currentStateId={state.id}

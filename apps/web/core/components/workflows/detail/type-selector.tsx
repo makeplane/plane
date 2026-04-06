@@ -12,9 +12,10 @@
  */
 import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { getButtonStyling } from "@plane/propel/button";
 import { Combobox } from "@plane/propel/combobox";
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon } from "@plane/propel/icons";
 import { observer } from "mobx-react";
 import { useMemo } from "react";
 
@@ -22,20 +23,19 @@ type Props = {
   selectedTypeIds: string[];
   projectId: string;
   handleChange: (value: string[]) => void;
-  occupiedWorkItemTypeIds: string[];
+  workflowId?: string;
 };
 
 export const WorkItemTypeMultiSelect = observer(function WorkItemTypeMultiSelect(props: Props) {
   // props
-  const { selectedTypeIds, projectId, handleChange, occupiedWorkItemTypeIds } = props;
+  const { selectedTypeIds, projectId, handleChange, workflowId } = props;
 
   // hooks
-  const { getProjectIssueTypeIds, getIssueTypeById } = useIssueTypes();
+  const { getIssueTypeById } = useIssueTypes();
+  const { getUnassignedWorkItemTypeIds } = useWorkflows();
 
   // derived values
-  const availableWorkItemTypeIds = getProjectIssueTypeIds(projectId).filter(
-    (id) => !occupiedWorkItemTypeIds.includes(id)
-  );
+  const availableWorkItemTypeIds = getUnassignedWorkItemTypeIds(projectId, workflowId);
   const workItemTypeOptions: { value: string; label: string }[] = useMemo(() => {
     return availableWorkItemTypeIds
       .map((id) => {

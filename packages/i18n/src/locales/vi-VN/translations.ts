@@ -3970,6 +3970,59 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
           "Thay đổi trạng thái không được phép cho một số mục công việc. Đảm bảo thay đổi trạng thái được cho phép.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Bật quy trình làm việc",
+        description: "Thiết lập quy trình làm việc để kiểm soát việc di chuyển của mục công việc",
+        no_states_tooltip: "Chưa có trạng thái nào được thêm vào quy trình làm việc.",
+        toast: {
+          loading: {
+            enabling: "Đang bật quy trình làm việc",
+            disabling: "Đang tắt quy trình làm việc",
+          },
+          success: {
+            title: "Thành công!",
+            message: "Đã bật quy trình làm việc thành công.",
+          },
+          error: {
+            title: "Lỗi!",
+            message: "Không thể bật quy trình làm việc. Vui lòng thử lại.",
+          },
+        },
+      },
+      heading: "Quy trình làm việc",
+      description:
+        "Tự động hóa các chuyển đổi của mục công việc và thiết lập quy tắc để kiểm soát cách các tác vụ di chuyển trong quy trình dự án của bạn.",
+      add_button: "Thêm quy trình làm việc mới",
+      search: "Tìm kiếm quy trình làm việc",
+      detail: {
+        define: "Xác định quy trình làm việc",
+        add_states: "Thêm trạng thái",
+        unmapped_states: {
+          title: "Đã phát hiện trạng thái chưa được ánh xạ",
+          description:
+            "Một số mục công việc của các loại đã chọn hiện đang ở trong những trạng thái không tồn tại trong quy trình làm việc này.",
+          note: "Nếu bạn bật quy trình làm việc này, các mục đó sẽ tự động được chuyển sang trạng thái ban đầu của quy trình làm việc này.",
+          label: "Trạng thái bị thiếu",
+          tooltip:
+            "Một số mục công việc đang ở trong những trạng thái chưa được ánh xạ tới quy trình làm việc này. Mở quy trình làm việc để xem lại.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Tất cả trạng thái đều đang được sử dụng",
+          description:
+            "Tất cả trạng thái được định nghĩa cho dự án này đã có trong quy trình làm việc hiện tại của bạn.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Quy trình làm việc này áp dụng cho bất kỳ loại mục công việc nào chưa được gán cho quy trình làm việc nào.",
+      },
+      create: {
+        heading: "Tạo quy trình làm việc mới",
+      },
+    },
   },
   work_item_types: {
     label: "Loại mục công việc",

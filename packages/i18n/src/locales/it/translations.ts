@@ -4001,6 +4001,58 @@ Crea un nuovo progetto invece`,
           "Il cambiamento di stato non è consentito per alcuni elementi di lavoro. Assicurati che il cambiamento di stato sia consentito.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Abilita flussi di lavoro",
+        description: "Imposta i flussi di lavoro per controllare lo spostamento degli elementi di lavoro",
+        no_states_tooltip: "Nessuno stato è stato aggiunto al flusso di lavoro.",
+        toast: {
+          loading: {
+            enabling: "Attivazione dei flussi di lavoro",
+            disabling: "Disattivazione dei flussi di lavoro",
+          },
+          success: {
+            title: "Successo!",
+            message: "Flussi di lavoro abilitati con successo.",
+          },
+          error: {
+            title: "Errore!",
+            message: "Impossibile abilitare i flussi di lavoro. Riprova.",
+          },
+        },
+      },
+      heading: "Flussi di lavoro",
+      description:
+        "Automatizza le transizioni degli elementi di lavoro e imposta regole per controllare come le attività si muovono nel flusso del progetto.",
+      add_button: "Aggiungi nuovo flusso di lavoro",
+      search: "Cerca flussi di lavoro",
+      detail: {
+        define: "Definisci flusso di lavoro",
+        add_states: "Aggiungi stati",
+        unmapped_states: {
+          title: "Rilevati stati non mappati",
+          description:
+            "Alcuni elementi di lavoro dei tipi selezionati si trovano attualmente in stati che non esistono in questo flusso di lavoro.",
+          note: "Se abiliti questo flusso di lavoro, questi elementi verranno automaticamente spostati nello stato iniziale di questo flusso di lavoro.",
+          label: "Stati mancanti",
+          tooltip:
+            "Alcuni elementi di lavoro si trovano in stati che non sono mappati a questo flusso di lavoro. Apri il flusso di lavoro per verificarlo.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Tutti gli stati sono in uso",
+          description: "Tutti gli stati definiti per questo progetto sono già presenti nel flusso di lavoro corrente.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Questo flusso di lavoro si applica a qualsiasi tipo di elemento di lavoro che non è assegnato a nessun flusso di lavoro.",
+      },
+      create: {
+        heading: "Crea nuovo flusso di lavoro",
+      },
+    },
   },
   work_item_types: {
     label: "Tipi di elemento di lavoro",

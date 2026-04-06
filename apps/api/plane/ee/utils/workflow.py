@@ -203,9 +203,11 @@ class WorkflowStateManager:
         # get the workflow state
         workflow_state = WorkflowState.objects.filter(state_id=issue.state_id, workflow_id=workflow.id).first()
 
-        # if no workflow state is found, allow transition
-        if not workflow_state:
-            return True
+        new_workflow_state = WorkflowState.objects.filter(state_id=new_state_id, workflow_id=workflow.id).first()
+
+        # if no workflow state is found, don't allow transition
+        if not new_workflow_state or not workflow_state:
+            return False
 
         if workflow_state.type == WorkflowStateType.TRANSITION:
             # Get allowed transitions
@@ -282,7 +284,7 @@ class WorkflowStateManager:
             state_id=state_id, project_id=self.project_id, workflow_id=workflow.id
         ).first()
 
-        if workflow_state and not workflow_state.allow_issue_creation:
+        if not workflow_state or not workflow_state.allow_issue_creation:
             return True
 
         return False

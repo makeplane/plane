@@ -3938,6 +3938,56 @@ export default {
         message: "일부 작업 항목에 대해 상태 변경이 허용되지 않습니다. 상태 변경이 허용되는지 확인하세요.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "워크플로우 활성화",
+        description: "워크 아이템 이동을 제어할 수 있도록 워크플로우를 설정하세요.",
+        no_states_tooltip: "워크플로우에 추가된 스테이트가 없습니다.",
+        toast: {
+          loading: {
+            enabling: "워크플로우 활성화 중",
+            disabling: "워크플로우 비활성화 중",
+          },
+          success: {
+            title: "성공!",
+            message: "워크플로우가 성공적으로 활성화되었습니다.",
+          },
+          error: {
+            title: "오류!",
+            message: "워크플로우를 활성화하지 못했습니다. 다시 시도해 주세요.",
+          },
+        },
+      },
+      heading: "워크플로우",
+      description:
+        "워크 아이템 전환을 자동화하고 작업이 프로젝트 파이프라인을 따라 어떻게 이동하는지 제어하는 규칙을 설정하세요.",
+      add_button: "새 워크플로우 추가",
+      search: "워크플로우 검색",
+      detail: {
+        define: "워크플로우 정의",
+        add_states: "스테이트 추가",
+        unmapped_states: {
+          title: "매핑되지 않은 스테이트가 감지되었습니다",
+          description: "선택한 타입의 일부 워크 아이템이 현재 이 워크플로우에 존재하지 않는 스테이트에 있습니다.",
+          note: "이 워크플로우를 활성화하면 해당 항목은 이 워크플로우의 초기 스테이트로 자동 이동합니다.",
+          label: "누락된 스테이트",
+          tooltip:
+            "일부 워크 아이템이 이 워크플로우에 매핑되지 않은 스테이트에 있습니다. 검토하려면 워크플로우를 여세요.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "모든 스테이트가 이미 사용 중입니다",
+          description: "이 프로젝트에 정의된 모든 스테이트가 이미 현재 워크플로우에 포함되어 있습니다.",
+        },
+      },
+      default_footer: {
+        fallback_message: "이 워크플로우는 어떤 워크플로우에도 할당되지 않은 모든 워크 아이템 타입에 적용됩니다.",
+      },
+      create: {
+        heading: "새 워크플로우 만들기",
+      },
+    },
   },
   work_item_types: {
     label: "워크 아이템 타입",

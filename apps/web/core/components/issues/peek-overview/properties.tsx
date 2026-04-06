@@ -65,6 +65,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -99,11 +100,17 @@ export const PeekOverviewWorkItemProperties = observer(function PeekOverviewWork
   const { getProjectById } = useProject();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
+  const { isApprovalPending } = useWorkflows();
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const isReleasesFeatureFlagEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES);
   const currentStateDuration = useCurrentStateDuration(issueId);
+  // derived values
+  const isApprovalPendingState = issue?.state_id
+    ? isApprovalPending(workspaceSlug, projectId, issue.type_id, issue.state_id)
+    : false;
+  if (!issue) return <></>;
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
@@ -132,7 +139,7 @@ export const PeekOverviewWorkItemProperties = observer(function PeekOverviewWork
             }
             projectId={projectId}
             typeId={issue.type_id}
-            disabled={disabled}
+            disabled={disabled || isApprovalPendingState}
             buttonVariant="transparent-with-text"
             className="w-full grow group"
             buttonContainerClassName="w-full text-left h-7.5"

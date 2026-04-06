@@ -3959,6 +3959,58 @@ Utwórz nowy.`,
           "Zmiana stanu nie jest dozwolona dla niektórych elementów pracy. Upewnij się, że zmiana stanu jest dozwolona.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Włącz workflowy",
+        description: "Skonfiguruj workflowy, aby kontrolować przepływ elementów pracy",
+        no_states_tooltip: "Do workflowu nie dodano żadnych stanów.",
+        toast: {
+          loading: {
+            enabling: "Włączanie workflowów",
+            disabling: "Wyłączanie workflowów",
+          },
+          success: {
+            title: "Sukces!",
+            message: "Workflowy zostały pomyślnie włączone.",
+          },
+          error: {
+            title: "Błąd!",
+            message: "Nie udało się włączyć workflowów. Spróbuj ponownie.",
+          },
+        },
+      },
+      heading: "Workflowy",
+      description:
+        "Zautomatyzuj przejścia elementów pracy i ustaw reguły kontrolujące, jak zadania przemieszczają się przez pipeline projektu.",
+      add_button: "Dodaj nowy workflow",
+      search: "Szukaj workflowów",
+      detail: {
+        define: "Zdefiniuj workflow",
+        add_states: "Dodaj stany",
+        unmapped_states: {
+          title: "Wykryto nieprzypisane stany",
+          description:
+            "Niektóre elementy pracy wybranych typów znajdują się obecnie w stanach, które nie istnieją w tym workflowie.",
+          note: "Jeśli włączysz ten workflow, te elementy zostaną automatycznie przeniesione do początkowego stanu tego workflowu.",
+          label: "Brakujące stany",
+          tooltip:
+            "Niektóre elementy pracy znajdują się w stanach, które nie są przypisane do tego workflowu. Otwórz workflow, aby go sprawdzić.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Wszystkie stany są w użyciu",
+          description: "Wszystkie stany zdefiniowane dla tego projektu są już obecne w bieżącym workflowie.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Ten workflow dotyczy każdego typu elementu pracy, który nie jest przypisany do żadnego workflowu.",
+      },
+      create: {
+        heading: "Utwórz nowy workflow",
+      },
+    },
   },
   work_item_types: {
     label: "Typy Elementów Pracy",

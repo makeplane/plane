@@ -2925,6 +2925,7 @@ Erstellen Sie ein neues.`,
       toggle: {
         title: "Workflows aktivieren",
         description: "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",
+        no_states_tooltip: "Keine Status wurden dem Workflow hinzugefügt.",
         toast: {
           loading: {
             enabling: "Workflows werden aktiviert",
@@ -2948,6 +2949,24 @@ Erstellen Sie ein neues.`,
       detail: {
         define: "Workflow definieren",
         add_states: "Status hinzufügen",
+        unmapped_states: {
+          title: "Nicht zugeordnete Status erkannt",
+          description:
+            "Einige Arbeitselemente der ausgewählten Typen befinden sich derzeit in Status, die in diesem Workflow nicht vorhanden sind.",
+          note: "Wenn Sie diesen Workflow aktivieren, werden diese Elemente automatisch in den Anfangsstatus dieses Workflows verschoben.",
+          label: "Fehlende Status",
+          tooltip:
+            "Einige Arbeitselemente befinden sich in Status, die diesem Workflow nicht zugeordnet sind. Öffnen Sie den Workflow zur Überprüfung.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Alle Status werden verwendet",
+          description: "Alle für dieses Projekt definierten Status sind bereits in Ihrem aktuellen Workflow vorhanden.",
+        },
+      },
+      default_footer: {
+        fallback_message: "Dieser Workflow gilt für jeden Arbeitselementtyp, der keinem Workflow zugeordnet ist.",
       },
       create: {
         heading: "Neuen Workflow erstellen",

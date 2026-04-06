@@ -14,6 +14,7 @@
 import { sortBy, values } from "lodash-es";
 // plane imports
 import type {
+  IState,
   IStateTransition,
   IStateTransitionTree,
   TWorkflowChangeHistoryKeys,
@@ -69,12 +70,54 @@ export function convertToStateTransitionTree(transitions: IStateTransition[]): I
   return values(transitionMap);
 }
 
+type TGroupedStates = Record<string, IState[]>;
+
+type TFilterGroupedStates = {
+  groupedStates?: TGroupedStates;
+  includedStateIds?: string[];
+  excludedStateIds?: string[];
+  searchQuery?: string;
+};
+
+export const filterGroupedStates = ({
+  groupedStates,
+  includedStateIds,
+  excludedStateIds = [],
+  searchQuery = "",
+}: TFilterGroupedStates): TGroupedStates => {
+  if (!groupedStates) return {};
+
+  const includedStateIdSet = includedStateIds ? new Set(includedStateIds) : undefined;
+  const excludedStateIdSet = new Set(excludedStateIds);
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+
+  return Object.entries(groupedStates).reduce<TGroupedStates>((acc, [groupKey, groupStates]) => {
+    const filteredStates = groupStates.filter((state) => {
+      if (includedStateIdSet && !includedStateIdSet.has(state.id)) return false;
+      if (excludedStateIdSet.has(state.id)) return false;
+      if (normalizedSearchQuery && !state.name.toLowerCase().includes(normalizedSearchQuery)) return false;
+
+      return true;
+    });
+
+    if (filteredStates.length > 0) {
+      acc[groupKey] = filteredStates;
+    }
+
+    return acc;
+  }, {});
+};
+
+export const countGroupedStates = (groupedStates: TGroupedStates): number =>
+  Object.values(groupedStates).reduce((total, states) => total + states.length, 0);
+
 type TResolveStateHeaderCreationArgs = {
   groupBy: TIssueGroupByOptions | undefined;
   groupId: string;
   workItemPayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   projectId?: string;
+  workflowsEnabled: boolean;
   canCreateInStateAcrossTypes: (projectId: string, stateId: string) => boolean;
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
   isWorkItemTypeEnabled: boolean;
@@ -100,6 +143,7 @@ type TResolveQuickAddCreationContextArgs = {
   isEpic: boolean;
   prePopulatedData?: Partial<TIssue>;
   defaultIssueTypeId?: string;
+  workflowsEnabled: boolean;
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
   projectId: string;
   isWorkItemTypeEnabled: boolean;
@@ -124,6 +168,7 @@ export const resolveStateHeaderCreation = ({
   workItemPayload,
   disableIssueCreation,
   projectId,
+  workflowsEnabled,
   canCreateInStateAcrossTypes,
   getCreationTypeForState,
   isWorkItemTypeEnabled,
@@ -142,6 +187,12 @@ export const resolveStateHeaderCreation = ({
     if (!isTypeActive(groupId)) {
       return { isCreationDisabled: true, createModalData: workItemPayload };
     }
+    if (!workflowsEnabled) {
+      return {
+        isCreationDisabled: defaultResult.isCreationDisabled,
+        createModalData: { ...workItemPayload, type_id: groupId },
+      };
+    }
     const allowedStateId = getFirstCreationAllowedStateForType(projectId, groupId);
     return {
       isCreationDisabled: defaultResult.isCreationDisabled || !allowedStateId,
@@ -152,6 +203,13 @@ export const resolveStateHeaderCreation = ({
   }
 
   if (groupBy !== "state") return defaultResult;
+
+  if (!workflowsEnabled) {
+    return {
+      isCreationDisabled: defaultResult.isCreationDisabled,
+      createModalData: { ...workItemPayload, state_id: groupId },
+    };
+  }
 
   const workflowCreationTypeId = getCreationTypeForState(projectId, groupId);
   const isWorkflowStateCreationDisabled = !canCreateInStateAcrossTypes(projectId, groupId);
@@ -168,6 +226,7 @@ export const resolveQuickAddCreationContext = ({
   isEpic,
   prePopulatedData,
   defaultIssueTypeId,
+  workflowsEnabled,
   getCreationTypeForState,
   projectId,
   isWorkItemTypeEnabled,
@@ -201,6 +260,15 @@ export const resolveQuickAddCreationContext = ({
     const isStateFromGrouping = groupBy === "state" || subGroupBy === "state";
 
     if (isStateFromGrouping && targetStateId) {
+      if (!workflowsEnabled) {
+        return {
+          creationTypeId: prePopulatedTypeId,
+          modalData: { ...prePopulatedData, type_id: prePopulatedTypeId },
+          resolvedPrePopulatedData: prePopulatedData,
+          shouldHideQuickAdd: false,
+          shouldUseModalWithFallbackType: false,
+        };
+      }
       // Case 1: Both type and state from explicit grouping
       const isAllowed = isStateCreationAllowedForType(projectId, prePopulatedTypeId, targetStateId);
       return {
@@ -211,6 +279,16 @@ export const resolveQuickAddCreationContext = ({
         shouldUseModalWithFallbackType: false,
       };
     } else {
+      if (!workflowsEnabled) {
+        const resolvedData = { ...prePopulatedData, type_id: prePopulatedTypeId };
+        return {
+          creationTypeId: prePopulatedTypeId,
+          modalData: resolvedData,
+          resolvedPrePopulatedData: resolvedData,
+          shouldHideQuickAdd: false,
+          shouldUseModalWithFallbackType: false,
+        };
+      }
       // Case 2: Type from grouping, state not from grouping — find best state
       const allowedStateId = getFirstCreationAllowedStateForType(projectId, prePopulatedTypeId);
       const resolvedData = allowedStateId
@@ -224,6 +302,19 @@ export const resolveQuickAddCreationContext = ({
         shouldUseModalWithFallbackType: false,
       };
     }
+  }
+
+  if (!workflowsEnabled) {
+    const resultData =
+      !isEpic && defaultIssueTypeId ? { ...prePopulatedData, type_id: defaultIssueTypeId } : prePopulatedData;
+
+    return {
+      creationTypeId: defaultIssueTypeId,
+      modalData: resultData,
+      resolvedPrePopulatedData: resultData,
+      shouldHideQuickAdd: false,
+      shouldUseModalWithFallbackType: false,
+    };
   }
 
   // Existing logic for non-type grouping

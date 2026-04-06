@@ -240,8 +240,13 @@ class WorkflowWorkItemApproverEndpoint(BaseAPIView):
             issue.state_id = new_state_id
             issue.save()
 
+            activity_type = (
+                "issue.activity.workflow_approved"
+                if action_type == "approve"
+                else "issue.activity.workflow_rejected"
+            )
             issue_activity.delay(
-                type="issue.activity.updated",
+                type=activity_type,
                 requested_data=json.dumps({"state_id": str(new_state_id)}),
                 actor_id=str(request.user.id),
                 issue_id=str(work_item_id),

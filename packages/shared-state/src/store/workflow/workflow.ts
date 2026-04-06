@@ -14,6 +14,7 @@
 import type {
   TWorkflow,
   TWorkflowState,
+  TWorkflowStateDependencies,
   TWorkflowStateType,
   TWorkflowUpdatePayload,
   IWorkflow,
@@ -39,6 +40,7 @@ export class Workflow implements IWorkflow {
   is_active: boolean;
   work_item_type_ids: string[];
   states: TWorkflowState[] = [];
+  missing_states?: boolean;
   created_by: string;
   created_at: string;
   activeSidebarTransitionId: string | null = null;
@@ -60,6 +62,7 @@ export class Workflow implements IWorkflow {
       is_active: observable.ref,
       work_item_type_ids: observable,
       states: observable,
+      missing_states: observable.ref,
       created_by: observable.ref,
       created_at: observable.ref,
       statesMap: observable,
@@ -79,6 +82,7 @@ export class Workflow implements IWorkflow {
       update: action,
       addStates: action,
       deleteState: action,
+      transferAndDeleteState: action,
       clearDraftTransitions: action,
     });
     this.id = data.id;
@@ -216,9 +220,12 @@ export class Workflow implements IWorkflow {
   update = async (workspaceSlug: string, projectId: string, data: Partial<TWorkflowUpdatePayload>) => {
     const beforeUpdate = { ...this.asJSON };
     try {
-      // optimistic update
-      this.mutate(data);
-      await this.workflowService.update(workspaceSlug, projectId, this.id, data);
+      // optimistic update for active toggle
+      if (Object.keys(data).includes("is_active")) {
+        this.mutate({ is_active: data.is_active });
+      }
+      const response = await this.workflowService.update(workspaceSlug, projectId, this.id, data);
+      this.mutate(response);
     } catch (error) {
       // revert changes
       this.mutate(beforeUpdate);
@@ -262,6 +269,50 @@ export class Workflow implements IWorkflow {
     } catch (error) {
       // revert changes
       console.error("Error deleting state from workflow", error);
+      throw error;
+    }
+  };
+
+  getStateDependencies = (stateId: string): TWorkflowStateDependencies => {
+    const targetState = this.statesMap.get(stateId);
+    if (!targetState) return { transitionCount: 0, approvalCount: 0 };
+
+    // Count the target state's own persisted transitions
+    let transitionCount = targetState.type === "transition" ? targetState.persistedTransitionIds.length : 0;
+    let approvalCount = targetState.type === "approval" ? targetState.persistedTransitionIds.length : 0;
+
+    // Scan other states for transitions referencing this state
+    this.statesMap.forEach((ws, wsId) => {
+      if (wsId === stateId) return;
+      ws.persistedTransitionIds.forEach((tId) => {
+        const t = ws.getTransitionById(tId);
+        if (!t) return;
+        const references = t.transition_state_id === stateId || t.rejection_state_id === stateId;
+        if (!references) return;
+        if (ws.type === "approval") {
+          approvalCount++;
+        } else {
+          transitionCount++;
+        }
+      });
+    });
+
+    return { transitionCount, approvalCount };
+  };
+
+  transferAndDeleteState = async (workspaceSlug: string, projectId: string, stateId: string, newStateId: string) => {
+    try {
+      await this.workflowService.transferAndDeleteState(workspaceSlug, projectId, this.id, stateId, {
+        new_state_id: newStateId,
+      });
+      runInAction(() => {
+        this.mutate({
+          states: this.states.filter((state) => state.id !== stateId),
+        });
+        this.statesMap.delete(stateId);
+      });
+    } catch (error) {
+      console.error("Error migrating and deleting state from workflow", error);
       throw error;
     }
   };

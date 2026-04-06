@@ -24,6 +24,7 @@ import type { TBulkIssueProperties, TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 // plane web imports
 import { IssueTypeDropdown } from "@/components/work-item-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -66,6 +67,7 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
   } = props;
   // state for confirmation modal
   const [pendingTypeChange, setPendingTypeChange] = useState<{
+    currentTypeId: string | null;
     newTypeId: string | null;
     onChange: (value: string | null) => void;
   } | null>(null);
@@ -73,13 +75,19 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
   const { workspaceSlug } = useParams();
   // plane web store hooks
   const { loader: workItemTypeLoader, getProjectIssueTypes, isWorkItemTypeEnabledForProject } = useIssueTypes();
+  const { isWorkflowsEnabled } = useWorkflows();
   // context hooks
-  const { workItemTemplateId, setWorkItemTemplateId } = useIssueModal();
-  const { reset } = useFormContext<TIssue>();
+  const { workItemTemplateId, setWorkItemTemplateId, resolveStateIdForTypeChange } = useIssueModal();
+  const { getValues, reset, setValue } = useFormContext<TIssue>();
   // derived values
   const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId);
+  const workflowsEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
 
-  const applyTypeChange = (newValue: string | null, onChange: (value: string | null) => void) => {
+  const applyTypeChange = (
+    currentTypeId: string | null,
+    newValue: string | null,
+    onChange: (value: string | null) => void
+  ) => {
     onChange(newValue);
     if (workItemTemplateId) {
       reset({
@@ -89,13 +97,29 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
       });
       editorRef?.current?.clearEditor();
       setWorkItemTemplateId(null);
+    } else {
+      const currentStateId = getValues("state_id");
+      const resolvedStateId = resolveStateIdForTypeChange({
+        projectId,
+        workflowsEnabled,
+        currentTypeId,
+        nextTypeId: newValue,
+        currentStateId,
+      });
+
+      if (resolvedStateId !== currentStateId) {
+        setValue("state_id", resolvedStateId, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+      }
     }
     handleFormChange?.();
   };
 
   const handleConfirmTypeChange = () => {
     if (pendingTypeChange) {
-      applyTypeChange(pendingTypeChange.newTypeId, pendingTypeChange.onChange);
+      applyTypeChange(pendingTypeChange.currentTypeId, pendingTypeChange.newTypeId, pendingTypeChange.onChange);
       setPendingTypeChange(null);
     }
   };
@@ -126,18 +150,19 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
                     disabled={disabled}
                     allWorkItemTypes={Object.values(getProjectIssueTypes(projectId, true))}
                     handleChange={(workItemTypeId) => {
+                      const currentTypeId = typeof value === "string" ? value : (value?.toString() ?? null);
                       // If it's not set as required, then allow issue type to be null (unset issue type)
-                      const newTypeId = !isRequired && value === workItemTypeId ? null : workItemTypeId;
+                      const newTypeId = !isRequired && currentTypeId === workItemTypeId ? null : workItemTypeId;
 
                       // Show confirmation modal for existing issues when type is changing
                       // Only show if: existing issue (has ID), currently has a type, and type is actually changing
-                      if (workItemId && value && newTypeId !== value) {
-                        setPendingTypeChange({ newTypeId, onChange });
+                      if (workItemId && currentTypeId && newTypeId !== currentTypeId) {
+                        setPendingTypeChange({ currentTypeId, newTypeId, onChange });
                         return;
                       }
 
                       // For new issues or when setting type for first time, change immediately
-                      applyTypeChange(newTypeId, onChange);
+                      applyTypeChange(currentTypeId, newTypeId, onChange);
                     }}
                     isInitializing={workItemTypeLoader === "init-loader"}
                     selectedWorkItemTypeId={value?.toString() || null}

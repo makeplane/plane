@@ -14,6 +14,7 @@
 import type { ReactNode } from "react";
 import { AlignLeft, ArrowRightLeft, CalendarDays, FileText, Network, Paperclip, Type } from "lucide-react";
 import {
+  ApproverIcon,
   CustomersIcon,
   CycleIcon,
   EpicIcon,
@@ -33,6 +34,9 @@ const ICON_CLASS = "h-3.5 w-3.5 text-secondary";
 
 export const DEFAULT_FIELD_ICON_MAP = {
   state: <StatePropertyIcon className={ICON_CLASS} />,
+  workflow_state_removed: <StatePropertyIcon className={ICON_CLASS} />,
+  workflow_approved: <StatePropertyIcon className={ICON_CLASS} />,
+  workflow_rejected: <StatePropertyIcon className={ICON_CLASS} />,
   priority: <PriorityPropertyIcon className={ICON_CLASS} />,
   assignees: <MembersPropertyIcon className={ICON_CLASS} />,
   start_date: <CalendarDays className={ICON_CLASS} />,

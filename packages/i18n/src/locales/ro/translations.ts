@@ -4006,6 +4006,58 @@ văzute aici`,
           "Schimbarea stării nu este permisă pentru unele elemente de lucru. Asigură-te că schimbarea stării este permisă.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Activează fluxurile de lucru",
+        description: "Setează fluxurile de lucru pentru a controla mișcarea elementelor de lucru",
+        no_states_tooltip: "Nicio stare nu a fost adăugată în fluxul de lucru.",
+        toast: {
+          loading: {
+            enabling: "Se activează fluxurile de lucru",
+            disabling: "Se dezactivează fluxurile de lucru",
+          },
+          success: {
+            title: "Succes!",
+            message: "Fluxurile de lucru au fost activate cu succes.",
+          },
+          error: {
+            title: "Eroare!",
+            message: "Fluxurile de lucru nu au putut fi activate. Te rugăm să încerci din nou.",
+          },
+        },
+      },
+      heading: "Fluxuri de lucru",
+      description:
+        "Automatizează tranzițiile elementelor de lucru și stabilește reguli pentru a controla modul în care sarcinile avansează prin fluxul proiectului tău.",
+      add_button: "Adaugă un flux de lucru nou",
+      search: "Caută fluxuri de lucru",
+      detail: {
+        define: "Definește fluxul de lucru",
+        add_states: "Adaugă stări",
+        unmapped_states: {
+          title: "Au fost detectate stări nemapate",
+          description:
+            "Unele elemente de lucru ale tipurilor selectate se află în prezent în stări care nu există în acest flux de lucru.",
+          note: "Dacă activezi acest flux de lucru, aceste elemente vor fi mutate automat în starea inițială a acestui flux de lucru.",
+          label: "Stări lipsă",
+          tooltip:
+            "Unele elemente de lucru se află în stări care nu sunt mapate la acest flux de lucru. Deschide fluxul de lucru pentru a-l revizui.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Toate stările sunt în uz",
+          description: "Toate stările definite pentru acest proiect sunt deja prezente în fluxul de lucru curent.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Acest flux de lucru se aplică oricărui tip de element de lucru care nu este atribuit unui flux de lucru.",
+      },
+      create: {
+        heading: "Creează un flux de lucru nou",
+      },
+    },
   },
   work_item_types: {
     label: "Tipuri de Elemente de Lucru",

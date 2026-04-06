@@ -71,11 +71,17 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   // hooks
   const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   const storeType = useIssueStoreType();
-  const { canCreateInStateAcrossTypes, getCreationTypeForState, getFirstCreationAllowedStateForType } = useWorkflows();
+  const {
+    canCreateInStateAcrossTypes,
+    getCreationTypeForState,
+    getFirstCreationAllowedStateForType,
+    isWorkflowsEnabled,
+  } = useWorkflows();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
 
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
+  const workflowsEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
   const isTypeActive = (typeId: string) => Boolean(getIssueTypeById(typeId)?.is_active);
 
   const renderExistingIssueModal = moduleId || cycleId;
@@ -86,6 +92,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     workItemPayload: issuePayload,
     disableIssueCreation,
     projectId: projectId?.toString(),
+    workflowsEnabled,
     canCreateInStateAcrossTypes,
     getCreationTypeForState,
     isWorkItemTypeEnabled,

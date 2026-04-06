@@ -14,10 +14,12 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { TransitionStatesList } from "./states-list";
 import { SearchIcon } from "@plane/propel/icons";
 import { Input } from "@plane/propel/input";
-import { useState } from "react";
+import { countGroupedStates, filterGroupedStates } from "@plane/utils";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 
 type Props = {
+  availableStateIds: string[];
   onChange: (stateId: string) => void;
   selectedStateId?: string;
   currentStateId: string;
@@ -26,11 +28,24 @@ type Props = {
 
 export const TransitionStateSelection = observer(function TransitionStateSelection(props: Props) {
   // props
-  const { onChange, selectedStateId, currentStateId, occupiedStateIds } = props;
+  const { availableStateIds, onChange, selectedStateId, currentStateId, occupiedStateIds } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // hooks
   const { groupedProjectStates } = useProjectState();
+  const hasGroupedProjectStates = !!groupedProjectStates;
+
+  const groupedAvailableStates = useMemo(
+    () =>
+      filterGroupedStates({
+        groupedStates: groupedProjectStates,
+        includedStateIds: availableStateIds,
+        searchQuery,
+      }),
+    [availableStateIds, groupedProjectStates, searchQuery]
+  );
+
+  const hasAvailableStates = countGroupedStates(groupedAvailableStates) > 0;
 
   return (
     <div className="flex flex-col gap-2">
@@ -45,19 +60,23 @@ export const TransitionStateSelection = observer(function TransitionStateSelecti
         />
         {/* States list */}
         <div className="flex flex-col gap-2">
-          {groupedProjectStates &&
-            Object.entries(groupedProjectStates).map(([groupKey, groupStates]) => (
+          {hasGroupedProjectStates && hasAvailableStates ? (
+            Object.entries(groupedAvailableStates).map(([groupKey, groupStates]) => (
               <div key={groupKey}>
                 <h6 className="text-caption-md-regular capitalize text-tertiary py-1.5 px-2">{groupKey}</h6>
                 <TransitionStatesList
                   states={groupStates}
                   selectedStates={selectedStateId ? [selectedStateId] : []}
                   onChange={onChange}
-                  searchQuery={searchQuery}
                   disabledStateIds={[currentStateId, ...occupiedStateIds]}
                 />
               </div>
-            ))}
+            ))
+          ) : hasGroupedProjectStates ? (
+            <p className="px-2 py-1.5 text-caption-md-regular text-placeholder">
+              {searchQuery.length > 0 ? "No matching results" : "No states available"}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

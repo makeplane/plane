@@ -15,6 +15,7 @@ import type { ReactElement, ReactNode } from "react";
 import { ArrowRightLeft, BellRing, CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 // plane imports
 import {
+  ApproverIcon,
   ArchiveIcon,
   CustomersIcon,
   CycleIcon,
@@ -68,6 +69,11 @@ export const activityIconMap: Record<string, ReactElement> = {
   customer: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
   customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
   milestones: <MilestoneIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  workflow_approved: <ApproverIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  workflow_rejected: <ApproverIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  workflow_state_removed: (
+    <StatePropertyIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />
+  ),
 };
 
 export function IssueActivityBlock(props: TIssueActivityBlock) {

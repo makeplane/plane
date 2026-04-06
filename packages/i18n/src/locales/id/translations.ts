@@ -3990,6 +3990,58 @@ jika Anda yakin pencarian Anda benar. `,
         message: "Perubahan status tidak diizinkan untuk beberapa item kerja. Pastikan perubahan status diizinkan.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Aktifkan alur kerja",
+        description: "Atur alur kerja untuk mengontrol perpindahan item kerja",
+        no_states_tooltip: "Tidak ada status yang ditambahkan ke alur kerja.",
+        toast: {
+          loading: {
+            enabling: "Mengaktifkan alur kerja",
+            disabling: "Menonaktifkan alur kerja",
+          },
+          success: {
+            title: "Berhasil!",
+            message: "Alur kerja berhasil diaktifkan.",
+          },
+          error: {
+            title: "Kesalahan!",
+            message: "Gagal mengaktifkan alur kerja. Silakan coba lagi.",
+          },
+        },
+      },
+      heading: "Alur kerja",
+      description:
+        "Otomatiskan transisi item kerja dan tetapkan aturan untuk mengontrol bagaimana tugas bergerak melalui alur proyek Anda.",
+      add_button: "Tambahkan alur kerja baru",
+      search: "Cari alur kerja",
+      detail: {
+        define: "Tentukan alur kerja",
+        add_states: "Tambahkan status",
+        unmapped_states: {
+          title: "Status yang belum dipetakan terdeteksi",
+          description:
+            "Beberapa item kerja untuk tipe yang dipilih saat ini berada dalam status yang tidak ada di alur kerja ini.",
+          note: "Jika Anda mengaktifkan alur kerja ini, item-item tersebut akan otomatis dipindahkan ke status awal untuk alur kerja ini.",
+          label: "Status yang hilang",
+          tooltip:
+            "Beberapa item kerja berada dalam status yang tidak dipetakan ke alur kerja ini. Buka alur kerja untuk meninjaunya.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Semua status sedang digunakan",
+          description: "Semua status yang ditentukan untuk proyek ini sudah ada di alur kerja Anda saat ini.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Alur kerja ini berlaku untuk tipe item kerja apa pun yang tidak ditetapkan ke alur kerja mana pun.",
+      },
+      create: {
+        heading: "Buat alur kerja baru",
+      },
+    },
   },
   work_item_types: {
     label: "Tipe Item Kerja",

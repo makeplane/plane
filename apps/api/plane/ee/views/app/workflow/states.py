@@ -17,18 +17,23 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
     OuterRef,
+    Q,
     Subquery,
     UUIDField,
     Value,
 )
 
-from plane.db.models import Workspace
+from plane.db.models import Workspace, State, Issue
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.host import base_host
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import (
     WorkflowState,
     WorkflowStateType,
     WorkflowTransition,
     WorkflowTransitionApprover,
+    WorkflowTransitionHook,
+    WorkflowWorkItemType,
 )
 from plane.ee.permissions import allow_permission, ROLE
 from plane.ee.serializers import WorkflowStateSerializer, WorkflowTransitionSerializer
@@ -102,6 +107,8 @@ class WorkflowStatesEndpoint(BaseAPIView):
         workflow_state = WorkflowState.objects.filter(
             project_id=project_id, workflow_id=workflow_id, state_id=state_id
         ).first()
+        if not workflow_state:
+            return Response({"error": "Workflow state not found"}, status=status.HTTP_404_NOT_FOUND)
         state_type = request.data.get("type")
         current_instance = json.dumps(
             {"type": workflow_state.type, "state_id": str(state_id)},
@@ -139,7 +146,10 @@ class WorkflowStatesEndpoint(BaseAPIView):
                 slug=slug,
                 epoch=int(timezone.now().timestamp()),
             )
-            return Response(WorkflowStateSerializer(workflow_state).data, status=status.HTTP_201_CREATED)
+            return Response(
+                WorkflowStateSerializer(workflow_state).data,
+                status=status.HTTP_201_CREATED,
+            )
         else:
             serializer = WorkflowStateSerializer(workflow_state, data=request.data, partial=True)
             if serializer.is_valid():
@@ -161,9 +171,11 @@ class WorkflowStatesEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
     def delete(self, request, slug, project_id, workflow_id, state_id):
-        workflow_state = WorkflowState.objects.filter(
-            project_id=project_id, workflow_id=workflow_id, state_id=state_id
-        ).first()
+        workflow_state = (
+            WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, state_id=state_id)
+            .select_related("workflow")
+            .first()
+        )
         if not workflow_state:
             return Response(
                 {"error": "Workflow state not found"},
@@ -173,6 +185,33 @@ class WorkflowStatesEndpoint(BaseAPIView):
             {"state_id": str(state_id), "type": workflow_state.type},
             cls=DjangoJSONEncoder,
         )
+
+        # check if the workflow state is from default workflow, if yes then don't allow deletion
+        if workflow_state.workflow.is_default:
+            return Response(
+                {"error": "Default workflow states cannot be deleted."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # delete the transition in which the state is present
+        WorkflowTransition.objects.filter(
+            workflow_state_id=workflow_state.id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
+        WorkflowTransitionApprover.objects.filter(
+            workflow_state_id=workflow_state.id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
+        WorkflowTransitionHook.objects.filter(
+            workflow_transition__workflow_state_id=workflow_state.id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
         workflow_activity.delay(
             workflow_id=str(workflow_id),
             type="workflow_state.activity.deleted",
@@ -210,8 +249,8 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
             type=activity_type,
             requested_data=json.dumps(
                 {
-                    "transition_state_id": str(transition_state_id) if transition_state_id else None,
-                    "rejection_state_id": str(rejection_state_id) if rejection_state_id else None,
+                    "transition_state_id": (str(transition_state_id) if transition_state_id else None),
+                    "rejection_state_id": (str(rejection_state_id) if rejection_state_id else None),
                     "type": state_type,
                 }
             ),
@@ -263,7 +302,9 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
 
         # check if the multiple workflows feature flag is enabled
         if workflow_state.type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
-            slug=slug, feature_key=FeatureFlag.MULTIPLE_WORKFLOWS, user_id=request.user.id
+            slug=slug,
+            feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
+            user_id=request.user.id,
         ):
             return Response(
                 {"error": "You are not allowed to create a approval transition."},
@@ -319,7 +360,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
             activity_type="workflow_transition.activity.created",
             transition_state_id=transition_state_id,
             rejection_state_id=rejection_state_id,
-            state_type=WorkflowStateType.APPROVAL,
+            state_type=workflow_state.type,
             request=request,
             slug=slug,
             project_id=project_id,
@@ -366,12 +407,12 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         workflow_state_type = workflow_transition.workflow_state.type
         current_instance = json.dumps(
             {
-                "transition_state_id": str(workflow_transition.transition_state_id)
-                if workflow_transition.transition_state_id
-                else None,
-                "rejection_state_id": str(workflow_transition.rejection_state_id)
-                if workflow_transition.rejection_state_id
-                else None,
+                "transition_state_id": (
+                    str(workflow_transition.transition_state_id) if workflow_transition.transition_state_id else None
+                ),
+                "rejection_state_id": (
+                    str(workflow_transition.rejection_state_id) if workflow_transition.rejection_state_id else None
+                ),
             },
             cls=DjangoJSONEncoder,
         )
@@ -458,9 +499,11 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
     def delete(self, request, slug, project_id, workflow_id, transition_id):
-        workflow_transition = WorkflowTransition.objects.get(
+        workflow_transition = WorkflowTransition.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=transition_id
-        )
+        ).first()
+        if not workflow_transition:
+            return Response({"error": "Workflow transition not found"}, status=status.HTTP_404_NOT_FOUND)
         current_instance = json.dumps({"transition_state_id": str(workflow_transition.transition_state_id)})
         workflow_transition.delete()
         workflow_activity.delay(
@@ -476,3 +519,119 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkflowStateTransferEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    def post(self, request, slug, project_id, workflow_id, state_id):
+        new_state_id = request.data.get("new_state_id")
+        if not new_state_id:
+            return Response(
+                {"error": "new_state_id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate the source workflow state exists
+        old_workflow_state = WorkflowState.objects.filter(
+            project_id=project_id, workflow_id=workflow_id, state_id=state_id
+        ).first()
+        if not old_workflow_state:
+            return Response({"error": "Workflow state not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # validate the target workflow state exists
+        if not WorkflowState.objects.filter(
+            project_id=project_id, workflow_id=workflow_id, state_id=new_state_id
+        ).exists():
+            return Response({"error": "Target workflow state not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Prevent transferring to the same state
+        if str(state_id) == str(new_state_id):
+            return Response(
+                {"error": "new_state_id must be different from the current state"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate the target state belongs to the same project
+        if not State.objects.filter(id=new_state_id, project_id=project_id, workspace__slug=slug).exists():
+            return Response(
+                {"error": "Target state not found in this project"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Base queryset for transitions in this workflow
+        transitions_qs = WorkflowTransition.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            workflow_state__workflow_id=workflow_id,
+        )
+
+        # The state being removed must not be referenced as a transition_state or rejection_state
+        # in any WorkflowTransition within this workflow.
+        if transitions_qs.filter(Q(transition_state_id=state_id) | Q(rejection_state_id=state_id)).exists():
+            return Response(
+                {"error": "The state is referenced as a transition or rejection in one or more workflow transitions."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # delete the workflow state
+        WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, state_id=state_id).delete()
+
+        current_instance = json.dumps(
+            {
+                "state_id": str(state_id),
+                "new_state_id": str(new_state_id),
+                "type": old_workflow_state.type,
+            },
+            cls=DjangoJSONEncoder,
+        )
+
+        # Move all issues of the relevant work item types from the old state to the new state.
+        work_item_type_ids = WorkflowWorkItemType.objects.filter(
+            workflow_id=workflow_id,
+            project_id=project_id,
+        ).values_list("work_item_type_id", flat=True)
+
+        affected_issue_ids = list(
+            Issue.objects.filter(
+                project_id=project_id,
+                state_id=state_id,
+                type_id__in=work_item_type_ids,
+            ).values_list("id", flat=True)
+        )
+
+        Issue.objects.filter(id__in=affected_issue_ids).update(state_id=new_state_id)
+
+        # current_instance is the same for all issues — they all transition from the same state
+        current_instance = json.dumps({"state_id": str(state_id)}, cls=DjangoJSONEncoder)
+        requested_data = json.dumps({"state_id": str(new_state_id)})
+        epoch = int(timezone.now().timestamp())
+        for issue_id in affected_issue_ids:
+            issue_activity.delay(
+                type="issue.activity.workflow_state_transferred",
+                requested_data=requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=current_instance,
+                epoch=epoch,
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+
+        workflow_activity.delay(
+            workflow_id=str(workflow_id),
+            type="workflow_state.activity.transferred",
+            requested_data=json.dumps(
+                {"new_state_id": str(new_state_id), "affected_count": len(affected_issue_ids)},
+                cls=DjangoJSONEncoder,
+            ),
+            actor_id=str(request.user.id),
+            workflow_state_id=str(old_workflow_state.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            slug=slug,
+            epoch=int(timezone.now().timestamp()),
+        )
+
+        return Response(status=status.HTTP_200_OK)

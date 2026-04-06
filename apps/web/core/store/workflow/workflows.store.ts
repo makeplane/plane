@@ -57,8 +57,7 @@ export interface IWorkflowsStore {
   workflowsMap: Map<string, IWorkflow>;
   filters: IWorkflowFilterStore;
   // computed
-  getWorkflowMode: (workspaceSlug: string, projectId: string) => "single-default" | "multiple";
-  isWorkflowCreationAllowed: (workspaceSlug: string, projectId: string) => boolean;
+  isMultipleWorkflowModeEnabled: (workspaceSlug: string, projectId: string) => boolean;
   isWorkflowsEnabled: (workspaceSlug: string, projectId: string) => boolean;
   isApprovalsEnabled: (workspaceSlug: string, projectId: string) => boolean;
   getWorkflowById: (workflowId: string) => IWorkflow | undefined;
@@ -66,6 +65,7 @@ export interface IWorkflowsStore {
   getProjectDefaultWorkflow: (projectId: string) => IWorkflow | undefined;
   getProjectWorkflows: (projectId: string) => IWorkflow[];
   getOccupiedWorkItemTypeIds: (projectId: string, workflowId?: string) => string[];
+  getUnassignedWorkItemTypeIds: (projectId: string, workflowId?: string) => string[];
   // workflow resolution
   getApplicableWorkflowForType: (projectId: string, typeId: string) => IWorkflow | null;
   isStateCreationAllowedForType: (projectId: string, typeId: string, stateId: string) => boolean;
@@ -110,6 +110,7 @@ export interface IWorkflowsStore {
   ) => boolean;
   // actions
   fetchAllWorkflows: (workspaceSlug: string) => Promise<void>;
+  fetchProjectWorkflows: (workspaceSlug: string, projectId: string) => Promise<TWorkflow[]>;
   createWorkflow: (workspaceSlug: string, projectId: string, data: TWorkflowCreatePayload) => Promise<void>;
   deleteWorkflow: (workspaceSlug: string, projectId: string, workflowId: string) => Promise<void>;
   toggleWorkflows: (workspaceSlug: string, projectId: string, isEnabled: boolean) => Promise<void>;
@@ -144,13 +145,31 @@ export class WorkflowsStore implements IWorkflowsStore {
     this.rootStore = _rootStore;
   }
 
+  private buildScopedStateMap = (
+    projectId: string,
+    workflow: IWorkflow | null,
+    initialValue: boolean
+  ): { [key: string]: boolean } => {
+    const projectStates = this.rootStore.state.getProjectStates(projectId);
+    const allIds = projectStates?.map((s) => s.id) ?? [];
+
+    if (!workflow) {
+      return allIds.reduce<Record<string, boolean>>((map, id) => {
+        map[id] = initialValue;
+        return map;
+      }, {});
+    }
+
+    const workflowStateIds = new Set(workflow.stateIds);
+    return allIds.reduce<Record<string, boolean>>((map, id) => {
+      map[id] = workflowStateIds.has(id) ? initialValue : false;
+      return map;
+    }, {});
+  };
+
   // computed
 
-  getWorkflowMode = computedFn((workspaceSlug: string, projectId: string): "single-default" | "multiple" => {
-    return this.isWorkflowCreationAllowed(workspaceSlug, projectId) ? "multiple" : "single-default";
-  });
-
-  isWorkflowCreationAllowed = computedFn((workspaceSlug: string, projectId: string): boolean => {
+  isMultipleWorkflowModeEnabled = computedFn((workspaceSlug: string, projectId: string): boolean => {
     const isMultipleWorkflowsFeatureEnabled = this.rootStore.featureFlags.getFeatureFlag(
       workspaceSlug,
       "MULTIPLE_WORKFLOWS",
@@ -222,7 +241,13 @@ export class WorkflowsStore implements IWorkflowsStore {
     }
 
     if (workItemTypeIds.length > 0) {
-      next = next.filter((workflow) => workflow.work_item_type_ids.some((id) => workItemTypeIds.includes(id)));
+      next = next.filter((workflow) => {
+        const workflowTypeIds = workflow.is_default
+          ? this.getUnassignedWorkItemTypeIds(projectId, undefined)
+          : workflow.work_item_type_ids;
+
+        return workflowTypeIds.some((id) => workItemTypeIds.includes(id));
+      });
     }
 
     next.sort((a, b) => {
@@ -257,6 +282,13 @@ export class WorkflowsStore implements IWorkflowsStore {
     return workflows.flatMap((w) => w.work_item_type_ids);
   });
 
+  getUnassignedWorkItemTypeIds = computedFn((projectId: string, workflowId?: string): string[] => {
+    const projectWorkItemTypeIds = this.rootStore.workItemTypeBridge.getProjectIssueTypeIds(projectId);
+    const occupiedWorkItemTypeIds = new Set(this.getOccupiedWorkItemTypeIds(projectId, workflowId));
+
+    return projectWorkItemTypeIds.filter((typeId) => !occupiedWorkItemTypeIds.has(typeId));
+  });
+
   /**
    * Resolves the applicable workflow for a given project + work item type.
    * For epics, always resolves to the project default workflow.
@@ -281,7 +313,7 @@ export class WorkflowsStore implements IWorkflowsStore {
     if (!workflow) return true;
 
     const workflowState = workflow.getStateById(stateId);
-    if (!workflowState) return true;
+    if (!workflowState) return false;
 
     return workflowState.allow_issue_creation;
   });
@@ -318,7 +350,7 @@ export class WorkflowsStore implements IWorkflowsStore {
     const workflow = this.resolveWorkflowForType(projectId, undefined);
     if (!workflow) return false;
     const workflowState = workflow.getStateById(stateId);
-    if (!workflowState) return true;
+    if (!workflowState) return false;
     return workflowState.allow_issue_creation;
   });
 
@@ -346,7 +378,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   hasTransitionsForState = computedFn(
     (workspaceSlug: string, projectId: string, stateId: string, typeId?: string | null): boolean => {
       const approvalsEnabled = this.isApprovalsEnabled(workspaceSlug, projectId);
-      const workflowMode = this.getWorkflowMode(workspaceSlug, projectId);
+      const isMultipleWorkflowModeEnabled = this.isMultipleWorkflowModeEnabled(workspaceSlug, projectId);
       const hasTransitions = (transitions: TWorkflowStateTransition[]) =>
         transitions.some((t) => Boolean(t.transition_state_id || (!approvalsEnabled && t.rejection_state_id)));
 
@@ -355,7 +387,7 @@ export class WorkflowsStore implements IWorkflowsStore {
         return hasTransitions(info.transitions);
       }
 
-      if (workflowMode === "multiple") {
+      if (isMultipleWorkflowModeEnabled) {
         const projectWorkItemTypes = this.rootStore.workItemTypeBridge.getProjectIssueTypes(projectId, true);
         const typeIds = Object.keys(projectWorkItemTypes);
         if (typeIds.length > 0) {
@@ -384,7 +416,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   getWorkflowInfoTree = computedFn(
     (workspaceSlug: string, projectId: string, stateId: string, typeId?: string | null): TWorkflowInfoTree => {
       const approvalsEnabled = this.isApprovalsEnabled(workspaceSlug, projectId);
-      const workflowMode = this.getWorkflowMode(workspaceSlug, projectId);
+      const isMultipleWorkflowModeEnabled = this.isMultipleWorkflowModeEnabled(workspaceSlug, projectId);
       const sections: TWorkflowInfoTreeSection[] = [];
 
       const getNormalizedTransitions = (workflowState: IWorkflowState) => {
@@ -418,6 +450,13 @@ export class WorkflowsStore implements IWorkflowsStore {
         meta?: { typeId?: string; typeName?: string; defaultWorkflowTypeIds?: string[] }
       ): TWorkflowInfoTreeSection | null => {
         if (!workflow) return null;
+        // Skip empty default-workflow groups when no work item types resolve to the default workflow.
+        if (
+          sectionKind === "default-workflow" &&
+          meta?.defaultWorkflowTypeIds?.length === 0 &&
+          isMultipleWorkflowModeEnabled
+        )
+          return null;
 
         const workflowState = workflow.getStateById(workflowStateId);
         if (!workflowState) return null;
@@ -466,7 +505,7 @@ export class WorkflowsStore implements IWorkflowsStore {
         return { stateId, sections };
       }
 
-      if (workflowMode === "single-default") {
+      if (!isMultipleWorkflowModeEnabled) {
         const defaultWorkflow = this.getProjectActiveDefaultWorkflow(projectId);
         const section = getSectionForWorkflow(defaultWorkflow ?? null, stateId, "default-workflow", {
           defaultWorkflowTypeIds: sortedTypeIds,
@@ -550,19 +589,16 @@ export class WorkflowsStore implements IWorkflowsStore {
       currentStateId: string | null | undefined,
       currentUserId: string | undefined
     ): { [key: string]: boolean } => {
-      const projectStates = this.rootStore.state.getProjectStates(projectId);
-      const allIds = projectStates?.map((s) => s.id) ?? [];
-      const allMap = allIds.reduce<Record<string, boolean>>((m, id) => {
-        m[id] = true;
-        return m;
-      }, {});
+      const workflow = this.resolveWorkflowForType(projectId, typeId);
+      const allMap = this.buildScopedStateMap(projectId, workflow, true);
 
       if (!currentStateId) return allMap;
+      allMap[currentStateId] = true;
 
       const approvalsEnabled = this.isApprovalsEnabled(workspaceSlug, projectId);
       const info = this.getWorkflowStateInfo(projectId, typeId, currentStateId);
       if (info.isUnconstrained) return allMap;
-      // If not transitions are defined all states should be allowed
+      // If no transitions are defined, any state inside the workflow should be allowed
       if (info.transitions.length === 0) return allMap;
       // If the state is an approval state, only the current state should be allowed
       if (info.type === "approval" && approvalsEnabled) return { [currentStateId]: true };
@@ -592,14 +628,8 @@ export class WorkflowsStore implements IWorkflowsStore {
    * creation is allowed within the resolved workflow.
    */
   getCreationAllowedStateIds = computedFn((projectId: string, typeId?: string | null): { [key: string]: boolean } => {
-    const projectStates = this.rootStore.state.getProjectStates(projectId);
-    const allIds = projectStates?.map((s) => s.id) ?? [];
-    const allMap = allIds.reduce<Record<string, boolean>>((m, id) => {
-      m[id] = true;
-      return m;
-    }, {});
-
     const workflow = this.resolveWorkflowForType(projectId, typeId);
+    const allMap = this.buildScopedStateMap(projectId, workflow, true);
     if (!workflow) return allMap;
 
     workflow.stateIds.map((id) => {
@@ -658,6 +688,29 @@ export class WorkflowsStore implements IWorkflowsStore {
       this.loader = undefined;
     }
   };
+  //FIXME: right now this fetch is used only to show missing states warning in bulk. Remove the project fetch when new endpoint is added for states check.
+  fetchProjectWorkflows = async (workspaceSlug: string, projectId: string): Promise<TWorkflow[]> => {
+    try {
+      this.loader = "init-loader";
+      const response: TWorkflow[] = await this.workflowService.fetchProjectWorkflows(workspaceSlug, projectId);
+      runInAction(() => {
+        response.forEach((workflow: TWorkflow) => {
+          const workflowInstance = this.getWorkflowById(workflow.id);
+          if (workflowInstance) {
+            workflowInstance.mutate({
+              missing_states: workflow.missing_states ?? false,
+            });
+          }
+        });
+      });
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch project workflows", error);
+      throw error;
+    } finally {
+      this.loader = undefined;
+    }
+  };
 
   _createDefaultWorkflow = async (workspaceSlug: string, projectId: string): Promise<void> => {
     const defaultWorkflow = this.getProjectDefaultWorkflow(projectId);
@@ -667,7 +720,10 @@ export class WorkflowsStore implements IWorkflowsStore {
     try {
       const response: TWorkflow = await this.workflowService.createDefault(workspaceSlug, projectId);
       runInAction(() => {
-        this.workflowsMap.set(response.id, new Workflow({ ...response, states: [] }, this.workflowService));
+        this.workflowsMap.set(
+          response.id,
+          new Workflow({ ...response, states: response.states ?? [] }, this.workflowService)
+        );
       });
     } catch (error) {
       console.error("Failed to create default workflow", error);
@@ -679,7 +735,10 @@ export class WorkflowsStore implements IWorkflowsStore {
     try {
       const response: TWorkflow = await this.workflowService.create(workspaceSlug, projectId, data);
       runInAction(() => {
-        this.workflowsMap.set(response.id, new Workflow({ ...response, states: [] }, this.workflowService));
+        this.workflowsMap.set(
+          response.id,
+          new Workflow({ ...response, states: response.states ?? [] }, this.workflowService)
+        );
       });
     } catch (error) {
       console.error("Failed to create workflow", error);
@@ -707,6 +766,13 @@ export class WorkflowsStore implements IWorkflowsStore {
       runInAction(() => {
         this.rootStore.projectDetails.features[projectId].is_workflow_enabled = isEnabled;
       });
+
+      if (!isEnabled) {
+        runInAction(() => {
+          this.filters.reset();
+        });
+      }
+
       // Create default workflow
       if (isEnabled) {
         await this._createDefaultWorkflow(workspaceSlug, projectId);

@@ -51,6 +51,7 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
@@ -136,15 +137,17 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     handlePropertyValuesValidation,
     handleCreateUpdatePropertyValues,
     handleTemplateChange,
+    resolveCreateStateId,
   } = useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
+  const { isWorkflowsEnabled } = useWorkflows();
 
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
-  const { getStateById } = useProjectState();
+  const { getProjectStateIds, getStateById } = useProjectState();
 
   // form info
   const methods = useForm<TIssue>({
@@ -163,6 +166,10 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
   } = methods;
 
   const projectId = watch("project_id");
+  const typeId = watch("type_id");
+  const stateId = watch("state_id");
+  const projectStateIds = getProjectStateIds(projectId);
+  const projectStateIdsKey = projectStateIds?.join(",");
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
     projectId: projectId,
     workspaceSlug: workspaceSlug?.toString(),
@@ -172,6 +179,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
   // derived values
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
   const isDisabled = isSubmitting || isApplyingTemplate;
+  const workflowsEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
@@ -202,22 +210,37 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
 
   // Update the issue type id when the project id changes
   useEffect(() => {
-    const issueTypeId = watch("type_id");
-
     // if issue type id is present or project not available, return
-    if (issueTypeId || !projectId) return;
+    if (typeId || !projectId) return;
 
     // get issue type id on project change
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, projectId]);
+  }, [data, projectId, typeId]);
+
+  useEffect(() => {
+    if (data?.id || !projectId || !projectStateIds) return;
+
+    const resolvedStateId = resolveCreateStateId({
+      projectId,
+      workflowsEnabled,
+      typeId,
+      currentStateId: stateId,
+    });
+
+    if (resolvedStateId && resolvedStateId !== stateId) {
+      setValue("state_id", resolvedStateId, { shouldValidate: true });
+    }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.id, projectId, projectStateIdsKey, stateId, typeId, workflowsEnabled]);
 
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
       handleTemplateChange({
         workspaceSlug: workspaceSlug?.toString(),
+        workflowsEnabled,
         reset,
         editorRef,
       });
@@ -265,6 +288,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
         if (isCreateMoreToggleEnabled && workItemTemplateId) {
           handleTemplateChange({
             workspaceSlug: workspaceSlug?.toString(),
+            workflowsEnabled,
             reset,
             editorRef,
           });

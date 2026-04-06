@@ -38,6 +38,8 @@ import type {
   THandleProjectEntitiesFetchProps,
   THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
+  TResolveCreateStateIdProps,
+  TResolveStateIdForTypeChangeProps,
 } from "@/components/issues/issue-modal/context";
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
@@ -78,8 +80,8 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const { t } = useTranslation();
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
-  const { getProjectStateIds, fetchProjectStates } = useProjectState();
-  const { getCreationAllowedStateIds } = useWorkflows();
+  const { getProjectDefaultStateId, getProjectStateIds, fetchProjectStates } = useProjectState();
+  const { getCreationAllowedStateIds, getFirstCreationAllowedStateForType } = useWorkflows();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
   const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
   const {
@@ -140,12 +142,74 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   };
 
   const getAvailableWorkItemCreationStateIds = useCallback(
-    (projectId: string | null | undefined): string[] | undefined => {
+    (projectId: string | null | undefined, workflowsEnabled: boolean): string[] | undefined => {
       if (!projectId) return undefined;
+      if (!workflowsEnabled) {
+        return getProjectStateIds(projectId);
+      }
       const map = getCreationAllowedStateIds(projectId, undefined);
       return Object.keys(map).filter((stateId) => map[stateId]);
     },
-    [getCreationAllowedStateIds]
+    [getCreationAllowedStateIds, getProjectStateIds]
+  );
+
+  const resolveCreateStateId = useCallback(
+    (props: TResolveCreateStateIdProps): string | null => {
+      const { projectId, workflowsEnabled, typeId, currentStateId } = props;
+
+      if (!projectId) return currentStateId ?? null;
+
+      const projectStateIds = getProjectStateIds(projectId);
+      if (!projectStateIds) return currentStateId ?? null;
+
+      const isCurrentProjectState = currentStateId ? projectStateIds.includes(currentStateId) : false;
+
+      if (!workflowsEnabled) {
+        if (isCurrentProjectState) return currentStateId ?? null;
+        return getProjectDefaultStateId(projectId) ?? null;
+      }
+
+      if (typeId) {
+        const allowedStateIds = getCreationAllowedStateIds(projectId, typeId);
+        if (currentStateId && allowedStateIds[currentStateId]) return currentStateId;
+        return getFirstCreationAllowedStateForType(projectId, typeId) ?? null;
+      }
+
+      const allowedStateIds = getCreationAllowedStateIds(projectId, undefined);
+      if (currentStateId && allowedStateIds[currentStateId]) return currentStateId;
+
+      const defaultStateId = getProjectDefaultStateId(projectId);
+      if (defaultStateId && allowedStateIds[defaultStateId]) return defaultStateId;
+
+      const firstAllowedStateId = projectStateIds.find((stateId) => allowedStateIds[stateId]);
+      return firstAllowedStateId ?? null;
+    },
+    [getCreationAllowedStateIds, getFirstCreationAllowedStateForType, getProjectDefaultStateId, getProjectStateIds]
+  );
+
+  const resolveStateIdForTypeChange = useCallback(
+    (props: TResolveStateIdForTypeChangeProps): string | null => {
+      const { projectId, workflowsEnabled, currentTypeId, nextTypeId, currentStateId } = props;
+
+      if (!projectId) return currentStateId;
+
+      const effectiveCurrentStateId =
+        currentStateId ||
+        resolveCreateStateId({
+          projectId,
+          workflowsEnabled,
+          typeId: currentTypeId,
+          currentStateId,
+        });
+
+      return resolveCreateStateId({
+        projectId,
+        workflowsEnabled,
+        typeId: nextTypeId,
+        currentStateId: effectiveCurrentStateId,
+      });
+    },
+    [resolveCreateStateId]
   );
 
   // handlers
@@ -296,7 +360,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
    */
   const handleTemplateChange = useCallback(
     async (props: THandleTemplateChangeProps) => {
-      const { workspaceSlug, reset, editorRef } = props;
+      const { workspaceSlug, workflowsEnabled, reset, editorRef } = props;
       // check if work item template id is available
       if (!workItemTemplateId) return;
       // get template details
@@ -315,7 +379,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
         // Get the sanitized work item form data
         const { valid: sanitizedWorkItemFormData } = extractAndSanitizeWorkItemTemplateFormData({
           workItemData: template.template_data,
-          getProjectStateIds: getAvailableWorkItemCreationStateIds,
+          getProjectStateIds: (projectId) => getAvailableWorkItemCreationStateIds(projectId, workflowsEnabled),
           getProjectLabelIds,
           getProjectModuleIds,
           getProjectMemberIds,
@@ -435,6 +499,8 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
         handleCreateUpdatePropertyValues,
         handleProjectEntitiesFetch,
         handleTemplateChange,
+        resolveCreateStateId,
+        resolveStateIdForTypeChange,
         handleConvert,
         handleCreateSubWorkItem,
       }}

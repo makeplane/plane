@@ -127,6 +127,21 @@ export const NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {
     value: newValue || oldValue || "",
     showConnector: !!newValue, // "to" only when setting, not when removing
   }),
+  workflow_approved: ({ newValue }) => ({
+    action: "approved this work item. State updated to",
+    value: newValue,
+    showConnector: false,
+  }),
+  workflow_rejected: ({ newValue }) => ({
+    action: "rejected this work item. State updated to",
+    value: newValue,
+    showConnector: false,
+  }),
+  workflow_state_removed: ({ newValue }) => ({
+    action: "moved this work item to",
+    value: newValue,
+    showConnector: false,
+  }),
 };
 
 // Helper to get content details from maps

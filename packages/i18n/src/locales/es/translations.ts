@@ -4026,6 +4026,59 @@ si estás seguro de que tu búsqueda es correcta.`,
           "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido.",
       },
     },
+    workflows: {
+      toggle: {
+        title: "Habilitar flujos de trabajo",
+        description: "Configura flujos de trabajo para controlar el movimiento de los elementos de trabajo",
+        no_states_tooltip: "No hay estados agregados al flujo de trabajo.",
+        toast: {
+          loading: {
+            enabling: "Habilitando flujos de trabajo",
+            disabling: "Deshabilitando flujos de trabajo",
+          },
+          success: {
+            title: "¡Éxito!",
+            message: "Los flujos de trabajo se habilitaron correctamente.",
+          },
+          error: {
+            title: "¡Error!",
+            message: "No se pudieron habilitar los flujos de trabajo. Inténtalo de nuevo.",
+          },
+        },
+      },
+      heading: "Flujos de trabajo",
+      description:
+        "Automatiza las transiciones de los elementos de trabajo y define reglas para controlar cómo las tareas avanzan por el flujo de tu proyecto.",
+      add_button: "Agregar nuevo flujo de trabajo",
+      search: "Buscar flujos de trabajo",
+      detail: {
+        define: "Definir flujo de trabajo",
+        add_states: "Agregar estados",
+        unmapped_states: {
+          title: "Se detectaron estados no asignados",
+          description:
+            "Algunos elementos de trabajo de los tipos seleccionados se encuentran actualmente en estados que no existen en este flujo de trabajo.",
+          note: "Si habilitas este flujo de trabajo, esos elementos se moverán automáticamente al estado inicial de este flujo de trabajo.",
+          label: "Estados faltantes",
+          tooltip:
+            "Algunos elementos de trabajo están en estados que no están asignados a este flujo de trabajo. Abre el flujo de trabajo para revisarlo.",
+        },
+      },
+      select_states: {
+        empty_state: {
+          title: "Todos los estados están en uso",
+          description:
+            "Todos los estados definidos para este proyecto ya están presentes en tu flujo de trabajo actual.",
+        },
+      },
+      default_footer: {
+        fallback_message:
+          "Este flujo de trabajo se aplica a cualquier tipo de elemento de trabajo que no esté asignado a un flujo de trabajo.",
+      },
+      create: {
+        heading: "Crear nuevo flujo de trabajo",
+      },
+    },
   },
   work_item_types: {
     label: "Tipos de elementos de trabajo",
