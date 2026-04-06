@@ -420,11 +420,12 @@ deploy:external-test:
 # =============================================================================
 
 # Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
+# No real production server on external path — release runs after builds succeed.
+# On internal (IS_AIRGAPPED=true), release:production:shell waits for deploy:production.
 release:production:docker:
   stage: release
   image: alpine:latest
   needs:
-    - job: deploy:production
     - job: build:web:docker
       artifacts: true  # provides $SHB_VERSION from dotenv
   variables:
