@@ -96,7 +96,7 @@ def get_asset_size_limit(asset_size, entity_type, slug, user_id):
         asset_size: The requested file size in bytes.
         entity_type: The entity type context string.
         slug: The workspace slug.
-        user_id: The user ID (will be converted to str).
+        user_id: The user ID (will be converted to str) if not None.
 
     Returns:
         int: The effective size limit (min of requested size and applicable limit).
@@ -109,7 +109,7 @@ def get_asset_size_limit(asset_size, entity_type, slug, user_id):
     if not getattr(settings, "IS_SELF_MANAGED", False) and check_workspace_feature_flag(
         feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
         slug=slug,
-        user_id=str(user_id),
+        user_id=str(user_id) if user_id else None,
     ):
         return min(asset_size, settings.PRO_FILE_SIZE_LIMIT)
 
