@@ -655,6 +655,12 @@ class PageExtendedViewSet(BaseViewSet):
             id__in=page_ids,
             project_pages__deleted_at__isnull=True,
         ).annotate(
+            sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+            .filter(archived_at__isnull=True)
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        ).annotate(
             project_ids=Coalesce(
                 ArrayAgg("project_pages__project_id", distinct=True, filter=Q(project_pages__deleted_at__isnull=True)),
                 Value([], output_field=ArrayField(UUIDField())),

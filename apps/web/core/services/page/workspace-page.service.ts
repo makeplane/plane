@@ -40,7 +40,10 @@ export class WorkspacePageService extends APIService {
 
   async fetchAll(workspaceSlug: string): Promise<TPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        const data = response?.data as TPage[] | TPagePaginatedResponse;
+        return Array.isArray(data) ? data : (data?.results ?? []);
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

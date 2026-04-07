@@ -28,3 +28,4 @@ from .merge_issue_type_task import (
 )
 from .workflow_post_actions_task import run_workflow_post_actions
 from .seed_workflow_projects_task import seed_workflow_default_states
+from .seed_default_collections_task import seed_default_collections

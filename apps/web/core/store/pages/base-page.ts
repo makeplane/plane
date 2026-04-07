@@ -142,6 +142,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   is_locked: boolean;
   archived_at: string | null | undefined;
   workspace: string | undefined;
+  collection_id?: string | null | undefined;
   project_ids?: string[] | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
@@ -184,6 +185,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.is_locked = !!page?.is_locked;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
+    this.collection_id = page?.collection_id ?? undefined;
     this.project_ids = page?.project_ids || undefined;
     this.created_by = page?.created_by || undefined;
     this.updated_by = page?.updated_by || undefined;
@@ -212,6 +214,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       is_locked: observable.ref,
       archived_at: observable.ref,
       workspace: observable.ref,
+      collection_id: observable.ref,
       project_ids: observable,
       created_by: observable.ref,
       updated_by: observable.ref,
@@ -281,6 +284,8 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     // Auto-configure page context based on workspace and project information
     this.autoConfigurePage();
   }
+
+  protected onAccessStateChange(_access: EPageAccess) {}
 
   /**
    * @description automatically configure page context based on workspace and project information
@@ -354,6 +359,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       is_locked: this.is_locked,
       archived_at: this.archived_at,
       workspace: this.workspace,
+      collection_id: this.collection_id,
       project_ids: this.project_ids,
       created_by: this.created_by,
       updated_by: this.updated_by,
@@ -477,6 +483,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       this.access = EPageAccess.PUBLIC;
       this.is_shared = false;
     });
+    this.onAccessStateChange(EPageAccess.PUBLIC);
 
     if (shouldSync) {
       try {
@@ -488,6 +495,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
           this.access = pageAccess;
           this.is_shared = oldIsShared;
         });
+        this.onAccessStateChange(pageAccess ?? EPageAccess.PUBLIC);
         throw error;
       }
     }
@@ -501,6 +509,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     runInAction(() => {
       this.access = EPageAccess.PRIVATE;
     });
+    this.onAccessStateChange(EPageAccess.PRIVATE);
 
     if (shouldSync) {
       try {
@@ -511,6 +520,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
         runInAction(() => {
           this.access = pageAccess;
         });
+        this.onAccessStateChange(pageAccess ?? EPageAccess.PUBLIC);
         throw error;
       }
     }

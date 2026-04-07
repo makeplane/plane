@@ -462,6 +462,12 @@ class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
         page_ids = get_all_parent_ids(page_id)
 
         pages = Page.objects.filter(workspace__slug=slug, id__in=page_ids).annotate(
+            sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+            .filter(archived_at__isnull=True)
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        ).annotate(
             team=TeamspacePage.objects.filter(
                 page_id=OuterRef("pk"),
                 team_space_id=self.kwargs.get("team_space_id"),

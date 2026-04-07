@@ -42,6 +42,15 @@ export const wikiRoutes: RouteConfigEntry[] = [
       route(":workspaceSlug/wiki/shared", "./(all)/[workspaceSlug]/(wiki)/wiki/(pageType)/shared/page.tsx"),
     ]),
 
+    // Collection Detail
+    layout("./(all)/[workspaceSlug]/(wiki)/wiki/collections/[collectionId]/layout.tsx", [
+      route(
+        ":workspaceSlug/wiki/collections/:collectionId",
+        "./(all)/[workspaceSlug]/(wiki)/wiki/collections/[collectionId]/page.tsx",
+        { id: "wiki-collection-dynamic" }
+      ),
+    ]),
+
     // Page Detail
     layout("./(all)/[workspaceSlug]/(wiki)/wiki/[pageId]/layout.tsx", [
       route(":workspaceSlug/wiki/:pageId", "./(all)/[workspaceSlug]/(wiki)/wiki/[pageId]/page.tsx"),

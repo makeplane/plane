@@ -17,7 +17,7 @@ import Link from "next/link";
 import useSWR from "swr";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
-import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TPage, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -69,13 +69,13 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
-  const { error: pageDetailsError } = useSWR(
+  const { error: pageDetailsError } = useSWR<TPage | undefined, Error>(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
     pageId ? () => fetchPageDetails(pageId.toString()) : null,
     {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
     }
   );
   // page root handlers
@@ -84,8 +84,8 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
       create: createPage,
       fetchAllVersions: async (pageId) => await workspacePageVersionService.fetchAllVersions(workspaceSlug, pageId),
       fetchDescriptionBinary: async () => {
-        if (!id) return;
-        return await workspacePageService.fetchDescriptionBinary(workspaceSlug, id);
+        if (!id) throw new Error("Page id is required to fetch the page description.");
+        return (await workspacePageService.fetchDescriptionBinary(workspaceSlug, id)) as ArrayBuffer;
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) =>

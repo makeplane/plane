@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -41,7 +40,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   const { workspaceSlug, pageId } = useParams();
   const router = useRouter();
   // store hooks
-  const { fetchParentPages } = usePageStore(storeType);
+  const { fetchParentPages, getPageById } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -53,11 +52,20 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
     workspaceSlug && pageId ? () => fetchParentPages(pageId.toString()) : null
   );
 
-  // Transform the data once it's available using useMemo
-  const orderedParentPages = useMemo(() => {
-    if (!parentPagesList) return undefined;
-    return createOrderedParentChildArray(parentPagesList);
-  }, [parentPagesList]);
+  const storeParentPagesList = page?.id
+    ? [
+        ...[...page.parentPageIds]
+          .reverse()
+          .map((parentPageId) => getPageById(parentPageId)?.asJSON)
+          .filter((parentPage): parentPage is TPage => !!parentPage?.id),
+        ...(page.asJSON?.id ? [page.asJSON] : []),
+      ]
+    : undefined;
+
+  const effectiveParentPagesList = storeParentPagesList?.length ? storeParentPagesList : parentPagesList;
+  const orderedParentPages = effectiveParentPagesList
+    ? createOrderedParentChildArray(effectiveParentPagesList)
+    : undefined;
 
   // Now use orderedParentPages instead of parentPagesList for your UI logic
   const isRootPage = orderedParentPages?.length === 1;

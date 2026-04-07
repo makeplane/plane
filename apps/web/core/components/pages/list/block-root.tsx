@@ -31,6 +31,8 @@ type TPageListBlock = {
   paddingLeft: number;
   pageId: string;
   storeType: EPageStoreType;
+  getChildPageIds?: (pageId: string) => string[];
+  handleDropAsChild?: (pageId: string, targetParentId: string) => void | Promise<void>;
   pageType?: TPageNavigationTabs;
   expandedPageIds?: string[];
   setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -38,7 +40,17 @@ type TPageListBlock = {
 };
 
 export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPageListBlock) {
-  const { paddingLeft, pageId, storeType, pageType, expandedPageIds = [], setExpandedPageIds, sectionType } = props;
+  const {
+    paddingLeft,
+    pageId,
+    storeType,
+    getChildPageIds,
+    handleDropAsChild,
+    pageType,
+    expandedPageIds = [],
+    setExpandedPageIds,
+    sectionType,
+  } = props;
   // states
   const [localIsExpanded, setLocalIsExpanded] = useState(false);
   const [subPagesLoaded, setSubPagesLoaded] = useState(false);
@@ -57,6 +69,7 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
   });
   // derived values
   const { sub_pages_count, subPageIds } = page ?? {};
+  const resolvedSubPageIds = getChildPageIds ? getChildPageIds(pageId) : subPageIds;
 
   // Check if this is the active page
   const isActivePage = currentPageIdParam && currentPageIdParam.toString() === pageId;
@@ -170,7 +183,7 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
         const page = getPageById(id);
         if (!page) return;
 
-        const subpageIds = page.subPageIds || [];
+        const subpageIds = getChildPageIds ? getChildPageIds(id) : page.subPageIds || [];
 
         subpageIds.forEach((childId) => {
           children.push(childId);
@@ -181,7 +194,7 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
       collectChildren(parentId);
       return children;
     },
-    [getPageById]
+    [getChildPageIds, getPageById]
   );
 
   // drag and drop
@@ -233,6 +246,7 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
         onDrop: ({ location, self, source }) => {
           setIsDropping(false);
           if (location.current.dropTargets[0]?.element !== self.element) return;
+          if (!page.id) return;
           const { id: droppedPageId } = source.data as TPageDragPayload;
           const droppedPageDetails = getPageById(droppedPageId);
           if (!droppedPageDetails) return;
@@ -253,6 +267,11 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
           // Check if access needs to be updated (section has changed)
           if (targetAccess !== undefined && droppedPageDetails.access !== targetAccess) {
             updatePayload.access = targetAccess;
+          }
+
+          if (handleDropAsChild) {
+            void handleDropAsChild(droppedPageId, page.id);
+            return;
           }
 
           // Use the store method instead of direct update
@@ -300,6 +319,7 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
     workspaceSlug,
     sectionType,
     movePageInternally,
+    handleDropAsChild,
   ]);
 
   if (!page) return null;
@@ -332,12 +352,14 @@ export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPag
           leaveTo="opacity-0"
         >
           <div>
-            {subPageIds?.map((subPageId) => (
+            {resolvedSubPageIds?.map((subPageId) => (
               <PageListBlockRoot
                 key={subPageId}
                 paddingLeft={paddingLeft + 26}
                 pageId={subPageId}
                 storeType={storeType}
+                getChildPageIds={getChildPageIds}
+                handleDropAsChild={handleDropAsChild}
                 pageType={pageType}
                 expandedPageIds={expandedPageIds}
                 setExpandedPageIds={setExpandedPageIds}

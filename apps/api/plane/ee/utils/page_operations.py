@@ -42,7 +42,8 @@ Usage Examples:
     move_page_entities(descendant_ids, "project", slug, user_id, project_id=project_id)
 """
 
-from typing import List, Optional
+from typing import Dict, List, Optional
+from django.db.models import Max
 from django.utils import timezone
 
 from plane.db.models import (
@@ -55,12 +56,14 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.ee.models import (
+    Collection,
     TeamspacePage,
     WorkItemPage,
     PageUser,
     TeamspaceMember,
     PageComment,
     PageCommentReaction,
+    PageCollection,
 )
 
 
@@ -137,6 +140,43 @@ def remove_pages_from_workspace_level(page_ids: List[str], workspace_id: str, us
     )
 
 
+def remove_pages_from_collection(page_ids: List[str], collection_id: str) -> None:
+    """remove the pages from the collection."""
+    PageCollection.objects.filter(page_id__in=page_ids, collection_id=collection_id).delete()
+
+
+def add_pages_to_collection(page_ids: List[str], collection_id: str, workspace_id: str) -> None:
+    """add the pages to the collection by creating new page collections."""
+    if not page_ids:
+        return
+
+    page_sort_orders: Dict[str, Optional[float]] = {
+        str(page.id): page.sort_order
+        for page in Page.objects.filter(id__in=page_ids, workspace_id=workspace_id).only("id", "sort_order")
+    }
+    largest_sort_order = (
+        PageCollection.objects.filter(collection_id=collection_id).aggregate(largest=Max("sort_order"))["largest"]
+    )
+    next_sort_order = ((largest_sort_order if largest_sort_order is not None else 0) + 10000)
+
+    PageCollection.objects.bulk_create(
+        [
+            PageCollection(
+                page_id=current_page_id,
+                collection_id=collection_id,
+                workspace_id=workspace_id,
+                sort_order=(
+                    page_sort_orders[current_page_id]
+                    if current_page_id in page_sort_orders and page_sort_orders[current_page_id] is not None
+                    else next_sort_order + index * 10000
+                ),
+            )
+            for index, current_page_id in enumerate(page_ids)
+        ],
+        ignore_conflicts=True,
+    )
+
+
 # ====================
 # Unified Entity Move Operations
 # ====================
@@ -180,6 +220,12 @@ def move_page_entities(
         "updated_by_id": user_id,
         "updated_at": timezone.now(),
     }
+
+    # Collection membership is only valid for workspace wiki pages.
+    # If a page moves into a project or teamspace, clear any persisted
+    # page-collection rows so later collection hydration cannot reattach it.
+    if move_type in ["project", "teamspace"]:
+        PageCollection.objects.filter(page_id__in=page_ids, workspace__slug=slug).delete()
 
     # 1. Update WorkItemPage - delete old associations when moving from project
     if move_type in ["workspace", "teamspace"]:
@@ -267,3 +313,80 @@ def move_entities_to_workspace(page_ids: List[str], slug: str, user_id: str) -> 
 def move_entities_to_teamspace(page_ids: List[str], slug: str, user_id: str, teamspace_id: str) -> None:
     """Move all entities for multiple pages to teamspace level (bulk operation)."""
     move_page_entities(page_ids, "teamspace", slug, user_id, teamspace_id=teamspace_id)
+
+
+# ====================
+# Collection Membership Recomputation
+# ====================
+
+
+def recompute_page_collection(page_id: str, workspace_id: str) -> None:
+    """
+    Enforce the collection invariant for page_id and its entire subtree.
+
+    Decision tree:
+    1. If page is ineligible (private / not global / archived / deleted):
+       → delete all PageCollection rows for page + subtree
+    2. If page has a parent:
+       → target = parent's active collection (may be None)
+    3. If page is a root (no parent):
+       → target = page's own existing active collection
+       → if none: assign workspace default collection
+    4. Apply:
+       → keep root's own row, re-sync all descendants to same collection
+    """
+    from plane.ee.utils.page_descendants import get_descendant_page_ids
+
+    page = Page.objects.filter(id=page_id, workspace_id=workspace_id).first()
+    if not page:
+        return
+
+    descendants = [str(d) for d in get_descendant_page_ids(page_id)]
+    all_ids = [str(page_id)] + descendants
+
+    # Ineligibility check — private, non-global, archived, or deleted pages have no collection
+    if not (page.access == Page.PUBLIC_ACCESS and page.is_global and not page.archived_at and not page.deleted_at):
+        PageCollection.objects.filter(page_id__in=all_ids, workspace_id=workspace_id).delete()
+        return
+
+    # Determine the target collection
+    target_collection_id: Optional[str] = None
+
+    if page.parent_id:
+        # Child page: inherit from nearest ancestor that has a collection
+        target_collection_id = (
+            PageCollection.objects.filter(page_id=str(page.parent_id), workspace_id=workspace_id)
+            .values_list("collection_id", flat=True)
+            .first()
+        )
+        if target_collection_id:
+            target_collection_id = str(target_collection_id)
+    else:
+        # Root page: keep existing collection, or assign default if none
+        target_collection_id = (
+            PageCollection.objects.filter(page_id=str(page_id), workspace_id=workspace_id)
+            .values_list("collection_id", flat=True)
+            .first()
+        )
+        if target_collection_id:
+            target_collection_id = str(target_collection_id)
+        else:
+            default = Collection.objects.filter(workspace_id=workspace_id, is_default=True, access=0).first()
+            target_collection_id = str(default.id) if default else None
+
+    if target_collection_id:
+        # Sync descendants to the same collection as the root
+        if descendants:
+            PageCollection.objects.filter(page_id__in=descendants, workspace_id=workspace_id).delete()
+            add_pages_to_collection(descendants, target_collection_id, workspace_id)
+
+        # Upsert the root page's own collection row
+        existing = PageCollection.objects.filter(page_id=str(page_id), workspace_id=workspace_id).first()
+        if not existing:
+            add_pages_to_collection([str(page_id)], target_collection_id, workspace_id)
+        elif str(existing.collection_id) != target_collection_id:
+            existing.collection_id = target_collection_id
+            existing.save(update_fields=["collection_id", "updated_at"])
+    else:
+        # No collection could be determined — remove all rows for the subtree
+        PageCollection.objects.filter(page_id__in=all_ids, workspace_id=workspace_id).delete()

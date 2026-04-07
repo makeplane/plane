@@ -15,4 +15,7 @@ export * from "./components";
 export * from "./hooks";
 export * from "./constants";
 export * from "./types";
+export * from "./collections-section";
 export * from "./section-root";
+export * from "./add-existing-page-modal";
+export * from "./collection-add-page-menu";

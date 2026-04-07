@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type React from "react";
+
 export type TTableColumn<T> = {
   key: string;
   content: string;
@@ -22,6 +24,7 @@ export type TTableData<T> = {
   data: T[];
   columns: TTableColumn<T>[];
   keyExtractor: (rowData: T) => string;
+  renderRow?: (props: { rowData: T; children: React.ReactNode; className: string }) => React.ReactNode;
   // classNames
   tableClassName?: string;
   tHeadClassName?: string;

@@ -17,6 +17,7 @@ import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
+import { useTranslation } from "@plane/i18n";
 // utils
 import { cn } from "@plane/utils";
 // types
@@ -30,12 +31,14 @@ export const SectionHeader = React.memo(function SectionHeader({
   sectionType,
   sectionDetails,
   isCreatingPage,
+  canCreatePage,
   handleCreatePage,
   buttonRef,
   onButtonClick,
   isOpen,
 }: SectionHeaderProps & { isOpen?: boolean }) {
   const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
 
   return (
     <div
@@ -47,11 +50,11 @@ export const SectionHeader = React.memo(function SectionHeader({
         href={`/${workspaceSlug}/wiki/${sectionType}`}
         className={cn("flex-grow text-13 font-semibold text-placeholder")}
       >
-        {sectionDetails.label === SECTION_DETAILS.public.label ? "Workspace" : sectionDetails.label}
+        {sectionDetails.label === SECTION_DETAILS.public.label ? t("common.general") : sectionDetails.label}
       </Link>
 
       <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
-        {sectionType !== "archived" && sectionType !== "shared" && (
+        {canCreatePage && sectionType !== "archived" && sectionType !== "shared" && (
           <button
             className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
             onClick={() => {

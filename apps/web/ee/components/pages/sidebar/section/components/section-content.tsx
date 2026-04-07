@@ -43,7 +43,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
   // Get current page ID to ensure it's always rendered
   const { pageId: currentPageId } = useParams();
   // store hooks
-  const { getPageById } = usePageStore(EPageStoreType.WORKSPACE);
+  const { getPageById, movePageInternally } = usePageStore(EPageStoreType.WORKSPACE);
   // refs for intersection observer (load more trigger)
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -151,14 +151,14 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
       }
 
       if (Object.keys(payload).length > 0) {
-        sourcePage?.update(payload);
+        void movePageInternally(pageId, payload);
       }
     },
-    [getPageById, pageIds, sectionType]
+    [getPageById, movePageInternally, pageIds, sectionType]
   );
 
   return (
-    <CollapsibleContent className="ml-1 mt-2 pb-4">
+    <CollapsibleContent className="ml-1 mt-1 pb-1 transition-none">
       {pageIds.length > 0 ? (
         <div>
           {pageIds.map((pageId, index) => {
@@ -202,14 +202,17 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
             );
           })}
           {hasNextPage && (
-            <div ref={loadMoreRef} className="flex items-center justify-center py-2">
+            <div
+              ref={loadMoreRef}
+              className={isFetchingNextPage ? "flex items-center justify-center py-2" : "h-px overflow-hidden"}
+            >
               {isFetchingNextPage ? (
                 <div className="flex items-center gap-2 text-tertiary">
                   <Loader className="size-3 animate-spin" />
                   <span className="ml-2 text-13 text-tertiary">Loading more pages...</span>
                 </div>
               ) : (
-                <div className="h-4" />
+                <div className="h-px w-full" aria-hidden="true" />
               )}
             </div>
           )}

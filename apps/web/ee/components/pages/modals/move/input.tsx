@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -20,22 +19,34 @@ import { useTranslation } from "@plane/i18n";
 
 type Props = {
   canPageBeMovedToTeamspace: boolean;
+  canPageBeMovedToWiki: boolean;
   searchTerm: string;
   updateSearchTerm: (searchTerm: string) => void;
 };
 
 export function MovePageModalInput(props: Props) {
-  const { canPageBeMovedToTeamspace, searchTerm, updateSearchTerm } = props;
+  const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm, updateSearchTerm } = props;
   // navigation
   const { teamspaceId, projectId } = useParams();
   // translation
   const { t } = useTranslation();
 
-  const placeholder = useMemo(() => {
+  const canPageBeMovedToWikiCollections = canPageBeMovedToWiki && canPageBeMovedToTeamspace;
+
+  const placeholder = (() => {
     if (teamspaceId) {
+      if (canPageBeMovedToWikiCollections) {
+        return t("page_actions.move_page.placeholders.teamspace_to_all_with_wiki");
+      }
       return t("page_actions.move_page.placeholders.teamspace_to_all");
     }
     if (projectId) {
+      if (canPageBeMovedToWikiCollections) {
+        if (canPageBeMovedToTeamspace) {
+          return t("page_actions.move_page.placeholders.project_to_all_with_wiki");
+        }
+        return t("page_actions.move_page.placeholders.project_to_project_with_wiki");
+      }
       if (canPageBeMovedToTeamspace) {
         return t("page_actions.move_page.placeholders.project_to_all");
       }
@@ -45,8 +56,7 @@ export function MovePageModalInput(props: Props) {
       return t("page_actions.move_page.placeholders.workspace_to_all");
     }
     return t("page_actions.move_page.placeholders.workspace_to_project");
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [canPageBeMovedToTeamspace, projectId, teamspaceId]);
+  })();
 
   return (
     <div className="flex items-center gap-2 px-4">

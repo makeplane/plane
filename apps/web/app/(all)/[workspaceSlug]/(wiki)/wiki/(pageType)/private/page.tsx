@@ -11,9 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// plane web components
-import { WikiPagesListLayoutRoot } from "@/plane-web/components/pages";
+import { PageTypePagesListLayoutRoot } from "@/plane-web/components/pages/list/page-type-root";
 
 export default function PrivatePagesList() {
-  return <WikiPagesListLayoutRoot pageType="private" />;
+  return <PageTypePagesListLayoutRoot pageType="private" />;
 }

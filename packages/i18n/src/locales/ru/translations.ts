@@ -7194,4 +7194,112 @@ export default {
       level: "Уровень иерархии",
     },
   },
+  page_actions: {
+    move_page: {
+      placeholders: {
+        project_to_all_with_wiki: "Искать коллекции wiki, проекты и командные пространства",
+        project_to_project_with_wiki: "Искать коллекции wiki и проекты",
+        teamspace_to_all_with_wiki: "Искать коллекции wiki, проекты и командные пространства",
+      },
+      toasts: {
+        collection_error: {
+          title: "Перемещено в wiki",
+          message:
+            "Страница была перемещена в wiki, но её не удалось добавить в выбранную коллекцию. Она остаётся в General.",
+        },
+      },
+    },
+    remove_from_collection: {
+      label: "Удалить из коллекции",
+      success_message: "Страница удалена из коллекции.",
+      error_message: "Не удалось удалить страницу из коллекции. Повторите попытку.",
+    },
+  },
+  wiki_collections: {
+    predefined: {
+      general: "Общее",
+      private: "Приватные",
+      shared: "Общие",
+      archived: "Архив",
+    },
+    fallback_name: "Коллекция",
+    form: {
+      name_required: "Название коллекции обязательно",
+      name_max_length: "Название коллекции должно содержать менее 255 символов",
+      name_placeholder_create: "Задайте название коллекции",
+      name_placeholder_edit: "Название коллекции",
+    },
+    create_modal: {
+      title: "Создать коллекцию",
+      submit: "Создать коллекцию",
+    },
+    rename_modal: {
+      title: "Переименовать коллекцию",
+    },
+    delete_modal: {
+      title: "Удалить коллекцию",
+      page_count: "В этой коллекции {pageCount} страниц. Выберите, что с ними сделать.",
+      transfer_title: "Переместить страницы и удалить коллекцию",
+      transfer_description:
+        "Перед удалением переместите все страницы в другую коллекцию. Страницы и их права доступа будут сохранены.",
+      transfer_warning: "Перемещённые страницы унаследуют права доступа выбранной коллекции.",
+      transfer_target_label: "Переместить страницы в",
+      transfer_target_placeholder: "Выберите коллекцию",
+      delete_with_pages_title: "Удалить коллекцию вместе со страницами",
+      delete_with_pages_description: "Навсегда удаляет коллекцию и все её страницы. Это действие нельзя отменить.",
+      submit: "Удалить коллекцию",
+    },
+    header: {
+      add_page: "Добавить страницу",
+    },
+    menu: {
+      create_new_page: "Создать новую страницу",
+      add_existing_page: "Добавить существующую страницу",
+      rename_collection: "Переименовать коллекцию",
+      collection_options: "Параметры коллекции",
+    },
+    add_existing_page_modal: {
+      search_placeholder: "Поиск страниц",
+      success_message: "В коллекцию добавлено страниц: {count}.",
+      error_message: "Не удалось переместить страницы. Повторите попытку.",
+      no_pages_found: "Не найдено страниц, соответствующих вашему запросу",
+      no_pages_available: "Нет доступных страниц для перемещения",
+      submit: "Переместить",
+    },
+    list: {
+      invite_only: "Только по приглашению",
+      remove_error: "Не удалось удалить страницу из коллекции.",
+      no_matching_pages: "Нет подходящих страниц",
+      remove_search_criteria: "Уберите условия поиска, чтобы увидеть все страницы",
+      remove_filters: "Уберите фильтры, чтобы увидеть все страницы",
+      no_pages_title: "Пока нет страниц",
+      no_pages_description: "В этой коллекции пока нет страниц.",
+      untitled: "Без названия",
+      restricted_access: "Ограниченный доступ",
+      collapse_page: "Свернуть страницу",
+      expand_page: "Развернуть страницу",
+      page_actions: "Действия со страницей",
+      page_link_copied: "Ссылка на страницу скопирована в буфер обмена.",
+      columns: {
+        page_name: "Название страницы",
+        owner: "Владелец",
+        nested_pages: "Вложенные страницы",
+        last_activity: "Последняя активность",
+        actions: "Действия",
+      },
+    },
+    toasts: {
+      created: "Коллекция успешно создана.",
+      create_error: "Не удалось создать коллекцию. Повторите попытку.",
+      renamed: "Коллекция успешно переименована.",
+      rename_error: "Не удалось обновить коллекцию. Повторите попытку.",
+      transferred_deleted: "Страницы перенесены, коллекция удалена.",
+      deleted_with_pages: "Коллекция и её страницы удалены.",
+      delete_error: "Не удалось удалить коллекцию. Повторите попытку.",
+      target_required: "Выберите коллекцию, в которую нужно перенести страницы.",
+      create_page_error: "Не удалось создать страницу. Повторите попытку.",
+      create_page_in_collection_error: "Не удалось создать страницу или добавить её в коллекцию. Повторите попытку.",
+      collection_link_copied: "Ссылка на коллекцию скопирована в буфер обмена.",
+    },
+  },
 } as const;

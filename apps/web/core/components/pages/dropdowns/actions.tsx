@@ -45,7 +45,8 @@ export type TPageActions =
   | "delete"
   | "version-history"
   | "export"
-  | "move";
+  | "move"
+  | "remove-from-collection";
 
 type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];

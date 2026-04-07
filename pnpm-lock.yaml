@@ -2043,6 +2043,9 @@ importers:
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 6.1.1(rolldown-vite@7.3.1(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(typescript@5.9.3)
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.19.11)(@vitest/browser-playwright@4.0.18)(jiti@2.6.1)(jsdom@23.2.0)(lightningcss@1.32.0)(yaml@2.8.3)
 
   e2e:
     devDependencies:

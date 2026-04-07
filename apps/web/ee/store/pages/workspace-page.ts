@@ -31,6 +31,8 @@ const workspacePageService = new WorkspacePageService();
 export type TWorkspacePage = TPageInstance;
 
 export class WorkspacePage extends BasePage implements TWorkspacePage {
+  private fetchSubPagesRequest: Promise<void> | undefined = undefined;
+
   constructor(store: RootStore, page: TPage) {
     // required fields for API calls
     const { workspaceSlug } = store.router;
@@ -339,21 +341,37 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     try {
       const { workspaceSlug } = this.rootStore.router ?? {};
       if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
-      const subPages = await workspacePageService.fetchSubPages(workspaceSlug, this.id);
+      const expectedSubPagesCount = this.sub_pages_count ?? 0;
+      if (expectedSubPagesCount > 0 && this.subPageIds.length >= expectedSubPagesCount) {
+        return;
+      }
 
-      runInAction(() => {
-        for (const page of subPages) {
-          if (page?.id) {
-            const pageInstance = this.rootStore.workspacePages.getPageById(page.id);
-            if (pageInstance) {
-              pageInstance.mutateProperties(page);
-            } else {
-              set(this.rootStore.workspacePages.data, [page.id], new WorkspacePage(this.rootStore, page));
+      if (this.fetchSubPagesRequest) {
+        return await this.fetchSubPagesRequest;
+      }
+
+      this.fetchSubPagesRequest = (async () => {
+        const subPages = await workspacePageService.fetchSubPages(workspaceSlug, this.id as string);
+
+        runInAction(() => {
+          this.mutateProperties({ sub_pages_count: subPages.length }, false);
+          for (const page of subPages) {
+            if (page?.id) {
+              const pageInstance = this.rootStore.workspacePages.getPageById(page.id);
+              if (pageInstance) {
+                pageInstance.mutateProperties(page);
+              } else {
+                set(this.rootStore.workspacePages.data, [page.id], new WorkspacePage(this.rootStore, page));
+              }
             }
           }
-        }
-      });
+        });
+      })();
+
+      await this.fetchSubPagesRequest;
+      this.fetchSubPagesRequest = undefined;
     } catch (error) {
+      this.fetchSubPagesRequest = undefined;
       console.error("Error in fetching sub-pages", error);
       throw error;
     }

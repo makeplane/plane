@@ -42,6 +42,7 @@ class MoveActionEnum(Enum):
     TEAMSPACE_TO_TEAMSPACE = "teamspace_to_teamspace"
     WORKSPACE_TO_TEAMSPACE = "workspace_to_teamspace"
     TEAMSPACE_TO_WORKSPACE = "teamspace_to_workspace"
+    COLLECTION_TO_COLLECTION = "collection_to_collection"
 
 
 class MoveEntityEnum(Enum):

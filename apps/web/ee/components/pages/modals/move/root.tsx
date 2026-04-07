@@ -16,21 +16,26 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EPageAccess, EUserWorkspaceRoles } from "@plane/types";
 import type { TMovePageActions, TMovePageEntity } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // ce imports
 import type { TMovePageModalProps } from "@/ce/components/pages";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, useCollection, useFlag, usePageStore, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { MovePageModalBody } from "./body";
 import { MovePageModalFooter } from "./footer";
 import { MovePageModalInput } from "./input";
+import { getLoadedSubtreePageIds } from "@/plane-web/store/pages/page-tree";
 
-export type TMovePageSelectedValue = `project-${string}` | `teamspace-${string}` | "workspace";
+export type TMovePageSelectedValue = `project-${string}` | `teamspace-${string}` | "workspace" | `workspace-${string}`;
 
 export const MovePageModal = observer(function MovePageModal(props: TMovePageModalProps) {
   const { isOpen, onClose, page } = props;
@@ -42,13 +47,31 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
   const moveButtonRef = useRef<HTMLButtonElement>(null);
   // navigation
   const { workspaceSlug, teamspaceId, projectId } = useParams();
+  const router = useAppRouter();
   // translation
   const { t } = useTranslation();
   // store hooks
   const { movePage } = usePageStore(EPageStoreType.PROJECT);
+  const { getOrFetchPageInstance, getPageById, removePageInstance } = usePageStore(EPageStoreType.WORKSPACE);
+  const collectionStore = useCollection();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { allowPermissions } = useUserPermissions();
   // derived values
-  const { access, id, is_shared } = page;
-  const canPageBeMovedToTeamspace = access === EPageAccess.PUBLIC && !is_shared;
+  const { access, id, is_shared, archived_at } = page;
+  const canPageBeMovedToTeamspace = access === EPageAccess.PUBLIC && !is_shared && !archived_at;
+  const isWikiEnabled = useFlag(workspaceSlug?.toString() ?? "", "WORKSPACE_PAGES");
+  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
+  const canCreateWikiPage = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
+  const canPageBeMovedToWiki =
+    !!workspaceSlug &&
+    !!(projectId || teamspaceId) &&
+    isWikiEnabled &&
+    canCreateWikiPage &&
+    (!teamspaceId || isTeamspacesEnabled);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -60,17 +83,23 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
 
   const handleMovePage = useCallback(async () => {
     if (!selectedValue || !id) return;
+
     const moveSource: TMovePageEntity = teamspaceId ? "teamspace" : projectId ? "project" : "workspace";
     let moveTarget: TMovePageEntity | null = null;
-    if (selectedValue.includes("teamspace")) {
+    if (selectedValue.startsWith("teamspace-")) {
       moveTarget = "teamspace";
-    } else if (selectedValue.includes("project")) {
+    } else if (selectedValue.startsWith("project-")) {
       moveTarget = "project";
-    } else {
+    } else if (selectedValue === "workspace" || selectedValue.startsWith("workspace-")) {
       moveTarget = "workspace";
     }
+    if (!moveTarget) return;
 
     const moveSourceIdentifier = teamspaceId ?? projectId ?? workspaceSlug;
+    const targetCollectionId =
+      selectedValue !== "workspace" && selectedValue.startsWith("workspace-")
+        ? selectedValue.replace("workspace-", "")
+        : null;
     const moveTargetIdentifier =
       moveTarget === "workspace"
         ? workspaceSlug?.toString()
@@ -79,31 +108,89 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
           : selectedValue.replace("teamspace-", "");
     if (!moveSourceIdentifier || !moveTargetIdentifier) return;
 
-    await movePage({
-      pageId: id,
-      data: {
-        move_type: `${moveSource}_to_${moveTarget}` as TMovePageActions,
-        source_identifier: moveSourceIdentifier?.toString(),
-        target_identifier: moveTargetIdentifier,
-      },
-    })
-      .then(() => {
+    const redirectPath =
+      moveTarget === "workspace"
+        ? `/${workspaceSlug?.toString()}/wiki/${id}`
+        : moveTarget === "project"
+          ? `/${workspaceSlug?.toString()}/projects/${moveTargetIdentifier}/pages/${id}`
+          : `/${workspaceSlug?.toString()}/teamspaces/${moveTargetIdentifier}/pages/${id}`;
+    let didFailCollectionAssignment = false;
+
+    try {
+      await movePage({
+        pageId: id,
+        data: {
+          move_type: `${moveSource}_to_${moveTarget}` as TMovePageActions,
+          source_identifier: moveSourceIdentifier?.toString(),
+          target_identifier: moveTargetIdentifier,
+        },
+      });
+
+      if (moveTarget === "workspace" && workspaceSlug) {
+        try {
+          await getOrFetchPageInstance({
+            pageId: id,
+            trackVisit: false,
+            refreshIfExists: true,
+          });
+
+          const resolvedTargetCollectionId = targetCollectionId ?? collectionStore.defaultCollectionId;
+          if (resolvedTargetCollectionId) {
+            await collectionStore.addPageToCollection(workspaceSlug.toString(), id, resolvedTargetCollectionId);
+            collectionStore.setCollectionExpanded(resolvedTargetCollectionId);
+          }
+        } catch (error) {
+          console.error("Unable to move page to selected wiki collection", error);
+          didFailCollectionAssignment = true;
+        }
+      }
+
+      if (moveSource === "workspace" && moveTarget !== "workspace") {
+        const loadedSubtreePageIds = getLoadedSubtreePageIds(id, getPageById);
+        collectionStore.removeExplicitPageCollectionsFromStore(loadedSubtreePageIds);
+        loadedSubtreePageIds.forEach((pageId) => removePageInstance(pageId));
+      }
+
+      if (workspaceSlug) {
+        router.replace(redirectPath);
+      }
+
+      if (didFailCollectionAssignment) {
+        setToast({
+          type: TOAST_TYPE.WARNING,
+          title: t("page_actions.move_page.toasts.collection_error.title"),
+          message: t("page_actions.move_page.toasts.collection_error.message"),
+        });
+      } else {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("page_actions.move_page.toasts.success.title"),
           message: t("page_actions.move_page.toasts.success.message"),
         });
-        handleClose();
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("page_actions.move_page.toasts.error.title"),
-          message: t("page_actions.move_page.toasts.error.message"),
-        });
+      }
+      handleClose();
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("page_actions.move_page.toasts.error.title"),
+        message: t("page_actions.move_page.toasts.error.message"),
       });
+    }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleClose, id, movePage, projectId, selectedValue, teamspaceId, workspaceSlug]);
+  }, [
+    collectionStore,
+    getOrFetchPageInstance,
+    getPageById,
+    handleClose,
+    id,
+    movePage,
+    projectId,
+    removePageInstance,
+    router,
+    selectedValue,
+    teamspaceId,
+    workspaceSlug,
+  ]);
 
   const handleMove = useCallback(async () => {
     setIsMoving(true);
@@ -124,12 +211,22 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
       >
         <MovePageModalInput
           canPageBeMovedToTeamspace={canPageBeMovedToTeamspace}
+          canPageBeMovedToWiki={canPageBeMovedToWiki}
           searchTerm={searchTerm}
           updateSearchTerm={setSearchTerm}
         />
-        <MovePageModalBody canPageBeMovedToTeamspace={canPageBeMovedToTeamspace} searchTerm={searchTerm} />
+        <MovePageModalBody
+          canPageBeMovedToTeamspace={canPageBeMovedToTeamspace}
+          canPageBeMovedToWiki={canPageBeMovedToWiki}
+          searchTerm={searchTerm}
+        />
       </Combobox>
-      <MovePageModalFooter onClose={handleClose} onMove={handleMove} isMoving={isMoving} disabled={!selectedValue} />
+      <MovePageModalFooter
+        onClose={handleClose}
+        onMove={() => void handleMove()}
+        isMoving={isMoving}
+        disabled={!selectedValue}
+      />
     </ModalCore>
   );
 });

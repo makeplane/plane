@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Earth, Minus } from "lucide-react";
 // plane imports
 import { Avatar } from "@plane/propel/avatar";
@@ -37,6 +38,7 @@ type Props = {
 
 export const BlockItemAction = observer(function BlockItemAction(props: Props) {
   const { page, parentRef, storeType } = props;
+  const { collectionId } = useParams();
   // store hooks
   const { getUserDetails } = useMember();
   // page operations
@@ -46,6 +48,18 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
   // derived values
   const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
+  const isCustomCollectionView = typeof collectionId === "string" && collectionId !== "general";
+  const optionsOrder = isCustomCollectionView
+    ? (["open-in-new-tab", "copy-link", "remove-from-collection"] as const)
+    : ([
+        "open-in-new-tab",
+        "copy-link",
+        "make-a-copy",
+        "toggle-lock",
+        "toggle-access",
+        "archive-restore",
+        "delete",
+      ] as const);
 
   return (
     <>
@@ -85,15 +99,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       {/* quick actions dropdown */}
       <PageActions
         realtimeEvents={false}
-        optionsOrder={[
-          "open-in-new-tab",
-          "copy-link",
-          "make-a-copy",
-          "toggle-lock",
-          "toggle-access",
-          "archive-restore",
-          "delete",
-        ]}
+        optionsOrder={[...optionsOrder]}
         page={page}
         parentRef={parentRef}
         storeType={storeType}

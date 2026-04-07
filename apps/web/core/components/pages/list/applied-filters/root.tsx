@@ -26,13 +26,14 @@ type Props = {
   handleClearAllFilters: () => void;
   handleRemoveFilter: (key: keyof TPageFilterProps, value: string | null) => void;
   alwaysAllowEditing?: boolean;
+  tagClassName?: string;
 };
 
 const MEMBERS_FILTERS = ["created_by"];
 const DATE_FILTERS = ["created_at"];
 
 export function PageAppliedFiltersList(props: Props) {
-  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
+  const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing, tagClassName } = props;
   const { t } = useTranslation();
 
   if (!appliedFilters) return null;
@@ -49,7 +50,7 @@ export function PageAppliedFiltersList(props: Props) {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <Tag key={filterKey}>
+          <Tag key={filterKey} className={tagClassName}>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {DATE_FILTERS.includes(filterKey) && (
@@ -81,7 +82,7 @@ export function PageAppliedFiltersList(props: Props) {
       })}
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
-          <Tag>
+          <Tag className={tagClassName}>
             {t("common.clear_all")}
             <CloseIcon height={12} strokeWidth={2} />
           </Tag>

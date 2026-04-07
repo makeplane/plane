@@ -11,17 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FolderOutput } from "lucide-react";
 // plane imports
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IconButton } from "@plane/propel/icon-button";
+import { EUserWorkspaceRoles } from "@plane/types";
 // core imports
 import type { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useCollection, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // plane web hooks
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { MovePageModal } from "../modals/move";
 
@@ -30,13 +35,37 @@ export const PageMoveControl = observer(function PageMoveControl(props: TPageMov
   // states
   const [isMovePageModalOpen, setIsMovePageModalOpen] = useState(false);
   // navigation
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, teamspaceId, projectId } = useParams();
   // derived values
   const { canCurrentUserMovePage } = page;
   // page flag
   const { isMovePageEnabled } = usePageFlag({
     workspaceSlug: workspaceSlug?.toString() ?? "",
   });
+  const collectionStore = useCollection();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { allowPermissions } = useUserPermissions();
+  const isWikiEnabled = useFlag(workspaceSlug?.toString() ?? "", "WORKSPACE_PAGES");
+  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
+  const canCreateWikiPage = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
+  const canPageBeMovedToWiki =
+    !!workspaceSlug &&
+    !!(projectId || teamspaceId) &&
+    isWikiEnabled &&
+    canCreateWikiPage &&
+    (!teamspaceId || isTeamspacesEnabled);
+
+  const handleOpenMoveModal = useCallback(() => {
+    if (canPageBeMovedToWiki && workspaceSlug && !collectionStore.workspaceCollections) {
+      void collectionStore.fetchCollections(workspaceSlug.toString());
+    }
+
+    setIsMovePageModalOpen(true);
+  }, [canPageBeMovedToWiki, collectionStore, workspaceSlug]);
 
   if (!isMovePageEnabled || !canCurrentUserMovePage) return null;
 
@@ -48,7 +77,7 @@ export const PageMoveControl = observer(function PageMoveControl(props: TPageMov
           variant="ghost"
           size="lg"
           icon={FolderOutput}
-          onClick={() => setIsMovePageModalOpen(true)}
+          onClick={handleOpenMoveModal}
           aria-label="Move page"
         />
       </Tooltip>

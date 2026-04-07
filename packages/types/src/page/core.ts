@@ -31,6 +31,7 @@ export type TPage = {
   name: string | undefined;
   owned_by: string | undefined;
   parent_id: string | null | undefined;
+  collection_id?: string | null | undefined;
   project_ids?: string[] | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
@@ -136,6 +137,7 @@ export type TPublicPageResponse = Pick<
 export type TPageDragPayload = {
   id: string;
   parentId: string | null;
+  collectionId?: string | null;
 };
 
 export type TIssuePage = Pick<TPage, "name" | "logo_props"> & {

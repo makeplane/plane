@@ -15,6 +15,7 @@ from rest_framework import serializers
 # Module imports
 from plane.ee.serializers import BaseSerializer
 from plane.db.models import Page, ProjectPage
+from plane.ee.models import Collection, PageCollection
 from plane.utils.content_validator import validate_html_content
 
 
@@ -107,6 +108,7 @@ class PageCreateAPISerializer(BaseSerializer):
         owned_by_id = self.context["owned_by_id"]
         description_binary = self.context["description_binary"]
         description_json = self.context["description_json"]
+        collection_id = self.context.get("collection_id", None)
 
         # Create the page
         page = Page.objects.create(
@@ -125,6 +127,26 @@ class PageCreateAPISerializer(BaseSerializer):
                 page_id=page.id,
                 created_by_id=page.created_by_id,
                 updated_by_id=page.updated_by_id,
+            )
+
+        # Add to collection: use provided collection_id if page is public, else fall back to default
+        target_collection_id = None
+        if collection_id and page.access == Page.PUBLIC_ACCESS:
+            target_collection_id = collection_id
+        else:
+            default_collection = Collection.objects.filter(
+                workspace_id=workspace_id, access=0, is_default=True
+            ).first()
+            if default_collection:
+                target_collection_id = default_collection.id
+
+        if target_collection_id:
+            PageCollection.objects.create(
+                page=page,
+                collection_id=target_collection_id,
+                workspace_id=workspace_id,
+                created_by_id=owned_by_id,
+                updated_by_id=owned_by_id,
             )
 
         return page

@@ -23,6 +23,7 @@ export function Table<T>(props: TTableData<T>) {
     data,
     columns,
     keyExtractor,
+    renderRow,
     tableClassName = "",
     tHeadClassName = "",
     tHeadTrClassName = "",
@@ -56,18 +57,28 @@ export function Table<T>(props: TTableData<T>) {
             </td>
           </tr>
         ) : (
-          data.map((item) => (
-            <tr
-              key={keyExtractor(item)}
-              className={cn("divide-x divide-subtle-1 text-13 text-secondary", tBodyTrClassName)}
-            >
-              {columns.map((column) => (
-                <td key={`${column.key}-${keyExtractor(item)}`} className={cn("px-2.5 py-2", tdClassName)}>
-                  {column.tdRender(item)}
-                </td>
-              ))}
-            </tr>
-          ))
+          data.map((item) => {
+            const rowClassName = cn("divide-x divide-subtle-1 text-13 text-secondary", tBodyTrClassName);
+            const cells = columns.map((column) => (
+              <td key={`${column.key}-${keyExtractor(item)}`} className={cn("px-2.5 py-2", tdClassName)}>
+                {column.tdRender(item)}
+              </td>
+            ));
+
+            if (renderRow) {
+              return (
+                <React.Fragment key={keyExtractor(item)}>
+                  {renderRow({ rowData: item, children: cells, className: rowClassName })}
+                </React.Fragment>
+              );
+            }
+
+            return (
+              <tr key={keyExtractor(item)} className={rowClassName}>
+                {cells}
+              </tr>
+            );
+          })
         )}
       </tbody>
     </table>

@@ -120,6 +120,7 @@ from .customer import (
     CustomerRequestIssue,
 )
 
+from .collection import Collection, CollectionMember, PageCollection, CollectionAccess
 from .dashboard import (
     Dashboard,
     DashboardProject,

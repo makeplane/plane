@@ -13,6 +13,7 @@
 
 export * from "./ai";
 export * from "./automations";
+export * from "./collection";
 export * from "./developer";
 export * from "./epic";
 export * from "./auth";
@@ -32,6 +33,7 @@ export * from "./label";
 export * from "./state";
 export * from "./issue";
 export * from "./page";
+export * from "./page-collection";
 export * from "./feature-flag";
 export * from "./templates";
 export * from "./customers";

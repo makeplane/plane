@@ -12,3 +12,5 @@
  */
 
 export * from "./root";
+export * from "./collection-root";
+export * from "./page-type-root";

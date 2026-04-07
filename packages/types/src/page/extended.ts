@@ -44,7 +44,11 @@ export type TPageExtended = {
 
 export type TMovePageEntity = "workspace" | "project" | "teamspace";
 
-export type TMovePageActions = Exclude<`${TMovePageEntity}_to_${TMovePageEntity}`, "workspace_to_workspace">;
+export type TMovePageRealtimeEntity = TMovePageEntity | "collection";
+
+export type TMovePageActions =
+  | Exclude<`${TMovePageEntity}_to_${TMovePageEntity}`, "workspace_to_workspace">
+  | "collection_to_collection";
 
 export type TMovePagePayload = {
   move_type: TMovePageActions;

@@ -14,6 +14,7 @@
 export * from "./dashboards";
 export * from "./use-feature-flags";
 export * from "./use-flag";
+export * from "./use-collection";
 export * from "./use-page-store";
 export * from "./use-page";
 export * from "./use-publish-page";

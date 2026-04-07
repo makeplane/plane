@@ -20,11 +20,12 @@ import { MovePageModalSections } from "./sections/root";
 
 type Props = {
   canPageBeMovedToTeamspace: boolean;
+  canPageBeMovedToWiki: boolean;
   searchTerm: string;
 };
 
 export function MovePageModalBody(props: Props) {
-  const { canPageBeMovedToTeamspace, searchTerm } = props;
+  const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm } = props;
   // translation
   const { t } = useTranslation();
 
@@ -38,7 +39,11 @@ export function MovePageModalBody(props: Props) {
           </div>
         </section>
       )}
-      <MovePageModalSections canPageBeMovedToTeamspace={canPageBeMovedToTeamspace} searchTerm={searchTerm} />
+      <MovePageModalSections
+        canPageBeMovedToTeamspace={canPageBeMovedToTeamspace}
+        canPageBeMovedToWiki={canPageBeMovedToWiki}
+        searchTerm={searchTerm}
+      />
     </Combobox.Options>
   );
 }

@@ -15,7 +15,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ArchiveIcon, Loader } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -28,18 +28,19 @@ import { cn, getPageName } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, useCollection, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   handleToggleExpanded: () => void;
+  onSubPagesLoaded?: () => void | Promise<void>;
   isDragging: boolean;
   isExpanded: boolean;
   paddingLeft: number;
   pageId: string;
   isHovered?: boolean;
   canShowAddButton?: boolean;
-  expandedPageIds: string[];
   sectionType?: TPageNavigationTabs;
+  collectionId?: string;
   setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
   setIsDropping: React.Dispatch<React.SetStateAction<boolean>>;
   setLocalIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,14 +49,15 @@ type Props = {
 const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListItemComponent(props: Props) {
   const {
     handleToggleExpanded,
+    onSubPagesLoaded,
     isExpanded,
     paddingLeft,
     pageId,
     isHovered,
     canShowAddButton,
-    expandedPageIds,
     setExpandedPageIds,
     sectionType,
+    collectionId,
     setIsDropping,
     setLocalIsExpanded,
   } = props;
@@ -66,8 +68,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
   const listItemContentRef = useRef<HTMLDivElement>(null);
   const expandTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // navigation
-  const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const { workspaceSlug, pageId: currentPageIdParam } = useParams();
   // router
   const router = useAppRouter();
   // derived values
@@ -75,7 +76,8 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
     pageId,
     storeType: EPageStoreType.WORKSPACE,
   });
-  const { isNestedPagesEnabled, getPageById } = usePageStore(EPageStoreType.WORKSPACE);
+  const collectionStore = useCollection();
+  const { isNestedPagesEnabled, getPageById, movePageInternally } = usePageStore(EPageStoreType.WORKSPACE);
   const {
     fetchSubPages,
     is_description_empty,
@@ -93,10 +95,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
     [is_description_empty, description_html]
   );
 
-  const isPageActive = useMemo(
-    () => pathname === `/${workspaceSlug}/wiki/${page?.id}/`,
-    [pathname, workspaceSlug, page?.id]
-  );
+  const isPageActive = useMemo(() => currentPageIdParam?.toString() === page?.id, [currentPageIdParam, page?.id]);
 
   const pageLink = useMemo(() => getRedirectionLink?.() ?? "", [getRedirectionLink]);
 
@@ -104,6 +103,8 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
     () => sub_pages_count !== undefined && sub_pages_count > 0,
     [sub_pages_count]
   );
+  const loadedSubPagesCount = page?.subPageIds?.length ?? 0;
+  const hasLoadedAllSubPages = shouldShowSubPagesButton && loadedSubPagesCount >= (sub_pages_count ?? 0);
 
   const showAddButton = isHovered && canShowAddButton;
 
@@ -152,10 +153,11 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
       handleToggleExpanded();
 
       // Only fetch if expanding
-      if (!isExpanded) {
+      if (!isExpanded && !hasLoadedAllSubPages) {
         setIsFetchingSubPages(true);
         try {
           await fetchSubPages?.();
+          await onSubPagesLoaded?.();
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -167,7 +169,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
         }
       }
     },
-    [handleToggleExpanded, isExpanded, fetchSubPages]
+    [fetchSubPages, handleToggleExpanded, hasLoadedAllSubPages, isExpanded, onSubPagesLoaded]
   );
 
   const handleNavigate = useCallback(
@@ -188,7 +190,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
       if (!isPageActive) {
         router.push(pageLink);
       } else {
-        handleSubPagesToggle(e);
+        void handleSubPagesToggle(e);
       }
     },
     [isPageActive, pageContent?.status.hasAccess, router, pageLink, handleSubPagesToggle]
@@ -231,9 +233,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
           // Set new timer to expand after 1 second
           expandTimerRef.current = setTimeout(() => {
             if (setExpandedPageIds) {
-              if (!expandedPageIds.includes(pageId)) {
-                setExpandedPageIds([...expandedPageIds, pageId]);
-              }
+              setExpandedPageIds((prev) => (prev.includes(pageId) ? prev : [...prev, pageId]));
             } else {
               setLocalIsExpanded(true);
             }
@@ -257,8 +257,9 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
           }
 
           if (location.current.dropTargets[0]?.element !== self.element) return;
+          if (!page.id) return;
           // get data of the dropped page(source)
-          const { id: droppedPageId } = source.data as TPageDragPayload;
+          const { id: droppedPageId, collectionId: sourceCollectionId } = source.data as TPageDragPayload;
           const droppedPageDetails = getPageById(droppedPageId);
           if (!droppedPageDetails) return;
           // prepare update payload with the new parent_id
@@ -276,8 +277,20 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
           if (targetAccess !== undefined && droppedPageDetails.access !== targetAccess) {
             updatePayload.access = targetAccess;
           }
+          // Keep collection membership in sync when nesting across collections.
+          if (collectionId) {
+            void collectionStore.movePageWithCollectionContext({
+              pageId: droppedPageId,
+              sourceCollectionId,
+              targetCollectionId: collectionId,
+              targetParentId: page.id,
+              access: updatePayload.access,
+            });
+            return;
+          }
+
           // make the API call to update the page
-          droppedPageDetails.update(updatePayload);
+          void movePageInternally(droppedPageId, updatePayload);
         },
         canDrop: ({ source }) => {
           // check if the page is editable
@@ -302,6 +315,9 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
 
           if (isSamePage || isImmediateParent || isAnyLevelChild) return false;
 
+          // Block private pages from being dropped into a collection
+          if (collectionId && sourcePage.access !== EPageAccess.PUBLIC) return false;
+
           // Allow dropping shared pages onto any accessible page
           if (sourcePage.is_shared) {
             return true;
@@ -321,7 +337,6 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
       }
     };
   }, [
-    expandedPageIds,
     getPageById,
     page,
     pageId,
@@ -329,8 +344,11 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
     setIsDropping,
     setLocalIsExpanded,
     isNestedPagesEnabled,
+    movePageInternally,
+    collectionStore,
     workspaceSlug,
     sectionType,
+    collectionId,
   ]);
 
   if (!page) return null;
@@ -368,7 +386,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
           {isFetchingSubPages || (shouldShowSubPagesButton && isHovering) ? (
             <button
               type="button"
-              onClick={handleSubPagesToggle}
+              onClick={(event) => void handleSubPagesToggle(event)}
               className="rounded-sm hover:bg-layer-transparent-hover grid place-items-center"
               data-prevent-progress
             >

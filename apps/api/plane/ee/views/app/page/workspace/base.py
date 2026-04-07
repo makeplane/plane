@@ -68,6 +68,7 @@ from plane.payment.flags.flag_decorator import (
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import WorkspacePagePermission
 from plane.app.serializers import PageBinaryUpdateSerializer
+from plane.app.permissions import ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +150,7 @@ class WorkspacePageViewSet(BaseViewSet):
                 "owned_by_id": request.user.id,
                 "description_html": request.data.get("description_html", "<p></p>"),
                 "workspace_id": workspace.id,
+                "collection_id": request.data.get("collection_id"),
             },
         )
 
@@ -474,15 +476,15 @@ class WorkspacePageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # only the owner or admin can delete the page
-        if (
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, is_active=True, role__lte=15
-            ).exists()
-            and request.user.id != page.owned_by_id
-        ):
+        if page.owned_by_id != request.user.id and not WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
+            role=ROLE.ADMIN.value,
+        ).exists():
             return Response(
-                {"error": "Only the owner or admin can un archive the page"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Only admin or owner can delete the page"},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         page.delete()
@@ -530,7 +532,24 @@ class WorkspacePageViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def parent_pages(self, request, slug, page_id):
         page_ids = get_all_parent_ids(page_id)
-        pages = Page.objects.filter(workspace__slug=slug, id__in=page_ids)
+        pages = (
+            Page.objects.filter(workspace__slug=slug, id__in=page_ids)
+            .annotate(
+                sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+                .filter(archived_at__isnull=True)
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                is_shared=Exists(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("id"),
+                        workspace__slug=slug,
+                    )
+                )
+            )
+        )
 
         # Convert queryset to a dictionary keyed by id
         page_map = {str(page.id): page for page in pages}

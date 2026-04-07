@@ -39,6 +39,7 @@ from plane.ee.utils.page_events import PageAction, MoveActionEnum
 from plane.utils.url import normalize_url_path
 from plane.ee.models import (
     PageUser,
+    PageCollection,
 )
 from plane.ee.utils.page_operations import (
     unlink_pages_from_project,
@@ -50,6 +51,8 @@ from plane.ee.utils.page_operations import (
     move_entities_to_workspace,
     move_entities_to_teamspace,
     move_entities_to_project,
+    add_pages_to_collection,
+    recompute_page_collection,
 )
 
 
@@ -132,9 +135,11 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
 
         elif action == PageAction.MADE_PUBLIC:
             Page.objects.filter(id__in=descendants_ids).update(access=0, updated_at=timezone.now(), updated_by=user_id)
+            recompute_page_collection(str(page_id), str(workspace_id))
 
         elif action == PageAction.MADE_PRIVATE:
             Page.objects.filter(id__in=descendants_ids).update(access=1, updated_at=timezone.now(), updated_by=user_id)
+            PageCollection.objects.filter(page_id__in=[page_id, *descendants_ids], workspace__slug=slug).delete()
 
         elif action == PageAction.SUB_PAGE:
             # publish the current page if the parent page is published
@@ -293,12 +298,26 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
             if updates:
                 Page.objects.bulk_update(updates, ["parent_id"])
 
-            data = {"new_page_id": str(old_to_new_page_mapping[page_id].id)}
+            new_root_id = str(old_to_new_page_mapping[page_id].id)
+
+            # Seed the new root's collection from the original so recompute
+            # doesn't fall back to the workspace default collection.
+            original_collection_id = (
+                PageCollection.objects.filter(page_id=page_id, workspace_id=workspace_id)
+                .values_list("collection_id", flat=True)
+                .first()
+            )
+            if original_collection_id:
+                add_pages_to_collection([new_root_id], str(original_collection_id), workspace_id)
+
+            recompute_page_collection(new_root_id, str(workspace_id))
+            data = {"new_page_id": new_root_id}
 
         elif action == PageAction.MOVED:
             old_page_parent_id = extra["old_page_parent_id"]
             move_type = extra["move_type"]
             new_entity_identifier = extra["new_entity_identifier"]
+            _ = extra.get("old_entity_identifier")
             data = {
                 "new_entity_identifier": new_entity_identifier,
                 "move_type": move_type,
@@ -352,6 +371,12 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
 
                 link_pages_to_project(descendants_ids, new_entity_identifier, workspace_id, user_id)
                 move_entities_to_project(descendants_ids, slug, user_id, new_entity_identifier)
+
+            elif move_type == MoveActionEnum.COLLECTION_TO_COLLECTION.value:
+                # remove descendants from whichever collection they currently belong to
+                PageCollection.objects.filter(page_id__in=descendants_ids, workspace_id=workspace_id).delete()
+                add_pages_to_collection(descendants_ids, new_entity_identifier, workspace_id)
+
 
         elif action == PageAction.MOVED_INTERNALLY:
             new_parent_id = extra["new_parent_id"]
@@ -418,6 +443,9 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
                     user_id=user_id,
                 )
 
+            # Recompute collection membership — page may have moved to a different collection tree
+            recompute_page_collection(str(page_id), str(workspace_id))
+
         elif action == PageAction.DELETED:
             # delete all the descendants
             Page.objects.filter(id__in=descendants_ids, workspace__slug=slug).delete()
@@ -438,6 +466,8 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
             ).delete(soft=False)
 
         elif action == PageAction.RESTORED:
+            for restored_id in extra["deleted_page_ids"]:
+                recompute_page_collection(str(restored_id), str(workspace_id))
             data = {"deleted_page_ids": extra["deleted_page_ids"]}
 
         elif action == PageAction.SHARED:

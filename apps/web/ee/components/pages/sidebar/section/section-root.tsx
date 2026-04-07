@@ -13,21 +13,21 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
-// lucide icons
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Loader } from "lucide-react";
-// ui
-import { Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/propel/collapsible";
 // plane imports
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
+import { getLoadedSubtreePageIds } from "@/plane-web/store/pages/page-tree";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
 import { SectionContent, SectionHeader } from "./components";
@@ -44,13 +44,22 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
   // navigation
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
+  const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
   // store hooks
-  const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } = usePageStore(
-    EPageStoreType.WORKSPACE
-  );
+  const { createPage, getPageById, movePageInternally, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } =
+    usePageStore(EPageStoreType.WORKSPACE);
+  const canCreatePage = workspaceSlug
+    ? allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        EUserPermissionsLevel.WORKSPACE,
+        workspaceSlug.toString()
+      )
+    : false;
 
   // feature flag check for shared pages
   const isSharedPagesEnabled = useFlag(workspaceSlug?.toString(), "SHARED_PAGES", false);
+  const shouldRenderSection = sectionType !== "shared" || isSharedPagesEnabled;
 
   // Get page IDs based on section type
   const pageIds = useMemo(() => {
@@ -68,9 +77,16 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
     }
   }, [publicPageIds, privatePageIds, archivedPageIds, sharedPageIds, sectionType]);
 
-  // Custom hooks
-  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType, pageIds.length === 0);
-  const { isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useSectionPages(sectionType);
+  const collectionStore = useCollection();
+
+  // Optimistically remove page (and its loaded subtree) from collection store when going private
+  const handleRemoveFromCollectionStore = useCallback(
+    (pageId: string) => {
+      const subtreeIds = getLoadedSubtreePageIds(pageId, getPageById);
+      collectionStore.removeExplicitPageCollectionsFromStore(subtreeIds);
+    },
+    [collectionStore, getPageById]
+  );
 
   const sectionDetails = SECTION_DETAILS[sectionType];
   const sectionPages = useMemo(() => new Set(pageIds), [pageIds]);
@@ -110,29 +126,49 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
 
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  // Show loader if loading and no cached data
-  const showLoader = isLoading && pageIds.length === 0;
+  // Custom hooks
+  const { isDropping } = useSectionDragAndDrop(
+    listSectionRef,
+    getPageById,
+    movePageInternally,
+    sectionType,
+    pageIds.length === 0,
+    handleRemoveFromCollectionStore
+  );
+  // Only fetch when the section is open so collapsed sections (e.g. archived) show
+  // a loading indicator when first expanded instead of silently loading in the background.
+  const { isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useSectionPages(sectionType, isOpen);
+
+  // Keep the section body hidden during the first fetch to avoid a loader gap in the sidebar.
+  const shouldHideContentWhileLoading = isLoading && pageIds.length === 0;
 
   // Handle page creation
-  const handleCreatePage = async (pageType: TPageNavigationTabs) => {
-    setIsCreatingPage(pageType);
-    const payload: Partial<TPage> = {
-      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-    };
+  const handleCreatePage = (pageType: TPageNavigationTabs) => {
+    if (!canCreatePage) return;
+    void (async () => {
+      setIsCreatingPage(pageType);
+      const payload: Partial<TPage> = {
+        access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+      };
 
-    try {
-      const res = await createPage(payload);
-      const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
-      router.push(pageId);
-    } catch (err: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: err?.data?.error || "Page could not be created. Please try again.",
-      });
-    } finally {
-      setIsCreatingPage(null);
-    }
+      try {
+        const res = await createPage(payload);
+        const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
+        router.push(pageId);
+      } catch (err: unknown) {
+        const errorMessage =
+          (err as { data?: { error?: string } } | undefined)?.data?.error ||
+          t("wiki_collections.toasts.create_page_error");
+
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("common.error.label"),
+          message: errorMessage,
+        });
+      } finally {
+        setIsCreatingPage(null);
+      }
+    })();
   };
 
   // Expand parent pages when needed
@@ -169,8 +205,7 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
     });
   }, [currentPageId, sectionContainsActivePage, getPageById, setExpandedPageIds]);
 
-  // Don't render shared section if feature flag is disabled
-  if (sectionType === "shared" && !isSharedPagesEnabled) {
+  if (!shouldRenderSection) {
     return null;
   }
 
@@ -186,21 +221,13 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
           sectionType={sectionType}
           sectionDetails={sectionDetails}
           isCreatingPage={isCreatingPage}
+          canCreatePage={canCreatePage}
           handleCreatePage={handleCreatePage}
           isOpen={isOpen}
           onButtonClick={() => setIsOpen(!isOpen)}
         />
-        <Transition
-          show={isOpen}
-          enter="transition-all duration-200 ease-out"
-          enterFrom="opacity-0 max-h-0 -translate-y-2"
-          enterTo="opacity-100 max-h-[1000px] translate-y-0"
-          leave="transition-all duration-150 ease-in"
-          leaveFrom="opacity-100 max-h-[1000px] translate-y-0"
-          leaveTo="opacity-0 max-h-0 -translate-y-2"
-          className="overflow-hidden"
-        >
-          {showLoader ? (
+        {isOpen &&
+          (shouldHideContentWhileLoading ? (
             <div className="ml-2 mt-2 flex items-center justify-center py-3">
               <Loader className="size-4 animate-spin text-placeholder" />
               <span className="ml-2 text-13 text-placeholder">Loading pages...</span>
@@ -215,8 +242,7 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
             />
-          )}
-        </Transition>
+          ))}
       </Collapsible>
     </div>
   );

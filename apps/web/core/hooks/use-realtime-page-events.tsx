@@ -18,7 +18,6 @@ import type { EventToPayloadMap } from "@plane/editor";
 import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // types
 import type { IUserLite, TCollaborator } from "@plane/types";
-import { getMoveSourceAndTargetFromMoveType } from "@plane/utils";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
@@ -28,6 +27,7 @@ import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { getMovedPageRedirectLink } from "./page-move-routing";
 
 // Type for page update handlers with proper typing for action data
 export type PageUpdateHandler<T extends keyof EventToPayloadMap = keyof EventToPayloadMap> = (params: {
@@ -349,19 +349,21 @@ export const useRealtimePageEvents = ({
         const newEntityIdentifier = data.new_entity_identifier;
 
         if (moveType && newEntityIdentifier && page.id) {
-          const { target: moveTarget } = getMoveSourceAndTargetFromMoveType(moveType);
-
           // remove the old page instance from the store
           if (pageIds.includes(page.id)) {
-            removePageInstance(page.id);
+            const redirectLink = getMovedPageRedirectLink({
+              workspaceSlug: workspaceSlug?.toString() ?? "",
+              pageId: page.id,
+              moveType,
+              newEntityIdentifier,
+            });
 
-            if (moveTarget === "workspace") {
-              router.replace(`/${workspaceSlug}/wiki/${page.id}`);
-            } else if (moveTarget === "project") {
-              router.replace(`/${workspaceSlug}/projects/${newEntityIdentifier}/pages/${page.id}`);
-            } else {
-              router.replace(`/${workspaceSlug}/teamspaces/${newEntityIdentifier}/pages/${page.id}`);
+            if (!redirectLink) {
+              return;
             }
+
+            removePageInstance(page.id);
+            router.replace(redirectLink);
           }
         }
       },

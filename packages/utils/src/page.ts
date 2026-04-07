@@ -15,7 +15,7 @@ import { sortBy } from "lodash-es";
 // plane imports
 import type {
   TMovePageActions,
-  TMovePageEntity,
+  TMovePageRealtimeEntity,
   TPage,
   TPageFilterProps,
   TPageFiltersSortBy,
@@ -110,11 +110,11 @@ export const getPageName = (name: string | undefined) => {
 /**
  * @description returns the source and target from the move type
  * @param {TMovePageActions} moveType
- * @returns { { source: TMovePageEntity; target: TMovePageEntity } }
+ * @returns { { source: TMovePageRealtimeEntity; target: TMovePageRealtimeEntity } }
  */
 export const getMoveSourceAndTargetFromMoveType = (
   moveType: TMovePageActions
-): { source: TMovePageEntity; target: TMovePageEntity } => {
-  const [source, target] = moveType.split("_to_") as [TMovePageEntity, TMovePageEntity];
+): { source: TMovePageRealtimeEntity; target: TMovePageRealtimeEntity } => {
+  const [source, target] = moveType.split("_to_") as [TMovePageRealtimeEntity, TMovePageRealtimeEntity];
   return { source, target };
 };

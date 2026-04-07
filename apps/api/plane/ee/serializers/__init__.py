@@ -170,6 +170,12 @@ from .app.cycle_schedule import AutomatedCycleSerializer
 
 from .app.workspace.workspace_member import WorkspaceMemberActivitySerializer
 
+from .app.collection import (
+    CollectionSerializer,
+    CollectionMemberSerializer,
+    PageCollectionSerializer,
+)
+
 # mobile app endpoints serializers
 from .app.mobile import (
     MobileWorkspaceLiteSerializer,

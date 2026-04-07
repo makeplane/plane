@@ -13,10 +13,9 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// plane imports
-import type { TPageNavigationTabs } from "@plane/types";
+import { useParams, usePathname } from "next/navigation";
 // local imports
+import { CollectionsSection } from "./section/collections-section";
 import { WikiSidebarListSectionRoot } from "./section/section-root";
 
 type Props = {
@@ -28,23 +27,32 @@ export const PagesAppSidebarList = observer(function PagesAppSidebarList(props: 
   const { expandedPageIds = [], setExpandedPageIds } = props;
   // params
   const { pageId } = useParams();
-
-  // derived values
-  const sectionsList: TPageNavigationTabs[] = ["public", "shared", "private", "archived"];
-  // Current page ID (without UUID validation to keep it simple)
-  const currentPageId = pageId ? pageId.toString() : undefined;
+  const pathname = usePathname();
+  const isCollectionRoute = pathname?.includes("/wiki/collections/");
+  // Current page ID only on actual wiki page detail routes
+  const currentPageId = !isCollectionRoute && pageId ? pageId.toString() : undefined;
 
   return (
     <div className="vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4">
-      {Object.values(sectionsList).map((section) => (
-        <WikiSidebarListSectionRoot
-          key={section}
-          currentPageId={currentPageId}
-          expandedPageIds={expandedPageIds}
-          sectionType={section}
-          setExpandedPageIds={setExpandedPageIds}
-        />
-      ))}
+      <CollectionsSection />
+      <WikiSidebarListSectionRoot
+        currentPageId={currentPageId}
+        expandedPageIds={expandedPageIds}
+        sectionType="shared"
+        setExpandedPageIds={setExpandedPageIds}
+      />
+      <WikiSidebarListSectionRoot
+        currentPageId={currentPageId}
+        expandedPageIds={expandedPageIds}
+        sectionType="private"
+        setExpandedPageIds={setExpandedPageIds}
+      />
+      <WikiSidebarListSectionRoot
+        currentPageId={currentPageId}
+        expandedPageIds={expandedPageIds}
+        sectionType="archived"
+        setExpandedPageIds={setExpandedPageIds}
+      />
     </div>
   );
 });

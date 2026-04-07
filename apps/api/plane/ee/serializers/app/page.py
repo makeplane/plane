@@ -24,7 +24,7 @@ from plane.db.models import (
     PageLabel,
     PageVersion,
 )
-from plane.ee.models import PageComment, PageCommentReaction
+from plane.ee.models import PageComment, PageCommentReaction, Collection, PageCollection
 
 
 class WorkspacePageSerializer(BaseSerializer):
@@ -90,6 +90,37 @@ class WorkspacePageSerializer(BaseSerializer):
             owned_by_id=owned_by_id,
             workspace_id=workspace_id,
         )
+
+        # Add the page to a collection. Priority:
+        # 1. Explicit collection_id from context (only if page is public)
+        # 2. Parent page's collection (for child pages)
+        # 3. Workspace default collection
+        collection_id = self.context.get("collection_id")
+        if not collection_id and page.parent_id:
+            parent_collection = PageCollection.objects.filter(
+                page_id=str(page.parent_id), workspace_id=workspace_id
+            ).values_list("collection_id", flat=True).first()
+            if parent_collection:
+                collection_id = str(parent_collection)
+
+        target_collection_id = None
+        if collection_id and page.access == Page.PUBLIC_ACCESS:
+            target_collection_id = collection_id
+        elif page.access == Page.PUBLIC_ACCESS:
+            default_collection = Collection.objects.filter(
+                workspace_id=workspace_id, access=0, is_default=True
+            ).first()
+            if default_collection:
+                target_collection_id = default_collection.id
+
+        if target_collection_id:
+            PageCollection.objects.create(
+                page=page,
+                collection_id=target_collection_id,
+                workspace_id=workspace_id,
+                created_by_id=owned_by_id,
+                updated_by_id=owned_by_id,
+            )
 
         # Create the page labels
         if labels is not None:

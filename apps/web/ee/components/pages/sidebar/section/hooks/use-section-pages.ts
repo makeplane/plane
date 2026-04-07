@@ -22,13 +22,13 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
  * @param sectionType Type of the section (public, private, archived, shared)
  * @returns Object containing loading state, pagination info, and fetchNextPage function
  */
-export const useSectionPages = (sectionType: TPageNavigationTabs) => {
+export const useSectionPages = (sectionType: TPageNavigationTabs, enabled = true) => {
   const { workspaceSlug } = useParams();
   const { fetchPagesByType, getPaginationInfo, getPaginationLoader } = usePageStore(EPageStoreType.WORKSPACE);
 
   const { isLoading } = useSWR(
-    workspaceSlug ? `WORKSPACE_PAGES_${workspaceSlug}_${sectionType}` : null,
-    workspaceSlug ? () => fetchPagesByType(sectionType) : null,
+    workspaceSlug && enabled ? `WORKSPACE_PAGES_${workspaceSlug}_${sectionType}` : null,
+    workspaceSlug && enabled ? () => fetchPagesByType(sectionType) : null,
     {
       revalidateOnFocus: true,
       revalidateIfStale: true,

@@ -13,9 +13,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, ArchiveIcon } from "lucide-react";
+import { useParams, usePathname } from "next/navigation";
+import { ArchiveRestoreIcon, FolderX, LockKeyhole, LockKeyholeOpen, ArchiveIcon } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { AlertModalCore } from "@plane/ui";
 // components
@@ -26,9 +28,10 @@ import type { TPageOperations } from "@/hooks/use-page-operations";
 // plane web imports
 import { LockPageModal } from "@/plane-web/components/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageStore } from "@/plane-web/hooks/store";
+import { useCollection, usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { resolveWikiCollectionId } from "@/plane-web/components/pages/collections";
 
 export const usePageActionsMenu = (props: {
   page: TPageInstance;
@@ -36,18 +39,24 @@ export const usePageActionsMenu = (props: {
   pageOperations: TPageOperations;
 }) => {
   const { page, storeType, pageOperations } = props;
+  const { t } = useTranslation();
   const { getPageById, getOrFetchPageInstance, isNestedPagesEnabled } = usePageStore(storeType);
+  const collectionStore = useCollection();
   // states
   const [lockPageModal, setLockPageModal] = useState(false);
   const [restorePageModal, setRestorePageModal] = useState(false);
 
   // params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, collectionId } = useParams();
+  const pathname = usePathname();
 
   const router = useAppRouter();
 
   // derived values
   const { is_locked, archived_at, canCurrentUserLockPage } = page;
+  const resolvedCollectionId = resolveWikiCollectionId(pathname, collectionId?.toString());
+  const actualCollectionId =
+    resolvedCollectionId && resolvedCollectionId !== "general" ? resolvedCollectionId : undefined;
 
   // Custom menu items
   const customMenuItems: (TContextMenuItem & { key: TPageActions })[] = [
@@ -76,6 +85,37 @@ export const usePageActionsMenu = (props: {
       title: archived_at ? "Restore" : "Archive",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: page.canCurrentUserArchivePage,
+    },
+    {
+      key: "remove-from-collection",
+      action: async () => {
+        if (!workspaceSlug || !actualCollectionId || !page.id) return;
+
+        try {
+          await collectionStore.removePageFromCollection(workspaceSlug.toString(), page.id, actualCollectionId);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("common.success"),
+            message: t("page_actions.remove_from_collection.success_message"),
+          });
+        } catch (error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("common.error.label"),
+            message:
+              (error as { detail?: string; error?: string })?.detail ??
+              (error as { error?: string })?.error ??
+              t("page_actions.remove_from_collection.error_message"),
+          });
+        }
+      },
+      title: t("page_actions.remove_from_collection.label"),
+      icon: FolderX,
+      shouldRender:
+        !!actualCollectionId &&
+        !!page.id &&
+        collectionStore.canCurrentUserRemovePageFromCollection(actualCollectionId, page.id),
+      className: "text-danger-primary",
     },
   ];
 

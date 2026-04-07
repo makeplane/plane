@@ -14,8 +14,8 @@
 import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, computed, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EPageAccess } from "@plane/constants";
 // types
+import { EPageAccess } from "@plane/types";
 import type { TMovePagePayload, TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
@@ -38,6 +38,7 @@ import type { TPageSharedUser } from "@/services/page/page-share.service";
 import { PageShareService } from "@/services/page/page-share.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
+import { getLoadedSubtreePageIds } from "@/plane-web/store/pages/page-tree";
 import type { TWorkspacePage } from "./workspace-page";
 import { WorkspacePage } from "./workspace-page";
 import { PiChatService } from "@/services/pi-chat.service";
@@ -53,6 +54,14 @@ export type TPagePaginationInfo = {
   nextCursor: string | null;
   hasNextPage: boolean;
   totalResults: number;
+};
+
+export type TPageInternalUpdateSnapshot = {
+  pageId: string;
+  previousParentId: string | null;
+  nextParentId: string | null;
+  previousUpdatedAt: TWorkspacePage["updated_at"];
+  previousValues: Partial<TPage>;
 };
 
 // Default pagination info
@@ -111,11 +120,18 @@ export interface IWorkspacePageStore {
     pageId: string,
     options?: {
       trackVisit?: boolean;
+      shouldFetchParentPages?: boolean;
       shouldFetchSubPages?: boolean;
     }
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  applyPageInternalUpdateLocally: (
+    pageId: string,
+    updatePayload: Partial<TPage>
+  ) => TPageInternalUpdateSnapshot | undefined;
+  rollbackPageInternalUpdateLocally: (snapshot: TPageInternalUpdateSnapshot) => void;
+  persistPageInternalUpdate: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
   movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
   movePage: ({
     pageId,
@@ -129,9 +145,15 @@ export interface IWorkspacePageStore {
   getOrFetchPageInstance: ({
     pageId,
     trackVisit,
+    shouldFetchParentPages,
+    shouldFetchSubPages,
+    refreshIfExists,
   }: {
     pageId: string;
     trackVisit?: boolean;
+    shouldFetchParentPages?: boolean;
+    shouldFetchSubPages?: boolean;
+    refreshIfExists?: boolean;
   }) => Promise<TWorkspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
@@ -183,7 +205,9 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     shared: undefined,
   };
   // private props
+  private _parentPagesMap = observable.map<string, TPage[]>(new Map()); // pageId => parentPagesList
   private _rootParentMap: Map<string, string | null> = new Map(); // pageId => rootParentId
+  private fetchParentPagesRequests: Map<string, Promise<TPage[] | undefined>> = new Map();
   // disposers for reactions
   private disposers: (() => void)[] = [];
   // services
@@ -391,6 +415,26 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    * @param {string} pageId
    */
   getPageById = computedFn((pageId: string) => this.data?.[pageId] || undefined);
+
+  private invalidateParentPagesCache = (pageIds: Iterable<string>) => {
+    for (const pageId of pageIds) {
+      this._parentPagesMap.delete(pageId);
+      this.fetchParentPagesRequests.delete(pageId);
+      this._rootParentMap.delete(pageId);
+    }
+  };
+
+  private doesCachedParentPagesMatchHierarchy = (pageId: string, cachedParentPages: TPage[]) => {
+    const page = this.getPageById(pageId);
+    if (!page?.id) return false;
+
+    const expectedPageIds = [...page.parentPageIds].reverse();
+    expectedPageIds.push(page.id);
+
+    if (cachedParentPages.length !== expectedPageIds.length) return false;
+
+    return cachedParentPages.every((cachedPage, index) => cachedPage.id === expectedPageIds[index]);
+  };
 
   /**
    * Returns true if nested pages feature is enabled
@@ -697,29 +741,52 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   fetchParentPages = async (pageId: string) => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !pageId) return undefined;
-    const response = await this.pageService.fetchParentPages(workspaceSlug, pageId);
 
-    // Store the parent pages data in the store
-    runInAction(() => {
-      for (const page of response) {
-        if (page?.id) {
-          const pageInstance = this.getPageById(page.id);
-          if (pageInstance) {
-            pageInstance.mutateProperties(page);
-          } else {
-            set(this.data, [page.id], new WorkspacePage(this.store, page));
+    const cachedParentPages = this._parentPagesMap.get(pageId);
+    if (cachedParentPages && this.doesCachedParentPagesMatchHierarchy(pageId, cachedParentPages)) {
+      return cachedParentPages;
+    }
+
+    const inFlightRequest = this.fetchParentPagesRequests.get(pageId);
+    if (inFlightRequest) return inFlightRequest;
+
+    const request = (async () => {
+      const response = await this.pageService.fetchParentPages(workspaceSlug, pageId);
+
+      // Store the parent pages data in the store
+      runInAction(() => {
+        for (const page of response) {
+          if (page?.id) {
+            const pageInstance = this.getPageById(page.id);
+            if (pageInstance) {
+              pageInstance.mutateProperties(page);
+            } else {
+              set(this.data, [page.id], new WorkspacePage(this.store, page));
+            }
           }
         }
-      }
-    });
+        this._parentPagesMap.set(pageId, response);
+      });
 
-    return response;
+      return response;
+    })();
+
+    this.fetchParentPagesRequests.set(pageId, request);
+
+    try {
+      return await request;
+    } finally {
+      if (this.fetchParentPagesRequests.get(pageId) === request) {
+        this.fetchParentPagesRequests.delete(pageId);
+      }
+    }
   };
 
   /**
    * @description fetch the details of a page
    */
   fetchPageDetails: IWorkspacePageStore["fetchPageDetails"] = async (pageId, options) => {
+    const shouldFetchParentPages = options?.shouldFetchParentPages ?? true;
     const shouldFetchSubPages = options?.shouldFetchSubPages ?? true;
     const trackVisit = options?.trackVisit ?? true;
     try {
@@ -734,13 +801,18 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       const promises: Promise<TPage | TPage[]>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
 
+      if (shouldFetchParentPages) {
+        promises.push(this.pageService.fetchParentPages(workspaceSlug, pageId));
+      }
+
       if (shouldFetchSubPages) {
         promises.push(this.pageService.fetchSubPages(workspaceSlug, pageId));
       }
 
       const results = await Promise.all(promises);
       const page = results[0] as TPage;
-      const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
+      const parentPages = shouldFetchParentPages ? (results[1] as TPage[]) : (this._parentPagesMap.get(pageId) ?? []);
+      const subPages = shouldFetchSubPages ? (results[shouldFetchParentPages ? 2 : 1] as TPage[]) : [];
 
       runInAction(() => {
         if (page) {
@@ -750,6 +822,20 @@ export class WorkspacePageStore implements IWorkspacePageStore {
           } else {
             set(this.data, [pageId], new WorkspacePage(this.store, page));
           }
+        }
+
+        if (shouldFetchParentPages) {
+          parentPages.forEach((parentPage) => {
+            if (parentPage?.id) {
+              const parentPageInstance = this.getPageById(parentPage.id);
+              if (parentPageInstance) {
+                parentPageInstance.mutateProperties(parentPage, false);
+              } else {
+                set(this.data, [parentPage.id], new WorkspacePage(this.store, parentPage));
+              }
+            }
+          });
+          this._parentPagesMap.set(pageId, parentPages);
         }
 
         if (shouldFetchSubPages) {
@@ -788,7 +874,11 @@ export class WorkspacePageStore implements IWorkspacePageStore {
           description: "Failed to fetch the page, Please try again later.",
         };
       });
-      throw error;
+      if (error instanceof Error) {
+        throw error;
+      }
+
+      throw new Error("Failed to fetch the page.");
     }
   };
 
@@ -881,28 +971,16 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    * @param {Partial<TPage>} updatePayload - The update payload containing parent_id and other properties
    */
   movePageInternally = async (pageId: string, updatePayload: Partial<TPage>) => {
+    const snapshot = runInAction(() => this.applyPageInternalUpdateLocally(pageId, updatePayload));
+    if (!snapshot) return;
+
     try {
-      const pageInstance = this.getPageById(pageId);
-      if (!pageInstance) return;
-
+      await this.persistPageInternalUpdate(pageId, updatePayload);
+    } catch (error) {
       runInAction(() => {
-        // Handle parent_id changes and update sub_pages_count accordingly
-        if (updatePayload.hasOwnProperty("parent_id") && updatePayload.parent_id !== pageInstance.parent_id) {
-          this.updateParentSubPageCounts(pageInstance.parent_id ?? null, updatePayload.parent_id ?? null);
-        }
-
-        // Apply all updates to the page instance
-        Object.keys(updatePayload).forEach((key) => {
-          const currentPageKey = key as keyof TPage;
-          set(pageInstance, key, updatePayload[currentPageKey] || undefined);
-        });
-
-        // Update the updated_at field locally to ensure reactions trigger
-        pageInstance.updated_at = new Date();
+        this.rollbackPageInternalUpdateLocally(snapshot);
       });
 
-      await pageInstance.update(updatePayload);
-    } catch (error) {
       console.error("Unable to move page internally", error);
       runInAction(() => {
         this.error = {
@@ -911,6 +989,79 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         };
       });
       throw error;
+    }
+  };
+
+  applyPageInternalUpdateLocally = (pageId: string, updatePayload: Partial<TPage>) => {
+    const pageInstance = this.getPageById(pageId);
+    if (!pageInstance) return undefined;
+
+    const previousParentId = pageInstance.parent_id ?? null;
+    const nextParentId = Object.prototype.hasOwnProperty.call(updatePayload, "parent_id")
+      ? (updatePayload.parent_id ?? null)
+      : previousParentId;
+    const previousUpdatedAt = pageInstance.updated_at;
+    const previousValues = Object.keys(updatePayload).reduce<Partial<TPage>>((acc, key) => {
+      const currentPageKey = key as keyof TPage;
+      acc[currentPageKey] = pageInstance[currentPageKey] as never;
+      return acc;
+    }, {});
+    const snapshot: TPageInternalUpdateSnapshot = {
+      pageId,
+      previousParentId,
+      nextParentId,
+      previousUpdatedAt,
+      previousValues,
+    };
+
+    if (Object.prototype.hasOwnProperty.call(updatePayload, "parent_id") && nextParentId !== previousParentId) {
+      this.invalidateParentPagesCache(getLoadedSubtreePageIds(pageId, this.getPageById));
+      this.clearRootParentCache();
+      this.updateParentSubPageCounts(previousParentId, nextParentId);
+    }
+
+    Object.keys(updatePayload).forEach((key) => {
+      const currentPageKey = key as keyof TPage;
+      set(pageInstance, currentPageKey, updatePayload[currentPageKey] ?? undefined);
+    });
+
+    pageInstance.updated_at = new Date();
+
+    return snapshot;
+  };
+
+  rollbackPageInternalUpdateLocally = (snapshot: TPageInternalUpdateSnapshot) => {
+    const pageInstance = this.getPageById(snapshot.pageId);
+    if (!pageInstance) return;
+
+    if (
+      Object.prototype.hasOwnProperty.call(snapshot.previousValues, "parent_id") &&
+      snapshot.nextParentId !== snapshot.previousParentId
+    ) {
+      this.invalidateParentPagesCache(getLoadedSubtreePageIds(snapshot.pageId, this.getPageById));
+      this.clearRootParentCache();
+      this.updateParentSubPageCounts(snapshot.nextParentId, snapshot.previousParentId);
+    }
+
+    Object.keys(snapshot.previousValues).forEach((key) => {
+      const currentPageKey = key as keyof TPage;
+      set(pageInstance, currentPageKey, snapshot.previousValues[currentPageKey] ?? undefined);
+    });
+
+    pageInstance.updated_at = snapshot.previousUpdatedAt;
+  };
+
+  persistPageInternalUpdate = async (pageId: string, updatePayload: Partial<TPage>) => {
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    const pageInstance = this.getPageById(pageId);
+    if (!pageInstance) return;
+
+    const updatedPage = await this.pageService.update(workspaceSlug, pageId, updatePayload);
+
+    if (updatedPage) {
+      pageInstance.mutateProperties(updatedPage, false);
     }
   };
 
@@ -964,19 +1115,30 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     }
   };
 
-  getOrFetchPageInstance = async ({ pageId, trackVisit }: { pageId: string; trackVisit?: boolean }) => {
+  getOrFetchPageInstance = async ({
+    pageId,
+    trackVisit,
+    shouldFetchParentPages = true,
+    shouldFetchSubPages = true,
+    refreshIfExists = false,
+  }: {
+    pageId: string;
+    trackVisit?: boolean;
+    shouldFetchParentPages?: boolean;
+    shouldFetchSubPages?: boolean;
+    refreshIfExists?: boolean;
+  }) => {
     const pageInstance = this.getPageById(pageId);
-    if (pageInstance) {
+    if (pageInstance && !refreshIfExists) {
       return pageInstance;
-    } else {
-      const page = await this.fetchPageDetails(pageId, { trackVisit });
-      if (page) {
-        return new WorkspacePage(this.store, page);
-      }
     }
+
+    const page = await this.fetchPageDetails(pageId, { trackVisit, shouldFetchParentPages, shouldFetchSubPages });
+    return page?.id ? this.getPageById(page.id) : undefined;
   };
 
   removePageInstance = (pageId: string) => {
+    this.invalidateParentPagesCache([pageId]);
     delete this.data[pageId];
   };
 
@@ -1024,6 +1186,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       // Determine cursor to use
       const cursorToUse = isFirstPage ? undefined : (this.paginationInfo[pageNavigationTab].nextCursor ?? undefined);
+
+      if (pageNavigationTab === "archived" && isFirstPage && this.archivedPageIds.length === 0) {
+        await this.fetchAllPages();
+      }
 
       const response = await this.pageService.fetchPagesByType(
         workspaceSlug,

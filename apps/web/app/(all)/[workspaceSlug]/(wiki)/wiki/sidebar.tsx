@@ -27,6 +27,8 @@ export const WikiAppSidebar = observer(function WikiAppSidebar() {
   // params
   const { workspaceSlug, pageId } = useParams();
   const pathname = usePathname();
+  const isCollectionRoute = pathname?.includes("/wiki/collections/");
+  const currentPageId = !isCollectionRoute && pageId ? pageId.toString() : undefined;
   // state
   const [expandedPageIds, setExpandedPageIds] = useState<string[]>([]);
   // store hooks
@@ -34,8 +36,8 @@ export const WikiAppSidebar = observer(function WikiAppSidebar() {
 
   // Fetch parent pages if we're on a page detail view
   const { data: parentPagesList } = useSWR(
-    workspaceSlug && pageId && pathname?.includes("/pages/") ? `PARENT_PAGES_LIST_${pageId.toString()}` : null,
-    workspaceSlug && pageId && pathname?.includes("/pages/") ? () => fetchParentPages(pageId.toString()) : null
+    workspaceSlug && currentPageId ? `PARENT_PAGES_LIST_${currentPageId}` : null,
+    workspaceSlug && currentPageId ? () => fetchParentPages(currentPageId) : null
   );
 
   // Optimized parent pages expansion

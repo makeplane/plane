@@ -16,8 +16,8 @@ import { useEffect, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 // plane imports
-import { EPageAccess } from "@plane/constants";
-import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+import { EPageAccess } from "@plane/types";
+import type { TPage, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -33,8 +33,10 @@ import type { DragAndDropHookReturn } from "../types";
 export const useSectionDragAndDrop = (
   listSectionRef: RefObject<HTMLDivElement>,
   getPageById: (id: string) => TPageInstance | undefined,
+  movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>,
   sectionType: TPageNavigationTabs,
-  isSectionEmpty: boolean
+  isSectionEmpty: boolean,
+  removeFromCollectionStore?: (pageId: string) => void
 ): DragAndDropHookReturn => {
   // states
   const [isDropping, setIsDropping] = useState(false);
@@ -55,7 +57,7 @@ export const useSectionDragAndDrop = (
         onDragStart: () => {
           setIsDropping(true);
         },
-        onDrop: async ({ location, self, source }) => {
+        onDrop: ({ location, self, source }) => {
           setIsDropping(false);
           if (location.current.dropTargets[0]?.element !== self.element) return;
 
@@ -71,7 +73,7 @@ export const useSectionDragAndDrop = (
             newAccess = EPageAccess.PRIVATE;
           }
 
-          const updateData: Partial<TPageInstance> = {};
+          const updateData: Partial<TPage> = {};
 
           // If the page has a parent, move it to top level
           if (droppedPageDetails.parent_id) {
@@ -85,10 +87,13 @@ export const useSectionDragAndDrop = (
             updateData.is_shared = false;
           }
 
-          try {
-            await droppedPageDetails.update(updateData);
-          } catch (error) {
+          void movePageInternally(droppedPageId, updateData).catch((error) => {
             console.error("Failed to update page:", error);
+          });
+
+          // Optimistically remove from collection store when making a page private
+          if (newAccess === EPageAccess.PRIVATE) {
+            removeFromCollectionStore?.(droppedPageId);
           }
         },
         canDrop: ({ source }) => {
@@ -103,9 +108,9 @@ export const useSectionDragAndDrop = (
           const sourcePage = getPageById(draggedPageId);
           if (!sourcePage) return false;
 
-          const isDroppingOnTheSameSection =
-            (sourcePage.access === EPageAccess.PUBLIC && sectionType === "public") ||
-            (sourcePage.access === EPageAccess.PRIVATE && sectionType === "private");
+          const sameSectionAccess =
+            sectionType === "public" ? EPageAccess.PUBLIC : sectionType === "private" ? EPageAccess.PRIVATE : undefined;
+          const isDroppingOnTheSameSection = sameSectionAccess !== undefined && sourcePage.access === sameSectionAccess;
 
           if (!draggedPageParentId && isDroppingOnTheSameSection) return false;
 
@@ -113,7 +118,15 @@ export const useSectionDragAndDrop = (
         },
       })
     );
-  }, [getPageById, isDropping, isSectionEmpty, listSectionRef, sectionType]);
+  }, [
+    getPageById,
+    isDropping,
+    isSectionEmpty,
+    listSectionRef,
+    movePageInternally,
+    removeFromCollectionStore,
+    sectionType,
+  ]);
 
   return { isDropping };
 };

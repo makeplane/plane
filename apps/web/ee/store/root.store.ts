@@ -12,6 +12,8 @@
  */
 
 // plane web imports
+import type { ICollectionStore } from "@/plane-web/store/pages/collection.store";
+import { CollectionStore } from "@/plane-web/store/pages/collection.store";
 import type { IPublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
@@ -25,12 +27,14 @@ import type { ITimelineStore } from "./timeline";
 export class RootStore extends CoreRootStore {
   // Override theme with extended type
   workspacePages: IWorkspacePageStore;
+  collection: ICollectionStore;
   publishPage: IPublishPageStore;
   timelineStore: ITimelineStore;
 
   constructor() {
     super();
     this.workspacePages = new WorkspacePageStore(this);
+    this.collection = new CollectionStore(this);
     this.publishPage = new PublishPageStore(this);
     this.timelineStore = new TimeLineStore(this);
   }
@@ -38,6 +42,7 @@ export class RootStore extends CoreRootStore {
   resetOnSignOut() {
     super.resetOnSignOut();
     this.workspacePages = new WorkspacePageStore(this);
+    this.collection = new CollectionStore(this);
     this.publishPage = new PublishPageStore(this);
     this.timelineStore = new TimeLineStore(this);
   }

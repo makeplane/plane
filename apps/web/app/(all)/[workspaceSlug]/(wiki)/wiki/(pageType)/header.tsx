@@ -98,7 +98,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label={`${pageType === "public" ? "Workspace" : capitalizeFirstLetter(pageType)} pages`}
+                  label={`${pageType === "public" ? "General" : capitalizeFirstLetter(pageType)} pages`}
                 />
               }
             />

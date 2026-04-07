@@ -50,6 +50,7 @@ from plane.db.models import (
     BotTypeEnum,
     WorkspaceUserLink,
 )
+from plane.ee.models import Collection, PageCollection, CollectionAccess
 
 logger = logging.getLogger("plane.worker")
 
@@ -76,7 +77,9 @@ def read_seed_file(filename):
         return None
 
 
-def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int, uuid.UUID]:
+def create_project_and_member(
+    workspace: Workspace, bot_user: User
+) -> Dict[int, uuid.UUID]:
     """Creates a project and associated members for a workspace.
 
     Creates a new project using the workspace name and sets up all necessary
@@ -92,12 +95,16 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
     project_identifier = "".join(ch for ch in workspace.name if ch.isalnum())[:5]
 
     # Create members
-    workspace_members = WorkspaceMember.objects.filter(workspace=workspace).values("member_id", "role")
+    workspace_members = WorkspaceMember.objects.filter(workspace=workspace).values(
+        "member_id", "role"
+    )
 
     projects_map: Dict[int, uuid.UUID] = {}
 
     if not project_seeds:
-        logger.warning("Task: workspace_seed_task -> No project seeds found. Skipping project creation.")
+        logger.warning(
+            "Task: workspace_seed_task -> No project seeds found. Skipping project creation."
+        )
         return projects_map
 
     for project_seed in project_seeds:
@@ -279,7 +286,9 @@ def create_project_issues(
         # get the values
         for field in required_fields:
             if field not in issue_seed:
-                logger.error(f"Task: workspace_seed_task -> Required field '{field}' missing in issue seed")
+                logger.error(
+                    f"Task: workspace_seed_task -> Required field '{field}' missing in issue seed"
+                )
                 continue
 
         # get the values
@@ -350,7 +359,9 @@ def create_project_issues(
     return
 
 
-def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> None:
+def create_pages(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User
+) -> None:
     """Creates pages for each project in the workspace.
 
     Args:
@@ -362,6 +373,20 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
 
     if not page_seeds:
         return
+
+    # Create a default collection for workspace-level pages
+    default_collection = Collection(
+        workspace_id=workspace.id,
+        name="General",
+        owned_by_id=bot_user.id,
+        access=CollectionAccess.PUBLIC,
+        is_default=True,
+        is_global=True,
+        created_by_id=bot_user.id,
+        updated_by_id=bot_user.id,
+    )
+    default_collection.save(disable_auto_set_user=True)
+    logger.info("Task: workspace_seed_task -> Default collection created")
 
     for page_seed in page_seeds:
         page_id = page_seed.pop("id")
@@ -393,10 +418,27 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
             )
             project_page.save(disable_auto_set_user=True)
             logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
+        elif (
+            page_seed.get("type") == "WORKSPACE"
+            and page_seed.get("access") == Page.PUBLIC_ACCESS
+        ):
+            page_collection = PageCollection(
+                workspace_id=workspace.id,
+                collection=default_collection,
+                page=page,
+                created_by_id=bot_user.id,
+                updated_by_id=bot_user.id,
+            )
+            page_collection.save(disable_auto_set_user=True)
+            logger.info(
+                f"Task: workspace_seed_task -> Page {page_id} added to default collection"
+            )
     return
 
 
-def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> Dict[int, uuid.UUID]:
+def create_cycles(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User
+) -> Dict[int, uuid.UUID]:
     """Creates cycles for each project in the workspace.
 
     Args:
@@ -423,7 +465,11 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
 
         if type == "UPCOMING":
             # Get the last cycle
-            last_cycle = Cycle.objects.filter(project_id=project_map[project_id]).order_by("-end_date").first()
+            last_cycle = (
+                Cycle.objects.filter(project_id=project_map[project_id])
+                .order_by("-end_date")
+                .first()
+            )
             if last_cycle:
                 start_date = last_cycle.end_date + timedelta(days=1)
                 end_date = start_date + timedelta(days=14)
@@ -447,7 +493,9 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
     return cycle_map
 
 
-def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> None:
+def create_modules(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User
+) -> None:
     """Creates modules for each project in the workspace.
 
     Args:
@@ -482,7 +530,9 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_
     return module_map
 
 
-def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> None:
+def create_views(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User
+) -> None:
     """Creates views for each project in the workspace.
 
     Args:
@@ -590,7 +640,15 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         module_map = create_modules(workspace, project_map, bot_user)
 
         # create project issues
-        create_project_issues(workspace, project_map, state_map, label_map, cycle_map, module_map, bot_user)
+        create_project_issues(
+            workspace,
+            project_map,
+            state_map,
+            label_map,
+            cycle_map,
+            module_map,
+            bot_user,
+        )
 
         # create project views
         create_views(workspace, project_map, bot_user)
@@ -598,8 +656,12 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # create project pages
         create_pages(workspace, project_map, bot_user)
 
-        logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
+        logger.info(
+            f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully"
+        )
         return
     except Exception as e:
-        logger.error(f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}")
+        logger.error(
+            f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}"
+        )
         raise e
