@@ -34,6 +34,7 @@ import {
   WORKSPACE_PROJECT_NAVIGATION_PREFERENCES,
   WORKSPACE_FLAGS,
   AI_FLAGS,
+  WORKSPACE_RELEASES,
   RUNNER_HEALTH,
 } from "@/constants/fetch-keys";
 // hooks
@@ -115,7 +116,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { fetchRelationDefinitions } = useRelationDefinition();
   const { fetchScripts, checkRunnerHealth } = useRunners();
   const {
-    release: { fetchReleases },
+    release: { fetchReleases, isReleasesEnabled },
   } = useReleases();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -391,9 +392,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
   // fetching releases
   useSWR(
-    currentWorkspace ? `RELEASES_${workspaceSlug}` : null,
-    currentWorkspace ? () => fetchReleases(workspaceSlug) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    workspaceSlug && isReleasesEnabled(workspaceSlug) ? WORKSPACE_RELEASES(workspaceSlug) : null,
+    workspaceSlug && isReleasesEnabled(workspaceSlug) ? () => fetchReleases(workspaceSlug) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
   );
 
   const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;

@@ -13,11 +13,10 @@
 
 import { observer } from "mobx-react";
 import { Navigate, Outlet, useMatch } from "react-router";
-import { E_FEATURE_FLAGS } from "@plane/constants";
 import { AppHeader } from "@/components/core/app-header";
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { useFeatureFlags, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { useFeatureFlags, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useReleases } from "@/hooks/store/use-releases";
 import type { Route } from "./+types/layout";
 import { WorkspaceReleaseHeader } from "@/components/releases/header";
 import { ReleaseDetailBreadcrumbHeader } from "@/components/releases/detail-breadcrumb-header";
@@ -25,14 +24,15 @@ import { ReleaseDetailBreadcrumbHeader } from "@/components/releases/detail-brea
 function ReleasesLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   const { flags } = useFeatureFlags();
-  const { isWorkspaceFeatureEnabled, featuresByWorkspaceSlug } = useWorkspaceFeatures();
-  const isReleasesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
-  const isFeatureFlagEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES);
+  const { featuresByWorkspaceSlug } = useWorkspaceFeatures();
+  const {
+    release: { isReleasesEnabled },
+  } = useReleases();
   const isDetailPage = useMatch("/:workspaceSlug/releases/:releaseId/*");
 
   const hasWorkspaceFeaturesLoaded = workspaceSlug ? featuresByWorkspaceSlug(workspaceSlug) !== undefined : false;
   const hasFeatureFlagsLoaded = workspaceSlug ? flags[workspaceSlug] !== undefined : false;
-  const isReleasesAccessible = isFeatureFlagEnabled && isReleasesEnabled;
+  const isReleasesAccessible = isReleasesEnabled(workspaceSlug);
 
   if (hasWorkspaceFeaturesLoaded && hasFeatureFlagsLoaded && !isReleasesAccessible) {
     return <Navigate to={`/${workspaceSlug}`} replace />;

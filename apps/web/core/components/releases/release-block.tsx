@@ -23,7 +23,7 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import type { Release } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
-import { RELEASES } from "@/constants/fetch-keys";
+import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useReleases } from "@/hooks/store/use-releases";
@@ -58,7 +58,7 @@ export const ReleaseBlock = observer(function ReleaseBlock(props: Props) {
     try {
       await releaseStore.deleteRelease(slug, release.id);
       await mutate(
-        RELEASES(slug),
+        WORKSPACE_RELEASES(slug),
         (current: Release[] | undefined) => (current ?? []).filter((r) => r.id !== release.id),
         { revalidate: false }
       );

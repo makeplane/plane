@@ -17,12 +17,11 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { Release } from "@plane/types";
-// constants
-import { RELEASES } from "@/constants/fetch-keys";
+import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
 // components
 import { ReleaseDropdown } from "@/components/dropdowns/release/dropdown";
+import { useReleases } from "@/hooks/store/use-releases";
 // services
-import releaseService from "@/services/release.service";
 import type { TReleaseDropdownBaseProps } from "@/components/dropdowns/release/types";
 
 type Props = {
@@ -61,13 +60,18 @@ export const ReleaseSelect = observer(function ReleaseSelect({
   showCount,
 }: Props) {
   const { t } = useTranslation();
+  const {
+    release: { isReleasesEnabled, fetchReleases },
+  } = useReleases();
+  const isReleaseAccessEnabled = isReleasesEnabled(workspaceSlug);
 
-  //TODO: make use of release store once it is implemented
   const { data: releases = [] } = useSWR<Release[]>(
-    workspaceSlug ? RELEASES(workspaceSlug) : null,
-    workspaceSlug ? () => releaseService.list(workspaceSlug) : null,
+    isReleaseAccessEnabled ? WORKSPACE_RELEASES(workspaceSlug) : null,
+    isReleaseAccessEnabled ? () => fetchReleases(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  if (!isReleaseAccessEnabled) return null;
 
   const effectiveReleaseIds =
     releaseIdsProp ?? releases.filter((r) => r.work_item_ids?.includes(issueId)).map((r) => r.id);

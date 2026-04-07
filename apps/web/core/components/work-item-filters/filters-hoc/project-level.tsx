@@ -83,7 +83,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const { getProjectModuleIds } = useModule();
   const { getProjectStateIds } = useProjectState();
   const {
-    release: { getReleaseIdsByWorkspaceSlug },
+    release: { getReleaseIdsByWorkspaceSlug, isReleasesEnabled },
   } = useReleases();
   const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   const { getProjectEpicDetails, getProjectIssueTypes, isWorkItemTypeEnabledForProject, isEpicEnabledForProject } =
@@ -93,6 +93,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
   const isEpicEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
+  const isReleasesFeatureEnabled = isReleasesEnabled(workspaceSlug);
   const projectWorkItemTypes = Object.values(getProjectIssueTypes(projectId, false));
   const projectWorkItemTypeIds = useMemo(
     () => projectWorkItemTypes.map((workItemType) => workItemType.id).filter((id) => id !== undefined),
@@ -265,7 +266,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         labelIds={getProjectLabelIds(projectId)}
         memberIds={getProjectMemberIds(projectId, false) ?? undefined}
         moduleIds={getProjectModuleIds(projectId) ?? undefined}
-        releaseIds={allReleaseIds}
+        releaseIds={isReleasesFeatureEnabled ? allReleaseIds : undefined}
         stateIds={getProjectStateIds(projectId)}
         workItemTypeIds={isWorkItemTypeEnabled ? projectWorkItemTypeIds : undefined}
         milestoneIds={isMilestonesFeatureEnabled ? projectMilestoneIds : undefined}

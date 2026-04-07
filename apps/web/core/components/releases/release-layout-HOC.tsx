@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useReleases } from "@/hooks/store/use-releases";
 
@@ -35,9 +36,11 @@ export const ReleaseLayoutHOC = observer(function ReleaseLayoutHOC(props: Props)
   const { t } = useTranslation();
   const { release: releaseStore } = useReleases();
   const { toggleCreateReleaseModal } = useCommandPalette();
+  const currentWorkspaceSlug = workspaceSlug?.toString();
 
-  const { isLoading } = useSWR(workspaceSlug ? `RELEASES_${workspaceSlug}` : null, () =>
-    releaseStore.fetchReleases(workspaceSlug.toString())
+  const { isLoading } = useSWR(
+    currentWorkspaceSlug ? WORKSPACE_RELEASES(currentWorkspaceSlug) : null,
+    currentWorkspaceSlug ? () => releaseStore.fetchReleases(currentWorkspaceSlug) : null
   );
 
   if (isLoading) {

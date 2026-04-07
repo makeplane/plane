@@ -24,6 +24,8 @@ import type {
 // store
 import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/work-items/details/sub_issues_filter.store";
 // hooks
+import { useReleases } from "@/hooks/store/use-releases";
+// plane web store hooks
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { useFeatureFlags } from "@/plane-web/hooks/store";
@@ -71,8 +73,11 @@ export const useGroupByOptions = (
   const { isMilestonesEnabled } = useMilestones();
   const { isEpicEnabledForProject, isWorkItemTypeEnabledForProject } = useIssueTypes();
   const { getFeatureFlag } = useFeatureFlags();
-
+  const {
+    release: { isReleasesEnabled },
+  } = useReleases();
   //derived values
+  const isReleasesFeatureEnabled = isReleasesEnabled(workspaceSlug);
   const groupByOptions = ISSUE_GROUP_BY_OPTIONS.filter((option) => options.includes(option.key));
 
   if (!workspaceSlug) return groupByOptions;
@@ -90,6 +95,7 @@ export const useGroupByOptions = (
     milestone: isMilestonesFeatureEnabled,
     epic: isEpicFeatureEnabled,
     type: projectId ? isWorkItemTypeEnabled : isWorkItemTypeFlagEnabled,
+    release: isReleasesFeatureEnabled,
   };
 
   // filter out options that are not enabled

@@ -14,19 +14,28 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import type { Release } from "@plane/types";
-import { RELEASES } from "@/constants/fetch-keys";
-import releaseService from "@/services/release.service";
+import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
+import { useReleases } from "@/hooks/store/use-releases";
 import { ReleaseDropdownBase } from "./base";
 import type { TReleaseDropdownProps } from "./types";
 
 export const ReleaseDropdown = observer(function ReleaseDropdown(props: TReleaseDropdownProps) {
   const { workspaceSlug, ...rest } = props;
+  const {
+    release: { isReleasesEnabled, fetchReleases },
+  } = useReleases();
+  const isReleaseAccessEnabled = workspaceSlug ? isReleasesEnabled(workspaceSlug) : false;
 
   const { data: releases = [] } = useSWR<Release[]>(
-    workspaceSlug ? RELEASES(workspaceSlug) : null,
-    workspaceSlug ? () => releaseService.list(workspaceSlug) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    workspaceSlug && isReleaseAccessEnabled ? WORKSPACE_RELEASES(workspaceSlug) : null,
+    workspaceSlug && isReleaseAccessEnabled ? () => fetchReleases(workspaceSlug) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
   );
+
+  if (!isReleaseAccessEnabled) return null;
 
   return <ReleaseDropdownBase {...rest} releases={releases} />;
 });

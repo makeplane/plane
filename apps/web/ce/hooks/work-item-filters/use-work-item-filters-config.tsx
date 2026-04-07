@@ -166,7 +166,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       releaseIds
         ? (releaseIds.map((releaseId) => getReleaseById(releaseId)).filter((release) => release) as Release[])
-        : [],
+        : undefined,
     [releaseIds, getReleaseById]
   );
   const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
@@ -178,6 +178,8 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
    * @returns True if the filter is enabled, false otherwise.
    */
   const isFilterEnabled = useCallback((key: TWorkItemFilterProperty) => filtersToShow.has(key), [filtersToShow]);
+
+  const isReleaseFilterEnabled = isFilterEnabled("release_id") && releases !== undefined;
 
   // state group filter config
   const stateGroupFilterConfig = useMemo(
@@ -212,7 +214,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         filterIcon: LabelPropertyIcon,
         labels: workItemLabels ?? [],
         getOptionIcon: (color) => (
-          <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
+          <span className="flex shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
         ),
         ...operatorConfigs,
       }),
@@ -225,7 +227,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       getCycleFilterConfig<TWorkItemFilterProperty>("cycle_id")({
         isEnabled: isFilterEnabled("cycle_id") && project?.cycle_view === true && cycles !== undefined,
         filterIcon: CycleIcon,
-        getOptionIcon: (cycleGroup) => <CycleGroupIcon cycleGroup={cycleGroup} className="h-3.5 w-3.5 flex-shrink-0" />,
+        getOptionIcon: (cycleGroup) => <CycleGroupIcon cycleGroup={cycleGroup} className="h-3.5 w-3.5 shrink-0" />,
         cycles: cycles ?? [],
         ...operatorConfigs,
       }),
@@ -238,7 +240,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       getModuleFilterConfig<TWorkItemFilterProperty>("module_id")({
         isEnabled: isFilterEnabled("module_id") && project?.module_view === true && modules !== undefined,
         filterIcon: ModuleIcon,
-        getOptionIcon: () => <ModuleIcon className="h-3 w-3 flex-shrink-0" />,
+        getOptionIcon: () => <ModuleIcon className="h-3 w-3 shrink-0" />,
         modules: modules ?? [],
         ...operatorConfigs,
       }),
@@ -385,13 +387,12 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const releaseFilterConfig = useMemo(
     () =>
       getReleaseFilterConfig<TWorkItemFilterProperty>("release_id")({
-        isEnabled: isFilterEnabled("release_id"),
+        isEnabled: isReleaseFilterEnabled,
         filterIcon: ReleaseIcon,
-        getOptionIcon: () => undefined,
-        releases,
+        releases: releases ?? [],
         ...operatorConfigs,
       }),
-    [isFilterEnabled, releases, operatorConfigs]
+    [isReleaseFilterEnabled, releases, operatorConfigs]
   );
 
   // project filter config

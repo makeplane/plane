@@ -64,10 +64,7 @@ export const isSidebarFeatureEnabled = (featureKey: string, workspaceSlug: strin
         store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED)
       );
     case "releases":
-      return (
-        isFeatureFlagEnabled &&
-        store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED)
-      );
+      return store.releaseStore.isReleasesEnabled(workspaceSlug);
     default:
       return isFeatureFlagEnabled;
   }

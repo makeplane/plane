@@ -23,7 +23,7 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 
 import { RELEASE_ERROR_DETAILS } from "@plane/constants";
 
-import { RELEASES } from "@/constants/fetch-keys";
+import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
 import { DEFAULT_RELEASE_STATE } from "@/constants/release";
 import useKeypress from "@/hooks/use-keypress";
 import releaseService from "@/services/release.service";
@@ -128,7 +128,7 @@ export const CreateUpdateReleaseModal = observer(function CreateUpdateReleaseMod
           await releaseService.create(workspaceSlug, data);
         }
 
-        await mutate(RELEASES(workspaceSlug));
+        await mutate(WORKSPACE_RELEASES(workspaceSlug));
 
         setToast({
           type: TOAST_TYPE.SUCCESS,

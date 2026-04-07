@@ -12,8 +12,6 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { SidebarSections } from "../issue-detail/sidebar-sections";
@@ -28,7 +26,6 @@ type PeekOverviewPropertiesProps = {
 
 export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: PeekOverviewPropertiesProps) {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
-  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col gap-4 py-6 w-full">

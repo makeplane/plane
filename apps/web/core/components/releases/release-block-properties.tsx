@@ -19,7 +19,7 @@ import { mutate } from "swr";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { DateDropdown } from "@/components/dropdowns/date";
-import { RELEASES } from "@/constants/fetch-keys";
+import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
 import { useReleases } from "@/hooks/store/use-releases";
 import { ReleaseLabelDropdown } from "./modal/release-label-dropdown";
 import { ReleaseStateDropdown } from "./modal/release-state-dropdown";
@@ -47,7 +47,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
       await releaseStore.updateRelease(workspaceSlug, release.id, patch);
       const { description_html: _html, description_json: _json, ...optimisticPatch } = patch;
       await mutate(
-        RELEASES(workspaceSlug),
+        WORKSPACE_RELEASES(workspaceSlug),
         (current: Release[] | undefined) =>
           (current ?? []).map((r) => (r.id === release.id ? { ...r, ...optimisticPatch } : r)),
         { revalidate: false }

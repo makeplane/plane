@@ -13,11 +13,12 @@
 
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import type { Release, ReleaseWrite } from "@plane/types";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import releaseService from "@/services/release.service";
 import type { RootStore } from "@/plane-web/store/root.store";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { ReleaseInstance } from "./release-instance";
 
 export interface IReleaseStore {
@@ -33,6 +34,7 @@ export interface IReleaseStore {
   // computed fns
   getReleaseIdsByWorkspaceSlug: (workspaceSlug: string) => string[];
   getReleaseById: (releaseId: string) => ReleaseInstance | undefined;
+  isReleasesEnabled: (workspaceSlug: string) => boolean;
   // actions
   fetchReleases: (workspaceSlug: string) => Promise<Release[]>;
   fetchReleaseDetails: (workspaceSlug: string, releaseId: string) => Promise<Release>;
@@ -97,6 +99,20 @@ export class ReleaseStore implements IReleaseStore {
   };
 
   getReleaseById = computedFn((releaseId: string) => this.releasesMap.get(releaseId));
+
+  isReleasesEnabled = computedFn((workspaceSlug: string): boolean => {
+    if (!workspaceSlug) return false;
+
+    const isFeatureFlagEnabled = this.rootStore.featureFlags.getFeatureFlag(
+      workspaceSlug,
+      E_FEATURE_FLAGS.RELEASES,
+      false
+    );
+    const workspaceFeatures = this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(
+      EWorkspaceFeatures.IS_RELEASES_ENABLED
+    );
+    return isFeatureFlagEnabled && workspaceFeatures;
+  });
 
   private addReleaseToMap = (workspaceSlug: string, release: Release): ReleaseInstance => {
     const instance = new ReleaseInstance(release, {

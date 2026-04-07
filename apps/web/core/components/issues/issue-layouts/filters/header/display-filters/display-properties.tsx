@@ -24,8 +24,8 @@ import type { IIssueDisplayProperties } from "@plane/types";
 import { FilterHeader } from "../helpers/filter-header";
 // lib
 import { store } from "@/lib/store-context";
-import { useCustomers, useFeatureFlags, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { useReleases } from "@/hooks/store/use-releases";
+import { useCustomers, useFeatureFlags } from "@/plane-web/hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -54,9 +54,11 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   // derived values
   const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
   // store hooks
-  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { getFeatureFlag } = useFeatureFlags();
   const { isCustomersFeatureEnabled } = useCustomers();
+  const {
+    release: { isReleasesEnabled },
+  } = useReleases();
   // plane web store
   const isWorkItemTypeEnabled = projectId
     ? store.workItemTypeBridge.isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString())
@@ -78,7 +80,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
       case "customer_request_count":
         return isCustomersFeatureEnabled;
       case "releases":
-        return isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+        return workspaceSlug ? isReleasesEnabled(workspaceSlug) : false;
       default:
         return true;
     }

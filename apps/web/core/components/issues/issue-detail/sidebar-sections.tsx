@@ -49,9 +49,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
-import { useFlag, useIssueTypes, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { E_FEATURE_FLAGS } from "@plane/constants";
-import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useReleases } from "@/hooks/store/use-releases";
 
 type Props = {
   workspaceSlug: string;
@@ -74,8 +73,10 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
   const { getUserDetails } = useMember();
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
-  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { getIssueTypeById } = useIssueTypes();
+  const {
+    release: { isReleasesEnabled },
+  } = useReleases();
 
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -86,9 +87,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
   const hasCustomProperties = issue.type_id
     ? (getIssueTypeById(issue.type_id)?.activeProperties?.length ?? 0) > 0
     : false;
-  const isReleasesFeatureEnabled =
-    useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES) &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+  const isReleasesFeatureEnabled = isReleasesEnabled(workspaceSlug);
   const hasProjectStructureProperties =
     projectDetails?.cycle_view ||
     projectDetails?.module_view ||

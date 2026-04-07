@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { ReleaseDropdown } from "@/components/dropdowns/release/dropdown";
+import { useReleases } from "@/hooks/store/use-releases";
 
 type TReleaseValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;
@@ -39,6 +40,12 @@ export const ReleaseValueSelect = observer(function ReleaseValueSelect(props: TR
     onReleaseValueChange,
   } = props;
   const { t } = useTranslation();
+  const {
+    release: { isReleasesEnabled },
+  } = useReleases();
+  const isReleaseAccessEnabled = workspaceSlug ? isReleasesEnabled(workspaceSlug) : false;
+
+  if (!isReleaseAccessEnabled) return null;
 
   return (
     <>

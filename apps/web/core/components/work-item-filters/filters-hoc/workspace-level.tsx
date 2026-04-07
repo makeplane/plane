@@ -62,10 +62,11 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   } = useMember();
   const { getWorkspaceLabelIds } = useLabel();
   const {
-    release: { getReleaseIdsByWorkspaceSlug },
+    release: { getReleaseIdsByWorkspaceSlug, isReleasesEnabled },
   } = useReleases();
   const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   // derived values
+  const isReleasesFeatureEnabled = isReleasesEnabled(workspaceSlug);
   const hasWorkspaceAdminLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -201,7 +202,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
         memberIds={getWorkspaceMemberIds(workspaceSlug)}
         labelIds={getWorkspaceLabelIds(workspaceSlug)}
         projectIds={joinedProjectIds}
-        releaseIds={allReleaseIds}
+        releaseIds={isReleasesFeatureEnabled ? allReleaseIds : undefined}
         viewOptions={{
           saveViewOptions,
           updateViewOptions,

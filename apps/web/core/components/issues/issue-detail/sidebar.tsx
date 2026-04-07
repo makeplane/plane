@@ -12,8 +12,6 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TIssueOperations } from "./root";
 import { SidebarSections } from "./sidebar-sections";
@@ -27,7 +25,6 @@ type Props = {
 };
 
 export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
-  const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
 
   return (
