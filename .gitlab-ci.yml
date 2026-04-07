@@ -55,7 +55,7 @@ variables:
     <<: *pnpm_cache
   before_script:
     - command -v git || (command -v apk && apk add --no-cache git)
-    - export PATH="/opt/homebrew/bin:$PATH"
+    - if [ "$(uname)" = "Darwin" ]; then export PATH="/opt/homebrew/bin:$PATH"; fi
     - command -v pnpm || corepack enable pnpm
     - pnpm config set store-dir $PNPM_STORE_PATH
     - pnpm install --prefer-frozen-lockfile
