@@ -408,8 +408,11 @@ deploy:test:
   interruptible: false
   before_script:
     - *deploy_before
+    # Skip deploy if TEST_SERVER is not configured (e.g. during local CI testing)
+    - '[ -n "$TEST_SERVER" ] || { echo "TEST_SERVER not set — skipping deploy"; exit 0; }'
     - ssh-keyscan -H $TEST_SERVER >> ~/.ssh/known_hosts
   script:
+    - '[ -n "$TEST_SERVER" ] || exit 0'
     - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$SSH_PASSWORD_TEST" scp dist/*.tar.gz dist/.shb-version $SSH_USER_TEST@$TEST_SERVER:/tmp/plane-deploy/
     - sshpass -p "$SSH_PASSWORD_TEST" scp scripts/ci-deploy.sh $SSH_USER_TEST@$TEST_SERVER:/tmp/ci-deploy.sh
@@ -429,8 +432,11 @@ deploy:production:
   interruptible: false
   before_script:
     - *deploy_before
+    # Skip deploy if PROD_SERVER is not configured
+    - '[ -n "$PROD_SERVER" ] || { echo "PROD_SERVER not set — skipping deploy"; exit 0; }'
     - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
   script:
+    - '[ -n "$PROD_SERVER" ] || exit 0'
     - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
     - sshpass -p "$SSH_PASSWORD_PROD" scp dist/*.tar.gz dist/.shb-version $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
     - sshpass -p "$SSH_PASSWORD_PROD" scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
