@@ -89,6 +89,12 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
   const isReleasesFeatureEnabled =
     useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES) &&
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+  const hasProjectStructureProperties =
+    projectDetails?.cycle_view ||
+    projectDetails?.module_view ||
+    isCustomersFeatureEnabled ||
+    isMilestonesFeatureEnabled ||
+    isReleasesFeatureEnabled;
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-1 overflow-y-auto">
@@ -96,7 +102,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
         <div className="flex items-center justify-between w-full">
           <h5 className="text-body-sm-semibold text-primary">{t("common.properties")}</h5>
           {/* Compact updated-ago row */}
-          {(issue.last_activity_at || issue.updated_at) && (
+          {(issue.last_activity_at || issue.updated_at) && !isPeekView && (
             <div className="flex items-center gap-1.5 text-caption-sm-regular text-tertiary">
               <span>Updated {calculateTimeAgo(issue.last_activity_at ?? issue.updated_at)}</span>
               <Tooltip
@@ -181,75 +187,83 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
             />
           </EntityDetailSidebarGroup>
 
-          <EntityDetailDivider />
+          {hasProjectStructureProperties && (
+            <>
+              <EntityDetailDivider />
 
-          {/* Project structure section */}
-          <EntityDetailSidebarGroup label={t("common.project_structure")}>
-            {projectDetails?.cycle_view && (
-              <EntityDetailPropertyField
-                icon={CycleIcon}
-                label={t("common.cycle")}
-                appendElement={<TransferHopInfo workItem={issue} />}
-              >
-                <IssueCycleSelect
-                  className="w-full grow h-7.5"
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  issueOperations={issueOperations}
-                  disabled={!isEditable}
-                />
-              </EntityDetailPropertyField>
-            )}
+              {/* Project structure section */}
+              <EntityDetailSidebarGroup label={t("common.project_structure")}>
+                {projectDetails?.cycle_view && (
+                  <EntityDetailPropertyField
+                    icon={CycleIcon}
+                    label={t("common.cycle")}
+                    appendElement={<TransferHopInfo workItem={issue} />}
+                  >
+                    <IssueCycleSelect
+                      className="w-full grow h-7.5"
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      issueId={issueId}
+                      issueOperations={issueOperations}
+                      disabled={!isEditable}
+                    />
+                  </EntityDetailPropertyField>
+                )}
 
-            {projectDetails?.module_view && (
-              <EntityDetailPropertyField icon={ModuleIcon} label={t("common.modules")}>
-                <IssueModuleSelect
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  issueId={issueId}
-                  issueOperations={issueOperations}
-                  disabled={!isEditable}
-                />
-              </EntityDetailPropertyField>
-            )}
+                {projectDetails?.module_view && (
+                  <EntityDetailPropertyField icon={ModuleIcon} label={t("common.modules")}>
+                    <IssueModuleSelect
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      issueId={issueId}
+                      issueOperations={issueOperations}
+                      disabled={!isEditable}
+                    />
+                  </EntityDetailPropertyField>
+                )}
 
-            {isCustomersFeatureEnabled && (
-              <WorkItemSidebarCustomers workItemId={issueId} workspaceSlug={workspaceSlug} isPeekView={isPeekView} />
-            )}
+                {isCustomersFeatureEnabled && (
+                  <WorkItemSidebarCustomers
+                    workItemId={issueId}
+                    workspaceSlug={workspaceSlug}
+                    isPeekView={isPeekView}
+                  />
+                )}
 
-            {isMilestonesFeatureEnabled && (
-              <WorkItemSideBarMilestoneItem
-                projectId={projectId}
-                milestoneId={issue.milestone_id}
-                updateWorkItemMilestone={(milestoneId) =>
-                  issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
-                }
-              />
-            )}
+                {isMilestonesFeatureEnabled && (
+                  <WorkItemSideBarMilestoneItem
+                    projectId={projectId}
+                    milestoneId={issue.milestone_id}
+                    updateWorkItemMilestone={(milestoneId) =>
+                      issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
+                    }
+                  />
+                )}
 
-            {isReleasesFeatureEnabled && (
-              <EntityDetailPropertyField icon={ReleaseIcon} label={t("workspace_settings.settings.releases.title")}>
-                <ReleaseSelect
-                  workspaceSlug={workspaceSlug}
-                  issueId={issueId}
-                  onChange={(updatedIds) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, {
-                      release_ids: updatedIds,
-                    })
-                  }
-                  releaseIds={issue?.release_ids}
-                  disabled={!isEditable}
-                  className="group w-full grow h-7.5"
-                  buttonVariant="transparent-with-text"
-                  buttonContainerClassName="w-full text-left h-7.5"
-                  dropdownArrow
-                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-                  hideIcon
-                />
-              </EntityDetailPropertyField>
-            )}
-          </EntityDetailSidebarGroup>
+                {isReleasesFeatureEnabled && (
+                  <EntityDetailPropertyField icon={ReleaseIcon} label={t("workspace_settings.settings.releases.title")}>
+                    <ReleaseSelect
+                      workspaceSlug={workspaceSlug}
+                      issueId={issueId}
+                      onChange={(updatedIds) =>
+                        issueOperations.update(workspaceSlug, projectId, issueId, {
+                          release_ids: updatedIds,
+                        })
+                      }
+                      releaseIds={issue?.release_ids}
+                      disabled={!isEditable}
+                      className="group w-full grow h-7.5"
+                      buttonVariant="transparent-with-text"
+                      buttonContainerClassName="w-full text-left h-7.5"
+                      dropdownArrow
+                      dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                      hideIcon
+                    />
+                  </EntityDetailPropertyField>
+                )}
+              </EntityDetailSidebarGroup>
+            </>
+          )}
 
           {/* Custom properties section */}
           {issue.type_id && hasCustomProperties && (

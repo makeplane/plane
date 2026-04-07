@@ -17,6 +17,7 @@ import { EntityDetailWidgetToolbar } from "@plane/blocks/entity-detail";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, ViewsIcon, RelationPropertyIcon, PageIcon, DependencyPropertyIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
@@ -67,11 +68,15 @@ export function IssueDetailWidgetActionButtons(props: Props) {
               <DependencyActionButton
                 issueId={issueId}
                 customButton={
-                  <EntityDetailWidgetToolbar.DropdownButton
-                    icon={<DependencyPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-                    disabled={disabled}
-                    ariaLabel={t("issue.add.dependency")}
-                  />
+                  <Tooltip tooltipContent={t("issue.add.dependency")}>
+                    <span>
+                      <EntityDetailWidgetToolbar.DropdownButton
+                        icon={<DependencyPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                        disabled={disabled}
+                        ariaLabel={t("issue.add.dependency")}
+                      />
+                    </span>
+                  </Tooltip>
                 }
                 disabled={disabled}
                 issueServiceType={issueServiceType}
@@ -81,11 +86,15 @@ export function IssueDetailWidgetActionButtons(props: Props) {
               <RelationActionButton
                 issueId={issueId}
                 customButton={
-                  <EntityDetailWidgetToolbar.DropdownButton
-                    icon={<RelationPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-                    disabled={disabled}
-                    ariaLabel={t("issue.add.relation")}
-                  />
+                  <Tooltip tooltipContent={t("issue.add.relation")}>
+                    <span>
+                      <EntityDetailWidgetToolbar.DropdownButton
+                        icon={<RelationPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                        disabled={disabled}
+                        ariaLabel={t("issue.add.relation")}
+                      />
+                    </span>
+                  </Tooltip>
                 }
                 disabled={disabled}
                 issueServiceType={issueServiceType}
@@ -98,11 +107,15 @@ export function IssueDetailWidgetActionButtons(props: Props) {
             {!hideWidgets?.includes("links") && (
               <IssueLinksActionButton
                 customButton={
-                  <EntityDetailWidgetToolbar.IconButton
-                    icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
-                    disabled={disabled}
-                    ariaLabel={t("issue.add.link")}
-                  />
+                  <Tooltip tooltipContent={t("issue.add.link")}>
+                    <span>
+                      <EntityDetailWidgetToolbar.IconButton
+                        icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+                        disabled={disabled}
+                        ariaLabel={t("issue.add.link")}
+                      />
+                    </span>
+                  </Tooltip>
                 }
                 disabled={disabled}
                 issueServiceType={issueServiceType}
@@ -114,11 +127,15 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                 projectId={projectId}
                 issueId={issueId}
                 customButton={
-                  <EntityDetailWidgetToolbar.IconButton
-                    icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
-                    disabled={disabled}
-                    ariaLabel={t("common.attach")}
-                  />
+                  <Tooltip tooltipContent={t("common.attach")}>
+                    <span>
+                      <EntityDetailWidgetToolbar.IconButton
+                        icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+                        disabled={disabled}
+                        ariaLabel={t("common.attach")}
+                      />
+                    </span>
+                  </Tooltip>
                 }
                 disabled={disabled}
                 issueServiceType={issueServiceType}
@@ -134,11 +151,15 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                 disabled={disabled}
                 workItemId={issueId}
                 customButton={
-                  <EntityDetailWidgetToolbar.IconButton
-                    icon={<PageIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
-                    disabled={disabled}
-                    ariaLabel={t("issue.pages.link_pages")}
-                  />
+                  <Tooltip tooltipContent={t("issue.pages.link_pages")}>
+                    <span>
+                      <EntityDetailWidgetToolbar.IconButton
+                        icon={<PageIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+                        disabled={disabled}
+                        ariaLabel={t("issue.pages.link_pages")}
+                      />
+                    </span>
+                  </Tooltip>
                 }
               />
             </EntityDetailWidgetToolbar.Section>

@@ -11,9 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { MinusCircle } from "lucide-react";
+import { MinusCircle, MoreHorizontal } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // ui
@@ -45,6 +45,8 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
   // router
   const router = useAppRouter();
   const { t } = useTranslation();
+  // ref
+  const actionSectionRef = useRef<HTMLSpanElement | null>(null);
   // state
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // hooks
@@ -87,15 +89,29 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
           />
         )}
       </ControlLink>
-
       <CustomMenu
         onOpen={() => setIsMenuOpen(true)}
-        onMenuClose={() => setIsMenuOpen(false)}
+        customButton={
+          <span
+            ref={actionSectionRef}
+            className={cn(
+              "grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm transition-opacity",
+              {
+                "hidden group-hover/parent:block": !isMenuOpen,
+                block: isMenuOpen,
+              }
+            )}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <MoreHorizontal className="size-4" />
+          </span>
+        }
         ellipsis
         placement="bottom-end"
         optionsClassName="p-1.5"
-        buttonClassName={cn("group-hover/parent:block transition-opacity", {
-          hidden: !isMenuOpen,
+        buttonClassName={cn("transition-opacity", {
+          "hidden group-hover/parent:block": !isMenuOpen,
+          block: isMenuOpen,
         })}
       >
         <div className="border-b border-strong text-11 font-medium text-secondary">{t("issue.sibling.label")}</div>

@@ -31,7 +31,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
 
   return (
-    <div className="px-6 py-6">
+    <div className="px-6 py-6 overflow-hidden overflow-y-auto h-full">
       <SidebarSections
         workspaceSlug={workspaceSlug}
         projectId={projectId}

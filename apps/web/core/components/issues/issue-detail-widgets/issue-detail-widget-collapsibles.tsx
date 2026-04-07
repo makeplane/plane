@@ -62,6 +62,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
     subIssues: { subIssuesByIssueId },
     attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
+    pages: { getPagesByIssueId },
   } = useIssueDetail(issueServiceType);
   const { isCustomersFeatureEnabled } = useCustomers();
   // derived values
@@ -71,18 +72,31 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   const RELATION_OPTIONS = useCustomRelationOptions();
   const dependenciesCount = getRelationCountByIssueId(issueId, DEPENDENCY_OPTIONS);
   const relationsCount = getRelationCountByIssueId(issueId, RELATION_OPTIONS);
+  const issuePages = getPagesByIssueId(issueId);
+  const pagesCount = issuePages.length;
   // render conditions
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0 && !hideWidgets?.includes("sub-work-items");
   const shouldRenderDependencies = dependenciesCount > 0 && !hideWidgets?.includes("dependencies");
   const shouldRenderRelations = relationsCount > 0 && !hideWidgets?.includes("relations");
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0 && !hideWidgets?.includes("links");
   const shouldRenderCustomerRequest = Boolean(issue?.customer_request_ids?.length) && !issue?.is_epic;
-  const shouldRenderPages = !hideWidgets?.includes("pages");
+  const shouldRenderPages = !hideWidgets?.includes("pages") && pagesCount > 0;
   const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
   const attachmentsCount = getAttachmentsCountByIssueId(issueId);
   const shouldRenderAttachments =
     attachmentsCount > 0 ||
     (!!attachmentUploads && attachmentUploads.length > 0 && !hideWidgets?.includes("attachments"));
+
+  const shouldRenderAnyWidget =
+    shouldRenderSubIssues ||
+    shouldRenderDependencies ||
+    shouldRenderRelations ||
+    shouldRenderLinks ||
+    shouldRenderAttachments ||
+    (shouldRenderCustomerRequest && isCustomersFeatureEnabled) ||
+    shouldRenderPages;
+
+  if (!issue || !shouldRenderAnyWidget) return <></>;
 
   return (
     <div className="flex flex-col">

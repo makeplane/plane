@@ -197,7 +197,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                     percentage={selectedState?.order}
                   />
                 )}
-                <div className="flex items-center gap-1.5 flex-grow">
+                <div className="flex items-center gap-1.5 flex-grow truncate">
                   {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
                     <span className="truncate text-left">{selectedState?.name ?? t("state")}</span>
                   )}
