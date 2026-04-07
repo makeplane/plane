@@ -208,11 +208,28 @@ backend:test:shell:
 #   :shell  — Shell executor, docker runs on host (air-gapped, IS_AIRGAPPED=true)
 # =============================================================================
 
+# ─── Build Template (Shell Executor — macOS / Linux / Windows/Git Bash) ──────
+# Runner prerequisite (Windows): install Git for Windows, configure runner shell = "bash"
+
+.build_shell_base:
+  stage: build
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    # Detect Docker socket: unix socket on macOS/Linux, named pipe on Windows (Git Bash)
+    - |
+      case "$(uname -s)" in
+        Darwin|Linux) export DOCKER_HOST="unix:///var/run/docker.sock" ;;
+        *)            export DOCKER_HOST="npipe:////./pipe/docker_engine" ;;
+      esac
+
 # ─── Build Template (Docker Executor + DinD) ──────────────────────────────────
 
 .build_docker_base:
   stage: build
   image: docker:latest
+  tags:
+    - docker  # requires a Docker executor runner — never runs on Mac shell runner
   services:
     - docker:dind
   variables:
@@ -251,11 +268,7 @@ build:web:docker:
 # Docker runs on host — no DinD, use local daemon via unix socket
 # Also produces .shb-version and version.env (dotenv) for the release stage
 build:web:shell:
-  stage: build
-  variables:
-    # Use local Docker daemon (not DinD) and reset TLS so the host socket is used
-    DOCKER_HOST: ""
-    DOCKER_TLS_CERTDIR: ""
+  extends: .build_shell_base
   script:
     # Extract version from package.json — used as Docker tag + tar.gz filename
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
@@ -300,10 +313,7 @@ build:admin:docker:
 
 # Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
 build:admin:shell:
-  stage: build
-  variables:
-    DOCKER_HOST: ""
-    DOCKER_TLS_CERTDIR: ""
+  extends: .build_shell_base
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
@@ -342,10 +352,7 @@ build:api:docker:
 
 # Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
 build:api:shell:
-  stage: build
-  variables:
-    DOCKER_HOST: ""
-    DOCKER_TLS_CERTDIR: ""
+  extends: .build_shell_base
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
