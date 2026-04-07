@@ -81,7 +81,7 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
           <IssueIdentifier
             projectId={parentIssue.project_id}
             issueId={parentIssue.id}
-            size="xs"
+            size="md"
             variant="secondary"
             showWorkItemTypeName
           />

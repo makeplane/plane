@@ -18,10 +18,10 @@ import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize
 import { cn, formatProjectIdentifierForDisplay } from "@plane/utils";
 
 const SIZE_MAP: Record<TIssueIdentifierSize, string> = {
-  xs: "text-body-xs-regular",
-  sm: "text-body-xs-medium",
-  md: "text-body-sm-medium",
-  lg: "text-body-md-medium",
+  xs: "text-caption-sm-regular",
+  sm: "text-caption-sm-medium",
+  md: "text-caption-md-medium",
+  lg: "text-caption-lg-medium",
 };
 
 const VARIANT_MAP: Record<TIdentifierTextVariant, string> = {

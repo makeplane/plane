@@ -57,8 +57,15 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
   const isStateTransition = activity.field === "state";
   const durationSeconds = isStateTransition ? getStateDurationByActivityId(activityId) : undefined;
   const oldBadge = <DurationBadge seconds={durationSeconds} stateName={activity.old_value ?? undefined} />;
+
+  // For state transitions, use actual state icons with colors
+  const oldState = isStateTransition && activity.old_identifier ? getStateById(activity.old_identifier) : undefined;
+  const newState = isStateTransition && activity.new_identifier ? getStateById(activity.new_identifier) : undefined;
+
+  // Don't show live duration badge for terminal states (completed/cancelled)
+  const isTerminalState = newState?.group === "completed" || newState?.group === "cancelled";
   const newBadge =
-    isLast && isStateTransition ? (
+    isLast && isStateTransition && !isTerminalState ? (
       <DurationBadge
         seconds={(Date.now() - new Date(activity.created_at).getTime()) / 1000}
         stateName={activity.new_value ?? undefined}
@@ -77,10 +84,6 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
     />
   );
   const actor = resolveActorInfo(activity);
-
-  // For state transitions, use actual state icons with colors
-  const oldState = isStateTransition && activity.old_identifier ? getStateById(activity.old_identifier) : undefined;
-  const newState = isStateTransition && activity.new_identifier ? getStateById(activity.new_identifier) : undefined;
   const oldStateIcon = oldState ? (
     <StateGroupIcon stateGroup={oldState.group} color={oldState.color} size={EIconSize.MD} />
   ) : undefined;
