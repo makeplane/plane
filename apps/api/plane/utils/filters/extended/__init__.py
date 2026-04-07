@@ -12,10 +12,9 @@
 # Extended filters module - enhanced versions of base filter utilities
 
 from .converters import ExtendedLegacyToRichFiltersConverter
-from .filterset import ExtendedIssueFilterSet, InitiativeFilterSet
+from .filterset import InitiativeFilterSet
 
 __all__ = [
     "ExtendedLegacyToRichFiltersConverter",
-    "ExtendedIssueFilterSet",
     "InitiativeFilterSet",
 ]

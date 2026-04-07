@@ -20,9 +20,7 @@ from .filterset import BaseFilterSet, IssueFilterSet
 from .extended.converters import (
     ExtendedLegacyToRichFiltersConverter as LegacyToRichFiltersConverter,  # noqa: F811
 )
-from .extended.filter_backend import ExtendedComplexFilterBackend as ComplexFilterBackend  # noqa: F811
 from .extended.filterset import (
-    ExtendedIssueFilterSet as IssueFilterSet,  # noqa: F811
     InitiativeFilterSet,
 )
 
