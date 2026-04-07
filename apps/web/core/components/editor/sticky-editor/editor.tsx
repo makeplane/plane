@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 // plane constants
 import type { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
@@ -74,11 +74,13 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
-  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
-    return !!ref && typeof ref === "object" && "current" in ref;
-  }
-  // derived values
-  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+
+  // Stable wrapper to safely access ref inside callbacks
+  const getEditorRef = useCallback((): EditorRefApi | null => {
+    if (!ref) return null;
+    if (typeof ref === "function") return null;
+    return ref.current ?? null;
+  }, [ref]);
 
   return (
     <div
@@ -115,16 +117,16 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
         >
           <StickyEditorToolbar
             executeCommand={(item) => {
-              // TODO: update this while toolbar homogenization
-              // @ts-expect-error type mismatch here
-              editorRef?.executeMenuItemCommand({
-                itemKey: item.itemKey,
-                ...item.extraProps,
-              });
+              const editorRef = getEditorRef();
+              if (editorRef) {
+                editorRef.executeMenuItemCommand({
+                  itemKey: item.itemKey,
+                  ...item.extraProps,
+                });
+              }
             }}
             handleDelete={handleDelete}
             handleColorChange={handleColorChange}
-            editorRef={editorRef}
           />
         </div>
       )}

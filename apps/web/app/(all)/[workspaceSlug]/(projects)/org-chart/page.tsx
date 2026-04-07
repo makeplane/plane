@@ -20,12 +20,12 @@ function OrgChartPage() {
 
   useEffect(() => {
     if (!workspaceSlug) return;
-    setIsLoading(true);
+    queueMicrotask(() => setIsLoading(true));
     orgChartService
       .getOrgChart(workspaceSlug)
-      .then(setDepartments)
-      .catch(() => setDepartments([]))
-      .finally(() => setIsLoading(false));
+      .then((data) => queueMicrotask(() => setDepartments(data)))
+      .catch(() => queueMicrotask(() => setDepartments([])))
+      .finally(() => queueMicrotask(() => setIsLoading(false)));
   }, [workspaceSlug]);
 
   return (

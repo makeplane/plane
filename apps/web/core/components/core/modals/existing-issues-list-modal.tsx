@@ -125,13 +125,13 @@ export function ExistingIssuesListModal(props: Props) {
 
   useEffect(() => {
     if (isOpen && !hasInitializedSelection.current && selectedWorkItemIds && issues.length > 0) {
-      setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
+      queueMicrotask(() => setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id))));
       hasInitializedSelection.current = true;
     }
   }, [isOpen, issues, selectedWorkItemIds]);
 
   useEffect(() => {
-    handleSearch();
+    queueMicrotask(() => handleSearch());
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, workspaceSlug]);
 
   const filteredIssues = issues.filter((issue) => !shouldHideIssue?.(issue));

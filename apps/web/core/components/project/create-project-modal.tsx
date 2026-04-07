@@ -42,8 +42,8 @@ export function CreateProjectModal(props: Props) {
 
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep(EProjectCreationSteps.CREATE_PROJECT);
-      setCreatedProjectId(null);
+      queueMicrotask(() => setCurrentStep(EProjectCreationSteps.CREATE_PROJECT));
+      queueMicrotask(() => setCreatedProjectId(null));
     }
   }, [isOpen]);
 

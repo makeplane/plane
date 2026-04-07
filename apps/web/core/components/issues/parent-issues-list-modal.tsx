@@ -73,8 +73,8 @@ export function ParentIssuesListModal({
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
 
-    setIsSearching(true);
-    setIsLoading(true);
+    queueMicrotask(() => setIsSearching(true));
+    queueMicrotask(() => setIsLoading(true));
 
     projectService
       .projectIssuesSearch(workspaceSlug, projectId, {
@@ -84,10 +84,10 @@ export function ParentIssuesListModal({
         workspace_search: false,
         epic: searchEpic ? true : undefined,
       })
-      .then((res) => setIssues(res))
+      .then((res) => queueMicrotask(() => setIssues(res)))
       .finally(() => {
-        setIsSearching(false);
-        setIsLoading(false);
+        queueMicrotask(() => setIsSearching(false));
+        queueMicrotask(() => setIsLoading(false));
       });
   }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
 

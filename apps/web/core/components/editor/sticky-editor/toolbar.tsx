@@ -57,7 +57,7 @@ export function StickyEditorToolbar(props: Props) {
   useEffect(() => {
     if (!editorRef) return;
     const unsubscribe = editorRef.onStateChange(updateActiveStates);
-    updateActiveStates();
+    queueMicrotask(() => updateActiveStates());
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
 

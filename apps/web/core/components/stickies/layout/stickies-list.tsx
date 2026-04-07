@@ -182,11 +182,11 @@ export function StickiesLayout(props: TStickiesLayout) {
   useEffect(() => {
     if (!ref?.current) return;
 
-    setContainerWidth(ref?.current.offsetWidth);
+    queueMicrotask(() => setContainerWidth(ref?.current.offsetWidth));
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
+        queueMicrotask(() => setContainerWidth(entry.contentRect.width));
       }
     });
 

@@ -136,8 +136,8 @@ export function EditorAIMenu(props: Props) {
   // reset on close
   useEffect(() => {
     if (!isOpen) {
-      setActiveTask(null);
-      setResponse(undefined);
+      queueMicrotask(() => setActiveTask(null));
+      queueMicrotask(() => setResponse(undefined));
     }
   }, [isOpen]);
 
