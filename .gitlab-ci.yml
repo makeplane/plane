@@ -2,8 +2,8 @@
 # CI/CD Pipeline — Plane SHB
 #
 # Supports two environments via IS_AIRGAPPED variable:
-#   IS_AIRGAPPED=true  (default): internal GitLab + Shell Executor (air-gapped, no internet)
-#   IS_AIRGAPPED=false          : gitlab.com + Docker Executor + DinD (internet)
+#   IS_AIRGAPPED=false (default): gitlab.com + self-hosted runner (Docker Executor, internet)
+#   IS_AIRGAPPED=true           : internal GitLab + Shell Executor (air-gapped, no internet)
 #
 # Stages: lint → test → build → deploy → release
 # CI/CD targets only 3 dynamic services: web, admin, api
@@ -27,9 +27,9 @@ variables:
   #   PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD → Prod (10.94.125.86)
   # Deploy directory — must match on ALL servers (test, prod, external VPS)
   PLANE_DIR: "/opt/shb-deploy/plane-app"
-  # Toggle: "true"  = Shell Executor + air-gapped (internal GitLab) — DEFAULT
-  #         "false" = Docker Executor + DinD (gitlab.com) — set via GitLab CI/CD Variables
-  IS_AIRGAPPED: "true"
+  # Toggle: "false" = Docker Executor + internet (gitlab.com)
+  #         "true"  = Shell Executor + air-gapped (internal GitLab)
+  IS_AIRGAPPED: "false"
   # Full git history required for turbo --affected to detect changed packages
   GIT_DEPTH: 0
 
@@ -229,7 +229,7 @@ build:web:docker:
     # Extract version from package.json — used as Docker tag + tar.gz filename
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
-    - docker build -t makeplane/plane-frontend:${SHB_VERSION} -f apps/web/Dockerfile.web .
+    - docker build --platform linux/amd64 -t makeplane/plane-frontend:${SHB_VERSION} -f apps/web/Dockerfile.web .
     - mkdir -p dist
     - docker save makeplane/plane-frontend:${SHB_VERSION} | gzip > dist/plane-frontend-${SHB_VERSION}.tar.gz
     - echo $SHB_VERSION > dist/.shb-version
@@ -285,7 +285,7 @@ build:admin:docker:
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
-    - docker build -t makeplane/plane-admin:${SHB_VERSION} -f apps/admin/Dockerfile.admin .
+    - docker build --platform linux/amd64 -t makeplane/plane-admin:${SHB_VERSION} -f apps/admin/Dockerfile.admin .
     - mkdir -p dist
     - docker save makeplane/plane-admin:${SHB_VERSION} | gzip > dist/plane-admin-${SHB_VERSION}.tar.gz
   artifacts:
@@ -327,7 +327,7 @@ build:api:docker:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
     # Build context is ./apps/api (not repo root) per Dockerfile.api requirements
-    - docker build -t makeplane/plane-backend:${SHB_VERSION} -f apps/api/Dockerfile.api ./apps/api
+    - docker build --platform linux/amd64 -t makeplane/plane-backend:${SHB_VERSION} -f apps/api/Dockerfile.api ./apps/api
     - mkdir -p dist
     - docker save makeplane/plane-backend:${SHB_VERSION} | gzip > dist/plane-backend-${SHB_VERSION}.tar.gz
   artifacts:
