@@ -222,6 +222,18 @@ backend:test:shell:
         Darwin|Linux) export DOCKER_HOST="unix:///var/run/docker.sock" ;;
         *)            export DOCKER_HOST="npipe:////./pipe/docker_engine" ;;
       esac
+    # On macOS: auto-start Docker Desktop if daemon is not running
+    - |
+      if [ "$(uname -s)" = "Darwin" ] && ! docker info >/dev/null 2>&1; then
+        echo "Docker daemon not running — starting Docker Desktop..."
+        open -a Docker
+        for i in $(seq 1 30); do
+          sleep 3
+          docker info >/dev/null 2>&1 && echo "Docker ready." && break
+          echo "  waiting... ($((i * 3))s elapsed)"
+        done
+        docker info >/dev/null 2>&1 || { echo "ERROR: Docker Desktop failed to start after 90s"; exit 1; }
+      fi
 
 # ─── Build Template (Docker Executor + DinD) ──────────────────────────────────
 
