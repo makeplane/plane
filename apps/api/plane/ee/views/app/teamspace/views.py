@@ -158,13 +158,6 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
             if issue_view.is_locked:
                 return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Only update the view if owner is updating
-            if issue_view.owned_by_id != request.user.id:
-                return Response(
-                    {"error": "Only the owner of the view can update the view"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             # Update the view
             serializer = TeamspaceViewSerializer(issue_view, data=request.data, partial=True)
             if serializer.is_valid():

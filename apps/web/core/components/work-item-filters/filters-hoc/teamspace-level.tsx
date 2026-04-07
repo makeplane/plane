@@ -63,6 +63,11 @@ export const TeamspaceLevelWorkItemFiltersHOC = observer(function TeamspaceLevel
   const { getViewById, updateView } = useTeamspaceViews();
   const { getProjectLabelIds } = useLabel();
   // derived values
+  const hasWorkspaceAdminLevelPermissions = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug
+  );
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE,
@@ -71,38 +76,16 @@ export const TeamspaceLevelWorkItemFiltersHOC = observer(function TeamspaceLevel
   const viewDetails = entityId ? getViewById(teamspaceId, entityId) : null;
   const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
   const isCurrentUserOwner = viewDetails ? viewDetails.owned_by === currentUser?.id : false;
-  const canCreateView = useMemo(
-    () =>
-      enableSaveView &&
-      !props.saveViewOptions?.isDisabled &&
-      hasWorkspaceMemberLevelPermissions &&
-      isCurrentUserMemberOfTeamspace(teamspaceId),
-    [
-      enableSaveView,
-      props.saveViewOptions?.isDisabled,
-      hasWorkspaceMemberLevelPermissions,
-      isCurrentUserMemberOfTeamspace,
-      teamspaceId,
-    ]
-  );
-  const canUpdateView = useMemo(
-    () =>
-      enableUpdateView &&
-      !props.updateViewOptions?.isDisabled &&
-      !isViewLocked &&
-      isCurrentUserMemberOfTeamspace(teamspaceId) &&
-      hasWorkspaceMemberLevelPermissions &&
-      isCurrentUserOwner,
-    [
-      enableUpdateView,
-      props.updateViewOptions?.isDisabled,
-      isViewLocked,
-      isCurrentUserMemberOfTeamspace,
-      teamspaceId,
-      hasWorkspaceMemberLevelPermissions,
-      isCurrentUserOwner,
-    ]
-  );
+  const canCreateView =
+    enableSaveView &&
+    !props.saveViewOptions?.isDisabled &&
+    hasWorkspaceMemberLevelPermissions &&
+    isCurrentUserMemberOfTeamspace(teamspaceId);
+  const canUpdateView =
+    enableUpdateView &&
+    !props.updateViewOptions?.isDisabled &&
+    !isViewLocked &&
+    (hasWorkspaceAdminLevelPermissions || isCurrentUserOwner);
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges =
@@ -171,13 +154,13 @@ export const TeamspaceLevelWorkItemFiltersHOC = observer(function TeamspaceLevel
       updateView(workspaceSlug, teamspaceId, viewDetails.id, {
         ...getViewFilterPayload(args),
       })
-        .then(() => {
+        .then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: "Your view has been updated successfully.",
-          });
-        })
+          })
+        )
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,

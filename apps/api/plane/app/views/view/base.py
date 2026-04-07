@@ -102,20 +102,13 @@ class WorkspaceViewViewSet(BaseViewSet):
         views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
         return Response(views, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView)
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
     def partial_update(self, request, slug, pk):
         with transaction.atomic():
             workspace_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
 
             if workspace_view.is_locked:
                 return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Only update the view if owner is updating
-            if workspace_view.owned_by_id != request.user.id:
-                return Response(
-                    {"error": "Only the owner of the view can update the view"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
             serializer = IssueViewSerializer(workspace_view, data=request.data, partial=True)
 
@@ -601,20 +594,13 @@ class IssueViewViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[], creator=True, model=IssueView)
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def partial_update(self, request, slug, project_id, pk):
         with transaction.atomic():
             issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug, project_id=project_id)
 
             if issue_view.is_locked:
                 return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Only update the view if owner is updating
-            if issue_view.owned_by_id != request.user.id:
-                return Response(
-                    {"error": "Only the owner of the view can update the view"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
             serializer = IssueViewSerializer(issue_view, data=request.data, partial=True)
 

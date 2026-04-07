@@ -108,38 +108,25 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     workspaceSlug,
     projectId
   );
+  const hasWorkspaceAdminLevelPermissions = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug
+  );
   const projectDetails = getProjectById(projectId);
   const viewDetails = entityId ? getViewById(entityId) : null;
-  const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
-  const isCurrentUserOwner = viewDetails ? viewDetails.owned_by === currentUser?.id : false;
-  const canCreateView = useMemo(
-    () =>
-      projectDetails?.issue_views_view === true &&
-      enableSaveView &&
-      !props.saveViewOptions?.isDisabled &&
-      hasProjectMemberLevelPermissions,
-    [
-      projectDetails?.issue_views_view,
-      enableSaveView,
-      props.saveViewOptions?.isDisabled,
-      hasProjectMemberLevelPermissions,
-    ]
-  );
-  const canUpdateView = useMemo(
-    () =>
-      enableUpdateView &&
-      !props.updateViewOptions?.isDisabled &&
-      !isViewLocked &&
-      hasProjectMemberLevelPermissions &&
-      isCurrentUserOwner,
-    [
-      enableUpdateView,
-      props.updateViewOptions?.isDisabled,
-      isViewLocked,
-      hasProjectMemberLevelPermissions,
-      isCurrentUserOwner,
-    ]
-  );
+  const isViewLocked = !!viewDetails?.is_locked;
+  const isCurrentUserOwner = viewDetails?.owned_by === currentUser?.id;
+  const canCreateView =
+    projectDetails?.issue_views_view === true &&
+    enableSaveView &&
+    !props.saveViewOptions?.isDisabled &&
+    hasProjectMemberLevelPermissions;
+  const canUpdateView =
+    enableUpdateView &&
+    !props.updateViewOptions?.isDisabled &&
+    !isViewLocked &&
+    (hasWorkspaceAdminLevelPermissions || isCurrentUserOwner);
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges =
@@ -150,7 +137,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     );
   const customPropertyIds: string[] | undefined = useMemo(() => {
     // Get custom property IDs based on entity type and feature flags
-    if (props.entityType === EIssuesStoreType.EPIC && isEpicEnabled) {
+    if (entityType === EIssuesStoreType.EPIC && isEpicEnabled) {
       // Get epic custom property IDs
       return projectEpicDetails?.properties
         ?.map((property) => property.id)
@@ -162,7 +149,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         .filter((propertyId) => propertyId !== undefined);
     }
     return undefined;
-  }, [props.entityType, isEpicEnabled, isWorkItemTypeEnabled, projectWorkItemTypes, projectEpicDetails]);
+  }, [entityType, isEpicEnabled, isWorkItemTypeEnabled, projectWorkItemTypes, projectEpicDetails]);
 
   const getDefaultViewDetailPayload: () => Partial<IProjectView> = useCallback(
     () => ({

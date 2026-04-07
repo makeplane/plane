@@ -66,6 +66,11 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   } = useReleases();
   const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   // derived values
+  const hasWorkspaceAdminLevelPermissions = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug
+  );
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE,
@@ -75,27 +80,13 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   const isDefaultView = typeof entityId === "string" && DEFAULT_GLOBAL_VIEWS_LIST.some((view) => view.key === entityId);
   const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
   const isCurrentUserOwner = viewDetails ? viewDetails.owned_by === currentUser?.id : false;
-  const canCreateView = useMemo(
-    () => enableSaveView && !props.saveViewOptions?.isDisabled && hasWorkspaceMemberLevelPermissions,
-    [enableSaveView, props.saveViewOptions?.isDisabled, hasWorkspaceMemberLevelPermissions]
-  );
-  const canUpdateView = useMemo(
-    () =>
-      enableUpdateView &&
-      !isDefaultView &&
-      !props.updateViewOptions?.isDisabled &&
-      !isViewLocked &&
-      hasWorkspaceMemberLevelPermissions &&
-      isCurrentUserOwner,
-    [
-      enableUpdateView,
-      props.updateViewOptions?.isDisabled,
-      isDefaultView,
-      isViewLocked,
-      hasWorkspaceMemberLevelPermissions,
-      isCurrentUserOwner,
-    ]
-  );
+  const canCreateView = enableSaveView && !props.saveViewOptions?.isDisabled && hasWorkspaceMemberLevelPermissions;
+  const canUpdateView =
+    enableUpdateView &&
+    !isDefaultView &&
+    !props.updateViewOptions?.isDisabled &&
+    !isViewLocked &&
+    (hasWorkspaceAdminLevelPermissions || isCurrentUserOwner);
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges =
@@ -158,13 +149,13 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
         /* No need to sync filters here as updateFilters already handles it */
         false
       )
-        .then(() => {
+        .then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: "Your view has been updated successfully.",
-          });
-        })
+          })
+        )
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
