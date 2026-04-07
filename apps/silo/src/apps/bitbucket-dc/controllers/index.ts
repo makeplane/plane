@@ -233,16 +233,11 @@ export default class BitbucketController {
           payload.actor?.id !== undefined ? payload.actor.id.toString() : (payload.actor?.slug ?? "");
         const sourceBaseUrl = getWebhookSourceBaseUrl(payload);
 
-        // Bitbucket event types contain colons (e.g. "pr:modified", "pr:opened") which conflict
-        // with the Redis store key format used by TaskManager (silo:{route}:{type}:{jobId}:{entity}).
-        // The manager splits on ":" to parse headers back, so we sanitize colons in route-level
-        // fields. The original event type is preserved in data.action for the worker to use.
-        const sanitizedEventType = eventType.replaceAll(":", "_");
-        await integrationTaskManager.registerStoreTask(
+        await integrationTaskManager.registerTask(
           {
             route: "bitbucket-dc-webhook",
-            jobId: sanitizedEventType,
-            type: sanitizedEventType,
+            jobId: deliveryId || `${eventType}-${Date.now()}`,
+            type: eventType,
           },
           {
             action: eventType,
@@ -253,8 +248,7 @@ export default class BitbucketController {
             pullRequestId: pullRequestId.toString(),
             eventActorId,
             sourceBaseUrl,
-          },
-          Number(env.DEDUP_INTERVAL)
+          }
         );
       } else {
         await integrationTaskManager.registerTask(
