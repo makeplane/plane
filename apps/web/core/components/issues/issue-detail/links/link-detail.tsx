@@ -35,8 +35,8 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
   const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   const createdByDetails = useMemo(
-    () => getUserDetails(linkDetail?.created_by_id),
-    [linkDetail?.created_by_id, getUserDetails]
+    () => (linkDetail?.created_by_id ? getUserDetails(linkDetail.created_by_id) : undefined),
+    [linkDetail, getUserDetails]
   );
   if (!linkDetail) return <></>;
 

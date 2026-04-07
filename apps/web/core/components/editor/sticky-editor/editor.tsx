@@ -75,12 +75,15 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
 
-  // Stable wrapper to safely access ref inside callbacks
+  // Stable wrapper to safely access ref inside callbacks (event handlers only, not render)
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   const getEditorRef = useCallback((): EditorRefApi | null => {
     if (!ref) return null;
     if (typeof ref === "function") return null;
     return ref.current ?? null;
   }, [ref]);
+  // eslint-disable-next-line react-hooks/refs
+  const editorRef = typeof ref === "object" && ref !== null ? ref.current : null;
 
   return (
     <div
@@ -127,6 +130,7 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
             }}
             handleDelete={handleDelete}
             handleColorChange={handleColorChange}
+            editorRef={editorRef}
           />
         </div>
       )}

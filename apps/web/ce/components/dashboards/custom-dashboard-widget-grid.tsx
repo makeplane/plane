@@ -9,14 +9,14 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import ReactGridLayout from "react-grid-layout";
+import { Responsive, WidthProvider } from "react-grid-layout";
 import type { Layout } from "react-grid-layout";
 import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { CustomDashboardWidgetCard } from "./custom-dashboard-widget-card";
 import "react-grid-layout/css/styles.css";
 
-const ResponsiveGridLayout = ReactGridLayout.WidthProvider(ReactGridLayout.Responsive);
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 /** Convert IDashboardWidget to react-grid-layout Layout item */
 function widgetToLayoutItem(widget: IDashboardWidget): Layout {
