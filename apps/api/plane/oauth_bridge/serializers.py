@@ -28,7 +28,7 @@ class ExternalTokenProviderSerializer(serializers.ModelSerializer):
             "audience",
             "jwks_url",
             "allowed_algorithms",
-            "user_claim",
+            "user_claims",
             "jwks_cache_ttl",
             "rate_limit",
             "created_at",

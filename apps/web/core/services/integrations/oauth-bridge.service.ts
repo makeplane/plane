@@ -22,7 +22,7 @@ export interface IExternalTokenProvider {
   audience: string[];
   jwks_url: string;
   allowed_algorithms: string[];
-  user_claim: string;
+  user_claims: string;
   jwks_cache_ttl: number;
   rate_limit: string | null;
   created_at: string;

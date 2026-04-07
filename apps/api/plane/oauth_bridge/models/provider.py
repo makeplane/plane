@@ -42,10 +42,10 @@ class ExternalTokenProvider(BaseModel):
     )  # e.g. ["RS256"] — only asymmetric algorithms permitted
 
     # User identity mapping
-    user_claim = models.CharField(
-        max_length=100,
+    user_claims = models.CharField(
+        max_length=255,
         default="email",
-    )  # JWT claim that contains the Plane email
+    )  # Comma-separated JWT claims to match against the Plane email (first match wins)
     jwks_cache_ttl = models.IntegerField(default=86400)  # Key cache TTL in seconds
 
     # Rate limiting — format: "<count>/<period>" e.g. "120/minute", "500/hour"

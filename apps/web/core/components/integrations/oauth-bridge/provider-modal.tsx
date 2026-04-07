@@ -43,7 +43,7 @@ const DEFAULT_VALUES: FormValues = {
   audienceInput: "",
   jwks_url: "",
   allowed_algorithms: ["RS256"],
-  user_claim: "email",
+  user_claims: "email",
   jwks_cache_ttl: 86400,
   rate_limit: null,
 };
@@ -75,7 +75,7 @@ export const ProviderModal = ({ isOpen, onClose, editProvider, onSave }: Provide
         allowed_algorithms: Array.isArray(editProvider.allowed_algorithms)
           ? editProvider.allowed_algorithms
           : ["RS256"],
-        user_claim: editProvider.user_claim,
+        user_claims: editProvider.user_claims,
         jwks_cache_ttl: editProvider.jwks_cache_ttl,
         rate_limit: editProvider.rate_limit,
       });
@@ -186,19 +186,19 @@ export const ProviderModal = ({ isOpen, onClose, editProvider, onSave }: Provide
           {/* User Claim */}
           <div className="flex flex-col gap-1">
             <label className="text-body-xs-medium">
-              {t(`${f}.user_claim_label`)} <span className="text-danger-primary">*</span>
+              {t(`${f}.user_claims_label`)} <span className="text-danger-primary">*</span>
             </label>
             <Controller
-              name="user_claim"
+              name="user_claims"
               control={control}
-              rules={{ required: t(`${f}.user_claim_required`) }}
+              rules={{ required: t(`${f}.user_claims_required`) }}
               render={({ field }) => (
-                <Input type="text" {...field} placeholder={t(`${f}.user_claim_placeholder`)} className="w-full" />
+                <Input type="text" {...field} placeholder={t(`${f}.user_claims_placeholder`)} className="w-full" />
               )}
             />
-            <p className="text-body-xs-regular text-tertiary">{t(`${f}.user_claim_description`)}</p>
-            {errors.user_claim && (
-              <p className="text-body-xs-regular text-danger-primary">{errors.user_claim.message}</p>
+            <p className="text-body-xs-regular text-tertiary">{t(`${f}.user_claims_description`)}</p>
+            {errors.user_claims && (
+              <p className="text-body-xs-regular text-danger-primary">{errors.user_claims.message}</p>
             )}
           </div>
 

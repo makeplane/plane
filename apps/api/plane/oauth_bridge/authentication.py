@@ -207,15 +207,45 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
             )
             raise AuthenticationFailed({"detail": "Token validation failed.", "code": "token_validation_failed"})
 
-        # 7. Extract user identifier from claims
-        user_identifier = payload.get(provider.user_claim)
-        if not user_identifier:
-            raise AuthenticationFailed(
-                {"detail": f"JWT claim '{provider.user_claim}' is missing or empty.", "code": "missing_claim"}
-            )
+        # 7. Extract user identifier from claims (supports comma-separated claim names)
+        claim_names = [c.strip() for c in provider.user_claims.split(",") if c.strip()]
 
-        # 8. Map to Plane user
-        user = self._resolve_user(user_identifier, provider, workspace_slug)
+        logger.debug(
+            "Mapping JWT to user using claims %s (provider config: '%s')",
+            claim_names,
+            provider.user_claims,
+        )
+
+        user = None
+        matched_claim = None
+        for claim_name in claim_names:
+            user_identifier = payload.get(claim_name)
+            
+            if not user_identifier:
+                continue
+            
+            logger.debug(
+                "Trying claim '%s' with value '%s' to resolve user",
+                claim_name,
+                user_identifier,
+            )
+            resolved = self._try_resolve_user(user_identifier)
+            if resolved:
+                logger.debug(
+                    "Resolved user %s from claim '%s' with value '%s'",
+                    resolved.id,
+                    claim_name,
+                    user_identifier,
+                )
+                user = resolved
+                matched_claim = claim_name
+                break
+
+        if user is None:
+            tried = ", ".join(f"'{c}'" for c in claim_names)
+            raise AuthenticationFailed(
+                {"detail": f"No Plane user found for JWT claims [{tried}].", "code": "missing_claim"}
+            )
 
         # 9. Verify workspace membership
         is_member = WorkspaceMember.objects.filter(
@@ -234,10 +264,11 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
             )
 
         logger.info(
-            "External JWT auth succeeded: user=%s workspace=%s provider=%s",
+            "External JWT auth succeeded: user=%s workspace=%s provider=%s claim=%s",
             user.id,
             workspace_slug,
             provider.id,
+            matched_claim,
         )
 
         # Tag the request so get_throttles() can apply the external token throttle
@@ -247,24 +278,14 @@ class ExternalOIDCTokenAuthentication(authentication.BaseAuthentication):
 
         return (user, payload)
 
-    def _resolve_user(self, identifier: str, provider, workspace_slug: str) -> User:
-        """Look up a user by the JWT identifier claim."""
+    def _try_resolve_user(self, identifier: str):
+        """Look up an active user by email. Returns None if not found or inactive."""
         try:
             user = User.objects.get(email=identifier)
         except User.DoesNotExist:
-            logger.warning(
-                "No user found for identifier '%s' in workspace %s",
-                identifier,
-                workspace_slug,
-            )
-            raise PermissionDenied({"detail": "No User found.", "code": "user_not_found"})
+            return None
 
         if not user.is_active:
-            logger.warning(
-                "User '%s' is deactivated (workspace %s)",
-                identifier,
-                workspace_slug,
-            )
-            raise PermissionDenied({"detail": "User account is deactivated.", "code": "user_inactive"})
+            return None
 
         return user
