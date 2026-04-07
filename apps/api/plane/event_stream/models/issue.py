@@ -172,7 +172,7 @@ class IssueProxy(Issue):
                             FROM information_schema.columns 
                             WHERE table_name = 'issues' 
                             AND table_schema = 'public'
-                            AND column_name NOT IN ('updated_at', 'updated_by_id', 'description_html', 'description_binary', 'description', 'description_stripped')  -- Skip description fields
+                            AND column_name NOT IN ('updated_at', 'updated_by_id', 'description_html', 'description_binary', 'description', 'description_stripped', 'last_activity_at')  -- Skip description and activity tracking fields
                         LOOP
                             -- Get old and new values as text to avoid JSON conversion issues
                             EXECUTE format('SELECT ($1).%I::text, ($2).%I::text', field_name, field_name) 

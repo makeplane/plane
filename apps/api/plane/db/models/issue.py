@@ -573,14 +573,14 @@ class IssueComment(IssueActivityMixin, ChangeTrackerMixin, ProjectBaseModel):
         }
 
         with transaction.atomic():
-            super(IssueComment, self).save(*args, **kwargs)
             if is_creating or not self.description_id:
-                # Create new description for new comment
+                # Create description first so the FK is set before the single save
                 description = Description.objects.create(**description_defaults)
                 self.description_id = description.id
 
-                super(IssueComment, self).save(update_fields=["description_id"])
-            else:
+            super(IssueComment, self).save(*args, **kwargs)
+
+            if not is_creating and self.description_id:
                 field_mapping = {
                     "comment_html": "description_html",
                     "comment_stripped": "description_stripped",
@@ -596,7 +596,7 @@ class IssueComment(IssueActivityMixin, ChangeTrackerMixin, ProjectBaseModel):
                 }
 
                 # Update description only if comment fields changed
-                if changed_fields and self.description_id:
+                if changed_fields:
                     Description.objects.filter(pk=self.description_id).update(
                         **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
                     )
