@@ -8,9 +8,7 @@ import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 
 // Pre-computed random widths for loader skeleton animation
-const LOADER_WIDTHS = [
-  "250px", "260px", "270px", "280px", "290px", "300px", "310px", "320px", "330px", "340px",
-];
+const LOADER_WIDTHS = ["250px", "260px", "270px", "280px", "290px", "300px", "310px", "320px", "330px", "340px"];
 
 export function PageLoader() {
   return (

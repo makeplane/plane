@@ -34,7 +34,10 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
   const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
-  const createdByDetails = useMemo(() => getUserDetails(linkDetail?.created_by_id), [linkDetail?.created_by_id, getUserDetails]);
+  const createdByDetails = useMemo(
+    () => getUserDetails(linkDetail?.created_by_id),
+    [linkDetail?.created_by_id, getUserDetails]
+  );
   const Icon = useMemo(() => (linkDetail ? getIconForLink(linkDetail.url) : Link2), [linkDetail?.url]);
   if (!linkDetail) return <></>;
 
