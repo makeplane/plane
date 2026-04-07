@@ -386,14 +386,28 @@ build:api:shell:
 # Deploy strategy: SCP tar.gz + scripts/ci-deploy.sh to server, then SSH execute
 # =============================================================================
 
+# ─── Deploy Before Script Template (macOS shell / Linux shell) ────────────────
+# Installs sshpass using the appropriate package manager for the runner OS.
+# macOS: brew tap hudochenkov/sshpass && brew install sshpass
+# Linux: apt-get install sshpass
+.deploy_before: &deploy_before
+  - |
+    if [ "$(uname -s)" = "Darwin" ]; then
+      export PATH="/opt/homebrew/bin:$PATH"
+      brew tap hudochenkov/sshpass 2>/dev/null || true
+      brew install sshpass 2>/dev/null || true
+    else
+      apt-get update -qq && apt-get install -y -qq sshpass
+    fi
+  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+
 # ── Deploy Test — auto on merge to develop (air-gapped internal) ──────────────
 # Auth: password-based via sshpass — variables: TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST
 deploy:test:
   stage: deploy
   interruptible: false
   before_script:
-    - apt-get update -qq && apt-get install -y -qq sshpass
-    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - *deploy_before
     - ssh-keyscan -H $TEST_SERVER >> ~/.ssh/known_hosts
   script:
     - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
@@ -414,8 +428,7 @@ deploy:production:
   stage: deploy
   interruptible: false
   before_script:
-    - apt-get update -qq && apt-get install -y -qq sshpass
-    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - *deploy_before
     - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
   script:
     - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
