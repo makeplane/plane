@@ -20,7 +20,7 @@ from django.db.models.functions import Concat
 # Module imports
 from plane.db.models import Issue
 from plane.license.utils.instance_value import get_email_configuration
-from plane.utils.analytics_plot import build_graph_plot
+from plane.utils.analytics_plot import build_graph_plot, VALID_ANALYTICS_FIELDS, VALID_YAXIS
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_filters import issue_filters
