@@ -5,7 +5,7 @@
  */
 
 import { useMemo } from "react";
-import { Link2, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { LinkIcon, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -38,7 +38,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
     () => getUserDetails(linkDetail?.created_by_id),
     [linkDetail?.created_by_id, getUserDetails]
   );
-  const Icon = useMemo(() => (linkDetail ? getIconForLink(linkDetail.url) : Link2), [linkDetail?.url]);
+  const Icon = useMemo(() => (linkDetail ? getIconForLink(linkDetail.url) : LinkIcon), [linkDetail?.url]);
   if (!linkDetail) return <></>;
 
   const toggleIssueLinkModal = (modalToggle: boolean) => {
