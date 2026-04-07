@@ -314,6 +314,23 @@ async def get_workspace_slug(workspace_id: str) -> Optional[str]:
         return None
 
 
+async def get_workspace_id_from_slug(workspace_slug: str) -> Optional[str]:
+    """Return the workspace UUID for a given slug, or None if not found."""
+    query = """
+    SELECT id
+    FROM workspaces
+    WHERE slug = $1
+      AND deleted_at IS NULL
+    LIMIT 1
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (workspace_slug,))
+        return str(result["id"]) if result else None
+    except Exception as e:
+        log.error(f"Error fetching workspace id for slug {workspace_slug}: {e}")
+        return None
+
+
 async def resolve_workspace_id_from_project_id(project_id: str) -> Optional[str]:
     """
     Resolve workspace_id from project_id.
@@ -2703,3 +2720,80 @@ def clear_oauth_credentials_cache() -> None:
     global _oauth_credentials_cache, _oauth_cache_initialized
     _oauth_credentials_cache = None
     _oauth_cache_initialized = False
+
+
+async def get_user_workspace_role(user_id: str, workspace_id: str) -> Optional[int]:
+    """Return the workspace-level role integer for a user, or None if not a member."""
+    query = """
+    SELECT role
+    FROM workspace_members
+    WHERE member_id = $1
+      AND workspace_id = $2
+      AND deleted_at IS NULL
+      AND is_active IS TRUE
+    LIMIT 1
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (user_id, workspace_id))
+        return result["role"] if result else None
+    except Exception as e:
+        log.error(f"Error fetching workspace role for user {user_id} in workspace {workspace_id}: {e}")
+        return None
+
+
+async def get_user_project_role(user_id: str, project_id: str) -> Optional[int]:
+    """Return the project-level role integer for a user, or None if not a member."""
+    query = """
+    SELECT role
+    FROM project_members
+    WHERE member_id = $1
+      AND project_id = $2
+      AND deleted_at IS NULL
+      AND is_active IS TRUE
+    LIMIT 1
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (user_id, project_id))
+        return result["role"] if result else None
+    except Exception as e:
+        log.error(f"Error fetching project role for user {user_id} in project {project_id}: {e}")
+        return None
+
+
+def get_user_workspace_role_sync(user_id: str, workspace_id: str) -> Optional[int]:
+    """Synchronous version of get_user_workspace_role for use in non-async contexts."""
+    # psycopg2 uses %s placeholders (not $1/$2 like asyncpg)
+    query = """
+    SELECT role
+    FROM workspace_members
+    WHERE member_id = %s
+      AND workspace_id = %s
+      AND deleted_at IS NULL
+      AND is_active IS TRUE
+    LIMIT 1
+    """
+    try:
+        result = PlaneDBSync.fetchrow(query, (user_id, workspace_id))
+        return result["role"] if result else None
+    except Exception as e:
+        log.error(f"Error fetching workspace role (sync) for user {user_id} in workspace {workspace_id}: {e}")
+        return None
+
+
+def get_user_project_role_sync(user_id: str, project_id: str) -> Optional[int]:
+    """Synchronous version of get_user_project_role for use in non-async contexts."""
+    query = """
+    SELECT role
+    FROM project_members
+    WHERE member_id = %s
+      AND project_id = %s
+      AND deleted_at IS NULL
+      AND is_active IS TRUE
+    LIMIT 1
+    """
+    try:
+        result = PlaneDBSync.fetchrow(query, (user_id, project_id))
+        return result["role"] if result else None
+    except Exception as e:
+        log.error(f"Error fetching project role (sync) for user {user_id} in project {project_id}: {e}")
+        return None

@@ -15,7 +15,9 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
+from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_id_from_slug
 from pi.app.schemas.pql import TextToPQLRequest
 from pi.app.schemas.pql import TextToPQLResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
@@ -32,6 +34,13 @@ async def text_to_pql(
     db: AsyncSession = Depends(get_async_session),
 ):
     """Translate a natural language query into a PQL (Plane Query Language) string."""
+    workspace_id_str = str(data.workspace_id) if data.workspace_id else None
+    if not workspace_id_str and data.workspace_slug:
+        workspace_id_str = await get_workspace_id_from_slug(data.workspace_slug)
+    if workspace_id_str:
+        guest_check = await check_guest_access(str(current_user.id), workspace_id_str)
+        if guest_check:
+            return guest_check
     try:
         result = await translate_to_pql(
             data.query,

@@ -1298,7 +1298,9 @@ def build_method_prompt(
     user_meta: Optional[Dict[str, Any]] = None,
     source: Optional[str] = None,
     websearch_enabled: bool = False,
+    is_guest_user: bool = False,
 ) -> str:
+    from pi.services.chat.prompt_mixins import RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import TOOL_CALL_REASONING_REINFORCEMENT
     from pi.services.chat.prompts import plane_context
@@ -1329,7 +1331,7 @@ Context about Plane:
 **IMPORTANT: You are in PLANNING mode with a TWO-PHASE APPROACH:**
 
 **PHASE 1 - INFORMATION GATHERING (executes immediately):**
-- Retrieval tools (search_*, *_list, *_retrieve, structured_db_tool, etc.) execute immediately
+- Retrieval tools ({"search_*, " if not is_guest_user else ''}*_list, *_retrieve, structured_db_tool, etc.) execute immediately
 - These tools gather information you need (IDs, names, etc.)
 - No user approval required for these tools
 
@@ -1392,11 +1394,11 @@ Use retrieval tools to gather information, then plan the modifying actions based
 |- When query is related to workitems and spans ALL projects without specifying a particular project or projects
 |  - DO NOT: call `entity_list(entity_type="projects")` then query each project separately
 |  - PREFER: `workitems_advanced_search` for filter-based queries (priority, state_group, assignee, labels, etc.)
-|    - Faster and cheaper than structured_db_tool
+|    {"- Faster and cheaper than structured_db_tool" if not is_guest_user else ""}
 |    - Automatically scopes to workspace (no `project_id` needed for workspace-wide queries)
 |    - Example: `workitems_advanced_search(filters={{"priority": "high"}})` for all high-priority workitems across workspace
 |    - Example: `workitems_advanced_search(filters={{"assignee_id": "<user_id>", "state_group": "started"}})` for a user's active workitems
-|  - FALLBACK: Use `structured_db_tool` WITHOUT `project_id` only for complex aggregations, counts, cross-entity joins, or queries that `workitems_advanced_search` cannot express
+|  {"- FALLBACK: Use `structured_db_tool` WITHOUT `project_id` only for complex aggregations, counts, cross-entity joins, or queries that `workitems_advanced_search` cannot express" if not is_guest_user else ""}
 |  - Example WRONG: `entity_list(entity_type="projects")` + 7x `structured_db_tool` (each with different project_id)
 |  - Example RIGHT: `workitems_advanced_search(filters={{"priority__in": ["high", "urgent"]}})` for all high/urgent workitems
 |- For project-specific queries, include the specific `project_id`
@@ -1404,7 +1406,7 @@ Use retrieval tools to gather information, then plan the modifying actions based
 **PROJECT FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING PROJECT-SCOPED ENTITIES):**
 - Cycles, modules, pages, workitem types, views, intake, epics (a special workitem type), and time-tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
 - **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, create_epic, modules_create, pages_create_*, worklogs_create, intake_create, etc.), you MUST:
-    1. First get the project_id (UUID) (via entity_search with entity_type="projects" and search_mode="by_name" or search_mode="by_identifier" (Identifier looks like 'PROJ', 'WEB' etc. It is not a UUID) if not already known)
+    1. First get the project_id (UUID) (via {"entity_search with entity_type='projects' and search_mode='by_name' or search_mode='by_identifier'" if not is_guest_user else "user entity_list with type projects to get project_id from the result based on the project name"} (Identifier looks like 'PROJ', 'WEB' etc. It is not a UUID) if not already known)
     2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled.
        - **WARNING**: Do NOT stop to ask for clarification on optional entity fields (e.g., description, priority) before this check.
        - **WARNING**: You must perform this check even if you think you need more information for the creaton.
@@ -1502,9 +1504,9 @@ Use retrieval tools to gather information, then plan the modifying actions based
   - If the user hints at volume (e.g., "a few", "several", "a dozen"), align the count accordingly.
 
 **ENTITY SEARCH FALLBACK AND DISAMBIGUATION RULES:**
-- **Lookup fallback**: If one of the search tools for a given entity type fails or returns "Invalid identifier format", immediately try the next search tool for that entity type with the same query
-    If the that too fails with an error, fallback to the structured_db_tool with an appropriate natural language query
-- **Tool failures → structured_db_tool**: If any retrieval tool (search_*, *_list, *_get, *_retrieve) fails with an error, immediately try `structured_db_tool` with an equivalent natural language query before asking for clarification
+{"- **Lookup fallback**: If one of the search tools for a given entity type fails or returns 'Invalid identifier format, immediately try the next search tool for that entity type with the same query" if not is_guest_user else ""}
+    {"If the that too fails with an error, fallback to the structured_db_tool with an appropriate natural language query" if not is_guest_user else ""}
+{"- **Tool failures → structured_db_tool**: If any retrieval tool (search_*, *_list, *_get, *_retrieve) fails with an error, immediately try `structured_db_tool` with an equivalent natural language query before asking for clarification" if not is_guest_user else ""}
 - **Multiple matches**: If the search tool for a given entity type returns multiple candidates (users, work-items, etc.), you **MUST** call `ask_for_clarification` with:
   - `reason`: "Multiple matches found for [entity_type]"
   - `questions`: ["Which [entity] did you mean?"]
@@ -1521,14 +1523,14 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
   - **Do not loop the same call.**
 
-**CRITICAL: ENTITY ID RESOLUTION AND PLACEHOLDER RULES**
+***CRITICAL: ENTITY ID RESOLUTION AND PLACEHOLDER RULES***
 
 **RULE 1: EXISTING ENTITIES - USE ACTUAL UUIDs (NO PLACEHOLDERS)**
 When the user mentions an EXISTING entity (one that already exists in Plane):
-- **YOU MUST**: Call `entity_search` FIRST to get its UUID
-  - project NAME → `entity_search(entity_type="projects", search_mode="by_name", name="...")` → extract UUID from response
-  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → `entity_search(entity_type="projects", search_mode="by_identifier", identifier="...")` → extract UUID
-  - cycle/module/label/state/user/workitem → `entity_search(entity_type="...", search_mode="by_name"|"by_identifier", ...)` → extract UUID
+- **YOU MUST**: Call {"`entity_search`" if not is_guest_user else "entity_list"} FIRST to get its UUID
+  - project NAME → {"`entity_search(entity_type='projects', search_mode='by_name', name='...')`" if not is_guest_user else "entity_list(entity_type='projects')"} → extract UUID from response
+  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → {"`entity_search(entity_type='projects', search_mode='by_identifier', identifier='...')`" if not is_guest_user else "entity_list(entity_type='projects')"} → extract UUID
+  - cycle/module/label/state/user/workitem → {"`entity_search(entity_type='...', search_mode='by_name'|'by_identifier', ...)`" if not is_guest_user else "entity_list(entity_type='...')"} → extract UUID
   - **EXCEPTION**: User pronouns ('me', 'my', 'I', 'mine') → use User ID from USER CONTEXT directly
 - **YOU MUST**: Extract the actual UUID from the search tool response (usually in the `id` field)
 - **YOU MUST**: Use that extracted UUID directly in ALL subsequent tool calls
@@ -1537,13 +1539,12 @@ When the user mentions an EXISTING entity (one that already exists in Plane):
 
 **CRITICAL - PROPERTY VALUES RESOLUTION:**
 When setting properties (state, labels, assignees, types) on work items, you MUST resolve names to IDs:
-- **state property**: "change state to done" → call `entity_search(entity_type="states", search_mode="by_name", name="done", project_id=...)` → extract `state_id` → use in action
-- **labels property**: "add label 'bug'" → call `entity_search(entity_type="labels", search_mode="by_name", name="bug", project_id=...)` → extract `label_id` → use in action
-- **assignees property**: "assign to John" → call `entity_search(entity_type="users", search_mode="by_name", name="John")` → extract `user_id` → use in action
-- **type property**: "change type to task" → call `entity_search(entity_type="types", search_mode="by_name", name="task", project_id=...)` → extract `type_id` → use in action
+- **state property**: "change state to done" → call {"`entity_search(entity_type='states', search_mode='by_name', name='done', project_id=...)`" if not is_guest_user else "entity_list(entity_type='states')"} → extract `state_id` → use in action
+- **labels property**: "add label 'bug'" → call {"`entity_search(entity_type='labels', search_mode='by_name', name='bug', project_id=...)`" if not is_guest_user else "entity_list(entity_type='labels')"} → extract `label_id` → use in action
+- **assignees property**: "assign to John" → call {"`entity_search(entity_type='users', search_mode='by_name', name='John')`" if not is_guest_user else "entity_list(entity_type='users')"} → extract `user_id` → use in action
+- **type property**: "change type to task" → call {"`entity_search(entity_type='types', search_mode='by_name', name='task', project_id=...)`" if not is_guest_user else "entity_list(entity_type='types')"} → extract `type_id` → use in action
 - **NEVER** use property names directly (e.g., `state: {{name: "backlog"}}` ❌) - always resolve to ID first (e.g., `state_id: "uuid-123-eabc3cf2e"` ✅)
-- **EXCEPTION - NEW PROJECT IN CURRENT PLAN**: If `project_id` is a placeholder for a project being created in this same plan, do NOT call `search_state_by_name`; use the state name directly in the planned action and let execution resolve it after project creation.
-
+- **EXCEPTION - NEW PROJECT IN CURRENT PLAN**: If `project_id` is a placeholder for a project being created in this same plan, do NOT call `entity_search`; use the state name directly in the planned action and let execution resolve it after project creation.
 
 **RULE 2: NEWLY CREATED ENTITIES - USE PLACEHOLDERS**
 When planning actions that depend on entities you CREATE in the CURRENT PLAN:
@@ -1558,13 +1559,13 @@ When planning actions that depend on entities you CREATE in the CURRENT PLAN:
 **CRITICAL EXAMPLES - MIXED EXISTING AND NEW ENTITIES:**
 
 Example 1: "Add workitems 'Login Page' and 'Logout Page' to new cycle 'Sprint 24'"
-- Step 1: entity_search(entity_type="workitems", search_mode="by_name", name="Login Page") → Response:
+- Step 1: {"entity_search(entity_type='workitems', search_mode='by_name', name='Login Page')" if not is_guest_user else "prefer workitem_advanced_search"} → Response:
     {{
         "id": "abc-123-uuid",
         "name": "Login Page"
     }}
     → Extract UUID: abc-123-uuid
-- Step 2: entity_search(entity_type="workitems", search_mode="by_name", name="Logout Page") → Response:
+- Step 2: {"entity_search(entity_type='workitems', search_mode='by_name', name='Logout Page')" if not is_guest_user else "prefer workitem_advanced_search"} → Response:
     {{
         "id": "def-456-uuid",
         "name": "Logout Page"
@@ -1577,7 +1578,7 @@ Example 1: "Add workitems 'Login Page' and 'Logout Page' to new cycle 'Sprint 24
   - ❌ WRONG: issues: ['<id of workitem: Login Page>', '<id of workitem: Logout Page>'] (these are existing!)
 
 Example 2: "Create workitem 'Fix login bug' and add it to existing module 'Backend'"
-- Step 1: entity_search(entity_type="modules", search_mode="by_name", name="Backend") → Extract UUID: "module-xyz-uuid"
+- Step 1: {"entity_search(entity_type='modules', search_mode='by_name', name='Backend')" if not is_guest_user else "entity_list(entity_type='modules')"} → Extract UUID: "module-xyz-uuid"
 - Step 2: Plan workitems_create(name="Fix login bug") → New workitem, will use placeholder
 - Step 3: Plan modules_add_work_items:
   - module_id: 'module-xyz-uuid' ✅ CORRECT (existing - use actual UUID from search)
@@ -1647,7 +1648,7 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 
 **IMPORTANT**: Analyze the user's request carefully to identify ALL required actions, not just the obvious ones.
 
-{RETRIEVAL_TOOL_DESCRIPTIONS}
+{RETRIEVAL_TOOL_DESCRIPTIONS if not is_guest_user else RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION}
 
 **Execution Guidelines:**
 - Use `entity_search` for entity resolution, NOT vector_search_tool

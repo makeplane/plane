@@ -45,8 +45,13 @@ export class PIService extends APIService {
       });
   }
 
-  async getPiFeatureFlag(workspaceSlug: string): Promise<TFeatureFlagsResponse> {
-    return this.get(`/api/v1/flags/`, { params: { workspace_slug: workspaceSlug } })
+  async getPiFeatureFlag(
+    workspaceSlug: string,
+    isGuestUser: boolean | undefined = false
+  ): Promise<TFeatureFlagsResponse> {
+    const params: Record<string, unknown> = { workspace_slug: workspaceSlug };
+    if (isGuestUser !== undefined) params.is_guest_user = isGuestUser;
+    return this.get(`/api/v1/flags/`, { params })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

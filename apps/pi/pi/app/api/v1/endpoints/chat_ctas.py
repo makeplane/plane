@@ -28,7 +28,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
+from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_id_from_slug
 from pi.app.utils.markdown_to_html import md_to_html
 from pi.core.db.plane import PlaneDBPool
 from pi.core.db.plane_pi.lifecycle import get_async_session
@@ -69,6 +71,11 @@ async def save_as_page(
 ):
     try:
         user_id = current_user.id
+        workspace_id_for_check = await get_workspace_id_from_slug(data.workspace_slug)
+        if workspace_id_for_check:
+            guest_check = await check_guest_access(str(user_id), workspace_id_for_check)
+            if guest_check:
+                return guest_check
         data.description_html = md_to_html(data.description_html)
 
         # Validate page_type and project_id combination

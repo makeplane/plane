@@ -16,12 +16,14 @@ import httpx
 from fastapi import Depends
 from fastapi import Header
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyCookie
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.security import HTTPBearer
 from pydantic import ValidationError
 from starlette.status import HTTP_400_BAD_REQUEST
 from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_403_FORBIDDEN
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlette.status import HTTP_503_SERVICE_UNAVAILABLE
 
@@ -253,6 +255,19 @@ async def verify_internal_secret_key(x_internal_api_secret: Annotated[str | None
         )
 
     return True
+
+
+_GUEST_ROLE = 5
+
+
+async def check_guest_access(user_id: str, workspace_id: str) -> JSONResponse | None:
+    """Return a 403 JSONResponse if the user is a workspace guest, else None."""
+    from pi.app.api.v1.helpers.plane_sql_queries import get_user_workspace_role
+
+    role = await get_user_workspace_role(user_id, workspace_id)
+    if role == _GUEST_ROLE:
+        return JSONResponse(status_code=HTTP_403_FORBIDDEN, content={"detail": "Access denied for guest users"})
+    return None
 
 
 async def get_current_user(session: str = Depends(cookie_schema)) -> User:

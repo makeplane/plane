@@ -31,6 +31,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import jwt_schema
 from pi.app.api.dependencies import validate_jwt_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
@@ -91,6 +92,11 @@ async def get_answer(
         # currently mobile not providing focus. so, set project_id as None
         data.project_id = None
         return JSONResponse(status_code=400, content={"detail": "Either project_id or workspace_id must be provided"})
+
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(data.user_id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
 
     # Constructing query_id to insert into index, can be removed after shiting to web flow (queue_answer, stream_answer)
     query_id = uuid.uuid4()
@@ -297,6 +303,11 @@ async def get_answer_stream_json(
         # currently mobile not providing focus. so, set project_id as None
         data.project_id = None
         return JSONResponse(status_code=400, content={"detail": "Either project_id or workspace_id must be provided"})
+
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(data.user_id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
 
     # Constructing query_id to insert into index
     query_id = uuid.uuid4()
@@ -558,6 +569,11 @@ async def get_user_threads(
     except Exception as e:
         log.error(f"Error validating JWT: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
+
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(data.user_id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
 
     results = await get_user_chat_threads(user_id=user_id, workspace_id=data.workspace_id, db=db, is_project_chat=data.is_project_chat)
 

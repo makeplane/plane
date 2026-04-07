@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import AIFeatureFeedback
 from pi.core.db.plane_pi.lifecycle import get_async_session
@@ -61,6 +62,9 @@ async def create_ai_feature_feedback(
         - 401: Invalid or missing authentication
         - 500: Internal server error
     """
+    guest_check = await check_guest_access(str(current_user.id), str(feedback_data.workspace_id))
+    if guest_check:
+        return guest_check
     result = await create_feedback(
         db=db,
         usage_type=usage_type,

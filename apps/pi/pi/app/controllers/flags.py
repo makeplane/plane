@@ -28,8 +28,12 @@ from typing import Iterable
 
 from pi import logger
 from pi import settings
+from pi.app.api.v1.helpers.plane_sql_queries import get_user_workspace_role
+from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_id_from_slug
 from pi.services.feature_flags import FeatureFlagContext
 from pi.services.feature_flags import feature_flag_service
+
+_GUEST_ROLE = 5
 
 FeatureKey = str
 
@@ -180,6 +184,7 @@ async def get_workspace_feature_availability(
     *,
     user_id: str,
     workspace_slug: str,
+    is_guest_user: bool = False,
 ) -> Dict[FeatureKey, bool]:
     caps = await _compute_env_capabilities()
     env_ready = _env_readiness_from_caps(caps)
@@ -200,5 +205,18 @@ async def get_workspace_feature_availability(
         remote_enabled,
         combined,
     )
+
+    # Fast-path: frontend asserts guest; DB check: always verify via DB when frontend says non-guest
+    is_guest = is_guest_user
+    if not is_guest:
+        workspace_id = await get_workspace_id_from_slug(workspace_slug)
+        if workspace_id:
+            role = await get_user_workspace_role(str(user_id), workspace_id)
+            log.debug(f"guest DB check: user={user_id} workspace={workspace_slug} workspace_id={workspace_id} role={role!r}")
+            is_guest = role == _GUEST_ROLE
+
+    if is_guest:
+        log.info(f"User {user_id} is a guest user. Overriding all feature flags to False.")
+        return {k: False for k in combined.keys()}
 
     return combined

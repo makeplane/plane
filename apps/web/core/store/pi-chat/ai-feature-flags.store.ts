@@ -14,7 +14,7 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissions } from "@plane/constants";
 // plane-web
 import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
 import { PIService } from "@/services/pi.service";
@@ -46,7 +46,11 @@ export class AiFeatureFlagsStore implements IAiFeatureFlagsStore {
 
   fetchAiFeatureFlags = async (workspaceSlug: string) => {
     try {
-      const response = await piService.getPiFeatureFlag(workspaceSlug);
+      const role = this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+      // Only assert non-guest when we have a confirmed role; leave undefined if role isn't loaded yet
+      // so the backend falls through to its own DB-level guest check.
+      const isGuestUser = role === undefined ? undefined : role === EUserPermissions.GUEST;
+      const response = await piService.getPiFeatureFlag(workspaceSlug, isGuestUser);
       runInAction(() => {
         if (response.values) {
           Object.keys(response.values).forEach((key) => {

@@ -534,12 +534,15 @@ class PlaneSDKAdapter:
 
         Args:
             workspace_slug: Workspace slug
-            filters: Filter dictionary supporting:
-                - Simple filters: {"priority": "high", "state_group": "started"}
-                - Multiple values: {"priority__in": ["high", "urgent"]}
-                - AND logic: {"and": [{"priority": "high"}, {"state_group": "started"}]}
-                - OR logic: {"or": [{"priority": "high"}, {"priority": "urgent"}]}
-                - NOT logic: {"not": {"state_group": "completed"}}
+            filters: Filter dictionary. Valid field names match IssueFilterSet exactly:
+                Scalar: priority, state_group, is_archived, is_draft
+                UUID (always use _id suffix): assignee_id, project_id, cycle_id, module_id,
+                    label_id, state_id, created_by_id, subscriber_id, mention_id
+                Date: start_date, target_date, start_date__range, target_date__range,
+                    created_at__range, updated_at__range
+                Multi-value: append __in to any scalar or UUID field (e.g. priority__in,
+                    assignee_id__in, created_by_id__in)
+                Logical: {"and": [...]}, {"or": [...]}, {"not": {...}}
             limit: Maximum number of results (default: 25)
             query: Free-text search string to match name, description, or identifier
             **kwargs: Additional parameters

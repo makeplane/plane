@@ -20,6 +20,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.transcription.transcribe import process_transcription
@@ -37,6 +38,9 @@ async def transcribe_file(
     current_user=Depends(get_current_user),
 ):
     """Transcribe audio file."""
+    guest_check = await check_guest_access(str(current_user.id), str(workspace_id))
+    if guest_check:
+        return guest_check
     try:
         user_id = current_user.id
         success, message = await process_transcription(workspace_id, chat_id, file, user_id, db)

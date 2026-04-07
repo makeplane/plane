@@ -25,6 +25,7 @@ log = logger.getChild("v1.flags")
 async def get_flags(
     workspace_slug: str,
     current_user=Depends(get_current_user),
+    is_guest_user: bool = False,
 ):
     """
     Return feature availability as true/false.
@@ -32,7 +33,7 @@ async def get_flags(
     Availability = env readiness AND (remote feature-flag enabled, if configured).
     """
     try:
-        features = await get_workspace_feature_availability(user_id=current_user.id, workspace_slug=workspace_slug)
+        features = await get_workspace_feature_availability(user_id=current_user.id, workspace_slug=workspace_slug, is_guest_user=is_guest_user)
         return JSONResponse(content={"values": features})
     except Exception as e:
         log.error(f"Error computing flags: {e!s}")

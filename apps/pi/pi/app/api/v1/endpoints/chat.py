@@ -35,6 +35,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
 from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
@@ -129,6 +130,10 @@ async def chat_start(
 
     try:
         user_id = current_user.id
+        guest_check = await check_guest_access(str(user_id), str(workspace_id))
+        if guest_check:
+            return guest_check
+
         oauth_service = PlaneOAuthService()
 
         # Check if user has valid OAuth token for workspace
@@ -187,6 +192,10 @@ async def chat_auth_check(
 
     try:
         user_id = current_user.id
+        guest_check = await check_guest_access(str(user_id), str(workspace_id))
+        if guest_check:
+            return guest_check
+
         oauth_service = PlaneOAuthService()
 
         # Check if user has valid OAuth token for workspace
@@ -580,6 +589,11 @@ async def get_answer(data: ChatRequest, current_user=Depends(get_current_user)):
     user_id = current_user.id
     data.user_id = user_id
 
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(user_id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
+
     # Validate request data
     validation_error = validate_chat_request(data)
     if validation_error:
@@ -828,6 +842,11 @@ async def get_chat_history_object(
     current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
+    if workspace_id:
+        guest_check = await check_guest_access(str(current_user.id), str(workspace_id))
+        if guest_check:
+            return guest_check
+
     try:
         user_id = current_user.id
         log.info(f"chat history retrieve request received for chat_id: {chat_id}")
@@ -917,6 +936,11 @@ async def get_chat_template_suggestion(
 async def initialize_chat(data: ChatInitializationRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     """Initialize a new chat and return the chat_id immediately."""
     user_id = current_user.id
+
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(user_id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
 
     # Validate request data
     validation_error = validate_chat_initialization(data)
@@ -1008,6 +1032,11 @@ async def get_user_threads(
     """Get user chat threads with cursor-based pagination for web interface."""
     user_id = current_user.id
 
+    if workspace_id:
+        guest_check = await check_guest_access(str(user_id), str(workspace_id))
+    if guest_check:
+        return guest_check
+
     results = await get_user_chat_threads_paginated(
         user_id=user_id, db=db, workspace_id=workspace_id, is_project_chat=is_project_chat, cursor=cursor, per_page=per_page
     )
@@ -1035,6 +1064,11 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
     don't need a new table.  The rest of the ChatRequest fields are stored in
     a MessageFlowStep (tool_name="QUEUE", step_order=0) until the client
     later redeems the token via /stream-answer/{token}."""
+
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(current_user.id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
 
     validation_error = validate_chat_request(data)
     if validation_error:
@@ -1293,6 +1327,10 @@ async def search_chats(
     # Validate query parameters
     if not query or not query.strip():
         return JSONResponse(status_code=400, content={"detail": "Search query cannot be empty"})
+
+    guest_check = await check_guest_access(str(current_user.id), str(workspace_id))
+    if guest_check:
+        return guest_check
 
     try:
         user_id = current_user.id

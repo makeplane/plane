@@ -218,6 +218,9 @@ async def execute_tools_for_build_mode(
             chat_id=chat_id,
             db=db,
         )
+        # Carry pre-fetched guest flag into the tool context dict so @access_control
+        # decorators on tool-building functions can short-circuit the DB lookup.
+        context["is_guest"] = query_flow_store.get("is_guest")
         # Update project_id from normalized context
         project_id = context["project_id"]
 

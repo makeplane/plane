@@ -20,6 +20,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import jwt_schema
 from pi.app.api.dependencies import validate_jwt_token
 from pi.app.models.message_attachment import MessageAttachment
@@ -59,6 +60,11 @@ async def create_attachment_upload(
     except Exception as e:
         log.error(f"Error validating JWT: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
+
+    if data.workspace_id:
+        guest_check = await check_guest_access(str(user_id), str(data.workspace_id))
+        if guest_check:
+            return guest_check
 
     try:
         # Validate file size (10MB for images, 50MB for PDFs)

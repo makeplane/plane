@@ -148,7 +148,7 @@ class PlaneChatBot(ChatKit):
             # log.info(f"ChatID: {chat_id} - Retrieved chat history: {res}")
             return await process_conv_history(res["dialogue"], db, chat_id, user_id), None
 
-    def _create_query_flow_store(self, data, workspace_in_context):
+    def _create_query_flow_store(self, data, workspace_in_context, is_guest: bool = False):
         """Create a query flow store to track processing of a query."""
         return {
             "is_new": data.is_new,
@@ -166,6 +166,7 @@ class PlaneChatBot(ChatKit):
             "answer": "",
             "workspace_in_context": workspace_in_context,
             "websearch_enabled": bool(getattr(data, "is_websearch_enabled", False)),
+            "is_guest": is_guest,
         }
 
     async def _execute_tools_for_build_mode(
@@ -380,6 +381,26 @@ class PlaneChatBot(ChatKit):
         if not workspace_id and project_id:
             workspace_id = await ask_mode_helpers.resolve_workspace_id_from_project(project_id)
 
+        # Pre-fetch guest status once for the entire request so downstream decorators
+        # can short-circuit without hitting the DB on every tool-building call.
+        is_guest = False
+        if workspace_in_context and user_id and workspace_id:
+            from pi.app.api.v1.helpers.plane_sql_queries import get_user_project_role
+            from pi.app.api.v1.helpers.plane_sql_queries import get_user_workspace_role
+            from pi.app.controllers.access_controls import GUEST_ROLE
+
+            try:
+                workspace_role = await get_user_workspace_role(str(user_id), str(workspace_id))
+                is_guest = workspace_role is None or workspace_role == GUEST_ROLE
+                log.info(f"ChatID: {data.chat_id} - Guest check: workspace_role={workspace_role}, is_guest={is_guest}")
+                if not is_guest and project_id:
+                    project_role = await get_user_project_role(str(user_id), str(project_id))
+                    is_guest = project_role is None or project_role == GUEST_ROLE
+                    log.info(f"ChatID: {data.chat_id} - Guest check (project): project_role={project_role}, is_guest={is_guest}")
+            except Exception as _e:
+                log.warning(f"ChatID: {data.chat_id} - Failed to pre-fetch guest status, defaulting to guest-safe filter: {_e}")
+                is_guest = True
+
         # Initialize variables for use in finally block
         parsed_query = query
         final_response = ""
@@ -401,7 +422,7 @@ class PlaneChatBot(ChatKit):
             log.warning(f"ChatID: {chat_id} - Chat does not exist. Creating a new chat in the database")
 
         # Initialize query flow store
-        query_flow_store = self._create_query_flow_store(data, workspace_in_context)
+        query_flow_store = self._create_query_flow_store(data, workspace_in_context, is_guest)
 
         # Parse query to detect mentions/links and get clean parsed content
         parsed = await parse_query(query, message_id=query_id, workspace_id=workspace_id, db=db)
@@ -506,10 +527,14 @@ class PlaneChatBot(ChatKit):
             )
 
         # Check if the query is a preset question
-        preset_query_steps = preset_question_flow(query)
-        if preset_query_steps:
-            log.debug(f"ChatID: {chat_id} - Using preset question flow for: {query}")
-            log.debug(f"ChatID: {chat_id} - Preset query steps: {preset_query_steps}")
+        if is_guest:
+            log.debug(f"ChatID: {chat_id} - Skipping preset question flow check for guest user")
+            preset_query_steps = None
+        else:
+            preset_query_steps = preset_question_flow(parsed_query)
+            if preset_query_steps:
+                log.debug(f"ChatID: {chat_id} - Using preset question flow for: {query}")
+                log.debug(f"ChatID: {chat_id} - Preset query steps: {preset_query_steps}")
 
         _title_handled_on_cancel = False
         try:

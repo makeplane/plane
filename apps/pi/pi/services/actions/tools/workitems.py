@@ -615,8 +615,10 @@ async def _advanced_search_pre_handler(
     field keys at the same level).
     """
     filters = kwargs.get("filters")
+    log.debug("workitems_advanced_search pre-handler: raw kwargs from LLM: %s", kwargs)
     if isinstance(filters, dict) and filters:
         kwargs["filters"] = _sanitize_filter_node(filters)
+        log.debug("workitems_advanced_search pre-handler: sanitised filters: %s", kwargs["filters"])
     return kwargs
 
 
@@ -1119,12 +1121,29 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 type="Dict[str, Any]",
                 required=False,
                 description="Filter dictionary for structured filtering.\n"
-                "Field values:\n"
+                "Scalar fields (use exact match):\n"
                 "- priority: urgent, high, medium, low, none\n"
                 "- state_group: backlog, unstarted, started, completed, cancelled\n"
-                "- assignee_id, project_id, cycle_id, module_id, label_id: UUID strings\n"
-                "Examples: {'priority': 'urgent'}, {'priority': 'high', 'state_group': 'started'}, "
-                "{'priority__in': ['high', 'urgent']}",
+                "- is_archived: true or false\n"
+                "- is_draft: true or false\n"
+                "UUID fields (use exact UUID string — always include the _id suffix):\n"
+                "- assignee_id, project_id, cycle_id, module_id, label_id,\n"
+                "  state_id, created_by_id, subscriber_id, mention_id\n"
+                "Date fields (ISO 8601 strings):\n"
+                "- start_date, target_date (exact match)\n"
+                '- start_date__range, target_date__range, created_at__range, updated_at__range: ["YYYY-MM-DD", "YYYY-MM-DD"]\n'
+                "Multi-value lookups (append __in to any UUID or scalar field):\n"
+                "- priority__in, state_group__in, assignee_id__in, project_id__in,\n"
+                "  cycle_id__in, module_id__in, label_id__in, state_id__in, created_by_id__in\n"
+                "Logical operators (wrap field dicts in and/or/not):\n"
+                "- {'and': [{'priority': 'high'}, {'state_group': 'started'}]}\n"
+                "- {'or': [{'assignee_id': '<uuid>'}, {'created_by_id': '<uuid>'}]}\n"
+                "- {'not': {'state_group': 'completed'}}\n"
+                "Examples:\n"
+                "- {'priority': 'urgent'}\n"
+                "- {'created_by_id': '<uuid>', 'project_id': '<uuid>'}\n"
+                "- {'priority__in': ['high', 'urgent']}\n"
+                "- {'and': [{'project_id': '<uuid>'}, {'created_by_id': '<uuid>'}]}",
             ),
             ToolParameter(
                 name="limit",

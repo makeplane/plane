@@ -39,6 +39,7 @@ from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
 from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
+from pi.services.chat.prompt_mixins import pai_ask_system_prompt_sensitive_version
 from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.llm.cache_utils import create_claude_cached_system_message
@@ -129,6 +130,7 @@ async def execute_tools_for_ask_mode(
         workspace_in_context = True
         if isinstance(query_flow_store, dict):
             workspace_in_context = query_flow_store.get("workspace_in_context", True)
+            is_guest_user = query_flow_store.get("is_guest_user", False)
 
         log.info(f"ChatID: {chat_id} - Workspace in context: {workspace_in_context}")
 
@@ -381,7 +383,7 @@ async def execute_tools_for_ask_mode(
 
         # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (conversation history) content
         # Static content (system prompt + context_block) should remain constant for cache hits
-        system_prompt_to_use = f"{pai_ask_system_prompt}\n\n{context_block}"
+        system_prompt_to_use = f"{pai_ask_system_prompt if not is_guest_user else pai_ask_system_prompt_sensitive_version}\n\n{context_block}"
 
         # Message-level cache_control works with both ChatAnthropic and LiteLLM
         if should_cache_messages(chatbot_instance.switch_llm):

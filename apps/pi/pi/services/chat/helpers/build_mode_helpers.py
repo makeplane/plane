@@ -39,6 +39,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
+from pi.app.controllers.access_controls import access_control
 from pi.app.models.enums import ExecutionStatus
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
@@ -280,6 +281,22 @@ async def run_category_router_and_persist(
     return selections_list, current_step + 1
 
 
+@access_control
+def _merge_planning_tools(
+    context: Dict[str, Any],
+    all_method_tools: List[Any],
+    fresh_retrieval_tools: List[Any],
+    method_tool_names: set,
+) -> List[Any]:
+    """Merge method tools and retrieval tools into the final build-mode planning list.
+
+    @access_control filters ACCESS_CONTROLLED_TOOL_NAMES from the returned list when
+    the caller is a guest, using context["is_guest"] via the fast-path in _extract_is_guest.
+    This is the single authoritative gate for build-mode tool assembly.
+    """
+    return all_method_tools + [t for t in fresh_retrieval_tools if getattr(t, "name", "") not in method_tool_names]
+
+
 def build_planning_tools(
     *,
     chatbot_instance,
@@ -321,6 +338,7 @@ def build_planning_tools(
     ]
 
     all_method_tools: List[Any] = []
+    existing_tool_names: set = set()
     built_categories: List[str] = []
     for sel in selections_list:
         cat: Optional[str]
@@ -336,42 +354,37 @@ def build_planning_tools(
             continue
         try:
             tools_for_cat = chatbot_instance._build_planning_method_tools(cat, method_executor, context)
-            all_method_tools.extend(tools_for_cat)
+            # Dedup: _build_planning_method_tools now includes unified tools (entity_list/retrieve/search)
+            # for every category, so we must deduplicate across iterations.
+            for t in tools_for_cat:
+                t_name = getattr(t, "name", "")
+                if t_name not in existing_tool_names:
+                    all_method_tools.append(t)
+                    existing_tool_names.add(t_name)
 
             if cat in project_scoped_cats:
                 tools_for_project = chatbot_instance._build_planning_method_tools("projects", method_executor, context)
                 # Include projects_retrieve, projects_update, and projects_update_features for project-scoped work
                 # projects_update_features is needed to enable features like epics before creating them
-                tools_for_project = [
-                    t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update", "projects_update_features"]
-                ]
-                all_method_tools.extend(tools_for_project)
+                for t in tools_for_project:
+                    if getattr(t, "name", "") in ["projects_retrieve", "projects_update", "projects_update_features"]:
+                        t_name = getattr(t, "name", "")
+                        if t_name not in existing_tool_names:
+                            all_method_tools.append(t)
+                            existing_tool_names.add(t_name)
 
             if cat in workspace_scoped_cats:
                 tools_for_workspace = chatbot_instance._build_planning_method_tools("workspaces", method_executor, context)
                 # remove all tools except workspaces_get_features and workspaces_update_features
-                tools_for_workspace = [
-                    t for t in tools_for_workspace if getattr(t, "name", "") in ["workspaces_get_features", "workspaces_update_features"]
-                ]
-                all_method_tools.extend(tools_for_workspace)
+                for t in tools_for_workspace:
+                    if getattr(t, "name", "") in ["workspaces_get_features", "workspaces_update_features"]:
+                        t_name = getattr(t, "name", "")
+                        if t_name not in existing_tool_names:
+                            all_method_tools.append(t)
+                            existing_tool_names.add(t_name)
 
         except Exception as e:
             log.warning(f"Failed to build tools for category {cat}: {e}")
-
-    # Add unified retrieval tools (entity_list, entity_retrieve, entity_search)
-    # entity_search consolidates the 12 individual entity search tools into one
-    try:
-        from pi.services.actions.tools.unified_retrieval import get_unified_retrieval_tools
-
-        unified_tools = get_unified_retrieval_tools(method_executor=method_executor, context=context) or []
-        existing_names = {getattr(t, "name", "") for t in all_method_tools}
-        for t in unified_tools:
-            t_name = getattr(t, "name", "")
-            if t_name not in existing_names:
-                all_method_tools.append(t)
-                existing_names.add(t_name)
-    except Exception as e:
-        log.warning(f"Failed to add unified retrieval tools: {e}")
 
     try:
         from pi.services.actions.tools.workitems import get_workitem_tools
@@ -384,7 +397,7 @@ def build_planning_tools(
         log.warning(f"Failed to add workitems_advanced_search tool: {e}")
 
     method_tool_names = {getattr(t, "name", "") for t in all_method_tools}
-    combined_tools = all_method_tools + [t for t in fresh_retrieval_tools if getattr(t, "name", "") not in method_tool_names]
+    combined_tools = _merge_planning_tools(context, all_method_tools, fresh_retrieval_tools, method_tool_names)
     return combined_tools, all_method_tools, built_categories
 
 

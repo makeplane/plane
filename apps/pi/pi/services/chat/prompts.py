@@ -11,146 +11,9 @@
 
 from langchain_core.prompts import PromptTemplate
 
-plane_context = """
-Plane is a flexible project-, work- and knowledge-management platform that scales from solo makers to large enterprises. It blends Agile/Scrum features with wiki-style documentation and rich analytics.
-
-CORE BUILDING BLOCKS
-1.  Workspaces - top-level container for all Plane data.
-2.  Teamspaces - mirror real-world teams; roll up projects, cycles, views, pages and progress for that team. Once enabled, they can't be disabled.
-3.  Projects - scoped collections of work items, cycles, views, pages and settings. Each project has its own timezone and feature toggles.
-4.  Work Items - the atomic unit of work (formerly Issues). Fully customizable properties, sub-work items, relations, attachments, drafts (auto-saved) and an activity feed.
-                 **Each work item gets a unique key like "PROJ-1", created from the project prefix (first 3-4 letters, or a custom ID) plus an auto-incrementing number.**
-                 **Work items have two main text fields: `title` (short name) and `description` (detailed body). There is NO separate "summary" field.**
-5.  States - names are fully configurable but map to one of five buckets: Backlog, Unstarted, Started, Completed, Cancelled. These drive analytics and progress bars.
-6.  Cycles - time-boxed sprints inside a project.
-7.  Modules - logical buckets of work inside a project (e.g., features, components).
-8.  Epics - a special work item type that groups related work items inside one project; progress is visualized and can host threaded updates.
-9.  Initiatives - cross-project containers that track multiple projects and their epics against a high-level goal or OKR.
-10. Team Drafts & Inbox - Drafts store half-written work items; Inbox is a catch-all notification and mention feed.
-
-AI ASSISTANT
-11. Plane AI (Formerly called Pi, a moniker for Plane Intelligence) - AI-powered assistant that helps users interact with Plane using natural language. Pi can search work items, analyze project data, access documentation, and provide insights through conversational queries. It also has action capabilities like create, update, delete, assign, move, etc.
-
-PROJECT & WORK MANAGEMENT
-12. Work Item Types - schema-driven custom types with per-type fields (replaces "Issue Types").
-13. Time Tracking & Estimates - log worklogs; compare story points / time budgets.
-14. Bulk operations - mass-edit states, assignees, labels, etc.
-15. Dependencies in Timeline - Gantt-like view with "Starts Before/After, Finishes Before/After, Blocking" relations.
-16. Workflows & Approvals - guard-rail transitions with required reviewers.
-17. Project & Work Item Templates - one-click scaffolds for repeatable setups.
-18. Project States - label whole projects (e.g., "Discovery", "In Flight", "Shipped") for portfolio tracking.
-19. Customers - lightweight CRM objects you can link to work items.
-20. Intake:
-    - Forms - public form → triage queue.
-    - Email - unique address that converts incoming mail to work items.
-    - Guest portal - "Intake" role lets external users raise tickets without full access.
-
-KNOWLEDGE MANAGEMENT
-21. Pages - AI-assisted rich-text pages with version history and export (PDF/MD).
-22. Wiki - publish a tree of pages as an internal knowledge base.
-23. Stickies - free-form canvas of sticky notes for whiteboarding.
-
-VISUALIZATION & INSIGHT
-24. Layouts - Kanban, Table, Timeline (Gantt), Calendar and List.
-25. Filters & Saved Views - multi-property filters you can save and share; can be embedded in dashboards.
-26. Analytics - out-of-the-box burn-up, cumulative-flow, demand-forecast charts.
-27. Dashboards - fully custom; add bar/line/area/number/pie widgets that query across projects.
-28. Home & Your Work - personal landing pages that aggregate assigned, created and recent items.
-
-NAVIGATION & PRODUCTIVITY
-29. Power K - global command palette (⌘/Ctrl + K) for fuzzy jumping and quick actions.
-30. Mobile Apps - Android 5+ and iOS 13+ companion apps with project, work-item, cycles, pages & inbox support.
-
-INTEGRATION & EXTENSIBILITY
-31. Importers - migrate from Jira, Linear, Asana, or CSV.
-32. Integrations - GitHub (PR ↔ Work Item sync), GitLab, Slack slash-commands + notifications.
-33. SDK, API & Webhooks - Plane SDK (Python and Node.js), REST-style JSON API plus outgoing webhooks.
-34. Self-Host vs Cloud - run Plane Cloud (SaaS) or deploy the open-source stack on-prem.
-
-PERMISSIONS & BILLING
-35. Roles - Admin, Member, Guest per workspace/project; fine-grained on features.
-36. Billing Plans - Free, Pro, Business, Enterprise; feature flags like Epics, Initiatives, Dashboards noted as paid-only.
-
-TERMINOLOGY BRIDGE — cross-tool aliases
-(Use this glossary to map Plane objects to the familiar terms you'll see in other tools or in general)
-
-• Work Items → tasks, issues, tickets, user stories
-• States → status buckets (Backlog/Todo, In Progress, Done/Closed)
-• Cycles → sprints, iterations
-• Modules → components, feature buckets
-• Epics → large user stories / epics
-• Initiatives → programs, portfolio objectives
-• Projects → projects, boards
-• Teamspaces → teams, squads
-• Workspaces → workspaces, organisations/accounts
-• Work Item Types → issue types (bug, task, story)
-• Layouts → views (Kanban board, List, Calendar, Timeline/Gantt, Table)
-"""  # noqa: E501
-
-plane_one_context = """
-Plane One:
-Plane One is our first licensed self-hosted edition for growing teams serious about staying in control.
-One unlocks security, governance, and project management features scale-ups need to manage their instance and projects better.
-
-    - Plane One is a self-hosted-only solution that works well for up to 100 users.
-    - Plane One only works with a domain, not with IP addresses or localhost.
-    - Plane One comes with updates for two years with an option to auto-update to the latest versions when released.
-    - If you have more than 100 users, consider our Pro plan.
-   \n"""
-
-
-# In pi/services/chat/prompts.py, add this constant:
-RETRIEVAL_TOOL_DESCRIPTIONS = """
-**Retrieval Tool Capabilities:**
-
-1. **vector_search_tool**: For semantic search ONLY on work-item title and description fields.
-   - USE FOR: Finding work items by content, topics, keywords, concepts
-   - NOT FOR: Comments, updates, activity streams, state changes, metadata queries, presentation/output-formatting instructions
-   - RETURNS: Text results and a list of work-item IDs
-
-
-2. **structured_db_tool**: For pulling structured data from Plane's database using natural language queries.
-   - USE FOR: **Complex aggregations** (counts, groupings), **cross-entity joins** (e.g. issues in cycles spanning projects), custom SQL-like logic.
-   - NOT FOR: **Listing entities** (use entity_list), **searching/filtering work items by name or metadata** (use workitems_advanced_search), semantic search.
-   - ACCEPTS: Natural language query and optional issue_ids/page_ids from prior searches
-   - NOTE: This is a text2sql tool - slower and more expensive than specialized tools. **Avoid if entity_list or workitems_advanced_search can answer.**
-   - IMPORTANT: If the query is about finding work items by title/name keywords AND/OR filtering by priority/state/assignee/etc., use workitems_advanced_search instead.
-
-3. **workitems_advanced_search**: For **searching and filtering** work items — both text search AND metadata filters.
-   - USE FOR: **Text/name search** (finding work items by title keywords like 'capex', 'login bug', etc.) AND/OR **metadata filtering** (priority, state_group, assignee, project, cycle, module, labels)
-   - PREFER OVER structured_db_tool: For ANY query that searches work items by name/title/keyword AND/OR filters by metadata fields
-   - SUPPORTS: `query` param for text search, `filters` param with AND/OR/NOT logic, or BOTH combined
-   - Do NOT put filter logic (e.g. "priority:high") inside `query`. Use the `filters` dict for that.
-   - Examples: query="capex", filters={{'priority': 'high'}}, or BOTH: query="capex" + filters={{'priority': 'high'}}
-   - This is faster and more accurate than structured_db_tool for work item search/filter queries
-
-4. **entity_list**: **PRIMARY TOOL** for listing entities by type.
-   - USE FOR: Listing workitems, projects, cycles, labels, states, modules, initiatives, teamspaces, workspace members, project members, etc.
-   - PARAMS: entity_type (required), project_id, cycle_id, module_id, work_item_id
-   - PAGINATION: per_page (default 25), page, cursor
-   - FILTER/SORT: order_by, expand, cycle_view (params depend on entity_type support)
-   - Entity types: workitems, projects, cycles, modules, labels, states, intake, types, archived_cycles, archived_modules, cycle_workitems, module_workitems, activity, comments, attachments, links, worklogs, initiatives, teamspaces, stickies, customers, workspace_members, project_members
-
-5. **entity_retrieve**: For retrieving a **single entity by ID**.
-   - USE FOR: Getting details of a specific project, workitem, cycle, module, label, state, initiative, teamspace, sticky, customer, intake item, type, or property
-   - PARAMS: entity_type (required), entity_id (required), project_id (auto-filled from context for project-scoped entities), work_item_id (for workitem-scoped entities like properties), type_id (for properties)
-   - Entity types: projects, workitems, cycles, modules, labels, states, intake, types, properties, initiatives, teamspaces, stickies, customers
-   - NOTE: For project-scoped entities (workitems, cycles, modules, labels, states, intake, types, properties), project_id is auto-filled from context if available
-
-6. **pages_search_tool**: For semantic search in content of Plane Pages (notepad).
-   - USE FOR: Finding pages by content, topics, concepts
-   - NOT FOR: Page metadata queries (who created, when created)
-   - RETURNS: Text results and a list of page IDs
-
-7. **docs_search_tool**: For searching Plane's official documentation.
-   - USE FOR: Finding documentation by topics, features, how-to guides
-   - RETURNS: Formatted documentation search results
-
-8. **web_search_tool**: For searching the public web for up-to-date external information.
-   - USE FOR: Current events, external references, or info not covered by Plane data/docs
-   - RETURNS: Summarized web search results with sources
-"""  # noqa: E501
-
+from pi.services.chat.prompt_mixins import RETRIEVAL_TOOL_DESCRIPTIONS
+from pi.services.chat.prompt_mixins import TOOL_CALL_REASONING_REINFORCEMENT
+from pi.services.chat.prompt_mixins import plane_context
 
 # LLM prompt for action category routing (multi-select)
 action_category_router_prompt = f"""You are helping select one or more Plane API action categories for the user's intent.
@@ -331,18 +194,6 @@ Chat:
 
 Title:""",  # noqa: E501
 )
-
-TOOL_CALL_REASONING_REINFORCEMENT = """## Final mandatory requirement: reasoning for every tool call
-
-You MUST include clear reasoning in your **assistant message content** both **before** and **after** each tool call.
-
-### Requirements
-- This reasoning is not optional; it is required for transparency and debugging.
-- Before tool call: write 2-3 sentences explaining what you are about to do and why (and what you expect back).
-- After tool call: write 1-2 sentences summarizing what you found and what you will do next.
-- Be clear and helpful, but do not write a long essay.
-- Put this reasoning in the assistant `content` surrounding your `tool_calls` (before/after), not inside tool arguments.
-"""  # noqa: E501
 
 
 pai_ask_system_prompt = f"""You are an advanced AI assistant that helps answer user questions at Plane, a work management platform.
@@ -559,7 +410,7 @@ When query mentions entity NAMES without IDs and the UUID is NOT in context:
 When IDs already provided: Skip entity search and use IDs directly AS PARAMETERS.
 
 Examples:
- - Query "List work items assigned to Robert" + no user_id in context → entity_search(entity_type="users", search_mode="by_name", name="Robert") → if multiple matches → ask_for_clarification
+ - Query "List projects created by Robert" + no user_id in context → entity_search(entity_type="users", search_mode="by_name", name="Robert") → if multiple matches → ask_for_clarification
  - Query "List my work items" + user_id in context → use user_id as FILTER in tool call (no search needed)
  - Query "is time tracking enabled in this project?" + project_id in context → call entity_retrieve(entity_type="projects", entity_id=project_id) to GET project features
  - Query "show me the Mobile project" + no project_id in context → search_project_by_name("Mobile") → use resolved project_id

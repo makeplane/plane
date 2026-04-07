@@ -648,6 +648,11 @@ class Settings:
             return f"postgresql://{user}:{password}@{host}:{port}/{name}"
         return self.FOLLOWER_POSTGRES_URI
 
+    # Tools in which Pi accesses follower-db or OpenSearch directly (bypassing API layer) should be listed here
+    ACCESS_CONTROLLED_TOOL_NAMES: list[str] = field(
+        default_factory=lambda: ["structured_db_tool", "vector_search_tool", "pages_search_tool", "fetch_cycle_details", "entity_search"]
+    )
+
     chat = Chat()
     server = Server()
     plane_api = PlaneAPI()

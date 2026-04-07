@@ -22,6 +22,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import UUID4
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
@@ -193,6 +194,10 @@ async def create_or_generate_ai_block(
     If request.block_id is provided, generates using that existing block.
     Otherwise, creates a new block using the provided configuration and generates content for it.
     """
+    guest_check = await check_guest_access(str(current_user.id), str(request.workspace_id))
+    if guest_check:
+        return guest_check
+
     # Validate block_type FIRST - before any DB operations
     error_response = validate_block_type(request.block_type)
     if error_response:
@@ -314,6 +319,9 @@ async def summarize_page(
         - error: Error messages if generation fails
         - done: Stream completion signal
     """
+    guest_check = await check_guest_access(str(current_user.id), str(request.workspace_id))
+    if guest_check:
+        return guest_check
 
     async def stream_summary() -> AsyncGenerator[str, None]:
         try:

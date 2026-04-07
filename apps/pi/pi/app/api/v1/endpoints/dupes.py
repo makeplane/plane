@@ -14,6 +14,7 @@ from fastapi import Depends
 from fastapi.responses import JSONResponse
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.dupes import DupeSearchRequest
 from pi.app.schemas.dupes import NotDuplicateRequest
@@ -28,6 +29,9 @@ log = logger.getChild("v1/dupes")
 
 @router.post("/issues/")
 async def get_duplicate_issues(data: DupeSearchRequest, current_user=Depends(get_current_user)):
+    guest_check = await check_guest_access(str(current_user.id), str(data.workspace_id))
+    if guest_check:
+        return guest_check
     try:
         result = await dupes.get_dupes(data)
         return JSONResponse(content=result)

@@ -22,6 +22,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import get_current_user
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentCompleteRequest
@@ -52,6 +53,9 @@ async def create_attachment_upload(
     current_user=Depends(get_current_user),
 ):
     """Receive file, scan for security, then upload to S3 if safe"""
+    guest_check = await check_guest_access(str(current_user.id), workspace_id)
+    if guest_check:
+        return guest_check
     try:
         user_id = current_user.id
         # Read file into memory

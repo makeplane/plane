@@ -27,6 +27,7 @@ from pi import settings
 from pi.agents.sql_agent.helpers import construct_entity_urls_from_db
 from pi.agents.sql_agent.helpers import extract_ids_from_sql_result
 from pi.agents.sql_agent.helpers import format_as_bullet_points
+from pi.app.controllers.access_controls import access_control
 from pi.app.models.enums import MessageMetaStepType
 
 # Import new modular tools from actions service
@@ -484,6 +485,7 @@ Provide concise, relevant context from the attachment(s):"""
             log.error(f"Error getting OAuth token for user {user_id}, workspace {workspace_id}: {e}")
             return None
 
+    @access_control
     def _create_tools(
         self,
         db,
@@ -1174,6 +1176,7 @@ Provide concise, relevant context from the attachment(s):"""
 
         return tools
 
+    @access_control
     async def _create_tools_for_ask_mode(
         self,
         db,
@@ -1269,6 +1272,8 @@ Provide concise, relevant context from the attachment(s):"""
                 chat_id=chat_id,
                 db=db,
             )
+            # Carry pre-fetched guest flag into context for @access_control short-circuit
+            context["is_guest"] = query_flow_store.get("is_guest")
 
             # Only add SDK-based tools if method_executor is available (requires OAuth token)
             if method_executor:
@@ -1307,6 +1312,7 @@ Provide concise, relevant context from the attachment(s):"""
         """Build method-specific tools for the selected category using modular structure"""
         return get_tools_for_category(category, method_executor, context)
 
+    @access_control
     def _build_planning_method_tools(self, category: str, method_executor, context: dict):
         """Build planning-time tools for a category.
 
@@ -1331,7 +1337,7 @@ Provide concise, relevant context from the attachment(s):"""
             existing = {getattr(t, "name", "") for t in tools}
             for t in unified_tools:
                 t_name = getattr(t, "name", "")
-                if t_name == "entity_search" and t_name not in existing:
+                if t_name not in existing:
                     tools.append(t)
                     existing.add(t_name)
         except Exception:
