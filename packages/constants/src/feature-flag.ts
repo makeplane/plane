@@ -187,6 +187,8 @@ export enum E_FEATURE_FLAGS {
   PQL = "PQL",
   // Work Item Subscribers
   MANAGE_WORK_ITEM_SUBSCRIBERS = "MANAGE_WORK_ITEM_SUBSCRIBERS",
+  // Work Item State Duration
+  WORK_ITEM_STATE_DURATION = "WORK_ITEM_STATE_DURATION",
 }
 
 /**

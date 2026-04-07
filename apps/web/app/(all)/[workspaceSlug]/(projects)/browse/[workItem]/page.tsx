@@ -36,6 +36,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkItemDetailRevalidation } from "@/lib/socket/hooks/work-item-detail";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // layouts
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
@@ -90,6 +91,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     subIssues: { fetchSubIssues },
     relation: { fetchRelations },
   } = useIssueDetail(workItemServiceType);
+  const isStateDurationEnabled = useFlag(workspaceSlug, "WORK_ITEM_STATE_DURATION");
   const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, workItemId);
 
   const { mutate: mutateWorkItemActivity } = useSWR(
@@ -99,8 +101,10 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   );
 
   const { mutate: mutateWorkItemStateDuration } = useSWR(
-    projectId && workItemId ? ["workItemStateDuration", projectId, workItemId] : null,
-    projectId && workItemId ? () => fetchStateDuration(workspaceSlug, projectId, workItemId) : null,
+    isStateDurationEnabled && projectId && workItemId ? ["workItemStateDuration", projectId, workItemId] : null,
+    isStateDurationEnabled && projectId && workItemId
+      ? () => fetchStateDuration(workspaceSlug, projectId, workItemId)
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

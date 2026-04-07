@@ -149,6 +149,8 @@ class FeatureFlag(Enum):
     WORKFLOW_CONDITIONS = "WORKFLOW_CONDITIONS"
     # Auto reminder automation
     DUE_DATE_REMINDER = "DUE_DATE_REMINDER"
+    # Work Item State Duration
+    WORK_ITEM_STATE_DURATION = "WORK_ITEM_STATE_DURATION"
 
 
 class AdminFeatureFlag(Enum):

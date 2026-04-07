@@ -27,6 +27,7 @@ import { useCurrentStateDuration, DurationBadge } from "@/components/issues/issu
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkflows } from "@/hooks/store/use-workflows";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
 import type { TIssueOperations } from "./root";
 import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
@@ -55,19 +56,21 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
   const isApprovalPendingState = issue?.state_id
     ? isApprovalPending(workspaceSlug, projectId, issue.type_id, issue.state_id)
     : false;
-  if (!issue) return null;
 
   const disabled = isArchived || !isEditable;
-  const stateDetails = getStateById(issue.state_id);
+  const stateDetails = getStateById(issue?.state_id);
 
-  const minDate = issue.start_date ? getDate(issue.start_date) : null;
+  const minDate = issue?.start_date ? getDate(issue?.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? getDate(issue.target_date) : null;
+  const maxDate = issue?.target_date ? getDate(issue?.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  const isStateDurationEnabled = useFlag(workspaceSlug, "WORK_ITEM_STATE_DURATION");
   const currentStateDuration = useCurrentStateDuration(issueId);
-  const assigneeCount = issue.assignee_ids?.length ?? 0;
+  const assigneeCount = issue?.assignee_ids?.length ?? 0;
+
+  if (!issue) return null;
 
   return (
     <div className="-ml-1">
@@ -88,7 +91,11 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
           buttonContainerClassName="w-full h-7 rounded-md hover:bg-layer-transparent-hover"
           buttonClassName="text-body-xs-medium"
           dropdownArrow={false}
-          appendElement={<DurationBadge seconds={currentStateDuration} stateName={stateDetails?.name} />}
+          appendElement={
+            isStateDurationEnabled ? (
+              <DurationBadge seconds={currentStateDuration} stateName={stateDetails?.name} />
+            ) : undefined
+          }
         />
 
         <PropertyDivider />

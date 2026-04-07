@@ -26,6 +26,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
@@ -54,6 +55,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
     fetchActivities,
     fetchStateDuration,
   } = useIssueDetail();
+  const isStateDurationEnabled = useFlag(peekIssue?.workspaceSlug, "WORK_ITEM_STATE_DURATION");
   const issueStoreType = useIssueStoreType();
   const storeType = issueStoreFromProps ?? issueStoreType;
   const { issues } = useIssues(storeType);
@@ -89,7 +91,9 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             .updateIssue(workspaceSlug, projectId, issueId, data)
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
-              fetchStateDuration(workspaceSlug, projectId, issueId);
+              if (isStateDurationEnabled) {
+                fetchStateDuration(workspaceSlug, projectId, issueId);
+              }
               return;
             })
             .catch((_error) => {
@@ -244,8 +248,12 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   );
 
   useSWR(
-    peekIssue ? ["peek-state-duration", peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId] : null,
-    peekIssue ? () => fetchStateDuration(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId) : null,
+    isStateDurationEnabled && peekIssue
+      ? ["peek-state-duration", peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId]
+      : null,
+    isStateDurationEnabled && peekIssue
+      ? () => fetchStateDuration(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId)
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

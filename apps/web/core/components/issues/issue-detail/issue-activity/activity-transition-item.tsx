@@ -30,6 +30,8 @@ import { useActivityHighlight } from "@/hooks/use-activity-highlight";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useFeatureFlags } from "@/plane-web/hooks/store";
+import { useParams } from "next/navigation";
 import { EIconSize } from "@plane/constants";
 
 type IssueActivityTransitionItemProps = {
@@ -43,6 +45,11 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
 ) {
   const { activityId, ends, isLast = false } = props;
   // hooks
+  const { workspaceSlug } = useParams();
+  const { getFeatureFlag } = useFeatureFlags();
+  const isStateDurationEnabled = workspaceSlug
+    ? getFeatureFlag(workspaceSlug.toString(), "WORK_ITEM_STATE_DURATION", false)
+    : false;
   const {
     activity: { getActivityById, getStateDurationByActivityId },
   } = useIssueDetail();
@@ -55,8 +62,11 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
   if (!activity) return null;
 
   const isStateTransition = activity.field === "state";
-  const durationSeconds = isStateTransition ? getStateDurationByActivityId(activityId) : undefined;
-  const oldBadge = <DurationBadge seconds={durationSeconds} stateName={activity.old_value ?? undefined} />;
+  const durationSeconds =
+    isStateDurationEnabled && isStateTransition ? getStateDurationByActivityId(activityId) : undefined;
+  const oldBadge = isStateDurationEnabled ? (
+    <DurationBadge seconds={durationSeconds} stateName={activity.old_value ?? undefined} />
+  ) : undefined;
 
   // For state transitions, use actual state icons with colors
   const oldState = isStateTransition && activity.old_identifier ? getStateById(activity.old_identifier) : undefined;
@@ -65,7 +75,7 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
   // Don't show live duration badge for terminal states (completed/cancelled)
   const isTerminalState = newState?.group === "completed" || newState?.group === "cancelled";
   const newBadge =
-    isLast && isStateTransition && !isTerminalState ? (
+    isStateDurationEnabled && isLast && isStateTransition && !isTerminalState ? (
       <DurationBadge
         seconds={(Date.now() - new Date(activity.created_at).getTime()) / 1000}
         stateName={activity.new_value ?? undefined}

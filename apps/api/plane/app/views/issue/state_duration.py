@@ -20,12 +20,15 @@ from plane.db.models import IssueActivity, Issue, Project, ProjectMember
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class WorkItemStateDurationEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     use_read_replica = True
 
+    @check_feature_flag(FeatureFlag.WORK_ITEM_STATE_DURATION)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, work_item_id):
         # Get the work item to know its creation time and current state
