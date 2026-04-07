@@ -77,7 +77,6 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
             )
             activity = queryset.get(
                 id=pk,
-                project_id=project_id,
                 workspace__slug=slug,
                 automation_id=automation_id,
             )
@@ -94,7 +93,6 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
                 )
             )
             .filter(
-                project_id=project_id,
                 workspace__slug=slug,
                 automation_id=automation_id,
             )
