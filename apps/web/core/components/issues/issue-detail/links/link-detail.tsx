@@ -43,8 +43,6 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
     setIssueLinkData(linkDetail);
   };
 
-  const createdByDetails = getUserDetails(linkDetail.created_by_id);
-
   return (
     <div key={linkId}>
       <div className="relative flex flex-col rounded-md bg-surface-2 p-2.5">
