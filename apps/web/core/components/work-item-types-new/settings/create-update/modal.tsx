@@ -114,8 +114,8 @@ export const CreateOrUpdateWorkItemTypeModal = observer(function CreateOrUpdateW
       if (mode === "update" && isObject(error) && "level" in error) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("work_item_type_hierarchy.add_level_modal.invalid_level_toast.title"),
-          message: t("work_item_type_hierarchy.add_level_modal.invalid_level_toast.message", {
+          title: t("work_item_type_hierarchy.work_item_type_modal.invalid_level_toast.title"),
+          message: t("work_item_type_hierarchy.work_item_type_modal.invalid_level_toast.message", {
             type_name: formData?.name,
             level: formData?.level,
           }),

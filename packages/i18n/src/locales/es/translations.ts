@@ -7176,9 +7176,10 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
     },
     levels: {
-      add_level_button: "Agregar nivel de jerarquía",
+      max_level_placeholder: "Agregar nivel de jerarquía",
       empty_level_placeholder: "Agrega un tipo de elemento de trabajo al nivel {level}",
       empty_level_unauthorized: "No se encontraron tipos de elementos de trabajo en este nivel.",
+      drag_tooltip: "Arrastrar para cambiar de nivel",
       quick_actions: {
         set_as_default: {
           label: "Establecer como predeterminado",
@@ -7196,25 +7197,16 @@ si estás seguro de que tu búsqueda es correcta.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Agregar nivel de jerarquía",
-      description: "Agrega un nuevo nivel de jerarquía al tipo de elemento de trabajo.",
-      work_item_type: "Tipo de elemento de trabajo",
-      select_placeholder: "Seleccionar tipos",
-      search_placeholder: "Buscar tipos",
-      empty_state: {
-        title: "Todos los tipos de elementos de trabajo en uso",
-        description:
-          "Cada tipo de elemento de trabajo definido en este espacio de trabajo ya forma parte de la jerarquía.",
-      },
-      invalid_level_toast: {
-        title: "¡Error!",
-        message: "{type_name} no se puede agregar al nivel {level} ya que rompe las reglas de jerarquía.",
-      },
-      error_toast: {
-        title: "Error",
-        message: "Error al agregar el tipo de elemento de trabajo a la jerarquía.",
+      add_to_level_toast: {
+        loading: "Agregando {workItemTypeName} al nivel {level}...",
+        success: {
+          title: "¡Éxito!",
+          message: "{workItemTypeName} agregado al nivel {level} exitosamente.",
+        },
+        error: {
+          title: "¡Error!",
+          message: "No se pudo agregar {workItemTypeName} al nivel {level} ya que rompe las reglas de jerarquía.",
+        },
       },
     },
     work_item_modal: {
@@ -7230,6 +7222,10 @@ si estás seguro de que tu búsqueda es correcta.`,
     },
     work_item_type_modal: {
       level: "Nivel de jerarquía",
+      invalid_level_toast: {
+        title: "¡Error!",
+        message: "El tipo de elemento de trabajo no se puede actualizar ya que rompe las reglas de jerarquía.",
+      },
     },
   },
   page_actions: {

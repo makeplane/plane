@@ -8020,9 +8020,10 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
     levels: {
-      add_level_button: "Hierarchieebene hinzufügen",
+      max_level_placeholder: "Hierarchieebene hinzufügen",
       empty_level_placeholder: "Arbeitselement-Typ zu Ebene {level} hinzufügen",
       empty_level_unauthorized: "Keine Arbeitselement-Typen in dieser Ebene gefunden.",
+      drag_tooltip: "Ziehen zum Ändern der Ebene",
       quick_actions: {
         set_as_default: {
           label: "Als Standard festlegen",
@@ -8040,24 +8041,17 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Hierarchieebene hinzufügen",
-      description: "Fügen Sie dem Arbeitselement-Typ eine neue Hierarchieebene hinzu.",
-      work_item_type: "Arbeitselement-Typ",
-      select_placeholder: "Typen auswählen",
-      search_placeholder: "Typen suchen",
-      empty_state: {
-        title: "Alle Arbeitselement-Typen werden verwendet",
-        description: "Jeder in diesem Arbeitsbereich definierte Arbeitselement-Typ ist bereits Teil Ihrer Hierarchie.",
-      },
-      invalid_level_toast: {
-        title: "Fehler!",
-        message: "{type_name} kann nicht zur Ebene {level} hinzugefügt werden, da dies die Hierarchieregeln verletzt.",
-      },
-      error_toast: {
-        title: "Fehler",
-        message: "Arbeitselement-Typ konnte nicht zur Hierarchie hinzugefügt werden.",
+      add_to_level_toast: {
+        loading: "Füge {workItemTypeName} zu Ebene {level} hinzu...",
+        success: {
+          title: "Erfolg!",
+          message: "{workItemTypeName} wurde erfolgreich zu Ebene {level} hinzugefügt.",
+        },
+        error: {
+          title: "Fehler!",
+          message:
+            "{workItemTypeName} konnte nicht zu Ebene {level} hinzugefügt werden, da dies die Hierarchieregeln verletzt.",
+        },
       },
     },
     work_item_modal: {
@@ -8073,6 +8067,10 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
     },
     work_item_type_modal: {
       level: "Hierarchieebene",
+      invalid_level_toast: {
+        title: "Fehler!",
+        message: "Der Arbeitselement-Typ kann nicht aktualisiert werden, da dies die Hierarchieregeln verletzt.",
+      },
     },
   },
 } as const;

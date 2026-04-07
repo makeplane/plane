@@ -7139,9 +7139,10 @@ export default {
       },
     },
     levels: {
-      add_level_button: "Добавить уровень иерархии",
+      max_level_placeholder: "Добавить уровень иерархии",
       empty_level_placeholder: "Добавьте тип рабочего элемента на уровень {level}",
       empty_level_unauthorized: "Типы рабочих элементов на этом уровне не найдены.",
+      drag_tooltip: "Перетащите для изменения уровня",
       quick_actions: {
         set_as_default: {
           label: "Установить по умолчанию",
@@ -7158,25 +7159,16 @@ export default {
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Добавить уровень иерархии",
-      description: "Добавьте новый уровень иерархии к типу рабочего элемента.",
-      work_item_type: "Тип рабочего элемента",
-      select_placeholder: "Выбрать типы",
-      search_placeholder: "Поиск типов",
-      empty_state: {
-        title: "Все типы рабочих элементов используются",
-        description:
-          "Каждый тип рабочего элемента, определённый в этом рабочем пространстве, уже является частью иерархии.",
-      },
-      invalid_level_toast: {
-        title: "Ошибка!",
-        message: "{type_name} не может быть добавлен на уровень {level}, так как это нарушает правила иерархии.",
-      },
-      error_toast: {
-        title: "Ошибка",
-        message: "Не удалось добавить тип рабочего элемента в иерархию.",
+      add_to_level_toast: {
+        loading: "Добавление {workItemTypeName} на уровень {level}...",
+        success: {
+          title: "Успешно!",
+          message: "{workItemTypeName} успешно добавлен на уровень {level}.",
+        },
+        error: {
+          title: "Ошибка!",
+          message: "{workItemTypeName} не удалось добавить на уровень {level}, так как это нарушает правила иерархии.",
+        },
       },
     },
     work_item_modal: {
@@ -7192,6 +7184,10 @@ export default {
     },
     work_item_type_modal: {
       level: "Уровень иерархии",
+      invalid_level_toast: {
+        title: "Ошибка!",
+        message: "Тип рабочего элемента не может быть обновлён, так как это нарушает правила иерархии.",
+      },
     },
   },
   page_actions: {

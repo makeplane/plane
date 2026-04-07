@@ -7061,9 +7061,10 @@ Vytvořte nový.`,
       },
     },
     levels: {
-      add_level_button: "Přidat úroveň hierarchie",
+      max_level_placeholder: "Přidat úroveň hierarchie",
       empty_level_placeholder: "Přidejte typ pracovní položky na úroveň {level}",
       empty_level_unauthorized: "Na této úrovni nebyly nalezeny žádné typy pracovních položek.",
+      drag_tooltip: "Přetáhněte pro změnu úrovně",
       quick_actions: {
         set_as_default: {
           label: "Nastavit jako výchozí",
@@ -7080,25 +7081,17 @@ Vytvořte nový.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Přidat úroveň hierarchie",
-      description: "Přidejte novou úroveň hierarchie k typu pracovní položky.",
-      work_item_type: "Typ pracovní položky",
-      select_placeholder: "Vyberte typy",
-      search_placeholder: "Hledat typy",
-      empty_state: {
-        title: "Všechny typy pracovních položek jsou používány",
-        description:
-          "Každý typ pracovní položky definovaný v tomto pracovním prostoru je již součástí vaší hierarchie.",
-      },
-      invalid_level_toast: {
-        title: "Chyba!",
-        message: "{type_name} nelze přidat na úroveň {level}, protože porušuje pravidla hierarchie.",
-      },
-      error_toast: {
-        title: "Chyba",
-        message: "Nepodařilo se přidat typ pracovní položky do hierarchie.",
+      add_to_level_toast: {
+        loading: "Přidávání {workItemTypeName} do úrovně {level}...",
+        success: {
+          title: "Úspěch!",
+          message: "{workItemTypeName} byl úspěšně přidán do úrovně {level}.",
+        },
+        error: {
+          title: "Chyba!",
+          message:
+            "Nepodařilo se přidat {workItemTypeName} do úrovně {level}, protože to porušuje pravidla hierarchie.",
+        },
       },
     },
     work_item_modal: {
@@ -7114,6 +7107,10 @@ Vytvořte nový.`,
     },
     work_item_type_modal: {
       level: "Úroveň hierarchie",
+      invalid_level_toast: {
+        title: "Chyba!",
+        message: "Typ pracovní položky nelze aktualizovat, protože to porušuje pravidla hierarchie.",
+      },
     },
   },
   page_actions: {

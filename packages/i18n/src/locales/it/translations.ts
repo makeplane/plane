@@ -7143,9 +7143,10 @@ Crea un nuovo progetto invece`,
       },
     },
     levels: {
-      add_level_button: "Aggiungi livello di gerarchia",
+      max_level_placeholder: "Aggiungi livello di gerarchia",
       empty_level_placeholder: "Aggiungi un tipo di elemento di lavoro al livello {level}",
       empty_level_unauthorized: "Nessun tipo di elemento di lavoro trovato in questo livello.",
+      drag_tooltip: "Trascina per cambiare livello",
       quick_actions: {
         set_as_default: {
           label: "Imposta come predefinito",
@@ -7162,25 +7163,17 @@ Crea un nuovo progetto invece`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Aggiungi livello di gerarchia",
-      description: "Aggiungi un nuovo livello di gerarchia al tipo di elemento di lavoro.",
-      work_item_type: "Tipo elemento di lavoro",
-      select_placeholder: "Seleziona tipi",
-      search_placeholder: "Cerca tipi",
-      empty_state: {
-        title: "Tutti i tipi di elementi di lavoro in uso",
-        description:
-          "Ogni tipo di elemento di lavoro definito in questo spazio di lavoro fa già parte della tua gerarchia.",
-      },
-      invalid_level_toast: {
-        title: "Errore!",
-        message: "{type_name} non può essere aggiunto al livello {level} poiché viola le regole della gerarchia.",
-      },
-      error_toast: {
-        title: "Errore",
-        message: "Impossibile aggiungere il tipo di elemento di lavoro alla gerarchia.",
+      add_to_level_toast: {
+        loading: "Aggiunta di {workItemTypeName} al livello {level}...",
+        success: {
+          title: "Successo!",
+          message: "{workItemTypeName} aggiunto al livello {level} con successo.",
+        },
+        error: {
+          title: "Errore!",
+          message:
+            "Impossibile aggiungere {workItemTypeName} al livello {level} poiché viola le regole della gerarchia.",
+        },
       },
     },
     work_item_modal: {
@@ -7196,6 +7189,10 @@ Crea un nuovo progetto invece`,
     },
     work_item_type_modal: {
       level: "Livello di gerarchia",
+      invalid_level_toast: {
+        title: "Errore!",
+        message: "Il tipo di elemento di lavoro non può essere aggiornato poiché viola le regole della gerarchia.",
+      },
     },
   },
   page_actions: {

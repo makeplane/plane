@@ -7067,9 +7067,10 @@ export default {
       },
     },
     levels: {
-      add_level_button: "Додати рівень ієрархії",
+      max_level_placeholder: "Додати рівень ієрархії",
       empty_level_placeholder: "Додайте тип робочого елемента до рівня {level}",
       empty_level_unauthorized: "Типи робочих елементів на цьому рівні не знайдено.",
+      drag_tooltip: "Перетягніть для зміни рівня",
       quick_actions: {
         set_as_default: {
           label: "Встановити за замовчуванням",
@@ -7086,24 +7087,16 @@ export default {
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Додати рівень ієрархії",
-      description: "Додайте новий рівень ієрархії до типу робочого елемента.",
-      work_item_type: "Тип робочого елемента",
-      select_placeholder: "Вибрати типи",
-      search_placeholder: "Пошук типів",
-      empty_state: {
-        title: "Усі типи робочих елементів використовуються",
-        description: "Кожен тип робочого елемента, визначений у цьому робочому просторі, вже є частиною ієрархії.",
-      },
-      invalid_level_toast: {
-        title: "Помилка!",
-        message: "{type_name} не може бути додано до рівня {level}, оскільки це порушує правила ієрархії.",
-      },
-      error_toast: {
-        title: "Помилка",
-        message: "Не вдалося додати тип робочого елемента до ієрархії.",
+      add_to_level_toast: {
+        loading: "Додавання {workItemTypeName} до рівня {level}...",
+        success: {
+          title: "Успішно!",
+          message: "{workItemTypeName} успішно додано до рівня {level}.",
+        },
+        error: {
+          title: "Помилка!",
+          message: "{workItemTypeName} не вдалося додати до рівня {level}, оскільки це порушує правила ієрархії.",
+        },
       },
     },
     work_item_modal: {
@@ -7119,6 +7112,10 @@ export default {
     },
     work_item_type_modal: {
       level: "Рівень ієрархії",
+      invalid_level_toast: {
+        title: "Помилка!",
+        message: "Тип робочого елемента не може бути оновлений, оскільки це порушує правила ієрархії.",
+      },
     },
   },
   page_actions: {

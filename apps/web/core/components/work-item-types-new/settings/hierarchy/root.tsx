@@ -17,9 +17,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
 // plane web imports
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 // local imports
-import { WorkItemTypeHierarchyAddToLevelButton } from "./add-to-level-button";
+import { WorkItemTypeHierarchyVacantLevel } from "./vacant-level";
 import { WorkItemTypeHierarchyLevelItem } from "./level-item";
 
 type Props = {
@@ -30,12 +31,15 @@ export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHie
   workspaceSlug,
 }: Props) {
   // store hooks
-  const { canCreate, getWorkItemTypesByWorkspaceSlugGroupedByLevel, getLoaderByWorkspaceSlug } =
+  const { canCreate, getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel, getLoaderByWorkspaceSlug } =
     useWorkspaceWorkItemTypes();
+  const { featuresByWorkspaceSlug } = useWorkspaceFeatures();
   // derived values
-  const workItemTypesByLevel = getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug);
+  const workItemTypesByLevel = getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug);
   const isLoading = getLoaderByWorkspaceSlug(workspaceSlug) === "init-loader";
   const canAddLevel = canCreate(workspaceSlug);
+  const maxLevel = workItemTypesByLevel.size > 0 ? Math.max(...workItemTypesByLevel.keys()) : -1;
+  const defaultLevel = workspaceSlug ? (featuresByWorkspaceSlug(workspaceSlug)?.work_item_type_default_level ?? 0) : 0;
 
   if (isLoading)
     return (
@@ -51,7 +55,7 @@ export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHie
     <div className="bg-surface-2 rounded-2xl p-4">
       {canAddLevel && (
         <>
-          <WorkItemTypeHierarchyAddToLevelButton />
+          <WorkItemTypeHierarchyVacantLevel defaultLevel={defaultLevel} hideQuickActions level={maxLevel + 1} />
           <div className="h-8 py-1 pl-4">
             <MoveDown className="size-6 text-tertiary stroke-1" />
           </div>
@@ -64,7 +68,12 @@ export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHie
               <MoveDown className="size-6 text-tertiary stroke-1" />
             </div>
           )}
-          <WorkItemTypeHierarchyLevelItem canAddLevel={canAddLevel} level={level} workItemTypes={workItemTypes} />
+          <WorkItemTypeHierarchyLevelItem
+            canAddLevel={canAddLevel}
+            defaultLevel={defaultLevel}
+            level={level}
+            workItemTypes={workItemTypes}
+          />
         </Fragment>
       ))}
     </div>

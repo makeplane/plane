@@ -7060,9 +7060,10 @@ export default {
       },
     },
     levels: {
-      add_level_button: "階層レベルを追加",
+      max_level_placeholder: "階層レベルを追加",
       empty_level_placeholder: "レベル {level} に作業アイテムタイプを追加",
       empty_level_unauthorized: "このレベルに作業アイテムタイプが見つかりません。",
+      drag_tooltip: "ドラッグしてレベルを変更",
       quick_actions: {
         set_as_default: {
           label: "デフォルトに設定",
@@ -7079,24 +7080,16 @@ export default {
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "階層レベルを追加",
-      description: "作業アイテムタイプに新しい階層レベルを追加します。",
-      work_item_type: "作業アイテムタイプ",
-      select_placeholder: "タイプを選択",
-      search_placeholder: "タイプを検索",
-      empty_state: {
-        title: "すべての作業アイテムタイプが使用中",
-        description: "このワークスペースで定義されたすべての作業アイテムタイプはすでに階層の一部です。",
-      },
-      invalid_level_toast: {
-        title: "エラー！",
-        message: "{type_name} は階層ルールに違反するため、レベル {level} に追加できません。",
-      },
-      error_toast: {
-        title: "エラー",
-        message: "作業アイテムタイプを階層に追加できませんでした。",
+      add_to_level_toast: {
+        loading: "{workItemTypeName}をレベル{level}に追加しています...",
+        success: {
+          title: "成功！",
+          message: "{workItemTypeName}がレベル{level}に正常に追加されました。",
+        },
+        error: {
+          title: "エラー！",
+          message: "{workItemTypeName}は階層ルールに違反するため、レベル{level}に追加できませんでした。",
+        },
       },
     },
     work_item_modal: {
@@ -7111,6 +7104,10 @@ export default {
     },
     work_item_type_modal: {
       level: "階層レベル",
+      invalid_level_toast: {
+        title: "エラー！",
+        message: "階層ルールに違反するため、作業アイテムタイプを更新できませんでした。",
+      },
     },
   },
   page_actions: {

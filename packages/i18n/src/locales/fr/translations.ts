@@ -7193,9 +7193,10 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
     },
     levels: {
-      add_level_button: "Ajouter un niveau de hiérarchie",
+      max_level_placeholder: "Ajouter un niveau de hiérarchie",
       empty_level_placeholder: "Ajouter un type d'élément de travail au niveau {level}",
       empty_level_unauthorized: "Aucun type d'élément de travail trouvé à ce niveau.",
+      drag_tooltip: "Faire glisser pour changer le niveau",
       quick_actions: {
         set_as_default: {
           label: "Définir par défaut",
@@ -7212,25 +7213,17 @@ si vous êtes sûr que votre recherche est correcte.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Ajouter un niveau de hiérarchie",
-      description: "Ajouter un nouveau niveau de hiérarchie au type d'élément de travail.",
-      work_item_type: "Type d'élément de travail",
-      select_placeholder: "Sélectionner les types",
-      search_placeholder: "Rechercher des types",
-      empty_state: {
-        title: "Tous les types d'éléments de travail sont utilisés",
-        description:
-          "Chaque type d'élément de travail défini dans cet espace de travail fait déjà partie de votre hiérarchie.",
-      },
-      invalid_level_toast: {
-        title: "Erreur !",
-        message: "{type_name} ne peut pas être ajouté au niveau {level} car cela enfreint les règles de hiérarchie.",
-      },
-      error_toast: {
-        title: "Erreur",
-        message: "Impossible d'ajouter le type d'élément de travail à la hiérarchie.",
+      add_to_level_toast: {
+        loading: "Ajout de {workItemTypeName} au niveau {level}...",
+        success: {
+          title: "Succès !",
+          message: "{workItemTypeName} ajouté au niveau {level} avec succès.",
+        },
+        error: {
+          title: "Erreur !",
+          message:
+            "Impossible d'ajouter {workItemTypeName} au niveau {level} car cela enfreint les règles de hiérarchie.",
+        },
       },
     },
     work_item_modal: {
@@ -7246,6 +7239,10 @@ si vous êtes sûr que votre recherche est correcte.`,
     },
     work_item_type_modal: {
       level: "Niveau de hiérarchie",
+      invalid_level_toast: {
+        title: "Erreur !",
+        message: "Le type d'élément de travail ne peut pas être mis à jour car cela enfreint les règles de hiérarchie.",
+      },
     },
   },
   page_actions: {

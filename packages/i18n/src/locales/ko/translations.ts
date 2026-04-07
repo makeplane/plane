@@ -7008,9 +7008,10 @@ export default {
       },
     },
     levels: {
-      add_level_button: "계층 레벨 추가",
+      max_level_placeholder: "계층 레벨 추가",
       empty_level_placeholder: "레벨 {level}에 작업 항목 유형 추가",
       empty_level_unauthorized: "이 레벨에서 작업 항목 유형을 찾을 수 없습니다.",
+      drag_tooltip: "드래그하여 레벨 변경",
       quick_actions: {
         set_as_default: {
           label: "기본값으로 설정",
@@ -7027,24 +7028,16 @@ export default {
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "계층 레벨 추가",
-      description: "작업 항목 유형에 새 계층 레벨을 추가합니다.",
-      work_item_type: "작업 항목 유형",
-      select_placeholder: "유형 선택",
-      search_placeholder: "유형 검색",
-      empty_state: {
-        title: "모든 작업 항목 유형이 사용 중",
-        description: "이 워크스페이스에 정의된 모든 작업 항목 유형은 이미 계층 구조의 일부입니다.",
-      },
-      invalid_level_toast: {
-        title: "오류!",
-        message: "{type_name}은(는) 계층 규칙을 위반하므로 레벨 {level}에 추가할 수 없습니다.",
-      },
-      error_toast: {
-        title: "오류",
-        message: "작업 항목 유형을 계층 구조에 추가하지 못했습니다.",
+      add_to_level_toast: {
+        loading: "{workItemTypeName}을(를) 레벨 {level}에 추가하는 중...",
+        success: {
+          title: "성공!",
+          message: "{workItemTypeName}이(가) 레벨 {level}에 성공적으로 추가되었습니다.",
+        },
+        error: {
+          title: "오류!",
+          message: "{workItemTypeName}을(를) 레벨 {level}에 추가할 수 없습니다. 계층 규칙을 위반합니다.",
+        },
       },
     },
     work_item_modal: {
@@ -7059,6 +7052,10 @@ export default {
     },
     work_item_type_modal: {
       level: "계층 레벨",
+      invalid_level_toast: {
+        title: "오류!",
+        message: "계층 규칙을 위반하므로 작업 항목 유형을 업데이트할 수 없습니다.",
+      },
     },
   },
   page_actions: {

@@ -32,13 +32,15 @@ export const WorkItemTypeCreateUpdateLevelSelect = observer(function WorkItemTyp
   // params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { getWorkItemTypesByWorkspaceSlugGroupedByLevel } = useWorkspaceWorkItemTypes();
+  const { getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel } = useWorkspaceWorkItemTypes();
   const { featuresByWorkspaceSlug } = useWorkspaceFeatures();
   // derived values
   const defaultLevel = workspaceSlug ? (featuresByWorkspaceSlug(workspaceSlug)?.work_item_type_default_level ?? 0) : 0;
   const allAvailableLevels = workspaceSlug
-    ? Array.from(getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug).keys())
+    ? Array.from(getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug).keys())
     : [];
+  let maxLevel = Math.max(...allAvailableLevels);
+  maxLevel = Number.isFinite(maxLevel) ? maxLevel : 0;
   // translation
   const { t } = useTranslation();
 
@@ -58,7 +60,7 @@ export const WorkItemTypeCreateUpdateLevelSelect = observer(function WorkItemTyp
         value={value ?? defaultLevel}
         onChange={onChange}
       >
-        {allAvailableLevels.map((level) => (
+        {[maxLevel + 1, ...allAvailableLevels].map((level) => (
           <CustomSelect.Option key={level} value={level}>
             <span className="w-full flex items-center justify-between gap-2">
               <span className="shrink-0">{level}</span>

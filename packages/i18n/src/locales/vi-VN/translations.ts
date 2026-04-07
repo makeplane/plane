@@ -7069,9 +7069,10 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       },
     },
     levels: {
-      add_level_button: "Thêm cấp độ phân cấp",
+      max_level_placeholder: "Thêm cấp độ phân cấp",
       empty_level_placeholder: "Thêm loại mục công việc vào cấp độ {level}",
       empty_level_unauthorized: "Không tìm thấy loại mục công việc nào ở cấp độ này.",
+      drag_tooltip: "Kéo để thay đổi cấp độ",
       quick_actions: {
         set_as_default: {
           label: "Đặt làm mặc định",
@@ -7088,25 +7089,16 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Thêm cấp độ phân cấp",
-      description: "Thêm cấp độ phân cấp mới vào loại mục công việc.",
-      work_item_type: "Loại mục công việc",
-      select_placeholder: "Chọn loại",
-      search_placeholder: "Tìm kiếm loại",
-      empty_state: {
-        title: "Tất cả loại mục công việc đang được sử dụng",
-        description:
-          "Mỗi loại mục công việc được định nghĩa trong không gian làm việc này đã là một phần của phân cấp của bạn.",
-      },
-      invalid_level_toast: {
-        title: "Lỗi!",
-        message: "{type_name} không thể thêm vào cấp độ {level} vì vi phạm quy tắc phân cấp.",
-      },
-      error_toast: {
-        title: "Lỗi",
-        message: "Không thể thêm loại mục công việc vào phân cấp.",
+      add_to_level_toast: {
+        loading: "Đang thêm {workItemTypeName} vào cấp độ {level}...",
+        success: {
+          title: "Thành công!",
+          message: "{workItemTypeName} đã được thêm vào cấp độ {level} thành công.",
+        },
+        error: {
+          title: "Lỗi!",
+          message: "Không thể thêm {workItemTypeName} vào cấp độ {level} vì vi phạm quy tắc phân cấp.",
+        },
       },
     },
     work_item_modal: {
@@ -7121,6 +7113,10 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
     },
     work_item_type_modal: {
       level: "Cấp độ phân cấp",
+      invalid_level_toast: {
+        title: "Lỗi!",
+        message: "Không thể cập nhật loại mục công việc vì vi phạm quy tắc phân cấp.",
+      },
     },
   },
   page_actions: {

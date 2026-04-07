@@ -7146,9 +7146,10 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       },
     },
     levels: {
-      add_level_button: "Adicionar nível de hierarquia",
+      max_level_placeholder: "Adicionar nível de hierarquia",
       empty_level_placeholder: "Adicionar um tipo de item de trabalho ao nível {level}",
       empty_level_unauthorized: "Nenhum tipo de item de trabalho encontrado neste nível.",
+      drag_tooltip: "Arraste para mudar o nível",
       quick_actions: {
         set_as_default: {
           label: "Definir como padrão",
@@ -7165,24 +7166,16 @@ da maneira que você quiser a partir das fontes que você especificar.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Adicionar nível de hierarquia",
-      description: "Adicionar um novo nível de hierarquia ao tipo de item de trabalho.",
-      work_item_type: "Tipo de item de trabalho",
-      select_placeholder: "Selecionar tipos",
-      search_placeholder: "Pesquisar tipos",
-      empty_state: {
-        title: "Todos os tipos de itens de trabalho em uso",
-        description: "Cada tipo de item de trabalho definido neste espaço de trabalho já faz parte da sua hierarquia.",
-      },
-      invalid_level_toast: {
-        title: "Erro!",
-        message: "{type_name} não pode ser adicionado ao nível {level} pois viola as regras de hierarquia.",
-      },
-      error_toast: {
-        title: "Erro",
-        message: "Falha ao adicionar o tipo de item de trabalho à hierarquia.",
+      add_to_level_toast: {
+        loading: "Adicionando {workItemTypeName} ao nível {level}...",
+        success: {
+          title: "Sucesso!",
+          message: "{workItemTypeName} adicionado ao nível {level} com sucesso.",
+        },
+        error: {
+          title: "Erro!",
+          message: "Falha ao adicionar {workItemTypeName} ao nível {level} pois viola as regras de hierarquia.",
+        },
       },
     },
     work_item_modal: {
@@ -7198,6 +7191,10 @@ da maneira que você quiser a partir das fontes que você especificar.`,
     },
     work_item_type_modal: {
       level: "Nível de hierarquia",
+      invalid_level_toast: {
+        title: "Erro!",
+        message: "O tipo de item de trabalho não pode ser atualizado pois viola as regras de hierarquia.",
+      },
     },
   },
   page_actions: {

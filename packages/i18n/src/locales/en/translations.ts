@@ -7974,9 +7974,10 @@ the way you want to from the sources you specify.`,
       },
     },
     levels: {
-      add_level_button: "Add hierarchy level",
+      max_level_placeholder: "Add hierarchy level",
       empty_level_placeholder: "Add a work item type to level {level}",
       empty_level_unauthorized: "No work item types found in this level.",
+      drag_tooltip: "Drag to change level",
       quick_actions: {
         set_as_default: {
           label: "Set as default",
@@ -7993,24 +7994,16 @@ the way you want to from the sources you specify.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Add hierarchy level",
-      description: "Add a new hierarchy level to the work item type.",
-      work_item_type: "Work item type",
-      select_placeholder: "Select types",
-      search_placeholder: "Search types",
-      empty_state: {
-        title: "All work item types in use",
-        description: "Every work item type defined in this workspace is already part of your hierarchy.",
-      },
-      invalid_level_toast: {
-        title: "Error!",
-        message: "{type_name} cannot be added to level {level} since it breaks the hierarchy rules.",
-      },
-      error_toast: {
-        title: "Error",
-        message: "Failed to add work item type to hierarchy.",
+      add_to_level_toast: {
+        loading: "Adding {workItemTypeName} to level {level}...",
+        success: {
+          title: "Success!",
+          message: "{workItemTypeName} added to level {level} successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Failed to add {workItemTypeName} to level {level} since it breaks the hierarchy rules.",
+        },
       },
     },
     work_item_modal: {
@@ -8026,6 +8019,10 @@ the way you want to from the sources you specify.`,
     },
     work_item_type_modal: {
       level: "Hierarchy level",
+      invalid_level_toast: {
+        title: "Error!",
+        message: "Work item type cannot be updated since it breaks the hierarchy rules.",
+      },
     },
   },
 } as const;

@@ -11,34 +11,27 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useState } from "react";
-import { CheckCircle2, PencilIcon } from "lucide-react";
+import { useMemo } from "react";
+import { CheckCircle2 } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 // plane web imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store/use-workspace-features";
-// local imports
-import { AddWorkItemTypeHierarchyLevelModal } from "./add-level-modal";
 
 type Props = {
   defaultLevel: number;
   level: number;
-  workItemTypes: BaseWorkItemTypeInstanceSchema[];
 };
 
 export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItemTypeHierarchyLevelQuickActions({
   defaultLevel,
   level,
-  workItemTypes,
 }: Props) {
-  // states
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   // params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -48,13 +41,6 @@ export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItem
   // derived values
   const MENU_ITEMS: TContextMenuItem[] = useMemo(() => {
     const allItems = [
-      {
-        key: "edit",
-        title: t("common.edit"),
-        icon: PencilIcon,
-        action: () => setIsEditModalOpen(true),
-        shouldRender: true,
-      },
       {
         key: "set-as-default",
         title: t("work_item_type_hierarchy.levels.quick_actions.set_as_default.label"),
@@ -92,21 +78,13 @@ export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItem
   if (MENU_ITEMS.length === 0) return null;
 
   return (
-    <>
-      <AddWorkItemTypeHierarchyLevelModal
-        handleClose={() => setIsEditModalOpen(false)}
-        isOpen={isEditModalOpen}
-        level={level}
-        selectedWorkItemTypeIds={workItemTypes.map((t) => t.id)}
-      />
-      <CustomMenu className="shrink-0" ellipsis placement="bottom-end" closeOnSelect>
-        {MENU_ITEMS.map((item) => (
-          <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
-            {item.icon && <item.icon className="shrink-0 size-3" />}
-            {item.title}
-          </CustomMenu.MenuItem>
-        ))}
-      </CustomMenu>
-    </>
+    <CustomMenu className="shrink-0" ellipsis placement="bottom-end" closeOnSelect>
+      {MENU_ITEMS.map((item) => (
+        <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
+          {item.icon && <item.icon className="shrink-0 size-3" />}
+          {item.title}
+        </CustomMenu.MenuItem>
+      ))}
+    </CustomMenu>
   );
 });

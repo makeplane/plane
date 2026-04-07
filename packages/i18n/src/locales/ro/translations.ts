@@ -7147,9 +7147,10 @@ așa cum dorești din sursele pe care le specifici.`,
       },
     },
     levels: {
-      add_level_button: "Adăugați nivel de ierarhie",
+      max_level_placeholder: "Adăugați nivel de ierarhie",
       empty_level_placeholder: "Adăugați un tip de element de lucru la nivelul {level}",
       empty_level_unauthorized: "Nu s-au găsit tipuri de elemente de lucru la acest nivel.",
+      drag_tooltip: "Glisați pentru a schimba nivelul",
       quick_actions: {
         set_as_default: {
           label: "Setați ca implicit",
@@ -7166,25 +7167,16 @@ așa cum dorești din sursele pe care le specifici.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Adăugați nivel de ierarhie",
-      description: "Adăugați un nou nivel de ierarhie tipului de element de lucru.",
-      work_item_type: "Tip element de lucru",
-      select_placeholder: "Selectați tipuri",
-      search_placeholder: "Căutați tipuri",
-      empty_state: {
-        title: "Toate tipurile de elemente de lucru sunt utilizate",
-        description:
-          "Fiecare tip de element de lucru definit în acest spațiu de lucru face deja parte din ierarhia dvs.",
-      },
-      invalid_level_toast: {
-        title: "Eroare!",
-        message: "{type_name} nu poate fi adăugat la nivelul {level} deoarece încalcă regulile ierarhiei.",
-      },
-      error_toast: {
-        title: "Eroare",
-        message: "Eroare la adăugarea tipului de element de lucru în ierarhie.",
+      add_to_level_toast: {
+        loading: "Se adaugă {workItemTypeName} la nivelul {level}...",
+        success: {
+          title: "Succes!",
+          message: "{workItemTypeName} a fost adăugat la nivelul {level} cu succes.",
+        },
+        error: {
+          title: "Eroare!",
+          message: "Nu s-a putut adăuga {workItemTypeName} la nivelul {level} deoarece încalcă regulile de ierarhie.",
+        },
       },
     },
     work_item_modal: {
@@ -7200,6 +7192,10 @@ așa cum dorești din sursele pe care le specifici.`,
     },
     work_item_type_modal: {
       level: "Nivel de ierarhie",
+      invalid_level_toast: {
+        title: "Eroare!",
+        message: "Tipul elementului de lucru nu poate fi actualizat deoarece încalcă regulile de ierarhie.",
+      },
     },
   },
   page_actions: {

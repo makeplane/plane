@@ -7125,9 +7125,10 @@ modüller arşivlenebilir.`,
       },
     },
     levels: {
-      add_level_button: "Hiyerarşi seviyesi ekle",
+      max_level_placeholder: "Hiyerarşi seviyesi ekle",
       empty_level_placeholder: "{level}. seviyeye bir iş öğesi türü ekleyin",
       empty_level_unauthorized: "Bu seviyede iş öğesi türü bulunamadı.",
+      drag_tooltip: "Seviyeyi değiştirmek için sürükleyin",
       quick_actions: {
         set_as_default: {
           label: "Varsayılan olarak ayarla",
@@ -7144,24 +7145,16 @@ modüller arşivlenebilir.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Hiyerarşi seviyesi ekle",
-      description: "İş öğesi türüne yeni bir hiyerarşi seviyesi ekleyin.",
-      work_item_type: "İş öğesi türü",
-      select_placeholder: "Türleri seçin",
-      search_placeholder: "Türleri ara",
-      empty_state: {
-        title: "Tüm iş öğesi türleri kullanımda",
-        description: "Bu çalışma alanında tanımlanan her iş öğesi türü zaten hiyerarşinizin bir parçasıdır.",
-      },
-      invalid_level_toast: {
-        title: "Hata!",
-        message: "{type_name}, hiyerarşi kurallarını bozduğundan {level}. seviyeye eklenemiyor.",
-      },
-      error_toast: {
-        title: "Hata",
-        message: "İş öğesi türü hiyerarşiye eklenemedi.",
+      add_to_level_toast: {
+        loading: "{workItemTypeName}, {level}. seviyeye ekleniyor...",
+        success: {
+          title: "Başarılı!",
+          message: "{workItemTypeName}, {level}. seviyeye başarıyla eklendi.",
+        },
+        error: {
+          title: "Hata!",
+          message: "{workItemTypeName}, hiyerarşi kurallarını ihlal ettiğinden {level}. seviyeye eklenemedi.",
+        },
       },
     },
     work_item_modal: {
@@ -7177,6 +7170,10 @@ modüller arşivlenebilir.`,
     },
     work_item_type_modal: {
       level: "Hiyerarşi seviyesi",
+      invalid_level_toast: {
+        title: "Hata!",
+        message: "Çalışma öğesi türü, hiyerarşi kurallarını ihlal ettiğinden güncellenemiyor.",
+      },
     },
   },
   page_actions: {

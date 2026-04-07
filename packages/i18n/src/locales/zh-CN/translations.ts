@@ -6888,9 +6888,10 @@ export default {
       },
     },
     levels: {
-      add_level_button: "添加层级",
+      max_level_placeholder: "添加层级",
       empty_level_placeholder: "向第 {level} 层添加工作项类型",
       empty_level_unauthorized: "此层级中未找到工作项类型。",
+      drag_tooltip: "拖动以更改层级",
       quick_actions: {
         set_as_default: {
           label: "设为默认",
@@ -6907,24 +6908,16 @@ export default {
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "添加层级",
-      description: "为工作项类型添加新的层级。",
-      work_item_type: "工作项类型",
-      select_placeholder: "选择类型",
-      search_placeholder: "搜索类型",
-      empty_state: {
-        title: "所有工作项类型已在使用中",
-        description: "此工作区中定义的每个工作项类型已是您层级的一部分。",
-      },
-      invalid_level_toast: {
-        title: "错误！",
-        message: "{type_name} 无法添加至第 {level} 层，因为这违反了层级规则。",
-      },
-      error_toast: {
-        title: "错误",
-        message: "无法将工作项类型添加至层级。",
+      add_to_level_toast: {
+        loading: "正在将 {workItemTypeName} 添加到层级 {level}...",
+        success: {
+          title: "成功！",
+          message: "{workItemTypeName} 已成功添加到层级 {level}。",
+        },
+        error: {
+          title: "错误！",
+          message: "无法将 {workItemTypeName} 添加到层级 {level}，因为它违反了层级规则。",
+        },
       },
     },
     work_item_modal: {
@@ -6939,6 +6932,10 @@ export default {
     },
     work_item_type_modal: {
       level: "层级",
+      invalid_level_toast: {
+        title: "错误！",
+        message: "工作项类型无法更新，因为它违反了层级规则。",
+      },
     },
   },
   page_actions: {

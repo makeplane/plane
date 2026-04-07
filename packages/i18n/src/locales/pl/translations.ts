@@ -7075,9 +7075,10 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       },
     },
     levels: {
-      add_level_button: "Dodaj poziom hierarchii",
+      max_level_placeholder: "Dodaj poziom hierarchii",
       empty_level_placeholder: "Dodaj typ elementu roboczego do poziomu {level}",
       empty_level_unauthorized: "Nie znaleziono typów elementów roboczych na tym poziomie.",
+      drag_tooltip: "Przeciągnij, aby zmienić poziom",
       quick_actions: {
         set_as_default: {
           label: "Ustaw jako domyślny",
@@ -7094,24 +7095,16 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Dodaj poziom hierarchii",
-      description: "Dodaj nowy poziom hierarchii do typu elementu roboczego.",
-      work_item_type: "Typ elementu roboczego",
-      select_placeholder: "Wybierz typy",
-      search_placeholder: "Szukaj typów",
-      empty_state: {
-        title: "Wszystkie typy elementów roboczych są w użyciu",
-        description: "Każdy typ elementu roboczego zdefiniowany w tym obszarze roboczym jest już częścią hierarchii.",
-      },
-      invalid_level_toast: {
-        title: "Błąd!",
-        message: "{type_name} nie może być dodany do poziomu {level}, ponieważ narusza zasady hierarchii.",
-      },
-      error_toast: {
-        title: "Błąd",
-        message: "Nie udało się dodać typu elementu roboczego do hierarchii.",
+      add_to_level_toast: {
+        loading: "Dodawanie {workItemTypeName} do poziomu {level}...",
+        success: {
+          title: "Sukces!",
+          message: "{workItemTypeName} pomyślnie dodano do poziomu {level}.",
+        },
+        error: {
+          title: "Błąd!",
+          message: "Nie udało się dodać {workItemTypeName} do poziomu {level}, ponieważ narusza to zasady hierarchii.",
+        },
       },
     },
     work_item_modal: {
@@ -7127,6 +7120,10 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
     },
     work_item_type_modal: {
       level: "Poziom hierarchii",
+      invalid_level_toast: {
+        title: "Błąd!",
+        message: "Typ elementu pracy nie może zostać zaktualizowany, ponieważ narusza zasady hierarchii.",
+      },
     },
   },
   page_actions: {

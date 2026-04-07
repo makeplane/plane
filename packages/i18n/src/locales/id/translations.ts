@@ -7098,9 +7098,10 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       },
     },
     levels: {
-      add_level_button: "Tambah tingkat hierarki",
+      max_level_placeholder: "Tambah tingkat hierarki",
       empty_level_placeholder: "Tambahkan jenis item pekerjaan ke tingkat {level}",
       empty_level_unauthorized: "Tidak ada jenis item pekerjaan yang ditemukan di tingkat ini.",
+      drag_tooltip: "Seret untuk mengubah tingkat",
       quick_actions: {
         set_as_default: {
           label: "Tetapkan sebagai default",
@@ -7117,25 +7118,16 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
           },
         },
       },
-    },
-    add_level_modal: {
-      title: "Tambah tingkat hierarki",
-      description: "Tambahkan tingkat hierarki baru ke jenis item pekerjaan.",
-      work_item_type: "Jenis item pekerjaan",
-      select_placeholder: "Pilih tipe",
-      search_placeholder: "Cari tipe",
-      empty_state: {
-        title: "Semua jenis item pekerjaan sedang digunakan",
-        description:
-          "Setiap jenis item pekerjaan yang ditentukan di ruang kerja ini sudah menjadi bagian dari hierarki Anda.",
-      },
-      invalid_level_toast: {
-        title: "Kesalahan!",
-        message: "{type_name} tidak dapat ditambahkan ke tingkat {level} karena melanggar aturan hierarki.",
-      },
-      error_toast: {
-        title: "Kesalahan",
-        message: "Gagal menambahkan jenis item pekerjaan ke hierarki.",
+      add_to_level_toast: {
+        loading: "Menambahkan {workItemTypeName} ke tingkat {level}...",
+        success: {
+          title: "Berhasil!",
+          message: "{workItemTypeName} berhasil ditambahkan ke tingkat {level}.",
+        },
+        error: {
+          title: "Kesalahan!",
+          message: "Gagal menambahkan {workItemTypeName} ke tingkat {level} karena melanggar aturan hierarki.",
+        },
       },
     },
     work_item_modal: {
@@ -7151,6 +7143,10 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
     },
     work_item_type_modal: {
       level: "Tingkat hierarki",
+      invalid_level_toast: {
+        title: "Kesalahan!",
+        message: "Jenis item kerja tidak dapat diperbarui karena melanggar aturan hierarki.",
+      },
     },
   },
   page_actions: {

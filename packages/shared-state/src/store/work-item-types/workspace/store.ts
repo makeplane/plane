@@ -81,9 +81,9 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
     }
   );
 
-  getWorkItemTypesByWorkspaceSlugGroupedByLevel: WorkspaceWorkItemTypesStoreSchema["getWorkItemTypesByWorkspaceSlugGroupedByLevel"] =
+  getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel: WorkspaceWorkItemTypesStoreSchema["getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel"] =
     computedFn((workspaceSlug) => {
-      const types = this.getWorkItemTypesByWorkspaceSlug(workspaceSlug);
+      const types = this.getWorkItemTypesByWorkspaceSlug(workspaceSlug).filter((t) => !!t.is_active);
       const grouped = types.reduce((acc, type) => {
         acc.set(type.level, [...(acc.get(type.level) ?? []), type]);
         return acc;
@@ -181,7 +181,9 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
   updateHierarchy: WorkspaceWorkItemTypesStoreSchema["updateHierarchy"] = async (workspaceSlug, payload) => {
     try {
       await workspaceTypeService.updateHierarchy(workspaceSlug, payload);
-      const allTypesAtLevel = this.getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug).get(payload.level);
+      const allTypesAtLevel = this.getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug).get(
+        payload.level
+      );
       const addedTypes = payload.type_ids.filter((typeId) => !allTypesAtLevel?.some((t) => t.id === typeId));
       const removedTypes = allTypesAtLevel?.filter((t) => !payload.type_ids.includes(t.id));
       runInAction(() => {
