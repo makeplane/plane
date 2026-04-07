@@ -98,7 +98,7 @@ from .epic import EpicSerializer, EpicCreateSerializer
 
 from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
 
-from .page import PageAPISerializer, PageCreateAPISerializer, PageDetailAPISerializer
+from .page import PageAPISerializer, PageCreateAPISerializer, PageDetailAPISerializer, PageListAPISerializer
 
 from .work_item_page import (
     WorkItemPageSerializer,

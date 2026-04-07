@@ -43,6 +43,25 @@ class PageDetailAPISerializer(BaseSerializer):
         read_only_fields = ["workspace", "owned_by", "anchor"]
 
 
+class PageListAPISerializer(BaseSerializer):
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "owned_by",
+            "access",
+            "is_locked",
+            "archived_at",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "logo_props",
+            "parent_id",
+        ]
+        read_only_fields = ["workspace", "owned_by"]
+
+
 class PageAPISerializer(BaseSerializer):
     anchor = serializers.CharField(read_only=True)
 
