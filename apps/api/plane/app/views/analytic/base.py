@@ -197,9 +197,9 @@ class SavedAnalyticEndpoint(BaseAPIView):
         x_axis = analytic_view.query_dict.get("x_axis", False)
         y_axis = analytic_view.query_dict.get("y_axis", False)
 
-        if not x_axis or not y_axis:
+        if not x_axis or not y_axis or x_axis not in VALID_ANALYTICS_FIELDS or y_axis not in VALID_YAXIS:
             return Response(
-                {"error": "x-axis and y-axis dimensions are required"},
+                {"error": "x-axis and y-axis dimensions are required and the values should be valid"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
