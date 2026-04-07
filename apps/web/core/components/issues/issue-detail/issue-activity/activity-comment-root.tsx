@@ -92,7 +92,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
       ? filteredActivities.filter((item) => {
           if (item.activity_type === "COMMENT" || item.activity_type === "WORKLOG") return true;
           const data = getActivityById(item.id);
-          if (!data?.field || data.field === "description" || data.field === "name") return false;
+          if (!data?.field || data.field === "description") return false;
           return !!(data.old_value || data.new_value);
         })
       : filteredActivities;
