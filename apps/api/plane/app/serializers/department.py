@@ -1,4 +1,5 @@
 # Django imports
+from django.db.models import Count, Q
 from rest_framework import serializers
 
 # Module imports
@@ -85,7 +86,16 @@ class DepartmentTreeSerializer(BaseSerializer):
         ]
 
     def get_children(self, obj):
-        children = obj.children.filter(deleted_at__isnull=True).order_by("sort_order", "name")
+        children = (
+            obj.children.filter(deleted_at__isnull=True)
+            .annotate(
+                staff_count=Count(
+                    "staff_members",
+                    filter=Q(staff_members__deleted_at__isnull=True),
+                )
+            )
+            .order_by("sort_order", "name")
+        )
         return DepartmentTreeSerializer(children, many=True, context=self.context).data
 
     def get_manager_detail(self, obj):
