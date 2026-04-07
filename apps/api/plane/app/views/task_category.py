@@ -16,7 +16,11 @@ class MainTaskCategoryEndpoint(BaseAPIView):
     """Read-only endpoint: list active main task categories for the web app."""
 
     def get(self, request, slug):
-        categories = MainTaskCategory.objects.filter(is_active=True).order_by("sort_order", "name")
+        # Only return categories linked to the department associated with this workspace
+        categories = MainTaskCategory.objects.filter(
+            is_active=True,
+            departments__linked_workspace__slug=slug,
+        ).distinct().order_by("sort_order", "name")
         serializer = MainTaskCategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -26,7 +30,11 @@ class SubTaskCategoryEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         main_category_id = request.query_params.get("main_category")
-        qs = SubTaskCategory.objects.filter(is_active=True).order_by("sort_order", "name")
+        # Only return subs under main categories linked to this workspace's department
+        qs = SubTaskCategory.objects.filter(
+            is_active=True,
+            main_category__departments__linked_workspace__slug=slug,
+        ).distinct().order_by("sort_order", "name")
         if main_category_id:
             qs = qs.filter(main_category_id=main_category_id)
         serializer = SubTaskCategorySerializer(qs, many=True)
