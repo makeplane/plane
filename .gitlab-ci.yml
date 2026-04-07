@@ -54,7 +54,7 @@ variables:
   cache:
     <<: *pnpm_cache
   before_script:
-    - apk add --no-cache git
+    - command -v git || (command -v apk && apk add --no-cache git)
     - corepack enable pnpm
     - pnpm config set store-dir $PNPM_STORE_PATH
     - pnpm install --frozen-lockfile
