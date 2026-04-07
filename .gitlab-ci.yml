@@ -2,8 +2,8 @@
 # CI/CD Pipeline — Plane SHB
 #
 # Supports two environments via IS_AIRGAPPED variable:
-#   IS_AIRGAPPED=false (default): gitlab.com + self-hosted runner (Docker Executor, internet)
-#   IS_AIRGAPPED=true           : internal GitLab + Shell Executor (air-gapped, no internet)
+#   IS_AIRGAPPED=true  (default): internal GitLab + Shell Executor (air-gapped, no internet)
+#   IS_AIRGAPPED=false          : gitlab.com + Docker Executor + DinD (internet)
 #
 # Stages: lint → test → build → deploy → release
 # CI/CD targets only 3 dynamic services: web, admin, api
@@ -27,9 +27,9 @@ variables:
   #   PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD → Prod (10.94.125.86)
   # Deploy directory — must match on ALL servers (test, prod, external VPS)
   PLANE_DIR: "/opt/shb-deploy/plane-app"
-  # Toggle: "false" = Docker Executor + internet (gitlab.com)
-  #         "true"  = Shell Executor + air-gapped (internal GitLab)
-  IS_AIRGAPPED: "false"
+  # Toggle: "true"  = Shell Executor + air-gapped (internal GitLab) — DEFAULT
+  #         "false" = Docker Executor + DinD (gitlab.com) — set via GitLab CI/CD Variables
+  IS_AIRGAPPED: "true"
   # Full git history required for turbo --affected to detect changed packages
   GIT_DEPTH: 0
 
