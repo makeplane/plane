@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo } from "react";
-import { LinkIcon, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { createElement, useMemo } from "react";
+import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -38,7 +38,6 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
     () => getUserDetails(linkDetail?.created_by_id),
     [linkDetail?.created_by_id, getUserDetails]
   );
-  const Icon = useMemo(() => (linkDetail ? getIconForLink(linkDetail.url) : LinkIcon), [linkDetail?.url]);
   if (!linkDetail) return <></>;
 
   const toggleIssueLinkModal = (modalToggle: boolean) => {
@@ -50,19 +49,29 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
     <div key={linkId}>
       <div className="relative flex flex-col rounded-md bg-surface-2 p-2.5">
         <div
+          role="button"
+          tabIndex={0}
           className="flex w-full cursor-pointer items-start justify-between gap-2"
           onClick={() => {
-            copyTextToClipboard(linkDetail.url);
+            void copyTextToClipboard(linkDetail.url);
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Link copied!",
               message: "Link copied to clipboard",
             });
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              void copyTextToClipboard(linkDetail.url);
+              setToast({ type: TOAST_TYPE.SUCCESS, title: "Link copied!", message: "Link copied to clipboard" });
+            }
+          }}
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
+              {createElement(getIconForLink(linkDetail.url), {
+                className: "size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0",
+              })}
             </span>
             <Tooltip
               tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
@@ -101,7 +110,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  linkOperations.remove(linkDetail.id);
+                  void linkOperations.remove(linkDetail.id);
                 }}
               >
                 <TrashIcon className="h-3 w-3" />
