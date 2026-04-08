@@ -7151,8 +7151,8 @@ Vytvořte nový.`,
       title: "Vytvořit kolekci",
       submit: "Vytvořit kolekci",
     },
-    rename_modal: {
-      title: "Přejmenovat kolekci",
+    edit_modal: {
+      title: "Upravit kolekci",
     },
     delete_modal: {
       title: "Smazat kolekci",
@@ -7173,7 +7173,7 @@ Vytvořte nový.`,
     menu: {
       create_new_page: "Vytvořit novou stránku",
       add_existing_page: "Přidat existující stránku",
-      rename_collection: "Přejmenovat kolekci",
+      edit_collection: "Upravit kolekci",
       collection_options: "Možnosti kolekce",
     },
     add_existing_page_modal: {

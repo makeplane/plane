@@ -7229,8 +7229,8 @@ export default {
       title: "Создать коллекцию",
       submit: "Создать коллекцию",
     },
-    rename_modal: {
-      title: "Переименовать коллекцию",
+    edit_modal: {
+      title: "Редактировать коллекцию",
     },
     delete_modal: {
       title: "Удалить коллекцию",
@@ -7251,7 +7251,7 @@ export default {
     menu: {
       create_new_page: "Создать новую страницу",
       add_existing_page: "Добавить существующую страницу",
-      rename_collection: "Переименовать коллекцию",
+      edit_collection: "Редактировать коллекцию",
       collection_options: "Параметры коллекции",
     },
     add_existing_page_modal: {

@@ -7188,8 +7188,8 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       title: "Buat koleksi",
       submit: "Buat koleksi",
     },
-    rename_modal: {
-      title: "Ubah nama koleksi",
+    edit_modal: {
+      title: "Edit koleksi",
     },
     delete_modal: {
       title: "Hapus koleksi",
@@ -7211,7 +7211,7 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
     menu: {
       create_new_page: "Buat halaman baru",
       add_existing_page: "Tambah halaman yang sudah ada",
-      rename_collection: "Ubah nama koleksi",
+      edit_collection: "Edit koleksi",
       collection_options: "Opsi koleksi",
     },
     add_existing_page_modal: {

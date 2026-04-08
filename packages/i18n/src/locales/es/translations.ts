@@ -7267,8 +7267,8 @@ si estás seguro de que tu búsqueda es correcta.`,
       title: "Crear una colección",
       submit: "Crear colección",
     },
-    rename_modal: {
-      title: "Renombrar colección",
+    edit_modal: {
+      title: "Editar colección",
     },
     delete_modal: {
       title: "Eliminar colección",
@@ -7290,7 +7290,7 @@ si estás seguro de que tu búsqueda es correcta.`,
     menu: {
       create_new_page: "Crear nueva página",
       add_existing_page: "Añadir página existente",
-      rename_collection: "Renombrar colección",
+      edit_collection: "Editar colección",
       collection_options: "Opciones de la colección",
     },
     add_existing_page_modal: {

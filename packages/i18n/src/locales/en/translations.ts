@@ -7132,8 +7132,8 @@ the way you want to from the sources you specify.`,
       title: "Create a collection",
       submit: "Create collection",
     },
-    rename_modal: {
-      title: "Rename collection",
+    edit_modal: {
+      title: "Edit collection",
     },
     delete_modal: {
       title: "Delete collection",
@@ -7156,7 +7156,7 @@ the way you want to from the sources you specify.`,
     menu: {
       create_new_page: "Create new page",
       add_existing_page: "Add existing page",
-      rename_collection: "Rename collection",
+      edit_collection: "Edit collection",
       collection_options: "Collection options",
     },
     add_existing_page_modal: {

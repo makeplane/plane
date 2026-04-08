@@ -7236,8 +7236,8 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       title: "Criar uma coleção",
       submit: "Criar coleção",
     },
-    rename_modal: {
-      title: "Renomear coleção",
+    edit_modal: {
+      title: "Editar coleção",
     },
     delete_modal: {
       title: "Excluir coleção",
@@ -7259,7 +7259,7 @@ da maneira que você quiser a partir das fontes que você especificar.`,
     menu: {
       create_new_page: "Criar nova página",
       add_existing_page: "Adicionar página existente",
-      rename_collection: "Renomear coleção",
+      edit_collection: "Editar coleção",
       collection_options: "Opções da coleção",
     },
     add_existing_page_modal: {

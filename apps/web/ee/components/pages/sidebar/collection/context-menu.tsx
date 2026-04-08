@@ -20,7 +20,7 @@ import { LinkIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TCollection, TLogoProps } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
-import { DeleteCollectionModal, RenameCollectionModal } from "@/components/collections";
+import { DeleteCollectionModal, EditCollectionModal } from "@/components/collections";
 import { useCollection } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -29,7 +29,7 @@ type Props = {
 };
 
 export const CollectionContextMenu = observer(function CollectionContextMenu({ collection, workspaceSlug }: Props) {
-  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const collectionStore = useCollection();
   const { t } = useTranslation();
@@ -49,9 +49,9 @@ export const CollectionContextMenu = observer(function CollectionContextMenu({ c
 
   return (
     <>
-      <RenameCollectionModal
-        isOpen={isRenameModalOpen}
-        onClose={() => setIsRenameModalOpen(false)}
+      <EditCollectionModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         collectionId={collection.id}
         collectionName={collection.name}
         logoProps={collection.logo_props as TLogoProps}
@@ -69,10 +69,10 @@ export const CollectionContextMenu = observer(function CollectionContextMenu({ c
         customButton={
           <button
             type="button"
-            className="grid place-items-center size-5 rounded-md hover:bg-layer-transparent-hover text-tertiary hover:text-primary transition-all"
+            className="grid size-4 place-items-center rounded-md text-tertiary transition-all hover:bg-layer-transparent-hover hover:text-primary"
             aria-label={t("wiki_collections.menu.collection_options")}
           >
-            <MoreHorizontal className="size-3.5" />
+            <MoreHorizontal className="size-3" />
           </button>
         }
         placement="bottom-end"
@@ -84,10 +84,10 @@ export const CollectionContextMenu = observer(function CollectionContextMenu({ c
         }}
       >
         {collectionInstance?.canCurrentUserEditCollection && (
-          <CustomMenu.MenuItem onClick={() => setIsRenameModalOpen(true)}>
+          <CustomMenu.MenuItem onClick={() => setIsEditModalOpen(true)}>
             <div className="flex items-center gap-2 font-body-sm font-regular">
               <Edit className="size-3" />
-              {t("wiki_collections.menu.rename_collection")}
+              {t("wiki_collections.menu.edit_collection")}
             </div>
           </CustomMenu.MenuItem>
         )}

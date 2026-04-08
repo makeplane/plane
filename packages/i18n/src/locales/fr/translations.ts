@@ -7284,8 +7284,8 @@ si vous êtes sûr que votre recherche est correcte.`,
       title: "Créer une collection",
       submit: "Créer la collection",
     },
-    rename_modal: {
-      title: "Renommer la collection",
+    edit_modal: {
+      title: "Modifier la collection",
     },
     delete_modal: {
       title: "Supprimer la collection",
@@ -7307,7 +7307,7 @@ si vous êtes sûr que votre recherche est correcte.`,
     menu: {
       create_new_page: "Créer une nouvelle page",
       add_existing_page: "Ajouter une page existante",
-      rename_collection: "Renommer la collection",
+      edit_collection: "Modifier la collection",
       collection_options: "Options de la collection",
     },
     add_existing_page_modal: {

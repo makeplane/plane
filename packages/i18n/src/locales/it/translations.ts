@@ -7234,8 +7234,8 @@ Crea un nuovo progetto invece`,
       title: "Crea una raccolta",
       submit: "Crea raccolta",
     },
-    rename_modal: {
-      title: "Rinomina raccolta",
+    edit_modal: {
+      title: "Modifica raccolta",
     },
     delete_modal: {
       title: "Elimina raccolta",
@@ -7257,7 +7257,7 @@ Crea un nuovo progetto invece`,
     menu: {
       create_new_page: "Crea nuova pagina",
       add_existing_page: "Aggiungi pagina esistente",
-      rename_collection: "Rinomina raccolta",
+      edit_collection: "Modifica raccolta",
       collection_options: "Opzioni della raccolta",
     },
     add_existing_page_modal: {

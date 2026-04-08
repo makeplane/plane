@@ -13,4 +13,4 @@
 
 export * from "./create-collection-modal";
 export * from "./delete-collection-modal";
-export * from "./rename-collection-modal";
+export * from "./edit-collection-modal";

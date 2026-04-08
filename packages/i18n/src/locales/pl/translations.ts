@@ -7165,8 +7165,8 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       title: "Utwórz kolekcję",
       submit: "Utwórz kolekcję",
     },
-    rename_modal: {
-      title: "Zmień nazwę kolekcji",
+    edit_modal: {
+      title: "Edytuj kolekcję",
     },
     delete_modal: {
       title: "Usuń kolekcję",
@@ -7187,7 +7187,7 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
     menu: {
       create_new_page: "Utwórz nową stronę",
       add_existing_page: "Dodaj istniejącą stronę",
-      rename_collection: "Zmień nazwę kolekcji",
+      edit_collection: "Edytuj kolekcję",
       collection_options: "Opcje kolekcji",
     },
     add_existing_page_modal: {

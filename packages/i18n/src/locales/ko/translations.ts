@@ -7097,8 +7097,8 @@ export default {
       title: "컬렉션 만들기",
       submit: "컬렉션 만들기",
     },
-    rename_modal: {
-      title: "컬렉션 이름 변경",
+    edit_modal: {
+      title: "컬렉션 편집",
     },
     delete_modal: {
       title: "컬렉션 삭제",
@@ -7118,7 +7118,7 @@ export default {
     menu: {
       create_new_page: "새 페이지 만들기",
       add_existing_page: "기존 페이지 추가",
-      rename_collection: "컬렉션 이름 변경",
+      edit_collection: "컬렉션 편집",
       collection_options: "컬렉션 옵션",
     },
     add_existing_page_modal: {

@@ -35,7 +35,7 @@ type Props = {
   logoProps?: TLogoProps;
 };
 
-const RenameCollectionForm = ({ collectionId, collectionName, logoProps, onClose }: Omit<Props, "isOpen">) => {
+const EditCollectionForm = ({ collectionId, collectionName, logoProps, onClose }: Omit<Props, "isOpen">) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const collectionStore = useCollection();
@@ -97,7 +97,7 @@ const RenameCollectionForm = ({ collectionId, collectionName, logoProps, onClose
   return (
     <form onSubmit={(event) => void handleSubmit(onSubmit)(event)}>
       <div className="px-4 pt-5">
-        <h3 className="text-lg font-medium text-primary">{t("wiki_collections.rename_modal.title")}</h3>
+        <h3 className="text-lg font-medium text-primary">{t("wiki_collections.edit_modal.title")}</h3>
       </div>
 
       <div className="space-y-4 px-4 py-4">
@@ -176,7 +176,7 @@ const RenameCollectionForm = ({ collectionId, collectionName, logoProps, onClose
   );
 };
 
-export const RenameCollectionModal: FC<Props> = observer(function RenameCollectionModal({
+export const EditCollectionModal: FC<Props> = observer(function EditCollectionModal({
   isOpen,
   onClose,
   collectionId,
@@ -186,7 +186,7 @@ export const RenameCollectionModal: FC<Props> = observer(function RenameCollecti
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       {isOpen ? (
-        <RenameCollectionForm
+        <EditCollectionForm
           key={`${collectionId}:${collectionName}`}
           collectionId={collectionId}
           collectionName={collectionName}

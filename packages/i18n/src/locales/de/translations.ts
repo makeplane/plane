@@ -7081,8 +7081,8 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       title: "Sammlung erstellen",
       submit: "Sammlung erstellen",
     },
-    rename_modal: {
-      title: "Sammlung umbenennen",
+    edit_modal: {
+      title: "Sammlung bearbeiten",
     },
     delete_modal: {
       title: "Sammlung löschen",
@@ -7104,7 +7104,7 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
     menu: {
       create_new_page: "Neue Seite erstellen",
       add_existing_page: "Vorhandene Seite hinzufügen",
-      rename_collection: "Sammlung umbenennen",
+      edit_collection: "Sammlung bearbeiten",
       collection_options: "Sammlungsoptionen",
     },
     add_existing_page_modal: {

@@ -22,8 +22,7 @@ import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useCollection } from "@/plane-web/hooks/store";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
 
 type TAddExistingPageModalProps = {
   isOpen: boolean;
@@ -76,9 +75,13 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
 
   const candidatePages = useMemo(() => {
     const addablePageIds = new Set(collectionStore.getAddablePageIdsForCollection(collectionId));
+    const existingCollectionPageIds = collectionStore.getCollectionViewPageIds(collectionId);
 
     return Object.values(workspacePageStore.data)
-      .filter((page): page is NonNullable<typeof page> => !!page?.id && addablePageIds.has(page.id) && !page.parent_id)
+      .filter(
+        (page): page is NonNullable<typeof page> =>
+          !!page?.id && addablePageIds.has(page.id) && !existingCollectionPageIds.has(page.id) && !page.parent_id
+      )
       .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   }, [collectionId, collectionStore, workspacePageStore.data]);
 

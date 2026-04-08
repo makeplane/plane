@@ -44,7 +44,7 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
   const router = useAppRouter();
   const collectionStore = useCollection();
   const { t } = useTranslation();
-  const { createPage, filters, updateFilters } = usePageStore(EPageStoreType.WORKSPACE);
+  const { createPage, filters, updateFilters, clearAllFilters } = usePageStore(EPageStoreType.WORKSPACE);
   const resolvedCollectionId = resolveWikiCollectionId(pathname, collectionId?.toString());
   const predefinedCollection = getPredefinedWikiCollection(resolvedCollectionId);
   const isGeneralCollection = resolvedCollectionId === "general";
@@ -53,7 +53,8 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
 
   useEffect(() => {
     updateFilters("searchQuery", "");
-  }, [pathname, updateFilters]);
+    clearAllFilters();
+  }, [pathname, updateFilters, clearAllFilters]);
 
   const handleCreatePage = async () => {
     if (!workspaceSlug || isCreatingPage) return;

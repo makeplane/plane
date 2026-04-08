@@ -7149,8 +7149,8 @@ export default {
       title: "コレクションを作成",
       submit: "コレクションを作成",
     },
-    rename_modal: {
-      title: "コレクション名を変更",
+    edit_modal: {
+      title: "コレクションを編集",
     },
     delete_modal: {
       title: "コレクションを削除",
@@ -7170,7 +7170,7 @@ export default {
     menu: {
       create_new_page: "新しいページを作成",
       add_existing_page: "既存のページを追加",
-      rename_collection: "コレクション名を変更",
+      edit_collection: "コレクションを編集",
       collection_options: "コレクションのオプション",
     },
     add_existing_page_modal: {

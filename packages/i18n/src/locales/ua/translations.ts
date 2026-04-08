@@ -7157,8 +7157,8 @@ export default {
       title: "Створити колекцію",
       submit: "Створити колекцію",
     },
-    rename_modal: {
-      title: "Перейменувати колекцію",
+    edit_modal: {
+      title: "Редагувати колекцію",
     },
     delete_modal: {
       title: "Видалити колекцію",
@@ -7179,7 +7179,7 @@ export default {
     menu: {
       create_new_page: "Створити нову сторінку",
       add_existing_page: "Додати наявну сторінку",
-      rename_collection: "Перейменувати колекцію",
+      edit_collection: "Редагувати колекцію",
       collection_options: "Параметри колекції",
     },
     add_existing_page_modal: {

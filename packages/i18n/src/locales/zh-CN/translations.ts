@@ -6976,8 +6976,8 @@ export default {
       title: "创建集合",
       submit: "创建集合",
     },
-    rename_modal: {
-      title: "重命名集合",
+    edit_modal: {
+      title: "编辑集合",
     },
     delete_modal: {
       title: "删除集合",
@@ -6997,7 +6997,7 @@ export default {
     menu: {
       create_new_page: "创建新页面",
       add_existing_page: "添加现有页面",
-      rename_collection: "重命名集合",
+      edit_collection: "编辑集合",
       collection_options: "集合选项",
     },
     add_existing_page_modal: {

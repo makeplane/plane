@@ -306,10 +306,7 @@ export class CollectionStore implements ICollectionStore {
 
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !this.defaultCollectionId) return undefined;
-    if (
-      !this.hasHydratedCollectionMemberships(workspaceSlug) &&
-      !this.pageCollectionIdsByCollection.has(this.defaultCollectionId)
-    ) {
+    if (!this.hasHydratedCollectionMemberships(workspaceSlug)) {
       return undefined;
     }
 
@@ -590,7 +587,7 @@ export class CollectionStore implements ICollectionStore {
       this.fetchCollectionPagesRequests.clear();
     }
 
-    if (!this.fetchCollectionPagesRequests.has(this.defaultCollectionId ?? "")) {
+    if (this.fetchCollectionPagesRequests.size === 0) {
       this.hydrateCollectionMembershipsRequest = undefined;
       this.isHydratingMemberships = false;
     }
@@ -619,7 +616,7 @@ export class CollectionStore implements ICollectionStore {
       }
 
       await Promise.all([
-        this.fetchCollectionPages(workspaceSlug, defaultCollectionId),
+        ...collections.map((collection) => this.fetchCollectionPages(workspaceSlug, collection.id)),
         this.store.workspacePages.fetchAllPages(),
       ]);
 
@@ -630,6 +627,12 @@ export class CollectionStore implements ICollectionStore {
 
         this.hydratedMembershipsWorkspaceSlug = workspaceSlug;
       });
+
+      // If the epoch changed mid-hydration (e.g. a page move happened during load),
+      // the runInAction above was a no-op. Re-queue so the store doesn't stay stuck.
+      if (!this.hasHydratedCollectionMemberships(workspaceSlug)) {
+        void this.hydrateCollectionMemberships(workspaceSlug);
+      }
     })();
     this.hydrateCollectionMembershipsRequest = request;
 
@@ -1131,8 +1134,8 @@ export class CollectionStore implements ICollectionStore {
     return this.isCurrentUserWorkspaceAdmin() || page.isCurrentUserOwner;
   });
 
-  computeDestinationSortOrder = computedFn(
-    (collectionId: string, targetPageId: string, position: "before" | "after", pageId?: string) => {
+  private computeDestinationSortOrderComputed = computedFn(
+    (collectionId: string, targetPageId: string, position: "before" | "after", pageId: string | undefined) => {
       const targetPage = this.store.workspacePages.getPageById(targetPageId);
       if (!targetPage?.id) return undefined;
 
@@ -1159,6 +1162,13 @@ export class CollectionStore implements ICollectionStore {
       return (this.getCollectionOrderValue(targetPageId) + this.getCollectionOrderValue(nextPageId)) / 2;
     }
   );
+
+  computeDestinationSortOrder: ICollectionStore["computeDestinationSortOrder"] = (
+    collectionId,
+    targetPageId,
+    position,
+    pageId
+  ) => this.computeDestinationSortOrderComputed(collectionId, targetPageId, position, pageId);
 
   private buildCollectionDropPlan = (params: {
     pageId: string;
@@ -1593,19 +1603,11 @@ export class CollectionStore implements ICollectionStore {
     return this.getDerivedCollectionViewPageIds(collectionId);
   });
 
-  getCollectionRootPageIds = computedFn(
-    (
-      collectionId: string,
-      options: {
-        searchQuery?: string;
-        filters?: TPageFilterProps;
-      } = {}
-    ): string[] => {
+  private getCollectionRootPageIdsComputed = computedFn(
+    (collectionId: string, searchQuery: string, filters: TPageFilterProps | undefined): string[] => {
       const actualCollectionId = this.resolveCollectionId(collectionId);
       if (!actualCollectionId) return [];
 
-      const searchQuery = options.searchQuery ?? "";
-      const filters = options.filters;
       const collectionPageIds = this.getCollectionViewPageIds(actualCollectionId);
 
       return [...collectionPageIds]
@@ -1620,6 +1622,9 @@ export class CollectionStore implements ICollectionStore {
         .filter((pageId) => this.doesScopedTreeMatchFilters(pageId, actualCollectionId, searchQuery, filters));
     }
   );
+
+  getCollectionRootPageIds: ICollectionStore["getCollectionRootPageIds"] = (collectionId, options = {}) =>
+    this.getCollectionRootPageIdsComputed(collectionId, options.searchQuery ?? "", options.filters);
 
   getCollectionChildPageIds = computedFn((pageId: string, collectionId: string): string[] => {
     const actualCollectionId = this.resolveCollectionId(collectionId);
@@ -1640,34 +1645,49 @@ export class CollectionStore implements ICollectionStore {
       );
   });
 
-  getCollectionAutoExpandedAncestorIds = computedFn((collectionId: string, currentPageId?: string): string[] => {
-    if (!currentPageId) return [];
+  private getCollectionAutoExpandedAncestorIdsComputed = computedFn(
+    (collectionId: string, currentPageId: string | undefined): string[] => {
+      if (!currentPageId) return [];
 
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return [];
+      const actualCollectionId = this.resolveCollectionId(collectionId);
+      if (!actualCollectionId) return [];
 
-    const currentPage = this.store.workspacePages.getPageById(currentPageId);
-    const resolvedCurrentPageId = currentPage?.id ?? currentPageId;
-    if (!currentPage?.id && !this.pageParentIdByPageId.has(currentPageId)) return [];
-    if (this.getEffectiveCollectionId(resolvedCurrentPageId) !== actualCollectionId) return [];
+      const currentPage = this.store.workspacePages.getPageById(currentPageId);
+      const resolvedCurrentPageId = currentPage?.id ?? currentPageId;
+      if (!currentPage?.id && !this.pageParentIdByPageId.has(currentPageId)) return [];
 
-    const ancestorPageIds: string[] = [];
-    const visitedPageIds = new Set<string>([resolvedCurrentPageId]);
-    let parentPageId = this.getPageParentId(currentPageId) ?? undefined;
+      const { workspaceSlug } = this.store.router;
+      const isHydrated = workspaceSlug ? this.hasHydratedCollectionMemberships(workspaceSlug) : false;
 
-    while (parentPageId && !visitedPageIds.has(parentPageId)) {
-      visitedPageIds.add(parentPageId);
+      // Only enforce the effective-collection guard once hydration is complete.
+      // Before that, getEffectiveCollectionId returns undefined for unresolved pages,
+      // which would incorrectly block auto-expand. After hydration, MobX reactivity
+      // re-runs this and the correct check applies.
+      if (isHydrated && this.getEffectiveCollectionId(resolvedCurrentPageId) !== actualCollectionId) return [];
 
-      if (this.getEffectiveCollectionId(parentPageId) !== actualCollectionId) {
-        break;
+      const ancestorPageIds: string[] = [];
+      const visitedPageIds = new Set<string>([resolvedCurrentPageId]);
+      let parentPageId = this.getPageParentId(currentPageId) ?? undefined;
+
+      while (parentPageId && !visitedPageIds.has(parentPageId)) {
+        visitedPageIds.add(parentPageId);
+
+        if (isHydrated && this.getEffectiveCollectionId(parentPageId) !== actualCollectionId) {
+          break;
+        }
+
+        ancestorPageIds.push(parentPageId);
+        parentPageId = this.getPageParentId(parentPageId) ?? undefined;
       }
 
-      ancestorPageIds.push(parentPageId);
-      parentPageId = this.getPageParentId(parentPageId) ?? undefined;
+      return ancestorPageIds.reverse();
     }
+  );
 
-    return ancestorPageIds.reverse();
-  });
+  getCollectionAutoExpandedAncestorIds: ICollectionStore["getCollectionAutoExpandedAncestorIds"] = (
+    collectionId,
+    currentPageId
+  ) => this.getCollectionAutoExpandedAncestorIdsComputed(collectionId, currentPageId);
 
   toggleCollectionExpanded = (collectionId: string) => {
     const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;

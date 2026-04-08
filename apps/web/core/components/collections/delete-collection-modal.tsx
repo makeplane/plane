@@ -122,7 +122,7 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
         message:
           (error as { detail?: string; error?: string })?.detail ??
           (error as { error?: string })?.error ??
-          (error instanceof Error ? error.message : t("wiki_collections.toasts.delete_error")),
+          t("wiki_collections.toasts.delete_error"),
       });
     } finally {
       setIsDeleting(false);

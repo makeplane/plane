@@ -82,7 +82,7 @@ export const CollectionAddPageMenu = observer(function CollectionAddPageMenu(pro
         ) : (
           <button
             type="button"
-            className="grid size-5 place-items-center rounded-md text-tertiary transition-all hover:bg-layer-transparent-hover hover:text-primary disabled:opacity-50"
+            className="grid size-4 place-items-center rounded-md text-tertiary transition-all hover:bg-layer-transparent-hover hover:text-primary disabled:opacity-50"
             aria-label={t("wiki_collections.header.add_page")}
             disabled={isCreatingPage}
           >

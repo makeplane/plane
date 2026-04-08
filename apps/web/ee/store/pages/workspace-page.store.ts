@@ -547,7 +547,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         !page.parent_id &&
         !page.archived_at &&
         !page.deleted_at &&
-        !page.is_shared
+        !page.is_shared &&
+        !(page.id && this.store.collection.pageCollectionIdByPageId.has(page.id))
     );
     const newPublicPageIds = publicPages
       .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -572,7 +573,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     // Unfiltered private pages (sorted by updated_at)
     const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at && !page.is_shared);
     const privateParentPages = nonArchivedPages.filter(
-      (page) => page.access === EPageAccess.PRIVATE && !page.parent_id
+      (page) =>
+        page.access === EPageAccess.PRIVATE &&
+        !page.parent_id &&
+        !(page.id && this.store.collection.pageCollectionIdByPageId.has(page.id))
     );
     const privateChildPages = nonArchivedPages.filter((page) => {
       if (page.parent_id === null || page.access !== EPageAccess.PRIVATE || !page.id) return false;

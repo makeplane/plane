@@ -43,20 +43,20 @@ export const SectionHeader = React.memo(function SectionHeader({
   return (
     <div
       className={cn(
-        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-placeholder hover:bg-surface-2"
+        "group flex w-full items-center justify-between gap-1 rounded-md px-1 py-1.5 text-secondary transition-colors hover:bg-layer-transparent-hover focus-within:bg-layer-transparent-active"
       )}
     >
       <Link
         href={`/${workspaceSlug}/wiki/${sectionType}`}
-        className={cn("flex-grow text-13 font-semibold text-placeholder")}
+        className={cn("min-w-0 flex-grow truncate text-13 font-semibold text-placeholder")}
       >
         {sectionDetails.label === SECTION_DETAILS.public.label ? t("common.general") : sectionDetails.label}
       </Link>
 
-      <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
+      <div className="flex flex-shrink-0 items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
         {canCreatePage && sectionType !== "archived" && sectionType !== "shared" && (
           <button
-            className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
+            className="grid size-5 place-items-center rounded-md hover:bg-layer-transparent-hover"
             onClick={() => {
               handleCreatePage(sectionType);
             }}
@@ -71,7 +71,7 @@ export const SectionHeader = React.memo(function SectionHeader({
         <CollapsibleTrigger
           ref={buttonRef}
           type="button"
-          className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
+          className="grid size-5 place-items-center rounded-md hover:bg-layer-transparent-hover"
           onClick={(e) => {
             e.stopPropagation();
             if (onButtonClick) onButtonClick();

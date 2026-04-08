@@ -33,7 +33,7 @@ export const PagesAppSidebarList = observer(function PagesAppSidebarList(props: 
   const currentPageId = !isCollectionRoute && pageId ? pageId.toString() : undefined;
 
   return (
-    <div className="vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4">
+    <div className="vertical-scrollbar -mr-3 -ml-4 flex h-full flex-col gap-2 !overflow-y-scroll scrollbar-sm pl-4 pb-2">
       <CollectionsSection />
       <WikiSidebarListSectionRoot
         currentPageId={currentPageId}

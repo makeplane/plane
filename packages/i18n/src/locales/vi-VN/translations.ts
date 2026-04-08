@@ -7158,8 +7158,8 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       title: "Tạo bộ sưu tập",
       submit: "Tạo bộ sưu tập",
     },
-    rename_modal: {
-      title: "Đổi tên bộ sưu tập",
+    edit_modal: {
+      title: "Chỉnh sửa bộ sưu tập",
     },
     delete_modal: {
       title: "Xóa bộ sưu tập",
@@ -7181,7 +7181,7 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
     menu: {
       create_new_page: "Tạo trang mới",
       add_existing_page: "Thêm trang hiện có",
-      rename_collection: "Đổi tên bộ sưu tập",
+      edit_collection: "Chỉnh sửa bộ sưu tập",
       collection_options: "Tùy chọn bộ sưu tập",
     },
     add_existing_page_modal: {

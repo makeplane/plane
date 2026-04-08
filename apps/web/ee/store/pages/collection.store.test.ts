@@ -942,6 +942,52 @@ describe("CollectionStore", () => {
     expect([...store.getCollectionViewPageIds("general")]).toEqual(["page-1"]);
   });
 
+  it("moves collection pages after filtered root lookups without hitting computedFn arity errors", async () => {
+    const pages = {
+      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
+      "page-2": createWorkspacePage({ id: "page-2", parent_id: "page-1" }),
+    };
+    const rootStore = createRootStore(pages);
+    const store = new CollectionStore(rootStore);
+
+    store.updateCollectionsInStore([
+      createCollection({ id: "source-collection" }),
+      createCollection({ id: "target-collection" }),
+    ]);
+
+    const membershipsByCollection: Record<string, TPageCollection[]> = {
+      "source-collection": [
+        createPageCollection({ id: "pc-source-parent", collection: "source-collection", page: "page-1" }),
+        createPageCollection({ id: "pc-source-child", collection: "source-collection", page: "page-2" }),
+      ],
+      "target-collection": [],
+    };
+
+    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
+      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
+        membershipsByCollection[collectionId] ?? []
+    );
+
+    await store.fetchCollectionPages("plane", "source-collection");
+    await store.fetchCollectionPages("plane", "target-collection");
+
+    expect(store.getCollectionRootPageIds("target-collection", {})).toEqual([]);
+
+    vi.spyOn(CollectionService.prototype, "movePages").mockImplementation(async () => {
+      membershipsByCollection["source-collection"] = [];
+      membershipsByCollection["target-collection"] = [
+        createPageCollection({ id: "pc-target-parent", collection: "target-collection", page: "page-1" }),
+        createPageCollection({ id: "pc-target-child", collection: "target-collection", page: "page-2" }),
+      ];
+    });
+
+    await expect(store.moveCollectionPages("plane", "source-collection", "target-collection")).resolves.toBeUndefined();
+
+    expect(store.getCollectionById("source-collection")).toBeUndefined();
+    expect([...store.getCollectionViewPageIds("target-collection")].sort()).toEqual(["page-1", "page-2"]);
+    expect(store.getCollectionRootPageIds("target-collection", {})).toEqual(["page-1"]);
+  });
+
   it("limits addable pages to owned pages for members and all eligible pages for workspace admins", () => {
     const pages = {
       "page-1": createWorkspacePage({ id: "page-1", isCurrentUserOwner: true, access: EPageAccess.PUBLIC }),

@@ -33,6 +33,9 @@ import { CollectionItem } from "./collection-item";
 import { WikiPageSidebarListItemRoot } from "../list-item-root";
 
 const collectionsListKey = (workspaceSlug: string) => ["workspace-collections", workspaceSlug] as const;
+const SIDEBAR_ROW_CLASS =
+  "group flex w-full items-center justify-between gap-1 rounded-md py-1.5 text-secondary transition-colors hover:bg-layer-transparent-hover focus-within:bg-layer-transparent-active";
+const SIDEBAR_ROW_CONTENT_CLASS = "flex w-full items-center gap-1 truncate px-1";
 
 const GeneralCollectionItem = observer(function GeneralCollectionItem({
   workspaceSlug,
@@ -208,24 +211,21 @@ const GeneralCollectionItem = observer(function GeneralCollectionItem({
     <div>
       <div
         ref={rowRef}
-        className={cn(
-          "group flex w-full items-center justify-between gap-1 rounded-md py-1 text-secondary transition-colors hover:bg-layer-transparent-hover",
-          {
-            "bg-layer-transparent-hover": isPageDropTarget && !isActive,
-            "bg-accent-primary/10 font-medium text-accent-primary hover:bg-accent-primary/10": isActive,
-          }
-        )}
+        className={cn(SIDEBAR_ROW_CLASS, {
+          "bg-layer-transparent-hover": isPageDropTarget && !isActive,
+          "bg-accent-primary/10 font-medium text-accent-primary hover:bg-accent-primary/10": isActive,
+        })}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <div className="flex w-full items-center gap-1 truncate pl-1 pr-1">
-          <div className="size-5 flex-shrink-0 grid place-items-center">
+        <div className={SIDEBAR_ROW_CONTENT_CLASS}>
+          <div className="grid size-4 flex-shrink-0 place-items-center">
             {isLoadingCollectionPages ? (
               <Loader className="size-3.5 animate-spin" />
             ) : showChevron ? (
               <button
                 type="button"
-                className="grid place-items-center rounded-sm hover:bg-layer-transparent-hover"
+                className="grid size-4 place-items-center rounded-sm hover:bg-layer-transparent-hover"
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
@@ -242,8 +242,8 @@ const GeneralCollectionItem = observer(function GeneralCollectionItem({
                 />
               </button>
             ) : (
-              <span className="grid size-5 place-items-center rounded bg-[#E4F6E9]">
-                <Building2 className="size-3.5 text-[#00A63E]" />
+              <span className="grid size-4 place-items-center rounded-md bg-[#E4F6E9]">
+                <Building2 className="size-3 text-[#00A63E]" />
               </span>
             )}
           </div>
@@ -252,12 +252,12 @@ const GeneralCollectionItem = observer(function GeneralCollectionItem({
             className="min-w-0 flex-1 cursor-pointer truncate text-left"
             onClick={() => router.push(`/${workspaceSlug}/wiki/collections/general`)}
           >
-            <p className="truncate text-13">General</p>
+            <p className="min-w-0 truncate text-13">General</p>
           </button>
         </div>
-        <div className="flex justify-end pr-1">
+        <div className="flex items-center justify-end pr-1 leading-none">
           <div
-            className={cn("flex items-center gap-0.5 transition-opacity", {
+            className={cn("flex items-center gap-0.5 leading-none transition-opacity group-focus-within:opacity-100", {
               "pointer-events-none opacity-0": !isHovering,
             })}
           >
@@ -406,12 +406,12 @@ const CollectionsSectionContent = observer(function CollectionsSectionContent() 
       )}
 
       <div className="flex flex-col rounded-md transition-colors">
-        <div className="flex items-center justify-between px-2 py-1 text-placeholder">
-          <span className="text-13 font-semibold">Collections</span>
+        <div className="group flex items-center justify-between gap-1 rounded-md px-1 py-1.5 text-secondary transition-colors hover:bg-layer-transparent-hover">
+          <span className="min-w-0 flex-1 truncate text-13 font-semibold text-placeholder">Collections</span>
           {canCreateCollections && (
             <button
               type="button"
-              className="grid place-items-center rounded p-0.5 hover:bg-layer-transparent-hover"
+              className="grid size-5 place-items-center rounded-md opacity-0 transition-opacity hover:bg-layer-transparent-hover group-hover:opacity-100 group-focus-within:opacity-100"
               aria-label="Create collection"
               onClick={() => setIsCreateCollectionModalOpen(true)}
             >
@@ -426,7 +426,7 @@ const CollectionsSectionContent = observer(function CollectionsSectionContent() 
             <span className="ml-2 text-13 text-placeholder">Loading collections...</span>
           </div>
         ) : (
-          <div className="ml-1 mt-1 space-y-0.5">
+          <div className="mt-1 space-y-0.5">
             {hasDefaultCollection && (
               <GeneralCollectionItem
                 workspaceSlug={wsSlug}

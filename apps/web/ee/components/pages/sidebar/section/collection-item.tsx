@@ -180,14 +180,14 @@ const CollectionItemContent = observer(function CollectionItemContent(props: TCo
         return collectionStore.canCurrentUserAddPageToCollection(payload.id);
       },
     });
-  }, [collection.id, collectionStore, handlePromotePageToRoot, workspaceSlug]);
+  }, [collection.id, collectionStore, handlePromotePageToRoot, pageStore, workspaceSlug]);
 
   return (
     <div>
       <div
         ref={collectionRowRef}
         className={cn(
-          "group/collection-item flex w-full items-center justify-between gap-1 rounded-md py-1 text-secondary transition-colors hover:bg-layer-transparent-hover",
+          "group/collection-item flex w-full items-center justify-between gap-1 rounded-md py-1.5 text-secondary transition-colors hover:bg-layer-transparent-hover focus-within:bg-layer-transparent-active",
           {
             "bg-layer-transparent-hover": isPageDropTarget && !isCollectionActive,
             "bg-accent-primary/10 font-medium text-accent-primary hover:bg-accent-primary/10": isCollectionActive,
@@ -196,14 +196,14 @@ const CollectionItemContent = observer(function CollectionItemContent(props: TCo
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <div className="flex w-full items-center gap-1 truncate pl-1 pr-1">
-          <div className="size-5 flex-shrink-0 grid place-items-center">
+        <div className="flex w-full items-center gap-1 truncate px-1">
+          <div className="grid size-4 flex-shrink-0 place-items-center">
             {isLoadingCollectionPages ? (
               <Loader className="size-3.5 animate-spin" />
             ) : showChevron ? (
               <button
                 type="button"
-                className="grid place-items-center rounded-sm hover:bg-layer-transparent-hover"
+                className="grid size-4 place-items-center rounded-sm hover:bg-layer-transparent-hover"
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
@@ -218,7 +218,7 @@ const CollectionItemContent = observer(function CollectionItemContent(props: TCo
                 />
               </button>
             ) : (
-              <span className="grid size-5 place-items-center rounded-md bg-surface-2">
+              <span className="grid size-4 place-items-center rounded-md bg-surface-2">
                 {collectionLogoProps?.in_use ? (
                   <Logo logo={collectionLogoProps} size={12} type="lucide" />
                 ) : (
@@ -232,15 +232,18 @@ const CollectionItemContent = observer(function CollectionItemContent(props: TCo
             className="min-w-0 flex-1 cursor-pointer truncate text-left"
             onClick={() => router.push(`/${workspaceSlug}/wiki/collections/${collection.id}`)}
           >
-            <p className="truncate text-13">{collection.name}</p>
+            <p className="min-w-0 truncate text-13">{collection.name}</p>
           </button>
         </div>
 
-        <div className="flex justify-end pr-1">
+        <div className="flex items-center justify-end pr-1 leading-none">
           <div
-            className={cn("flex items-center gap-0.5 transition-opacity", {
-              "pointer-events-none opacity-0": !isHovering,
-            })}
+            className={cn(
+              "flex items-center gap-0.5 leading-none transition-opacity group-focus-within/collection-item:opacity-100",
+              {
+                "pointer-events-none opacity-0": !isHovering,
+              }
+            )}
           >
             <CollectionAddPageMenu
               workspaceSlug={workspaceSlug}

@@ -7214,8 +7214,8 @@ modüller arşivlenebilir.`,
       title: "Koleksiyon oluştur",
       submit: "Koleksiyon oluştur",
     },
-    rename_modal: {
-      title: "Koleksiyonu yeniden adlandır",
+    edit_modal: {
+      title: "Koleksiyonu düzenle",
     },
     delete_modal: {
       title: "Koleksiyonu sil",
@@ -7235,7 +7235,7 @@ modüller arşivlenebilir.`,
     menu: {
       create_new_page: "Yeni sayfa oluştur",
       add_existing_page: "Var olan sayfa ekle",
-      rename_collection: "Koleksiyonu yeniden adlandır",
+      edit_collection: "Koleksiyonu düzenle",
       collection_options: "Koleksiyon seçenekleri",
     },
     add_existing_page_modal: {

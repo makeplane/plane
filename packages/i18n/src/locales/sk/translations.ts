@@ -7126,8 +7126,8 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       title: "Vytvoriť kolekciu",
       submit: "Vytvoriť kolekciu",
     },
-    rename_modal: {
-      title: "Premenovať kolekciu",
+    edit_modal: {
+      title: "Upraviť kolekciu",
     },
     delete_modal: {
       title: "Odstrániť kolekciu",
@@ -7149,7 +7149,7 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
     menu: {
       create_new_page: "Vytvoriť novú stránku",
       add_existing_page: "Pridať existujúcu stránku",
-      rename_collection: "Premenovať kolekciu",
+      edit_collection: "Upraviť kolekciu",
       collection_options: "Možnosti kolekcie",
     },
     add_existing_page_modal: {

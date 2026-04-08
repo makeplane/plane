@@ -7236,8 +7236,8 @@ așa cum dorești din sursele pe care le specifici.`,
       title: "Creează o colecție",
       submit: "Creează colecția",
     },
-    rename_modal: {
-      title: "Redenumește colecția",
+    edit_modal: {
+      title: "Editează colecția",
     },
     delete_modal: {
       title: "Șterge colecția",
@@ -7259,7 +7259,7 @@ așa cum dorești din sursele pe care le specifici.`,
     menu: {
       create_new_page: "Creează o pagină nouă",
       add_existing_page: "Adaugă o pagină existentă",
-      rename_collection: "Redenumește colecția",
+      edit_collection: "Editează colecția",
       collection_options: "Opțiuni colecție",
     },
     add_existing_page_modal: {
