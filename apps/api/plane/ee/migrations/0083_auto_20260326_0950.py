@@ -17,21 +17,6 @@ from django.db import migrations
 logger = logging.getLogger("plane.migrations")
 
 
-
-def backfill_default_collections(apps, schema_editor):
-    """Dispatch background task to seed WorkflowState entries for all default workflows."""
-    try:
-        from plane.ee.bgtasks.seed_workflow_projects_task import seed_workflow_default_states
-
-        # If self-managed, run synchronously to ensure data consistency before proceeding. Otherwise, dispatch as a background task.
-        if settings.IS_SELF_MANAGED:
-            seed_workflow_default_states()
-        else:
-            seed_workflow_default_states.delay()
-        logger.info("Dispatched seed_workflow_default_states background task")
-    except Exception as e:
-        logger.warning(f"Could not dispatch seed_workflow_default_states task: {e}")
-
 def backfill_default_collections(apps, schema_editor):
     """
     For self-managed instances: run the default collection backfill synchronously.

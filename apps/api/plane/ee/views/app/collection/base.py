@@ -81,7 +81,6 @@ def assign_pages_to_collection(page_ids, collection_id, workspace, slug, user_id
 
 
 class CollectionEndpoint(BaseAPIView):
-
     def _visible_collections(self, slug, user):
         """Collections visible to the user: public ones + private ones they own or are a member of."""
         return (
@@ -97,19 +96,13 @@ class CollectionEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @allow_permission(
-        level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
-    )
+    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def get(self, request, slug, collection_id=None):
         if collection_id:
-            collection = self._visible_collections(slug, request.user).filter(
-                pk=collection_id
-            ).first()
+            collection = self._visible_collections(slug, request.user).filter(pk=collection_id).first()
             if not collection:
-                return Response(
-                    {"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND)
 
             serializer = CollectionSerializer(collection)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -164,9 +157,9 @@ class CollectionEndpoint(BaseAPIView):
             )
 
         # get all page ids inside the collection
-        page_ids = PageCollection.objects.filter(
-            collection_id=collection_id, workspace__slug=slug
-        ).values_list("page_id", flat=True)
+        page_ids = PageCollection.objects.filter(collection_id=collection_id, workspace__slug=slug).values_list(
+            "page_id", flat=True
+        )
 
         Page.objects.filter(id__in=page_ids, workspace__slug=slug).delete()
 
@@ -200,14 +193,30 @@ class MoveCollectionPagesEndpoint(BaseAPIView):
 
         _ = Collection.objects.get(workspace__slug=slug, pk=new_collection_id)
 
-        # update the collection id for all pages in the collection
-        PageCollection.objects.filter(
-            collection_id=collection_id, workspace__slug=slug
-        ).update(collection_id=new_collection_id)
+        # fetch pages being moved (source) and max sort_order in target — 2 queries
+        pages_to_move = list(
+            PageCollection.objects.filter(collection_id=collection_id, workspace__slug=slug)
+            .select_related("page")
+            .order_by("sort_order")
+        )
 
-        CollectionMember.objects.filter(
-            collection_id=collection_id, workspace__slug=slug
-        ).update(collection_id=new_collection_id)
+        if pages_to_move:
+            max_sort_order = (
+                PageCollection.objects.filter(collection_id=new_collection_id, workspace__slug=slug).aggregate(
+                    v=db_models.Max("sort_order")
+                )["v"]
+                or 0
+            )
+            for i, page in enumerate(pages_to_move, start=1):
+                page.collection_id = new_collection_id
+                # skip the sort order for the child pages
+                if page.page.parent_id is None:
+                    page.sort_order = max_sort_order + i * 10000
+            PageCollection.objects.bulk_update(pages_to_move, ["collection_id", "sort_order"])
+
+        CollectionMember.objects.filter(collection_id=collection_id, workspace__slug=slug).update(
+            collection_id=new_collection_id
+        )
 
         # delete the old collection
         Collection.objects.filter(workspace__slug=slug, pk=collection_id).delete()
@@ -220,9 +229,7 @@ class CollectionMemberEndpoint(BaseAPIView):
 
     def _get_collection(self, slug, collection_id, user):
         return Collection.objects.annotate(
-            is_owner=Exists(
-                Collection.objects.filter(pk=OuterRef("pk"), owned_by=user)
-            ),
+            is_owner=Exists(Collection.objects.filter(pk=OuterRef("pk"), owned_by=user)),
             is_admin=Exists(
                 WorkspaceMember.objects.filter(
                     workspace__slug=slug,
@@ -233,15 +240,11 @@ class CollectionMemberEndpoint(BaseAPIView):
             ),
         ).get(workspace__slug=slug, pk=collection_id)
 
-    @allow_permission(
-        level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
-    )
+    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, collection_id):
         Collection.objects.get(workspace__slug=slug, pk=collection_id)
 
-        members = CollectionMember.objects.filter(
-            collection_id=collection_id, workspace__slug=slug
-        )
+        members = CollectionMember.objects.filter(collection_id=collection_id, workspace__slug=slug)
         serializer = CollectionMemberSerializer(members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -251,9 +254,7 @@ class CollectionMemberEndpoint(BaseAPIView):
 
         if not (collection.is_owner or collection.is_admin):
             return Response(
-                {
-                    "error": "You don't have permission to manage members of this collection."
-                },
+                {"error": "You don't have permission to manage members of this collection."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -268,24 +269,18 @@ class CollectionMemberEndpoint(BaseAPIView):
         try:
             collection = self._get_collection(slug, collection_id, request.user)
         except Collection.DoesNotExist:
-            return Response(
-                {"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if not (collection.is_owner or collection.is_admin):
             return Response(
-                {
-                    "error": "You don't have permission to manage members of this collection."
-                },
+                {"error": "You don't have permission to manage members of this collection."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         try:
             member = CollectionMember.objects.get(pk=pk, collection=collection)
         except CollectionMember.DoesNotExist:
-            return Response(
-                {"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CollectionMemberSerializer(member, data=request.data, partial=True)
         if serializer.is_valid():
@@ -298,24 +293,18 @@ class CollectionMemberEndpoint(BaseAPIView):
         try:
             collection = self._get_collection(slug, collection_id, request.user)
         except Collection.DoesNotExist:
-            return Response(
-                {"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if not (collection.is_owner or collection.is_admin):
             return Response(
-                {
-                    "error": "You don't have permission to manage members of this collection."
-                },
+                {"error": "You don't have permission to manage members of this collection."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         try:
             member = CollectionMember.objects.get(pk=pk, collection=collection)
         except CollectionMember.DoesNotExist:
-            return Response(
-                {"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
 
         member.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -358,26 +347,22 @@ class PageCollectionEndpoint(BaseAPIView):
     def _can_remove_page_from_collection(self, collection, page, slug, user):
         return self._is_workspace_admin(slug, user) or page.owned_by_id == user.id
 
-    @allow_permission(
-        level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
-    )
+    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def get(self, request, slug, collection_id):
-        collection = (
-            self._accessible_collections(slug, request.user)
-            .filter(pk=collection_id)
-            .first()
-        )
+        collection = self._accessible_collections(slug, request.user).filter(pk=collection_id).first()
         if not collection:
-            return Response(
-                {"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        page_collections = PageCollection.objects.filter(
-            collection=collection,
-            workspace__slug=slug,
-            page__deleted_at__isnull=True,
-        ).values("id", "page_id", "sort_order", "collection_id", parent_id=F("page__parent_id"))
+        page_collections = (
+            PageCollection.objects.filter(
+                collection=collection,
+                workspace__slug=slug,
+                page__deleted_at__isnull=True,
+            )
+            .values("id", "page_id", "sort_order", "collection_id", parent_id=F("page__parent_id"))
+            .order_by("sort_order")
+        )
 
         return Response(page_collections, status=status.HTTP_200_OK)
 
@@ -408,9 +393,7 @@ class PageCollectionEndpoint(BaseAPIView):
             user_id=str(request.user.id),
         )
 
-        collection_pages = PageCollection.objects.filter(
-            collection=collection, workspace__slug=slug
-        )
+        collection_pages = PageCollection.objects.filter(collection=collection, workspace__slug=slug)
         serializer = PageCollectionSerializer(collection_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -422,9 +405,7 @@ class PageCollectionEndpoint(BaseAPIView):
             return Response({"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            page_collection = PageCollection.objects.select_related(
-                "collection", "page"
-            ).get(
+            page_collection = PageCollection.objects.select_related("collection", "page").get(
                 pk=pk,
                 collection=collection,
                 workspace__slug=slug,
@@ -435,9 +416,7 @@ class PageCollectionEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if not self._can_reorder_page_in_collection(
-            page_collection.page, slug, request.user
-        ):
+        if not self._can_reorder_page_in_collection(page_collection.page, slug, request.user):
             return Response(
                 {"error": "You don't have permission to reorder or move this page."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -455,9 +434,7 @@ class PageCollectionEndpoint(BaseAPIView):
             page_collection.sort_order = request.data.get("sort_order")
 
         page_collection.updated_by = request.user
-        page_collection.save(
-            update_fields=["collection", "sort_order", "updated_by", "updated_at"]
-        )
+        page_collection.save(update_fields=["collection", "sort_order", "updated_by", "updated_at"])
 
         # Cascade collection change to all descendants
         if next_collection:
@@ -484,9 +461,7 @@ class PageCollectionEndpoint(BaseAPIView):
             return Response({"error": "Collection not found"}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            page_collection = PageCollection.objects.select_related(
-                "collection", "page"
-            ).get(
+            page_collection = PageCollection.objects.select_related("collection", "page").get(
                 pk=pk,
                 collection=collection,
                 workspace__slug=slug,
@@ -497,13 +472,9 @@ class PageCollectionEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if not self._can_remove_page_from_collection(
-            collection, page_collection.page, slug, request.user
-        ):
+        if not self._can_remove_page_from_collection(collection, page_collection.page, slug, request.user):
             return Response(
-                {
-                    "error": "You don't have permission to remove this page from the collection."
-                },
+                {"error": "You don't have permission to remove this page from the collection."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
