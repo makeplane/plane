@@ -39,6 +39,7 @@ channels==4.1.0
 # ai
 openai==1.63.2
 anthropic==0.49.0
+gigachat==0.1.38
 # slack
 slack-sdk==3.27.1
 # apm
