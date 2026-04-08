@@ -25,9 +25,18 @@ from plane.app.serializers import BaseSerializer
 
 
 class EpicSerializer(BaseSerializer):
+    assignees = serializers.SerializerMethodField()
+    labels = serializers.SerializerMethodField()
+
     class Meta:
         model = Issue
         fields = "__all__"
+
+    def get_assignees(self, obj):
+        return [issue_assignee.assignee_id for issue_assignee in obj.issue_assignee.all()]
+
+    def get_labels(self, obj):
+        return [label_issue.label_id for label_issue in obj.label_issue.all()]
 
 
 class EpicCreateSerializer(BaseSerializer):

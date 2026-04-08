@@ -12,7 +12,8 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
+from django.db.models import Q, Prefetch
+
 from django.utils import timezone
 
 from rest_framework import status
@@ -24,7 +25,7 @@ from plane.api.serializers import EpicSerializer, EpicCreateSerializer, IssueSer
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
-from plane.db.models import Issue, IssueType, Project
+from plane.db.models import Issue, IssueType, Project, IssueAssignee, IssueLabel
 from plane.ee.utils.workflow import WorkflowStateManager
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -72,10 +73,23 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
     serializer_class = EpicSerializer
 
     def get_queryset(self):
-        return Issue.objects.filter(
-            workspace__slug=self.kwargs["slug"],
-            project_id=self.kwargs["project_id"],
-        ).filter(Q(type__isnull=False) & Q(type__is_epic=True))
+        return (
+            Issue.objects.filter(
+                workspace__slug=self.kwargs["slug"],
+                project_id=self.kwargs["project_id"],
+            )
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.all(),
+                ),
+                Prefetch(
+                    "label_issue",
+                    queryset=IssueLabel.objects.all(),
+                ),
+            )
+        )
 
     @check_feature_flag(FeatureFlag.EPICS)
     @epic_docs(
@@ -476,9 +490,7 @@ class EpicIssuesAPIEndpoint(BaseAPIView):
         Issue.objects.bulk_update(work_items, ["parent"], batch_size=10)
 
         updated_work_items = (
-            Issue.issue_objects.filter(id__in=sub_work_item_ids)
-            .select_related("state")
-            .order_by("-created_at")
+            Issue.issue_objects.filter(id__in=sub_work_item_ids).select_related("state").order_by("-created_at")
         )
 
         _ = [
