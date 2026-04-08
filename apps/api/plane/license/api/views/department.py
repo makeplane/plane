@@ -704,3 +704,25 @@ def _join_descendant_workspaces(department, user, depth=0):
             ).exists():
                 WorkspaceMember.objects.create(workspace=child.linked_workspace, member=user, role=15, is_active=True)
         _join_descendant_workspaces(child, user, depth + 1)
+
+
+class InstanceDepartmentLinkTaskCategoriesEndpoint(BaseAPIView):
+    """Bulk-set task categories for a department (replace-all via PUT)."""
+
+    def put(self, request, pk):
+        from plane.db.models import MainTaskCategory
+        from plane.app.serializers.department import DepartmentSerializer
+
+        try:
+            dept = Department.objects.get(pk=pk, deleted_at__isnull=True)
+        except Department.DoesNotExist:
+            return Response({"error": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        category_ids = request.data.get("task_category_ids", [])
+        valid_ids = MainTaskCategory.objects.filter(
+            id__in=category_ids, deleted_at__isnull=True
+        ).values_list("id", flat=True)
+        dept.main_task_categories.set(valid_ids)
+
+        serializer = DepartmentSerializer(dept)
+        return Response(serializer.data, status=status.HTTP_200_OK)

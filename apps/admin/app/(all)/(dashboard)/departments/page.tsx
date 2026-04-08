@@ -14,7 +14,7 @@ import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IInstanceDepartment } from "@plane/services";
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { useInstanceDepartment } from "@/hooks/store";
+import { useInstanceDepartment, useInstanceTaskCategory } from "@/hooks/store";
 import { DepartmentTreeItem } from "./components/department-tree-item";
 import { DepartmentFormModal } from "./components/department-form-modal";
 import { AutoJoinModal } from "./components/auto-join-modal";
@@ -24,6 +24,7 @@ import { BulkLinkModal } from "./components/bulk-link-modal";
 const DepartmentsPage = observer(function DepartmentsPage() {
   const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked } =
     useInstanceDepartment();
+  const { fetchCategories } = useInstanceTaskCategory();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [editDept, setEditDept] = useState<IInstanceDepartment | null>(null);
@@ -32,6 +33,7 @@ const DepartmentsPage = observer(function DepartmentsPage() {
   const [bulkLinkOpen, setBulkLinkOpen] = useState(false);
 
   useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
+  useSWR("INSTANCE_TASK_CATEGORIES_FOR_DEPTS", fetchCategories);
 
   const handleEdit = (dept: IInstanceDepartment) => {
     setEditDept(dept);
@@ -138,6 +140,7 @@ const DepartmentsPage = observer(function DepartmentsPage() {
   );
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function meta() {
   return [{ title: "Departments - God Mode" }];
 }

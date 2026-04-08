@@ -47,6 +47,7 @@ export interface IInstanceDepartmentStore {
   bulkLinkWorkspace: (data: IDepartmentBulkLinkRequest) => Promise<IDepartmentBulkLinkResponse>;
   autoJoin: (id: string, mode: TAutoJoinMode) => Promise<IAutoJoinResult>;
   rejoinAll: (mode: TAutoJoinMode) => Promise<IRejoinAllResult>;
+  linkTaskCategories: (id: string, taskCategoryIds: string[]) => Promise<IInstanceDepartment>;
 }
 
 export class InstanceDepartmentStore implements IInstanceDepartmentStore {
@@ -75,6 +76,7 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       bulkLinkWorkspace: action,
       autoJoin: action,
       rejoinAll: action,
+      linkTaskCategories: action,
     });
     this.service = new InstanceDepartmentService();
   }
@@ -264,6 +266,19 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       return await this.service.bulkLinkWorkspace(data);
     } catch (error) {
       console.error("Error bulk linking departments to workspaces", error);
+      throw error;
+    }
+  };
+
+  linkTaskCategories = async (id: string, taskCategoryIds: string[]): Promise<IInstanceDepartment> => {
+    try {
+      const updated = await this.service.linkTaskCategories(id, taskCategoryIds);
+      runInAction(() => {
+        set(this.departments, id, updated);
+      });
+      return updated;
+    } catch (error) {
+      console.error("Error linking task categories to department", error);
       throw error;
     }
   };

@@ -52,6 +52,7 @@ export interface IInstanceDepartment {
   manager_detail: { id: string; display_name: string; email: string } | null;
   linked_workspace: string | null;
   linked_workspace_detail: { id: string; name: string; slug: string } | null;
+  task_category_ids: string[];
   sort_order: number;
   is_active: boolean;
   staff_count: number;
@@ -62,7 +63,14 @@ export interface IInstanceDepartment {
 
 export type IInstanceDepartmentCreate = Omit<
   IInstanceDepartment,
-  "id" | "created_at" | "updated_at" | "staff_count" | "manager_detail" | "linked_workspace_detail" | "children"
+  | "id"
+  | "created_at"
+  | "updated_at"
+  | "staff_count"
+  | "manager_detail"
+  | "linked_workspace_detail"
+  | "task_category_ids"
+  | "children"
 >;
 
 export type IInstanceDepartmentUpdate = Partial<IInstanceDepartmentCreate>;
@@ -226,6 +234,16 @@ export class InstanceDepartmentService extends APIService {
   async bulkLinkWorkspace(data: IDepartmentBulkLinkRequest): Promise<IDepartmentBulkLinkResponse> {
     return this.post("/api/instances/departments/bulk-link-workspace/", data)
       .then((res) => res?.data as IDepartmentBulkLinkResponse)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async linkTaskCategories(id: string, taskCategoryIds: string[]): Promise<IInstanceDepartment> {
+    return this.put(`/api/instances/departments/${id}/link-task-categories/`, {
+      task_category_ids: taskCategoryIds,
+    })
+      .then((res) => res?.data as IInstanceDepartment)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

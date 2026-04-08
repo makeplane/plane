@@ -11,6 +11,7 @@ import { cn } from "@plane/utils";
 import type { IInstanceDepartment } from "@plane/services";
 import { Button } from "@plane/propel/button";
 import { DepartmentLinkWorkspace } from "./department-link-workspace";
+import { DepartmentLinkTaskCategories } from "./department-link-task-categories";
 
 type Props = {
   dept: IInstanceDepartment;
@@ -62,6 +63,9 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
 
         {/* Linked workspace */}
         <DepartmentLinkWorkspace dept={dept} />
+
+        {/* Linked task categories */}
+        <DepartmentLinkTaskCategories dept={dept} />
 
         {/* Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

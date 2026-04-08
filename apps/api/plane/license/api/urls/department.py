@@ -8,6 +8,7 @@ from plane.license.api.views.department import (
     InstanceDepartmentTreeEndpoint,
     InstanceDepartmentStaffEndpoint,
     InstanceDepartmentLinkWorkspaceEndpoint,
+    InstanceDepartmentLinkTaskCategoriesEndpoint,
     RejoinAllEndpoint,
 )
 from plane.license.api.views.department_bulk_import import DepartmentBulkImportView
@@ -64,5 +65,10 @@ urlpatterns = [
         "departments/<uuid:pk>/auto-join/",
         InstanceDepartmentAutoJoinEndpoint.as_view(http_method_names=["post"]),
         name="instance-department-auto-join",
+    ),
+    path(
+        "departments/<uuid:pk>/link-task-categories/",
+        InstanceDepartmentLinkTaskCategoriesEndpoint.as_view(http_method_names=["put"]),
+        name="instance-department-link-task-categories",
     ),
 ]
