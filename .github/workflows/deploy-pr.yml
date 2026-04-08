@@ -497,10 +497,12 @@ jobs:
 
             CLOUDFLARE_TOKEN=$(echo "$SECRET_JSON" | jq -r '.cloudflare_api_token')
             REDIS_URL=$(echo "$SECRET_JSON" | jq -r '.redis_url')
+            RANCHER_PROJECT_ID=$(echo "$SECRET_JSON" | jq -r '.rancher_project_id')
 
             # Mask sensitive values immediately after extraction
             echo "::add-mask::$REDIS_URL"
             echo "::add-mask::$CLOUDFLARE_TOKEN"
+            echo "::add-mask::$RANCHER_PROJECT_ID"
 
             # Generate random delimiter for heredoc to prevent injection
             DELIMITER=$(openssl rand -hex 16)
@@ -514,6 +516,12 @@ jobs:
             {
               echo "redis_url<<${DELIMITER}"
               echo "$REDIS_URL"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
+
+            {
+              echo "rancher_project_id<<${DELIMITER}"
+              echo "$RANCHER_PROJECT_ID"
               echo "${DELIMITER}"
             } >> "$GITHUB_ENV"
 
@@ -679,6 +687,7 @@ jobs:
               --set env.storageClass=gp2 \
               --set-string env.pgdb_remote_url="${PG_URI}" \
               --set-string env.remote_redis_url="${{ env.redis_url }}"
+            kubectl annotate namespace ${NAMESPACE} field.cattle.io/projectId=${{ env.rancher_project_id }} --overwrite || true
           else
             RELEASE_NAME="${RELEASE_NAME}-cloud"
             APP_HOST="feat-${PR_NUMBER}-cloud.feat.plane.town"
@@ -726,6 +735,7 @@ jobs:
               --set django_backend.session_cookie_domain=.plane.town \
               --set opensearch.enabled=false \
               --set planeVersion=${IMAGE_TAG}
+            kubectl annotate namespace ${NAMESPACE} field.cattle.io/projectId=${{ env.rancher_project_id }} --overwrite || true
           fi
 
       - name: Comment URL to access plane deployment
