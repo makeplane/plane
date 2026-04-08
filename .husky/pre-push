@@ -18,9 +18,11 @@ pnpm turbo run check:types --filter="web" --filter="admin" || { echo "ERROR: Typ
 
 # 4. Backend lint (ruff)
 echo "\n[4/4] Checking backend lint..."
-if ! command -v ruff >/dev/null 2>&1; then
+if command -v ruff >/dev/null 2>&1; then
+  ruff check apps/api || { echo "ERROR: Backend lint failed. Run 'ruff check --fix apps/api' to fix."; exit 1; }
+else
   pip3 install ruff -q
+  python3 -m ruff check apps/api || { echo "ERROR: Backend lint failed. Run 'ruff check --fix apps/api' to fix."; exit 1; }
 fi
-ruff check apps/api || { echo "ERROR: Backend lint failed. Run 'ruff check --fix apps/api' to fix."; exit 1; }
 
 echo "\nAll pre-push checks passed!"
