@@ -159,7 +159,10 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
    */
   filterProjectsBySearchQuery = (projects: TProject[], searchQuery: string | undefined): TProject[] => {
     if (!searchQuery) return projects;
-    return projects.filter((project) => project.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const query = searchQuery.toLowerCase();
+    return projects.filter(
+      (project) => project.name.toLowerCase().includes(query) || project.identifier.toLowerCase().includes(query)
+    );
   };
 
   /**
