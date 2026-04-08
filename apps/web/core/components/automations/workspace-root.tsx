@@ -15,8 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-// components
-import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
+// components;
 import { WorkspaceAutomationsListRoot } from "@/components/automations/list/workspace-root";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
@@ -35,7 +34,7 @@ export const WorkspaceCustomAutomationsRoot = observer(function WorkspaceCustomA
   const { t } = useTranslation();
 
   return (
-    <WithFeatureFlagHOC flag="WORKSPACE_AUTOMATIONS" fallback={<></>} workspaceSlug={workspaceSlug}>
+    <>
       <div className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-between border-b border-subtle py-4">
         <div className="flex flex-col items-start gap-1">
           <h4 className="text-14 font-medium">{t("automations.settings.title")}</h4>
@@ -47,6 +46,6 @@ export const WorkspaceCustomAutomationsRoot = observer(function WorkspaceCustomA
         )}
       </div>
       <WorkspaceAutomationsListRoot workspaceSlug={workspaceSlug} />
-    </WithFeatureFlagHOC>
+    </>
   );
 });

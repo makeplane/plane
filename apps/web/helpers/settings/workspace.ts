@@ -36,6 +36,13 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
   const isGroupSyncingEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.IDP_GROUP_SYNC, false);
   // Cloud SSO is enabled if the instance is not self-managed (i.e cloud only)
   const isCloudSSOEnabled = store.instance.config?.is_self_managed === false ? true : false;
+  // automations
+  const isAutomationsEnabled = store.featureFlags.getFeatureFlag(
+    workspaceSlug,
+    E_FEATURE_FLAGS.WORKSPACE_AUTOMATIONS,
+    false
+  );
+
   switch (settingKey) {
     case "plane-intelligence":
       return isPiChatEnabled || isEditorOPSEnabled || isPiDedupeEnabled;
@@ -51,6 +58,8 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
       return isWorkItemTypesEnabled;
     case "group-syncing":
       return isGroupSyncingEnabled;
+    case "automations":
+      return isAutomationsEnabled;
     default:
       return true;
   }

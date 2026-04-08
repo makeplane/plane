@@ -30,12 +30,12 @@ export const WorkspaceAutomationsWrapper = observer(function WorkspaceAutomation
     workspaceAutomations: { canView, fetchAutomations },
   } = useAutomations();
   // derived values
-  const isWorkspaceAutomationsEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_AUTOMATIONS);
+  const isWorkspaceAutomationsFlagAvailable = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_AUTOMATIONS);
 
   // fetching automations list
   useSWR(
-    workspaceSlug && isWorkspaceAutomationsEnabled && canView
-      ? ["workspace-automations", workspaceSlug, isWorkspaceAutomationsEnabled, canView]
+    workspaceSlug && isWorkspaceAutomationsFlagAvailable && canView
+      ? ["workspace-automations", workspaceSlug, isWorkspaceAutomationsFlagAvailable, canView]
       : null,
     () => fetchAutomations(workspaceSlug)
   );
