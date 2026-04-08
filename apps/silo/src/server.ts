@@ -214,7 +214,7 @@ export default class Server {
 
   private setupProcessHandlers(): void {
     process.on("unhandledRejection", (reason) => {
-      logger.error("Unhandled Rejection at:", reason);
+      logger.error("Unhandled Rejection at:", reason ?? "No rejection reason provided");
     });
 
     process.on("uncaughtException", (err) => {

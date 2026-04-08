@@ -17,6 +17,15 @@ import { logger } from "@plane/logger";
 const { APP_ENV } = process.env;
 
 export const responseHandler = (res: Response, status: number, data: any = {}, extras: any = undefined) => {
+  // Prevent double response - check if headers were already sent
+  if (res.headersSent) {
+    logger.warn("Attempted to send response after headers were already sent", {
+      status,
+      originalStatus: res.statusCode,
+    });
+    return res;
+  }
+
   switch (status) {
     case 200: {
       return res.status(status).json({

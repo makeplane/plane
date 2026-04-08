@@ -43,7 +43,9 @@ class AsanaController {
     try {
       const { workspaceId, userId, apiToken, personalAccessToken } = req.body;
       if (!workspaceId || !userId || !apiToken || !personalAccessToken) {
-        res.status(400).json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
+        return res
+          .status(400)
+          .json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
       }
       try {
         const asanaService = createAsanaService({
@@ -62,9 +64,9 @@ class AsanaController {
         workspace_id: workspaceId,
         is_pat: true,
       });
-      res.status(200).json({ message: "Authentication successful" });
+      return res.status(200).json({ message: "Authentication successful" });
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 

@@ -124,7 +124,6 @@ process.on("uncaughtException", async (error) => {
   process.exit(1);
 });
 
-process.on("unhandledRejection", async (error) => {
-  logger.error("Unhandled Rejection:", error);
-  process.exit(1);
+process.on("unhandledRejection", async (reason) => {
+  logger.error("Unhandled Rejection:", reason ?? "No rejection reason provided");
 });

@@ -215,11 +215,53 @@ export const syncIssueWithPlane = async (store: Store, data: GitlabIssueEvent) =
       // Use 5 second TTL to allow the webhook loop back but expire quickly
       await store.set(PLANE_GITLAB_ISSUE_CACHE_KEY(issue.id), "true", 60);
     } else {
-      const createdIssue = await planeClient.issue.create(
-        entityConnection.workspace_slug,
-        entityConnection.project_id ?? "",
-        planeIssue
-      );
+      let createdIssue;
+      try {
+        createdIssue = await planeClient.issue.create(
+          entityConnection.workspace_slug,
+          entityConnection.project_id ?? "",
+          planeIssue
+        );
+      } catch (error: any) {
+        // Handle duplicate issue creation gracefully
+        if (error?.error?.includes("already exists") || error?.message?.includes("already exists")) {
+          logger.info(
+            `${glIntegrationKey}[ISSUE] Issue with external_id already exists, attempting to fetch and update`,
+            {
+              external_id: GITLAB_ISSUE_EXTERNAL_ID(data.project.id.toString(), data.object_attributes.iid.toString()),
+            }
+          );
+
+          // Try to fetch the existing issue and update it instead
+          try {
+            issue = await planeClient.issue.getIssueWithExternalId(
+              entityConnection.workspace_slug,
+              entityConnection.project_id ?? "",
+              GITLAB_ISSUE_EXTERNAL_ID(data.project.id.toString(), data.object_attributes.iid.toString()),
+              glIntegrationKey
+            );
+
+            if (issue) {
+              await planeClient.issue.update(
+                entityConnection.workspace_slug,
+                entityConnection.project_id ?? "",
+                issue.id,
+                planeIssue
+              );
+            }
+          } catch (fetchError) {
+            logger.error(`${glIntegrationKey}[ISSUE] Failed to fetch existing issue after duplicate error`, fetchError);
+          }
+          // Set the store key regardless of fetch/update success to prevent webhook loops
+          if (issue) {
+            await store.set(PLANE_GITLAB_ISSUE_CACHE_KEY(issue.id), "true", 60);
+          }
+          // Exit early for duplicate errors - no need to create links
+          return;
+        }
+        // Re-throw if it's not a duplicate error
+        throw error;
+      }
 
       const createIssueLinkEntityConnection = async () => {
         return await createGitlabIssueLinkedComment(

@@ -91,9 +91,26 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
     let issue: ExIssue | null = null;
 
     const ghService = getGithubService(workspaceConnection, data.installationId.toString(), data.isEnterprise);
-    const ghIssue = await ghService.getIssue(data.owner, data.repositoryName, Number(data.issueNumber));
-    const bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
-    // replace the issue body with the html body
+
+    // Fetch GitHub issue with error handling for deleted issues
+    let ghIssue;
+    let bodyHtml;
+    try {
+      ghIssue = await ghService.getIssue(data.owner, data.repositoryName, Number(data.issueNumber));
+      bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
+    } catch (error: any) {
+      // Handle deleted issues gracefully
+      if (error?.message?.includes("deleted") || error?.status === 404 || error?.status === 410) {
+        logger.info(`${ghIntegrationKey}[ISSUE] Issue was deleted from GitHub, skipping sync`, {
+          owner: data.owner,
+          repository: data.repositoryName,
+          issueNumber: data.issueNumber,
+        });
+        return;
+      }
+      // Re-throw other errors
+      throw error;
+    }
 
     if (!entityConnection) {
       logger.info(`${ghIntegrationKey}[ISSUE sync] No entity connection found, skipping`, {
@@ -219,11 +236,53 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
       // Use 5 second TTL to allow the webhook loop back but expire quickly
       await store.set(`silo:issue:plane:${issue.id}`, "true", 60);
     } else {
-      const createdIssue = await planeClient.issue.create(
-        entityConnection.workspace_slug,
-        entityConnection.project_id ?? "",
-        planeIssue
-      );
+      let createdIssue;
+      try {
+        createdIssue = await planeClient.issue.create(
+          entityConnection.workspace_slug,
+          entityConnection.project_id ?? "",
+          planeIssue
+        );
+      } catch (error: any) {
+        // Handle duplicate issue creation gracefully
+        if (error?.error?.includes("already exists") || error?.message?.includes("already exists")) {
+          logger.info(
+            `${ghIntegrationKey}[ISSUE] Issue with external_id already exists, attempting to fetch and update`,
+            {
+              external_id: data.issueNumber.toString(),
+            }
+          );
+
+          // Try to fetch the existing issue and update it instead
+          try {
+            issue = await planeClient.issue.getIssueWithExternalId(
+              entityConnection.workspace_slug,
+              entityConnection.project_id ?? "",
+              data.issueNumber.toString(),
+              ghIntegrationKey
+            );
+
+            if (issue) {
+              await planeClient.issue.update(
+                entityConnection.workspace_slug,
+                entityConnection.project_id ?? "",
+                issue.id,
+                planeIssue
+              );
+            }
+          } catch (fetchError) {
+            logger.error(`${ghIntegrationKey}[ISSUE] Failed to fetch existing issue after duplicate error`, fetchError);
+          }
+          // Set the store key regardless of fetch/update success to prevent webhook loops
+          if (issue) {
+            await store.set(`silo:issue:plane:${issue.id}`, "true", 60);
+          }
+          // Exit early for duplicate errors - no need to create links
+          return;
+        }
+        // Re-throw if it's not a duplicate error
+        throw error;
+      }
 
       // Create link to issue created in GitHub
       const createLink = async () => {
