@@ -342,7 +342,7 @@ class AutomationNode(ProjectOptionalBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.handler_name == "scheduled":
-            self.next_scheduled_at = self.compute_next_scheduled_at(self.config, self.version.project)
+            self.next_scheduled_at = self.compute_next_scheduled_at(self.config)
         super().save(*args, **kwargs)
 
     @staticmethod
@@ -363,20 +363,15 @@ class AutomationNode(ProjectOptionalBaseModel):
         raise ValueError(f"Unknown frequency: {freq}")
 
     @staticmethod
-    def resolve_timezone(config, project):
-        """Resolve timezone: trigger config → project → workspace → UTC."""
+    def resolve_timezone(config):
+        """Resolve timezone: trigger config → UTC."""
         tz_name = config.get("timezone")
-        if not tz_name:
-            tz_name = getattr(project, "timezone", None)
-        if not tz_name:
-            workspace = getattr(project, "workspace", None)
-            tz_name = getattr(workspace, "timezone", None) if workspace else None
         return tz_name or "UTC"
 
     @classmethod
-    def compute_next_scheduled_at(cls, config, project, current=None):
+    def compute_next_scheduled_at(cls, config, current=None):
         """Compute next fire time. Both fixed and cron go through croniter."""
-        tz = ZoneInfo(cls.resolve_timezone(config, project))
+        tz = ZoneInfo(cls.resolve_timezone(config))
         now = current or timezone.now()
         cron_expr = config.get("cron_expression") if config.get("method") == "cron" else cls.fixed_to_cron(config)
         return croniter(cron_expr, now.astimezone(tz)).get_next(datetime).astimezone(UTC)

@@ -301,7 +301,6 @@ def execute_scheduled_automation(
                     verb="created",
                     field="automation.run_history",
                     new_value=str(automation_run.id),
-                    project_id=automation.project_id,
                     workspace_id=automation.workspace_id,
                 )
             except Exception:
@@ -352,7 +351,6 @@ def schedule_automation_triggers_batch() -> Dict[str, Any]:
                     version__automation__current_version_id=F("version_id"),
                     version__automation__deleted_at__isnull=True,
                 )
-                .select_related("version__automation__project")
             )
 
             for trigger_node in due_triggers:
@@ -362,7 +360,6 @@ def schedule_automation_triggers_batch() -> Dict[str, Any]:
 
                     trigger_node.next_scheduled_at = AutomationNode.compute_next_scheduled_at(
                         config=trigger_node.config,
-                        project=automation.project,
                         current=scheduled_at,
                     )
                     trigger_node.save(update_fields=["next_scheduled_at"])

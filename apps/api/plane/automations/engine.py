@@ -477,7 +477,6 @@ class AutomationExecutionEngine:
                                 old_identifier=None,
                                 new_identifier=None,
                                 epoch=event.get("epoch", None),
-                                project_id=project_id,
                                 workspace_id=workspace_id,
                             )
                         except Exception:
