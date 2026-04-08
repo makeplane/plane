@@ -73,10 +73,12 @@ export class SentryAssetsController {
       const { planeClient, workspaceConnection } = await getSentryConnectionDetails(installationId);
 
       const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
-      const formatttedResponse = projects.results.map((project) => ({
-        label: project.name,
-        value: project.id,
-      }));
+      const formatttedResponse = projects.results
+        .filter((project) => project.archived_at == null)
+        .map((project) => ({
+          label: project.name,
+          value: project.id,
+        }));
 
       res.status(200).json(formatttedResponse);
     } catch (error) {
