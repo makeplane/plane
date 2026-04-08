@@ -18,7 +18,7 @@ export default function BankWideProjectsLayout() {
     const params = new URLSearchParams(searchParams);
     if (value) params.set(key, value);
     else params.delete(key);
-    navigate(`?${params.toString()}`, { replace: true });
+    void navigate(`?${params.toString()}`, { replace: true });
   };
 
   return (
@@ -30,10 +30,7 @@ export default function BankWideProjectsLayout() {
               <Breadcrumbs>
                 <Breadcrumbs.Item
                   component={
-                    <BreadcrumbLink
-                      label="Bank-wide Projects"
-                      icon={<Globe className="h-4 w-4 text-tertiary" />}
-                    />
+                    <BreadcrumbLink label="Bank-wide Projects" icon={<Globe className="h-4 w-4 text-tertiary" />} />
                   }
                 />
               </Breadcrumbs>
