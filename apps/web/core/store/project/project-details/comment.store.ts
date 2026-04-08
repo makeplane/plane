@@ -157,25 +157,20 @@ export class ProjectUpdateCommentStore implements IUpdateCommentStore {
     commentId: string,
     data: Partial<TProjectUpdatesComment>
   ) => {
-    try {
-      runInAction(() => {
-        Object.keys(data).forEach((key) => {
-          set(this.commentMap, [commentId, key], data[key as keyof TProjectUpdatesComment]);
-        });
+    runInAction(() => {
+      Object.keys(data).forEach((key) => {
+        set(this.commentMap, [commentId, key], data[key as keyof TProjectUpdatesComment]);
       });
+    });
 
-      const response = await this.updateCommentService.patchProjectUpdateComment(
-        workspaceSlug,
-        projectId,
-        commentId,
-        data
-      );
+    const response = await this.updateCommentService.patchProjectUpdateComment(
+      workspaceSlug,
+      projectId,
+      commentId,
+      data
+    );
 
-      return response;
-    } catch (error) {
-      // this.rootUpdateDetail.activity.fetchActivities(workspaceSlug, projectId, updateId);
-      throw error;
-    }
+    return response;
   };
 
   removeComment = async (workspaceSlug: string, projectId: string, updateId: string, commentId: string) => {

@@ -448,14 +448,9 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
    * @param externalApiToken
    */
   saveCredentials = async (workspaceId: string, userId: string, externalApiToken: string): Promise<void> => {
-    // oxlint-disable-next-line no-useless-catch
-    try {
-      await this.zipImporterService.saveCredentials(workspaceId, userId, externalApiToken);
-      // After saving credentials, refresh auth status
-      await this.fetchAuthStatus(workspaceId, userId);
-    } catch (error) {
-      throw error;
-    }
+    await this.zipImporterService.saveCredentials(workspaceId, userId, externalApiToken);
+    // After saving credentials, refresh auth status
+    await this.fetchAuthStatus(workspaceId, userId);
   };
 
   verifyAndAddCredentials = async (workspaceId: string, userId: string, externalApiToken: string): Promise<void> => {

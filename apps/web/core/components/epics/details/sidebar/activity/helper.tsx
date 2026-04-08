@@ -76,7 +76,7 @@ export type TEpicActivityDetails = {
 // Helper to create a wrapper component for relation icons that need size parameter
 // TODO: update ISSUE_RELATION_OPTIONS constant icon type.
 const createRelationIconWrapper = (relationType: TIssueRelationTypes | undefined): FC<{ className?: string }> => {
-  return ({ className }) => {
+  const RelationIcon: FC<{ className?: string }> = ({ className }) => {
     if (!relationType) {
       return <Network className={className} />;
     }
@@ -87,6 +87,7 @@ const createRelationIconWrapper = (relationType: TIssueRelationTypes | undefined
     // h-3.5 = 14px, which matches the original size parameter
     return <>{iconFn(14)}</>;
   };
+  return RelationIcon;
 };
 
 export type TEpicActivityDetailsHelperMap = {

@@ -243,20 +243,16 @@ export class GitLabService {
   }
 
   async addWebhookToGroup(groupId: string, url: string, token: string) {
-    try {
-      const response = await this.client.post(`/groups/${groupId}/hooks`, {
-        url,
-        token,
-        push_events: true,
-        merge_requests_events: true,
-        pipeline_events: true,
-        tag_push_events: true,
-        issues_events: true,
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.client.post(`/groups/${groupId}/hooks`, {
+      url,
+      token,
+      push_events: true,
+      merge_requests_events: true,
+      pipeline_events: true,
+      tag_push_events: true,
+      issues_events: true,
+    });
+    return response.data;
   }
 
   /**
@@ -266,12 +262,8 @@ export class GitLabService {
    * @returns
    */
   async removeWebhookFromGroup(groupId: string, hookId: string) {
-    try {
-      const response = await this.client.delete(`/groups/${groupId}/hooks/${hookId}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.client.delete(`/groups/${groupId}/hooks/${hookId}`);
+    return response.data;
   }
 
   async getGroups() {
@@ -284,60 +276,52 @@ export class GitLabService {
   }
 
   async getProjects() {
-    try {
-      const response = await this.client.get("/projects?membership=true&pages=100");
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.client.get("/projects?membership=true&pages=100");
+    return response.data;
   }
 
   async getAllProjects() {
-    try {
-      const allProjects = [];
-      const perPage = 100;
-      const currentPage = 1;
-      let totalPages = 1;
+    const allProjects = [];
+    const perPage = 100;
+    const currentPage = 1;
+    let totalPages = 1;
 
-      // Fetch first page to get pagination info
-      const firstResponse = await this.client.get("/projects", {
-        params: {
-          membership: true,
-          per_page: perPage,
-          page: currentPage,
-        },
-      });
+    // Fetch first page to get pagination info
+    const firstResponse = await this.client.get("/projects", {
+      params: {
+        membership: true,
+        per_page: perPage,
+        page: currentPage,
+      },
+    });
 
-      allProjects.push(...firstResponse.data);
+    allProjects.push(...firstResponse.data);
 
-      // Get total pages from response headers
-      const totalPagesHeader = firstResponse.headers["x-total-pages"];
-      if (totalPagesHeader) {
-        totalPages = parseInt(totalPagesHeader, 10);
-      }
-
-      // Fetch remaining pages if there are more
-      if (totalPages > 1) {
-        const remainingPages = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
-        const pagePromises = remainingPages.map((page) =>
-          this.client.get("/projects", {
-            params: {
-              membership: true,
-              per_page: perPage,
-              page,
-            },
-          })
-        );
-
-        const responses = await Promise.all(pagePromises);
-        responses.forEach((response) => {
-          allProjects.push(...response.data);
-        });
-      }
-
-      return allProjects;
-    } catch (error) {
-      throw error;
+    // Get total pages from response headers
+    const totalPagesHeader = firstResponse.headers["x-total-pages"];
+    if (totalPagesHeader) {
+      totalPages = parseInt(totalPagesHeader, 10);
     }
+
+    // Fetch remaining pages if there are more
+    if (totalPages > 1) {
+      const remainingPages = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+      const pagePromises = remainingPages.map((page) =>
+        this.client.get("/projects", {
+          params: {
+            membership: true,
+            per_page: perPage,
+            page,
+          },
+        })
+      );
+
+      const responses = await Promise.all(pagePromises);
+      responses.forEach((response) => {
+        allProjects.push(...response.data);
+      });
+    }
+
+    return allProjects;
   }
 }

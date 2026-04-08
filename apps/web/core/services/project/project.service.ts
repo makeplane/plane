@@ -244,12 +244,8 @@ export class ProjectService extends APIService {
 
   // analytics
   async fetchProjectAnalytics(workspaceSlug: string, projectId: string): Promise<TStateAnalytics> {
-    try {
-      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/analytics/`);
-      return data || undefined;
-    } catch (error) {
-      throw error;
-    }
+    const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/analytics/`);
+    return data || undefined;
   }
 
   // links

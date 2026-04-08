@@ -24,12 +24,15 @@ import { EmbedLoading, ErrorState, HTMLContent, InViewportRenderer, RichCard, Tw
 
 // Main wrapper component that uses lazy loading through InViewportRenderer
 export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
-  observer((props) => (
-    <InViewportRenderer placeholder={<EmbedLoading />}>
-      <EmbedHandlerRender {...props} />
-    </InViewportRenderer>
-  ))
+  observer(function EmbedHandler(props) {
+    return (
+      <InViewportRenderer placeholder={<EmbedLoading />}>
+        <EmbedHandlerRender {...props} />
+      </InViewportRenderer>
+    );
+  })
 );
+EmbedHandler.displayName = "EmbedHandler";
 
 const EmbedHandlerRender = observer(function EmbedHandlerRender(props: ExternalEmbedNodeViewProps) {
   const { node } = props;

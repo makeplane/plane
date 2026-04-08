@@ -34,7 +34,7 @@
     "eslint-plugin-turbo": "catalog:",
     "husky": "catalog:",
     "lint-staged": "catalog:",
-    "oxfmt": "latest",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "turbo": "catalog:"

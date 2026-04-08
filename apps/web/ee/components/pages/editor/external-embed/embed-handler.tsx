@@ -118,7 +118,7 @@ function EmbedRenderer({
 
 // Main Entry Component - Simple orchestration
 export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
-  observer((props) => {
+  observer(function EmbedHandler(props) {
     const hasEmbedData = props.node.attrs[EExternalEmbedAttributeNames.EMBED_DATA];
 
     return (
@@ -128,6 +128,7 @@ export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
     );
   })
 );
+EmbedHandler.displayName = "EmbedHandler";
 
 // Main Component - Clean orchestration of families
 const EmbedHandlerRender = observer(function EmbedHandlerRender(externalEmbedNodeView: ExternalEmbedNodeViewProps) {

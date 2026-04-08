@@ -212,11 +212,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
   };
 
   subscribeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
-    try {
-      await this.issueService.bulkSubscribeIssues(workspaceSlug, projectId, { issue_ids: issueIds });
-    } catch (error) {
-      throw error;
-    }
+    await this.issueService.bulkSubscribeIssues(workspaceSlug, projectId, { issue_ids: issueIds });
   };
 
   // Using aliased names as they cannot be overridden in other stores

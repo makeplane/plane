@@ -166,22 +166,17 @@ export class InitiativeAttachmentStore implements IInitiativeAttachmentStore {
   };
 
   removeAttachment = async (workspaceSlug: string, initiativeId: string, attachmentId: string) => {
-    // oxlint-disable-next-line no-useless-catch
-    try {
-      const response = await this.initiativeAttachmentService.deleteInitiativeAttachment(
-        workspaceSlug,
-        initiativeId,
-        attachmentId
-      );
+    const response = await this.initiativeAttachmentService.deleteInitiativeAttachment(
+      workspaceSlug,
+      initiativeId,
+      attachmentId
+    );
 
-      runInAction(() => {
-        update(this.attachments, [initiativeId], (attachmentIds) => pull(attachmentIds ?? [], attachmentId));
-        delete this.attachmentMap[attachmentId];
-      });
+    runInAction(() => {
+      update(this.attachments, [initiativeId], (attachmentIds) => pull(attachmentIds ?? [], attachmentId));
+      delete this.attachmentMap[attachmentId];
+    });
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return response;
   };
 }

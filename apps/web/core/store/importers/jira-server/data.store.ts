@@ -469,11 +469,6 @@ export class JiraServerDataStore implements IJiraServerDataStore {
     projectKey: string,
     jql: string
   ): Promise<IJiraValidateJQLResponse | undefined> => {
-    try {
-      const response = await this.service.validateJql(workspaceId, userId, projectKey, jql);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return await this.service.validateJql(workspaceId, userId, projectKey, jql);
   };
 }

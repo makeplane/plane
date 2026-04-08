@@ -200,53 +200,48 @@ class AsanaController {
 }
 
 export const createAsanaClient = async (workspaceId: string, userId: string) => {
-  // oxlint-disable-next-line no-useless-catch
-  try {
-    const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
-    if (!credentials || credentials.length <= 0) {
-      throw new Error("No asana credentials available for the given workspaceId and userId");
-    }
-    // Get the credentials data
-    const credentialsData = credentials[0];
-    // Check if refresh token is required
-    const isRefreshAllowed = !credentialsData.is_pat && credentialsData.source_refresh_token;
-    // Check if the credentials are valid
-    if (
-      !credentialsData.source_access_token ||
-      !credentialsData.target_access_token ||
-      (isRefreshAllowed && !credentialsData.source_refresh_token)
-    ) {
-      throw new Error("No asana credentials available for the given workspaceId and userId");
-    }
-
-    const refreshTokenCallback = async ({
-      access_token,
-      refresh_token,
-    }: {
-      access_token: string;
-      refresh_token: string;
-    }) => {
-      await createOrUpdateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA, {
-        source_access_token: access_token,
-        source_refresh_token: refresh_token,
-        source: E_IMPORTER_KEYS.ASANA,
-      });
-    };
-
-    const refreshTokenRejectCallback = async () => {
-      await deactivateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
-    };
-
-    return createAsanaService({
-      accessToken: credentialsData.source_access_token,
-      refreshToken: credentialsData.source_refresh_token ?? "",
-      refreshTokenFunc: isRefreshAllowed ? asanaAuth.getRefreshToken.bind(asanaAuth) : undefined,
-      refreshTokenCallback: isRefreshAllowed ? refreshTokenCallback : undefined,
-      refreshTokenRejectCallback: refreshTokenRejectCallback,
-    });
-  } catch (error) {
-    throw error;
+  const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
+  if (!credentials || credentials.length <= 0) {
+    throw new Error("No asana credentials available for the given workspaceId and userId");
   }
+  // Get the credentials data
+  const credentialsData = credentials[0];
+  // Check if refresh token is required
+  const isRefreshAllowed = !credentialsData.is_pat && credentialsData.source_refresh_token;
+  // Check if the credentials are valid
+  if (
+    !credentialsData.source_access_token ||
+    !credentialsData.target_access_token ||
+    (isRefreshAllowed && !credentialsData.source_refresh_token)
+  ) {
+    throw new Error("No asana credentials available for the given workspaceId and userId");
+  }
+
+  const refreshTokenCallback = async ({
+    access_token,
+    refresh_token,
+  }: {
+    access_token: string;
+    refresh_token: string;
+  }) => {
+    await createOrUpdateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA, {
+      source_access_token: access_token,
+      source_refresh_token: refresh_token,
+      source: E_IMPORTER_KEYS.ASANA,
+    });
+  };
+
+  const refreshTokenRejectCallback = async () => {
+    await deactivateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
+  };
+
+  return createAsanaService({
+    accessToken: credentialsData.source_access_token,
+    refreshToken: credentialsData.source_refresh_token ?? "",
+    refreshTokenFunc: isRefreshAllowed ? asanaAuth.getRefreshToken.bind(asanaAuth) : undefined,
+    refreshTokenCallback: isRefreshAllowed ? refreshTokenCallback : undefined,
+    refreshTokenRejectCallback: refreshTokenRejectCallback,
+  });
 };
 
 export default AsanaController;

@@ -140,16 +140,12 @@ export const encapsulateInQuoteBlock = (text: string) =>
     .join("\n");
 
 export const createPlaneClient = async (workspaceId: string, userId: string, source: string): Promise<PlaneClient> => {
-  try {
-    const credential = await getValidCredentials(workspaceId, userId, source);
+  const credential = await getValidCredentials(workspaceId, userId, source);
 
-    return new PlaneClient({
-      baseURL: env.API_BASE_URL,
-      apiToken: credential.target_access_token || "",
-    });
-  } catch (error) {
-    throw error;
-  }
+  return new PlaneClient({
+    baseURL: env.API_BASE_URL,
+    apiToken: credential.target_access_token || "",
+  });
 };
 
 export const titleCase = (word: string) =>

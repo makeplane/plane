@@ -210,6 +210,7 @@ catalog:
   nanoid: 3.3.8
   next-themes: 0.4.6
   node-html-parser: ^6.1.13
+  oxfmt: 0.42.0
   oxlint: 1.57.0
   oxlint-tsgolint: 0.16.0
   pako: ^2.1.0

@@ -41,26 +41,22 @@ export const useAttachmentOperations = (workspaceSlug: string, projectId: string
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
       create: async (file) => {
-        try {
-          if (!workspaceSlug || !projectId) throw new Error("Missing required fields");
-          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, file);
-          setPromiseToast(attachmentUploadPromise, {
-            loading: "Uploading attachment...",
-            success: {
-              title: "Attachment uploaded",
-              message: () => "The attachment has been successfully uploaded",
-            },
-            error: {
-              title: "Attachment not uploaded",
-              message: () => "The attachment could not be uploaded",
-            },
-          });
+        if (!workspaceSlug || !projectId) throw new Error("Missing required fields");
+        const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, file);
+        setPromiseToast(attachmentUploadPromise, {
+          loading: "Uploading attachment...",
+          success: {
+            title: "Attachment uploaded",
+            message: () => "The attachment has been successfully uploaded",
+          },
+          error: {
+            title: "Attachment not uploaded",
+            message: () => "The attachment could not be uploaded",
+          },
+        });
 
-          await attachmentUploadPromise;
-          setLastCollapsibleAction("attachments");
-        } catch (error) {
-          throw error;
-        }
+        await attachmentUploadPromise;
+        setLastCollapsibleAction("attachments");
       },
       remove: async (attachmentId) => {
         try {

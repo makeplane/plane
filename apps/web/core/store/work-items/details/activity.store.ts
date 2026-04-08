@@ -189,16 +189,12 @@ export class IssueActivityStore implements IIssueActivityStore {
   });
 
   fetchStateDuration = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      const durations = await this.issueActivityService.getStateDuration(workspaceSlug, projectId, issueId);
-      runInAction(() => {
-        durations.forEach((d) => {
-          this.stateDurationMap[d.id] = d.duration_seconds;
-        });
+    const durations = await this.issueActivityService.getStateDuration(workspaceSlug, projectId, issueId);
+    runInAction(() => {
+      durations.forEach((d) => {
+        this.stateDurationMap[d.id] = d.duration_seconds;
       });
-    } catch (error) {
-      throw error;
-    }
+    });
   };
 
   fetchActivities = async (

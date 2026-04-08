@@ -229,14 +229,9 @@ export class FlatfileStore extends ImporterBaseStore implements IFlatfileStore {
    * @param externalApiToken
    */
   saveCredentials = async (workspaceId: string, userId: string, externalApiToken: string): Promise<void> => {
-    // oxlint-disable-next-line no-useless-catch
-    try {
-      await this.flatfileAuthService.saveCredentials(workspaceId, userId, externalApiToken);
-      // After saving credentials, refresh auth status
-      await this.fetchAuthStatus(workspaceId, userId);
-    } catch (error) {
-      throw error;
-    }
+    await this.flatfileAuthService.saveCredentials(workspaceId, userId, externalApiToken);
+    // After saving credentials, refresh auth status
+    await this.fetchAuthStatus(workspaceId, userId);
   };
 
   verifyAndAddCredentials = async (workspaceId: string, userId: string, externalApiToken: string): Promise<void> => {

@@ -76,7 +76,7 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
           aria-disabled={activity.issue === null}
           href={workItemLink}
           target={activity.issue === null ? "_self" : "_blank"}
-          rel={activity.issue === null ? "" : "noopener noreferrer"}
+          rel="noopener noreferrer"
           className="inline items-center gap-1 font-medium text-primary hover:underline"
         >
           <span className="whitespace-nowrap">
