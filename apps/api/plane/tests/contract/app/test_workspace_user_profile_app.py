@@ -70,4 +70,4 @@ def test_workspace_user_profile_excludes_soft_deleted_assignments_from_project_c
     assert len(response.data["project_data"]) == 1
     assert response.data["project_data"][0]["assigned_issues"] == 1
     assert response.data["project_data"][0]["completed_issues"] == 0
-    assert response.data["project_data"][0]["pending_issues"] == 0
+    assert response.data["project_data"][0]["created_issues"] == 0
