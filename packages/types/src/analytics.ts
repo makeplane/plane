@@ -61,7 +61,7 @@ export type TAnalyticsFilterParams = {
 // service types
 
 export interface IAnalyticsResponse {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface IAnalyticsResponseFields {
@@ -75,3 +75,90 @@ export interface IChartResponse {
   schema: Record<string, string>;
   data: TChartData<string, string>[];
 }
+
+// analytics params form
+export interface IAnalyticsParams {
+  x_axis: ChartXAxisProperty;
+  y_axis: ChartYAxisMetric;
+  group_by?: ChartXAxisProperty;
+}
+
+// insight table column types
+export interface IntakeInsightColumns {
+  project__name: string;
+  total_intakes: number;
+  accepted: number;
+  declined: number;
+  duplicate: number;
+}
+
+export interface CycleInsightColumns {
+  id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  project__name: string;
+  project_id: string;
+  lead__display_name: string;
+  total_issues: number;
+  completed_issues: number;
+  completion_percent: number;
+}
+
+export interface ModuleInsightColumns {
+  id: string;
+  name: string;
+  start_date: string;
+  target_date: string;
+  project__name: string;
+  project_id: string;
+  lead__display_name: string;
+  total_issues: number;
+  completed_issues: number;
+  completion_percent: number;
+}
+
+export interface ProjectInsightColumns {
+  project__name: string;
+  project_id: string;
+  members: number;
+  work_items: number;
+  state_groups: {
+    started: number;
+    completed: number;
+    backlog: number;
+    unstarted: number;
+    cancelled: number;
+  };
+}
+
+export interface UserInsightColumns {
+  display_name: string;
+  assignee_id: string;
+  avatar_url: string;
+  started_work_items: number;
+  completed_work_items: number;
+  un_started_work_items: number;
+}
+
+export interface WorkItemInsightColumns {
+  project__name: string;
+  project_id: string;
+  display_name: string;
+  assignee_id: string;
+  avatar_url: string;
+  backlog_work_items: number;
+  started_work_items: number;
+  un_started_work_items: number;
+  completed_work_items: number;
+  cancelled_work_items: number;
+}
+
+export type AnalyticsTableDataMap = {
+  intake: IntakeInsightColumns;
+  cycles: CycleInsightColumns;
+  modules: ModuleInsightColumns;
+  projects: ProjectInsightColumns;
+  users: UserInsightColumns;
+  "work-items": WorkItemInsightColumns;
+};
