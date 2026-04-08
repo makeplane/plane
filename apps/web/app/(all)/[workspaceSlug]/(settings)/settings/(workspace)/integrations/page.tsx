@@ -36,19 +36,22 @@ import { cn } from "@plane/utils";
 import { ConnectorListRoot } from "@/components/marketplace/connectors/root";
 import { useRouter, useSearchParams } from "next/navigation";
 import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
+import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
+import type { Route } from "./+types/page";
 
 const siloAppService = new SiloAppService();
 
-function WorkspaceIntegrationsPage() {
+function WorkspaceIntegrationsPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   // i18n
   const { t } = useTranslation();
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { slug: workspaceSlug } = currentWorkspace || {};
   const { fetchApplications, getApplicationsForWorkspace } = useApplications();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const isMcpConnectorEnabled = useAiFlag(workspaceSlug, "AI_MCP_CONNECTORS", false);
 
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -56,7 +59,7 @@ function WorkspaceIntegrationsPage() {
     EUserPermissionsLevel.WORKSPACE
   );
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
-  const applications = getApplicationsForWorkspace(workspaceSlug || "");
+  const applications = getApplicationsForWorkspace(workspaceSlug);
   const activeTabParam = searchParams.get("tab");
 
   // state
@@ -103,19 +106,19 @@ function WorkspaceIntegrationsPage() {
         />
         <>
           {/* Tab Navigation */}
-          <div className="flex items-center gap-3 border-b border-subtle">
-            <button
-              onClick={() => handleTabChange("apps")}
-              className={cn(
-                "py-2 text-sm font-medium transition-colors border-b-2 -mb-px",
-                activeTab === "apps"
-                  ? "border-primary-dark text-primary"
-                  : "border-transparent text-tertiary hover:text-secondary"
-              )}
-            >
-              <Button variant={activeTab === "apps" ? "tertiary" : "ghost"}>Apps</Button>
-            </button>
-            <WithAiFeatureFlagHOC flag="AI_MCP_CONNECTORS" disabledFallback={<></>} workspaceSlug={workspaceSlug || ""}>
+          <WithAiFeatureFlagHOC flag="AI_MCP_CONNECTORS" disabledFallback={<></>} workspaceSlug={workspaceSlug || ""}>
+            <div className="flex items-center gap-3 border-b border-subtle">
+              <button
+                onClick={() => handleTabChange("apps")}
+                className={cn(
+                  "py-2 text-sm font-medium transition-colors border-b-2 -mb-px",
+                  activeTab === "apps"
+                    ? "border-primary-dark text-primary"
+                    : "border-transparent text-tertiary hover:text-secondary"
+                )}
+              >
+                <Button variant={activeTab === "apps" ? "tertiary" : "ghost"}>Apps</Button>
+              </button>
               <button
                 onClick={() => handleTabChange("connectors")}
                 className={cn(
@@ -127,16 +130,16 @@ function WorkspaceIntegrationsPage() {
               >
                 <Button variant={activeTab === "connectors" ? "tertiary" : "ghost"}>Connectors</Button>
               </button>
-            </WithAiFeatureFlagHOC>
-          </div>
-          {activeTab === "apps" ? (
+            </div>
+          </WithAiFeatureFlagHOC>
+          {activeTab === "connectors" && isMcpConnectorEnabled ? (
+            <ConnectorListRoot workspaceSlug={workspaceSlug} />
+          ) : (
             <AppListRoot
-              workspaceSlug={workspaceSlug || ""}
+              workspaceSlug={workspaceSlug}
               apps={applications}
               supportedIntegrations={supportedIntegrations}
             />
-          ) : (
-            <ConnectorListRoot workspaceSlug={workspaceSlug || ""} />
           )}
         </>
       </div>

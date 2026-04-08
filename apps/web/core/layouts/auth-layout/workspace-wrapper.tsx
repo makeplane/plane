@@ -72,6 +72,7 @@ import { useConnectors } from "@/plane-web/hooks/store/marketplace/use-connector
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 import { useWorkspaceCustomProperties } from "@/plane-web/hooks/store/custom-properties/use-workspace-custom-properties";
 import { useReleases } from "@/hooks/store/use-releases";
+import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
 
 type WorkspaceAuthWrapper = {
   children: ReactNode;
@@ -143,6 +144,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const isWorkflowsFeatureEnabled = useFlag(workspaceSlug, "WORKFLOWS");
   const isCustomRelationsEnabled = useFlag(workspaceSlug, "CUSTOM_RELATIONS", false);
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const isMcpConnectorEnabled = useAiFlag(workspaceSlug, "AI_MCP_CONNECTORS", false);
 
   // fetching user workspace information
   useSWR(
@@ -403,10 +405,14 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
 
   // fetching connectors list
-  useSWR(`CONNECTORS_LIST_${workspaceSlug}`, () => fetchConnectors(workspaceSlug), {
-    revalidateOnFocus: false,
-    errorRetryCount: 0,
-  });
+  useSWR(
+    workspaceSlug && isMcpConnectorEnabled ? `CONNECTORS_LIST_${workspaceSlug}` : null,
+    workspaceSlug && isMcpConnectorEnabled ? () => fetchConnectors(workspaceSlug) : null,
+    {
+      revalidateOnFocus: false,
+      errorRetryCount: 0,
+    }
+  );
 
   const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;
   const flagsError = featureFlagsResponse.error || aiFeatureFlagsResponse.error;
