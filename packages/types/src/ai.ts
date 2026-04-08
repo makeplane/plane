@@ -87,3 +87,15 @@ export type TAIBlockHandlers = {
   }>;
   saveDocument?: () => Promise<void>;
 };
+
+export type PageUtilityEmbedResponse = {
+  embed_id: string;
+  embed_type: string;
+  sub_type?: string | null;
+  entity_type: string;
+  entity_id: string;
+  chat_id: string;
+  message_id?: string | null;
+  title?: string | null;
+  payload: Record<string, unknown>;
+};

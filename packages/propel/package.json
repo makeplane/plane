@@ -126,6 +126,10 @@
       "development": "./src/input/index.ts",
       "default": "./dist/input/index.js"
     },
+    "./json-renderer": {
+      "development": "./src/json-renderer/index.ts",
+      "default": "./dist/json-renderer/index.js"
+    },
     "./menu": {
       "development": "./src/menu/index.ts",
       "default": "./dist/menu/index.js"
@@ -233,6 +237,7 @@
       "./icon-button": "./dist/icon-button/index.js",
       "./icons": "./dist/icons/index.js",
       "./input": "./dist/input/index.js",
+      "./json-renderer": "./dist/json-renderer/index.js",
       "./menu": "./dist/menu/index.js",
       "./pill": "./dist/pill/index.js",
       "./popover": "./dist/popover/index.js",
@@ -293,7 +298,8 @@
     "recharts": "catalog:",
     "tailwind-merge": "catalog:",
     "use-font-face-observer": "catalog:",
-    "uuid": "catalog:"
+    "uuid": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@plane/tailwindcss": "workspace:*",

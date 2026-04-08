@@ -11,24 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export type TExtensions =
-  | "ai"
-  | "ai-block"
-  | "collaboration-caret"
-  | "issue-embed"
-  | "page-embed"
-  | "slash-commands"
-  | "enter-key"
-  | "image"
-  | "nested-pages"
-  | "external-embed"
-  | "attachments"
-  | "video-attachments"
-  | "comments"
-  | "mathematics"
-  | "drawio"
-  | "copy-block-link"
-  | "selection-conversion"
-  | "mermaid-diagrams"
-  | "multi-column"
-  | "pi-utility-embed";
+export { ErrorBoundary } from "./error-boundary";

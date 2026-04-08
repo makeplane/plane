@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { DEFAULT_PAGE_SORT_ORDER, PAGE_SORT_ORDER_INCREMENT } from "@plane/constants";
 import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
+import { PiUtilityEmbedWidget } from "@/plane-web/components/pages/editor/pi-utility-embed/pi-utility-embed-widget";
 import { PriorityIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
@@ -279,6 +280,11 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
       issue: issueEmbedProps,
       ...(pageEmbedProps && { page: pageEmbedProps }),
       externalEmbedComponent: { widgetCallback: EmbedHandler },
+      piUtilityEmbed: {
+        widgetCallback: ({ embedId, embedType, subType, title }) => (
+          <PiUtilityEmbedWidget embedId={embedId} embedType={embedType} subType={subType} title={title} />
+        ),
+      },
     }),
     [issueEmbedProps, pageEmbedProps]
   );

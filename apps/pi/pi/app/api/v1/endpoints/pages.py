@@ -36,6 +36,7 @@ from pi.app.schemas.pages import PageAIBlockRevisionResponse
 from pi.app.schemas.pages import PageAIBlockRevisionTypesResponse
 from pi.app.schemas.pages import PageAIBlockTypesResponse
 from pi.app.schemas.pages import PageSummarizeRequest
+from pi.app.schemas.pages import PageUtilityEmbedResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.pages.ai_block import AIBlockService
@@ -360,3 +361,43 @@ async def summarize_page(
             yield sse_done()
 
     return StreamingResponse(stream_summary(), media_type="text/event-stream")
+
+
+# ---------------------------------------------------------------------------
+# Page Utility Embeds
+# ---------------------------------------------------------------------------
+
+
+@router.get("/embeds/{embed_id}/", response_model=PageUtilityEmbedResponse)
+async def get_page_embed(
+    embed_id: UUID4,
+    current_user=Depends(get_current_user),
+    db=Depends(get_async_session),
+):
+    """
+    Fetch a single embed payload by its public embed_id.
+
+    The page editor calls this endpoint lazily when a ``pi-utility-embed``
+    node becomes visible, providing the full JSON payload needed to render
+    the embed (chart, work item, view, etc.).
+    """
+    from pi.services.retrievers.pg_store.page_embeds import get_page_embed_by_embed_id
+
+    embed = await get_page_embed_by_embed_id(db, embed_id)
+    if not embed:
+        return JSONResponse(status_code=404, content={"error": "Embed not found"})
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "embed_id": str(embed.embed_id),
+            "embed_type": embed.embed_type,
+            "sub_type": embed.sub_type,
+            "entity_type": embed.entity_type,
+            "entity_id": str(embed.entity_id),
+            "chat_id": str(embed.chat_id),
+            "message_id": str(embed.message_id) if embed.message_id else None,
+            "title": embed.title,
+            "payload": embed.payload,
+        },
+    )

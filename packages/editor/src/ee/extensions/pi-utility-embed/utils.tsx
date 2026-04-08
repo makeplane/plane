@@ -10,25 +10,12 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+import type { TPiEmbedBlockAttributes } from "./types";
+import { EPiEmbedBlockAttributeNames } from "./types";
 
-export type TExtensions =
-  | "ai"
-  | "ai-block"
-  | "collaboration-caret"
-  | "issue-embed"
-  | "page-embed"
-  | "slash-commands"
-  | "enter-key"
-  | "image"
-  | "nested-pages"
-  | "external-embed"
-  | "attachments"
-  | "video-attachments"
-  | "comments"
-  | "mathematics"
-  | "drawio"
-  | "copy-block-link"
-  | "selection-conversion"
-  | "mermaid-diagrams"
-  | "multi-column"
-  | "pi-utility-embed";
+export const DEFAULT_PI_EMBED_BLOCK_ATTRIBUTES: Omit<TPiEmbedBlockAttributes, "node_type"> = {
+  [EPiEmbedBlockAttributeNames.EMBED_ID]: null,
+  [EPiEmbedBlockAttributeNames.EMBED_TYPE]: null,
+  [EPiEmbedBlockAttributeNames.EMBED_SUB_TYPE]: null,
+  [EPiEmbedBlockAttributeNames.EMBED_TITLE]: null,
+};

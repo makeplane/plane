@@ -23,7 +23,7 @@ import type { ExternalEmbedExtensionOptions } from "../extensions/external-embed
 import type { MathematicsExtensionOptions } from "../extensions/mathematics/types";
 import type { PiChatEditorMentionAttributes } from "../extensions/pi-chat-editor/mention/types";
 import type { TCommentConfig } from "./comments";
-import type { TEmbedConfig } from "./issue-embed";
+import type { TEmbedConfig } from "./embed";
 import type { CustomAIBlockExtensionProps } from "../extensions/ai-block/types";
 
 export type IEditorExtensionOptions = {

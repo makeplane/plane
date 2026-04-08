@@ -278,6 +278,9 @@ html.todesktop .desktop-header .desktop-header-actions {
   h6 {
     @apply font-semibold;
   }
+  hr {
+    @apply border-subtle;
+  }
 }
 
 /* react-grid-layout */

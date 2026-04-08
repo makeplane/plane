@@ -156,7 +156,7 @@ EE_ATTRIBUTES = {
     "block-math-component": {"latex", "id"},
     # drawio components (generic)
     "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode", "status"},
-    "ai-block-component": {"data-id"},
+    "ai-block-component": {"data-id"}
 }
 
 # Merge nh3 defaults with all attributes used across our custom components
@@ -193,6 +193,10 @@ ATTRIBUTES = {
         "data-block-type",
         # multi-column attributes
         "data-width",
+        "data-embed-id",
+        "data-embed-type",
+        "data-sub-type",
+        "data-title",
     },
     "a": {"href", "target"},
     # editor node/tag attributes

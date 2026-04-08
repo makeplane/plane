@@ -2737,6 +2737,9 @@ importers:
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@plane/tailwindcss':
         specifier: workspace:*

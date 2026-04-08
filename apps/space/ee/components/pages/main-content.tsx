@@ -33,6 +33,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { PageEmbedCardRoot } from "./page/root";
 import { PageHeader } from "./page-head";
+import { PiUtilityEmbedWidget } from "./editor/pi-utility-embed/pi-utility-embed-widget";
 
 type Props = {
   anchor: string;
@@ -104,6 +105,9 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
                 page: {
                   widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
                   workspaceSlug: "",
+                },
+                piUtilityEmbed: {
+                  widgetCallback: ({ embedId }) => <PiUtilityEmbedWidget embedId={embedId} />,
                 },
               },
               aiBlockWidgetCallback: (props) => <CustomAIBlockUI {...props} />,

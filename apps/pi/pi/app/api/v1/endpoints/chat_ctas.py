@@ -49,6 +49,7 @@ class SaveAsPageRequest(BaseModel):
     workspace_slug: str = Field(..., description="Workspace slug where the page will be created")
     page_type: str = Field(..., description="Type of page: 'workspace' for wiki pages or 'project' for project pages")
     chat_id: Optional[UUID] = Field(None, description="Chat ID")
+    answer_id: Optional[UUID] = Field(None, description="Assistant message ID that produced the response")
     project_id: Optional[UUID] = Field(None, description="Project ID (required if page_type is 'project')")
     access: Optional[int] = Field(None, description="Access level - 0 for public, 1 for private")
     color: Optional[str] = Field(None, description="Page color in hex format")
@@ -71,12 +72,17 @@ async def save_as_page(
 ):
     try:
         user_id = current_user.id
+
+        from pi.services.pages.embed_extractor import extract_embeds
+
         workspace_id_for_check = await get_workspace_id_from_slug(data.workspace_slug)
         if workspace_id_for_check:
             guest_check = await check_guest_access(str(user_id), workspace_id_for_check)
             if guest_check:
                 return guest_check
-        data.description_html = md_to_html(data.description_html)
+
+        extraction = extract_embeds(data.description_html)
+        data.description_html = md_to_html(extraction.rewritten_markdown)
 
         # Validate page_type and project_id combination
         if data.page_type not in ["workspace", "project"]:
@@ -182,6 +188,32 @@ async def save_as_page(
         if page_result and page_result.get("success"):
             page_data = page_result.get("data", {})
             page_id = page_data.get("id")
+
+            # Persist extracted embeds (best-effort; failures are logged but don't block the response)
+            if extraction.embeds and page_id and data.chat_id:
+                try:
+                    from pi.services.retrievers.pg_store.page_embeds import bulk_create_page_embeds
+
+                    entity_type = "wiki" if data.page_type == "workspace" else "page"
+                    embed_rows = [
+                        {
+                            "embed_id": embed.embed_id,
+                            "embed_type": embed.embed_type,
+                            "sub_type": embed.sub_type,
+                            "entity_type": entity_type,
+                            "entity_id": UUID(page_id),
+                            "workspace_id": workspace_id,
+                            "project_id": data.project_id,
+                            "chat_id": data.chat_id,
+                            "message_id": data.answer_id,
+                            "title": embed.title,
+                            "payload": embed.payload,
+                        }
+                        for embed in extraction.embeds
+                    ]
+                    await bulk_create_page_embeds(db, embed_rows)
+                except Exception as embed_err:
+                    log.warning(f"Failed to persist embeds for page {page_id}: {embed_err}")
 
             # Construct page URL based on page_type
             if data.page_type == "project":

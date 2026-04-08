@@ -25,7 +25,7 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/types";
 // local imports
 import { Feedback } from "./feedback";
-import { JsonRenderPreBlock } from "@/components/common/json-renderer/pi-chat-registry";
+import { JsonRenderPreBlock } from "@plane/propel/json-renderer";
 import { ReasoningBlock } from "./reasoning";
 
 type TProps = {
@@ -48,7 +48,7 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
 
   return (
     <div className="flex gap-4" id={id}>
-      <div className="flex flex-col text-14 break-words w-full">
+      <div className="flex flex-col text-14 wrap-break-word w-full">
         {/* Message */}
         <div className="flex flex-col">
           {!isLoading && (

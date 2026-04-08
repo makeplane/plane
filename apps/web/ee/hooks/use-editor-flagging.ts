@@ -60,7 +60,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // disabled and flagged in the document editor
   const document = useMemo(
     () => ({
-      disabled: new Set<TExtensions>(["selection-conversion"]),
+      disabled: new Set<TExtensions>(["selection-conversion", "pi-utility-embed"]),
       flagged: new Set<TExtensions>(),
     }),
     []
@@ -68,7 +68,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // disabled and flagged in the rich text editor
   const richText = useMemo(
     () => ({
-      disabled: new Set<TExtensions>(["selection-conversion"]),
+      disabled: new Set<TExtensions>(["selection-conversion", "pi-utility-embed"]),
       flagged: new Set<TExtensions>(),
     }),
     []
@@ -76,7 +76,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // disabled and flagged in the lite text editor
   const liteText = useMemo(
     () => ({
-      disabled: new Set<TExtensions>(["external-embed", "selection-conversion"]),
+      disabled: new Set<TExtensions>(["external-embed", "selection-conversion", "pi-utility-embed"]),
       flagged: new Set<TExtensions>(),
     }),
     []
@@ -141,6 +141,9 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
 
   if (pageId && isEditorSelectionConversionEnabled) {
     document.disabled.delete("selection-conversion");
+  }
+  if (pageId) {
+    document.disabled.delete("pi-utility-embed");
   }
   if (!isEditorMultiColumnEnabled) {
     document.flagged.add("multi-column");

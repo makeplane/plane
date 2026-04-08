@@ -21,6 +21,7 @@ import type {
   TFeedback,
   TDuplicateIssuePayload,
   TDuplicateIssueResponse,
+  PageUtilityEmbedResponse,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -157,6 +158,18 @@ export class PIService extends APIService {
   async listBlocks(pageId: string | undefined): Promise<{ blocks: TAIBlockDetails[] }> {
     return this.get(`/api/v1/pages/${pageId}/blocks/`)
       .then((response: AxiosResponse<{ blocks: TAIBlockDetails[] }>) => response.data)
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Fetches a page utility embed by its embed_id.
+   * Used when rendering pi-utility-embed nodes (charts, analytics, etc.) in the page editor.
+   */
+  async getPageEmbed(embedId: string): Promise<PageUtilityEmbedResponse> {
+    return this.get(`/api/v1/pages/embeds/${embedId}/`)
+      .then((response: AxiosResponse<PageUtilityEmbedResponse>) => response.data)
       .catch((error: AxiosError) => {
         throw error?.response?.data;
       });

@@ -20,6 +20,7 @@ import { MathematicsExtensionConfig } from "../mathematics/extension-config";
 import { MultiColumnExtensionConfig } from "../multi-column/extension-config";
 import { PageEmbedExtensionConfig } from "../page-embed/extension-config";
 import { CustomAIBlockExtensionConfig } from "../ai-block/extension-config";
+import { PiUtilityEmbedExtensionConfig } from "../pi-utility-embed/extension-config";
 
 export const CoreEditorAdditionalExtensionsWithoutProps: Extensions = [
   ExternalEmbedExtensionConfig,
@@ -33,4 +34,5 @@ export const CoreEditorAdditionalExtensionsWithoutProps: Extensions = [
 export const DocumentEditorAdditionalExtensionsWithoutProps: Extensions = [
   PageEmbedExtensionConfig,
   CustomAIBlockExtensionConfig,
+  PiUtilityEmbedExtensionConfig,
 ];

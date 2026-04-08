@@ -24,7 +24,7 @@
 
 import React, { createContext, useContext } from "react";
 // local imports
-import type { TCatalog, TComponentMap, TComponentRenderer, TJsonUISpec, TRegistry } from "./types";
+import type { TCatalog, TComponentMap, TComponentRenderer, TJsonUISpec, TRegistry } from "@plane/types";
 
 // ============================================================
 // defineCatalog

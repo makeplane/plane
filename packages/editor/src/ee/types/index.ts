@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./issue-embed";
+export * from "./embed";
 export * from "./external-embed";
 export * from "./editor-extended";
 export * from "./comments";

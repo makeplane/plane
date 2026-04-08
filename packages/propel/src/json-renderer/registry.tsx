@@ -26,18 +26,17 @@
  */
 
 import React, { useMemo } from "react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { BarChart } from "@plane/propel/charts/bar-chart";
-import { PieChart } from "@plane/propel/charts/pie-chart";
-import { LineChart } from "@plane/propel/charts/line-chart";
 // local imports
-import type { TJsonUISpec } from "./types";
-import { barChartPropsSchema, buttonPropsSchema, lineChartPropsSchema, pieChartPropsSchema } from "./pi-chat-schema";
-import { piChatCatalog } from "./pi-chat-catalog";
+import type { TJsonUISpec } from "@plane/types";
+import { barChartPropsSchema, buttonPropsSchema, lineChartPropsSchema, pieChartPropsSchema } from "./schema";
+import { piChatCatalog } from "./catalog";
 import { defineRegistry, JSONUIProvider, Renderer } from "./renderer";
-import { isObject } from "@plane/utils";
-import { ErrorBoundary } from "../error-boundary";
+import { isValidJsonUISpec } from "@plane/utils";
+import { ErrorBoundary } from "../error-boundary/error-boundary";
+import { PieChart } from "../charts/pie-chart";
+import { LineChart } from "../charts/line-chart";
+import { Button } from "../button";
+import { BarChart } from "../charts/bar-chart";
 // ============================================================
 // Shared UI Helpers
 // ============================================================
@@ -144,7 +143,7 @@ export const { registry: piChatRegistry } = defineRegistry(piChatCatalog, {
 });
 
 // ============================================================
-// PiJsonRenderer Component
+// JsonRenderer Component
 // ============================================================
 
 /**
@@ -156,25 +155,8 @@ export const { registry: piChatRegistry } = defineRegistry(piChatCatalog, {
  * Gracefully handles partial/invalid JSON during streaming by
  * rendering nothing until a valid spec is available.
  */
-export const PiJsonRenderer: React.FC<{ jsonString: string }> = ({ jsonString }) => {
-  const spec = useMemo<TJsonUISpec | null>(() => {
-    try {
-      const parsed: unknown = JSON.parse(jsonString);
-      // Validate that the parsed JSON has the expected spec shape
-      if (
-        isObject(parsed) &&
-        "root" in parsed &&
-        "elements" in parsed &&
-        typeof parsed.root === "string" &&
-        isObject(parsed.elements)
-      ) {
-        return parsed as TJsonUISpec;
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  }, [jsonString]);
+export const JsonRenderer: React.FC<{ jsonString: string }> = ({ jsonString }) => {
+  const spec = useMemo<TJsonUISpec | null>(() => isValidJsonUISpec(jsonString), [jsonString]);
 
   if (!spec) return null;
   return (
@@ -197,7 +179,7 @@ export const PiJsonRenderer: React.FC<{ jsonString: string }> = ({ jsonString })
  *
  * react-markdown renders fenced code blocks as `<pre><code class="language-xxx">…</code></pre>`.
  * This component checks the inner `<code>` className — if it matches a JSON UI
- * language marker (```ui or ```chart), the content is rendered via `PiJsonRenderer`.
+ * language marker (```ui or ```chart), the content is rendered via `JsonRenderer`.
  * Everything else falls through to a normal `<pre>`.
  */
 export const JsonRenderPreBlock: React.FC<React.ComponentProps<"pre">> = ({ children, ...rest }) => {
@@ -210,7 +192,7 @@ export const JsonRenderPreBlock: React.FC<React.ComponentProps<"pre">> = ({ chil
   ) {
     const raw = child.props.children;
     const jsonString = (typeof raw === "string" ? raw : Array.isArray(raw) ? raw.join("") : "").trim();
-    return <PiJsonRenderer jsonString={jsonString} />;
+    return <JsonRenderer jsonString={jsonString} />;
   }
 
   return <pre {...rest}>{children}</pre>;

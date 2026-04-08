@@ -28,7 +28,7 @@
 
 // local imports
 import { defineCatalog } from "./renderer";
-import { barChartPropsSchema, lineChartPropsSchema, pieChartPropsSchema, buttonPropsSchema } from "./pi-chat-schema";
+import { barChartPropsSchema, lineChartPropsSchema, pieChartPropsSchema, buttonPropsSchema } from "./schema";
 
 export const piChatCatalog = defineCatalog({
   components: {

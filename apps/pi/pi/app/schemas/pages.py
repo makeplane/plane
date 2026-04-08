@@ -9,6 +9,8 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from pydantic import UUID4
@@ -119,3 +121,22 @@ class PageSummarizeResponse(BaseModel):
     success: bool = Field(description="Whether summarization was successful")
     summary: Optional[str] = Field(None, description="Generated summary content")
     message: str = Field(description="Success or error message")
+
+
+# ---------------------------------------------------------------------------
+# Page Utility Embed schemas
+# ---------------------------------------------------------------------------
+
+
+class PageUtilityEmbedResponse(BaseModel):
+    """Response schema for fetching a single embed payload by embed_id."""
+
+    embed_id: str = Field(description="Stable UUID referenced by the page document placeholder")
+    embed_type: str = Field(description="Broad embed category: 'chart', 'workitem', 'view', 'image', 'audio', etc.")
+    sub_type: Optional[str] = Field(None, description="Renderer/variant within the category, e.g. 'PieChart', 'issue'")
+    entity_type: str = Field(description="Type of entity: 'page' or 'wiki'")
+    entity_id: str = Field(description="Plane page/wiki ID")
+    chat_id: str = Field(description="Originating chat session ID")
+    message_id: Optional[str] = Field(None, description="Assistant message ID that produced the embed")
+    title: Optional[str] = Field(None, description="Display title")
+    payload: Dict[str, Any] = Field(description="Full JSON payload whose shape varies by embed_type")

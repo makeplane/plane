@@ -24,6 +24,16 @@ export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;
   page?: TPageEmbedConfig;
   externalEmbedComponent?: TExternalEmbedConfig;
+  piUtilityEmbed?: TPiUtilityEmbedConfig;
+};
+
+export type TPiUtilityEmbedConfig = {
+  widgetCallback: (props: {
+    embedId: string;
+    embedType?: string | null;
+    subType?: string | null;
+    title?: string | null;
+  }) => React.ReactNode;
 };
 
 export type TReadOnlyEmbedConfig = {

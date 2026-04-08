@@ -39,6 +39,7 @@ import type { TExtensions } from "@/types";
 // local imports
 import { CustomAIBlockExtension } from "./ai-block/extension";
 import { CustomCollaborationCaret } from "./collaboration-caret";
+import { PiUtilityEmbedExtension } from "./pi-utility-embed/extension";
 import { CommentsExtension } from "./comments";
 import { DrawioExtension } from "./drawio/extension";
 import { EDrawioMode } from "./drawio/types";
@@ -304,6 +305,14 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         aiBlockHandlers: extendedEditorProps?.aiBlockHandlers,
         aiBlockWidgetCallback: extendedEditorProps?.aiBlockWidgetCallback,
         isFlagged: flaggedExtensions.includes("ai-block"),
+      }),
+  },
+  {
+    // PI utility embed extension (only for page documents)
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("pi-utility-embed"),
+    getExtension: ({ extendedEditorProps }) =>
+      PiUtilityEmbedExtension({
+        widgetCallback: extendedEditorProps?.embedHandler?.piUtilityEmbed?.widgetCallback,
       }),
   },
 ];
