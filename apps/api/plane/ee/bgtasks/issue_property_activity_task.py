@@ -13,8 +13,8 @@
 from celery import shared_task
 
 # Module imports
-from plane.ee.models import IssuePropertyActivity, PropertyTypeEnum, IssueProperty
-from plane.db.models import Issue
+from plane.ee.models import IssuePropertyActivity, PropertyTypeEnum, RelationTypeEnum, IssueProperty
+from plane.db.models import Issue, IssueSubscriber, ProjectMember
 
 
 def track_property_text(
@@ -444,3 +444,40 @@ def issue_property_activity(existing_values, requested_values, issue_id, user_id
 
     # Create the bulk activity
     IssuePropertyActivity.objects.bulk_create(bulk_property_activity)
+
+    # For RELATION/USER (member picker) properties, subscribe newly added members
+    user_relation_properties = properties.filter(
+        property_type=PropertyTypeEnum.RELATION,
+        relation_type=RelationTypeEnum.USER,
+    )
+
+    bulk_subscribers = []
+    for property in user_relation_properties:
+        prop_id_str = str(property.id)
+        existing_user_ids = existing_values.get(prop_id_str, [])
+        requested_user_ids = requested_values.get(prop_id_str, existing_user_ids)
+
+        added_user_ids = set(requested_user_ids) - set(existing_user_ids)
+
+        # check user exists in the project or not
+        project_users = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=added_user_ids,
+            deleted_at__isnull=True,
+            is_active=True,
+        ).values_list("member_id", flat=True)
+
+        bulk_subscribers.extend(
+            IssueSubscriber(
+                subscriber_id=user_id,
+                issue_id=issue_id,
+                workspace_id=issue.workspace_id,
+                project_id=project_id,
+                created_by_id=user_id,
+                updated_by_id=user_id,
+            )
+            for user_id in project_users
+        )
+
+    if bulk_subscribers:
+        IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)

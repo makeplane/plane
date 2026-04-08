@@ -10,19 +10,20 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.db.models import F, Value, Case, When
-from django.db.models import Q, CharField, Func
-from django.db.models.functions import Cast
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Case, CharField, F, Func, Q, Value, When
+from django.db.models.functions import Cast
+from django.utils import timezone
 
 # Third party imports
+from drf_spectacular.utils import OpenApiExample, OpenApiRequest, OpenApiResponse
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Workspace, Issue
+from plane.db.models import Issue, Workspace
+from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
 from plane.api.serializers import (
     IssuePropertyValueAPISerializer,
@@ -47,6 +48,60 @@ from plane.utils.oauth import (
 )
 
 
+def _annotate_property_values_qs(queryset):
+    """Annotate queryset with aggregated property values per property_id."""
+    return queryset.values("property_id").annotate(
+        values=ArrayAgg(
+            Case(
+                When(
+                    property__property_type__in=[
+                        PropertyTypeEnum.TEXT,
+                        PropertyTypeEnum.URL,
+                        PropertyTypeEnum.EMAIL,
+                        PropertyTypeEnum.FILE,
+                    ],
+                    then=F("value_text"),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.DATETIME,
+                    then=Func(
+                        F("value_datetime"),
+                        function="TO_CHAR",
+                        template="%(function)s(%(expressions)s, 'YYYY-MM-DD')",
+                        output_field=CharField(),
+                    ),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.DECIMAL,
+                    then=Cast(F("value_decimal"), output_field=CharField()),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.BOOLEAN,
+                    then=Cast(F("value_boolean"), output_field=CharField()),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.RELATION,
+                    then=Cast(F("value_uuid"), output_field=CharField()),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.OPTION,
+                    then=Cast(F("value_option"), output_field=CharField()),
+                ),
+                default=Value(""),
+                output_field=CharField(),
+            ),
+            filter=Q(property_id=F("property_id")),
+            distinct=True,
+        )
+    )
+
+
+def _annotate_property_values(queryset) -> dict:
+    """Return {str(property_id): [str_values]} from an IssuePropertyValue queryset."""
+    rows = _annotate_property_values_qs(queryset).values("property_id", "values")
+    return {str(row["property_id"]): [v for v in row["values"] if v] for row in rows}
+
+
 class IssuePropertyValueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, and `update`
@@ -66,50 +121,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
     webhook_event = "issue_property_value"
 
     def query_annotator(self, query):
-        return query.values("property_id").annotate(
-            values=ArrayAgg(
-                Case(
-                    When(
-                        property__property_type__in=[
-                            PropertyTypeEnum.TEXT,
-                            PropertyTypeEnum.URL,
-                            PropertyTypeEnum.EMAIL,
-                            PropertyTypeEnum.FILE,
-                        ],
-                        then=F("value_text"),
-                    ),
-                    When(
-                        property__property_type=PropertyTypeEnum.DATETIME,
-                        then=Func(
-                            F("value_datetime"),
-                            function="TO_CHAR",
-                            template="%(function)s(%(expressions)s, 'YYYY-MM-DD')",
-                            output_field=CharField(),
-                        ),
-                    ),
-                    When(
-                        property__property_type=PropertyTypeEnum.DECIMAL,
-                        then=Cast(F("value_decimal"), output_field=CharField()),
-                    ),
-                    When(
-                        property__property_type=PropertyTypeEnum.BOOLEAN,
-                        then=Cast(F("value_boolean"), output_field=CharField()),
-                    ),
-                    When(
-                        property__property_type=PropertyTypeEnum.RELATION,
-                        then=Cast(F("value_uuid"), output_field=CharField()),
-                    ),
-                    When(
-                        property__property_type=PropertyTypeEnum.OPTION,
-                        then=Cast(F("value_option"), output_field=CharField()),
-                    ),
-                    default=Value(""),  # Default value if none of the conditions match
-                    output_field=CharField(),
-                ),
-                filter=Q(property_id=F("property_id")),
-                distinct=True,
-            )
-        )
+        return _annotate_property_values_qs(query)
 
     # list issue property options and get issue property option by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
@@ -215,11 +227,25 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                     )
                 )
 
+        # Capture existing values before deletion for activity tracking
+        existing_values_qs = self.query_annotator(existing_issue_property_values).values("property_id", "values")
+        existing_values_map = {str(pv["property_id"]): [v for v in pv["values"] if v] for pv in existing_values_qs}
+
         #  remove the existing issue property values
         existing_issue_property_values.delete()
 
         # Bulk create the issue property values
         self.model.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
+
+        # Dispatch activity task to log the property change
+        new_values = [v.get("value") for v in request.data.get("values", []) if v.get("value")]
+        issue_property_activity.delay(
+            existing_values=existing_values_map,
+            requested_values={str(property_id): new_values},
+            issue_id=issue_id,
+            user_id=str(request.user.id),
+            epoch=int(timezone.now().timestamp()),
+        )
 
         # fetching the created issue property values
         issue_property_values = self.model.objects.filter(
@@ -459,13 +485,22 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Check if value already exists for this work item/property
-        existing_value = self.model.objects.filter(
+        # Capture existing values before any writes for activity tracking
+        existing_qs = self.model.objects.filter(
             workspace_id=workspace.id,
             project_id=project_id,
             issue_id=work_item_id,
             property_id=property_id,
-        ).first()
+        )
+        existing_values_map = _annotate_property_values(existing_qs)
+
+        # Build requested values from request data
+        raw_value = request.data.get("value")
+        new_values = raw_value if isinstance(raw_value, list) else ([str(raw_value)] if raw_value is not None else [])
+        requested_values_map = {str(property_id): [str(v) for v in new_values if v]}
+
+        # Check if value already exists for this work item/property
+        existing_value = existing_qs.first()
 
         if existing_value:
             # Update existing value(s)
@@ -479,6 +514,14 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             result = serializer.save()
+
+            issue_property_activity.delay(
+                existing_values=existing_values_map,
+                requested_values=requested_values_map,
+                issue_id=work_item_id,
+                user_id=str(request.user.id),
+                epoch=int(timezone.now().timestamp()),
+            )
 
             # Handle multi-value properties (returns list)
             if isinstance(result, list):
@@ -506,6 +549,14 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             result = serializer.save()
+
+            issue_property_activity.delay(
+                existing_values=existing_values_map,
+                requested_values=requested_values_map,
+                issue_id=work_item_id,
+                user_id=str(request.user.id),
+                epoch=int(timezone.now().timestamp()),
+            )
 
             # Handle multi-value properties (returns list)
             if isinstance(result, list):
@@ -600,6 +651,17 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
+            # Capture existing values before save for activity tracking
+            existing_values_map = _annotate_property_values(property_values)
+
+            # Build requested values from request data
+            raw_value = request.data.get("value")
+            if isinstance(raw_value, list):
+                new_values = [str(v) for v in raw_value if v]
+            else:
+                new_values = [str(raw_value)] if raw_value is not None else []
+            requested_values_map = {str(property_id): new_values}
+
             # Get first value to pass as instance (for serializer validation)
             first_value = property_values.first()
 
@@ -615,6 +677,14 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
 
             # Update the property value(s)
             result = serializer.save()
+
+            issue_property_activity.delay(
+                existing_values=existing_values_map,
+                requested_values=requested_values_map,
+                issue_id=work_item_id,
+                user_id=str(request.user.id),
+                epoch=int(timezone.now().timestamp()),
+            )
 
             # Handle multi-value properties (returns list)
             if isinstance(result, list):
