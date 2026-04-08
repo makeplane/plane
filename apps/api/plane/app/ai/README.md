@@ -193,36 +193,47 @@ return {"issues": [...список...]}
 
 Настраивается в Instance Admin (`/god-mode/`) или через env-переменные (при `SKIP_ENV_VAR=0`):
 
-| Переменная     | Значение                                            |
-| -------------- | --------------------------------------------------- |
-| `LLM_PROVIDER` | провайдер (`anthropic`, в будущем — `openai` и др.) |
-| `LLM_API_KEY`  | API ключ провайдера                                 |
-| `LLM_MODEL`    | модель (`claude-sonnet-4-6` и др.)                  |
+| Переменная     | Значение                                                       |
+| -------------- | -------------------------------------------------------------- |
+| `LLM_PROVIDER` | провайдер (`anthropic`, `gigachat`)                            |
+| `LLM_API_KEY`  | API ключ провайдера (для GigaChat — Authorization Key)         |
+| `LLM_MODEL`    | модель (`claude-sonnet-4-6`, `GigaChat`, `GigaChat-Pro` и др.) |
 
 ### Поддерживаемые провайдеры
 
-Сейчас поддерживается только **Anthropic**. `views.py` явно проверяет `LLM_PROVIDER == "anthropic"` и возвращает ошибку для остальных.
+| Провайдер   | AI чат (tools) | Простая генерация текста | Примечание                                                                                   |
+| ----------- | :------------: | :----------------------: | -------------------------------------------------------------------------------------------- |
+| `anthropic` |       ✅       |            ✅            |                                                                                              |
+| `gigachat`  |       ✅       |            ✅            | `LLM_API_KEY` — Authorization Key из [developers.sber.ru](https://developers.sber.ru/studio) |
+| `openai`    |       ❌       |            ✅            |                                                                                              |
+| `gemini`    |       ❌       |            ✅            |                                                                                              |
 
-**Почему пока только Anthropic:**
+#### GigaChat: как получить Authorization Key
 
-- Формат описания инструментов в `@register_tool` использует ключ `input_schema` — это Anthropic-специфичный формат. OpenAI и другие провайдеры используют ключ `parameters`
-- `views.py` использует `anthropic.Anthropic()` клиент напрямую
+1. Зарегистрироваться на [developers.sber.ru/studio](https://developers.sber.ru/studio)
+2. Создать проект → выбрать **GigaChat API**
+3. В настройках проекта → **«Настройки API»** → **«Получить ключ»**
+4. Скопировать **Authorization Key** — показывается только один раз
+
+Authorization Key — это уже готовая Base64-строка (`Base64(client_id:client_secret)`). Передаётся как `LLM_API_KEY`. SDK автоматически обменивает его на access token (живёт 30 минут) и обновляет по истечении.
+
+#### Особенности GigaChat vs Anthropic
+
+| Аспект              | Anthropic                          | GigaChat                                                                        |
+| ------------------- | ---------------------------------- | ------------------------------------------------------------------------------- |
+| Tool schema         | `input_schema`                     | `parameters` (конвертируется через `get_tools_schema_openai()` в `registry.py`) |
+| Tool call detection | `stop_reason == "tool_use"`        | `finish_reason == "function_call"`                                              |
+| Tool results        | `role: user` + `type: tool_result` | `role: function` + `name` функции                                               |
+| Параллельные вызовы | несколько tool_use за один шаг     | только один function_call за шаг                                                |
+| Системный промпт    | отдельный параметр `system=`       | `Messages(role=SYSTEM)` первым в массиве                                        |
 
 ### Как добавить поддержку другого провайдера
 
 Реестр инструментов (`registry.py`) и сами tool-функции **не зависят от провайдера** — они просто Python-функции, которые возвращают `dict`. Нужно адаптировать только два места:
 
-1. **Конвертер схемы** — написать функцию, которая превращает `input_schema` (Anthropic) → `parameters` (OpenAI) при передаче инструментов в API
-2. **`views.py`** — добавить ветку под новый провайдер с соответствующим SDK-клиентом и форматом tool_results
-
-Пример минимального изменения в `views.py`:
-
-```python
-if provider == "anthropic":
-    # текущая реализация
-elif provider == "openai":
-    # openai.OpenAI() клиент, tools с "parameters" вместо "input_schema"
-```
+1. **Конвертер схемы** — `registry.py` уже содержит `get_tools_schema_openai()`, которая превращает `input_schema` (Anthropic) → `parameters` (OpenAI-формат). Для большинства новых провайдеров она подойдёт.
+2. **`views.py`** — добавить ветку под новый провайдер с соответствующим SDK-клиентом и форматом tool_results.
+3. **`external/base.py`** — добавить класс провайдера и ветку в `get_llm_response()` для простой генерации текста.
 
 ---
 

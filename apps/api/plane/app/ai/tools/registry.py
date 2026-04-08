@@ -21,5 +21,20 @@ def get_tools_schema() -> list:
     return _TOOLS_SCHEMA
 
 
+def get_tools_schema_openai() -> list:
+    """Return tools schema in OpenAI/GigaChat format (parameters instead of input_schema)."""
+    result = []
+    for tool in _TOOLS_SCHEMA:
+        result.append({
+            "type": "function",
+            "function": {
+                "name": tool["name"],
+                "description": tool["description"],
+                "parameters": tool["input_schema"],
+            },
+        })
+    return result
+
+
 def get_tool(name: str) -> Callable | None:
     return _TOOLS.get(name)

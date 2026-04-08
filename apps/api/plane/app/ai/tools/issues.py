@@ -7,13 +7,17 @@ from plane.db.models import Issue, Project, State
 
 @register_tool(
     name="list_issues",
-    description="List issues (tasks) in a project. Use when user asks to show, find or list tasks.",
+    description="List or search issues (tasks) in a project. Use when user asks to show, find or list tasks. Use name_contains to search by title.",
     input_schema={
         "type": "object",
         "properties": {
             "project_id": {
                 "type": "string",
-                "description": "Project ID to list issues from",
+                "description": "Project UUID (use list_projects to get it)",
+            },
+            "name_contains": {
+                "type": "string",
+                "description": "Filter issues whose title contains this string (case-insensitive). Use when searching for a specific task by name.",
             },
             "limit": {
                 "type": "integer",
@@ -23,17 +27,16 @@ from plane.db.models import Issue, Project, State
         "required": ["project_id"],
     },
 )
-def list_issues(workspace_slug: str, user, project_id: str, limit: int = 10, **kwargs) -> dict:
-    issues = (
-        Issue.objects.filter(
-            workspace__slug=workspace_slug,
-            project_id=project_id,
-            project__project_projectmember__member=user,
-            project__project_projectmember__is_active=True,
-        )
-        .select_related("state")
-        .order_by("-created_at")[:limit]
+def list_issues(workspace_slug: str, user, project_id: str, name_contains: str = "", limit: int = 10, **kwargs) -> dict:
+    qs = Issue.objects.filter(
+        workspace__slug=workspace_slug,
+        project_id=project_id,
+        project__project_projectmember__member=user,
+        project__project_projectmember__is_active=True,
     )
+    if name_contains:
+        qs = qs.filter(name__icontains=name_contains)
+    issues = qs.select_related("state").order_by("-created_at")[:limit]
 
     return {
         "issues": [
@@ -57,7 +60,7 @@ def list_issues(workspace_slug: str, user, project_id: str, limit: int = 10, **k
         "properties": {
             "project_id": {
                 "type": "string",
-                "description": "Project ID to create the issue in",
+                "description": "Project UUID (use list_projects to get it)",
             },
             "title": {
                 "type": "string",
@@ -74,7 +77,7 @@ def list_issues(workspace_slug: str, user, project_id: str, limit: int = 10, **k
             },
             "due_date": {
                 "type": "string",
-                "description": "Due date in YYYY-MM-DD format",
+                "description": "Due date in YYYY-MM-DD format. Always include if the user mentioned a date or deadline.",
             },
         },
         "required": ["project_id", "title"],

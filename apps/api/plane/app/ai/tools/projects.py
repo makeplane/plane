@@ -4,7 +4,7 @@ from plane.db.models import Project
 
 @register_tool(
     name="list_projects",
-    description="List all projects in the workspace",
+    description="List all projects in the workspace. Call this first to get project IDs before working with issues.",
     input_schema={
         "type": "object",
         "properties": {},

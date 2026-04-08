@@ -9,6 +9,7 @@ from typing import List, Dict, Tuple
 # Third party import
 from openai import OpenAI
 import anthropic
+from gigachat import GigaChat
 import requests
 
 from rest_framework import status
@@ -68,10 +69,17 @@ class GeminiProvider(LLMProvider):
     default_model = "gemini-pro"
 
 
+class GigaChatProvider(LLMProvider):
+    name = "GigaChat"
+    models = ["GigaChat", "GigaChat-Pro", "GigaChat-Max", "GigaChat-2", "GigaChat-2-Pro", "GigaChat-2-Max"]
+    default_model = "GigaChat"
+
+
 SUPPORTED_PROVIDERS = {
     "openai": OpenAIProvider,
     "anthropic": AnthropicProvider,
     "gemini": GeminiProvider,
+    "gigachat": GigaChatProvider,
 }
 
 
@@ -127,6 +135,7 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
     final_text = task + "\n" + prompt
     try:
         import httpx
+        from gigachat.models import Chat, Messages, MessagesRole
 
         if provider.lower() == "anthropic":
             base_url = os.environ.get("ANTHROPIC_BASE_URL", None)
@@ -141,6 +150,15 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
                 messages=[{"role": "user", "content": final_text}],
             )
             text = message.content[0].text
+        elif provider.lower() == "gigachat":
+            # api_key here is the base64-encoded credentials (client_id:secret)
+            with GigaChat(credentials=api_key, model=model, verify_ssl_certs=False) as client:
+                response = client.chat(
+                    Chat(
+                        messages=[Messages(role=MessagesRole.USER, content=final_text)],
+                    )
+                )
+            text = response.choices[0].message.content
         else:
             # For Gemini, prepend provider name to model
             if provider.lower() == "gemini":
