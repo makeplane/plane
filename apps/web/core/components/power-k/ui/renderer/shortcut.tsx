@@ -85,7 +85,7 @@ export function ShortcutRenderer(props: Props) {
   const isShortcutsEmpty = groupedCommands.length === 0;
 
   return (
-    <div className="flex flex-col gap-y-3 overflow-y-auto">
+    <div className="flex flex-col gap-y-3">
       {!isShortcutsEmpty ? (
         groupedCommands.map((group) => (
           <div key={group.key}>
