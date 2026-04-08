@@ -63,7 +63,7 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
         }}
       >
         <div className="bg-layer-1 rounded-md py-2 px-3 flex gap-3">
-          <div className="shrink-0">
+          <div className="flex items-center shrink-0">
             <Tabs.List>
               <Tabs.Trigger value="rich_filters">Basic</Tabs.Trigger>
               <Tabs.Trigger value="pql_filters">PQL</Tabs.Trigger>
@@ -72,7 +72,7 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
           <div className="grow flex items-start gap-3">
             <div className="grow">
               <Tabs.Content value="rich_filters">
-                <div className="border-[0.5px] border-subtle-1 bg-layer-2 rounded-lg py-1 px-2">
+                <div className="py-1 px-2">
                   <WorkItemFiltersTransparentRow {...rest} filter={filter?.richFiltersInstance} />
                 </div>
               </Tabs.Content>
@@ -84,7 +84,7 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
                 />
               </Tabs.Content>
             </div>
-            <div className="shrink-0 py-1">
+            <div className="shrink-0 py-1 flex items-center">
               <WorkItemAdvancedFiltersRowViewControls filter={filter} pqlEditorRef={pqlEditorRef} />
             </div>
           </div>

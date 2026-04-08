@@ -100,7 +100,7 @@ function PQLEditor(
   return (
     <div
       className={cn(
-        "pql-editor-wrapper relative bg-layer-2 min-h-0 transition-[min-height] duration-300 ease-in-out",
+        "pql-editor-wrapper relative bg-layer-2 min-h-0 transition-[min-height] duration-300 ease-in-out h-8",
         {
           "min-h-37.5": isMaximized,
         },
@@ -112,33 +112,33 @@ function PQLEditor(
           editor={editor}
           className="size-full font-code text-13 [&_.pql-editor-content]:wrap-break-word"
         />
-        {onSubmit && !disableSubmit && (
-          <div className="shrink-0 flex items-center">
-            <Tooltip
-              tooltipContent={
-                <span className="flex items-center gap-1">
-                  Enter
-                  <CornerDownLeft className="size-3" />
-                </span>
+
+        <div className="shrink-0 flex items-center">
+          <Tooltip
+            tooltipContent={
+              <span className="flex items-center gap-1">
+                Enter
+                <CornerDownLeft className="size-3" />
+              </span>
+            }
+          >
+            <Button
+              variant="secondary"
+              size="base"
+              onClick={() =>
+                void onSubmit?.({
+                  json: editor.getJSON(),
+                  text: editor.getText(),
+                })
               }
+              loading={isSubmitting}
+              className="shrink-0 transition-colors duration-200"
+              disabled={disableSubmit || isSubmitting}
             >
-              <Button
-                variant="primary"
-                size="base"
-                onClick={() =>
-                  void onSubmit?.({
-                    json: editor.getJSON(),
-                    text: editor.getText(),
-                  })
-                }
-                loading={isSubmitting}
-                className="shrink-0"
-              >
-                Run
-              </Button>
-            </Tooltip>
-          </div>
-        )}
+              Run
+            </Button>
+          </Tooltip>
+        </div>
       </div>
 
       {/* Resize grip — bottom-right corner, native textarea style */}
