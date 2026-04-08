@@ -15,27 +15,14 @@ export const HoCategoryView = observer(function HoCategoryView() {
   const { t } = useTranslation();
   const store = useHoIssues();
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey | null>("department_name");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [sortKey] = useState<SortKey | null>("department_name");
+  const [sortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     void store.fetchCategorySummary();
     void store.fetchAccessibleWorkspaces();
     void store.fetchFilterOptions();
   }, [store]);
-
-  const handleSort = (key: SortKey | "clear") => {
-    if (key === "clear") {
-      setSortKey(null);
-      setSortDir("asc");
-      return;
-    }
-    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-  };
 
   const filtered = useMemo(() => {
     if (!search) return store.categorySummary;
@@ -108,7 +95,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
           {search ? t("ho.no_matching_rows") : t("ho.no_data")}
         </p>
       ) : (
-        <HoCategoryTable data={sortedData} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+        <HoCategoryTable data={sortedData} />
       )}
     </div>
   );

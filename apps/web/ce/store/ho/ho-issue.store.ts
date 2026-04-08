@@ -63,7 +63,7 @@ export class HoIssueStore implements IHoIssueStore {
   filterOptions: THoFilterOptions | null = null;
   selectedWorkspaceSlug: string | null = null;
   selectedProjectIds: string[] = [];
-  filters = {
+  filters: IHoIssueStore["filters"] = {
     priority: [],
     state: [],
     assignees: [],
@@ -295,7 +295,7 @@ export class HoIssueStore implements IHoIssueStore {
   };
 
   updateDisplayProperties = (props: Partial<THoDisplayProperties>): void => {
-    this.displayProperties = { ...this.displayProperties, ...props };
+    this.displayProperties = { ...this.displayProperties, ...props } as THoDisplayProperties;
   };
 
   setWorkspaceFilter = (slug: string | null): void => {

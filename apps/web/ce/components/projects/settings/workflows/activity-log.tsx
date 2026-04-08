@@ -45,8 +45,10 @@ export const WorkflowActivityLog = observer(function WorkflowActivityLog({ works
       {activities.map((activity) => (
         <li key={activity.id} className="flex justify-between gap-4 px-0 py-4">
           <div className="flex-1">
-            <p className="text-sm font-medium text-primary">{activity.triggered_by?.display_name ?? "Unknown"}</p>
-            <p className="text-xs text-secondary mt-1">{activity.action}</p>
+            <p className="text-sm font-medium text-primary">{activity.actor_detail?.display_name ?? "Unknown"}</p>
+            <p className="text-xs text-secondary mt-1">
+              {activity.field}: {activity.old_value} → {activity.new_value}
+            </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-tertiary">{format(new Date(activity.created_at), "MMM d, yyyy HH:mm")}</p>

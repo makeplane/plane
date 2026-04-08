@@ -149,6 +149,7 @@ export class IssueStore implements IIssueStore {
       sort_order: issue?.sort_order,
       state_id: issue?.state_id,
       priority: issue?.priority,
+      frequency: issue?.frequency,
       label_ids: issue?.label_ids,
       assignee_ids: issue?.assignee_ids,
       estimate_point: issue?.estimate_point,
@@ -193,20 +194,20 @@ export class IssueStore implements IIssueStore {
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
 
-  removeIssue = (workspaceSlug: string, projectId: string, issueId: string) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
-    void currentStore.removeIssue(workspaceSlug, projectId, issueId);
+    await currentStore.removeIssue(workspaceSlug, projectId, issueId);
   };
 
-  archiveIssue = (workspaceSlug: string, projectId: string, issueId: string) => {
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
-    void currentStore.archiveIssue(workspaceSlug, projectId, issueId);
+    await currentStore.archiveIssue(workspaceSlug, projectId, issueId);
   };
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {

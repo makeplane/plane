@@ -63,7 +63,7 @@ export function FieldChangeReasonModal({ isOpen, onClose, onConfirm, fieldLabel 
           />
         </div>
         <div className="flex justify-end gap-2 pt-1">
-          <Button variant="neutral-primary" size="sm" onClick={onClose} type="button" disabled={isSubmitting}>
+          <Button variant="tertiary" size="sm" onClick={onClose} type="button" disabled={isSubmitting}>
             {t("cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting} disabled={!reason.trim()}>

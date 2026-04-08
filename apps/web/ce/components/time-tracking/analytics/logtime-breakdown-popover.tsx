@@ -48,7 +48,7 @@ export const LogtimeBreakdownPopover: FC<LogtimeBreakdownPopoverProps> = ({ tota
               className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <Avatar name={u.display_name} src={u.avatar_url} size="xs" />
+                <Avatar name={u.display_name} src={u.avatar_url} size="sm" />
                 <span className="text-12 text-primary truncate">{u.display_name}</span>
               </div>
               <span className="text-12 font-medium text-secondary shrink-0">{formatMinutes(u.minutes)}</span>

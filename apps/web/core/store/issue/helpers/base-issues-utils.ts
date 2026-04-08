@@ -246,7 +246,7 @@ export const getFilteredWorkItems = (workItems: TIssue[], filters: IIssueFilterO
       const issueValue = workItem[issueKey];
       // Handle array-based properties vs single value properties
       if (Array.isArray(issueValue)) {
-        return filterValues!.some((filterValue: string) => issueValue.includes(filterValue));
+        return filterValues!.some((filterValue: string) => (issueValue as unknown[]).includes(filterValue));
       } else {
         return filterValues!.includes(issueValue as string);
       }

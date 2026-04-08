@@ -7,6 +7,7 @@ import { useHoIssues } from "@/hooks/store/use-ho-issues";
 import { useState } from "react";
 
 type Props = {
+  columnKey?: string;
   label: string;
   asc?: string;
   desc?: string;

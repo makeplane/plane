@@ -125,7 +125,7 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
                 editorRef.executeMenuItemCommand({
                   itemKey: item.itemKey,
                   ...item.extraProps,
-                });
+                } as Parameters<EditorRefApi["executeMenuItemCommand"]>[0]);
               }
             }}
             handleDelete={handleDelete}

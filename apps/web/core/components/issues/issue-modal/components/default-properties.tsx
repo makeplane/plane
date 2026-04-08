@@ -134,7 +134,9 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="assignee_ids"
-        rules={getFieldRules({ validate: (v) => (v && v.length > 0) || t("assignee_is_required") })}
+        rules={getFieldRules({
+          validate: (v: unknown) => (v && (v as string[]).length > 0) || t("assignee_is_required"),
+        })}
         render={({ field: { value, onChange } }) => (
           <div className={cn("h-7 rounded-sm", errors.assignee_ids && "outline outline-1 outline-danger-strong")}>
             <MemberDropdown

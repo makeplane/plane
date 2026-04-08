@@ -23,8 +23,8 @@ export const workItemSortWithOrderByExtended = (
 ): string[] => {
   if (!key || !rootStore) return getIssueIds(array);
 
-  const { projectStore, taskCategoryStore } = rootStore;
-  if (!taskCategoryStore || !projectStore) return getIssueIds(array);
+  const { projectRoot, taskCategoryStore } = rootStore;
+  if (!taskCategoryStore || !projectRoot) return getIssueIds(array);
 
   const isDescending = key.startsWith("-");
   const baseKey = isDescending ? key.slice(1) : key;
@@ -34,7 +34,7 @@ export const workItemSortWithOrderByExtended = (
 
   switch (baseKey) {
     case "project__name":
-      getNameFn = (issue: TIssue) => projectStore.getProjectById(issue.project_id)?.name?.toLowerCase() ?? "";
+      getNameFn = (issue: TIssue) => projectRoot.project.getProjectById(issue.project_id)?.name?.toLowerCase() ?? "";
       break;
     case "main_task_category__name":
       getNameFn = (issue: TIssue) =>

@@ -214,7 +214,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
                           className="flex items-center justify-between gap-3 rounded px-1 py-1 hover:bg-layer-1"
                         >
                           <div className="flex min-w-0 items-center gap-2">
-                            <Avatar name={entry.display_name} src={entry.avatar_url} size="xs" shape="circle" />
+                            <Avatar name={entry.display_name} src={entry.avatar_url} size="sm" shape="circle" />
                             <span className="truncate text-11 text-primary">{entry.display_name}</span>
                           </div>
                           <span className="flex-shrink-0 text-11 text-secondary">

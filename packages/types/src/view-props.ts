@@ -5,11 +5,12 @@
  */
 
 import type { IProjectMemberNavigationPreferences } from "./project";
-import type { TIssue } from "./issues/issue";
+import type { EIssueLayoutTypes, TIssue } from "./issues/issue";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
 
-export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+// TIssueLayouts uses EIssueLayoutTypes enum values for layout compatibility
+export type TIssueLayouts = EIssueLayoutTypes;
 
 export type TIssueGroupByOptions =
   | "state"
