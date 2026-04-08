@@ -28,8 +28,6 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
   const isIntercomEnabled = isTelemetryEnabled
     ? instanceConfigurations
       ? instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1"
-        ? true
-        : false
       : undefined
     : false;
 
@@ -73,7 +71,7 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
 
           <div className="ml-auto">
             <ToggleSwitch
-              value={isIntercomEnabled ? true : false}
+              value={!!isIntercomEnabled}
               onChange={enableIntercomConfig}
               size="sm"
               disabled={!isTelemetryEnabled || isSubmitting || initialLoader}

@@ -33,7 +33,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
   const { currentProjectFilters, searchQuery, updateFilters, updateSearchQuery } = useCycleFilter();
   const { t } = useTranslation();
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "");
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);

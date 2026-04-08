@@ -173,7 +173,7 @@ export const getWeeksBetweenTwoDates = (
       endYear: yearAtEndOfTheWeek,
       startDate: weekStartDate,
       endDate: weekEndDate,
-      today: today >= weekStartDate && today <= weekEndDate ? true : false,
+      today: today >= weekStartDate && today <= weekEndDate,
     });
 
     currentDate.setDate(currentDate.getDate() + 7);

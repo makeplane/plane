@@ -32,7 +32,7 @@ export const FilterDueDate = observer(function FilterDueDate(props: Props) {
 
   const isCustomDateSelected = () => {
     const isCustomFateApplied = appliedFilters?.filter((f) => f.includes("-")) || [];
-    return isCustomFateApplied.length > 0 ? true : false;
+    return isCustomFateApplied.length > 0;
   };
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
@@ -63,7 +63,7 @@ export const FilterDueDate = observer(function FilterDueDate(props: Props) {
               {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  isChecked={appliedFilters?.includes(option.value) ? true : false}
+                  isChecked={appliedFilters?.includes(option.value) ?? false}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
                   multiple

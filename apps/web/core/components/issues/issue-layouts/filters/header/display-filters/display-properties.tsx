@@ -52,7 +52,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
     }
   }).map((property) => {
     if (isEpic && property.key === "sub_issue_count") {
-      return { ...property, titleTranslationKey: "issue.display.properties.work_item_count" };
+      return Object.assign({}, property, { titleTranslationKey: "issue.display.properties.work_item_count" });
     }
     return property;
   });

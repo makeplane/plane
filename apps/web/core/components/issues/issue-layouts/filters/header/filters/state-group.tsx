@@ -49,7 +49,7 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
               {filteredOptions.slice(0, itemsToRender).map((stateGroup) => (
                 <FilterOption
                   key={stateGroup.key}
-                  isChecked={appliedFilters?.includes(stateGroup.key) ? true : false}
+                  isChecked={appliedFilters?.includes(stateGroup.key) ?? false}
                   onClick={() => handleUpdate(stateGroup.key)}
                   icon={<StateGroupIcon stateGroup={stateGroup.key} />}
                   title={stateGroup.label}

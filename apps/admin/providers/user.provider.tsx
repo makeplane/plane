@@ -24,7 +24,7 @@ export const UserProvider = observer(function UserProvider({ children }: React.P
 
   useEffect(() => {
     const localValue = localStorage && localStorage.getItem("god_mode_sidebar_collapsed");
-    const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
+    const localBoolValue = localValue ? localValue === "true" : false;
     if (isSidebarCollapsed === undefined && localBoolValue != isSidebarCollapsed) toggleSidebar(localBoolValue);
   }, [isSidebarCollapsed, currentUser, toggleSidebar]);
 

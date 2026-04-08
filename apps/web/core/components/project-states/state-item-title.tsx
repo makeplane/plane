@@ -67,7 +67,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           <div className="flex-shrink-0 text-11 transition-all">
             <StateMarksAsDefault
               stateId={state.id}
-              isDefault={state.default ? true : false}
+              isDefault={!!state.default}
               markStateAsDefaultCallback={props.stateOperationsCallbacks.markStateAsDefault}
             />
           </div>

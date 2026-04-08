@@ -72,11 +72,12 @@ export function autolink(options: AutolinkOptions): Plugin {
           find(lastWordBeforeSpace)
             .filter((link) => link.isLink)
             // Calculate link position.
-            .map((link) => ({
-              ...link,
-              from: lastWordAndBlockOffset + link.start + 1,
-              to: lastWordAndBlockOffset + link.end + 1,
-            }))
+            .map((link) =>
+              Object.assign({}, link, {
+                from: lastWordAndBlockOffset + link.start + 1,
+                to: lastWordAndBlockOffset + link.end + 1,
+              })
+            )
             // ignore link inside code mark
             .filter((link) => {
               if (!newState.schema.marks.code) {

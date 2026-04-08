@@ -32,7 +32,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   const { currentProjectArchivedFilters, archivedCyclesSearchQuery, updateFilters, updateArchivedCyclesSearchQuery } =
     useCycleFilter();
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(archivedCyclesSearchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(archivedCyclesSearchQuery !== "");
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && archivedCyclesSearchQuery.trim() === "") setIsSearchOpen(false);

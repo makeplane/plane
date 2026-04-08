@@ -39,7 +39,7 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
     cycleId,
   });
   // derived values
-  const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
+  const isSidebarCollapsed = storedValue ? storedValue === true : false;
   const cycle = getCycleById(cycleId);
   const project = getProjectById(projectId);
   const pageTitle = project?.name && cycle?.name ? `${project?.name} - ${cycle?.name}` : undefined;

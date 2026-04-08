@@ -74,7 +74,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                   return (
                     <FilterOption
                       key={`lead-${member.id}`}
-                      isChecked={appliedFilters?.includes(member.id) ? true : false}
+                      isChecked={appliedFilters?.includes(member.id) ?? false}
                       onClick={() => handleUpdate(member.id)}
                       icon={
                         <Avatar

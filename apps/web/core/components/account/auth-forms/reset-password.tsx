@@ -76,11 +76,11 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
 
   const isButtonDisabled = useMemo(
     () =>
-      !!resetFormData.password &&
-      getPasswordStrength(resetFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-      resetFormData.password === resetFormData.confirm_password
-        ? false
-        : true,
+      !(
+        !!resetFormData.password &&
+        getPasswordStrength(resetFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
+        resetFormData.password === resetFormData.confirm_password
+      ),
     [resetFormData]
   );
 
