@@ -78,6 +78,18 @@ export class ProjectWorkItemTypesStore extends BaseWorkItemTypesStore implements
     }
   );
 
+  getSortedWorkItemTypesByProjectId: ProjectWorkItemTypesStoreSchema["getSortedWorkItemTypesByProjectId"] = computedFn(
+    (projectId) => {
+      const types = this.getWorkItemTypesByProjectId(projectId);
+      return [...types].sort((a, b) => {
+        if (a.level !== b.level) return b.level - a.level;
+        const aTime = a.created_at instanceof Date ? a.created_at.getTime() : new Date(a.created_at).getTime();
+        const bTime = b.created_at instanceof Date ? b.created_at.getTime() : new Date(b.created_at).getTime();
+        return bTime - aTime;
+      });
+    }
+  );
+
   getDefaultWorkItemTypeId: ProjectWorkItemTypesStoreSchema["getDefaultWorkItemTypeId"] = computedFn((projectId) => {
     const types = this.getWorkItemTypesByProjectId(projectId);
     const defaultType = types.find((t) => t.is_default);

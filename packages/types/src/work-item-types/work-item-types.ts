@@ -128,6 +128,7 @@ export type ProjectWorkItemTypesStoreSchema = {
   getLoaderByProjectId: (workspaceSlug: string) => TLoader | undefined;
   // helpers
   getWorkItemTypesByProjectId: (projectId: string) => BaseWorkItemTypeInstanceSchema[];
+  getSortedWorkItemTypesByProjectId: (projectId: string) => BaseWorkItemTypeInstanceSchema[];
   getDefaultWorkItemTypeId: (projectId: string) => string | undefined;
   enrichTypeIdsFromWorkspaceTypes: (types: TWorkItemTypeResponse[]) => void;
   // actions

@@ -49,7 +49,7 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
   // plane hooks
   const { t } = useTranslation();
   // hooks
-  const { getWorkItemTypesByProjectId, getLoaderByProjectId, importGlobalTypes } = useProjectWorkItemTypes();
+  const { getSortedWorkItemTypesByProjectId, getLoaderByProjectId, importGlobalTypes } = useProjectWorkItemTypes();
   const { getWorkItemTypesByWorkspaceSlug, getLoaderByWorkspaceSlug } = useWorkspaceWorkItemTypes();
   const { getPropertiesByWorkspaceSlug } = useWorkspaceCustomProperties();
   const { getCustomPropertiesByIds } = useCustomProperty();
@@ -62,7 +62,7 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
   const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const canAccessWorkspaceWorkItemTypesSettings =
     useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false) && currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const projectWorkItemTypes = getWorkItemTypesByProjectId(projectId);
+  const projectWorkItemTypes = getSortedWorkItemTypesByProjectId(projectId);
   const workspaceWorkItemTypes = getWorkItemTypesByWorkspaceSlug(workspaceSlug);
   const isInitializing =
     getLoaderByProjectId(projectId) === "init-loader" || getLoaderByWorkspaceSlug(workspaceSlug) === "init-loader";
