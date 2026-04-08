@@ -307,6 +307,10 @@ const errorCodeMessages: {
     title: `Rate limit exceeded`,
     message: () => `Too many requests. Please try again later.`,
   },
+  [EAuthErrorCodes.BOT_LOGIN_NOT_ALLOWED]: {
+    title: `Bot login not allowed`,
+    message: () => `Bot login is not allowed. Please contact administrator.`,
+  },
 };
 
 // Error handler

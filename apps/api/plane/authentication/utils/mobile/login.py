@@ -21,6 +21,10 @@ from django.conf import settings
 from plane.db.models import Profile
 from plane.settings.redis import redis_instance
 from plane.authentication.utils.host import base_host
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 
 def generate_random_string(length=64):
@@ -93,6 +97,13 @@ def mobile_validate_user_onboarding(user):
 
 
 def mobile_user_login(request, user, is_app=False, is_admin=False, is_space=False):
+    # Block bot users from logging in
+    if user.is_bot:
+        raise AuthenticationException(
+            error_code=AUTHENTICATION_ERROR_CODES["BOT_LOGIN_NOT_ALLOWED"],
+            error_message="BOT_LOGIN_NOT_ALLOWED",
+        )
+
     login(request=request, user=user)
 
     # If is admin cookie set the custom age

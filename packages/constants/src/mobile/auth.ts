@@ -78,6 +78,8 @@ export const EMobileAuthErrorCodes = {
   // SAML
   SAML_NOT_CONFIGURED: "6025",
   SAML_PROVIDER_ERROR: "6030",
+  // Bot
+  BOT_LOGIN_NOT_ALLOWED: "5920",
   // Rate limit
   RATE_LIMIT_EXCEEDED: "5900",
   // mobile specific codes

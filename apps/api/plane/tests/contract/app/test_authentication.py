@@ -124,6 +124,55 @@ class TestMagicLinkGenerate:
 
 
 @pytest.mark.contract
+class TestBotUserLogin:
+    """Test that bot users are blocked from logging in"""
+
+    @pytest.fixture
+    def setup_bot_user(self, db):
+        """Create a bot user for testing"""
+        user = User.objects.create(email="bot@plane.so", is_bot=True, bot_type="APP_BOT")
+        user.set_password("bot@123")
+        user.save()
+        return user
+
+    @pytest.mark.django_db
+    def test_bot_user_sign_in_blocked(self, django_client, setup_bot_user, setup_instance):
+        """Test that bot users cannot sign in via email/password"""
+        url = reverse("sign-in")
+        response = django_client.post(
+            url, {"email": "bot@plane.so", "password": "bot@123"}, follow=True
+        )
+
+        # Check redirect contains BOT_LOGIN_NOT_ALLOWED error code
+        assert "BOT_LOGIN_NOT_ALLOWED" in response.redirect_chain[-1][0]
+
+    @pytest.mark.django_db
+    @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
+    def test_bot_user_magic_sign_in_blocked(
+        self, mock_magic_link, django_client, api_client, setup_bot_user, setup_instance
+    ):
+        """Test that bot users cannot sign in via magic link"""
+        # Generate a magic link token
+        gen_url = reverse("magic-generate")
+        response = api_client.post(gen_url, {"email": "bot@plane.so"}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+
+        # Get the token from Redis
+        ri = redis_instance()
+        user_data = json.loads(ri.get("magic_bot@plane.so"))
+        token = user_data["token"]
+
+        # Attempt magic sign-in
+        url = reverse("magic-sign-in")
+        response = django_client.post(
+            url, {"email": "bot@plane.so", "code": token}, follow=False
+        )
+
+        assert response.status_code == 302
+        assert "BOT_LOGIN_NOT_ALLOWED" in response.url
+
+
+@pytest.mark.contract
 class TestSignInEndpoint:
     """Test sign-in functionality"""
 

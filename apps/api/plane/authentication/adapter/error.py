@@ -91,6 +91,8 @@ AUTHENTICATION_ERROR_CODES = {
     "ADMIN_NOT_INSTANCE_ADMIN": 5195,
     # Rate limit
     "RATE_LIMIT_EXCEEDED": 5900,
+    # Bot
+    "BOT_LOGIN_NOT_ALLOWED": 5920,
     # Unknown
     "AUTHENTICATION_FAILED": 5999,
     # user not onboarded

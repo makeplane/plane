@@ -21,6 +21,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
+from plane.authentication.adapter.error import AuthenticationException
 from plane.authentication.utils.mobile.login import ValidateAuthToken
 from plane.db.models import User
 from plane.authentication.utils.mobile.login import mobile_user_login
@@ -111,6 +112,8 @@ class MobileSessionTokenEndpoint(APIView):
                 },
                 status=status.HTTP_200_OK,
             )
+        except AuthenticationException as e:
+            return Response(e.get_error_dict(), status=status.HTTP_403_FORBIDDEN)
         except Exception:
             return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 

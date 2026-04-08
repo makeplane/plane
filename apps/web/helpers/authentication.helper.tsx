@@ -119,6 +119,8 @@ export enum EAuthenticationErrorCodes {
   ADMIN_USER_ALREADY_EXIST = "5180",
   ADMIN_USER_DOES_NOT_EXIST = "5185",
   ADMIN_USER_DEACTIVATED = "5190",
+  // Bot
+  BOT_LOGIN_NOT_ALLOWED = "5920",
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
   // mobile specific codes
@@ -396,6 +398,10 @@ const errorCodeMessages: {
     title: `Admin user deactivated`,
     message: () => <div>Your account is deactivated</div>,
   },
+  [EAuthenticationErrorCodes.BOT_LOGIN_NOT_ALLOWED]: {
+    title: `Login not allowed`,
+    message: () => `Bot accounts are not allowed to sign in. Please contact your administrator.`,
+  },
   [EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: "",
     message: () => `Rate limit exceeded. Please try again later.`,
@@ -468,6 +474,7 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
+    EAuthenticationErrorCodes.BOT_LOGIN_NOT_ALLOWED,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
     EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
     EAuthenticationErrorCodes.USER_NOT_ONBOARDED,

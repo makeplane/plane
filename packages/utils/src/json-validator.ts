@@ -10,8 +10,8 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-import { isObject } from "@plane/utils";
 import type { TJsonUISpec } from "@plane/types";
+import { isObject } from "./common";
 
 export const isValidJsonUISpec = (jsonString: string) => {
   try {

@@ -230,6 +230,10 @@ const mobileAuthErrorCodeMessages: {
     title: `Admin user deactivated`,
     message: () => `Your account is deactivated`,
   },
+  [EMobileAuthErrorCodes.BOT_LOGIN_NOT_ALLOWED]: {
+    title: `Login not allowed`,
+    message: () => `Bot accounts are not allowed to sign in. Please contact your administrator.`,
+  },
   [EMobileAuthErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: "",
     message: () => `Rate limit exceeded. Please try again later.`,
@@ -320,6 +324,7 @@ export const mobileAuthErrorHandler = (
     EMobileAuthErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EMobileAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EMobileAuthErrorCodes.ADMIN_USER_DEACTIVATED,
+    EMobileAuthErrorCodes.BOT_LOGIN_NOT_ALLOWED,
     EMobileAuthErrorCodes.RATE_LIMIT_EXCEEDED,
     EMobileAuthErrorCodes.USER_NOT_ONBOARDED,
     EMobileAuthErrorCodes.TOKEN_NOT_SET,

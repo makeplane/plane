@@ -303,6 +303,13 @@ class Adapter:
         # Check if sign up case or login
         is_signup = not bool(user)
 
+        # Block bot users from logging in
+        if user and user.is_bot:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["BOT_LOGIN_NOT_ALLOWED"],
+                error_message="BOT_LOGIN_NOT_ALLOWED",
+            )
+
         # Block deactivated users in admin authentication flows
         if user and not user.is_active and getattr(self.request, "is_admin_auth", False):
             raise AuthenticationException(
