@@ -4,7 +4,6 @@ import * as dotenv from "dotenv";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, type PluginOption } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 dotenv.config({ path: path.resolve(import.meta.dirname, ".env") });
@@ -49,19 +48,7 @@ function swVersionPlugin(): PluginOption {
   };
 }
 
-const plugins: PluginOption[] = [
-  tailwindcss(),
-  reactRouter(),
-  tsconfigPaths({
-    projects: [
-      path.resolve(import.meta.dirname, "tsconfig.json"),
-      // Root tsconfig references all workspace packages, enabling path alias
-      // resolution when Vite consumes source files via "development" export condition.
-      path.resolve(import.meta.dirname, "../../tsconfig.json"),
-    ],
-  }),
-  swVersionPlugin(),
-];
+const plugins: PluginOption[] = [tailwindcss(), reactRouter(), swVersionPlugin()];
 
 if (process.env.SENTRY_AUTH_TOKEN) {
   plugins.push(
@@ -90,6 +77,7 @@ export default defineConfig({
   },
   plugins,
   resolve: {
+    tsconfigPaths: true,
     alias: {
       // Next.js compatibility shims used within web
       "next/link": path.resolve(import.meta.dirname, "app/compat/next/link.tsx"),

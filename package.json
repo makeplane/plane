@@ -39,9 +39,7 @@
     "oxlint-tsgolint": "catalog:",
     "turbo": "catalog:"
   },
-  "optionalDependencies": {
-    "@rollup/rollup-darwin-arm64": "4.59.0"
-  },
+  "optionalDependencies": {},
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
       "pnpm exec oxfmt --write"

@@ -4,7 +4,6 @@ import * as dotenv from "dotenv";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { joinUrlPath } from "@plane/utils";
 
 const require = createRequire(import.meta.url);
@@ -29,19 +28,9 @@ export default defineConfig(() => ({
   build: {
     assetsInlineLimit: 0,
   },
-  plugins: [
-    tailwindcss(),
-    reactRouter(),
-    tsconfigPaths({
-      projects: [
-        path.resolve(import.meta.dirname, "tsconfig.json"),
-        // Root tsconfig references all workspace packages, enabling path alias
-        // resolution when Vite consumes source files via "development" export condition.
-        path.resolve(import.meta.dirname, "../../tsconfig.json"),
-      ],
-    }),
-  ],
+  plugins: [tailwindcss(), reactRouter()],
   resolve: {
+    tsconfigPaths: true,
     alias: {
       "@atlaskit/pragmatic-drag-and-drop/combine":
         require.resolve("@atlaskit/pragmatic-drag-and-drop/dist/esm/entry-point/combine.js"),
