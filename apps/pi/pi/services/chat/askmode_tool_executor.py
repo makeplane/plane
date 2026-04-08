@@ -39,6 +39,7 @@ from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
 from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
+from pi.services.chat.kit import TODO_STATUS_ICON
 from pi.services.chat.prompt_mixins import pai_ask_system_prompt_sensitive_version
 from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
@@ -572,6 +573,19 @@ async def execute_tools_for_ask_mode(
                             result_preview = str(tool_result) if tool_result else "None"
                             log.debug(f"ChatID: {chat_id} - Tool {tool_name} result preview: {result_preview[:200]}")
                             log.debug(f"ChatID: {chat_id} - Tool {tool_name} completed successfully")
+
+                            # Stream todos update to the frontend as a dedicated todos event
+                            if tool_name == "write_todos":
+                                _tc = query_flow_store.get("todos_container") if isinstance(query_flow_store, dict) else None
+                                if _tc and _tc.get("updated"):
+                                    _tc["updated"] = False
+                                    todos_list = _tc.get("todos", [])
+                                    if todos_list:
+                                        display_todos = [
+                                            {**t, "content": f"{TODO_STATUS_ICON.get(t.get('status', 'pending'), '○')} {t['content']}"}
+                                            for t in todos_list
+                                        ]
+                                        yield {"chunk_type": "todos", "todos": display_todos}
 
                             # Track the response
                             responses.append((tool_name, str(tool_args), tool_result))

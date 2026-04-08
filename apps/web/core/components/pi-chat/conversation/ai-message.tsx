@@ -44,14 +44,16 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
-  const { query_id, answer, reasoning, isPiThinking, feedback, current_tick } = dialogue || {};
+  const { query_id, answer, reasoning, isPiThinking, feedback, current_tick, todos } = dialogue || {};
 
   return (
     <div className="flex gap-4" id={id}>
       <div className="flex flex-col text-14 break-words w-full">
         {/* Message */}
         <div className="flex flex-col">
-          {!isLoading && <ReasoningBlock reasoning={reasoning} isThinking={isPiThinking} currentTick={current_tick} />}
+          {!isLoading && (
+            <ReasoningBlock reasoning={reasoning} isThinking={isPiThinking} currentTick={current_tick} todos={todos} />
+          )}
           <Markdown
             remarkPlugins={[remarkGfm]}
             className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in text-body-sm-regular text-primary"

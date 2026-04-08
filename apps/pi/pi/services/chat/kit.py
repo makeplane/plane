@@ -48,6 +48,7 @@ from .helpers.build_mode_helpers import build_method_executor_and_context
 from .helpers.tool_utils import WordBatcher
 from .helpers.tool_utils import extract_text_from_content
 from .mixins import AttachmentMixin
+from .prompts import WRITE_TODOS_TOOL_DESCRIPTION
 from .prompts import combination_system_prompt
 from .prompts import combination_user_prompt
 from .prompts import title_generation_prompt
@@ -57,6 +58,7 @@ from .utils import format_message_with_attachments
 log = logger.getChild(__name__)
 NON_PLANE_TEMPERATURE = settings.llm_config.CONTEXT_OFF_TEMPERATURE
 DEFAULT_LLM = settings.llm_model.DEFAULT
+TODO_STATUS_ICON = {"pending": "○", "in_progress": "◑", "completed": "●"}
 
 
 def _fuzzy_filter_options(
@@ -1163,6 +1165,72 @@ Provide concise, relevant context from the attachment(s):"""
         # Store fetch_cycle_details in self for later access by _get_selected_tools
         self._fetch_cycle_details_tool = fetch_cycle_details
 
+        @tool(description=WRITE_TODOS_TOOL_DESCRIPTION)
+        async def write_todos(
+            todos_json: str,
+        ) -> str:
+            """Create and manage a structured task list for the current work session.
+
+            Args:
+                todos_json: A JSON array string of todo items. Each item must have:
+                    - "content": string describing the task
+                    - "status": one of "pending", "in_progress", or "completed"
+                  Example: '[{"content": "Search for open issues", "status": "in_progress"}, {"content": "Summarize results", "status": "pending"}]'
+
+            Returns:
+                Confirmation string with task counts.
+            """
+            import json as _json
+
+            if isinstance(query_flow_store, dict):
+                query_flow_store.setdefault("todos_container", {"todos": [], "updated": False})
+                _tc = query_flow_store["todos_container"]
+            else:
+                return "Error: no query_flow_store available."
+
+            try:
+                raw = _json.loads(todos_json)
+            except Exception:
+                return "Error: todos_json must be a valid JSON array string."
+
+            if not isinstance(raw, list):
+                return "Error: todos_json must be a JSON array."
+
+            allowed_statuses = ("pending", "in_progress", "completed")
+            required_keys = {"content", "status"}
+            normalized: List[Dict[str, Any]] = []
+            for index, item in enumerate(raw):
+                if not isinstance(item, dict):
+                    return f"Error: todo item at index {index} must be an object with exactly 'content' and 'status' fields."
+                item_keys = set(item.keys())
+                if item_keys != required_keys:
+                    return f"Error: todo item at index {index} must contain exactly the 'content' and 'status' fields."
+                content = str(item["content"]).strip()
+                if not content:
+                    return f"Error: todo item at index {index} must have a non-empty 'content' field."
+                status = item["status"]
+                if status not in allowed_statuses:
+                    return f"Error: todo item at index {index} has invalid status '{status}'. " "Allowed values are: pending, in_progress, completed."
+                normalized.append({"content": content, "status": status})
+
+            _tc["todos"] = normalized
+            _tc["updated"] = True
+
+            counts: Dict[str, int] = {"pending": 0, "in_progress": 0, "completed": 0}
+            for t in normalized:
+                counts[t["status"]] = counts.get(t["status"], 0) + 1
+
+            parts = []
+            if counts["in_progress"]:
+                parts.append(f"{counts['in_progress']} in_progress")
+            if counts["pending"]:
+                parts.append(f"{counts['pending']} pending")
+            if counts["completed"]:
+                parts.append(f"{counts['completed']} completed")
+
+            summary = ", ".join(parts) if parts else "0 tasks"
+            return f"Todo list updated: {len(normalized)} tasks ({summary})"
+
         tools = [
             ask_for_clarification,
             vector_search_tool,
@@ -1170,6 +1238,7 @@ Provide concise, relevant context from the attachment(s):"""
             pages_search_tool,
             docs_search_tool,
             fetch_cycle_details,
+            write_todos,
         ]
         if websearch_enabled:
             tools.append(web_search_tool)
@@ -1231,6 +1300,7 @@ Provide concise, relevant context from the attachment(s):"""
                     "docs_search_tool",
                     "web_search_tool",
                     "fetch_cycle_details",
+                    "write_todos",
                 ]
             ]
             clarification_tool = next((t for t in all_tools if getattr(t, "name", "") == "ask_for_clarification"), None)
@@ -1300,11 +1370,7 @@ Provide concise, relevant context from the attachment(s):"""
         else:
             # When workspace is not in context, only include non-workspace-specific tools
             log.info(f"ChatID: {chat_id} - Workspace not in context, filtering out workspace-specific tools")
-            retrieval_tools = [
-                tool
-                for tool in all_tools
-                if tool.name in ["docs_search_tool", "web_search_tool"]  # Only general documentation and web search
-            ]
+            retrieval_tools = [tool for tool in all_tools if tool.name in ["docs_search_tool", "web_search_tool", "write_todos"]]
             # Don't include ask_for_clarification as it's designed for workspace entity clarifications
             return retrieval_tools
 

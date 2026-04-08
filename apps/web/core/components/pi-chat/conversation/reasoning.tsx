@@ -15,17 +15,39 @@ import { useState, useEffect, useRef } from "react";
 import Markdown from "react-markdown";
 import { Brain, ChevronDownIcon } from "lucide-react";
 import { cn } from "@plane/utils";
+import type { TTodoItem } from "@/types";
+import { Checkbox } from "@plane/ui";
 
 type TProps = {
   reasoning?: string;
   isThinking: boolean | undefined;
   currentTick?: string;
+  todos?: TTodoItem[];
 };
 
 const stripEmojis = (str: string) => str.replace(/\p{Emoji}/gu, "");
 
+const BULLET_ICONS = ["●", "○", "◑"] as const;
+
+export function parseBulletString(str: string): {
+  isCompleted: boolean;
+  content: string;
+} {
+  const trimmed = str.trimStart();
+  const startsWithBullet = BULLET_ICONS.some((icon) => trimmed.startsWith(icon));
+
+  if (!startsWithBullet) {
+    return { isCompleted: false, content: str };
+  }
+
+  const content = trimmed.slice(1).trimStart();
+  const isCompleted = trimmed.startsWith("●");
+
+  return { isCompleted, content };
+}
+
 export const ReasoningBlock = (props: TProps) => {
-  const { reasoning, isThinking, currentTick } = props;
+  const { reasoning, isThinking, currentTick, todos } = props;
   const [manuallyToggled, setManuallyToggled] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -100,6 +122,27 @@ export const ReasoningBlock = (props: TProps) => {
             isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 mt-0"
           )}
         >
+          {todos && todos.length > 0 && (
+            <div className="mx-3 py-3 rounded-lg">
+              <p className="text-body-xs-medium text-secondary mb-1.5">To do</p>
+              <div className="pl-3">
+                {todos.map((todo, i) => {
+                  const renderData = parseBulletString(todo.content);
+                  return (
+                    <div key={i} className="flex gap-2 items-center">
+                      <Checkbox
+                        checked={renderData.isCompleted}
+                        className="size-4 bg-layer-1"
+                        disabled
+                        iconClassName="size-3 text-primary"
+                      />
+                      <p className="text-body-xs-regular text-tertiary leading-5">{renderData.content}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <div
             ref={contentRef}
             className="mx-3 overflow-y-auto text-tertiary relative max-h-80 scrollbar-thin scrollbar-thumb-subtle scrollbar-track-transparent"

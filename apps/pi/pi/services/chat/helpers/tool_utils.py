@@ -30,6 +30,7 @@ from typing import TypedDict
 from typing import Union
 
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
+from pi.services.chat.prompts import WRITE_TODOS_SYSTEM_PROMPT_BUILD
 
 log = logging.getLogger(__name__)
 
@@ -753,6 +754,7 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "list_member_projects": "List Member Projects",
         "worklogs_get_summary": "Worklog Summary",
         "ask_for_clarification": "Elicitation",
+        "write_todos": "Task planning",
     }
     name_to_return = tool_to_user_map.get(tool_name, "")
     if not name_to_return:
@@ -1697,6 +1699,10 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
     if clarification_context and isinstance(clarification_context, dict):
         method_prompt += build_clarification_context_block(clarification_context)
         # Reasoning guidance is added globally below so it applies to all build-mode planning.
+
+    # Inject write_todos guidance before the final reasoning/format instructions
+
+    method_prompt += f"\n\n{WRITE_TODOS_SYSTEM_PROMPT_BUILD}"
 
     # Ensure build-mode planning uses the same "reasoning around tool_calls" guidance as ask-mode.
     method_prompt += f"\n\n{TOOL_CALL_REASONING_REINFORCEMENT}"

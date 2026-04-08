@@ -34,6 +34,7 @@ import type {
   TInstanceResponse,
   TSSEDeltaEvent,
   TSSEReasoningEvent,
+  TSSETodosEvent,
   TSSEActionsEvent,
   TSSETitleResponse,
   TTemplate,
@@ -530,6 +531,17 @@ export class PiChatStore implements IPiChatStore {
         this.updateDialogue(chatId, token, newDialogue);
       } catch (e) {
         console.error("Reasoning parse error", e);
+      }
+    });
+
+    // 🔹 Handles todos events — replaces the pinned todo list in the reasoning block
+    eventSource.addEventListener("todos", (event: MessageEvent<string>) => {
+      try {
+        const data = parseSSEData<TSSETodosEvent>(event.data);
+        newDialogue.todos = data.todos;
+        this.updateDialogue(chatId, token, newDialogue);
+      } catch (e) {
+        console.error("Todos parse error", e);
       }
     });
 

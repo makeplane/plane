@@ -248,6 +248,10 @@ def reasoning_header_factory(stage: str, tool_name: str, tool_query: str) -> str
             "\n\nApplying optimized insights...\n\n",
             "\n\nFollowing optimized guidance...\n\n",
         ],
+        "todo_update": [
+            "\n\nUpdating task progress...\n\n",
+            "\n\nTracking progress...\n\n",
+        ],
         "final_response": ["\n\nGenerating final response...\n\n"],
     }
     stage_list = stage_dict.get(stage, "{stage}\n\n")

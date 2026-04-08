@@ -669,6 +669,8 @@ async def get_answer(data: ChatRequest, current_user=Depends(get_current_user)):
                                     # for backward compatibility, we also need to yield the chunk as a string
                                     # bwc_payload = {"reasoning": f"{chunk["header"]}\n\n{chunk["content"]}\n\n"}
                                     # yield f"event: reasoning\ndata: {json.dumps(bwc_payload)}\n\n"
+                                elif "chunk_type" in chunk and chunk["chunk_type"] == "todos":
+                                    yield f"event: todos\ndata: {json.dumps({'todos': chunk['todos']})}\n\n"
                                 else:
                                     log.warning(f"ChatID: {data.chat_id} - Chunk is not a json string: {chunk}")
                                     payload = {"chunk": chunk}

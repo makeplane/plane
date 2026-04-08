@@ -25,6 +25,7 @@ from typing import cast
 
 from langchain_core.messages import HumanMessage
 from langchain_core.messages import SystemMessage
+from langchain_core.messages import ToolMessage
 
 from pi import logger
 from pi import settings
@@ -66,6 +67,7 @@ from .helpers.tool_utils import extract_text_from_content
 from .helpers.tool_utils import format_tool_query_for_display
 from .helpers.tool_utils import preflight_missing_required_fields
 from .helpers.tool_utils import tool_name_shown_to_user
+from .kit import TODO_STATUS_ICON
 
 # from .tool_utils import log_toolset_details
 
@@ -842,6 +844,31 @@ async def execute_tools_for_build_mode(
                 #
                 # This ensures that operations like 'list_modules' don't require user approval,
                 # while operations like 'create_workitem' still do.
+
+                # write_todos must be executed directly — intercept before classify_tool
+                # so it is never treated as an action tool (planned/faux-executed)
+                if tool_name == "write_todos":
+                    _wt_func = next((t for t in combined_tools if getattr(t, "name", "") == "write_todos"), None)
+                    _wt_result = "Error: write_todos tool not found."
+                    if _wt_func:
+                        try:
+                            _wt_result = await _wt_func.ainvoke(tool_args)
+                        except Exception as exc:
+                            _wt_result = f"Error: {exc}"
+                    _wt_tc = query_flow_store.get("todos_container") if isinstance(query_flow_store, dict) else None
+                    if not isinstance(_wt_result, str) or _wt_result.startswith("Error"):
+                        tool_messages.append(ToolMessage(content=_wt_result or "Error: unknown failure.", tool_call_id=str(tool_id)))
+                        continue
+                    if _wt_tc and _wt_tc.get("updated"):
+                        _wt_tc["updated"] = False
+                        todos_list = _wt_tc.get("todos", [])
+                        if todos_list:
+                            display_todos = [
+                                {**t, "content": f"{TODO_STATUS_ICON.get(t.get('status', 'pending'), '○')} {t['content']}"} for t in todos_list
+                            ]
+                            yield {"chunk_type": "todos", "todos": display_todos}
+                    tool_messages.append(ToolMessage(content=_wt_result, tool_call_id=str(tool_id)))
+                    continue
 
                 # Classify tool via shared helper
                 _is_retrieval_tool, is_action_tool = classify_tool(tool_name)

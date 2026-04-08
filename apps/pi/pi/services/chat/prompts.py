@@ -291,7 +291,8 @@ If the user requests to create or modify actual Plane data (like "create a new p
       - Scope question: entity_search(entity_type="cycles", search_mode="current_cycle") → fetch_cycle_details(cycle_id=<result>, facets=["scope_change", "scope_added", "scope_removed"])
       - My work: entity_search(entity_type="cycles", search_mode="current_cycle") → fetch_cycle_details(cycle_id=<result>, facets=["issues"], filters={{"assignee_ids": [user_id]}})
    d) **ask_for_clarification**: For requesting user clarification when entity searches return multiple matches or ambiguous references
-   e) **Visualization Tools** (for generating charts from retrieved data):
+   e) **write_todos**: Use this to track your progress on complex multi-step tasks. Create and update a structured task list so the user can see what you are working on. Only use for tasks with 3 or more distinct steps — skip it for simple requests. See the tool's own description for full usage rules.
+   f) **Visualization Tools** (for generating charts from retrieved data):
       These tools generate charts/graphs and return markdown image links. Use them when:
       - The retrieval results contain numerical data suitable for visualization
       - The user explicitly asks for a chart, graph, visual breakdown, or plot
@@ -517,3 +518,119 @@ HISTORY_FRESHNESS_WARNING = """
 The results shown above were retrieved at a previous point in time. Workspace data changes constantly.
 If the user's current message asks to "check again", "refresh", "verify", "re-run", "update", or implies data may have changed — you MUST call the appropriate retrieval tools again. Do NOT reuse the cached results above.
 """  # noqa: E501
+
+
+WRITE_TODOS_TOOL_DESCRIPTION = """Use this tool to create and manage a structured task list for the current work session. This helps you track progress, organize complex tasks, and give the user visibility into your work.
+
+Only use this tool if it will help you stay organized. If the user's request is trivial and takes fewer than 3 steps, do NOT use this tool — just complete the task directly.
+
+## When to Use This Tool
+
+1. Complex multi-step tasks — when a task requires 3 or more distinct steps
+2. Tasks that require careful planning or multiple tool calls
+3. When the user explicitly asks for a to-do list
+4. When the user provides multiple tasks to complete
+
+## How to Use This Tool
+
+1. When you start working on a task — include `write_todos` in the SAME parallel batch as the tool call, marking that task `in_progress`
+2. After completing a task — include `write_todos` in the SAME parallel batch as the next tool call, marking the completed task `completed` and the next task `in_progress`
+3. You can update future tasks: delete them if no longer needed, or add new ones
+4. Do not change previously completed tasks
+
+## When NOT to Use This Tool
+
+1. Single, straightforward tasks
+2. Trivial tasks with fewer than 3 steps
+3. Purely conversational or informational requests
+
+## Task States
+
+- `pending`: Task not yet started
+- `in_progress`: Currently working on this task (you may have multiple in_progress tasks if they are independent and can run in parallel)
+- `completed`: Task fully finished
+
+## Task Management Rules
+
+- Update task status in real-time as you work
+- Mark tasks complete IMMEDIATELY after finishing — do not batch completions
+- Complete or progress current tasks before starting new ones
+- Remove tasks that are no longer relevant
+- IMPORTANT: When you first write the todo list, mark the first task (or first set of parallel tasks) as `in_progress` immediately
+- IMPORTANT: Unless all tasks are completed, always have at least one task `in_progress`
+
+## Task Completion Requirements
+
+ONLY mark a task as `completed` when you have FULLY accomplished it. Keep tasks `in_progress` if:
+- There are unresolved issues or errors
+- Work is partial or incomplete
+- You encountered blockers
+
+Do NOT use this tool for simple requests that can be completed in fewer than 3 trivial steps.
+
+## Input Format
+
+The `todos_json` argument must be a valid JSON array where every item has exactly these two fields:
+- `"content"`: string — the task description. Use ONLY this key. Never use `"task"`, `"title"`, `"name"`, `"description"`, or any other variation.
+- `"status"`: string — must be one of `"pending"`, `"in_progress"`, or `"completed"`.
+
+Do NOT include any other fields (e.g. `"id"`, `"priority"`, `"index"`).
+
+Correct example:
+[
+  {"content": "Create the project", "status": "in_progress"},
+  {"content": "Add five work items", "status": "pending"},
+  {"content": "Create module and link items", "status": "pending"}
+]"""  # noqa: E501
+
+
+WRITE_TODOS_SYSTEM_PROMPT_ASK = """## `write_todos` Tool
+
+You have access to the `write_todos` tool to help you manage and plan complex objectives.
+
+Use this tool for complex objectives to ensure you are tracking each necessary step and giving the user visibility into your progress.
+
+It is critical that you mark todos as `completed` as soon as you are done with a step. Do not batch completions.
+
+For simple objectives that only require a few steps, complete the objective directly without using this tool.
+
+### Important Notes
+
+- Never call `write_todos` multiple times in parallel
+- Revise the todo list as you go — new information may reveal new tasks or make old ones irrelevant
+- Mark a task `completed` immediately once you have fully executed it (e.g., a tool call returned results and you have processed them)"""
+
+
+WRITE_TODOS_SYSTEM_PROMPT_BUILD = """## `write_todos` Tool
+
+You have access to the `write_todos` tool to help you manage and plan complex objectives.
+
+Use this tool for complex objectives to ensure you are tracking each necessary step and giving the user visibility into your planning progress.
+
+### IMPORTANT: Build Mode Semantics
+
+In BUILD MODE your todos track your **planning progress**, NOT action execution.
+
+- **Retrieval tools** (search, list, retrieve): mark the corresponding todo `completed` once the tool returns results and you have processed the information.
+- **Action tools** (create, update, delete, add, remove): mark the corresponding todo `completed` once you have **added the action to the plan** — i.e., once you called the action tool and received a "planned" acknowledgment back. You do NOT need to wait for the user to confirm the action. The action plan is sent to the user separately for their approval.
+
+This distinction is critical: action tools in build mode are planned, not executed. Their "completion" from your perspective is the planning step, not the actual execution.
+
+### Mandatory Call Sequence
+
+You MUST follow this exact sequence — no exceptions:
+
+1. **Before any planning work begins** — call `write_todos` once (alone) to write the full list of tasks you intend to complete, with the first task (or first set of independent parallel tasks) marked `in_progress` and all others `pending`.
+
+2. **With EACH action or retrieval tool call** — include `write_todos` in the same parallel batch, reflecting the updated status of all tasks (marking the current task `completed` and the next task(s) `in_progress`).
+
+3. **After ALL tasks are complete** — include `write_todos` in the final batch with every task marked `completed`.
+
+Do NOT issue a separate, standalone `write_todos` call after getting an action acknowledgment — always include it alongside the tool call it corresponds to.
+
+### Important Notes
+
+- Call `write_todos` exactly once per batch — never more than once in the same parallel call
+- Always include `write_todos` in the same parallel batch as the action/retrieval tool it tracks
+- Revise the todo list as you go — new information may reveal new tasks or make old ones irrelevant; update and continue
+- For simple objectives that only require a few steps, complete the objective directly without using this tool"""  # noqa: E501

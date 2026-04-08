@@ -125,6 +125,11 @@ export type TArtifactWithEntity = TArtifact & {
   };
 };
 
+export type TTodoItem = {
+  content: string;
+  status: "pending" | "in_progress" | "completed";
+};
+
 export type TDialogue = {
   query_id?: string;
   answer_id?: string;
@@ -134,6 +139,7 @@ export type TDialogue = {
   feedback?: EAiFeedback;
   current_tick?: string;
   reasoning?: string;
+  todos?: TTodoItem[];
   isPiThinking: boolean;
   execution_status?: EExecutionStatus;
   actions?: TArtifactWithEntity[];
@@ -272,6 +278,10 @@ export type TSSEDeltaEvent = {
 export type TSSEReasoningEvent = {
   header?: string;
   content?: string;
+};
+
+export type TSSETodosEvent = {
+  todos: TTodoItem[];
 };
 
 export type TSSEActionsEvent = TArtifact;

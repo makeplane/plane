@@ -137,7 +137,7 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
               >
                 <div
                   ref={containerRef}
-                  className="relative flex flex-col gap-2.5 h-full px-3 py-4 rounded-lg shadow-xl bg-pi-50 max-h-[460px]"
+                  className="relative flex flex-col gap-2.5 h-full px-3 py-4 rounded-lg shadow-xl bg-layer-1 max-h-[460px]"
                 >
                   <div className="flex gap-1.5 w-80 flex-shrink-0">
                     <p className="text-left text-11 text-secondary">

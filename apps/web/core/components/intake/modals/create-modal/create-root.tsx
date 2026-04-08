@@ -288,7 +288,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       {shouldRenderDuplicateModal && (
         <div
           ref={modalContainerRef}
-          className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+          className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-layer-1"
           style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
         >
           <DuplicateModalRoot
