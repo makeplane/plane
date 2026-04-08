@@ -22,10 +22,17 @@ import { usePQLEditor } from "@/hooks/use-pql-editor";
 // local imports
 import { PQLAutocompleteDropdown } from "./autocomplete-dropdown";
 import { PQLErrorTooltip } from "./error-tooltip";
+import { Button } from "@plane/propel/button";
 import { IconButton } from "@plane/propel/icon-button";
-import { CornerDownLeft, Maximize2, Minimize2 } from "lucide-react";
+import { ResizeGripIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CornerDownLeft } from "lucide-react";
 
-function PQLEditor(props: PQLEditorProps & { forwardedRef?: React.ForwardedRef<PQLEditorHandle> }) {
+function PQLEditor(
+  props: PQLEditorProps & {
+    forwardedRef?: React.ForwardedRef<PQLEditorHandle>;
+  }
+) {
   const {
     autoFocus,
     className,
@@ -44,17 +51,29 @@ function PQLEditor(props: PQLEditorProps & { forwardedRef?: React.ForwardedRef<P
   const [isMaximized, setIsMaximized] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [anchor, setAnchor] = useState<{ top: number; left: number; bottom: number } | null>(null);
+  const [anchor, setAnchor] = useState<{
+    top: number;
+    left: number;
+    bottom: number;
+  } | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   // refs
-  const dropdownStateRef = useRef<DropdownState>({ isOpen: false, activeIndex: 0, suggestions: [] });
+  const dropdownStateRef = useRef<DropdownState>({
+    isOpen: false,
+    activeIndex: 0,
+    suggestions: [],
+  });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDropdownClose = useCallback(() => {
     setSuggestions([]);
     setAnchor(null);
     setShowDatePicker(false);
-    dropdownStateRef.current = { isOpen: false, activeIndex: 0, suggestions: [] };
+    dropdownStateRef.current = {
+      isOpen: false,
+      activeIndex: 0,
+      suggestions: [],
+    };
   }, []);
 
   const { editor, selectOption } = usePQLEditor({
@@ -93,31 +112,45 @@ function PQLEditor(props: PQLEditorProps & { forwardedRef?: React.ForwardedRef<P
           editor={editor}
           className="size-full font-code text-13 [&_.pql-editor-content]:wrap-break-word"
         />
-        <div className="shrink-0 flex items-center gap-1">
-          <IconButton
-            variant="ghost"
-            size="base"
-            icon={isMaximized ? Minimize2 : Maximize2}
-            onClick={() => setIsMaximized((prev) => !prev)}
-            className="shrink-0"
-          />
-          {onSubmit && !disableSubmit && (
-            <IconButton
-              variant="primary"
-              size="base"
-              icon={CornerDownLeft}
-              onClick={() => {
-                void onSubmit({
-                  json: editor.getJSON(),
-                  text: editor.getText(),
-                });
-              }}
-              className="shrink-0"
-              loading={isSubmitting}
-            />
-          )}
-        </div>
+        {onSubmit && !disableSubmit && (
+          <div className="shrink-0 flex items-center">
+            <Tooltip
+              tooltipContent={
+                <span className="flex items-center gap-1">
+                  Enter
+                  <CornerDownLeft className="size-3" />
+                </span>
+              }
+            >
+              <Button
+                variant="primary"
+                size="base"
+                onClick={() =>
+                  void onSubmit?.({
+                    json: editor.getJSON(),
+                    text: editor.getText(),
+                  })
+                }
+                loading={isSubmitting}
+                className="shrink-0"
+              >
+                Run
+              </Button>
+            </Tooltip>
+          </div>
+        )}
       </div>
+
+      {/* Resize grip — bottom-right corner, native textarea style */}
+      <IconButton
+        variant="ghost"
+        size="sm"
+        icon={ResizeGripIcon}
+        onClick={() => setIsMaximized((prev) => !prev)}
+        className="absolute bottom-0 right-0 cursor-nwse-resize opacity-40 hover:opacity-70 transition-opacity !size-3 !p-0"
+        iconClassName="size-2.5"
+        aria-label={isMaximized ? "Collapse editor" : "Expand editor"}
+      />
 
       <PQLAutocompleteDropdown
         editor={editor}

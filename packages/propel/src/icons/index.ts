@@ -88,6 +88,7 @@ export * from "./properties";
 export * from "./recurring-work-item";
 export * from "./related-icon";
 export * from "./release-icon";
+export * from "./resize-grip-icon";
 export * from "./restricted-page-icon";
 export * from "./sans-serif-icon";
 export * from "./scope-icon";
