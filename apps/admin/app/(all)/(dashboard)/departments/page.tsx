@@ -22,7 +22,8 @@ import { RejoinAllModal } from "./components/rejoin-all-modal";
 import { BulkLinkModal } from "./components/bulk-link-modal";
 
 const DepartmentsPage = observer(function DepartmentsPage() {
-  const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked } = useInstanceDepartment();
+  const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked } =
+    useInstanceDepartment();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [editDept, setEditDept] = useState<IInstanceDepartment | null>(null);
@@ -68,27 +69,34 @@ const DepartmentsPage = observer(function DepartmentsPage() {
             {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => exportDepartments()}>
+            <Button variant="ghost" size="sm" onClick={() => exportDepartments()}>
               <Download className="w-4 h-4" />
               Export Dept
             </Button>
-            <Button variant="outline" size="sm" onClick={() => router.push("/departments/import")}>
+            <Button variant="ghost" size="sm" onClick={() => router.push("/departments/import")}>
               <Upload className="w-4 h-4" />
               Import Dept
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setRejoinModalOpen(true)}>
+            <Button variant="ghost" size="sm" onClick={() => setRejoinModalOpen(true)}>
               <RefreshCw className="w-4 h-4" />
               Rejoin
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setBulkLinkOpen(true)}>
+            <Button variant="ghost" size="sm" onClick={() => setBulkLinkOpen(true)}>
               <Link className="w-4 h-4" />
               Bulk Linked
             </Button>
-            <Button variant="outline" size="sm" onClick={() => exportWorkspaceLinked()}>
+            <Button variant="ghost" size="sm" onClick={() => exportWorkspaceLinked()}>
               <Download className="w-4 h-4" />
               Export Workspace Linked
             </Button>
-            <Button variant="primary" size="sm" onClick={() => { setEditDept(null); setModalOpen(true); }}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                setEditDept(null);
+                setModalOpen(true);
+              }}
+            >
               <Plus className="w-4 h-4" />
               Add Department
             </Button>
@@ -102,9 +110,7 @@ const DepartmentsPage = observer(function DepartmentsPage() {
             <Loader.Item height="44px" width="85%" />
           </Loader>
         ) : tree.length === 0 ? (
-          <div className="text-center py-12 text-tertiary">
-            No departments found. Create the first one.
-          </div>
+          <div className="text-center py-12 text-tertiary">No departments found. Create the first one.</div>
         ) : (
           <div className="rounded-lg border border-subtle bg-layer-1 divide-y divide-subtle">
             {tree.map((dept) => (
@@ -132,6 +138,8 @@ const DepartmentsPage = observer(function DepartmentsPage() {
   );
 });
 
-export function meta() { return [{ title: "Departments - God Mode" }]; }
+export function meta() {
+  return [{ title: "Departments - God Mode" }];
+}
 
 export default DepartmentsPage;

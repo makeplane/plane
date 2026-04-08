@@ -73,7 +73,14 @@ export function InstanceSetupForm() {
     retypePassword: false,
   });
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
-  const [formData, setFormData] = useState<TFormData>(defaultFromData);
+  const [formData, setFormData] = useState<TFormData>({
+    first_name: firstNameParam || "",
+    last_name: lastNameParam || "",
+    email: emailParam || "",
+    company_name: companyParam || "",
+    password: "",
+    is_telemetry_enabled: isTelemetryEnabledParam,
+  });
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
@@ -88,14 +95,6 @@ export function InstanceSetupForm() {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
-
-  useEffect(() => {
-    if (firstNameParam) setFormData((prev) => ({ ...prev, first_name: firstNameParam }));
-    if (lastNameParam) setFormData((prev) => ({ ...prev, last_name: lastNameParam }));
-    if (companyParam) setFormData((prev) => ({ ...prev, company_name: companyParam }));
-    if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
-    if (isTelemetryEnabledParam) setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
-  }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {

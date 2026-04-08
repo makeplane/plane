@@ -88,4 +88,3 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
     </>
   );
 });
-

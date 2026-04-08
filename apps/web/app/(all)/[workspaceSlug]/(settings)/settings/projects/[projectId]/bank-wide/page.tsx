@@ -28,10 +28,7 @@ function BankWideProjectSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails, updateProject } = useProject();
 
-  const canPerformProjectAdminActions = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT
-  );
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} settings - ${t("bank_wide_project.settings.title")}`

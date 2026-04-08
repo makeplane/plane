@@ -7,6 +7,9 @@
 import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 
+// Pre-computed random widths for loader skeleton animation
+const LOADER_WIDTHS = ["250px", "260px", "270px", "280px", "290px", "300px", "310px", "320px", "330px", "340px"];
+
 export function PageLoader() {
   return (
     <div className="relative w-full h-full flex flex-col">
@@ -22,7 +25,7 @@ export function PageLoader() {
       <div>
         {range(10).map((i) => (
           <Loader key={i} className="relative flex items-center gap-2 p-3 py-4 border-b border-subtle">
-            <Loader.Item width={`${250 + 10 * Math.floor(Math.random() * 10)}px`} height="22px" />
+            <Loader.Item width={LOADER_WIDTHS[i]} height="22px" />
             <div className="ml-auto relative flex items-center gap-2">
               <Loader.Item width="60px" height="22px" />
               <Loader.Item width="22px" height="22px" />

@@ -34,19 +34,22 @@ function getActionText(activity: IModuleActivity, t: (key: string, opts?: Record
 export const ModuleActivityItem = ({ activity }: Props) => {
   const { t } = useTranslation();
   const actor = activity.actor_detail;
-  const displayName = actor ? (actor.display_name || `${actor.first_name} ${actor.last_name}`.trim()) : t("module.activity.unknown_actor");
+  const displayName = actor
+    ? actor.display_name || `${actor.first_name} ${actor.last_name}`.trim()
+    : t("module.activity.unknown_actor");
   const avatarUrl = actor?.avatar_url ? getFileURL(actor.avatar_url) : undefined;
 
   return (
     <div className="flex items-start gap-2 py-1.5">
-      <Avatar name={displayName} src={avatarUrl} size="sm" className="text-11 grid h-full w-full place-items-center rounded-full" />
+      <Avatar
+        name={displayName}
+        src={avatarUrl}
+        size="sm"
+        className="text-11 grid h-full w-full place-items-center rounded-full"
+      />
       <div className="flex-1 min-w-0 text-sm text-12">
-        <span className="font-medium text-primary">{displayName}</span>
-        {" "}
-        <span>{getActionText(activity, t)}</span>
-        <span className="ml-1.5 text-xs text-tertiary whitespace-nowrap">
-          {calculateTimeAgo(activity.created_at)}
-        </span>
+        <span className="font-medium text-primary">{displayName}</span> <span>{getActionText(activity, t)}</span>
+        <span className="ml-1.5 text-xs text-tertiary whitespace-nowrap">{calculateTimeAgo(activity.created_at)}</span>
       </div>
     </div>
   );

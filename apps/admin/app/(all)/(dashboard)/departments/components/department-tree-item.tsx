@@ -65,12 +65,7 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
 
         {/* Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onAutoJoin(dept)}
-            title="Auto join manager to projects"
-          >
+          <Button variant="ghost" size="sm" onClick={() => onAutoJoin(dept)} title="Auto join manager to projects">
             <UserPlus className="w-3.5 h-3.5" />
           </Button>
           <Button variant="secondary" size="sm" onClick={() => onEdit(dept)}>

@@ -28,7 +28,7 @@ export function PageContentBrowser(props: Props) {
   useEffect(() => {
     const unsubscribe = editorRef?.onHeadingChange(setHeadings);
     // for initial render of this component to get the editor headings
-    setHeadings(editorRef?.getHeadings() ?? []);
+    queueMicrotask(() => setHeadings(editorRef?.getHeadings() ?? []));
     return () => {
       unsubscribe?.();
     };

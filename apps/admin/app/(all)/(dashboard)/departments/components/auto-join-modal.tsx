@@ -71,7 +71,9 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
               </div>
             </div>
             <div className="flex justify-end pt-2">
-              <Button variant="primary" size="sm" onClick={handleClose}>Done</Button>
+              <Button variant="primary" size="sm" onClick={handleClose}>
+                Done
+              </Button>
             </div>
           </div>
         ) : (
@@ -81,15 +83,25 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
             </p>
             <div className="space-y-2">
               {[
-                { value: "all_projects" as TAutoJoinMode, label: "All Projects", desc: "Every project in the linked workspace" },
-                { value: "bank_wide_projects" as TAutoJoinMode, label: "Bank-wide Projects", desc: "Only projects marked as bank-wide" },
+                {
+                  value: "all_projects" as TAutoJoinMode,
+                  label: "All Projects",
+                  desc: "Every project in the linked workspace",
+                },
+                {
+                  value: "bank_wide_projects" as TAutoJoinMode,
+                  label: "Bank-wide Projects",
+                  desc: "Only projects marked as bank-wide",
+                },
               ].map((opt) => (
                 <label
                   key={opt.value}
                   htmlFor={`auto-join-mode-${opt.value}`}
                   aria-label={opt.label}
                   className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                    mode === opt.value ? "border-accent-primary bg-accent-subtle" : "border-subtle hover:border-secondary"
+                    mode === opt.value
+                      ? "border-accent-primary bg-accent-subtle"
+                      : "border-subtle hover:border-secondary"
                   }`}
                 >
                   <input
@@ -109,7 +121,9 @@ export const AutoJoinModal = function AutoJoinModal({ deptId, deptName, onClose 
               ))}
             </div>
             <div className="flex justify-end gap-2 pt-1">
-              <Button variant="outline" size="sm" onClick={handleClose}>Cancel</Button>
+              <Button variant="ghost" size="sm" onClick={handleClose}>
+                Cancel
+              </Button>
               <Button variant="primary" size="sm" onClick={() => void handleConfirm()} loading={loading}>
                 <UserPlus className="w-3.5 h-3.5" />
                 Auto Join

@@ -122,13 +122,14 @@ export const WorkspaceModuleBulkImportForm = observer(function WorkspaceModuleBu
         <p className="text-sm text-tertiary">
           Required: <code className="text-primary">workspace_slug</code>,{" "}
           <code className="text-primary">project_name</code> (exact project name),{" "}
-          <code className="text-primary">name</code>.
-          Optional: <code className="text-primary">description</code>,{" "}
-          <code className="text-primary">status</code> (backlog / planned / in-progress / paused / completed / cancelled, default: planned),{" "}
-          <code className="text-primary">start_date</code> / <code className="text-primary">target_date</code> (YYYY-MM-DD).
+          <code className="text-primary">name</code>. Optional: <code className="text-primary">description</code>,{" "}
+          <code className="text-primary">status</code> (backlog / planned / in-progress / paused / completed /
+          cancelled, default: planned), <code className="text-primary">start_date</code> /{" "}
+          <code className="text-primary">target_date</code> (YYYY-MM-DD).
         </p>
         <p className="text-sm text-tertiary">
-          Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import. Each row can target a different project or workspace.
+          Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import. Each row can target a different project or
+          workspace.
         </p>
       </div>
 

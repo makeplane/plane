@@ -38,7 +38,14 @@ export enum ChartYAxisMetric {
 }
 
 export type TAnalyticsTabsBase = "overview" | "work-items" | "projects" | "users" | "cycles" | "modules" | "intake";
-export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items" | "users" | "cycles" | "modules" | "intake";
+export type TAnalyticsGraphsBase =
+  | "projects"
+  | "work-items"
+  | "custom-work-items"
+  | "users"
+  | "cycles"
+  | "modules"
+  | "intake";
 export interface AnalyticsTab {
   key: TAnalyticsTabsBase;
   label: string;
@@ -53,7 +60,6 @@ export type TAnalyticsFilterParams = {
 
 // service types
 
- 
 export interface IAnalyticsResponse {
   [key: string]: any;
 }

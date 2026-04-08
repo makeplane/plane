@@ -73,7 +73,12 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
               </Link>
               <div className="flex items-center gap-3">
                 <span className="text-13 text-tertiary">{currentUser?.email}</span>
-                <Button variant="link" size="sm" onClick={handleSignOut} className="!text-danger-primary hover:!text-danger-primary-hover no-underline">
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="!text-danger-primary hover:!text-danger-primary-hover no-underline"
+                >
                   <LogOut className="shrink-0 size-3.5 mr-1" />
                   {t("sign_out")}
                 </Button>
@@ -89,9 +94,7 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
                     className="w-64 h-auto object-contain"
                     alt="Workspace creation disabled"
                   />
-                  <div className="text-16 font-medium">
-                    {t("workspace_creation.errors.creation_disabled.title")}
-                  </div>
+                  <div className="text-16 font-medium">{t("workspace_creation.errors.creation_disabled.title")}</div>
                   <p className="text-13 text-tertiary">
                     {t("workspace_creation.errors.creation_disabled.description")}
                   </p>

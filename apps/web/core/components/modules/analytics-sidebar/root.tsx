@@ -164,10 +164,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       ? "0 work items"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <div className="relative">

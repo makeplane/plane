@@ -14,10 +14,7 @@ export const extendedRoutes: RouteConfigEntry[] = [
       // same pattern as the "ho" route in core.ts
       layout("./(all)/[workspaceSlug]/(projects)/layout.tsx", [
         layout("./(all)/[workspaceSlug]/(projects)/bank-wide-projects/layout.tsx", [
-          route(
-            ":workspaceSlug/bank-wide-projects",
-            "./(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx"
-          ),
+          route(":workspaceSlug/bank-wide-projects", "./(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx"),
         ]),
       ]),
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [

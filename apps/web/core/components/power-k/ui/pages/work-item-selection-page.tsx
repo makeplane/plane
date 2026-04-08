@@ -52,15 +52,17 @@ export function WorkItemSelectionPage(props: Props) {
     workspaceService
       .fetchWorkspaceRecents(workspaceSlug.toString(), "issue")
       .then((res) =>
-        setRecentIssues(res.map((r: TActivityEntityData) => r.entity_data as TIssueEntityData).slice(0, 10))
+        queueMicrotask(() =>
+          setRecentIssues(res.map((r: TActivityEntityData) => r.entity_data as TIssueEntityData).slice(0, 10))
+        )
       )
-      .catch(() => setRecentIssues([]));
+      .catch(() => queueMicrotask(() => setRecentIssues([])));
   }, [workspaceSlug]);
 
   // Search issues based on search term
   useEffect(() => {
     if (!workspaceSlug || !debouncedSearchTerm) {
-      setIssueResults([]);
+      queueMicrotask(() => setIssueResults([]));
       return;
     }
 
@@ -72,9 +74,9 @@ export function WorkItemSelectionPage(props: Props) {
         ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
       })
       .then((res) => {
-        setIssueResults(res.issue || []);
+        queueMicrotask(() => setIssueResults(res.issue || []));
       })
-      .catch(() => setIssueResults([]));
+      .catch(() => queueMicrotask(() => setIssueResults([])));
   }, [debouncedSearchTerm, workspaceSlug, projectId, isWorkspaceLevel]);
 
   if (!workspaceSlug) return null;

@@ -70,4 +70,4 @@ export const ScheduledJobsTab = observer(() => {
   );
 });
 
-ScheduledJobsTab.displayName = "ScheduledJobsTab";
+(ScheduledJobsTab as any).displayName = "ScheduledJobsTab";

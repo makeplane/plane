@@ -19,7 +19,12 @@ interface DepartmentFormFieldsProps {
  * Renders form fields for creating/editing a department.
  * Extracted from DepartmentFormModal for file-size compliance.
  */
-export const DepartmentFormFields = ({ formData, onChange, departments, editingDepartmentId }: DepartmentFormFieldsProps) => (
+export const DepartmentFormFields = ({
+  formData,
+  onChange,
+  departments,
+  editingDepartmentId,
+}: DepartmentFormFieldsProps) => (
   <>
     <div className="grid grid-cols-2 gap-4">
       <div>

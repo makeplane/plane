@@ -37,10 +37,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
   const { t } = useTranslation();
 
   // auth
-  const canUserCreateModule = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateModule = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <Header>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronRight, Users } from "lucide-react";
 import { cn } from "@plane/utils";
-import type { IOrgChartDepartment } from "@/ce/services/org-chart.service";
+import type { IOrgChartDepartment } from "@/plane-web/services/org-chart.service";
 
 type Props = {
   department: IOrgChartDepartment;
@@ -25,9 +25,7 @@ export function OrgChartNode({ department }: Props) {
           className={cn("flex-shrink-0 p-0.5 rounded transition-transform", hasChildren ? "visible" : "invisible")}
           onClick={() => setIsExpanded((v) => !v)}
         >
-          <ChevronRight
-            className={cn("h-3.5 w-3.5 text-tertiary transition-transform", isExpanded && "rotate-90")}
-          />
+          <ChevronRight className={cn("h-3.5 w-3.5 text-tertiary transition-transform", isExpanded && "rotate-90")} />
         </button>
 
         {/* Department info */}
@@ -44,9 +42,7 @@ export function OrgChartNode({ department }: Props) {
               )}
             </div>
             {department.manager_detail && (
-              <p className="text-xs text-tertiary mt-0.5">
-                Manager: {department.manager_detail.display_name}
-              </p>
+              <p className="text-xs text-tertiary mt-0.5">Manager: {department.manager_detail.display_name}</p>
             )}
           </div>
           <div className="ml-auto flex items-center gap-1 flex-shrink-0 text-tertiary">

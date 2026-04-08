@@ -98,7 +98,13 @@ export const StaffActionButtons = observer(function StaffActionButtons({ staffId
         )}
       </div>
 
-      <Button variant="secondary" size="sm" onClick={() => void handleDeactivate()} disabled={isLoading} title="Deactivate">
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => void handleDeactivate()}
+        disabled={isLoading}
+        title="Deactivate"
+      >
         <UserMinus className="w-3.5 h-3.5" />
       </Button>
 

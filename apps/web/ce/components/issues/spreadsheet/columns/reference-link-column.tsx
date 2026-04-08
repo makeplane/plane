@@ -29,11 +29,7 @@ export const SpreadsheetReferenceLinkColumn = observer(function SpreadsheetRefer
           void (async () => {
             try {
               if (workspaceSlug && issue.project_id && issue.id) {
-                const fetched = await issueDetail.link.fetchLinks(
-                  workspaceSlug.toString(),
-                  issue.project_id,
-                  issue.id
-                );
+                const fetched = await issueDetail.link.fetchLinks(workspaceSlug.toString(), issue.project_id, issue.id);
                 setLinks(fetched);
               }
             } catch {

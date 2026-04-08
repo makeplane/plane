@@ -16,7 +16,10 @@ const MAX_FILE_MB = 5;
 
 async function downloadTemplate() {
   const XLSX = await import("xlsx");
-  const sheet = XLSX.utils.aoa_to_sheet([["code", "workspace_slug"], ["DEPT001", "my-workspace"]]);
+  const sheet = XLSX.utils.aoa_to_sheet([
+    ["code", "workspace_slug"],
+    ["DEPT001", "my-workspace"],
+  ]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, sheet, "BulkLink");
   XLSX.writeFile(wb, "bulk-link-template.xlsx");
@@ -48,11 +51,20 @@ export function BulkLinkModal({ open, onClose }: Props) {
     setResult(null);
     setFileName("");
     if (!file) return;
-    if (!/\.(xlsx|xls|aaa)$/i.test(file.name)) { setFileError("Only .xlsx/.xls/.aaa files accepted."); return; }
-    if (file.size > MAX_FILE_MB * 1024 * 1024) { setFileError(`Max ${MAX_FILE_MB} MB.`); return; }
+    if (!/\.(xlsx|xls|aaa)$/i.test(file.name)) {
+      setFileError("Only .xlsx/.xls/.aaa files accepted.");
+      return;
+    }
+    if (file.size > MAX_FILE_MB * 1024 * 1024) {
+      setFileError(`Max ${MAX_FILE_MB} MB.`);
+      return;
+    }
     try {
       const parsed = await parseFile(file);
-      if (parsed.length > MAX_ROWS) { setFileError(`Max ${MAX_ROWS} rows (got ${parsed.length}).`); return; }
+      if (parsed.length > MAX_ROWS) {
+        setFileError(`Max ${MAX_ROWS} rows (got ${parsed.length}).`);
+        return;
+      }
       setRows(parsed);
       setFileName(file.name);
     } catch {
@@ -107,7 +119,13 @@ export function BulkLinkModal({ open, onClose }: Props) {
         </button>
 
         <div className="space-y-1">
-          <input ref={fileRef} type="file" accept=".xlsx,.xls,.aaa" onChange={(e) => void handleFile(e)} className="hidden" />
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".xlsx,.xls,.aaa"
+            onChange={(e) => void handleFile(e)}
+            className="hidden"
+          />
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
@@ -138,9 +156,7 @@ export function BulkLinkModal({ open, onClose }: Props) {
               </tbody>
             </table>
             {rows.length > 10 && (
-              <p className="px-3 py-1 text-xs text-tertiary border-t border-subtle">
-                Showing 10 of {rows.length} rows
-              </p>
+              <p className="px-3 py-1 text-xs text-tertiary border-t border-subtle">Showing 10 of {rows.length} rows</p>
             )}
           </div>
         )}
@@ -157,7 +173,8 @@ export function BulkLinkModal({ open, onClose }: Props) {
               <ul className="space-y-0.5 max-h-28 overflow-y-auto">
                 {result.skipped.map((s, i) => (
                   <li key={i} className="text-xs text-danger-primary">
-                    Row {s.row}{s.code ? ` (${s.code})` : ""}: {s.reason}
+                    Row {s.row}
+                    {s.code ? ` (${s.code})` : ""}: {s.reason}
                   </li>
                 ))}
               </ul>
@@ -166,7 +183,9 @@ export function BulkLinkModal({ open, onClose }: Props) {
         )}
 
         <div className="flex justify-end gap-2 pt-1">
-          <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            Close
+          </Button>
           <Button
             variant="primary"
             size="sm"

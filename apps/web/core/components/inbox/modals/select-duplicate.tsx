@@ -57,14 +57,14 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
 
-    setIsSearching(true);
+    queueMicrotask(() => setIsSearching(true));
     projectService
       .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
         search: debouncedSearchTerm,
         workspace_search: false,
       })
-      .then((res: ISearchIssueResponse[]) => setIssues(res))
-      .finally(() => setIsSearching(false));
+      .then((res: ISearchIssueResponse[]) => queueMicrotask(() => setIssues(res)))
+      .finally(() => queueMicrotask(() => setIsSearching(false)));
   }, [debouncedSearchTerm, isOpen, projectId, workspaceSlug]);
 
   const filteredIssues = issues.filter((issue) => issue.id !== issueId);

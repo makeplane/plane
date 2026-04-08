@@ -32,7 +32,14 @@ export const ColorPresetSelector = ({ selectedPreset, onChange }: ColorPresetSel
           ))}
         </div>
         <div className="flex-1">
-          <div className={cn("font-medium transition-colors", selectedPreset === preset.id ? "text-accent-primary" : "text-primary")}>{preset.name}</div>
+          <div
+            className={cn(
+              "font-medium transition-colors",
+              selectedPreset === preset.id ? "text-accent-primary" : "text-primary"
+            )}
+          >
+            {preset.name}
+          </div>
           <div className="text-xs text-tertiary">{preset.description}</div>
         </div>
       </button>

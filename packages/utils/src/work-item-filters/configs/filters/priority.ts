@@ -8,7 +8,12 @@
 import type { TIssuePriorities } from "@plane/constants";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import type { TFilterProperty, TSupportedOperators } from "@plane/types";
-import { EQUALITY_OPERATOR, COLLECTION_OPERATOR, EXTENDED_COLLECTION_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
+import {
+  EQUALITY_OPERATOR,
+  COLLECTION_OPERATOR,
+  EXTENDED_COLLECTION_OPERATOR,
+  EXTENDED_EQUALITY_OPERATOR,
+} from "@plane/types";
 // local imports
 import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
 import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";

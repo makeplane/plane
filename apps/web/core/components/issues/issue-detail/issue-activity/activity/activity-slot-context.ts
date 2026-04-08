@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { createContext  } from "react";
-import type {ReactNode} from "react";
+import { createContext } from "react";
+import type { ReactNode } from "react";
 
 /** Context to pass actionSlot from IssueActivityItem → IssueActivityBlockComponent
  *  without modifying all intermediate action components. */

@@ -8,7 +8,6 @@ from django.db.models import Q
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 # Module imports
 from plane.app.permissions import WorkSpaceBasePermission, allow_permission, ROLE

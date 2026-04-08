@@ -82,8 +82,8 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
             </div>
             <div>
               <p className="text-13 text-secondary mb-2">
-                For final confirmation, type{" "}
-                <span className="font-medium text-primary">delete my workspace</span> below.
+                For final confirmation, type <span className="font-medium text-primary">delete my workspace</span>{" "}
+                below.
               </p>
               <input
                 type="text"

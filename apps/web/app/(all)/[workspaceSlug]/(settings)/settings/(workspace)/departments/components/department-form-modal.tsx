@@ -74,15 +74,27 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
     try {
       if (department) {
         await departmentService.updateDepartment(workspaceSlug, department.id, formData as IDepartmentUpdate);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Department updated", message: "Department has been updated successfully." });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Department updated",
+          message: "Department has been updated successfully.",
+        });
       } else {
         await departmentService.createDepartment(workspaceSlug, formData);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Department created", message: "Department has been created successfully." });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Department created",
+          message: "Department has been created successfully.",
+        });
       }
       onSuccess();
       onClose();
     } catch (error: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: error?.message || "Something went wrong. Please try again." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: error?.message || "Something went wrong. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }

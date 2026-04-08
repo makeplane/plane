@@ -4,15 +4,16 @@
 
 ### Môi trường thực tế
 
-| Môi trường | IP | Branch | Mô tả |
-|-----------|-----|--------|-------|
-| **Test (Staging)** | `10.94.232.123` | `develop` | Kiểm thử nội bộ |
-| **Production** | `10.94.125.86` | `preview` | Vận hành chính thức |
-| **GitLab nội bộ** | Mạng internal | — | Không có Internet |
-| **Máy Dev** | Máy cá nhân | — | Có Internet, viết code |
-| **Máy Internal** | Mạng nội bộ SHB | — | Cầu nối giữa Dev ↔ GitLab |
+| Môi trường         | IP              | Branch    | Mô tả                     |
+| ------------------ | --------------- | --------- | ------------------------- |
+| **Test (Staging)** | `10.94.232.123` | `develop` | Kiểm thử nội bộ           |
+| **Production**     | `10.94.125.86`  | `preview` | Vận hành chính thức       |
+| **GitLab nội bộ**  | Mạng internal   | —         | Không có Internet         |
+| **Máy Dev**        | Máy cá nhân     | —         | Có Internet, viết code    |
+| **Máy Internal**   | Mạng nội bộ SHB | —         | Cầu nối giữa Dev ↔ GitLab |
 
 ### Ràng buộc
+
 - ❌ Các server **không có Internet** (air-gapped)
 - ❌ GitLab nội bộ **không có Internet** → không thể pull Docker images từ Docker Hub
 - ❌ GitLab Runner **không thể pull** `node:22-alpine`, `python:3.12-slim` từ bên ngoài
@@ -49,21 +50,21 @@ flowchart LR
 
 Các services này **ít hoặc không thay đổi** → build 1 lần trên Máy Dev, transfer tar.gz vào server, xong.
 
-| Service | Image | Dockerfile | Lý do không đổi |
-|---------|-------|-----------|-----------------|
-| Space | `plane-space` | `apps/space/Dockerfile.space` | Portal chia sẻ công khai, hầu như không custom |
-| Live | `plane-live` | `apps/live/Dockerfile.live` | WebSocket server, core không đổi |
-| Proxy | `plane-proxy` | `apps/proxy/Dockerfile.ce` | Caddy config cố định |
+| Service | Image         | Dockerfile                    | Lý do không đổi                                |
+| ------- | ------------- | ----------------------------- | ---------------------------------------------- |
+| Space   | `plane-space` | `apps/space/Dockerfile.space` | Portal chia sẻ công khai, hầu như không custom |
+| Live    | `plane-live`  | `apps/live/Dockerfile.live`   | WebSocket server, core không đổi               |
+| Proxy   | `plane-proxy` | `apps/proxy/Dockerfile.ce`    | Caddy config cố định                           |
 
 ### Nhóm 2: Dynamic (CI/CD tự động qua GitLab)
 
 Các services này **thay đổi thường xuyên** theo yêu cầu nghiệp vụ SHB → cần CI/CD.
 
-| Service | Image | Dockerfile | Build Context |
-|---------|-------|-----------|---------------|
-| **Web** (Frontend) | `plane-frontend` | `apps/web/Dockerfile.web` | `.` (root) |
-| **Admin** (God Mode) | `plane-admin` | `apps/admin/Dockerfile.admin` | `.` (root) |
-| **API** (Backend) | `plane-backend` | `apps/api/Dockerfile.api` | `./apps/api` |
+| Service              | Image            | Dockerfile                    | Build Context |
+| -------------------- | ---------------- | ----------------------------- | ------------- |
+| **Web** (Frontend)   | `plane-frontend` | `apps/web/Dockerfile.web`     | `.` (root)    |
+| **Admin** (God Mode) | `plane-admin`    | `apps/admin/Dockerfile.admin` | `.` (root)    |
+| **API** (Backend)    | `plane-backend`  | `apps/api/Dockerfile.api`     | `./apps/api`  |
 
 > **Lưu ý**: `worker`, `beat-worker`, `migrator` đều dùng chung image `plane-backend` → build API 1 lần = có cả 4 services backend.
 
@@ -112,6 +113,7 @@ cd /path/to/plane
 ```
 
 Script sẽ tạo:
+
 ```
 dist/
 ├── .shb-version                       # Tag: shb_v1.2.0
@@ -130,6 +132,7 @@ dist/
 ```
 
 Tạo thư mục `deploy/` chứa mọi thứ cần copy vào server:
+
 ```
 deploy/
 ├── docker-compose.shb.yml    # Override file (chỉ đổi image tags)
@@ -634,6 +637,7 @@ flowchart LR
 ```
 
 **Rollback nhanh** (quay về bản deploy trước):
+
 ```bash
 ssh user@10.94.125.86
 cd /opt/plane
@@ -671,11 +675,11 @@ graph TD
     style CI fill:#e94560,color:#fff
 ```
 
-| File | Nội dung | Ai tạo | Bao giờ thay đổi |
-|------|---------|--------|-------------------|
-| `docker-compose.yaml` | Base config: tất cả services, volumes, networks, infra | plane-selfhost installer | Hiếm khi |
-| `docker-compose.shb.yml` | Override **6 images** → tag `shb_v1.2.0` | `build-shb-images.sh` (lần đầu) | Khi upgrade toàn bộ |
-| `docker-compose.ci.yml` | Override **3 images** (web, admin, api) → tag commit SHA | GitLab CI/CD pipeline | Mỗi lần deploy |
+| File                     | Nội dung                                                 | Ai tạo                          | Bao giờ thay đổi    |
+| ------------------------ | -------------------------------------------------------- | ------------------------------- | ------------------- |
+| `docker-compose.yaml`    | Base config: tất cả services, volumes, networks, infra   | plane-selfhost installer        | Hiếm khi            |
+| `docker-compose.shb.yml` | Override **6 images** → tag `shb_v1.2.0`                 | `build-shb-images.sh` (lần đầu) | Khi upgrade toàn bộ |
+| `docker-compose.ci.yml`  | Override **3 images** (web, admin, api) → tag commit SHA | GitLab CI/CD pipeline           | Mỗi lần deploy      |
 
 > Layer 2 (`ci.yml`) override Layer 1 (`shb.yml`) cho 3 services dynamic. Space, live, proxy vẫn giữ tag từ Layer 1.
 
@@ -691,12 +695,12 @@ graph TD
 
 ### 7.2. CI/CD Variables (Settings → CI/CD → Variables)
 
-| Biến | Mô tả | Masked | Protected |
-|------|-------|--------|-----------|
-| `SSH_PRIVATE_KEY` | SSH key → server Test | ✅ | ✅ |
-| `SSH_USER` | User SSH server Test (vd: `ubuntu`) | ❌ | ✅ |
-| `SSH_PRIVATE_KEY_PROD` | SSH key → server Prod | ✅ | ✅ |
-| `SSH_USER_PROD` | User SSH server Prod | ❌ | ✅ |
+| Biến                   | Mô tả                               | Masked | Protected |
+| ---------------------- | ----------------------------------- | ------ | --------- |
+| `SSH_PRIVATE_KEY`      | SSH key → server Test               | ✅     | ✅        |
+| `SSH_USER`             | User SSH server Test (vd: `ubuntu`) | ❌     | ✅        |
+| `SSH_PRIVATE_KEY_PROD` | SSH key → server Prod               | ✅     | ✅        |
+| `SSH_USER_PROD`        | User SSH server Prod                | ❌     | ✅        |
 
 ### 7.3. SSH Keys Setup
 
@@ -747,14 +751,137 @@ gantt
 
 ## 9. Tổng kết
 
-| Hạng mục | Chi tiết |
-|---------|---------|
-| **Deploy lần đầu** | 6 images, thủ công, dùng scripts có sẵn (`build-shb-images.sh` + `deploy-shb.sh`) |
-| **CI/CD sau đó** | Chỉ 3 images: `plane-frontend`, `plane-admin`, `plane-backend` |
-| **Lint** | 4 frontend jobs (format, build, lint, types) + 1 backend job (ruff) |
-| **Test** | pytest cho Django API (cần PostgreSQL + Redis service) |
-| **Build** | Export tar.gz (air-gapped, không dùng registry) |
-| **Deploy Test** | Tự động khi merge vào `develop` → SCP + deploy trên `10.94.232.123` |
-| **Deploy Prod** | Manual approve khi merge vào `preview` → SCP + deploy trên `10.94.125.86` |
-| **Rollback** | Đổi image tag trong `docker-compose.ci.yml` → restart |
-| **Static services** | space, live, proxy — chỉ update khi upgrade version lớn |
+| Hạng mục            | Chi tiết                                                                          |
+| ------------------- | --------------------------------------------------------------------------------- |
+| **Deploy lần đầu**  | 6 images, thủ công, dùng scripts có sẵn (`build-shb-images.sh` + `deploy-shb.sh`) |
+| **CI/CD sau đó**    | Chỉ 3 images: `plane-frontend`, `plane-admin`, `plane-backend`                    |
+| **Lint**            | 4 frontend jobs (format, build, lint, types) + 1 backend job (ruff)               |
+| **Test**            | pytest cho Django API (cần PostgreSQL + Redis service)                            |
+| **Build**           | Export tar.gz (air-gapped, không dùng registry)                                   |
+| **Deploy Test**     | Tự động khi merge vào `develop` → SCP + deploy trên `10.94.232.123`               |
+| **Deploy Prod**     | Manual approve khi merge vào `preview` → SCP + deploy trên `10.94.125.86`         |
+| **Rollback**        | Đổi image tag trong `docker-compose.ci.yml` → restart                             |
+| **Static services** | space, live, proxy — chỉ update khi upgrade version lớn                           |
+
+---
+
+## Validation Log
+
+### Session 1 — 2026-04-03
+
+**Trigger:** `/ck:plan validate` pre-implementation interview
+**Questions asked:** 5
+
+#### Questions & Answers
+
+1. **[Architecture]** Runner executor: Shell Executor được recommend nhưng `backend:test` dùng `services:` (postgres, valkey) chỉ chạy được với Docker Executor — sẽ dùng setup nào?
+   - Options: Shell + local services | Docker Executor + preload | Two runners | Skip backend tests
+   - **Answer:** Shell Executor + install PostgreSQL + Valkey trực tiếp trên Runner machine, xóa `services:` khỏi `backend:test`
+   - **Rationale:** `services:` keyword không tương thích với Shell Executor — giữ nguyên `services:` sẽ làm CI fail. Cần sửa `backend:test` để kết nối PostgreSQL/Valkey local.
+
+2. **[Risks]** `$DEPLOY_SCRIPT` trong deploy jobs là YAML anchor (inline text), không phải biến shell trên remote server — remote shell sẽ thấy biến rỗng. Cách invoke deploy script từ xa?
+   - Options: SCP script → SSH execute | Pre-install trên servers | Heredoc via SSH
+   - **Answer:** SCP inline script thành file `/tmp/deploy.sh` lên server, sau đó `ssh user@server bash /tmp/deploy.sh`
+   - **Rationale:** `$DEPLOY_SCRIPT` không truyền được qua SSH như đang viết. SCP + execute là cách clean và dễ debug nhất.
+
+3. **[Assumptions]** `ruff check --fix` trong CI tự sửa files nhưng không commit lại — violations bị fix silently, job vẫn pass. Có nên bỏ `--fix`?
+   - Options: `ruff check` (no --fix) | `--fix` + git diff check | Giữ nguyên
+   - **Answer:** Đổi thành `ruff check` (không có `--fix`) — fail CI nếu có violation, dev tự fix local
+   - **Rationale:** Standard CI behavior. `--fix` trong CI không có tác dụng vì không commit back.
+
+4. **[Architecture]** Mỗi pipeline build tạo ~1GB tar.gz artifacts với expiry 3 ngày — có thể đầy disk GitLab nếu deploy nhiều lần/ngày.
+   - Options: 1-day expiry | Giữ 3 ngày, monitor | Skip GitLab artifacts
+   - **Answer:** Giảm xuống 1 ngày (1 day expiry)
+   - **Rationale:** Sau khi deploy xong, artifacts không cần thiết nữa. 1 ngày đủ để retry nếu cần.
+
+5. **[Scope]** Không có quy trình documented cho việc update static services (space, live, proxy) khi upgrade version lớn.
+   - Options: Re-run manual scripts | Add manual CI job | Write runbook doc
+   - **Answer:** Re-run `build-shb-images.sh` + `prepare-deploy-package.sh` + `deploy-shb.sh` thủ công — chấp nhận là thao tác hiếm gặp
+   - **Rationale:** Upgrade version lớn hiếm, script đã có sẵn. Thêm note vào plan là đủ.
+
+#### Confirmed Decisions
+
+- **Runner**: Shell Executor, cài postgres + valkey local, xóa `services:` trong `backend:test`
+- **Deploy invocation**: SCP script → SSH execute (không dùng YAML anchor làm env var)
+- **Ruff lint**: `ruff check` (no `--fix`)
+- **Artifacts expiry**: 1 ngày thay vì 3 ngày
+- **Static upgrade**: Re-run manual scripts, thêm note vào Section 3
+
+#### Action Items
+
+- [ ] Sửa `backend:test`: xóa `services:`, thay bằng kết nối PostgreSQL/Valkey local (`localhost`)
+- [ ] Sửa `deploy:test` và `deploy:production`: SCP inline script thành file, rồi SSH execute
+- [ ] Sửa `backend:lint`: đổi `ruff check --fix` → `ruff check`
+- [ ] Sửa `build:web/admin/api`: đổi `expire_in: 3 days` → `expire_in: 1 day`
+- [ ] Thêm note ở Section 3: cách re-run khi cần update static services
+
+#### Impact on Phases
+
+- **Section 4.2 (Runner setup)**: Confirm Shell Executor, document cài postgres + valkey local
+- **Section 4.3 (.gitlab-ci.yml)**: 4 chỗ cần sửa (backend:test, deploy scripts, ruff, artifacts expiry)
+- **Section 3 (Deploy lần đầu)**: Thêm note về quy trình upgrade static services sau này
+
+---
+
+### Session 2 — 2026-04-03
+
+**Trigger:** Test trên external GitLab (gitlab.com) trước khi đưa vào GitLab nội bộ air-gapped
+**Questions asked:** 6
+
+#### Questions & Answers
+
+1. **[Architecture]** External GitLab là gì? Runner sẽ chạy ở đâu?
+   - Options: gitlab.com + shared runner | gitlab.com + self-hosted runner | Self-hosted GitLab bên ngoài
+   - **Answer:** gitlab.com + self-hosted runner
+   - **Rationale:** Self-hosted runner gần hơn với setup nội bộ (cùng machine config), nhưng vẫn có internet để pull Docker images. Đây là môi trường test tốt nhất để validate pipeline trước khi adapt cho air-gapped.
+
+2. **[Scope]** Stage nào cần chạy trên external GitLab?
+   - Options: Lint | Backend test (pytest) | Build (tar.gz) | Deploy (SSH)
+   - **Answer:** Tất cả 4 stages
+   - **Rationale:** Test full pipeline end-to-end trên external trước — nếu tất cả pass, adapt cho internal sẽ chỉ là thay đổi runner config và biến môi trường.
+
+3. **[Assumptions]** Session 1 action items đã apply chưa?
+   - Options: Chưa apply — sẽ apply khi implement | Đã apply một phần | Chưa apply — test file gốc trước
+   - **Answer:** Chưa apply — sẽ apply khi bắt đầu implement
+   - **Rationale:** Apply Session 1 fixes trước (baseline clean), sau đó thêm Session 2 changes (external GitLab support). Không test file gốc có bugs đã biết.
+
+4. **[Architecture]** `backend:test` strategy: external (Docker Executor, có internet) vs internal (Shell Executor, air-gapped)?
+   - Options: services: trên external, xóa services: cho internal | Một config duy nhất không dùng services: | services: cho cả hai
+   - **Answer:** Dùng `services:` trên external, xóa `services:` cho internal
+   - **Rationale:** Tận dụng Docker Executor của self-hosted runner trên external. Khi chuyển sang internal, chỉ cần toggle `IS_AIRGAPPED=true` để skip `services:` block.
+
+5. **[Architecture]** Deploy target cho external test?
+   - Options: Server nội bộ 10.94.232.123 (nếu có VPN) | VPS/cloud tạm thời | Skip deploy stage
+   - **Answer:** VPS/cloud tạm thời
+   - **Rationale:** Runner self-hosted có internet → dùng VPS làm deploy target để test SSH + SCP flow đầy đủ mà không cần access vào mạng SHB.
+
+6. **[Architecture]** Quản lý config cho 2 môi trường?
+   - Options: Một .gitlab-ci.yml với `$IS_AIRGAPPED` variable | Hai file riêng | Branch riêng cho external config
+   - **Answer:** Một file `.gitlab-ci.yml` duy nhất với `$IS_AIRGAPPED` CI variable
+   - **Rationale:** DRY — một file duy nhất, behavior phân nhánh qua variable. Khi push vào internal GitLab chỉ cần set `IS_AIRGAPPED=true` trong CI/CD Variables.
+
+#### Confirmed Decisions
+
+- **External GitLab**: gitlab.com + self-hosted runner (Docker enabled, có internet)
+- **Test scope**: Full pipeline — lint + test + build + deploy
+- **backend:test**: Dùng `services: [postgres, valkey]` khi `IS_AIRGAPPED=false`, localhost khi `true`
+- **Deploy target external**: VPS tạm thời (SSH từ runner tới VPS)
+- **Config**: Single `.gitlab-ci.yml` với `IS_AIRGAPPED` toggle variable
+- **Order**: Apply Session 1 fixes trước → thêm `IS_AIRGAPPED` logic → test external
+
+#### Action Items
+
+- [ ] Apply tất cả Session 1 fixes trước (5 items: backend:test, deploy script, ruff, artifacts expiry, static note)
+- [ ] Thêm `IS_AIRGAPPED` variable vào `variables:` block (default `"false"`)
+- [ ] Sửa `backend:test`: thêm conditional — nếu `IS_AIRGAPPED=false` dùng `services:`, nếu `true` dùng localhost connection
+- [ ] Setup SSH key auth trên VPS `161.118.223.149` (user: ubuntu): generate key pair trên runner, copy public key vào VPS `~/.ssh/authorized_keys`
+- [ ] Thêm VPS SSH credentials vào gitlab.com CI/CD Variables: `VPS_HOST=161.118.223.149`, `VPS_USER=ubuntu`, `VPS_SSH_KEY` (private key)
+- [ ] Thêm `deploy:external-test` job (SSH vào VPS) chạy khi `IS_AIRGAPPED=false`
+- [ ] Cài self-hosted runner trên gitlab.com với Docker enabled (để `services:` hoạt động)
+- [ ] Sau khi pipeline xanh trên external → set `IS_AIRGAPPED=true` trên internal GitLab variables
+
+#### Impact on Phases
+
+- **Section 4.2 (Runner setup)**: Document 2 runner configs — external (Docker Executor) vs internal (Shell Executor)
+- **Section 4.3 (.gitlab-ci.yml)**: Thêm `IS_AIRGAPPED` toggle, `deploy:external-test` job, conditional services block
+- **Section 7.2 (CI/CD Variables)**: Thêm `IS_AIRGAPPED`, `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` vào bảng variables

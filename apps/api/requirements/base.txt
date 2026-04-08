@@ -72,4 +72,4 @@ drf-spectacular==0.28.0
 # html sanitizer
 nh3==0.2.18
 # ldap authentication
-ldap3>=2.9.1
+python-ldap>=3.4.0

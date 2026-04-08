@@ -44,10 +44,11 @@ const StaffSettingsPage = observer(function StaffSettingsPage() {
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  const { data: staffList, isLoading, mutate } = useSWR(
-    workspaceSlug ? `STAFF_LIST_${workspaceSlug}` : null,
-    () => staffService.getStaffList(workspaceSlug)
-  );
+  const {
+    data: staffList,
+    isLoading,
+    mutate,
+  } = useSWR(workspaceSlug ? `STAFF_LIST_${workspaceSlug}` : null, () => staffService.getStaffList(workspaceSlug));
 
   const { data: stats } = useSWR(workspaceSlug ? `STAFF_STATS_${workspaceSlug}` : null, () =>
     staffService.getStats(workspaceSlug)
@@ -68,9 +69,17 @@ const StaffSettingsPage = observer(function StaffSettingsPage() {
     return matchesSearch && matchesDepartment && matchesStatus;
   });
 
-  const handleAddStaff = () => { setEditingStaff(undefined); setIsFormModalOpen(true); };
-  const handleEditStaff = (s: IStaff) => { setEditingStaff(s); setIsFormModalOpen(true); };
-  const handleFormSuccess = () => { mutate(); };
+  const handleAddStaff = () => {
+    setEditingStaff(undefined);
+    setIsFormModalOpen(true);
+  };
+  const handleEditStaff = (s: IStaff) => {
+    setEditingStaff(s);
+    setIsFormModalOpen(true);
+  };
+  const handleFormSuccess = () => {
+    mutate();
+  };
 
   const handleExport = async () => {
     try {
@@ -83,9 +92,17 @@ const StaffSettingsPage = observer(function StaffSettingsPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Export successful", message: "Staff data has been exported successfully." });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export successful",
+        message: "Staff data has been exported successfully.",
+      });
     } catch (error: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Export failed", message: error?.message || "Failed to export staff data." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Export failed",
+        message: error?.message || "Failed to export staff data.",
+      });
     }
   };
 
@@ -103,7 +120,12 @@ const StaffSettingsPage = observer(function StaffSettingsPage() {
             <Button variant="secondary" size="sm" onClick={handleExport} className="flex items-center gap-2">
               <Download className="h-4 w-4" /> Export CSV
             </Button>
-            <Button variant="secondary" size="sm" onClick={() => setIsImportModalOpen(true)} className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center gap-2"
+            >
               <Upload className="h-4 w-4" /> Import CSV
             </Button>
             <Button variant="primary" size="sm" onClick={handleAddStaff} className="flex items-center gap-2">
@@ -116,16 +138,33 @@ const StaffSettingsPage = observer(function StaffSettingsPage() {
 
         <div className="flex items-center gap-3">
           <div className="flex-1">
-            <Input id="search" placeholder="Search by staff ID, name, or email..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <Input
+              id="search"
+              placeholder="Search by staff ID, name, or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
           <div className="w-48">
-            <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm">
+            <select
+              value={departmentFilter}
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+              className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
+            >
               <option value="">All Departments</option>
-              {departments?.map((dept) => (<option key={dept.id} value={dept.id}>{dept.name}</option>))}
+              {departments?.map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="w-40">
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
+            >
               <option value="">All Status</option>
               <option value="active">Active</option>
               <option value="probation">Probation</option>
@@ -137,14 +176,34 @@ const StaffSettingsPage = observer(function StaffSettingsPage() {
         </div>
 
         {isLoading ? (
-          <Loader className="space-y-4"><Loader.Item height="60px" /><Loader.Item height="60px" /><Loader.Item height="60px" /></Loader>
+          <Loader className="space-y-4">
+            <Loader.Item height="60px" />
+            <Loader.Item height="60px" />
+            <Loader.Item height="60px" />
+          </Loader>
         ) : (
-          <StaffTable staff={filteredStaff || []} workspaceSlug={workspaceSlug} onEdit={handleEditStaff} onDelete={mutate} />
+          <StaffTable
+            staff={filteredStaff || []}
+            workspaceSlug={workspaceSlug}
+            onEdit={handleEditStaff}
+            onDelete={mutate}
+          />
         )}
       </div>
 
-      <StaffFormModal workspaceSlug={workspaceSlug} staff={editingStaff} isOpen={isFormModalOpen} onClose={() => setIsFormModalOpen(false)} onSuccess={handleFormSuccess} />
-      <StaffImportModal workspaceSlug={workspaceSlug} isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onSuccess={handleFormSuccess} />
+      <StaffFormModal
+        workspaceSlug={workspaceSlug}
+        staff={editingStaff}
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSuccess={handleFormSuccess}
+      />
+      <StaffImportModal
+        workspaceSlug={workspaceSlug}
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSuccess={handleFormSuccess}
+      />
     </SettingsContentWrapper>
   );
 });

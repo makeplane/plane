@@ -1,4 +1,4 @@
-import type { IOrgChartDepartment } from "@/ce/services/org-chart.service";
+import type { IOrgChartDepartment } from "@/plane-web/services/org-chart.service";
 import { OrgChartNode } from "./org-chart-node";
 
 type Props = {

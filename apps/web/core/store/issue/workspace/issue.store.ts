@@ -115,15 +115,30 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       if (issueFilters?.displayFilters?.show_archived && params) {
         params.include_archived = true;
       }
-      console.log("[ARCHIVED-DEBUG] show_archived =", issueFilters?.displayFilters?.show_archived, "| include_archived =", params?.include_archived, "| caller:", new Error().stack?.split("\n")[2]?.trim());
+      console.log(
+        "[ARCHIVED-DEBUG] show_archived =",
+        issueFilters?.displayFilters?.show_archived,
+        "| include_archived =",
+        params?.include_archived,
+        "| caller:",
+        new Error().stack?.split("\n")[2]?.trim()
+      );
       // call the fetch issues API with the params
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      const resultIds = Array.isArray(response?.results) ? response.results.map((i: any) => i.id) : Object.keys(response?.results || {});
-      console.log("[ARCHIVED-DEBUG] API returned", response?.total_count, "issues. Result IDs:", resultIds.length, resultIds);
+      const resultIds = Array.isArray(response?.results)
+        ? response.results.map((i: any) => i.id)
+        : Object.keys(response?.results || {});
+      console.log(
+        "[ARCHIVED-DEBUG] API returned",
+        response?.total_count,
+        "issues. Result IDs:",
+        resultIds.length,
+        resultIds
+      );
       this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
       console.log("[ARCHIVED-DEBUG] groupedIssueIds count:", Object.values(this.groupedIssueIds || {}).flat().length);
       return response;

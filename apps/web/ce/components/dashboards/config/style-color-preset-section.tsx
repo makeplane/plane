@@ -23,9 +23,7 @@ export function StyleColorPresetSection({ control, showFillOpacity }: StyleColor
     <>
       {/* Color preset */}
       <div>
-        <span className="mb-2 block text-sm font-medium text-secondary">
-          {t("analytics_dashboard.color_preset")}
-        </span>
+        <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.color_preset")}</span>
         <Controller
           name="config.color_preset"
           control={control}
@@ -41,9 +39,7 @@ export function StyleColorPresetSection({ control, showFillOpacity }: StyleColor
       {/* Fill opacity slider */}
       {showFillOpacity && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-secondary">
-            {t("analytics_dashboard.fill_opacity")}
-          </span>
+          <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.fill_opacity")}</span>
           <Controller
             name="config.fill_opacity"
             control={control}

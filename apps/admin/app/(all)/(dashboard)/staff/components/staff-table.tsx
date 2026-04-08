@@ -31,9 +31,7 @@ export const StaffTable = observer(function StaffTable({ onEdit }: Props) {
   }
 
   if (staffIds.length === 0) {
-    return (
-      <div className="text-center py-12 text-tertiary">No staff found.</div>
-    );
+    return <div className="text-center py-12 text-tertiary">No staff found.</div>;
   }
 
   return (
@@ -80,12 +78,7 @@ export const StaffTable = observer(function StaffTable({ onEdit }: Props) {
 
       {hasNextPage && (
         <div className="flex justify-center pt-2">
-          <Button
-            variant="link"
-            size="lg"
-            onClick={() => void fetchNextStaff()}
-            disabled={loader === "pagination"}
-          >
+          <Button variant="link" size="lg" onClick={() => void fetchNextStaff()} disabled={loader === "pagination"}>
             Load more
             {loader === "pagination" && <LoaderIcon className="w-3 h-3 animate-spin" />}
           </Button>

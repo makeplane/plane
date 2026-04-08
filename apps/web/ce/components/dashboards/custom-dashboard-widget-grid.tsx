@@ -9,17 +9,19 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { Responsive, WidthProvider } from "react-grid-layout";
-import type { Layout, Layouts } from "react-grid-layout";
+import * as ReactGridLayout from "react-grid-layout";
 import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { CustomDashboardWidgetCard } from "./custom-dashboard-widget-card";
 import "react-grid-layout/css/styles.css";
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+type Layout = ReactGridLayout.Layout;
+type LayoutItem = ReactGridLayout.LayoutItem;
 
-/** Convert IDashboardWidget to react-grid-layout Layout item */
-function widgetToLayoutItem(widget: IDashboardWidget): Layout {
+const ResponsiveGridLayout = ReactGridLayout.WidthProvider(ReactGridLayout.Responsive);
+
+/** Convert IDashboardWidget to react-grid-layout LayoutItem */
+function widgetToLayoutItem(widget: IDashboardWidget): LayoutItem {
   return {
     i: widget.id,
     x: widget.x_axis_coord ?? 0,
@@ -60,7 +62,7 @@ export const CustomDashboardWidgetGrid = observer(function CustomDashboardWidget
   }, []);
 
   const handleLayoutChange = useCallback(
-    (currentLayout: Layout[], _allLayouts: Layouts) => {
+    (currentLayout: Layout, _allLayouts: Record<string, Layout>) => {
       if (!isEditMode) return;
 
       // Build position payload from layout
@@ -82,7 +84,7 @@ export const CustomDashboardWidgetGrid = observer(function CustomDashboardWidget
     [isEditMode, workspaceSlug, dashboardId, dashboardStore]
   );
 
-  const layout = widgets.map(widgetToLayoutItem);
+  const layout: Layout = widgets.map(widgetToLayoutItem);
 
   return (
     <ResponsiveGridLayout

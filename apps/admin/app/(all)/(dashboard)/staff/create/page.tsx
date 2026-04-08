@@ -22,7 +22,11 @@ const StaffCreatePage = observer(function StaffCreatePage() {
   const { createStaff } = useInstanceStaff();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<StaffFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<StaffFormValues>({
     defaultValues: {
       staff_id: "",
       first_name: "",
@@ -65,7 +69,11 @@ const StaffCreatePage = observer(function StaffCreatePage() {
       router.push("/staff");
     } catch (err) {
       const error = err as Record<string, string[] | string>;
-      const msg = Array.isArray(error?.email) ? error.email[0] : (typeof error?.detail === "string" ? error.detail : "Failed to create staff");
+      const msg = Array.isArray(error?.email)
+        ? error.email[0]
+        : typeof error?.detail === "string"
+          ? error.detail
+          : "Failed to create staff";
       setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: msg });
     } finally {
       setIsSubmitting(false);
@@ -91,6 +99,8 @@ const StaffCreatePage = observer(function StaffCreatePage() {
   );
 });
 
-export function meta() { return [{ title: "Add Staff - God Mode" }]; }
+export function meta() {
+  return [{ title: "Add Staff - God Mode" }];
+}
 
 export default StaffCreatePage;

@@ -81,25 +81,41 @@ const StaffPage = observer(function StaffPage() {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative flex-1 min-w-[200px] max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-placeholder" />
-            <Input onChange={(e) => handleSearch(e.target.value)} placeholder="Search by name or email..." className="pl-9" />
+            <Input
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search by name or email..."
+              className="pl-9"
+            />
           </div>
           <select
             value={filterStatus}
-            onChange={(e) => { setFilterStatus(e.target.value); handleFilterChange(e.target.value, filterDept); }}
+            onChange={(e) => {
+              setFilterStatus(e.target.value);
+              handleFilterChange(e.target.value, filterDept);
+            }}
             className="rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
           >
             <option value="">All statuses</option>
             {["active", "probation", "resigned", "suspended", "transferred"].map((s) => (
-              <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+              <option key={s} value={s}>
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </option>
             ))}
           </select>
           <select
             value={filterDept}
-            onChange={(e) => { setFilterDept(e.target.value); handleFilterChange(filterStatus, e.target.value); }}
+            onChange={(e) => {
+              setFilterDept(e.target.value);
+              handleFilterChange(filterStatus, e.target.value);
+            }}
             className="rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
           >
             <option value="">All departments</option>
-            {departmentIds.map((id) => <option key={id} value={id}>{departments[id]?.name}</option>)}
+            {departmentIds.map((id) => (
+              <option key={id} value={id}>
+                {departments[id]?.name}
+              </option>
+            ))}
           </select>
           <div className="flex items-center gap-2 ml-auto">
             <Button variant="secondary" size="sm" onClick={() => setImportOpen(true)}>
@@ -128,6 +144,8 @@ const StaffPage = observer(function StaffPage() {
   );
 });
 
-export function meta() { return [{ title: "Staff - God Mode" }]; }
+export function meta() {
+  return [{ title: "Staff - God Mode" }];
+}
 
 export default StaffPage;

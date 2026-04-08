@@ -88,13 +88,23 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
                 skipped.append({"row_number": row_number, "name": name, "slug": "", "reason": "Name is required"})
                 continue
             if len(name) > 80:
-                skipped.append({"row_number": row_number, "name": name, "slug": "", "reason": "Name exceeds 80 characters"})
+                skipped.append({
+                    "row_number": row_number,
+                    "name": name,
+                    "slug": "",
+                    "reason": "Name exceeds 80 characters",
+                })
                 continue
 
             # Auto-generate slug
             slug = _generate_unique_slug(name, existing_slugs)
             if not slug:
-                skipped.append({"row_number": row_number, "name": name, "slug": "", "reason": "Name produces an empty slug (only special characters)"})
+                skipped.append({
+                    "row_number": row_number,
+                    "name": name,
+                    "slug": "",
+                    "reason": "Name produces an empty slug (only special characters)",
+                })
                 continue
 
             try:
@@ -115,10 +125,23 @@ class InstanceWorkspaceBulkCreateEndpoint(BaseAPIView):
                 existing_slugs.add(slug.lower())
                 created.append(WorkspaceSerializer(workspace).data)
             except IntegrityError:
-                skipped.append({"row_number": row_number, "name": name, "slug": slug, "reason": "Workspace slug already exists (concurrent creation)"})
+                skipped.append({
+                    "row_number": row_number,
+                    "name": name,
+                    "slug": slug,
+                    "reason": "Workspace slug already exists (concurrent creation)",
+                })
             except Exception:
-                logger.exception("Workspace bulk create failed for row %s (name=%r)", row_number, name)
-                skipped.append({"row_number": row_number, "name": name, "slug": slug, "reason": "Unexpected error — see server logs"})
+                logger.exception(
+                    "Workspace bulk create failed for row %s (name=%r)",
+                    row_number, name,
+                )
+                skipped.append({
+                    "row_number": row_number,
+                    "name": name,
+                    "slug": slug,
+                    "reason": "Unexpected error — see server logs",
+                })
 
         return Response(
             {

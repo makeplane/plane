@@ -4,7 +4,7 @@
 
 import json
 
-from django.db.models import Sum, F
+from django.db.models import Sum
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -149,7 +149,12 @@ class IssueWorkLogViewSet(BaseViewSet):
         # Check 60-working-day edit window using project timezone
         if not self._check_edit_window(worklog, tz_str=project.timezone):
             return Response(
-                {"error": "This worklog is locked and cannot be edited. Worklogs older than 60 working days are read-only."},
+                {
+                    "error": (
+                        "This worklog is locked and cannot be edited. "
+                        "Worklogs older than 60 working days are read-only."
+                    )
+                },
                 status=status.HTTP_403_FORBIDDEN,
             )
         # Reason is mandatory for edits
@@ -213,7 +218,12 @@ class IssueWorkLogViewSet(BaseViewSet):
         # Check 60-working-day edit window using project timezone
         if not self._check_edit_window(worklog, tz_str=project.timezone):
             return Response(
-                {"error": "This worklog is locked and cannot be deleted. Worklogs older than 60 working days are read-only."},
+                {
+                    "error": (
+                        "This worklog is locked and cannot be deleted. "
+                        "Worklogs older than 60 working days are read-only."
+                    )
+                },
                 status=status.HTTP_403_FORBIDDEN,
             )
         # Reason is mandatory for deletions

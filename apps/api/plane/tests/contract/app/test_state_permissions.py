@@ -4,9 +4,8 @@
 
 import pytest
 from rest_framework import status
-from django.urls import reverse
 
-from plane.db.models import State, Project, ProjectMember, Issue, Workspace, User
+from plane.db.models import State, Project, ProjectMember, Issue, Workspace
 from plane.license.models import Instance, InstanceAdmin
 
 

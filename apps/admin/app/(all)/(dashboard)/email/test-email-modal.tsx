@@ -45,6 +45,7 @@ export function SendTestEmailModal(props: Props) {
       const timer = setTimeout(resetState, 100);
       return () => clearTimeout(timer);
     }
+    return;
   }, [isOpen]);
 
   const handleSubmit = async () => {
@@ -90,9 +91,7 @@ export function SendTestEmailModal(props: Props) {
                 <p>If you still cannot find it, recheck your SMTP configuration and trigger a new test email.</p>
               </div>
             )}
-            {sendEmailStep === ESendEmailSteps.FAILED && (
-              <div className="text-13 text-danger-primary">{error}</div>
-            )}
+            {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13 text-danger-primary">{error}</div>}
           </div>
           <div className="mt-6 flex items-center gap-2 justify-end">
             <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={0}>

@@ -296,10 +296,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 />
               )}
             />
-            <label
-              htmlFor="board_of_director_workspace"
-              className="text-body-sm-medium cursor-pointer"
-            >
+            <label htmlFor="board_of_director_workspace" className="text-body-sm-medium cursor-pointer">
               Board Of Director Workspace
             </label>
           </div>

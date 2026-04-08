@@ -6,7 +6,6 @@
 
 import type { EUserPermissions, IJiraMetadata } from "@plane/types";
 
- 
 const paramsToKey = (params: Record<string, string | undefined>) => {
   const {
     state,
@@ -99,8 +98,7 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_
 // cycles
 export const WORKSPACE_ACTIVE_CYCLES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
   `WORKSPACE_ACTIVE_CYCLES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
- 
- 
+
 export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: Record<string, string | undefined>) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
 

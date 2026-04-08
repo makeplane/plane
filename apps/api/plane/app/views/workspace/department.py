@@ -16,7 +16,6 @@ from plane.app.serializers.department import DepartmentSerializer, DepartmentTre
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import Department, Project, ProjectMember, Workspace
-from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
 

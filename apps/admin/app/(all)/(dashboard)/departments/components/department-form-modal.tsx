@@ -40,8 +40,27 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
   const { departments, departmentIds, createDepartment, updateDepartment } = useInstanceDepartment();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    defaultValues: { name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 65535, is_active: true },
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      code: "",
+      short_name: "",
+      dept_code: "",
+      dept_type: "" as DeptType,
+      description: "",
+      parent: "",
+      level: 0,
+      manager: "",
+      sort_order: 65535,
+      is_active: true,
+    },
   });
 
   const parentId = watch("parent");
@@ -71,7 +90,19 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
         is_active: editDept.is_active,
       });
     } else {
-      reset({ name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 65535, is_active: true });
+      reset({
+        name: "",
+        code: "",
+        short_name: "",
+        dept_code: "",
+        dept_type: "" as DeptType,
+        description: "",
+        parent: "",
+        level: 0,
+        manager: "",
+        sort_order: 65535,
+        is_active: true,
+      });
     }
   }, [editDept, reset]);
 
@@ -110,7 +141,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
               <div className="space-y-1">
                 <label className="text-13 font-medium">Name *</label>
                 <Input {...register("name", { required: "Required" })} placeholder="Department name" />
-                {errors.name && <p className="text-11 text-color-danger-primary">{errors.name.message}</p>}
+                {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
               </div>
               <div className="space-y-1">
                 <label className="text-13 font-medium">Code</label>
@@ -122,24 +153,41 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
               </div>
               <div className="space-y-1">
                 <label className="text-13 font-medium">Dept code (4 digits)</label>
-                <Input {...register("dept_code", { pattern: { value: /^\d{4}$/, message: "Must be 4 digits" } })} placeholder="0001" />
-                {errors.dept_code && <p className="text-11 text-color-danger-primary">{errors.dept_code.message}</p>}
+                <Input
+                  {...register("dept_code", { pattern: { value: /^\d{4}$/, message: "Must be 4 digits" } })}
+                  placeholder="0001"
+                />
+                {errors.dept_code && <p className="text-11 text-danger-primary">{errors.dept_code.message}</p>}
               </div>
               <div className="space-y-1">
                 <label className="text-13 font-medium">Dept Type</label>
-                <select {...register("dept_type")} className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13">
+                <select
+                  {...register("dept_type")}
+                  className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
+                >
                   <option value="">— Select type —</option>
-                  {DEPT_TYPE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                  {DEPT_TYPE_OPTIONS.map((o) => (
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
             <div className="space-y-1">
               <label className="text-13 font-medium">Parent department</label>
-              <select {...register("parent")} className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13">
+              <select
+                {...register("parent")}
+                className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
+              >
                 <option value="">— None (top level) —</option>
-                {departmentIds.filter((id) => id !== editDept?.id).map((id) => (
-                  <option key={id} value={id}>{departments[id]?.name}</option>
-                ))}
+                {departmentIds
+                  .filter((id) => id !== editDept?.id)
+                  .map((id) => (
+                    <option key={id} value={id}>
+                      {departments[id]?.name}
+                    </option>
+                  ))}
               </select>
             </div>
             <div className="space-y-1">
@@ -157,7 +205,9 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="secondary" onClick={onClose} type="button">Cancel</Button>
+              <Button variant="secondary" onClick={onClose} type="button">
+                Cancel
+              </Button>
               <Button variant="primary" type="submit" loading={isSubmitting}>
                 {editDept ? "Save changes" : "Create"}
               </Button>

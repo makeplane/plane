@@ -95,7 +95,7 @@ export function IssueCommentToolbar(props: Props) {
   useEffect(() => {
     if (!editorRef) return;
     const unsubscribe = editorRef.onStateChange(updateActiveStates);
-    updateActiveStates();
+    queueMicrotask(() => updateActiveStates());
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
 

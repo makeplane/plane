@@ -110,4 +110,4 @@ export const WorkerHealthTab = observer(() => {
   );
 });
 
-WorkerHealthTab.displayName = "WorkerHealthTab";
+(WorkerHealthTab as any).displayName = "WorkerHealthTab";

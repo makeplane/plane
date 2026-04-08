@@ -1,5 +1,5 @@
-import { useContext  } from "react";
-import type {ReactNode} from "react";
+import { useContext } from "react";
+import type { ReactNode } from "react";
 import { Network } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";

@@ -157,8 +157,8 @@ export function ResizableSidebar({
   // Reset peek when sidebar is expanded
   useEffect(() => {
     if (!isCollapsed) {
-      setShowPeek(false);
-      setIsHoveringTrigger(false);
+      queueMicrotask(() => setShowPeek(false));
+      queueMicrotask(() => setIsHoveringTrigger(false));
       if (peekTimeoutRef.current) {
         clearTimeout(peekTimeoutRef.current);
       }

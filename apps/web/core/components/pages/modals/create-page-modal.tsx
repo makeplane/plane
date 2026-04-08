@@ -53,7 +53,7 @@ export function CreatePageModal(props: Props) {
 
   // update page access in form data when page access from the store changes
   useEffect(() => {
-    setPageFormData((prev) => ({ ...prev, access: pageAccess }));
+    queueMicrotask(() => setPageFormData((prev) => ({ ...prev, access: pageAccess })));
   }, [pageAccess]);
 
   const handleStateClear = () => {

@@ -102,9 +102,7 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
               <div className="space-y-3">
                 <div
                   className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-13 font-medium ${
-                    result.success
-                      ? "bg-success-subtle text-success-primary"
-                      : "bg-danger-subtle text-danger-primary"
+                    result.success ? "bg-success-subtle text-success-primary" : "bg-danger-subtle text-danger-primary"
                   }`}
                 >
                   {result.success ? "Authentication Successful" : "Authentication Failed"}

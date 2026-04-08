@@ -4,7 +4,6 @@
 
 # Python imports
 import re
-from collections import defaultdict
 
 # Django imports
 from django.contrib.auth import get_user_model

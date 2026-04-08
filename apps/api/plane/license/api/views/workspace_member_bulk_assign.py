@@ -59,39 +59,76 @@ class InstanceWorkspaceBulkAssignMembersEndpoint(BaseAPIView):
 
             # Validate email
             if not email or not EMAIL_REGEX.match(email):
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "Invalid or missing email"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "Invalid or missing email",
+                })
                 continue
 
             # Validate workspace_slug
             if not workspace_slug:
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "Missing workspace_slug"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "Missing workspace_slug",
+                })
                 continue
 
             # Validate role
             try:
                 role = int(role)
             except (TypeError, ValueError):
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "Invalid role — must be 5, 15, or 20"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "Invalid role — must be 5, 15, or 20",
+                })
                 continue
             if role not in VALID_ROLES:
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": f"Invalid role {role} — must be 5 (Guest), 15 (Member), or 20 (Admin)"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": f"Invalid role {role} — must be 5 (Guest), 15 (Member), or 20 (Admin)",
+                })
                 continue
 
             # Lookup user
             user = User.objects.filter(email=email).first()
             if not user:
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "User not found"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "User not found",
+                })
                 continue
 
             # Lookup workspace
             workspace = Workspace.objects.filter(slug=workspace_slug).first()
             if not workspace:
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "Workspace not found"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "Workspace not found",
+                })
                 continue
 
             # Check existing membership (active only)
-            if WorkspaceMember.objects.filter(workspace=workspace, member=user, deleted_at__isnull=True).exists():
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "User already a member of this workspace"})
+            if WorkspaceMember.objects.filter(
+                workspace=workspace, member=user, deleted_at__isnull=True
+            ).exists():
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "User already a member of this workspace",
+                })
                 continue
 
             try:
@@ -99,10 +136,23 @@ class InstanceWorkspaceBulkAssignMembersEndpoint(BaseAPIView):
                     WorkspaceMember.objects.create(workspace=workspace, member=user, role=role)
                 assigned.append({"email": email, "workspace_slug": workspace_slug, "role": role})
             except IntegrityError:
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "Already a member (concurrent assignment)"})
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "Already a member (concurrent assignment)",
+                })
             except Exception:
-                logger.exception("Bulk assign failed for row %s (email=%r, slug=%r)", row_number, email, workspace_slug)
-                skipped.append({"row_number": row_number, "email": email, "workspace_slug": workspace_slug, "reason": "Unexpected error — see server logs"})
+                logger.exception(
+                    "Bulk assign failed for row %s (email=%r, slug=%r)",
+                    row_number, email, workspace_slug,
+                )
+                skipped.append({
+                    "row_number": row_number,
+                    "email": email,
+                    "workspace_slug": workspace_slug,
+                    "reason": "Unexpected error — see server logs",
+                })
 
         return Response(
             {

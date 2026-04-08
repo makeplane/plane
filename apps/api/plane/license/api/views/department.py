@@ -1,11 +1,9 @@
 # Python imports
 import io
-import json
 from datetime import datetime
 
 # Django imports
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Count, Q
 from django.http import HttpResponse
 
@@ -61,7 +59,10 @@ def _dept_to_row(dept, code_map):
 
 def _xlsx_response(rows):
     """Build an HttpResponse streaming a flat XLSX of departments."""
-    headers = ["name", "code", "short_name", "dept_code", "dept_type", "parent_code", "manager_email", "sort_order", "is_active", "level"]
+    headers = [
+        "name", "code", "short_name", "dept_code", "dept_type",
+        "parent_code", "manager_email", "sort_order", "is_active", "level",
+    ]
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Departments"
@@ -247,7 +248,8 @@ class InstanceDepartmentLinkWorkspaceEndpoint(BaseAPIView):
             return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Verify workspace is not already linked to another department
-        if hasattr(workspace, "linked_department") and workspace.linked_department and workspace.linked_department.pk != department.pk:
+        ws_linked = getattr(workspace, "linked_department", None)
+        if ws_linked and ws_linked.pk != department.pk:
             return Response(
                 {"error": "Workspace is already linked to another department"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -324,7 +326,10 @@ class InstanceDepartmentAutoJoinEndpoint(BaseAPIView):
 
         mode = request.data.get("mode")
         if mode not in ("all_projects", "bank_wide_projects"):
-            return Response({"error": "mode must be 'all_projects' or 'bank_wide_projects'"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "mode must be 'all_projects' or 'bank_wide_projects'"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Collect managers: own dept + all ancestors (Option B cascade upward)
         managers = _collect_dept_and_ancestor_managers(department)
@@ -401,8 +406,8 @@ class InstanceDepartmentAutoJoinEndpoint(BaseAPIView):
                         newly_added += 1
                         continue
 
-                    # New membership — use bulk_create pattern (bypasses save() to avoid ProjectUserProperty dupe)
-                    # then manually create ProjectUserProperty with ignore_conflicts=True (matches "Add to Project" button logic)
+                    # New membership — use bulk_create pattern (bypasses save to avoid ProjectUserProperty dupe)
+                    # then manually create ProjectUserProperty with ignore_conflicts=True
                     min_sort = ProjectUserProperty.objects.filter(
                         workspace=workspace, user=manager
                     ).aggregate(min=Min("sort_order"))["min"]
@@ -438,7 +443,10 @@ class RejoinAllEndpoint(BaseAPIView):
 
         mode = request.data.get("mode")
         if mode not in ("all_projects", "bank_wide_projects"):
-            return Response({"error": "mode must be 'all_projects' or 'bank_wide_projects'"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "mode must be 'all_projects' or 'bank_wide_projects'"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         departments = Department.objects.filter(
             deleted_at__isnull=True, linked_workspace__isnull=False
@@ -573,7 +581,7 @@ def _collect_dept_and_ancestor_managers(department):
             seen_ids.add(current.manager_id)
             managers.append(current.manager)
 
-        # Source 2: StaffProfile.is_department_manager=True (no employment_status filter — manager flag is authoritative)
+        # Source 2: StaffProfile.is_department_manager=True (manager flag is authoritative)
         for staff in StaffProfile.objects.filter(
             department=current,
             is_department_manager=True,
@@ -691,6 +699,8 @@ def _join_descendant_workspaces(department, user, depth=0):
     children = Department.objects.filter(parent=department, deleted_at__isnull=True)
     for child in children:
         if child.linked_workspace:
-            if not WorkspaceMember.objects.filter(workspace=child.linked_workspace, member=user, deleted_at__isnull=True).exists():
+            if not WorkspaceMember.objects.filter(
+                workspace=child.linked_workspace, member=user, deleted_at__isnull=True
+            ).exists():
                 WorkspaceMember.objects.create(workspace=child.linked_workspace, member=user, role=15, is_active=True)
         _join_descendant_workspaces(child, user, depth + 1)

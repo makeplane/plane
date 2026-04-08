@@ -183,7 +183,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   // fetch task categories once on mount
   useEffect(() => {
     void fetchCategories();
-     
   }, []);
 
   //reset few fields on projectId change
@@ -199,8 +198,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
       }
     }
     if (projectId && routeProjectId !== projectId) void fetchCycles(workspaceSlug?.toString(), projectId);
-
-     
   }, [projectId]);
 
   // Reset form when data prop changes
@@ -208,7 +205,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     if (data) {
       reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
     }
-     
   }, [...dataResetProperties]);
 
   // Update the issue type id when the project id changes
@@ -221,8 +217,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     // get issue type id on project change
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
-
-     
   }, [data, projectId]);
 
   useEffect(() => {
@@ -233,7 +227,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         editorRef,
       });
     }
-     
   }, [workItemTemplateId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
@@ -268,7 +261,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         };
 
     // this condition helps to move the issues from draft to project issues
-     
+
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
 
     await onSubmit(submitData, is_draft_issue)
@@ -370,7 +363,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
     if (isDirty && condition) onChange(watch());
     else onChange(null);
-     
   }, [isDirty]);
 
   useEffect(() => {

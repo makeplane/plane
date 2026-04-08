@@ -27,9 +27,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
   return (
     <>
       <div>
-        <span className="mb-2 block text-sm font-medium text-secondary">
-          {t("analytics_dashboard.text_align")}
-        </span>
+        <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.text_align")}</span>
         <Controller
           name="config.text_align"
           control={control}
@@ -55,9 +53,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
       </div>
 
       <div>
-        <span className="mb-2 block text-sm font-medium text-secondary">
-          {t("analytics_dashboard.text_color")}
-        </span>
+        <span className="mb-2 block text-sm font-medium text-secondary">{t("analytics_dashboard.text_color")}</span>
         <Controller
           name="config.text_color"
           control={control}

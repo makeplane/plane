@@ -64,7 +64,7 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
     try {
       const payload: ISubTaskCategoryCreate = {
         name: data.name,
-        main_category: data.main_category || null,
+        main_category: data.main_category || "",
         sort_order: Number(data.sort_order),
         is_active: data.is_active,
       };
@@ -112,9 +112,7 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
                   </option>
                 ))}
               </select>
-              {errors.main_category && (
-                <p className="text-11 text-danger-primary">{errors.main_category.message}</p>
-              )}
+              {errors.main_category && <p className="text-11 text-danger-primary">{errors.main_category.message}</p>}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">

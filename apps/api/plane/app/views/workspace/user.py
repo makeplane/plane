@@ -319,7 +319,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                         "project_issue",
                         filter=Q(
                             project_issue__assignees__in=[user_id],
-                            #[2026/03/06][Tri Ho] - Bug fix for counting assigned issues in dashboard, we need to filter parent__isnull=True to avoid counting sub-tasks as assigned issues
+                            # Bug fix: filter parent__isnull=True to avoid counting sub-tasks
                             project_issue__parent__isnull=True,
                             project_issue__deleted_at__isnull=True,
                             project_issue__archived_at__isnull=True,

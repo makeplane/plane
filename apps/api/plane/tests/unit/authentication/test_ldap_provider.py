@@ -159,7 +159,6 @@ class TestGetLDAPConnection:
     def test_raises_on_server_down(self):
         provider = _build_provider()
         with patch(LDAP_MOD_PATCH) as mock_ldap:
-            import builtins
 
             # Create a real exception class for SERVER_DOWN
             server_down_exc = type("SERVER_DOWN", (Exception,), {})
@@ -334,8 +333,10 @@ class TestSetUserData:
         mock_ldap.SCOPE_SUBTREE = 2
         mock_ldap.filter.escape_filter_chars = lambda s: s
 
-        invalid_creds_exc = type("INVALID_CREDENTIALS", (Exception,), {})
-        mock_ldap.INVALID_CREDENTIALS = invalid_creds_exc
+        # Preserve INVALID_CREDENTIALS if caller already set it as a real exception class
+        existing = getattr(mock_ldap, "INVALID_CREDENTIALS", None)
+        if not (isinstance(existing, type) and issubclass(existing, BaseException)):
+            mock_ldap.INVALID_CREDENTIALS = type("INVALID_CREDENTIALS", (Exception,), {})
         mock_ldap.LDAPError = Exception
         mock_ldap.SERVER_DOWN = type("SERVER_DOWN", (Exception,), {})
 
