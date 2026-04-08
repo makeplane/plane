@@ -11,4 +11,5 @@
 
 from .chat import PlaneChatBot as PlaneChatBot
 from .kit import ChatKit as ChatKit
+from .plotting import PLOTTING_TOOL_NAMES as PLOTTING_TOOL_NAMES
 from .templates import tiles_factory as tiles_factory

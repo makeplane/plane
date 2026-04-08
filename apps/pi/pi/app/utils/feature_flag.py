@@ -9,13 +9,12 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-import logging
-
 import httpx
 
+from pi import logger
 from pi import settings
 
-logger = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 FLAGS = settings.feature_flags
 
 
@@ -46,9 +45,9 @@ async def is_feature_enabled(feature_flag: str, workspace_slug: str, user_id: st
 
                 return resp.get("value", False)
 
-            logger.error(f"Failed to fetch feature flag. Status code: {response.status_code}")
+            log.error(f"Failed to fetch feature flag. Status code: {response.status_code}")
             return False
 
     except httpx.RequestError as e:
-        logger.error(f"Error checking feature flag: {e}")
+        log.error(f"Error checking feature flag: {e}")
         return False

@@ -21,6 +21,7 @@ from pi.app.models.github_webhook import GitHubWebhook
 from pi.app.models.llm import LlmModel
 from pi.app.models.llm import LlmModelPricing
 from pi.app.models.llm import LlmModelUsageTracking
+from pi.app.models.mcp_metadata import MCPServerMetadata
 from pi.app.models.message import Message
 from pi.app.models.message import MessageFeedback
 from pi.app.models.message import MessageFlowStep
@@ -48,6 +49,7 @@ __all__ = [
     "LlmModel",
     "LlmModelPricing",
     "LlmModelUsageTracking",
+    "MCPServerMetadata",
     "Message",
     "MessageAttachment",
     "MessageFeedback",

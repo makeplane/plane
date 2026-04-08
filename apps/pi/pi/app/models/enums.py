@@ -74,8 +74,10 @@ class MessageMetaStepType(str, Enum):
     ARTIFACT_MODIFICATION = "artifact_modification"
     ACTION_CATEGORY_ROUTING = "action_category_routing"
     ACTION_METHOD_PLANNING = "action_method_planning"
+    ACTION_TOOL_PICKING = "action_tool_picking"
     ACTION_EXECUTION = "action_execution"
     WEB_SEARCH = "web_search"
+    MCP_OSMOSIS = "mcp_osmosis"
 
     def __str__(self):
         return self.value

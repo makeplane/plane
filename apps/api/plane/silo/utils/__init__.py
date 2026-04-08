@@ -10,3 +10,9 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # add all the utils in this folder like helpers, string, encryption, etc.
+from .mcp import (  # noqa: F401
+    generate_unique_slug,
+    build_mcp_serializer_context,
+    save_credentials_and_activate,
+    refresh_token_if_expired,
+)

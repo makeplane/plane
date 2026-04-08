@@ -386,6 +386,7 @@ async def upsert_message_flow_steps(message_id: UUID4, chat_id: UUID4, db: Async
                 oauth_completed=step_data.get("oauth_completed", False) if step_data.get("oauth_completed") is not None else False,
                 oauth_completed_at=step_data.get("oauth_completed_at"),
                 workspace_slug=workspace_slug,
+                mcp_connector_id=step_data.get("mcp_connector_id"),
             )
             db.add(flow_step)
             flow_step_objects.append(flow_step)

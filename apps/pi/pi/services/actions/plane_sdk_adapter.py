@@ -20,7 +20,6 @@ This adapter shields the rest of our codebase from SDK breaking changes by:
 Only this file should need changes when the SDK evolves.
 """
 
-import logging
 from typing import Any
 from typing import Dict
 from typing import Iterable
@@ -61,7 +60,9 @@ from plane.models.work_items import UpdateWorkItemComment  # type: ignore[attr-d
 from plane.models.work_items import UpdateWorkItemLink  # type: ignore[attr-defined]
 from plane.models.work_items import WorkItemAttachmentUploadRequest  # type: ignore[attr-defined]
 
-log = logging.getLogger(__name__)
+from pi import logger
+
+log = logger.getChild(__name__)
 
 
 class PlaneSDKAdapter:

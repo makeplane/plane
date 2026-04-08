@@ -271,37 +271,46 @@ async def extract_execution_status_from_flow_steps(
     actions = []
 
     for step in message_specific_steps:
-        # Extract action from tool name (e.g., "workitems_create" -> "create")
+        # Get artifact ID from execution_data first (needed to determine artifact type)
+        artifact_id = None
+        if step.execution_data and isinstance(step.execution_data, dict):
+            artifact_id = step.execution_data.get("artifact_id")
+
+        # Get artifact if available (needed for MCP special handling)
+        artifact = artifacts_by_id.get(artifact_id) if artifact_id else None
+
+        # Extract action - MCP uses artifact.action, Plane tools parse from tool_name
         action = "unknown"
-        if step.tool_name and "_" in step.tool_name:
-            action = step.tool_name.split("_", 1)[1]  # Get everything after the first underscore
+        if artifact and artifact.entity == "mcp":
+            # MCP artifacts store action directly (create, update, delete, execute)
+            action = artifact.action or "execute"
+        elif step.tool_name and "_" in step.tool_name:
+            # Plane tools: "workitems_create" -> "create"
+            action = step.tool_name.split("_", 1)[1]
         elif step.tool_name:
             action = step.tool_name
+
+        # Extract tool_name for MCP (from artifact data)
+        tool_name = step.tool_name or ""
+        if artifact and artifact.entity == "mcp" and artifact.data:
+            # Get display-friendly tool_name from planning_data
+            planning_data = artifact.data.get("planning_data", {})
+            if isinstance(planning_data, dict):
+                tool_name = planning_data.get("tool_name", step.tool_name) or step.tool_name or ""
 
         # Basic action data from flow step
         action_data = {
             "action": action,
+            "tool_name": tool_name,  # Include tool_name for consistency
             "success": False,  # Will be updated based on artifact/version status
             "executed_at": None,
-            "artifact_id": None,
-            "artifact_type": None,  # Will be populated from ActionArtifact.entity
+            "artifact_id": artifact_id,
+            "artifact_type": artifact.entity if artifact else None,
         }
 
         # Include planned sequence for ordering
         if hasattr(step, "step_order") and step.step_order is not None:
             action_data["sequence"] = step.step_order
-
-        # Get artifact ID from execution_data
-        artifact_id = None
-        if step.execution_data and isinstance(step.execution_data, dict):
-            artifact_id = step.execution_data.get("artifact_id")
-            if artifact_id:
-                action_data["artifact_id"] = artifact_id
-
-        # Get artifact_type from ActionArtifact if we have the artifact_id
-        if artifact_id and artifact_id in artifacts_by_id:
-            artifact = artifacts_by_id[artifact_id]
-            action_data["artifact_type"] = artifact.entity
 
         # Check execution status: first from MessageFlowStep, then from ActionArtifactVersion
         is_executed = step.is_executed
@@ -364,8 +373,8 @@ async def extract_execution_status_from_flow_steps(
             if essential_entity:
                 action_data["entity"] = essential_entity
 
-        # If no entity_info found but artifact is executed and has entity_id, populate entity info
-        elif is_executed and artifact_id and artifact_id in artifacts_by_id:
+        missing_url = not (entity_info and isinstance(entity_info, dict) and entity_info.get("entity_url"))
+        if is_executed and missing_url and artifact_id and artifact_id in artifacts_by_id:
             artifact = artifacts_by_id[artifact_id]
             if artifact.entity_id:
                 try:
@@ -377,24 +386,27 @@ async def extract_execution_status_from_flow_steps(
 
                     # Build entity info if we found any details
                     if entity_name or entity_url:
-                        essential_entity = {
-                            "entity_id": entity_id,
-                            "entity_type": entity_type,
-                        }
+                        # Start from whatever was already in action_data["entity"] (may have entity_id/type)
+                        enriched_entity = action_data.get("entity") or {}
+                        if entity_id:
+                            enriched_entity["entity_id"] = entity_id
+                        if entity_type:
+                            enriched_entity["entity_type"] = entity_type
                         if entity_name:
-                            essential_entity["entity_name"] = entity_name
+                            enriched_entity["entity_name"] = entity_name
                         if entity_url:
-                            essential_entity["entity_url"] = entity_url
+                            enriched_entity["entity_url"] = entity_url
 
-                        action_data["entity"] = essential_entity
+                        action_data["entity"] = enriched_entity
 
                 except Exception as e:
                     log.warning(f"Error fetching entity details for {artifact.entity} {artifact.entity_id} in chat history: {e}")
-                    # Keep minimal entity info
-                    action_data["entity"] = {
-                        "entity_id": str(artifact.entity_id),
-                        "entity_type": artifact.entity,
-                    }
+                    # Keep whatever minimal entity info we have, add entity_id/type as fallback
+                    if "entity" not in action_data:
+                        action_data["entity"] = {
+                            "entity_id": str(artifact.entity_id),
+                            "entity_type": artifact.entity,
+                        }
 
         # Add success/error message
         if is_executed and is_successful:
@@ -1349,6 +1361,7 @@ async def retrieve_chat_history(
             if user_chat_preference and user_chat_preference.focus_workspace_id
             else None,
             "mode": user_chat_preference.mode if user_chat_preference and user_chat_preference.mode else "ask",
+            "mcp_connector_ids": user_chat_preference.mcp_connector_ids if user_chat_preference and user_chat_preference.mcp_connector_ids else [],
         }
         return response
 
@@ -1368,6 +1381,7 @@ async def retrieve_chat_history(
             "focus_project_id": None,
             "focus_workspace_id": None,
             "mode": "ask",
+            "mcp_connector_ids": [],
         }
 
 
@@ -1851,6 +1865,7 @@ async def upsert_user_chat_preference(
     focus_project_id: Optional[UUID4] = None,
     focus_workspace_id: Optional[UUID4] = None,
     mode: Optional[Literal["ask", "build"]] = "ask",
+    mcp_connector_ids: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """
     Upserts a user chat preference.
@@ -1894,6 +1909,8 @@ async def upsert_user_chat_preference(
                 existing_user_chat_preference.focus_workspace_id = focus_workspace_id
             if mode is not None:
                 existing_user_chat_preference.mode = mode
+            if mcp_connector_ids is not None:
+                existing_user_chat_preference.mcp_connector_ids = mcp_connector_ids
             db.add(existing_user_chat_preference)
             await db.commit()
             return {"message": "success", "user_chat_preference": existing_user_chat_preference}
@@ -1917,6 +1934,8 @@ async def upsert_user_chat_preference(
                 new_user_chat_preference_kwargs["focus_workspace_id"] = focus_workspace_id
             if mode is not None:
                 new_user_chat_preference_kwargs["mode"] = mode
+            if mcp_connector_ids is not None:
+                new_user_chat_preference_kwargs["mcp_connector_ids"] = mcp_connector_ids
             new_user_chat_preference = UserChatPreference(**new_user_chat_preference_kwargs)
             db.add(new_user_chat_preference)
             await db.commit()

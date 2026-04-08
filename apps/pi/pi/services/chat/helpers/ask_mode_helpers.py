@@ -389,7 +389,7 @@ async def record_preset_routing_step(*, query_id: UUID4, chat_id: UUID4, step_or
             timeout=2.0,
         )
         if flow_step_result["message"] != "success":
-            log.warning(f"Failed to record RAG routing flow step: {flow_step_result.get('error', 'Unknown error')}")
+            log.warning(f"Failed to record RAG routing flow step: {flow_step_result.get("error", "Unknown error")}")
     except asyncio.TimeoutError:
         log.warning("Timed out recording RAG routing flow step; continuing")
     except Exception as e:
@@ -538,7 +538,6 @@ def log_ask_mode_request_details(data: Any, context: Dict[str, Any]) -> None:
     log.debug(f"ChatID: {chat_id} - Input query: {data.query}")
     log.debug(f"ChatID: {chat_id} - Enhanced query: {context.get("enhanced_query_for_processing")}")
     log.debug(f"ChatID: {chat_id} - Attachment context: {context.get("attachment_context")}")
-    log.debug(f"ChatID: {chat_id} - User meta: {data.context}")
     log.debug(f"ChatID: {chat_id} - Workspace in context: {context.get("workspace_in_context", data.workspace_in_context)}")
     log.debug(f"ChatID: {chat_id} - Workspace slug: {context.get("workspace_slug", data.workspace_slug)}")
     log.debug(f"ChatID: {chat_id} - Workspace ID: {context.get("workspace_id", str(data.workspace_id) if data.workspace_id else None)}")
@@ -705,10 +704,9 @@ async def create_fast_path_stream(
     web_search_context: str | None = None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """
-    Create a fast-path stream for queries without workspace context.
+    Create a stream for queries without workspace context.
 
-    This bypasses tool orchestration and directly calls the LLM with a simple prompt.
-    Used when workspace_in_context is False for both Ask and Build modes.
+    Provides a direct LLM stream without workspace-specific tools.
 
     Args:
         chatbot_instance: The chatbot instance with tool_llm attribute
@@ -719,36 +717,29 @@ async def create_fast_path_stream(
         user_id: User ID for timestamp context
         enhanced_query_for_processing: The user's query (may include attachment context)
         enhanced_conversation_history: Previous conversation history
+        reasoning_container: Optional container for reasoning content
 
     Yields:
-        str: Streaming chunks from LLM response
+        str or dict: Streaming chunks from LLM response
     """
+    log.info(f"ChatID: {chat_id} - No workspace context, using fast path")
 
-    log.info(f"ChatID: {chat_id} - No workspace context, using fast path (direct LLM call)")
-
-    # Extract user name from user_meta if available
-    user_first_name = None
-    user_email = None
-    if user_meta and isinstance(user_meta, dict):
-        user_first_name = user_meta.get("first_name")
-        user_email = user_meta.get("email")
-
-    # Get timestamp context
-    dt_ctx = None
-    try:
-        if user_id:
-            dt_ctx = await get_current_timestamp_context(user_id)
-    except Exception:
-        pass
-
-    # Build context block
+    # Build context
     context_parts = []
-    if user_first_name:
-        context_parts.append(f"**User:** {user_first_name}")
-    elif user_email:
-        context_parts.append(f"**User:** {user_email}")
-    if dt_ctx:
-        context_parts.append(dt_ctx.strip())
+    if user_meta and isinstance(user_meta, dict):
+        if user_meta.get("first_name"):
+            context_parts.append(f"**User:** {user_meta["first_name"]}")
+        elif user_meta.get("email"):
+            context_parts.append(f"**User:** {user_meta["email"]}")
+
+    if user_id:
+        try:
+            dt_ctx = await get_current_timestamp_context(user_id)
+            if dt_ctx:
+                context_parts.append(dt_ctx.strip())
+        except Exception:
+            pass
+
     context_block = "\n".join(context_parts) if context_parts else ""
 
     # Build system prompt
@@ -781,26 +772,22 @@ When using information from the web search results above, embed clickable source
 
 Be helpful, concise, and professional."""
 
-    # Build message list
+    # Build messages
     messages: List[BaseMessage] = [SystemMessage(content=system_prompt)]
     if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
         messages.append(SystemMessage(content=f"Conversation History:\n{enhanced_conversation_history}"))
     messages.append(HumanMessage(content=enhanced_query_for_processing))
 
-    # Setup LLM with token tracking
+    # Setup LLM
     llm = chatbot_instance.tool_llm
     llm.set_tracking_context(query_id, db, MessageMetaStepType.TOOL_ORCHESTRATION, chat_id=str(chat_id))
 
-    # Signal to the caller that we're generating the final response
-    # This marker is used by chat.py to start collecting chunks for DB persistence
-    stage = "final_response"
-    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+    # Signal final response
+    reasoning_chunk = reasoning_dict_maker(stage="final_response", tool_name="", tool_query="", content="")
     if reasoning_container is not None:
-        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-    yield reasoning_chunk_dict
+        reasoning_container["content"] += reasoning_chunk["header"] + reasoning_chunk["content"]
+    yield reasoning_chunk
 
-    # Stream LLM response with batching to avoid overwhelming browser with individual token events
-
-    # Wrap the LLM stream with batching (10 words per batch)
+    # Stream LLM response with batching
     async for batched_chunk in batch_llm_stream_by_words(llm.astream(messages), words_per_batch=15):
         yield batched_chunk

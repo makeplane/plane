@@ -11,16 +11,16 @@
 
 """Feature flag service for checking feature availability."""
 
-import logging
 from dataclasses import dataclass
 from typing import Dict
 from typing import Optional
 
+from pi import logger
 from pi import settings
 from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
 from pi.app.utils.feature_flag import is_feature_enabled
 
-logger = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 
 @dataclass

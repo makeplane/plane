@@ -555,6 +555,12 @@ if not SILO_BASE_URL:
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
 SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH)
 
+API_BASE_URL = os.environ.get("API_BASE_URL", None)
+API_BASE_PATH = "/api"
+if IS_SELF_MANAGED:
+    API_BASE_URL = APP_BASE_URL
+API_URL = urljoin(API_BASE_URL, API_BASE_PATH)
+
 RUNNER_BASE_URL = os.environ.get("RUNNER_BASE_URL", "")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))

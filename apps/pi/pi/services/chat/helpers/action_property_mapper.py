@@ -14,12 +14,13 @@ Helper module to map flat tool arguments to the nested 'properties' structure
 required for the action summary in the UI.
 """
 
-import logging
 import re
 from typing import Any
 from typing import Dict
 
-log = logging.getLogger(__name__)
+from pi import logger
+
+log = logger.getChild(__name__)
 
 
 def is_uuid(value: str) -> bool:

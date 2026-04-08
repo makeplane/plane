@@ -18,7 +18,6 @@ so that `action_executor.execute_action_with_retrieval` stays lean and readable.
 
 import asyncio
 import contextlib
-import logging
 import re
 from collections.abc import AsyncIterator
 from typing import Any
@@ -29,10 +28,11 @@ from typing import Tuple
 from typing import TypedDict
 from typing import Union
 
+from pi import logger
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 from pi.services.chat.prompts import WRITE_TODOS_SYSTEM_PROMPT_BUILD
 
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 
 def extract_text_from_content(content: Any) -> str:
@@ -664,6 +664,7 @@ TOOL_METADATA_REGISTRY: Dict[str, Dict[str, Any]] = {
     "fetch_cycle_details": {"kind": "retrieval", "plan_only": False},
     # Planner/system helpers
     "ask_for_clarification": {"kind": "retrieval", "plan_only": False},
+    "reselect_action_categories": {"kind": "retrieval", "plan_only": False},
     # Common actions (examples - fallback to heuristics for unknown tools)
     "workitems_create": {"kind": "action", "plan_only": True},
     "workitems_update": {"kind": "action", "plan_only": True},
@@ -714,6 +715,30 @@ def tool_name_to_retrieval_tool(tool_name: str) -> str:
 
 def tool_name_shown_to_user(tool_name: str) -> str:
     """Convert tool name to a user-friendly name."""
+
+    # Small helper to clean unknown tool names into a readable, title-cased label
+    def _clean_tool_display_name(raw: str) -> str:
+        try:
+            s = str(raw or "").strip()
+        except Exception:
+            s = ""
+        if not s:
+            return str(raw or "")
+        # Remove MCP prefix if still present and normalize common separators
+        if s.startswith("mcp_"):
+            s = s[4:]
+        s = s.replace("__", " ")
+        s = s.replace("_", " ")
+        s = s.replace("-", " ")
+        s = s.replace("/", " ")
+        # Collapse multiple spaces and title-case
+        s = " ".join(s.split())
+        return s.title() if s else str(raw or "")
+
+    # Handle MCP tools first (pattern: mcp_<connector_slug>__<tool_name>)
+    if tool_name.startswith("mcp_"):
+        return _clean_tool_display_name(tool_name[4:] or tool_name)
+
     tool_to_user_map = {
         "vector_search_tool": "Semantic search",
         "structured_db_tool": "Database querying",
@@ -758,7 +783,11 @@ def tool_name_shown_to_user(tool_name: str) -> str:
     }
     name_to_return = tool_to_user_map.get(tool_name, "")
     if not name_to_return:
-        name_to_return = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("front_facing_name", tool_name)
+        # Prefer explicitly configured front-facing name when available
+        name_to_return = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("front_facing_name", "")
+    if not name_to_return:
+        # Generic fallback: clean the raw tool name for user display
+        name_to_return = _clean_tool_display_name(tool_name)
     return name_to_return
 
 
@@ -1299,12 +1328,17 @@ def build_method_prompt(
     clarification_context: Optional[Dict[str, Any]] = None,
     user_meta: Optional[Dict[str, Any]] = None,
     source: Optional[str] = None,
+    mcp_tools: Optional[List] = None,
     websearch_enabled: bool = False,
+    available_categories: Optional[List[str]] = None,
+    max_category_reselect_invocations: Optional[int] = None,
     is_guest_user: bool = False,
 ) -> str:
     from pi.services.chat.prompt_mixins import RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION
+    from pi.services.chat.prompts import ANSWER_DELIMITER_BUILD_MODE
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import TOOL_CALL_REASONING_REINFORCEMENT
+    from pi.services.chat.prompts import mcp_tool_instructions_build_mode
     from pi.services.chat.prompts import plane_context
 
     address_user_by_name = True
@@ -1323,6 +1357,18 @@ When using information from web_search_tool results:
 - Use short, descriptive titles (e.g., "GitHub", "Official Blog", "Reuters")
 - Do NOT include a separate Sources section - all citations should be inline
 """
+
+    # Prepare dynamic re-selection guidance
+    categories_line = (
+        f"- Valid categories you can request: {', '.join(sorted(set(available_categories or [])))}"
+        if available_categories
+        else "- See the `reselect_action_categories` tool description for the current list of valid categories"
+    )
+    uses_line = (
+        f"- This tool can be used up to {max_category_reselect_invocations} times per session"
+        if isinstance(max_category_reselect_invocations, int) and max_category_reselect_invocations > 0
+        else "- Use this tool only when the needed categories are genuinely missing (usage is limited by configuration)"
+    )
 
     method_prompt = f"""You are an AI assistant that helps users perform actions in Plane.
 
@@ -1650,6 +1696,13 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 
 **IMPORTANT**: Analyze the user's request carefully to identify ALL required actions, not just the obvious ones.
 
+**CATEGORY RE-SELECTION TOOL (reselect_action_categories):**
+- If you realize the available tools are insufficient to fulfil the user's request (e.g. you need cycle tools but only workitem tools are loaded), call `reselect_action_categories` with `reason` and `additional_categories`.
+- {uses_line}.
+- After calling it, newly requested categories will be added and you should proceed with the expanded toolset.
+- Only use this if the tools you need are genuinely missing — do not call it speculatively.
+{categories_line}
+
 {RETRIEVAL_TOOL_DESCRIPTIONS if not is_guest_user else RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION}
 
 **Execution Guidelines:**
@@ -1661,6 +1714,12 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 
 {WORK_TREE_INSTRUCTIONS}
 """  # noqa: E501
+
+    # Add MCP tool instructions if MCP tools are available
+    if mcp_tools:
+        method_prompt += f"""
+{mcp_tool_instructions_build_mode}
+"""
 
     if project_id:
         method_prompt += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
@@ -1708,40 +1767,8 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
     method_prompt += f"\n\n{TOOL_CALL_REASONING_REINFORCEMENT}"
 
     # Add answer delimiter instruction LAST (after TOOL_CALL_REASONING_REINFORCEMENT) to ensure it's the final instruction the model sees
-    # This is critical because we want the delimiter to be applied unconditionally to ALL responses
-    method_prompt += """
-
-## MANDATORY OUTPUT FORMAT (APPLIES TO ALL RESPONSES - NO EXCEPTIONS)
-
-**CRITICAL - ANSWER DELIMITER FORMAT:**
-You MUST ALWAYS structure your response with the delimiter, regardless of whether you called tools, planned actions, or are answering a general question.
-
-Format:
-1. First, write any reasoning/thinking/context (this will be shown in the "Thought" panel)
-2. Then output the EXACT delimiter: ππANSWERππ on its own line
-3. Then write your actual response to the user (this will be shown as the main response)
-
-Example 1 (with planned actions):
-```
-I've analyzed the request and will create two work items.
-
-ππANSWERππ
-
-I've planned the following actions for your approval:
-- Create work item "Fix login bug"
-```
-
-Example 2 (answering a question without tools):
-```
-The user is asking a general question that I can answer directly.
-
-ππANSWERππ
-
-Here's the answer to your question...
-```
-
-**ABSOLUTE REQUIREMENT:** The delimiter ππANSWERππ MUST appear in EVERY response you generate. This is non-negotiable. If you forget the delimiter, the user interface will break and the user won't see your answer.
-"""  # noqa: E501
+    # This frames the delimiter as a one-way gate: reasoning before, answer after, never repeated
+    method_prompt += f"\n\n{ANSWER_DELIMITER_BUILD_MODE}"
     return method_prompt
 
 
@@ -1842,6 +1869,17 @@ def classify_tool(tool_name: str) -> Tuple[bool, bool]:
 
 def format_tool_query_for_display(tool_name: str, tool_args: dict, user_query: Optional[str] = None) -> str:
     """Format tool arguments for display in streaming messages."""
+
+    # Handle MCP tools: show "for query: <user_query>"
+    if tool_name.startswith("mcp_"):
+        if user_query:
+            return f"for query: {user_query}"
+        elif tool_args:
+            # Show simplified args for MCP tools
+            params = ", ".join(f"{k}={v}" for k, v in tool_args.items() if not k.startswith("_"))
+            return f"with: {params}"
+        return ""
+
     if not tool_args:
         return user_query or "the request"
 

@@ -36,6 +36,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.api.dependencies import check_guest_access
+from pi.app.api.dependencies import cookie_schema
 from pi.app.api.dependencies import get_current_user
 from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
@@ -585,9 +586,12 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
 
 
 @router.post("/get-answer/")
-async def get_answer(data: ChatRequest, current_user=Depends(get_current_user)):
+async def get_answer(data: ChatRequest, current_user=Depends(get_current_user), session: str = Depends(cookie_schema)):
     user_id = current_user.id
     data.user_id = user_id
+    # Stash session cookie for downstream MCP loader to forward to silo.
+    if isinstance(session, str):
+        data.context["session_cookie"] = session
 
     if data.workspace_id:
         guest_check = await check_guest_access(str(user_id), str(data.workspace_id))
@@ -879,6 +883,7 @@ async def get_chat_history_object(
                     "focus_project_id": results.get("focus_project_id", None),
                     "focus_workspace_id": results.get("focus_workspace_id", None),
                     "mode": results.get("mode", "ask"),
+                    "mcp_connector_ids": results.get("mcp_connector_ids", []),
                 }
             }
         )
@@ -1059,7 +1064,9 @@ async def get_user_threads(
 
 
 @router.post("/queue-answer/")
-async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
+async def queue_answer(
+    data: ChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user), session: str = Depends(cookie_schema)
+):
     """First phase of two-step streaming flow.
     Persists the ChatRequest payload and returns a one-time stream token.
     The token is simply the UUID of a freshly created *user* Message row so we
@@ -1067,6 +1074,8 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
     a MessageFlowStep (tool_name="QUEUE", step_order=0) until the client
     later redeems the token via /stream-answer/{token}."""
 
+    # Stash session cookie for downstream MCP loader to forward to silo
+    data.context["session_cookie"] = session
     if data.workspace_id:
         guest_check = await check_guest_access(str(current_user.id), str(data.workspace_id))
         if guest_check:
@@ -1165,7 +1174,9 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
 
 
 @router.get("/stream-answer/{token}")
-async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
+async def stream_answer(
+    token: UUID4, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user), session: str = Depends(cookie_schema)
+):
     """Second phase of two-step flow.
     Looks up the queued ChatRequest by token (message_id), deletes the queue
     entry, and then re-uses the existing /get-answer/ logic to start the SSE
@@ -1215,6 +1226,7 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
             log.warning(f"Failed to attach token_id to regenerate request context: {e!s}")
 
         log.info(f"Regenerating response for message {token}")
+        queued_request.context["session_cookie"] = session
 
         # Stream new response (get_answer will call process_query_stream)
         #    When process_query_stream calls retrieve_chat_history,
@@ -1266,11 +1278,17 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
             log.warning(f"Failed to attach token_id to queued request context: {e!s}")
 
         # Delegate to existing get_answer for streaming
+        queued_request.context["session_cookie"] = session
         return await get_answer(data=queued_request, current_user=current_user)
 
 
 @router.post("/execute-action/")
-async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
+async def execute_action(
+    request: ActionBatchExecutionRequest,
+    db: AsyncSession = Depends(get_async_session),
+    current_user=Depends(get_current_user),
+    session: str = Depends(cookie_schema),
+):
     """Execute all planned actions in a message as a batch using LLM orchestration."""
 
     # EXECUTION STATUS TRACKING:
@@ -1289,7 +1307,7 @@ async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession 
         # Use default model if none was found in the message
         chatbot = PlaneChatBot(llm_model or settings.llm_model.DEFAULT)
         build_mode_tool_executor = BuildModeToolExecutor(chatbot=chatbot, db=db)
-        result = await build_mode_tool_executor.execute(request, user_id)
+        result = await build_mode_tool_executor.execute(request, user_id, session_cookie=session)
 
         # Check if service returned an error
         if result.get("error"):

@@ -12,4 +12,5 @@
 from .workspace_credential import WorkspaceCredentialAPISerializer
 from .workspace_connection import WorkspaceConnectionAPISerializer
 from .workspace_entity_connection import WorkspaceEntityConnectionAPISerializer
+from .mcp import MCPApplicationSerializer
 from .job import ImportReportAPISerializer, ImportJobAPISerializer, ImportExecutionLogSerializer

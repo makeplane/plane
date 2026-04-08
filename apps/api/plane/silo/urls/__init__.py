@@ -21,6 +21,7 @@ from .import_execution_log import urlpatterns as import_execution_log_urls
 from .page import urlpatterns as page_urls
 from .releases import urlpatterns as releases_urls
 from .work_item_property import urlpatterns as work_item_property_urls
+from .app import urlpatterns as app_urls
 from .work_item_type import urlpatterns as work_item_type_urls
 
 urlpatterns = [
@@ -34,5 +35,6 @@ urlpatterns = [
     *page_urls,
     *releases_urls,
     *work_item_property_urls,
+    *app_urls,
     *work_item_type_urls,
 ]

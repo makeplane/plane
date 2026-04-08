@@ -71,6 +71,7 @@ class FeatureFlags:
     AI_FILE_UPLOADS = "AI_FILE_UPLOADS"
     AI_PAGES_BLOCKS = "AI_PAGES_BLOCKS"
     AI_PAGES_SUMMARY = "AI_PAGES_SUMMARY"
+    AI_MCP_CONNECTORS = "AI_MCP_CONNECTORS"
     AI_TEXT_TO_PQL = "AI_TEXT_TO_PQL"
 
 
@@ -346,7 +347,16 @@ class Chat:
         },
     )
     MAX_TOOL_CALLS_PER_AGENT_RUN: int = 5
-    MAX_ACTION_EXECUTOR_ITERATIONS: int = 25
+    MAX_ACTION_EXECUTOR_ITERATIONS: int = 100
+    # Multi-hop tool picker: when total tool count exceeds this threshold,
+    # run a rolling-batch LLM picker to select only the relevant tools.
+    TOOL_COUNT_THRESHOLD: int = 80
+    TOOL_PICKER_BATCH_SIZE: int = 40
+    MAX_CATEGORY_RESELECT_INVOCATIONS: int = 3
+    # Maximum number of tools to classify in a single LLM call.
+    # Keeps structured JSON output reliable for large MCP servers (100+ tools).
+    MCP_TOOL_CLASSIFICATION_BATCH_SIZE: int = 40
+    MCP_OSMOSIS_MAX_CONCURRENCY: int = 8
 
 
 @dataclass
@@ -587,6 +597,7 @@ class Settings:
     cors_origins_raw: str = os.getenv("CORS_ALLOWED_ORIGINS", "")
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
 
+    # Sentry Configuration
     SENTRY_DSN: str | None = os.getenv("SENTRY_DSN")
     SENTRY_ENVIRONMENT: str = os.getenv("SENTRY_ENVIRONMENT", "development")
 
@@ -616,11 +627,15 @@ class Settings:
     DD_AGENT_HOST: str = os.getenv("DD_AGENT_HOST", "")
     DD_TRACE_SAMPLE_RATE: float = float(os.getenv("DD_TRACE_SAMPLE_RATE", "0.0") or "0.0")
 
+    # Feature Flag Server Configuration
     FEATURE_FLAG_SERVER_BASE_URL: str = os.getenv("FEATURE_FLAG_SERVER_BASE_URL", "http://localhost:8000")
     FEATURE_FLAG_SERVER_AUTH_TOKEN: str = os.getenv("FEATURE_FLAG_SERVER_AUTH_TOKEN", "")
 
     FOLLOWER_POSTGRES_URI: str = os.getenv("FOLLOWER_POSTGRES_URI", "")
     FOLLOWER_RDS_SECRET_ARN: str = os.getenv("FOLLOWER_RDS_SECRET_ARN", "")
+
+    MCP_TOOL_EXECUTION_TIMEOUT: int = get_env_int("MCP_TOOL_EXECUTION_TIMEOUT", "30")
+    MCP_CONNECTOR_DISCOVERY_TIMEOUT: int = get_env_int("MCP_CONNECTOR_DISCOVERY_TIMEOUT", "15")
 
     def follower_connection_url(self) -> str:
         """Return the follower DB DSN, refreshing from Secrets Manager on TTL expiry."""
@@ -695,6 +710,11 @@ class Settings:
         # Suppress Anthropic client debug logs
         colorlog.getLogger("anthropic").setLevel(colorlog.WARNING)
         colorlog.getLogger("anthropic._base_client").setLevel(colorlog.WARNING)
+
+        # Suppress MCP client debug logs
+        colorlog.getLogger("mcp").setLevel(colorlog.WARNING)
+        colorlog.getLogger("mcp.client").setLevel(colorlog.WARNING)
+        colorlog.getLogger("mcp.client.streamable_http").setLevel(colorlog.WARNING)
 
         # Suppress watchfiles debug logs
         colorlog.getLogger("watchfiles").setLevel(colorlog.WARNING)

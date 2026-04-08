@@ -36,6 +36,7 @@ async def initialize_chat_context(chatbot_instance, data, chat_exists, db):
 
     is_focus_enabled = data.workspace_in_context
     is_websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
+    mcp_connector_ids = getattr(data, "mcp_connector_ids", None)
 
     # Use new polymorphic fields if available, otherwise fall back to legacy fields
     focus_entity_type = getattr(data, "focus_entity_type", None)
@@ -79,6 +80,7 @@ async def initialize_chat_context(chatbot_instance, data, chat_exists, db):
             focus_project_id=focus_project_id,
             focus_workspace_id=focus_workspace_id,
             mode=mode,
+            mcp_connector_ids=mcp_connector_ids,
         )
         if user_chat_preference_result["message"] != "success":
             return None, "An unexpected error occurred. Please try again"

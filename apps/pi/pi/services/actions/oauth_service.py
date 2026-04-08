@@ -14,7 +14,6 @@ OAuth Service for Plane App Integration
 Handles OAuth flow, token management, and refresh logic
 """
 
-import logging
 import secrets
 from datetime import datetime
 from datetime import timedelta
@@ -29,12 +28,13 @@ import httpx
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from pi import logger
 from pi import settings
 from pi.app.api.v1.helpers.plane_sql_queries import get_oauth_credentials_sync
 from pi.app.models.oauth import PlaneOAuthState
 from pi.app.models.oauth import PlaneOAuthToken
 
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 
 class PlaneOAuthService:

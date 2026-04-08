@@ -15,7 +15,6 @@ Main orchestrator class that provides unified access to all Plane API categories
 Designed for hierarchical LLM-based action execution.
 """
 
-import logging
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -25,13 +24,15 @@ from typing import Union
 
 from plane.errors import HttpError  # type: ignore[attr-defined]
 
+from pi import logger
+
 from .plane_sdk_adapter import PlaneSDKAdapter
 from .registry import get_available_categories
 from .registry import get_category_methods
 from .registry import get_method_name_map
 from .registry import resolve_actual_method_name
 
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 # Type alias for methods that can return various types including bool for delete operations
 SyncMethod = Callable[..., Union[Dict[str, Any], List[Any], Any, bool]]

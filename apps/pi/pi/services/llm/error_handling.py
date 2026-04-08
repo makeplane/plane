@@ -11,7 +11,6 @@
 
 import asyncio
 import inspect
-import logging
 from functools import wraps
 from typing import Any
 from typing import Callable
@@ -30,9 +29,10 @@ from openai import PermissionDeniedError
 from openai import RateLimitError
 from openai import UnprocessableEntityError
 
+from pi import logger
 from pi.services.llm.llms import LLMFactory
 
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 T = TypeVar("T")
 ReturnType = Union[T, str]

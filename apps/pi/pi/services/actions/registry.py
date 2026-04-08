@@ -20,30 +20,37 @@ from typing import Optional
 
 # Centralized registry of all API categories and their methods
 API_CATEGORIES: Dict[str, str] = {
+    # Not exposed to router by default (see ROUTER_HIDDEN_CATEGORIES)
     "assets": "Manage and organize project assets",
-    "cycles": "Create, list, and manage cycles",
-    "labels": "Create, update, and manage labels",
-    "modules": "Create, update, and manage modules",
-    "pages": "Create and manage project and workspace pages/documentation",
-    "projects": "Create, list, and manage projects",
-    "states": "Create, update, and manage states",
-    "users": "Manage user information and profiles",
-    "workitems": "Work items/issues - create, update, manage work items",
-    "intake": "Submit and manage work items in intake queue for triage",
-    "initiatives": "Manage strategic initiatives with epics, labels, and projects",
-    "teamspaces": "Manage team collaboration spaces with members and projects",
-    "stickies": "Create and manage quick sticky notes and annotations",
-    "customers": "Manage customer relationships and information",
-    "members": "Manage workspace and project members",
-    "activity": "Track and manage work item activities",
+    # Categories with richer, router-grade guidance
+    "workitems": "Create/update/list/get/delete work-items (issues) and create/update epics; assignments, state changes, priority updates",
+    "projects": "Create/list/update/delete projects",
+    "cycles": "Create/list/update/delete cycles (sprints); add/remove workitems to/from cycles",
+    "labels": "Create/list/update/delete labels",
+    "states": "Create/list/update/delete states",
+    "modules": "Create/list/update/delete modules; add/remove workitems to/from modules",
+    "pages": "Create and manage project/workspace pages (rich text, fonts, images, styles)",
+    "users": "Get current user information",
+    "intake": "Create/update/list/delete intake work items (triage queue); forms, guest submissions, triage workflow",
+    "members": "Workspace and project member management and listings",
+    "activity": "Track work item activities, history, and audit logs",
+    "comments": "Comments and discussions on work items",
+    "links": "External links and references on work items",
+    "properties": "Custom properties and fields for work items",
+    "types": "Custom work item types (bug, task, story, etc.)",
+    "worklogs": "Time tracking and work logs",
+    "initiatives": "Create/list/update/delete initiatives (cross-project goal containers)",
+    "teamspaces": "Manage teamspaces (team containers for projects and cycles)",
+    "stickies": "Create/list/update/delete sticky notes (plain text notes, no rich media)",
+    "customers": "Manage customer records and CRM integrations",
+    "workspaces": "Workspace-level operations and feature management",
+    # Keep attachments in registry for completeness; hidden from router unless enabled
     "attachments": "Manage file attachments on work items",
-    "comments": "Manage comments on work items",
-    "links": "Manage external links on work items",
-    "properties": "Manage custom properties and their values",
-    "types": "Manage work item types",
-    "worklogs": "Track and manage time entries",
-    "workspaces": "Manage workspace settings and features",
 }
+
+# Categories hidden from the action category router (but kept in registry).
+# Toggle by editing this set. One-line change restores visibility.
+ROUTER_HIDDEN_CATEGORIES = {"assets", "attachments"}
 
 # Centralized registry of methods for each category
 API_METHODS: Dict[str, Dict[str, str]] = {
@@ -246,6 +253,15 @@ API_METHODS: Dict[str, Dict[str, str]] = {
 def get_available_categories() -> Dict[str, str]:
     """Get all available API categories with descriptions."""
     return API_CATEGORIES.copy()
+
+
+def get_router_categories() -> Dict[str, str]:
+    """Categories visible to the action category router (excludes hidden).
+
+    This lets us hide categories like 'assets' without changing all call sites.
+    Toggle visibility by editing ROUTER_HIDDEN_CATEGORIES above.
+    """
+    return {k: v for k, v in API_CATEGORIES.items() if k not in ROUTER_HIDDEN_CATEGORIES}
 
 
 def get_category_methods(category: str) -> Dict[str, str]:
@@ -503,80 +519,3 @@ def resolve_actual_method_name(category: str, method: str) -> Optional[str]:
 
     # If not a simplified name, assume it could already be actual; allow pass-through
     return method
-
-
-# ============================================================================
-# CENTRALIZED TOOL DEFINITIONS (Phase 1: Foundation)
-# ============================================================================
-# This is the single source of truth for all tool metadata.
-# Auto-generation in progress - currently only labels category defined.
-
-from pi.services.actions.tool_metadata import ToolMetadata
-
-# Tool definitions - now imported from individual tool modules for modularity
-# Each tool file defines its own metadata, special handlers, and business logic
-from pi.services.actions.tools.activity import ACTIVITY_TOOL_DEFINITIONS
-from pi.services.actions.tools.assets import ASSET_TOOL_DEFINITIONS
-from pi.services.actions.tools.comments import COMMENTS_TOOL_DEFINITIONS
-from pi.services.actions.tools.customers import CUSTOMER_TOOL_DEFINITIONS
-from pi.services.actions.tools.cycles import CYCLES_TOOL_DEFINITIONS
-from pi.services.actions.tools.initiatives import INITIATIVE_TOOL_DEFINITIONS
-from pi.services.actions.tools.intake import INTAKE_TOOL_DEFINITIONS
-from pi.services.actions.tools.labels import LABEL_TOOL_DEFINITIONS
-from pi.services.actions.tools.links import LINKS_TOOL_DEFINITIONS
-from pi.services.actions.tools.members import MEMBER_TOOL_DEFINITIONS
-from pi.services.actions.tools.modules import MODULES_TOOL_DEFINITIONS
-from pi.services.actions.tools.pages import PAGE_TOOL_DEFINITIONS
-from pi.services.actions.tools.projects import PROJECT_TOOL_DEFINITIONS
-from pi.services.actions.tools.properties import PROPERTIES_TOOL_DEFINITIONS
-from pi.services.actions.tools.states import STATE_TOOL_DEFINITIONS
-from pi.services.actions.tools.stickies import STICKY_TOOL_DEFINITIONS
-from pi.services.actions.tools.teamspaces import TEAMSPACE_TOOL_DEFINITIONS
-from pi.services.actions.tools.types import TYPE_TOOL_DEFINITIONS
-from pi.services.actions.tools.users import USER_TOOL_DEFINITIONS
-from pi.services.actions.tools.workitems import WORKITEMS_TOOL_DEFINITIONS
-from pi.services.actions.tools.worklogs import WORKLOGS_TOOL_DEFINITIONS
-from pi.services.actions.tools.workspaces import WORKSPACE_TOOL_DEFINITIONS
-
-TOOL_DEFINITIONS: Dict[str, Dict[str, ToolMetadata]] = {
-    "activity": ACTIVITY_TOOL_DEFINITIONS,
-    "assets": ASSET_TOOL_DEFINITIONS,
-    "comments": COMMENTS_TOOL_DEFINITIONS,
-    "customers": CUSTOMER_TOOL_DEFINITIONS,
-    "cycles": CYCLES_TOOL_DEFINITIONS,
-    "initiatives": INITIATIVE_TOOL_DEFINITIONS,
-    "intake": INTAKE_TOOL_DEFINITIONS,
-    "labels": LABEL_TOOL_DEFINITIONS,
-    "links": LINKS_TOOL_DEFINITIONS,
-    "members": MEMBER_TOOL_DEFINITIONS,
-    "modules": MODULES_TOOL_DEFINITIONS,
-    "pages": PAGE_TOOL_DEFINITIONS,
-    "projects": PROJECT_TOOL_DEFINITIONS,
-    "properties": PROPERTIES_TOOL_DEFINITIONS,
-    "states": STATE_TOOL_DEFINITIONS,
-    "stickies": STICKY_TOOL_DEFINITIONS,
-    "teamspaces": TEAMSPACE_TOOL_DEFINITIONS,
-    "types": TYPE_TOOL_DEFINITIONS,
-    "users": USER_TOOL_DEFINITIONS,
-    "workitems": WORKITEMS_TOOL_DEFINITIONS,
-    "worklogs": WORKLOGS_TOOL_DEFINITIONS,
-    "workspaces": WORKSPACE_TOOL_DEFINITIONS,
-}
-
-
-def get_tool_metadata(category: str, method: str) -> Optional[ToolMetadata]:
-    """Get tool metadata for a specific category and method.
-
-    Args:
-        category: API category (e.g., "labels", "workitems")
-        method: Simplified method name (e.g., "create", "list")
-
-    Returns:
-        ToolMetadata if found, None otherwise
-    """
-    return TOOL_DEFINITIONS.get(category, {}).get(method)
-
-
-def get_all_tool_metadata() -> Dict[str, Dict[str, ToolMetadata]]:
-    """Get all tool metadata across all categories."""
-    return TOOL_DEFINITIONS.copy()

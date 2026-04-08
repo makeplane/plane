@@ -180,6 +180,16 @@ class StandardAgentResponse:
 def reasoning_header_factory(stage: str, tool_name: str, tool_query: str) -> str:
     """Factory function to create a reasoning header for a given stage"""
     stage_dict = {
+        "mcp_loading": [
+            "\n\nConnecting to your integrations...\n\n",
+            "\n\nLoading MCP tools from connectors...\n\n",
+        ],
+        "mcp_osmosis": [
+            f"\n\nGenerating connector summaries and understanding tools for: {tool_query}\n\n"
+            if tool_query
+            else "\n\nSummarizing connector capabilities...\n\n",
+            f"\n\nClassifying connector tools for: {tool_query}\n\n" if tool_query else "\n\nClassifying connector tools...\n\n",
+        ],
         "build_beginning": [
             "\n\nAssembling the action sequence...\n\n",
             "\n\nPlanning next steps...\n\n",
@@ -326,10 +336,11 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
             filenames = [att.get("filename", "Unknown") for att in attachments]
             attachment_info = f" [Attachments: {', '.join(filenames)}]"
 
-        # Extract and include action context if available
+        # Extract and include action context if available.
+        # The DB layer stores actions at the top level of the qa_pair dict
+        # (qa_pair["actions"]), not nested under "execution_status".
         action_context = ""
-        execution_status = qa_pair.get("execution_status", {})
-        # Fix: Remove has_planned_actions gate - just check if actions exist
+        execution_status = {"actions": qa_pair.get("actions", []), "action_summary": qa_pair.get("action_summary", {})}
         if execution_status.get("actions"):
             action_context += "\n**Action Context:**\n"
 
@@ -337,18 +348,40 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
             for action in execution_status.get("actions", []):
                 action_type = action.get("action")
                 success = action.get("success")
+                is_mcp = action.get("artifact_type") == "mcp"
 
                 if success and action.get("entity"):
                     entity = action.get("entity", {})
                     entity_type = entity.get("entity_type", "entity")
                     entity_name = entity.get("entity_name", "")
                     entity_id = entity.get("entity_id", "")
+                    entity_url = entity.get("entity_url", "")
 
-                    action_context += f"- Action: {action_type} → Successfully created/updated {entity_type} '{entity_name}' (ID: {entity_id})\n"
+                    if is_mcp:
+                        msg = action.get("message", "")
+                        line = f"- MCP [{entity_type}]: {msg or 'Executed successfully'}"
+                        if entity_url:
+                            line += f" → {entity_url}"
+                        action_context += line + "\n"
+                    else:
+                        line = f"- Action: {action_type} → Successfully created/updated {entity_type} '{entity_name}' (ID: {entity_id})"
+                        if entity_url:
+                            line += f" (URL: {entity_url})"
+                        action_context += line + "\n"
                 elif success:
-                    action_context += f"- Action: {action_type} → Executed successfully\n"
+                    if is_mcp:
+                        msg = action.get("message", "")
+                        tool_name = action.get("tool_name", "MCP tool")
+                        action_context += f"- MCP [{tool_name}]: {msg or 'Executed successfully'}\n"
+                    else:
+                        action_context += f"- Action: {action_type} → Executed successfully\n"
                 else:
-                    action_context += f"- Action: {action_type} → Failed to execute\n"
+                    error = action.get("error", "")
+                    if is_mcp:
+                        tool_name = action.get("tool_name", "MCP tool")
+                        action_context += f"- MCP [{tool_name}]: Failed{' — ' + error if error else ''}\n"
+                    else:
+                        action_context += f"- Action: {action_type} → Failed to execute\n"
 
             # Check if we can extract planning context from the qa_pair structure
             # This would be available when the enhanced execution_data includes planning_context

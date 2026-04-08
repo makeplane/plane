@@ -79,6 +79,7 @@ class ChatRequest(BaseModel):
     attachment_ids: Optional[List[uuid.UUID]] = Field(default=[], description="List of attachment IDs to link to this message")
     sidebar_open_url: Optional[str] = Field(default="", description="The URL where the sidebar was opened from")
     source: Optional[str] = Field(default="", description="The source of the chat request")
+    mcp_connector_ids: Optional[List[str]] = Field(default=[], description="List of MCP connector IDs or slugs selected by user")
 
 
 class ChatInitializationRequest(BaseModel):

@@ -25,7 +25,6 @@ from typing import cast
 
 from langchain_core.messages import HumanMessage
 from langchain_core.messages import SystemMessage
-from langchain_core.messages import ToolMessage
 
 from pi import logger
 from pi import settings
@@ -39,6 +38,9 @@ from pi.services.llm.cache_utils import create_claude_cached_system_message
 from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
 from pi.services.llm.cache_utils import should_cache_messages
 from pi.services.llm.cache_utils import should_cache_tool_bindings
+from pi.services.mcp.loader import get_mcp_loader
+from pi.services.mcp.osmosis import run_osmosis
+from pi.services.mcp.utils import parse_tool_name as parse_mcp_tool_name
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps as _upsert_message_flow_steps
 from pi.services.schemas.chat import ActionCategorySelection
 
@@ -54,6 +56,7 @@ from .helpers.build_mode_helpers import enrich_tool_query_for_display
 from .helpers.build_mode_helpers import execute_and_persist_clarification
 from .helpers.build_mode_helpers import execute_retrieval_tool_and_build_step
 from .helpers.build_mode_helpers import handle_preflight_clarification
+from .helpers.build_mode_helpers import multi_hop_tool_picker
 from .helpers.build_mode_helpers import persist_skip_category_selection_step
 from .helpers.build_mode_helpers import plan_action_and_prepare_outputs
 from .helpers.build_mode_helpers import recover_clarification_categories
@@ -66,8 +69,10 @@ from .helpers.tool_utils import classify_tool
 from .helpers.tool_utils import extract_text_from_content
 from .helpers.tool_utils import format_tool_query_for_display
 from .helpers.tool_utils import preflight_missing_required_fields
+from .helpers.tool_utils import register_tool_metadata
 from .helpers.tool_utils import tool_name_shown_to_user
 from .kit import TODO_STATUS_ICON
+from .kit import build_reselect_categories_tool
 
 # from .tool_utils import log_toolset_details
 
@@ -176,6 +181,7 @@ async def execute_tools_for_build_mode(
     pi_sidebar_open=None,
     sidebar_open_url=None,
     source=None,
+    mcp_connector_ids=None,
     websearch_enabled: bool = False,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """
@@ -237,6 +243,96 @@ async def execute_tools_for_build_mode(
             db=db,
         )
 
+        # Initialize MCP-related variables so they are always bound regardless of which branch is taken
+        mcp_connector_slug_to_id: dict = {}
+        mcp_tools: list = []
+        connectors: list = []
+        mcp_descriptions: dict | None = None
+        mcp_tools_by_slug: dict | None = None
+
+        if mcp_connector_ids:
+            try:
+                connector_id_strs = [str(cid) for cid in mcp_connector_ids]
+                session_cookie = user_meta.get("session_cookie", "") if isinstance(user_meta, dict) else ""
+                mcp_service = get_mcp_loader()
+                # Show loading tick only on fresh turns (not clarification follow-ups)
+                if not skip_category_selection:
+                    try:
+                        _content = ""
+                        _stage = "mcp_loading"
+                        _tick = reasoning_dict_maker(stage=_stage, tool_name="", tool_query="", content=_content)
+                        if reasoning_container is not None:
+                            reasoning_container["content"] += _tick["header"] + _tick["content"]
+                        # πspecial reasoning blockπ
+                        yield _tick
+                    except Exception:
+                        pass
+                mcp_tools, mcp_connector_slug_to_id, connectors = await mcp_service.load_mcp_tools_with_connector_map(
+                    workspace_slug=workspace_slug,
+                    session_cookie=session_cookie,
+                    connector_ids=connector_id_strs,
+                )
+                if mcp_tools:
+                    log.info(f"ChatID: {chat_id} - Loaded {len(mcp_tools)} MCP tools from {len(mcp_connector_ids)} connectors")
+                    # Phase 1: resolve cache hits and identify misses
+                    from pi.services.mcp.osmosis import plan_osmosis_precheck
+
+                    osmosis_result, _miss_slugs, _names_by_slug = await plan_osmosis_precheck(
+                        connectors=connectors,
+                        mcp_tools=mcp_tools,
+                        db=db,
+                    )
+                    # Phase 2: if any connectors missed cache, run LLM generation
+                    # Only show osmosis tick on fresh turns
+                    if _miss_slugs:
+                        if not skip_category_selection:
+                            try:
+                                _names = [str(_names_by_slug.get(s, s)) for s in _miss_slugs]
+                                _preview = ", ".join(_names[:3])
+                                if len(_names) > 3:
+                                    _preview += f" (+{len(_names) - 3})"
+                                _tick2 = reasoning_dict_maker(stage="mcp_osmosis", tool_name="", tool_query=_preview, content="")
+                                if reasoning_container is not None:
+                                    reasoning_container["content"] += _tick2["header"] + _tick2["content"]
+                                yield _tick2
+                            except Exception:
+                                pass
+                        generated = await run_osmosis(
+                            connectors=connectors,
+                            mcp_tools=mcp_tools,
+                            db=db,
+                            query_id=query_id,
+                            chat_id=str(chat_id),
+                            only_slugs=_miss_slugs,
+                        )
+                        # Merge generated results into cached results
+                        osmosis_result.connector_descriptions.update(generated.connector_descriptions)
+                        osmosis_result.tool_classifications.update(generated.tool_classifications)
+                    # Build mcp_descriptions dict for category router (mcp_<slug> → description)
+                    if osmosis_result.connector_descriptions:
+                        mcp_descriptions = {f"mcp_{slug}": desc for slug, desc in osmosis_result.connector_descriptions.items()}
+                    # Register tool classifications for planning
+                    for tool_full_name, classification in osmosis_result.tool_classifications.items():
+                        register_tool_metadata(
+                            tool_full_name,
+                            kind=classification,
+                            plan_only=(classification == "action"),
+                        )
+                    # Group MCP tools by connector slug for build_planning_tools
+                    _tbs: dict = {}
+                    for t in mcp_tools:
+                        t_name = getattr(t, "name", "")
+                        if t_name.startswith("mcp_"):
+                            try:
+                                _s = parse_mcp_tool_name(t_name)[0]
+                                _tbs.setdefault(_s, []).append(t)
+                            except Exception:
+                                pass
+                    if _tbs:
+                        mcp_tools_by_slug = _tbs
+            except Exception as e:
+                log.error(f"ChatID: {chat_id} - Failed to load MCP tools: {e}", exc_info=True)
+
         if not skip_category_selection:
             # ----- PHASE 1: Category Selection (Programmatic + LLM Router) -----
             # Yield early reasoning chunk to provide immediate feedback (similar to ask mode)
@@ -273,6 +369,7 @@ async def execute_tools_for_build_mode(
                 chat_id=chat_id,
                 current_step=current_step,
                 db=db,
+                mcp_descriptions=mcp_descriptions,
             )
             # Stream category routing decisions as reasoning for frontend visibility
             try:
@@ -344,7 +441,17 @@ async def execute_tools_for_build_mode(
             method_executor=method_executor,
             context=context,
             fresh_retrieval_tools=fresh_retrieval_tools,
+            mcp_tools_by_slug=mcp_tools_by_slug,
         )
+
+        # # If MCP tools were loaded but none were routed via categories (e.g. router didn't
+        # # select any mcp_* category), fall back to appending all MCP tools so they are
+        # # still available to the planner.
+        # if mcp_tools:
+        #     _routed_mcp_names = {getattr(t, "name", "") for t in all_method_tools if getattr(t, "name", "").startswith("mcp_")}
+        #     _unrouted = [t for t in mcp_tools if getattr(t, "name", "") not in _routed_mcp_names]
+        #     if _unrouted:
+        #         combined_tools = combined_tools + _unrouted
 
         # Add app response tool if source is 'app'
         if source == "app":
@@ -357,6 +464,58 @@ async def execute_tools_for_build_mode(
             except Exception as e:
                 log.warning(f"ChatID: {chat_id} - Failed to add app response tool: {e}")
 
+        # --- Dynamic category re-selection tool ---
+        # Mutable container that lets the reselect tool communicate rebuilt tools
+        # back to this scope so we can re-bind the LLM.
+        _reselect_tools_container: Dict[str, Any] = {}
+        reselect_tool = build_reselect_categories_tool(
+            chatbot_instance=chatbot_instance,
+            method_executor=method_executor,
+            context=context,
+            fresh_retrieval_tools=fresh_retrieval_tools,
+            current_selections=selections_list,
+            tools_container=_reselect_tools_container,
+            chat_id=str(chat_id),
+            mcp_tools_by_slug=mcp_tools_by_slug,
+        )
+        combined_tools.append(reselect_tool)
+
+        # Log the full method planning prompt and context for debugging
+        try:
+            # Determine if this is a clarification follow-up (raw user input) or router-synthesized query
+            is_clarification_followup = bool(user_meta and isinstance(user_meta, dict) and user_meta.get("clarification_context"))
+            query_label = "User Intent (clarification response)" if is_clarification_followup else "User Intent"
+
+            # Log comprehensive debugging information
+            log.debug(f"ChatID: {chat_id} - {query_label}: {combined_tool_query}")
+            log.debug(f"ChatID: {chat_id} - Selected Categories: {built_categories}")
+            log.debug(f"ChatID: {chat_id} - Available Tools Count: {len(combined_tools)}")
+
+        except Exception as e:
+            log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
+
+        # --- Multi-hop tool picker: filter when tool count exceeds threshold ---
+        if len(combined_tools) > settings.chat.TOOL_COUNT_THRESHOLD:
+            log.info(
+                f"ChatID: {chat_id} - Tool count ({len(combined_tools)}) exceeds threshold "
+                f"({settings.chat.TOOL_COUNT_THRESHOLD}); running multi-hop tool picker"
+            )
+            combined_tools = await multi_hop_tool_picker(
+                all_tools=combined_tools,
+                user_intent=combined_tool_query,
+                enhanced_conversation_history=enhanced_conversation_history,
+                chatbot_instance=chatbot_instance,
+                chat_id=chat_id,
+                query_id=query_id,
+                db=db,
+            )
+
+        try:
+            tool_names_for_log = [t.name for t in combined_tools]
+            log.debug(f"ChatID: {chat_id} - Tool list used for action planning: {tool_names_for_log}")
+        except Exception:
+            pass
+
         if not combined_tools:
             log.warning("No method or retrieval tools available for selected categories")
             msg = "An unexpected error occurred. Please try again later."
@@ -368,6 +527,19 @@ async def execute_tools_for_build_mode(
         combined_tools = list({tool.name: tool for tool in combined_tools}.values())
 
         # Build the planning prompt via shared helper, pass previously derived clar_ctx
+        # Check if MCP tools are present in combined_tools
+        mcp_tools_list = [t for t in combined_tools if t.name.startswith("mcp_")]
+
+        # Build dynamic category list for prompt (registry + MCP + retrieval_tools)
+        try:
+            from pi.services.actions.registry import get_router_categories  # Local import to avoid broad file changes
+
+            _registry_cats = list(get_router_categories().keys())
+        except Exception:
+            _registry_cats = []
+        _mcp_cats = [f"mcp_{slug}" for slug in (mcp_tools_by_slug or {}).keys()] if mcp_tools_by_slug else []
+        _available_categories = sorted(set(_registry_cats + _mcp_cats + ["retrieval_tools"]))
+
         method_prompt = build_method_prompt(
             combined_tool_query,
             project_id,
@@ -377,7 +549,10 @@ async def execute_tools_for_build_mode(
             clarification_context=clar_ctx,
             user_meta=user_meta,
             source=source,
+            mcp_tools=mcp_tools_list or None,
             websearch_enabled=websearch_enabled,
+            available_categories=_available_categories,
+            max_category_reselect_invocations=getattr(settings.chat, "MAX_CATEGORY_RESELECT_INVOCATIONS", None),
         )
 
         # Record the tool orchestration context (enhanced conversation history) before planning
@@ -395,25 +570,6 @@ async def execute_tools_for_build_mode(
                 current_step = next_step_ctx
         except Exception:
             pass
-
-        # Log the full method planning prompt and context for debugging
-        try:
-            # Determine if this is a clarification follow-up (raw user input) or router-synthesized query
-            is_clarification_followup = bool(user_meta and isinstance(user_meta, dict) and user_meta.get("clarification_context"))
-            query_label = "User Intent (clarification response)" if is_clarification_followup else "User Intent"
-
-            # Log comprehensive debugging information
-            log.debug(f"ChatID: {chat_id} - {query_label}: {combined_tool_query}")
-            log.debug(f"ChatID: {chat_id} - Selected Categories: {built_categories}")
-            log.debug(f"ChatID: {chat_id} - Available Tools Count: {len(combined_tools)}")
-            try:
-                tool_names_for_log = [t.name for t in combined_tools]
-                log.debug(f"ChatID: {chat_id} - Planning tools: {tool_names_for_log}")
-            except Exception:
-                pass
-
-        except Exception as e:
-            log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
 
         if not combined_tool_query or not combined_tool_query.strip():
             log.error(f"ChatID: {chat_id} - Empty user query received in build mode")
@@ -834,6 +990,69 @@ async def execute_tools_for_build_mode(
                     yield f"__FINAL_RESPONSE__{json_response}"
                     return
 
+                # Special handling for dynamic category re-selection tool
+                elif tool_name == "reselect_action_categories":
+                    log.info(f"ChatID: {chat_id} - Category re-selection invoked: {tool_args}")
+                    # Execute the async tool directly
+                    reselect_result_tool = next((t for t in combined_tools if getattr(t, "name", "") == "reselect_action_categories"), None)
+                    if reselect_result_tool is not None:
+                        try:
+                            result_text = await reselect_result_tool.ainvoke(tool_args)
+                        except Exception as e:
+                            result_text = f"Category re-selection failed: {e}"
+                            log.error(f"ChatID: {chat_id} - reselect_action_categories error: {e}")
+                    else:
+                        result_text = "reselect_action_categories tool not found."
+
+                    from langchain_core.messages import ToolMessage
+
+                    tool_messages.append(ToolMessage(content=str(result_text), tool_call_id=tool_id))
+
+                    # If the reselect tool rebuilt tools, re-bind the LLM
+                    if _reselect_tools_container.get("needs_rebind"):
+                        new_tools = _reselect_tools_container.pop("combined_tools", [])
+                        new_method_tools = _reselect_tools_container.pop("all_method_tools", all_method_tools)
+                        new_built_cats = _reselect_tools_container.pop("built_categories", built_categories)
+                        _reselect_tools_container.pop("needs_rebind", None)
+
+                        # Re-add the reselect tool itself and the app response tool
+                        existing_names = {getattr(t, "name", "") for t in new_tools}
+                        if "reselect_action_categories" not in existing_names:
+                            new_tools.append(reselect_tool)
+                        if source == "app" and "provide_final_answer_for_app" not in existing_names:
+                            try:
+                                from pi.services.actions.tools.app_response import get_app_response_tool
+
+                                new_tools.append(get_app_response_tool())
+                            except Exception:
+                                pass
+
+                        # Apply multi-hop filtering if still over threshold
+                        if len(new_tools) > settings.chat.TOOL_COUNT_THRESHOLD:
+                            new_tools = await multi_hop_tool_picker(
+                                all_tools=new_tools,
+                                user_intent=combined_tool_query,
+                                enhanced_conversation_history=enhanced_conversation_history,
+                                chatbot_instance=chatbot_instance,
+                                chat_id=chat_id,
+                                query_id=query_id,
+                                db=db,
+                            )
+
+                        # Deduplicate and re-bind
+                        combined_tools = list({getattr(t, "name", id(t)): t for t in new_tools}.values())
+                        all_method_tools = new_method_tools
+                        built_categories = new_built_cats
+
+                        _bind_kwargs = {}
+                        if should_cache_tool_bindings(chatbot_instance.switch_llm):
+                            _bind_kwargs = get_claude_bind_kwargs_with_cache()
+                        llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools, **_bind_kwargs)
+                        llm_with_method_tools.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_METHOD_PLANNING, chat_id=str(chat_id))
+
+                        log.info(f"ChatID: {chat_id} - LLM re-bound after category re-selection with {len(combined_tools)} tools")
+                    continue
+
                 # Check if this is an action tool (not a retrieval tool)
                 #
                 # Tool Classification Logic:
@@ -872,6 +1091,92 @@ async def execute_tools_for_build_mode(
 
                 # Classify tool via shared helper
                 _is_retrieval_tool, is_action_tool = classify_tool(tool_name)
+
+                # Check if this is an external tool
+                from pi.services.actions.artifacts.handlers import get_handler_optional
+
+                tool_handler = get_handler_optional(tool_name)
+
+                # For MCP read-only tools (list, get, search), skip the handler
+                # and execute inline like native retrieval tools, so the LLM
+                # can see the result and generate a natural-language answer.
+                # Modifying MCP tools still go through handler → artifact → approval.
+                if tool_handler and is_action_tool:
+                    # External tool (MCP, etc.) - use handler for all logic
+                    log.info(f"ChatID: {chat_id} - {tool_handler.__class__.__name__}: {tool_name}")
+
+                    # Create artifact via handler
+                    handler_context = {
+                        "step_order": current_step,
+                        "query_id": query_id,
+                        "workspace_slug": workspace_slug,
+                        "db": db,
+                        "chat_id": chat_id,
+                        "tool_id": tool_id,
+                        "combined_tool_query": combined_tool_query,
+                    }
+                    artifact = await tool_handler.create_artifact(tool_name, tool_args, handler_context)
+
+                    # Save to DB (handler encapsulates all DB logic)
+                    artifact_id = await tool_handler.save_to_db(artifact, handler_context)
+                    if artifact_id:
+                        artifact.artifact_id = artifact_id
+
+                    # Yield reasoning block
+                    stage = "planner_tool_selection_final"
+                    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name=artifact.tool_name, tool_query="", content="")
+                    if reasoning_container is not None:
+                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                    yield reasoning_chunk_dict
+
+                    # Stream to UI (without _internal)
+                    yield f"πspecial actions blockπ: {json.dumps(artifact.to_dict(), default=str)}"
+
+                    # Derive mcp_connector_id from tool name slug
+                    _mcp_connector_id = None
+                    if tool_name.startswith("mcp_") and mcp_connector_slug_to_id:
+                        try:
+                            _slug = tool_name[4:].split("__")[0]
+                            _cid_str = mcp_connector_slug_to_id.get(_slug)
+                            if _cid_str:
+                                import uuid as _uuid
+
+                                _mcp_connector_id = _uuid.UUID(str(_cid_str))
+                        except Exception:
+                            _mcp_connector_id = None
+
+                    # Track flow step
+                    flow_step_data = {
+                        "step_type": FlowStepType.TOOL.value,
+                        "step_order": current_step,
+                        "tool_name": tool_name,
+                        "execution_data": {
+                            "artifact_id": artifact_id,
+                            "tool_name": tool_name,
+                            "entity_type": f"{artifact.artifact_type}_action",
+                            "action_type": "execute",
+                            "args": tool_args,
+                        },
+                        "is_planned": True,
+                        "is_executed": False,
+                        "execution_success": ExecutionStatus.PENDING,
+                    }
+                    if _mcp_connector_id:
+                        flow_step_data["mcp_connector_id"] = _mcp_connector_id
+                    tool_flow_steps.append(flow_step_data)
+
+                    # Add to history and planned actions
+                    tool_messages.append(
+                        {
+                            "role": "tool",
+                            "content": f"{artifact.artifact_type.upper()} action planned: {artifact.tool_name}",
+                            "tool_call_id": tool_id,
+                            "name": tool_name,
+                        }
+                    )
+                    planned_actions.append(artifact.to_internal_dict())
+                    current_step += 1
+                    continue
 
                 if is_action_tool:
                     # Build context for entity resolution
@@ -995,6 +1300,7 @@ async def execute_tools_for_build_mode(
                         query_flow_store=query_flow_store,
                         current_step=current_step,
                         tool_query=tool_query,
+                        mcp_connector_slug_to_id=mcp_connector_slug_to_id if "mcp_connector_slug_to_id" in locals() else None,
                     )
                     (
                         flow_step,

@@ -14,13 +14,14 @@ JSON Serialization utilities for handling non-serializable objects in pg_store.
 """
 
 import json
-import logging
 from datetime import date
 from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-log = logging.getLogger(__name__)
+from pi import logger
+
+log = logger.getChild(__name__)
 
 
 def make_json_serializable(obj: Any) -> Any:

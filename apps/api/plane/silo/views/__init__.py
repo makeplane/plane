@@ -22,6 +22,15 @@ from .importer_report import (
     ImportReportCountIncrementAPIView,
 )
 from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView
+from .app import (
+    MCPApplicationsInternalAPIView,
+    MCPApplicationAPIView,
+    MCPApplicationConnectAPIView,
+    MCPApplicationCredentialsAPIView,
+    MCPApplicationDisconnectAPIView,
+    MCPApplicationOAuthCallbackAPIView,
+    MCPApplicationOAuthConnectAPIView,
+)
 from .work_item_property import IssuePropertyBulkOperationAPIView, WorkspaceIssuePropertyBulkOperationAPIView
 from .work_item_type import WorkspaceIssueTypeBulkOperationAPIView, WorkspaceWorkItemTypeImportAPIView
 from .releases import ReleaseBulkOperationAPIView

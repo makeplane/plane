@@ -24,7 +24,6 @@ Key Components:
 """
 
 import json
-import logging
 import re
 from datetime import date
 from datetime import timedelta
@@ -38,6 +37,7 @@ from pydantic import UUID4
 from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from pi import logger
 from pi import settings
 from pi.app.models.enums import MessageMetaStepType
 from pi.services.actions.method_executor import MethodExecutor
@@ -50,7 +50,7 @@ from pi.services.query_utils import _parse_query_internal
 from pi.services.retrievers.pg_store.action_artifact import add_query_to_artifact
 from pi.services.retrievers.pg_store.action_artifact import get_artifact_prompt_history_from_flow_steps
 
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 # Constants for maintainability and scalability
 TOOL_ENTITY_MAPPING = {

@@ -16,15 +16,13 @@ Tests the most important create/update operations
 """
 
 import asyncio
-import logging
 import uuid
 from datetime import datetime
 
+from pi import logger
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 
 async def quick_test_key_actions():

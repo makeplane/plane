@@ -218,6 +218,10 @@ class PlaneToolBase:
                     entity["entity_name"] = str(entity_data["name"])
                 if "entity_type" not in entity:
                     entity["entity_type"] = entity_type
+                # For link entities, use the link's own URL when URL construction
+                # fails (links are sub-resources with no Plane URL path template)
+                if entity_type == "link" and "entity_url" not in entity and entity_data.get("url"):
+                    entity["entity_url"] = str(entity_data["url"])
         except Exception as e:
             log.warning(f"Failed to build structured entity payload: {e}")
 

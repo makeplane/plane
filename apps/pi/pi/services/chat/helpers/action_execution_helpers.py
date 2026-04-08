@@ -398,6 +398,7 @@ async def load_artifacts(
                 "entity_type": entity_type,
                 "action": action,
                 "version_id": version_id,  # Track version for execution status update
+                "planning_data": artifact.data.get("planning_data", {}),  # Include for MCP raw_tool_name
             }
         )
 
@@ -428,7 +429,17 @@ async def update_flow_steps(results, message_id, chat_id, db: AsyncSession):
                     except (ValueError, TypeError):
                         log.warning(f"Invalid entity_id format in entity_info: {entity_id_str}")
 
-            # Update ActionArtifact and MessageFlowStep execution status
+            # For failed MCP actions, persist the error message into entity_info
+            # so the artifacts list API can surface it later.
+            if not r.get("success") and r.get("artifact_type") == "mcp":
+                error_msg = r.get("message") or r.get("result") or r.get("error") or ""
+                if error_msg:
+                    if entity_info and isinstance(entity_info, dict):
+                        entity_info = {**entity_info, "error": error_msg}
+                    else:
+                        entity_info = {"error": error_msg}
+
+            execution_result = r.get("result", "") or r.get("message", "")
             await update_action_artifact_execution_status(
                 db=db,
                 message_id=message_id,
@@ -438,7 +449,7 @@ async def update_flow_steps(results, message_id, chat_id, db: AsyncSession):
                 success=r.get("success", False),
                 entity_id=entity_id,
                 entity_info=entity_info,
-                execution_result=r.get("result", ""),
+                execution_result=execution_result,
                 executed_at=r.get("executed_at"),
             )
 
@@ -510,13 +521,16 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
         tool_name = action.get("tool_name", "")
 
         # Filter out retrieval tools - only show actual actions to frontend
-        if tool_name:
+        # BUT never filter MCP tools: they were explicitly planned/approved in build mode
+        if tool_name and action.get("artifact_type") != "mcp":
             is_retrieval, is_action = classify_tool(tool_name)
             if is_retrieval and not is_action:
                 log.debug(f"Filtering out retrieval tool from actions response: {tool_name}")
                 continue
 
-        action_type = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("action_type", "")
+        # For MCP/external tools, use action field directly from ExecutionResult
+        # For Plane tools, use TOOL_NAME_TO_CATEGORY_MAP
+        action_type = action.get("action") or TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("action_type", "")
 
         action_data = {
             "action": action_type,
@@ -569,8 +583,7 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
                 if project_identifier:
                     action_data["project_identifier"] = project_identifier
 
-            # Extract the nice success message from the result
-            result = action.get("result", "")
+            result = action.get("result", "") or action.get("message", "")
             if result:
                 # Extract the nice message that comes after "✅ " and before "\n\n"
                 nice_message = extract_success_message(result)
@@ -585,17 +598,36 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
                     else:
                         action_data["message"] = "Action completed successfully"
         else:
-            # For failed actions, send user-friendly message in error field
-            # Technical error details are already logged in SDK adapter and method executor
+            # For failed MCP actions, also include entity info (entity_name + entity_type)
+            # so the caller knows which connector/tool failed.
+            if action.get("artifact_type") == "mcp":
+                entity_info = action.get("entity_info")
+                if entity_info and isinstance(entity_info, dict):
+                    essential_entity = {}
+                    for field in ["entity_url", "entity_name", "entity_type", "entity_id"]:
+                        if field in entity_info and entity_info[field]:
+                            essential_entity[field] = entity_info[field]
+                    # Combine entity_name + entity_type (e.g. "Supaseb create_project")
+                    if essential_entity.get("entity_name") and essential_entity.get("entity_type"):
+                        essential_entity["entity_name"] = f"{essential_entity['entity_name']} {essential_entity['entity_type']}"
+                    if essential_entity:
+                        action_data["entity"] = essential_entity
+
+            # For failed actions, send user-friendly message in error field.
+            # MCP ExecutionResult stores the error in "message"; Plane tools use "result".
             result = action.get("result", "")
             if result:
                 # Use the user-friendly message (e.g., "❌ Failed to create module")
                 action_data["error"] = result
             else:
-                # Fallback to technical error if no user-friendly message
-                error = action.get("error", "")
-                if error:
-                    action_data["error"] = error[:100] + "..." if len(error) > 100 else error
+                # Fallback: MCP errors are stored in the "message" field of ExecutionResult
+                msg = action.get("message", "")
+                if msg:
+                    action_data["error"] = msg
+                else:
+                    error = action.get("error", "")
+                    if error:
+                        action_data["error"] = error[:100] + "..." if len(error) > 100 else error
 
         clean_actions.append(action_data)
 

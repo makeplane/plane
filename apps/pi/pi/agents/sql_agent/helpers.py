@@ -943,6 +943,11 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
             # Extract customer_id (it was injected by tool_generator from sdk adapter result)
             entity_data["customer"] = data.get("customer")
             entity_data["customer_id"] = data.get("customer_id")
+        elif entity_type == "link":
+            # Links use 'title' instead of 'name', and have their own 'url'.
+            # Fall back to url when title is absent (links can be created without a title).
+            entity_data["name"] = data.get("title") or data.get("name") or data.get("url")
+            entity_data["url"] = data.get("url")
         elif entity_type == "teamspace":
             # For teamspace operations where SDK doesn't return full object,
             # id may have been injected (e.g., for add_projects)
@@ -980,9 +985,6 @@ async def construct_action_entity_url(
     Returns:
         Dictionary with entity URL information or None if construction fails
     """
-    import logging
-
-    log = logging.getLogger(__name__)
     from pi.services.chat.helpers.url_builder import build_entity_url
 
     _ = api_base_url

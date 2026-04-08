@@ -18,7 +18,6 @@ Special handling includes: state/type resolution, epic type injection, identifie
 Old manual definitions kept below for comparison/rollback safety.
 """
 
-import logging
 import uuid
 from typing import Any
 from typing import Dict
@@ -26,12 +25,13 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+from pi import logger
 from pi.services.actions.tool_generator import generate_tools_for_category
 from pi.services.actions.tool_metadata import ToolMetadata
 from pi.services.actions.tool_metadata import ToolParameter
 from pi.services.chat.helpers.tool_utils import generate_success_message
 
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 # Issue relation types as per Plane SDK documentation
 RELATION_TYPES = {

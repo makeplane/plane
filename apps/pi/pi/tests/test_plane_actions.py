@@ -17,7 +17,6 @@ Tests all create/update tools directly without frontend
 
 import asyncio
 import json
-import logging
 import uuid
 from datetime import datetime
 from typing import Any
@@ -25,12 +24,12 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+from pi import logger
 from pi.services.actions.method_executor import MethodExecutor
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-log = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 
 
 class PlaneActionsTestSuite:

@@ -11,7 +11,6 @@
 
 from enum import Enum
 from typing import List
-from typing import Literal
 from typing import Optional
 from typing import TypeAlias
 from typing import TypedDict
@@ -99,10 +98,9 @@ class QueryFlowStore(TypedDict):
 # --- Action Category Routing (for hierarchical actions) ---
 
 
-class ActionCategorySelection(BaseModel):
-    """One selected action category with optional rationale and priority."""
-
-    category: Literal[
+# Known Plane API categories (used for validation alongside dynamic MCP categories)
+_KNOWN_CATEGORIES = frozenset(
+    {
         "workitems",
         "projects",
         "cycles",
@@ -125,8 +123,27 @@ class ActionCategorySelection(BaseModel):
         "customers",
         "workspaces",
         "retrieval_tools",
-    ]
+    }
+)
+
+
+class ActionCategorySelection(BaseModel):
+    """One selected action category with optional rationale and priority.
+
+    Accepts both known Plane categories and dynamic ``mcp_*`` categories
+    for externally connected MCP servers.
+    """
+
+    category: str = Field(
+        ...,
+        description="Category name: a known Plane category or an mcp_<slug> category.",
+    )
     rationale: Optional[str] = None
+
+    @classmethod
+    def is_valid_category(cls, value: str) -> bool:
+        """Check whether *value* is an accepted category name."""
+        return value in _KNOWN_CATEGORIES or value.startswith("mcp_")
 
 
 class ActionCategoryRouting(BaseModel):

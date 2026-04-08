@@ -11,39 +11,97 @@
 
 from langchain_core.prompts import PromptTemplate
 
+from pi.services.actions.registry import get_router_categories
 from pi.services.chat.prompt_mixins import RETRIEVAL_TOOL_DESCRIPTIONS
 from pi.services.chat.prompt_mixins import TOOL_CALL_REASONING_REINFORCEMENT
 from pi.services.chat.prompt_mixins import plane_context
 
-# LLM prompt for action category routing (multi-select)
-action_category_router_prompt = f"""You are helping select one or more Plane API action categories for the user's intent.
+# Build dynamic category help text from registry
+_API_CATEGORIES = get_router_categories()
+_CATEGORIES_BULLETS = "\n".join(f"- {name}: {desc}" for name, desc in _API_CATEGORIES.items())
+_VALID_CATEGORY_VALUES = ", ".join(sorted(list(_API_CATEGORIES.keys()) + ["retrieval_tools"]))
+
+
+# Base MCP tool instructions (common to all modes)
+mcp_tool_instructions_base = """
+
+**MCP (Model Context Protocol) Tools:**
+
+Some tools are prefixed with `mcp_`. These are external tools provided by MCP connectors that the user has enabled:
+- MCP tools follow the naming pattern: `mcp_<connector_name>__<tool_name>` (note the double underscores before tool name)
+  Example: `mcp_github__search_issues`, `mcp_slack__send_message`
+- The double underscore (`__`) separates the connector name from the tool name for clarity
+- Treat MCP tools like any other tool in your toolkit - use them when appropriate for the user's request
+- MCP tools may provide capabilities beyond native Plane tools (e.g., accessing GitHub, Slack, external APIs)
+
+**Authentication:**
+- All MCP tools are already authenticated and ready to use
+- Ignore any mentions of "API token", "authentication required", or "requires auth" in MCP tool descriptions
+- The backend has already handled authentication - you can freely use any `mcp_*` tool without worrying about credentials
+
+When multiple tools can accomplish a task, prefer native Plane tools unless:
+- The user specifically mentions the external service (e.g., "search GitHub issues" should use the GitHub MCP tool)
+- The MCP tool provides unique capabilities not available in Plane's native tools
+"""
+
+
+# Build mode specific additions (full capabilities)
+mcp_tool_instructions_build_mode_specific = """
+
+**BUILD MODE - Capabilities:**
+You are in **BUILD MODE** and can use MCP tools for:
+- **Reading/Retrieving data** (search, get, list, fetch operations)
+- **Creating new resources** (create issues, send messages, post comments)
+- **Updating existing resources** (update records, modify settings, edit content)
+- **Deleting resources** (delete items, remove entries) - use with caution
+"""
+
+# Composed prompt for build mode
+mcp_tool_instructions_build_mode = mcp_tool_instructions_base + mcp_tool_instructions_build_mode_specific
+
+
+def build_action_category_router_prompt(
+    mcp_descriptions: dict[str, str] | None = None,
+) -> str:
+    """Build the action category router system prompt.
+
+    Args:
+        mcp_descriptions: Optional mapping of ``mcp_<slug>`` category names
+            to their LLM-generated descriptions.  When provided, the MCP
+            connectors appear as additional routable categories.
+
+    Returns:
+        The fully rendered system prompt string.
+    """
+    # Base category bullets (Plane API categories)
+    categories_section = _CATEGORIES_BULLETS
+    valid_values = _VALID_CATEGORY_VALUES
+
+    # Inject MCP connector categories if available
+    mcp_section = ""
+    if mcp_descriptions:
+        mcp_bullets = "\n".join(f"- {cat}: {desc}" for cat, desc in mcp_descriptions.items())
+        mcp_section = f"""
+
+**Connected External Tools (MCP):**
+The user has connected external MCP (Model Context Protocol) servers. These are available as additional routable categories:
+{mcp_bullets}
+
+Select an MCP category when the user's intent clearly relates to that external tool's capabilities.
+MCP categories can be selected alongside Plane categories when the intent spans both."""
+        # Extend valid values with MCP category names
+        mcp_names = sorted(mcp_descriptions.keys())
+        valid_values = ", ".join(sorted(list(_API_CATEGORIES.keys()) + ["retrieval_tools"] + mcp_names))
+
+    return f"""You are helping select one or more Plane API action categories for the user's intent.
 
 Context about Plane:
 {plane_context}
 
 Your task: Based on the user's intent and any advisory text (like method lists) provided, choose the most relevant one or more categories from this fixed set:
-- workitems: Create/update/list/get/delete work-items (issues) and Create/update/ epics; assignments, state changes, priority updates
-- projects: Create/list/update/delete projects
-- cycles: Create/list/update/delete cycles (sprints), add/remove workitems to/from cycles
-- labels: Create/list/update/delete labels
-- states: Create/list/update/delete states
-- modules: Create/list/update/delete modules, add/remove workitems to/from modules
-- pages: Create and manage project and workspace pages/documentation (rich text, fonts, images, styles)
-- users: Get current user information
-- intake: Create/update/list/delete intake work items (triage queue items). Handle intake forms, guest submissions, triage workflow
-- members: Workspace and project member management, listings
-- activity: Track work item activities, history, and audit logs
-- comments: Comments and discussions on work items
-- links: External links and references on work items
-- properties: Custom properties and fields for work items
-- types: Custom work item types (bug, task, story, etc.)
-- worklogs: Time tracking and work logs
-- initiatives: Create/list/update/delete initiatives (cross-project goal containers)
-- teamspaces: Manage teamspaces (team containers for projects and cycles)
-- stickies: Create/list/update/delete sticky notes (short plain text notes, like 3M stickers, no rich media)
-- customers: Manage customer records and CRM integrations
-- workspaces: Workspace-level operations and feature management
+{categories_section}
 - retrieval_tools: text2sql, vector_search_tool, pages_search_tool, docs_search_tool, web_search_tool
+{mcp_section}
 
 Rules:
 - "wiki", "knowledge base", "kb", "handbook", "runbook", and "notes" (BUT NOT "sticky notes") are all synonyms for pages. Route these to the pages category, not projects.
@@ -91,9 +149,35 @@ You MUST return a JSON object with a "selections" key containing an array of sel
 **Rules:**
 - ALWAYS wrap selections in a "selections" array, even for a single category
 - If no categories are appropriate, return: {{{{"selections": []}}}}
-- Valid category values: workitems, projects, cycles, labels, states, modules, pages, users, intake, members, activity, comments, links, properties, types, worklogs, initiatives, teamspaces, stickies, customers, workspaces, retrieval_tools
+- Valid category values: {valid_values}
 - No explanation outside the JSON structure
 """  # noqa: E501
+
+
+# Backward-compatible module-level constant (used by imports that don't pass MCP descriptions)
+action_category_router_prompt = build_action_category_router_prompt()
+
+
+tool_picker_system_prompt = """You are a tool relevance filter for a project management AI assistant.
+Given the user's intent, select ONLY the tools from the batch below that could be needed to fulfil the request.
+
+Rules:
+- Include a tool if the user's request could reasonably need it, even indirectly (e.g. retrieval tools needed to resolve IDs before an action).
+- Exclude tools that are clearly unrelated to the request.
+- When uncertain, INCLUDE the tool — false positives are cheaper than false negatives.
+- Return ONLY a JSON object. No explanation.
+
+Output format:
+{{"selected_tools": ["tool_name_1", "tool_name_2"]}}
+"""  # noqa: E501
+
+tool_picker_human_prompt = """User intent: {user_intent}
+
+Tools in this batch (name | description):
+{tool_batch}"""  # noqa: E501
+
+# Legacy alias kept for any external references
+tool_picker_prompt = tool_picker_system_prompt
 
 
 generic_prompt_non_plane = """Your name is Plane AI (formerly, Plane Intelligence (Pi). You are a helpful assistant. Use the user's first name naturally in conversation when it feels appropriate.
@@ -193,6 +277,58 @@ Chat:
 {chat_history}
 
 Title:""",  # noqa: E501
+)
+
+ANSWER_DELIMITER_INSTRUCTIONS = """
+## ANSWER DELIMITER — HOW THE FRONTEND WORKS
+
+- Everything you write BEFORE the delimiter ππANSWERππ is displayed in a live "Thinking..." panel (reasoning/thought).
+- Everything you write AFTER the delimiter is displayed as the **final answer** to the user.
+- The delimiter is a **one-way gate**: once you emit it, there is no going back. You CANNOT output any more reasoning, thinking, or internal commentary after the delimiter — only the polished user-facing answer.
+
+**Rules:**
+1. You may write as much reasoning as you need before the delimiter (tool-selection rationale, result summaries, next-step planning). All of it stays in the thinking panel.{extra_rules}
+2. When you are ready to answer the user, output the EXACT delimiter: ππANSWERππ on its own line.
+3. After the delimiter, write ONLY your final, user-facing answer. No further reasoning, no meta-commentary, no "let me summarize" preambles.
+4. The delimiter MUST appear **exactly once**. Never repeat it. Never omit it.
+5. If you are making tool calls in this turn (not yet ready to answer), do NOT include the delimiter at all — just write reasoning and let the tools execute.
+{extra_trailing_rules}
+{example}
+
+**CRITICAL:** If you forget the delimiter, the UI breaks. If you output it more than once, the user sees garbled duplicate content. Emit it exactly once, then only the answer.
+"""  # noqa: E501
+
+# Pre-formatted variants for each mode
+ANSWER_DELIMITER_BUILD_MODE = ANSWER_DELIMITER_INSTRUCTIONS.format(
+    extra_rules="",
+    extra_trailing_rules="",
+    example="""Example:
+```
+I've analyzed the request and will create two work items.
+
+ππANSWERππ
+
+I've planned the following actions for your approval:
+- Create work item "Fix login bug"
+```""",
+)
+
+ANSWER_DELIMITER_ASK_MODE = ANSWER_DELIMITER_INSTRUCTIONS.format(
+    extra_rules=" Do NOT include the actual formatted answer (tables, lists, results) in the reasoning section.",
+    extra_trailing_rules="6. If you have no reasoning to show, you can start directly with ππANSWERππ.",
+    example="""Example:
+```
+I found 5 high-priority work items from the database query. I'll present them in a table.
+
+ππANSWERππ
+
+You have **5 high-priority work-items** assigned to you:
+
+| Work-item | Title | State |
+|---|---|---|
+| [PROJ-123](url) | Fix login bug | In Progress |
+...
+```""",
 )
 
 
@@ -452,30 +588,7 @@ Always call tools in the logical order needed to answer the question completely.
 When you have the complete answer, meaning you've decided that there are no more tools to call, answer the user's question in a coherent and comprehensive manner in your content section.
 Use the user's first name naturally in conversation when it feels appropriate.
 
-**ANSWER DELIMITER FORMAT:**
-When providing your final answer (after all tool calls are complete), you MUST structure your response as follows:
-1. First, write your reasoning/thinking (this will be shown in the "Thought" panel)
-2. Then output the EXACT delimiter: ππANSWERππ on its own line
-3. Then write your actual answer to the user (this will be shown as the main response)
-
-**Important:** The reasoning section (before the delimiter) should ONLY contain your internal thinking process - what you're planning to do, what you found, what you will present. Do NOT include the actual formatted answer (tables, lists, results) in the reasoning section. All user-facing content must come AFTER the delimiter.
-
-Example format:
-```
-I found 5 high-priority work items from the database query. I'll now present them in a table with their details and clickable links.
-
-ππANSWERππ
-
-You have **5 high-priority work-items** assigned to you:
-
-| Work-item | Title | State |
-|---|---|---|
-| [PROJ-123](url) | Fix login bug | In Progress |
-...
-```
-
-The delimiter ππANSWERππ is REQUIRED whenever you provide a final answer. Everything BEFORE it goes to the reasoning panel. Everything AFTER it goes to the user as the answer.
-If you have no reasoning to show, you can start directly with ππANSWERππ.
+{ANSWER_DELIMITER_ASK_MODE}
 
 Rules to follow while formatting the final content section while answering the user's question:
 1. Ensure your answer directly addresses the user query.

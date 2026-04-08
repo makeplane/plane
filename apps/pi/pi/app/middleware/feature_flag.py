@@ -10,7 +10,6 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 import json
-import logging
 from typing import Dict
 from typing import Optional
 
@@ -18,6 +17,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
+from pi import logger
 from pi import settings
 from pi.app.api.dependencies import is_jwt_valid
 from pi.app.api.dependencies import is_valid_session
@@ -25,7 +25,7 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
 from pi.services.feature_flags import FeatureFlagContext
 from pi.services.feature_flags import feature_flag_service
 
-logger = logging.getLogger(__name__)
+log = logger.getChild(__name__)
 FLAGS = settings.feature_flags
 SESSION_ID_NAME = settings.plane_api.SESSION_COOKIE_NAME
 
@@ -87,7 +87,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
                             return workspace_slug
 
             except Exception as e:
-                logger.debug(f"Could not parse POST request body for workspace slug: {e}")
+                log.debug(f"Could not parse POST request body for workspace slug: {e}")
 
         elif request.method in ["DELETE", "PUT", "PATCH"]:
             try:
@@ -108,7 +108,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
                             return workspace_slug
 
             except Exception as e:
-                logger.debug(f"Could not parse {request.method} request body for workspace slug: {e}")
+                log.debug(f"Could not parse {request.method} request body for workspace slug: {e}")
 
         elif request.method == "GET":
             # Try workspace_slug from query params first
@@ -123,7 +123,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
                 if workspace_slug:
                     return workspace_slug
 
-        logger.debug(f"No workspace slug found in {request.method} {request.url.path}")
+        log.debug(f"No workspace slug found in {request.method} {request.url.path}")
         return None
 
     async def dispatch(self, request: Request, call_next):
@@ -134,7 +134,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
         # Skip feature flag checks if server is not configured
         if not settings.FEATURE_FLAG_SERVER_BASE_URL:
             # if not settings.FEATURE_FLAG_SERVER_AUTH_TOKEN or not settings.FEATURE_FLAG_SERVER_BASE_URL:
-            logger.warning("Feature flag base url not configured - skipping feature flag checks")
+            log.warning("Feature flag base url not configured - skipping feature flag checks")
             return await call_next(request)
 
         # Check if this endpoint requires feature flag validation
@@ -152,7 +152,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
                 # Mobile endpoints use JWT authentication
                 auth_header = request.headers.get("Authorization")
                 if not auth_header or not auth_header.startswith("Bearer "):
-                    logger.error("Missing or invalid Authorization header for mobile endpoint")
+                    log.error("Missing or invalid Authorization header for mobile endpoint")
                     return JSONResponse(status_code=401, content={"detail": "Missing Authorization header"})
 
                 token = auth_header[7:]  # Remove "Bearer " prefix
@@ -167,7 +167,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
                 # Web endpoints use session cookie authentication
                 session = request.cookies.get(SESSION_ID_NAME)
                 if not session:
-                    logger.error("Missing session cookie for web endpoint")
+                    log.error("Missing session cookie for web endpoint")
                     return JSONResponse(status_code=401, content={"detail": "Missing session cookie"})
 
                 auth = await is_valid_session(session)
@@ -179,14 +179,14 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
 
         except Exception as e:
             endpoint_type = "mobile" if is_mobile_endpoint else "web"
-            logger.error(f"Authentication failed for {endpoint_type} endpoint: {e}")
+            log.error(f"Authentication failed for {endpoint_type} endpoint: {e}")
             return JSONResponse(status_code=401, content={"detail": "Authentication failed"})
 
         # Extract workspace information
         workspace_slug = await self._extract_workspace_slug(request)
 
         if not workspace_slug:
-            logger.warning(f"No workspace information found for feature flag check: {feature_flag}")
+            log.warning(f"No workspace information found for feature flag check: {feature_flag}")
             return JSONResponse(status_code=400, content={"detail": "Workspace information is required"})
 
         # Check feature flag
@@ -196,10 +196,10 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
             is_enabled = await feature_flag_service.is_enabled(feature_flag, feature_context)
 
             if not is_enabled:
-                logger.info(f"Feature {feature_flag} not enabled for workspace {workspace_slug}, user {user_id}")
+                log.info(f"Feature {feature_flag} not enabled for workspace {workspace_slug}, user {user_id}")
                 return JSONResponse(status_code=402, content={"detail": f"Feature {feature_flag} is not enabled for this workspace"})
 
         except Exception as e:
-            logger.error(f"Error checking feature flag {feature_flag}: {e}")
+            log.error(f"Error checking feature flag {feature_flag}: {e}")
             return JSONResponse(status_code=503, content={"detail": "Feature flag service unavailable"})
         return await call_next(request)

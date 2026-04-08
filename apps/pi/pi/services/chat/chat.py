@@ -89,6 +89,7 @@ class PlaneChatBot(ChatKit):
 
         is_focus_enabled = data.workspace_in_context
         is_websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
+        mcp_connector_ids = getattr(data, "mcp_connector_ids", None)
         # Use new polymorphic fields if available, otherwise fall back to legacy fields
         focus_entity_type = getattr(data, "focus_entity_type", None)
         focus_entity_id = getattr(data, "focus_entity_id", None)
@@ -133,6 +134,7 @@ class PlaneChatBot(ChatKit):
                 focus_project_id=focus_project_id,
                 focus_workspace_id=focus_workspace_id,
                 mode=mode,
+                mcp_connector_ids=mcp_connector_ids,
             )
             if user_chat_preference_result["message"] != "success":
                 return None, "An unexpected error occurred. Please try again"
@@ -190,6 +192,7 @@ class PlaneChatBot(ChatKit):
         pi_sidebar_open=None,
         sidebar_open_url=None,
         source=None,
+        mcp_connector_ids=None,
         websearch_enabled: bool = False,
     ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Execute tools for build mode"""
@@ -214,6 +217,7 @@ class PlaneChatBot(ChatKit):
             pi_sidebar_open,
             sidebar_open_url,
             source,
+            mcp_connector_ids,
             websearch_enabled=websearch_enabled,
         ):
             yield chunk
@@ -375,6 +379,7 @@ class PlaneChatBot(ChatKit):
         websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
         workspace_slug = data.workspace_slug
         attachment_ids = data.attachment_ids or []
+        mcp_connector_ids = data.mcp_connector_ids or []
         step_order = 0
 
         # Resolve workspace_id from project_id if needed
@@ -603,9 +608,8 @@ class PlaneChatBot(ChatKit):
                         web_search_context=web_search_context,
                     )
 
-                # Mode-specific execution branch
+                # Build mode: Action planning with user approval
                 elif mode == "build":
-                    # Build mode: Action planning with user approval
                     log.info(f"ChatID: {chat_id} - Using BUILD mode (action planning)")
 
                     # Early OAuth check for build mode (before building any tools)
@@ -673,10 +677,12 @@ class PlaneChatBot(ChatKit):
                         pi_sidebar_open=data.pi_sidebar_open,
                         sidebar_open_url=data.sidebar_open_url,
                         source=getattr(data, "source", None),
+                        mcp_connector_ids=mcp_connector_ids,
                         websearch_enabled=websearch_enabled,
                     )
+
                 else:
-                    # Ask mode: Retrieval and answering
+                    # Ask mode with workspace: Retrieval and answering
                     log.info(f"ChatID: {chat_id} - Using ASK mode (retrieval only)")
                     execution_stream = self._execute_tools_for_ask_mode(
                         user_meta,

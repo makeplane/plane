@@ -16,6 +16,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Sequence
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
@@ -29,6 +30,7 @@ from pi.agents.sql_agent.helpers import extract_ids_from_sql_result
 from pi.agents.sql_agent.helpers import format_as_bullet_points
 from pi.app.controllers.access_controls import access_control
 from pi.app.models.enums import MessageMetaStepType
+from pi.services.actions.registry import get_router_categories
 
 # Import new modular tools from actions service
 from pi.services.actions.tools import get_tools_for_category
@@ -45,6 +47,7 @@ from pi.services.retrievers.pages_search import PageChunkRetriever
 from pi.services.schemas.chat import QueryFlowStore
 
 from .helpers.build_mode_helpers import build_method_executor_and_context
+from .helpers.build_mode_helpers import build_planning_tools
 from .helpers.tool_utils import WordBatcher
 from .helpers.tool_utils import extract_text_from_content
 from .mixins import AttachmentMixin
@@ -157,6 +160,134 @@ async def _mark_archived_options(options: List[Dict[str, Any]]) -> None:
     for opt in options:
         if str(opt.get("id", "")) in archived_ids:
             opt["archived"] = True
+
+
+def build_reselect_categories_tool(
+    *,
+    chatbot_instance,
+    method_executor,
+    context: Dict[str, Any],
+    fresh_retrieval_tools: list,
+    current_selections: Sequence[Any],
+    tools_container: Dict[str, Any],
+    chat_id: str,
+    mcp_tools_by_slug: Optional[Dict[str, List[Any]]] = None,
+):
+    """Create a StructuredTool that lets the orchestration LLM request additional action categories.
+
+    Merges newly requested categories with ``current_selections``, rebuilds the planning toolset, and
+    stores the expanded tool list in ``tools_container['combined_tools']`` so the while-loop caller
+    can re-bind tool calls.
+    """
+    from langchain_core.tools import StructuredTool
+
+    _MAX_RESELECT_INVOCATIONS = settings.chat.MAX_CATEGORY_RESELECT_INVOCATIONS
+
+    def _get_active_categories() -> set[str]:
+        """Derive currently-active categories from surviving tools in tools_container.
+
+        After `multi_hop_tool_picker` runs, some categories may have had ALL their
+        tools dropped.  By inspecting the *actual* tools that remain we avoid a
+        "dead zone" where a dropped category is still considered loaded and can
+        never be re-requested.
+        """
+        cats: set[str] = set()
+        for t in tools_container.get("combined_tools", []):
+            cat = getattr(t, "category", None) or getattr(t, "metadata", {}).get("category")
+            if cat:
+                cats.add(cat)
+        # Fallback: if tools_container hasn't been populated yet (pre-picker),
+        # derive from the original selections so the first call still works.
+        if not cats:
+            for sel in current_selections:
+                if isinstance(sel, dict):
+                    c = sel.get("category")
+                    if c:
+                        cats.add(c)
+                else:
+                    with contextlib.suppress(Exception):
+                        cats.add(getattr(sel, "category", ""))
+        return cats
+
+    # Build dynamic description from registry + MCP connectors
+    registry_cats = list(get_router_categories().keys())
+    mcp_cats = [f"mcp_{slug}" for slug in (mcp_tools_by_slug or {}).keys()]
+    # Include special bucket used in planning
+    all_valid = sorted(set(registry_cats + mcp_cats + ["retrieval_tools"]))
+    categories_text = ", ".join(all_valid)
+
+    # Per-request invocation counter (fresh dict per build_reselect_categories_tool call,
+    # so parallel requests each get their own independent counter).
+    invocation_state = {"count": 0}
+
+    def _reselect_sync(reason: str, additional_categories: List[str] | None = None) -> str:  # noqa: D401
+        raise NotImplementedError("Use the async variant")
+
+    async def _reselect_async(reason: str, additional_categories: List[str] | None = None) -> str:  # noqa: D401
+        if invocation_state["count"] >= _MAX_RESELECT_INVOCATIONS:
+            return f"Category re-selection has been used {_MAX_RESELECT_INVOCATIONS} times " "(maximum reached). Work with the current toolset."
+        invocation_state["count"] += 1
+
+        new_cats = [c.strip().lower() for c in (additional_categories or []) if c and c.strip()]
+        if not new_cats:
+            return "No additional categories specified. Provide a list, e.g. additional_categories=['intake','cycles']."
+
+        valid_categories = set(get_router_categories().keys()) | {"retrieval_tools"}
+        # Add MCP categories dynamically so the planner can request them
+        if mcp_tools_by_slug:
+            valid_categories |= {f"mcp_{slug}" for slug in mcp_tools_by_slug.keys()}
+        invalid = [c for c in new_cats if c not in valid_categories]
+        if invalid:
+            return f"Unknown categories: {invalid}. Valid categories: {sorted(valid_categories)}"
+
+        # Derive active categories from *surviving* tools (not the stale initial selections)
+        # so that categories fully dropped by multi_hop_tool_picker can be re-requested.
+        active_cats = _get_active_categories()
+        genuinely_new = [c for c in new_cats if c not in active_cats]
+        if not genuinely_new:
+            return f"All requested categories are already available: {sorted(active_cats)}"
+
+        expanded_selections = list(current_selections)
+        for cat in genuinely_new:
+            expanded_selections.append({"category": cat, "rationale": f"Re-selected: {reason}"})
+
+        new_combined, new_method, new_built = build_planning_tools(
+            chatbot_instance=chatbot_instance,
+            selections_list=expanded_selections,
+            method_executor=method_executor,
+            context=context,
+            fresh_retrieval_tools=fresh_retrieval_tools,
+            mcp_tools_by_slug=mcp_tools_by_slug,
+        )
+
+        tools_container["combined_tools"] = new_combined
+        tools_container["all_method_tools"] = new_method
+        tools_container["built_categories"] = new_built
+        tools_container["needs_rebind"] = True
+
+        added_names = [getattr(t, "name", "") for t in new_combined]
+        remaining = _MAX_RESELECT_INVOCATIONS - invocation_state["count"]
+        log.info(
+            f"ChatID: {chat_id} - Category re-selection #{invocation_state['count']}: added {genuinely_new}, total tools now: {len(new_combined)}"
+        )
+        return (
+            f"Categories expanded with: {genuinely_new}. You now have {len(new_combined)} tools available. "
+            f"New tool names: {added_names}. "
+            f"Re-selection uses remaining: {remaining}/{_MAX_RESELECT_INVOCATIONS}."
+        )
+
+    description = (
+        "Request additional Plane API categories when the current toolset is insufficient. "
+        f"Provide a reason and a list of category names to add. Can be used up to {_MAX_RESELECT_INVOCATIONS} times per session. "
+        f"Valid categories (dynamic): {categories_text}."
+    )
+
+    return StructuredTool.from_function(
+        func=_reselect_sync,
+        coroutine=_reselect_async,
+        name="reselect_action_categories",
+        description=description,
+    )
 
 
 class ChatKit(AttachmentMixin):
@@ -366,10 +497,10 @@ Provide concise, relevant context from the attachment(s):"""
                         intermediate_results["urls"] = entity_urls
                         query_flow_store["tool_response"] += f"Entity URLs: {len(entity_urls)} URLs constructed\n"
                         for url_info in entity_urls:
-                            query_flow_store["tool_response"] += f"  - {url_info['type']}: {url_info['name']} - URL: {url_info['url']}\n"
+                            query_flow_store["tool_response"] += f"  - {url_info["type"]}: {url_info["name"]} - URL: {url_info["url"]}\n"
 
         except Exception as e:
-            log.error(f"Error extracting entity IDs for chat {chat_id or 'unknown chat_id'}: {e}")
+            log.error(f"Error extracting entity IDs for chat {chat_id or "unknown chat_id"}: {e}")
 
         return entity_urls
 
@@ -886,12 +1017,12 @@ Provide concise, relevant context from the attachment(s):"""
                 def _format_summary_text(d: Dict[str, Any]) -> str:
                     s = d.get("summary") or {}
                     parts: List[str] = []
-                    parts.append(f"Cycle: {core.get('name')} ({core.get('id')})")
+                    parts.append(f"Cycle: {core.get("name")} ({core.get("id")})")
                     if s:
                         parts.append(
-                            f"Issues: total={s.get('total_issues', 0)}, completed={s.get('completed_issues', 0)}, open={s.get('open_issues', 0)}"
+                            f"Issues: total={s.get("total_issues", 0)}, completed={s.get("completed_issues", 0)}, open={s.get("open_issues", 0)}"
                         )
-                        points = f"Points: total={s.get('total_points', 0)}, completed={s.get('completed_points', 0)}"
+                        points = f"Points: total={s.get("total_points", 0)}, completed={s.get("completed_points", 0)}"
                         parts.append(points)
                     return "\n".join(parts)
 
@@ -901,37 +1032,37 @@ Provide concise, relevant context from the attachment(s):"""
                     if br.get("by_state"):
                         lines.append("State breakdown:")
                         for row in br["by_state"]:
-                            lines.append(f"- {row.get('state_group')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)")
+                            lines.append(f"- {row.get("state_group")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)")
                     if br.get("by_priority"):
                         lines.append("Priority breakdown:")
                         for row in br["by_priority"]:
-                            lines.append(f"- {row.get('priority')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)")
+                            lines.append(f"- {row.get("priority")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)")
                     if br.get("by_assignee"):
                         lines.append("Assignee breakdown:")
                         for row in br["by_assignee"]:
                             lines.append(
-                                f"- {row.get('assignee_name') or row.get('assignee_id')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)"
+                                f"- {row.get("assignee_name") or row.get("assignee_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
                             )
                     if br.get("by_label"):
                         lines.append("Label breakdown:")
                         for row in br["by_label"]:
                             lines.append(
-                                f"- {row.get('label_name') or row.get('label_id')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)"
+                                f"- {row.get("label_name") or row.get("label_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
                             )
                     if br.get("by_type"):
                         lines.append("Type breakdown:")
                         for row in br["by_type"]:
                             lines.append(
-                                f"- {row.get('type_name') or row.get('type_id')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)"
+                                f"- {row.get("type_name") or row.get("type_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
                             )
                     # Include scope change metrics if present
                     scope = d.get("scope_change")
                     if scope:
                         lines.append("Scope change:")
-                        lines.append(f"- Baseline (at start): {scope.get('baseline_issues', 0)} issues")
-                        lines.append(f"- Added during cycle: {scope.get('added_during_cycle', 0)} issues")
-                        lines.append(f"- Removed during cycle: {scope.get('removed_during_cycle', 0)} issues")
-                        lines.append(f"- Net change: {scope.get('net_scope_change', 0)} issues")
+                        lines.append(f"- Baseline (at start): {scope.get("baseline_issues", 0)} issues")
+                        lines.append(f"- Added during cycle: {scope.get("added_during_cycle", 0)} issues")
+                        lines.append(f"- Removed during cycle: {scope.get("removed_during_cycle", 0)} issues")
+                        lines.append(f"- Net change: {scope.get("net_scope_change", 0)} issues")
                     return "\n".join(lines)
 
                 if (detail_level or "summary") == "summary":
@@ -1087,7 +1218,7 @@ Provide concise, relevant context from the attachment(s):"""
                                     "type": "cycle",
                                     "id": str(core.get("id")),
                                     "name": core.get("name", ""),
-                                    "url": f"{api_base_url}/{ws_slug}/projects/{pid}/cycles/{core.get('id')}/",
+                                    "url": f"{api_base_url}/{ws_slug}/projects/{pid}/cycles/{core.get("id")}/",
                                 }
                             ]
                     except Exception as _e:  # noqa: F841
@@ -1366,6 +1497,7 @@ Provide concise, relevant context from the attachment(s):"""
             else:
                 log.info(f"ChatID: {chat_id} - Skipping SDK retrieval tools (no OAuth token available)")
 
+            # Combine retrieval tools + clarification
             return retrieval_tools + [clarification_tool] if clarification_tool else retrieval_tools
         else:
             # When workspace is not in context, only include non-workspace-specific tools

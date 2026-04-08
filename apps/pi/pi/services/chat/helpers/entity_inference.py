@@ -108,13 +108,20 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
             subresource_id_fields = {
                 "comment": "comment_id",
                 "worklog": "worklog_id",
+                "link": "link_id",
             }
             entity_type = hint if hint in subresource_id_fields else "workitem"
             entity_id = args.get(subresource_id_fields.get(entity_type, ""), None) if entity_type != "workitem" else str(issue_id)
 
             entity: Dict[str, Any] = {
-                "entity_url": url_info.get("entity_url"),
-                "entity_name": None if entity_type in {"comment", "worklog"} else url_info.get("entity_name"),
+                "entity_url": (args.get("url") if entity_type == "link" and args.get("url") else url_info.get("entity_url")),
+                "entity_name": (
+                    args.get("title") or args.get("url")
+                    if entity_type == "link"
+                    else None
+                    if entity_type in {"comment", "worklog"}
+                    else url_info.get("entity_name")
+                ),
                 "entity_type": entity_type,
                 "entity_id": str(entity_id) if entity_id else None,
             }

@@ -14,6 +14,7 @@
 import asyncio
 import functools
 import json
+import time
 import uuid
 from typing import Any
 from typing import Callable
@@ -28,6 +29,8 @@ from pi.app.models.enums import MessageMetaStepType
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.utils import standardize_flow_step_content
+from pi.services.mcp.tracking import build_mcp_metadata
+from pi.services.mcp.utils import is_mcp_tool
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps
 
 log = logger.getChild(__name__)
@@ -366,6 +369,24 @@ async def persist_precomputed_ai_message(*, ai_message: Any, **_kwargs: Any) -> 
     return ai_message
 
 
+def _extract_display_content_from_result(structured_result: Any, execution_result: str, tool_name: str) -> str:
+    """Extract human-readable content from tool result for display."""
+    if not structured_result:
+        return execution_result or f"Executed {tool_name}"
+
+    # Try to extract 'text' field from common MCP result formats
+    if isinstance(structured_result, list) and structured_result:
+        first_item = structured_result[0]
+        if isinstance(first_item, dict) and "text" in first_item:
+            return first_item["text"]
+
+    if isinstance(structured_result, dict) and "text" in structured_result:
+        return structured_result["text"]
+
+    # Fallback to string representation
+    return str(structured_result)
+
+
 def persist_tool_execution_step(func: Callable) -> Callable:
     """
     Decorator to persist a tool execution step (success or error).
@@ -383,14 +404,36 @@ def persist_tool_execution_step(func: Callable) -> Callable:
         db = kwargs.get("db")
         current_step = kwargs.get("current_step", 1)
         extract_facts_fn = kwargs.get("extract_facts_fn")
+        # Optional map of connector_slug -> connector_id (UUID string) for MCP tools
+        mcp_connector_slug_to_id: dict = kwargs.get("mcp_connector_slug_to_id") or {}
 
         # Expect first two positional args to include tool_name and tool_args via signature
         # Safer: rely on kwargs provided by caller for tool_name/tool_args
         tool_name = kwargs.get("tool_name") or (args[1] if len(args) > 1 else "")
         tool_args = kwargs.get("tool_args") or (args[2] if len(args) > 2 else {})
 
+        # Resolve connector_id for MCP tools from the slug encoded in the tool name
+        # Tool name format: mcp_<connector_slug>__<method_name>
+        mcp_connector_id = None
+        if is_mcp_tool(tool_name) and mcp_connector_slug_to_id:
+            try:
+                slug = tool_name[4:].split("__")[0]  # strip "mcp_", take part before "__"
+                connector_id_str = mcp_connector_slug_to_id.get(slug)
+                if connector_id_str:
+                    import uuid as _uuid
+
+                    mcp_connector_id = _uuid.UUID(str(connector_id_str))
+            except Exception:
+                mcp_connector_id = None
+
+        # Track execution time for MCP tools
+        start_time_ms = int(time.time() * 1000)
+
         try:
             result = await func(*args, **kwargs)
+
+            # Calculate execution time
+            execution_time_ms = int(time.time() * 1000) - start_time_ms
 
             facts: Dict[str, Any] = {}
             if callable(extract_facts_fn):
@@ -416,30 +459,39 @@ def persist_tool_execution_step(func: Callable) -> Callable:
                 execution_result = str(result)
                 structured_result = None
 
+            # Build clean execution_data (no redundant status - we have execution_success field)
             execution_data: Dict[str, Any] = {
                 "tool_args": tool_args,
-                "tool_name": tool_name,
-                "execution_status": "success",
             }
             if facts:
                 execution_data["facts"] = facts
-            # Persist result in execution_data so retrieval can reconstruct external reasoning
-            if execution_result:
-                execution_data["execution_result"] = execution_result
+            # Store full structured result for reconstruction
             if structured_result is not None:
-                execution_data["structured_result"] = structured_result
+                execution_data["tool_result"] = structured_result
+
+            # Add MCP metadata for analytics if this is an MCP tool
+            if is_mcp_tool(tool_name):
+                mcp_metadata = build_mcp_metadata(
+                    tool_name=tool_name,
+                    execution_time_ms=execution_time_ms,
+                )
+                execution_data["mcp"] = mcp_metadata
+
+            # Extract human-readable content for display
+            display_content = _extract_display_content_from_result(structured_result, execution_result, tool_name)
 
             step = {
                 "step_order": current_step,
                 "step_type": FlowStepType.TOOL.value,
                 "tool_name": tool_name,
-                "content": standardize_flow_step_content(execution_data, FlowStepType.TOOL),
+                "content": display_content,
                 "execution_data": execution_data,
                 "is_planned": False,
                 "is_executed": True,
                 # execution_success is persisted via upsert_message_flow_steps when provided.
                 # We set it to SUCCESS explicitly to avoid PENDING default on retrieval.
                 "execution_success": ExecutionStatus.SUCCESS.value,
+                "mcp_connector_id": mcp_connector_id,
             }
 
             if query_id and chat_id and db:
@@ -452,28 +504,38 @@ def persist_tool_execution_step(func: Callable) -> Callable:
                     )
             return result, current_step + 1
         except Exception as e:
+            # Calculate execution time for failed attempts
+            execution_time_ms = int(time.time() * 1000) - start_time_ms
+
             # Persist error step
+            # Persist error step with clean fields
+            error_data = {
+                "tool_args": tool_args,
+            }
+
+            # Add MCP metadata for failed MCP tool calls
+            if is_mcp_tool(tool_name):
+                error_type = type(e).__name__  # Get error class name
+                mcp_metadata = build_mcp_metadata(
+                    tool_name=tool_name,
+                    execution_time_ms=execution_time_ms,
+                    error_type=error_type,
+                )
+                error_data["mcp"] = mcp_metadata
+
             error_step = {
                 "step_order": current_step,
                 "step_type": FlowStepType.TOOL.value,
                 "tool_name": tool_name,
-                "content": standardize_flow_step_content(
-                    {
-                        "tool_args": tool_args,
-                        "execution_status": "error",
-                        "execution_error": str(e),
-                    },
-                    FlowStepType.TOOL,
-                ),
-                "execution_data": {
-                    "tool_args": tool_args,
-                    "execution_status": "error",
-                    "execution_error": str(e),
-                },
+                "content": f"Error executing {tool_name}: {str(e)}",
+                "execution_data": error_data,
+                "execution_error": str(e),  # Use dedicated field for error message
                 "is_planned": False,
                 "is_executed": True,
                 "execution_status": ExecutionStatus.FAILED.value,
+                "mcp_connector_id": mcp_connector_id,
             }
+
             try:
                 if query_id and chat_id and db:
                     async with get_streaming_db_session() as _db:

@@ -44,6 +44,7 @@ _DEPENDENCIES: dict[FeatureKey, list[FeatureKey]] = {
     settings.feature_flags.AI_CHAT: [
         settings.feature_flags.AI_CONVERSE,
         settings.feature_flags.AI_FILE_UPLOADS,
+        settings.feature_flags.AI_MCP_CONNECTORS,
     ]
 }
 
@@ -144,6 +145,7 @@ def _env_readiness_from_caps(caps: _EnvCapabilities) -> Dict[FeatureKey, bool]:
         settings.feature_flags.AI_FILE_UPLOADS: bool(caps.uploads),
         settings.feature_flags.AI_PAGES_BLOCKS: bool(caps.llm_present),
         settings.feature_flags.AI_PAGES_SUMMARY: bool(caps.llm_present),
+        settings.feature_flags.AI_MCP_CONNECTORS: bool(caps.llm_present),
         settings.feature_flags.AI_TEXT_TO_PQL: bool(caps.llm_present),
     }
 
@@ -156,6 +158,7 @@ def _remote_gated_features() -> Iterable[FeatureKey]:
         settings.feature_flags.AI_FILE_UPLOADS,
         settings.feature_flags.AI_PAGES_BLOCKS,
         settings.feature_flags.AI_PAGES_SUMMARY,
+        settings.feature_flags.AI_MCP_CONNECTORS,
         settings.feature_flags.AI_TEXT_TO_PQL,
     )
 

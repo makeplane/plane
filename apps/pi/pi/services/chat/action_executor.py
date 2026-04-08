@@ -32,6 +32,7 @@ from pi.services.chat.helpers.action_execution_helpers import load_artifacts
 from pi.services.chat.helpers.action_execution_helpers import update_flow_steps
 from pi.services.chat.helpers.entity_inference import infer_selected_entity
 from pi.services.chat.helpers.placeholder_orchestrator import PlaceholderOrchestrator
+from pi.services.mcp.loader import get_mcp_loader
 
 log = logger.getChild(__name__)
 
@@ -70,7 +71,7 @@ class BuildModeToolExecutor:
         self.chatbot = chatbot
         self.db = db
 
-    async def execute(self, request, user_id):
+    async def execute(self, request, user_id, session_cookie: str = ""):
         """Execute the planned actions"""
 
         log.debug(f"EXECUTE ACTION REQUEST: {request}")
@@ -113,11 +114,28 @@ class BuildModeToolExecutor:
         context = {
             "workspace_slug": workspace_slug,
             "workspace_id": str(workspace_id) if workspace_id else None,
+            "user_id": str(user_id) if user_id else None,
             "project_id": project_id,
             "message_id": message_id,
             "chat_id": chat_id,
             "is_project_chat": is_project_chat,
+            "session_cookie": session_cookie,
         }
+
+        # Pre-fetch MCP connectors so parallel execution doesn't hammer the database or cause identical Silo calls.
+        if session_cookie and workspace_slug:
+            try:
+                mcp_loader = get_mcp_loader()
+                connectors = await mcp_loader.fetch_connectors_from_silo(
+                    workspace_slug=workspace_slug,
+                    session_cookie=session_cookie,
+                )
+                context["mcp_connectors"] = connectors
+            except Exception as e:
+                log.warning(f"Failed to pre-fetch MCP connectors: {e}")
+                context["mcp_connectors"] = []
+        else:
+            context["mcp_connectors"] = []
 
         # Execute single action
         # If single action, execute directly
@@ -148,6 +166,22 @@ class BuildModeToolExecutor:
 
         tool_name = planned_action["tool_name"]
         args = planned_action["args"]
+
+        # Check if a specialized external handler exists
+        from pi.services.actions.artifacts.handlers import get_handler_optional
+
+        raw_tool_name = tool_name
+        planning_data = planned_action.get("planning_data", {})
+        if isinstance(planning_data, dict):
+            raw_tool_name = planning_data.get("raw_tool_name", tool_name)
+
+        handler = get_handler_optional(raw_tool_name)
+        if handler:
+            # Use external handler
+            result = await handler.execute(planned_action, context)
+            return [result.to_dict()]
+
+        # Standard Plane tool execution (existing logic)
         entity_type = planned_action["entity_type"]
 
         # Map entity_type to actual category (e.g., "epic" -> "workitems")
@@ -175,9 +209,18 @@ class BuildModeToolExecutor:
         # Normalize dict payload
         message = result.get("message") or ""
         ok = bool(result.get("ok", True))
-        entity_info = result.get("entity")
+        entity_info: Optional[Dict[str, Any]] = result.get("entity")
         if ok and not entity_info:
             entity_info = await infer_selected_entity(args, context, entity_type_hint=entity_type)
+        elif ok and entity_info:
+            _sub_resources = {"link", "comment", "worklog"}
+            needs_enrichment = not entity_info.get("entity_url") or entity_type in _sub_resources
+            if needs_enrichment:
+                inferred = await infer_selected_entity(args, context, entity_type_hint=entity_type)
+                if inferred:
+                    for k, v in inferred.items():
+                        if v is not None and not entity_info.get(k):
+                            entity_info[k] = v
 
         executed = {
             "tool_name": tool_name,
@@ -224,7 +267,12 @@ class BuildModeToolExecutor:
     def _has_placeholder(self, value: Any) -> bool:
         """Check if a value contains a placeholder recursively."""
         if isinstance(value, str):
-            return "<id of" in value
+            # Plane placeholders: "<id of type: name>"
+            if "<id of" in value:
+                return True
+            # MCP template variables: "{{connector.field}}"
+            if "{{" in value and "}}" in value:
+                return True
         elif isinstance(value, dict):
             return any(self._has_placeholder(v) for v in value.values())
         elif isinstance(value, list):

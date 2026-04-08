@@ -36,6 +36,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.models.enums import MessageMetaStepType
+from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 
 log = logger.getChild(__name__)
 
@@ -184,8 +185,10 @@ class TrackedLLM(Runnable):
             try:
                 from pi.services.llm.token_tracker import TokenTracker
 
-                tracker = TokenTracker(self._tracking_context["db"], self._tracking_context["message_id"])
-                await tracker.track_llm_usage(response, self._model_key, self._tracking_context["step_type"])
+                # Use an isolated short-lived DB session to avoid concurrent AsyncSession usage
+                async with get_streaming_db_session() as local_db:
+                    tracker = TokenTracker(local_db, self._tracking_context["message_id"])
+                    await tracker.track_llm_usage(response, self._model_key, self._tracking_context["step_type"])
             except Exception as e:
                 log.warning(f"Failed to track token usage: {e}")
 

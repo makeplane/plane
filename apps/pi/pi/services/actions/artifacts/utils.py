@@ -456,7 +456,7 @@ async def populate_entity_info_from_artifact(
             return None
         return None
 
-    async def _populate_issue_link(issue_id: str) -> None:
+    async def _populate_issue_link(issue_id: str, set_url: bool = True) -> None:
         nonlocal entity_url, issue_identifier, entity_identifier
         issue_info = await get_issue_identifier_for_artifact(str(issue_id))
         if issue_info and isinstance(issue_info, dict):
@@ -465,7 +465,7 @@ async def populate_entity_info_from_artifact(
                 issue_identifier = str(ident)
                 entity_identifier = issue_identifier
                 project_identifier = issue_info.get("project_identifier")
-                if project_identifier:
+                if set_url and project_identifier:
                     entity_url = f"/projects/{project_identifier}/issues/{issue_identifier}"
 
     try:
@@ -519,6 +519,47 @@ async def populate_entity_info_from_artifact(
             issue_id = _extract_issue_id_from_tool_args()
             if issue_id:
                 await _populate_issue_link(issue_id)
+
+        elif artifact.entity == "link":
+            # Link entity: keep entity_type as "link" but link appropriately.
+            entity_type = "link"
+            entity_name = None
+            link_url = None
+
+            try:
+                raw = getattr(artifact, "data", {}) or {}
+                tool_args = raw.get("tool_args_raw", {}) if isinstance(raw, dict) else {}
+                if not tool_args:
+                    pd = raw.get("planning_data", {})
+                    if isinstance(pd, dict):
+                        tool_args = pd.get("parameters", {})
+
+                if isinstance(tool_args, dict):
+                    entity_name = tool_args.get("title")
+                    link_url = tool_args.get("url")
+
+                    if not entity_name or not link_url:
+                        props = tool_args.get("properties", {})
+                        if isinstance(props, dict):
+                            if not entity_name and "title" in props:
+                                title_prop = props["title"]
+                                entity_name = title_prop.get("name") if isinstance(title_prop, dict) else str(title_prop)
+                            if not link_url and "url" in props:
+                                url_prop = props["url"]
+                                link_url = url_prop.get("name") if isinstance(url_prop, dict) else str(url_prop)
+            except Exception:
+                pass
+
+            # Fall back to URL when title is absent (links can be created without a title)
+            if not entity_name and link_url:
+                entity_name = str(link_url)
+
+            if link_url:
+                entity_url = str(link_url)
+
+            issue_id = _extract_issue_id_from_tool_args()
+            if issue_id:
+                await _populate_issue_link(issue_id, set_url=not bool(link_url))
 
         elif artifact.entity == "page":
             entity_details = await get_page_details_for_artifact(entity_id)
@@ -640,6 +681,8 @@ async def prepare_artifact_data(entity_type: str, artifact_data: dict, action: O
         "comment": prepare_comment_artifact_data,
         "state": prepare_state_artifact_data,
         "label": prepare_label_artifact_data,
+        "link": prepare_link_artifact_data,
+        "mcp": prepare_mcp_artifact_data,
     }
 
     preparation_function = preparation_functions.get(entity_type, prepare_unknown_artifact_data)
@@ -964,6 +1007,29 @@ async def prepare_label_artifact_data(label_data: dict):
         return label_data
 
 
+async def prepare_link_artifact_data(link_data: dict):
+    """Prepare link artifact data for enhanced UI display."""
+    try:
+        original_entity_info = link_data.get("entity_info") if isinstance(link_data, dict) else None
+
+        # For create/update operations, use the planning data
+        if "planning_data" in link_data:
+            planning_data = link_data["planning_data"]
+            parameters = planning_data.get("parameters", {})
+            result = normalize_parameters_structure(parameters, flatten_entities=False)
+        else:
+            result = link_data
+
+        if original_entity_info and isinstance(result, dict):
+            result["entity_info"] = original_entity_info
+
+        return result
+
+    except Exception as e:
+        log.error(f"Error preparing link artifact data: {e}")
+        return link_data
+
+
 async def prepare_page_artifact_data(page_data: dict):
     """Prepare page artifact data for enhanced UI display."""
     try:
@@ -1199,6 +1265,41 @@ async def prepare_comment_artifact_data(comment_data: dict) -> Optional[Dict[str
     except Exception as e:
         log.error(f"Error preparing comment artifact data: {e}")
         return comment_data
+
+
+async def prepare_mcp_artifact_data(mcp_data: dict):
+    """Prepare MCP artifact data for enhanced UI display."""
+    try:
+        # Preserve entity_info if it exists (for executed artifacts)
+        original_entity_info = mcp_data.get("entity_info") if isinstance(mcp_data, dict) else None
+
+        # Extract tool arguments from tool_args_raw (actual parameters used for execution)
+        result = mcp_data.get("tool_args_raw", {}).copy() if isinstance(mcp_data.get("tool_args_raw"), dict) else {}
+
+        # Add display fields from planning_data.parameters so the frontend knows
+        # the connector name (mcp_name) and tool being called (tool_name).
+        if "planning_data" in mcp_data and isinstance(mcp_data["planning_data"], dict):
+            planning_params = mcp_data["planning_data"].get("parameters", {})
+            if isinstance(planning_params, dict):
+                prefix: dict = {}
+                if "name" in planning_params:
+                    prefix["name"] = planning_params["name"]
+                if "mcp_name" in planning_params:
+                    prefix["mcp_name"] = planning_params["mcp_name"]
+                if "tool_name" in planning_params:
+                    prefix["tool_name"] = planning_params["tool_name"]
+                if prefix:
+                    result = {**prefix, **result}
+
+        # Restore entity_info if it was present
+        if original_entity_info and isinstance(result, dict):
+            result["entity_info"] = original_entity_info
+
+        return result
+
+    except Exception as e:
+        log.error(f"Error preparing MCP artifact data: {e}")
+        return mcp_data
 
 
 async def prepare_unknown_artifact_data(artifact_data: dict):
@@ -1503,7 +1604,15 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
             if isinstance(inner, dict):
                 clean_parameters = inner.copy()
 
-    return {
+    # Extract error message for failed executed artifacts
+    error_message = None
+    if actual_is_executed and not actual_success:
+        if isinstance(enhanced_data, dict) and "entity_info" in enhanced_data:
+            error_message = enhanced_data.get("entity_info", {}).get("error")
+        elif isinstance(artifact_data_to_use, dict) and "entity_info" in artifact_data_to_use:
+            error_message = artifact_data_to_use.get("entity_info", {}).get("error")
+
+    result_dict = {
         "artifact_id": str(artifact.id),
         "sequence": artifact.sequence,
         "artifact_type": artifact.entity,
@@ -1521,6 +1630,9 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
         "issue_identifier": issue_identifier,
         "entity_identifier": entity_identifier,
     }
+    if error_message is not None:
+        result_dict["error"] = error_message
+    return result_dict
 
 
 async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_message_ids: Dict[str, Any]) -> List[dict]:
@@ -1646,6 +1758,14 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
                     if isinstance(inner, dict):
                         clean_parameters = inner.copy()
 
+            # Extract error message for failed executed artifacts
+            error_message = None
+            if actual_is_executed and not actual_success:
+                if isinstance(enhanced_data, dict) and "entity_info" in enhanced_data:
+                    error_message = enhanced_data.get("entity_info", {}).get("error")
+                elif isinstance(artifact_data_to_use, dict) and "entity_info" in artifact_data_to_use:
+                    error_message = artifact_data_to_use.get("entity_info", {}).get("error")
+
             artifact_dict = {
                 "artifact_id": str(artifact.id),
                 "sequence": artifact.sequence,
@@ -1664,6 +1784,8 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
                 "issue_identifier": issue_identifier,
                 "entity_identifier": entity_identifier,
             }
+            if error_message is not None:
+                artifact_dict["error"] = error_message
             artifacts_data.append(artifact_dict)
 
         log.debug(f"Batch prepared {len(artifacts_data)} artifacts with optimized queries")

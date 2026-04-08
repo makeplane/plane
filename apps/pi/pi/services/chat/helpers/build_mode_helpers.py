@@ -18,6 +18,7 @@ execute_tools_for_build_mode function lean and readable.
 from __future__ import annotations
 
 import ast
+import asyncio
 import contextlib
 import datetime
 import json
@@ -57,6 +58,7 @@ from pi.services.chat.helpers.tool_utils import category_display_name
 from pi.services.chat.helpers.tool_utils import clean_tool_args_for_storage
 from pi.services.chat.helpers.tool_utils import handle_missing_required_fields
 from pi.services.chat.prompts import action_category_router_prompt
+from pi.services.chat.prompts import build_action_category_router_prompt
 from pi.services.chat.utils import standardize_flow_step_content
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps as _upsert_message_flow_steps
 from pi.services.schemas.chat import ActionCategoryRouting
@@ -178,16 +180,15 @@ async def build_advisory_tool_step(
     categories = get_available_categories()
 
     lines: list[str] = []
-    lines.append("Available Plane action categories and methods:\n")
-    for cat, description in categories.items():
+    lines.append("Available methods per action category:\n")
+    for cat in categories:
         try:
             cat_methods = get_category_methods(cat)
             method_names = ", ".join(cat_methods.keys()) if cat_methods else "-"
         except Exception as exc:
             log.warning(f"Failed to get methods for category '{cat}': {exc}")
             method_names = "(error retrieving methods)"
-        lines.append(f"- {cat}: {description}")
-        lines.append(f"  Methods: {method_names}")
+        lines.append(f"- {cat}: {method_names}")
 
     advisory_text = "\n".join(lines)
 
@@ -210,6 +211,7 @@ async def run_category_router_and_persist(
     chat_id,
     current_step: int,
     db,
+    mcp_descriptions: Optional[Dict[str, str]] = None,
 ) -> Tuple[List[ActionCategorySelection | Dict[str, Optional[str]]], int]:
     """Run the LLM-based category router and persist a routing step.
 
@@ -220,9 +222,11 @@ async def run_category_router_and_persist(
     if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
         custom_prompt = f"CONVERSATION HISTORY & ACTION CONTEXT:\n{enhanced_conversation_history}\n\n" + custom_prompt
 
+    # Use dynamic prompt when MCP descriptions are available, otherwise fall back to static
+    router_system_prompt = build_action_category_router_prompt(mcp_descriptions) if mcp_descriptions else action_category_router_prompt
     router_prompt_template = ChatPromptTemplate.from_messages(
         [
-            ("system", action_category_router_prompt),
+            ("system", router_system_prompt),
             ("human", "{custom_prompt}"),
         ]
     )
@@ -278,6 +282,17 @@ async def run_category_router_and_persist(
         )
     if flow_step_result.get("message") != "success":
         log.warning("Failed to record category routing in database")
+
+    # TEST: Drop 'workitems' category from selections
+    # selections_list = [
+    #     sel for sel in selections_list
+    #     if (sel.category if isinstance(sel, ActionCategorySelection) else sel.get("category")) != "workitems"
+    # ]
+    # selections_list = [
+    #     sel for sel in selections_list
+    #     if 'github' not in (sel.category if isinstance(sel, ActionCategorySelection) else sel.get("category"))
+    # ]
+
     return selections_list, current_step + 1
 
 
@@ -304,6 +319,7 @@ def build_planning_tools(
     method_executor,
     context: Dict[str, Any],
     fresh_retrieval_tools: List[Any],
+    mcp_tools_by_slug: Optional[Dict[str, List[Any]]] = None,
 ) -> Tuple[List[Any], List[Any], List[str]]:
     """Build method tools for categories, merge with retrieval tools, and return combined.
 
@@ -352,6 +368,15 @@ def build_planning_tools(
         # Skip retrieval_tools - it's a meta-category, not an API category with methods
         if cat == "retrieval_tools":
             continue
+        # Handle MCP categories — pull tools from the pre-grouped dict
+        if cat.startswith("mcp_") and mcp_tools_by_slug:
+            slug = cat[4:]  # strip "mcp_" prefix to get connector slug
+            mcp_cat_tools = mcp_tools_by_slug.get(slug, [])
+            if mcp_cat_tools:
+                all_method_tools.extend(mcp_cat_tools)
+            else:
+                log.warning(f"MCP category {cat} selected but no tools found for slug '{slug}'")
+            continue
         try:
             tools_for_cat = chatbot_instance._build_planning_method_tools(cat, method_executor, context)
             # Dedup: _build_planning_method_tools now includes unified tools (entity_list/retrieve/search)
@@ -399,6 +424,171 @@ def build_planning_tools(
     method_tool_names = {getattr(t, "name", "") for t in all_method_tools}
     combined_tools = _merge_planning_tools(context, all_method_tools, fresh_retrieval_tools, method_tool_names)
     return combined_tools, all_method_tools, built_categories
+
+
+# ---------------------------------------------------------------------------
+# Multi-hop tool picker: batched LLM filtering when tool count > threshold
+# ---------------------------------------------------------------------------
+
+# Names that must always be present in the tool set regardless of picker output.
+_ALWAYS_INCLUDE_PREFIXES = ("search_", "list_recent_", "list_member_", "entity_list", "entity_retrieve", "entity_search")
+_ALWAYS_INCLUDE_NAMES = frozenset(
+    {
+        "vector_search_tool",
+        "structured_db_tool",
+        "pages_search_tool",
+        "docs_search_tool",
+        "web_search_tool",
+        "ask_for_clarification",
+        "provide_final_answer_for_app",
+        "reselect_action_categories",
+    }
+)
+
+
+def _is_always_include(tool_name: str) -> bool:
+    """Return True if a tool must always be bound regardless of LLM picker output."""
+    if tool_name in _ALWAYS_INCLUDE_NAMES:
+        return True
+    if tool_name.startswith(_ALWAYS_INCLUDE_PREFIXES):
+        return True
+    return False
+
+
+async def _pick_tools_for_batch(
+    batch_descriptions: str,
+    user_intent: str,
+    llm,
+) -> list[str]:
+    """Ask the decomposer LLM to select relevant tools from a single batch.
+
+    Returns a list of tool names selected by the LLM for this batch.
+    """
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain_core.utils.json import parse_json_markdown
+
+    from pi.services.chat.prompts import tool_picker_human_prompt
+    from pi.services.chat.prompts import tool_picker_system_prompt
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", tool_picker_system_prompt),
+            ("human", tool_picker_human_prompt),
+        ]
+    )
+    chain = prompt | llm
+    raw_response = await chain.ainvoke(
+        {
+            "user_intent": user_intent,
+            "tool_batch": batch_descriptions,
+        }
+    )
+    content = raw_response.content if hasattr(raw_response, "content") else str(raw_response)
+    try:
+        parsed = parse_json_markdown(content)
+        selected = parsed.get("selected_tools", [])
+        if isinstance(selected, list):
+            return [str(s) for s in selected]
+    except Exception as exc:
+        log.warning(f"Tool picker batch parse failed ({exc}); including entire batch as fallback")
+    # On parse failure, return empty — caller will fall back to including the batch.
+    return []
+
+
+async def multi_hop_tool_picker(
+    *,
+    all_tools: list,
+    user_intent: str,
+    enhanced_conversation_history: str | None,
+    chatbot_instance,
+    chat_id,
+    query_id=None,
+    db=None,
+) -> list:
+    """Filter a large tool set down to the relevant subset using batched LLM calls.
+
+    Algorithm:
+    1. Separate tools into *always-include* (entity search, retrieval, system) and
+       *selectable* (action / category-specific) buckets.
+    2. Chunk the selectable tools into batches of ``TOOL_PICKER_BATCH_SIZE``.
+    3. For each batch, ask the decomposer LLM which tools are relevant.
+    4. Merge always-include + LLM-selected tools.
+    5. If a batch call fails to parse, include the entire batch (safe fallback).
+    """
+    batch_size = settings.chat.TOOL_PICKER_BATCH_SIZE
+
+    always_include: list = []
+    selectable: list = []
+    for tool in all_tools:
+        name = getattr(tool, "name", "")
+        if _is_always_include(name):
+            always_include.append(tool)
+        else:
+            selectable.append(tool)
+
+    if not selectable:
+        return all_tools
+
+    # Build the query context for the picker
+    intent_with_context = user_intent
+    if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
+        intent_with_context = f"{user_intent}\n\nConversation context:\n{enhanced_conversation_history[:1000]}"
+
+    # Chunk selectable tools into batches
+    batches: list[tuple[list, str]] = []
+    for i in range(0, len(selectable), batch_size):
+        batch = selectable[i : i + batch_size]
+        descriptions = "\n".join(f"- {getattr(t, 'name', '?')} | {(getattr(t, 'description', '') or '')[:300]}" for t in batch)
+        batches.append((batch, descriptions))
+
+    llm = chatbot_instance.decomposer_llm
+    # Ensure tokens for tool selection are tracked under a dedicated step type
+    try:
+        if query_id and db:
+            llm.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_TOOL_PICKING, chat_id=str(chat_id))
+    except Exception:
+        # Non-fatal: continue without tracking if context cannot be set
+        pass
+
+    # Run all batches concurrently
+    async def _process_batch(batch_tools: list, batch_desc: str) -> list:
+        selected_names = await _pick_tools_for_batch(batch_desc, intent_with_context, llm)
+        if not selected_names:
+            # Parse failure or empty selection — include entire batch as safe fallback
+            return batch_tools
+        name_set = set(selected_names)
+        picked = [t for t in batch_tools if getattr(t, "name", "") in name_set]
+        # If the LLM returned names that don't match any tool, fallback to full batch
+        if not picked:
+            return batch_tools
+        return picked
+
+    results = await asyncio.gather(
+        *[_process_batch(bt, bd) for bt, bd in batches],
+        return_exceptions=True,
+    )
+
+    selected_tools: list = list(always_include)
+    for res in results:
+        if isinstance(res, BaseException):
+            # On error, include the corresponding batch entirely
+            idx = results.index(res)
+            selected_tools.extend(batches[idx][0])
+            log.warning(f"ChatID: {chat_id} - Tool picker batch failed: {res}; including full batch")
+        else:
+            selected_tools.extend(res)
+
+    # Deduplicate by name
+    selected_tools = list({getattr(t, "name", id(t)): t for t in selected_tools}.values())
+
+    log.info(
+        f"ChatID: {chat_id} - Multi-hop tool picker: {len(all_tools)} -> {len(selected_tools)} tools "
+        f"(always-include-tools={len(always_include)}, batches processed={len(batches)})"
+    )
+    return selected_tools
+
+
+# (Moved) Dynamic category re-selection tool now lives in services/chat/kit.py
 
 
 def build_tool_orchestration_context_step(
@@ -1039,6 +1229,7 @@ async def execute_retrieval_tool_and_build_step(
     query_flow_store: Dict[str, Any],
     current_step: int,
     tool_query: str,
+    mcp_connector_slug_to_id: Optional[Dict[str, str]] = None,
 ) -> Tuple[Optional[Dict[str, Any]], Optional[Any], int, str, ExecutionStatus, Optional[str]]:
     """Execute a retrieval tool, build flow step and tool message.
 
@@ -1171,6 +1362,19 @@ async def execute_retrieval_tool_and_build_step(
         "execution_success": execution_success,
         "execution_error": execution_error,
     }
+
+    # Derive mcp_connector_id for MCP tools
+    if tool_name.startswith("mcp_") and mcp_connector_slug_to_id:
+        try:
+            import uuid as _uuid
+
+            _slug = tool_name[4:].split("__")[0]
+            _cid_str = mcp_connector_slug_to_id.get(_slug)
+            if _cid_str:
+                flow_step["mcp_connector_id"] = _uuid.UUID(str(_cid_str))
+        except Exception:
+            pass
+
     return flow_step, tool_message, current_step + 1, tool_query, execution_success, execution_error
 
 

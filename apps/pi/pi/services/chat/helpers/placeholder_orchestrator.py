@@ -158,7 +158,7 @@ class PlaceholderOrchestrator:
 
         remaining = list(self.planned_actions)
         iteration = 0
-        max_iterations = len(self.planned_actions) * 2  # Prevent infinite loops
+        max_iterations = len(self.planned_actions) * 4  # Prevent infinite loops
 
         while remaining and iteration < max_iterations:
             iteration += 1
@@ -307,11 +307,44 @@ class PlaceholderOrchestrator:
         Returns:
             True if action has unresolved placeholders
         """
+        # Check <id of entity: name> placeholders
         for _field_name, placeholder in self._iter_placeholders(action):
             entity_type, entity_name = self._parse_placeholder(placeholder)
             if not self._can_resolve_from_context(entity_type, entity_name):
                 return True
 
+        if self._has_unresolvable_templates_in_args(action.get("args", {})):
+            return True
+
+        return False
+
+    def _has_unresolvable_templates_in_args(self, args: Dict[str, Any]) -> bool:
+        """Recursively check if any value in *args* contains an unresolvable {{...}} template."""
+        for value in args.values():
+            if isinstance(value, str):
+                if self._is_template_variable(value) and self._has_unresolvable_template(value):
+                    return True
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, str) and self._is_template_variable(item) and self._has_unresolvable_template(item):
+                        return True
+            elif isinstance(value, dict):
+                if self._has_unresolvable_templates_in_args(value):
+                    return True
+        return False
+
+    def _has_unresolvable_template(self, template: str) -> bool:
+        """Return True if any {{connector.field}} in *template* cannot yet be resolved."""
+        import re
+
+        pattern = r"\{\{([^}]+)\}\}"
+        for match in re.findall(pattern, template):
+            parts = match.strip().split(".")
+            if len(parts) < 2:
+                continue
+            connector = parts[0]
+            if f"mcp:{connector}" not in self.execution_context:
+                return True
         return False
 
     async def _resolve_placeholders_in_action(self, action: Dict[str, Any]):
@@ -329,17 +362,30 @@ class PlaceholderOrchestrator:
                 args[key] = resolved
                 log.debug(f"Resolved {key}: {value} -> {resolved}")
 
-            # Handle lists of placeholders
+            # Handle MCP template variables (e.g., "{{github.login}}")
+            elif self._is_template_variable(value):
+                resolved = self._resolve_template_variable(value)
+                args[key] = resolved
+                log.info(f"Resolved template {key}: {value} -> {resolved}")
+
+            # Handle lists of placeholders and templates
             elif isinstance(value, list):
                 resolved_list = []
                 for item in value:
                     if self._is_placeholder(item):
                         resolved = await self._resolve_single_placeholder(key, item)
                         resolved_list.append(resolved)
+                    elif self._is_template_variable(item):
+                        resolved = self._resolve_template_variable(item)
+                        resolved_list.append(resolved)
                     else:
                         resolved_list.append(item)
                 if resolved_list != value:
                     args[key] = resolved_list
+
+            # Handle nested objects with templates
+            elif isinstance(value, dict):
+                self._resolve_templates_in_dict(value)
 
     async def _resolve_single_placeholder(self, field_name: str, placeholder: str) -> str:
         """
@@ -508,7 +554,36 @@ IMPORTANT:
 
         log.debug(f"Executing: {tool_name} with args: {args}")
 
-        # Build tool if not cached
+        raw_tool_name = tool_name
+        planning_data = action.get("planning_data", {})
+        if isinstance(planning_data, dict) and planning_data.get("raw_tool_name"):
+            raw_tool_name = planning_data["raw_tool_name"]
+        internal = action.get("_internal", {})
+        if isinstance(internal, dict) and internal.get("raw_tool_name"):
+            raw_tool_name = internal["raw_tool_name"]
+
+        from pi.services.actions.artifacts.handlers import get_handler_optional
+
+        handler = get_handler_optional(raw_tool_name)
+        if handler:
+            log.debug(f"Executing external tool '{raw_tool_name}' via handler")
+            exec_result = await handler.execute(action, self.context)
+            result_dict = exec_result.to_dict()
+            entity_info = result_dict.get("entity_info")
+            return {
+                "tool_name": tool_name,
+                "result": result_dict.get("message", ""),
+                "entity_info": entity_info,
+                "artifact_id": action.get("artifact_id"),
+                "version_id": action.get("version_id"),
+                "sequence": len(self.results) + 1,
+                "artifact_type": action.get("entity_type", "mcp"),
+                "executed_at": datetime.utcnow().isoformat(),
+                "success": result_dict.get("success", False),
+                "raw_mcp_result": result_dict.get("raw_mcp_result"),
+            }
+
+        # Build tool if not cached (native Plane tools)
         if tool_name not in self.tools_cache:
             # Special cases where tool name doesn't follow {category}_{method} pattern
             SPECIAL_TOOL_CATEGORIES = {
@@ -586,6 +661,16 @@ IMPORTANT:
             action: Executed action with original planned args
             result: Execution result with actual entity_info
         """
+        tool_name = action.get("tool_name", "")
+        planning_data = action.get("planning_data", {})
+        raw_tool_name_ctx = planning_data.get("raw_tool_name", tool_name) if isinstance(planning_data, dict) else tool_name
+        if tool_name.startswith("mcp_") or raw_tool_name_ctx.startswith("mcp_"):
+            # Pass a copy of action with raw_tool_name so _store_mcp_result can parse the connector slug.
+            mcp_action = dict(action)
+            mcp_action["tool_name"] = raw_tool_name_ctx
+            self._store_mcp_result(mcp_action, result)
+
+        # Store Plane entity results for placeholders
         entity_info = result.get("entity_info", {})
         if not entity_info:
             return
@@ -756,3 +841,114 @@ IMPORTANT:
             f"- Entity name mismatch between placeholder and actual name\n"
             f"- Circular dependency between actions"
         )
+
+    def _store_mcp_result(self, action: Dict[str, Any], result: Dict[str, Any]):
+        """Store MCP tool result for template variable resolution.
+
+        Args:
+            action: Executed MCP action with tool_name
+            result: Execution result containing raw_mcp_result
+        """
+        from pi.services.mcp.utils import parse_tool_name
+
+        # Get the raw MCP result data
+        raw_mcp_result = result.get("raw_mcp_result")
+
+        if not raw_mcp_result or not isinstance(raw_mcp_result, dict):
+            return
+
+        # Parse connector name from tool name (e.g., "mcp_github-mcp__get_me" -> "github-mcp")
+        tool_name = action.get("tool_name", "")
+        connector_slug, _ = parse_tool_name(tool_name)
+
+        # Strip the random hex collision suffix (e.g. "git-43aeb7" -> "git") so the
+        # context key matches the connector name used in {{connector.field}} templates.
+        from pi.services.mcp.utils import strip_slug_suffix
+
+        clean_slug = strip_slug_suffix(connector_slug)
+        context_key = f"mcp:{clean_slug}"
+
+        # Merge with existing connector data if present
+        if context_key in self.execution_context:
+            self.execution_context[context_key].update(raw_mcp_result)
+        else:
+            self.execution_context[context_key] = raw_mcp_result
+
+        log.info(f"Stored MCP result for {connector_slug}: {list(raw_mcp_result.keys())}")
+
+    def _is_template_variable(self, value: Any) -> bool:
+        """Check if value contains mustache template variables."""
+        return isinstance(value, str) and "{{" in value and "}}" in value
+
+    def _resolve_template_variable(self, template: str) -> str:
+        """Resolve mustache template variables from MCP execution context.
+
+        Example: "{{github.login}}" -> "akhilramv"
+
+        Args:
+            template: String containing {{connector.field}} variables
+
+        Returns:
+            String with all templates resolved
+
+        Raises:
+            ValueError: If connector not found or field path invalid
+        """
+        import re
+
+        # Find all {{variable}} patterns
+        pattern = r"\{\{([^}]+)\}\}"
+        matches = re.findall(pattern, template)
+
+        resolved = template
+        for match in matches:
+            # Parse variable path: "github.login" -> ["github", "login"]
+            parts = match.strip().split(".")
+
+            if len(parts) < 2:
+                raise ValueError(f"Template variable must be in format {{{{connector.field}}}}, got: {{{{{match}}}}}")
+
+            connector = parts[0]
+            field_path = parts[1:]
+
+            # Lookup in MCP context
+            context_key = f"mcp:{connector}"
+            if context_key not in self.execution_context:
+                available = [k.replace("mcp:", "") for k in self.execution_context if k.startswith("mcp:")]
+                raise ValueError(f"No MCP data found for connector '{connector}'. " f"Available connectors: {available}")
+
+            # Navigate nested fields
+            value: Any = self.execution_context[context_key]
+            for field in field_path:
+                # Handle array indices: "items[0]"
+                array_match = re.match(r"(\w+)\[(\d+)\]", field)
+                if array_match:
+                    field_name, index = array_match.groups()
+                    value = value.get(field_name, [])[int(index)]
+                else:
+                    if isinstance(value, dict):
+                        value = value.get(field)
+                    else:
+                        raise ValueError(f"Cannot access field '{field}' on non-dict value")
+
+                if value is None:
+                    raise ValueError(f"Field '{".".join(parts)}' not found in MCP context")
+
+            # Replace in template
+            resolved = resolved.replace(f"{{{{{match}}}}}", str(value))
+
+        return resolved
+
+    def _resolve_templates_in_dict(self, obj: dict):
+        """Recursively resolve templates in nested dictionaries.
+
+        Args:
+            obj: Dictionary that may contain template variables
+        """
+        for key, value in obj.items():
+            if self._is_template_variable(value):
+                obj[key] = self._resolve_template_variable(value)
+            elif isinstance(value, dict):
+                self._resolve_templates_in_dict(value)
+            elif isinstance(value, list):
+                obj[key] = [self._resolve_template_variable(item) if self._is_template_variable(item) else item for item in value]

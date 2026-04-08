@@ -16,6 +16,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
+from pi.app.api.dependencies import cookie_schema
 from pi.app.api.dependencies import get_current_user
 
 # from pi.services.chat.helpers.action_execution_helpers import execute_batch_actions
@@ -49,6 +50,7 @@ async def execute_batch_actions_endpoint(
     request: ActionBatchExecutionRequest,
     current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
+    session: str = Depends(cookie_schema),
 ):
     """
     Execute all planned actions in a message as a batch using LLM orchestration.
@@ -138,7 +140,7 @@ async def execute_batch_actions_endpoint(
         user_id = current_user.id
 
         build_mode_tool_executor = BuildModeToolExecutor(chatbot=PlaneChatBot(settings.llm_model.DEFAULT), db=db)
-        result = await build_mode_tool_executor.execute(request, user_id)
+        result = await build_mode_tool_executor.execute(request, user_id, session_cookie=session)
 
         # Check if service returned an error
         if result.get("error"):
