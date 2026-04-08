@@ -1,0 +1,27 @@
+#!/bin/sh
+# Pre-push checks — mirrors CI/CD pipeline checks
+# Skip with: git push --no-verify
+
+echo "Running pre-push checks..."
+
+# 1. Frontend format check
+echo "\n[1/4] Checking frontend format..."
+pnpm turbo run check:format --affected || { echo "ERROR: Format check failed. Run 'pnpm fix:format' to fix."; exit 1; }
+
+# 2. Frontend lint check
+echo "\n[2/4] Checking frontend lint..."
+pnpm turbo run check:lint --filter="web" --filter="admin" || { echo "ERROR: Lint check failed. Run 'pnpm fix:lint' to fix."; exit 1; }
+
+# 3. Frontend type check
+echo "\n[3/4] Checking frontend types..."
+pnpm turbo run check:types --filter="web" --filter="admin" || { echo "ERROR: Type check failed."; exit 1; }
+
+# 4. Backend lint (ruff)
+echo "\n[4/4] Checking backend lint..."
+if command -v ruff >/dev/null 2>&1; then
+  ruff check apps/api || { echo "ERROR: Backend lint failed. Run 'ruff check --fix apps/api' to fix."; exit 1; }
+else
+  pip install ruff -q && ruff check apps/api || { echo "ERROR: Backend lint failed. Run 'ruff check --fix apps/api' to fix."; exit 1; }
+fi
+
+echo "\nAll pre-push checks passed!"
