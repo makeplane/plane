@@ -49,7 +49,7 @@ function formatTooltip(totalMinutes: number): string {
   const parts = [];
   if (hours > 0) parts.push(`${hours}h`);
   if (mins > 0) parts.push(`${mins}m`);
-  return `Today: ${parts.length ? parts.join(" ") : "0m"} / 12h`;
+  return `Today: ${parts.length ? parts.join(" ") : "0m"}`;
 }
 
 export function DailyLogtimeIndicator() {
@@ -78,7 +78,7 @@ export function DailyLogtimeIndicator() {
           style={{ color: "#ffffff", fontSize: "12px" }}
         >
           <Clock className="size-3.5" strokeWidth={2.5} />
-          <span>{label} / 12h</span>
+          <span>{label}</span>
         </div>
       </div>
     </Tooltip>
