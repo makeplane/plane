@@ -20,9 +20,10 @@ import type { TTourType } from "@/constants/tour-config";
 
 type FeatureTourProps = {
   tourType: TTourType;
+  onComplete?: () => void; // Optional callback for when the tour is completed
 };
 
-export const FeatureTour = observer(({ tourType }: FeatureTourProps) => {
+export const FeatureTour = observer(({ tourType, onComplete }: FeatureTourProps) => {
   const { workspaceSlug } = useParams();
   const config = TOUR_CONFIG_MAP[tourType];
 
@@ -32,6 +33,7 @@ export const FeatureTour = observer(({ tourType }: FeatureTourProps) => {
     workspaceSlug: config.storageType === "workspace_properties" ? workspaceSlug : undefined,
     storageType: config.storageType,
     propertyKey: config.propertyKey,
+    onComplete: onComplete,
   });
 
   // Preload all tour assets when tour is open

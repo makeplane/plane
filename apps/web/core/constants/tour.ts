@@ -251,3 +251,14 @@ export const INTAKE_TOUR_STEPS: TTourStep[] = [
     asset: "/tour/intake/step-3",
   },
 ];
+
+export const MCP_CONNECTORS_TOUR_STEPS: TTourStep[] = [
+  {
+    id: "step-0",
+    i18n_title: "product_tour.mcp_connectors.step_zero.title",
+    i18n_description: "product_tour.mcp_connectors.step_zero.description",
+    targetElement: '[data-tour="mcp-connectors-tour-step-0"]',
+    position: "bottom-right",
+    lottieUrl: "/tour/mcp-connectors/step-0.json",
+  },
+];

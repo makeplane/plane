@@ -20,6 +20,7 @@ import {
   MODULE_TOUR_STEPS,
   PAGE_TOUR_STEPS,
   INTAKE_TOUR_STEPS,
+  MCP_CONNECTORS_TOUR_STEPS,
 } from "./tour";
 
 export const TOUR_TYPES = {
@@ -29,6 +30,7 @@ export const TOUR_TYPES = {
   MODULES: "modules",
   PAGES: "pages",
   INTAKE: "intake",
+  MCP_CONNECTORS: "mcp_connectors",
 } as const;
 
 export type TTourType = (typeof TOUR_TYPES)[keyof typeof TOUR_TYPES];
@@ -75,5 +77,11 @@ export const TOUR_CONFIG_MAP: Record<TTourType, TTourConfig> = {
     steps: INTAKE_TOUR_STEPS,
     storageType: "workspace_properties",
     propertyKey: "intake",
+  },
+  [TOUR_TYPES.MCP_CONNECTORS]: {
+    tourId: "mcp_connectors",
+    steps: MCP_CONNECTORS_TOUR_STEPS, // Placeholder for future MCP Connectors tour steps
+    storageType: "workspace_properties",
+    propertyKey: "mcp_connectors",
   },
 };

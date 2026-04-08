@@ -180,6 +180,7 @@ catalog:
   express-ws: ^5.0.2
   file-type: ^21.3.1
   framer-motion: ^12.34.3
+  lottie-react: ^2.4.1
   frimousse: ^0.3.0
   fuse.js: ^7.1.0
   hast: ^1.0.0
@@ -197,7 +198,7 @@ catalog:
   linkifyjs: ^4.3.2
   lint-staged: 16.2.7
   lodash-es: 4.18.1
-  lucide-react: 0.542.0
+  lucide-react: 0.566.0
   markdown-to-jsx: ^7.7.17
   marked: ^15.0.12
   mdast: ^3.0.0
@@ -280,6 +281,7 @@ catalog:
   y-protocols: ^1.0.7
   yjs: ^13.6.29
   zod: ^4.3.6
+
 
 catalogMode: prefer
 

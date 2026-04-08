@@ -142,3 +142,16 @@ export const downloadSkippedDetails = (skippedDetails: TProjectMemberImportSumma
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
+
+/**
+ * TourContent - Displays tour step content with carousel animations
+ *
+ * Shows the tour step image, title, description, and navigation controls.
+ * Supports smooth carousel-style transitions between steps.
+ *
+ * @internal This component is used internally by the Tour component
+ */
+export const fetchLottieData = async (url: string, signal: AbortSignal): Promise<Record<string, unknown>> => {
+  const res = await fetch(url, { signal });
+  return res.json() as Promise<Record<string, unknown>>;
+};

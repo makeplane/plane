@@ -43,7 +43,7 @@ export function AiMode(props: { aiMode: string; setAiMode: (mode: string) => voi
           )}
         >
           <span className="flex items-center gap-2 text-icon-secondary">{selectedMode?.icon}</span>
-          <span className="text-body-xs-medium truncate text-primary">{selectedMode?.label}</span>
+          <span className="text-body-sm-medium truncate text-primary">{selectedMode?.label}</span>
           <ChevronDownIcon className="size-4 text-icon-secondary" />
         </Combobox.Button>
       </Tooltip>
@@ -55,7 +55,7 @@ export function AiMode(props: { aiMode: string; setAiMode: (mode: string) => voi
             className="text-13 text-secondary font-medium flex w-full items-center gap-2 data-[highlighted]:bg-layer-transparent-hover"
           >
             <span className="flex items-center gap-2 text-tertiary">{option.icon}</span>
-            <span className="text-13 truncate">{option.label}</span>
+            <span className="text-body-sm-medium truncate">{option.label}</span>
           </Combobox.Option>
         ))}
       </Combobox.Options>

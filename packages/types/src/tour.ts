@@ -17,6 +17,7 @@ export type TProductTour = {
   modules?: boolean;
   intake?: boolean;
   pages?: boolean;
+  mcp_connectors?: boolean;
 };
 
 /**
@@ -34,6 +35,10 @@ export type TTourStep = {
   targetElement?: string;
   position?: TourPosition;
   asset?: string;
+  /** Lottie animation data object — takes precedence over `asset` when provided */
+  lottieAsset?: Record<string, unknown>;
+  /** URL path to a Lottie JSON file — loaded lazily, takes precedence over `asset` */
+  lottieUrl?: string;
 };
 
 /**

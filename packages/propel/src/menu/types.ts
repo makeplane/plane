@@ -51,6 +51,7 @@ export type TSubMenuProps = {
   className?: string;
   contentClassName?: string;
   placement?: TPlacement;
+  showChevron?: boolean;
 };
 
 export type TMenuItemProps = {
@@ -58,4 +59,6 @@ export type TMenuItemProps = {
   disabled?: boolean;
   onClick?: (_args?: unknown) => void;
   className?: string;
+  /** When false, clicking the item will not close the menu. Default: true */
+  closeOnClick?: boolean;
 };

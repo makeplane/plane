@@ -111,6 +111,8 @@ import { AutomationsRootStore } from "./automations/root.store";
 // marketplace
 import type { IApplicationStore } from "./marketplace/application.store";
 import { ApplicationStore } from "./marketplace/application.store";
+import { ConnectorsStore } from "./marketplace/connectors.store";
+import type { IConnectorsStore } from "./marketplace/connectors.store";
 // Plane AI
 import type { IPiChatStore } from "./pi-chat/pi-chat";
 import { PiChatStore } from "./pi-chat/pi-chat";
@@ -266,6 +268,7 @@ export class CoreRootStore {
   baseDashboards: IBaseDashboardsStore;
   automationsRoot: IAutomationsRootStore;
   applicationStore: IApplicationStore;
+  connectorsStore: IConnectorsStore;
   piChat: IPiChatStore;
   aiFeatureFlags: IAiFeatureFlagsStore;
   teamspaceRoot: ITeamspaceRootStore;
@@ -360,6 +363,7 @@ export class CoreRootStore {
     this.baseDashboards = new BaseDashboardsStore(this as unknown as RootStore);
     this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
     this.applicationStore = new ApplicationStore(this as unknown as RootStore);
+    this.connectorsStore = new ConnectorsStore(this as unknown as RootStore);
     this.piChat = new PiChatStore(this as unknown as RootStore);
     this.aiFeatureFlags = new AiFeatureFlagsStore(this as unknown as RootStore);
     this.teamspaceRoot = new TeamspaceRootStore(this as unknown as RootStore);
@@ -466,6 +470,7 @@ export class CoreRootStore {
     this.baseDashboards = new BaseDashboardsStore(this as unknown as RootStore);
     this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
     this.applicationStore = new ApplicationStore(this as unknown as RootStore);
+    this.connectorsStore = new ConnectorsStore(this as unknown as RootStore);
     this.piChat = new PiChatStore(this as unknown as RootStore);
     this.aiFeatureFlags = new AiFeatureFlagsStore(this as unknown as RootStore);
     this.teamspaceRoot = new TeamspaceRootStore(this as unknown as RootStore);

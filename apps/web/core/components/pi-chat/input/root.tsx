@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 import { v4 as uuidv4 } from "uuid";
-import { ArrowUp, Disc, Globe, Square } from "lucide-react";
+import { ArrowUp, Disc, Globe, GlobeOff, Square } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 
 import { PiChatEditorWithRef } from "@plane/editor";
@@ -38,9 +38,11 @@ import { InputPreviewUploads } from "../uploads/input-preview-uploads";
 import { DndWrapper } from "./dnd-wrapper";
 import { FocusFilter } from "./focus-filter";
 import { AiMode } from "./mode";
-import { AttachmentActionButton } from "./quick-action-button";
 import { ContextualTemplates } from "../conversation/contextual-templates";
 import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
+import { QuickActions } from "./quick-actions";
+import { ConnectorsPill } from "@/components/marketplace/connectors/connectors-pill";
+import { useConnectors } from "@/plane-web/hooks/store/marketplace/use-connectors";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -85,6 +87,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     getChatWebSearch,
     activeModel,
     getModelById,
+    activeChat,
     attachmentStore: { getAttachmentsUploadStatusByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -94,6 +97,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const { getProjectByIdentifier } = useProject();
   const routerWithProgress = useAppRouter();
   const pathname = usePathname();
+  const { fetchMostUsedConnectors } = useConnectors();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const [projectIdentifier] = workItem?.split("-") ?? [];
@@ -104,6 +108,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const chatWebSearch = getChatWebSearch(activeChatId || "");
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   const activeModelSupportsWebSearch = getModelById(activeModel ?? "")?.supports_web_search ?? false;
+  const chatConnectors = activeChat?.mcp_connector_ids || [];
   // state
   const [focus, setFocus] = useState<TFocus>(
     chatFocus || {
@@ -117,16 +122,23 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const [aiMode, setAiMode] = useState<string>(chatMode);
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [isWebSerachEnabled, setIsWebSerachEnabled] = useState(chatWebSearch);
+  const [toggledConnectors, setToggledConnectors] = useState<string[]>([]);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
   const editorRef = useRef<TPiChatEditorRefApi>(null);
   const lastKeyRef = useRef<string>("");
   const timeoutRef = useRef<number | null>(null);
+  const isConnectorsDisabled = !focus.isInWorkspaceContext || aiMode !== "build";
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: false,
     revalidateIfStale: false,
     errorRetryCount: 0,
+  });
+
+  useSWR(`MOST_USED_CONNECTORS_${workspaceSlug}`, () => fetchMostUsedConnectors(workspaceSlug), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
   });
 
   useEffect(() => {
@@ -189,7 +201,14 @@ export const InputBox = observer(function InputBox(props: TProps) {
     let chatIdToUse = activeChatId;
     setLoader("submitting");
     if (!chatIdToUse) {
-      chatIdToUse = await createNewChat(focus, aiMode, isProjectLevel, workspaceId, isWebSerachEnabled);
+      chatIdToUse = await createNewChat(
+        focus,
+        aiMode,
+        isProjectLevel,
+        workspaceId,
+        isWebSerachEnabled,
+        toggledConnectors
+      );
     }
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect && !routeChatId)
@@ -207,7 +226,8 @@ export const InputBox = observer(function InputBox(props: TProps) {
       pathname,
       attachmentIds,
       aiMode,
-      isWebSerachEnabled
+      isWebSerachEnabled,
+      toggledConnectors
     );
     editorCommands.current?.clear();
     addContext();
@@ -224,6 +244,14 @@ export const InputBox = observer(function InputBox(props: TProps) {
     const response = await searchCallback(workspaceSlug?.toString() || "", query, focus);
     return formatSearchQuery(response);
   });
+
+  const handleConnectorToggle = (connectorId: string) => {
+    if (toggledConnectors.includes(connectorId)) {
+      setToggledConnectors(toggledConnectors.filter((id) => id !== connectorId));
+    } else {
+      setToggledConnectors([...toggledConnectors, connectorId]);
+    }
+  };
 
   const templateProps = {
     isFullScreen,
@@ -249,6 +277,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     if (chatWebSearch !== undefined) {
       setIsWebSerachEnabled(chatWebSearch);
     }
+    setToggledConnectors(chatConnectors);
   }, [isChatLoading, chatFocus, chatMode, chatWebSearch]);
 
   // Adding context for the sidecar
@@ -340,11 +369,12 @@ export const InputBox = observer(function InputBox(props: TProps) {
             workspaceSlug={workspaceSlug?.toString()}
             workspaceId={workspaceId}
             chatId={activeChatId}
-            is_websearch_enabled={isWebSerachEnabled}
             setAttachments={setAttachments}
             isProjectLevel={isProjectLevel}
             mode={aiMode}
-            createNewChat={createNewChat}
+            createNewChat={() =>
+              createNewChat(focus, aiMode, isProjectLevel, workspaceId, isWebSerachEnabled, toggledConnectors)
+            }
             focus={focus}
             showBg={isNewChat && !onlyInput && isFullScreen}
           >
@@ -394,12 +424,25 @@ export const InputBox = observer(function InputBox(props: TProps) {
                 />
                 <div className="flex items-center w-full gap-3 justify-between">
                   {/* Focus */}
+                  {!SPEECH_LOADERS.includes(loader) && (
+                    <QuickActions
+                      workspaceSlug={workspaceSlug?.toString()}
+                      open={open}
+                      isUploading={isUploading}
+                      toggledConnectors={toggledConnectors}
+                      handleConnectorToggle={handleConnectorToggle}
+                      mode={aiMode}
+                      isConnectorsDisabled={isConnectorsDisabled}
+                    />
+                  )}
                   {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
                   {!SPEECH_LOADERS.includes(loader) && (
                     <Tooltip
                       tooltipContent={
                         activeModelSupportsWebSearch
-                          ? "Enable web search"
+                          ? isWebSerachEnabled
+                            ? "Disable web search"
+                            : "Enable web search"
                           : "Web search is not available for this model"
                       }
                       position="top"
@@ -407,22 +450,33 @@ export const InputBox = observer(function InputBox(props: TProps) {
                       <button
                         type="button"
                         className={cn(
-                          "size-7 flex items-center justify-center rounded-lg transition-all duration-300 shrink-0",
+                          "size-7 flex items-center justify-center rounded-lg transition-all duration-300 shrink-0 text-secondary bg-layer-3 hover:bg-layer-1",
                           {
-                            "text-icon-accent-primary bg-accent-subtle hover:text-secondary hover:bg-layer-1 ":
-                              isWebSerachEnabled && activeModelSupportsWebSearch,
-                            "text-secondary bg-layer-1 hover:bg-accent-subtle hover:text-icon-accent-primary ":
-                              (!isWebSerachEnabled && activeModelSupportsWebSearch) || !activeModelSupportsWebSearch,
+                            "text-icon-disabled": !isWebSerachEnabled || !activeModelSupportsWebSearch,
                             "cursor-not-allowed opacity-50": !activeModelSupportsWebSearch,
                           }
                         )}
                         color={isWebSerachEnabled ? "primary" : "secondary"}
                         onClick={() => activeModelSupportsWebSearch && setIsWebSerachEnabled(!isWebSerachEnabled)}
                       >
-                        <Globe className="size-4" />
+                        {isWebSerachEnabled ? <Globe className="size-4" /> : <GlobeOff className="size-4" />}
                       </button>
                     </Tooltip>
                   )}
+                  <WithAiFeatureFlagHOC
+                    flag="AI_MCP_CONNECTORS"
+                    disabledFallback={<></>}
+                    workspaceSlug={workspaceSlug?.toString() || ""}
+                  >
+                    {!SPEECH_LOADERS.includes(loader) && (
+                      <ConnectorsPill
+                        workspaceSlug={workspaceSlug?.toString()}
+                        toggledConnectors={toggledConnectors}
+                        handleConnectorToggle={handleConnectorToggle}
+                        isDisabled={isConnectorsDisabled}
+                      />
+                    )}
+                  </WithAiFeatureFlagHOC>
                   <div className="flex items-center w-full justify-end gap-2">
                     <div className="flex w-full justify-end">
                       {/* speech recorder */}
@@ -434,24 +488,21 @@ export const InputBox = observer(function InputBox(props: TProps) {
                           workspaceId={workspaceId}
                           chatId={activeChatId}
                           editorRef={editorRef}
-                          createNewChat={createNewChat}
-                          isProjectLevel={isProjectLevel}
+                          createNewChat={() =>
+                            createNewChat(
+                              focus,
+                              aiMode,
+                              isProjectLevel,
+                              workspaceId,
+                              isWebSerachEnabled,
+                              toggledConnectors
+                            )
+                          }
                           loader={loader}
                           setLoader={setLoader}
                           isFullScreen={isFullScreen}
-                          focus={focus}
-                          mode={aiMode}
-                          is_websearch_enabled={isWebSerachEnabled}
                         />
                       </WithAiFeatureFlagHOC>
-                      {!SPEECH_LOADERS.includes(loader) && (
-                        <WithAiFeatureFlagHOC
-                          workspaceSlug={workspaceSlug?.toString()}
-                          flag={E_FEATURE_FLAGS.AI_FILE_UPLOADS}
-                        >
-                          {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
-                        </WithAiFeatureFlagHOC>
-                      )}
                     </div>
                     {!SPEECH_LOADERS.includes(loader) && (
                       <button

@@ -133,6 +133,12 @@ export default {
           "A work item can be snoozed to review it at a later time. It will be moved to the bottom of your open request list.",
       },
     },
+    mcp_connectors: {
+      step_zero: {
+        title: "Stop tab-switching. Connect your world.",
+        description: "Link GitHub, Slack to track PRs and summarize chats directly in Plane AI.",
+      },
+    },
     navigation: {
       modal: {
         title: "Navigation, re-imagined",

@@ -26,5 +26,11 @@ type AppListProps = {
 export function AppList(props: AppListProps) {
   const { apps } = props;
 
-  return apps.map((app) => <AppTile key={app.id} app={app} />);
+  return (
+    <div className="flex flex-col gap-4 overflow-y-scroll">
+      {apps.map((app) => (
+        <AppTile key={app.id} app={app} />
+      ))}
+    </div>
+  );
 }

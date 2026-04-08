@@ -63,6 +63,7 @@ function getAppTileConfig(params: {
   const showInternalBadge = !!app.is_owned;
   const showOptionsMenu =
     isPaidOrOwned &&
+    isAdmin &&
     ((app.is_default && app.is_owned && isAdmin) ||
       (!app.is_default && (app.is_owned || (isAdmin && app.is_installed))));
 
@@ -208,12 +209,15 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-md bg-layer-2 border border-subtle-1 p-4">
+    <div className="flex items-center gap-3 rounded-lg bg-layer-2 border border-subtle p-3">
       <div className="shrink-0 size-10 bg-layer-3 rounded-lg grid place-items-center">
         <AppTileLogo app={app} />
       </div>
       <div className="flex flex-col space-y-1 flex-1 w-full">
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex gap-2 w-full">
+          <div className="flex">
+            <div className="text-body-sm-medium">{app.name}</div>
+          </div>
           <div className="flex gap-1 items-center h-fit">
             {config.showInstalledBadge && (
               <div className="px-2 text-caption-sm-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
@@ -231,11 +235,10 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
               </div>
             )}
           </div>
-          <div className="text-body-sm-medium">{app.name}</div>
         </div>
         <div className="text-body-xs-regular text-secondary flex-1 line-clamp-2">{t(app.short_description)}</div>
       </div>
-      <div className="flex items-center gap-x-1 flex-wrap">{renderAction()}</div>
+      {isAdmin && <div className="flex items-center gap-x-1 flex-wrap">{renderAction()}</div>}
     </div>
   );
 });

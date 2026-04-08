@@ -19,7 +19,7 @@ import type { TPiChatEditorRefApi } from "@plane/editor";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/services/pi-chat.service";
-import type { TFocus, TPiLoaders } from "@/types";
+import type { TPiLoaders } from "@/types";
 import { Waveform } from "./voice-chart";
 
 // oxlint-disable-next-line react-refresh/only-export-components
@@ -29,37 +29,15 @@ type TProps = {
   workspaceId: string;
   chatId: string | undefined;
   editorRef: React.RefObject<TPiChatEditorRefApi>;
-  isProjectLevel: boolean;
   isFullScreen: boolean;
-  focus: TFocus;
   loader: TPiLoaders;
-  mode: string;
-  is_websearch_enabled: boolean;
   setLoader: Dispatch<SetStateAction<TPiLoaders>>;
-  createNewChat: (
-    focus: TFocus,
-    mode: string,
-    isProjectLevel: boolean,
-    workspaceId: string,
-    is_websearch_enabled: boolean
-  ) => Promise<string>;
+  createNewChat: () => Promise<string>;
 };
 const piChatService = new PiChatService();
 
 function AudioRecorder(props: TProps) {
-  const {
-    workspaceId,
-    chatId,
-    editorRef,
-    createNewChat,
-    isProjectLevel,
-    isFullScreen,
-    focus,
-    loader,
-    setLoader,
-    mode,
-    is_websearch_enabled,
-  } = props;
+  const { workspaceId, chatId, editorRef, createNewChat, isFullScreen, loader, setLoader } = props;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [waveformData, setWaveformData] = useState<{ index: number; amplitude: number }[]>([]);
@@ -145,8 +123,7 @@ function AudioRecorder(props: TProps) {
     try {
       setLoader("transcribing");
       let chatIdToUse = chatId;
-      if (!chatIdToUse)
-        chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId, is_websearch_enabled);
+      if (!chatIdToUse) chatIdToUse = await createNewChat();
       const response = await piChatService.transcribeAudio(workspaceId, formData, chatIdToUse);
       editorRef.current?.appendText(" " + response);
     } catch (err) {

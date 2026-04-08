@@ -42,9 +42,10 @@ export const AttachmentActionButton = observer(function AttachmentActionButton(p
         }}
         disabled={disabled || isLoading}
         aria-label="Attach files"
-        className="size-8 flex items-center justify-center hover:bg-layer-1 rounded-full"
+        className="flex items-center gap-2 justify-center hover:bg-layer-1 rounded-full"
       >
         <Paperclip className="h-4 w-4" />
+        <div className="text-body-sm-regular text-primary"> Add files or photos</div>
       </button>
     </div>
   );

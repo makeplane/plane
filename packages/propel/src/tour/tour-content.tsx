@@ -11,24 +11,30 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import _Lottie from "lottie-react";
+import { fetchLottieData } from "@plane/utils";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { Button } from "../button";
 import { CloseIcon } from "../icons";
 import { cn } from "../utils";
 import type { TourContentProps } from "./tour-types";
 
-/**
- * TourContent - Displays tour step content with carousel animations
- *
- * Shows the tour step image, title, description, and navigation controls.
- * Supports smooth carousel-style transitions between steps.
- *
- * @internal This component is used internally by the Tour component
- */
+const Lottie = (_Lottie as any).default ?? _Lottie;
 export const TourContent: React.FC<TourContentProps> = (props) => {
   const { stepData, currentStep, totalSteps, isFirstStep, isLastStep, direction, onClose, onNext, onPrevious } = props;
   // Image loaded state - resets automatically on remount due to key={currentStep} on parent
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [lottieData, setLottieData] = useState<Record<string, unknown> | null>(null);
+
+  useEffect(() => {
+    if (!stepData.lottieUrl) return;
+    const controller = new AbortController();
+    fetchLottieData(stepData.lottieUrl, controller.signal)
+      .then(setLottieData)
+      .catch(() => {});
+    return () => controller.abort();
+  }, [stepData.lottieUrl]);
 
   // Determine animation class for content with smooth carousel effect
   let contentAnimationClass = "";
@@ -45,7 +51,9 @@ export const TourContent: React.FC<TourContentProps> = (props) => {
           contentAnimationClass
         )}
       >
-        {stepData.asset && (
+        {stepData.lottieAsset || lottieData ? (
+          <Lottie animationData={(stepData.lottieAsset ?? lottieData)!} loop className="w-full h-full mx-4 my-6" />
+        ) : stepData.asset ? (
           <>
             {/* Loading blur placeholder */}
             {!imageLoaded && (
@@ -64,7 +72,7 @@ export const TourContent: React.FC<TourContentProps> = (props) => {
               loading="eager"
             />
           </>
-        )}
+        ) : null}
 
         {/* Close button */}
         <button

@@ -68,6 +68,7 @@ import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
 import { useRunners } from "@/plane-web/hooks/store";
 import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
+import { useConnectors } from "@/plane-web/hooks/store/marketplace/use-connectors";
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 import { useWorkspaceCustomProperties } from "@/plane-web/hooks/store/custom-properties/use-workspace-custom-properties";
 import { useReleases } from "@/hooks/store/use-releases";
@@ -113,6 +114,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { getWorkspaceBySlug } = useWorkspace();
   const { getInstance } = usePiChat();
   const { fetchAllWorkflows } = useWorkflows();
+  const { fetchConnectors } = useConnectors();
   const { fetchRelationDefinitions } = useRelationDefinition();
   const { fetchScripts, checkRunnerHealth } = useRunners();
   const {
@@ -399,6 +401,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
       revalidateOnFocus: false,
     }
   );
+
+  // fetching connectors list
+  useSWR(`CONNECTORS_LIST_${workspaceSlug}`, () => fetchConnectors(workspaceSlug), {
+    revalidateOnFocus: false,
+    errorRetryCount: 0,
+  });
 
   const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;
   const flagsError = featureFlagsResponse.error || aiFeatureFlagsResponse.error;

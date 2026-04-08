@@ -12,11 +12,12 @@
  */
 
 import Link from "next/link";
-import { ArrowUpRight, Hash, Timer } from "lucide-react";
+import { ArrowUpRight, Hash, Timer, Link2 } from "lucide-react";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon, EpicIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import type { TArtifact } from "@/types";
 import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { ERadius, EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 
 export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon", className?: string) => {
   switch (type) {
@@ -38,12 +39,22 @@ export const getIcon = (type: string, color?: string, defaultRender: "text" | "i
       return <Hash width={16} height={16} />;
     case "worklog":
       return <Timer width={16} height={16} />;
+    case "link":
+      return <Link2 width={16} height={16} className="-rotate-45" />;
+    case "mcp":
+      return (
+        <div
+          className={cn("bg-layer-1 rounded-md py-0.5 px-2 capitalize text-11 text-secondary font-medium", className)}
+        >
+          MCP
+        </div>
+      );
     default:
       return defaultRender === "icon" ? (
         <div className={cn("size-3 rounded", { "bg-layer-1": !color })} style={{ backgroundColor: color }} />
       ) : (
         <div
-          className={cn("bg-layer-1 rounded-full py-0.5 px-2 capitalize text-11 text-secondary font-medium", className)}
+          className={cn("bg-layer-1 rounded-md py-0.5 px-2 capitalize text-11 text-secondary font-medium", className)}
         >
           {type}
         </div>
@@ -93,8 +104,13 @@ export function PreviewBlock(props: {
           </div>
         )}
       </div>
-      <div className="text-13 font-medium line-clamp-2 text-start">
+      <div className="flex gap-2 text-13 font-medium line-clamp-2 text-start">
         <div>{shouldShowAction ? (action === "create" ? "Added " : "Deleted ") + name : name} </div>
+        {type === "mcp" && data && (
+          <Pill variant={EPillVariant.PRIMARY} size={EPillSize.SM} radius={ERadius.SQUARE} className="border-none ">
+            {data?.entity_type}
+          </Pill>
+        )}
       </div>
     </Link>
   );

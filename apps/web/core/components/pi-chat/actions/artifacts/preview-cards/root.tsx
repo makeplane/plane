@@ -23,6 +23,8 @@ import { DeleteArchivePreviewCard } from "./delete-archieve";
 import { TemplatePreviewCard } from "./template";
 import { CommentPreviewCard } from "./comment";
 import { WorklogPreviewCard } from "./worklogs";
+import { McpsPreviewCard } from "./mcps";
+import { LinkPreviewCard } from "./link";
 
 // --- Main PreviewCard Component ---
 export const PreviewCard = observer(function PreviewCard(props: { artifactId: string; type: string; action: string }) {
@@ -34,6 +36,8 @@ export const PreviewCard = observer(function PreviewCard(props: { artifactId: st
   if (["delete", "archive"].includes(action)) return <DeleteArchivePreviewCard artifactId={artifactId} />;
 
   switch (type) {
+    case "link":
+      return <LinkPreviewCard artifactId={artifactId} />;
     case "workitem":
       return <WorkItemPreviewCard artifactId={artifactId} />;
     case "epic":
@@ -52,6 +56,8 @@ export const PreviewCard = observer(function PreviewCard(props: { artifactId: st
       return <CommentPreviewCard artifactId={artifactId} />;
     case "worklog":
       return <WorklogPreviewCard artifactId={artifactId} />;
+    case "mcp":
+      return <McpsPreviewCard artifactId={artifactId} />;
     default:
       return <TemplatePreviewCard artifactId={artifactId} />;
   }

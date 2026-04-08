@@ -15,16 +15,17 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@plane/propel/button";
-import { UserCirclePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import type { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
+import { Image, X } from "lucide-react";
+import { IconButton } from "@plane/propel/icon-button";
 
 const fileService = new FileService();
 
@@ -54,7 +55,11 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
-    accept: { "image/*": [".png", ".jpg", ".jpeg", ".webp"] },
+    accept: {
+      "image/png": [".png"],
+      "image/jpeg": [".jpg", ".jpeg"],
+      "image/webp": [".webp"],
+    },
     maxSize: MAX_FILE_SIZE,
     multiple: false,
   });
@@ -88,65 +93,46 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
     }
   };
 
-  const handleImageRemove = async () => {
-    if (!initialValue || !workspaceSlug || !workspaceId) return;
-    setIsRemoving(true);
-    try {
-      if (checkURLValidity(initialValue)) {
-        await fileService.deleteOldWorkspaceAssetV2(workspaceSlug, initialValue);
-      } else {
-        const assetId = getAssetIdFromUrl(initialValue);
-        await fileService.deleteWorkspaceAsset(workspaceSlug, assetId);
-      }
-      await handleRemove();
-    } catch (error) {
-      console.log("Error removing image:", error);
-    } finally {
-      setIsRemoving(false);
-    }
-  };
-
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
-      <div className="px-5 py-8">
-        <h3 className="text-16 font-medium text-primary">Upload Image</h3>
-        <div className="mt-4">
-          <div
-            {...getRootProps()}
-            className="relative h-80 w-80 border-2 border-dashed border-subtle-1 rounded-lg flex items-center justify-center cursor-pointer"
-          >
-            {image || initialValue ? (
-              <img
-                src={image ? URL.createObjectURL(image) : getFileURL(initialValue ?? "")}
-                alt="Uploaded preview"
-                className="h-full w-full object-cover rounded-md"
-              />
-            ) : (
-              <div className="text-center">
-                <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-secondary" />
-                <p className="text-13 text-secondary">
-                  {isDragActive ? "Drop image here" : "Drag & drop or click to upload"}
-                </p>
-              </div>
-            )}
-            <input {...getInputProps()} />
-          </div>
-          {fileRejections.length > 0 && (
-            <p className="text-danger-primary text-13 mt-2">Invalid file or exceeds size limit (5 MB).</p>
-          )}
+      <div className="px-5 py-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-16 font-medium text-primary">Upload Image</h3>
+          <IconButton variant="ghost" icon={X} onClick={handleClose} />
         </div>
-        <div className="mt-6 flex justify-between">
-          <Button variant="error-fill" onClick={handleImageRemove} disabled={!initialValue || isRemoving}>
-            {isRemoving ? "Removing..." : "Remove Image"}
+        <div
+          {...getRootProps()}
+          className="relative h-50 w-full border border-dashed border-accent-strong rounded-lg flex items-center justify-center cursor-pointer"
+        >
+          {isDragActive ? (
+            <div className="size-45 bg-layer-1 rounded-md"></div>
+          ) : image || initialValue ? (
+            <img
+              src={image ? URL.createObjectURL(image) : getFileURL(initialValue ?? "")}
+              alt="Uploaded preview"
+              className="size-45 object-cover rounded-md"
+            />
+          ) : (
+            <div className="text-center flex flex-col gap-2">
+              <Image className="mx-auto h-6 w-6 text-accent-primary" />
+              <div className="text-caption-md-regular text-accent-primary">Click to upload or drag and drop</div>
+              <div className="text-caption-sm-medium text-placeholder">
+                File formats supported- .jpeg, .jpg, .png, .webp
+              </div>
+            </div>
+          )}
+          <input {...getInputProps()} />
+        </div>
+        {fileRejections.length > 0 && (
+          <p className="text-danger-primary text-13 mt-2">Failed to upload file. Please try again.</p>
+        )}
+        <div className="flex gap-2 justify-end">
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
           </Button>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isUploading}>
-              {isUploading ? "Uploading..." : "Upload & Save"}
-            </Button>
-          </div>
+          <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isUploading}>
+            {isUploading ? "Uploading..." : "Upload & Save"}
+          </Button>
         </div>
       </div>
     </ModalCore>

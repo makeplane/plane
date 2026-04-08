@@ -32,16 +32,16 @@ const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
 function SubMenu(props: TSubMenuProps) {
-  const { children, trigger, disabled = false, className = "" } = props;
+  const { children, trigger, disabled = false, className = "", showChevron = true } = props;
 
   return (
     <BaseMenu.SubmenuRoot disabled={disabled}>
-      <BaseMenu.SubmenuTrigger className={""}>
+      <BaseMenu.SubmenuTrigger className={"flex items-center gap-2 p-2 hover:bg-layer-1-hover"}>
         <span className="flex-1">{trigger}</span>
-        <ChevronRightIcon />
+        {showChevron && <ChevronRightIcon />}
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal>
-        <BaseMenu.Positioner className={""} alignOffset={-4} sideOffset={-4}>
+        <BaseMenu.Positioner className={"z-40"} alignOffset={-4} sideOffset={-4}>
           <BaseMenu.Popup className={className}>{children} </BaseMenu.Popup>
         </BaseMenu.Positioner>
       </BaseMenu.Portal>
@@ -50,12 +50,13 @@ function SubMenu(props: TSubMenuProps) {
 }
 
 function MenuItem(props: TMenuItemProps) {
-  const { children, disabled = false, onClick, className } = props;
+  const { children, disabled = false, onClick, className, closeOnClick = true } = props;
   const submenuContext = useSubMenu();
 
   return (
     <BaseMenu.Item
       disabled={disabled}
+      closeOnClick={closeOnClick}
       className={cn(
         "w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-1 cursor-pointer outline-none",
         {
@@ -65,7 +66,7 @@ function MenuItem(props: TMenuItemProps) {
       )}
       onClick={(e) => {
         onClick?.(e);
-        submenuContext?.closeSubmenu();
+        if (closeOnClick) submenuContext?.closeSubmenu();
       }}
     >
       {children}

@@ -11,9 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import type { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
 //assets
 import BitbucketLogo from "@/app/assets/services/bitbucket.svg?url";
@@ -25,6 +25,9 @@ import OAuthBridgeLogo from "@/app/assets/logos/integrations/oauth-bridge.svg?ur
 // plane web imports
 import { AppList } from "@/components/marketplace";
 import type { TFeatureFlags } from "@/types/feature-flag";
+import { Link } from "react-router";
+import { getButtonStyling } from "@plane/propel/button";
+import { useUserPermissions } from "@/hooks/store/user";
 
 // list all the applications
 // have tabs to filter by category
@@ -33,6 +36,7 @@ import type { TFeatureFlags } from "@/types/feature-flag";
 type AppListProps = {
   apps: TUserApplication[];
   supportedIntegrations: E_INTEGRATION_KEYS[];
+  workspaceSlug: string;
 };
 
 export type IntegrationProps = {
@@ -147,7 +151,9 @@ export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TU
 };
 
 export const AppListRoot = observer(function AppListRoot(props: AppListProps) {
-  const { supportedIntegrations } = props;
+  const { supportedIntegrations, workspaceSlug } = props;
+  const { allowPermissions } = useUserPermissions();
+  const isWorkspaceAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const internalApps = getInternalApps(supportedIntegrations);
   // filter apps which has same slug as internal apps
   const apps = props.apps.filter((app) => !internalApps.some((internalApp) => internalApp.slug === app.slug));
@@ -179,8 +185,23 @@ export const AppListRoot = observer(function AppListRoot(props: AppListProps) {
   const allApps = [...internalApps, ...apps];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <AppList apps={allApps} />
-    </div>
+    <>
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-1">
+          <div className="text-h6-medium">Apps</div>
+          <div className="text-body-xs-regular text-tertiary">
+            These integrations allow Plane to access external resources securely.
+          </div>
+        </div>
+        {isWorkspaceAdmin && (
+          <Link to={`/${workspaceSlug}/settings/integrations/create`} className={getButtonStyling("primary", "lg")}>
+            Build your own
+          </Link>
+        )}
+      </div>
+      <div className="overflow-y-auto">
+        <AppList apps={allApps} />
+      </div>
+    </>
   );
 });

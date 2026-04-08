@@ -35,10 +35,11 @@ export type TQuery = {
   attachment_ids?: string[];
   mode?: string;
   is_websearch_enabled?: boolean;
+  mcp_connector_ids?: string[];
 };
 export type TInitPayload = Pick<
   TQuery,
-  "workspace_in_context" | "workspace_id" | "project_id" | "is_project_chat" | "workspace_slug"
+  "workspace_in_context" | "workspace_id" | "project_id" | "is_project_chat" | "workspace_slug" | "mcp_connector_ids"
 >;
 export type TSearchQuery = {
   query: string;
@@ -90,11 +91,14 @@ export type TArtifact = {
   entity_id?: string;
   entity_url?: string;
   entity_name?: string;
+  entity_type?: string;
   issue_identifier?: string;
   project_identifier?: string;
   tool_name: string;
   parameters: {
     name: string;
+    mcp_name?: string;
+    tool_name?: string;
     color?: {
       name: string;
     };
@@ -122,6 +126,7 @@ export type TArtifactWithEntity = TArtifact & {
     entity_url: string;
     issue_identifier: string;
     entity_name: string;
+    entity_type?: string;
   };
 };
 
@@ -167,6 +172,7 @@ export type TChatHistory = {
   workspace_id?: string;
   mode?: string;
   llm?: string;
+  mcp_connector_ids?: string[];
 };
 
 export type TAction = {

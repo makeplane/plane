@@ -12,3 +12,4 @@
  */
 
 export * from "./application";
+export * from "./connector";

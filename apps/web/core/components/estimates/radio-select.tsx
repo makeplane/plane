@@ -22,6 +22,7 @@ type RadioInputProps = {
   fieldClassName?: string;
   buttonClassName?: string;
   labelClassName?: string;
+  buttonLabelClassName?: string;
   ariaLabel?: string;
   options: { label: string | React.ReactNode; value: string; disabled?: boolean }[];
   vertical?: boolean;
@@ -37,6 +38,7 @@ export function RadioInput({
   wrapperClassName: inputWrapperClassName = "",
   fieldClassName: inputFieldClassName = "",
   buttonClassName: inputButtonClassName = "",
+  buttonLabelClassName: inputButtonLabelClassName = "",
   options,
   vertical,
   selected,
@@ -85,7 +87,7 @@ export function RadioInput({
               disabled={disabled}
               checked={selected === value}
             />
-            <label htmlFor={`${name}_${index}`} className="cursor-pointer w-full">
+            <label htmlFor={`${name}_${index}`} className={cn("cursor-pointer w-full", inputButtonLabelClassName)}>
               {label}
             </label>
           </div>

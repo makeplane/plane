@@ -86,7 +86,8 @@ export interface IPiChatStore {
     callbackUrl: string,
     attachmentIds: string[],
     aiMode: string,
-    is_websearch_enabled: boolean
+    is_websearch_enabled: boolean,
+    toggledConnectors: string[]
   ) => void;
   getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
@@ -107,7 +108,8 @@ export interface IPiChatStore {
     mode: string,
     isProjectChat: boolean,
     workspaceId: string | undefined,
-    is_websearch_enabled: boolean
+    is_websearch_enabled: boolean,
+    toggledConnectors: string[]
   ) => Promise<string>;
   renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
   deleteChat: (chatId: string, workspaceSlug: string) => Promise<void>;
@@ -362,13 +364,15 @@ export class PiChatStore implements IPiChatStore {
     mode: string,
     isProjectChat: boolean = false,
     workspaceId: string | undefined,
-    is_websearch_enabled: boolean
+    is_websearch_enabled: boolean,
+    toggledConnectors: string[]
   ) => {
     this.isNewChat = true;
     let payload: TInitPayload = {
       workspace_in_context: focus.isInWorkspaceContext,
       is_project_chat: isProjectChat,
       workspace_id: workspaceId,
+      mcp_connector_ids: toggledConnectors,
     };
     if (focus.isInWorkspaceContext) {
       payload = {
@@ -396,6 +400,7 @@ export class PiChatStore implements IPiChatStore {
       workspace_id: workspaceId,
       mode,
       is_websearch_enabled,
+      mcp_connector_ids: toggledConnectors,
     };
 
     if (isProjectChat) {
@@ -428,7 +433,8 @@ export class PiChatStore implements IPiChatStore {
     attachmentIds: string[],
     isNewChat: boolean,
     mode: string,
-    is_websearch_enabled: boolean
+    is_websearch_enabled: boolean,
+    toggledConnectors: string[]
   ) => {
     let payload: TQuery = {
       chat_id: chatId,
@@ -451,6 +457,7 @@ export class PiChatStore implements IPiChatStore {
       attachment_ids: attachmentIds,
       mode,
       is_websearch_enabled,
+      mcp_connector_ids: toggledConnectors,
     };
     if (focus.isInWorkspaceContext) {
       payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
@@ -615,7 +622,8 @@ export class PiChatStore implements IPiChatStore {
     callbackUrl: string,
     attachmentIds: string[],
     aiMode: string,
-    is_websearch_enabled: boolean
+    is_websearch_enabled: boolean,
+    toggledConnectors: string[]
   ) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
@@ -670,7 +678,8 @@ export class PiChatStore implements IPiChatStore {
       attachmentIds,
       isNewChat,
       aiMode,
-      is_websearch_enabled
+      is_websearch_enabled,
+      toggledConnectors
     );
     this.piChatService
       .retrieveToken(payload)
@@ -1078,6 +1087,7 @@ export class PiChatStore implements IPiChatStore {
           entity_id: action.entity?.entity_id,
           entity_url: action.entity?.entity_url,
           entity_name: action.entity?.entity_name,
+          entity_type: action.entity?.entity_type,
           issue_identifier: action.entity?.issue_identifier,
           is_executed: true,
           success: action.success,

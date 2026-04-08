@@ -459,7 +459,7 @@ async def _pick_tools_for_batch(
     batch_descriptions: str,
     user_intent: str,
     llm,
-) -> list[str]:
+) -> tuple[bool, list[str]]:
     """Ask the decomposer LLM to select relevant tools from a single batch.
 
     Returns a list of tool names selected by the LLM for this batch.
@@ -488,11 +488,11 @@ async def _pick_tools_for_batch(
         parsed = parse_json_markdown(content)
         selected = parsed.get("selected_tools", [])
         if isinstance(selected, list):
-            return [str(s) for s in selected]
+            return True, [str(s) for s in selected]
     except Exception as exc:
         log.warning(f"Tool picker batch parse failed ({exc}); including entire batch as fallback")
     # On parse failure, return empty — caller will fall back to including the batch.
-    return []
+    return False, []
 
 
 async def multi_hop_tool_picker(
@@ -552,10 +552,13 @@ async def multi_hop_tool_picker(
 
     # Run all batches concurrently
     async def _process_batch(batch_tools: list, batch_desc: str) -> list:
-        selected_names = await _pick_tools_for_batch(batch_desc, intent_with_context, llm)
-        if not selected_names:
-            # Parse failure or empty selection — include entire batch as safe fallback
+        parsed_ok, selected_names = await _pick_tools_for_batch(batch_desc, intent_with_context, llm)
+        if not parsed_ok:
+            # Parse failure — include entire batch as safe fallback
             return batch_tools
+        # Parsed OK: if LLM explicitly selected none, drop the batch.
+        if not selected_names:
+            return []
         name_set = set(selected_names)
         picked = [t for t in batch_tools if getattr(t, "name", "") in name_set]
         # If the LLM returned names that don't match any tool, fallback to full batch

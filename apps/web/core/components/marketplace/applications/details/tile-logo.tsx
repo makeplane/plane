@@ -11,13 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TUserApplication } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 import drawioLogo from "@/app/assets/services/drawio.png?url";
 import cursorLogo from "@/app/assets/services/cursor.png?url";
 
 type AppTileLogoProps = {
-  app: TUserApplication;
+  app: {
+    name: string;
+    logo_url?: string | undefined;
+    is_hardcoded?: boolean;
+    slug: string;
+  };
 };
 
 export function AppTileLogo(props: AppTileLogoProps) {
@@ -38,7 +42,12 @@ export function AppTileLogo(props: AppTileLogoProps) {
  * @param app
  * @returns
  */
-const getLogoUrl = (app: TUserApplication): string | undefined => {
+const getLogoUrl = (app: {
+  name: string;
+  logo_url?: string | undefined;
+  is_hardcoded?: boolean;
+  slug: string;
+}): string | undefined => {
   if (app.logo_url) {
     if (app.is_hardcoded) {
       return app.logo_url;

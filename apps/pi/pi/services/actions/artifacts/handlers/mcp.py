@@ -305,6 +305,55 @@ class MCPHandler(ExternalHandler):
         )
 
     @staticmethod
+    def _extract_clean_error_message(raw: str, max_len: int = 300) -> str:
+        """Parse a potentially JSON-encoded error string into a clean human message.
+
+        Handles structures like:
+          - '{"error":{"name":"Error","message":"Cost confirmation..."}}'  -> 'Cost confirmation...'
+          - '{"message":"Something went wrong"}'                             -> 'Something went wrong'
+          - '{"error":"plain string"}'                                       -> 'plain string'
+          - Any non-JSON string                                              -> returned as-is
+
+        The result is always truncated to *max_len* characters.
+        """
+        if not raw or not isinstance(raw, str):
+            return raw or ""
+
+        text = raw.strip()
+
+        # Fast-path: not JSON
+        if not text.startswith("{"):
+            return text[:max_len]
+
+        try:
+            parsed = json.loads(text)
+        except (json.JSONDecodeError, ValueError):
+            return text[:max_len]
+
+        if not isinstance(parsed, dict):
+            return text[:max_len]
+
+        # Pattern 1: {"error": {"message": "...", ...}}
+        inner = parsed.get("error")
+        if isinstance(inner, dict):
+            msg = inner.get("message") or inner.get("msg") or inner.get("detail")
+            if msg and isinstance(msg, str):
+                return msg[:max_len]
+
+        # Pattern 2: top-level {"message": "..."} or {"detail": "..."}
+        for key in ("message", "detail", "msg", "description"):
+            val = parsed.get(key)
+            if val and isinstance(val, str):
+                return val[:max_len]
+
+        # Pattern 3: {"error": "plain string"}
+        if isinstance(inner, str) and inner:
+            return inner[:max_len]
+
+        # Nothing useful — return original (truncated)
+        return text[:max_len]
+
+    @staticmethod
     def _extract_user_facing_error(exc: BaseException) -> str:
         """Extract a clean, user-facing error message."""
         real = MCPHandler._unwrap_exception(exc)
@@ -318,21 +367,6 @@ class MCPHandler(ExternalHandler):
         msg = MCPHandler._extract_clean_error_message(msg)
 
         return msg or str(exc)
-
-    @staticmethod
-    def _extract_clean_error_message(msg: str) -> str:
-        """Attempt to extract a clean string from a JSON-encoded error payload."""
-        try:
-            if msg.strip().startswith("{") and msg.strip().endswith("}"):
-                data = json.loads(msg)
-                if isinstance(data, dict):
-                    if "message" in data:
-                        return str(data["message"])
-                    if "error" in data and isinstance(data["error"], dict) and "message" in data["error"]:
-                        return str(data["error"]["message"])
-        except Exception:
-            pass
-        return msg
 
     # -----------------------------------------------------------------
     # Artifact data extraction
@@ -407,15 +441,24 @@ class MCPHandler(ExternalHandler):
                 try:
                     parsed = json.loads(text)
                     if isinstance(parsed, dict):
-                        url = parsed.get("url") or parsed.get("html_url")
-                        entity_id = parsed.get("id") or parsed.get("number")
-                        if url:
-                            message = f"Created successfully: {url}"
-                        elif entity_id:
-                            message = f"Action completed (ID: {entity_id})"
+                        # Check for error structure first
+                        error_inner = parsed.get("error")
+                        is_error_payload = isinstance(error_inner, (dict, str))
+
+                        if is_error_payload:
+                            # Extract clean error message and mark as failed
+                            message = self._extract_clean_error_message(text)
+                            success = False
                         else:
-                            message = text
-                        success = bool(parsed.get("ok", parsed.get("success", True)))
+                            url = parsed.get("url") or parsed.get("html_url")
+                            entity_id = parsed.get("id") or parsed.get("number")
+                            if url:
+                                message = f"Created successfully: {url}"
+                            elif entity_id:
+                                message = f"Action completed (ID: {entity_id})"
+                            else:
+                                message = text
+                            success = bool(parsed.get("ok", parsed.get("success", True)))
                     else:
                         message = text
                 except json.JSONDecodeError:
