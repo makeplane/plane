@@ -1070,17 +1070,22 @@ export class CollectionStore implements ICollectionStore {
     }
   };
 
-  removePageFromCollection = async (workspaceSlug: string, pageId: string, _sourceCollectionId: string) => {
+  removePageFromCollection = async (workspaceSlug: string, pageId: string, sourceCollectionId: string) => {
     if (!this.defaultCollectionId) {
       throw new Error("Default collection not found.");
     }
 
-    await this.movePageAcrossCollections(
-      workspaceSlug,
+    const resolvedSourceCollectionId = this.resolveMutationSourceCollectionId(pageId, sourceCollectionId);
+    if (!resolvedSourceCollectionId || resolvedSourceCollectionId === this.defaultCollectionId) {
+      return;
+    }
+
+    await this.movePageWithCollectionContext({
       pageId,
-      this.getEffectiveCollectionId(pageId),
-      this.defaultCollectionId
-    );
+      sourceCollectionId: resolvedSourceCollectionId,
+      targetCollectionId: this.defaultCollectionId,
+      targetParentId: null,
+    });
   };
 
   removeExplicitPageCollectionsFromStore = (pageIds: Iterable<string>) => {

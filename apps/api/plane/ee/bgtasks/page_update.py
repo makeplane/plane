@@ -351,6 +351,7 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
 
                 elif move_type == MoveActionEnum.WORKSPACE_TO_TEAMSPACE.value:
                     remove_pages_from_workspace_level(descendants_ids, workspace_id, user_id)
+                    PageCollection.objects.filter(page_id__in=descendants_ids, workspace_id=workspace_id).delete()
 
                 link_pages_to_teamspace(descendants_ids, new_entity_identifier, workspace_id, user_id)
                 move_entities_to_teamspace(descendants_ids, slug, user_id, new_entity_identifier)
@@ -365,6 +366,7 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
 
                 elif move_type == MoveActionEnum.WORKSPACE_TO_PROJECT.value:
                     remove_pages_from_workspace_level(descendants_ids, workspace_id, user_id)
+                    PageCollection.objects.filter(page_id__in=descendants_ids, workspace_id=workspace_id).delete()
 
                 elif move_type == MoveActionEnum.TEAMSPACE_TO_PROJECT.value:
                     unlink_pages_from_teamspace(descendants_ids, workspace_id)

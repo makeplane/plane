@@ -19,6 +19,7 @@ from plane.db.models import (
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.models import (
+    PageCollection,
     TeamspaceMember,
 )
 from plane.ee.bgtasks.page_update import nested_page_update
@@ -202,6 +203,7 @@ class MovePageEndpoint(BaseAPIView):
 
             if move_type == MoveActionEnum.WORKSPACE_TO_PROJECT.value:
                 remove_pages_from_workspace_level([page_id], workspace_id, user_id)
+                PageCollection.objects.filter(page_id=page_id, workspace_id=workspace_id).delete()
 
             if move_type == MoveActionEnum.PROJECT_TO_PROJECT.value:
                 unlink_pages_from_project([page_id], workspace_id)
@@ -237,6 +239,7 @@ class MovePageEndpoint(BaseAPIView):
 
             if move_type == MoveActionEnum.WORKSPACE_TO_TEAMSPACE.value:
                 remove_pages_from_workspace_level([page_id], workspace_id, user_id)
+                PageCollection.objects.filter(page_id=page_id, workspace_id=workspace_id).delete()
 
             link_pages_to_teamspace([page_id], target_identifier, workspace_id, user_id)
 
