@@ -16,7 +16,14 @@ import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 // local imports
 import { PQL_HIGHLIGHTER_KEY } from "./highlighter-plugin";
-import { isFunctionToken, isFieldToken, isCompOp, isConditionEnd, tokenKindToCompOp } from "./token-utils";
+import {
+  isFunctionToken,
+  isFieldToken,
+  isCompOp,
+  isConditionEnd,
+  isOrderByClauseToken,
+  tokenKindToCompOp,
+} from "./token-utils";
 import type { Token, SuggestionContext } from "../types";
 import { TokenKind } from "../types";
 
@@ -184,6 +191,43 @@ export function determineSuggestionContext(tokens: Token[], cursorChar: number):
     }
     // Plain grouping paren → start of a new condition
     return { kind: "START", tokenStart: cursorChar };
+  }
+
+  // ── ORDER BY / LIMIT clause contexts ─────────────────────────────────────────
+
+  // After "ORDER BY" → suggest sortable fields
+  if (last.kind === TokenKind.BY && prev?.kind === TokenKind.ORDER) {
+    return { kind: "AFTER_ORDER_BY", tokenStart: cursorChar };
+  }
+
+  // After a FIELD inside ORDER BY clause → suggest ASC/DESC
+  if (isFieldToken(last.kind) && isInOrderByClause(before)) {
+    return { kind: "AFTER_ORDER_FIELD", tokenStart: last.from };
+  }
+
+  // After ASC/DESC → suggest comma (more fields), LIMIT, or end
+  if (last.kind === TokenKind.ASC || last.kind === TokenKind.DESC) {
+    return { kind: "AFTER_SORT_DIR", tokenStart: cursorChar };
+  }
+
+  // After COMMA inside ORDER BY clause → suggest more sortable fields
+  if (last.kind === TokenKind.COMMA && isInOrderByClause(before)) {
+    return { kind: "AFTER_ORDER_BY", tokenStart: cursorChar };
+  }
+
+  // After "LIMIT" → suggest a number
+  if (last.kind === TokenKind.LIMIT) {
+    return { kind: "AFTER_LIMIT", tokenStart: cursorChar };
+  }
+
+  // After an INTEGER that follows LIMIT → no more suggestions
+  if (last.kind === TokenKind.INTEGER && prev?.kind === TokenKind.LIMIT) {
+    return null;
+  }
+
+  // After "ORDER" without "BY" yet → no suggestions (wait for BY)
+  if (last.kind === TokenKind.ORDER) {
+    return null;
   }
 
   // ── Logical operators (OR, NOT) → start of a new condition ───────────────────
@@ -396,6 +440,33 @@ function contextFromPrecedingTokens(preceding: Token[], tokenStart: number): Sug
     return { kind: "AFTER_CONDITION", tokenStart };
   }
 
+  // ── ORDER BY / LIMIT clause contexts ─────────────────────────────────────────
+
+  // After "ORDER BY" → partial is a sortable field name
+  if (last.kind === TokenKind.BY && prev && prev.kind === TokenKind.ORDER) {
+    return { kind: "AFTER_ORDER_BY", tokenStart };
+  }
+
+  // After FIELD inside ORDER BY → partial is ASC/DESC
+  if (isFieldToken(last.kind) && isInOrderByClause(preceding)) {
+    return { kind: "AFTER_ORDER_FIELD", tokenStart };
+  }
+
+  // After ASC/DESC → partial is LIMIT or comma
+  if (last.kind === TokenKind.ASC || last.kind === TokenKind.DESC) {
+    return { kind: "AFTER_SORT_DIR", tokenStart };
+  }
+
+  // After COMMA in ORDER BY → partial is a sortable field name
+  if (last.kind === TokenKind.COMMA && isInOrderByClause(preceding)) {
+    return { kind: "AFTER_ORDER_BY", tokenStart };
+  }
+
+  // After LIMIT → partial is a number (no suggestions)
+  if (last.kind === TokenKind.LIMIT) {
+    return { kind: "AFTER_LIMIT", tokenStart };
+  }
+
   // After AND, OR, NOT (as group) → still starting a new condition
   if (last.kind === TokenKind.AND || last.kind === TokenKind.OR || last.kind === TokenKind.NOT) {
     return { kind: "START", tokenStart };
@@ -412,7 +483,7 @@ function contextFromPrecedingTokens(preceding: Token[], tokenStart: number): Sug
  * derived from the tokens that precede it.
  */
 function isPartialWordToken(kind: TokenKind): boolean {
-  return kind === TokenKind.IDENTIFIER || isFunctionToken(kind);
+  return kind === TokenKind.IDENTIFIER || isFunctionToken(kind) || isOrderByClauseToken(kind);
 }
 
 /**
@@ -512,4 +583,18 @@ function findBetweenField(before: Token[]): string | undefined {
     }
   }
   return undefined;
+}
+
+/**
+ * Checks whether the cursor is currently inside an ORDER BY clause by
+ * scanning backwards for an ORDER + BY token pair without encountering
+ * a LIMIT token (which would mean we've moved past ORDER BY into LIMIT).
+ */
+function isInOrderByClause(before: Token[]): boolean {
+  for (let i = before.length - 1; i >= 0; i--) {
+    const kind = before[i].kind;
+    if (kind === TokenKind.LIMIT) return false;
+    if (kind === TokenKind.BY && i > 0 && before[i - 1].kind === TokenKind.ORDER) return true;
+  }
+  return false;
 }

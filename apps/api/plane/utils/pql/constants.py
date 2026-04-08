@@ -52,6 +52,34 @@ FIELD_ALIASES = {
 }
 
 # ---------------------------------------------------------------------------
+# ORDER BY: PQL field name → Django ORM ordering expression
+# These map to the same strings _validate_order_by_field() accepts.
+# ---------------------------------------------------------------------------
+ORDER_BY_ALIASES = {
+    "priority": "priority",
+    "state": "state__group",
+    "stateGroup": "state__group",
+    "createdAt": "created_at",
+    "updatedAt": "updated_at",
+    "startDate": "start_date",
+    "dueDate": "target_date",
+    "title": "name",
+    "assignee": "assignees__first_name",
+    "label": "labels__name",
+    "module": "issue_module__module__name",
+    "createdBy": "created_by__first_name",
+    "sequenceId": "sequence_id",
+    "sortOrder": "sort_order",
+    "completedAt": "completed_at",
+    "archivedAt": "archived_at",
+    "isDraft": "is_draft",
+    "type": "type__name",
+}
+
+# Maximum allowed LIMIT value
+PQL_MAX_LIMIT = 1000
+
+# ---------------------------------------------------------------------------
 # Operator → lookup suffix mapping
 # ---------------------------------------------------------------------------
 OPERATOR_LOOKUP = {

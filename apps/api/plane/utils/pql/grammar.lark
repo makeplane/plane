@@ -5,7 +5,13 @@
 //   NAME followed by "(" → predicate_call or func_call
 //   NAME followed by operator → condition
 
-start: expr
+start: query
+
+query: expr order_clause? limit_clause?
+     | expr limit_clause order_clause?
+     | order_clause limit_clause?
+     | limit_clause order_clause?
+     | limit_clause
 
 // Logical operators (lowest precedence)
 ?expr: or_expr
@@ -69,6 +75,15 @@ func_call: NAME "(" func_args? ")"
 func_args: value ("," value)*
 
 value_list: value ("," value)*
+
+// ORDER BY and LIMIT clauses
+order_clause: "ORDER"i "BY"i order_field ("," order_field)*
+order_field: field sort_dir?
+sort_dir: "ASC"i  -> asc
+        | "DESC"i -> desc
+
+limit_clause: "LIMIT"i POSITIVE_INT
+POSITIVE_INT: /[1-9][0-9]*/
 
 NAME: /[a-zA-Z_][a-zA-Z0-9_.]*/
 SINGLE_QUOTED_STRING: "'" /.*?/ "'"

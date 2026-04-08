@@ -79,6 +79,19 @@ export function isConditionEnd(kind: TokenKind): boolean {
 }
 
 /**
+ * Returns true for tokens that are ORDER BY / LIMIT clause keywords.
+ */
+export function isOrderByClauseToken(kind: TokenKind): boolean {
+  return (
+    kind === TokenKind.ORDER ||
+    kind === TokenKind.BY ||
+    kind === TokenKind.ASC ||
+    kind === TokenKind.DESC ||
+    kind === TokenKind.LIMIT
+  );
+}
+
+/**
  * Maps a comparison-operator token kind to its string representation.
  * Returns `undefined` when the kind is not a comparison operator.
  */

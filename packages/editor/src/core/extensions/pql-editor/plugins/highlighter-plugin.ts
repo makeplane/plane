@@ -70,6 +70,13 @@ const TOKEN_CLASS: Partial<Record<TokenKind, string>> = {
   [TokenKind.IS]: "operator",
   [TokenKind.BETWEEN]: "operator",
 
+  // ── ORDER BY / LIMIT clause keywords ──────────────────────────────────
+  [TokenKind.ORDER]: "operator",
+  [TokenKind.BY]: "operator",
+  [TokenKind.LIMIT]: "operator",
+  [TokenKind.ASC]: "operator",
+  [TokenKind.DESC]: "operator",
+
   // ── Field names ──────────────────────────────────────────────────────────
   [TokenKind.FIELD]: "field",
   [TokenKind.CUSTOM_PROPERTY_FIELD_NODE]: "field",

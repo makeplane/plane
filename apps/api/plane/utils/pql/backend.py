@@ -55,4 +55,19 @@ class PQLFilterBackend(filters.BaseFilterBackend):
             backend = ComplexFilterBackend()
             queryset = backend.filter_queryset(request, queryset, view, filter_data=result.rich_filter)
 
+        # Inject PQL ordering into request.GET so views pick it up
+        # via request.GET.get("order_by", ...) → order_issue_queryset() → paginator
+        if result.order_by:
+            django_field, direction = result.order_by[0]
+            order_by_param = f"-{django_field}" if direction == "DESC" else django_field
+            qd = request.GET.copy()
+            qd["order_by"] = order_by_param
+            request.GET = qd
+
+        # Store PQL limit on the request for BasePaginator.paginate() to apply.
+        # Applied as a subquery filter after ordering, before pagination, so
+        # cursor/page metadata stays correct.
+        if result.limit is not None:
+            request._pql_limit = result.limit
+
         return queryset

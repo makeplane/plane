@@ -113,6 +113,7 @@ class OffsetPaginator:
         max_offset=None,
         on_results=None,
         total_count_queryset=None,
+        result_cap=None,
     ):
         # Key tuple and remove `-` if descending order by
         self.key = (
@@ -127,6 +128,8 @@ class OffsetPaginator:
         self.max_offset = max_offset
         self.on_results = on_results
         self.total_count_queryset = total_count_queryset
+        # Optional cap on total results (used by PQL LIMIT)
+        self.result_cap = result_cap
 
     def get_result(self, limit=1000, cursor=None):
         # offset is page #
@@ -165,15 +168,24 @@ class OffsetPaginator:
 
         total_count = self.total_count_queryset.count() if self.total_count_queryset else queryset.count()
 
+        # Apply result cap (PQL LIMIT)
+        if self.result_cap is not None:
+            total_count = min(total_count, self.result_cap)
+
         # Check if there are more results available after the current page
+        has_next = page_results.count() > limit and (offset + limit) < total_count
 
         # Adjust cursors based on the results for pagination
-        next_cursor = Cursor(limit, page + 1, False, page_results.count() > limit)
+        next_cursor = Cursor(limit, page + 1, False, has_next)
         # If the page is greater than 0, then set the previous cursor
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
 
-        # Process the results
-        results = results[:limit]
+        # Process the results — trim to the capped result set if needed
+        if self.result_cap is not None:
+            remaining = max(0, self.result_cap - offset)
+            results = results[:min(limit, remaining)]
+        else:
+            results = results[:limit]
 
         # Process the results
         if self.on_results:
@@ -183,7 +195,7 @@ class OffsetPaginator:
         count = total_count
 
         # Optionally, calculate the total count and max_hits if needed
-        max_hits = math.ceil(count / limit)
+        max_hits = math.ceil(count / limit) if count > 0 else 0
 
         # Return the cursor results
         return CursorResult(
@@ -273,14 +285,19 @@ class GroupedOffsetPaginator(OffsetPaginator):
             F("created_at").desc(),
         )
 
+        # Count the queryset
+        count = queryset.count()
+
+        # Apply result cap (PQL LIMIT)
+        if self.result_cap is not None:
+            count = min(count, self.result_cap)
+
         # Adjust cursors based on the grouped results for pagination
-        next_cursor = Cursor(limit, page + 1, False, queryset.filter(row_number__gte=stop).exists())
+        has_next = queryset.filter(row_number__gte=stop).exists() and (offset + limit) < count
+        next_cursor = Cursor(limit, page + 1, False, has_next)
 
         # Add previous cursors
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
-
-        # Count the queryset
-        count = queryset.count()
 
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
@@ -488,14 +505,19 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             F("created_at").desc(),
         )
 
+        # Count the queryset
+        count = queryset.count()
+
+        # Apply result cap (PQL LIMIT)
+        if self.result_cap is not None:
+            count = min(count, self.result_cap)
+
         # Adjust cursors based on the grouped results for pagination
-        next_cursor = Cursor(limit, page + 1, False, queryset.filter(row_number__gte=stop).exists())
+        has_next = queryset.filter(row_number__gte=stop).exists() and (offset + limit) < count
+        next_cursor = Cursor(limit, page + 1, False, has_next)
 
         # Add previous cursors
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
-
-        # Count the queryset
-        count = queryset.count()
 
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
@@ -704,6 +726,12 @@ class BasePaginator:
             input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name, f"{per_page}:0:0"))
         except ValueError:
             raise ParseError(detail="Invalid cursor parameter.")
+
+        # Apply PQL LIMIT: pass a result_cap to the paginator so it caps
+        # total counts and pagination metadata without extra queries.
+        pql_limit = getattr(request, "_pql_limit", None)
+        if pql_limit is not None:
+            paginator_kwargs["result_cap"] = pql_limit
 
         if not paginator:
             if group_by_field_name:

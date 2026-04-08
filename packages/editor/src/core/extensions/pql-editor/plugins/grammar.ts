@@ -672,6 +672,31 @@ export const FUNCTION_DEFS: FunctionDef[] = [
   // },
 ];
 
+// ─── Sortable field names for ORDER BY ───────────────────────────────────────
+// Mirrors the Python ORDER_BY_ALIASES in apps/api/plane/utils/pql/constants.py.
+// Only these PQL field names are valid in ORDER BY clauses.
+
+export const SORTABLE_FIELDS = new Set<string>([
+  "priority",
+  "state",
+  "stateGroup",
+  "createdAt",
+  "updatedAt",
+  "startDate",
+  "dueDate",
+  "title",
+  "assignee",
+  "label",
+  "module",
+  "createdBy",
+  "sequenceId",
+  "sortOrder",
+  "completedAt",
+  "archivedAt",
+  "isDraft",
+  "type",
+]);
+
 /** Map from function name → FunctionDef */
 export const FUNCTION_MAP = new Map<string, FunctionDef>(FUNCTION_DEFS.map((f) => [f.name, f]));
 
@@ -711,4 +736,10 @@ export const KEYWORD_MAP = new Map<string, TokenKind>([
   ["between", TokenKind.BETWEEN],
   ["true", TokenKind.TRUE_KW],
   ["false", TokenKind.FALSE_KW],
+  // ORDER BY / LIMIT clause keywords
+  ["order", TokenKind.ORDER],
+  ["by", TokenKind.BY],
+  ["limit", TokenKind.LIMIT],
+  ["asc", TokenKind.ASC],
+  ["desc", TokenKind.DESC],
 ]);

@@ -1266,3 +1266,142 @@ class TestWorkItemIdentifier:
                 {"priority": "high"},
             ]
         }
+
+
+# =========================================================================
+# ORDER BY and LIMIT
+# =========================================================================
+
+
+@pytest.mark.unit
+class TestOrderBy:
+    """Tests for the ORDER BY clause."""
+
+    def test_order_by_single_field_desc(self):
+        r = _parse('ORDER BY createdAt DESC')
+        assert r.rich_filter is None
+        assert r.order_by == [("created_at", "DESC")]
+        assert r.limit is None
+
+    def test_order_by_single_field_asc(self):
+        r = _parse('ORDER BY createdAt ASC')
+        assert r.order_by == [("created_at", "ASC")]
+
+    def test_order_by_default_asc(self):
+        r = _parse('ORDER BY createdAt')
+        assert r.order_by == [("created_at", "ASC")]
+
+    def test_order_by_multiple_fields(self):
+        r = _parse('ORDER BY dueDate DESC, priority ASC')
+        assert r.order_by == [("target_date", "DESC"), ("priority", "ASC")]
+
+    def test_order_by_case_insensitive(self):
+        r = _parse('order by createdAt desc')
+        assert r.order_by == [("created_at", "DESC")]
+
+    def test_order_by_with_filter(self):
+        r = _parse('priority = "high" ORDER BY createdAt DESC')
+        assert r.rich_filter == {"priority": "high"}
+        assert r.order_by == [("created_at", "DESC")]
+
+    def test_order_by_field_aliases(self):
+        """ORDER BY aliases map to the correct Django ORM fields."""
+        cases = {
+            "priority": "priority",
+            "state": "state__group",
+            "stateGroup": "state__group",
+            "dueDate": "target_date",
+            "startDate": "start_date",
+            "title": "name",
+            "assignee": "assignees__first_name",
+            "label": "labels__name",
+            "module": "issue_module__module__name",
+            "createdBy": "created_by__first_name",
+            "sequenceId": "sequence_id",
+            "sortOrder": "sort_order",
+            "type": "type__name",
+        }
+        for pql_field, django_field in cases.items():
+            r = _parse(f"ORDER BY {pql_field}")
+            assert r.order_by == [(django_field, "ASC")], f"Failed for field: {pql_field}"
+
+    def test_order_by_unknown_field_raises(self):
+        with pytest.raises(ValidationError):
+            _parse('ORDER BY unknownField')
+
+    def test_order_by_cf_field_raises(self):
+        uid = str(uuid4())
+        with pytest.raises(ValidationError):
+            _parse(f'ORDER BY cf["{uid}"]')
+
+
+@pytest.mark.unit
+class TestLimit:
+    """Tests for the LIMIT clause."""
+
+    def test_limit_only(self):
+        r = _parse('LIMIT 50')
+        assert r.rich_filter is None
+        assert r.order_by is None
+        assert r.limit == 50
+
+    def test_limit_with_filter(self):
+        r = _parse('priority = "high" LIMIT 10')
+        assert r.rich_filter == {"priority": "high"}
+        assert r.limit == 10
+
+    def test_limit_case_insensitive(self):
+        r = _parse('limit 25')
+        assert r.limit == 25
+
+    def test_limit_exceeds_max_raises(self):
+        with pytest.raises(ValidationError):
+            _parse('LIMIT 5000')
+
+    def test_limit_zero_raises(self):
+        """LIMIT 0 is rejected by the POSITIVE_INT grammar rule."""
+        with pytest.raises(ValidationError):
+            _parse('LIMIT 0')
+
+    def test_limit_negative_raises(self):
+        with pytest.raises(ValidationError):
+            _parse('LIMIT -5')
+
+
+@pytest.mark.unit
+class TestOrderByAndLimit:
+    """Tests for ORDER BY and LIMIT used together."""
+
+    def test_filter_order_limit(self):
+        r = _parse('priority = "high" ORDER BY createdAt DESC LIMIT 10')
+        assert r.rich_filter == {"priority": "high"}
+        assert r.order_by == [("created_at", "DESC")]
+        assert r.limit == 10
+
+    def test_order_and_limit_no_filter(self):
+        r = _parse('ORDER BY dueDate ASC LIMIT 25')
+        assert r.rich_filter is None
+        assert r.order_by == [("target_date", "ASC")]
+        assert r.limit == 25
+
+    def test_limit_before_order_by(self):
+        """LIMIT can come before ORDER BY."""
+        r = _parse('LIMIT 10 ORDER BY createdAt')
+        assert r.limit == 10
+        assert r.order_by == [("created_at", "ASC")]
+
+    def test_existing_filters_still_work(self):
+        """Existing filter-only queries still parse correctly."""
+        r = _parse('priority = "high" AND state IN openStates()')
+        assert r.rich_filter is not None
+        assert r.order_by is None
+        assert r.limit is None
+
+    def test_merge_does_not_propagate_order_limit(self):
+        """merge() only combines rich_filter, not order_by/limit."""
+        left = PQLResult(rich_filter={"priority": "high"}, order_by=[("created_at", "DESC")], limit=10)
+        right = PQLResult(rich_filter={"state_id": "abc"}, order_by=[("name", "ASC")], limit=5)
+        merged = left.merge(right, "and")
+        assert merged.rich_filter == {"and": [{"priority": "high"}, {"state_id": "abc"}]}
+        assert merged.order_by is None
+        assert merged.limit is None

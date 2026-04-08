@@ -58,6 +58,12 @@ export enum TokenKind {
   FN_STATE = "FN_STATE",
   FN_RELATION = "FN_RELATION",
   FN_HISTORY = "FN_HISTORY",
+  // ORDER BY / LIMIT clause keywords
+  ORDER = "ORDER",
+  BY = "BY",
+  LIMIT = "LIMIT",
+  ASC = "ASC",
+  DESC = "DESC",
   // Unknown identifier (will be flagged by validator)
   IDENTIFIER = "IDENTIFIER",
   // Unrecognized character sequence
@@ -316,7 +322,11 @@ export type SuggestionContextKind =
   | "AFTER_IS"
   | "AFTER_BETWEEN"
   | "AFTER_BETWEEN_AND"
-  | "AFTER_CONDITION";
+  | "AFTER_CONDITION"
+  | "AFTER_ORDER_BY"
+  | "AFTER_ORDER_FIELD"
+  | "AFTER_SORT_DIR"
+  | "AFTER_LIMIT";
 
 export type SuggestionContext = {
   kind: SuggestionContextKind;

@@ -17,7 +17,7 @@ import { Ampersand, CircleIcon, Diamond, Ellipsis, SquareFunction } from "lucide
 import type { IFilterOption, IFilterOptionGroup, TAllAvailableOperatorsForDisplay, TFilterValue } from "@plane/types";
 // local imports
 import type { AppendCharacter, CompOp, FieldDef, Suggestion, SuggestionContext } from "../extensions/pql-editor/types";
-import { FUNCTION_DEFS } from "../extensions/pql-editor/plugins/grammar";
+import { FUNCTION_DEFS, SORTABLE_FIELDS, FIELD_ALIASES } from "../extensions/pql-editor/plugins/grammar";
 import { isCustomPropertyField } from "../extensions/pql-editor/custom-property-field/utils";
 
 // ─── Operator key mapping ──────────────────────────────────────────────────────
@@ -202,6 +202,75 @@ function buildLogicalSuggestions(): Suggestion[] {
   ];
 }
 
+function buildOrderByKeywordSuggestion(): Suggestion {
+  return {
+    kind: "keyword",
+    label: "ORDER BY",
+    icon: Diamond,
+    i18n_description: "Sort results by a field",
+    insertText: "ORDER BY",
+    appendCharacter: "whitespace",
+    sortOrder: 2,
+  };
+}
+
+function buildLimitKeywordSuggestion(): Suggestion {
+  return {
+    kind: "keyword",
+    label: "LIMIT",
+    icon: Diamond,
+    i18n_description: "Limit the number of results",
+    insertText: "LIMIT",
+    appendCharacter: "whitespace",
+    sortOrder: 3,
+  };
+}
+
+function buildSortableFieldSuggestions(fieldDefs: FieldDef[]): Suggestion[] {
+  // Build a reverse lookup: PQL alias → FieldDef
+  // FIELD_ALIASES maps internal key → PQL alias (e.g. "created_at" → "createdAt")
+  const suggestions: Suggestion[] = [];
+  let i = 0;
+
+  for (const def of fieldDefs) {
+    const pqlAlias = FIELD_ALIASES[def.value] ?? def.value;
+    if (!SORTABLE_FIELDS.has(pqlAlias)) continue;
+
+    suggestions.push({
+      kind: "field",
+      label: def.name,
+      icon: def.icon,
+      insertText: pqlAlias,
+      appendCharacter: "whitespace",
+      sortOrder: i++,
+    });
+  }
+  return suggestions;
+}
+
+function buildSortDirectionSuggestions(): Suggestion[] {
+  return [
+    {
+      kind: "keyword",
+      label: "ASC",
+      icon: Diamond,
+      i18n_description: "Ascending order",
+      insertText: "ASC",
+      appendCharacter: "whitespace",
+      sortOrder: 0,
+    },
+    {
+      kind: "keyword",
+      label: "DESC",
+      icon: Diamond,
+      i18n_description: "Descending order",
+      insertText: "DESC",
+      appendCharacter: "whitespace",
+      sortOrder: 1,
+    },
+  ];
+}
+
 // ─── Field-specific function suggestion builder ───────────────────────────────
 
 /**
@@ -346,7 +415,20 @@ export async function computeAllSuggestions(
       return buildFunctionSuggestions(["DATE"]);
 
     case "AFTER_CONDITION":
-      return buildLogicalSuggestions();
+      return [...buildLogicalSuggestions(), buildOrderByKeywordSuggestion(), buildLimitKeywordSuggestion()];
+
+    case "AFTER_ORDER_BY":
+      return buildSortableFieldSuggestions(fieldDefs);
+
+    case "AFTER_ORDER_FIELD":
+      return [...buildSortDirectionSuggestions(), buildLimitKeywordSuggestion()];
+
+    case "AFTER_SORT_DIR":
+      return [buildLimitKeywordSuggestion()];
+
+    case "AFTER_LIMIT":
+      // No autocomplete for numeric values — user types the number manually
+      return [];
 
     default:
       return [];

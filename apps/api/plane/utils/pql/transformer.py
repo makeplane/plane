@@ -35,6 +35,8 @@ from .constants import (
     ISNULL_TRUE_OPERATORS,
     NEGATED_OPERATORS,
     OPERATOR_LOOKUP,
+    ORDER_BY_ALIASES,
+    PQL_MAX_LIMIT,
     PREDICATE_FUNCTIONS,
 )
 
@@ -73,9 +75,15 @@ class PQLResult:
     """Container for the output of PQL transformation."""
 
     rich_filter: dict | None = None
+    order_by: list | None = None  # list of (django_field, "ASC"|"DESC") tuples
+    limit: int | None = None
 
     def merge(self, other: PQLResult, operator: str = "and") -> PQLResult:
-        """Merge two results under a logical operator."""
+        """Merge two results under a logical operator.
+
+        order_by and limit are NOT merged — they only exist at the
+        top-level query node.
+        """
         left = self.rich_filter
         right = other.rich_filter
 
@@ -112,6 +120,55 @@ class PQLTransformer(Transformer):
 
     def start(self, result: PQLResult) -> PQLResult:
         return result
+
+    # ------------------------------------------------------------------
+    # Query: expr? order_clause? limit_clause?
+    # ------------------------------------------------------------------
+
+    def query(self, *children) -> PQLResult:
+        """Assemble final PQLResult from filter, order, and limit."""
+        rich_filter = None
+        order_by = None
+        limit = None
+
+        for child in children:
+            if isinstance(child, PQLResult):
+                rich_filter = child.rich_filter
+            elif isinstance(child, list):
+                order_by = child
+            elif isinstance(child, int):
+                limit = child
+
+        return PQLResult(rich_filter=rich_filter, order_by=order_by, limit=limit)
+
+    def order_clause(self, *order_fields) -> list:
+        """Collect order field tuples into a list."""
+        return list(order_fields)
+
+    def order_field(self, field, direction=None) -> tuple:
+        """Resolve an order field to (django_field, direction)."""
+        if isinstance(field, CfField):
+            raise ValueError("Custom property fields cannot be used in ORDER BY")
+
+        field_name = field
+        django_field = ORDER_BY_ALIASES.get(field_name)
+        if django_field is None:
+            raise ValueError(f"Cannot order by field: {field_name}")
+
+        dir_str = direction if direction else "ASC"
+        return (django_field, dir_str)
+
+    def asc(self) -> str:
+        return "ASC"
+
+    def desc(self) -> str:
+        return "DESC"
+
+    def limit_clause(self, token) -> int:
+        value = int(str(token))
+        if value > PQL_MAX_LIMIT:
+            raise ValueError(f"LIMIT cannot exceed {PQL_MAX_LIMIT}")
+        return value
 
     # ------------------------------------------------------------------
     # Conditions: field <op> value
