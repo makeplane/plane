@@ -13,18 +13,19 @@
 
 import { Workflow, WorkflowFilterStore } from "@plane/shared-state";
 import { WorkflowsService } from "@plane/services";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, comparer, makeObservable, observable, reaction, runInAction } from "mobx";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type {
   TWorkflow,
   TWorkflowCreatePayload,
   TWorkflowResponse,
+  TWorkflowState,
   TWorkflowStateTransition,
   TWorkflowStateType,
   IWorkflow,
-  IWorkflowState,
   TLoader,
   IWorkflowFilterStore,
+  IWorkflowState,
 } from "@plane/types";
 import { computedFn } from "mobx-utils";
 
@@ -111,9 +112,11 @@ export interface IWorkflowsStore {
   // actions
   fetchAllWorkflows: (workspaceSlug: string) => Promise<void>;
   fetchProjectWorkflows: (workspaceSlug: string, projectId: string) => Promise<TWorkflow[]>;
+  syncProjectStateToDefaultWorkflow: (projectId: string) => void;
   createWorkflow: (workspaceSlug: string, projectId: string, data: TWorkflowCreatePayload) => Promise<void>;
   deleteWorkflow: (workspaceSlug: string, projectId: string, workflowId: string) => Promise<void>;
   toggleWorkflows: (workspaceSlug: string, projectId: string, isEnabled: boolean) => Promise<void>;
+  dispose: () => void;
 }
 
 export class WorkflowsStore implements IWorkflowsStore {
@@ -125,6 +128,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   workflowService: WorkflowsService;
   // root store
   rootStore: RootStore;
+  private disposers: Array<() => void> = [];
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -134,6 +138,7 @@ export class WorkflowsStore implements IWorkflowsStore {
       filters: observable.ref,
       // actions
       fetchAllWorkflows: action,
+      syncProjectStateToDefaultWorkflow: action,
       createWorkflow: action,
       deleteWorkflow: action,
       toggleWorkflows: action,
@@ -143,6 +148,28 @@ export class WorkflowsStore implements IWorkflowsStore {
     this.workflowService = new WorkflowsService();
     // root store
     this.rootStore = _rootStore;
+
+    const syncProjectStatesReaction = reaction(
+      () => ({
+        projectStates: Object.values(this.rootStore.state.stateMap).map((state) => ({
+          id: state.id,
+          projectId: state.project_id,
+        })),
+        defaultWorkflows: Array.from(this.workflowsMap.values())
+          .filter((workflow) => workflow.is_default)
+          .map((workflow) => ({
+            id: workflow.id,
+            projectId: workflow.project_id,
+            stateIds: workflow.stateIds,
+          })),
+      }),
+      ({ defaultWorkflows }) => {
+        defaultWorkflows.forEach(({ projectId }) => this.syncProjectStateToDefaultWorkflow(projectId));
+      },
+      { equals: comparer.structural }
+    );
+
+    this.disposers.push(syncProjectStatesReaction);
   }
 
   private buildScopedStateMap = (
@@ -731,6 +758,36 @@ export class WorkflowsStore implements IWorkflowsStore {
     }
   };
 
+  syncProjectStateToDefaultWorkflow = (projectId: string): void => {
+    const defaultWorkflow = this.getProjectDefaultWorkflow(projectId);
+    if (!defaultWorkflow) return;
+    const projectStates = this.rootStore.state.getProjectStates(projectId);
+    if (!projectStates) return;
+
+    const projectStateIds = projectStates.map((state) => state.id);
+    const workflowStateIds = defaultWorkflow.stateIds;
+    const workflowStateIdSet = new Set(workflowStateIds);
+    const projectStateIdSet = new Set(projectStateIds);
+
+    const statesToAdd: TWorkflowState[] = projectStateIds
+      .filter((stateId) => !workflowStateIdSet.has(stateId))
+      .map((stateId) => ({
+        id: stateId,
+        allow_issue_creation: true,
+        transitions: [],
+        type: "transition",
+      }));
+    const stateIdsToRemove = workflowStateIds.filter((stateId) => !projectStateIdSet.has(stateId));
+
+    if (statesToAdd.length > 0) {
+      defaultWorkflow.hydrateStates(statesToAdd);
+    }
+
+    if (stateIdsToRemove.length > 0) {
+      defaultWorkflow.removeStates(stateIdsToRemove);
+    }
+  };
+
   createWorkflow = async (workspaceSlug: string, projectId: string, data: TWorkflowCreatePayload): Promise<void> => {
     try {
       const response: TWorkflow = await this.workflowService.create(workspaceSlug, projectId, data);
@@ -781,5 +838,10 @@ export class WorkflowsStore implements IWorkflowsStore {
       console.error("Failed to toggle workflows", error);
       throw error;
     }
+  };
+
+  dispose = () => {
+    this.disposers.forEach((dispose) => dispose());
+    this.disposers = [];
   };
 }

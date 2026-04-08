@@ -272,6 +272,8 @@ export interface IWorkflow extends TWorkflow {
   stopEditing: (transitionId: string) => void;
   isEditing: (transitionId: string) => boolean;
   mutate: (data: Partial<TWorkflow>) => void;
+  hydrateStates: (states: TWorkflowState[]) => void;
+  removeStates: (stateIds: string[]) => void;
   update: (workspaceSlug: string, projectId: string, data: TWorkflowUpdatePayload) => Promise<void>;
   addStates: (workspaceSlug: string, projectId: string, data: TAddStatesToWorkflowPayload) => Promise<void>;
   deleteState: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;

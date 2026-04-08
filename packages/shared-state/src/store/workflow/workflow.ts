@@ -79,6 +79,8 @@ export class Workflow implements IWorkflow {
       switchMode: action,
       startEditing: action,
       stopEditing: action,
+      hydrateStates: action,
+      removeStates: action,
       update: action,
       addStates: action,
       deleteState: action,
@@ -217,6 +219,38 @@ export class Workflow implements IWorkflow {
     });
   }
 
+  hydrateStates = (states: TWorkflowState[]) => {
+    const statesToHydrate = states.filter((state) => !this.statesMap.has(state.id));
+    if (statesToHydrate.length === 0) return;
+
+    runInAction(() => {
+      this.mutate({
+        states: [...this.states, ...statesToHydrate],
+      });
+
+      statesToHydrate.forEach((state) => {
+        this.statesMap.set(state.id, new WorkflowState(state, this.workflowService));
+      });
+    });
+  };
+
+  removeStates = (stateIds: string[]) => {
+    const stateIdsToRemove = stateIds.filter((stateId) => this.statesMap.has(stateId));
+    if (stateIdsToRemove.length === 0) return;
+
+    const stateIdsToRemoveSet = new Set(stateIdsToRemove);
+
+    runInAction(() => {
+      this.mutate({
+        states: this.states.filter((state) => !stateIdsToRemoveSet.has(state.id)),
+      });
+
+      stateIdsToRemove.forEach((stateId) => {
+        this.statesMap.delete(stateId);
+      });
+    });
+  };
+
   update = async (workspaceSlug: string, projectId: string, data: Partial<TWorkflowUpdatePayload>) => {
     const beforeUpdate = { ...this.asJSON };
     try {
@@ -237,20 +271,16 @@ export class Workflow implements IWorkflow {
   addStates = async (workspaceSlug: string, projectId: string, data: TAddStatesToWorkflowPayload) => {
     try {
       await this.workflowService.addStates(workspaceSlug, projectId, this.id, data);
-      runInAction(() => {
-        data.state_ids.forEach((stateId) => {
-          const stateData: TWorkflowState = {
+      this.hydrateStates(
+        data.state_ids.map(
+          (stateId): TWorkflowState => ({
             id: stateId,
             allow_issue_creation: true,
             transitions: [],
             type: "transition",
-          };
-          this.mutate({
-            states: [...this.states, stateData],
-          });
-          this.statesMap.set(stateId, new WorkflowState(stateData, this.workflowService));
-        });
-      });
+          })
+        )
+      );
     } catch (error) {
       console.error("Error adding states to workflow", error);
       throw error;
@@ -260,12 +290,7 @@ export class Workflow implements IWorkflow {
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
     try {
       await this.workflowService.deleteState(workspaceSlug, projectId, this.id, stateId);
-      runInAction(() => {
-        this.mutate({
-          states: this.states.filter((state) => state.id !== stateId),
-        });
-        this.statesMap.delete(stateId);
-      });
+      this.removeStates([stateId]);
     } catch (error) {
       // revert changes
       console.error("Error deleting state from workflow", error);
@@ -305,12 +330,7 @@ export class Workflow implements IWorkflow {
       await this.workflowService.transferAndDeleteState(workspaceSlug, projectId, this.id, stateId, {
         new_state_id: newStateId,
       });
-      runInAction(() => {
-        this.mutate({
-          states: this.states.filter((state) => state.id !== stateId),
-        });
-        this.statesMap.delete(stateId);
-      });
+      this.removeStates([stateId]);
     } catch (error) {
       console.error("Error migrating and deleting state from workflow", error);
       throw error;
