@@ -202,20 +202,20 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IWorkspaceIssuesFilter["updateFilterExpression"] = (workspaceSlug, viewId, filters) => {
+  updateFilterExpression: IWorkspaceIssuesFilter["updateFilterExpression"] = async (workspaceSlug, viewId, filters) => {
     try {
       runInAction(() => {
         set(this.filters, [viewId, "richFilters"], filters);
       });
 
-      void this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+      await this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
     } catch (error) {
       console.log("error while updating rich filters", error);
       throw error;
     }
   };
 
-  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = (workspaceSlug, _projectId, type, filters, viewId) => {
+  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = async (workspaceSlug, _projectId, type, filters, viewId) => {
     try {
       const issueFilters = this.getIssueFilters(viewId);
 
@@ -262,7 +262,11 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          void this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+          await this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(
+            workspaceSlug,
+            viewId,
+            "mutation"
+          );
 
           // Persist display filter changes locally for all workspace views
           this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
@@ -316,7 +320,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           break;
       }
     } catch (error) {
-      if (viewId) void this.fetchFilters(workspaceSlug, viewId);
+      if (viewId) await this.fetchFilters(workspaceSlug, viewId);
       throw error;
     }
   };

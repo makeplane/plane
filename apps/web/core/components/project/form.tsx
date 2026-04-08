@@ -12,6 +12,7 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -228,19 +229,18 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   className="flex items-center justify-center"
                   buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
-                  onChange={(val: { type: string; value: Record<string, unknown> }) => {
-                    let logoValue: Record<string, unknown> = {};
-
-                    if (val?.type === "emoji")
-                      logoValue = {
-                        value: val.value,
-                      };
-                    else if (val?.type === "icon") logoValue = val.value;
-
-                    onChange({
-                      in_use: val?.type,
-                      [val?.type]: logoValue,
-                    });
+                  onChange={(val: TChangeHandlerProps) => {
+                    if (val.type === EmojiIconPickerTypes.EMOJI) {
+                      onChange({
+                        in_use: val.type,
+                        [val.type]: { value: val.value },
+                      });
+                    } else if (val.type === EmojiIconPickerTypes.ICON) {
+                      onChange({
+                        in_use: val.type,
+                        [val.type]: val.value,
+                      });
+                    }
                     setIsOpen(false);
                   }}
                   defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}

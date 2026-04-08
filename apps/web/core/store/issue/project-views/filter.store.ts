@@ -191,7 +191,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IProjectViewIssuesFilter["updateFilterExpression"] = (
+  updateFilterExpression: IProjectViewIssuesFilter["updateFilterExpression"] = async (
     workspaceSlug,
     projectId,
     viewId,
@@ -202,7 +202,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
         set(this.filters, [viewId, "richFilters"], filters);
       });
 
-      void this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
+      await this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
         workspaceSlug,
         projectId,
         viewId,
@@ -214,7 +214,13 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     }
   };
 
-  updateFilters: IProjectViewIssuesFilter["updateFilters"] = (workspaceSlug, projectId, type, filters, viewId) => {
+  updateFilters: IProjectViewIssuesFilter["updateFilters"] = async (
+    workspaceSlug,
+    projectId,
+    type,
+    filters,
+    viewId
+  ) => {
     try {
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId])) return;
 
@@ -277,7 +283,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            void this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
+            await this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
               workspaceSlug,
               projectId,
               viewId,
@@ -349,7 +355,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           break;
       }
     } catch (error) {
-      if (viewId) void this.fetchFilters(workspaceSlug, projectId, viewId);
+      if (viewId) await this.fetchFilters(workspaceSlug, projectId, viewId);
       throw error;
     }
   };

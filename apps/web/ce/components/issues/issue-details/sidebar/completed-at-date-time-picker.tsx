@@ -67,7 +67,7 @@ export const CompletedAtDateTimePicker = observer(function CompletedAtDateTimePi
 
   return (
     <Popover className="relative">
-      {({ close }: { close: () => void }): React.ReactNode => (
+      {({ close }: { close: () => void }): React.ReactElement => (
         <>
           <Popover.Button
             ref={triggerRef}

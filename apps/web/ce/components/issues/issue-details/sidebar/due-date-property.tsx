@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
-import type { TIssue, TIssueUpdatePayload } from "@plane/types";
+import type { TIssue, TIssueUpdatePayload, TStateGroups } from "@plane/types";
 import { DateDropdown } from "@/components/dropdowns/date";
 import type { TIssueOperations } from "@/components/issues/issue-detail/root";
 import { DateAlert } from "./date-alert";
@@ -20,7 +20,7 @@ type TDueDatePropertyProps = {
   issueId: string;
   issueOperations: TIssueOperations;
   isEditable: boolean;
-  stateGroup?: string;
+  stateGroup?: TStateGroups;
   minDate?: Date;
   hasFieldError?: boolean;
   issue: TIssue;

@@ -13,13 +13,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
-import type {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IProjectView,
-  EIssueLayoutTypes,
-  IIssueFilters,
-} from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IProjectView, IIssueFilters } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 import { EViewAccess, EIssuesStoreType } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
@@ -213,7 +208,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                         layout: selectedValue,
                       })
                     }
-                    value={displayFilters.layout}
+                    value={displayFilters.layout ?? EIssueLayoutTypes.LIST}
                   />
                   {/* display filters dropdown */}
                   <Controller
@@ -223,7 +218,9 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                       <FiltersDropdown title={t("common.display")}>
                         <DisplayFiltersSelection
                           layoutDisplayFiltersOptions={
-                            ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[displayFilters.layout]
+                            displayFilters.layout
+                              ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[displayFilters.layout]
+                              : undefined
                           }
                           displayFilters={displayFilters ?? {}}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {

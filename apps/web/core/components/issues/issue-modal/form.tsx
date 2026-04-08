@@ -182,8 +182,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   // fetch task categories once on mount
   useEffect(() => {
-    void fetchCategories();
-  }, []);
+    if (workspaceSlug) void fetchCategories(workspaceSlug.toString());
+  }, [workspaceSlug]);
 
   //reset few fields on projectId change
   useEffect(() => {

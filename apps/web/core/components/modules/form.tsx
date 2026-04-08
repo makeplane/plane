@@ -66,7 +66,7 @@ export function ModuleForm(props: Props) {
   const { t } = useTranslation();
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
-    await handleFormSubmit(formData, dirtyFields);
+    await handleFormSubmit(formData, dirtyFields as Partial<Record<keyof IModule, boolean>>);
 
     reset({
       ...defaultValues,

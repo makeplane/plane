@@ -77,9 +77,9 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { fetchCategories } = useTaskCategory();
 
   useEffect(() => {
-    void fetchCategories();
+    if (workspaceSlug) void fetchCategories(workspaceSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [workspaceSlug]);
 
   // derived values
   const issue = getIssueById(issueId);

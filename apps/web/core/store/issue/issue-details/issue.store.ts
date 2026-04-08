@@ -18,8 +18,8 @@ export interface IIssueStoreActions {
   // actions
   fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -149,6 +149,7 @@ export class IssueStore implements IIssueStore {
       sort_order: issue?.sort_order,
       state_id: issue?.state_id,
       priority: issue?.priority,
+      frequency: issue?.frequency,
       label_ids: issue?.label_ids,
       assignee_ids: issue?.assignee_ids,
       estimate_point: issue?.estimate_point,

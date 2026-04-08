@@ -18,7 +18,11 @@ import "react-grid-layout/css/styles.css";
 type Layout = ReactGridLayout.Layout;
 type LayoutItem = ReactGridLayout.LayoutItem;
 
-const ResponsiveGridLayout = ReactGridLayout.WidthProvider(ReactGridLayout.Responsive);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const WidthProvider = (ReactGridLayout as any).WidthProvider;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Responsive = (ReactGridLayout as any).Responsive;
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 /** Convert IDashboardWidget to react-grid-layout LayoutItem */
 function widgetToLayoutItem(widget: IDashboardWidget): LayoutItem {

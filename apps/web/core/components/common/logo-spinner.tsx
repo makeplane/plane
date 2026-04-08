@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import LogoSpinnerImg from "@/app/assets/images/logo-spinner.svg?url";
 
 export function LogoSpinner() {
-  const { _resolvedTheme } = useTheme();
+  useTheme(); // Theme hook - may be used for future dark mode support
 
   const logoSrc = LogoSpinnerImg;
 

@@ -6,6 +6,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -32,6 +33,7 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
   // plane hooks
   const { t } = useTranslation();
   // store

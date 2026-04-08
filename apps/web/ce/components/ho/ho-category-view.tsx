@@ -24,19 +24,6 @@ export const HoCategoryView = observer(function HoCategoryView() {
     void store.fetchFilterOptions();
   }, [store]);
 
-  const handleSort = (key: SortKey | "clear") => {
-    if (key === "clear") {
-      setSortKey(null);
-      setSortDir("asc");
-      return;
-    }
-    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-  };
-
   const filtered = useMemo(() => {
     if (!search) return store.categorySummary;
     const q = search.toLowerCase();
@@ -108,7 +95,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
           {search ? t("ho.no_matching_rows") : t("ho.no_data")}
         </p>
       ) : (
-        <HoCategoryTable data={sortedData} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+        <HoCategoryTable data={sortedData} />
       )}
     </div>
   );
