@@ -11,6 +11,9 @@
 
 import base64
 
+# Django imports
+from django.db.models import Q
+
 # Third party imports
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -19,7 +22,8 @@ from rest_framework.response import Response
 # Module imports
 from plane.api.views.base import BaseAPIView
 from plane.db.models import Page, DeployBoard, Project, ProjectMember, Workspace
-from plane.api.serializers import PageDetailAPISerializer, PageCreateAPISerializer
+from plane.ee.models import PageUser
+from plane.api.serializers import PageDetailAPISerializer, PageCreateAPISerializer, PageListAPISerializer
 from plane.ee.permissions import ProjectPagePermission
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
@@ -32,15 +36,19 @@ from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 
 # openapi imports
-from drf_spectacular.utils import OpenApiResponse, OpenApiExample
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiParameter
 from plane.utils.openapi.decorators import page_docs
 from plane.utils.openapi.parameters import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
     PAGE_ID_PARAMETER,
     PAGE_ANCHOR_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    ORDER_BY_PARAMETER,
+    SEARCH_PARAMETER,
 )
-from plane.utils.openapi.responses import UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE
+from plane.utils.openapi.responses import UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE, create_paginated_response
 from plane.utils.openapi.examples import SAMPLE_PAGE
 
 from plane.utils.oauth import (
@@ -155,8 +163,82 @@ class ProjectPageAPIEndpoint(BaseAPIView):
     serializer_class = PageCreateAPISerializer
     permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_PAGES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_PAGES_WRITE_SCOPE]],
     }
+
+    @page_docs(
+        operation_id="list_project_pages",
+        summary="List project pages",
+        description="List project pages",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            SEARCH_PARAMETER,
+            OpenApiParameter(
+                name="type",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Filter pages by type: all (default), public, private, shared, archived",
+                required=False,
+                enum=["all", "public", "private", "shared", "archived"],
+            ),
+        ],
+        responses={
+            200: create_paginated_response(
+                PageListAPISerializer,
+                "PaginatedProjectPageResponse",
+                "Paginated list of project pages",
+                "Paginated Project Pages",
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id):
+        page_type = request.GET.get("type", "all")
+        search = request.GET.get("search")
+        order_by = request.GET.get("order_by", "-created_at")
+
+        user_pages = PageUser.objects.filter(
+            Q(user_id=request.user.id) | Q(page__owned_by_id=request.user.id),
+            workspace__slug=slug,
+            page__projects__id=project_id,
+        ).values_list("page_id", flat=True)
+
+        queryset = (
+            Page.objects.filter(
+                workspace__slug=slug,
+                projects__id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
+            .filter(moved_to_page__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0) | Q(id__in=user_pages))
+            .distinct()
+        )
+
+        filters = Q()
+        if search:
+            filters &= Q(name__icontains=search)
+        if page_type == "public":
+            filters &= Q(access=0, archived_at__isnull=True)
+        elif page_type == "private":
+            filters &= Q(access=1, archived_at__isnull=True) & ~Q(id__in=user_pages)
+        elif page_type == "shared":
+            filters &= Q(id__in=user_pages, access=1, archived_at__isnull=True)
+        elif page_type == "archived":
+            filters &= Q(archived_at__isnull=False)
+
+        queryset = queryset.filter(filters).order_by(order_by)
+
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            on_results=lambda pages: PageListAPISerializer(pages, many=True).data,
+        )
 
     @page_docs(
         operation_id="create_project_page",
