@@ -112,7 +112,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
         key={updateData.id}
         className="relative flex updateDatas-center gap-2 border border-subtle rounded-md p-4 pb-0"
       >
-        <div className="flex-1 w-full">
+        <div className="flex-1 w-full min-w-0">
           <div className="flex flex-1 items-center">
             <div className={cn(`mr-2`, {})}>
               {/* render icon here */}

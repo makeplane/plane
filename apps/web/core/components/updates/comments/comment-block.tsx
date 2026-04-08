@@ -49,7 +49,7 @@ export const CommentBlock = observer(function CommentBlock(props: TProps) {
       {isEditing ? (
         <EditComment setIsEditing={setIsEditing} operations={operations} commentData={commentData} />
       ) : (
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex w-full">
             <div className="flex-1">
               <div className="text-13">{creator?.display_name}</div>
@@ -72,7 +72,7 @@ export const CommentBlock = observer(function CommentBlock(props: TProps) {
               />
             )}
           </div>
-          <div className="text-14 mb-2">{commentData?.description}</div>
+          <div className="text-14 mb-2 break-words">{commentData?.description}</div>
           <UpdateReaction
             workspaceSlug={workspaceSlug}
             entityId={entityId}
