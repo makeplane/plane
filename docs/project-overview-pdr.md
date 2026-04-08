@@ -29,31 +29,45 @@
 - Module-level progress tracking
 
 ### Custom Workflows (CE)
-- Shinhan-specific workflow states and transitions
-- Workflow blockers for validation
-- Unhandled rejection error handling for blocked transitions
+- Workflow state transitions with validation
+- Workflow blockers for approval workflows
+- Error handling for blocked transitions (unhandled rejection)
+- Workflow rule editing per project
 
 ### Real-Time Collaboration
 - WebSocket support (apps/live, Hocuspocus + Y.js CRDT)
-- Shared document editing
+- Shared document editing (Page edits, Issue field updates)
 - Real-time cursor positions (planned)
 
 ### Wiki/Pages
 - Static page creation within projects
-- Markdown-based content
+- Markdown-based content with Y.js real-time sync
 
 ### Time Tracking (CE)
-- Time estimate and logged hours per issue
-- Time analytics
+- Time estimates and logged hours per issue
+- Time analytics and burndown tracking
+- Timesheet reports (weekly, monthly)
+- Team capacity planning
 
 ### Organization Chart (HO - CE)
-- Shinhan-specific org hierarchies
+- Bank department hierarchy visualization
+- Multi-level employee management
 - Column-specific sorting and multi-select filtering
-- Properties to show/hide (modules, cycles)
+- Drill-down analytics by team/role
+- Org chart export (PDF, PNG)
 
-### Analytics (CE)
-- Project analytics dashboard
-- Custom report generation
+### Analytics Dashboard (CE)
+- Sprint burndown charts and velocity tracking
+- Project metrics and team productivity
+- Custom report builder
+- Scheduled report delivery (email)
+- Export to PDF/Excel
+
+### Admin Features (CE)
+- Task category management
+- Monitoring dashboard (system health, metrics)
+- Staff management
+- Bank-wide project visibility (cross-team)
 
 ## Product Development Requirements (PDR)
 
@@ -239,5 +253,5 @@
 
 ---
 
-**Last Updated:** 2026-04-02
-**PDR Version:** 1.0
+**Last Updated:** 2026-04-08
+**PDR Version:** 1.1
