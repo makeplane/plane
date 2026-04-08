@@ -18,8 +18,8 @@ export interface IIssueStoreActions {
   // actions
   fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
-  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -194,20 +194,20 @@ export class IssueStore implements IIssueStore {
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
 
-  removeIssue = (workspaceSlug: string, projectId: string, issueId: string) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
-    void currentStore.removeIssue(workspaceSlug, projectId, issueId);
+    await currentStore.removeIssue(workspaceSlug, projectId, issueId);
   };
 
-  archiveIssue = (workspaceSlug: string, projectId: string, issueId: string) => {
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
-    void currentStore.archiveIssue(workspaceSlug, projectId, issueId);
+    await currentStore.archiveIssue(workspaceSlug, projectId, issueId);
   };
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
