@@ -44,6 +44,7 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
     const filtered = projects.filter((p) => {
       if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return false;
       if (from || to) {
+        if (!p.created_at) return true;
         const created = new Date(p.created_at);
         if (from && created < from) return false;
         if (to && created > to) return false;
