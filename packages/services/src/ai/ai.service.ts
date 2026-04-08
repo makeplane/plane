@@ -25,6 +25,21 @@ export type TTaskPayload = {
   text_input: string;
 };
 
+export type TChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type TChatToolAction = {
+  tool: string;
+  result: string;
+};
+
+export type TChatResponse = {
+  response: string;
+  actions: TChatToolAction[];
+};
+
 /**
  * Service class for handling AI-related API operations
  * Extends the base APIService class to interact with AI endpoints
@@ -59,6 +74,14 @@ export class AIService extends APIService {
    * @returns {Promise<{response: string}>} The processed text response
    * @throws {Error} Throws the response data if the request fails
    */
+  async chat(workspaceSlug: string, data: { messages: TChatMessage[] }): Promise<TChatResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/ai-chat/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async rephraseGrammar(
     workspaceSlug: string,
     data: TTaskPayload

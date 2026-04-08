@@ -8,6 +8,7 @@ from typing import List, Dict, Tuple
 
 # Third party import
 from openai import OpenAI
+import anthropic
 import requests
 
 from rest_framework import status
@@ -48,16 +49,17 @@ class OpenAIProvider(LLMProvider):
 class AnthropicProvider(LLMProvider):
     name = "Anthropic"
     models = [
-        "claude-3-5-sonnet-20240620",
-        "claude-3-haiku-20240307",
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5-20251001",
+        "claude-3-5-sonnet-20241022",
+        "claude-3-5-haiku-20241022",
         "claude-3-opus-20240229",
+        "claude-3-haiku-20240307",
+        "claude-3-5-sonnet-20240620",
         "claude-3-sonnet-20240229",
-        "claude-2.1",
-        "claude-2",
-        "claude-instant-1.2",
-        "claude-instant-1",
     ]
-    default_model = "claude-3-sonnet-20240229"
+    default_model = "claude-3-5-sonnet-20241022"
 
 
 class GeminiProvider(LLMProvider):
@@ -124,15 +126,31 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
     """Helper to get LLM completion response"""
     final_text = task + "\n" + prompt
     try:
-        # For Gemini, prepend provider name to model
-        if provider.lower() == "gemini":
-            model = f"gemini/{model}"
+        import httpx
 
-        client = OpenAI(api_key=api_key)
-        chat_completion = client.chat.completions.create(
-            model=model, messages=[{"role": "user", "content": final_text}]
-        )
-        text = chat_completion.choices[0].message.content
+        if provider.lower() == "anthropic":
+            base_url = os.environ.get("ANTHROPIC_BASE_URL", None)
+            client = anthropic.Anthropic(
+                api_key=api_key,
+                base_url=base_url,
+                http_client=httpx.Client(verify=False),
+            )
+            message = client.messages.create(
+                model=model,
+                max_tokens=1024,
+                messages=[{"role": "user", "content": final_text}],
+            )
+            text = message.content[0].text
+        else:
+            # For Gemini, prepend provider name to model
+            if provider.lower() == "gemini":
+                model = f"gemini/{model}"
+            client = OpenAI(api_key=api_key, http_client=httpx.Client(verify=False))
+            chat_completion = client.chat.completions.create(
+                model=model, messages=[{"role": "user", "content": final_text}]
+            )
+            text = chat_completion.choices[0].message.content
+
         return text, None
     except Exception as e:
         log_exception(e)
