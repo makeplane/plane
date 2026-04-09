@@ -66,10 +66,8 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
         {/* Sub Task Category — inline, shown when main has sub-categories */}
         {selectedMainId && subCategories.length > 0 && (
           <>
-            <span className="text-tertiary text-body-xs-regular shrink-0 mx-1">/</span>
-            <span className="text-tertiary text-body-xs-regular shrink-0 whitespace-nowrap">
-              {t("task_category.sub_label")}:
-            </span>
+            <span className="text-tertiary text-body-xs-regular shrink-0">/</span>
+            <>{t("task_category.sub_label")}: </>
             <CustomMenu
               label={
                 issue.sub_task_category_id

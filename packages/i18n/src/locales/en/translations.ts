@@ -438,7 +438,6 @@ export default {
   capacity_main_task_category: "Main Task Category",
   capacity_sub_task_category: "Sub Task Category",
   capacity_day_details: "Tasks on this day",
-  capacity_no_data: "No data available.",
   work_management_description: "Manage your work and teams/projects with ease.",
   documentation: "Documentation",
   message_support: "Message support",

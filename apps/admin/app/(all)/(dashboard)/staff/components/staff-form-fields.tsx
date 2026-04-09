@@ -35,7 +35,13 @@ type Props = {
   control: Control<StaffFormValues>;
 };
 
-export const StaffFormFields = observer(function StaffFormFields({ register, errors, watch, setValue, control }: Props) {
+export const StaffFormFields = observer(function StaffFormFields({
+  register,
+  errors,
+  watch,
+  setValue,
+  control,
+}: Props) {
   const { departments, departmentIds } = useInstanceDepartment();
   const { grades, positions, hasFetched, fetchAll } = useInstanceJobPosition();
 
