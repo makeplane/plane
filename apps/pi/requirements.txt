@@ -3,7 +3,7 @@ fastapi==0.111.1
 uvicorn==0.38.0
 requests==2.33.0
 plane-sdk==0.2.5
-pydantic==2.10.6
+pydantic==2.12.5
 openai==2.24.0
 html2text==2024.2.26
 python-json-logger==3.3.0

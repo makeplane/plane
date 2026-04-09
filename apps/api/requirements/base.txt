@@ -83,7 +83,7 @@ firebase-admin==6.6.0
 django-oauth-toolkit==3.0.1
 
 # types
-pydantic==2.10.6
+pydantic==2.12.5
 
 # rate limiting
 django-ratelimit==4.1.0
