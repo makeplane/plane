@@ -120,7 +120,7 @@ class EntityAssetEndpoint(BaseAPIView):
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
             slug=publish_entity.workspace.slug,
-            user_id=str(request.user.id),
+            user_id=request.user.id,
         ):
             size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
         else:
@@ -157,7 +157,9 @@ class EntityAssetEndpoint(BaseAPIView):
             workspace=publish_entity.workspace,
             entity_type=entity_type,
             project_id=publish_entity.project_id,
-            comment_id=entity_identifier,
+            comment_id=entity_identifier
+            if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION.value
+            else None,
         )
 
         # Get the presigned URL
