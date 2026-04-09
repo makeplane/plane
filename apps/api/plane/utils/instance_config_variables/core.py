@@ -232,21 +232,6 @@ unsplash_config_variables = [
     },
 ]
 
-intercom_config_variables = [
-    {
-        "key": "IS_INTERCOM_ENABLED",
-        "value": os.environ.get("IS_INTERCOM_ENABLED", "1"),
-        "category": "INTERCOM",
-        "is_encrypted": False,
-    },
-    {
-        "key": "INTERCOM_APP_ID",
-        "value": os.environ.get("INTERCOM_APP_ID", ""),
-        "category": "INTERCOM",
-        "is_encrypted": False,
-    },
-]
-
 core_config_variables = [
     *authentication_config_variables,
     *workspace_management_config_variables,
@@ -257,5 +242,4 @@ core_config_variables = [
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,
-    *intercom_config_variables,
 ]

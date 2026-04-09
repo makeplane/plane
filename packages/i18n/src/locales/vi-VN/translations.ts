@@ -399,7 +399,6 @@ export default {
   time_tracking_description: "Ghi lại thời gian dành cho các mục công việc và dự án.",
   work_management_description: "Quản lý công việc và dự án của bạn một cách dễ dàng.",
   documentation: "Tài liệu",
-  message_support: "Liên hệ hỗ trợ",
   contact_sales: "Liên hệ bộ phận bán hàng",
   hyper_mode: "Chế độ siêu tốc",
   keyboard_shortcuts: "Phím tắt",

@@ -398,7 +398,6 @@ export default {
   time_tracking_description: "Catat waktu yang dihabiskan untuk item kerja dan proyek.",
   work_management_description: "Kelola pekerjaan dan proyek Anda dengan mudah.",
   documentation: "Dokumentasi",
-  message_support: "Pesan dukungan",
   contact_sales: "Hubungi penjualan",
   hyper_mode: "Mode Hyper",
   keyboard_shortcuts: "Pintasan keyboard",
