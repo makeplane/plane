@@ -19,14 +19,15 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const ProjectPreviewCard = observer(function ProjectPreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useProjectData(artifactId);
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={artifactId}>
+    <WithPreviewHOC artifactId={artifactId} isEditable={isEditable}>
       <div className="flex flex-col items-start gap-2">
         {/* header */}
         <div className="flex gap-2 items-center w-full">

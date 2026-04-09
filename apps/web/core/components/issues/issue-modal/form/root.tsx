@@ -81,6 +81,8 @@ export type WorkItemFormProps = {
   showActionButtons?: boolean;
   dataResetProperties?: any[];
   isTypeSelectDisabled?: boolean;
+  /** When true, suppresses description sync while editor is focused to prevent cursor jump (e.g. PI chat work item) */
+  suppressDescriptionSyncWhenFocused?: boolean;
 };
 
 export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemFormProps) {
@@ -109,6 +111,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     showActionButtons = true,
     dataResetProperties = [],
     isTypeSelectDisabled = false,
+    suppressDescriptionSyncWhenFocused = false,
   } = props;
 
   // states
@@ -511,6 +514,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
                   handleGptAssistantClose={() => reset(getValues())}
                   onAssetUpload={onAssetUpload}
                   onClose={onClose}
+                  suppressDescriptionSyncWhenFocused={suppressDescriptionSyncWhenFocused}
                 />
               </div>
               <div

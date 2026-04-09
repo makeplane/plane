@@ -14,7 +14,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
-import { Card } from "@plane/ui";
+import { Card, cn } from "@plane/ui";
 import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
 import { EpicFormRoot } from "@/components/epics/epic-modal/form";
 import type { TArtifact, TUpdatedArtifact } from "@/types";
@@ -26,10 +26,11 @@ interface TEpicDetailProps {
   activeChatId: string;
   data: TArtifact;
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
+  isEditable: boolean;
 }
 
 export const EpicDetail = observer(function EpicDetail(props: TEpicDetailProps) {
-  const { data, workspaceSlug, activeChatId, updateArtifact } = props;
+  const { data, workspaceSlug, activeChatId, updateArtifact, isEditable } = props;
   // state
   const [isSaving, setIsSaving] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -78,6 +79,8 @@ export const EpicDetail = observer(function EpicDetail(props: TEpicDetailProps) 
     isProjectSelectionDisabled: false,
     convertToWorkItem: false,
     showActionButtons: false,
+    dataResetProperties: [data.artifact_id, updatedData],
+    suppressDescriptionSyncWhenFocused: true,
   };
   return (
     <>
@@ -87,6 +90,11 @@ export const EpicDetail = observer(function EpicDetail(props: TEpicDetailProps) 
             <IssueModalProvider>
               <EpicFormRoot {...commonIssueModalProps} key={data.artifact_id} />
             </IssueModalProvider>
+            <div
+              className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
+                hidden: data.is_editable && isEditable,
+              })}
+            />
           </Card>
         </div>
       )}

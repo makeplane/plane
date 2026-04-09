@@ -233,7 +233,6 @@ html.todesktop .desktop-header .desktop-header-actions {
 
 .pi-chat-root {
   * {
-    margin: revert;
     font-size: revert;
     font-weight: revert;
     text-decoration: revert;

@@ -37,7 +37,7 @@ type TProps = {
 };
 export const AiMessage = observer(function AiMessage(props: TProps) {
   // props
-  const { dialogue, id = "", isLatest, isLoading, handleConvertToPage } = props;
+  const { dialogue, id = "", isLatest = true, isLoading, handleConvertToPage } = props;
   // store
   const { workspaceSlug } = useParams();
   const { activeChatId, isPiTyping } = usePiChat();
@@ -48,7 +48,7 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
 
   return (
     <div className="flex gap-4" id={id}>
-      <div className="flex flex-col text-14 wrap-break-word w-full">
+      <div className="flex flex-col text-14 wrap-break-word w-full gap-2">
         {/* Message */}
         <div className="flex flex-col">
           {!isLoading && (
@@ -64,8 +64,8 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
                 </a>
               ),
               table: ({ children }) => (
-                <div className="my-3 w-full overflow-x-auto">
-                  <table className="w-full border-collapse">{children}</table>
+                <div className="w-full min-w-0 overflow-x-auto vertical-scrollbar horizontal-scrollbar scrollbar-sm max-h-[450px]">
+                  <table className="my-3 w-full min-w-max border-collapse">{children}</table>
                 </div>
               ),
               th: ({ children }) => <th className="min-w-32 border-0 px-3 py-2 text-left">{children}</th>,
@@ -84,7 +84,7 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
         {dialogue && (
           <div className={cn("flex flex-col gap-4", { "mt-4": !answer })}>
             {/* Artifacts list */}
-            {dialogue.actions && <PiChatArtifactsListRoot artifacts={dialogue.actions} />}
+            {dialogue.actions && <PiChatArtifactsListRoot artifacts={dialogue.actions} isEditable={isLatest} />}
             {/* Action bar */}
             <ActionStatusBlock
               workspaceSlug={workspaceSlug?.toString()}

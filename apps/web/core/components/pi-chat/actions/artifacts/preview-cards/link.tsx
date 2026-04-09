@@ -18,15 +18,16 @@ import { Link2 } from "lucide-react";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const LinkPreviewCard = observer(function LinkPreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useTemplateData(artifactId);
   const link = data?.parameters?.properties;
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false}>
+    <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false} isEditable={isEditable}>
       <div className="flex gap-2 items-start justify-between w-full">
         <div className="flex gap-2 items-center truncate text-body-sm-medium text-start">
           <Link2 className="size-4 text-primary my-0.5 -rotate-45" />

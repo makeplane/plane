@@ -153,6 +153,8 @@ export type TDialogue = {
     duration_seconds: number;
     failed: number;
     total_planned: number;
+    is_editable: boolean;
+    is_executed: boolean;
   };
   attachment_ids?: string[];
   action_error?: string;
@@ -190,7 +192,7 @@ export type TExecuteActionResponse = {
   status: string;
   message: string;
   actions: TArtifactWithEntity[];
-  action_summary?: {
+  action_summary: {
     completed: number;
     duration_seconds: number;
     failed: number;

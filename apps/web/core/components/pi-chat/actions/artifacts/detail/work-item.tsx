@@ -26,11 +26,12 @@ interface TWorkItemDetailProps {
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
   workspaceSlug: string;
   activeChatId: string;
+  isEditable: boolean;
 }
 
 export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemDetailProps) {
   // props
-  const { data, updateArtifact, workspaceSlug, activeChatId } = props;
+  const { data, updateArtifact, workspaceSlug, activeChatId, isEditable } = props;
   // state
   const [isSaving, setIsSaving] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -78,6 +79,8 @@ export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemD
     handleDuplicateIssueModal: () => {},
     isProjectSelectionDisabled: false,
     showActionButtons: false,
+    dataResetProperties: [data.artifact_id, updatedData],
+    suppressDescriptionSyncWhenFocused: true,
   };
 
   return (
@@ -90,7 +93,7 @@ export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemD
             </IssueModalProvider>
             <div
               className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
-                hidden: data.is_editable,
+                hidden: data.is_editable && isEditable,
               })}
             />
           </Card>

@@ -26,10 +26,11 @@ interface IPreviewHOC {
   artifactId: string;
   shouldToggleSidebar?: boolean;
   showEdited?: boolean;
+  isEditable: boolean;
 }
 
 const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewHOC) {
-  const { children, artifactId, shouldToggleSidebar = true, showEdited = true } = props;
+  const { children, artifactId, shouldToggleSidebar = true, showEdited = true, isEditable } = props;
   // router
   const pathname = usePathname();
   // store hooks
@@ -59,6 +60,7 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
     >
       {children}
       {showEdited &&
+        isEditable &&
         isFullScreen &&
         originalArtifact?.is_editable &&
         EDITABLE_ARTIFACT_TYPES.includes(originalArtifact.artifact_type) && (

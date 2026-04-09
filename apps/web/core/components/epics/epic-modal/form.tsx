@@ -72,6 +72,7 @@ export interface EpicFormProps {
   modalTitle?: string;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
+  suppressDescriptionSyncWhenFocused?: boolean;
 }
 
 export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps) {
@@ -90,6 +91,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
     modalTitle = `${data?.id ? "Update epic" : "Create epic"}`,
     showActionButtons = true,
     dataResetProperties = [],
+    suppressDescriptionSyncWhenFocused = false,
   } = props;
 
   // states
@@ -333,6 +335,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
                   handleGptAssistantClose={() => reset(getValues())}
                   onAssetUpload={onAssetUpload}
                   onClose={onClose}
+                  suppressDescriptionSyncWhenFocused={suppressDescriptionSyncWhenFocused}
                 />
               </div>
               <div

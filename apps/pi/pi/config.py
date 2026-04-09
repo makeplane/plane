@@ -501,12 +501,12 @@ class Celery:
 
             region = os.getenv("AWS_REGION", "us-east-1")
             secret = get_secret(secret_arn, region)
-            user = quote(str(secret.get(os.getenv("RABBITMQ_USER_KEY"), "")), safe="")
-            password = quote(str(secret.get(os.getenv("RABBITMQ_PASSWORD_KEY"), "")), safe="")
-            host = secret.get(os.getenv("RABBITMQ_HOST_KEY"), "")
-            port = secret.get(os.getenv("RABBITMQ_PORT_KEY"), 5671)
+            secret_user = quote(str(secret.get(os.getenv("RABBITMQ_USER_KEY"), "")), safe="")
+            secret_password = quote(str(secret.get(os.getenv("RABBITMQ_PASSWORD_KEY"), "")), safe="")
+            secret_host = secret.get(os.getenv("RABBITMQ_HOST_KEY"), "")
+            secret_port = secret.get(os.getenv("RABBITMQ_PORT_KEY"), 5671)
             secret_vhost = quote(str(secret.get(os.getenv("RABBITMQ_VHOST_KEY"), "/")), safe="")
-            self.BROKER_URL = f"amqps://{user}:{password}@{host}:{port}/{secret_vhost}"
+            self.BROKER_URL = f"amqps://{secret_user}:{secret_password}@{secret_host}:{secret_port}/{secret_vhost}"
             return
 
         # If broker is provided but missing credentials (e.g. `host:5671`), inject creds from secret.

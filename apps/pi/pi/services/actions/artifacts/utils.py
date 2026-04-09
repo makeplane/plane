@@ -711,7 +711,10 @@ async def prepare_edited_artifact_data(entity_type: str, artifact_data: dict) ->
     preparation_function = edited_preparation_functions.get(entity_type, prepare_edited_unknown_artifact_data)
     prepared_data = await preparation_function(artifact_data)
 
-    return prepared_data
+    # Resolve project_id to full project object if present (matching unedited path behavior)
+    resolved_data = await resolve_project_id_to_object(prepared_data)
+
+    return resolved_data
 
 
 async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
@@ -748,7 +751,7 @@ async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
             else:
                 # If it's just an ID, keep it as string
                 properties["owned_by"] = str(value)
-        elif key not in {"entity_info"}:  # Skip entity_info
+        elif key not in {"entity_info", "workspace_slug"}:  # Skip non-display fields
             properties[key] = value
 
     # Convert project object to project_id string (frontend sends project as object)
@@ -832,7 +835,7 @@ async def prepare_edited_workitem_artifact_data(artifact_data: dict) -> dict:
         elif key in ["start_date", "target_date"] and value:
             # Transform date to object
             properties[key] = {"name": str(value)}
-        elif key not in {"entity_info"}:  # Skip entity_info
+        elif key not in {"entity_info", "workspace_slug"}:  # Skip non-display fields
             properties[key] = value
 
     # Execute all queries in parallel

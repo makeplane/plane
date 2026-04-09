@@ -12,12 +12,12 @@
  */
 
 import { observer } from "mobx-react";
-import { CyclePreviewCard } from "../preview-cards/cycle";
-import { ModulePreviewCard } from "../preview-cards/module";
-import { PagePreviewCard } from "../preview-cards/page";
-import { ProjectPreviewCard } from "../preview-cards/project";
-import { ViewPreviewCard } from "../preview-cards/view";
-import { WorkItemPreviewCard } from "../preview-cards/work-item";
+import { CyclePreviewCard } from "./cycle";
+import { ModulePreviewCard } from "./module";
+import { PagePreviewCard } from "./page";
+import { ProjectPreviewCard } from "./project";
+import { ViewPreviewCard } from "./view";
+import { WorkItemPreviewCard } from "./work-item";
 import { AddRemovePreviewCard } from "./add-remove";
 import { DeleteArchivePreviewCard } from "./delete-archieve";
 import { TemplatePreviewCard } from "./template";
@@ -27,38 +27,45 @@ import { McpsPreviewCard } from "./mcps";
 import { LinkPreviewCard } from "./link";
 
 // --- Main PreviewCard Component ---
-export const PreviewCard = observer(function PreviewCard(props: { artifactId: string; type: string; action: string }) {
-  const { artifactId, type, action } = props;
+export const PreviewCard = observer(function PreviewCard(props: {
+  artifactId: string;
+  type: string;
+  action: string;
+  isEditable: boolean;
+}) {
+  const { artifactId, type, action, isEditable } = props;
 
   // Special cases
-  if (type === "comment") return <CommentPreviewCard artifactId={artifactId} />;
-  if (["add", "remove"].includes(action)) return <AddRemovePreviewCard artifactId={artifactId} />;
-  if (["delete", "archive"].includes(action)) return <DeleteArchivePreviewCard artifactId={artifactId} />;
+  if (type === "comment") return <CommentPreviewCard artifactId={artifactId} isEditable={isEditable} />;
+  if (["add", "remove"].includes(action))
+    return <AddRemovePreviewCard artifactId={artifactId} isEditable={isEditable} />;
+  if (["delete", "archive"].includes(action))
+    return <DeleteArchivePreviewCard artifactId={artifactId} isEditable={isEditable} />;
 
   switch (type) {
     case "link":
-      return <LinkPreviewCard artifactId={artifactId} />;
+      return <LinkPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "workitem":
-      return <WorkItemPreviewCard artifactId={artifactId} />;
+      return <WorkItemPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "epic":
-      return <WorkItemPreviewCard artifactId={artifactId} isEpic />;
+      return <WorkItemPreviewCard artifactId={artifactId} isEpic isEditable={isEditable} />;
     case "page":
-      return <PagePreviewCard artifactId={artifactId} />;
+      return <PagePreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "cycle":
-      return <CyclePreviewCard artifactId={artifactId} />;
+      return <CyclePreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "module":
-      return <ModulePreviewCard artifactId={artifactId} />;
+      return <ModulePreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "view":
-      return <ViewPreviewCard artifactId={artifactId} />;
+      return <ViewPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "project":
-      return <ProjectPreviewCard artifactId={artifactId} />;
+      return <ProjectPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "comment":
-      return <CommentPreviewCard artifactId={artifactId} />;
+      return <CommentPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "worklog":
-      return <WorklogPreviewCard artifactId={artifactId} />;
+      return <WorklogPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     case "mcp":
-      return <McpsPreviewCard artifactId={artifactId} />;
+      return <McpsPreviewCard artifactId={artifactId} isEditable={isEditable} />;
     default:
-      return <TemplatePreviewCard artifactId={artifactId} />;
+      return <TemplatePreviewCard artifactId={artifactId} isEditable={isEditable} />;
   }
 });

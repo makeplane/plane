@@ -19,15 +19,21 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const TemplatePreviewCard = observer(function TemplatePreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useTemplateData(artifactId);
   if (!data) return <></>;
   const properties = { ...data.parameters?.properties, project: data.parameters?.project };
   return (
-    <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false} showEdited={false}>
+    <WithPreviewHOC
+      artifactId={data.artifact_id}
+      shouldToggleSidebar={false}
+      showEdited={false}
+      isEditable={isEditable}
+    >
       <div className="flex gap-2 items-start justify-between w-full">
         <div className="flex gap-2 items-start w-full">
           <div className="flex items-center justify-center my-1">

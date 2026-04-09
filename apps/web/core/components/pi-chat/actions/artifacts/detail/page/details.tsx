@@ -28,10 +28,11 @@ interface TPageDetailProps {
   activeChatId: string;
   workspaceSlug: string;
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
+  isEditable: boolean;
 }
 
 export const PageDetail = observer(function PageDetail(props: TPageDetailProps) {
-  const { data, artifactId, activeChatId, workspaceSlug, updateArtifact } = props;
+  const { data, artifactId, activeChatId, workspaceSlug, updateArtifact, isEditable } = props;
   const updatedData = usePageData(data.artifact_id);
   const editorRef = useRef<EditorRefApi>(null);
   // Helper: shallow/targeted equality for the page fields you care about.
@@ -69,6 +70,7 @@ export const PageDetail = observer(function PageDetail(props: TPageDetailProps) 
         }}
         handleOnChange={handleOnChange}
         editorRef={editorRef}
+        isEditable={data.is_editable && isEditable}
       />
       <PiChatArtifactsFooter
         artifactsData={data}

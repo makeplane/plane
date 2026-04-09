@@ -27,11 +27,12 @@ interface TProjectDetailProps {
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
   workspaceSlug: string;
   activeChatId: string;
+  isEditable: boolean;
 }
 
 export const ProjectDetail = observer(function ProjectDetail(props: TProjectDetailProps) {
   // props
-  const { data, updateArtifact, workspaceSlug, activeChatId } = props;
+  const { data, updateArtifact, workspaceSlug, activeChatId, isEditable } = props;
   // state
   const [isSaving, setIsSaving] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -110,7 +111,7 @@ export const ProjectDetail = observer(function ProjectDetail(props: TProjectDeta
         />
         <div
           className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
-            hidden: data.is_editable,
+            hidden: data.is_editable && isEditable,
           })}
         />
       </Card>

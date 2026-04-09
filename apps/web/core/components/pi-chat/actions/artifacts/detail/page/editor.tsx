@@ -31,10 +31,11 @@ type Props = {
   artifactId: string;
   onChange: (json: object, html: string) => void;
   editorRef: React.RefObject<EditorRefApi>;
+  isEditable: boolean;
 };
 
 export const PagePreviewEditor = observer(function PagePreviewEditor(props: Props) {
-  const { workspaceSlug, projectId, artifactId, initialValue, onChange, editorRef } = props;
+  const { workspaceSlug, projectId, artifactId, initialValue, onChange, editorRef, isEditable } = props;
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = useMemo(
@@ -45,7 +46,7 @@ export const PagePreviewEditor = observer(function PagePreviewEditor(props: Prop
   return (
     <DocumentEditor
       disabledExtensions={["issue-embed", "attachments", "image", "drawio", "comments", "page-embed", "nested-pages"]}
-      editable
+      editable={isEditable}
       id={`page-artifact-${artifactId}`}
       value={initialValue}
       onChange={onChange}

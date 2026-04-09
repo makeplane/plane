@@ -19,15 +19,16 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const ViewPreviewCard = observer(function ViewPreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useTemplateData(artifactId);
   const properties = { ...data?.parameters?.properties, project: data?.parameters?.project };
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={data.artifact_id}>
+    <WithPreviewHOC artifactId={data.artifact_id} isEditable={isEditable}>
       <div className="flex gap-2 items-start">
         <ViewsIcon className="size-4 text-primary my-0.5" />
         <div className="flex flex-col">

@@ -31,6 +31,7 @@ const DetailCardRenderer = observer(function DetailCardRenderer(props: {
   data: TArtifact;
   workspaceSlug: string;
   updateArtifact: (data: Partial<TUpdatedArtifact>) => Promise<void>;
+  isEditable: boolean;
 }) {
   const { data } = props;
   switch (data.artifact_type) {
@@ -59,9 +60,11 @@ export const PiChatArtifactsRoot = observer(function PiChatArtifactsRoot() {
     activeChatId,
     isPiArtifactsDrawerOpen: artifactId,
     artifactsStore: { getArtifact, updateArtifact },
+    getLatestMessageId,
   } = usePiChat();
   // derived values
   const artifactsData = artifactId && getArtifact(artifactId);
+  const latestMessageId = getLatestMessageId(activeChatId);
   if (!artifactsData) return null;
 
   return (
@@ -88,6 +91,7 @@ export const PiChatArtifactsRoot = observer(function PiChatArtifactsRoot() {
         >
           <DetailCardRenderer
             artifactId={artifactId}
+            isEditable={latestMessageId === artifactsData.message_id}
             activeChatId={activeChatId}
             workspaceSlug={workspaceSlug?.toString() || ""}
             data={artifactsData}

@@ -14,8 +14,8 @@
 import type { TArtifact } from "@/types";
 import { PreviewCard } from "../preview-cards/root";
 
-export function PiChatArtifactsListRoot(props: { artifacts: TArtifact[] }) {
-  const { artifacts } = props;
+export function PiChatArtifactsListRoot(props: { artifacts: TArtifact[]; isEditable: boolean }) {
+  const { artifacts, isEditable } = props;
   return (
     <div className="flex flex-col gap-4">
       {artifacts.map((artifact) => (
@@ -24,6 +24,7 @@ export function PiChatArtifactsListRoot(props: { artifacts: TArtifact[] }) {
           artifactId={artifact.artifact_id}
           type={artifact.artifact_type}
           action={artifact.action}
+          isEditable={isEditable}
         />
       ))}
     </div>

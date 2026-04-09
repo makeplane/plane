@@ -20,14 +20,15 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const CyclePreviewCard = observer(function CyclePreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useCycleData(artifactId);
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={artifactId}>
+    <WithPreviewHOC artifactId={artifactId} isEditable={isEditable}>
       <div className="flex gap-2 items-start">
         <CycleIcon className="size-4 text-primary my-0.5" />
         <div className="flex flex-col gap-2">

@@ -26,7 +26,7 @@ type TProps = {
 export function ConfirmBlock(props: TProps) {
   const { title, summary, isExecutingAction, handleExecuteAction, workspaceId, query_id, buttonText } = props;
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-layer-1 p-3 mb-4">
+    <div className="flex flex-col gap-3 rounded-xl bg-layer-1 p-3">
       <div className="flex flex-col gap-1">
         <div className="text-body-sm-semibold text-primary">{title || "Awaiting response"}</div>
         <div className="text-body-xs-regular text-tertiary">{summary}</div>

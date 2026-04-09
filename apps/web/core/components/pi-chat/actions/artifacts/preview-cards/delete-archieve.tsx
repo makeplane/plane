@@ -18,14 +18,15 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const DeleteArchivePreviewCard = observer(function DeleteArchivePreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useTemplateData(artifactId);
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false}>
+    <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false} isEditable={isEditable}>
       <div className="flex gap-2 items-start justify-between">
         <div className="flex gap-2 items-center">
           <div className="flex items-center justify-center my-1">

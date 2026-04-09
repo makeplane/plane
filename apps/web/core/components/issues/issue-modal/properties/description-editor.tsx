@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -59,6 +59,8 @@ type TIssueDescriptionEditorProps = {
   handleGptAssistantClose: () => void;
   onAssetUpload: (assetId: string) => void;
   onClose: () => void;
+  /** When true, suppresses value sync while editor is focused to prevent cursor jump on form reset (e.g. PI chat work item) */
+  suppressDescriptionSyncWhenFocused?: boolean;
 };
 
 export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(props: TIssueDescriptionEditorProps) {
@@ -79,11 +81,14 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     handleGptAssistantClose,
     onAssetUpload,
     onClose,
+    suppressDescriptionSyncWhenFocused = false,
   } = props;
   // i18n
   const { t } = useTranslation();
   // states
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "";
@@ -98,6 +103,16 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     if (descriptionHtmlData) handleDescriptionHTMLDataChange(descriptionHtmlData);
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [descriptionHtmlData]);
+
+  // Suppress value sync when editor is focused to prevent cursor jump on form reset (only when enabled)
+  useEffect(() => {
+    if (!suppressDescriptionSyncWhenFocused) return;
+    const handleFocusIn = (e: FocusEvent) => {
+      setIsEditorFocused(!!editorContainerRef.current?.contains(e.target as Node));
+    };
+    document.addEventListener("focusin", handleFocusIn);
+    return () => document.removeEventListener("focusin", handleFocusIn);
+  }, [suppressDescriptionSyncWhenFocused]);
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (editorRef.current?.isEditorReadyToDiscard()) {
@@ -184,72 +199,74 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
         </Loader>
       ) : (
         <>
-          <Controller
-            name="description_html"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <RichTextEditor
-                editable
-                id="issue-modal-editor"
-                initialValue={value ?? ""}
-                value={descriptionHtmlData}
-                workspaceSlug={workspaceSlug?.toString()}
-                workspaceId={workspaceId}
-                projectId={projectId}
-                onChange={(_description: object, description_html: string) => {
-                  onChange(description_html);
-                  handleFormChange();
-                }}
-                onEnterKeyPress={() => submitBtnRef?.current?.click()}
-                ref={editorRef}
-                tabIndex={getIndex("description_html")}
-                placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
-                searchMentionCallback={async (payload) =>
-                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                    ...payload,
-                    project_id: projectId?.toString() ?? "",
-                  })
-                }
-                containerClassName="pt-3 min-h-[120px]"
-                uploadFile={async (blockId, file) => {
-                  try {
-                    const { asset_id } = await uploadEditorAsset({
-                      blockId,
-                      data: {
-                        entity_identifier: issueId ?? "",
-                        entity_type: isDraft
-                          ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION
-                          : EFileAssetType.ISSUE_DESCRIPTION,
-                      },
-                      file,
-                      projectId,
-                      workspaceSlug,
-                    });
-                    onAssetUpload(asset_id);
-                    return asset_id;
-                  } catch (error) {
-                    console.log("Error in uploading issue asset:", error);
-                    throw new Error("Asset upload failed. Please try again later.");
+          <div ref={editorContainerRef}>
+            <Controller
+              name="description_html"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <RichTextEditor
+                  editable
+                  id="issue-modal-editor"
+                  initialValue={value ?? ""}
+                  value={suppressDescriptionSyncWhenFocused && isEditorFocused ? null : descriptionHtmlData}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  workspaceId={workspaceId}
+                  projectId={projectId}
+                  onChange={(_description: object, description_html: string) => {
+                    onChange(description_html);
+                    handleFormChange();
+                  }}
+                  onEnterKeyPress={() => submitBtnRef?.current?.click()}
+                  ref={editorRef}
+                  tabIndex={getIndex("description_html")}
+                  placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
+                  searchMentionCallback={async (payload) =>
+                    await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                      ...payload,
+                      project_id: projectId?.toString() ?? "",
+                    })
                   }
-                }}
-                duplicateFile={async (assetId: string) => {
-                  try {
-                    const { asset_id } = await duplicateEditorAsset({
-                      assetId,
-                      entityId: issueId,
-                      entityType: isDraft ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION : EFileAssetType.ISSUE_DESCRIPTION,
-                      projectId,
-                      workspaceSlug,
-                    });
-                    onAssetUpload(asset_id);
-                    return asset_id;
-                  } catch {
-                    throw new Error("Asset duplication failed. Please try again later.");
-                  }
-                }}
-              />
-            )}
-          />
+                  containerClassName="pt-3 min-h-[120px]"
+                  uploadFile={async (blockId, file) => {
+                    try {
+                      const { asset_id } = await uploadEditorAsset({
+                        blockId,
+                        data: {
+                          entity_identifier: issueId ?? "",
+                          entity_type: isDraft
+                            ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION
+                            : EFileAssetType.ISSUE_DESCRIPTION,
+                        },
+                        file,
+                        projectId,
+                        workspaceSlug,
+                      });
+                      onAssetUpload(asset_id);
+                      return asset_id;
+                    } catch (error) {
+                      console.log("Error in uploading issue asset:", error);
+                      throw new Error("Asset upload failed. Please try again later.");
+                    }
+                  }}
+                  duplicateFile={async (assetId: string) => {
+                    try {
+                      const { asset_id } = await duplicateEditorAsset({
+                        assetId,
+                        entityId: issueId,
+                        entityType: isDraft ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION : EFileAssetType.ISSUE_DESCRIPTION,
+                        projectId,
+                        workspaceSlug,
+                      });
+                      onAssetUpload(asset_id);
+                      return asset_id;
+                    } catch {
+                      throw new Error("Asset duplication failed. Please try again later.");
+                    }
+                  }}
+                />
+              )}
+            />
+          </div>
           <div className="border-0.5 z-10 flex items-center justify-end gap-2 p-3">
             {issueName && issueName.trim() !== "" && config?.has_llm_configured && (
               <button

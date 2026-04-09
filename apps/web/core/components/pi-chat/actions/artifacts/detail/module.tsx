@@ -27,10 +27,11 @@ interface TModuleDetailProps {
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
   workspaceSlug: string;
   activeChatId: string;
+  isEditable: boolean;
 }
 
 export const ModuleDetail = observer(function ModuleDetail(props: TModuleDetailProps) {
-  const { data, updateArtifact, workspaceSlug, activeChatId } = props;
+  const { data, updateArtifact, workspaceSlug, activeChatId, isEditable } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   const updatedData = useModuleData(data.artifact_id);
@@ -77,7 +78,7 @@ export const ModuleDetail = observer(function ModuleDetail(props: TModuleDetailP
           />
           <div
             className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
-              hidden: data.is_editable,
+              hidden: data.is_editable && isEditable,
             })}
           />
         </Card>

@@ -19,14 +19,14 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
-
 export const PagePreviewCard = observer(function PagePreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = usePageData(artifactId);
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={artifactId}>
+    <WithPreviewHOC artifactId={artifactId} isEditable={isEditable}>
       <div className="flex gap-2 w-full items-center">
         {data.logo_props?.in_use ? (
           <Logo logo={data.logo_props} size={16} type="lucide" />

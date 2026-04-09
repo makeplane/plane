@@ -21,14 +21,15 @@ import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 export const ModulePreviewCard = observer(function ModulePreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useModuleData(artifactId);
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={artifactId}>
+    <WithPreviewHOC artifactId={artifactId} isEditable={isEditable}>
       <div className="flex gap-2 items-start">
         <DiceIcon className="size-4 text-primary my-0.5 shrink-0" />
         <div className="flex flex-col">

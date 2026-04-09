@@ -18,6 +18,7 @@ import { Timer } from "lucide-react";
 
 type TProps = {
   artifactId: string;
+  isEditable: boolean;
 };
 
 const getDuration = (duration: string) => {
@@ -27,12 +28,12 @@ const getDuration = (duration: string) => {
   return `${hours} hours ${minutes % 60} minutes`;
 };
 export const WorklogPreviewCard = observer(function WorklogPreviewCard(props: TProps) {
-  const { artifactId } = props;
+  const { artifactId, isEditable } = props;
   const data = useTemplateData(artifactId);
   const worklog = data?.parameters?.properties;
   if (!data) return <></>;
   return (
-    <WithPreviewHOC artifactId={artifactId}>
+    <WithPreviewHOC artifactId={artifactId} isEditable={isEditable}>
       <div className="flex gap-2 items-start justify-between">
         <div className="flex gap-2 items-start">
           <div className="flex items-center justify-center my-1">

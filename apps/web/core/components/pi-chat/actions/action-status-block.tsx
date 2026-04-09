@@ -43,8 +43,13 @@ function ActionStatusBlock(props: TProps) {
   // store
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getChatFocus, executeAction } = usePiChat();
-
   const chatFocus = getChatFocus(activeChatId);
+  //derived
+  const shouldShowConfirmBlock =
+    isLatest &&
+    (execution_status === EExecutionStatus.PENDING ||
+      ((action_error || action_summary?.is_editable) && !action_summary?.is_executed));
+  const shouldShowSummaryBlock = execution_status === EExecutionStatus.EXECUTING || action_summary?.is_executed;
   // handlers
   const handleExecuteAction = async (workspaceId: string, query_id: string) => {
     try {
@@ -68,60 +73,38 @@ function ActionStatusBlock(props: TProps) {
       setIsExecutingAction(false);
     }
   };
-  if (actions?.length === 0 || !query_id) return null;
-  if (execution_status === EExecutionStatus.PENDING) {
-    if (isPiThinking || (isLatest && isPiTyping)) return null;
-    if (isLatest) {
-      return (
-        <ConfirmBlock
-          summary="Please confirm the actions you want to execute"
-          isExecutingAction={isExecutingAction}
-          handleExecuteAction={handleExecuteAction}
-          workspaceId={workspaceId}
-          query_id={query_id}
-        />
-      );
-    } else
-      return (
-        <div className="flex gap-2 text-placeholder text-13 mb-4">
-          <InfoIcon height={16} width={16} className="my-auto" />
-          <div> {actions?.length} action(s) not executed </div>
-        </div>
-      );
-  }
-  if (action_summary && action_summary?.completed + action_summary?.failed !== actions?.length)
+
+  if (!query_id || (isLatest && (isPiThinking || isPiTyping))) return null;
+  if (shouldShowConfirmBlock) {
     return (
-      <div className="flex gap-2 text-placeholder text-body-sm-regular mb-4">
-        <InfoIcon height={16} width={16} className="my-auto text-icon-tertiary" />
-        <div> {actions?.length} action(s) not executed </div>
-      </div>
+      <ConfirmBlock
+        title={action_error ? "Action failed" : "Awaiting response"}
+        summary={action_error ? action_error : "Please confirm the actions you want to execute"}
+        isExecutingAction={isExecutingAction}
+        handleExecuteAction={handleExecuteAction}
+        workspaceId={workspaceId}
+        query_id={query_id}
+      />
     );
-  // Render summary if execution status is executing or action summary is present
-  const shouldShowSummary = execution_status === EExecutionStatus.EXECUTING || Boolean(action_summary);
-
-  if (!shouldShowSummary && !action_error) return null;
-
+  }
+  if (shouldShowSummaryBlock)
+    return (
+      <SummaryBlock
+        summary={dialogue.action_summary}
+        chatId={activeChatId}
+        status={execution_status}
+        query_id={query_id}
+      />
+    );
+  if (!actions || !action_summary) return null;
   return (
-    <div className="flex flex-col gap-2">
-      {action_error && (
-        <ConfirmBlock
-          title="Action failed"
-          summary={action_error}
-          isExecutingAction={isExecutingAction}
-          handleExecuteAction={handleExecuteAction}
-          workspaceId={workspaceId}
-          query_id={query_id}
-          buttonText="Try again"
-        />
-      )}
-      {shouldShowSummary && (
-        <SummaryBlock
-          summary={dialogue.action_summary}
-          chatId={activeChatId}
-          status={execution_status}
-          query_id={query_id}
-        />
-      )}
+    <div className="flex gap-2 text-placeholder text-body-sm-regular">
+      <InfoIcon height={16} width={16} className="my-auto text-icon-tertiary" />
+      <div>
+        {" "}
+        {action_summary?.total_planned - (action_summary?.completed + action_summary?.failed)} action(s) not
+        executed{" "}
+      </div>
     </div>
   );
 }

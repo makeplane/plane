@@ -73,6 +73,7 @@ export interface IPiChatStore {
   getChatMode: (chatId: string) => string;
   getChatWebSearch: (chatId: string) => boolean;
   getModelById: (modelId: string) => TAiModels | undefined;
+  getLatestMessageId: (chatId: string) => string;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => Promise<void>;
@@ -342,6 +343,14 @@ export class PiChatStore implements IPiChatStore {
       }
     });
     return response;
+  });
+
+  getLatestMessageId = computedFn((chatId: string) => {
+    const chat = this.chatMap[chatId];
+    if (chat && chat.dialogue?.length > 0) {
+      return chat.dialogue[chat.dialogue.length - 1];
+    }
+    return "";
   });
 
   // actions
@@ -1093,6 +1102,7 @@ export class PiChatStore implements IPiChatStore {
           success: action.success,
           error: action.error,
           message: action.message,
+          is_editable: false,
         });
         if (action.success) {
           actionableEntities.push(action.artifact_type);
@@ -1101,7 +1111,7 @@ export class PiChatStore implements IPiChatStore {
       // update dialogue
       dialogue.execution_status = EExecutionStatus.COMPLETED;
       dialogue.action_error = undefined;
-      dialogue.action_summary = response.action_summary;
+      dialogue.action_summary = { ...response.action_summary, is_editable: false, is_executed: true };
       dialogue.actions = response.actions;
       this.updateDialogue(chatId, actionId, dialogue);
 

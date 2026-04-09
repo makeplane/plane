@@ -26,10 +26,11 @@ type Props = {
   preloadedData?: Partial<TPage>;
   handleOnChange: (data: Partial<TPage> | null) => void;
   editorRef: React.RefObject<EditorRefApi>;
+  isEditable: boolean;
 };
 
 export const PageFormRoot = observer(function PageFormRoot(props: Props) {
-  const { artifactId, workspaceSlug, preloadedData, handleOnChange, editorRef } = props;
+  const { artifactId, workspaceSlug, preloadedData, handleOnChange, editorRef, isEditable } = props;
   // states
   const [isEmojiIconPickerOpen, setIsEmojiIconPickerOpen] = useState(false);
   // form state
@@ -76,6 +77,7 @@ export const PageFormRoot = observer(function PageFormRoot(props: Props) {
                 name="logo_props"
                 render={({ field: { onChange, value } }) => (
                   <EmojiPicker
+                    disabled={!isEditable}
                     iconType="lucide"
                     isOpen={isEmojiIconPickerOpen}
                     handleToggle={(val: boolean) => setIsEmojiIconPickerOpen(val)}
@@ -124,6 +126,7 @@ export const PageFormRoot = observer(function PageFormRoot(props: Props) {
                     artifactId={artifactId}
                     workspaceSlug={workspaceSlug}
                     editorRef={editorRef}
+                    isEditable={isEditable}
                   />
                 )}
               />

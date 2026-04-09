@@ -29,14 +29,15 @@ import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-iden
 type TProps = {
   artifactId: string;
   isEpic?: boolean;
+  isEditable: boolean;
 };
 
 export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: TProps) {
-  const { artifactId, isEpic = false } = props;
+  const { artifactId, isEpic = false, isEditable } = props;
   const data = useWorkItemData(artifactId);
   const { workspaceSlug } = useParams();
   return (
-    <WithPreviewHOC artifactId={artifactId}>
+    <WithPreviewHOC artifactId={artifactId} isEditable={isEditable}>
       <div className="flex flex-col items-start">
         {/* header */}
         <div className="flex gap-2 items-center overflow-hidden w-full">

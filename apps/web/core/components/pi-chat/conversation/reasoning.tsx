@@ -89,7 +89,7 @@ export const ReasoningBlock = (props: TProps) => {
         </button>
       )}
       <div
-        className={cn("rounded-xl bg-surface-1  border-subtle transition-all duration-500 ease-in-out ", {
+        className={cn("rounded-xl bg-surface-1  border-subtle transition-all duration-500 ease-in-out py-2", {
           "my-2": isOpen,
           "border ": isThinking || isOpen,
         })}
