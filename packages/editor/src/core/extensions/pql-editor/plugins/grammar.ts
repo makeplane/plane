@@ -47,6 +47,14 @@ export const FIELD_ALIASES: Record<string, string> = {
   text: "text",
 };
 
+/** PQL field names that expect date / datetime string values (yyyy-M-d). */
+export const DATE_FIELD_NAMES = new Set<string>([
+  FIELD_ALIASES.start_date,
+  FIELD_ALIASES.target_date,
+  FIELD_ALIASES.created_at,
+  FIELD_ALIASES.updated_at,
+]);
+
 // ─── Valid history field names (for wasEver, changedFrom, etc.) ───────────────
 
 export const HISTORY_FIELD_NAMES = new Set([

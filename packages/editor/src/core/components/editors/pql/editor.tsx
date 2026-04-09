@@ -76,7 +76,7 @@ function PQLEditor(
     };
   }, []);
 
-  const { editor, selectOption } = usePQLEditor({
+  const { editor, hasErrors, selectOption } = usePQLEditor({
     autoFocus: !!autoFocus,
     disableSubmit,
     dropdownStateRef,
@@ -131,9 +131,9 @@ function PQLEditor(
                   text: editor.getText(),
                 })
               }
-              loading={isSubmitting}
               className="shrink-0 transition-colors duration-200"
-              disabled={disableSubmit || isSubmitting}
+              loading={isSubmitting}
+              disabled={disableSubmit || hasErrors}
             >
               Run
             </Button>

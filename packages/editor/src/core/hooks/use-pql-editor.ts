@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useCallback, useImperativeHandle, useMemo, useRef } from "react";
+import { useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
@@ -92,12 +92,22 @@ export const usePQLEditor = ({
   const disableSubmitRef = useRef(disableSubmit);
   disableSubmitRef.current = disableSubmit;
 
+  // Tracks parse errors so the submit button and Enter-key handler can be
+  // disabled when the query is invalid. The ref is used by the frozen getter
+  // inside the extension; the state drives the button's visual disabled state.
+  const parseErrorsRef = useRef(false);
+  const [hasErrors, setHasErrors] = useState(false);
+
   // Tracks the most-recent suggestion context so value-accept handlers can
   // check whether we're inside an IN list without re-running the full context
   // derivation.
   const currentContextRef = useRef<SuggestionContext | null>(null);
 
-  const handleParseResult = useCallback((_result: ParseResult) => {}, []);
+  const handleParseResult = useCallback((result: ParseResult) => {
+    const nextHasErrors = !result.isValid;
+    parseErrorsRef.current = nextHasErrors;
+    setHasErrors(nextHasErrors);
+  }, []);
 
   const openDropdown = useCallback(
     (list: Suggestion[], newAnchor: { top: number; left: number; bottom: number } | null) => {
@@ -267,7 +277,7 @@ export const usePQLEditor = ({
         onParseResult: handleParseResult,
         onContextChange: handleContextChange,
         onSubmit,
-        getIsSubmitDisabled: () => !!disableSubmitRef.current,
+        getIsSubmitDisabled: () => !!disableSubmitRef.current || parseErrorsRef.current,
         getDropdownState: () => dropdownStateRef.current,
         onDropdownNavigate: handleDropdownNavigate,
         onDropdownAccept: handleDropdownAccept,
@@ -325,6 +335,7 @@ export const usePQLEditor = ({
 
   return {
     editor,
+    hasErrors,
     selectOption,
   };
 };

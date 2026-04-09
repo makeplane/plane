@@ -191,7 +191,7 @@ function buildState(state: EditorState, options: PQLHighlighterOptions): Highlig
       if (fieldValue) token.value = fieldValue;
     }
   }
-  const { ast, errors: parseErrors } = parse(tokens);
+  const { ast, errors: parseErrors } = parse(tokens, options.fieldDefs);
   const validationErrors = validate(ast, fieldMap);
   const allErrors = [...parseErrors, ...validationErrors];
 

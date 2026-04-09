@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
+import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parse, parseISO } from "date-fns";
 import { isNumber } from "lodash-es";
 
 // Format Date Helpers
@@ -621,3 +621,10 @@ export const formatDuration = (seconds: number | undefined | null): string => {
  */
 export const isValidDate = (date: unknown): date is string | Date =>
   (typeof date === "string" || typeof date === "object") && date !== null && !isNaN(Date.parse(date as string));
+
+/**
+ * Returns true when the string is a valid formatted date (yyyy-M-d).
+ * Accepts both zero-padded and single-digit months/days (e.g. "2024-1-5" and "2024-01-05").
+ * @param str The date string to validate.
+ */
+export const isAValidFormattedDate = (str: string): boolean => isValid(parse(str, "yyyy-M-d", new Date()));
