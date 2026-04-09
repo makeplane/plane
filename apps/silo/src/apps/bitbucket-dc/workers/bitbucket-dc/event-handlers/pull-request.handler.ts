@@ -50,7 +50,7 @@ const handlePullRequestEvent = async (data: BitbucketPullRequestDedupPayload) =>
     return;
   }
 
-  const { wsAdminCredential, planeCredentials } = context;
+  const { wsAdminCredential } = context;
 
   const { workspaceConnection: bitbucketWorkspaceConnection, allEntityConnections } =
     await getConnDetailsForBitbucketToPlaneSync({
@@ -69,7 +69,7 @@ const handlePullRequestEvent = async (data: BitbucketPullRequestDedupPayload) =>
     return;
   }
 
-  const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.BITBUCKET_DC);
+  const planeClient = await getPlaneAPIClient(wsAdminCredential, E_INTEGRATION_KEYS.BITBUCKET_DC);
   const pullRequestService = await getBitbucketClientService(bitbucketWorkspaceConnection);
 
   const pullRequestBehaviour = new PullRequestBehaviour(
