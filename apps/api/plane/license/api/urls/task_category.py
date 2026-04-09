@@ -10,6 +10,7 @@ from plane.license.api.views.task_category import (
     InstanceSubTaskCategoryEndpoint,
     InstanceSubTaskCategoryDetailEndpoint,
 )
+from plane.license.api.views.task_category_bulk_import import TaskCategoryBulkImportView
 
 urlpatterns = [
     path(
@@ -31,5 +32,10 @@ urlpatterns = [
         "task-categories/sub/<uuid:pk>/",
         InstanceSubTaskCategoryDetailEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="instance-sub-task-category-detail",
+    ),
+    path(
+        "task-categories/bulk-import/",
+        TaskCategoryBulkImportView.as_view(http_method_names=["post"]),
+        name="instance-task-category-bulk-import",
     ),
 ]

@@ -704,3 +704,39 @@ def _join_descendant_workspaces(department, user, depth=0):
             ).exists():
                 WorkspaceMember.objects.create(workspace=child.linked_workspace, member=user, role=15, is_active=True)
         _join_descendant_workspaces(child, user, depth + 1)
+
+
+class InstanceDepartmentLinkTaskCategoriesEndpoint(BaseAPIView):
+    """Bulk-set task categories for a department (replace-all via PUT)."""
+
+    def put(self, request, pk):
+        from plane.db.models import DepartmentTaskCategory, MainTaskCategory
+        from plane.app.serializers.department import DepartmentSerializer
+
+        try:
+            dept = Department.objects.get(pk=pk, deleted_at__isnull=True)
+        except Department.DoesNotExist:
+            return Response({"error": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        category_ids = request.data.get("task_category_ids", [])
+        valid_ids = list(
+            MainTaskCategory.objects.filter(
+                id__in=category_ids, deleted_at__isnull=True
+            ).values_list("id", flat=True)
+        )
+
+        # Hard-delete ALL through records (including previously soft-deleted ones)
+        # via all_objects manager to avoid unique constraint conflicts on bulk_create.
+        # SoftDeletionQuerySet.delete() does a soft delete by default, which leaves
+        # rows in DB and blocks re-insertion due to unique_together constraint.
+        DepartmentTaskCategory.all_objects.filter(department=dept).delete()
+        if valid_ids:
+            DepartmentTaskCategory.objects.bulk_create(
+                [
+                    DepartmentTaskCategory(department=dept, main_task_category_id=cat_id)
+                    for cat_id in valid_ids
+                ],
+            )
+
+        serializer = DepartmentSerializer(dept)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus, Loader as LoaderIcon } from "lucide-react";
+import { Download, Plus, Upload, Loader as LoaderIcon } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import type { IMainTaskCategory, ISubTaskCategory } from "@plane/types";
@@ -17,13 +17,30 @@ import { MainCategoryList } from "./components/main-category-list";
 import { SubCategoryList } from "./components/sub-category-list";
 import { MainCategoryFormModal } from "./components/main-category-form-modal";
 import { SubCategoryFormModal } from "./components/sub-category-form-modal";
+import { TaskCategoryImportModal } from "./components/task-category-import-modal";
+
+async function exportToExcel(
+  mains: IMainTaskCategory[],
+  subs: ISubTaskCategory[],
+  mainById: Record<string, IMainTaskCategory>
+) {
+  const XLSX = await import("xlsx");
+  const headers = ["type", "main_category_name", "name", "description", "sort_order", "is_active"];
+  const mainRows = mains.map((m) => ["main", "", m.name, m.description ?? "", m.sort_order, m.is_active]);
+  const subRows = subs.map((s) => ["sub", mainById[s.main_category]?.name ?? "", s.name, "", s.sort_order, s.is_active]);
+  const sheet = XLSX.utils.aoa_to_sheet([headers, ...mainRows, ...subRows]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, sheet, "Task Categories");
+  XLSX.writeFile(wb, "task-categories.xlsx");
+}
 
 const TaskCategoriesPage = observer(function TaskCategoriesPage() {
-  const { loader, fetchCategories } = useInstanceTaskCategory();
+  const { loader, fetchCategories, mainCategories, subCategories } = useInstanceTaskCategory();
 
   const [selectedMainId, setSelectedMainId] = useState<string | null>(null);
   const [mainModalOpen, setMainModalOpen] = useState(false);
   const [subModalOpen, setSubModalOpen] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
   const [editMain, setEditMain] = useState<IMainTaskCategory | null>(null);
   const [editSub, setEditSub] = useState<ISubTaskCategory | null>(null);
 
@@ -67,6 +84,26 @@ const TaskCategoriesPage = observer(function TaskCategoriesPage() {
             Categories
             {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
           </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() =>
+                void exportToExcel(
+                  Object.values(mainCategories),
+                  Object.values(subCategories),
+                  mainCategories
+                )
+              }
+            >
+              <Download className="w-4 h-4" />
+              Export
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setImportModalOpen(true)}>
+              <Upload className="w-4 h-4" />
+              Import
+            </Button>
+          </div>
         </div>
 
         {loader === "init-loader" ? (
@@ -108,6 +145,7 @@ const TaskCategoriesPage = observer(function TaskCategoriesPage() {
         editCategory={editSub}
         defaultMainId={selectedMainId}
       />
+      <TaskCategoryImportModal isOpen={importModalOpen} onClose={() => setImportModalOpen(false)} />
     </PageWrapper>
   );
 });

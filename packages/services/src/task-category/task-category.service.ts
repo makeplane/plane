@@ -5,6 +5,8 @@ import type {
   ISubTaskCategory,
   ISubTaskCategoryCreate,
   ISubTaskCategoryUpdate,
+  ITaskCategoryBulkImportRequest,
+  ITaskCategoryBulkImportResponse,
 } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "../api.service";
@@ -77,6 +79,14 @@ export class TaskCategoryService extends APIService {
 
   async deleteSub(id: string): Promise<void> {
     return this.delete(`/api/instances/task-categories/sub/${id}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkImport(data: ITaskCategoryBulkImportRequest): Promise<ITaskCategoryBulkImportResponse> {
+    return this.post("/api/instances/task-categories/bulk-import/", data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

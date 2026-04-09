@@ -5,6 +5,7 @@
  */
 
 import { useMemo } from "react";
+import { useSearchParams } from "react-router";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
@@ -19,6 +20,10 @@ const bankWideProjectsService = new BankWideProjectsService();
 export const BankWideProjectsRoot = function BankWideProjectsRoot() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search")?.toLowerCase() ?? "";
+  const fromDate = searchParams.get("from_date") ?? "";
+  const toDate = searchParams.get("to_date") ?? "";
 
   const {
     data: projects,
@@ -28,14 +33,30 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
     bankWideProjectsService.fetchAll(currentWorkspace!.slug)
   );
 
-  // Group projects by workspace_slug, preserving backend order
+  // Filter by search query and date range (created_at), then group by workspace_slug
   const grouped = useMemo(() => {
     if (!projects) return {};
-    return projects.reduce<Record<string, IBankWideProject[]>>((acc, project) => {
+    const from = fromDate ? new Date(fromDate) : null;
+    const to = toDate ? new Date(toDate) : null;
+    // extend to end-of-day so "to date" is inclusive
+    if (to) to.setHours(23, 59, 59, 999);
+
+    const filtered = projects.filter((p) => {
+      if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return false;
+      if (from || to) {
+        if (!p.created_at) return true;
+        const created = new Date(p.created_at);
+        if (from && created < from) return false;
+        if (to && created > to) return false;
+      }
+      return true;
+    });
+
+    return filtered.reduce<Record<string, IBankWideProject[]>>((acc, project) => {
       (acc[project.workspace_slug] ??= []).push(project);
       return acc;
     }, {});
-  }, [projects]);
+  }, [projects, searchQuery, fromDate, toDate]);
 
   if (isLoading) return <ProjectsLoader />;
 

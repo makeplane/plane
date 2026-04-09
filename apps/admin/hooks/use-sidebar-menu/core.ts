@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Activity, Image, BrainCog, Cog, Mail, Users, Network, UserCheck, Tag } from "lucide-react";
+import { Activity, Briefcase, Image, BrainCog, Cog, Mail, Users, Network, UserCheck, Tag } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
@@ -21,7 +21,8 @@ export type TCoreSidebarMenuKey =
   | "ai"
   | "image"
   | "monitoring"
-  | "task-categories";
+  | "task-categories"
+  | "job-positions";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -89,5 +90,11 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Task Categories",
     description: "Manage main and sub task categories for work items.",
     href: `/task-categories/`,
+  },
+  "job-positions": {
+    Icon: Briefcase,
+    name: "Job Positions",
+    description: "Manage job positions and grades.",
+    href: `/job-positions/`,
   },
 };

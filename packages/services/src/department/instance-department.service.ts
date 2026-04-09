@@ -52,6 +52,7 @@ export interface IInstanceDepartment {
   manager_detail: { id: string; display_name: string; email: string } | null;
   linked_workspace: string | null;
   linked_workspace_detail: { id: string; name: string; slug: string } | null;
+  task_category_ids: string[];
   sort_order: number;
   is_active: boolean;
   staff_count: number;
@@ -62,7 +63,14 @@ export interface IInstanceDepartment {
 
 export type IInstanceDepartmentCreate = Omit<
   IInstanceDepartment,
-  "id" | "created_at" | "updated_at" | "staff_count" | "manager_detail" | "linked_workspace_detail" | "children"
+  | "id"
+  | "created_at"
+  | "updated_at"
+  | "staff_count"
+  | "manager_detail"
+  | "linked_workspace_detail"
+  | "task_category_ids"
+  | "children"
 >;
 
 export type IInstanceDepartmentUpdate = Partial<IInstanceDepartmentCreate>;
@@ -118,6 +126,34 @@ export interface IDepartmentBulkLinkSkipped {
 export interface IDepartmentBulkLinkResponse {
   linked: IDepartmentBulkLinkLinked[];
   skipped: IDepartmentBulkLinkSkipped[];
+  total_linked: number;
+  total_skipped: number;
+}
+
+export interface IDepartmentBulkLinkCategoriesRow {
+  dept_code: string;
+  category_name: string;
+}
+
+export interface IDepartmentBulkLinkCategoriesRequest {
+  links: IDepartmentBulkLinkCategoriesRow[];
+}
+
+export interface IDepartmentBulkLinkCategoriesLinked {
+  dept_code: string;
+  dept_name: string;
+  category_name: string;
+}
+
+export interface IDepartmentBulkLinkCategoriesSkipped {
+  row: number;
+  dept_code?: string;
+  reason: string;
+}
+
+export interface IDepartmentBulkLinkCategoriesResponse {
+  linked: IDepartmentBulkLinkCategoriesLinked[];
+  skipped: IDepartmentBulkLinkCategoriesSkipped[];
   total_linked: number;
   total_skipped: number;
 }
@@ -226,6 +262,26 @@ export class InstanceDepartmentService extends APIService {
   async bulkLinkWorkspace(data: IDepartmentBulkLinkRequest): Promise<IDepartmentBulkLinkResponse> {
     return this.post("/api/instances/departments/bulk-link-workspace/", data)
       .then((res) => res?.data as IDepartmentBulkLinkResponse)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkLinkCategories(
+    data: IDepartmentBulkLinkCategoriesRequest
+  ): Promise<IDepartmentBulkLinkCategoriesResponse> {
+    return this.post("/api/instances/departments/bulk-link-categories/", data)
+      .then((res) => res?.data as IDepartmentBulkLinkCategoriesResponse)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async linkTaskCategories(id: string, taskCategoryIds: string[]): Promise<IInstanceDepartment> {
+    return this.put(`/api/instances/departments/${id}/link-task-categories/`, {
+      task_category_ids: taskCategoryIds,
+    })
+      .then((res) => res?.data as IInstanceDepartment)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

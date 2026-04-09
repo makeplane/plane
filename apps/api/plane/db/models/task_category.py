@@ -16,6 +16,12 @@ class MainTaskCategory(BaseModel):
     description = models.TextField(blank=True, default="")
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
+    departments = models.ManyToManyField(
+        "db.Department",
+        through="DepartmentTaskCategory",
+        related_name="main_task_categories",
+        blank=True,
+    )
 
     class Meta:
         db_table = "main_task_categories"
@@ -62,3 +68,18 @@ class SubTaskCategory(BaseModel):
 
     def __str__(self):
         return f"{self.main_category.name} / {self.name}"
+
+
+class DepartmentTaskCategory(BaseModel):
+    """Through-model linking departments to main task categories (M2M)."""
+
+    department = models.ForeignKey(
+        "db.Department", on_delete=models.CASCADE, related_name="task_category_links"
+    )
+    main_task_category = models.ForeignKey(
+        MainTaskCategory, on_delete=models.CASCADE, related_name="department_links"
+    )
+
+    class Meta:
+        db_table = "department_task_categories"
+        unique_together = [["department", "main_task_category"]]

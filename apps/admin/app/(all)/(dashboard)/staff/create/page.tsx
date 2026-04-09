@@ -25,6 +25,9 @@ const StaffCreatePage = observer(function StaffCreatePage() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
+    control,
     formState: { errors },
   } = useForm<StaffFormValues>({
     defaultValues: {
@@ -84,7 +87,7 @@ const StaffCreatePage = observer(function StaffCreatePage() {
     <PageWrapper header={{ title: "Add Staff", description: "Create a new staff profile." }}>
       <div className="pt-4 max-w-2xl">
         <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-6">
-          <StaffFormFields register={register} errors={errors} />
+          <StaffFormFields register={register} errors={errors} watch={watch} setValue={setValue} control={control} />
           <div className="flex items-center gap-4 pt-2">
             <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
               {isSubmitting ? "Creating..." : "Create staff"}

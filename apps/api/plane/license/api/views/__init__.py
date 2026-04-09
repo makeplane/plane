@@ -51,3 +51,10 @@ from .task_category import (
     InstanceSubTaskCategoryEndpoint,
     InstanceSubTaskCategoryDetailEndpoint,
 )
+from .job_position import (
+    InstanceJobPositionEndpoint,
+    InstanceJobPositionDetailEndpoint,
+    InstanceJobGradeEndpoint,
+    InstanceJobGradeDetailEndpoint,
+)
+from .job_position_bulk_import import JobPositionBulkImportView

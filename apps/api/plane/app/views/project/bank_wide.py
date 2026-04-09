@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers.base import DynamicBaseSerializer
 from plane.app.views.base import BaseAPIView
+from plane.app.views.ho import get_accessible_workspace_ids
 from plane.db.models import Project, Workspace
 
 
@@ -59,8 +60,16 @@ class WorkspaceBankWideProjectsEndpoint(BaseAPIView):
         if not workspace or not workspace.is_board_of_director_workspace:
             return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
 
+        # Scope to workspaces the user manages (department tree) or belongs to.
+        # Instance admins see all workspaces; others see only their managed departments + descendants.
+        accessible_workspace_ids = get_accessible_workspace_ids(request.user)
+
         projects = (
-            Project.objects.filter(is_bank_wide=True, archived_at__isnull=True)
+            Project.objects.filter(
+                is_bank_wide=True,
+                archived_at__isnull=True,
+                workspace_id__in=accessible_workspace_ids,
+            )
             .select_related("workspace")
             .prefetch_related("project_projectmember")
             .order_by("workspace__name", "name")

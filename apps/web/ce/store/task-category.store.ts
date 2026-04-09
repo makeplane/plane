@@ -8,6 +8,7 @@ export interface ITaskCategoryStore {
   // observables
   loader: TLoader;
   hasFetched: boolean;
+  fetchedWorkspaceSlug: string | undefined;
   mainCategories: Record<string, IMainTaskCategory>;
   subCategories: Record<string, ISubTaskCategory>;
   // computed
@@ -21,6 +22,7 @@ export class TaskCategoryStore implements ITaskCategoryStore {
   // observables
   loader: TLoader = undefined;
   hasFetched: boolean = false;
+  fetchedWorkspaceSlug: string | undefined = undefined;
   mainCategories: Record<string, IMainTaskCategory> = {};
   subCategories: Record<string, ISubTaskCategory> = {};
 
@@ -33,6 +35,7 @@ export class TaskCategoryStore implements ITaskCategoryStore {
     makeObservable(this, {
       loader: observable,
       hasFetched: observable,
+      fetchedWorkspaceSlug: observable,
       mainCategories: observable,
       subCategories: observable,
       // computed
@@ -55,9 +58,9 @@ export class TaskCategoryStore implements ITaskCategoryStore {
     return Object.values(this.subCategories).filter((s) => s.is_active && s.main_category === mainId);
   };
 
-  /** Fetch main and sub categories. Guards against repeat calls via hasFetched. */
+  /** Fetch main and sub categories. Re-fetches when workspace changes. */
   fetchCategories = async (workspaceSlug: string): Promise<void> => {
-    if (this.hasFetched) return;
+    if (this.hasFetched && this.fetchedWorkspaceSlug === workspaceSlug) return;
 
     runInAction(() => {
       this.loader = "init-loader";
@@ -74,11 +77,13 @@ export class TaskCategoryStore implements ITaskCategoryStore {
         this.subCategories = Object.fromEntries(subList.map((s) => [s.id, s]));
         this.loader = "loaded";
         this.hasFetched = true;
+        this.fetchedWorkspaceSlug = workspaceSlug;
       });
     } catch {
       runInAction(() => {
         this.loader = undefined;
         this.hasFetched = true; // prevent infinite retry
+        this.fetchedWorkspaceSlug = workspaceSlug;
       });
     }
   };

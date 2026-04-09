@@ -14,24 +14,28 @@ import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IInstanceDepartment } from "@plane/services";
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { useInstanceDepartment } from "@/hooks/store";
+import { useInstanceDepartment, useInstanceTaskCategory } from "@/hooks/store";
 import { DepartmentTreeItem } from "./components/department-tree-item";
 import { DepartmentFormModal } from "./components/department-form-modal";
 import { AutoJoinModal } from "./components/auto-join-modal";
 import { RejoinAllModal } from "./components/rejoin-all-modal";
 import { BulkLinkModal } from "./components/bulk-link-modal";
+import { BulkLinkCategoriesModal } from "./components/bulk-link-categories-modal";
 
 const DepartmentsPage = observer(function DepartmentsPage() {
-  const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked } =
+  const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked, exportLinkedCategories } =
     useInstanceDepartment();
+  const { fetchCategories, mainCategories } = useInstanceTaskCategory();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [editDept, setEditDept] = useState<IInstanceDepartment | null>(null);
   const [autoJoinDept, setAutoJoinDept] = useState<IInstanceDepartment | null>(null);
   const [rejoinModalOpen, setRejoinModalOpen] = useState(false);
   const [bulkLinkOpen, setBulkLinkOpen] = useState(false);
+  const [bulkLinkCategoriesOpen, setBulkLinkCategoriesOpen] = useState(false);
 
   useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
+  useSWR("INSTANCE_TASK_CATEGORIES_FOR_DEPTS", fetchCategories);
 
   const handleEdit = (dept: IInstanceDepartment) => {
     setEditDept(dept);
@@ -63,12 +67,12 @@ const DepartmentsPage = observer(function DepartmentsPage() {
       }}
     >
       <div className="space-y-3">
-        <div className="pt-2 flex items-center justify-between gap-2">
+        <div className="pt-2 space-y-2">
           <div className="flex items-center gap-2 text-16 font-medium">
             Department tree
             {loader === "mutation" && <LoaderIcon className="w-4 h-4 animate-spin text-tertiary" />}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button variant="ghost" size="sm" onClick={() => exportDepartments()}>
               <Download className="w-4 h-4" />
               Export Dept
@@ -88,6 +92,14 @@ const DepartmentsPage = observer(function DepartmentsPage() {
             <Button variant="ghost" size="sm" onClick={() => exportWorkspaceLinked()}>
               <Download className="w-4 h-4" />
               Export Workspace Linked
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setBulkLinkCategoriesOpen(true)}>
+              <Upload className="w-4 h-4" />
+              Bulk Linked Categories
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => exportLinkedCategories(Object.values(mainCategories))}>
+              <Download className="w-4 h-4" />
+              Export Linked Categories
             </Button>
             <Button
               variant="primary"
@@ -134,10 +146,12 @@ const DepartmentsPage = observer(function DepartmentsPage() {
       />
       <RejoinAllModal open={rejoinModalOpen} onClose={() => setRejoinModalOpen(false)} />
       <BulkLinkModal open={bulkLinkOpen} onClose={() => setBulkLinkOpen(false)} />
+      <BulkLinkCategoriesModal open={bulkLinkCategoriesOpen} onClose={() => setBulkLinkCategoriesOpen(false)} />
     </PageWrapper>
   );
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function meta() {
   return [{ title: "Departments - God Mode" }];
 }

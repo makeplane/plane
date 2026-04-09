@@ -29,6 +29,9 @@ export const StaffFormModal = observer(function StaffFormModal({ open, onClose, 
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
+    control,
     formState: { errors },
   } = useForm<StaffFormValues>();
 
@@ -87,7 +90,7 @@ export const StaffFormModal = observer(function StaffFormModal({ open, onClose, 
         <div className="p-6">
           <Dialog.Title>Edit Staff Profile</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="mt-4 space-y-4">
-            <StaffFormFields register={register} errors={errors} />
+            <StaffFormFields register={register} errors={errors} watch={watch} setValue={setValue} control={control} />
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="secondary" onClick={onClose} type="button">
                 Cancel
