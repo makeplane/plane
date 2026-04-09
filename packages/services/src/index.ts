@@ -22,3 +22,4 @@ export * from "./label";
 export * from "./state";
 export * from "./issue";
 export * from "./task-category";
+export * from "./job-position";

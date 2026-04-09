@@ -106,3 +106,4 @@ from .workflow import (
 )
 
 from .task_category import MainTaskCategory, SubTaskCategory, DepartmentTaskCategory
+from .job_position import JobPosition, JobGrade

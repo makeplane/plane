@@ -24,6 +24,8 @@ import type { IMonitoringStore } from "./monitoring.store";
 import { MonitoringStore } from "./monitoring.store";
 import type { IInstanceTaskCategoryStore } from "./instance-task-category.store";
 import { InstanceTaskCategoryStore } from "./instance-task-category.store";
+import type { IInstanceJobPositionStore } from "./instance-job-position.store";
+import { InstanceJobPositionStore } from "./instance-job-position.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -37,6 +39,7 @@ export class RootStore {
   instanceStaff: IInstanceStaffStore;
   monitoring: IMonitoringStore;
   instanceTaskCategory: IInstanceTaskCategoryStore;
+  instanceJobPosition: IInstanceJobPositionStore;
 
   constructor() {
     this.theme = new ThemeStore(this);
@@ -48,6 +51,7 @@ export class RootStore {
     this.instanceStaff = new InstanceStaffStore(this);
     this.monitoring = new MonitoringStore(this);
     this.instanceTaskCategory = new InstanceTaskCategoryStore();
+    this.instanceJobPosition = new InstanceJobPositionStore();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pre-existing hydrate pattern
@@ -69,5 +73,6 @@ export class RootStore {
     this.instanceStaff = new InstanceStaffStore(this);
     this.monitoring = new MonitoringStore(this);
     this.instanceTaskCategory = new InstanceTaskCategoryStore();
+    this.instanceJobPosition = new InstanceJobPositionStore();
   }
 }

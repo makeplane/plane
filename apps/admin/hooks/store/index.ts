@@ -13,3 +13,4 @@ export * from "./use-instance-department";
 export * from "./use-instance-staff";
 export * from "./use-monitoring";
 export * from "./use-instance-task-category";
+export * from "./use-instance-job-position";

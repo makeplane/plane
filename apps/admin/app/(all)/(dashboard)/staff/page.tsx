@@ -8,7 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Download, Search, Upload } from "lucide-react";
+import { Briefcase, Download, Search, Upload } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -124,6 +124,9 @@ const StaffPage = observer(function StaffPage() {
             <Button variant="secondary" size="sm" onClick={() => void handleExport()}>
               <Download className="w-4 h-4" /> Export
             </Button>
+            <Link href="/job-positions/" className={getButtonStyling("neutral-primary", "sm")}>
+              <Briefcase className="w-4 h-4" /> Job Position
+            </Link>
             <Link href="/staff/create" className={getButtonStyling("primary", "sm")}>
               Add Staff
             </Link>

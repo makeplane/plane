@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
 // Plane Imports
 import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -22,8 +23,12 @@ import { TimezoneSelect } from "@/components/global/timezone-select";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// services
+import { UserService } from "@/services/user.service";
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace/delete-workspace-section";
+
+const userService = new UserService();
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -41,6 +46,8 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
   const { currentWorkspace, updateWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
+  // instance admin status
+  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
 
   // form info
   const {
@@ -125,6 +132,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
   }, [currentWorkspace, reset]);
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
 
   if (!currentWorkspace) return null;
 
@@ -281,24 +289,31 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               />
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Controller
-              name="is_board_of_director_workspace"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <input
-                  type="checkbox"
-                  id="board_of_director_workspace"
-                  checked={!!value}
-                  onChange={(e) => onChange(e.target.checked)}
-                  disabled={!isAdmin}
-                  className="h-4 w-4 cursor-pointer accent-accent-primary disabled:cursor-not-allowed"
-                />
-              )}
-            />
-            <label htmlFor="board_of_director_workspace" className="text-body-sm-medium cursor-pointer">
-              Board Of Director Workspace
-            </label>
+          {/* Admin Setting Section */}
+          <div className="flex flex-col gap-3 rounded-md border border-subtle p-4">
+            <h4 className="text-body-sm-semibold text-tertiary">Admin Setting Section</h4>
+            <div className={cn("flex items-center gap-3", { "opacity-60": !isInstanceAdmin })}>
+              <Controller
+                name="is_board_of_director_workspace"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <input
+                    type="checkbox"
+                    id="board_of_director_workspace"
+                    checked={!!value}
+                    onChange={(e) => onChange(e.target.checked)}
+                    disabled={!isInstanceAdmin}
+                    className="h-4 w-4 cursor-pointer accent-accent-primary disabled:cursor-not-allowed"
+                  />
+                )}
+              />
+              <label
+                htmlFor="board_of_director_workspace"
+                className={cn("text-body-sm-medium", isInstanceAdmin ? "cursor-pointer" : "cursor-not-allowed")}
+              >
+                Board Of Director Workspace
+              </label>
+            </div>
           </div>
         </div>
         {isAdmin && (
