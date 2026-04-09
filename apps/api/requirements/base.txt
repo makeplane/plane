@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.29
+Django==4.2.30
 # rest framework
 djangorestframework==3.15.2
 # postgres
@@ -51,7 +51,7 @@ beautifulsoup4==4.12.3
 # analytics
 posthog==3.5.0
 # crypto
-cryptography==46.0.6
+cryptography==46.0.7
 # html validator
 lxml==6.0.0
 # s3

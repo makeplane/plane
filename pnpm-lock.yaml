@@ -46,8 +46,8 @@ catalogs:
       specifier: 18.3.1
       version: 18.3.1
     axios:
-      specifier: 1.13.5
-      version: 1.13.5
+      specifier: 1.15.0
+      version: 1.15.0
     dotenv:
       specifier: 16.4.7
       version: 16.4.7
@@ -105,7 +105,7 @@ overrides:
   webpack: 5.104.1
   lodash-es: 4.18.0
   '@isaacs/brace-expansion': 5.0.1
-  lodash: 4.17.23
+  lodash: 4.18.1
   markdown-it: 14.1.1
   rollup: 4.59.0
   minimatch@3: 3.1.4
@@ -190,7 +190,7 @@ importers:
         version: 3.13.12
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.15.0
       isbot:
         specifier: ^5.1.31
         version: 5.1.31
@@ -317,7 +317,7 @@ importers:
         version: 2.26.2(@tiptap/core@2.26.3(@tiptap/pm@3.6.6))(@tiptap/pm@3.6.6)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.15.0
       compression:
         specifier: 1.8.1
         version: 1.8.1
@@ -462,7 +462,7 @@ importers:
         version: 7.13.1(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.15.0
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -622,7 +622,7 @@ importers:
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.15.0
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -1190,7 +1190,7 @@ importers:
         version: link:../types
       axios:
         specifier: 'catalog:'
-        version: 1.13.5
+        version: 1.15.0
       file-type:
         specifier: ^21.3.1
         version: 21.3.3
@@ -4740,8 +4740,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.13.5:
-    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
+  axios@1.15.0:
+    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
 
   babel-dead-code-elimination@1.0.10:
     resolution: {integrity: sha512-DV5bdJZTzZ0zn0DC24v3jD7Mnidh6xhKa4GfKCbq3sfW8kaWhDdZjP3i81geA8T33tdYqWKw4D3fVv0CwEgKVA==}
@@ -6457,8 +6457,8 @@ packages:
   lodash.isarguments@3.1.0:
     resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
 
-  lodash@4.17.23:
-    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
@@ -7396,8 +7396,9 @@ packages:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
 
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
 
   punycode.js@2.3.1:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
@@ -10317,7 +10318,7 @@ snapshots:
       exit-hook: 2.2.1
       isbot: 5.1.31
       jsesc: 3.0.2
-      lodash: 4.17.23
+      lodash: 4.18.1
       p-map: 7.0.3
       pathe: 1.1.2
       picocolors: 1.1.1
@@ -11090,7 +11091,7 @@ snapshots:
       chalk: 3.0.0
       css.escape: 1.5.1
       dom-accessibility-api: 0.6.3
-      lodash: 4.17.23
+      lodash: 4.18.1
       redent: 3.0.0
 
   '@testing-library/jest-dom@6.9.1':
@@ -11983,11 +11984,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.13.5:
+  axios@1.15.0:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.5
-      proxy-from-env: 1.1.0
+      proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
 
@@ -12836,7 +12837,7 @@ snapshots:
   express-winston@4.2.0(winston@3.17.0):
     dependencies:
       chalk: 2.4.2
-      lodash: 4.17.23
+      lodash: 4.18.1
       winston: 3.17.0
 
   express-ws@5.0.2(express@4.22.0):
@@ -13315,7 +13316,7 @@ snapshots:
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
-      lodash: 4.17.23
+      lodash: 4.18.1
       pretty-error: 4.0.0
       tapable: 2.3.0
     optionalDependencies:
@@ -13783,7 +13784,7 @@ snapshots:
 
   lodash.isarguments@3.1.0: {}
 
-  lodash@4.17.23: {}
+  lodash@4.18.1: {}
 
   log-update@6.1.0:
     dependencies:
@@ -14859,7 +14860,7 @@ snapshots:
 
   pretty-error@4.0.0:
     dependencies:
-      lodash: 4.17.23
+      lodash: 4.18.1
       renderkid: 3.0.0
 
   pretty-format@27.5.1:
@@ -14997,7 +14998,7 @@ snapshots:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
 
-  proxy-from-env@1.1.0: {}
+  proxy-from-env@2.1.0: {}
 
   punycode.js@2.3.1: {}
 
@@ -15040,7 +15041,7 @@ snapshots:
   react-color@2.19.3(react@18.3.1):
     dependencies:
       '@icons/material': 0.2.4(react@18.3.1)
-      lodash: 4.17.23
+      lodash: 4.18.1
       lodash-es: 4.18.0
       material-colors: 1.2.6
       prop-types: 15.8.1
@@ -15146,7 +15147,7 @@ snapshots:
       create-react-class: 15.7.0
       element-resize-detector: 1.2.4
       imagesloaded: 4.1.4
-      lodash: 4.17.23
+      lodash: 4.18.1
       masonry-layout: 4.2.2
       prop-types: 15.8.1
       react: 18.3.1
@@ -15237,7 +15238,7 @@ snapshots:
 
   reactcss@1.2.3(react@18.3.1):
     dependencies:
-      lodash: 4.17.23
+      lodash: 4.18.1
       react: 18.3.1
 
   read-cache@1.0.0:
@@ -15270,7 +15271,7 @@ snapshots:
     dependencies:
       clsx: 2.1.1
       eventemitter3: 4.0.7
-      lodash: 4.17.23
+      lodash: 4.18.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.3.1
@@ -15383,7 +15384,7 @@ snapshots:
       css-select: 4.3.0
       dom-converter: 0.2.0
       htmlparser2: 6.1.0
-      lodash: 4.17.23
+      lodash: 4.18.1
       strip-ansi: 6.0.1
 
   require-directory@2.1.1: {}
