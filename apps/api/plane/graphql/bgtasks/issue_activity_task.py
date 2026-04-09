@@ -191,6 +191,44 @@ def track_parent(
         )
 
 
+def track_parent_hierarchy_break(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_parent_id = current_instance.get("parent_id") or current_instance.get("parent")
+
+    # Validate UUID before database query
+    if current_parent_id is not None and not is_valid_uuid(current_parent_id):
+        return
+
+    old_parent = Issue.objects.filter(pk=current_parent_id).first() if current_parent_id is not None else None
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="updated",
+            old_value=(
+                f"{old_parent.project.identifier}-{old_parent.sequence_id}" if old_parent is not None else ""
+            ),
+            new_value="",
+            field="hierarchy_break",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="removed the parent due to work item type level change breaking hierarchy rules",
+            old_identifier=(old_parent.id if old_parent is not None else None),
+            new_identifier=None,
+            epoch=epoch,
+        )
+    )
+
+
 # Track changes in priority
 def track_priority(
     requested_data,
@@ -702,6 +740,7 @@ def update_issue_activity(
         "assignees": track_assignees,
         "labels": track_labels,
         "type_id": track_type,
+        "parent_hierarchy_break": track_parent_hierarchy_break,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None

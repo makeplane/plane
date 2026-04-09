@@ -34,6 +34,8 @@ from plane.ee.views.app.issue_property import (
     MergeWorkItemTypesEndpoint,
     WorkspaceWorkItemTypeFormulaValidateEndpoint,
     WorkitemHierarchyEndpoint,
+    WorkitemHierarchyValidationEndpoint,
+    WorkitemHierarchyRelationBreakEndpoint,
 )
 
 urlpatterns = [
@@ -215,5 +217,15 @@ urlpatterns = [
         "workspaces/<str:slug>/work-item-types/hierarchy/",
         WorkitemHierarchyEndpoint.as_view(),
         name="workitem-hierarchy",
+    ),
+    path(
+        "workspaces/<str:slug>/work-item-types/hierarchy/validate/",
+        WorkitemHierarchyValidationEndpoint.as_view(),
+        name="workitem-hierarchy-validate",
+    ),
+    path(
+        "workspaces/<str:slug>/work-item-types/hierarchy/break/",
+        WorkitemHierarchyRelationBreakEndpoint.as_view(),
+        name="workitem-hierarchy-break",
     ),
 ]

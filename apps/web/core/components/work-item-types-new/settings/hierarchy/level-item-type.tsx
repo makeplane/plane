@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { GripVertical } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -25,19 +26,24 @@ import { cn } from "@plane/utils";
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 // local imports
 import { getWorkItemHierarchyDragData } from "./drag-helpers";
+import { useWorkItemTypeHierarchyDndProcessing } from "./hierarchy-dnd-processing-context";
 
-type Props = {
+type WorkItemTypeHierarchyLevelItemTypeProps = {
   level: number;
   workItemType: BaseWorkItemTypeInstanceSchema;
 };
 
-export const WorkItemTypeDraggablePill = observer(function WorkItemTypeDraggablePill({ level, workItemType }: Props) {
+export const WorkItemTypeHierarchyLevelItemType = observer(function WorkItemTypeHierarchyLevelItemType({
+  level,
+  workItemType,
+}: WorkItemTypeHierarchyLevelItemTypeProps) {
   // refs
   const pillRef = useRef<HTMLDivElement | null>(null);
   // states
   const [isDragging, setIsDragging] = useState(false);
   // translation
   const { t } = useTranslation();
+  const { isProcessing } = useWorkItemTypeHierarchyDndProcessing();
 
   useEffect(() => {
     const element = pillRef.current;
@@ -46,16 +52,23 @@ export const WorkItemTypeDraggablePill = observer(function WorkItemTypeDraggable
     return combine(
       draggable({
         element,
+        canDrag: () => !isProcessing,
         getInitialData: () => getWorkItemHierarchyDragData(workItemType.id, level),
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
       })
     );
-  }, [level, workItemType.id]);
+  }, [isProcessing, level, workItemType.id]);
 
   return (
     <Tooltip tooltipContent={t("work_item_type_hierarchy.levels.drag_tooltip")}>
-      <div ref={pillRef} className="cursor-grab active:cursor-grabbing">
+      <div
+        ref={pillRef}
+        className={cn("group", {
+          "cursor-grab active:cursor-grabbing": !isProcessing,
+          "cursor-not-allowed opacity-60 pointer-events-none": isProcessing,
+        })}
+      >
         <Pill
           size={EPillSize.MD}
           variant={EPillVariant.DEFAULT}
@@ -64,7 +77,12 @@ export const WorkItemTypeDraggablePill = observer(function WorkItemTypeDraggable
             "bg-layer-2-hover": isDragging,
           })}
         >
-          <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" />
+          <span className="shrink-0 w-6 grid place-items-center">
+            <GripVertical className="size-4 text-tertiary hidden group-hover:inline-block" />
+            <span className="group-hover:hidden">
+              <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" />
+            </span>
+          </span>
           <span className="text-caption-md-regular">{workItemType.name}</span>
         </Pill>
       </div>

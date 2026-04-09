@@ -7060,9 +7060,8 @@ export default {
       },
     },
     levels: {
-      max_level_placeholder: "階層レベルを追加",
-      empty_level_placeholder: "レベル {level} に作業アイテムタイプを追加",
-      empty_level_unauthorized: "このレベルに作業アイテムタイプが見つかりません。",
+      max_level_placeholder: "新しい階層レベルを追加するには、タイプをドラッグ＆ドロップしてください",
+      empty_level_placeholder: "作業アイテムタイプをレベル {level} にドラッグ＆ドロップ",
       drag_tooltip: "ドラッグしてレベルを変更",
       quick_actions: {
         set_as_default: {
@@ -7080,16 +7079,34 @@ export default {
           },
         },
       },
-      add_to_level_toast: {
-        loading: "{workItemTypeName}をレベル{level}に追加しています...",
+      update_level_toast: {
+        loading: "{workItemTypeName}をレベル{level}に移動しています...",
         success: {
           title: "成功！",
-          message: "{workItemTypeName}がレベル{level}に正常に追加されました。",
+          message: "{workItemTypeName}をレベル{level}に正常に移動しました。",
         },
-        error: {
-          title: "エラー！",
-          message: "{workItemTypeName}は階層ルールに違反するため、レベル{level}に追加できませんでした。",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "検証エラー！",
+      content: {
+        intro: "作業アイテムタイプ「{workItemTypeName}」には次が含まれます。",
+        parent_items: "{count, plural, other {親の作業アイテム}}",
+        child_items: "{count, plural, other {子の作業アイテム}}",
+        parent_line_suffix_when_also_children: "、および ",
+        footer: "この変更により、{workItemTypeName} 作業アイテムタイプの既存の作業アイテムから親子関係が削除されます。",
+      },
+      confirm_input: {
+        label: "続けるには「確認」と入力してください。",
+        placeholder: "確認",
+      },
+      error_toast: {
+        title: "エラー！",
+        message: "階層を解除できませんでした。もう一度お試しください。",
+      },
+      confirm_button: {
+        loading: "適用中",
+        default: "適用してリンク解除",
       },
     },
     work_item_modal: {

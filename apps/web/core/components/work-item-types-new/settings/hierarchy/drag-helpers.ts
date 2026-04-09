@@ -12,10 +12,12 @@
  */
 
 // plane imports
-import { setPromiseToast } from "@plane/propel/toast";
-import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
+import { dismissToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { WorkspaceWorkItemTypesService } from "@plane/services";
+import type { BaseWorkItemTypeInstanceSchema, TValidateLevelChangeResponse } from "@plane/types";
 
 export const WORK_ITEM_HIERARCHY_DRAG_KEY = "workItemTypeHierarchyDrag";
+const workspaceWorkItemTypesService = new WorkspaceWorkItemTypesService();
 
 export type TWorkItemHierarchyDragData = {
   [WORK_ITEM_HIERARCHY_DRAG_KEY]: true;
@@ -37,41 +39,62 @@ export function isWorkItemHierarchyDragData(
   return data[WORK_ITEM_HIERARCHY_DRAG_KEY] === true;
 }
 
-export function handleWorkItemHierarchyDrop(
-  workItemType: BaseWorkItemTypeInstanceSchema,
-  targetLevel: number,
-  t: (key: string, options?: Record<string, unknown>) => string
-): void {
-  const promise = workItemType.updateType({ level: targetLevel }, false);
-  setPromiseToast(promise, {
-    loading: t("work_item_type_hierarchy.levels.add_to_level_toast.loading", {
+type HandleWorkItemHierarchyDropArgs = {
+  onProcessingChange?: (processing: boolean) => void;
+  onValidationError: (data: TValidateLevelChangeResponse) => void;
+  t: (key: string, options?: Record<string, unknown>) => string;
+  targetLevel: number;
+  workItemType: BaseWorkItemTypeInstanceSchema;
+  workspaceSlug: string;
+};
+
+export async function handleWorkItemHierarchyDrop({
+  onProcessingChange,
+  onValidationError,
+  t,
+  targetLevel,
+  workItemType,
+  workspaceSlug,
+}: HandleWorkItemHierarchyDropArgs): Promise<void> {
+  onProcessingChange?.(true);
+  const loadingToastId = setToast({
+    type: TOAST_TYPE.LOADING,
+    title: t("work_item_type_hierarchy.levels.update_level_toast.loading", {
       workItemTypeName: workItemType.name,
       level: targetLevel,
     }),
-    success: {
-      title: t("work_item_type_hierarchy.levels.add_to_level_toast.success.title"),
-      message: () =>
-        t("work_item_type_hierarchy.levels.add_to_level_toast.success.message", {
-          workItemTypeName: workItemType.name,
-          level: targetLevel,
-        }),
-    },
-    error: {
-      title: t("work_item_type_hierarchy.levels.add_to_level_toast.error.title"),
-      message: () =>
-        t("work_item_type_hierarchy.levels.add_to_level_toast.error.message", {
-          workItemTypeName: workItemType.name,
-          level: targetLevel,
-        }),
-    },
   });
-  promise
-    .then(() =>
+  const makeRequests = async () => {
+    const res = await workspaceWorkItemTypesService.validateLevelChange(workspaceSlug, {
+      type_id: workItemType.id,
+      level: targetLevel,
+    });
+    if (!res) throw new Error("Failed to validate level change");
+
+    if (res.total_violations > 0) {
+      onValidationError(res);
+      throw new Error("Hierarchy validation failed");
+    } else {
+      await workItemType.updateType({ level: targetLevel }, false);
       workItemType.mutateProperties({
         level: targetLevel,
-      })
-    )
-    .catch((error) => {
-      console.error(error);
+      });
+    }
+  };
+  try {
+    await makeRequests();
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("work_item_type_hierarchy.levels.update_level_toast.success.title"),
+      message: t("work_item_type_hierarchy.levels.update_level_toast.success.message", {
+        workItemTypeName: workItemType.name,
+        level: targetLevel,
+      }),
     });
+  } catch (error) {
+    console.error("Error in handling work item hierarchy drop:", error);
+  } finally {
+    dismissToast(loadingToastId);
+    onProcessingChange?.(false);
+  }
 }

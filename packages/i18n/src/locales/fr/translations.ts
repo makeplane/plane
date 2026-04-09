@@ -7193,9 +7193,8 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
     },
     levels: {
-      max_level_placeholder: "Ajouter un niveau de hiérarchie",
-      empty_level_placeholder: "Ajouter un type d'élément de travail au niveau {level}",
-      empty_level_unauthorized: "Aucun type d'élément de travail trouvé à ce niveau.",
+      max_level_placeholder: "Glissez-déposez un type pour ajouter un nouveau niveau de hiérarchie",
+      empty_level_placeholder: "Glissez-déposez un type d'élément de travail vers le niveau {level}",
       drag_tooltip: "Faire glisser pour changer le niveau",
       quick_actions: {
         set_as_default: {
@@ -7213,17 +7212,35 @@ si vous êtes sûr que votre recherche est correcte.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Ajout de {workItemTypeName} au niveau {level}...",
+      update_level_toast: {
+        loading: "Déplacement de {workItemTypeName} vers le niveau {level}...",
         success: {
           title: "Succès !",
-          message: "{workItemTypeName} ajouté au niveau {level} avec succès.",
+          message: "{workItemTypeName} a été déplacé vers le niveau {level} avec succès.",
         },
-        error: {
-          title: "Erreur !",
-          message:
-            "Impossible d'ajouter {workItemTypeName} au niveau {level} car cela enfreint les règles de hiérarchie.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Erreur de validation !",
+      content: {
+        intro: "Le type d'élément de travail {workItemTypeName} comporte :",
+        parent_items: "{count, plural, one {élément de travail parent} other {éléments de travail parents}}",
+        child_items: "{count, plural, one {sous-élément de travail} other {sous-éléments de travail}}",
+        parent_line_suffix_when_also_children: ", et ",
+        footer:
+          "Cette modification supprimera les relations parent-enfant des éléments de travail existants du type {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Saisissez « Confirmer » pour continuer.",
+        placeholder: "Confirmer",
+      },
+      error_toast: {
+        title: "Erreur !",
+        message: "Impossible de rompre la hiérarchie. Veuillez réessayer.",
+      },
+      confirm_button: {
+        loading: "Application en cours",
+        default: "Appliquer et dissocier",
       },
     },
     work_item_modal: {

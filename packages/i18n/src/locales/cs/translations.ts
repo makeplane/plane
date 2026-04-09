@@ -7061,9 +7061,8 @@ Vytvořte nový.`,
       },
     },
     levels: {
-      max_level_placeholder: "Přidat úroveň hierarchie",
-      empty_level_placeholder: "Přidejte typ pracovní položky na úroveň {level}",
-      empty_level_unauthorized: "Na této úrovni nebyly nalezeny žádné typy pracovních položek.",
+      max_level_placeholder: "Přetáhněte typ pro přidání nové úrovně hierarchie",
+      empty_level_placeholder: "Přetáhněte typ pracovní položky na úroveň {level}",
       drag_tooltip: "Přetáhněte pro změnu úrovně",
       quick_actions: {
         set_as_default: {
@@ -7081,17 +7080,37 @@ Vytvořte nový.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Přidávání {workItemTypeName} do úrovně {level}...",
+      update_level_toast: {
+        loading: "Přesouvání {workItemTypeName} do úrovně {level}...",
         success: {
           title: "Úspěch!",
-          message: "{workItemTypeName} byl úspěšně přidán do úrovně {level}.",
+          message: "{workItemTypeName} byl úspěšně přesunut do úrovně {level}.",
         },
-        error: {
-          title: "Chyba!",
-          message:
-            "Nepodařilo se přidat {workItemTypeName} do úrovně {level}, protože to porušuje pravidla hierarchie.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Chyba ověření!",
+      content: {
+        intro: "Typ pracovní položky {workItemTypeName} obsahuje:",
+        parent_items:
+          "{count, plural, one {nadřazenou pracovní položku} few {nadřazené pracovní položky} other {nadřazených pracovních položek}}",
+        child_items:
+          "{count, plural, one {podřazenou pracovní položku} few {podřazené pracovní položky} other {podřazených pracovních položek}}",
+        parent_line_suffix_when_also_children: ", a ",
+        footer:
+          "Tato změna odstraní nadřazené a podřazené vztahy u stávajících pracovních položek typu {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Pro pokračování napište „Potvrdit“.",
+        placeholder: "Potvrdit",
+      },
+      error_toast: {
+        title: "Chyba!",
+        message: "Nepodařilo se přerušit hierarchii. Zkuste to prosím znovu.",
+      },
+      confirm_button: {
+        loading: "Používání",
+        default: "Použít a odpojit",
       },
     },
     work_item_modal: {

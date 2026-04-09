@@ -6912,9 +6912,8 @@ export default {
       },
     },
     levels: {
-      max_level_placeholder: "新增層級",
-      empty_level_placeholder: "新增工作項目類型至第 {level} 層",
-      empty_level_unauthorized: "此層級中未找到工作項目類型。",
+      max_level_placeholder: "拖放類型以新增階層",
+      empty_level_placeholder: "將工作項目類型拖放到第 {level} 層",
       drag_tooltip: "拖曳以變更層級",
       quick_actions: {
         set_as_default: {
@@ -6932,16 +6931,34 @@ export default {
           },
         },
       },
-      add_to_level_toast: {
-        loading: "正在將 {workItemTypeName} 新增至層級 {level}...",
+      update_level_toast: {
+        loading: "正在將 {workItemTypeName} 移至層級 {level}...",
         success: {
           title: "成功！",
-          message: "{workItemTypeName} 已成功新增至層級 {level}。",
+          message: "{workItemTypeName} 已成功移至層級 {level}。",
         },
-        error: {
-          title: "錯誤！",
-          message: "無法將 {workItemTypeName} 新增至層級 {level}，因為它違反了層級規則。",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "驗證錯誤！",
+      content: {
+        intro: "工作項目類型 {workItemTypeName} 包含：",
+        parent_items: "{count, plural, other {個父工作項目}}",
+        child_items: "{count, plural, other {個子工作項目}}",
+        parent_line_suffix_when_also_children: "，以及 ",
+        footer: "此變更將從 {workItemTypeName} 工作項目類型的現有工作項目中移除父子關係。",
+      },
+      confirm_input: {
+        label: "請輸入「確認」以繼續。",
+        placeholder: "確認",
+      },
+      error_toast: {
+        title: "錯誤！",
+        message: "無法中斷層級結構。請重試。",
+      },
+      confirm_button: {
+        loading: "正在套用",
+        default: "套用並解除連結",
       },
     },
     work_item_modal: {

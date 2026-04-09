@@ -57,6 +57,17 @@ export type TUpdateWorkItemTypeHierarchyPayload = {
   type_ids: string[];
 };
 
+export type TValidateLevelChangePayload = {
+  level: number;
+  type_id: string;
+};
+
+export type TValidateLevelChangeResponse = {
+  child_violations: number;
+  parent_violations: number;
+  total_violations: number;
+};
+
 // Work item type instance
 export interface BaseWorkItemTypeInstanceSchema extends TWorkItemTypeResponse {
   asJSON: TWorkItemTypeResponse;

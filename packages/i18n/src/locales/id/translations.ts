@@ -7098,9 +7098,8 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       },
     },
     levels: {
-      max_level_placeholder: "Tambah tingkat hierarki",
-      empty_level_placeholder: "Tambahkan jenis item pekerjaan ke tingkat {level}",
-      empty_level_unauthorized: "Tidak ada jenis item pekerjaan yang ditemukan di tingkat ini.",
+      max_level_placeholder: "Seret dan lepas jenis untuk menambahkan tingkat hierarki baru",
+      empty_level_placeholder: "Seret dan lepas jenis item pekerjaan ke tingkat {level}",
       drag_tooltip: "Seret untuk mengubah tingkat",
       quick_actions: {
         set_as_default: {
@@ -7118,16 +7117,35 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Menambahkan {workItemTypeName} ke tingkat {level}...",
+      update_level_toast: {
+        loading: "Memindahkan {workItemTypeName} ke tingkat {level}...",
         success: {
           title: "Berhasil!",
-          message: "{workItemTypeName} berhasil ditambahkan ke tingkat {level}.",
+          message: "{workItemTypeName} berhasil dipindahkan ke tingkat {level}.",
         },
-        error: {
-          title: "Kesalahan!",
-          message: "Gagal menambahkan {workItemTypeName} ke tingkat {level} karena melanggar aturan hierarki.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Kesalahan validasi!",
+      content: {
+        intro: "Jenis item pekerjaan {workItemTypeName} memiliki:",
+        parent_items: "{count, plural, other {item pekerjaan induk}}",
+        child_items: "{count, plural, other {sub-item pekerjaan}}",
+        parent_line_suffix_when_also_children: ", dan ",
+        footer:
+          "Perubahan ini akan menghapus hubungan induk-anak dari item pekerjaan yang ada dengan jenis {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: 'Ketik "Konfirmasi" untuk melanjutkan.',
+        placeholder: "Konfirmasi",
+      },
+      error_toast: {
+        title: "Kesalahan!",
+        message: "Gagal memutus hierarki. Silakan coba lagi.",
+      },
+      confirm_button: {
+        loading: "Menerapkan",
+        default: "Terapkan & lepas tautan",
       },
     },
     work_item_modal: {

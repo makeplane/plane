@@ -7067,9 +7067,8 @@ export default {
       },
     },
     levels: {
-      max_level_placeholder: "Додати рівень ієрархії",
-      empty_level_placeholder: "Додайте тип робочого елемента до рівня {level}",
-      empty_level_unauthorized: "Типи робочих елементів на цьому рівні не знайдено.",
+      max_level_placeholder: "Перетягніть тип, щоб додати новий рівень ієрархії",
+      empty_level_placeholder: "Перетягніть тип робочого елемента на рівень {level}",
       drag_tooltip: "Перетягніть для зміни рівня",
       quick_actions: {
         set_as_default: {
@@ -7087,16 +7086,37 @@ export default {
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Додавання {workItemTypeName} до рівня {level}...",
+      update_level_toast: {
+        loading: "Переміщення {workItemTypeName} на рівень {level}...",
         success: {
           title: "Успішно!",
-          message: "{workItemTypeName} успішно додано до рівня {level}.",
+          message: "{workItemTypeName} успішно переміщено на рівень {level}.",
         },
-        error: {
-          title: "Помилка!",
-          message: "{workItemTypeName} не вдалося додати до рівня {level}, оскільки це порушує правила ієрархії.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Помилка перевірки!",
+      content: {
+        intro: "У типу робочого елемента {workItemTypeName} є:",
+        parent_items:
+          "{count, plural, one {батьківський робочий елемент} few {батьківські робочі елементи} other {батьківських робочих елементів}}",
+        child_items:
+          "{count, plural, one {дочірній робочий елемент} few {дочірні робочі елементи} other {дочірніх робочих елементів}}",
+        parent_line_suffix_when_also_children: ", а також ",
+        footer:
+          "Ця зміна прибере батьківські та дочірні зв\u2019язки з наявних робочих елементів типу {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Введіть «Підтвердити», щоб продовжити.",
+        placeholder: "Підтвердити",
+      },
+      error_toast: {
+        title: "Помилка!",
+        message: "Не вдалося розірвати ієрархію. Будь ласка, спробуйте ще раз.",
+      },
+      confirm_button: {
+        loading: "Застосування…",
+        default: "Застосувати та від\u2019єднати",
       },
     },
     work_item_modal: {

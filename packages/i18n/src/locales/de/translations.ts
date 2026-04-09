@@ -8020,9 +8020,8 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
     levels: {
-      max_level_placeholder: "Hierarchieebene hinzufügen",
-      empty_level_placeholder: "Arbeitselement-Typ zu Ebene {level} hinzufügen",
-      empty_level_unauthorized: "Keine Arbeitselement-Typen in dieser Ebene gefunden.",
+      max_level_placeholder: "Ziehen Sie einen Typ hierher, um eine neue Hierarchieebene hinzuzufügen",
+      empty_level_placeholder: "Ziehen Sie einen Arbeitselement-Typ auf Ebene {level}",
       drag_tooltip: "Ziehen zum Ändern der Ebene",
       quick_actions: {
         set_as_default: {
@@ -8041,17 +8040,35 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Füge {workItemTypeName} zu Ebene {level} hinzu...",
+      update_level_toast: {
+        loading: "Verschiebe {workItemTypeName} in Ebene {level}...",
         success: {
           title: "Erfolg!",
-          message: "{workItemTypeName} wurde erfolgreich zu Ebene {level} hinzugefügt.",
+          message: "{workItemTypeName} wurde erfolgreich in Ebene {level} verschoben.",
         },
-        error: {
-          title: "Fehler!",
-          message:
-            "{workItemTypeName} konnte nicht zu Ebene {level} hinzugefügt werden, da dies die Hierarchieregeln verletzt.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Validierungsfehler!",
+      content: {
+        intro: "Der Arbeitselement-Typ „{workItemTypeName}“ umfasst:",
+        parent_items: "{count, plural, one {übergeordnetes Arbeitselement} other {übergeordnete Arbeitselemente}}",
+        child_items: "{count, plural, one {Unterarbeitselement} other {Unterarbeitselemente}}",
+        parent_line_suffix_when_also_children: ", und ",
+        footer:
+          "Diese Änderung entfernt übergeordnete und untergeordnete Beziehungen bei vorhandenen Arbeitselementen des Typs {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Geben Sie „Bestätigen“ ein, um fortzufahren.",
+        placeholder: "Bestätigen",
+      },
+      error_toast: {
+        title: "Fehler!",
+        message: "Hierarchie konnte nicht aufgebrochen werden. Bitte versuchen Sie es erneut.",
+      },
+      confirm_button: {
+        loading: "Wird angewendet",
+        default: "Anwenden & Verknüpfung aufheben",
       },
     },
     work_item_modal: {

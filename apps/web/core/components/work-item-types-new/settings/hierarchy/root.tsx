@@ -20,16 +20,17 @@ import { Loader } from "@plane/ui";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 // local imports
-import { WorkItemTypeHierarchyVacantLevel } from "./vacant-level";
+import { WorkItemTypeHierarchyDndProcessingProvider } from "./hierarchy-dnd-processing-context";
 import { WorkItemTypeHierarchyLevelItem } from "./level-item";
+import { WorkItemTypeHierarchyMaxLevel } from "./max-level";
 
-type Props = {
+type WorkItemTypeHierarchyLevelsRootProps = {
   workspaceSlug: string;
 };
 
 export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHierarchyLevelsRoot({
   workspaceSlug,
-}: Props) {
+}: WorkItemTypeHierarchyLevelsRootProps) {
   // store hooks
   const { canCreate, getActiveWorkItemTypesByWorkspaceSlugGroupedByLevel, getLoaderByWorkspaceSlug } =
     useWorkspaceWorkItemTypes();
@@ -52,30 +53,27 @@ export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHie
     );
 
   return (
-    <div className="bg-surface-2 rounded-2xl p-4">
-      {canAddLevel && (
-        <>
-          <WorkItemTypeHierarchyVacantLevel defaultLevel={defaultLevel} hideQuickActions level={maxLevel + 1} />
-          <div className="h-8 py-1 pl-4">
-            <MoveDown className="size-6 text-tertiary stroke-1" />
-          </div>
-        </>
-      )}
-      {Array.from(workItemTypesByLevel.entries()).map(([level, workItemTypes], index) => (
-        <Fragment key={level}>
-          {index > 0 && (
+    <WorkItemTypeHierarchyDndProcessingProvider>
+      <div className="bg-surface-2 rounded-2xl p-4">
+        {canAddLevel && (
+          <>
+            <WorkItemTypeHierarchyMaxLevel level={maxLevel + 1} />
             <div className="h-8 py-1 pl-4">
               <MoveDown className="size-6 text-tertiary stroke-1" />
             </div>
-          )}
-          <WorkItemTypeHierarchyLevelItem
-            canAddLevel={canAddLevel}
-            defaultLevel={defaultLevel}
-            level={level}
-            workItemTypes={workItemTypes}
-          />
-        </Fragment>
-      ))}
-    </div>
+          </>
+        )}
+        {Array.from(workItemTypesByLevel.entries()).map(([level, workItemTypes], index) => (
+          <Fragment key={level}>
+            {index > 0 && (
+              <div className="h-8 py-1 pl-4">
+                <MoveDown className="size-6 text-tertiary stroke-1" />
+              </div>
+            )}
+            <WorkItemTypeHierarchyLevelItem defaultLevel={defaultLevel} level={level} workItemTypes={workItemTypes} />
+          </Fragment>
+        ))}
+      </div>
+    </WorkItemTypeHierarchyDndProcessingProvider>
   );
 });

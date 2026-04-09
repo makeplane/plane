@@ -7125,9 +7125,8 @@ modüller arşivlenebilir.`,
       },
     },
     levels: {
-      max_level_placeholder: "Hiyerarşi seviyesi ekle",
-      empty_level_placeholder: "{level}. seviyeye bir iş öğesi türü ekleyin",
-      empty_level_unauthorized: "Bu seviyede iş öğesi türü bulunamadı.",
+      max_level_placeholder: "Yeni bir hiyerarşi seviyesi eklemek için türü sürükleyip bırakın",
+      empty_level_placeholder: "{level}. seviyeye bir iş öğesi türünü sürükleyip bırakın",
       drag_tooltip: "Seviyeyi değiştirmek için sürükleyin",
       quick_actions: {
         set_as_default: {
@@ -7145,16 +7144,35 @@ modüller arşivlenebilir.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "{workItemTypeName}, {level}. seviyeye ekleniyor...",
+      update_level_toast: {
+        loading: "{workItemTypeName}, {level}. seviyeye taşınıyor...",
         success: {
           title: "Başarılı!",
-          message: "{workItemTypeName}, {level}. seviyeye başarıyla eklendi.",
+          message: "{workItemTypeName}, {level}. seviyeye başarıyla taşındı.",
         },
-        error: {
-          title: "Hata!",
-          message: "{workItemTypeName}, hiyerarşi kurallarını ihlal ettiğinden {level}. seviyeye eklenemedi.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Doğrulama hatası!",
+      content: {
+        intro: "{workItemTypeName} iş öğesi türünde şunlar var:",
+        parent_items: "{count, plural, one {üst iş öğesi} other {üst iş öğeleri}}",
+        child_items: "{count, plural, one {alt iş öğesi} other {alt iş öğeleri}}",
+        parent_line_suffix_when_also_children: ", ve ",
+        footer:
+          "Bu değişiklik, {workItemTypeName} iş öğesi türündeki mevcut iş öğelerinden üst-alt ilişkilerini kaldıracaktır.",
+      },
+      confirm_input: {
+        label: "Devam etmek için «Onayla» yazın.",
+        placeholder: "Onayla",
+      },
+      error_toast: {
+        title: "Hata!",
+        message: "Hiyerarşi kırılamadı. Lütfen tekrar deneyin.",
+      },
+      confirm_button: {
+        loading: "Uygulanıyor",
+        default: "Uygula ve bağlantıyı kaldır",
       },
     },
     work_item_modal: {

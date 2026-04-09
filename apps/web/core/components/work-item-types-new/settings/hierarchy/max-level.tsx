@@ -18,31 +18,26 @@ import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Badge } from "@plane/propel/badge";
-import type { BaseWorkItemTypeInstanceSchema, TValidateLevelChangeResponse } from "@plane/types";
+import type { TValidateLevelChangeResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useWorkItemType } from "@/plane-web/hooks/store/work-item-types/use-work-item-type";
 // local imports
 import { handleWorkItemHierarchyDrop, isWorkItemHierarchyDragData } from "./drag-helpers";
 import { useWorkItemTypeHierarchyDndProcessing } from "./hierarchy-dnd-processing-context";
-import { WorkItemTypeHierarchyLevelItemType } from "./level-item-type";
-import { WorkItemTypeHierarchyLevelQuickActions } from "./level-quick-actions";
 import { ValidationChangeErrorModal } from "./validation-change-error-modal";
 
-type WorkItemTypeHierarchyLevelItemProps = {
-  defaultLevel: number;
+type WorkItemTypeHierarchyMaxLevelProps = {
+  disabled?: boolean;
   level: number;
-  workItemTypes: BaseWorkItemTypeInstanceSchema[];
 };
 
-export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHierarchyLevelItem({
-  defaultLevel,
+export const WorkItemTypeHierarchyMaxLevel = observer(function WorkItemTypeHierarchyMaxLevel({
+  disabled = false,
   level,
-  workItemTypes,
-}: WorkItemTypeHierarchyLevelItemProps) {
+}: WorkItemTypeHierarchyMaxLevelProps) {
   // refs
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const divRef = useRef<HTMLDivElement | null>(null);
   // states
   const [isDragOver, setIsDragOver] = useState(false);
   const [isValidationChangeErrorModalOpen, setIsValidationChangeErrorModalOpen] = useState(false);
@@ -53,20 +48,19 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
   // store hooks
   const { getWorkItemType } = useWorkItemType();
   const { isProcessing, setProcessing } = useWorkItemTypeHierarchyDndProcessing();
-  // derived values
-  const isEmptyLevel = workItemTypes.length === 0;
   // translation
   const { t } = useTranslation();
 
+  const isDropEnabled = !disabled && !isProcessing;
+
   useEffect(() => {
-    const element = containerRef.current;
-    if (!element) return;
+    const element = divRef.current;
+    if (!element || !isDropEnabled) return;
 
     return combine(
       dropTargetForElements({
         element,
         canDrop: ({ source }) => {
-          if (isProcessing) return false;
           const data = source.data;
           return isWorkItemHierarchyDragData(data) && data.sourceLevel !== level;
         },
@@ -95,7 +89,7 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
         },
       })
     );
-  }, [isProcessing, level, getWorkItemType, setProcessing, workspaceSlug, t]);
+  }, [isDropEnabled, level, getWorkItemType, setProcessing, workspaceSlug, t]);
 
   return (
     <>
@@ -110,51 +104,23 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
               setDroppedWorkItemTypeId(null);
             }, 350);
           }}
-          level={level}
           workItemTypeId={droppedWorkItemTypeId}
+          level={level}
           workspaceSlug={workspaceSlug}
         />
       )}
       <div
-        ref={containerRef}
+        ref={divRef}
         className={cn(
-          "bg-layer-2 border border-subtle p-3 rounded-lg flex items-start justify-between gap-2 truncate transition-colors",
+          "w-full bg-layer-2 border border-dashed border-strong-1 px-3 py-4.5 rounded-lg text-center transition-colors",
           {
             "border-accent-strong bg-layer-2-hover": isDragOver,
           }
         )}
       >
-        <div className="flex gap-2 truncate">
-          <span
-            className={cn(
-              "shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center",
-              {
-                "text-placeholder": level === 0,
-              }
-            )}
-          >
-            {level}
-          </span>
-          {isEmptyLevel ? (
-            <p className="text-body-xs-regular text-tertiary py-1.5">
-              {t("work_item_type_hierarchy.levels.empty_level_placeholder", { level })}
-            </p>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2">
-              {workItemTypes.map((workItemType) => (
-                <WorkItemTypeHierarchyLevelItemType key={workItemType.id} level={level} workItemType={workItemType} />
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="shrink-0 flex items-center gap-2 py-1">
-          {level === defaultLevel && (
-            <Badge size="sm" variant="neutral">
-              {t("common.default")}
-            </Badge>
-          )}
-          <WorkItemTypeHierarchyLevelQuickActions defaultLevel={defaultLevel} level={level} />
-        </div>
+        <p className="text-body-xs-regular text-tertiary">
+          {t("work_item_type_hierarchy.levels.max_level_placeholder")}
+        </p>
       </div>
     </>
   );

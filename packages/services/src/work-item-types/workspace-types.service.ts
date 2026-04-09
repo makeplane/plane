@@ -26,6 +26,8 @@ import type {
   TWorkItemTypeResponse,
   TReorderPropertyToGlobalTypePayload,
   TUpdateWorkItemTypeHierarchyPayload,
+  TValidateLevelChangePayload,
+  TValidateLevelChangeResponse,
 } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
@@ -135,6 +137,25 @@ export class WorkspaceWorkItemTypesService extends APIService {
 
   async updateHierarchy(workspaceSlug: string, payload: TUpdateWorkItemTypeHierarchyPayload): Promise<void> {
     return this.patch(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async validateLevelChange(
+    workspaceSlug: string,
+    payload: TValidateLevelChangePayload
+  ): Promise<TValidateLevelChangeResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/validate/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async breakHierarchy(workspaceSlug: string, payload: TValidateLevelChangePayload): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/break/`, payload)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

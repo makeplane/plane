@@ -7146,9 +7146,8 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       },
     },
     levels: {
-      max_level_placeholder: "Adicionar nível de hierarquia",
-      empty_level_placeholder: "Adicionar um tipo de item de trabalho ao nível {level}",
-      empty_level_unauthorized: "Nenhum tipo de item de trabalho encontrado neste nível.",
+      max_level_placeholder: "Arraste e solte um tipo para adicionar um novo nível de hierarquia",
+      empty_level_placeholder: "Arraste e solte um tipo de item de trabalho para o nível {level}",
       drag_tooltip: "Arraste para mudar o nível",
       quick_actions: {
         set_as_default: {
@@ -7166,16 +7165,35 @@ da maneira que você quiser a partir das fontes que você especificar.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Adicionando {workItemTypeName} ao nível {level}...",
+      update_level_toast: {
+        loading: "Movendo {workItemTypeName} para o nível {level}...",
         success: {
           title: "Sucesso!",
-          message: "{workItemTypeName} adicionado ao nível {level} com sucesso.",
+          message: "{workItemTypeName} foi movido para o nível {level} com sucesso.",
         },
-        error: {
-          title: "Erro!",
-          message: "Falha ao adicionar {workItemTypeName} ao nível {level} pois viola as regras de hierarquia.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Erro de validação!",
+      content: {
+        intro: "O tipo de item de trabalho {workItemTypeName} possui:",
+        parent_items: "{count, plural, one {item de trabalho pai} other {itens de trabalho pai}}",
+        child_items: "{count, plural, one {subitem de trabalho} other {subitens de trabalho}}",
+        parent_line_suffix_when_also_children: ", e ",
+        footer:
+          "Esta alteração removerá as relações pai-filho dos itens de trabalho existentes do tipo {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Digite «Confirmar» para continuar.",
+        placeholder: "Confirmar",
+      },
+      error_toast: {
+        title: "Erro!",
+        message: "Falha ao romper a hierarquia. Por favor, tente novamente.",
+      },
+      confirm_button: {
+        loading: "Aplicando",
+        default: "Aplicar e desvincular",
       },
     },
     work_item_modal: {

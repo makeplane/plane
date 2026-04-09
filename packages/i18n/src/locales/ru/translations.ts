@@ -7139,9 +7139,8 @@ export default {
       },
     },
     levels: {
-      max_level_placeholder: "Добавить уровень иерархии",
-      empty_level_placeholder: "Добавьте тип рабочего элемента на уровень {level}",
-      empty_level_unauthorized: "Типы рабочих элементов на этом уровне не найдены.",
+      max_level_placeholder: "Перетащите тип, чтобы добавить новый уровень иерархии",
+      empty_level_placeholder: "Перетащите тип рабочего элемента на уровень {level}",
       drag_tooltip: "Перетащите для изменения уровня",
       quick_actions: {
         set_as_default: {
@@ -7159,16 +7158,37 @@ export default {
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Добавление {workItemTypeName} на уровень {level}...",
+      update_level_toast: {
+        loading: "Перемещение {workItemTypeName} на уровень {level}...",
         success: {
           title: "Успешно!",
-          message: "{workItemTypeName} успешно добавлен на уровень {level}.",
+          message: "{workItemTypeName} успешно перемещён на уровень {level}.",
         },
-        error: {
-          title: "Ошибка!",
-          message: "{workItemTypeName} не удалось добавить на уровень {level}, так как это нарушает правила иерархии.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Ошибка проверки!",
+      content: {
+        intro: "У типа рабочего элемента {workItemTypeName} есть:",
+        parent_items:
+          "{count, plural, one {родительский рабочий элемент} few {родительских рабочих элемента} other {родительских рабочих элементов}}",
+        child_items:
+          "{count, plural, one {дочерний рабочий элемент} few {дочерних рабочих элемента} other {дочерних рабочих элементов}}",
+        parent_line_suffix_when_also_children: ", а также ",
+        footer:
+          "Это изменение удалит родительские и дочерние связи у существующих рабочих элементов типа {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Введите «Подтвердить», чтобы продолжить.",
+        placeholder: "Подтвердить",
+      },
+      error_toast: {
+        title: "Ошибка!",
+        message: "Не удалось разорвать иерархию. Пожалуйста, попробуйте ещё раз.",
+      },
+      confirm_button: {
+        loading: "Применение…",
+        default: "Применить и отвязать",
       },
     },
     work_item_modal: {

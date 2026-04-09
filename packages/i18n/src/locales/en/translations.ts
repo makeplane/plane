@@ -7975,9 +7975,8 @@ the way you want to from the sources you specify.`,
       },
     },
     levels: {
-      max_level_placeholder: "Add hierarchy level",
-      empty_level_placeholder: "Add a work item type to level {level}",
-      empty_level_unauthorized: "No work item types found in this level.",
+      max_level_placeholder: "Drag and drop type to add a new hierarchy level",
+      empty_level_placeholder: "Drag and drop a work item type to level {level}",
       drag_tooltip: "Drag to change level",
       quick_actions: {
         set_as_default: {
@@ -7995,16 +7994,35 @@ the way you want to from the sources you specify.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Adding {workItemTypeName} to level {level}...",
+      update_level_toast: {
+        loading: "Moving {workItemTypeName} to level {level}...",
         success: {
           title: "Success!",
-          message: "{workItemTypeName} added to level {level} successfully.",
+          message: "{workItemTypeName} moved to level {level} successfully.",
         },
-        error: {
-          title: "Error!",
-          message: "Failed to add {workItemTypeName} to level {level} since it breaks the hierarchy rules.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Validation error!",
+      content: {
+        intro: "Work item type {workItemTypeName} has:",
+        parent_items: "{count, plural, one {parent work item} other {parent work items}}",
+        child_items: "{count, plural, one {sub-work item} other {sub-work items}}",
+        parent_line_suffix_when_also_children: ", and ",
+        footer:
+          "This change will remove parent and child relationships from existing work items of {workItemTypeName} work item type.",
+      },
+      confirm_input: {
+        label: 'Type in "Confirm" to continue.',
+        placeholder: "Confirm",
+      },
+      error_toast: {
+        title: "Error!",
+        message: "Failed to break hierarchy. Please try again.",
+      },
+      confirm_button: {
+        loading: "Applying",
+        default: "Apply & Unlink",
       },
     },
     work_item_modal: {

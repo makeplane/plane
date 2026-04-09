@@ -7008,9 +7008,8 @@ export default {
       },
     },
     levels: {
-      max_level_placeholder: "계층 레벨 추가",
-      empty_level_placeholder: "레벨 {level}에 작업 항목 유형 추가",
-      empty_level_unauthorized: "이 레벨에서 작업 항목 유형을 찾을 수 없습니다.",
+      max_level_placeholder: "새 계층 레벨을 추가하려면 유형을 끌어다 놓으세요",
+      empty_level_placeholder: "작업 항목 유형을 레벨 {level}(으)로 끌어다 놓으세요",
       drag_tooltip: "드래그하여 레벨 변경",
       quick_actions: {
         set_as_default: {
@@ -7028,16 +7027,34 @@ export default {
           },
         },
       },
-      add_to_level_toast: {
-        loading: "{workItemTypeName}을(를) 레벨 {level}에 추가하는 중...",
+      update_level_toast: {
+        loading: "{workItemTypeName}을(를) 레벨 {level}(으)로 이동하는 중...",
         success: {
           title: "성공!",
-          message: "{workItemTypeName}이(가) 레벨 {level}에 성공적으로 추가되었습니다.",
+          message: "{workItemTypeName}이(가) 레벨 {level}(으)로 성공적으로 이동했습니다.",
         },
-        error: {
-          title: "오류!",
-          message: "{workItemTypeName}을(를) 레벨 {level}에 추가할 수 없습니다. 계층 규칙을 위반합니다.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "유효성 검사 오류!",
+      content: {
+        intro: "작업 항목 유형 {workItemTypeName}에 다음이 있습니다.",
+        parent_items: "{count, plural, other {상위 작업 항목}}",
+        child_items: "{count, plural, other {하위 작업 항목}}",
+        parent_line_suffix_when_also_children: ", 그리고 ",
+        footer: "이 변경은 {workItemTypeName} 작업 항목 유형의 기존 작업 항목에서 상위·하위 관계를 제거합니다.",
+      },
+      confirm_input: {
+        label: '계속하려면 "확인"을 입력하세요.',
+        placeholder: "확인",
+      },
+      error_toast: {
+        title: "오류!",
+        message: "계층 구조를 깨뜨리지 못했습니다. 다시 시도해 주세요.",
+      },
+      confirm_button: {
+        loading: "적용 중",
+        default: "적용 및 연결 해제",
       },
     },
     work_item_modal: {

@@ -7176,9 +7176,8 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
     },
     levels: {
-      max_level_placeholder: "Agregar nivel de jerarquía",
-      empty_level_placeholder: "Agrega un tipo de elemento de trabajo al nivel {level}",
-      empty_level_unauthorized: "No se encontraron tipos de elementos de trabajo en este nivel.",
+      max_level_placeholder: "Arrastra y suelta un tipo para añadir un nuevo nivel de jerarquía",
+      empty_level_placeholder: "Arrastra y suelta un tipo de elemento de trabajo al nivel {level}",
       drag_tooltip: "Arrastrar para cambiar de nivel",
       quick_actions: {
         set_as_default: {
@@ -7197,16 +7196,35 @@ si estás seguro de que tu búsqueda es correcta.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Agregando {workItemTypeName} al nivel {level}...",
+      update_level_toast: {
+        loading: "Moviendo {workItemTypeName} al nivel {level}...",
         success: {
           title: "¡Éxito!",
-          message: "{workItemTypeName} agregado al nivel {level} exitosamente.",
+          message: "{workItemTypeName} se movió al nivel {level} correctamente.",
         },
-        error: {
-          title: "¡Error!",
-          message: "No se pudo agregar {workItemTypeName} al nivel {level} ya que rompe las reglas de jerarquía.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "¡Error de validación!",
+      content: {
+        intro: "El tipo de elemento de trabajo {workItemTypeName} tiene:",
+        parent_items: "{count, plural, one {elemento de trabajo padre} other {elementos de trabajo padre}}",
+        child_items: "{count, plural, one {subelemento de trabajo} other {subelementos de trabajo}}",
+        parent_line_suffix_when_also_children: ", y ",
+        footer:
+          "Este cambio eliminará las relaciones padre-hijo de los elementos de trabajo existentes del tipo {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Escribe «Confirmar» para continuar.",
+        placeholder: "Confirmar",
+      },
+      error_toast: {
+        title: "¡Error!",
+        message: "No se pudo romper la jerarquía. Inténtalo de nuevo.",
+      },
+      confirm_button: {
+        loading: "Aplicando",
+        default: "Aplicar y desvincular",
       },
     },
     work_item_modal: {

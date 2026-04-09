@@ -7147,9 +7147,8 @@ așa cum dorești din sursele pe care le specifici.`,
       },
     },
     levels: {
-      max_level_placeholder: "Adăugați nivel de ierarhie",
-      empty_level_placeholder: "Adăugați un tip de element de lucru la nivelul {level}",
-      empty_level_unauthorized: "Nu s-au găsit tipuri de elemente de lucru la acest nivel.",
+      max_level_placeholder: "Trageți și plasați un tip pentru a adăuga un nou nivel ierarhic",
+      empty_level_placeholder: "Trageți și plasați un tip de element de lucru la nivelul {level}",
       drag_tooltip: "Glisați pentru a schimba nivelul",
       quick_actions: {
         set_as_default: {
@@ -7167,16 +7166,37 @@ așa cum dorești din sursele pe care le specifici.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Se adaugă {workItemTypeName} la nivelul {level}...",
+      update_level_toast: {
+        loading: "Se mută {workItemTypeName} la nivelul {level}...",
         success: {
           title: "Succes!",
-          message: "{workItemTypeName} a fost adăugat la nivelul {level} cu succes.",
+          message: "{workItemTypeName} a fost mutat la nivelul {level} cu succes.",
         },
-        error: {
-          title: "Eroare!",
-          message: "Nu s-a putut adăuga {workItemTypeName} la nivelul {level} deoarece încalcă regulile de ierarhie.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Eroare de validare!",
+      content: {
+        intro: "Tipul de element de lucru {workItemTypeName} are:",
+        parent_items:
+          "{count, plural, one {element de lucru părinte} few {elemente de lucru părinte} other {elemente de lucru părinte}}",
+        child_items:
+          "{count, plural, one {sub-element de lucru} few {sub-elemente de lucru} other {sub-elemente de lucru}}",
+        parent_line_suffix_when_also_children: ", și ",
+        footer:
+          "Această modificare va elimina relațiile părinte-copil din elementele de lucru existente de tipul {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Introduceți „Confirmă” pentru a continua.",
+        placeholder: "Confirmă",
+      },
+      error_toast: {
+        title: "Eroare!",
+        message: "Nu s-a putut rupe ierarhia. Vă rugăm să încercați din nou.",
+      },
+      confirm_button: {
+        loading: "Se aplică",
+        default: "Aplică și deconectează",
       },
     },
     work_item_modal: {

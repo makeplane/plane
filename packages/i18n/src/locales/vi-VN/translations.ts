@@ -7069,9 +7069,8 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       },
     },
     levels: {
-      max_level_placeholder: "Thêm cấp độ phân cấp",
-      empty_level_placeholder: "Thêm loại mục công việc vào cấp độ {level}",
-      empty_level_unauthorized: "Không tìm thấy loại mục công việc nào ở cấp độ này.",
+      max_level_placeholder: "Kéo và thả loại để thêm cấp phân cấp mới",
+      empty_level_placeholder: "Kéo và thả loại mục công việc vào cấp độ {level}",
       drag_tooltip: "Kéo để thay đổi cấp độ",
       quick_actions: {
         set_as_default: {
@@ -7089,16 +7088,34 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Đang thêm {workItemTypeName} vào cấp độ {level}...",
+      update_level_toast: {
+        loading: "Đang chuyển {workItemTypeName} sang cấp độ {level}...",
         success: {
           title: "Thành công!",
-          message: "{workItemTypeName} đã được thêm vào cấp độ {level} thành công.",
+          message: "{workItemTypeName} đã được chuyển sang cấp độ {level} thành công.",
         },
-        error: {
-          title: "Lỗi!",
-          message: "Không thể thêm {workItemTypeName} vào cấp độ {level} vì vi phạm quy tắc phân cấp.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Lỗi xác thực!",
+      content: {
+        intro: "Loại mục công việc {workItemTypeName} có:",
+        parent_items: "{count, plural, other {mục công việc cha}}",
+        child_items: "{count, plural, other {mục công việc con}}",
+        parent_line_suffix_when_also_children: ", và ",
+        footer: "Thay đổi này sẽ gỡ bỏ quan hệ cha-con khỏi các mục công việc hiện có thuộc loại {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: 'Nhập "Xác nhận" để tiếp tục.',
+        placeholder: "Xác nhận",
+      },
+      error_toast: {
+        title: "Lỗi!",
+        message: "Không thể phá vỡ phân cấp. Vui lòng thử lại.",
+      },
+      confirm_button: {
+        loading: "Đang áp dụng",
+        default: "Áp dụng & gỡ liên kết",
       },
     },
     work_item_modal: {

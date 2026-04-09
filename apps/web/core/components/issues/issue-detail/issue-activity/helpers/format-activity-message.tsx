@@ -331,6 +331,13 @@ export function ActivityMessage({
     case "work_item":
       return "converted to epic.";
 
+    case "hierarchy_break":
+      return (
+        <>
+          removed the parent <Bold value={oldValue} /> during hierarchy changes.
+        </>
+      );
+
     default:
       // Generic fallback for unknown fields
       if (newValue && oldValue) {

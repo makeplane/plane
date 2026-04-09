@@ -7075,9 +7075,8 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       },
     },
     levels: {
-      max_level_placeholder: "Dodaj poziom hierarchii",
-      empty_level_placeholder: "Dodaj typ elementu roboczego do poziomu {level}",
-      empty_level_unauthorized: "Nie znaleziono typów elementów roboczych na tym poziomie.",
+      max_level_placeholder: "Przeciągnij i upuść typ, aby dodać nowy poziom hierarchii",
+      empty_level_placeholder: "Przeciągnij i upuść typ elementu roboczego na poziom {level}",
       drag_tooltip: "Przeciągnij, aby zmienić poziom",
       quick_actions: {
         set_as_default: {
@@ -7095,16 +7094,35 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Dodawanie {workItemTypeName} do poziomu {level}...",
+      update_level_toast: {
+        loading: "Przenoszenie {workItemTypeName} na poziom {level}...",
         success: {
           title: "Sukces!",
-          message: "{workItemTypeName} pomyślnie dodano do poziomu {level}.",
+          message: "{workItemTypeName} został pomyślnie przeniesiony na poziom {level}.",
         },
-        error: {
-          title: "Błąd!",
-          message: "Nie udało się dodać {workItemTypeName} do poziomu {level}, ponieważ narusza to zasady hierarchii.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Błąd walidacji!",
+      content: {
+        intro: "Typ elementu roboczego {workItemTypeName} obejmuje:",
+        parent_items: "{count, plural, one {element nadrzędny} few {elementy nadrzędne} other {elementów nadrzędnych}}",
+        child_items: "{count, plural, one {podelement} few {podelementy} other {podelementów}}",
+        parent_line_suffix_when_also_children: ", oraz ",
+        footer:
+          "Ta zmiana usunie relacje nadrzędne i podrzędne z istniejących elementów roboczych typu {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Wpisz „Potwierdź”, aby kontynuować.",
+        placeholder: "Potwierdź",
+      },
+      error_toast: {
+        title: "Błąd!",
+        message: "Nie udało się zerwać hierarchii. Spróbuj ponownie.",
+      },
+      confirm_button: {
+        loading: "Stosowanie",
+        default: "Zastosuj i odłącz",
       },
     },
     work_item_modal: {

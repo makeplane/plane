@@ -23,7 +23,7 @@ import { CustomMenu } from "@plane/ui";
 // plane web imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store/use-workspace-features";
 
-type Props = {
+type WorkItemTypeHierarchyLevelQuickActionsProps = {
   defaultLevel: number;
   level: number;
 };
@@ -31,7 +31,7 @@ type Props = {
 export const WorkItemTypeHierarchyLevelQuickActions = observer(function WorkItemTypeHierarchyLevelQuickActions({
   defaultLevel,
   level,
-}: Props) {
+}: WorkItemTypeHierarchyLevelQuickActionsProps) {
   // params
   const { workspaceSlug } = useParams();
   // store hooks

@@ -7143,9 +7143,8 @@ Crea un nuovo progetto invece`,
       },
     },
     levels: {
-      max_level_placeholder: "Aggiungi livello di gerarchia",
-      empty_level_placeholder: "Aggiungi un tipo di elemento di lavoro al livello {level}",
-      empty_level_unauthorized: "Nessun tipo di elemento di lavoro trovato in questo livello.",
+      max_level_placeholder: "Trascina e rilascia un tipo per aggiungere un nuovo livello di gerarchia",
+      empty_level_placeholder: "Trascina e rilascia un tipo di elemento di lavoro al livello {level}",
       drag_tooltip: "Trascina per cambiare livello",
       quick_actions: {
         set_as_default: {
@@ -7163,17 +7162,35 @@ Crea un nuovo progetto invece`,
           },
         },
       },
-      add_to_level_toast: {
-        loading: "Aggiunta di {workItemTypeName} al livello {level}...",
+      update_level_toast: {
+        loading: "Spostamento di {workItemTypeName} al livello {level}...",
         success: {
           title: "Successo!",
-          message: "{workItemTypeName} aggiunto al livello {level} con successo.",
+          message: "{workItemTypeName} è stato spostato al livello {level} correttamente.",
         },
-        error: {
-          title: "Errore!",
-          message:
-            "Impossibile aggiungere {workItemTypeName} al livello {level} poiché viola le regole della gerarchia.",
-        },
+      },
+    },
+    break_hierarchy_modal: {
+      title: "Errore di convalida!",
+      content: {
+        intro: "Il tipo di elemento di lavoro {workItemTypeName} include:",
+        parent_items: "{count, plural, one {elemento di lavoro padre} other {elementi di lavoro padre}}",
+        child_items: "{count, plural, one {sotto-elemento di lavoro} other {sotto-elementi di lavoro}}",
+        parent_line_suffix_when_also_children: ", e ",
+        footer:
+          "Questa modifica rimuoverà le relazioni padre-figlio dagli elementi di lavoro esistenti del tipo {workItemTypeName}.",
+      },
+      confirm_input: {
+        label: "Digita «Conferma» per continuare.",
+        placeholder: "Conferma",
+      },
+      error_toast: {
+        title: "Errore!",
+        message: "Impossibile interrompere la gerarchia. Riprovare.",
+      },
+      confirm_button: {
+        loading: "Applicazione in corso",
+        default: "Applica e scollega",
       },
     },
     work_item_modal: {

@@ -12,9 +12,8 @@
  */
 
 import type { ReactNode } from "react";
-import { AlignLeft, ArrowRightLeft, CalendarDays, FileText, Network, Paperclip, Type } from "lucide-react";
+import { AlignLeft, ArrowRightLeft, CalendarDays, FileText, Paperclip, Type } from "lucide-react";
 import {
-  ApproverIcon,
   CustomersIcon,
   CycleIcon,
   EpicIcon,
@@ -62,4 +61,5 @@ export const DEFAULT_FIELD_ICON_MAP = {
   epic: <EpicIcon className={ICON_CLASS} />,
   milestones: <MilestoneIcon className={ICON_CLASS} />,
   work_item: <ArrowRightLeft className={ICON_CLASS} />,
+  hierarchy_break: <ParentPropertyIcon className={ICON_CLASS} />,
 } satisfies Record<string, ReactNode>;
