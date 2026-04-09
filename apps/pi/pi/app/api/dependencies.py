@@ -39,6 +39,8 @@ session_check_url = settings.plane_api.SESSION_CHECK
 cookie_schema = APIKeyCookie(name=settings.plane_api.SESSION_COOKIE_NAME)
 jwt_schema = HTTPBearer()
 
+_GUEST_ROLE = 5
+
 
 async def is_valid_session(session: str) -> AuthResponse:
     if not session:
@@ -257,7 +259,22 @@ async def verify_internal_secret_key(x_internal_api_secret: Annotated[str | None
     return True
 
 
-_GUEST_ROLE = 5
+async def get_current_mobile_user(credentials: HTTPAuthorizationCredentials = Depends(jwt_schema)) -> User:
+    """
+    Dependency to get the current authenticated user from a JWT Bearer token.
+
+    This also sets the user in the request context for automatic population
+    of created_by_id and updated_by_id audit fields in database models.
+
+    Raises HTTPException if authentication fails.
+    Returns:
+        User object with authenticated user information.
+    """
+    auth = await validate_jwt_token(credentials)
+    if not auth.user:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid User")
+    # set_current_user is already called inside validate_jwt_token
+    return auth.user
 
 
 async def check_guest_access(user_id: str, workspace_id: str) -> JSONResponse | None:

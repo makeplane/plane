@@ -30,7 +30,7 @@ Guidelines:
 4. If the input is under 100 words, respond in 1-2 concise sentences.
 
 Formatting:
-- Output valid HTML only. Use tags like <p>, <ul>, <li>, <strong>, and <em>.
+- Output valid Markdown only. Use standard Markdown syntax (e.g., **bold**, *italic*, bullet lists with -, numbered lists, headings with #).
 - Structure the summary naturally based on the content — use paragraphs, bullet points, or a mix of both, whatever reads best.
 - Do not include meta commentary, image/video URLs, or media links.
 """
@@ -46,19 +46,19 @@ You are a highly capable AI assistant. Using the provided context and any additi
 2. Use the provided context as the primary guiding information.
 3. Augment the response only with verifiable, relevant knowledge you possess.
 4. Respond in a clear, direct, and complete manner.
-5. Provide your response formatted in valid HTML only, using appropriate tags for structure and readability.
+5. Provide your response formatted in valid Markdown only, using appropriate syntax for structure and readability.
 
 --- Output Criteria ---
 6. Provide a direct answer first, then explanations if needed.
 7. When relevant, include a summary of key points, structured lists (bullets or numbered)
    for readability, and relevant examples only if essential for clarity.
-8. For code responses, wrap code blocks in pre tags (with a language attribute where possible,
-   e.g. pre lang="python") and use code tags for inline code. Provide brief comments where
-   useful and ensure correctness.
+8. For code, use fenced code blocks with a language identifier when helpful (```python ... ```)
+   and backticks for inline code. Provide brief comments where useful and ensure correctness.
+   Do not use HTML (no pre, code, or other tags).
 
 --- Formatting Rules ---
-9. Use the following HTML tags where they enhance understanding: strong for bold, em for
-   italics, ul/ol for lists, code for inline code, and pre for code blocks.
+9. Use standard Markdown syntax where it enhances understanding: **bold**, *italic*, - or 1. for
+   lists, `inline code`, fenced code blocks, and # headings.
 10. Structure the response naturally based on the content — use paragraphs, lists, headings,
     or a mix, whatever is most readable. Do not force a rigid structure.
 
@@ -82,7 +82,7 @@ You will receive a message with these sections:
 5. Expand on key points with additional depth, examples from context, or clearer explanations where it adds value.
 
 --- Formatting ---
-6. Output valid HTML only. Use tags like p, ul, li, strong, and em as needed. No markdown.
+6. Output valid Markdown only. Use standard Markdown syntax (e.g., **bold**, *italic*, - or 1. for lists, # headings). No HTML.
 7. Structure the elaborated content naturally — use paragraphs, lists, or a mix, whatever reads best for the expanded content.
 8. Do not include meta-commentary, image/video URLs, or media links.
 """
@@ -101,7 +101,7 @@ You will receive a message with these sections:
 5. Prefer concise phrasing — combine related sentences, trim unnecessary qualifiers, and tighten language.
 
 --- Formatting ---
-6. Output valid HTML only. Use tags like p, ul, li, strong, and em as needed. No markdown.
+6. Output valid Markdown only. Use standard Markdown syntax (e.g., **bold**, *italic*, - or 1. for lists, # headings). No HTML.
 7. Structure the shortened content naturally — if the original used lists, keep lists;
    if paragraphs, keep paragraphs. Do not change the format unnecessarily.
 8. Do not include meta-commentary, image/video URLs, or media links.
