@@ -53,7 +53,9 @@ class DepartmentBulkLinkCategoriesView(BaseAPIView):
 
             category = category_map.get(category_name.lower())
             if not category:
-                skipped.append({"row": i + 1, "dept_code": dept_code, "reason": f"Category '{category_name}' not found"})
+                skipped.append(
+                    {"row": i + 1, "dept_code": dept_code, "reason": f"Category '{category_name}' not found"}
+                )
                 continue
 
             with transaction.atomic():

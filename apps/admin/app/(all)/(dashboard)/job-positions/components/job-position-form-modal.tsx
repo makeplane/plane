@@ -26,13 +26,23 @@ export const JobPositionFormModal = observer(function JobPositionFormModal({
   const { gradeIds, grades, createPosition, updatePosition } = useInstanceJobPosition();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: { name: "", job_grade: defaultGradeId ?? "", sort_order: 0, is_active: true },
   });
 
   useEffect(() => {
     if (editPosition) {
-      reset({ name: editPosition.name, job_grade: editPosition.job_grade ?? "", sort_order: editPosition.sort_order, is_active: editPosition.is_active });
+      reset({
+        name: editPosition.name,
+        job_grade: editPosition.job_grade ?? "",
+        sort_order: editPosition.sort_order,
+        is_active: editPosition.is_active,
+      });
     } else {
       reset({ name: "", job_grade: defaultGradeId ?? "", sort_order: 0, is_active: true });
     }
@@ -41,7 +51,12 @@ export const JobPositionFormModal = observer(function JobPositionFormModal({
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
-      const payload: IJobPositionCreate = { name: data.name, job_grade: data.job_grade, sort_order: Number(data.sort_order), is_active: data.is_active };
+      const payload: IJobPositionCreate = {
+        name: data.name,
+        job_grade: data.job_grade,
+        sort_order: Number(data.sort_order),
+        is_active: data.is_active,
+      };
       if (editPosition) {
         await updatePosition(editPosition.id, payload);
         setToast({ type: TOAST_TYPE.SUCCESS, title: "Job position updated" });
@@ -64,12 +79,16 @@ export const JobPositionFormModal = observer(function JobPositionFormModal({
           <Dialog.Title>{editPosition ? "Edit Job Position" : "Add Job Position"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="mt-4 space-y-3">
             <div className="space-y-1">
-              <label htmlFor="jp-name" className="text-13 font-medium">Name *</label>
+              <label htmlFor="jp-name" className="text-13 font-medium">
+                Name *
+              </label>
               <Input id="jp-name" {...register("name", { required: "Required" })} placeholder="Position name" />
               {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
             </div>
             <div className="space-y-1">
-              <label htmlFor="jp-grade" className="text-13 font-medium">Job Grade *</label>
+              <label htmlFor="jp-grade" className="text-13 font-medium">
+                Job Grade *
+              </label>
               <select
                 id="jp-grade"
                 {...register("job_grade", { required: "Required" })}
@@ -77,14 +96,18 @@ export const JobPositionFormModal = observer(function JobPositionFormModal({
               >
                 <option value="">— Select job grade —</option>
                 {gradeIds.map((id) => (
-                  <option key={id} value={id}>{grades[id]?.name}</option>
+                  <option key={id} value={id}>
+                    {grades[id]?.name}
+                  </option>
                 ))}
               </select>
               {errors.job_grade && <p className="text-11 text-danger-primary">{errors.job_grade.message}</p>}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="jp-sort-order" className="text-13 font-medium">Sort order</label>
+                <label htmlFor="jp-sort-order" className="text-13 font-medium">
+                  Sort order
+                </label>
                 <Input id="jp-sort-order" type="number" {...register("sort_order")} placeholder="0" />
               </div>
               <div className="space-y-1 flex flex-col justify-end">
@@ -95,7 +118,9 @@ export const JobPositionFormModal = observer(function JobPositionFormModal({
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="secondary" onClick={onClose} type="button">Cancel</Button>
+              <Button variant="secondary" onClick={onClose} type="button">
+                Cancel
+              </Button>
               <Button variant="primary" type="submit" loading={isSubmitting}>
                 {editPosition ? "Save changes" : "Create"}
               </Button>

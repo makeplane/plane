@@ -145,15 +145,14 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
           {/* Instructions */}
           <div className="space-y-1">
             <p className="text-sm text-tertiary">
-              Single-sheet Excel with columns:{" "}
-              <code className="text-primary">type</code> (main/sub),{" "}
-              <code className="text-primary">main_category_name</code>,{" "}
-              <code className="text-primary">name</code>,{" "}
-              <code className="text-primary">description</code>,{" "}
-              <code className="text-primary">sort_order</code>,{" "}
+              Single-sheet Excel with columns: <code className="text-primary">type</code> (main/sub),{" "}
+              <code className="text-primary">main_category_name</code>, <code className="text-primary">name</code>,{" "}
+              <code className="text-primary">description</code>, <code className="text-primary">sort_order</code>,{" "}
               <code className="text-primary">is_active</code>.
             </p>
-            <p className="text-sm text-tertiary">Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.</p>
+            <p className="text-sm text-tertiary">
+              Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.
+            </p>
           </div>
 
           {/* Template download */}
@@ -227,15 +226,13 @@ export const TaskCategoryImportModal = observer(function TaskCategoryImportModal
             <div className="space-y-3 rounded-md border border-subtle p-4">
               <p className="text-sm font-medium">Import complete:</p>
               <p className="text-sm">
-                Main:{" "}
-                <span className="text-success-primary">{result.total_main_created} created</span>
+                Main: <span className="text-success-primary">{result.total_main_created} created</span>
                 {result.total_main_skipped > 0 && (
                   <span className="text-warning-primary">, {result.total_main_skipped} skipped</span>
                 )}
               </p>
               <p className="text-sm">
-                Sub:{" "}
-                <span className="text-success-primary">{result.total_sub_created} created</span>
+                Sub: <span className="text-success-primary">{result.total_sub_created} created</span>
                 {result.total_sub_skipped > 0 && (
                   <span className="text-warning-primary">, {result.total_sub_skipped} skipped</span>
                 )}

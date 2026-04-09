@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { LayoutGrid, Tag } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu } from "@plane/ui";
 import { useTaskCategory } from "@/hooks/store/use-task-category";
@@ -46,9 +46,9 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
   };
 
   return (
-    <>
-      {/* Main Task Category */}
-      <SidebarPropertyListItem icon={LayoutGrid} label={t("task_category.main_label")}>
+    <SidebarPropertyListItem icon={LayoutGrid} label={t("task_category.main_label")}>
+      <div className="flex items-center gap-1 w-full">
+        {/* Main Task Category */}
         <CustomMenu
           label={selectedMain?.name ?? t("task_category.select_main")}
           buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
@@ -62,31 +62,35 @@ export const TaskCategoryProperty = observer(function TaskCategoryProperty(props
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-      </SidebarPropertyListItem>
 
-      {/* Sub Task Category — shown only when main has sub-categories */}
-      {selectedMainId && subCategories.length > 0 && (
-        <SidebarPropertyListItem icon={Tag} label={t("task_category.sub_label")}>
-          <CustomMenu
-            label={
-              issue.sub_task_category_id
-                ? (subCategories.find((s) => s.id === issue.sub_task_category_id)?.name ??
-                  t("task_category.select_sub"))
-                : t("task_category.select_sub")
-            }
-            buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
-            placement="bottom-start"
-            closeOnSelect
-            disabled={!isEditable}
-          >
-            {subCategories.map((sub) => (
-              <CustomMenu.MenuItem key={sub.id} onClick={() => handleSubChange(sub.id)}>
-                {sub.name}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
-        </SidebarPropertyListItem>
-      )}
-    </>
+        {/* Sub Task Category — inline, shown when main has sub-categories */}
+        {selectedMainId && subCategories.length > 0 && (
+          <>
+            <span className="text-tertiary text-body-xs-regular shrink-0 mx-1">/</span>
+            <span className="text-tertiary text-body-xs-regular shrink-0 whitespace-nowrap">
+              {t("task_category.sub_label")}:
+            </span>
+            <CustomMenu
+              label={
+                issue.sub_task_category_id
+                  ? (subCategories.find((s) => s.id === issue.sub_task_category_id)?.name ??
+                    t("task_category.select_sub"))
+                  : t("task_category.select_sub")
+              }
+              buttonClassName="h-7.5 w-full text-left text-body-xs-regular text-placeholder data-[has-value=true]:text-primary px-2"
+              placement="bottom-start"
+              closeOnSelect
+              disabled={!isEditable}
+            >
+              {subCategories.map((sub) => (
+                <CustomMenu.MenuItem key={sub.id} onClick={() => handleSubChange(sub.id)}>
+                  {sub.name}
+                </CustomMenu.MenuItem>
+              ))}
+            </CustomMenu>
+          </>
+        )}
+      </div>
+    </SidebarPropertyListItem>
   );
 });

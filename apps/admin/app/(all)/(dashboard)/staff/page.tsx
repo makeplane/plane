@@ -124,7 +124,7 @@ const StaffPage = observer(function StaffPage() {
             <Button variant="secondary" size="sm" onClick={() => void handleExport()}>
               <Download className="w-4 h-4" /> Export
             </Button>
-            <Link href="/job-positions/" className={getButtonStyling("neutral-primary", "sm")}>
+            <Link href="/job-positions/" className={getButtonStyling("secondary", "sm")}>
               <Briefcase className="w-4 h-4" /> Job Position
             </Link>
             <Link href="/staff/create" className={getButtonStyling("primary", "sm")}>

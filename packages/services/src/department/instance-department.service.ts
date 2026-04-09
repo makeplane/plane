@@ -267,9 +267,7 @@ export class InstanceDepartmentService extends APIService {
       });
   }
 
-  async bulkLinkCategories(
-    data: IDepartmentBulkLinkCategoriesRequest
-  ): Promise<IDepartmentBulkLinkCategoriesResponse> {
+  async bulkLinkCategories(data: IDepartmentBulkLinkCategoriesRequest): Promise<IDepartmentBulkLinkCategoriesResponse> {
     return this.post("/api/instances/departments/bulk-link-categories/", data)
       .then((res) => res?.data as IDepartmentBulkLinkCategoriesResponse)
       .catch((err: { response?: { data: unknown } }) => {

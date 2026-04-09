@@ -77,52 +77,63 @@ export class InstanceJobPositionStore implements IInstanceJobPositionStore {
   fetchAll = async (): Promise<void> => {
     this.loader = "init-loader";
     try {
-      const [grades, positions] = await Promise.all([
-        this.service.listGrades(),
-        this.service.listPositions(),
-      ]);
+      const [grades, positions] = await Promise.all([this.service.listGrades(), this.service.listPositions()]);
       runInAction(() => {
         grades.forEach((g) => set(this.grades, g.id, g));
         positions.forEach((p) => set(this.positions, p.id, p));
         this.hasFetched = true;
       });
     } finally {
-      runInAction(() => { this.loader = undefined; });
+      runInAction(() => {
+        this.loader = undefined;
+      });
     }
   };
 
   createGrade = async (data: IJobGradeCreate): Promise<IJobGrade> => {
     const created = await this.service.createGrade(data);
-    runInAction(() => { set(this.grades, created.id, created); });
+    runInAction(() => {
+      set(this.grades, created.id, created);
+    });
     return created;
   };
 
   updateGrade = async (id: string, data: IJobGradeUpdate): Promise<IJobGrade> => {
     const updated = await this.service.updateGrade(id, data);
-    runInAction(() => { set(this.grades, id, updated); });
+    runInAction(() => {
+      set(this.grades, id, updated);
+    });
     return updated;
   };
 
   deleteGrade = async (id: string): Promise<void> => {
     await this.service.deleteGrade(id);
-    runInAction(() => { delete this.grades[id]; });
+    runInAction(() => {
+      delete this.grades[id];
+    });
   };
 
   createPosition = async (data: IJobPositionCreate): Promise<IJobPosition> => {
     const created = await this.service.createPosition(data);
-    runInAction(() => { set(this.positions, created.id, created); });
+    runInAction(() => {
+      set(this.positions, created.id, created);
+    });
     return created;
   };
 
   updatePosition = async (id: string, data: IJobPositionUpdate): Promise<IJobPosition> => {
     const updated = await this.service.updatePosition(id, data);
-    runInAction(() => { set(this.positions, id, updated); });
+    runInAction(() => {
+      set(this.positions, id, updated);
+    });
     return updated;
   };
 
   deletePosition = async (id: string): Promise<void> => {
     await this.service.deletePosition(id);
-    runInAction(() => { delete this.positions[id]; });
+    runInAction(() => {
+      delete this.positions[id];
+    });
   };
 
   bulkImport = async (data: IJobPositionBulkImportRequest): Promise<IJobPositionBulkImportResponse> => {
