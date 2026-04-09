@@ -4,10 +4,12 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import type { UseFormRegister, FieldErrors } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import type { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue, Control } from "react-hook-form";
 import { Input } from "@plane/propel/input";
-import { useInstanceDepartment } from "@/hooks/store";
+import { useInstanceDepartment, useInstanceJobPosition } from "@/hooks/store";
 
 export type StaffFormValues = {
   staff_id: string;
@@ -28,10 +30,42 @@ export type StaffFormValues = {
 type Props = {
   register: UseFormRegister<StaffFormValues>;
   errors: FieldErrors<StaffFormValues>;
+  watch: UseFormWatch<StaffFormValues>;
+  setValue: UseFormSetValue<StaffFormValues>;
+  control: Control<StaffFormValues>;
 };
 
-export const StaffFormFields = observer(function StaffFormFields({ register, errors }: Props) {
+export const StaffFormFields = observer(function StaffFormFields({ register, errors, watch, setValue, control }: Props) {
   const { departments, departmentIds } = useInstanceDepartment();
+  const { grades, positions, hasFetched, fetchAll } = useInstanceJobPosition();
+
+  // Local state for selected grade ID — drives position filtering reliably
+  const [selectedGradeId, setSelectedGradeId] = useState<string>("");
+
+  useEffect(() => {
+    if (!hasFetched) fetchAll();
+  }, [hasFetched, fetchAll]);
+
+  // Sync selectedGradeId when the watched grade name or data availability changes (e.g., edit modal reset)
+  const watchedGradeName = watch("job_grade");
+  useEffect(() => {
+    const gradeObj = Object.values(grades).find((g) => g.name === watchedGradeName);
+    setSelectedGradeId(gradeObj?.id ?? "");
+  }, [watchedGradeName, hasFetched]); // hasFetched ensures sync after initial data load
+
+  const activeGrades = Object.values(grades).filter((g) => g.is_active);
+
+  // Access positions observable directly so MobX tracks it for reactivity
+  const filteredPositions = Object.values(positions).filter((p) => p.job_grade === selectedGradeId && p.is_active);
+
+  const gradeRegistration = register("job_grade");
+
+  const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    void gradeRegistration.onChange(e); // update react-hook-form state
+    const gradeObj = activeGrades.find((g) => g.name === e.target.value);
+    setSelectedGradeId(gradeObj?.id ?? ""); // update local state immediately → re-render positions
+    setValue("position", ""); // reset selected position
+  };
 
   return (
     <div className="space-y-3">
@@ -95,12 +129,42 @@ export const StaffFormFields = observer(function StaffFormFields({ register, err
           </select>
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Position</label>
-          <Input {...register("position")} placeholder="e.g. Senior Engineer" />
+          <label className="text-13 font-medium">Job grade</label>
+          <select
+            {...gradeRegistration}
+            onChange={handleGradeChange}
+            className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
+          >
+            <option value="">— None —</option>
+            {activeGrades.map((grade) => (
+              <option key={grade.id} value={grade.name}>
+                {grade.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Job grade</label>
-          <Input {...register("job_grade")} placeholder="e.g. L4" />
+          <label className="text-13 font-medium">Position</label>
+          {/* Controller keeps value in sync with form state (not DOM) — fixes edit case where
+              options load after reset() is called, causing uncontrolled select to lose its value */}
+          <Controller
+            name="position"
+            control={control}
+            render={({ field }) => (
+              <select
+                {...field}
+                disabled={!selectedGradeId}
+                className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13 disabled:opacity-50"
+              >
+                <option value="">— None —</option>
+                {filteredPositions.map((pos) => (
+                  <option key={pos.id} value={pos.name}>
+                    {pos.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
         </div>
         <div className="space-y-1">
           <label className="text-13 font-medium">Date of joining</label>
