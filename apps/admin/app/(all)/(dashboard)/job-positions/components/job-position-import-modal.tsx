@@ -146,15 +146,14 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
           {/* Instructions */}
           <div className="space-y-1">
             <p className="text-sm text-tertiary">
-              Single-sheet Excel with columns:{" "}
-              <code className="text-primary">type</code> (grade/position),{" "}
-              <code className="text-primary">grade_name</code>,{" "}
-              <code className="text-primary">name</code>,{" "}
-              <code className="text-primary">description</code>,{" "}
-              <code className="text-primary">sort_order</code>,{" "}
+              Single-sheet Excel with columns: <code className="text-primary">type</code> (grade/position),{" "}
+              <code className="text-primary">grade_name</code>, <code className="text-primary">name</code>,{" "}
+              <code className="text-primary">description</code>, <code className="text-primary">sort_order</code>,{" "}
               <code className="text-primary">is_active</code>.
             </p>
-            <p className="text-sm text-tertiary">Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.</p>
+            <p className="text-sm text-tertiary">
+              Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.
+            </p>
           </div>
 
           {/* Template download */}
@@ -228,15 +227,13 @@ export const JobPositionImportModal = observer(function JobPositionImportModal({
             <div className="space-y-3 rounded-md border border-subtle p-4">
               <p className="text-sm font-medium">Import complete:</p>
               <p className="text-sm">
-                Grades:{" "}
-                <span className="text-success-primary">{result.total_grade_created} created</span>
+                Grades: <span className="text-success-primary">{result.total_grade_created} created</span>
                 {result.total_grade_skipped > 0 && (
                   <span className="text-warning-primary">, {result.total_grade_skipped} skipped</span>
                 )}
               </p>
               <p className="text-sm">
-                Positions:{" "}
-                <span className="text-success-primary">{result.total_position_created} created</span>
+                Positions: <span className="text-success-primary">{result.total_position_created} created</span>
                 {result.total_position_skipped > 0 && (
                   <span className="text-warning-primary">, {result.total_position_skipped} skipped</span>
                 )}
