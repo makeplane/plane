@@ -418,7 +418,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                       onChange(value);
                     }}
                     error={Boolean(errors.timezone)}
-                    buttonClassName="border-none"
+                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
                     disabled={!isAdmin}
                   />
                 </>
