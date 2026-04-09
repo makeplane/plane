@@ -17,6 +17,7 @@ import { useInstanceStaff, useInstanceDepartment } from "@/hooks/store";
 import { StaffTable } from "./components/staff-table";
 import { StaffFormModal } from "./components/staff-form-modal";
 import { StaffImportModal } from "./components/staff-import-modal";
+import { Route } from "next";
 
 const StaffPage = observer(function StaffPage() {
   const { stats, staffIds, fetchStaff, fetchStats } = useInstanceStaff();
@@ -124,7 +125,7 @@ const StaffPage = observer(function StaffPage() {
             <Button variant="secondary" size="sm" onClick={() => void handleExport()}>
               <Download className="w-4 h-4" /> Export
             </Button>
-            <Link href="/job-positions/" className={getButtonStyling("neutral-primary", "sm")}>
+            <Link href="/job-positions/" className={getButtonStyling("secondary", "sm")}>
               <Briefcase className="w-4 h-4" /> Job Position
             </Link>
             <Link href="/staff/create" className={getButtonStyling("primary", "sm")}>
@@ -147,8 +148,7 @@ const StaffPage = observer(function StaffPage() {
   );
 });
 
-export function meta() {
-  return [{ title: "Staff - God Mode" }];
-}
+// eslint-disable-next-line react-refresh/only-export-components
+export const meta: Route.MetaFunction = () => [{ title: "Staff - God Mode" }];
 
 export default StaffPage;
