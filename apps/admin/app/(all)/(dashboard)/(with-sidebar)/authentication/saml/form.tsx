@@ -37,12 +37,14 @@ const DEFAULT_ATTRIBUTE_MAPPING: Record<string, string> = {
   email: "email",
   first_name: "first_name",
   last_name: "last_name",
+  display_name: "preferred_username",
 };
 
 const ATTRIBUTE_MAPPING_FIELDS = [
   { planeField: "email", label: "Email", required: true },
   { planeField: "first_name", label: "First name", required: false },
   { planeField: "last_name", label: "Last name", required: false },
+  { planeField: "display_name", label: "Display name", required: false },
 ] as const;
 
 const SAML_FORM_SWITCH_FIELDS: TControllerSwitchFormField<SAMLConfigFormValues>[] = [

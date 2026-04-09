@@ -40,6 +40,7 @@ DEFAULT_ATTRIBUTE_MAPPING = {
     "email": "email",
     "first_name": "first_name",
     "last_name": "last_name",
+    "display_name": "preferred_username",
 }
 
 DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
@@ -128,13 +129,13 @@ class SAMLAdapter(Adapter):
                 error_message="SAML_NOT_CONFIGURED",
             )
 
-        # Parse attribute mapping from JSON string
+        # Parse attribute mapping from JSON string, merging on top of defaults
         attribute_mapping = DEFAULT_ATTRIBUTE_MAPPING.copy()
         if SAML_ATTRIBUTE_MAPPING:
             try:
                 parsed = json.loads(SAML_ATTRIBUTE_MAPPING)
                 if isinstance(parsed, dict):
-                    attribute_mapping = parsed
+                    attribute_mapping.update(parsed)
             except (json.JSONDecodeError, TypeError):
                 pass
         self.attribute_mapping = attribute_mapping
@@ -276,6 +277,7 @@ class SAMLAdapter(Adapter):
 
         first_name = get_attribute_value(attributes, self.attribute_mapping, "first_name")
         last_name = get_attribute_value(attributes, self.attribute_mapping, "last_name")
+        display_name = get_attribute_value(attributes, self.attribute_mapping, "display_name") or None
 
         super().set_user_data(
             {
@@ -283,6 +285,7 @@ class SAMLAdapter(Adapter):
                 "user": {
                     "first_name": first_name,
                     "last_name": last_name,
+                    "display_name": display_name,
                     "email": email,
                     "is_password_autoset": True,
                 },
@@ -321,8 +324,10 @@ class SAMLAuthCloudAdapter(Adapter):
 
         self.workspace_id = workspace_id
 
-        # Parse attribute mapping from the provider
-        attribute_mapping = identity_provider.attribute_mapping or DEFAULT_ATTRIBUTE_MAPPING.copy()
+        # Parse attribute mapping from the provider, merging on top of defaults
+        attribute_mapping = DEFAULT_ATTRIBUTE_MAPPING.copy()
+        if identity_provider.attribute_mapping:
+            attribute_mapping.update(identity_provider.attribute_mapping)
         self.attribute_mapping = attribute_mapping
 
         super().__init__(request, self.provider)
@@ -494,6 +499,7 @@ class SAMLAuthCloudAdapter(Adapter):
 
         first_name = get_attribute_value(attributes, self.attribute_mapping, "first_name")
         last_name = get_attribute_value(attributes, self.attribute_mapping, "last_name")
+        display_name = get_attribute_value(attributes, self.attribute_mapping, "display_name") or None
 
         super().set_user_data(
             {
@@ -501,6 +507,7 @@ class SAMLAuthCloudAdapter(Adapter):
                 "user": {
                     "first_name": first_name,
                     "last_name": last_name,
+                    "display_name": display_name,
                     "email": email,
                     "is_password_autoset": True,
                 },

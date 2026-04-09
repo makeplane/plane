@@ -125,7 +125,7 @@ saml_config_variables = [
     },
     {
         "key": "SAML_ATTRIBUTE_MAPPING",
-        "value": '{"email": "email", "first_name": "first_name", "last_name": "last_name"}',
+        "value": {"email": "email", "first_name": "first_name", "last_name": "last_name", "display_name": "preferred_username"}, #noqa: E501
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },

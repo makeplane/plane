@@ -30,7 +30,12 @@ export const NAME_ID_FORMAT_OPTIONS = [
 export function SAMLAttributeMappingTable(props: Props) {
   const {
     nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-    attributeMapping = { email: "email", first_name: "first_name", last_name: "last_name" },
+    attributeMapping = {
+      email: "email",
+      first_name: "first_name",
+      last_name: "last_name",
+      display_name: "preferred_username",
+    },
   } = props;
 
   const selectedOption = NAME_ID_FORMAT_OPTIONS.find((opt) => opt.value === nameIdFormat);
