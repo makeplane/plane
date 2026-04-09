@@ -25,6 +25,7 @@ from typing import cast
 
 from langchain_core.messages import HumanMessage
 from langchain_core.messages import SystemMessage
+from langchain_core.messages import ToolMessage
 
 from pi import logger
 from pi import settings
@@ -1003,8 +1004,6 @@ async def execute_tools_for_build_mode(
                             log.error(f"ChatID: {chat_id} - reselect_action_categories error: {e}")
                     else:
                         result_text = "reselect_action_categories tool not found."
-
-                    from langchain_core.messages import ToolMessage
 
                     tool_messages.append(ToolMessage(content=str(result_text), tool_call_id=tool_id))
 
