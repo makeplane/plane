@@ -95,7 +95,7 @@
   },
   "dependencies": {
     "@flatfile/api": "catalog:",
-    "@linear/sdk": "^37.0.0",
+    "@linear/sdk": "catalog:",
     "@octokit/auth-app": "catalog:",
     "@octokit/rest": "catalog:",
     "@plane/constants": "workspace:*",
@@ -110,7 +110,7 @@
     "node-html-parser": "catalog:",
     "papaparse": "catalog:",
     "uuid": "catalog:",
-    "zeed-dom": "^0.15.1",
+    "zeed-dom": "catalog:",
     "zod": "^3.25.76"
   },
   "devDependencies": {
