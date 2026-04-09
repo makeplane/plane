@@ -19,12 +19,15 @@ class WorkspaceCapacityEndpoint(BaseAPIView):
     Per-member capacity report for all workspace projects (filtered by user membership).
 
     GET /api/workspaces/<slug>/time-tracking/analytics/capacity/
-    ?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&limit=100&offset=0
+    ?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&limit=100&offset=0&cross_workspace=false
+
+    cross_workspace=true: members scoped to this workspace, but time counted from ALL workspaces.
     """
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         user = request.user
+        cross_workspace = request.query_params.get("cross_workspace", "false").lower() == "true"
 
         # --- date range parsing ---
         today = timezone.now().date()
@@ -142,6 +145,13 @@ class WorkspaceCapacityEndpoint(BaseAPIView):
             for mid, name, avatar in members
         }
 
+        # --- cross-workspace override: same members, time from ALL workspaces ---
+        if cross_workspace and member_map:
+            worklog_filter = {
+                "logged_by__in": list(member_map.keys()),
+                "logged_at__range": [date_from, date_to],
+            }
+
         # --- aggregate logged time per member ---
         logged_qs = (
             IssueWorkLog.objects.filter(**worklog_filter)
@@ -209,3 +219,49 @@ class WorkspaceCapacityEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+class WorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
+    """
+    Tasks logged by a member on a specific day (workspace-scoped).
+
+    GET /api/workspaces/<slug>/time-tracking/analytics/capacity/day-details/
+    ?member_id=<uuid>&date=YYYY-MM-DD&cross_workspace=false
+
+    cross_workspace=true: returns all tasks across all workspaces for that member on that date.
+    """
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug):
+        member_id = request.query_params.get("member_id")
+        date = request.query_params.get("date")
+        cross_workspace = request.query_params.get("cross_workspace", "false").lower() == "true"
+
+        if not member_id or not date:
+            return Response({"error": "member_id and date are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if cross_workspace:
+            # All workspaces the current user is allowed to see (all user workspaces)
+            worklog_filter = {"logged_by": member_id, "logged_at": date}
+        else:
+            # Current workspace only
+            worklog_filter = {"workspace__slug": slug, "logged_by": member_id, "logged_at": date}
+
+        tasks_qs = (
+            IssueWorkLog.objects.filter(**worklog_filter)
+            .select_related("issue", "issue__project")
+            .values("issue_id", "issue__name", "issue__sequence_id", "issue__project__identifier")
+            .annotate(total_minutes=Sum("duration_minutes"))
+            .order_by("-total_minutes")
+        )
+
+        tasks = [
+            {
+                "issue_id": str(row["issue_id"]),
+                "issue_name": row["issue__name"],
+                "issue_identifier": f"{row['issue__project__identifier']}-{row['issue__sequence_id']}",
+                "total_minutes": row["total_minutes"] or 0,
+            }
+            for row in tasks_qs
+        ]
+
+        return Response({"tasks": tasks}, status=status.HTTP_200_OK)

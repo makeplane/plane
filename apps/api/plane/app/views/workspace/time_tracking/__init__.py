@@ -12,7 +12,7 @@ from .summary import ProjectWorkLogSummaryEndpoint, WorkspaceWorkLogSummaryEndpo
 from .timesheet_bulk import TimesheetBulkUpdateEndpoint
 from .timesheet_grid import TimesheetGridEndpoint
 from .workspace_analytics_timesheet import WorkspaceAnalyticsTimesheetEndpoint
-from .workspace_capacity import WorkspaceCapacityEndpoint
+from .workspace_capacity import WorkspaceCapacityEndpoint, WorkspaceCapacityDayDetailsEndpoint
 
 __all__ = [
     "ProjectAnalyticsTimesheetEndpoint",
@@ -25,4 +25,5 @@ __all__ = [
     "TimesheetBulkUpdateEndpoint",
     "WorkspaceAnalyticsTimesheetEndpoint",
     "WorkspaceCapacityEndpoint",
+    "WorkspaceCapacityDayDetailsEndpoint",
 ]
