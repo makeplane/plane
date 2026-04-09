@@ -7,18 +7,22 @@
 import { Outlet, useParams, useLocation, useNavigate } from "react-router";
 import { User, BarChart2, Users } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // local
 import { WorkspaceTimeTrackingHeader } from "./header";
 
-const TAB_ITEMS = [
-  { key: "my_timesheet", labelKey: "my_timesheet", path: "", icon: User },
-  { key: "analytics", labelKey: "project_analytics", path: "analytics", icon: BarChart2 },
-  { key: "capacity", labelKey: "capacity", path: "capacity", icon: Users },
+const ALL_TAB_ITEMS = [
+  { key: "my_timesheet", labelKey: "my_timesheet", path: "", icon: User, adminOnly: false },
+  { key: "analytics", labelKey: "project_analytics", path: "analytics", icon: BarChart2, adminOnly: true },
+  { key: "capacity", labelKey: "capacity", path: "capacity", icon: Users, adminOnly: true },
 ] as const;
 
 export default function WorkspaceTimeTrackingLayout() {
@@ -26,6 +30,10 @@ export default function WorkspaceTimeTrackingLayout() {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
   const location = useLocation();
   const navigate = useNavigate();
+  const { allowPermissions } = useUserPermissions();
+
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  const TAB_ITEMS = ALL_TAB_ITEMS.filter((tab) => !tab.adminOnly || isAdmin);
 
   const basePath = `/${workspaceSlug}/time-tracking`;
   const activeTab = (() => {

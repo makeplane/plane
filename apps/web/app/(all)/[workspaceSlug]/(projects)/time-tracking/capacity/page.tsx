@@ -5,17 +5,26 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
+import { useParams, Navigate } from "react-router";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { CapacityDashboard } from "@/plane-web/components/time-tracking/capacity";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 
 const WorkspaceCapacityPage = observer(function WorkspaceCapacityPage() {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
+  const { allowPermissions } = useUserPermissions();
+
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  if (!isAdmin) return <Navigate to={`/${workspaceSlug}/time-tracking`} replace />;
+
   return (
     <>
       <PageHead title="Capacity" />
-      <CapacityDashboard workspaceSlug={workspaceSlug!} defaultCrossWorkspace />
+      <CapacityDashboard workspaceSlug={workspaceSlug!} isWorkspaceMode />
     </>
   );
 });

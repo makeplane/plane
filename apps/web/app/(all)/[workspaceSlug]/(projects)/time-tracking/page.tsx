@@ -15,7 +15,7 @@ const WorkspaceTimesheetPage = observer(function WorkspaceTimesheetPage() {
   return (
     <>
       <PageHead title="My Timesheet" />
-      <TimesheetGrid workspaceSlug={workspaceSlug!} defaultCrossWorkspace />
+      <TimesheetGrid workspaceSlug={workspaceSlug!} isWorkspaceMode />
     </>
   );
 });
