@@ -69,7 +69,13 @@ export interface IJobPositionBulkImportSkipped {
 
 export interface IJobPositionBulkImportRequest {
   grades: Array<{ name: string; description?: string; sort_order?: number; is_active?: boolean }>;
-  positions: Array<{ grade_name: string; name: string; description?: string; sort_order?: number; is_active?: boolean }>;
+  positions: Array<{
+    grade_name: string;
+    name: string;
+    description?: string;
+    sort_order?: number;
+    is_active?: boolean;
+  }>;
 }
 
 export interface IJobPositionBulkImportResponse {
