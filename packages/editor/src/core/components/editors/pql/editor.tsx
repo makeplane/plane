@@ -100,7 +100,7 @@ function PQLEditor(
   return (
     <div
       className={cn(
-        "pql-editor-wrapper relative bg-layer-2 min-h-0 transition-[min-height] duration-300 ease-in-out h-8",
+        "pql-editor-wrapper relative bg-layer-2 transition-[min-height] duration-300 ease-in-out min-h-8",
         {
           "min-h-37.5": isMaximized,
         },
@@ -113,7 +113,7 @@ function PQLEditor(
           className="size-full font-code text-13 [&_.pql-editor-content]:wrap-break-word"
         />
 
-        <div className="shrink-0 flex items-center">
+        <div className="shrink-0 flex">
           <Tooltip
             tooltipContent={
               <span className="flex items-center gap-1">
