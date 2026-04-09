@@ -149,7 +149,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
       <div className="flex flex-col gap-4 pb-5">
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-between gap-4 h-6">
-            <div className="flex items-center gap-1.5 text-body-xs-medium">
+            <div className="flex items-center gap-1.5 text-body-xs-medium min-h-6">
               {issue.parent_id ? (
                 <IssueParentDetail
                   workspaceSlug={workspaceSlug}

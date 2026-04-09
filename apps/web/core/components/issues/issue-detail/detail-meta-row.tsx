@@ -73,7 +73,7 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
   if (!issue) return null;
 
   return (
-    <div className="-ml-1">
+    <div className="-ml-3">
       <EntityDetailPrimaryProperties>
         {/* State */}
         <StateDropdown

@@ -95,7 +95,7 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
           <span
             ref={actionSectionRef}
             className={cn(
-              "grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm transition-opacity",
+              "grid place-items-center p-0.5 text-placeholder group/parent-hover:bg-layer-1 rounded-sm transition-opacity",
               {
                 "hidden group-hover/parent:block": !isMenuOpen,
                 block: isMenuOpen,
