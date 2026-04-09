@@ -27,7 +27,14 @@ async function exportToExcel(
   const XLSX = await import("xlsx");
   const headers = ["type", "main_category_name", "name", "description", "sort_order", "is_active"];
   const mainRows = mains.map((m) => ["main", "", m.name, m.description ?? "", m.sort_order, m.is_active]);
-  const subRows = subs.map((s) => ["sub", mainById[s.main_category]?.name ?? "", s.name, "", s.sort_order, s.is_active]);
+  const subRows = subs.map((s) => [
+    "sub",
+    mainById[s.main_category]?.name ?? "",
+    s.name,
+    "",
+    s.sort_order,
+    s.is_active,
+  ]);
   const sheet = XLSX.utils.aoa_to_sheet([headers, ...mainRows, ...subRows]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, sheet, "Task Categories");
@@ -89,11 +96,7 @@ const TaskCategoriesPage = observer(function TaskCategoriesPage() {
               variant="secondary"
               size="sm"
               onClick={() =>
-                void exportToExcel(
-                  Object.values(mainCategories),
-                  Object.values(subCategories),
-                  mainCategories
-                )
+                void exportToExcel(Object.values(mainCategories), Object.values(subCategories), mainCategories)
               }
             >
               <Download className="w-4 h-4" />

@@ -23,8 +23,15 @@ import { BulkLinkModal } from "./components/bulk-link-modal";
 import { BulkLinkCategoriesModal } from "./components/bulk-link-categories-modal";
 
 const DepartmentsPage = observer(function DepartmentsPage() {
-  const { tree, loader, fetchTree, deleteDepartment, exportDepartments, exportWorkspaceLinked, exportLinkedCategories } =
-    useInstanceDepartment();
+  const {
+    tree,
+    loader,
+    fetchTree,
+    deleteDepartment,
+    exportDepartments,
+    exportWorkspaceLinked,
+    exportLinkedCategories,
+  } = useInstanceDepartment();
   const { fetchCategories, mainCategories } = useInstanceTaskCategory();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
