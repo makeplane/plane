@@ -49,11 +49,26 @@ const JobPositionsPage = observer(function JobPositionsPage() {
 
   useSWR("INSTANCE_JOB_POSITIONS", fetchAll);
 
-  const handleEditGrade = (g: IJobGrade) => { setEditGrade(g); setGradeModalOpen(true); };
-  const handleEditPosition = (p: IJobPosition) => { setEditPosition(p); setPositionModalOpen(true); };
-  const handleGradeModalClose = () => { setGradeModalOpen(false); setEditGrade(null); };
-  const handlePositionModalClose = () => { setPositionModalOpen(false); setEditPosition(null); };
-  const handleAddPosition = () => { setEditPosition(null); setPositionModalOpen(true); };
+  const handleEditGrade = (g: IJobGrade) => {
+    setEditGrade(g);
+    setGradeModalOpen(true);
+  };
+  const handleEditPosition = (p: IJobPosition) => {
+    setEditPosition(p);
+    setPositionModalOpen(true);
+  };
+  const handleGradeModalClose = () => {
+    setGradeModalOpen(false);
+    setEditGrade(null);
+  };
+  const handlePositionModalClose = () => {
+    setPositionModalOpen(false);
+    setEditPosition(null);
+  };
+  const handleAddPosition = () => {
+    setEditPosition(null);
+    setPositionModalOpen(true);
+  };
 
   return (
     <PageWrapper header={{ title: "Job Positions", description: "Manage job grades and their positions." }}>
@@ -94,7 +109,10 @@ const JobPositionsPage = observer(function JobPositionsPage() {
                 <Button
                   variant="primary"
                   size="sm"
-                  onClick={() => { setEditGrade(null); setGradeModalOpen(true); }}
+                  onClick={() => {
+                    setEditGrade(null);
+                    setGradeModalOpen(true);
+                  }}
                 >
                   <Plus className="w-4 h-4" />
                   Add Job Grade
