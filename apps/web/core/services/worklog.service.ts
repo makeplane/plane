@@ -288,4 +288,40 @@ export class WorklogService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  // Workspace capacity day-details (current workspace or cross-workspace based on param)
+  async getWorkspaceAnalyticsCapacityDayDetails(
+    workspaceSlug: string,
+    memberId: string,
+    date: string,
+    crossWorkspace?: boolean
+  ): Promise<ICapacityDayDetailsResponse> {
+    const params: Record<string, string> = { member_id: memberId, date };
+    if (crossWorkspace === true) params["cross_workspace"] = "true";
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/analytics/capacity/day-details/`, {
+        params,
+      }) as Promise<{ data: ICapacityDayDetailsResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Workspace-scoped capacity (current workspace members only, admin-only endpoint)
+  async getWorkspaceAnalyticsCapacity(
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityReportResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/analytics/capacity/`, {
+        params,
+      }) as Promise<{ data: ICapacityReportResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
 }
