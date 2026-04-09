@@ -35,7 +35,7 @@ django-storages==1.14.2
 # user management
 django-crum==0.7.9
 # web server
-uvicorn==0.29.0
+uvicorn==0.38.0
 # sockets
 channels==4.1.0
 # ai
