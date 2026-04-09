@@ -529,8 +529,8 @@ catalogs:
       specifier: 5.0.2
       version: 5.0.2
     file-type:
-      specifier: 21.3.1
-      version: 21.3.1
+      specifier: 21.3.2
+      version: 21.3.2
     framer-motion:
       specifier: 12.34.3
       version: 12.34.3
@@ -801,9 +801,6 @@ catalogs:
     uuid:
       specifier: 13.0.0
       version: 13.0.0
-    vite:
-      specifier: 8.0.7
-      version: 8.0.7
     vitest:
       specifier: 4.1.3
       version: 4.1.3
@@ -856,6 +853,8 @@ overrides:
   lodash-es: 4.18.1
   qs: '>=6.14.1'
   tough-cookie: '>=4.1.3'
+  vite: 8.0.7
+  defu: 6.1.5
 
 importers:
 
@@ -944,7 +943,7 @@ importers:
         version: 3.13.19
       '@vercel/react-router':
         specifier: 'catalog:'
-        version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -1002,7 +1001,7 @@ importers:
         version: link:../../packages/typescript-config
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
+        version: 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.19(tailwindcss@4.2.2)
@@ -1034,7 +1033,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: 8.0.7
         version: 8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
 
   apps/desktop:
@@ -1661,7 +1660,7 @@ importers:
         version: 10.46.0(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(rollup@4.59.0)
       '@vercel/react-router':
         specifier: 'catalog:'
-        version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -1728,7 +1727,7 @@ importers:
         version: link:../../packages/typescript-config
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
+        version: 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.19(tailwindcss@4.2.2)
@@ -1760,7 +1759,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: 8.0.7
         version: 8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
 
   apps/web:
@@ -1857,7 +1856,7 @@ importers:
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vercel/react-router':
         specifier: 'catalog:'
-        version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -1999,7 +1998,7 @@ importers:
         version: link:../../packages/typescript-config
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
+        version: 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
       '@sentry/vite-plugin':
         specifier: 'catalog:'
         version: 4.9.1
@@ -2043,7 +2042,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: 8.0.7
         version: 8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
       vitest:
         specifier: 'catalog:'
@@ -2687,7 +2686,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: 8.0.7
         version: 8.0.7(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
 
   packages/propel:
@@ -2852,7 +2851,7 @@ importers:
         version: 1.13.5
       file-type:
         specifier: 'catalog:'
-        version: 21.3.1
+        version: 21.3.2
     devDependencies:
       '@plane/typescript-config':
         specifier: workspace:*
@@ -4757,7 +4756,7 @@ packages:
     resolution: {integrity: sha512-qvsTEwEFefhdirGOPnu9Wp6ChfIwy2dBCRuETU3uE+4cC+PFoxMSiiEhxk4lOluA34eARHA0OxqsEUYDqRMgeQ==}
     peerDependencies:
       typescript: '>= 4.3.x'
-      vite: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: 8.0.7
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -6186,7 +6185,7 @@ packages:
       react-router: ^7.14.0
       react-server-dom-webpack: ^19.2.3
       typescript: ^5.1.0
-      vite: ^5.1.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: 8.0.7
       wrangler: ^3.28.2 || ^4.0.0
     peerDependenciesMeta:
       '@react-router/serve':
@@ -7188,7 +7187,7 @@ packages:
     resolution: {integrity: sha512-i4KwCOKbhtlbQIbhm53+Kk7bMnxa0cwTn1pxmtA/x5wm1Qu7FrrBQV0V0DNjkUqzcSKo1CjspASJV/HlY0zYlw==}
     peerDependencies:
       storybook: ^10.3.5
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: 8.0.7
 
   '@storybook/csf-plugin@10.3.5':
     resolution: {integrity: sha512-qlEzNKxOjq86pvrbuMwiGD/bylnsXk1dg7ve0j77YFjEEchqtl7qTlrXvFdNaLA89GhW6D/EV6eOCu/eobPDgw==}
@@ -7196,7 +7195,7 @@ packages:
       esbuild: '*'
       rollup: '*'
       storybook: ^10.3.5
-      vite: '*'
+      vite: 8.0.7
       webpack: '*'
     peerDependenciesMeta:
       esbuild:
@@ -7230,7 +7229,7 @@ packages:
       react: 18.3.1
       react-dom: 18.3.1
       storybook: ^10.3.5
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: 8.0.7
 
   '@storybook/react@10.3.5':
     resolution: {integrity: sha512-tpLTLaVGoA6fLK3ReyGzZUricq7lyPaV2hLPpj5wqdXLV/LpRtAHClUpNoPDYSBjlnSjL81hMZijbkGC3mA+gw==}
@@ -7361,7 +7360,7 @@ packages:
   '@tailwindcss/vite@4.2.2':
     resolution: {integrity: sha512-mEiF5HO1QqCLXoNEfXVA1Tzo+cYsrqV7w9Juj2wdUFyW07JRenqMG225MvPwr3ZD9N1bFQj46X7r33iHxLUW0w==}
     peerDependencies:
-      vite: ^5.2.0 || ^6 || ^7 || ^8
+      vite: 8.0.7
 
   '@tanstack/react-table@8.21.3':
     resolution: {integrity: sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==}
@@ -8154,7 +8153,7 @@ packages:
     peerDependencies:
       '@rolldown/plugin-babel': ^0.1.7 || ^0.2.0
       babel-plugin-react-compiler: ^1.0.0
-      vite: ^8.0.0
+      vite: 8.0.7
     peerDependenciesMeta:
       '@rolldown/plugin-babel':
         optional: true
@@ -8191,7 +8190,7 @@ packages:
     resolution: {integrity: sha512-XN3TrycitDQSzGRnec/YWgoofkYRhouyVQj4YNsJ5r/STCUFqMrP4+oxEv3e7ZbLi4og5kIHrZwekDJgw6hcjw==}
     peerDependencies:
       msw: ^2.4.9
-      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: 8.0.7
     peerDependenciesMeta:
       msw:
         optional: true
@@ -9462,8 +9461,8 @@ packages:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
     engines: {node: '>= 0.4'}
 
-  defu@6.1.4:
-    resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
+  defu@6.1.5:
+    resolution: {integrity: sha512-pwdBJxJuJXmqrLO6s0VBmfbRz+G7FUzkjldAsdi9Yrv86mPyzq0ll1o8+8gB4Gsr6GJHbK1Lh3ngllgTInDCjA==}
 
   del@6.1.1:
     resolution: {integrity: sha512-ua8BhapfP0JUJKC/zV9yHHDW/rDoDxP4Zhn3AkA6/xT6gY7jYXJiaeyBZznYVujhZZET+UgcbZiQ7sN3WqcImg==}
@@ -10073,8 +10072,8 @@ packages:
     resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
     engines: {node: '>= 12'}
 
-  file-type@21.3.1:
-    resolution: {integrity: sha512-SrzXX46I/zsRDjTb82eucsGg0ODq2NpGDp4HcsFKApPy8P8vACjpJRDoGGMfEzhFC0ry61ajd7f72J3603anBA==}
+  file-type@21.3.2:
+    resolution: {integrity: sha512-DLkUvGwep3poOV2wpzbHCOnSKGk1LzyXTv+aHFgN2VFl96wnp8YA9YjO2qPzg5PuL8q/SW9Pdi6WTkYOIh995w==}
     engines: {node: '>=20'}
 
   fill-range@7.1.1:
@@ -14320,46 +14319,6 @@ packages:
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
-  vite@7.3.1:
-    resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
-      jiti: '>=1.21.0'
-      less: ^4.0.0
-      lightningcss: ^1.21.0
-      sass: ^1.70.0
-      sass-embedded: ^1.70.0
-      stylus: '>=0.54.8'
-      sugarss: ^5.0.0
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: '>=2.8.3'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
-
   vite@8.0.7:
     resolution: {integrity: sha512-P1PbweD+2/udplnThz3btF4cf6AgPky7kk23RtHUkJIU5BIxwPprhRGmOAHs6FTI7UiGbTNrgNP6jSYD6JaRnw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -14419,7 +14378,7 @@ packages:
       '@vitest/ui': 4.1.3
       happy-dom: '*'
       jsdom: '*'
-      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: 8.0.7
     peerDependenciesMeta:
       '@edge-runtime/vm':
         optional: true
@@ -18346,7 +18305,7 @@ snapshots:
       '@react-pdf/primitives': 4.1.1
       '@react-pdf/stylesheet': 6.1.2
 
-  '@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)':
+  '@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/generator': 7.29.1
@@ -18377,16 +18336,17 @@ snapshots:
       tinyglobby: 0.2.15
       valibot: 1.2.0(typescript@5.9.3)
       vite: 8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
-      vite-node: 3.2.4(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3)
+      vite-node: 3.2.4(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
     optionalDependencies:
       '@react-router/serve': 7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@types/node'
+      - '@vitejs/devtools'
       - babel-plugin-macros
+      - esbuild
       - jiti
       - less
-      - lightningcss
       - sass
       - sass-embedded
       - stylus
@@ -20576,9 +20536,9 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@vercel/react-router@1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@vercel/react-router@1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@react-router/dev': 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
+      '@react-router/dev': 7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
       '@react-router/node': 7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)
       '@vercel/static-config': 3.2.0
       isbot: 5.1.35
@@ -22044,7 +22004,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
 
-  defu@6.1.4: {}
+  defu@6.1.5: {}
 
   del@6.1.1:
     dependencies:
@@ -22847,7 +22807,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  file-type@21.3.1:
+  file-type@21.3.2:
     dependencies:
       '@tokenizer/inflate': 0.4.1
       strtok3: 10.3.4
@@ -27864,7 +27824,7 @@ snapshots:
     dependencies:
       ansis: 4.2.0
       cac: 7.0.0
-      defu: 6.1.4
+      defu: 6.1.5
       empathic: 2.0.0
       hookable: 6.1.0
       import-without-cache: 0.2.5
@@ -28247,18 +28207,19 @@ snapshots:
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
 
-  vite-node@3.2.4(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3):
+  vite-node@3.2.4(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.3.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3)
+      vite: 8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)
     transitivePeerDependencies:
       - '@types/node'
+      - '@vitejs/devtools'
+      - esbuild
       - jiti
       - less
-      - lightningcss
       - sass
       - sass-embedded
       - stylus
@@ -28267,21 +28228,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-
-  vite@7.3.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3):
-    dependencies:
-      esbuild: 0.27.3
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-      postcss: 8.5.8
-      rollup: 4.59.0
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      '@types/node': 22.19.11
-      fsevents: 2.3.3
-      jiti: 2.6.1
-      lightningcss: 1.32.0
-      yaml: 2.8.3
 
   vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3):
     dependencies:

@@ -182,7 +182,7 @@ catalog:
   express: 4.22.0
   express-winston: 4.2.0
   express-ws: 5.0.2
-  file-type: 21.3.1
+  file-type: 21.3.2
   framer-motion: 12.34.3
   lottie-react: 2.4.1
   frimousse: 0.3.0
@@ -287,7 +287,6 @@ catalog:
   yjs: 13.6.29
   zeed-dom: 0.15.1
   zod: 4.3.6
-
 
 catalogMode: prefer
 
