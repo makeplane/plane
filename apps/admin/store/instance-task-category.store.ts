@@ -14,6 +14,8 @@ import type {
   ISubTaskCategory,
   ISubTaskCategoryCreate,
   ISubTaskCategoryUpdate,
+  ITaskCategoryBulkImportRequest,
+  ITaskCategoryBulkImportResponse,
 } from "@plane/types";
 import type { TLoader } from "@plane/types";
 
@@ -34,6 +36,7 @@ export interface IInstanceTaskCategoryStore {
   createSubCategory: (data: ISubTaskCategoryCreate) => Promise<ISubTaskCategory>;
   updateSubCategory: (id: string, data: ISubTaskCategoryUpdate) => Promise<ISubTaskCategory>;
   deleteSubCategory: (id: string) => Promise<void>;
+  bulkImport: (data: ITaskCategoryBulkImportRequest) => Promise<ITaskCategoryBulkImportResponse>;
 }
 
 export class InstanceTaskCategoryStore implements IInstanceTaskCategoryStore {
@@ -60,6 +63,7 @@ export class InstanceTaskCategoryStore implements IInstanceTaskCategoryStore {
       createSubCategory: action,
       updateSubCategory: action,
       deleteSubCategory: action,
+      bulkImport: action,
     });
   }
 
@@ -130,5 +134,11 @@ export class InstanceTaskCategoryStore implements IInstanceTaskCategoryStore {
     runInAction(() => {
       delete this.subCategories[id];
     });
+  };
+
+  bulkImport = async (data: ITaskCategoryBulkImportRequest): Promise<ITaskCategoryBulkImportResponse> => {
+    const result = await this.service.bulkImport(data);
+    await this.fetchCategories();
+    return result;
   };
 }
