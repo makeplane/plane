@@ -78,9 +78,8 @@ class FeatureFlagProxySpaceEndpoint(BaseAPIView):
         intake_form = IntakeForm.objects.filter(anchor=anchor).first()
         if intake_form:
             return intake_form.workspace.slug
-        
-        return None
 
+        return None
 
     @method_decorator(cache_page(60))  # cache the response for 1 minute
     def get(self, request, anchor):

@@ -32,6 +32,7 @@ from plane.utils.timezone_converter import convert_to_utc
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
+
 def _build_cycle_name(base_title: str, sequence: int) -> str:
     normalized_title = base_title.strip()
     return f"{normalized_title} {sequence}"
@@ -44,9 +45,7 @@ def _get_next_cycle_sequence(base_title: str, project_id: str, bot_id: str) -> i
 
     name_pattern = re.compile(rf"^{re.escape(normalized_title)}\s+(\d+)$")
 
-    bot_cycles = Cycle.all_objects.filter(project_id=project_id).filter(
-        Q(owned_by_id=bot_id) | Q(created_by_id=bot_id)
-    )
+    bot_cycles = Cycle.all_objects.filter(project_id=project_id).filter(Q(owned_by_id=bot_id) | Q(created_by_id=bot_id))
 
     last_bot_cycle = bot_cycles.order_by("-created_at").first()
     if not last_bot_cycle:

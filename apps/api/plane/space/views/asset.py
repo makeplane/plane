@@ -150,7 +150,9 @@ class EntityAssetEndpoint(BaseAPIView):
             workspace=publish_entity.workspace,
             entity_type=entity_type,
             project_id=publish_entity.project_id,
-            comment_id=entity_identifier,
+            comment_id=entity_identifier
+            if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION.value
+            else None,
         )
 
         # Get the presigned URL
