@@ -13,12 +13,11 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-// constants
+import { useGroupByOptions } from "@/helpers/work-item-layout";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -37,6 +36,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
 
   const selectedGroupBy = displayFilters.group_by ?? null;
   const selectedSubGroupBy = displayFilters.sub_group_by ?? null;
+  const options = useGroupByOptions(subGroupByOptions);
 
   return (
     <>
@@ -47,7 +47,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
       />
       {previewEnabled && (
         <div>
-          {ISSUE_GROUP_BY_OPTIONS.filter((option) => subGroupByOptions.includes(option.key)).map((subGroupBy) => {
+          {options.map((subGroupBy) => {
             if (selectedGroupBy !== null && subGroupBy.key === selectedGroupBy) return null;
             if (ignoreGroupedFilters.includes(subGroupBy?.key)) return null;
 
