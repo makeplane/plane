@@ -31,7 +31,15 @@ export const WithDisplayPropertiesHOC = observer(function WithDisplayPropertiesH
   let shouldDisplayPropertyFromFilters = false;
   if (Array.isArray(displayPropertyKey))
     shouldDisplayPropertyFromFilters = displayPropertyKey.every((key) => !!displayProperties[key]);
-  else shouldDisplayPropertyFromFilters = !!displayProperties[displayPropertyKey];
+  else {
+    const value = displayProperties[displayPropertyKey];
+    // Custom properties default to visible when key is absent (undefined)
+    if (typeof displayPropertyKey === "string" && displayPropertyKey.startsWith("customproperty_")) {
+      shouldDisplayPropertyFromFilters = value !== false;
+    } else {
+      shouldDisplayPropertyFromFilters = !!value;
+    }
+  }
 
   const renderProperty =
     shouldDisplayPropertyFromFilters && (shouldRenderProperty ? shouldRenderProperty(displayProperties) : true);

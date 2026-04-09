@@ -9,6 +9,9 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+from collections import defaultdict
+
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -63,6 +66,9 @@ from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
 from .workspace import WorkspaceLiteSerializer
+from plane.ee.models import (
+    PropertyTypeEnum,
+)
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -1479,3 +1485,132 @@ class RelatedWorkItemRelationSerializer(BaseSerializer):
             "updated_by",
             "updated_at",
         ]
+
+
+class WorkItemListSerializer(serializers.Serializer):
+    """Lightweight serializer for paginated work-item lists.
+
+    Designed to avoid N+1 queries by relying on:
+      - Prefetch with to_attr="prefetched_property_values" that loads all
+        property values in a single query, joining property definitions
+        and option names via select_related("property", "value_option")
+
+    The result is 2 main DB queries regardless of page size:
+      1. Issues (with annotations)
+      2. Property values for those issues (with joined property + option)
+
+    Context:
+      type_properties_map — {type_id: [(prop_id, prop_type), ...]}
+        Pre-built map of all active properties per issue type. Used to
+        fill default values for properties with no saved value:
+        BOOLEAN → [False], all others → [].
+    """
+
+    _PROPERTY_TYPE_TO_FIELD = {
+        PropertyTypeEnum.TEXT: "value_text",
+        PropertyTypeEnum.URL: "value_text",
+        PropertyTypeEnum.EMAIL: "value_text",
+        PropertyTypeEnum.FILE: "value_text",
+        PropertyTypeEnum.DATETIME: "value_datetime",
+        PropertyTypeEnum.DECIMAL: "value_decimal",
+        PropertyTypeEnum.BOOLEAN: "value_boolean",
+        PropertyTypeEnum.RELATION: "value_uuid",
+        PropertyTypeEnum.OPTION: "value_option",
+    }
+    
+    def _str_or_none(self, value):
+        """Convert a value to its string representation, or None if falsy."""
+        return str(value) if value else None
+
+    def _iso_or_none(self, value):
+        """Convert a datetime to ISO format string, or None if falsy."""
+        return value.isoformat() if value else None
+
+    def _build_property_values(self, instance):
+        """Group prefetched property values by property ID.
+
+        Iterates over instance.prefetched_property_values (set by
+        Prefetch/to_attr) and buckets each resolved value under its
+        property_id. Properties can be multi-valued (multiple rows per
+        issue+property pair), so values are collected as lists.
+
+        After processing saved values, fills any missing properties
+        defined on the issue's type with sensible defaults.
+        """
+        values = defaultdict(list)
+
+        for pv in getattr(instance, "prefetched_property_values", []):
+            property_type = pv.property.property_type
+            prop_id = str(pv.property_id)
+
+            field = self._PROPERTY_TYPE_TO_FIELD.get(property_type)
+            if not field:
+                continue
+
+            # OPTION — resolve to {id, name, logo_props} from the joined option row
+            if property_type == PropertyTypeEnum.OPTION and pv.value_option:
+                values[prop_id].append({
+                    "id": str(pv.value_option_id),
+                    "name": pv.value_option.name,
+                    "logo_props": pv.value_option.logo_props,
+                })
+                continue
+
+            value = getattr(pv, field, None)
+            if value is None:
+                continue
+
+            # Coerce non-JSON-native types
+            if property_type == PropertyTypeEnum.DATETIME:
+                values[prop_id].append(value.strftime("%Y-%m-%d"))
+            elif property_type == PropertyTypeEnum.RELATION:
+                values[prop_id].append(str(value))
+            else:
+                values[prop_id].append(value)
+
+        # Fill defaults for properties with no saved value
+        type_properties_map = self.context.get("type_properties_map", {})
+        type_id = self._str_or_none(instance.type_id)
+        if type_id and type_id in type_properties_map:
+            for prop_id, prop_type in type_properties_map[type_id]:
+                if prop_id not in values:
+                    values[prop_id] = [False] if prop_type == PropertyTypeEnum.BOOLEAN else []
+
+        return values
+
+    def to_representation(self, instance):
+        return {
+            # Core identifiers
+            "id": str(instance.id),
+            "sequence_id": instance.sequence_id,
+            "project_id": str(instance.project_id),
+            # Content
+            "name": instance.name,
+            "priority": instance.priority,
+            "is_draft": instance.is_draft,
+            # Relationships (FK ids)
+            "state_id": self._str_or_none(instance.state_id),
+            "type_id": self._str_or_none(instance.type_id),
+            "parent_id": self._str_or_none(instance.parent_id),
+            "estimate_point": instance.estimate_point_id,
+            # Annotated relationships (from subqueries)
+            "cycle_id": self._str_or_none(getattr(instance, "cycle_id", None)),
+            # Dates
+            "start_date": str(instance.start_date) if instance.start_date else None,
+            "target_date": str(instance.target_date) if instance.target_date else None,
+            "completed_at": self._iso_or_none(instance.completed_at),
+            "archived_at": self._iso_or_none(instance.archived_at),
+            # Ordering
+            "sort_order": instance.sort_order,
+            # Annotated counts
+            "sub_issues_count": getattr(instance, "sub_issues_count", 0),
+            "link_count": getattr(instance, "link_count", 0),
+            "attachment_count": getattr(instance, "attachment_count", 0),
+            # Audit
+            "created_at": self._iso_or_none(instance.created_at),
+            "updated_at": self._iso_or_none(instance.updated_at),
+            "created_by": self._str_or_none(instance.created_by_id),
+            "updated_by": self._str_or_none(instance.updated_by_id),
+            # Custom properties — grouped by property_id
+            "property_values": self._build_property_values(instance),
+        }

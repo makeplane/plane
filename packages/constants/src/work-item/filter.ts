@@ -202,7 +202,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
     ],
     layoutOptions: {
       spreadsheet: {
-        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_properties: [],
         display_filters: {
           order_by: [],
           type: ["active", "backlog"],
@@ -370,7 +370,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
       },
       spreadsheet: {
-        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_properties: [],
         display_filters: {
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
@@ -443,7 +443,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
       },
       spreadsheet: {
-        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_properties: [],
         display_filters: {
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
@@ -516,7 +516,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
       },
       spreadsheet: {
-        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_properties: [],
         display_filters: {
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
@@ -590,7 +590,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
       },
       spreadsheet: {
-        display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+        display_properties: [],
         display_filters: {
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],

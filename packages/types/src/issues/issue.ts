@@ -20,6 +20,7 @@ import type { TIssueAttachment } from "./issue_attachment";
 import type { TIssueLink } from "./issue_link";
 import type { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import type { TIssueRelationTypes } from "./issue_relation";
+import type { TIssuePropertyValues } from "../work-item-types/work-item-property-values";
 
 export enum EIssueLayoutTypes {
   LIST = "list",
@@ -91,6 +92,10 @@ export type TBaseIssue = {
   is_draft: boolean;
   is_epic?: boolean;
   is_intake?: boolean;
+
+  // Custom property values (inline from /work-items/ endpoint).
+  // Backend returns heterogeneous types; normalized to string[] in the store via normalizePropertyValues().
+  property_values?: TIssuePropertyValues;
 };
 
 type IssueRelation = {

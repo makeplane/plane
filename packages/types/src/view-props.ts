@@ -219,6 +219,9 @@ export interface IIssueDisplayProperties {
   issue_type?: boolean;
   customer_request_count?: boolean;
   customer_count?: boolean;
+  // Custom property column visibility toggles.
+  // Default: visible (undefined and true both mean visible; only explicit false hides the column)
+  [key: `customproperty_${string}`]: boolean | undefined;
   releases?: boolean;
 }
 

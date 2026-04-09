@@ -15,25 +15,45 @@ import { useRef } from "react";
 //types
 import { observer } from "mobx-react";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { isCustomPropertyKey } from "@plane/utils";
 //components
 import { shouldRenderWorkItemPropertyColumn } from "@/helpers/work-item-layout";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
+import { CustomPropertyHeaderColumn } from "./columns/custom-property-header-column";
 
-interface Props {
+type SpreadsheetHeaderColumnProps = {
   displayProperties: IIssueDisplayProperties;
   property: keyof IIssueDisplayProperties;
   isEstimateEnabled: boolean;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   isEpic?: boolean;
-}
-export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn(props: Props) {
+};
+
+export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn(props: SpreadsheetHeaderColumnProps) {
   const { displayProperties, displayFilters, property, handleDisplayFilterUpdate, isEpic = false } = props;
 
   //hooks
   const tableHeaderCellRef = useRef<HTMLTableCellElement | null>(null);
 
+  // Handle custom property columns
+  if (isCustomPropertyKey(property)) {
+    const propertyId = property.replace("customproperty_", "");
+    return (
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey={property}>
+        <th
+          className="h-11 min-w-36 items-center bg-layer-1 text-13 font-medium py-1 border border-b-0 border-t-0 border-subtle"
+          ref={tableHeaderCellRef}
+          tabIndex={0}
+        >
+          <CustomPropertyHeaderColumn propertyId={propertyId} />
+        </th>
+      </WithDisplayPropertiesHOC>
+    );
+  }
+
+  // Handle built-in property columns
   const shouldRenderProperty = shouldRenderWorkItemPropertyColumn(property);
 
   return (

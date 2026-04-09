@@ -15,11 +15,14 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { isCustomPropertyKey } from "@plane/utils";
 // components
 import { SPREADSHEET_COLUMNS, shouldRenderWorkItemPropertyColumn } from "@/helpers/work-item-layout";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { SpreadsheetCustomPropertyColumn } from "./columns/custom-property-column";
 
-type Props = {
+type WorkItemColumnProps = {
+  workspaceSlug: string;
   displayProperties: IIssueDisplayProperties;
   issueDetail: TIssue;
   disableUserActions: boolean;
@@ -28,16 +31,38 @@ type Props = {
   isEstimateEnabled: boolean;
 };
 
-export const IssueColumn = observer(function IssueColumn(props: Props) {
-  const { displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
-  // router
+export const IssueColumn = observer(function IssueColumn(props: WorkItemColumnProps) {
+  const { workspaceSlug, displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
 
-  const shouldRenderProperty = shouldRenderWorkItemPropertyColumn(property);
+  // Handle custom property columns
+  if (isCustomPropertyKey(property)) {
+    const propertyId = property.replace("customproperty_", "");
+    return (
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey={property as keyof IIssueDisplayProperties}
+      >
+        <td
+          className="h-11 min-w-36 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle"
+          ref={tableCellRef}
+        >
+          <SpreadsheetCustomPropertyColumn
+            workspaceSlug={workspaceSlug}
+            workItem={issueDetail}
+            propertyId={propertyId}
+            disabled={disableUserActions}
+          />
+        </td>
+      </WithDisplayPropertiesHOC>
+    );
+  }
 
+  // Handle built-in property columns
   const Column = SPREADSHEET_COLUMNS[property];
-
   if (!Column) return null;
+
+  const shouldRenderProperty = shouldRenderWorkItemPropertyColumn(property);
 
   const handleUpdateIssue = async (issue: TIssue, data: Partial<TIssue>) => {
     if (updateIssue) await updateIssue(issue.project_id, issue.id, data);

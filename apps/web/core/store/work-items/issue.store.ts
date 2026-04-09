@@ -17,9 +17,27 @@ import { computedFn } from "mobx-utils";
 import type { TIssue } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@plane/utils";
+import type { TIssuePropertyValues } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
 // services
 import { IssueService } from "@/services/issue";
+
+/**
+ * Normalizes raw property_values from the /work-items/ endpoint to string[] format.
+ * Backend returns heterogeneous types (objects for OPTION, booleans, numbers)
+ * that must be coerced to string arrays for the UI layer.
+ */
+function normalizePropertyValues(raw: Record<string, unknown[]>): TIssuePropertyValues {
+  const normalized: TIssuePropertyValues = {};
+  for (const [propertyId, values] of Object.entries(raw)) {
+    if (!Array.isArray(values)) continue;
+    normalized[propertyId] = values.map((v) => {
+      if (typeof v === "object" && v !== null && "id" in v) return String((v as { id: unknown }).id);
+      return String(v);
+    });
+  }
+  return normalized;
+}
 
 export type IIssueStore = {
   // actions
@@ -69,6 +87,13 @@ export class IssueStore implements IIssueStore {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
+        // Normalize property_values from backend heterogeneous types to string[]
+        if (issue.property_values) {
+          issue = {
+            ...issue,
+            property_values: normalizePropertyValues(issue.property_values as Record<string, unknown[]>),
+          };
+        }
         // add issue identifier to the workItemsIdentifierMap
         const projectIdentifier = rootStore.projectRoot.project.getProjectIdentifierById(issue?.project_id);
         const workItemSequenceId = issue?.sequence_id;

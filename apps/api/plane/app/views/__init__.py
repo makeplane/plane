@@ -163,6 +163,8 @@ from .issue.base import (
     IssueListMetaEndpoint,
 )
 
+from .issue.work_item import WorkItemListProjectEndpoint, WorkItemListWorkspaceEndpoint
+
 from .issue.activity import IssueActivityEndpoint
 
 from .issue.state_duration import WorkItemStateDurationEndpoint

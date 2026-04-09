@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
@@ -22,6 +22,7 @@ import { EIssueLayoutTypes } from "@plane/types";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useSpreadsheetCustomPropertyColumns } from "@/hooks/use-spreadsheet-custom-property-columns";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // plane web hooks
@@ -32,9 +33,12 @@ import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
 import { SpreadsheetTable } from "./spreadsheet-table";
 
 type Props = {
+  workspaceSlug: string;
+  projectIds: string[];
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate?: (property: Partial<IIssueDisplayProperties>) => void;
   issueIds: string[] | undefined;
   quickActions: TRenderQuickActions;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -51,9 +55,12 @@ type Props = {
 
 export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
+    workspaceSlug,
+    projectIds,
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    handleDisplayPropertiesUpdate,
     issueIds,
     quickActions,
     updateIssue,
@@ -74,15 +81,32 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
+  // Custom property columns (handles fetching + column building)
+  const customPropertyColumns = useSpreadsheetCustomPropertyColumns({
+    workspaceSlug,
+    projectIds,
+    isEpic,
+  });
+
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
-  const spreadsheetColumnsList = isWorkspaceLevel
-    ? SPREADSHEET_PROPERTY_LIST
-    : SPREADSHEET_PROPERTY_LIST.filter((property) => {
-        if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
-        if (property === "modules" && !currentProjectDetails?.module_view) return false;
-        return true;
-      });
+  const builtInColumnsList = useMemo(
+    () =>
+      isWorkspaceLevel
+        ? SPREADSHEET_PROPERTY_LIST
+        : SPREADSHEET_PROPERTY_LIST.filter((property) => {
+            if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
+            if (property === "modules" && !currentProjectDetails?.module_view) return false;
+            return true;
+          }),
+    [isWorkspaceLevel, currentProjectDetails?.cycle_view, currentProjectDetails?.module_view]
+  );
+
+  // Combine built-in and custom property columns
+  const spreadsheetColumnsList: (keyof IIssueDisplayProperties)[] = useMemo(
+    () => [...builtInColumnsList, ...customPropertyColumns],
+    [builtInColumnsList, customPropertyColumns]
+  );
 
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
@@ -99,9 +123,12 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
           <>
             <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
               <SpreadsheetTable
+                workspaceSlug={workspaceSlug}
+                projectIds={projectIds}
                 displayProperties={displayProperties}
                 displayFilters={displayFilters}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
                 issueIds={issueIds}
                 isEstimateEnabled={isEstimateEnabled}
                 portalElement={portalRef}

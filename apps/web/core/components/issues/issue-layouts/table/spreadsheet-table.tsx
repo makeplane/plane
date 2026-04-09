@@ -30,9 +30,12 @@ import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 
 type Props = {
+  workspaceSlug: string;
+  projectIds: string[];
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate?: (property: Partial<IIssueDisplayProperties>) => void;
   issueIds: string[];
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
@@ -49,9 +52,12 @@ type Props = {
 
 export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props) {
   const {
+    workspaceSlug,
+    projectIds,
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    handleDisplayPropertiesUpdate,
     issueIds,
     isEstimateEnabled,
     portalElement,
@@ -74,12 +80,15 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
     issues: { getIssueLoader },
   } = useIssuesStore();
 
+  const isScrolledRight = useRef(false);
+
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
-    const scrollLeft = containerRef.current.scrollLeft;
+    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
 
     const columnShadow = "8px 22px 22px 10px rgba(0, 0, 0, 0.05)"; // shadow for regular columns
     const headerShadow = "8px -22px 22px 10px rgba(0, 0, 0, 0.05)"; // shadow for headers
+    const rightShadow = "-5px 0px 80px -5px rgba(41, 47, 61, 0.04), -10px 0px 30px -5px rgba(41, 47, 61, 0.02)";
 
     //The shadow styles are added this way to avoid re-render of all the rows of table, which could be costly
     if (scrollLeft > 0 !== isScrolled.current) {
@@ -95,12 +104,25 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
       }
       isScrolled.current = scrollLeft > 0;
     }
+
+    // Right config column shadow
+    const isAtRight = scrollLeft + clientWidth >= scrollWidth - 1;
+    if (isAtRight !== isScrolledRight.current) {
+      const lastColumns = containerRef.current.querySelectorAll("table tr td:last-child, th:last-child");
+      for (let i = 0; i < lastColumns.length; i++) {
+        (lastColumns[i] as HTMLElement).style.boxShadow = isAtRight ? "none" : rightShadow;
+      }
+      isScrolledRight.current = isAtRight;
+    }
   }, [containerRef]);
 
   useEffect(() => {
     const currentContainerRef = containerRef.current;
 
-    if (currentContainerRef) currentContainerRef.addEventListener("scroll", handleScroll);
+    if (currentContainerRef) {
+      currentContainerRef.addEventListener("scroll", handleScroll);
+      handleScroll();
+    }
 
     return () => {
       if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
@@ -118,11 +140,17 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
   const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
-    <table className="overflow-y-auto bg-surface-1 w-full" onKeyDown={handleKeyBoardNavigation}>
+    <table
+      className="overflow-y-auto bg-surface-1 w-full border-separate border-spacing-0"
+      onKeyDown={handleKeyBoardNavigation}
+    >
       <SpreadsheetHeader
+        workspaceSlug={workspaceSlug}
+        projectIds={projectIds}
         displayProperties={displayProperties}
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
         canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}

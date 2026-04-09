@@ -106,8 +106,8 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             style={{ height: "calc(2.75rem - 1px)" }}
           />
         }
-        classNames={cn("bg-surface-1 transition-[background-color]", {
-          "group selected-issue-row": isIssueSelected,
+        classNames={cn("group bg-surface-1 transition-[background-color]", {
+          "selected-issue-row": isIssueSelected,
           "border-[0.5px] border-strong-1": isIssueActive,
         })}
         verticalOffset={100}
@@ -375,17 +375,6 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                     </Tooltip>
                   </div>
                 </div>
-                <div
-                  className={`opacity-0 group-hover:opacity-100 transition-opacity ${isMenuActive ? "!opacity-100" : ""}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {quickActions({
-                    issue: issueDetail,
-                    parentRef: cellRef,
-                    customActionButton,
-                    portalElement: portalElement.current,
-                  })}
-                </div>
               </div>
             </div>
           </Row>
@@ -395,6 +384,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
       {spreadsheetColumnsList.map((property) => (
         <IssueColumn
           key={property}
+          workspaceSlug={workspaceSlug?.toString() ?? ""}
           displayProperties={displayProperties}
           issueDetail={issueDetail}
           disableUserActions={disableUserActions}
@@ -403,6 +393,25 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           isEstimateEnabled={isEstimateEnabled}
         />
       ))}
+
+      {/* Config column cell — sticky right, contains quick actions */}
+      <td className="md:sticky right-0 z-10 w-12 min-w-12 bg-surface-1 border-l-[0.5px] border-t-[0.5px] border-subtle shadow-direction-left">
+        <div className="flex items-center justify-center">
+          <div
+            className={cn("opacity-0 group-hover:opacity-100 transition-opacity", {
+              "!opacity-100": isMenuActive,
+            })}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {quickActions({
+              issue: issueDetail,
+              parentRef: cellRef,
+              customActionButton,
+              portalElement: portalElement.current,
+            })}
+          </div>
+        </div>
+      </td>
     </>
   );
 });

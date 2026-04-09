@@ -18,3 +18,4 @@ export * from "./drag-drop";
 export * from "./display-properties";
 export * from "./filters";
 export * from "./timeline";
+export * from "./custom-property-columns";

@@ -30,10 +30,20 @@ type TUrlValueInputProps = {
   className?: string;
   isDisabled?: boolean;
   onTextValueChange: (value: string[]) => void;
+  buttonClassName?: string;
 };
 
 export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInputProps) {
-  const { propertyDetail, value, variant, error, className = "", isDisabled = false, onTextValueChange } = props;
+  const {
+    propertyDetail,
+    value,
+    variant,
+    error,
+    className = "",
+    isDisabled = false,
+    onTextValueChange,
+    buttonClassName = "",
+  } = props;
 
   // states
   const [data, setData] = useState<string[]>([]);
@@ -71,11 +81,15 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
     return (
       <button
         type="button"
-        className={cn("group w-full flex items-center justify-between gap-4 px-2 py-1.5 rounded-md outline-none", {
-          "cursor-not-allowed": isDisabled,
-          "hover:bg-layer-transparent-hover": !isDisabled,
-          "bg-layer-1": isEditing,
-        })}
+        className={cn(
+          "group w-full flex items-center justify-between gap-4 px-2 py-1.5 rounded-md outline-none",
+          {
+            "cursor-not-allowed": isDisabled,
+            "hover:bg-layer-transparent-hover": !isDisabled,
+            "bg-layer-1": isEditing,
+          },
+          buttonClassName
+        )}
         onClick={() => !isDisabled && setIsEditing(true)}
         disabled={isDisabled}
       >

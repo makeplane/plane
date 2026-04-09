@@ -12,7 +12,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // constants
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // ui
@@ -22,12 +21,17 @@ import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+// plane web components
+import { SpreadsheetColumnsToggle } from "@/components/issues/spreadsheet-columns-toggle";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {
+  workspaceSlug: string;
+  projectIds: string[];
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate?: (property: Partial<IIssueDisplayProperties>) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEstimateEnabled: boolean;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
@@ -37,21 +41,24 @@ interface Props {
 
 export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Props) {
   const {
+    workspaceSlug,
+    projectIds,
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    handleDisplayPropertiesUpdate,
     canEditProperties,
     isEstimateEnabled,
     spreadsheetColumnsList,
     selectionHelpers,
     isEpic = false,
   } = props;
-  // router
-  const { projectId } = useParams();
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
+  // For single-project context, use projectIds[0] for permission check
+  const singleProjectId = projectIds.length === 1 ? projectIds[0] : undefined;
   // auth
-  const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
+  const canSelectIssues = canEditProperties(singleProjectId) && !selectionHelpers.isSelectionDisabled;
 
   return (
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-subtle">
@@ -94,6 +101,22 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
             isEpic={isEpic}
           />
         ))}
+
+        {/* Config column header — sticky right */}
+        <th className="md:sticky right-0 z-[15] h-11 w-12 min-w-12 bg-layer-1 border-l-[0.5px] border-b-[0.5px] border-subtle shadow-direction-left">
+          <div className="flex items-center justify-center size-full">
+            {handleDisplayPropertiesUpdate && (
+              <SpreadsheetColumnsToggle
+                workspaceSlug={workspaceSlug}
+                projectIds={projectIds}
+                displayProperties={displayProperties}
+                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
+                isEstimateEnabled={isEstimateEnabled}
+                isEpic={isEpic}
+              />
+            )}
+          </div>
+        </th>
       </tr>
     </thead>
   );

@@ -17,6 +17,7 @@ import { CalendarDays, LayersIcon, Paperclip } from "lucide-react";
 import type { ISvgIcons } from "@plane/propel/icons";
 import {
   CycleIcon,
+  DiceIcon,
   ModuleIcon,
   ReleaseIcon,
   CustomerRequestIcon,
@@ -137,12 +138,32 @@ export function getApproximateCardHeight(displayProperties: IIssueDisplayPropert
   return cardHeight;
 }
 
-export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
+export type TSpreadsheetPropertyIconKey =
+  | "MembersPropertyIcon"
+  | "CalendarDays"
+  | "DueDatePropertyIcon"
+  | "EstimatePropertyIcon"
+  | "LabelPropertyIcon"
+  | "DiceIcon"
+  | "ModuleIcon"
+  | "ContrastIcon"
+  | "ReleaseIcon"
+  | "PriorityPropertyIcon"
+  | "StartDatePropertyIcon"
+  | "StatePropertyIcon"
+  | "Link2"
+  | "Paperclip"
+  | "LayersIcon"
+  | "CustomersIcon"
+  | "CustomerRequestIcon";
+
+export const SpreadSheetPropertyIconMap: Record<TSpreadsheetPropertyIconKey, FC<ISvgIcons>> = {
   MembersPropertyIcon: MembersPropertyIcon,
-  CalenderDays: CalendarDays,
+  CalendarDays: CalendarDays,
   DueDatePropertyIcon: DueDatePropertyIcon,
   EstimatePropertyIcon: EstimatePropertyIcon,
   LabelPropertyIcon: LabelPropertyIcon,
+  DiceIcon: DiceIcon,
   ModuleIcon: ModuleIcon,
   ContrastIcon: CycleIcon,
   ReleaseIcon: ReleaseIcon,
@@ -160,7 +181,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
  * This method returns the icon for Spreadsheet column headers
  * @param iconKey
  */
-export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: string }) {
+export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: TSpreadsheetPropertyIconKey }) {
   const { iconKey } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;

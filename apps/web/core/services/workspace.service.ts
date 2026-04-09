@@ -320,6 +320,14 @@ export class WorkspaceService extends APIService {
       });
   }
 
+  async getViewWorkItems(workspaceSlug: string, params: any, config = {}): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/work-items/`, { params }, config)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getWorkspaceUserProjectsRole(workspaceSlug: string): Promise<IUserProjectsRole> {
     return this.get(`/api/users/me/workspaces/${workspaceSlug}/project-roles/`)
       .then((response) => response?.data)

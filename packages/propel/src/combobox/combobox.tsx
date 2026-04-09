@@ -166,9 +166,10 @@ function ComboboxOptions({
     [onSearchQueryChange]
   );
 
-  // Filter children based on search query
+  // Filter children based on search query.
+  // Skip internal filtering when the consumer controls the search via onSearchQueryChange.
   const filteredChildren = React.useMemo(() => {
-    if (!showSearch || !searchQuery) return children;
+    if (onSearchQueryChange || !showSearch || !searchQuery) return children;
 
     return React.Children.toArray(children).filter((child) => {
       if (!React.isValidElement(child)) return true;
@@ -195,13 +196,13 @@ function ComboboxOptions({
       const searchLower = searchQuery.toLowerCase();
       return textContent.toLowerCase().includes(searchLower) || String(value).toLowerCase().includes(searchLower);
     });
-  }, [children, searchQuery, showSearch]);
+  }, [children, searchQuery, showSearch, onSearchQueryChange]);
 
   return (
     <BaseCombobox.Portal>
       <BaseCombobox.Positioner sideOffset={8} className={cn(positionerClassName, "z-40")} align="start" side="bottom">
         <BaseCombobox.Popup
-          className={cn("rounded-md border border-subtle bg-surface-1 p-1 shadow-lg", className)}
+          className={cn("rounded-md border border-subtle bg-surface-1 p-1 shadow-overlay-200", className)}
           data-prevent-outside-click={dataPreventOutsideClick}
         >
           <div className="flex flex-col gap-1">
@@ -214,7 +215,7 @@ function ComboboxOptions({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={onSearchQueryKeyDown}
                   className={cn(
-                    "w-full rounded-sm border border-subtle bg-surface-2 py-1.5 pl-8 pr-2 text-13 outline-none placeholder:text-placeholder",
+                    "w-full rounded-sm border border-subtle bg-layer-2 py-1.5 pl-8 pr-2 text-13 outline-none placeholder:text-placeholder",
                     inputClassName
                   )}
                 />
@@ -225,6 +226,7 @@ function ComboboxOptions({
             >
               {filteredChildren}
               {showSearch &&
+                !onSearchQueryChange &&
                 emptyMessage &&
                 React.Children.count(
                   React.Children.toArray(filteredChildren).filter(
@@ -315,7 +317,7 @@ function ComboboxChip({ value, className, children }: ComboboxChipProps) {
 function ComboboxChipRemove({ className, "aria-label": ariaLabel }: ComboboxChipRemoveProps) {
   return (
     <BaseCombobox.ChipRemove
-      className={cn("ml-1 flex items-center justify-center rounded-sm hover:bg-surface-4", className)}
+      className={cn("ml-1 flex items-center justify-center rounded-sm hover:bg-layer-transparent-hover", className)}
       aria-label={ariaLabel || "Remove"}
     >
       <CloseIcon className="h-3 w-3" />

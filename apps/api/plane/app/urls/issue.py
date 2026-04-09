@@ -39,6 +39,8 @@ from plane.app.views import (
     IssueDetailIdentifierEndpoint,
     IssueCommentRepliesEndpoint,
     IssueListMetaEndpoint,
+    WorkItemListProjectEndpoint,
+    WorkItemListWorkspaceEndpoint,
     # relation definitions
     WorkItemRelationDefinitionViewSet,
     # relations
@@ -283,6 +285,16 @@ all_urlpatterns = [
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
         IssueDetailIdentifierEndpoint.as_view(),
         name="issue-detail-identifier",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/",
+        WorkItemListProjectEndpoint.as_view(),
+        name="work-item-list",
+    ),
+    path(
+        "workspaces/<str:slug>/work-items/",
+        WorkItemListWorkspaceEndpoint.as_view(),
+        name="work-item-list-workspace",
     ),
     # work item relation definitions
     path(

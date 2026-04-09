@@ -21,11 +21,12 @@ import type {
   TIssuesResponse,
   TBulkOperationsPayload,
 } from "@plane/types";
-// helpers
+import { EIssueServiceType } from "@plane/types";
 // base class
 import type { IBaseIssuesStore } from "../helpers/base-issues.store";
 import { BaseIssuesStore } from "../helpers/base-issues.store";
 // services
+import { IssueService } from "@/services/issue";
 import type { IIssueRootStore } from "../root.store";
 import type { IProjectIssuesFilter } from "./filter.store";
 
@@ -76,6 +77,8 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
 
   // filter store
   issueFilterStore: IProjectIssuesFilter;
+  // Read-only service for /work-items/ endpoint (returns inline property_values)
+  private workItemsService: IssueService;
 
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IProjectIssuesFilter) {
     super(_rootStore, issueFilterStore);
@@ -90,6 +93,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     // filter store
     this.issueFilterStore = issueFilterStore;
     this.router = _rootStore.rootStore.router;
+    this.workItemsService = new IssueService(EIssueServiceType.WORK_ITEMS);
   }
 
   /**
@@ -128,8 +132,11 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
-      // call the fetch issues API with the params
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
+      // Use /work-items/ for spreadsheet layout (returns inline property_values);
+      // other layouts use /issues/ to avoid unnecessary serializer overhead
+      const currentLayout = this.issueFilterStore?.issueFilters?.displayFilters?.layout;
+      const fetchService = currentLayout === "spreadsheet" ? this.workItemsService : this.issueService;
+      const response = await fetchService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
@@ -169,8 +176,10 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
         groupId,
         subGroupId
       );
-      // call the fetch issues API with the params for next page in issues
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
+      // Use /work-items/ for spreadsheet, /issues/ for other layouts
+      const currentLayout = this.issueFilterStore?.issueFilters?.displayFilters?.layout;
+      const fetchService = currentLayout === "spreadsheet" ? this.workItemsService : this.issueService;
+      const response = await fetchService.getIssues(workspaceSlug, projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

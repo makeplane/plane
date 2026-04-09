@@ -149,6 +149,8 @@ class FeatureFlag(Enum):
     WORKFLOW_CONDITIONS = "WORKFLOW_CONDITIONS"
     # Auto reminder automation
     DUE_DATE_REMINDER = "DUE_DATE_REMINDER"
+    # Spreadsheet custom properties
+    SPREADSHEET_CUSTOM_PROPERTIES = "SPREADSHEET_CUSTOM_PROPERTIES"
     # Work Item State Duration
     WORK_ITEM_STATE_DURATION = "WORK_ITEM_STATE_DURATION"
 

@@ -28,3 +28,5 @@ export * from "./cycle-column";
 export * from "./release-column";
 export * from "./customers";
 export * from "./customer-requests";
+export * from "./custom-property-column";
+export * from "./custom-property-header-column";

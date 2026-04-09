@@ -97,6 +97,7 @@ from .issue import (
     # work item relation
     WorkItemRelationSerializer,
     RelatedWorkItemRelationSerializer,
+    WorkItemListSerializer,
 )
 
 from .module import (
@@ -264,6 +265,7 @@ __all__ = [
     "IssueListDetailSerializer",
     "IssueDuplicateSerializer",
     "IssueAttachmentSerializer",
+    "WorkItemListSerializer",
     # work item relation definition
     "WorkItemRelationDefinitionInputSerializer",
     "WorkItemRelationDefinitionSerializer",

@@ -15,13 +15,14 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { IIssueDisplayFilterOptions } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
@@ -56,6 +57,7 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
     EIssuesStoreType.GLOBAL
   );
   const { allowPermissions } = useUserPermissions();
+  const { joinedProjectIds } = useProject();
 
   // Derived values
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
@@ -98,6 +100,24 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
     [updateFilters, workspaceSlug, globalViewId]
   );
 
+  // Display properties handler
+  const handleDisplayPropertiesUpdate = useCallback(
+    (property: Partial<IIssueDisplayProperties>) => {
+      if (!workspaceSlug || !globalViewId) return;
+
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        globalViewId.toString()
+      ).catch((error) => {
+        console.error(error);
+      });
+    },
+    [updateFilters, workspaceSlug, globalViewId]
+  );
+
   // Quick actions renderer
   const renderQuickActions: TRenderQuickActions = useCallback(
     ({ issue, parentRef, customActionButton, placement, portalElement }) => (
@@ -129,9 +149,12 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
       <SpreadsheetView
+        workspaceSlug={workspaceSlug}
+        projectIds={joinedProjectIds}
         displayProperties={issueFilters?.displayProperties ?? {}}
         displayFilters={issueFilters?.displayFilters ?? {}}
         handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+        handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
         issueIds={Array.isArray(issueIds) ? issueIds : []}
         quickActions={renderQuickActions}
         updateIssue={updateIssue}
