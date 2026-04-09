@@ -103,6 +103,13 @@ REDIS_URL=redis://localhost:6379/0
 # RabbitMQ
 CELERY_BROKER_URL=amqp://guest:guest@localhost:5672//
 
+# OpenLDAP (Shinhan SSO)
+LDAP_SERVER_URI=ldap://openldap:389
+LDAP_BIND_DN=cn=admin,dc=shinhan,dc=local
+LDAP_BIND_PASSWORD=your-admin-password
+LDAP_BASE_DN=dc=shinhan,dc=local
+LDAP_USER_SEARCH_DN=ou=users,dc=shinhan,dc=local
+
 # Email (SMTP)
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_HOST=smtp.gmail.com
@@ -176,6 +183,22 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+
+  # OpenLDAP (for Shinhan SSO)
+  openldap:
+    image: osixia/openldap:latest
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Shinhan Bank"
+      LDAP_DOMAIN: "shinhan.local"
+      LDAP_BASE_DN: "dc=shinhan,dc=local"
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - openldap_data:/var/lib/ldap
+      - openldap_config:/etc/ldap/slapd.d
 
   # Reverse Proxy
   proxy:
@@ -296,6 +319,8 @@ volumes:
   postgres_data:
   redis_data:
   rabbitmq_data:
+  openldap_data:
+  openldap_config:
   caddy_data:
   caddy_config:
 ```
@@ -327,6 +352,7 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
+    openldap-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python packages from builder
@@ -510,12 +536,35 @@ python manage.py migrate
 - [ ] `ALLOWED_HOSTS` — Comma-separated domain list
 - [ ] `DEBUG=False` — Disable debug mode in production
 
+### OpenLDAP Integration (Shinhan SSO)
+
+- [ ] `LDAP_SERVER_URI` — LDAP server URL (e.g., `ldap://openldap:389`)
+- [ ] `LDAP_BIND_DN` — Admin DN (e.g., `cn=admin,dc=shinhan,dc=local`)
+- [ ] `LDAP_BIND_PASSWORD` — Admin password
+- [ ] `LDAP_BASE_DN` — Base DN (e.g., `dc=shinhan,dc=local`)
+- [ ] `LDAP_USER_SEARCH_DN` — User search DN (e.g., `ou=users,dc=shinhan,dc=local`)
+
 ### Optional (Feature Flags)
 
 - [ ] `NEXT_PUBLIC_ENABLE_WORKFLOWS` — Enable Shinhan workflows
 - [ ] `NEXT_PUBLIC_ENABLE_TIME_TRACKING` — Enable time tracking
 - [ ] `NEXT_PUBLIC_ENABLE_HO` — Enable org chart (HO)
 - [ ] `NEXT_PUBLIC_LIVE_URL` — WebSocket server URL
+
+### Pre-Push Hook Checks (Automated in CI/CD)
+
+The repository includes automated pre-push checks that run before commits are accepted:
+
+1. **Frontend Linting:** `pnpm check:lint`
+   - ESLint, Prettier, TSLint checks on TypeScript/React code
+   
+2. **Backend Linting:** `ruff check apps/api/`
+   - Python linting with Ruff
+   
+3. **Type Checking:** `mypy apps/api/`
+   - Python static type validation
+
+See `git-workflow-guide.md` for details.
 
 ### For Local Development
 
@@ -730,5 +779,5 @@ backup_service:
 
 ---
 
-**Last Updated:** 2026-04-02
-**Version:** 1.0
+**Last Updated:** 2026-04-08
+**Version:** 1.1

@@ -45,7 +45,7 @@ plane/
 │   └── proxy/            # Caddy reverse proxy
 │       └── Caddyfile (routes to web/admin/space/live)
 │
-├── packages/             # Shared libraries (18 total)
+├── packages/             # Shared libraries (17 total)
 │   ├── propel/           # New UI components (385 files)
 │   │   └── Button, Input, Dialog, Charts, Tables, etc.
 │   ├── ui/               # Legacy UI components (125 files)
@@ -123,7 +123,7 @@ BaseModel (id, created_at, updated_at)
   └─ WorkspaceBaseModel (workspace_id, workspace foreign key)
 ```
 
-**37 Models Include:**
+**37+ Models Include:**
 - **Workspace, Project, ProjectMember**
 - **Issue, IssueFavorite, IssueLabel, IssueLink, IssueActivity**
 - **Cycle (sprints), Module, CycleIssue, ModuleIssue**
@@ -131,9 +131,12 @@ BaseModel (id, created_at, updated_at)
 - **Page (wiki), PageBlock, PageFavorite**
 - **Webhook, WebhookLog, WebhookEventLog**
 - **Label, Priority, Estimate, Project Template**
-- **WorkflowState, WorkflowTransition** (Shinhan)
-- **TimeLog** (time tracking, Shinhan)
-- **WebSocketConnection** (real-time, Shinhan)
+- **WorkflowState, WorkflowTransition** (CE: state transitions, approvals)
+- **TimeLog** (CE: time tracking, estimates, logged hours)
+- **WebSocketConnection** (CE: real-time collaboration)
+- **Analytics, AnalyticsData** (CE: dashboards, reports)
+- **TaskCategory** (CE: admin task categorization)
+- **MonitoringMetric** (CE: admin monitoring dashboard)
 
 **Key Patterns:**
 - Soft-delete: `deleted_at` field, `SoftDeletionManager` ORM
@@ -151,9 +154,12 @@ RootStore (extends CoreRootStore in CE)
   ├─ cycleStore → CycleRootStore
   ├─ moduleStore → ModuleRootStore
   ├─ pageStore → PageRootStore
-  ├─ workflowStore (CE) → WorkflowRootStore (extends core)
-  ├─ timeTrackingStore (CE) → TimeTrackingRootStore
-  └─ hoStore (CE) → HORootStore (org chart)
+  ├─ workflowStore (CE) → WorkflowRootStore (workflow state transitions)
+  ├─ timeTrackingStore (CE) → TimeTrackingRootStore (estimates, logged hours)
+  ├─ hoStore (CE) → HORootStore (org chart / department hierarchy)
+  ├─ analyticsStore (CE) → AnalyticsRootStore (dashboards, reports)
+  ├─ taskCategoryStore (CE) → TaskCategoryRootStore (admin task categories)
+  └─ monitoringStore (CE) → MonitoringRootStore (admin monitoring dashboard)
 ```
 
 **Store Pattern:**
@@ -351,5 +357,5 @@ pnpm test
 
 ---
 
-**Last Updated:** 2026-04-02
-**Version:** 1.0
+**Last Updated:** 2026-04-08
+**Version:** 1.1

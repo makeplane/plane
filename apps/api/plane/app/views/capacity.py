@@ -34,6 +34,7 @@ class ProjectCapacityEndpoint(BaseAPIView):
         date_from = request.query_params.get("date_from", default_start.isoformat())
         date_to = request.query_params.get("date_to", default_end.isoformat())
         member_ids = request.query_params.get("member_id", None)
+        cross_workspace = request.query_params.get("cross_workspace", "false").lower() == "true"
 
         # Base filters
         member_filters = {
@@ -62,6 +63,13 @@ class ProjectCapacityEndpoint(BaseAPIView):
             str(mid): {"display_name": name, "avatar_url": avatar or ""}
             for mid, name, avatar in members
         }
+
+        # cross_workspace: same project members, but time counted from ALL workspaces
+        if cross_workspace and member_map:
+            worklog_filters = {
+                "logged_by__in": list(member_map.keys()),
+                "logged_at__range": [date_from, date_to],
+            }
 
         # Aggregate logged time per member in date range
         logged_qs = (

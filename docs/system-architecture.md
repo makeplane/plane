@@ -104,12 +104,18 @@ apps/web/
 │   │   ├── root.store.ts           # Extends CoreRootStore
 │   │   ├── workflow.store.ts       # Workflow MobX store
 │   │   ├── time-tracking.store.ts  # Time tracking store
-│   │   └── ho.store.ts             # Org chart (HO) store
+│   │   ├── ho.store.ts             # Org chart (HO) store
+│   │   ├── analytics.store.ts      # Analytics dashboard store
+│   │   ├── task-category.store.ts  # Task categories store
+│   │   └── monitoring.store.ts     # Monitoring dashboard store
 │   │
 │   ├── services/
 │   │   ├── workflow.service.ts
 │   │   ├── time-tracking.service.ts
-│   │   └── ho.service.ts
+│   │   ├── ho.service.ts
+│   │   ├── analytics.service.ts
+│   │   ├── task-category.service.ts
+│   │   └── monitoring.service.ts
 │   │
 │   └── components/
 │       ├── workflow/                # Workflow UI
@@ -118,6 +124,9 @@ apps/web/
 │       │   └── workflow-blocker-modal.tsx
 │       ├── time-tracking/           # Time tracking UI
 │       ├── ho/                       # Org chart UI
+│       ├── analytics/                # Analytics dashboard UI
+│       ├── task-category/            # Task categories admin UI
+│       ├── monitoring/               # Monitoring dashboard UI
 │       └── [other]/
 │
 ├── app/                            # Old routing (gradual migration)
@@ -147,8 +156,14 @@ RootStore (ce/store/root.store.ts extends CoreRootStore)
 │   └── workflows: Map<projectId, Workflow>
 ├── timeTrackingStore: TimeTrackingRootStore (CE)
 │   └── timeLogs: Map<issueId, TimeLog[]>
-└── hoStore: HORootStore (CE)
-    └── orgChart: OrgNode[]
+├── hoStore: HORootStore (CE)
+│   └── orgChart: OrgNode[]
+├── analyticsStore: AnalyticsRootStore (CE)
+│   └── dashboardData: Map<projectId, AnalyticsData>
+├── taskCategoryStore: TaskCategoryRootStore (CE)
+│   └── categories: Map<workspaceId, TaskCategory[]>
+└── monitoringStore: MonitoringRootStore (CE)
+    └── metrics: Map<projectId, MonitoringMetrics>
 ```
 
 **Data Flow:**
@@ -377,7 +392,7 @@ Workspace
 **Result Backend:** Redis
 **Scheduler:** Celery Beat
 
-**Task Categories (41 tasks):**
+**Task Categories (41+ tasks):**
 
 | Category | Tasks | Examples |
 |----------|-------|----------|
@@ -388,7 +403,7 @@ Workspace
 | **Cleanup** | 6 | Archive soft-deleted issues, expire sessions |
 | **Analytics** | 3 | Generate dashboard data, report aggregation |
 | **Real-Time Sync** | 5 | Update WebSocket connections, Y.js sync |
-| **CE-Specific** | 4 | Time log processing, org chart updates |
+| **CE-Specific** | 4+ | Time log processing, org chart updates, analytics computation, monitoring metrics |
 
 **Async Patterns:**
 ```python
@@ -557,5 +572,5 @@ Roles per level:
 
 ---
 
-**Last Updated:** 2026-04-02
-**Version:** 1.0
+**Last Updated:** 2026-04-08
+**Version:** 1.1

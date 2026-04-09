@@ -25,8 +25,10 @@ interface CapacityDayDetailsPopoverProps {
   cellClassName: string;
   /** Formatted label shown inside the cell (e.g. "7.5h") */
   cellLabel: string;
-  /** When true, fetches day details across all user workspaces instead of project-scoped */
+  /** When true, time counts from all workspaces; popover shows all-workspace tasks */
   isCrossWorkspace?: boolean;
+  /** When true, component is in workspace mode (no projectId); uses workspace day-details endpoint */
+  isWorkspaceMode?: boolean;
 }
 
 export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
@@ -38,6 +40,7 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
   cellClassName,
   cellLabel,
   isCrossWorkspace,
+  isWorkspaceMode,
 }) => {
   const { t } = useTranslation();
   const worklogStore = useWorklog();
@@ -48,9 +51,17 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
     if (loggedMinutes === 0) return;
     setIsLoading(true);
     try {
-      const res = isCrossWorkspace
-        ? await worklogStore.fetchCrossWorkspaceCapacityDayDetails(workspaceSlug, memberId, date)
-        : await worklogStore.fetchCapacityDayDetails(workspaceSlug, projectId, memberId, date);
+      let res;
+      if (isWorkspaceMode) {
+        // Workspace mode: use workspace day-details endpoint (supports cross_workspace flag)
+        res = await worklogStore.fetchWorkspaceCapacityDayDetails(workspaceSlug, memberId, date, isCrossWorkspace);
+      } else if (isCrossWorkspace) {
+        // Project mode, cross-workspace: all workspaces for this member
+        res = await worklogStore.fetchCrossWorkspaceCapacityDayDetails(workspaceSlug, memberId, date);
+      } else {
+        // Project mode, current project only
+        res = await worklogStore.fetchCapacityDayDetails(workspaceSlug, projectId, memberId, date);
+      }
       setTasks(res.tasks);
     } finally {
       setIsLoading(false);
