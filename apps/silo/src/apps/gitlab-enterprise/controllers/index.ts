@@ -72,7 +72,7 @@ export default class GitlabEnterpriseController {
             });
           }
           // Reject the activity, that is not useful
-          const skipFields = ["priority", "state", "start_date", "target_date", "cycles", "parent", "modules", "link"];
+          const skipFields = ["priority", "start_date", "target_date", "cycles", "parent", "modules", "link"];
           if (payload.activity.field && skipFields.includes(payload.activity.field)) {
             return res.status(202).send({
               message: "Webhook received",
