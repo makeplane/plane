@@ -105,7 +105,7 @@ overrides:
   webpack: 5.104.1
   lodash-es: 4.18.0
   '@isaacs/brace-expansion': 5.0.1
-  lodash: 4.18.0
+  lodash: 4.18.1
   markdown-it: 14.1.1
   rollup: 4.59.0
   minimatch@3: 3.1.4
@@ -6457,9 +6457,8 @@ packages:
   lodash.isarguments@3.1.0:
     resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
 
-  lodash@4.18.0:
-    resolution: {integrity: sha512-l1mfj2atMqndAHI3ls7XqPxEjV2J9ZkcNyHpoZA3r2T1LLwDB69jgkMWh71YKwhBbK0G2f4WSn05ahmQXVxupA==}
-    deprecated: Bad release. Please use lodash@4.17.21 instead.
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
@@ -10319,7 +10318,7 @@ snapshots:
       exit-hook: 2.2.1
       isbot: 5.1.31
       jsesc: 3.0.2
-      lodash: 4.18.0
+      lodash: 4.18.1
       p-map: 7.0.3
       pathe: 1.1.2
       picocolors: 1.1.1
@@ -11092,7 +11091,7 @@ snapshots:
       chalk: 3.0.0
       css.escape: 1.5.1
       dom-accessibility-api: 0.6.3
-      lodash: 4.18.0
+      lodash: 4.18.1
       redent: 3.0.0
 
   '@testing-library/jest-dom@6.9.1':
@@ -12838,7 +12837,7 @@ snapshots:
   express-winston@4.2.0(winston@3.17.0):
     dependencies:
       chalk: 2.4.2
-      lodash: 4.18.0
+      lodash: 4.18.1
       winston: 3.17.0
 
   express-ws@5.0.2(express@4.22.0):
@@ -13317,7 +13316,7 @@ snapshots:
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
-      lodash: 4.18.0
+      lodash: 4.18.1
       pretty-error: 4.0.0
       tapable: 2.3.0
     optionalDependencies:
@@ -13785,7 +13784,7 @@ snapshots:
 
   lodash.isarguments@3.1.0: {}
 
-  lodash@4.18.0: {}
+  lodash@4.18.1: {}
 
   log-update@6.1.0:
     dependencies:
@@ -14861,7 +14860,7 @@ snapshots:
 
   pretty-error@4.0.0:
     dependencies:
-      lodash: 4.18.0
+      lodash: 4.18.1
       renderkid: 3.0.0
 
   pretty-format@27.5.1:
@@ -15042,7 +15041,7 @@ snapshots:
   react-color@2.19.3(react@18.3.1):
     dependencies:
       '@icons/material': 0.2.4(react@18.3.1)
-      lodash: 4.18.0
+      lodash: 4.18.1
       lodash-es: 4.18.0
       material-colors: 1.2.6
       prop-types: 15.8.1
@@ -15148,7 +15147,7 @@ snapshots:
       create-react-class: 15.7.0
       element-resize-detector: 1.2.4
       imagesloaded: 4.1.4
-      lodash: 4.18.0
+      lodash: 4.18.1
       masonry-layout: 4.2.2
       prop-types: 15.8.1
       react: 18.3.1
@@ -15239,7 +15238,7 @@ snapshots:
 
   reactcss@1.2.3(react@18.3.1):
     dependencies:
-      lodash: 4.18.0
+      lodash: 4.18.1
       react: 18.3.1
 
   read-cache@1.0.0:
@@ -15272,7 +15271,7 @@ snapshots:
     dependencies:
       clsx: 2.1.1
       eventemitter3: 4.0.7
-      lodash: 4.18.0
+      lodash: 4.18.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.3.1
@@ -15385,7 +15384,7 @@ snapshots:
       css-select: 4.3.0
       dom-converter: 0.2.0
       htmlparser2: 6.1.0
-      lodash: 4.18.0
+      lodash: 4.18.1
       strip-ansi: 6.0.1
 
   require-directory@2.1.1: {}
