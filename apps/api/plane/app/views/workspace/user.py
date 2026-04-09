@@ -140,6 +140,10 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 )
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
+            )
         )
 
     def get(self, request, slug, user_id):
