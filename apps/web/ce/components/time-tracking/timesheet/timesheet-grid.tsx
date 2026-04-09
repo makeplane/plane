@@ -15,7 +15,8 @@ import { TimesheetTable } from "./timesheet-table";
 
 interface TimesheetGridProps {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
+  defaultCrossWorkspace?: boolean;
 }
 
 /**
@@ -23,11 +24,14 @@ interface TimesheetGridProps {
  * Read-only view of the current user's worklogs for a given week.
  * Supports a "Cross Workspaces" toggle to show data across all user workspaces.
  */
-export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, projectId }) => {
+export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, projectId, defaultCrossWorkspace }) => {
+  if (!projectId && !defaultCrossWorkspace) {
+    throw new Error("TimesheetGrid requires either projectId or defaultCrossWorkspace");
+  }
   const { t } = useTranslation();
   const worklogStore = useWorklog();
   const [error, setError] = useState<string | null>(null);
-  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(defaultCrossWorkspace ?? false);
 
   const fetchData = useCallback(
     async (weekStart?: string) => {
@@ -36,7 +40,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
         if (isCrossWorkspace) {
           await worklogStore.fetchCrossWorkspaceTimesheet(workspaceSlug, weekStart);
         } else {
-          await worklogStore.fetchTimesheetGrid(workspaceSlug, projectId, weekStart);
+          await worklogStore.fetchTimesheetGrid(workspaceSlug, projectId!, weekStart);
         }
       } catch {
         setError(t("timesheet_load_error"));
@@ -65,17 +69,19 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           onInit={() => void fetchData()}
         />
 
-        <button
-          onClick={() => setIsCrossWorkspace((v) => !v)}
-          className={cn(
-            "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
-            isCrossWorkspace
-              ? "bg-accent-subtle border-accent-primary text-accent-primary"
-              : "border-subtle text-secondary hover:text-primary"
-          )}
-        >
-          {t("timesheet_cross_workspaces")}
-        </button>
+        {!defaultCrossWorkspace && (
+          <button
+            onClick={() => setIsCrossWorkspace((v) => !v)}
+            className={cn(
+              "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
+              isCrossWorkspace
+                ? "bg-accent-subtle border-accent-primary text-accent-primary"
+                : "border-subtle text-secondary hover:text-primary"
+            )}
+          >
+            {t("timesheet_cross_workspaces")}
+          </button>
+        )}
       </div>
 
       {/* Loading */}
@@ -107,7 +113,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           dailyTotals={data.daily_totals}
           grandTotal={data.grand_total_minutes}
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
+          projectId={projectId ?? ""}
           showWorkspaceColumn={isCrossWorkspace}
         />
       )}

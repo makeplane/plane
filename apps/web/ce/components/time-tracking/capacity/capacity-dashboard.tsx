@@ -24,11 +24,15 @@ import { format } from "date-fns";
 
 interface ICapacityDashboardProps {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
+  defaultCrossWorkspace?: boolean;
 }
 
 export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, defaultCrossWorkspace } = props;
+  if (!projectId && !defaultCrossWorkspace) {
+    throw new Error("CapacityDashboard requires either projectId or defaultCrossWorkspace");
+  }
   const { t } = useTranslation();
   const worklogStore = useWorklog();
   const { capacityData, isCapacityLoading } = worklogStore;
@@ -39,14 +43,14 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
     from: undefined,
     to: undefined,
   });
-  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(defaultCrossWorkspace ?? false);
 
   // Derived date params
   const dateFrom = dateRange.from ? renderFormattedPayloadDate(dateRange.from) || "" : "";
   const dateTo = dateRange.to ? renderFormattedPayloadDate(dateRange.to) || "" : "";
 
   const fetchReport = useCallback(() => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || (!projectId && !isCrossWorkspace)) return;
 
     const params: Record<string, string> = {};
     if (selectedMembers.length > 0) params["member_id"] = selectedMembers.join(",");
@@ -56,7 +60,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
     if (isCrossWorkspace) {
       void worklogStore.fetchCrossWorkspaceCapacity(workspaceSlug, params);
     } else {
-      void worklogStore.fetchCapacityReport(workspaceSlug, projectId, params);
+      void worklogStore.fetchCapacityReport(workspaceSlug, projectId!, params);
     }
   }, [workspaceSlug, projectId, selectedMembers, dateFrom, dateTo, isCrossWorkspace, worklogStore]);
 
@@ -135,17 +139,19 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
           </div>
 
           {/* Cross Workspaces toggle */}
-          <button
-            onClick={() => setIsCrossWorkspace((v) => !v)}
-            className={cn(
-              "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
-              isCrossWorkspace
-                ? "bg-accent-subtle border-accent-primary text-accent-primary"
-                : "border-subtle text-secondary hover:text-primary"
-            )}
-          >
-            {t("timesheet_cross_workspaces")}
-          </button>
+          {!defaultCrossWorkspace && (
+            <button
+              onClick={() => setIsCrossWorkspace((v) => !v)}
+              className={cn(
+                "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
+                isCrossWorkspace
+                  ? "bg-accent-subtle border-accent-primary text-accent-primary"
+                  : "border-subtle text-secondary hover:text-primary"
+              )}
+            >
+              {t("timesheet_cross_workspaces")}
+            </button>
+          )}
         </div>
       </div>
 
@@ -163,8 +169,8 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
         {/* Filters Bar */}
         <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
           <div className="flex items-center gap-4">
-            {/* Member filter — hidden in cross-workspace mode */}
-            {!isCrossWorkspace && (
+            {/* Member filter — hidden when no projectId AND in cross-workspace mode */}
+            {!projectId && isCrossWorkspace ? null : (
               <div className="flex items-center gap-2">
                 <span className="text-12 font-medium text-secondary">{t("common.assignee")}:</span>
                 <MemberDropdown
@@ -221,7 +227,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
             dateTo={capacityData.date_to}
             projectDailyTotals={capacityData.project_daily_totals}
             workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            projectId={projectId ?? ""}
             isCrossWorkspace={isCrossWorkspace}
           />
         </div>
