@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+// ---- HTML Parsing -------------------------------------------
 export type TJiraIssueTypeScreenScheme = {
   id: number;
   name: string;
@@ -66,4 +67,28 @@ export type TJiraScreenSchemeQueryOptions = {
   operation?: keyof TJiraScreenOperations | "all";
   /** Narrow each scheme's issueTypes to a specific issue type name */
   issueType?: string | "all";
+};
+
+// ---- Custom API Call -------------------------------------------
+
+type TJiraCustomApiScreenOperation = "default" | "admin.issue.operations.edit" | "admin.issue.operations.view";
+
+export type TJiraCustomApiScreen = {
+  operation: TJiraCustomApiScreenOperation;
+  screenId: number;
+  screenName: string;
+};
+
+export type TJiraCustomApiIssueType = {
+  issueTypeId: string;
+  issueTypeName: string;
+  issueTypeScreenScheme: string;
+  fieldScreenScheme: string;
+  screens: TJiraCustomApiScreen[];
+};
+
+export type TJiraCustomApiProjectScreenConfig = {
+  projectKey: string;
+  issueTypeCount: number;
+  data: TJiraCustomApiIssueType[];
 };

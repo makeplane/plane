@@ -31,7 +31,10 @@ import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import type { JiraApiUser, JiraPriorityScheme, JiraProps } from "..";
 import { fetchPaginatedData, EJiraAuthenticationType } from "..";
 import { parseJiraScreensHtml, queryScreenSchemes } from "../helpers/project-screen-parser";
-import type { TJiraConsolidatedIssueTypeScreenScheme } from "../types/project-screens";
+import type {
+  TJiraConsolidatedIssueTypeScreenScheme,
+  TJiraCustomApiProjectScreenConfig,
+} from "../types/project-screens";
 
 export class JiraV2Service {
   private jiraClient: Version2Client;
@@ -382,34 +385,124 @@ export class JiraV2Service {
     return screenSchemes;
   }
 
-  async getScreensCustomFieldsForProject(projectKey: string): Promise<FieldDetails[]> {
-    const screenSchemes = await this.getProjectScreenSchemes(projectKey);
-    const associatedScreens = screenSchemes.flatMap((scheme) => scheme.screens);
+  async getScreenIdsForProject(projectKey: string): Promise<string[]> {
+    const screenIds = new Set<string>();
 
-    const set = new Set<string>();
+    // --- Approach 1: Custom ScriptRunner API -------------------------
+    console.log(`[getScreenIdsForProject] [${projectKey}] Attempting custom ScriptRunner API...`);
+    try {
+      const response = await this.jiraClient.sendRequestFullResponse<TJiraCustomApiProjectScreenConfig>({
+        method: "GET",
+        url: `${this.hostname}/rest/scriptrunner/latest/custom/workItemTypeScreens?projectKey=${projectKey}`,
+      });
+
+      const data = response.data;
+      console.log(
+        `[getScreenIdsForProject] [${projectKey}] ScriptRunner API responded with ${data.data.length} issue type(s).`
+      );
+
+      data.data.forEach((issueType) => {
+        console.log(
+          `[getScreenIdsForProject] [${projectKey}] Processing issue type "${issueType.issueTypeName}" (${issueType.issueTypeId}) with ${issueType.screens.length} screen(s).`
+        );
+        issueType.screens.forEach((screen) => {
+          console.log(
+            `[getScreenIdsForProject] [${projectKey}]   → Screen "${screen.screenName}" (id: ${screen.screenId}, operation: ${screen.operation})`
+          );
+          screenIds.add(screen.screenId.toString());
+        });
+      });
+
+      if (screenIds.size > 0) {
+        console.log(
+          `[getScreenIdsForProject] [${projectKey}] ScriptRunner API succeeded. Found ${screenIds.size} unique screen id(s): [${Array.from(screenIds).join(", ")}]`
+        );
+        return Array.from(screenIds);
+      }
+
+      console.warn(
+        `[getScreenIdsForProject] [${projectKey}] ScriptRunner API returned no screen ids. Falling back to HTML parsing...`
+      );
+    } catch (e) {
+      if (isAxiosError(e)) {
+        console.warn(
+          `[getScreenIdsForProject] [${projectKey}] ScriptRunner API failed with HTTP ${e.response?.status ?? "unknown"}: ${JSON.stringify(e.response?.data)}. Falling back to HTML parsing...`
+        );
+      } else {
+        console.warn(
+          `[getScreenIdsForProject] [${projectKey}] ScriptRunner API failed (${e instanceof Error ? e.message : String(e)}). Falling back to HTML parsing...`
+        );
+      }
+    }
+
+    // --- Approach 2: HTML Parsing ----------------------------
+    console.log(`[getScreenIdsForProject] [${projectKey}] Attempting HTML parsing via project config page...`);
+    const screenSchemes = await this.getProjectScreenSchemes(projectKey);
+    console.log(
+      `[getScreenIdsForProject] [${projectKey}] HTML parsing found ${screenSchemes.length} screen scheme(s).`
+    );
+
+    const associatedScreens = screenSchemes.flatMap((scheme) => scheme.screens).filter((screen) => screen.id !== 0);
+    associatedScreens.forEach((screen) => screenIds.add(screen.id.toString()));
+    console.log(
+      `[getScreenIdsForProject] [${projectKey}] HTML parsing resolved ${screenIds.size} unique screen(s): [${associatedScreens.map((s) => `${s.name}(${s.id})`).join(", ")}]`
+    );
+
+    return Array.from(screenIds);
+  }
+
+  async getScreensCustomFieldsForProject(projectKey: string): Promise<FieldDetails[]> {
+    const fieldSet = new Set<string>();
+    const screenIds = await this.getScreenIdsForProject(projectKey);
 
     await Promise.all(
-      associatedScreens.map(async (screen) => {
-        const tabs = await this.jiraClient.screenTabs.getAllScreenTabs({ screenId: screen.id });
-        await Promise.all(
-          tabs
-            .filter((tab) => tab.id != null)
-            .map(async (tab) => {
-              const fields = await this.jiraClient.screenTabFields.getAllScreenTabFields({
-                screenId: screen.id,
-                tabId: tab.id!,
-              });
-              fields.forEach((field) => field.id && set.add(field.id));
+      screenIds.map(async (screenId) => {
+        if (isNaN(Number(screenId))) {
+          console.warn(
+            `[getScreensCustomFieldsForProject] [${projectKey}] Skipping screen with invalid id: ${screenId}`
+          );
+          return;
+        }
+
+        const numericScreenId = Number(screenId);
+
+        try {
+          const tabs = await this.jiraClient.screenTabs.getAllScreenTabs({ screenId: numericScreenId });
+          console.log(
+            `[getScreensCustomFieldsForProject] [${projectKey}] Screen ${numericScreenId} has ${tabs.length} tab(s).`
+          );
+          const validTabs = tabs.filter((tab) => tab.id != null);
+
+          await Promise.all(
+            validTabs.map(async (tab) => {
+              try {
+                const fields = await this.jiraClient.screenTabFields.getAllScreenTabFields({
+                  screenId: numericScreenId,
+                  tabId: tab.id!,
+                });
+
+                fields.forEach((field) => field.id && fieldSet.add(field.id));
+              } catch (e) {
+                const reason = e instanceof Error ? e.message : String(e);
+                console.warn(
+                  `[getScreensCustomFieldsForProject] [${projectKey}] Failed to fetch fields for screen ${numericScreenId} tab ${tab.id}: ${reason}`
+                );
+              }
             })
-        );
+          );
+        } catch (e) {
+          console.warn(
+            `[getScreensCustomFieldsForProject] [${projectKey}] Failed to fetch tabs for screen ${numericScreenId}: ${e instanceof Error ? e.message : String(e)}`
+          );
+        }
       })
     );
 
     const customFields = await this.getCustomFields();
-    return customFields.filter((field) => field.id && set.has(field.id));
+    return customFields.filter((field) => field.id && fieldSet.has(field.id));
   }
 
-  async getCustomFieldsWithContext(projectId?: string) {
+  async getCustomFieldsWithContext(_projectId?: string) {
     try {
       const result = await this.jiraClient.sendRequestFullResponse<Paginated<JiraCustomFieldWithCtx>>({
         method: "GET",
