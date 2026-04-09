@@ -13,6 +13,8 @@ import type {
   IDepartmentBulkImportResponse,
   IDepartmentBulkLinkRequest,
   IDepartmentBulkLinkResponse,
+  IDepartmentBulkLinkCategoriesRequest,
+  IDepartmentBulkLinkCategoriesResponse,
   IAutoJoinResult,
   IRejoinAllResult,
   IInstanceDepartment,
@@ -22,6 +24,7 @@ import type {
   TAutoJoinMode,
 } from "@plane/services";
 import { InstanceDepartmentService } from "@plane/services";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TLoader } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
@@ -45,6 +48,8 @@ export interface IInstanceDepartmentStore {
   exportWorkspaceLinked: () => void;
   bulkImport: (data: IDepartmentBulkImportRequest) => Promise<IDepartmentBulkImportResponse>;
   bulkLinkWorkspace: (data: IDepartmentBulkLinkRequest) => Promise<IDepartmentBulkLinkResponse>;
+  bulkLinkCategories: (data: IDepartmentBulkLinkCategoriesRequest) => Promise<IDepartmentBulkLinkCategoriesResponse>;
+  exportLinkedCategories: (mainCategories: { id: string; name: string }[]) => void;
   autoJoin: (id: string, mode: TAutoJoinMode) => Promise<IAutoJoinResult>;
   rejoinAll: (mode: TAutoJoinMode) => Promise<IRejoinAllResult>;
   linkTaskCategories: (id: string, taskCategoryIds: string[]) => Promise<IInstanceDepartment>;
@@ -74,6 +79,8 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       exportWorkspaceLinked: action,
       bulkImport: action,
       bulkLinkWorkspace: action,
+      bulkLinkCategories: action,
+      exportLinkedCategories: action,
       autoJoin: action,
       rejoinAll: action,
       linkTaskCategories: action,
@@ -268,6 +275,52 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       console.error("Error bulk linking departments to workspaces", error);
       throw error;
     }
+  };
+
+  bulkLinkCategories = async (
+    data: IDepartmentBulkLinkCategoriesRequest
+  ): Promise<IDepartmentBulkLinkCategoriesResponse> => {
+    try {
+      const result = await this.service.bulkLinkCategories(data);
+      if (result.total_linked > 0) {
+        await this.fetchTree();
+      }
+      return result;
+    } catch (error) {
+      console.error("Error bulk linking categories to departments", error);
+      throw error;
+    }
+  };
+
+  exportLinkedCategories = (mainCategories: { id: string; name: string }[]): void => {
+    void import("xlsx").then((XLSX) => {
+      const categoryNameById = new Map(mainCategories.map((c) => [c.id, c.name]));
+      const flatten = (nodes: IInstanceDepartment[]): IInstanceDepartment[] =>
+        nodes.flatMap((n) => [n, ...flatten(n.children ?? [])]);
+
+      const allDepts = flatten(this.tree);
+      const hasDept = allDepts.some((d) => d.task_category_ids.length > 0);
+      if (!hasDept) {
+        setToast({ type: TOAST_TYPE.WARNING, title: "No linked categories to export" });
+        return;
+      }
+
+      const rows = allDepts
+        .filter((d) => d.task_category_ids.length > 0)
+        .flatMap((d) =>
+          d.task_category_ids.map((catId) => ({
+            dept_code: d.code,
+            category_name: categoryNameById.get(catId) ?? catId,
+          }))
+        );
+
+      const ws = XLSX.utils.json_to_sheet(rows, { header: ["dept_code", "category_name"] });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Linked Categories");
+
+      const timestamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+      XLSX.writeFile(wb, `linked-categories_${timestamp}.xlsx`);
+    });
   };
 
   linkTaskCategories = async (id: string, taskCategoryIds: string[]): Promise<IInstanceDepartment> => {

@@ -13,6 +13,7 @@ from plane.license.api.views.department import (
 )
 from plane.license.api.views.department_bulk_import import DepartmentBulkImportView
 from plane.license.api.views.department_bulk_link import DepartmentBulkLinkWorkspaceView
+from plane.license.api.views.department_bulk_link_categories import DepartmentBulkLinkCategoriesView
 
 urlpatterns = [
     path(
@@ -40,6 +41,11 @@ urlpatterns = [
         "departments/bulk-link-workspace/",
         DepartmentBulkLinkWorkspaceView.as_view(http_method_names=["post"]),
         name="instance-department-bulk-link-workspace",
+    ),
+    path(
+        "departments/bulk-link-categories/",
+        DepartmentBulkLinkCategoriesView.as_view(http_method_names=["post"]),
+        name="instance-department-bulk-link-categories",
     ),
     path(
         "departments/rejoin-all/",
