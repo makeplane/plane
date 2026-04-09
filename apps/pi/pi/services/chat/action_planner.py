@@ -43,6 +43,7 @@ from pi.services.mcp.loader import get_mcp_loader
 from pi.services.mcp.osmosis import run_osmosis
 from pi.services.mcp.utils import parse_tool_name as parse_mcp_tool_name
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps as _upsert_message_flow_steps
+from pi.services.retrievers.pg_store.message import upsert_write_todos_flow_step as _upsert_write_todos_flow_step
 from pi.services.schemas.chat import ActionCategorySelection
 
 from .helpers.build_mode_helpers import TOOL_NAME_TO_CATEGORY_MAP
@@ -1085,6 +1086,17 @@ async def execute_tools_for_build_mode(
                                 {**t, "content": f"{TODO_STATUS_ICON.get(t.get('status', 'pending'), '○')} {t['content']}"} for t in todos_list
                             ]
                             yield {"chunk_type": "todos", "todos": display_todos}
+                            # Persist the display todos (with icon-prefixed content) for fault-tolerance
+                            try:
+                                async with get_streaming_db_session() as _todos_db:
+                                    await _upsert_write_todos_flow_step(
+                                        message_id=query_id,
+                                        chat_id=chat_id,
+                                        todos=display_todos,
+                                        db=_todos_db,
+                                    )
+                            except Exception as _te:
+                                log.warning(f"ChatID: {chat_id} - Failed to persist todos flow step: {_te}")
                     tool_messages.append(ToolMessage(content=_wt_result, tool_call_id=str(tool_id)))
                     continue
 

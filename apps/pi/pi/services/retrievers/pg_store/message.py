@@ -400,6 +400,60 @@ async def upsert_message_flow_steps(message_id: UUID4, chat_id: UUID4, db: Async
         return {"message": "error", "error": str(e)}
 
 
+async def upsert_write_todos_flow_step(
+    message_id: UUID4,
+    chat_id: UUID4,
+    todos: List[Dict[str, Any]],
+    db: AsyncSession,
+) -> Dict[str, Any]:
+    """
+    Upserts a dedicated MessageFlowStep for the write_todos tool.
+    If a write_todos step already exists for this message it is updated in-place;
+    otherwise a new step is created.  This makes todo persistence fault-tolerant:
+    every incremental write_todos call during streaming immediately commits the
+    latest todo state so page refreshes and disconnects never lose it.
+    """
+    try:
+        stmt = (
+            select(MessageFlowStep)
+            .where(MessageFlowStep.message_id == message_id)  # type: ignore[arg-type]
+            .where(MessageFlowStep.tool_name == "write_todos")  # type: ignore[arg-type]
+        )
+        result = await db.execute(stmt)
+        existing_step = result.scalar_one_or_none()
+
+        if existing_step:
+            existing_step.execution_data = {"todos": todos}
+            existing_step.execution_success = ExecutionStatus.SUCCESS
+            db.add(existing_step)
+        else:
+            # Resolve workspace_slug from the parent message
+            msg_stmt = select(Message).where(Message.id == message_id)  # type: ignore[arg-type]
+            msg_result = await db.execute(msg_stmt)
+            parent_message = msg_result.scalar_one_or_none()
+            workspace_slug = parent_message.workspace_slug if parent_message else None
+
+            new_step = MessageFlowStep(
+                message_id=message_id,
+                chat_id=chat_id,
+                step_order=0,
+                step_type=FlowStepType.TOOL.value,
+                tool_name="write_todos",
+                content="",
+                execution_data={"todos": todos},
+                execution_success=ExecutionStatus.SUCCESS,
+                workspace_slug=workspace_slug,
+            )
+            db.add(new_step)
+
+        await db.commit()
+        return {"message": "success"}
+    except Exception as e:
+        await db.rollback()
+        log.error(f"upsert_write_todos_flow_step failed. message_id: {str(message_id)}, error: {str(e)}")
+        return {"message": "error", "error": str(e)}
+
+
 async def get_tool_results_from_chat_history(
     db: AsyncSession,
     chat_id: UUID,

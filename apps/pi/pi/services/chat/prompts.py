@@ -701,17 +701,31 @@ WRITE_TODOS_SYSTEM_PROMPT_ASK = """## `write_todos` Tool
 
 You have access to the `write_todos` tool to help you manage and plan complex objectives.
 
-Use this tool for complex objectives to ensure you are tracking each necessary step and giving the user visibility into your progress.
+Use this tool for complex objectives to ensure you are tracking each necessary step and giving the user visibility into your progress. For simple objectives that only require a few steps, complete the objective directly without using this tool.
 
-It is critical that you mark todos as `completed` as soon as you are done with a step. Do not batch completions.
+### Mandatory Call Sequence
 
-For simple objectives that only require a few steps, complete the objective directly without using this tool.
+You MUST follow this exact sequence — no exceptions:
+
+1. **Before any retrieval work begins** — call `write_todos` once (alone) to write the full list of tasks, with the first task(s) marked `in_progress` and all others `pending`.
+
+2. **With EACH subsequent retrieval tool call** — include `write_todos` in the same parallel batch. In this `write_todos` call, mark the tasks from the **previous** batch as `completed`, mark the tasks you are **currently** calling as `in_progress`, and leave everything else `pending`.
+
+3. **After ALL tasks are complete** — call `write_todos` alone with every task marked `completed`.
+
+### Critical: Status Update Rules
+
+- **`completed`**: a task whose tool call already returned results in a previous batch — you have seen the output.
+- **`in_progress`**: a task whose tool is being called in the **current** batch alongside this `write_todos` call.
+- **`pending`**: tasks not yet started.
+
+Never send the same statuses twice in a row. Every `write_todos` call after the first must advance at least one task from `in_progress` → `completed`.
 
 ### Important Notes
 
-- Never call `write_todos` multiple times in parallel
+- Call `write_todos` exactly once per batch
 - Revise the todo list as you go — new information may reveal new tasks or make old ones irrelevant
-- Mark a task `completed` immediately once you have fully executed it (e.g., a tool call returned results and you have processed them)"""
+- Never call `write_todos` multiple times in parallel"""  # noqa: E501
 
 
 WRITE_TODOS_SYSTEM_PROMPT_BUILD = """## `write_todos` Tool

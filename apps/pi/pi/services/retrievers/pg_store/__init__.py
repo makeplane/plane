@@ -35,6 +35,7 @@ from .message import get_tool_results_from_chat_history
 from .message import update_message_feedback
 from .message import upsert_message
 from .message import upsert_message_flow_steps
+from .message import upsert_write_todos_flow_step
 from .model import get_active_models
 from .webhook import create_webhook_record
 from .webhook import get_last_processed_commit
@@ -73,5 +74,6 @@ __all__ = [
     "get_chat_messages",
     "upsert_message",
     "upsert_message_flow_steps",
+    "upsert_write_todos_flow_step",
     "upsert_user_chat_preference",
 ]

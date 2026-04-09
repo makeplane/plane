@@ -593,10 +593,20 @@ async def retrieve_chat_history(
                             message_flow_steps, user_message.id, db, is_latest_message=is_last_user_message
                         )
 
+                        # Extract todos from the write_todos flow step for this user message (if any)
+                        todos_for_pair: list = []
+                        for _step in message_flow_steps:
+                            if _step.message_id == user_message.id and _step.tool_name == "write_todos":
+                                _exec = _step.execution_data or {}
+                                if isinstance(_exec, dict) and _exec.get("todos"):
+                                    todos_for_pair = _exec["todos"]
+                                break
+
                         qa_pair: Dict[str, Any] = {
                             "query": user_message.content or "",
                             "answer": await replace_plot_attachment_urls(assistant_message.content or "", db),
                             "reasoning": assistant_message.reasoning or "",
+                            "todos": todos_for_pair,
                             "feedback": feedback,
                             "llm": normalize_model_for_display(assistant_message.llm_model),
                             "parsed_query": user_message.parsed_content or "",

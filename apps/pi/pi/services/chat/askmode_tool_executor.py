@@ -28,6 +28,7 @@ from langchain_core.messages import ToolMessage
 
 from pi import logger
 from pi.app.models.enums import MessageMetaStepType
+from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.chat.helpers import ask_mode_helpers
 from pi.services.chat.helpers.flow_tracking import check_and_build_clarification
 from pi.services.chat.helpers.flow_tracking import execute_tool_step
@@ -41,12 +42,14 @@ from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 from pi.services.chat.kit import TODO_STATUS_ICON
 from pi.services.chat.prompt_mixins import pai_ask_system_prompt_sensitive_version
+from pi.services.chat.prompts import WRITE_TODOS_SYSTEM_PROMPT_ASK
 from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.llm.cache_utils import create_claude_cached_system_message
 from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
 from pi.services.llm.cache_utils import should_cache_messages
 from pi.services.llm.cache_utils import should_cache_tool_bindings
+from pi.services.retrievers.pg_store.message import upsert_write_todos_flow_step as _upsert_write_todos_flow_step
 
 log = logger.getChild(__name__)
 
@@ -384,7 +387,8 @@ async def execute_tools_for_ask_mode(
 
         # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (conversation history) content
         # Static content (system prompt + context_block) should remain constant for cache hits
-        system_prompt_to_use = f"{pai_ask_system_prompt if not is_guest_user else pai_ask_system_prompt_sensitive_version}\n\n{context_block}"
+        _base_prompt = pai_ask_system_prompt if not is_guest_user else pai_ask_system_prompt_sensitive_version
+        system_prompt_to_use = f"{_base_prompt}\n\n{WRITE_TODOS_SYSTEM_PROMPT_ASK}\n\n{context_block}"
 
         # Message-level cache_control works with both ChatAnthropic and LiteLLM
         if should_cache_messages(chatbot_instance.switch_llm):
@@ -525,6 +529,55 @@ async def execute_tools_for_ask_mode(
                     yield stream_chunk
                     return
 
+                elif tool_name == "write_todos":
+                    # write_todos is intercepted here (before execute_tool_step) so the
+                    # @persist_tool_execution_step decorator never fires for it.
+                    # That decorator always INSERTs a new row; if it ran alongside
+                    # _upsert_write_todos_flow_step we'd accumulate duplicate rows and
+                    # the upsert would fail on the second call with "Multiple rows found".
+                    _wt_func = next((t for t in tools if t.name == "write_todos"), None)
+                    if _wt_func:
+                        try:
+                            user_friendly_tool_name = tool_name_shown_to_user(tool_name)
+                            tool_query_str = format_tool_query_for_display(tool_name, tool_args, enhanced_query_for_processing)
+                            reasoning_chunk_dict = reasoning_dict_maker(
+                                stage="retrieval_tool_execution", tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=""
+                            )
+                            if reasoning_container is not None:
+                                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            yield reasoning_chunk_dict
+
+                            _wt_result = await _wt_func.ainvoke(tool_args)
+                            log.debug(f"ChatID: {chat_id} - Tool write_todos result preview: {str(_wt_result)[:200]}")
+                            log.debug(f"ChatID: {chat_id} - Tool write_todos completed successfully")
+
+                            _tc = query_flow_store.get("todos_container") if isinstance(query_flow_store, dict) else None
+                            if _tc and _tc.get("updated"):
+                                _tc["updated"] = False
+                                todos_list = _tc.get("todos", [])
+                                if todos_list:
+                                    display_todos = [
+                                        {**t, "content": f"{TODO_STATUS_ICON.get(t.get('status', 'pending'), '○')} {t['content']}"}
+                                        for t in todos_list
+                                    ]
+                                    yield {"chunk_type": "todos", "todos": display_todos}
+                                    try:
+                                        async with get_streaming_db_session() as _todos_db:
+                                            await _upsert_write_todos_flow_step(
+                                                message_id=query_id,
+                                                chat_id=chat_id,
+                                                todos=display_todos,
+                                                db=_todos_db,
+                                            )
+                                    except Exception as _te:
+                                        log.warning(f"ChatID: {chat_id} - Failed to persist todos flow step: {_te}")
+
+                            responses.append(("write_todos", str(tool_args), _wt_result))
+                            tool_messages.append(ToolMessage(content=str(_wt_result), tool_call_id=str(tool_id)))
+                        except Exception as e:
+                            log.error(f"ChatID: {chat_id} - Error executing tool write_todos: {str(e)}")
+                            tool_messages.append(ToolMessage(content=f"Error executing write_todos: {str(e)}", tool_call_id=str(tool_id or "")))
+
                 else:
                     # Find and execute the tool (decorator persists success/error)
                     tool_to_execute = next((t for t in tools if t.name == tool_name), None)
@@ -573,19 +626,6 @@ async def execute_tools_for_ask_mode(
                             result_preview = str(tool_result) if tool_result else "None"
                             log.debug(f"ChatID: {chat_id} - Tool {tool_name} result preview: {result_preview[:200]}")
                             log.debug(f"ChatID: {chat_id} - Tool {tool_name} completed successfully")
-
-                            # Stream todos update to the frontend as a dedicated todos event
-                            if tool_name == "write_todos":
-                                _tc = query_flow_store.get("todos_container") if isinstance(query_flow_store, dict) else None
-                                if _tc and _tc.get("updated"):
-                                    _tc["updated"] = False
-                                    todos_list = _tc.get("todos", [])
-                                    if todos_list:
-                                        display_todos = [
-                                            {**t, "content": f"{TODO_STATUS_ICON.get(t.get('status', 'pending'), '○')} {t['content']}"}
-                                            for t in todos_list
-                                        ]
-                                        yield {"chunk_type": "todos", "todos": display_todos}
 
                             # Track the response
                             responses.append((tool_name, str(tool_args), tool_result))
