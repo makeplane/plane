@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
+import { Switch } from "@plane/propel/switch";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { TimesheetWeekNavigator } from "./timesheet-week-navigator";
 import { TimesheetTable } from "./timesheet-table";
@@ -16,7 +16,9 @@ import { TimesheetTable } from "./timesheet-table";
 interface TimesheetGridProps {
   workspaceSlug: string;
   projectId?: string;
-  defaultCrossWorkspace?: boolean;
+  /** When true, component is rendered at workspace level (no projectId required).
+   *  The cross-workspace toggle is shown; default is current workspace only. */
+  isWorkspaceMode?: boolean;
 }
 
 /**
@@ -24,21 +26,26 @@ interface TimesheetGridProps {
  * Read-only view of the current user's worklogs for a given week.
  * Supports a "Cross Workspaces" toggle to show data across all user workspaces.
  */
-export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, projectId, defaultCrossWorkspace }) => {
-  if (!projectId && !defaultCrossWorkspace) {
-    throw new Error("TimesheetGrid requires either projectId or defaultCrossWorkspace");
+export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, projectId, isWorkspaceMode }) => {
+  if (!projectId && !isWorkspaceMode) {
+    throw new Error("TimesheetGrid requires either projectId or isWorkspaceMode");
   }
   const { t } = useTranslation();
   const worklogStore = useWorklog();
   const [error, setError] = useState<string | null>(null);
-  const [isCrossWorkspace, setIsCrossWorkspace] = useState(defaultCrossWorkspace ?? false);
+  // Workspace mode defaults to current-workspace-only (toggle OFF); project mode starts OFF too
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
 
   const fetchData = useCallback(
     async (weekStart?: string) => {
       setError(null);
       try {
         if (isCrossWorkspace) {
+          // All workspaces the user belongs to
           await worklogStore.fetchCrossWorkspaceTimesheet(workspaceSlug, weekStart);
+        } else if (isWorkspaceMode) {
+          // Current workspace only (workspace_only param filters to this workspace)
+          await worklogStore.fetchCrossWorkspaceTimesheet(workspaceSlug, weekStart, true);
         } else {
           await worklogStore.fetchTimesheetGrid(workspaceSlug, projectId!, weekStart);
         }
@@ -46,7 +53,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
         setError(t("timesheet_load_error"));
       }
     },
-    [workspaceSlug, projectId, worklogStore, isCrossWorkspace, t]
+    [workspaceSlug, projectId, worklogStore, isCrossWorkspace, isWorkspaceMode, t]
   );
 
   // Re-fetch when cross-workspace toggle changes
@@ -69,19 +76,10 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           onInit={() => void fetchData()}
         />
 
-        {!defaultCrossWorkspace && (
-          <button
-            onClick={() => setIsCrossWorkspace((v) => !v)}
-            className={cn(
-              "text-12 font-medium px-3 py-1.5 rounded-md border transition-colors",
-              isCrossWorkspace
-                ? "bg-accent-subtle border-accent-primary text-accent-primary"
-                : "border-subtle text-secondary hover:text-primary"
-            )}
-          >
-            {t("timesheet_cross_workspaces")}
-          </button>
-        )}
+        <div className="flex items-center gap-2.5">
+          <span className="text-12 font-medium text-secondary">{t("timesheet_cross_workspaces")}</span>
+          <Switch value={isCrossWorkspace} onChange={(val) => setIsCrossWorkspace(val)} size="sm" />
+        </div>
       </div>
 
       {/* Loading */}
