@@ -20,6 +20,10 @@ export interface ICEWorklogStore extends IWorklogStore {
   // Analytics timesheet
   analyticsTimesheetData: IAnalyticsTimesheetResponse | null;
   isAnalyticsTimesheetLoading: boolean;
+  // Workspace analytics timesheet
+  workspaceAnalyticsTimesheetData: IAnalyticsTimesheetResponse | null;
+  isWorkspaceAnalyticsTimesheetLoading: boolean;
+  workspaceAnalyticsTimesheetError: string | null;
   // Capacity categories
   categoriesData: ICapacityCategoriesResponse | null;
   // Actions
@@ -38,11 +42,15 @@ export interface ICEWorklogStore extends IWorklogStore {
     memberId: string,
     date: string
   ): Promise<ICapacityDayDetailsResponse>;
+  fetchWorkspaceAnalyticsTimesheet(workspaceSlug: string, weekStart?: string): Promise<void>;
 }
 
 export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
   analyticsTimesheetData: IAnalyticsTimesheetResponse | null = null;
   isAnalyticsTimesheetLoading = false;
+  workspaceAnalyticsTimesheetData: IAnalyticsTimesheetResponse | null = null;
+  isWorkspaceAnalyticsTimesheetLoading = false;
+  workspaceAnalyticsTimesheetError: string | null = null;
   categoriesData: ICapacityCategoriesResponse | null = null;
 
   // Separate service instance — base class service is private, so CE uses its own
@@ -54,6 +62,9 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
     makeObservable(this, {
       analyticsTimesheetData: observable,
       isAnalyticsTimesheetLoading: observable,
+      workspaceAnalyticsTimesheetData: observable,
+      isWorkspaceAnalyticsTimesheetLoading: observable,
+      workspaceAnalyticsTimesheetError: observable,
       categoriesData: observable,
       fetchAnalyticsTimesheet: action,
       fetchCapacityCategories: action,
@@ -61,6 +72,7 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
       fetchCrossWorkspaceTimesheet: action,
       fetchCrossWorkspaceCapacity: action,
       fetchCrossWorkspaceCapacityDayDetails: action,
+      fetchWorkspaceAnalyticsTimesheet: action,
     });
   }
 
@@ -142,5 +154,26 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
     date: string
   ): Promise<ICapacityDayDetailsResponse> => {
     return this.ceService.getCrossWorkspaceCapacityDayDetails(workspaceSlug, memberId, date);
+  };
+
+  fetchWorkspaceAnalyticsTimesheet = async (workspaceSlug: string, weekStart?: string): Promise<void> => {
+    this.workspaceAnalyticsTimesheetError = null; // RT-9: clear error on try
+    this.isWorkspaceAnalyticsTimesheetLoading = true;
+    try {
+      const params: Record<string, string> = {};
+      if (weekStart) params["week_start"] = weekStart;
+      const data = await this.ceService.getWorkspaceAnalyticsTimesheet(workspaceSlug, params);
+      runInAction(() => {
+        this.workspaceAnalyticsTimesheetData = data;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.workspaceAnalyticsTimesheetError = error instanceof Error ? error.message : String(error);
+      });
+    } finally {
+      runInAction(() => {
+        this.isWorkspaceAnalyticsTimesheetLoading = false;
+      });
+    }
   };
 }

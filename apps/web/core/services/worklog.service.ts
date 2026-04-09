@@ -189,6 +189,23 @@ export class WorklogService extends APIService {
       });
   }
 
+  // Workspace analytics timesheet endpoint (all users' logs for a workspace)
+  async getWorkspaceAnalyticsTimesheet(
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<IAnalyticsTimesheetResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/analytics/timesheet/`, {
+        params,
+      }) as Promise<{ data: IAnalyticsTimesheetResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw error?.response?.data ?? error;
+      });
+  }
+
   // Capacity categories (grouped by main_task_category / sub_task_category)
   async getCapacityCategories(
     workspaceSlug: string,
