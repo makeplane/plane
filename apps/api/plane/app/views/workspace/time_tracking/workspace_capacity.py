@@ -3,7 +3,7 @@
 
 from datetime import timedelta
 
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Sum
 from django.utils import timezone
 
 from rest_framework.response import Response
@@ -51,7 +51,7 @@ class WorkspaceCapacityEndpoint(BaseAPIView):
             from datetime import date as _date
 
             parsed_from = _date.fromisoformat(date_from)
-            parsed_to = _date.fromisoformat(date_to)
+            _date.fromisoformat(date_to)  # validate format only
         except ValueError:
             return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -62,7 +62,7 @@ class WorkspaceCapacityEndpoint(BaseAPIView):
             )
         if parsed_from > max_date:
             return Response(
-                {"error": f"date_from cannot be more than 7 days in the future."},
+                {"error": "date_from cannot be more than 7 days in the future."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
