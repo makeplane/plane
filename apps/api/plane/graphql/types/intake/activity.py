@@ -16,6 +16,7 @@ from typing import Optional
 # Third-party library imports
 import strawberry
 import strawberry_django
+from strawberry.types import Info
 from asgiref.sync import sync_to_async
 
 # Module Imports
@@ -74,17 +75,17 @@ class IntakeWorkItemPropertyActivityType:
         return self.issue_id
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
+    def created_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
 
     @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
+    def updated_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date
 
     @strawberry.field
-    async def source(self, info) -> Optional[str]:
+    async def source(self, info: Info) -> Optional[str]:
         issue_id = self.issue_id or None
         if issue_id:
             intake_work_item = await sync_to_async(lambda: IntakeIssue.objects.get(issue_id=issue_id))()

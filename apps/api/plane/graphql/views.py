@@ -14,6 +14,7 @@ import json
 from typing import Any, Dict, Optional
 
 # Django imports
+from django.conf import settings
 from django.http import JsonResponse
 from django.http.request import HttpRequest
 from django.utils.decorators import method_decorator
@@ -52,12 +53,21 @@ class CustomGraphQLView(AsyncGraphQLView):
 
     async def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any):
         """Check if the request contains a public query/mutation before enforcing authentication."""
+        # GET requests are used by the GraphQL IDE (GraphiQL) — pass through directly
+        if settings.DEBUG and request.method == "GET":
+            return await super().dispatch(request, *args, **kwargs)
+
         try:
             body = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid request"}, status=400)
 
         query_name = self.get_query_name(body)
+
+        # Allow introspection queries in DEBUG mode (used by GraphiQL to fetch schema)
+        if settings.DEBUG and ("__schema" in body.get("query", "") or "__type" in body.get("query", "")):
+            return await super().dispatch(request, *args, **kwargs)
+
         if self.is_public_operation(query_name):
             return await super().dispatch(request, *args, **kwargs)
 

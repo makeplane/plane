@@ -17,6 +17,7 @@ from typing import Optional
 # Third Party Imports
 import strawberry
 import strawberry_django
+from strawberry.types import Info
 from asgiref.sync import sync_to_async
 
 # Module imports
@@ -66,12 +67,12 @@ class PageMentionType:
         return self.page_id
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
+    def created_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
 
     @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
+    def updated_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date
 

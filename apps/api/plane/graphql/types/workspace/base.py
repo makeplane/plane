@@ -75,7 +75,7 @@ class WorkspaceType:
         return None
 
     @strawberry.field
-    def deleted_at(self, info) -> Optional[datetime]:
+    def deleted_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.deleted_at)
         return converted_date
 

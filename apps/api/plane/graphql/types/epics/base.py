@@ -15,6 +15,7 @@ from datetime import date, datetime
 from typing import Optional
 
 # Strawberry imports
+from strawberry.types import Info
 import strawberry
 import strawberry_django
 
@@ -148,17 +149,17 @@ class EpicType:
         return self.updated_by_id
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
+    def created_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
 
     @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
+    def updated_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date
 
     @strawberry.field
-    def archived_at(self, info) -> Optional[datetime]:
+    def archived_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.archived_at)
         return converted_date
 

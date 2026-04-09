@@ -15,6 +15,7 @@ from datetime import datetime
 from typing import Optional
 
 # Strawberry imports
+from strawberry.types import Info
 import strawberry
 import strawberry_django
 from strawberry.scalars import JSON
@@ -63,14 +64,14 @@ class EpicLinkType:
 
     @strawberry.field
     def updated_by(self) -> Optional[strawberry.ID]:
-        return self.updated_by_id if self.created_by_id else None
+        return self.updated_by_id if self.updated_by_id else None
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
+    def created_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
 
     @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
+    def updated_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date

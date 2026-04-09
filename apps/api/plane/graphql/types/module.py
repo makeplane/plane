@@ -107,12 +107,12 @@ class ModuleType:
         return self.updated_by_id
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
+    def created_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
 
     @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
+    def updated_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date
 

@@ -14,6 +14,7 @@ from datetime import datetime
 from typing import Optional
 
 # Strawberry imports
+from strawberry.types import Info
 import strawberry
 import strawberry_django
 
@@ -73,12 +74,12 @@ class UserFavoriteType:
         return ProjectLiteType()
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
+    def created_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
 
     @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
+    def updated_at(self, info: Info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date
 

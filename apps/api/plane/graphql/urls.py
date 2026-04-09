@@ -9,12 +9,14 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-# Django imports
-from django.urls import path
+# django imports
 from django.conf import settings
+from django.urls import path
 
-# Module imports
-from plane.graphql.views import CustomGraphQLView
+# module imports
 from plane.graphql.schema import schema
+from plane.graphql.views import CustomGraphQLView
 
-urlpatterns = [path("", CustomGraphQLView.as_view(schema=schema, graphiql=settings.DEBUG))]
+urlpatterns = [
+    path("", CustomGraphQLView.as_view(schema=schema, graphql_ide="graphiql" if settings.DEBUG else None)),
+]
