@@ -402,7 +402,6 @@ export default {
   time_tracking_description: "Фіксуйте час, витрачений на робочі одиниці та проєкти.",
   work_management_description: "Зручно керуйте своєю роботою та проєктами.",
   documentation: "Документація",
-  message_support: "Звернутися в підтримку",
   contact_sales: "Зв’язатися з відділом продажів",
   hyper_mode: "Гіпер-режим",
   keyboard_shortcuts: "Гарячі клавіші",
@@ -2861,7 +2860,6 @@ export default {
       open_plane_documentation: "Відкрити документацію Plane",
       join_forum: "Приєднатися до Forum",
       report_bug: "Повідомити про помилку",
-      chat_with_us: "Написати нам",
     },
     page_placeholders: {
       default: "Введіть команду або виконайте пошук",

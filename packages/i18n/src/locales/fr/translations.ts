@@ -402,7 +402,6 @@ export default {
   time_tracking_description: "Enregistrez le temps passé sur les éléments de travail et les projets.",
   work_management_description: "Gérez votre travail et vos projets facilement.",
   documentation: "Documentation",
-  message_support: "Contacter le support",
   contact_sales: "Contacter les ventes",
   hyper_mode: "Mode Hyper",
   keyboard_shortcuts: "Raccourcis clavier",
