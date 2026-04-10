@@ -1,6 +1,7 @@
 export interface IMainTaskCategory {
   id: string;
   name: string;
+  code?: string;
   description?: string;
   sort_order: number;
   is_active: boolean;
@@ -10,6 +11,7 @@ export interface IMainTaskCategory {
 
 export interface IMainTaskCategoryCreate {
   name: string;
+  code?: string;
   description?: string;
   sort_order?: number;
   is_active?: boolean;
@@ -17,6 +19,7 @@ export interface IMainTaskCategoryCreate {
 
 export interface IMainTaskCategoryUpdate {
   name?: string;
+  code?: string;
   description?: string;
   sort_order?: number;
   is_active?: boolean;
@@ -26,6 +29,7 @@ export interface ISubTaskCategory {
   id: string;
   main_category: string;
   name: string;
+  code?: string;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -35,6 +39,7 @@ export interface ISubTaskCategory {
 export interface ISubTaskCategoryCreate {
   main_category: string;
   name: string;
+  code?: string;
   sort_order?: number;
   is_active?: boolean;
 }
@@ -42,6 +47,7 @@ export interface ISubTaskCategoryCreate {
 export interface ISubTaskCategoryUpdate {
   main_category?: string;
   name?: string;
+  code?: string;
   sort_order?: number;
   is_active?: boolean;
 }

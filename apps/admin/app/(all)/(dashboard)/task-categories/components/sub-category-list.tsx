@@ -71,6 +71,7 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
               <thead>
                 <tr className="border-b border-subtle bg-layer-2">
                   <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
+                  <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
                   <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
                   <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
                   <th className="text-right px-3 py-2 font-medium text-secondary">Actions</th>
@@ -80,6 +81,7 @@ export const SubCategoryList = observer(function SubCategoryList({ selectedMainI
                 {subCategories.map((cat) => (
                   <tr key={cat.id} className="hover:bg-layer-2 transition-colors">
                     <td className="px-3 py-2 font-medium">{cat.name}</td>
+                    <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
                     <td className="px-3 py-2 text-center">
                       <span
                         className={`text-11 px-2 py-0.5 rounded font-medium ${
