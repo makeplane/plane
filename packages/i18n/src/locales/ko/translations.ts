@@ -3450,9 +3450,10 @@ export default {
       none: "없음", // TODO: native review
     },
     progress_status: {
+      off_track: "지연", // TODO: native review
+      due_today: "오늘 마감", // TODO: native review
+      at_risk: "위험", // TODO: native review
       on_track: "정상", // TODO: native review
-      behind: "지연", // TODO: native review
-      no_target_date: "마감일 없음", // TODO: native review
     },
   },
 } as const;

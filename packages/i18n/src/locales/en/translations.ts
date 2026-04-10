@@ -3503,9 +3503,10 @@ export default {
       none: "None",
     },
     progress_status: {
+      off_track: "Off Track",
+      due_today: "Due Today",
+      at_risk: "At Risk",
       on_track: "On Track",
-      behind: "Behind",
-      no_target_date: "No Target Date",
     },
   },
 } as const;

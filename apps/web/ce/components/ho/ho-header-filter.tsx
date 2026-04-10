@@ -76,9 +76,10 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
         </div>
       }
       placement="bottom-start"
-      closeOnSelect={!options}
+      closeOnSelect={!filterKey}
+      maxHeight="lg"
     >
-      <div className="max-h-96 overflow-y-auto vertical-scrollbar scrollbar-sm py-1">
+      <div className="py-1">
         {asc && (
           <CustomMenu.MenuItem onClick={() => store.updateOrderBy(asc)}>
             <span className="flex items-center gap-2">
@@ -95,7 +96,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
         )}
         {(asc || desc) && <div className="my-1 border-t border-subtle" />}
 
-        {options && (
+        {filterKey && (
           <>
             <div className="px-2 py-1">
               <div className="flex items-center gap-2 rounded bg-custom-background-80 px-2 py-1.5 border border-subtle focus-within:border-accent-primary transition-all">
@@ -133,7 +134,7 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
                   </div>
                 </CustomMenu.MenuItem>
               ))}
-              {filteredOptions?.length === 0 && (
+              {(!filteredOptions || filteredOptions.length === 0) && (
                 <div className="px-4 py-2 text-12 text-secondary">{t("ho.no_matching_rows")}</div>
               )}
             </div>
