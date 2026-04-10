@@ -86,8 +86,9 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const { getStateById } = useProjectState();
   const stateGroup = issue?.state_id ? getStateById(issue.state_id)?.group : undefined;
   const isStateTerminal = stateGroup === "completed" || stateGroup === "cancelled";
+  const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0;
   const isWorklogButtonEnabled =
-    !isIntakeIssue && !isGuest && isTimeTrackingEnabled && (isAdmin || isAssigned) && !isStateTerminal;
+    !isIntakeIssue && !isGuest && isTimeTrackingEnabled && (isAdmin || isAssigned) && !isStateTerminal && !hasSubIssues;
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     if (!selectedFilters) return;

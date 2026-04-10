@@ -49,6 +49,7 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
           <thead>
             <tr className="border-b border-subtle bg-layer-2">
               <th className="text-left px-3 py-2 font-medium text-secondary">Name</th>
+              <th className="text-left px-3 py-2 font-medium text-secondary">Code</th>
               <th className="text-left px-3 py-2 font-medium text-secondary">Description</th>
               <th className="text-center px-3 py-2 font-medium text-secondary">Active</th>
               <th className="text-center px-3 py-2 font-medium text-secondary">Order</th>
@@ -68,6 +69,7 @@ export const MainCategoryList = observer(function MainCategoryList({ selectedMai
                   <td className="px-3 py-2 font-medium">
                     <span className={isSelected ? "text-custom-primary-100" : ""}>{cat.name}</span>
                   </td>
+                  <td className="px-3 py-2 text-secondary">{cat.code || "—"}</td>
                   <td className="px-3 py-2 text-secondary truncate max-w-[160px]">{cat.description || "—"}</td>
                   <td className="px-3 py-2 text-center">
                     <span

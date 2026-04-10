@@ -199,12 +199,15 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
                           <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">{project?.name ?? "—"}</td>
                           <td className="py-2.5 pr-4">
                             {state ? (
-                              <span className="inline-flex items-center gap-2 text-12 text-primary">
-                                <span
-                                  className="h-2 w-2 rounded-full flex-shrink-0"
-                                  style={{ backgroundColor: state.color }}
-                                />
-                                <span className="truncate max-w-[120px]">{state.name}</span>
+                              <span
+                                className="inline-flex h-5 items-center rounded-sm border-[0.5px] px-2 text-caption-sm-regular truncate max-w-[140px]"
+                                style={{
+                                  color: state.color,
+                                  backgroundColor: `${state.color}1A`,
+                                  borderColor: `${state.color}4D`,
+                                }}
+                              >
+                                {state.name}
                               </span>
                             ) : (
                               <span className="text-secondary">—</span>
