@@ -24,14 +24,14 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
   const searchQuery = searchParams.get("search")?.toLowerCase() ?? "";
   const fromDate = searchParams.get("from_date") ?? "";
   const toDate = searchParams.get("to_date") ?? "";
+  const showArchived = searchParams.get("show_archived") === "true";
 
+  const swrKey = currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug}_${showArchived}` : null;
   const {
     data: projects,
     isLoading,
     error,
-  } = useSWR(currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug}` : null, () =>
-    bankWideProjectsService.fetchAll(currentWorkspace!.slug)
-  );
+  } = useSWR(swrKey, () => bankWideProjectsService.fetchAll(currentWorkspace!.slug, showArchived));
 
   // Filter by search query and date range (created_at), then group by workspace_slug
   const grouped = useMemo(() => {

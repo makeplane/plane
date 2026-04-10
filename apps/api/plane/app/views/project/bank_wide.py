@@ -41,6 +41,7 @@ class BankWideProjectSerializer(DynamicBaseSerializer):
             "network",
             "is_bank_wide",
             "created_at",
+            "archived_at",
             "member_count",
             "workspace_slug",
             "workspace_name",
@@ -64,11 +65,14 @@ class WorkspaceBankWideProjectsEndpoint(BaseAPIView):
         # Instance admins see all workspaces; others see only their managed departments + descendants.
         accessible_workspace_ids = get_accessible_workspace_ids(request.user)
 
+        show_archived = request.query_params.get("show_archived", "false") == "true"
+        archived_filter = {"archived_at__isnull": not show_archived}
+
         projects = (
             Project.objects.filter(
                 is_bank_wide=True,
-                archived_at__isnull=True,
                 workspace_id__in=accessible_workspace_ids,
+                **archived_filter,
             )
             .select_related("workspace")
             .prefetch_related("project_projectmember")

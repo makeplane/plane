@@ -13,8 +13,9 @@ export class BankWideProjectsService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchAll(workspaceSlug: string): Promise<IBankWideProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/bank-wide-projects/`)
+  async fetchAll(workspaceSlug: string, showArchived?: boolean): Promise<IBankWideProject[]> {
+    const query = showArchived ? "?show_archived=true" : "";
+    return this.get(`/api/workspaces/${workspaceSlug}/bank-wide-projects/${query}`)
       .then(({ data }: { data: IBankWideProject[] }) => data)
       .catch((error: { response?: { data: unknown } }) => {
         throw error?.response?.data;
