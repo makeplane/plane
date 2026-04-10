@@ -45,10 +45,7 @@ export default function WikiLayout({ params }: Route.ComponentProps) {
         flag="WORKSPACE_PAGES"
         fallback={<WikiUpgradeScreen workspaceSlug={workspaceSlug} />}
       >
-        <WorkspaceAccessWrapper
-          pageKey="pages"
-          allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST]}
-        >
+        <WorkspaceAccessWrapper pageKey="pages" allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER]}>
           <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-subtle-1">
             <PagesAppSidebar />
             <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">

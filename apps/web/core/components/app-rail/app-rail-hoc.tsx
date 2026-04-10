@@ -15,8 +15,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PlaneNewIcon, PiIcon, WikiIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
 import { isAppRailFeatureConfigured, isAppRailFeatureEnabled } from "@/helpers/app-rail";
 
@@ -28,6 +30,12 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
   const ComponentWithDockItems = observer(function ComponentWithDockItems(props: Omit<P, keyof WithDockItemsProps>) {
     const { workspaceSlug } = useParams();
     const { isProjectsPath, isWikiPath, isAiPath, isNotificationsPath } = useWorkspacePaths();
+    const { allowPermissions } = useUserPermissions();
+    const isNotGuest = allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      EUserPermissionsLevel.WORKSPACE,
+      workspaceSlug?.toString()
+    );
 
     const dockItems: (AppSidebarItemData & { shouldRender: boolean })[] = [
       {
@@ -42,7 +50,7 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
         icon: <WikiIcon className="size-5" />,
         href: `/${workspaceSlug}/wiki`,
         isActive: isWikiPath,
-        shouldRender: isAppRailFeatureEnabled(workspaceSlug, "wiki"),
+        shouldRender: isNotGuest && isAppRailFeatureEnabled(workspaceSlug, "wiki"),
       },
       {
         label: "AI",
