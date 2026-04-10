@@ -60,7 +60,7 @@ class WorkspaceAnalyticsTimesheetEndpoint(BaseAPIView):
             )
         if week_start > max_date:
             return Response(
-                {"error": f"week_start cannot be more than 7 days in the future."},
+                {"error": "week_start cannot be more than 7 days in the future."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

@@ -256,25 +256,28 @@ class HoIssueListView(BaseAPIView):
 
         progress = request.query_params.get("progress")
         if progress:
+            from datetime import timedelta
             from django.utils import timezone
             today = timezone.now().date()
+            tomorrow = today + timedelta(days=1)
             p_filters = Q()
             for p in progress.split(","):
-                if p == "on_track":
-                    p_filters |= Q(target_date__gte=today)
-                elif p == "behind":
+                if p == "off_track":
                     p_filters |= Q(target_date__lt=today)
-                elif p == "no_target_date":
-                    p_filters |= Q(target_date__isnull=True)
+                elif p == "due_today":
+                    p_filters |= Q(target_date=today)
+                elif p == "at_risk":
+                    p_filters |= Q(target_date=tomorrow)
+                elif p == "on_track":
+                    p_filters |= Q(target_date__gt=tomorrow)
             if p_filters:
                 qs = qs.filter(p_filters)
 
         qs = qs.order_by(order_by, "created_at")
 
         # Overlap filter: include issues where [start_date, target_date] overlaps [from_date, to_date]
-        # An issue is active during the range if: start_date <= to_date AND target_date >= from_date
-        # Null dates are treated as "unbounded" (include the issue)
-        if from_date:
+        # Skip target_date lower-bound when progress filter is active (progress already filters by target_date)
+        if from_date and not progress:
             qs = qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
         if to_date:
             qs = qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
@@ -373,20 +376,25 @@ class HoCategorySummaryView(BaseAPIView):
 
         progress = request.query_params.get("progress")
         if progress:
+            from datetime import timedelta
             from django.utils import timezone
             today = timezone.now().date()
+            tomorrow = today + timedelta(days=1)
             p_filters = Q()
             for p in progress.split(","):
-                if p == "on_track":
-                    p_filters |= Q(target_date__gte=today)
-                elif p == "behind":
+                if p == "off_track":
                     p_filters |= Q(target_date__lt=today)
-                elif p == "no_target_date":
-                    p_filters |= Q(target_date__isnull=True)
+                elif p == "due_today":
+                    p_filters |= Q(target_date=today)
+                elif p == "at_risk":
+                    p_filters |= Q(target_date=tomorrow)
+                elif p == "on_track":
+                    p_filters |= Q(target_date__gt=tomorrow)
             if p_filters:
                 qs = qs.filter(p_filters)
 
-        if from_date:
+        # Skip target_date lower-bound when progress filter is active
+        if from_date and not progress:
             qs = qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
         if to_date:
             qs = qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
@@ -512,11 +520,16 @@ class HoFilterOptionsView(BaseAPIView):
             .order_by("issue_module__module__name")
         )
 
-        # Assignees: list of {id, display_name}
-        assignees = (
-            StaffProfile.objects.filter(assigned_issues__id__in=issue_ids)
-            .values("id", "display_name")
+        # Assignees: get User IDs from issue_assignees, then resolve display names
+        User = get_user_model()
+        assignee_user_ids = (
+            Issue.objects.filter(id__in=issue_ids)
+            .values_list("issue_assignee__assignee_id", flat=True)
             .distinct()
+        )
+        assignees = (
+            User.objects.filter(id__in=assignee_user_ids)
+            .values("id", "display_name")
             .order_by("display_name")
         )
         assignees_list = [
@@ -524,11 +537,16 @@ class HoFilterOptionsView(BaseAPIView):
             for a in assignees
         ]
 
-        # Leads: list of {id, display_name}
-        leads = (
-            StaffProfile.objects.filter(project_leads__id__in=Project.objects.filter(issues__id__in=issue_ids).distinct())
-            .values("id", "display_name")
+        # Leads: get project lead User IDs, then resolve display names
+        lead_user_ids = (
+            Project.objects.filter(project_issue__id__in=issue_ids)
+            .exclude(project_lead__isnull=True)
+            .values_list("project_lead_id", flat=True)
             .distinct()
+        )
+        leads = (
+            User.objects.filter(id__in=lead_user_ids)
+            .values("id", "display_name")
             .order_by("display_name")
         )
         leads_list = [
@@ -545,7 +563,7 @@ class HoFilterOptionsView(BaseAPIView):
             "assignees": assignees_list,
             "leads": leads_list,
             "priorities": priorities,
-            "progress": ["on_track", "behind", "no_target_date"],
+            "progress": ["off_track", "due_today", "at_risk", "on_track"],
         }, status=status.HTTP_200_OK)
 
 

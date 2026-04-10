@@ -3500,9 +3500,10 @@ export default {
       none: "Không có", // TODO: native review
     },
     progress_status: {
+      off_track: "Trễ tiến độ", // TODO: native review
+      due_today: "Hết hạn hôm nay", // TODO: native review
+      at_risk: "Có nguy cơ", // TODO: native review
       on_track: "Đúng tiến độ", // TODO: native review
-      behind: "Trễ tiến độ", // TODO: native review
-      no_target_date: "Không có ngày hạn", // TODO: native review
     },
   },
 } as const;

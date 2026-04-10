@@ -90,12 +90,15 @@ export const HoCategoryView = observer(function HoCategoryView() {
           <Loader.Item height="36px" />
           <Loader.Item height="36px" />
         </Loader>
-      ) : sortedData.length === 0 ? (
-        <p className="mt-16 text-center text-body-xs-regular text-placeholder">
-          {search ? t("ho.no_matching_rows") : t("ho.no_data")}
-        </p>
       ) : (
-        <HoCategoryTable data={sortedData} />
+        <>
+          <HoCategoryTable data={sortedData} />
+          {sortedData.length === 0 && (
+            <p className="mt-16 text-center text-body-xs-regular text-placeholder">
+              {search ? t("ho.no_matching_rows") : t("ho.no_data")}
+            </p>
+          )}
+        </>
       )}
     </div>
   );
