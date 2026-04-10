@@ -1,17 +1,26 @@
-import { observer } from "mobx-react";
 import { Building2 } from "lucide-react";
+import useSWR from "swr";
 import { getButtonStyling } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useTranslation } from "@plane/i18n";
-import { useHoIssues } from "@/hooks/store/use-ho-issues";
+import { HoIssueService } from "@/plane-web/services/ho-issue.service";
 
-export const HoWorkspaceSelect = observer(function HoWorkspaceSelect() {
+const hoIssueService = new HoIssueService();
+
+type Props = {
+  value: string;
+  onChange: (slug: string) => void;
+};
+
+export const BankWideWorkspaceSelect = function BankWideWorkspaceSelect({ value, onChange }: Props) {
   const { t } = useTranslation();
-  const store = useHoIssues();
 
-  // Prepend sentinel "All workspaces" option so user can deselect workspace
+  const { data: workspaces = [] } = useSWR("HO_ACCESSIBLE_WORKSPACES", () =>
+    hoIssueService.listAccessibleWorkspaces()
+  );
+
   const options = [
     {
       value: "",
@@ -23,7 +32,7 @@ export const HoWorkspaceSelect = observer(function HoWorkspaceSelect() {
         </div>
       ),
     },
-    ...store.accessibleWorkspaces.map((ws) => ({
+    ...workspaces.map((ws) => ({
       value: ws.slug,
       query: ws.department_name,
       content: (
@@ -35,14 +44,12 @@ export const HoWorkspaceSelect = observer(function HoWorkspaceSelect() {
     })),
   ];
 
-  const selectedName = store.selectedWorkspaceSlug
-    ? store.accessibleWorkspaces.find((w) => w.slug === store.selectedWorkspaceSlug)?.department_name
-    : null;
+  const selectedName = value ? workspaces.find((w) => w.slug === value)?.department_name : null;
 
   return (
     <CustomSearchSelect
-      value={store.selectedWorkspaceSlug ?? ""}
-      onChange={(val: string) => store.setWorkspaceFilter(val || null)}
+      value={value}
+      onChange={(val: string) => onChange(val)}
       options={options}
       className="border-none p-0"
       customButton={
@@ -55,4 +62,4 @@ export const HoWorkspaceSelect = observer(function HoWorkspaceSelect() {
       customButtonClassName="border-none p-0 bg-transparent hover:bg-transparent w-auto h-auto"
     />
   );
-});
+};

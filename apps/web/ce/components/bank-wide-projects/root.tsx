@@ -25,6 +25,7 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
   const fromDate = searchParams.get("from_date") ?? "";
   const toDate = searchParams.get("to_date") ?? "";
   const showArchived = searchParams.get("show_archived") === "true";
+  const workspaceSlug = searchParams.get("workspace_slug") ?? "";
 
   const swrKey = currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug}_${showArchived}` : null;
   const {
@@ -42,6 +43,7 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
     if (to) to.setHours(23, 59, 59, 999);
 
     const filtered = projects.filter((p) => {
+      if (workspaceSlug && p.workspace_slug !== workspaceSlug) return false;
       if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return false;
       if (from || to) {
         if (!p.created_at) return true;
@@ -56,7 +58,7 @@ export const BankWideProjectsRoot = function BankWideProjectsRoot() {
       (acc[project.workspace_slug] ??= []).push(project);
       return acc;
     }, {});
-  }, [projects, searchQuery, fromDate, toDate]);
+  }, [projects, searchQuery, fromDate, toDate, workspaceSlug]);
 
   if (isLoading) return <ProjectsLoader />;
 

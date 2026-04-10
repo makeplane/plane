@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { BankWideProjectsSearch } from "@/plane-web/components/bank-wide-projects/search";
+import { BankWideWorkspaceSelect } from "@/plane-web/components/bank-wide-projects/workspace-select";
 
 export default function BankWideProjectsLayout() {
   const [searchParams] = useSearchParams();
@@ -41,6 +42,10 @@ export default function BankWideProjectsLayout() {
               <BankWideProjectsSearch searchQuery={searchQuery} onChange={(q) => updateParam("search", q)} />
               {/* Date range filter */}
               <div className="hidden items-center gap-2 md:flex">
+                <BankWideWorkspaceSelect
+                  value={searchParams.get("workspace_slug") ?? ""}
+                  onChange={(slug) => updateParam("workspace_slug", slug)}
+                />
                 <span className="text-13 font-medium text-secondary">From</span>
                 <input
                   type="date"

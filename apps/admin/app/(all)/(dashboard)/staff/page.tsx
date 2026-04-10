@@ -21,17 +21,16 @@ import type { Route } from "./+types/page";
 
 const StaffPage = observer(function StaffPage() {
   const { stats, staffIds, fetchStaff, fetchStats } = useInstanceStaff();
-  const { fetchDepartments } = useInstanceDepartment();
+  const { fetchTree, departments, departmentIds } = useInstanceDepartment();
   const [editStaffId, setEditStaffId] = useState<string | null>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState("");
   const [filterDept, setFilterDept] = useState("");
-  const { departments, departmentIds } = useInstanceDepartment();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useSWR("INSTANCE_STAFF", () => fetchStaff());
   useSWR("INSTANCE_STAFF_STATS", () => fetchStats());
-  useSWR("INSTANCE_DEPARTMENTS", () => fetchDepartments());
+  useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
 
   const handleSearch = useCallback(
     (value: string) => {

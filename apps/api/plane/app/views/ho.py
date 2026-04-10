@@ -627,8 +627,8 @@ class HoAccessibleWorkspacesView(BaseAPIView):
             return Response([], status=status.HTTP_200_OK)
 
         workspaces = (
-            Workspace.objects.filter(id__in=workspace_ids)
-            .select_related("logo_asset")
+            Workspace.objects.filter(id__in=workspace_ids, linked_department__isnull=False)
+            .select_related("logo_asset", "linked_department")
             .prefetch_related("workspace_project")
             .order_by("name")
         )
@@ -662,6 +662,7 @@ class HoAccessibleWorkspacesView(BaseAPIView):
                     "name": ws.name,
                     "slug": ws.slug,
                     "logo_url": ws.logo_url,  # Use @property, not raw ws.logo (resolves logo_asset for modern uploads)
+                    "department_name": ws.linked_department.name,
                     "projects": [
                         {"id": str(p["id"]), "name": p["name"], "identifier": p["identifier"]} for p in projects
                     ],
