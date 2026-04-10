@@ -23,12 +23,14 @@ interface ICapacityHeatmapProps {
   projectDailyTotals?: Record<string, { minutes: number; issue_count: number }>;
   workspaceSlug: string;
   projectId: string;
-  /** When true, heatmap cells are non-clickable (cross-workspace mode) */
   isCrossWorkspace?: boolean;
+  /** When true, popover uses workspace day-details endpoint instead of project-scoped */
+  isWorkspaceMode?: boolean;
 }
 
 export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
-  const { members, dateFrom, dateTo, projectDailyTotals, workspaceSlug, projectId, isCrossWorkspace } = props;
+  const { members, dateFrom, dateTo, projectDailyTotals, workspaceSlug, projectId, isCrossWorkspace, isWorkspaceMode } =
+    props;
   const { t } = useTranslation();
 
   const formatHours = (minutes: number) => (minutes / 60).toFixed(1);
@@ -133,6 +135,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                               cellClassName={cellInfo.className}
                               cellLabel={cellVal}
                               isCrossWorkspace={isCrossWorkspace}
+                              isWorkspaceMode={isWorkspaceMode}
                             />
                           </Tooltip>
                         </td>

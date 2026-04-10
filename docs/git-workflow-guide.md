@@ -1,6 +1,8 @@
 # Git Workflow Guide — Shinhan Plane
 
 > Hướng dẫn quy trình làm việc với Git cho Developer & Operator
+>
+> **English:** Git workflow guidelines for developers and operators
 
 ---
 
@@ -33,6 +35,16 @@
 | `feat/*`  | Feature mới                        | Developer (tạo & merge vào develop) |
 | `fix/*`   | Sửa bug                            | Developer                           |
 | `chore/*` | Config, docs, refactor             | Developer                           |
+
+**English Translation:**
+
+| Branch    | Purpose                       | Who merges?                    |
+| --------- | ----------------------------- | ------------------------------ |
+| `preview` | Production — stable, tested   | Lead / Manager                 |
+| `develop` | Development — integrate new features | Developer              |
+| `feat/*`  | New feature                   | Developer (create & merge to develop) |
+| `fix/*`   | Bug fix                       | Developer                      |
+| `chore/*` | Config, docs, refactor        | Developer                      |
 
 ---
 
@@ -81,6 +93,23 @@ git commit -m "feat(auth): implement login form validation"
 > | `refactor` | Tái cấu trúc     | `refactor(store): simplify state logic` |
 > | `chore`    | Config, deps     | `chore(deps): upgrade react to v18.3`   |
 > | `docs`     | Tài liệu         | `docs: update API reference`            |
+>
+> **English:** See code-standards.md for detailed commit message guidelines
+>
+> **Pre-Push Checks (Automated):**
+> ```bash
+> # Linting (frontend)
+> pnpm check:lint
+>
+> # Type checking (TypeScript)
+> # Runs automatically if configured
+>
+> # Backend linting (Python)
+> cd apps/api && ruff check .
+>
+> # Backend type checking (Python)
+> cd apps/api && mypy .
+> ```
 
 ### Bước 3 — Push & tạo Pull Request
 
@@ -280,4 +309,4 @@ Developer A          Developer B          Lead/Manager
 
 ---
 
-_Cập nhật: 2026-02-23 | Repo: github.com/shbvn/plane_
+_Cập nhật: 2026-04-08 | Repo: github.com/shbvn/plane_

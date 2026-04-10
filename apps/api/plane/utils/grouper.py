@@ -130,6 +130,8 @@ def issue_on_results(
         "total_logged_minutes",
         "main_task_category_id",
         "sub_task_category_id",
+        "main_task_category_name",
+        "sub_task_category_name",
     ]
 
     if group_by in FIELD_MAPPER:

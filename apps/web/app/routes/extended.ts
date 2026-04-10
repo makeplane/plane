@@ -16,6 +16,17 @@ export const extendedRoutes: RouteConfigEntry[] = [
         layout("./(all)/[workspaceSlug]/(projects)/bank-wide-projects/layout.tsx", [
           route(":workspaceSlug/bank-wide-projects", "./(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx"),
         ]),
+        layout("./(all)/[workspaceSlug]/(projects)/time-tracking/layout.tsx", [
+          route(":workspaceSlug/time-tracking", "./(all)/[workspaceSlug]/(projects)/time-tracking/page.tsx"),
+          route(
+            ":workspaceSlug/time-tracking/analytics",
+            "./(all)/[workspaceSlug]/(projects)/time-tracking/analytics/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/time-tracking/capacity",
+            "./(all)/[workspaceSlug]/(projects)/time-tracking/capacity/page.tsx"
+          ),
+        ]),
       ]),
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [
         layout("./(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx", [

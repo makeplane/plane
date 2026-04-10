@@ -97,6 +97,9 @@ from .workspace.time_tracking import (
     WorkspaceWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,
     TimesheetBulkUpdateEndpoint,
+    WorkspaceAnalyticsTimesheetEndpoint,
+    WorkspaceCapacityEndpoint,
+    WorkspaceCapacityDayDetailsEndpoint,
 )
 
 from .state.base import StateViewSet, IntakeStateEndpoint

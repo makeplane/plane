@@ -264,6 +264,10 @@ class IssueViewSet(BaseViewSet):
                     .values("total")[:1]
                 )
             )
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
+            )
         )
 
         return issues

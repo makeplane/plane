@@ -59,7 +59,9 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
-    enableInlineEditing: true,
+    // TODO: re-enable inline editing when ready
+    // enableInlineEditing: true,
+    enableInlineEditing: false,
   };
   // service
   workspaceService;

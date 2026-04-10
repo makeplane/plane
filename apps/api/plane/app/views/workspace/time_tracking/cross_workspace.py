@@ -46,12 +46,14 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
             return Response({"error": err}, status=400)
         week_end = week_start + timedelta(days=6)
 
-        # All workspace IDs this user is actively a member of
+        # When workspace_only=true, scope to the current workspace only
+        workspace_only = request.query_params.get("workspace_only", "false").lower() == "true"
+        workspace_filter = {"member": request.user, "is_active": True}
+        if workspace_only:
+            workspace_filter["workspace__slug"] = slug
+
         user_workspace_ids = list(
-            WorkspaceMember.objects.filter(
-                member=request.user,
-                is_active=True,
-            ).values_list("workspace_id", flat=True)
+            WorkspaceMember.objects.filter(**workspace_filter).values_list("workspace_id", flat=True)
         )
 
         # All issues assigned to this user across their workspaces
