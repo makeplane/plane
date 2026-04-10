@@ -15,7 +15,7 @@ import json
 
 # Django imports
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
@@ -24,7 +24,6 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from apps.api.plane.agents import models
 from plane.app.serializers import PageSerializer, PageDetailSerializer
 from plane.db.models import Page, Workspace, Project, ProjectPage
 from plane.silo.views.base import BaseServiceAPIView
@@ -167,8 +166,8 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
                 ).first()
                 # get the highest sort order for the default collection
                 largest_sort_order = PageCollection.objects.filter(
-                    workspace=workspace, collection=default_collection
-                ).aggregate(largest=models.Max("sort_order"))["largest"] or 0
+                    workspace__slug=slug, collection=default_collection
+                ).aggregate(largest=Max("sort_order"))["largest"] or 0
                 if default_collection:
                     PageCollection.objects.bulk_create(
                         [
