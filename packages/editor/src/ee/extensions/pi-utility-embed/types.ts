@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 export enum EPiEmbedBlockAttributeNames {
+  NODE_TYPE = "data-node-type",
   EMBED_ID = "data-embed-id",
   EMBED_TYPE = "data-embed-type",
   EMBED_SUB_TYPE = "data-sub-type",
@@ -22,6 +23,7 @@ export enum EPiEmbedTag {
 }
 
 export type TPiEmbedBlockAttributes = {
+  [EPiEmbedBlockAttributeNames.NODE_TYPE]: EPiEmbedBlockNodeType;
   [EPiEmbedBlockAttributeNames.EMBED_ID]: string | null;
   [EPiEmbedBlockAttributeNames.EMBED_TYPE]: string | null;
   [EPiEmbedBlockAttributeNames.EMBED_SUB_TYPE]: string | null;

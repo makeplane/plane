@@ -11,11 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 import type { TPiEmbedBlockAttributes } from "./types";
-import { EPiEmbedBlockAttributeNames } from "./types";
+import { EPiEmbedBlockAttributeNames, EPiEmbedBlockNodeType } from "./types";
 
 export const DEFAULT_PI_EMBED_BLOCK_ATTRIBUTES: Omit<TPiEmbedBlockAttributes, "node_type"> = {
   [EPiEmbedBlockAttributeNames.EMBED_ID]: null,
   [EPiEmbedBlockAttributeNames.EMBED_TYPE]: null,
   [EPiEmbedBlockAttributeNames.EMBED_SUB_TYPE]: null,
   [EPiEmbedBlockAttributeNames.EMBED_TITLE]: null,
+  [EPiEmbedBlockAttributeNames.NODE_TYPE]: EPiEmbedBlockNodeType.PI_UTILITY_EMBED,
 };
