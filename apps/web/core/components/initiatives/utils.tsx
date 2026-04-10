@@ -12,7 +12,7 @@
  */
 
 import type { ReactElement } from "react";
-import { uniq } from "lodash-es";
+import { orderBy, uniq } from "lodash-es";
 // plane
 import { EIconSize, INITIATIVE_STATES } from "@plane/constants";
 import { InitiativeStateIcon } from "@plane/propel/icons";
@@ -21,11 +21,12 @@ import type {
   IUserLite,
   TInitiativeGroupByOptions,
   TInitiativeLabel,
+  TInitiativeOrderByOptions,
   TInitiativeStates,
 } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { convertToISODateString, getFileURL } from "@plane/utils";
 
 // PLane-web
 import { rootStore } from "@/lib/store-context";
@@ -240,4 +241,60 @@ export const getInitiativeUpdatePayload = (
     default:
       return null;
   }
+};
+
+export const sortInitiativesWithOrderBy = (
+  initiatives: TInitiative[],
+  key: TInitiativeOrderByOptions | undefined
+): TInitiative[] => {
+  const array = orderBy(initiatives, (initiative) => convertToISODateString(initiative["created_at"]), ["desc"]);
+
+  switch (key) {
+    case "-created_at":
+      return orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
+    case "-updated_at":
+      return orderBy(array, (initiative) => convertToISODateString(initiative["updated_at"] ?? undefined), ["desc"]);
+    default:
+      return array;
+  }
+};
+
+export const ALL_INITIATIVES = "All Initiatives";
+
+export const getGroupedInitiativeIds = (initiatives: TInitiative[], key: TInitiativeGroupByOptions | undefined) => {
+  const groupedInitiativeIds: Record<string, string[]> = {};
+
+  if (!key) return { [ALL_INITIATIVES]: initiatives.map((initiative) => initiative.id) };
+
+  if (key === "label_ids") {
+    for (const initiative of initiatives) {
+      const labelIds = initiative.label_ids;
+      if (!labelIds || labelIds.length === 0) {
+        if (!groupedInitiativeIds["None"]) {
+          groupedInitiativeIds["None"] = [];
+        }
+        groupedInitiativeIds["None"].push(initiative.id);
+      } else {
+        labelIds.forEach((labelId) => {
+          if (!groupedInitiativeIds[labelId]) {
+            groupedInitiativeIds[labelId] = [];
+          }
+          groupedInitiativeIds[labelId].push(initiative.id);
+        });
+      }
+    }
+    return groupedInitiativeIds;
+  }
+
+  for (const initiative of initiatives) {
+    const groupId = initiative[key] ?? "None";
+
+    if (groupedInitiativeIds?.[groupId] !== undefined && Array.isArray(groupedInitiativeIds?.[groupId])) {
+      groupedInitiativeIds?.[groupId]?.push(initiative.id);
+    } else {
+      groupedInitiativeIds[groupId] = [initiative.id];
+    }
+  }
+
+  return groupedInitiativeIds;
 };

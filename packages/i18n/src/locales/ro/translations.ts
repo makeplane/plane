@@ -3722,6 +3722,7 @@ văzute aici`,
     all_initiatives: "Toate Inițiativele",
     delete_initiative: "Șterge Inițiativă",
     fill_all_required_fields: "Te rugăm să completezi toate câmpurile obligatorii.",
+    archive_description: "Doar inițiativele finalizate sau închise pot fi arhivate",
     toast: {
       create_success: "Inițiativa {name} creată cu succes.",
       create_error: "Eșec la crearea inițiativei. Te rugăm să încerci din nou!",
@@ -3730,6 +3731,11 @@ văzute aici`,
       delete: {
         success: "Inițiativa ștearsă cu succes.",
         error: "Eșec la ștergerea Inițiativei",
+      },
+      archive: {
+        success: "Inițiativă arhivată cu succes.",
+        error: "Arhivarea inițiativei a eșuat",
+        initiative_cannot_be_archived_in_this_state: "Inițiativa nu poate fi arhivată în această stare",
       },
       link_copied: "Link-ul inițiativei copiat în clipboard.",
       project_update_success: "Proiectele inițiativei actualizate cu succes.",
@@ -3754,6 +3760,7 @@ văzute aici`,
         title: "Nicio inițiativă care să se potrivească",
         description: `Nu s-au detectat inițiative cu criteriile de potrivire.
  Creează o nouă inițiativă în schimb.`,
+        archived_description: "Nu s-au detectat inițiative arhivate cu criteriile de potrivire.",
       },
       not_found: {
         title: "Inițiativa nu există",

@@ -3727,6 +3727,7 @@ se você tem certeza de que sua pesquisa está correta.`,
     all_initiatives: "Todas as Iniciativas",
     delete_initiative: "Excluir Iniciativa",
     fill_all_required_fields: "Por favor, preencha todos os campos obrigatórios.",
+    archive_description: "Somente iniciativas concluídas ou fechadas podem ser arquivadas",
     toast: {
       create_success: "Iniciativa {name} criada com sucesso.",
       create_error: "Falha ao criar iniciativa. Por favor, tente novamente!",
@@ -3735,6 +3736,11 @@ se você tem certeza de que sua pesquisa está correta.`,
       delete: {
         success: "Iniciativa excluída com sucesso.",
         error: "Falha ao excluir Iniciativa",
+      },
+      archive: {
+        success: "Iniciativa arquivada com sucesso.",
+        error: "Falha ao arquivar a iniciativa",
+        initiative_cannot_be_archived_in_this_state: "A iniciativa não pode ser arquivada neste estado",
       },
       link_copied: "Link da iniciativa copiado para a área de transferência.",
       project_update_success: "Projetos da iniciativa atualizados com sucesso.",
@@ -3759,6 +3765,7 @@ se você tem certeza de que sua pesquisa está correta.`,
         title: "Nenhuma iniciativa correspondente",
         description: `Nenhuma iniciativa detectada com os critérios correspondentes.
  Crie uma nova iniciativa em vez disso.`,
+        archived_description: "Nenhuma iniciativa arquivada detectada com os critérios correspondentes.",
       },
       not_found: {
         title: "Iniciativa não existe",

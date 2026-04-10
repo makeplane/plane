@@ -229,7 +229,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
   archives: {
     key: "archives",
     labelTranslationKey: "archives",
-    href: `/projects/archives/`,
+    href: `/archives/projects/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },

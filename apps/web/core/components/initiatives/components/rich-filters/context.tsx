@@ -15,12 +15,18 @@ import type { ReactNode } from "react";
 import { createContext, useContext, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
+// plane imports
 import { FilterInstance } from "@plane/shared-state";
 import type { IUserLite } from "@plane/types";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
+// plane web hooks
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// types
 import type { TExternalInitiativeFilterExpression, TInitiativeFilterKeys } from "@/types/initiative";
+
 import { InitiativesFilterAdapter } from "./adapter";
 import { useInitiativesFilterConfigs } from "./use-initiatives-filter-configs";
 
@@ -48,10 +54,12 @@ const InitiativesFilterInstanceProvider = observer(function InitiativesFilterIns
   children,
   filters,
   workspaceSlug,
+  isArchived = false,
 }: {
   children: ReactNode;
   filters: TExternalInitiativeFilterExpression;
   workspaceSlug: string;
+  isArchived?: boolean;
 }) {
   const {
     initiativeFilters: { updateFilters },
@@ -60,7 +68,7 @@ const InitiativesFilterInstanceProvider = observer(function InitiativesFilterIns
 
   const [filterInstance] = useState(() =>
     createFilterInstance(filters, (expression) => {
-      updateFilters(workspaceSlug, expression);
+      void updateFilters(workspaceSlug, expression, isArchived);
     })
   );
 
@@ -94,11 +102,7 @@ const InitiativesFilterInstanceProvider = observer(function InitiativesFilterIns
   ]);
 
   const value = useMemo(
-    () => ({
-      filterInstance,
-      workspaceMembers,
-      isReady: true,
-    }),
+    () => ({ filterInstance, workspaceMembers, isReady: true }),
     [filterInstance, workspaceMembers]
   );
 
@@ -107,8 +111,10 @@ const InitiativesFilterInstanceProvider = observer(function InitiativesFilterIns
 
 export const InitiativesFilterProvider = observer(function InitiativesFilterProvider({
   children,
+  isArchived = false,
 }: {
   children: ReactNode;
+  isArchived?: boolean;
 }) {
   const { workspaceSlug } = useParams();
   const {
@@ -121,6 +127,8 @@ export const InitiativesFilterProvider = observer(function InitiativesFilterProv
     workspace: { workspaceMemberIds },
     getUserDetails,
   } = useMember();
+  const { initiative } = useInitiatives();
+  const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
 
   const workspaceMembers = useMemo(() => {
     if (!workspaceMemberIds) return [];
@@ -129,13 +137,16 @@ export const InitiativesFilterProvider = observer(function InitiativesFilterProv
 
   const isReady = !!(workspaceSlug && filters);
 
-  const value = useMemo(
-    () => ({
-      filterInstance: null,
-      workspaceMembers,
-      isReady: false,
-    }),
-    [workspaceMembers]
+  const value = useMemo(() => ({ filterInstance: null, workspaceMembers, isReady: false }), [workspaceMembers]);
+
+  useSWR(
+    isInitiativesFeatureEnabled
+      ? isArchived
+        ? `initArchivedFilteredInitiatives-${workspaceSlug}`
+        : `initFilteredInitiatives-${workspaceSlug}`
+      : null,
+    isInitiativesFeatureEnabled ? () => initiative.initFilteredInitiatives(workspaceSlug, isArchived) : null,
+    { revalidateOnFocus: false, revalidateOnReconnect: false }
   );
 
   // If not ready, provide the "not ready" context
@@ -145,7 +156,11 @@ export const InitiativesFilterProvider = observer(function InitiativesFilterProv
 
   // When ready, use the instance provider
   return (
-    <InitiativesFilterInstanceProvider filters={filters} workspaceSlug={workspaceSlug.toString()}>
+    <InitiativesFilterInstanceProvider
+      filters={filters}
+      workspaceSlug={workspaceSlug.toString()}
+      isArchived={isArchived}
+    >
       {children}
     </InitiativesFilterInstanceProvider>
   );

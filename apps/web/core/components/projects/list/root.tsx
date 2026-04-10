@@ -21,7 +21,9 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+// types
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+
 import { ProjectsListWithGrouping } from "./with-grouping/root";
 import { ProjectsListWithoutGrouping } from "./without-grouping/root";
 
@@ -37,7 +39,9 @@ export const ProjectsListRoot = observer(function ProjectsListRoot(props: TProje
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { fetchProjects } = useProject();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace?.name} -${isArchived ? " Archived" : ""} Projects`
+    : undefined;
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;

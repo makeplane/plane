@@ -3658,6 +3658,7 @@ export default {
     all_initiatives: "모든 이니셔티브",
     delete_initiative: "이니셔티브 삭제",
     fill_all_required_fields: "모든 필수 필드를 입력해 주세요.",
+    archive_description: "완료되었거나 종료된 이니셔티브만 보관할 수 있습니다",
     toast: {
       create_success: "이니셔티브 {name} 성공적으로 생성되었습니다.",
       create_error: "이니셔티브 생성에 실패했습니다. 다시 시도해 주세요!",
@@ -3666,6 +3667,11 @@ export default {
       delete: {
         success: "이니셔티브가 성공적으로 삭제되었습니다.",
         error: "이니셔티브 삭제에 실패했습니다",
+      },
+      archive: {
+        success: "이니셔티브가 보관되었습니다.",
+        error: "이니셔티브를 보관하지 못했습니다",
+        initiative_cannot_be_archived_in_this_state: "이 상태의 이니셔티브는 보관할 수 없습니다",
       },
       link_copied: "이니셔티브 링크가 클립보드에 복사되었습니다.",
       project_update_success: "이니셔티브 프로젝트가 성공적으로 업데이트되었습니다.",
@@ -3690,6 +3696,7 @@ export default {
         title: "일치하는 이니셔티브 없음",
         description: `일치하는 기준의 이니셔티브가 감지되지 않았습니다.
  대신 새 이니셔티브를 만드세요.`,
+        archived_description: "일치하는 기준의 보관된 이니셔티브가 감지되지 않았습니다.",
       },
       not_found: {
         title: "이니셔티브가 존재하지 않습니다",

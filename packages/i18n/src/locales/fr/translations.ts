@@ -3743,6 +3743,7 @@ si vous êtes sûr que votre recherche est correcte.`,
     all_initiatives: "Toutes les initiatives",
     delete_initiative: "Supprimer l'initiative",
     fill_all_required_fields: "Veuillez remplir tous les champs obligatoires.",
+    archive_description: "Seules les initiatives terminées ou fermées peuvent être archivées",
     toast: {
       create_success: "Initiative {name} créée avec succès.",
       create_error: "Échec de la création de l'initiative. Veuillez réessayer !",
@@ -3751,6 +3752,11 @@ si vous êtes sûr que votre recherche est correcte.`,
       delete: {
         success: "Initiative supprimée avec succès.",
         error: "Échec de la suppression de l'initiative",
+      },
+      archive: {
+        success: "Initiative archivée avec succès.",
+        error: "Échec de l’archivage de l’initiative",
+        initiative_cannot_be_archived_in_this_state: "L’initiative ne peut pas être archivée dans cet état",
       },
       link_copied: "Lien de l'initiative copié dans le presse-papiers.",
       project_update_success: "Projets de l'initiative mis à jour avec succès.",
@@ -3775,6 +3781,7 @@ si vous êtes sûr que votre recherche est correcte.`,
         title: "Aucune initiative correspondante",
         description: `Aucune initiative détectée avec les critères correspondants.
  Créez plutôt une nouvelle initiative.`,
+        archived_description: "Aucune initiative archivée détectée avec les critères correspondants.",
       },
       not_found: {
         title: "L'initiative n'existe pas",

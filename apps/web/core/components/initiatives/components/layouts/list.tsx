@@ -14,16 +14,22 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissionsLevel, INITIATIVE_STATES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { IBaseLayoutsBaseGroup, TInitiativeStates } from "@plane/types";
+// components
 import { BaseListLayout } from "@/components/base-layouts/list/layout";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// types
 import type { TInitiative } from "@/types";
+
 import { getGroupList, getInitiativeUpdatePayload } from "../../utils";
 import { InitiativeBlock } from "../initiative-block";
 
@@ -92,7 +98,10 @@ export const InitiativesListLayout = observer(function InitiativesListLayout() {
 
   // Only allow dragging for specific groupBy types
   const isDraggableGroupBy = groupBy === "lead" || groupBy === "state" || groupBy === "label_ids";
-  const canDragFunction = useCallback(() => isEditable && isDraggableGroupBy, [isEditable, isDraggableGroupBy]);
+  const canDragFunction = useCallback(
+    (item: TInitiative) => isEditable && isDraggableGroupBy && !item?.archived_at,
+    [isEditable, isDraggableGroupBy]
+  );
 
   // Render each initiative item
   const renderItem = useCallback(

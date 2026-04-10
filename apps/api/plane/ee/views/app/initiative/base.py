@@ -38,6 +38,7 @@ from plane.ee.models import (
     EntityUpdates,
     InitiativeLabelAssociation,
 )
+from plane.ee.models.initiative import StateChoices
 from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer, InitiativeWriteSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import allow_permission, ROLE
@@ -60,7 +61,7 @@ class InitiativeEndpoint(BaseAPIView):
 
     def get_queryset(self):
         return (
-            Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            Initiative.initiative_objects.filter(workspace__slug=self.kwargs.get("slug"))
             .prefetch_related(
                 Prefetch(
                     "initiative_reactions",
@@ -477,7 +478,7 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id=None):
         initiatives = (
-            Initiative.objects.filter(workspace__slug=slug, projects__project__archived_at__isnull=True)
+            Initiative.initiative_objects.filter(workspace__slug=slug, projects__project__archived_at__isnull=True)
             .distinct()
             .annotate(
                 project_ids=Coalesce(
@@ -669,3 +670,51 @@ class InitiativeProgressEndpoint(BaseAPIView):
         }
 
         return Response(response, status=status.HTTP_200_OK)
+
+
+class InitiativeArchiveEndpoint(BaseAPIView):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = InitiativeFilterSet
+
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug):
+        archived_initiatives = Initiative.objects.filter(
+            archived_at__isnull=False,
+            workspace__slug=slug,
+        )
+
+        archived_initiatives = self.filter_queryset(archived_initiatives)
+
+        serializer = InitiativeSerializer(archived_initiatives, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def post(self, request, slug, initiative_id):
+        initiative = Initiative.objects.get(workspace__slug=slug, pk=initiative_id)
+
+        if initiative.state not in [StateChoices.COMPLETED.value, StateChoices.CLOSED.value]:
+            return Response(
+                {
+                    "error": f"Initiative in {initiative.state} cannot be archived",
+                    "code": "INITIATIVE_CANNOT_BE_ARCHIVED_IN_THIS_STATE",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        initiative.archived_at = timezone.now().date()
+        initiative.save()
+
+        return Response({"archived_at": str(initiative.archived_at)}, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def delete(self, request, slug, initiative_id):
+        initiative = Initiative.objects.get(workspace__slug=slug, pk=initiative_id)
+
+        initiative.archived_at = None
+        initiative.save()
+
+        return Response(status.HTTP_204_NO_CONTENT)

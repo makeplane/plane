@@ -16,11 +16,12 @@ import { observer } from "mobx-react";
 import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-// core components
+// components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// types
 import type { TInitiative } from "@/types/initiative";
 // local components
 import { InitiativeEpicsField } from "./initiative-epics-field";
@@ -46,6 +47,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
 
   // derived values
   const initiativeLabels = getInitiativesLabels(workspaceSlug);
+  const disabled = !!initiative?.archived_at;
 
   const handleLabelChange = (labelIds: string[]) => {
     updateInitiative?.(workspaceSlug, initiative.id, { label_ids: labelIds });
@@ -109,7 +111,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
     >
       {/* dates */}
       <PropertyBlockWrapper>
-        <InitiativeDateRangeDropdown initiative={initiative} workspaceSlug={workspaceSlug} />
+        <InitiativeDateRangeDropdown initiative={initiative} workspaceSlug={workspaceSlug} disabled={disabled} />
       </PropertyBlockWrapper>
 
       {/* projects */}
@@ -121,11 +123,17 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
           multiple
           buttonVariant="border-with-text"
           showTooltip
+          disabled={disabled}
         />
       </PropertyBlockWrapper>
       {/* epics */}
       <PropertyBlockWrapper>
-        <InitiativeEpicsField initiative={initiative} workspaceSlug={workspaceSlug} onEpicsUpdated={handleEpicChange} />
+        <InitiativeEpicsField
+          initiative={initiative}
+          workspaceSlug={workspaceSlug}
+          onEpicsUpdated={handleEpicChange}
+          disabled={disabled}
+        />
       </PropertyBlockWrapper>
       {/*  lead */}
       <PropertyBlockWrapper>
@@ -137,6 +145,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
           placeholder="Lead"
           showUserDetails
           optionsClassName="z-10"
+          disabled={disabled}
         />
       </PropertyBlockWrapper>
       {/* state */}
@@ -147,6 +156,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
             placeholder="State"
             size="xs"
             onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
+            disabled={disabled}
           />
         </PropertyBlockWrapper>
       )}
@@ -159,6 +169,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
           onAddLabel={createLabel}
           placeholder=""
           size="xs"
+          disabled={disabled}
         />
       </PropertyBlockWrapper>
     </div>

@@ -13,11 +13,10 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import type { TInitiativeDisplayFilters } from "@plane/types";
-
 // plane imports
+import type { TInitiativeDisplayFilters } from "@plane/types";
+// plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-
 // local imports
 import { DisplayFiltersSelection, FiltersDropdown } from "./header";
 
@@ -25,9 +24,11 @@ export * from "./header";
 
 type Props = {
   workspaceSlug: string;
+  isArchived?: boolean;
 };
 
-export const HeaderFilters = observer(function HeaderFilters({ workspaceSlug }: Props) {
+export const HeaderFilters = observer(function HeaderFilters(props: Props) {
+  const { workspaceSlug, isArchived = false } = props;
   const {
     initiativeFilters: { currentInitiativeDisplayFilters, updateDisplayFilters },
   } = useInitiatives();
@@ -35,9 +36,9 @@ export const HeaderFilters = observer(function HeaderFilters({ workspaceSlug }: 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<TInitiativeDisplayFilters>) => {
       if (!workspaceSlug) return;
-      updateDisplayFilters(workspaceSlug, updatedDisplayFilter);
+      updateDisplayFilters(workspaceSlug, updatedDisplayFilter, isArchived);
     },
-    [workspaceSlug, updateDisplayFilters]
+    [workspaceSlug, updateDisplayFilters, isArchived]
   );
 
   return (

@@ -224,6 +224,10 @@ export default {
         "Usa iniciativas para agrupar y monitorear proyectos y épicas relacionados. Ve el progreso, prioridades y resultados — todo desde una sola pantalla.",
       cta_primary: "Crear una Iniciativa",
     },
+    archived_initiatives: {
+      title: "Aún no hay iniciativas archivadas",
+      description: "Encuéntralas aquí una vez archivadas.",
+    },
     customers: {
       title: "Gestiona el trabajo según lo que es importante para tus clientes",
       description:

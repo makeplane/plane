@@ -70,3 +70,11 @@ export const INITIATIVE_STATES = {
     sortOrder: number;
   }
 >;
+
+export const ARCHIVABLE_INITIATIVE_STATES: TInitiativeStates[] = ["COMPLETED", "CLOSED"];
+
+export const INITIATIVE_ERROR_DETAILS: Record<string, { i18n_message: string }> = {
+  INITIATIVE_CANNOT_BE_ARCHIVED_IN_THIS_STATE: {
+    i18n_message: "initiatives.toast.archive.initiative_cannot_be_archived_in_this_state",
+  },
+};

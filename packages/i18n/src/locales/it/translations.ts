@@ -3716,6 +3716,7 @@ Crea un nuovo progetto invece`,
     all_initiatives: "Tutte le Iniziative",
     delete_initiative: "Elimina Iniziativa",
     fill_all_required_fields: "Si prega di compilare tutti i campi obbligatori.",
+    archive_description: "Solo le iniziative completate o chiuse possono essere archiviate",
     toast: {
       create_success: "Iniziativa {name} creata con successo.",
       create_error: "Impossibile creare l'iniziativa. Si prega di riprovare!",
@@ -3724,6 +3725,11 @@ Crea un nuovo progetto invece`,
       delete: {
         success: "Iniziativa eliminata con successo.",
         error: "Impossibile eliminare l'iniziativa",
+      },
+      archive: {
+        success: "Iniziativa archiviata correttamente.",
+        error: "Impossibile archiviare l'iniziativa",
+        initiative_cannot_be_archived_in_this_state: "L'iniziativa non può essere archiviata in questo stato",
       },
       link_copied: "Link dell'iniziativa copiato negli appunti.",
       project_update_success: "Progetti dell'iniziativa aggiornati con successo.",
@@ -3748,6 +3754,7 @@ Crea un nuovo progetto invece`,
         title: "Nessuna iniziativa corrispondente",
         description: `Nessuna iniziativa rilevata con i criteri corrispondenti.
  Crea una nuova iniziativa invece.`,
+        archived_description: "Nessuna iniziativa archiviata rilevata con i criteri corrispondenti.",
       },
       not_found: {
         title: "L'iniziativa non esiste",

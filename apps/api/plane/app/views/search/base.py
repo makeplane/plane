@@ -282,7 +282,11 @@ class GlobalSearchEndpoint(BaseAPIView):
             for field in fields:
                 q |= Q(**{f"{field}__icontains": query})
 
-        return Initiative.objects.filter(q, workspace__slug=slug).distinct().values("name", "id", "workspace__slug")
+        return (
+            Initiative.initiative_objects.filter(q, workspace__slug=slug)
+            .distinct()
+            .values("name", "id", "workspace__slug")
+        )
 
     def filter_epics(self, query, slug, project_id, workspace_search):
         fields = ["name", "sequence_id", "project__identifier"]

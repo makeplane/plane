@@ -214,6 +214,10 @@ export default {
         "イニシアチブを使用して、関連するプロジェクトとエピックをグループ化して監視します。進捗、優先度、結果を表示 — すべて1つの画面から。",
       cta_primary: "イニシアチブを作成",
     },
+    archived_initiatives: {
+      title: "アーカイブされたイニシアチブはまだありません",
+      description: "アーカイブ後はここで確認できます。",
+    },
     customers: {
       title: "顧客にとって重要なことで作業を管理",
       description:

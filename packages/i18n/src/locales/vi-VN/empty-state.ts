@@ -223,6 +223,10 @@ export default {
         "Sử dụng sáng kiến để nhóm và giám sát các dự án và câu chuyện sử thi liên quan. Xem tiến độ, ưu tiên và kết quả—tất cả từ một màn hình duy nhất.",
       cta_primary: "Tạo Sáng kiến",
     },
+    archived_initiatives: {
+      title: "Chưa có sáng kiến nào được lưu trữ",
+      description: "Tìm chúng tại đây sau khi lưu trữ.",
+    },
     customers: {
       title: "Quản lý công việc theo những gì quan trọng với khách hàng của bạn",
       description:

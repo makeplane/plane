@@ -223,6 +223,10 @@ export default {
         "İlgili projeleri ve destanları gruplamak ve izlemek için girişimleri kullanın. İlerlemeyi, öncelikleri ve sonuçları görün—hepsi tek bir ekrandan.",
       cta_primary: "Girişim Oluştur",
     },
+    archived_initiatives: {
+      title: "Henüz arşivlenmiş girişim yok",
+      description: "Arşivlendikten sonra burada bulun.",
+    },
     customers: {
       title: "Müşterileriniz için önemli olan şeye göre çalışmayı yönetin",
       description:

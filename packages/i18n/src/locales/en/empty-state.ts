@@ -216,6 +216,10 @@ export default {
         "Use initiatives to group and monitor related projects and epics. View progress, priorities, and outcomes—all from a single screen.",
       cta_primary: "Create an Initiative",
     },
+    archived_initiatives: {
+      title: "No archived initiatives yet",
+      description: "Find them here once archived.",
+    },
     customers: {
       title: "Manage work by what's important to your customers",
       description:

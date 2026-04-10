@@ -11,24 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// components
 import { Outlet } from "react-router";
+// components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
-// local components
+import { WorkspaceArchivesHeader } from "@/components/archives/workspace-archives-header";
+// layout
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { ProjectsListHeader } from "@/components/projects/header/root";
-import { ProjectsListMobileHeader } from "@/components/projects/header/mobile-root";
-// types
+
 import type { Route } from "./+types/layout";
 
-export default function ProjectArchivedListLayout(props: Route.ComponentProps) {
+export default function ArchivedProjectsLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   return (
     <WorkspaceAccessWrapper pageKey="archives">
-      <AppHeader
-        header={<ProjectsListHeader workspaceSlug={props.params.workspaceSlug} isArchived />}
-        mobileHeader={<ProjectsListMobileHeader workspaceSlug={props.params.workspaceSlug} isArchived />}
-      />
+      <AppHeader header={<WorkspaceArchivesHeader activeTab="projects" workspaceSlug={workspaceSlug} />} />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

@@ -220,6 +220,10 @@ export default {
         "Použijte iniciativy ke seskupení a sledování souvisejících projektů a epiků. Zobrazujte pokrok, priority a výsledky—vše z jediné obrazovky.",
       cta_primary: "Vytvořit iniciativu",
     },
+    archived_initiatives: {
+      title: "Zatím žádné archivované iniciativy",
+      description: "Po archivaci je najdete zde.",
+    },
     customers: {
       title: "Spravujte práci podle toho, co je důležité pro vaše zákazníky",
       description:

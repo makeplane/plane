@@ -22,12 +22,12 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
+import { UpdateStatusPills } from "@/components/initiatives/common/update-status";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { UpdateStatusPills } from "@/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { useInitiativeUpdates } from "../details/sidebar/use-updates";
@@ -63,6 +63,7 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
 
   const handleInitiativeClick = useCallback(
     (e: React.MouseEvent) => {
+      if (initiative?.archived_at) return;
       // If command/ctrl + click, open in new tab
       if (e.metaKey || e.ctrlKey) {
         const url = `/${workspaceSlug}/initiatives/${initiativeId}`;
@@ -72,7 +73,7 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
       // Otherwise open peek view
       setPeekInitiative({ workspaceSlug: workspaceSlug.toString(), initiativeId });
     },
-    [workspaceSlug, initiativeId, setPeekInitiative]
+    [workspaceSlug, initiativeId, setPeekInitiative, initiative?.archived_at]
   );
 
   if (!initiative) return <></>;
@@ -89,10 +90,10 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
       )}
       onClick={handleInitiativeClick}
     >
-      <div className="relative flex w-full items-center justify-between gap-1 truncate flex-wrap md:flex-nowrap flex-shrink-0 min-w-0 px-6 py-4 ">
+      <div className="relative flex w-full items-center justify-between gap-1 truncate flex-wrap md:flex-nowrap shrink-0 min-w-0 px-6 py-4 ">
         <div className="flex w-full items-center gap-3 overflow-hidden min-w-0">
           <div className="flex items-center gap-4 truncate">
-            <span className="flex items-center flex-shrink-0 bg-layer-3 p-1.5 rounded-sm">
+            <span className="flex items-center shrink-0 bg-layer-3 p-1.5 rounded-sm">
               {initiative?.logo_props?.in_use ? (
                 <Logo logo={initiative?.logo_props} size={16} type="lucide" />
               ) : (
@@ -105,13 +106,15 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 h-full">
-          <UpdateStatusPills
-            handleUpdateOperations={handleUpdateOperations}
-            workspaceSlug={workspaceSlug.toString()}
-            initiativeId={initiativeId}
-            analytics={initiativeStats}
-            showTabs
-          />
+          {!initiative?.archived_at && (
+            <UpdateStatusPills
+              handleUpdateOperations={handleUpdateOperations}
+              workspaceSlug={workspaceSlug.toString()}
+              initiativeId={initiativeId}
+              analytics={initiativeStats}
+              showTabs
+            />
+          )}
           <InitiativesBlockProperties
             initiative={initiative}
             isSidebarCollapsed={isSidebarCollapsed}

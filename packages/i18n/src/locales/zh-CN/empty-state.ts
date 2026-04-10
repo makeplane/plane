@@ -208,6 +208,10 @@ export default {
       description: "使用计划对相关项目和史诗进行分组和监控。查看进度、优先级和成果 — 全部来自单个屏幕。",
       cta_primary: "创建计划",
     },
+    archived_initiatives: {
+      title: "暂无已归档计划",
+      description: "归档后可在此处查看。",
+    },
     customers: {
       title: "按对客户重要的内容管理工作",
       description:

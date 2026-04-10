@@ -3596,6 +3596,7 @@ export default {
     all_initiatives: "所有计划",
     delete_initiative: "删除计划",
     fill_all_required_fields: "请填写所有必填字段。",
+    archive_description: "仅已完成或已关闭的计划可以归档",
     toast: {
       create_success: "计划 {name} 创建成功。",
       create_error: "创建计划失败。请重试！",
@@ -3604,6 +3605,11 @@ export default {
       delete: {
         success: "计划删除成功。",
         error: "删除计划失败",
+      },
+      archive: {
+        success: "计划已成功归档。",
+        error: "归档计划失败",
+        initiative_cannot_be_archived_in_this_state: "当前状态下的计划无法归档",
       },
       link_copied: "计划链接已复制到剪贴板。",
       project_update_success: "计划项目更新成功。",
@@ -3627,6 +3633,7 @@ export default {
         title: "没有匹配的计划",
         description: `未检测到符合匹配条件的计划。
  创建一个新计划。`,
+        archived_description: "未检测到符合条件的已归档计划。",
       },
       not_found: {
         title: "计划不存在",

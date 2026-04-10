@@ -33,6 +33,7 @@ from plane.ee.views.app.initiative import (
     InitiativeUserPropertiesEndpoint,
     InitiativeLabelsEndpoint,
     InitiativeProgressEndpoint,
+    InitiativeArchiveEndpoint,
 )
 
 urlpatterns = [
@@ -201,5 +202,16 @@ urlpatterns = [
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/progress/",
         InitiativeProgressEndpoint.as_view(),
         name="initiative-progress",
+    ),
+    # Initiative Archive
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/archive/",
+        InitiativeArchiveEndpoint.as_view(),
+        name="intiative-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/archived-initiatives/",
+        InitiativeArchiveEndpoint.as_view(),
+        name="intiative-archive",
     ),
 ]

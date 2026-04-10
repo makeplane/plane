@@ -11,20 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { clone, orderBy, update } from "lodash-es";
+import { clone, isEmpty, update } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type {
-  TEpicStats,
-  TInitiativeGroupByOptions,
-  TInitiativeLabel,
-  TInitiativeOrderByOptions,
-  TLoader,
-} from "@plane/types";
-import { convertToISODateString } from "@plane/utils";
+import type { TEpicStats, TInitiativeLabel, TLoader } from "@plane/types";
 
 // plane-web imports
 import { InitiativeLabelsService } from "@/services/initiative-labels.service";
@@ -50,8 +43,7 @@ import { InitiativeCommentActivityStore } from "./initiatives-comment-activity.s
 import type { IInitiativeFilterStore } from "./initiatives-filter.store";
 import type { IUpdateStore } from "@/store/work-items/epic/updates/base.store";
 import { UpdateStore } from "@/store/work-items/epic/updates/base.store";
-
-export const ALL_INITIATIVES = "All Initiatives";
+import { getGroupedInitiativeIds, sortInitiativesWithOrderBy } from "@/components/initiatives/utils";
 
 type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
@@ -63,7 +55,9 @@ export type TPeekInitiative = {
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
   filteredInitiativesMap: Record<string, TInitiative> | undefined;
+  filteredInitiativesIds: string[];
   initiativeIds: string[] | undefined;
+  archivedInitiativeIds: string[] | undefined;
 
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
   initiativeLabelsMap: Map<string, Map<string, TInitiativeLabel>>;
@@ -98,11 +92,10 @@ export interface IInitiativeStore {
   setPeekInitiative: (peekInitiative: TPeekInitiative | undefined) => void;
   getIsInitiativePeeked: (initiativeId: string) => boolean;
 
-  currentGroupedInitiativeIds: Record<string, string[]> | undefined;
   currentGroupedFilteredInitiativeIds: Record<string, string[]> | undefined;
   isInitiativesFeatureEnabled: boolean;
 
-  initFilteredInitiatives: (workspaceSlug: string) => Promise<void>;
+  initFilteredInitiatives: (workspaceSlug: string, isArchived?: boolean) => Promise<void>;
 
   getInitiativeById: (initiativeId: string) => TInitiative | undefined;
   getInitiativesLabels: (workspaceSlug: string) => Map<string, TInitiativeLabel> | undefined;
@@ -111,7 +104,8 @@ export interface IInitiativeStore {
 
   fetchInitiatives: (
     workspaceSlug: string,
-    filters?: TExternalInitiativeFilterExpression
+    filters?: TExternalInitiativeFilterExpression,
+    isArchived?: boolean
   ) => Promise<TInitiative[] | undefined>;
   fetchInitiativesStats: (workspaceSlug: string) => Promise<TInitiativeStats[] | undefined>;
   fetchInitiativeAnalytics: (workspaceSlug: string, initiativeId: string) => Promise<TInitiativeAnalytics | undefined>;
@@ -119,12 +113,15 @@ export interface IInitiativeStore {
   fetchInitiativeDetails: (workspaceSlug: string, initiativeId: string) => Promise<TInitiative | undefined>;
   fetchFilteredInitiatives: (
     workspaceSlug: string,
-    filters?: TExternalInitiativeFilterExpression
+    filters?: TExternalInitiativeFilterExpression,
+    isArchived?: boolean
   ) => Promise<TInitiative[] | undefined>;
 
   createInitiative: (workspaceSlug: string, payload: Partial<TInitiative>) => Promise<TInitiative | undefined>;
   updateInitiative: (workspaceSlug: string, initiativeId: string, payload: Partial<TInitiative>) => Promise<void>;
   deleteInitiative: (workspaceSlug: string, initiativeId: string) => Promise<void>;
+  archiveInitiative: (workspaceSlug: string, initiativeId: string) => Promise<void>;
+  restoreInitiative: (workspaceSlug: string, initiativeId: string) => Promise<void>;
 
   // labels
   createInitiativeLabel: (workspaceSlug: string, data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel>;
@@ -164,7 +161,7 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics> = {};
   initiativeLabelsMap: Map<string, Map<string, TInitiativeLabel>> = new Map();
 
-  filteredInitiativesMap: Record<string, TInitiative> | undefined = undefined;
+  filteredInitiativesIds: string[] = [];
   fetchingFilteredInitiatives: boolean = true;
 
   initiativesLoader: boolean = false;
@@ -191,8 +188,8 @@ export class InitiativeStore implements IInitiativeStore {
   constructor(_rootStore: RootStore, initiativeFilterStore: IInitiativeFilterStore) {
     makeObservable(this, {
       // observables
+      filteredInitiativesIds: observable,
       initiativesMap: observable,
-      filteredInitiativesMap: observable,
       fetchingFilteredInitiatives: observable,
       initiativesStatsMap: observable,
       initiativeAnalyticsLoader: observable,
@@ -219,6 +216,7 @@ export class InitiativeStore implements IInitiativeStore {
       createInitiative: action,
       updateInitiative: action,
       deleteInitiative: action,
+      archiveInitiative: action,
 
       addInitiativeReaction: action,
       deleteInitiativeReaction: action,
@@ -258,14 +256,6 @@ export class InitiativeStore implements IInitiativeStore {
     );
   }
 
-  get currentGroupedInitiativeIds() {
-    const workspaceSlug = this.rootStore.router.workspaceSlug;
-
-    if (!workspaceSlug) return;
-
-    return this.getGroupedInitiativeIds(workspaceSlug, false);
-  }
-
   get initiativeTimelineItems() {
     const filteredInitiativesMap = this.filteredInitiativesMap;
     if (!filteredInitiativesMap) return {};
@@ -282,7 +272,7 @@ export class InitiativeStore implements IInitiativeStore {
   get currentGroupedFilteredInitiativeIds() {
     const workspaceSlug = this.rootStore.router.workspaceSlug;
     if (!workspaceSlug) return;
-    return this.getGroupedInitiativeIds(workspaceSlug, true);
+    return this.getGroupedInitiativeIds(workspaceSlug);
   }
 
   get isInitiativesFeatureEnabled() {
@@ -295,16 +285,35 @@ export class InitiativeStore implements IInitiativeStore {
   }
 
   get initiativeIds() {
-    return Object.keys(this.initiativesMap ?? {});
+    return Object.values(this.initiativesMap ?? {})
+      .filter((initiative) => !initiative.archived_at)
+      .map((initiative) => initiative.id);
   }
 
-  initFilteredInitiatives = async (workspaceSlug: string) => {
-    await this.initiativeFilterStore.initInitiativeFilters(workspaceSlug);
+  get archivedInitiativeIds() {
+    return Object.values(this.initiativesMap ?? {})
+      .filter((initiative) => initiative.archived_at)
+      .map((initiative) => initiative.id);
+  }
+
+  get filteredInitiativesMap() {
+    const filteredMap: Record<string, TInitiative> = {};
+    this.filteredInitiativesIds.forEach((initiativeId: string) => {
+      const initiative = this.initiativesMap?.[initiativeId];
+      if (initiative) {
+        filteredMap[initiativeId] = initiative;
+      }
+    });
+    return isEmpty(filteredMap) ? undefined : filteredMap;
+  }
+
+  initFilteredInitiatives = async (workspaceSlug: string, isArchived = false) => {
+    await this.initiativeFilterStore.initInitiativeFilters(workspaceSlug, isArchived);
     const filters = this.initiativeFilterStore.getInitiativeFilters(workspaceSlug);
-    await this.fetchFilteredInitiatives(workspaceSlug, filters);
+    await this.fetchFilteredInitiatives(workspaceSlug, filters, isArchived);
   };
 
-  getGroupedInitiativeIds = computedFn((workspaceSlug: string, filtered: boolean = false) => {
+  getGroupedInitiativeIds = computedFn((workspaceSlug: string) => {
     const workspace = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug);
     if (!workspace) return;
 
@@ -313,12 +322,9 @@ export class InitiativeStore implements IInitiativeStore {
 
     if (!displayFilters || !filters) return;
 
-    const shouldReturnFilteredInitiatives = filtered && this.filteredInitiativesMap;
-    const initiativesMap = shouldReturnFilteredInitiatives ? this.filteredInitiativesMap : this.initiativesMap;
+    if (!this.filteredInitiativesMap) return;
 
-    if (!initiativesMap) return;
-
-    const initiativesArray = Object.values(initiativesMap);
+    const initiativesArray = Object.values(this.filteredInitiativesMap);
     const sortedInitiatives = sortInitiativesWithOrderBy(initiativesArray, displayFilters?.order_by);
 
     return getGroupedInitiativeIds(sortedInitiatives, displayFilters.group_by);
@@ -394,7 +400,7 @@ export class InitiativeStore implements IInitiativeStore {
         this.initiativesLoader = false;
       });
 
-      this.fetchInitiativesStats(workspaceSlug);
+      void this.fetchInitiativesStats(workspaceSlug);
       return response;
     } catch (error) {
       console.error("error while fetching initiatives", error);
@@ -408,20 +414,23 @@ export class InitiativeStore implements IInitiativeStore {
 
   fetchFilteredInitiatives = async (
     workspaceSlug: string,
-    filters?: TExternalInitiativeFilterExpression
+    filters?: TExternalInitiativeFilterExpression,
+    isArchived = false
   ): Promise<TInitiative[] | undefined> => {
     try {
       runInAction(() => {
         this.fetchingFilteredInitiatives = true;
-        this.filteredInitiativesMap = undefined;
+        this.filteredInitiativesIds = [];
       });
 
-      const response = await this.initiativeService.getInitiatives(workspaceSlug, filters);
+      const response = isArchived
+        ? await this.initiativeService.getArchivedInitiatives(workspaceSlug, filters)
+        : await this.initiativeService.getInitiatives(workspaceSlug, filters);
       runInAction(() => {
-        this.filteredInitiativesMap = {};
         response.forEach((initiative) => {
           if (!initiative) return;
-          this.filteredInitiativesMap![initiative.id] = initiative;
+          this.initiativesMap![initiative.id] = initiative;
+          this.filteredInitiativesIds.push(initiative.id);
         });
       });
 
@@ -491,9 +500,7 @@ export class InitiativeStore implements IInitiativeStore {
         if (!this.initiativesMap) this.initiativesMap = {};
         this.initiativesMap[response.id] = response;
 
-        if (this.filteredInitiativesMap) {
-          this.filteredInitiativesMap[response.id] = response;
-        }
+        this.filteredInitiativesIds.push(response.id);
       });
 
       this.fetchInitiativesStats(workspaceSlug);
@@ -573,15 +580,11 @@ export class InitiativeStore implements IInitiativeStore {
     payload: Partial<TInitiative>
   ): Promise<void> => {
     const preUpdateInitiative = clone(this.initiativesMap?.[initiativeId]);
-    const preUpdateFilteredInitiative = clone(this.filteredInitiativesMap?.[initiativeId]);
 
     try {
       runInAction(() => {
         if (this.initiativesMap?.[initiativeId]) {
           this.initiativesMap[initiativeId] = { ...this.initiativesMap[initiativeId], ...payload };
-        }
-        if (this.filteredInitiativesMap?.[initiativeId]) {
-          this.filteredInitiativesMap[initiativeId] = { ...this.filteredInitiativesMap[initiativeId], ...payload };
         }
       });
 
@@ -593,9 +596,6 @@ export class InitiativeStore implements IInitiativeStore {
       runInAction(() => {
         if (this.initiativesMap?.[initiativeId] && preUpdateInitiative) {
           this.initiativesMap[initiativeId] = { ...preUpdateInitiative };
-        }
-        if (this.filteredInitiativesMap?.[initiativeId] && preUpdateFilteredInitiative) {
-          this.filteredInitiativesMap[initiativeId] = { ...preUpdateFilteredInitiative };
         }
       });
       console.error("error while updating initiative", error);
@@ -609,11 +609,41 @@ export class InitiativeStore implements IInitiativeStore {
 
       runInAction(() => {
         delete this.initiativesMap?.[initiativeId];
-        delete this.filteredInitiativesMap?.[initiativeId];
+        this.filteredInitiativesIds = this.filteredInitiativesIds.filter((id) => id !== initiativeId);
       });
       await this.initiativeService.deleteInitiative(workspaceSlug, initiativeId);
     } catch (error) {
       console.error("error while updating initiative", error);
+      throw error;
+    }
+  };
+
+  archiveInitiative = async (workspaceSlug: string, initiativeId: string): Promise<void> => {
+    try {
+      if (!this.initiativesMap?.[initiativeId]) return;
+
+      const response = await this.initiativeService.archiveInitiative(workspaceSlug, initiativeId);
+      runInAction(() => {
+        this.initiativesMap![initiativeId] = { ...this.initiativesMap![initiativeId], ...response };
+        this.filteredInitiativesIds = this.filteredInitiativesIds.filter((id) => id !== initiativeId);
+      });
+    } catch (error) {
+      console.error("error while archiving initiative", error);
+      throw error;
+    }
+  };
+
+  restoreInitiative = async (workspaceSlug: string, initiativeId: string): Promise<void> => {
+    try {
+      if (!this.initiativesMap?.[initiativeId]) return;
+
+      await this.initiativeService.restoreInitiative(workspaceSlug, initiativeId);
+      runInAction(() => {
+        this.initiativesMap![initiativeId] = { ...this.initiativesMap![initiativeId], archived_at: null };
+        this.filteredInitiativesIds = this.filteredInitiativesIds.filter((id) => id !== initiativeId);
+      });
+    } catch (error) {
+      console.error("error while restoring initiative", error);
       throw error;
     }
   };
@@ -767,10 +797,9 @@ export class InitiativeStore implements IInitiativeStore {
     const currInitiativelabels = this.initiativeLabelsMap.get(workspaceSlug);
     const currInitiativeSelectedLabel = currInitiativelabels?.get(labelId);
     if (!currInitiativeSelectedLabel) return;
-    await this.initiativeLabelsService.deleteInitiativeLabel(workspaceSlug, labelId).then(() => {
-      runInAction(() => {
-        currInitiativelabels?.delete(labelId);
-      });
+    await this.initiativeLabelsService.deleteInitiativeLabel(workspaceSlug, labelId);
+    runInAction(() => {
+      currInitiativelabels?.delete(labelId);
     });
   };
 
@@ -839,57 +868,3 @@ export class InitiativeStore implements IInitiativeStore {
     return this.updateInitiativeLabel(workspaceSlug, draggingLabelId, { sort_order: sortOrder });
   };
 }
-
-const sortInitiativesWithOrderBy = (
-  initiatives: TInitiative[],
-  key: TInitiativeOrderByOptions | undefined
-): TInitiative[] => {
-  const array = orderBy(initiatives, (initiative) => convertToISODateString(initiative["created_at"]), ["desc"]);
-
-  switch (key) {
-    case "-created_at":
-      return orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
-    case "-updated_at":
-      return orderBy(array, (initiative) => convertToISODateString(initiative["updated_at"] ?? undefined), ["desc"]);
-    default:
-      return array;
-  }
-};
-
-const getGroupedInitiativeIds = (initiatives: TInitiative[], key: TInitiativeGroupByOptions | undefined) => {
-  const groupedInitiativeIds: Record<string, string[]> = {};
-
-  if (!key) return { [ALL_INITIATIVES]: initiatives.map((initiative) => initiative.id) };
-
-  if (key === "label_ids") {
-    for (const initiative of initiatives) {
-      const labelIds = initiative.label_ids;
-      if (!labelIds || labelIds.length === 0) {
-        if (!groupedInitiativeIds["None"]) {
-          groupedInitiativeIds["None"] = [];
-        }
-        groupedInitiativeIds["None"].push(initiative.id);
-      } else {
-        labelIds.forEach((labelId) => {
-          if (!groupedInitiativeIds[labelId]) {
-            groupedInitiativeIds[labelId] = [];
-          }
-          groupedInitiativeIds[labelId].push(initiative.id);
-        });
-      }
-    }
-    return groupedInitiativeIds;
-  }
-
-  for (const initiative of initiatives) {
-    const groupId = initiative[key] ?? "None";
-
-    if (groupedInitiativeIds?.[groupId] !== undefined && Array.isArray(groupedInitiativeIds?.[groupId])) {
-      groupedInitiativeIds?.[groupId]?.push(initiative.id);
-    } else {
-      groupedInitiativeIds[groupId] = [initiative.id];
-    }
-  }
-
-  return groupedInitiativeIds;
-};

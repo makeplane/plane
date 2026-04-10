@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";
 // plane imports
@@ -26,18 +25,19 @@ import type { TInitiative } from "@/types/initiative";
 type TInitiativeDateRangeDropdownProps = {
   initiative: TInitiative;
   workspaceSlug: string;
+  disabled?: boolean;
 };
 
 export const InitiativeDateRangeDropdown = observer(function InitiativeDateRangeDropdown(
   props: TInitiativeDateRangeDropdownProps
 ) {
-  const { initiative, workspaceSlug } = props;
+  const { initiative, workspaceSlug, disabled = false } = props;
   const {
     initiative: { updateInitiative },
   } = useInitiatives();
 
   const handleDateChange = (range: DateRange | undefined) => {
-    updateInitiative?.(workspaceSlug, initiative.id, {
+    void updateInitiative?.(workspaceSlug, initiative.id, {
       start_date: range?.from ? renderFormattedPayloadDate(range.from) : null,
       end_date: range?.to ? renderFormattedPayloadDate(range.to) : null,
     });
@@ -63,6 +63,7 @@ export const InitiativeDateRangeDropdown = observer(function InitiativeDateRange
       showTooltip
       renderPlaceholder={false}
       renderInPortal
+      disabled={disabled}
     />
   );
 });

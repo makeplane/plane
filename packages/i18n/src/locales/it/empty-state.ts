@@ -222,6 +222,10 @@ export default {
         "Usa le iniziative per raggruppare e monitorare progetti ed epiche correlati. Visualizza progressi, priorità e risultati—tutto da un'unica schermata.",
       cta_primary: "Crea un'Iniziativa",
     },
+    archived_initiatives: {
+      title: "Nessuna iniziativa archiviata ancora",
+      description: "Trovarle qui una volta archiviate.",
+    },
     customers: {
       title: "Gestisci il lavoro in base a ciò che è importante per i tuoi clienti",
       description:

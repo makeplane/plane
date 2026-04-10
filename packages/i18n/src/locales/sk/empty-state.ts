@@ -221,6 +221,10 @@ export default {
         "Použite iniciatívy na zoskupenie a sledovanie súvisiacich projektov a epikov. Zobrazujte pokrok, priority a výsledky—všetko z jedinej obrazovky.",
       cta_primary: "Vytvoriť iniciatívu",
     },
+    archived_initiatives: {
+      title: "Zatiaľ žiadne archivované iniciatívy",
+      description: "Nájdete ich tu po archivácii.",
+    },
     customers: {
       title: "Spravujte prácu podľa toho, čo je dôležité pre vašich zákazníkov",
       description:

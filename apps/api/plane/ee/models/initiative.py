@@ -17,6 +17,12 @@ from django.conf import settings
 from plane.db.models import BaseModel
 from plane.db.mixins import ChangeTrackerMixin, FiltersMixin
 from plane.utils.html_processor import strip_tags
+from plane.db.models.workspace import WorkspaceManager
+
+
+class InitiativeManager(WorkspaceManager):
+    def get_queryset(self):
+        return super().get_queryset().exclude(archived_at__isnull=False)
 
 
 class StateChoices(models.TextChoices):
@@ -53,6 +59,8 @@ class Initiative(BaseModel):
         blank=True,
     )
     archived_at = models.DateTimeField(null=True)
+
+    initiative_objects = InitiativeManager()
 
     class Meta:
         db_table = "initiatives"

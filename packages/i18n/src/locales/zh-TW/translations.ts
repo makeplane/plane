@@ -3616,6 +3616,7 @@ export default {
     all_initiatives: "所有倡議",
     delete_initiative: "刪除倡議",
     fill_all_required_fields: "請填寫所有必填欄位。",
+    archive_description: "僅已完成或已關閉的倡議可以封存",
     toast: {
       create_success: "倡議 {name} 已成功創建。",
       create_error: "創建倡議失敗。請再試一次！",
@@ -3624,6 +3625,11 @@ export default {
       delete: {
         success: "倡議已成功刪除。",
         error: "刪除倡議失敗",
+      },
+      archive: {
+        success: "倡議已成功封存。",
+        error: "封存倡議失敗",
+        initiative_cannot_be_archived_in_this_state: "此狀態下的倡議無法封存",
       },
       link_copied: "倡議連結已複製到剪貼板。",
       project_update_success: "倡議專案已成功更新。",
@@ -3647,6 +3653,7 @@ export default {
         title: "沒有匹配的倡議",
         description: `沒有檢測到與匹配條件相符的倡議。
  創建一個新的倡議代替。`,
+        archived_description: "未檢測到符合條件的已歸檔倡議。",
       },
       not_found: {
         title: "倡議不存在",

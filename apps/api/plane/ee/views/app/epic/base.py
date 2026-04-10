@@ -168,6 +168,7 @@ class EpicViewSet(BaseViewSet):
                         filter=Q(
                             initiative_epics__deleted_at__isnull=True,
                             initiative_epics__initiative_id__isnull=False,
+                            initiative_epics__initiative__archived_at__isnull=True,
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),

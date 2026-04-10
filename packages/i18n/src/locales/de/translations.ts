@@ -4098,6 +4098,7 @@ Erstellen Sie ein neues.`,
     all_initiatives: "Alle Initiativen",
     delete_initiative: "Initiative Löschen",
     fill_all_required_fields: "Bitte füllen Sie alle erforderlichen Felder aus.",
+    archive_description: "Nur abgeschlossene oder geschlossene Initiativen können archiviert werden",
     toast: {
       create_success: "Initiative {name} erfolgreich erstellt.",
       create_error: "Fehler beim Erstellen der Initiative. Bitte versuchen Sie es erneut!",
@@ -4106,6 +4107,11 @@ Erstellen Sie ein neues.`,
       delete: {
         success: "Initiative erfolgreich gelöscht.",
         error: "Fehler beim Löschen der Initiative",
+      },
+      archive: {
+        success: "Initiative erfolgreich archiviert.",
+        error: "Initiative konnte nicht archiviert werden",
+        initiative_cannot_be_archived_in_this_state: "Initiative kann in diesem Status nicht archiviert werden",
       },
       link_copied: "Initiativenlink in die Zwischenablage kopiert.",
       project_update_success: "Initiativenprojekte erfolgreich aktualisiert.",
@@ -4130,6 +4136,7 @@ Erstellen Sie ein neues.`,
         title: "Keine passenden Initiativen",
         description: `Keine Initiativen mit den passenden Kriterien gefunden.
  Erstellen Sie stattdessen eine neue Initiative.`,
+        archived_description: "Keine archivierten Initiativen mit den passenden Kriterien gefunden.",
       },
       not_found: {
         title: "Initiative existiert nicht",

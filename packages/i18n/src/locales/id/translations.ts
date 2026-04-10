@@ -3708,6 +3708,7 @@ jika Anda yakin pencarian Anda benar. `,
     all_initiatives: "Semua Inisiatif",
     delete_initiative: "Hapus Inisiatif",
     fill_all_required_fields: "Harap isi semua bidang yang diperlukan.",
+    archive_description: "Hanya inisiatif yang selesai atau ditutup yang dapat diarsipkan",
     toast: {
       create_success: "Inisiatif {name} berhasil dibuat.",
       create_error: "Gagal membuat inisiatif. Silakan coba lagi!",
@@ -3716,6 +3717,11 @@ jika Anda yakin pencarian Anda benar. `,
       delete: {
         success: "Inisiatif berhasil dihapus.",
         error: "Gagal menghapus Inisiatif",
+      },
+      archive: {
+        success: "Inisiatif berhasil diarsipkan.",
+        error: "Gagal mengarsipkan inisiatif",
+        initiative_cannot_be_archived_in_this_state: "Inisiatif tidak dapat diarsipkan dalam status ini",
       },
       link_copied: "Tautan inisiatif disalin ke clipboard.",
       project_update_success: "Proyek inisiatif berhasil diperbarui.",
@@ -3740,6 +3746,7 @@ jika Anda yakin pencarian Anda benar. `,
         title: "Tidak ada inisiatif yang cocok",
         description: `Tidak ada inisiatif yang terdeteksi dengan kriteria yang cocok.
  Buat inisiatif baru sebagai gantinya.`,
+        archived_description: "Tidak ada inisiatif yang diarsipkan terdeteksi dengan kriteria yang cocok.",
       },
       not_found: {
         title: "Inisiatif tidak ada",

@@ -3640,6 +3640,7 @@ Vytvorte nový.`,
     all_initiatives: "Všetky Iniciatívy",
     delete_initiative: "Odstrániť Iniciatívu",
     fill_all_required_fields: "Prosím, vyplňte všetky povinné polia.",
+    archive_description: "Archivovať možno len dokončené alebo zatvorené iniciatívy",
     toast: {
       create_success: "Iniciatíva {name} bola úspešne vytvorená.",
       create_error: "Nepodarilo sa vytvoriť iniciatívu. Skúste to znova!",
@@ -3648,6 +3649,11 @@ Vytvorte nový.`,
       delete: {
         success: "Iniciatíva bola úspešne odstránená.",
         error: "Nepodarilo sa odstrániť Iniciatívu",
+      },
+      archive: {
+        success: "Iniciatíva bola úspešne archivovaná.",
+        error: "Nepodarilo sa archivovať iniciatívu",
+        initiative_cannot_be_archived_in_this_state: "Iniciatívu v tomto stave nie je možné archivovať",
       },
       link_copied: "Odkaz na iniciatívu bol skopírovaný do schránky.",
       project_update_success: "Projekty iniciatívy boli úspešne aktualizované.",
@@ -3672,6 +3678,7 @@ Vytvorte nový.`,
         title: "Žiadne zodpovedajúce iniciatívy",
         description: `Neboli zistené žiadne iniciatívy so zodpovedajúcimi kritériami.
  Namiesto toho vytvorte novú iniciatívu.`,
+        archived_description: "Neboli zistené žiadne archivované iniciatívy so zodpovedajúcimi kritériami.",
       },
       not_found: {
         title: "Iniciatíva neexistuje",

@@ -13,11 +13,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
-import { MoreHorizontal } from "lucide-react";
+import { ArchiveRestoreIcon, MoreHorizontal } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_INITIATIVE_STATES, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { NewTabIcon, LinkIcon, EditIcon, TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -27,9 +27,12 @@ import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // Plane-web
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// types
 import type { TInitiative } from "@/types/initiative";
 // local components
 import { CreateUpdateInitiativeModal } from "./create-update-initiatives-modal";
+import { InitiativeArchiveModal } from "./initiative-archive-modal";
 import { InitiativeDeleteModal } from "./initiative-delete-modal";
 
 type Props = {
@@ -44,15 +47,19 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
   const { parentRef, initiative, workspaceSlug, disabled = false, customClassName } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
+  const [archiveModal, setArchiveModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
-
+  const {
+    initiative: { restoreInitiative },
+  } = useInitiatives();
   // derived values
-
+  const isArchived = !!initiative?.archived_at;
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const isOwnerOrAdmin = data?.id === initiative?.created_by || isAdmin;
+  const isArchivable = ARCHIVABLE_INITIATIVE_STATES.includes(initiative.state);
 
   const { t } = useTranslation();
 
@@ -67,12 +74,34 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
     });
   const handleOpenInNewTab = () => window.open(`/${initiativeLink}`, "_blank");
 
-  const handleEditCycle = () => {
+  const handleEditInitiative = () => {
     setUpdateModal(true);
   };
 
-  const handleDeleteCycle = () => {
+  const handleArchiveInitiative = () => {
+    setArchiveModal(true);
+  };
+
+  const handleDeleteInitiative = () => {
     setDeleteModal(true);
+  };
+
+  const handleRestoreInitiative = async () => {
+    if (!workspaceSlug || !initiative.id) return;
+    try {
+      await restoreInitiative(workspaceSlug.toString(), initiative.id);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Restore success",
+        message: `You can find ${initiative.name} in your initiatives.`,
+      });
+    } catch (_error) {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("initiatives.toast.restore.error"),
+      });
+    }
   };
 
   const MENU_ITEMS: TContextMenuItem[] = [
@@ -80,24 +109,44 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
       key: "edit",
       title: t("edit"),
       icon: EditIcon,
-      action: handleEditCycle,
-      shouldRender: !disabled,
+      action: handleEditInitiative,
+      shouldRender: !disabled && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: t("open_in_new_tab"),
       icon: NewTabIcon,
+      shouldRender: !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: t("copy_link"),
       icon: LinkIcon,
+      shouldRender: !isArchived,
+    },
+    {
+      key: "archive",
+      action: handleArchiveInitiative,
+      title: t("archive"),
+      description: isArchivable ? undefined : t("initiatives.archive_description"),
+      icon: ArchiveIcon,
+      className: "items-start",
+      iconClassName: "mt-1 shrink-0",
+      disabled: !isArchivable,
+      shouldRender: !disabled && isOwnerOrAdmin && !isArchived,
+    },
+    {
+      key: "restore",
+      action: handleRestoreInitiative,
+      title: t("restore"),
+      icon: ArchiveRestoreIcon,
+      shouldRender: !disabled && isOwnerOrAdmin && isArchived,
     },
     {
       key: "delete",
-      action: handleDeleteCycle,
+      action: handleDeleteInitiative,
       title: t("delete"),
       icon: TrashIcon,
       shouldRender: !disabled && isOwnerOrAdmin,
@@ -112,6 +161,12 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
             initiativeId={initiative?.id}
             isOpen={updateModal}
             handleClose={() => setUpdateModal(false)}
+          />
+          <InitiativeArchiveModal
+            initiative={initiative}
+            isOpen={archiveModal}
+            handleClose={() => setArchiveModal(false)}
+            workspaceSlug={workspaceSlug}
           />
           <InitiativeDeleteModal
             initiative={initiative}

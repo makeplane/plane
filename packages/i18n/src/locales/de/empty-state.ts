@@ -229,6 +229,10 @@ export default {
         "Verwenden Sie Initiativen, um verwandte Projekte und Epics zu gruppieren und zu überwachen. Sehen Sie Fortschritt, Prioritäten und Ergebnisse—alles von einem einzigen Bildschirm aus.",
       cta_primary: "Initiative erstellen",
     },
+    archived_initiatives: {
+      title: "Noch keine archivierten Initiativen",
+      description: "Finden Sie sie hier nach der Archivierung.",
+    },
     customers: {
       title: "Verwalten Sie Arbeit nach dem, was für Ihre Kunden wichtig ist",
       description:

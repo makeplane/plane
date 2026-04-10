@@ -43,6 +43,22 @@ export const projectRoutes: RouteConfigEntry[] = [
       route(":workspaceSlug/analytics/:tabId", "./(all)/[workspaceSlug]/(projects)/analytics/[tabId]/page.tsx"),
     ]),
 
+    // Archives - Initiatives
+    layout("./(all)/[workspaceSlug]/(projects)/archives/initiatives/layout.tsx", [
+      // Archives - Initiatives - List
+      layout("./(all)/[workspaceSlug]/(projects)/archives/initiatives/(list)/layout.tsx", [
+        route(
+          ":workspaceSlug/archives/initiatives",
+          "./(all)/[workspaceSlug]/(projects)/archives/initiatives/(list)/page.tsx"
+        ),
+      ]),
+    ]),
+
+    // Archives - Projects
+    layout("./(all)/[workspaceSlug]/(projects)/archives/projects/layout.tsx", [
+      route(":workspaceSlug/archives/projects", "./(all)/[workspaceSlug]/(projects)/archives/projects/page.tsx"),
+    ]),
+
     // Browse
     layout("./(all)/[workspaceSlug]/(projects)/browse/[workItem]/layout.tsx", [
       route(":workspaceSlug/browse/:workItem", "./(all)/[workspaceSlug]/(projects)/browse/[workItem]/page.tsx"),
@@ -82,14 +98,6 @@ export const projectRoutes: RouteConfigEntry[] = [
       route(
         ":workspaceSlug/workspace-views/:globalViewId",
         "./(all)/[workspaceSlug]/(projects)/workspace-views/[globalViewId]/page.tsx"
-      ),
-    ]),
-
-    // Archived Projects
-    layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
-      route(
-        ":workspaceSlug/projects/archives",
-        "./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/page.tsx"
       ),
     ]),
 

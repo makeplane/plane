@@ -26,10 +26,11 @@ type Props = {
   initiative: TInitiative;
   workspaceSlug: string;
   onEpicsUpdated: (epicIds: string[]) => Promise<void>;
+  disabled?: boolean;
 };
 
 export const InitiativeEpicsField = observer(function InitiativeEpicsField(props: Props) {
-  const { initiative, workspaceSlug, onEpicsUpdated } = props;
+  const { initiative, workspaceSlug, onEpicsUpdated, disabled } = props;
   const { isMobile } = usePlatformOS();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
@@ -82,6 +83,7 @@ export const InitiativeEpicsField = observer(function InitiativeEpicsField(props
               isModalOpen && "bg-layer-transparent-active"
             )}
             onClick={() => void handleOpenModal()}
+            disabled={disabled}
           >
             <EpicIcon className="h-4 w-4 shrink-0 text-tertiary" />
             <span className="min-w-0 grow truncate">{epicButtonLabel}</span>

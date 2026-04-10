@@ -223,6 +223,10 @@ export default {
         "Używaj inicjatyw do grupowania i monitorowania powiązanych projektów i epików. Przeglądaj postępy, priorytety i wyniki — wszystko z jednego ekranu.",
       cta_primary: "Utwórz inicjatywę",
     },
+    archived_initiatives: {
+      title: "Brak zarchiwizowanych inicjatyw",
+      description: "Znajdziesz je tutaj po zarchiwizowaniu.",
+    },
     customers: {
       title: "Zarządzaj pracą według tego, co jest ważne dla Twoich klientów",
       description:

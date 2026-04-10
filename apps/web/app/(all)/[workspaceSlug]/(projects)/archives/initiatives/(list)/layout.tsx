@@ -17,18 +17,24 @@ import { observer } from "mobx-react";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { InitiativesFilterProvider } from "@/components/initiatives/components/rich-filters/context";
+import { WorkspaceArchivesHeader } from "@/components/archives/workspace-archives-header";
+// layout
+import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 
-import { InitiativesListHeader } from "./header";
+import type { Route } from "./+types/layout";
 
-const InitiativesListLayout = observer(function InitiativesListLayout() {
+const ArchivedInitiativesLayout = observer(function ArchivedInitiativesLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
+
   return (
-    <InitiativesFilterProvider>
-      <AppHeader header={<InitiativesListHeader />} />
-      <ContentWrapper>
-        <Outlet />
-      </ContentWrapper>
-    </InitiativesFilterProvider>
+    <WorkspaceAccessWrapper pageKey="archives">
+      <InitiativesFilterProvider isArchived>
+        <AppHeader header={<WorkspaceArchivesHeader activeTab="initiatives" workspaceSlug={workspaceSlug} />} />
+        <ContentWrapper>
+          <Outlet />
+        </ContentWrapper>
+      </InitiativesFilterProvider>
+    </WorkspaceAccessWrapper>
   );
 });
-
-export default InitiativesListLayout;
+export default ArchivedInitiativesLayout;

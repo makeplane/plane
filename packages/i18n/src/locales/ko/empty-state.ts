@@ -213,6 +213,10 @@ export default {
         "이니셔티브를 사용하여 관련 프로젝트와 에픽을 그룹화하고 모니터링하세요. 진행 상황, 우선순위 및 결과를 모두 단일 화면에서 확인하세요.",
       cta_primary: "이니셔티브 생성",
     },
+    archived_initiatives: {
+      title: "아직 보관된 이니셔티브가 없습니다",
+      description: "보관 후 여기에서 찾을 수 있습니다.",
+    },
     customers: {
       title: "고객에게 중요한 것에 따라 작업 관리",
       description:

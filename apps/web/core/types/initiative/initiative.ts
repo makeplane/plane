@@ -31,6 +31,7 @@ export type TInitiativeLinkMetadata = {
 export type TInitiative = {
   id: string;
   reactions?: TInitiativeReaction[];
+  archived_at: string | null;
   created_at: string;
   updated_at: string | null;
   deleted_at: string | null;

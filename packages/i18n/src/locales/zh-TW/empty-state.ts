@@ -208,6 +208,10 @@ export default {
       description: "使用計劃對相關專案和史詩進行分組和監控。檢視進度、優先順序和成果 — 全部來自單個螢幕。",
       cta_primary: "建立計劃",
     },
+    archived_initiatives: {
+      title: "尚無已歸檔的倡議",
+      description: "歸檔後可在此處找到。",
+    },
     customers: {
       title: "按對客戶重要的內容管理工作",
       description:

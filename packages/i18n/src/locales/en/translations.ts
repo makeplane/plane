@@ -4126,6 +4126,10 @@ if you are sure your search is right. `,
     all_initiatives: "All Initiatives",
     delete_initiative: "Delete Initiative",
     fill_all_required_fields: "Please fill in all required fields.",
+    archive_initiative: "Archive Initiative",
+    archive_confirm_message:
+      "Are you sure you want to archive the initiative? All your archived initiatives can be restored later.",
+    archive_description: "Only completed or closed initiatives can be archived",
     toast: {
       create_success: "Initiative {name} created successfully.",
       create_error: "Failed to create initiative. Please try again!",
@@ -4134,6 +4138,14 @@ if you are sure your search is right. `,
       delete: {
         success: "Initiative deleted successfully.",
         error: "Failed to delete Initiative",
+      },
+      archive: {
+        success: "Initiative archived successfully.",
+        error: "Failed to archive Initiative",
+        initiative_cannot_be_archived_in_this_state: "Initiative cannot be archived in this state",
+      },
+      restore: {
+        error: "Initiative could not be restored. Please try again.",
       },
       link_copied: "Initiative link copied to clipboard.",
       project_update_success: "Initiative projects updated successfully.",
@@ -4158,6 +4170,7 @@ if you are sure your search is right. `,
         title: "No matching initiatives",
         description: `No initiatives detected with the matching criteria.
  Create a new initiative instead.`,
+        archived_description: "No archived initiatives detected with the matching criteria.",
       },
       not_found: {
         title: "Initiative does not exist",

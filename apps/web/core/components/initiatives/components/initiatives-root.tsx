@@ -37,7 +37,11 @@ import { InitiativeTimelineLayout } from "./layouts/timeline";
 import { InitiativeKanbanLayout } from "./layouts/kanban";
 import { InitiativesListLayout } from "./layouts/list";
 
-export const InitiativesRoot = observer(function InitiativesRoot() {
+interface IInitiativesRootProps {
+  isArchived?: boolean;
+}
+export const InitiativesRoot = observer(function InitiativesRoot(props: IInitiativesRootProps) {
+  const { isArchived = false } = props;
   // plane hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -73,12 +77,16 @@ export const InitiativesRoot = observer(function InitiativesRoot() {
   );
   const isEmptyInitiatives = isEmpty(groupedInitiativeIds) || emptyGroupedInitiativeIds;
 
-  if (emptyGroupedInitiativeIds && size(initiative.initiativesMap) > 0) {
+  if (emptyGroupedInitiativeIds && size(isArchived ? initiative.archivedInitiativeIds : initiative.initiativeIds) > 0) {
     return (
       <div className="flex items-center justify-center h-full w-full">
         <SimpleEmptyState
           title={t("initiatives.empty_state.search.title")}
-          description={t("initiatives.empty_state.search.description")}
+          description={
+            isArchived
+              ? t("initiatives.empty_state.search.archived_description")
+              : t("initiatives.empty_state.search.description")
+          }
           assetPath={searchedResolvedPath}
         />
       </div>
@@ -88,15 +96,27 @@ export const InitiativesRoot = observer(function InitiativesRoot() {
     return (
       <EmptyStateDetailed
         assetKey="initiative"
-        title={t("workspace_empty_state.initiatives.title")}
-        description={t("workspace_empty_state.initiatives.description")}
-        actions={[
-          {
-            label: t("workspace_empty_state.initiatives.cta_primary"),
-            onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
-            disabled: !hasWorkspaceMemberLevelPermissions,
-          },
-        ]}
+        title={
+          isArchived
+            ? t("workspace_empty_state.archived_initiatives.title")
+            : t("workspace_empty_state.initiatives.title")
+        }
+        description={
+          isArchived
+            ? t("workspace_empty_state.archived_initiatives.description")
+            : t("workspace_empty_state.initiatives.description")
+        }
+        actions={
+          isArchived
+            ? undefined
+            : [
+                {
+                  label: t("workspace_empty_state.initiatives.cta_primary"),
+                  onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
+                  disabled: !hasWorkspaceMemberLevelPermissions,
+                },
+              ]
+        }
       />
     );
   }

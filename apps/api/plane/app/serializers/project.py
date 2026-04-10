@@ -263,7 +263,13 @@ class ProjectListSerializer(DynamicBaseSerializer):
 
     def get_initiative_ids(self, obj):
         if obj.initiatives.all():
-            return [initiative.initiative_id for initiative in obj.initiatives.all()]
+            return [
+                initiative.initiative_id
+                for initiative in obj.initiatives.filter(
+                    initiative__archived_at__isnull=True, initiative__deleted_at__isnull=True
+                ).all()
+            ]
+
         return []
 
     def get_label_ids(self, obj):

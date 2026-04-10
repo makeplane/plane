@@ -350,16 +350,6 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     { revalidateOnFocus: false }
   );
 
-  // fetching filtered initiatives
-  useSWR(
-    isInitiativesFeatureEnabled ? `initFilteredInitiatives-${workspaceSlug}` : null,
-    isInitiativesFeatureEnabled ? () => initiative.initFilteredInitiatives(workspaceSlug) : null,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
-
   // fetching all initiative labels
   useSWR(
     isInitiativesFeatureEnabled ? ["initiativeLabels", workspaceSlug, isInitiativesFeatureEnabled] : null,

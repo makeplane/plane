@@ -3691,6 +3691,7 @@ export default {
     all_initiatives: "すべてのイニシアチブ",
     delete_initiative: "イニシアチブを削除",
     fill_all_required_fields: "すべての必須フィールドに入力してください。",
+    archive_description: "完了またはクローズ済みのイニシアチブのみアーカイブできます",
     toast: {
       create_success: "イニシアチブ {name} が正常に作成されました。",
       create_error: "イニシアチブの作成に失敗しました。もう一度お試しください！",
@@ -3699,6 +3700,11 @@ export default {
       delete: {
         success: "イニシアチブが正常に削除されました。",
         error: "イニシアチブの削除に失敗しました",
+      },
+      archive: {
+        success: "イニシアチブをアーカイブしました。",
+        error: "イニシアチブをアーカイブできませんでした",
+        initiative_cannot_be_archived_in_this_state: "この状態のイニシアチブはアーカイブできません",
       },
       link_copied: "イニシアチブのリンクがクリップボードにコピーされました。",
       project_update_success: "イニシアチブのプロジェクトが正常に更新されました。",
@@ -3723,6 +3729,7 @@ export default {
         title: "一致するイニシアチブがありません",
         description: `一致する条件のイニシアチブは検出されませんでした。
  代わりに新しいイニシアチブを作成してください。`,
+        archived_description: "一致する条件のアーカイブされたイニシアチブは検出されませんでした。",
       },
       not_found: {
         title: "イニシアチブが存在しません",

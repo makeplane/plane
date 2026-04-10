@@ -3692,6 +3692,7 @@ modüller arşivlenebilir.`,
     all_initiatives: "Tüm İnisiyatifler",
     delete_initiative: "İnisiyatif Sil",
     fill_all_required_fields: "Lütfen tüm zorunlu alanları doldurun.",
+    archive_description: "Yalnızca tamamlanmış veya kapatılmış inisiyatifler arşivlenebilir",
     toast: {
       create_success: "İnisiyatif {name} başarıyla oluşturuldu.",
       create_error: "İnisiyatif oluşturulamadı. Lütfen tekrar deneyin!",
@@ -3700,6 +3701,11 @@ modüller arşivlenebilir.`,
       delete: {
         success: "İnisiyatif başarıyla silindi.",
         error: "İnisiyatif silinemedi",
+      },
+      archive: {
+        success: "İnisiyatif başarıyla arşivlendi.",
+        error: "İnisiyatif arşivlenemedi",
+        initiative_cannot_be_archived_in_this_state: "İnisiyatif bu durumda arşivlenemez",
       },
       link_copied: "İnisiyatif bağlantısı panoya kopyalandı.",
       project_update_success: "İnisiyatif projeleri başarıyla güncellendi.",
@@ -3724,6 +3730,7 @@ modüller arşivlenebilir.`,
         title: "Eşleşen inisiyatif yok",
         description: `Eşleşen kriterlere sahip inisiyatif tespit edilmedi.
  Bunun yerine yeni bir inisiyatif oluşturun.`,
+        archived_description: "Eşleşen kriterlere sahip arşivlenmiş inisiyatif tespit edilmedi.",
       },
       not_found: {
         title: "İnisiyatif mevcut değil",

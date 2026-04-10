@@ -3676,6 +3676,7 @@ Utwórz nowy.`,
     all_initiatives: "Wszystkie Inicjatywy",
     delete_initiative: "Usuń Inicjatywę",
     fill_all_required_fields: "Wypełnij wszystkie wymagane pola.",
+    archive_description: "Archiwować można tylko ukończone lub zamknięte inicjatywy",
     toast: {
       create_success: "Inicjatywa {name} utworzona pomyślnie.",
       create_error: "Nie udało się utworzyć inicjatywy. Spróbuj ponownie!",
@@ -3684,6 +3685,11 @@ Utwórz nowy.`,
       delete: {
         success: "Inicjatywa usunięta pomyślnie.",
         error: "Nie udało się usunąć Inicjatywy",
+      },
+      archive: {
+        success: "Inicjatywa została pomyślnie zarchiwizowana.",
+        error: "Nie udało się zarchiwizować inicjatywy",
+        initiative_cannot_be_archived_in_this_state: "Nie można zarchiwizować inicjatywy w tym stanie",
       },
       link_copied: "Link do inicjatywy skopiowany do schowka.",
       project_update_success: "Projekty inicjatywy zaktualizowane pomyślnie.",
@@ -3708,6 +3714,7 @@ Utwórz nowy.`,
         title: "Brak pasujących inicjatyw",
         description: `Nie wykryto inicjatyw z pasującymi kryteriami.
  Zamiast tego utwórz nową inicjatywę.`,
+        archived_description: "Nie wykryto zarchiwizowanych inicjatyw z pasującymi kryteriami.",
       },
       not_found: {
         title: "Inicjatywa nie istnieje",

@@ -222,6 +222,10 @@ export default {
         "Utilizați inițiative pentru a grupa și monitoriza proiecte și epopei conexe. Vizualizați progresul, prioritățile și rezultatele — toate dintr-un singur ecran.",
       cta_primary: "Creați o Inițiativă",
     },
+    archived_initiatives: {
+      title: "Nicio inițiativă arhivată încă",
+      description: "Găsiți-le aici după arhivare.",
+    },
     customers: {
       title: "Gestionați munca în funcție de ceea ce este important pentru clienții dvs.",
       description:

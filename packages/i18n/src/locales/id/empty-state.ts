@@ -222,6 +222,10 @@ export default {
         "Gunakan inisiatif untuk mengelompokkan dan memantau proyek dan epik terkait. Lihat kemajuan, prioritas, dan hasil—semua dari satu layar.",
       cta_primary: "Buat Inisiatif",
     },
+    archived_initiatives: {
+      title: "Belum ada inisiatif yang diarsipkan",
+      description: "Temukan di sini setelah diarsipkan.",
+    },
     customers: {
       title: "Kelola pekerjaan berdasarkan apa yang penting bagi pelanggan Anda",
       description:

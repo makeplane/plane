@@ -48,6 +48,25 @@ export class InitiativeService extends APIService {
       });
   }
 
+  async getArchivedInitiatives(
+    workspaceSlug: string,
+    filters?: TExternalInitiativeFilterExpression
+  ): Promise<TInitiative[]> {
+    const queryParams: Record<string, string> = {};
+
+    if (filters) {
+      queryParams.filters = JSON.stringify(filters);
+    }
+
+    return this.get(`/api/workspaces/${workspaceSlug}/archived-initiatives/`, {
+      params: queryParams,
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async createInitiative(workspaceSlug: string, payload: Partial<TInitiative>): Promise<TInitiative> {
     return this.post(`/api/workspaces/${workspaceSlug}/initiatives/`, payload)
       .then((res) => res?.data)
@@ -66,6 +85,22 @@ export class InitiativeService extends APIService {
 
   async updateInitiative(workspaceSlug: string, initiativeId: string, payload: Partial<TInitiative>): Promise<void> {
     return this.patch(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/`, payload)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async archiveInitiative(workspaceSlug: string, initiativeId: string): Promise<Partial<TInitiative>> {
+    return this.post(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/archive/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async restoreInitiative(workspaceSlug: string, initiativeId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/archive/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

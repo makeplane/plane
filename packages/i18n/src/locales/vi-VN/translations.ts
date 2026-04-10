@@ -3687,6 +3687,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
     all_initiatives: "Tất cả Sáng kiến",
     delete_initiative: "Xóa Sáng kiến",
     fill_all_required_fields: "Vui lòng điền vào tất cả các trường bắt buộc.",
+    archive_description: "Chỉ các sáng kiến đã hoàn thành hoặc đã đóng mới có thể lưu trữ",
     toast: {
       create_success: "Sáng kiến {name} đã được tạo thành công.",
       create_error: "Không thể tạo sáng kiến. Vui lòng thử lại!",
@@ -3695,6 +3696,11 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       delete: {
         success: "Sáng kiến đã được xóa thành công.",
         error: "Không thể xóa Sáng kiến",
+      },
+      archive: {
+        success: "Đã lưu trữ sáng kiến thành công.",
+        error: "Không thể lưu trữ sáng kiến",
+        initiative_cannot_be_archived_in_this_state: "Không thể lưu trữ sáng kiến ở trạng thái này",
       },
       link_copied: "Liên kết sáng kiến đã được sao chép vào clipboard.",
       project_update_success: "Dự án sáng kiến đã được cập nhật thành công.",
@@ -3719,6 +3725,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
         title: "Không có sáng kiến phù hợp",
         description: `Không phát hiện sáng kiến nào với tiêu chí phù hợp.
  Tạo một sáng kiến mới thay thế.`,
+        archived_description: "Không phát hiện sáng kiến đã lưu trữ nào phù hợp với tiêu chí.",
       },
       not_found: {
         title: "Sáng kiến không tồn tại",
