@@ -7,30 +7,34 @@ const userWorklogService = new UserWorklogService();
 
 const MAX_MINUTES = 720; // 12 hours
 
-function getProgressGradient(totalMinutes: number): { fill: string; bg: string; border: string } {
+function getProgressGradient(totalMinutes: number): { fill: string; bg: string; border: string; text: string } {
   const hours = totalMinutes / 60;
   if (hours >= 10)
     return {
       fill: "linear-gradient(90deg, #f87171, #ef4444)",
       bg: "linear-gradient(90deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08))",
       border: "rgba(239, 68, 68, 0.55)",
+      text: "rgb(239, 68, 68)",
     };
   if (hours >= 8)
     return {
       fill: "linear-gradient(90deg, #4ade80, #22c55e)",
       bg: "linear-gradient(90deg, rgba(34,197,94,0.15), rgba(34,197,94,0.08))",
       border: "rgba(34, 197, 94, 0.55)",
+      text: "rgb(34, 197, 94)",
     };
   if (hours >= 4)
     return {
       fill: "linear-gradient(90deg, #60a5fa, #3b82f6)",
       bg: "linear-gradient(90deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08))",
       border: "rgba(59, 130, 246, 0.55)",
+      text: "rgb(59, 130, 246)",
     };
   return {
     fill: "linear-gradient(90deg, #fbbf24, #f59e0b)",
     bg: "linear-gradient(90deg, rgba(245,158,11,0.15), rgba(245,158,11,0.08))",
     border: "rgba(245, 158, 11, 0.55)",
+    text: "rgb(245, 158, 11)",
   };
 }
 
@@ -74,8 +78,8 @@ export function DailyLogtimeIndicator() {
           style={{ width: `${progress * 100}%`, background: color.fill }}
         />
         <div
-          className="relative z-10 flex items-center gap-1.5 font-medium whitespace-nowrap"
-          style={{ color: "#ffffff", fontSize: "12px" }}
+          className="relative z-10 flex items-center gap-1.5 font-semibold whitespace-nowrap"
+          style={{ color: color.text, fontSize: "12px" }}
         >
           <Clock className="size-3.5" strokeWidth={2.5} />
           <span>{label}</span>

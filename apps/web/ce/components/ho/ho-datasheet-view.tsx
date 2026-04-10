@@ -38,27 +38,25 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
       )}
       <HoDatasheetToolbar />
 
+      <HoDatasheetTable issues={store.issues} displayProperties={store.displayProperties} />
+
       {store.issues.length === 0 ? (
         <div className="flex h-32 items-center justify-center text-sm text-placeholder">{t("ho.no_work_items")}</div>
       ) : (
-        <>
-          <HoDatasheetTable issues={store.issues} displayProperties={store.displayProperties} />
-
-          {store.nextPageUrl && (
-            <div className="flex justify-center py-4">
-              <button
-                type="button"
-                disabled={store.isLoading}
-                onClick={() => void store.fetchNextPage()}
-                className="rounded border border-subtle px-4 py-1.5 text-sm text-secondary hover:text-primary disabled:opacity-50"
-              >
-                {store.isLoading
-                  ? t("ho.loading")
-                  : t("ho.load_more", { loaded: store.issues.length, total: store.totalCount })}
-              </button>
-            </div>
-          )}
-        </>
+        store.nextPageUrl && (
+          <div className="flex justify-center py-4">
+            <button
+              type="button"
+              disabled={store.isLoading}
+              onClick={() => void store.fetchNextPage()}
+              className="rounded border border-subtle px-4 py-1.5 text-sm text-secondary hover:text-primary disabled:opacity-50"
+            >
+              {store.isLoading
+                ? t("ho.loading")
+                : t("ho.load_more", { loaded: store.issues.length, total: store.totalCount })}
+            </button>
+          </div>
+        )
       )}
     </div>
   );
