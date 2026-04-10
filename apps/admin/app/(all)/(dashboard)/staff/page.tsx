@@ -17,7 +17,7 @@ import { useInstanceStaff, useInstanceDepartment } from "@/hooks/store";
 import { StaffTable } from "./components/staff-table";
 import { StaffFormModal } from "./components/staff-form-modal";
 import { StaffImportModal } from "./components/staff-import-modal";
-import { Route } from "next";
+import type { Route } from "./+types/page";
 
 const StaffPage = observer(function StaffPage() {
   const { stats, staffIds, fetchStaff, fetchStats } = useInstanceStaff();
