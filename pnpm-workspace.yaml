@@ -152,7 +152,7 @@ catalog:
   amqplib: 0.10.5
   asana: 3.1.9
   ast-types: 0.14.2
-  axios: 1.13.5
+  axios: 1.15.0
   bluebird: 3.7.2
   buffer: 6.0.3
   chroma-js: 3.2.0
