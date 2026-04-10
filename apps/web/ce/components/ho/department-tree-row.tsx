@@ -1,40 +1,8 @@
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
-import useSWR from "swr";
 import { cn } from "@plane/utils";
 import { getButtonStyling } from "@plane/propel/button";
-import { Badge } from "@plane/propel/badge";
 import type { IDepartment } from "@/plane-web/services/department.service";
-import type { IWorkspaceView } from "@plane/types";
-import { WorkspaceService } from "@/services/workspace.service";
-
-const workspaceService = new WorkspaceService();
-
-function HoDeptViewTags({ workspaceSlug }: { workspaceSlug: string }) {
-  const { data: views, isLoading } = useSWR(`WORKSPACE_VIEWS_${workspaceSlug}`, () =>
-    workspaceService.getAllViews(workspaceSlug)
-  );
-
-  if (isLoading) return <span className="text-tertiary text-12">...</span>;
-  if (!views?.length) return <span className="text-tertiary text-13">—</span>;
-
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {views.map((view: IWorkspaceView) => (
-        <a
-          key={view.id}
-          href={`/${workspaceSlug}/workspace-views/${view.id}/`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Badge variant="neutral" size="base">
-            {view.name}
-          </Badge>
-        </a>
-      ))}
-    </div>
-  );
-}
 
 type Props = {
   dept: IDepartment;
@@ -72,13 +40,6 @@ export function HoDepartmentTreeRow({ dept, depth = 0 }: Props) {
             >
               {dept.linked_workspace_detail.name}
             </button>
-          ) : (
-            <span className="text-13 text-tertiary">—</span>
-          )}
-        </td>
-        <td className="px-4 py-2.5 text-sm">
-          {dept.linked_workspace_detail ? (
-            <HoDeptViewTags workspaceSlug={dept.linked_workspace_detail.slug} />
           ) : (
             <span className="text-13 text-tertiary">—</span>
           )}
