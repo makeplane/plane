@@ -80,9 +80,134 @@ jobs:
         run: |
             echo "PR number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
 
+  check-deployment:
+    name: Check Existing Deployment
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      has_deployment: ${{ steps.check_helm.outputs.has_deployment }}
+      build_admin:    ${{ steps.check_files.outputs.build_admin }}
+      build_silo:     ${{ steps.check_files.outputs.build_silo }}
+      build_web:      ${{ steps.check_files.outputs.build_web }}
+      build_space:    ${{ steps.check_files.outputs.build_space }}
+      build_live:     ${{ steps.check_files.outputs.build_live }}
+      build_monitor:  ${{ steps.check_files.outputs.build_monitor }}
+      build_api:      ${{ steps.check_files.outputs.build_api }}
+      build_email:    ${{ steps.check_files.outputs.build_email }}
+      build_proxy:    ${{ steps.check_files.outputs.build_proxy }}
+    steps:
+      - name: Configure AWS credentials to assume the EKS role
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_EKS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ secrets.AWS_REGION || 'us-east-1' }} \
+            --name ${{ secrets.EKS_CLUSTER_NAME || 'plane-eks-dev' }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Check for existing helm release
+        id: check_helm
+        run: |
+          PR_NUMBER="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
+          DEPLOY_TYPE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}"
+
+          # Only check the release matching the current deploy type.
+          # This ensures a type switch (e.g. cloud → enterprise) is treated as
+          # a fresh deployment so all images (including monitor) are rebuilt.
+          if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
+            RELEASE_NAME="ee-${PR_NUMBER}-ent"
+          else
+            RELEASE_NAME="ee-${PR_NUMBER}-cloud"
+          fi
+
+          if helm status "${RELEASE_NAME}" --namespace "${RELEASE_NAME}" &>/dev/null; then
+            echo "has_deployment=true" >> "$GITHUB_OUTPUT"
+            echo "Existing ${DEPLOY_TYPE} deployment found for PR ${PR_NUMBER} — selective image building enabled"
+          else
+            echo "has_deployment=false" >> "$GITHUB_OUTPUT"
+            echo "No existing ${DEPLOY_TYPE} deployment for PR ${PR_NUMBER} — all images will be built"
+          fi
+
+      - name: Get changed files and set per-service build flags
+        id: check_files
+        if: steps.check_helm.outputs.has_deployment == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          PR_NUMBER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
+        run: |
+          # Fetch up to 100 changed files from GitHub API (no checkout needed)
+          RESPONSE=$(curl -sf \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/files?per_page=100")
+
+          FILE_COUNT=$(echo "$RESPONSE" | jq 'length')
+          echo "Changed files detected: ${FILE_COUNT}"
+
+          # If the page is full (100), there may be more files we can't see.
+          # Rebuild everything to avoid missing a changed service.
+          if [ "$FILE_COUNT" -ge 100 ]; then
+            echo "Too many changed files — rebuilding all services to be safe"
+            for svc in admin silo web space live monitor api email proxy; do
+              echo "build_${svc}=true" >> "$GITHUB_OUTPUT"
+            done
+            exit 0
+          fi
+
+          CHANGED_FILES=$(echo "$RESPONSE" | jq -r '.[].filename')
+
+          # packages/** is a shared library used by all frontend services
+          if echo "$CHANGED_FILES" | grep -qE '^packages/'; then
+            PACKAGES_CHANGED=true
+          else
+            PACKAGES_CHANGED=false
+          fi
+
+          # set_flag SERVICE PATH_PATTERN AFFECTED_BY_PACKAGES
+          # Sets build_SERVICE=true if the service path changed,
+          # or (for frontend services) if packages/ also changed.
+          set_flag() {
+            local svc=$1 pattern=$2 uses_packages=${3:-false}
+            if echo "$CHANGED_FILES" | grep -qE "$pattern"; then
+              echo "build_${svc}=true" >> "$GITHUB_OUTPUT"
+            elif [ "$uses_packages" = "true" ] && [ "$PACKAGES_CHANGED" = "true" ]; then
+              echo "build_${svc}=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "build_${svc}=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
+
+          set_flag admin   '^apps/admin/'   true   # frontend — uses packages/
+          set_flag silo    '^apps/silo/'    false  # backend
+          set_flag web     '^apps/web/'     true   # frontend — uses packages/
+          set_flag space   '^apps/space/'   true   # frontend — uses packages/
+          set_flag live    '^apps/live/'    true   # frontend — uses packages/
+          set_flag monitor '^apps/monitor/' false  # enterprise backend
+          set_flag api     '^apps/api/'     false  # backend
+          set_flag email   '^apps/email/'   false  # backend
+          set_flag proxy   '^apps/proxy/'   false  # nginx config
+
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_admin == 'true'
+      )
     runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
@@ -117,7 +242,15 @@ jobs:
 
   branch_build_push_silo:
     name: Build-Push Silo Docker Image
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_silo == 'true'
+      )
     runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
@@ -153,7 +286,15 @@ jobs:
   branch_build_push_web:
     name: Build-Push Web Docker Image
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_web == 'true'
+      )
     permissions:
         id-token: write
         contents: read
@@ -188,7 +329,15 @@ jobs:
   branch_build_push_space:
     name: Build-Push Space Docker Image
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_space == 'true'
+      )
     permissions:
       id-token: write
       contents: read
@@ -223,7 +372,15 @@ jobs:
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_live == 'true'
+      )
     permissions:
       id-token: write
       contents: read
@@ -257,9 +414,20 @@ jobs:
 
   branch_build_push_monitor:
     name: Build-Push Monitor Docker Image
-    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type) == 'enterprise' }}
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'enterprise' ||
+        github.event.client_payload.slash_command.args.named.type == 'enterprise'
+      ) &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_monitor == 'true'
+      )
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
     permissions:
       id-token: write
       contents: read
@@ -304,7 +472,15 @@ jobs:
   branch_build_push_api:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_api == 'true'
+      )
     permissions:
       id-token: write
       contents: read
@@ -339,7 +515,15 @@ jobs:
   branch_build_push_email:
     name: Build-Push Email Docker Image
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_email == 'true'
+      )
     permissions:
       id-token: write
       contents: read
@@ -374,7 +558,15 @@ jobs:
   branch_build_push_proxy:
     name: Build-Push Proxy Docker Image
     runs-on: ubuntu-22.04-4core
-    needs: [pre-requisites]
+    needs: [pre-requisites, check-deployment]
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      (
+        needs.check-deployment.outputs.has_deployment == 'false' ||
+        needs.check-deployment.outputs.build_proxy == 'true'
+      )
     permissions:
       id-token: write
       contents: read
@@ -408,16 +600,30 @@ jobs:
 
   branch_build_push_aio:
     name: Build-Push AIO Docker Image
-    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.aio == 'true') || github.event.client_payload.slash_command.args.named.aio == 'true' }}
     runs-on: ubuntu-22.04-4core
     needs:
       - pre-requisites
+      - check-deployment
       - branch_build_push_admin
       - branch_build_push_web
       - branch_build_push_space
       - branch_build_push_live
       - branch_build_push_api
       - branch_build_push_proxy
+    if: |
+      always() &&
+      needs.pre-requisites.result == 'success' &&
+      needs.check-deployment.result == 'success' &&
+      needs.branch_build_push_admin.result != 'failure' &&
+      needs.branch_build_push_web.result != 'failure' &&
+      needs.branch_build_push_space.result != 'failure' &&
+      needs.branch_build_push_live.result != 'failure' &&
+      needs.branch_build_push_api.result != 'failure' &&
+      needs.branch_build_push_proxy.result != 'failure' &&
+      (
+        github.event_name == 'workflow_dispatch' && github.event.inputs.aio == 'true' ||
+        github.event.client_payload.slash_command.args.named.aio == 'true'
+      )
     permissions:
       id-token: write
       contents: read
@@ -465,6 +671,7 @@ jobs:
   deploy-plane:
     name: Deploy plane
     needs: [pre-requisites,
+      check-deployment,
       branch_build_push_admin,
       branch_build_push_web,
       branch_build_push_space,
@@ -475,7 +682,7 @@ jobs:
       branch_build_push_email,
       branch_build_push_silo
     ]
-    if: always() && needs.pre-requisites.result == 'success' && needs.branch_build_push_admin.result == 'success' && needs.branch_build_push_web.result == 'success' && needs.branch_build_push_space.result == 'success' && needs.branch_build_push_live.result == 'success' && (needs.branch_build_push_monitor.result == 'success' || needs.branch_build_push_monitor.result == 'skipped') && needs.branch_build_push_api.result == 'success' && needs.branch_build_push_proxy.result == 'success'
+    if: always() && needs.pre-requisites.result == 'success' && needs.check-deployment.result == 'success' && needs.branch_build_push_admin.result != 'failure' && needs.branch_build_push_web.result != 'failure' && needs.branch_build_push_space.result != 'failure' && needs.branch_build_push_live.result != 'failure' && needs.branch_build_push_monitor.result != 'failure' && needs.branch_build_push_api.result != 'failure' && needs.branch_build_push_proxy.result != 'failure' && needs.branch_build_push_email.result != 'failure' && needs.branch_build_push_silo.result != 'failure'
     runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
