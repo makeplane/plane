@@ -24,6 +24,7 @@ from strawberry.types import Info
 
 # Module imports
 from plane.db.models import Page, ProjectMember, WorkspaceMember
+from plane.ee.models import Collection, PageCollection
 from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.pages import PageType
@@ -93,6 +94,21 @@ class WorkspacePageMutation:
             sort_order=sort_order,
             is_global=True,
         )
+
+        # If the page is public, add it to the workspace default collection.
+        if access == Page.PUBLIC_ACCESS:
+            default_collection = await sync_to_async(Collection.objects.filter)(
+                workspace=workspace, is_default=True, is_global=True, access=0
+            )
+            default_collection = await sync_to_async(default_collection.first)()
+            if default_collection:
+                await sync_to_async(PageCollection.objects.create)(
+                    page=page,
+                    collection=default_collection,
+                    workspace=workspace,
+                    created_by=info.context.user,
+                    updated_by=info.context.user,
+                )
 
         return page
 

@@ -148,14 +148,20 @@ class PageCreateAPISerializer(BaseSerializer):
                 updated_by_id=page.updated_by_id,
             )
 
-        # Add to collection: use provided collection_id if page is public, else fall back to default
+        if not collection_id and page.parent_id:
+            parent_collection_id = (
+                PageCollection.objects.filter(page_id=page.parent_id, workspace_id=workspace_id)
+                .values_list("collection_id", flat=True)
+                .first()
+            )
+            if parent_collection_id:
+                collection_id = parent_collection_id
+
         target_collection_id = None
         if collection_id and page.access == Page.PUBLIC_ACCESS:
             target_collection_id = collection_id
-        else:
-            default_collection = Collection.objects.filter(
-                workspace_id=workspace_id, access=0, is_default=True
-            ).first()
+        elif page.access == Page.PUBLIC_ACCESS:
+            default_collection = Collection.objects.filter(workspace_id=workspace_id, access=0, is_default=True).first()
             if default_collection:
                 target_collection_id = default_collection.id
 

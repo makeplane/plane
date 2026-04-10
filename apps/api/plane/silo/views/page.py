@@ -24,12 +24,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from apps.api.plane.agents import models
 from plane.app.serializers import PageSerializer, PageDetailSerializer
 from plane.db.models import Page, Workspace, Project, ProjectPage
 from plane.silo.views.base import BaseServiceAPIView
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
-from plane.ee.models import Teamspace, TeamspacePage
+from plane.ee.models import Collection, PageCollection, Teamspace, TeamspacePage
 from plane.ee.serializers import TeamspacePageDetailSerializer
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
@@ -157,6 +158,32 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
         # Create pages atomically
         with transaction.atomic():
             pages = Page.objects.bulk_create([Page(**data) for data in valid_data])
+
+            # Add public pages to the workspace default collection
+            public_pages = [p for p in pages if p.access == Page.PUBLIC_ACCESS]
+            if public_pages:
+                default_collection = Collection.objects.filter(
+                    workspace=workspace, is_default=True, is_global=True
+                ).first()
+                # get the highest sort order for the default collection
+                largest_sort_order = PageCollection.objects.filter(
+                    workspace=workspace, collection=default_collection
+                ).aggregate(largest=models.Max("sort_order"))["largest"] or 0
+                if default_collection:
+                    PageCollection.objects.bulk_create(
+                        [
+                            PageCollection(
+                                page=page,
+                                collection=default_collection,
+                                workspace=workspace,
+                                sort_order=(largest_sort_order) + (i + 1) * 10000,
+                                created_by_id=request.user.id,
+                                updated_by_id=request.user.id,
+                            )
+                            for i, page in enumerate(public_pages)
+                        ],
+                        ignore_conflicts=True,
+                    )
 
             # Prepare responses
             for page in pages:

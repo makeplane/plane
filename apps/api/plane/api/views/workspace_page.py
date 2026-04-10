@@ -173,6 +173,7 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
                     base64.b64decode(external_data.get("description_binary")) if external_data else None
                 ),
                 "description_json": (external_data.get("description_json", {}) if external_data else {}),
+                "collection_id": request.data.get("collection_id"),
             },
         )
 
