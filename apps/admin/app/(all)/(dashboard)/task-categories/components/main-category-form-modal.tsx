@@ -16,6 +16,7 @@ import { useInstanceTaskCategory } from "@/hooks/store";
 
 type FormValues = {
   name: string;
+  code: string;
   description: string;
   sort_order: number;
   is_active: boolean;
@@ -37,19 +38,20 @@ export const MainCategoryFormModal = observer(function MainCategoryFormModal({ o
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { name: "", description: "", sort_order: 0, is_active: true },
+    defaultValues: { name: "", code: "", description: "", sort_order: 0, is_active: true },
   });
 
   useEffect(() => {
     if (editCategory) {
       reset({
         name: editCategory.name,
+        code: editCategory.code ?? "",
         description: editCategory.description,
         sort_order: editCategory.sort_order,
         is_active: editCategory.is_active,
       });
     } else {
-      reset({ name: "", description: "", sort_order: 0, is_active: true });
+      reset({ name: "", code: "", description: "", sort_order: 0, is_active: true });
     }
   }, [editCategory, reset]);
 
@@ -58,6 +60,7 @@ export const MainCategoryFormModal = observer(function MainCategoryFormModal({ o
     try {
       const payload: IMainTaskCategoryCreate = {
         name: data.name,
+        code: data.code,
         description: data.description,
         sort_order: Number(data.sort_order),
         is_active: data.is_active,
@@ -89,6 +92,12 @@ export const MainCategoryFormModal = observer(function MainCategoryFormModal({ o
               </label>
               <Input id="mc-name" {...register("name", { required: "Required" })} placeholder="Category name" />
               {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="mc-code" className="text-13 font-medium">
+                Code
+              </label>
+              <Input id="mc-code" {...register("code")} placeholder="Optional code" />
             </div>
             <div className="space-y-1">
               <label htmlFor="mc-description" className="text-13 font-medium">

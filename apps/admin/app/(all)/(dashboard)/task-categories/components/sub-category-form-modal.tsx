@@ -16,6 +16,7 @@ import { useInstanceTaskCategory } from "@/hooks/store";
 
 type FormValues = {
   name: string;
+  code: string;
   main_category: string;
   sort_order: number;
   is_active: boolean;
@@ -43,19 +44,20 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { name: "", main_category: defaultMainId ?? "", sort_order: 0, is_active: true },
+    defaultValues: { name: "", code: "", main_category: defaultMainId ?? "", sort_order: 0, is_active: true },
   });
 
   useEffect(() => {
     if (editCategory) {
       reset({
         name: editCategory.name,
+        code: editCategory.code ?? "",
         main_category: editCategory.main_category ?? "",
         sort_order: editCategory.sort_order,
         is_active: editCategory.is_active,
       });
     } else {
-      reset({ name: "", main_category: defaultMainId ?? "", sort_order: 0, is_active: true });
+      reset({ name: "", code: "", main_category: defaultMainId ?? "", sort_order: 0, is_active: true });
     }
   }, [editCategory, defaultMainId, reset]);
 
@@ -64,6 +66,7 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
     try {
       const payload: ISubTaskCategoryCreate = {
         name: data.name,
+        code: data.code,
         main_category: data.main_category || "",
         sort_order: Number(data.sort_order),
         is_active: data.is_active,
@@ -95,6 +98,12 @@ export const SubCategoryFormModal = observer(function SubCategoryFormModal({
               </label>
               <Input id="sc-name" {...register("name", { required: "Required" })} placeholder="Sub category name" />
               {errors.name && <p className="text-11 text-danger-primary">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="sc-code" className="text-13 font-medium">
+                Code
+              </label>
+              <Input id="sc-code" {...register("code")} placeholder="Optional code" />
             </div>
             <div className="space-y-1">
               <label htmlFor="sc-main-category" className="text-13 font-medium">

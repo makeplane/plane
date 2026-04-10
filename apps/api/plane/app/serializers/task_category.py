@@ -13,7 +13,7 @@ from .base import BaseSerializer
 class MainTaskCategorySerializer(BaseSerializer):
     class Meta:
         model = MainTaskCategory
-        fields = ["id", "name", "description", "sort_order", "is_active", "created_at", "updated_at"]
+        fields = ["id", "name", "code", "description", "sort_order", "is_active", "created_at", "updated_at"]
         read_only_fields = ["id", "created_at", "updated_at"]
 
 
@@ -24,6 +24,7 @@ class SubTaskCategorySerializer(BaseSerializer):
             "id",
             "main_category",
             "name",
+            "code",
             "description",
             "sort_order",
             "is_active",

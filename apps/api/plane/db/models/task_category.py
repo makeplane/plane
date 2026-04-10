@@ -13,6 +13,7 @@ class MainTaskCategory(BaseModel):
     """Instance-level main task category for work item classification."""
 
     name = models.CharField(max_length=255)
+    code = models.CharField(max_length=100, blank=True, default="")
     description = models.TextField(blank=True, default="")
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
@@ -49,6 +50,7 @@ class SubTaskCategory(BaseModel):
         related_name="sub_categories",
     )
     name = models.CharField(max_length=255)
+    code = models.CharField(max_length=100, blank=True, default="")
     description = models.TextField(blank=True, default="")
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
