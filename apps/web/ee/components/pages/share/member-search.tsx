@@ -14,32 +14,38 @@
 import React, { memo } from "react";
 import { Search } from "lucide-react";
 import { Avatar } from "@plane/propel/avatar";
+import { SuspendedUserIcon } from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
+import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
-
-type TMemberOption = {
-  value: string;
-  query: string;
-  content: React.ReactNode;
-};
+import { cn, getFileURL } from "@plane/utils";
 
 type TMemberSearchProps = {
-  memberOptions: TMemberOption[];
+  memberOptions: ICustomSearchSelectOption[];
   onSelectMember: (memberId: string) => void;
   canCurrentUserChangeAccess?: boolean;
 };
 
 export const MemberOption = memo(function MemberOption({
   member,
+  isSuspended,
 }: {
   member: { display_name: string; avatar_url: string };
+  isSuspended?: boolean;
 }) {
   return (
     <div className="flex w-full items-center gap-2 h-5">
-      <Avatar name={member.display_name} src={getFileURL(member.avatar_url)} size="md" />
-      <div className="truncate">
-        <span className="font-medium">{member.display_name}</span>
-      </div>
+      {isSuspended ? (
+        <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+      ) : (
+        <Avatar name={member.display_name} src={getFileURL(member.avatar_url)} size="md" />
+      )}
+      <span className={cn("truncate font-medium", isSuspended && "text-placeholder")}>{member.display_name}</span>
+      {isSuspended && (
+        <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+          Suspended
+        </Pill>
+      )}
     </div>
   );
 });
