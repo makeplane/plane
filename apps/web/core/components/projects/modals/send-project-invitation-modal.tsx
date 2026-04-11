@@ -18,12 +18,13 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon, CloseIcon, ChevronDownIcon, SuspendedUserIcon } from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar } from "@plane/propel/avatar";
 import { CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -62,7 +63,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
     project: { getProjectMemberDetails, bulkAddMembersToProject },
-    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails, isUserSuspended },
   } = useMember();
   // form info
   const {
@@ -141,29 +142,36 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
       const memberDetails = getWorkspaceMemberDetails(userId);
 
       if (!memberDetails?.member) return;
+      const isSuspended = isUserSuspended(userId, workspaceSlug?.toString());
       return {
         value: `${memberDetails?.member.id}`,
         query: `${memberDetails?.member.first_name} ${
           memberDetails?.member.last_name
         } ${memberDetails?.member.display_name.toLowerCase()}`,
+        disabled: isSuspended,
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="shrink-0 pt-0.5">
-              <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+              {isSuspended ? (
+                <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+              ) : (
+                <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+              )}
             </div>
-            <div className="truncate">
+            <span className={cn("truncate", isSuspended && "text-placeholder")}>
               {memberDetails?.member.display_name} (
               {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
-            </div>
+            </span>
+            {isSuspended && (
+              <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                Suspended
+              </Pill>
+            )}
           </div>
         ),
       };
     })
-    .filter((option) => !!option) as {
-    value: string;
-    query: string;
-    content: React.ReactNode;
-  }[];
+    .filter((option): option is NonNullable<typeof option> => !!option);
 
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
