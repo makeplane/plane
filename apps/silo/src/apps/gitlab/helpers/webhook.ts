@@ -13,6 +13,7 @@
 
 import type { GitlabMergeRequestEvent, MergeRequestEvent } from "@plane/etl/gitlab";
 import { env } from "@/env";
+import crypto from "crypto";
 
 // Implement this function to verify the GitLab webhook token
 export function verifyGitlabToken(token: string | string[] | undefined): boolean {
@@ -58,5 +59,44 @@ export function classifyMergeRequestEvent(event: GitlabMergeRequestEvent): Merge
       return "MR_OPENED";
     default:
       return undefined;
+  }
+}
+
+/**
+ *
+ * @param workspaceId
+ * @returns workspace webhook secret
+ */
+
+export function getWorkspaceWebhookSecret(workspaceId: string, gitlabClientSecret: string) {
+  try {
+    // Combine the strings with a delimiter (e.g., ":")
+    const combined = `${workspaceId}:${gitlabClientSecret}`;
+
+    // Hash the combined string using SHA-256
+    const hash = crypto.createHash("sha256").update(combined).digest("hex");
+
+    // Return the first 32 characters of the hash
+    return hash.slice(0, 32);
+  } catch (error) {
+    console.error("error getWorkspaceWebhookSecret", error);
+    return "";
+  }
+}
+
+/**
+ *
+ * @param workspaceId
+ * @param webhookSecret
+ * @returns boolean
+ */
+export function verifyGitlabWebhookSecret(workspaceId: string, webhookSecret: string, gitlabClientSecret: string) {
+  try {
+    const webhookHash = getWorkspaceWebhookSecret(workspaceId, gitlabClientSecret);
+    if (!webhookHash) return false;
+    return webhookHash === webhookSecret;
+  } catch (error) {
+    console.error("error verifyGitlabWebhookSecret", error);
+    return false;
   }
 }

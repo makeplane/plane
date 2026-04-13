@@ -19,7 +19,7 @@ import { logger } from "@plane/logger";
 import type { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayloadBase } from "@plane/sdk";
 import type { TGitlabWorkspaceConnection, TGitlabAppConfig, TWorkspaceEntityConnection } from "@plane/types";
 import { E_INTEGRATION_KEYS } from "@plane/types";
-import { getGitlabClientService, getGitlabEnterpriseAuthService } from "@/apps/gitlab/services";
+import { getGitlabClientService } from "@/apps/gitlab/services";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { responseHandler } from "@/helpers/response-handler";
@@ -29,6 +29,7 @@ import { integrationTaskManager } from "@/worker";
 import { getGitlabEntityWebhookURL, getGitlabIssueSyncWebhookURL } from "../helpers/urls";
 import { GITLAB_ISSUE_OBJECT_KINDS } from "@/apps/gitlab/helpers/constants";
 import { GITLAB_LABEL } from "@/helpers/constants";
+import { getWorkspaceWebhookSecret, verifyGitlabWebhookSecret } from "@/apps/gitlab/helpers";
 
 const apiClient = getAPIClient();
 
@@ -422,13 +423,17 @@ export default class GitlabEnterpriseController {
           message: "App config not found",
         });
       }
-      const gitlabEnterpriseAuthService = getGitlabEnterpriseAuthService(
-        appConfig.baseUrl,
-        appConfig.clientId,
-        appConfig.clientSecret
-      );
+      if (!appConfig.clientSecret) {
+        logger.error(`${this.integrationKey} Client secret not found for`, {
+          workspace_id: workspaceId,
+          connection_type: this.integrationKey,
+        });
+        return res.status(400).send({
+          message: "Client secret not found",
+        });
+      }
 
-      if (!gitlabEnterpriseAuthService.verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "")) {
+      if (!verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "", appConfig.clientSecret)) {
         return res.status(400).send({
           message: "Webhook received",
         });
@@ -500,13 +505,17 @@ export default class GitlabEnterpriseController {
           message: "App config not found",
         });
       }
-      const gitlabEnterpriseAuthService = getGitlabEnterpriseAuthService(
-        appConfig.baseUrl,
-        appConfig.clientId,
-        appConfig.clientSecret
-      );
+      if (!appConfig.clientSecret) {
+        logger.error(`${this.integrationKey} Client secret not found for`, {
+          workspace_id: workspaceId,
+          connection_type: this.integrationKey,
+        });
+        return res.status(400).send({
+          message: "Client secret not found",
+        });
+      }
 
-      if (!gitlabEnterpriseAuthService.verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "")) {
+      if (!verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "", appConfig.clientSecret)) {
         return res.status(400).send({
           message: "Webhook received",
         });
@@ -614,12 +623,10 @@ function getWorkspaceWebhookData(workspaceId: string, appConfig: TGitlabAppConfi
     if (!workspaceId) {
       throw new Error("workspaceId is not defined");
     }
-    const gitlabEnterpriseAuthService = getGitlabEnterpriseAuthService(
-      appConfig.baseUrl,
-      appConfig.clientId,
-      appConfig.clientSecret
-    );
-    const workspaceWebhookSecret = gitlabEnterpriseAuthService.getWorkspaceWebhookSecret(workspaceId);
+    if (!appConfig.clientSecret) {
+      throw new Error("Client secret is not present in the app config");
+    }
+    const workspaceWebhookSecret = getWorkspaceWebhookSecret(workspaceId, appConfig.clientSecret);
     const webhookURL = isIssueSync
       ? getGitlabIssueSyncWebhookURL(workspaceId, E_INTEGRATION_KEYS.GITLAB_ENTERPRISE)
       : getGitlabEntityWebhookURL(workspaceId, E_INTEGRATION_KEYS.GITLAB_ENTERPRISE);

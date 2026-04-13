@@ -42,8 +42,8 @@ import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
-import { verifyGitlabToken } from "../helpers";
-import { getGitlabClientService, gitlabAuthService } from "../services";
+import { getWorkspaceWebhookSecret, verifyGitlabToken, verifyGitlabWebhookSecret } from "../helpers";
+import { getGitlabClientService } from "../services";
 import { GITLAB_ISSUE_OBJECT_KINDS } from "../helpers/constants";
 import { GITLAB_LABEL } from "@/helpers/constants";
 
@@ -666,7 +666,13 @@ export default class GitlabController {
       const workspaceId = req.params.workspaceId;
       const webhookSecret = req.headers["x-gitlab-token"]?.toString();
 
-      if (!gitlabAuthService.verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "")) {
+      if (!env.GITLAB_CLIENT_SECRET) {
+        return res.status(400).send({
+          message: "GITLAB_CLIENT_SECRET is not defined",
+        });
+      }
+
+      if (!verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "", env.GITLAB_CLIENT_SECRET)) {
         return res.status(400).send({
           message: "Webhook received",
         });
@@ -714,7 +720,13 @@ export default class GitlabController {
       const workspaceId = req.params.workspaceId;
       const webhookSecret = req.headers["x-gitlab-token"]?.toString();
 
-      if (!gitlabAuthService.verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "")) {
+      if (!env.GITLAB_CLIENT_SECRET) {
+        return res.status(400).send({
+          message: "GITLAB_CLIENT_SECRET is not defined",
+        });
+      }
+
+      if (!verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "", env.GITLAB_CLIENT_SECRET)) {
         return res.status(400).send({
           message: "Webhook received",
         });
@@ -802,7 +814,11 @@ function getWorkspaceWebhookData(workspaceId: string, isIssueSync: boolean = fal
     if (!workspaceId) {
       throw new Error("workspaceId is not defined");
     }
-    const workspaceWebhookSecret = gitlabAuthService.getWorkspaceWebhookSecret(workspaceId);
+    if (!env.GITLAB_CLIENT_SECRET) {
+      throw new Error("GITLAB_CLIENT_SECRET is not defined");
+    }
+
+    const workspaceWebhookSecret = getWorkspaceWebhookSecret(workspaceId, env.GITLAB_CLIENT_SECRET);
     const webhookURL = isIssueSync
       ? `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/issue-sync/${workspaceId}`
       : `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/${workspaceId}`;

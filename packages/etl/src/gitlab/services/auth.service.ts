@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import crypto from "node:crypto";
 import axios from "axios";
 import type { GitLabAuthConfig, GitLabAuthorizeState, GitLabAuthPayload, GitLabTokenResponse } from "../types/auth";
 
@@ -65,53 +64,5 @@ export class GitLabAuthService {
     const decodedState = JSON.parse(Buffer.from(state, "base64").toString()) as GitLabAuthorizeState;
 
     return { response, state: decodedState };
-  }
-
-  /**
-   *
-   * @param workspaceId
-   * @returns workspace webhook secret
-   */
-
-  getWorkspaceWebhookSecret(workspaceId: string) {
-    try {
-      const GITLAB_CLIENT_SECRET = this.config.clientSecret;
-      if (!GITLAB_CLIENT_SECRET) {
-        throw new Error("GITLAB_CLIENT_SECRET is not defined");
-      }
-
-      if (!workspaceId) {
-        throw new Error("workspaceId is not defined");
-      }
-
-      // Combine the strings with a delimiter (e.g., ":")
-      const combined = `${workspaceId}:${GITLAB_CLIENT_SECRET}`;
-
-      // Hash the combined string using SHA-256
-      const hash = crypto.createHash("sha256").update(combined).digest("hex");
-
-      // Return the first 32 characters of the hash
-      return hash.slice(0, 32);
-    } catch (error) {
-      console.error("error getWorkspaceWebhookSecret", error);
-      return "";
-    }
-  }
-
-  /**
-   *
-   * @param workspaceId
-   * @param webhookSecret
-   * @returns boolean
-   */
-  verifyGitlabWebhookSecret(workspaceId: string, webhookSecret: string) {
-    try {
-      const webhookHash = this.getWorkspaceWebhookSecret(workspaceId);
-      if (!webhookHash) return false;
-      return webhookHash === webhookSecret;
-    } catch (error) {
-      console.error("error verifyGitlabWebhookSecret", error);
-      return false;
-    }
   }
 }
