@@ -19,6 +19,11 @@ const viteEnv = Object.keys(process.env)
 // Fall back to VERCEL_GIT_COMMIT_SHA so Sentry release tracking works on Vercel
 viteEnv.VITE_APP_VERSION ||= process.env.VERCEL_GIT_COMMIT_SHA ?? "";
 
+// Expose Vercel deployment ID for Skew Protection (pins client asset requests to the deployment)
+if (process.env.VERCEL_DEPLOYMENT_ID) {
+  viteEnv.VITE_VERCEL_DEPLOYMENT_ID = process.env.VERCEL_DEPLOYMENT_ID;
+}
+
 /**
  * Stamps public/sw.js with the current app version so the browser
  * detects a new service worker on every deployment.

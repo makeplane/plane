@@ -39,6 +39,16 @@ function applyTheme() {
 applyTheme();
 new MutationObserver(() => applyTheme()).observe(document, { childList: true });
 
+// Vercel Skew Protection — pin this client session to the deployment that served it.
+// When Vercel sees the __vdpl cookie, it routes asset requests (lazy chunks, etc.)
+// to the same deployment, preventing 404s after a new deploy.
+// Always set (not just when absent) so a full page reload after a new deploy
+// updates the cookie to the current deployment rather than staying pinned to the old one.
+const deploymentId = process.env.VITE_VERCEL_DEPLOYMENT_ID;
+if (deploymentId) {
+  document.cookie = `__vdpl=${deploymentId};path=/;max-age=86400;samesite=lax`;
+}
+
 Sentry.init({
   dsn: process.env.VITE_SENTRY_DSN,
   environment: process.env.VITE_SENTRY_ENVIRONMENT,
@@ -57,6 +67,38 @@ Sentry.init({
     ? parseFloat(process.env.VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE)
     : 1.0,
   integrations: [],
+});
+
+// Safety net: catch stale-chunk errors from dynamic imports after a deployment.
+// If the user's browser tries to load a JS chunk that no longer exists (e.g. after
+// a deploy replaced hashed filenames), auto-reload once to pick up the new version.
+const RELOAD_KEY = "__plane_chunk_reload";
+
+window.addEventListener("error", (event) => {
+  if (sessionStorage.getItem(RELOAD_KEY)) return;
+  const msg = event.message || "";
+  if (msg.includes("Failed to fetch dynamically imported module") || msg.includes("Importing a module script failed")) {
+    sessionStorage.setItem(RELOAD_KEY, "1");
+    window.location.reload();
+  }
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  if (sessionStorage.getItem(RELOAD_KEY)) return;
+  const reason = event.reason instanceof Error ? event.reason.message : String(event.reason ?? "");
+  if (
+    reason.includes("Failed to fetch dynamically imported module") ||
+    reason.includes("Importing a module script failed")
+  ) {
+    sessionStorage.setItem(RELOAD_KEY, "1");
+    window.location.reload();
+  }
+});
+
+// After a successful load (including after an auto-reload), clear the flag so
+// future deployments can still trigger recovery.
+window.addEventListener("load", () => {
+  sessionStorage.removeItem(RELOAD_KEY);
 });
 
 startTransition(() => {
