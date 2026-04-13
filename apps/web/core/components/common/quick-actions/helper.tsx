@@ -81,7 +81,10 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
   const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
   const transferrableIssuesCount = cycleDetails
-    ? cycleDetails.total_issues - (cycleDetails.cancelled_issues + cycleDetails.completed_issues)
+    ? Math.max(
+        0,
+        (cycleDetails.total_issues ?? 0) - (cycleDetails.cancelled_issues ?? 0) - (cycleDetails.completed_issues ?? 0)
+      )
     : 0;
 
   const endCycleFeature = factory.useCycleEndFeature?.({

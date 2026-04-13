@@ -124,7 +124,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
   const isCompletedCycle = cycleStatus === "completed";
   const isProgressSnapshotEmpty = isEmpty(cycleDetails?.progress_snapshot);
   const transferableIssuesCount = cycleDetails
-    ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
+    ? (cycleDetails.total_issues ?? 0) - (cycleDetails.completed_issues ?? 0) - (cycleDetails.cancelled_issues ?? 0)
     : 0;
   const canTransferIssues = isProgressSnapshotEmpty && transferableIssuesCount > 0;
 
