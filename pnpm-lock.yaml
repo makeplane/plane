@@ -438,9 +438,6 @@ catalogs:
     ast-types:
       specifier: 0.14.2
       version: 0.14.2
-    axios:
-      specifier: 1.15.0
-      version: 1.15.0
     bluebird:
       specifier: 3.7.2
       version: 3.7.2
@@ -855,6 +852,7 @@ overrides:
   tough-cookie: '>=4.1.3'
   vite: 8.0.7
   defu: 6.1.5
+  axios: 1.15.0
 
 importers:
 
@@ -945,7 +943,7 @@ importers:
         specifier: 'catalog:'
         version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       isbot:
         specifier: 'catalog:'
@@ -1224,7 +1222,7 @@ importers:
         specifier: 'catalog:'
         version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))(@tiptap/pm@2.27.2)
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       compression:
         specifier: 'catalog:'
@@ -1387,7 +1385,7 @@ importers:
         specifier: 'catalog:'
         version: 8.3.5
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       dd-trace:
         specifier: 'catalog:'
@@ -1499,7 +1497,7 @@ importers:
         specifier: 'catalog:'
         version: 0.10.5
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       bluebird:
         specifier: 'catalog:'
@@ -1662,7 +1660,7 @@ importers:
         specifier: 'catalog:'
         version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       clsx:
         specifier: 'catalog:'
@@ -1858,7 +1856,7 @@ importers:
         specifier: 'catalog:'
         version: 1.2.6(@react-router/dev@7.14.0(@react-router/serve@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@8.0.7(@types/node@22.19.11)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.0(react-router@7.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3))(isbot@5.1.35)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       clsx:
         specifier: 'catalog:'
@@ -2477,7 +2475,7 @@ importers:
         specifier: 'catalog:'
         version: 3.1.9(@babel/core@7.29.0)
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       jira.js:
         specifier: 'catalog:'
@@ -2822,7 +2820,7 @@ importers:
   packages/sdk:
     dependencies:
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
     devDependencies:
       '@plane/types':
@@ -2847,7 +2845,7 @@ importers:
         specifier: workspace:*
         version: link:../types
       axios:
-        specifier: 'catalog:'
+        specifier: 1.15.0
         version: 1.15.0
       file-type:
         specifier: 'catalog:'
@@ -8511,9 +8509,6 @@ packages:
   axe-core@4.11.1:
     resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
     engines: {node: '>=4'}
-
-  axios@1.13.5:
-    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
 
   axios@1.15.0:
     resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
@@ -19941,7 +19936,7 @@ snapshots:
       ajv: 8.18.0
       ajv-formats: 3.0.1(ajv@8.18.0)
       archiver: 7.0.1
-      axios: 1.13.5
+      axios: 1.15.0
       better-ajv-errors: 2.0.3(ajv@8.18.0)
       bunyan: 1.8.15
       chalk: 4.1.2
@@ -20995,14 +20990,6 @@ snapshots:
   aws4@1.13.2: {}
 
   axe-core@4.11.1: {}
-
-  axios@1.13.5:
-    dependencies:
-      follow-redirects: 1.15.11
-      form-data: 4.0.5
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
 
   axios@1.15.0:
     dependencies:
