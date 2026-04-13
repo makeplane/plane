@@ -42,7 +42,7 @@ catalog:
   '@hungknguyen/docx-math-converter': 1.1.4
   '@hypermod/utils': 0.7.1
   '@linear/sdk': 37.0.0
-  '@makeplane/plane-node-sdk': 0.2.8
+  '@makeplane/plane-node-sdk': 0.2.11
   '@monaco-editor/react': 4.7.0
   '@octokit/auth-app': 7.2.2
   '@octokit/openapi-webhooks-types': 8.5.1

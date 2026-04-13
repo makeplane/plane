@@ -112,8 +112,8 @@ catalogs:
       specifier: 37.0.0
       version: 37.0.0
     '@makeplane/plane-node-sdk':
-      specifier: 0.2.8
-      version: 0.2.8
+      specifier: 0.2.11
+      version: 0.2.11
     '@monaco-editor/react':
       specifier: 4.7.0
       version: 4.7.0
@@ -1370,7 +1370,7 @@ importers:
     dependencies:
       '@makeplane/plane-node-sdk':
         specifier: 'catalog:'
-        version: 0.2.8(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)
+        version: 0.2.11(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)
       '@plane/logger':
         specifier: workspace:*
         version: link:../../../packages/logger
@@ -1446,7 +1446,7 @@ importers:
         version: 30.0.0
       '@makeplane/plane-node-sdk':
         specifier: 'catalog:'
-        version: 0.2.8(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@25.3.0))(typescript@5.9.3)
+        version: 0.2.11(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@25.3.0))(typescript@5.9.3)
       '@octokit/openapi-webhooks-types':
         specifier: 'catalog:'
         version: 8.5.1
@@ -1802,7 +1802,7 @@ importers:
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@makeplane/plane-node-sdk':
         specifier: 'catalog:'
-        version: 0.2.8(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)
+        version: 0.2.11(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)
       '@plane/blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
@@ -4807,8 +4807,8 @@ packages:
     resolution: {integrity: sha512-qC72D4+CDdjGqJvkFMMEAtancHUQ7/d/tAiHf64z8MopFDmcrtbcJuerDtFceuAfQJ2pDSfCKCtbqoGBNnwg0w==}
     engines: {node: '>=8'}
 
-  '@makeplane/plane-node-sdk@0.2.8':
-    resolution: {integrity: sha512-7abYwNJXtFLpBiY+aaFxgWLvEm/GqihBIWLAihGfDZsvEM9/cyQGK8/SGrjHgJ9RxKql5weis14XsLbXN4j86g==}
+  '@makeplane/plane-node-sdk@0.2.11':
+    resolution: {integrity: sha512-JcCZ3nhR04WBMc654Js2defayw8ZGboIrNMYDDnkmiOEGjCSK05Gw9bpgn0H3YyZhlcadD8R+BukY2BmkzO0fw==}
     engines: {node: '>=20.0.0'}
 
   '@mdx-js/react@3.1.1':
@@ -17061,9 +17061,9 @@ snapshots:
     dependencies:
       '@lukeed/csprng': 1.1.0
 
-  '@makeplane/plane-node-sdk@0.2.8(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)':
+  '@makeplane/plane-node-sdk@0.2.11(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)':
     dependencies:
-      axios: 1.13.5
+      axios: 1.15.0
       ts-jest: 29.4.6(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)
     transitivePeerDependencies:
       - '@babel/core'
@@ -17076,9 +17076,9 @@ snapshots:
       - jest-util
       - typescript
 
-  '@makeplane/plane-node-sdk@0.2.8(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@25.3.0))(typescript@5.9.3)':
+  '@makeplane/plane-node-sdk@0.2.11(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@25.3.0))(typescript@5.9.3)':
     dependencies:
-      axios: 1.13.5
+      axios: 1.15.0
       ts-jest: 29.4.6(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(esbuild@0.27.3)(jest-util@30.2.0)(jest@30.2.0(@types/node@25.3.0))(typescript@5.9.3)
     transitivePeerDependencies:
       - '@babel/core'
