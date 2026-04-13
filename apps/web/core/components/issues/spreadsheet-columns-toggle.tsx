@@ -36,7 +36,6 @@ type CustomPropertyItem = {
   displayName: string;
   iconName: string | undefined;
   issueTypeLogoProps: TLogoProps["icon"] | undefined;
-  issueTypeIsDefault: boolean;
 };
 
 export type SpreadsheetColumnsToggleProps = {
@@ -68,7 +67,7 @@ export const SpreadsheetColumnsToggle = observer(function SpreadsheetColumnsTogg
   const { getProjectIssueTypes, isWorkItemTypeEntityEnabledForProject } = useIssueTypes();
   const { getFeatureFlag } = useFeatureFlags();
 
-  const isWorkspaceLevel = projectIds.length !== 1;
+  const isWorkspaceLevel = projectIds.length > 1;
 
   // Build filtered built-in properties list
   const builtInProperties = SPREADSHEET_PROPERTY_LIST.filter((key) => {
@@ -107,7 +106,6 @@ export const SpreadsheetColumnsToggle = observer(function SpreadsheetColumnsTogg
               displayName: property.display_name || property.id,
               iconName: property.logo_props?.icon?.name,
               issueTypeLogoProps: issueType.logo_props?.icon,
-              issueTypeIsDefault: issueType.is_default ?? false,
             });
           }
         });

@@ -14,10 +14,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { TIssue } from "@plane/types";
+import type { TIssue, TIssuePropertyValues } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@plane/utils";
-import type { TIssuePropertyValues } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
 // services
 import { IssueService } from "@/services/issue";

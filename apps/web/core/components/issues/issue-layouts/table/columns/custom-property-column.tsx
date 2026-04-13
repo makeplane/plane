@@ -46,6 +46,12 @@ import { FormulaDisplay } from "@/components/work-item-types/values/components/f
 
 const workItemPropertyValuesService = new IssuePropertyValuesService();
 
+// Shared spreadsheet cell classes for dropdown-style property columns.
+// Forces the hover chevron to always occupy layout space (preventing text reflow on row hover)
+// while keeping it invisible until the cell itself is hovered.
+const DROPDOWN_BUTTON_CLASSNAME =
+  "h-11 border-0 rounded-none px-page-x [&_.hidden]:!block [&_.hidden]:!opacity-0 [&:hover_.hidden]:!opacity-100";
+
 export type SpreadsheetWorkItemPropertyColumnProps = {
   workspaceSlug: string;
   workItem: TIssue;
@@ -111,7 +117,7 @@ export const SpreadsheetCustomPropertyColumn = observer(function SpreadsheetCust
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail.property_type, propertyDetail.relation_type);
 
   return (
-    <div className="h-11 w-full border-b-[0.5px] border-subtle">
+    <div className="h-11 w-full overflow-hidden border-b-[0.5px] border-subtle">
       <PropertyValueEditor
         workspaceSlug={workspaceSlug}
         propertyTypeKey={propertyTypeKey}
@@ -161,7 +167,7 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
               ?.display_format as TTextAttributeDisplayOptions) ?? "single-line"
           }
           readOnlyData={propertyDetailData?.default_value?.[0]}
-          className="h-11 border-0"
+          className="h-11 border-0 bg-transparent truncate"
           isDisabled={disabled}
           onTextValueChange={onValueChange}
         />
@@ -173,8 +179,7 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
           displayName={propertyDetailData?.display_name}
           value={propertyValue}
           variant="update"
-          numberInputSize="xs"
-          className="h-11 border-0"
+          className="h-11 border-0 bg-transparent"
           isDisabled={disabled}
           onNumberValueChange={onValueChange}
         />
@@ -195,7 +200,7 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
             (propertyDetailData?.settings as TDateAttributeConfigurations | undefined)
               ?.display_format as TDateAttributeDisplayOptions
           }
-          buttonClassName="h-11 border-0"
+          buttonClassName="h-11 border-0 bg-transparent rounded-none px-page-x"
           isDisabled={disabled}
           onDateValueChange={onValueChange}
         />
@@ -209,7 +214,7 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
           getPropertyInstanceById={getIssuePropertyById}
           variant="update"
           isMultiSelect={propertyDetailData.is_multi}
-          buttonClassName="h-11 border-0"
+          buttonClassName={DROPDOWN_BUTTON_CLASSNAME}
           isDisabled={disabled}
           onOptionValueChange={onValueChange}
         />
@@ -222,7 +227,7 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
           projectId={projectId}
           variant="update"
           isMultiSelect={propertyDetailData?.is_multi}
-          buttonClassName="h-11 border-0"
+          buttonClassName={DROPDOWN_BUTTON_CLASSNAME}
           isDisabled={disabled}
           onMemberValueChange={onValueChange}
         />
@@ -234,7 +239,7 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
           value={propertyValue}
           workspaceSlug={workspaceSlug}
           variant="update"
-          buttonClassName="h-11 border-0"
+          buttonClassName={DROPDOWN_BUTTON_CLASSNAME}
           isDisabled={disabled}
           onReleaseValueChange={onValueChange}
         />
@@ -245,15 +250,15 @@ function PropertyValueEditor(props: PropertyValueEditorProps) {
           propertyDetail={propertyDetailData as TIssueProperty<EIssuePropertyType.URL>}
           value={propertyValue}
           variant="update"
-          className="h-11 border-0"
-          buttonClassName="h-11 w-full"
+          className="h-11 border-0 bg-transparent"
+          buttonClassName="h-11 w-full overflow-hidden"
           isDisabled={disabled}
           onTextValueChange={onValueChange}
         />
       );
     case "FORMULA":
       return (
-        <div className="flex h-11 w-full items-center px-2">
+        <div className="flex h-11 w-full items-center px-2 truncate">
           <FormulaDisplay value={propertyValue} />
         </div>
       );
