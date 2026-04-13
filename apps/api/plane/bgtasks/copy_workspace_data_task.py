@@ -243,6 +243,8 @@ class WorkspaceDataCopier:
             "epic_id": self.issue_map,
             "milestone": self.milestone_map,
             "milestone_id": self.milestone_map,
+            "workflow": self.workflow_map,
+            "workflow_id": self.workflow_map,
             "estimate_point_id": self.estimate_point_map,
             "issue_property": self.issue_property_map,
             "issue_property_id": self.issue_property_map,
@@ -267,6 +269,8 @@ class WorkspaceDataCopier:
             "type": reference_maps["type"],
             "milestone": reference_maps["milestone"],
             "milestone_id": reference_maps["milestone_id"],
+            "workflow": reference_maps["workflow"],
+            "workflow_id": reference_maps["workflow_id"],
             "assignee": reference_maps["assignee"],
             "assignees": reference_maps["assignees"],
         }

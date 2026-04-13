@@ -26,3 +26,4 @@ export * from "./work-item";
 export * from "./epic";
 export * from "./parent";
 export * from "./release";
+export * from "./workflow";

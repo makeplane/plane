@@ -84,6 +84,7 @@ export type TWorkItemFiltersEntityProps = {
   projectIds?: string[];
   releaseIds?: string[];
   stateIds?: string[];
+  workflowIds?: string[];
 };
 
 export type TUseWorkItemFiltersConfigProps = {

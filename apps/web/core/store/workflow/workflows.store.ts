@@ -65,6 +65,7 @@ export interface IWorkflowsStore {
   getFilteredProjectWorkflows: (projectId: string) => IWorkflow[];
   getProjectDefaultWorkflow: (projectId: string) => IWorkflow | undefined;
   getProjectWorkflows: (projectId: string) => IWorkflow[];
+  getProjectActiveWorkflows: (projectId: string) => IWorkflow[];
   getOccupiedWorkItemTypeIds: (projectId: string, workflowId?: string) => string[];
   getUnassignedWorkItemTypeIds: (projectId: string, workflowId?: string) => string[];
   // workflow resolution

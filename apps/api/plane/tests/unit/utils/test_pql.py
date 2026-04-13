@@ -430,6 +430,10 @@ class TestFieldAliases:
         rf = _rf('mention = "abc"')
         assert rf == {"mention_id": "abc"}
 
+    def test_workflow_aliased_to_workflow_id(self):
+        rf = _rf('workflow = "abc"')
+        assert rf == {"workflow_id": "abc"}
+
     def test_unknown_field_passes_through(self):
         """Fields not in FIELD_ALIASES pass through as-is."""
         rf = _rf('somefield = "val"')
@@ -1278,25 +1282,25 @@ class TestOrderBy:
     """Tests for the ORDER BY clause."""
 
     def test_order_by_single_field_desc(self):
-        r = _parse('ORDER BY createdAt DESC')
+        r = _parse("ORDER BY createdAt DESC")
         assert r.rich_filter is None
         assert r.order_by == [("created_at", "DESC")]
         assert r.limit is None
 
     def test_order_by_single_field_asc(self):
-        r = _parse('ORDER BY createdAt ASC')
+        r = _parse("ORDER BY createdAt ASC")
         assert r.order_by == [("created_at", "ASC")]
 
     def test_order_by_default_asc(self):
-        r = _parse('ORDER BY createdAt')
+        r = _parse("ORDER BY createdAt")
         assert r.order_by == [("created_at", "ASC")]
 
     def test_order_by_multiple_fields(self):
-        r = _parse('ORDER BY dueDate DESC, priority ASC')
+        r = _parse("ORDER BY dueDate DESC, priority ASC")
         assert r.order_by == [("target_date", "DESC"), ("priority", "ASC")]
 
     def test_order_by_case_insensitive(self):
-        r = _parse('order by createdAt desc')
+        r = _parse("order by createdAt desc")
         assert r.order_by == [("created_at", "DESC")]
 
     def test_order_by_with_filter(self):
@@ -1327,7 +1331,7 @@ class TestOrderBy:
 
     def test_order_by_unknown_field_raises(self):
         with pytest.raises(ValidationError):
-            _parse('ORDER BY unknownField')
+            _parse("ORDER BY unknownField")
 
     def test_order_by_cf_field_raises(self):
         uid = str(uuid4())
@@ -1340,7 +1344,7 @@ class TestLimit:
     """Tests for the LIMIT clause."""
 
     def test_limit_only(self):
-        r = _parse('LIMIT 50')
+        r = _parse("LIMIT 50")
         assert r.rich_filter is None
         assert r.order_by is None
         assert r.limit == 50
@@ -1351,21 +1355,21 @@ class TestLimit:
         assert r.limit == 10
 
     def test_limit_case_insensitive(self):
-        r = _parse('limit 25')
+        r = _parse("limit 25")
         assert r.limit == 25
 
     def test_limit_exceeds_max_raises(self):
         with pytest.raises(ValidationError):
-            _parse('LIMIT 5000')
+            _parse("LIMIT 5000")
 
     def test_limit_zero_raises(self):
         """LIMIT 0 is rejected by the POSITIVE_INT grammar rule."""
         with pytest.raises(ValidationError):
-            _parse('LIMIT 0')
+            _parse("LIMIT 0")
 
     def test_limit_negative_raises(self):
         with pytest.raises(ValidationError):
-            _parse('LIMIT -5')
+            _parse("LIMIT -5")
 
 
 @pytest.mark.unit
@@ -1379,14 +1383,14 @@ class TestOrderByAndLimit:
         assert r.limit == 10
 
     def test_order_and_limit_no_filter(self):
-        r = _parse('ORDER BY dueDate ASC LIMIT 25')
+        r = _parse("ORDER BY dueDate ASC LIMIT 25")
         assert r.rich_filter is None
         assert r.order_by == [("target_date", "ASC")]
         assert r.limit == 25
 
     def test_limit_before_order_by(self):
         """LIMIT can come before ORDER BY."""
-        r = _parse('LIMIT 10 ORDER BY createdAt')
+        r = _parse("LIMIT 10 ORDER BY createdAt")
         assert r.limit == 10
         assert r.order_by == [("created_at", "ASC")]
 

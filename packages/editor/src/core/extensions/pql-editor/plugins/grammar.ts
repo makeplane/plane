@@ -35,6 +35,7 @@ export const FIELD_ALIASES: Record<string, string> = {
   created_by_id: "createdBy",
   type_id: "type",
   milestone_id: "milestone",
+  workflow_id: "workflow",
   team_project_id: "teamspaceProject",
   state_group: "stateGroup",
   // Date fields

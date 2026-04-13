@@ -295,6 +295,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "id",
       "epic_id",
       "parent_id",
+      "workflow_id",
     ],
     layoutOptions: {
       list: {

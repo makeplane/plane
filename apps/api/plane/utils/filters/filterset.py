@@ -18,6 +18,7 @@ from django_filters import FilterSet, filters
 
 # Module imports
 from plane.db.models import Issue
+from plane.ee.models import WorkflowState
 from plane.utils.uuid import is_valid_uuid
 from plane.utils.exception_logger import log_exception
 
@@ -274,6 +275,8 @@ class IssueFilterSet(BaseFilterSet):
     release_id = filters.UUIDFilter(method="filter_release_id")
     release_id__in = UUIDInFilter(method="filter_release_id_in", lookup_expr="in")
     release_id__isnull = filters.BooleanFilter(method="filter_release_id_isnull", lookup_expr="isnull")
+    workflow_id = filters.UUIDFilter(method="filter_workflow_id")
+    workflow_id__in = UUIDInFilter(method="filter_workflow_id_in", lookup_expr="in")
 
     class Meta:
         model = Issue
@@ -810,3 +813,22 @@ class IssueFilterSet(BaseFilterSet):
             return ~has_non_deleted_release
         else:
             return has_non_deleted_release
+
+    def _resolve_workflow_state_ids(self, queryset, workflow_ids):
+        return list(
+            WorkflowState.objects.filter(
+                workflow_id__in=workflow_ids,
+            )
+            .values_list("state_id", flat=True)
+            .distinct()
+        )
+
+    def filter_workflow_id(self, queryset, name, value):
+        """Filter by workflow ID through its mapped states, excluding soft deleted workflows"""
+        state_ids = self._resolve_workflow_state_ids(queryset, [value])
+        return Q(state_id__in=state_ids)
+
+    def filter_workflow_id_in(self, queryset, name, value):
+        """Filter by workflow IDs through their mapped states, excluding soft deleted workflows"""
+        state_ids = self._resolve_workflow_state_ids(queryset, value)
+        return Q(state_id__in=state_ids)

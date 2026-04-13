@@ -22,6 +22,7 @@ import {
   WorkItemsIcon,
   EpicIcon,
   ParentPropertyIcon,
+  WorkflowIcon,
 } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type {
@@ -30,6 +31,7 @@ import type {
   IIssueType,
   IMilestoneInstance,
   IProject,
+  IWorkflow,
   TEpicMeta,
   TAsyncMultiSelectParams,
   TWorkItemFilterProperty,
@@ -43,6 +45,7 @@ import {
   getTeamspaceProjectFilterConfig,
   getTextPropertyFilterConfig,
   getWorkItemTypeFilterConfig,
+  getWorkflowFilterConfig,
   isLoaderReady,
   getParentFilterConfig,
 } from "@plane/utils";
@@ -58,6 +61,7 @@ import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/h
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useEpicMeta } from "@/hooks/store/use-epic-meta";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 // plane web imports
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 import { getWorkItemsFilterOptions } from "@/components/rich-filters/filter-value-input/select/shared";
@@ -72,13 +76,22 @@ export type TWorkItemFiltersEntityProps = TCoreWorkItemFiltersEntityProps & {
   customPropertyIds?: string[];
   milestoneIds?: string[];
   epicIds?: string[];
+  workflowIds?: string[];
 };
 
 export type TUseWorkItemFiltersConfigProps = TCoreUseWorkItemFiltersConfigProps & TWorkItemFiltersEntityProps;
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
-  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug, projectId, customPropertyIds, milestoneIds, epicIds } =
-    props;
+  const {
+    workItemTypeIds,
+    teamspaceProjectIds,
+    workspaceSlug,
+    projectId,
+    customPropertyIds,
+    milestoneIds,
+    epicIds,
+    workflowIds,
+  } = props;
   // store hooks
   const {
     getIssuePropertyById,
@@ -91,6 +104,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const { getMilestoneById } = useMilestones();
   const { getProjectById } = useProject();
   const { getEpicMetaById } = useEpicMeta();
+  const { getWorkflowById } = useWorkflows();
   // derived values
   const workItemFiltersConfig = useCoreWorkItemFiltersConfig(props);
   const { isFilterEnabled, members, areAllConfigsInitialized: areAllCoreConfigsInitialized } = workItemFiltersConfig;
@@ -120,6 +134,13 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         : [],
     [teamspaceProjectIds, getProjectById]
   );
+  const workflows: IWorkflow[] | undefined = useMemo(
+    () =>
+      workflowIds
+        ? (workflowIds.map((workflowId) => getWorkflowById(workflowId)).filter((workflow) => workflow) as IWorkflow[])
+        : undefined,
+    [workflowIds, getWorkflowById]
+  );
 
   // milestones list
   const milestones: IMilestoneInstance[] | undefined =
@@ -141,6 +162,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const isWorkItemTypesEnabled = isFilterEnabled("type_id") && workItemTypes !== undefined;
   const isMilestonesEnabled = isFilterEnabled("milestone_id") && milestones !== undefined;
   const isEpicsEnabled = isFilterEnabled("epic_id") && epics !== undefined;
+  const isWorkflowFilterEnabled = isFilterEnabled("workflow_id") && workflows !== undefined;
   const isWorkItemTypeFeatureEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
   const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
   const workItemTypePropertiesLoader = projectId
@@ -326,6 +348,18 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [workspaceSlug, projectId, isFilterEnabled, operatorConfigs, issueService]
   );
 
+  const workflowFilterConfig = useMemo(
+    () =>
+      getWorkflowFilterConfig<TWorkItemFilterProperty>("workflow_id")({
+        isEnabled: !!projectId && isWorkflowFilterEnabled,
+        filterIcon: WorkflowIcon,
+        getOptionIcon: () => <WorkflowIcon className="h-3.5 w-3.5 shrink-0" />,
+        workflows: workflows ?? [],
+        ...operatorConfigs,
+      }),
+    [projectId, isWorkflowFilterEnabled, workflows, operatorConfigs]
+  );
+
   return {
     ...workItemFiltersConfig,
     areAllConfigsInitialized,
@@ -337,6 +371,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       workItemFilterConfig,
       epicFilterConfig,
       parentFilterConfig,
+      workflowFilterConfig,
       ...workItemFiltersConfig.configs,
       ...customPropertyConfigs.configs,
     ],
@@ -347,6 +382,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       id: workItemFilterConfig,
       epic_id: epicFilterConfig,
       parent_id: parentFilterConfig,
+      workflow_id: workflowFilterConfig,
       ...workItemFiltersConfig.configMap,
       name: workItemNameFilterConfig,
       ...customPropertyConfigs.configMap,

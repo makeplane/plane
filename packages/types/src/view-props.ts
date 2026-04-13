@@ -138,6 +138,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "epic_id",
   "parent_id",
   "release_id",
+  "workflow_id",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TCustomPropertyFilterKey;
 

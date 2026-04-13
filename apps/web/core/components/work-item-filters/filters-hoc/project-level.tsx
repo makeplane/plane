@@ -40,6 +40,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useReleases } from "@/hooks/store/use-releases";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
@@ -85,6 +86,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const {
     release: { getReleaseIdsByWorkspaceSlug, isReleasesEnabled },
   } = useReleases();
+  const { getProjectActiveWorkflows, isWorkflowsEnabled } = useWorkflows();
   const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   const { getProjectEpicDetails, getProjectIssueTypes, isWorkItemTypeEnabledForProject, isEpicEnabledForProject } =
     useIssueTypes();
@@ -94,6 +96,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
   const isEpicEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
   const isReleasesFeatureEnabled = isReleasesEnabled(workspaceSlug);
+  const isWorkflowsFeatureEnabled = isWorkflowsEnabled(workspaceSlug, projectId);
   const projectWorkItemTypes = Object.values(getProjectIssueTypes(projectId, false));
   const projectWorkItemTypeIds = useMemo(
     () => projectWorkItemTypes.map((workItemType) => workItemType.id).filter((id) => id !== undefined),
@@ -102,6 +105,15 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const projectEpicDetails = getProjectEpicDetails(projectId);
   const projectMilestoneIds = getProjectMilestoneIds(projectId);
   const projectEpicIds = getProjectEpicIds(projectId);
+  const projectWorkflowIds = useMemo(
+    () =>
+      isWorkflowsFeatureEnabled
+        ? getProjectActiveWorkflows(projectId)
+            .filter((workflow) => !workflow.is_default)
+            .map((workflow) => workflow.id)
+        : [],
+    [getProjectActiveWorkflows, isWorkflowsFeatureEnabled, projectId]
+  );
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
   const hasProjectMemberLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
@@ -268,6 +280,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         moduleIds={getProjectModuleIds(projectId) ?? undefined}
         releaseIds={isReleasesFeatureEnabled ? allReleaseIds : undefined}
         stateIds={getProjectStateIds(projectId)}
+        workflowIds={projectWorkflowIds.length > 0 ? projectWorkflowIds : undefined}
         workItemTypeIds={isWorkItemTypeEnabled ? projectWorkItemTypeIds : undefined}
         milestoneIds={isMilestonesFeatureEnabled ? projectMilestoneIds : undefined}
         epicIds={isEpicEnabled ? projectEpicIds : undefined}

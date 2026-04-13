@@ -35,6 +35,7 @@ FIELD_ALIASES = {
     "createdBy": "created_by_id",
     "type": "type_id",
     "milestone": "milestone_id",
+    "workflow": "workflow_id",
     "teamspaceProject": "team_project_id",
     # State group
     "stateGroup": "state_group",
