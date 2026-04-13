@@ -14,6 +14,7 @@
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 import { InboxIcon } from "lucide-react";
+import { observer } from "mobx-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -28,7 +29,9 @@ type NotificationsPopoverRootProps = {
   workspaceSlug: string;
 };
 
-export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopoverRootProps) {
+export const NotificationsPopoverRoot = observer(function NotificationsPopoverRoot({
+  workspaceSlug,
+}: NotificationsPopoverRootProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -112,4 +115,4 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
       </Popover.Content>
     </Popover>
   );
-}
+});
