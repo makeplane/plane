@@ -170,7 +170,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
           const issueLength = issueIds?.length;
           const groupHeight = issueLength * approximateCardHeight;
 
-          const isGroupCollapsed = collapsedGroups?.group_by?.includes(subList.id);
+          const isGroupCollapsed = !sub_group_by && collapsedGroups?.group_by?.includes(subList.id);
 
           return (
             <div
