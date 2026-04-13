@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 import { Controller } from "react-hook-form";
 import type { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue, Control } from "react-hook-form";
 import { Input } from "@plane/propel/input";
-import { useInstanceDepartment, useInstanceJobPosition } from "@/hooks/store";
+import { useInstanceJobPosition } from "@/hooks/store";
+import { DepartmentTreeSelect } from "./department-tree-select";
 
 export type StaffFormValues = {
   staff_id: string;
@@ -42,7 +43,6 @@ export const StaffFormFields = observer(function StaffFormFields({
   setValue,
   control,
 }: Props) {
-  const { departments, departmentIds } = useInstanceDepartment();
   const { grades, positions, hasFetched, fetchAll } = useInstanceJobPosition();
 
   // Local state for selected grade ID — drives position filtering reliably
@@ -109,17 +109,13 @@ export const StaffFormFields = observer(function StaffFormFields({
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <label className="text-13 font-medium">Department</label>
-          <select
-            {...register("department")}
-            className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
-          >
-            <option value="">— None —</option>
-            {departmentIds.map((id) => (
-              <option key={id} value={id}>
-                {departments[id]?.name}
-              </option>
-            ))}
-          </select>
+          <Controller
+            name="department"
+            control={control}
+            render={({ field }) => (
+              <DepartmentTreeSelect value={field.value} onChange={field.onChange} />
+            )}
+          />
         </div>
         <div className="space-y-1">
           <label className="text-13 font-medium">Status</label>

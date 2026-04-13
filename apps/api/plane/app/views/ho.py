@@ -90,6 +90,39 @@ def get_accessible_workspace_ids(user):
     return list(accessible_ids)
 
 
+def _get_user_scope_q(user, workspace_ids):
+    """Return a Q filter scoping issues to what the user is allowed to see.
+
+    - Instance admin or dept manager: all issues in accessible workspaces.
+    - Workspace admin (role=20): all issues in those admin workspaces.
+    - Regular member: only issues assigned to the user in their member workspaces.
+    """
+    if _is_instance_admin(user):
+        return Q(workspace_id__in=workspace_ids)
+
+    is_dept_manager = StaffProfile.objects.filter(
+        user=user, is_department_manager=True, deleted_at__isnull=True
+    ).exists()
+    if is_dept_manager:
+        return Q(workspace_id__in=workspace_ids)
+
+    # Split accessible workspaces by admin role
+    admin_ws_ids = set(
+        WorkspaceMember.objects.filter(
+            member=user, role=20, deleted_at__isnull=True,
+            workspace_id__in=workspace_ids
+        ).values_list("workspace_id", flat=True)
+    )
+    member_only_ws_ids = set(workspace_ids) - admin_ws_ids
+
+    q = Q()
+    if admin_ws_ids:
+        q |= Q(workspace_id__in=admin_ws_ids)
+    if member_only_ws_ids:
+        q |= Q(workspace_id__in=member_only_ws_ids, assignees=user)
+    return q if q else Q(pk__in=[])
+
+
 # ---------------------------------------------------------------------------
 # Pagination
 # ---------------------------------------------------------------------------
@@ -187,13 +220,15 @@ class HoIssueListView(BaseAPIView):
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
 
+        scope_q = _get_user_scope_q(request.user, workspace_ids)
         qs = (
             Issue.objects.filter(
-                workspace_id__in=workspace_ids,
+                scope_q,
                 is_draft=False,
                 archived_at__isnull=True,
                 deleted_at__isnull=True,
             )
+            .distinct()
             .select_related(
                 "project",
                 "project__workspace",
@@ -330,12 +365,13 @@ class HoCategorySummaryView(BaseAPIView):
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
 
+        scope_q = _get_user_scope_q(request.user, workspace_ids)
         qs = Issue.objects.filter(
-            workspace_id__in=workspace_ids,
+            scope_q,
             is_draft=False,
             archived_at__isnull=True,
             deleted_at__isnull=True,
-        )
+        ).distinct()
 
         # Apply project filter if provided
         if project_ids:
@@ -352,7 +388,7 @@ class HoCategorySummaryView(BaseAPIView):
 
         assignees = request.query_params.get("assignees")
         if assignees:
-            qs = qs.filter(assignees__id__in=assignees.split(",")).distinct()
+            qs = qs.filter(assignees__id__in=assignees.split(","))
 
         main_task_category = request.query_params.get("main_task_category")
         if main_task_category:
@@ -408,7 +444,7 @@ class HoCategorySummaryView(BaseAPIView):
                 "main_task_category__name",
                 "sub_task_category__name",
             )
-            .annotate(work_item_count=Count("id"))
+            .annotate(work_item_count=Count("id", distinct=True))
             .order_by(
                 "project__workspace__name",
                 "project__name",
@@ -627,8 +663,8 @@ class HoAccessibleWorkspacesView(BaseAPIView):
             return Response([], status=status.HTTP_200_OK)
 
         workspaces = (
-            Workspace.objects.filter(id__in=workspace_ids)
-            .select_related("logo_asset")
+            Workspace.objects.filter(id__in=workspace_ids, linked_department__isnull=False)
+            .select_related("logo_asset", "linked_department")
             .prefetch_related("workspace_project")
             .order_by("name")
         )
@@ -662,6 +698,7 @@ class HoAccessibleWorkspacesView(BaseAPIView):
                     "name": ws.name,
                     "slug": ws.slug,
                     "logo_url": ws.logo_url,  # Use @property, not raw ws.logo (resolves logo_asset for modern uploads)
+                    "department_name": ws.linked_department.name,
                     "projects": [
                         {"id": str(p["id"]), "name": p["name"], "identifier": p["identifier"]} for p in projects
                     ],

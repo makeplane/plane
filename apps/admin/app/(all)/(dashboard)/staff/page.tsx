@@ -17,20 +17,20 @@ import { useInstanceStaff, useInstanceDepartment } from "@/hooks/store";
 import { StaffTable } from "./components/staff-table";
 import { StaffFormModal } from "./components/staff-form-modal";
 import { StaffImportModal } from "./components/staff-import-modal";
+import type { Route } from "./+types/page";
 
 const StaffPage = observer(function StaffPage() {
   const { stats, staffIds, fetchStaff, fetchStats } = useInstanceStaff();
-  const { fetchDepartments } = useInstanceDepartment();
+  const { fetchTree, departments, departmentIds } = useInstanceDepartment();
   const [editStaffId, setEditStaffId] = useState<string | null>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState("");
   const [filterDept, setFilterDept] = useState("");
-  const { departments, departmentIds } = useInstanceDepartment();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useSWR("INSTANCE_STAFF", () => fetchStaff());
   useSWR("INSTANCE_STAFF_STATS", () => fetchStats());
-  useSWR("INSTANCE_DEPARTMENTS", () => fetchDepartments());
+  useSWR("INSTANCE_DEPARTMENTS_TREE", () => fetchTree());
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -147,8 +147,7 @@ const StaffPage = observer(function StaffPage() {
   );
 });
 
-export function meta() {
-  return [{ title: "Staff - God Mode" }];
-}
+// eslint-disable-next-line react-refresh/only-export-components
+export const meta: Route.MetaFunction = () => [{ title: "Staff - God Mode" }];
 
 export default StaffPage;

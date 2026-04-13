@@ -60,6 +60,7 @@ export type THoAccessibleWorkspace = {
   name: string;
   slug: string;
   logo_url: string | null;
+  department_name: string;
   projects: THoWorkspaceProject[];
 };
 
