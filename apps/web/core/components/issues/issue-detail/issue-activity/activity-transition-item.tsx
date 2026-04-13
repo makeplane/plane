@@ -132,14 +132,7 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
   );
 
   return (
-    <div
-      ref={highlightRef}
-      className={cn(
-        "relative flex flex-col gap-2 rounded-lg border border-transparent",
-        ends !== "bottom" && "pb-6",
-        isHighlighted && "animate-highlight-fade"
-      )}
-    >
+    <div ref={highlightRef} className={cn("relative flex flex-col gap-2 rounded-lg", ends !== "bottom" && "pb-6")}>
       {/* Continuous connector line behind both TimelineItem and TransitionRow */}
       {showConnector && <TimelineConnectorLine />}
 
@@ -148,6 +141,7 @@ export const IssueActivityTransitionItem = observer(function IssueActivityTransi
         showConnector={ends !== "bottom"}
         connectorHeight="md"
         className="text-caption-sm-regular pb-0"
+        highlighted={isHighlighted}
       >
         <span className="flex items-center gap-1.5 w-full truncate text-secondary text-body-xs-medium">
           {actorDisplay}

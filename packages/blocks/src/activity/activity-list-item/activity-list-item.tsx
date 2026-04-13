@@ -29,15 +29,13 @@ export function ActivityListItem(props: ActivityListItemProps) {
   const { actor, timestamp, tooltipTimestamp, icon, customContent } = data;
 
   return (
-    <div
-      ref={highlightRef}
-      className={cn("rounded-lg border border-transparent", highlighted && "animate-highlight-fade")}
-    >
+    <div ref={highlightRef} className="rounded-lg">
       <TimelineItem
         icon={icon}
         showConnector={ends !== "bottom"}
         connectorHeight="md"
         className="text-caption-sm-regular"
+        highlighted={highlighted}
       >
         <span className="flex items-center gap-1.5 w-full truncate text-secondary text-body-xs-medium">
           {actor}

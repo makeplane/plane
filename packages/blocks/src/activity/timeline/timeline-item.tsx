@@ -22,12 +22,13 @@ export type TimelineItemProps = {
   showConnector?: boolean;
   connectorHeight?: "sm" | "md";
   className?: string;
+  highlighted?: boolean;
 };
 import { TimelineItemIcon } from "./timeline-item-icon";
 import { TimelineTimestamp } from "./timeline-timestamp";
 
 export function TimelineItem(props: TimelineItemProps) {
-  const { icon, children, timestamp, showConnector = true, connectorHeight = "md", className } = props;
+  const { icon, children, timestamp, showConnector = true, connectorHeight = "md", className, highlighted } = props;
 
   return (
     <div
@@ -38,7 +39,7 @@ export function TimelineItem(props: TimelineItemProps) {
       )}
     >
       {showConnector && <TimelineConnectorLine />}
-      <TimelineItemIcon className="relative text-icon-tertiary z-[4]">{icon}</TimelineItemIcon>
+      <TimelineItemIcon highlighted={highlighted}>{icon}</TimelineItemIcon>
       <div className="flex min-w-0 items-center gap-2">
         <div className="flex items-center gap-1.5 truncate">{children}</div>
         {timestamp && <TimelineTimestamp timestamp={timestamp} />}

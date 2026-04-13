@@ -66,18 +66,14 @@ export function CommentBlock(props: CommentBlockProps) {
   return (
     <div
       ref={highlightRef}
-      className={cn(
-        "relative flex w-full items-start gap-3 rounded-lg border border-transparent",
-        showConnector && "pb-6",
-        highlighted && "animate-highlight-fade"
-      )}
+      className={cn("relative flex w-full items-start gap-3 rounded-lg", showConnector && "pb-6")}
     >
       {/* Continuous connector line behind icon and card */}
       {showConnector && <TimelineConnectorLine />}
 
       {/* Left column: icon */}
       <div className="shrink-0 relative z-[4]">
-        <TimelineItemIcon>
+        <TimelineItemIcon highlighted={highlighted}>
           <CommentFillIcon className="size-3.5 text-tertiary" />
         </TimelineItemIcon>
       </div>

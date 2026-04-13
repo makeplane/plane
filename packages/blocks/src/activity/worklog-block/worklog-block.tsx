@@ -45,15 +45,14 @@ export function WorklogBlock(props: WorklogBlockProps) {
     <div
       ref={highlightRef}
       className={cn(
-        "relative flex gap-3 text-caption-sm-regular rounded-lg border border-transparent",
+        "relative flex gap-3 text-caption-sm-regular rounded-lg",
         description ? "items-start" : "items-center",
-        ends === "top" ? "pb-2" : ends === "bottom" ? "pt-2" : "py-2",
-        highlighted && "animate-highlight-fade"
+        ends === "top" ? "pb-2" : ends === "bottom" ? "pt-2" : "py-2"
       )}
     >
       {showConnector && <TimelineConnectorLine />}
       <div className="flex-shrink-0 relative z-[4]">
-        <TimelineItemIcon>{avatar}</TimelineItemIcon>
+        <TimelineItemIcon highlighted={highlighted}>{avatar}</TimelineItemIcon>
         {badgeIcon && (
           <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full flex justify-center items-center bg-layer-1 border border-subtle shadow-raised-100 z-10">
             {badgeIcon}

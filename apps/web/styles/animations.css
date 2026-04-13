@@ -91,24 +91,6 @@
   }
 }
 
-@keyframes highlight-fade {
-  0% {
-    background-color: rgb(var(--color-accent-subtle) / 0.5);
-    border-color: rgb(var(--color-accent-strong));
-    box-shadow: 0 0 0 2px rgb(var(--color-accent-subtle) / 0.3);
-  }
-  40% {
-    background-color: rgb(var(--color-accent-subtle) / 0.3);
-    border-color: rgb(var(--color-accent-strong));
-    box-shadow: 0 0 0 0px rgb(var(--color-accent-subtle) / 0);
-  }
-  100% {
-    background-color: transparent;
-    border-color: transparent;
-    box-shadow: none;
-  }
-}
-
 /* Animation classes */
 .animate-stagger-comments > * {
   animation: stagger-comments 0.25s var(--ease-out-cubic) forwards;
@@ -167,10 +149,6 @@
   animation: fade-in-up 0.3s var(--ease-out-cubic) forwards;
 }
 
-.animate-highlight-fade {
-  animation: highlight-fade 3s var(--ease-out-cubic) forwards;
-}
-
 /* Subtle transition for comment items during filtering */
 .animate-comment-item {
   transition: all 0.15s var(--ease-out-cubic);
@@ -188,8 +166,7 @@
   .animate-button-fade-up,
   .animate-fade-in-up,
   .animate-comment-filter,
-  .animate-comment-item,
-  .animate-highlight-fade {
+  .animate-comment-item {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

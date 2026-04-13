@@ -17,15 +17,17 @@ import { cn } from "@plane/utils";
 export type TimelineItemIconProps = {
   children: ReactNode;
   className?: string;
+  highlighted?: boolean;
 };
 
 export function TimelineItemIcon(props: TimelineItemIconProps) {
-  const { children, className } = props;
+  const { children, className, highlighted } = props;
 
   return (
     <div
       className={cn(
-        "shrink-0 overflow-clip rounded-lg border-[0.5px] border-subtle-1 bg-layer-2 p-1.5 shadow-raised-200",
+        "relative z-4 shrink-0 overflow-clip rounded-lg border-[0.5px] border-subtle-1 bg-layer-2 p-1.5 shadow-raised-200 transition-border duration-500",
+        highlighted && "border-1 border-accent-strong",
         className
       )}
     >
