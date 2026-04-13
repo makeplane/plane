@@ -441,10 +441,19 @@ def _is_custom_model(model_key: str) -> bool:
 
 def _create_custom_llm_config(*, streaming: bool = False) -> LLMConfig:
     """Build an LLMConfig for the custom self-hosted model."""
+    if settings.llm_config.use_inference_profile:
+        model = (
+            settings.llm_config.BEDROCK_INFERENCE_PROFILE_ARN
+            or settings.llm_config.BEDROCK_INFERENCE_PROFILE_ID
+        )
+        api_key = ""
+    else:
+        model = settings.llm_config.CUSTOM_LLM_MODEL_KEY
+        api_key = settings.llm_config.CUSTOM_LLM_API_KEY
     return LLMConfig(
-        model=settings.llm_config.CUSTOM_LLM_MODEL_KEY,
+        model=model,
         base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
-        api_key=settings.llm_config.CUSTOM_LLM_API_KEY,
+        api_key=api_key,
         streaming=streaming,
         temperature=None,
     )
@@ -454,10 +463,14 @@ def _create_bedrock_llm(config: LLMConfig, track_tokens: bool = True, **override
     """Create a Bedrock LLM instance via ChatBedrock."""
     bedrock_params: dict[str, Any] = {
         "model": config.model,
-        "bedrock_api_key": config.api_key,
         "region_name": settings.llm_config.CUSTOM_LLM_AWS_REGION,
         "streaming": config.streaming or False,
     }
+
+    if settings.llm_config.use_inference_profile:
+        bedrock_params["provider"] = "anthropic"
+    else:
+        bedrock_params["bedrock_api_key"] = config.api_key
 
     if config.temperature is not None:
         bedrock_params["temperature"] = config.temperature

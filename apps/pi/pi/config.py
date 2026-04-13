@@ -310,14 +310,29 @@ class LLMConfig:
     CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", ""))
     CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: get_env_int("CUSTOM_LLM_MAX_TOKENS", "128000"))
     CUSTOM_LLM_AWS_REGION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_AWS_REGION", ""))
+    BEDROCK_INFERENCE_PROFILE_ARN: str = field(default_factory=lambda: os.getenv("BEDROCK_INFERENCE_PROFILE_ARN", ""))
+    BEDROCK_INFERENCE_PROFILE_ID: str = field(default_factory=lambda: os.getenv("BEDROCK_INFERENCE_PROFILE_ID", ""))
 
     # Provider → required config fields
     LLM_PROVIDER_REQUIRED_ENV: dict[str, list[str]] = field(
         default_factory=lambda: {
             "openai": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_API_KEY", "CUSTOM_LLM_BASE_URL"],
             "bedrock": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_API_KEY", "CUSTOM_LLM_AWS_REGION"],
+            "bedrock_inference_profile": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_AWS_REGION"],
         }
     )
+
+    @property
+    def use_inference_profile(self) -> bool:
+        """True when an inference profile ARN/ID is set AND ambient AWS credentials are available (IRSA/EKS Pod Identity)."""
+        has_profile = bool(self.BEDROCK_INFERENCE_PROFILE_ARN or self.BEDROCK_INFERENCE_PROFILE_ID)
+        has_aws_creds = bool(
+            os.getenv("AWS_ROLE_ARN", "")
+            or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+            or os.getenv("AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE", "")  # EKS Pod Identity token file
+            or os.getenv("AWS_WEB_IDENTITY_TOKEN_FILE", "")             # IRSA token file
+        )
+        return has_profile and has_aws_creds
 
 
 @dataclass

@@ -131,7 +131,15 @@ def validate_cohere_key(api_key: Optional[str] = None, base_url: Optional[str] =
 def validate_custom_llm(api_key: Optional[str] = None, base_url: Optional[str] = None, model_key: Optional[str] = None) -> tuple[bool, str]:
     """Validate custom self-hosted LLM connectivity."""
 
-    model = model_key or settings.llm_config.CUSTOM_LLM_MODEL_KEY
+    if settings.llm_config.use_inference_profile:
+        model = (
+            model_key
+            or settings.llm_config.BEDROCK_INFERENCE_PROFILE_ARN
+            or settings.llm_config.BEDROCK_INFERENCE_PROFILE_ID
+            or settings.llm_config.CUSTOM_LLM_MODEL_KEY
+        )
+    else:
+        model = model_key or settings.llm_config.CUSTOM_LLM_MODEL_KEY
     provider = settings.llm_config.CUSTOM_LLM_PROVIDER.lower().strip()
 
     if not model:
