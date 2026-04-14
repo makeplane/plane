@@ -123,6 +123,8 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      // Prevent IME composition Enter from triggering submit
+      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
       if (e.key === "Enter") {
         e.stopPropagation();
         if (applyChanges()) {
