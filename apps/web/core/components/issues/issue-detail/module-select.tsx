@@ -177,7 +177,7 @@ const IssueModuleSelectDropdown = observer(function IssueModuleSelectDropdown(pr
   return (
     <Combobox
       as="div"
-      className="size-full shrink-0 text-left"
+      className="h-full w-min shrink-0 text-left flex items-center"
       value={currentModuleIds}
       onChange={(value) => onToggle(value)}
       multiple

@@ -213,7 +213,7 @@ export function ReleaseWorkItemsListModal(props: Props) {
                           } ${selected ? "text-primary" : ""}`
                         }
                       >
-                        <div className="flex items-center gap-2 truncate">
+                        <div className="flex items-center gap-2 truncate shrink-0">
                           <input type="checkbox" checked={selected} readOnly />
                           <span
                             className="block h-1.5 w-1.5 shrink-0 rounded-full"

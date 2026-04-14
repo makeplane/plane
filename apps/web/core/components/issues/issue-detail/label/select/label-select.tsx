@@ -128,7 +128,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
     <>
       <Combobox
         as="div"
-        className="size-full flex-shrink-0 text-left"
+        className="h-full w-min shrink-0 text-left flex items-center"
         value={issueLabels}
         onChange={(value) => onSelect(value)}
         multiple

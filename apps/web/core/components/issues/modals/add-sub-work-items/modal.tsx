@@ -278,7 +278,7 @@ export function SubWorkItemsListModal(props: Props) {
                           )
                         }
                       >
-                        <div className="flex items-center gap-2 truncate">
+                        <div className="flex items-center gap-2 truncate shrink-0">
                           <input type="checkbox" checked={selected} readOnly />
                         </div>
                         <SubWorkItemsListItem workspaceSlug={workspaceSlug ?? ""} workItem={workItem} />
