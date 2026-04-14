@@ -194,6 +194,10 @@
       "server_error_states": "Durumlar yüklenirken sunucu hatası"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Bitbucket Data Center depolarınızı Plane ile bağlayın ve senkronize edin."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "API erişimi için harici IdP tokenlarını doğrulayın.",
@@ -316,6 +320,7 @@
     "pulling": "Çekiliyor",
     "timed_out": "Zaman aşımı",
     "pulled": "Çekildi",
+    "progressing": "Devam ediyor",
     "transforming": "Dönüştürülüyor",
     "transformed": "Dönüştürüldü",
     "pushing": "İtiliyor",

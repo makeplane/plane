@@ -274,6 +274,9 @@
       "title": "Traccia i fogli ore per tutti i membri",
       "description": "Registra il tempo sugli elementi di lavoro per visualizzare fogli ore dettagliati per qualsiasi membro del team attraverso i progetti."
     },
+    "group_syncing": {
+      "title": "Nessuna mappatura di gruppi ancora"
+    },
     "customers_setting": {
       "title": "Abilita la gestione clienti per iniziare.",
       "cta_primary": "Abilita"
@@ -282,6 +285,15 @@
       "title": "Nessun modello ancora",
       "description": "Riduci i tempi di configurazione creando modelli per progetti, elementi di lavoro e pagine — e inizia nuovi lavori in pochi secondi.",
       "cta_primary": "Crea modello"
+    },
+    "workflows": {
+      "title": "Nessun flusso di lavoro ancora",
+      "description": "Crea flussi di lavoro per gestire lo stato di avanzamento dei tuoi elementi di lavoro.",
+      "cta_primary": "Aggiungi nuovo flusso di lavoro",
+      "states": {
+        "title": "Aggiungi stati",
+        "description": "Seleziona gli stati attraverso i quali avanza l'elemento di lavoro."
+      }
     }
   }
 }

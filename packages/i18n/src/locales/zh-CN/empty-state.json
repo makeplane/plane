@@ -274,6 +274,9 @@
       "title": "跟踪所有成员的工时表",
       "description": "在工作项上记录时间以查看跨项目任何团队成员的详细工时表。"
     },
+    "group_syncing": {
+      "title": "暂无组映射"
+    },
     "customers_setting": {
       "title": "启用客户管理以开始。",
       "cta_primary": "启用"
@@ -282,6 +285,15 @@
       "title": "暂无模板",
       "description": "通过为项目、工作项和页面创建模板来减少设置时间 — 并在几秒钟内开始新工作。",
       "cta_primary": "创建模板"
+    },
+    "workflows": {
+      "title": "暂无工作流",
+      "description": "创建工作流以管理工作项的进度。",
+      "cta_primary": "添加新工作流",
+      "states": {
+        "title": "添加状态",
+        "description": "选择工作项推进过程中经历的状态。"
+      }
     }
   }
 }

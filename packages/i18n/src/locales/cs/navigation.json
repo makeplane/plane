@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Poznámky",
     "projects": "Projekty",
     "pages": "Stránky",
     "new_work_item": "Nová pracovní položka",
@@ -25,7 +26,7 @@
     "plane_pro": "Plane Pro",
     "business": "Byznys",
     "customers": "Zákazníci",
-    "recurring_work_items": "Opakující se pracovní položky"
+    "releases": "Vydání"
   },
   "command_k": {
     "empty_state": {

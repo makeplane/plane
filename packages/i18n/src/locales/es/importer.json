@@ -77,7 +77,9 @@
     "add_seat_msg_paid": "Estás intentando importar {additionalUserCount} usuarios no registrados y solo tienes {currentWorkspaceSubscriptionAvailableSeats} asientos disponibles en el plan actual. Para continuar importando, compra al menos {extraSeatRequired} asientos adicionales.",
     "skip_user_import_title": "Omitir importación de datos de usuario",
     "skip_user_import_description": "Omitir la importación de usuarios resultará en que los elementos de trabajo, comentarios y otros datos de {serviceName} sean creados por el usuario que realiza la migración en Plane. Aún puedes agregar usuarios manualmente más tarde.",
-    "invalid_pat": "Token de acceso personal inválido"
+    "invalid_pat": "Token de acceso personal inválido",
+    "teamspace": "Espacio de equipo",
+    "destination": "Destino"
   },
   "jira_importer": {
     "jira_importer_description": "Importira tus datos de Jira a proyectos de Plane",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Todos los estados de Jira se crearán automáticamente en Plane.",
     "personal_access_token": "Token de acceso personal",
     "user_email": "Correo electrónico del usuario",
-    "atlassian_security_settings": "Configuración de seguridad de Atlassian",
     "email_description": "Este es el correo electrónico vinculado a tu token de acceso personal",
     "jira_domain": "Dominio de Jira",
     "jira_domain_description": "Este es el dominio de tu instancia de Jira",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Importa tus datos de Notion a proyectos de Plane.",
     "steps": {
+      "title_select_destination": "Seleccionar destino",
+      "description_select_destination": "Por favor, selecciona el destino para tus datos de Notion.",
       "title_upload_zip": "Subir ZIP exportado de Notion",
       "description_upload_zip": "Por favor, sube el archivo ZIP que contiene tus datos de Notion."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "¡Subida completada!",
       "upload_complete_description": "Haz clic en \"Iniciar importación\" para comenzar a procesar tus datos de Notion.",
       "upload_progress_message": "Por favor, no cierres esta ventana."
+    },
+    "select_destination": {
+      "destination_type": "Tipo de destino",
+      "select_destination_type": "Seleccionar tipo de destino",
+      "select_project": "Seleccionar proyecto",
+      "no_projects_found": "No se encontraron proyectos",
+      "select_teamspace": "Seleccionar espacio de equipo",
+      "no_teamspaces_found": "No se encontraron espacios de equipo",
+      "unknown_project": "Proyecto desconocido",
+      "unknown_teamspace": "Espacio de equipo desconocido"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Importa tus datos de Confluence al wiki de Plane.",
     "steps": {
+      "title_select_destination": "Seleccionar destino",
+      "description_select_destination": "Por favor, selecciona el destino para tus datos de Confluence.",
       "title_upload_zip": "Subir ZIP exportado de Confluence",
       "description_upload_zip": "Por favor, sube el archivo ZIP que contiene tus datos de Confluence."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "¡Subida completada!",
       "upload_complete_description": "Haz clic en \"Iniciar importación\" para comenzar a procesar tus datos de Confluence.",
       "upload_progress_message": "Por favor, no cierres esta ventana."
+    },
+    "select_destination": {
+      "destination_type": "Tipo de destino",
+      "select_destination_type": "Seleccionar tipo de destino",
+      "select_project": "Seleccionar proyecto",
+      "no_projects_found": "No se encontraron proyectos",
+      "select_teamspace": "Seleccionar espacio de equipo",
+      "no_teamspaces_found": "No se encontraron espacios de equipo",
+      "unknown_project": "Proyecto desconocido",
+      "unknown_teamspace": "Espacio de equipo desconocido"
     }
   },
   "flatfile_importer": {

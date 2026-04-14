@@ -274,6 +274,9 @@
       "title": "追蹤所有成員的工時表",
       "description": "在工作項上記錄時間以檢視跨專案任何團隊成員的詳細工時表。"
     },
+    "group_syncing": {
+      "title": "尚無群組對應"
+    },
     "customers_setting": {
       "title": "啟用客戶管理以開始。",
       "cta_primary": "啟用"
@@ -282,6 +285,15 @@
       "title": "暫無範本",
       "description": "透過為專案、工作項和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
       "cta_primary": "建立範本"
+    },
+    "workflows": {
+      "title": "尚無工作流程",
+      "description": "建立工作流程以管理工作項目的進度。",
+      "cta_primary": "新增工作流程",
+      "states": {
+        "title": "新增狀態",
+        "description": "選擇工作項目經過的狀態。"
+      }
     }
   }
 }

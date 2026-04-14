@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Vui lòng nhập một URL hợp lệ."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Mô tả nội dung của khối này",
+      "generated_here": "Nội dung AI của bạn sẽ được tạo ở đây"
+    },
+    "block_types": {
+      "placeholder": "Chọn loại khối",
+      "summarize_page": "Tóm tắt trang",
+      "custom_prompt": "Gợi ý tùy chỉnh"
+    },
+    "actions": {
+      "discard": "Hủy bỏ",
+      "generate": "Tạo",
+      "generating": "Đang tạo",
+      "rewriting": "Đang viết lại",
+      "rewrite": "Viết lại",
+      "use_this": "Sử dụng cái này",
+      "refine": "Tinh chỉnh"
+    }
   }
 }

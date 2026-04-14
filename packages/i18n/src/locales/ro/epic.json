@@ -49,6 +49,23 @@
           "text": "Adaugă epice"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Aceasta creează o copie a epicului.",
+        "description2": "Toate datele proprietăților vor fi eliminate la duplicare.",
+        "epics_not_enabled": "Epicele nu sunt activate"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic duplicat cu succes"
+        },
+        "error": {
+          "message": "Duplicarea epicului a eșuat"
+        }
+      }
     }
   },
   "epic_relation": {

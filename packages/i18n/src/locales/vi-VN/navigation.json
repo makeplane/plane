@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Ghi chú nhanh",
     "projects": "Dự án",
     "pages": "Trang",
     "new_work_item": "Mục công việc mới",
@@ -25,7 +26,7 @@
     "plane_pro": "Plane Pro",
     "business": "Doanh nghiệp",
     "customers": "Khách hàng",
-    "recurring_work_items": "Công việc lặp lại"
+    "releases": "Phiên bản phát hành"
   },
   "command_k": {
     "empty_state": {

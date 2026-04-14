@@ -5,8 +5,6 @@
       "sub-title": "Haz saber al equipo en qué te gustaría que trabajen.",
       "name": "Nombre",
       "email": "Correo electrónico",
-      "about": "¿De qué trata este elemento de trabajo?",
-      "description": "Describe qué debería ocurrir",
       "description_placeholder": "Añade todos los detalles que quieras para ayudar al equipo a identificar tu situación y necesidades.",
       "loading": "Creando",
       "create_work_item": "Crear elemento de trabajo",

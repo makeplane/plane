@@ -141,13 +141,7 @@
     "summary_of_projects": "Зведення проєктів",
     "project_insights": "Аналітика проєкту",
     "started_work_items": "Розпочаті {entity}",
-    "total_work_items": "Усього {entity}",
-    "total_projects": "Усього проєктів",
-    "total_admins": "Усього адміністраторів",
-    "total_users": "Усього користувачів",
-    "total_intake": "Загальний дохід",
     "un_started_work_items": "Нерозпочаті {entity}",
-    "total_guests": "Усього гостей",
     "completed_work_items": "Завершені {entity}",
     "total": "Усього {entity}",
     "projects_by_status": "Проєкти за статусом",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Ще немає заархівованих пейджів",
         "description": "Архівуйте пейджі, які не на вашому радарі. Доступ до них тут, коли потрібно."
+      },
+      "shared": {
+        "title": "Поки що немає спільних сторінок",
+        "description": "Сторінки, якими з вами поділилися, з'являться тут."
       }
     }
   },

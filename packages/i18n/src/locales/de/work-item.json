@@ -65,7 +65,8 @@
         "customer_count": "Kundenanzahl",
         "customer_request_count": "Kundenanfragenanzahl",
         "customer": "Kunde",
-        "requests": "Kundenanfrage"
+        "requests": "Kundenanfrage",
+        "releases": "Releases"
       },
       "extra": {
         "show_sub_issues": "Untergeordnete Elemente anzeigen",

@@ -10,6 +10,8 @@
     "all_initiatives": "Todas las Iniciativas",
     "delete_initiative": "Eliminar Iniciativa",
     "fill_all_required_fields": "Por favor complete todos los campos requeridos.",
+    "archive_initiative": "Archivar iniciativa",
+    "archive_confirm_message": "¿Estás seguro de que deseas archivar la iniciativa? Todas tus iniciativas archivadas se pueden restaurar más tarde.",
     "archive_description": "Solo se pueden archivar iniciativas completadas o cerradas",
     "toast": {
       "create_success": "Iniciativa {name} creada exitosamente.",
@@ -24,6 +26,9 @@
         "success": "Iniciativa archivada correctamente.",
         "error": "No se pudo archivar la iniciativa",
         "initiative_cannot_be_archived_in_this_state": "La iniciativa no se puede archivar en este estado"
+      },
+      "restore": {
+        "error": "No se pudo restaurar la iniciativa. Por favor, inténtalo de nuevo."
       },
       "link_copied": "Enlace de la iniciativa copiado al portapapeles.",
       "project_update_success": "Proyectos de la iniciativa actualizados exitosamente.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Aún no se ha agregado alcance a esta iniciativa",
         "description": "Conecta proyectos y épicas y sigue esa obra en este espacio.",
+        "description_projects": "Conecta proyectos y sigue ese trabajo en este espacio.",
+        "description_epics": "Conecta epics y sigue ese trabajo en este espacio.",
         "primary_button": {
           "text": "Agregar alcance"
         }
+      },
+      "board": {
+        "no_epics": "No hay epics en esta iniciativa",
+        "no_projects": "No hay proyectos en esta iniciativa",
+        "enable_project_states": "Los estados de proyecto no están habilitados",
+        "enable_project_states_description": "Habilita los estados de proyecto desde la configuración del espacio de trabajo para usar la agrupación por estado."
       }
     },
     "initiative_settings": {

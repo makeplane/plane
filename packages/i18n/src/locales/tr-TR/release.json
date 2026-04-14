@@ -6,6 +6,7 @@
     "select_releases": "Sürümleri seç",
     "overview": "Genel bakış",
     "scope": "Kapsam",
+    "changelog": "Değişiklik günlüğü",
     "page_title": {
       "scope": "Sürüm - {name} | Kapsam",
       "scope_fallback": "Sürüm | Kapsam"

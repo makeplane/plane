@@ -10,6 +10,8 @@
     "all_initiatives": "Wszystkie Inicjatywy",
     "delete_initiative": "Usuń Inicjatywę",
     "fill_all_required_fields": "Wypełnij wszystkie wymagane pola.",
+    "archive_initiative": "Archiwizuj inicjatywę",
+    "archive_confirm_message": "Czy na pewno chcesz zarchiwizować inicjatywę? Wszystkie zarchiwizowane inicjatywy można później przywrócić.",
     "archive_description": "Archiwować można tylko ukończone lub zamknięte inicjatywy",
     "toast": {
       "create_success": "Inicjatywa {name} utworzona pomyślnie.",
@@ -24,6 +26,9 @@
         "success": "Inicjatywa została pomyślnie zarchiwizowana.",
         "error": "Nie udało się zarchiwizować inicjatywy",
         "initiative_cannot_be_archived_in_this_state": "Nie można zarchiwizować inicjatywy w tym stanie"
+      },
+      "restore": {
+        "error": "Nie udało się przywrócić inicjatywy. Spróbuj ponownie."
       },
       "link_copied": "Link do inicjatywy skopiowany do schowka.",
       "project_update_success": "Projekty inicjatywy zaktualizowane pomyślnie.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Nie dodano jeszcze zakresu do tej inicjatywy",
         "description": "Połącz projekty i epiki z inicjatywą, aby rozpocząć.",
+        "description_projects": "Połącz projekty i śledź tę pracę w tej przestrzeni.",
+        "description_epics": "Połącz epiki i śledź tę pracę w tej przestrzeni.",
         "primary_button": {
           "text": "Dodaj zakres"
         }
+      },
+      "board": {
+        "no_epics": "Brak epików w tej inicjatywie",
+        "no_projects": "Brak projektów w tej inicjatywie",
+        "enable_project_states": "Stany projektu nie są włączone",
+        "enable_project_states_description": "Włącz stany projektu w ustawieniach przestrzeni roboczej, aby używać grupowania opartego na stanach."
       }
     },
     "initiative_settings": {

@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Wprowadź prawidłowy adres URL."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Opisz zawartość tego bloku",
+      "generated_here": "Twoja zawartość AI zostanie wygenerowana tutaj"
+    },
+    "block_types": {
+      "placeholder": "Wybierz typ bloku",
+      "summarize_page": "Podsumuj stronę",
+      "custom_prompt": "Niestandardowy prompt"
+    },
+    "actions": {
+      "discard": "Odrzuć",
+      "generate": "Generuj",
+      "generating": "Generowanie",
+      "rewriting": "Przepisywanie",
+      "rewrite": "Przepisz",
+      "use_this": "Użyj tego",
+      "refine": "Udoskonal"
+    }
   }
 }

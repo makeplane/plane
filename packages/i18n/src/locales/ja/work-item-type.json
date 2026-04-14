@@ -3,11 +3,17 @@
     "label": "作業項目タイプ",
     "label_lowercase": "作業項目タイプ",
     "settings": {
-      "title": "作業項目タイプ",
+      "description": "チームのニーズに合わせて独自のプロパティをカスタマイズして追加できます。",
       "properties": {
         "title": "カスタム作業項目プロパティ",
+        "description": "プロパティを作成・カスタマイズします。",
         "tooltip": "各作業項目タイプには、タイトル、説明、担当者、状態、優先度、開始日、期限日、モジュール、サイクルなどのデフォルトのプロパティセットが付属しています。チームのニーズに合わせて独自のプロパティをカスタマイズして追加することもできます。",
         "add_button": "新しいプロパティを追加",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "ワークスペースからインポート"
+          }
+        },
         "dropdown": {
           "label": "プロパティタイプ",
           "placeholder": "タイプを選択"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "新しいカスタムプロパティを作成",
+            "update": "カスタムプロパティを更新"
+          },
           "form": {
             "display_name": {
               "placeholder": "タイトル"
@@ -216,6 +226,46 @@
           "description": "この作業項目タイプに追加する新しいプロパティがここに表示されます。"
         }
       },
+      "types": {
+        "title": "タイプ",
+        "description": "プロパティを持つ作業項目タイプを作成・カスタマイズします。",
+        "sort_options": {
+          "project_count": "所属プロジェクト数"
+        },
+        "filter_options": {
+          "show_active": "アクティブを表示",
+          "show_inactive": "非アクティブを表示"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "新規作成",
+            "import_from_workspace": "ワークスペースからインポート"
+          },
+          "banner": {
+            "with_access": "ワークスペースレベルからタイプをインポートするには、作業項目タイプを有効にしてください",
+            "without_access": "作業項目タイプは無効になっています。ワークスペース管理者に連絡して、ワークスペース設定で有効にしてもらってください。"
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "カスタムプロパティ",
+        "add_button": "プロパティを追加",
+        "modal": {
+          "title": "プロパティを追加",
+          "empty": {
+            "title": "利用可能なプロパティがありません",
+            "description": "すべてのプロパティはすでにこのタイプにリンクされています。"
+          }
+        },
+        "unlink_confirmation": {
+          "title": "プロパティのリンクを解除",
+          "description": "このプロパティのリンクを解除すると、このタイプを使用するすべての作業項目のすべての値が完全に削除されます。この操作は元に戻せません。",
+          "input_label": "入力",
+          "input_label_suffix": "して続行：",
+          "confirm": "プロパティのリンクを解除",
+          "loading": "リンク解除中"
+        }
+      },
       "item_delete_confirmation": {
         "title": "このタイプを削除",
         "description": "タイプの削除は既存データの損失につながる可能性があります。",
@@ -256,6 +306,7 @@
         "error": {
           "title": "エラー！",
           "message": {
+            "default": "作業項目タイプの作成に失敗しました。もう一度お試しください！",
             "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "エラー！",
           "message": {
+            "default": "作業項目タイプの更新に失敗しました。もう一度お試しください！",
             "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
           }
         }

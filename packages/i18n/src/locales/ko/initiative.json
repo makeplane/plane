@@ -9,6 +9,8 @@
     "initiative_name": "이니셔티브 이름",
     "all_initiatives": "모든 이니셔티브",
     "delete_initiative": "이니셔티브 삭제",
+    "archive_initiative": "이니셔티브 아카이브",
+    "archive_confirm_message": "이니셔티브를 아카이브하시겠습니까? 아카이브한 모든 이니셔티브는 나중에 복원할 수 있습니다.",
     "fill_all_required_fields": "모든 필수 필드를 입력해 주세요.",
     "archive_description": "완료되었거나 종료된 이니셔티브만 보관할 수 있습니다",
     "toast": {
@@ -24,6 +26,9 @@
         "success": "이니셔티브가 보관되었습니다.",
         "error": "이니셔티브를 보관하지 못했습니다",
         "initiative_cannot_be_archived_in_this_state": "이 상태의 이니셔티브는 보관할 수 없습니다"
+      },
+      "restore": {
+        "error": "이니셔티브를 복원할 수 없습니다. 다시 시도해 주세요."
       },
       "link_copied": "이니셔티브 링크가 클립보드에 복사되었습니다.",
       "project_update_success": "이니셔티브 프로젝트가 성공적으로 업데이트되었습니다.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "아직 이니셔티브에 범위가 추가되지 않았습니다",
         "description": "이 이니셔티브에 프로젝트와 에픽을 연결하고 그 작업을 이 공간에서 추적하세요.",
+        "description_projects": "프로젝트를 연결하고 이 공간에서 해당 작업을 추적하세요.",
+        "description_epics": "에픽을 연결하고 이 공간에서 해당 작업을 추적하세요.",
         "primary_button": {
           "text": "범위 추가"
         }
+      },
+      "board": {
+        "no_epics": "이 이니셔티브에 에픽이 없습니다",
+        "no_projects": "이 이니셔티브에 프로젝트가 없습니다",
+        "enable_project_states": "프로젝트 상태가 활성화되지 않음",
+        "enable_project_states_description": "상태 기반 그룹화를 사용하려면 작업 공간 설정에서 프로젝트 상태를 활성화하세요."
       }
     },
     "initiative_settings": {

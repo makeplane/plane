@@ -81,6 +81,9 @@
             "min_length": "Przychód nie może być mniejszy niż 0."
           }
         },
+        "requests": {
+          "name": "Liczba próśb"
+        },
         "invalid_value": "Nieprawidłowa wartość właściwości."
       },
       "custom": {

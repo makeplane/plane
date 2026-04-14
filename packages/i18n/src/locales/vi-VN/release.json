@@ -6,6 +6,7 @@
     "select_releases": "Chọn bản phát hành",
     "overview": "Tổng quan",
     "scope": "Phạm vi",
+    "changelog": "Nhật ký thay đổi",
     "page_title": {
       "scope": "Bản phát hành - {name} | Phạm vi",
       "scope_fallback": "Bản phát hành | Phạm vi"

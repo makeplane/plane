@@ -135,10 +135,6 @@
           "text": "Vytvoriť pohľad"
         }
       },
-      "project_view": {
-        "title": "Žiadny z vašich prepojených projektov nemá verejné pohľady.",
-        "description": "Verejné pohľady v prepojených projektoch sa tu automaticky zobrazia. Aby ste tu videli verejné pohľady z prepojených projektov, uistite sa, že tieto projekty majú verejné pohľady prístupné všetkým členom projektu."
-      },
       "filter": {
         "title": "Žiadne zodpovedajúce pohľady",
         "description": "Žiadne pohľady nezodpovedajú kritériám vyhľadávania.\n Namiesto toho vytvorte nový pohľad."
@@ -153,10 +149,6 @@
         "primary_button": {
           "text": "Vytvorte svoju prvú tímovú stránku"
         }
-      },
-      "project_page": {
-        "title": "Žiadny z vašich prepojených projektov nemá verejné stránky.",
-        "description": "Verejné stránky v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že tu uvidíte verejné stránky, uistite sa, že vaše prepojené projekty majú verejné stránky dostupné všetkým členom projektu."
       },
       "filter": {
         "title": "Žiadne zodpovedajúce stránky",

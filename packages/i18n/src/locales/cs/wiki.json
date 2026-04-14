@@ -1,4 +1,29 @@
 {
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Upgradujte pro odemčení Wiki",
+      "description": "Odemkněte veřejné stránky, historii verzí, sdílené stránky, spolupráci v reálném čase a stránky pracovního prostoru pro wiki, firemní dokumentaci a znalostní báze s Plane Pro.",
+      "upgrade_button": {
+        "text": "Upgradovat"
+      },
+      "learn_more_button": {
+        "text": "Zjistit více"
+      },
+      "download_button": {
+        "text": "Stáhnout data",
+        "loading": "Stahování"
+      },
+      "tabs": {
+        "nested_pages": "Vnořené stránky",
+        "add_embeds": "Přidat vložený obsah",
+        "publish_pages": "Publikovat stránky",
+        "comments": "Komentáře"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Vnořené stránky vyžadují placený plán. Upgradujte pro jejich odemčení."
+    }
+  },
   "wiki_collections": {
     "predefined": {
       "general": "Obecné",

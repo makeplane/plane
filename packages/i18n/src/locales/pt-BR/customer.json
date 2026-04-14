@@ -1,6 +1,12 @@
 {
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
+    "open": "Abrir cliente",
+    "dropdown": {
+      "placeholder": "Adicionar cliente",
+      "required": "Selecione um cliente",
+      "no_selection": "Nenhum cliente"
+    },
     "upgrade": {
       "title": "Priorize e gerencie trabalho com Clientes.",
       "description": "Mapeie seu trabalho para clientes e priorize por atributos de cliente."
@@ -40,7 +46,8 @@
           "name": "Funcionários",
           "placeholder": "Número de funcionários se seu cliente for uma empresa.",
           "validation": {
-            "min_length": "Funcionários não pode ser menos que 0."
+            "min_length": "Funcionários não pode ser menos que 0.",
+            "max_length": "A contagem de funcionários não pode exceder 2147483647"
           }
         },
         "size": {
@@ -69,10 +76,15 @@
         "revenue": {
           "name": "Receita",
           "placeholder": "Esta é a receita que seu cliente gera anualmente.",
+          "placeholder_short": "Adicionar receita",
           "validation": {
             "min_length": "Receita não pode ser menor que 0."
           }
-        }
+        },
+        "requests": {
+          "name": "Nº de solicitações"
+        },
+        "invalid_value": "Valor de propriedade inválido."
       },
       "custom": {
         "title": "Propriedades personalizadas",

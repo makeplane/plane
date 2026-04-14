@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "付箋",
     "projects": "プロジェクト",
     "pages": "ページ",
     "new_work_item": "新規作業項目",
@@ -25,7 +26,7 @@
     "plane_pro": "Plane Pro",
     "business": "ビジネス",
     "customers": "顧客",
-    "recurring_work_items": "繰り返し作業項目"
+    "releases": "リリース"
   },
   "command_k": {
     "empty_state": {

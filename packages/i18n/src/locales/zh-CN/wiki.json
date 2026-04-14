@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "无法创建页面或将其添加到集合中。请重试。",
       "collection_link_copied": "集合链接已复制到剪贴板。"
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "升级以解锁 Wiki",
+      "description": "升级到 Plane Pro 以解锁公共页面、版本历史、共享页面、实时协作，以及用于 Wiki、公司内部文档和知识库的工作区页面。",
+      "upgrade_button": {
+        "text": "升级"
+      },
+      "learn_more_button": {
+        "text": "了解更多"
+      },
+      "download_button": {
+        "text": "下载数据",
+        "loading": "下载中"
+      },
+      "tabs": {
+        "nested_pages": "嵌套页面",
+        "add_embeds": "添加嵌入",
+        "publish_pages": "发布页面",
+        "comments": "评论"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "嵌套页面需要付费计划。升级以解锁。"
+    }
   }
 }

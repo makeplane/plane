@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Будь ласка, введіть дійсну URL-адресу."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Опишіть вміст цього блоку",
+      "generated_here": "Ваш ШІ-контент буде згенеровано тут"
+    },
+    "block_types": {
+      "placeholder": "Виберіть тип блоку",
+      "summarize_page": "Підсумувати сторінку",
+      "custom_prompt": "Користувацький промпт"
+    },
+    "actions": {
+      "discard": "Відхилити",
+      "generate": "Згенерувати",
+      "generating": "Генерація",
+      "rewriting": "Переписування",
+      "rewrite": "Переписати",
+      "use_this": "Використати це",
+      "refine": "Уточнити"
+    }
   }
 }

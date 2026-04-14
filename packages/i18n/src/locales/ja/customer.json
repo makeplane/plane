@@ -1,6 +1,7 @@
 {
   "customers": {
     "label": "{count, plural, one {顧客} other {顧客たち}}",
+    "open": "顧客を開く",
     "dropdown": {
       "placeholder": "顧客を選択",
       "required": "顧客を選択してください",
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "業界",
+          "name": "業界",
           "placeholder": "小売、eコマース、フィンテック、銀行",
           "placeholder_short": "業界を追加",
           "validation": {}
@@ -79,6 +80,9 @@
           "validation": {
             "min_length": "収益は0未満であってはなりません。"
           }
+        },
+        "requests": {
+          "name": "リクエスト数"
         },
         "invalid_value": "無効なプロパティ値です。"
       },

@@ -53,6 +53,9 @@
       "button": {
         "previous": "Înapoi",
         "next": "Adaugă acțiune"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Nu poți schimba tipul declanșatorului după ce a fost creat"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Selectează o opțiune",
       "handler_name": {
         "add_comment": "Adaugă comentariu",
-        "change_property": "Schimbă proprietatea"
+        "change_property": "Schimbă proprietatea",
+        "run_script": "Rulează script"
       },
       "configuration": {
         "label": "Configurare",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Adaugă comentariu"
+      },
+      "run_script_block": {
+        "title": "Rulează script"
       },
       "change_property_block": {
         "title": "Schimbă proprietatea"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Titlul automatizării",
+      "scope": "Domeniu",
+      "projects": "Proiecte",
       "last_run_on": "Ultima rulare pe",
       "created_on": "Creată pe",
       "last_updated_on": "Ultima actualizare pe",
@@ -229,6 +238,35 @@
         "title": "Automatizări",
         "description": "Automatizările sunt o modalitate de a automatiza sarcinile din proiectul tău.",
         "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Automatizările."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Selectează proiectele pe care să ruleze această automatizare",
+        "all_projects": {
+          "label": "Toate proiectele",
+          "description": "Automatizarea va rula pentru toate proiectele din spațiul de lucru."
+        },
+        "select_projects": {
+          "label": "Selectează proiectele",
+          "description": "Automatizarea va rula pentru proiectele selectate din spațiul de lucru.",
+          "placeholder": "Selectează proiectele"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatizări",
+        "title": "Automatizări",
+        "description": "Standardizează procesele din întregul spațiu de lucru cu automatizări globale."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Proiect",
+            "multiple": "Multiple",
+            "all": "Toate"
+          }
+        }
       }
     }
   }

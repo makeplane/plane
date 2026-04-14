@@ -43,6 +43,8 @@
     "import": "インポート",
     "serial_number": "番号",
     "project": "プロジェクト",
+    "teamspace": "チームスペース",
+    "destination": "インポート先",
     "workspace": "ワークスペース",
     "status": "ステータス",
     "summary": "概要",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "すべてのJiraステータスがPlaneで自動的に作成されます。",
     "personal_access_token": "個人アクセストークン",
     "user_email": "ユーザーメール",
-    "atlassian_security_settings": "Atlassianセキュリティ設定",
     "email_description": "これは個人アクセストークンに紐付けられたメールアドレスです",
     "jira_domain": "Jiraドメイン",
     "jira_domain_description": "これはあなたのJiraインスタンスのドメインです",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "NotionデータをPlaneプロジェクトにインポートします。",
     "steps": {
+      "title_select_destination": "インポート先を選択",
+      "description_select_destination": "Notionデータのインポート先を選択してください。",
       "title_upload_zip": "Notion エクスポート ZIP をアップロード",
       "description_upload_zip": "Notionデータを含むZIPファイルをアップロードしてください。"
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "アップロード完了！",
       "upload_complete_description": "「インポートを開始」をクリックして、Notionデータの処理を開始してください。",
       "upload_progress_message": "このウィンドウを閉じないでください。"
+    },
+    "select_destination": {
+      "destination_type": "インポート先タイプ",
+      "select_destination_type": "インポート先タイプを選択",
+      "select_project": "プロジェクトを選択",
+      "no_projects_found": "プロジェクトが見つかりません",
+      "select_teamspace": "チームスペースを選択",
+      "no_teamspaces_found": "チームスペースが見つかりません",
+      "unknown_project": "不明なプロジェクト",
+      "unknown_teamspace": "不明なチームスペース"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "ConfluenceデータをPlaneウィキにインポートします。",
     "steps": {
+      "title_select_destination": "インポート先を選択",
+      "description_select_destination": "Confluenceデータのインポート先を選択してください。",
       "title_upload_zip": "Confluence エクスポート ZIP をアップロード",
       "description_upload_zip": "Confluenceデータを含むZIPファイルをアップロードしてください。"
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "アップロード完了！",
       "upload_complete_description": "「インポートを開始」をクリックして、Confluenceデータの処理を開始してください。",
       "upload_progress_message": "このウィンドウを閉じないでください。"
+    },
+    "select_destination": {
+      "destination_type": "インポート先タイプ",
+      "select_destination_type": "インポート先タイプを選択",
+      "select_project": "プロジェクトを選択",
+      "no_projects_found": "プロジェクトが見つかりません",
+      "select_teamspace": "チームスペースを選択",
+      "no_teamspaces_found": "チームスペースが見つかりません",
+      "unknown_project": "不明なプロジェクト",
+      "unknown_teamspace": "不明なチームスペース"
     }
   },
   "flatfile_importer": {

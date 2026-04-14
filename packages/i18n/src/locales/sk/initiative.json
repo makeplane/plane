@@ -10,6 +10,8 @@
     "all_initiatives": "Všetky Iniciatívy",
     "delete_initiative": "Odstrániť Iniciatívu",
     "fill_all_required_fields": "Prosím, vyplňte všetky povinné polia.",
+    "archive_initiative": "Archivovať iniciatívu",
+    "archive_confirm_message": "Naozaj chcete archivovať iniciatívu? Všetky archivované iniciatívy je možné neskôr obnoviť.",
     "archive_description": "Archivovať možno len dokončené alebo zatvorené iniciatívy",
     "toast": {
       "create_success": "Iniciatíva {name} bola úspešne vytvorená.",
@@ -24,6 +26,9 @@
         "success": "Iniciatíva bola úspešne archivovaná.",
         "error": "Nepodarilo sa archivovať iniciatívu",
         "initiative_cannot_be_archived_in_this_state": "Iniciatívu v tomto stave nie je možné archivovať"
+      },
+      "restore": {
+        "error": "Iniciatívu nebolo možné obnoviť. Skúste to prosím znova."
       },
       "link_copied": "Odkaz na iniciatívu bol skopírovaný do schránky.",
       "project_update_success": "Projekty iniciatívy boli úspešne aktualizované.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Zatiaľ nebol pridaný žiadny rozsah do tejto iniciatívy",
         "description": "Prepojte projekty a epiky s iniciatívou, aby ste mohli začať.",
+        "description_projects": "Prepojte projekty a sledujte ich prácu v tomto priestore.",
+        "description_epics": "Prepojte epiky a sledujte ich prácu v tomto priestore.",
         "primary_button": {
           "text": "Pridať rozsah"
         }
+      },
+      "board": {
+        "no_epics": "V tejto iniciatíve nie sú žiadne epiky",
+        "no_projects": "V tejto iniciatíve nie sú žiadne projekty",
+        "enable_project_states": "Stavy projektu nie sú povolené",
+        "enable_project_states_description": "V nastaveniach pracovného priestoru povoľte stavy projektu, aby ste mohli používať zoskupenie podľa stavu."
       }
     },
     "initiative_settings": {

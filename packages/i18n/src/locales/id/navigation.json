@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Stickies",
     "projects": "Projek",
     "pages": "Halaman",
     "new_work_item": "Item kerja baru",
@@ -25,7 +26,7 @@
     "plane_pro": "Plane Pro",
     "business": "Bisnis",
     "customers": "Pelanggan",
-    "recurring_work_items": "Tugas Berulang"
+    "releases": "Rilis"
   },
   "command_k": {
     "empty_state": {

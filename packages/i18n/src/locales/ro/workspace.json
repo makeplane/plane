@@ -141,13 +141,7 @@
     "summary_of_projects": "Sumarul proiectelor",
     "project_insights": "Informații despre proiect",
     "started_work_items": "{entity} începute",
-    "total_work_items": "Totalul {entity}",
-    "total_projects": "Total proiecte",
-    "total_admins": "Total administratori",
-    "total_users": "Total utilizatori",
-    "total_intake": "Venit total",
     "un_started_work_items": "{entity} neîncepute",
-    "total_guests": "Total invitați",
     "completed_work_items": "{entity} finalizate",
     "total": "Totalul {entity}",
     "projects_by_status": "Proiecte după statut",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Încă nu există pagini arhivate",
         "description": "Arhivează paginile care nu sunt pe radarul tău. Accesează-le aici când ai nevoie."
+      },
+      "shared": {
+        "title": "Nicio pagină partajată încă",
+        "description": "Paginile pe care alții le-au partajat cu tine vor apărea aici."
       }
     }
   },

@@ -1,6 +1,12 @@
 {
   "customers": {
     "label": "{count, plural, one {Khách hàng} other {Khách hàng}}",
+    "open": "Mở khách hàng",
+    "dropdown": {
+      "placeholder": "Thêm khách hàng",
+      "required": "Vui lòng chọn một khách hàng",
+      "no_selection": "Không có khách hàng"
+    },
     "upgrade": {
       "title": "Ưu tiên và quản lý công việc với Khách hàng.",
       "description": "Ánh xạ công việc của bạn với khách hàng và ưu tiên theo thuộc tính khách hàng."
@@ -40,7 +46,8 @@
           "name": "Nhân viên",
           "placeholder": "Số lượng nhân viên nếu khách hàng của bạn là doanh nghiệp.",
           "validation": {
-            "min_length": "Số nhân viên không thể ít hơn 0."
+            "min_length": "Số nhân viên không thể ít hơn 0.",
+            "max_length": "Số nhân viên không thể vượt quá 2147483647"
           }
         },
         "size": {
@@ -69,10 +76,15 @@
         "revenue": {
           "name": "Doanh thu",
           "placeholder": "Đây là doanh thu khách hàng của bạn tạo ra hàng năm.",
+          "placeholder_short": "Thêm doanh thu",
           "validation": {
             "min_length": "Doanh thu không thể ít hơn 0."
           }
-        }
+        },
+        "requests": {
+          "name": "Số yêu cầu"
+        },
+        "invalid_value": "Giá trị thuộc tính không hợp lệ."
       },
       "custom": {
         "title": "Thuộc tính tùy chỉnh",

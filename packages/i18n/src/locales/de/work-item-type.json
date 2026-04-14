@@ -268,6 +268,10 @@
           "add_button": {
             "create_new": "Neu erstellen",
             "import_from_workspace": "Aus Arbeitsbereich importieren"
+          },
+          "banner": {
+            "with_access": "Aktivieren Sie Arbeitsaufgabentypen, um Typen von der Arbeitsbereichsebene zu importieren",
+            "without_access": "Arbeitsaufgabentypen sind deaktiviert. Wenden Sie sich an den Arbeitsbereichs-Administrator, um sie in den Arbeitsbereichseinstellungen zu aktivieren."
           }
         }
       },

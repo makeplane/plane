@@ -22,7 +22,8 @@
       "sub_issue": "Thêm mục công việc con",
       "relation": "Thêm mối quan hệ",
       "link": "Thêm liên kết",
-      "existing": "Thêm mục công việc hiện có"
+      "existing": "Thêm mục công việc hiện có",
+      "dependency": "Thêm phụ thuộc"
     },
     "remove": {
       "label": "Xóa mục công việc",
@@ -60,7 +61,12 @@
         "attachment_count": "Số lượng tệp đính kèm",
         "created_on": "Được tạo vào",
         "sub_issue": "Mục công việc con",
-        "work_item_count": "Số lượng mục công việc"
+        "work_item_count": "Số lượng mục công việc",
+        "customer_count": "Số lượng khách hàng",
+        "customer_request_count": "Số lượng yêu cầu khách hàng",
+        "customer": "Khách hàng",
+        "requests": "Yêu cầu khách hàng",
+        "releases": "Bản phát hành"
       },
       "extra": {
         "show_sub_issues": "Hiển thị mục công việc con",
@@ -110,6 +116,43 @@
       "copy_link": {
         "success": "Liên kết bình luận đã được sao chép vào clipboard",
         "error": "Lỗi khi sao chép liên kết bình luận. Vui lòng thử lại sau."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Thêm trả lời",
+          "placeholder": "Thêm trả lời"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Không thể tải các trả lời"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Đã tạo trả lời thành công"
+            },
+            "error": {
+              "message": "Không thể tạo trả lời"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Đã cập nhật trả lời thành công"
+            },
+            "error": {
+              "message": "Không thể cập nhật trả lời"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Đã xóa trả lời thành công"
+            },
+            "error": {
+              "message": "Không thể xóa trả lời"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +219,53 @@
       "deselect_all": "Bỏ chọn tất cả"
     },
     "open_in_full_screen": "Mở mục công việc trong chế độ toàn màn hình",
+    "duplicate": {
+      "modal": {
+        "title": "Tạo một bản sao đến dự án khác",
+        "description1": "Thao tác này tạo một bản sao của mục công việc.",
+        "description2": "Tất cả dữ liệu thuộc tính sẽ bị xóa khi sao chép.",
+        "placeholder": "Chọn một dự án"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Đã sao chép mục công việc thành công"
+        },
+        "error": {
+          "message": "Không thể sao chép mục công việc"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Liên kết trang",
+      "show_wiki_pages": "Hiển thị trang Wiki",
+      "link_pages_to": "Liên kết trang đến",
+      "linked_pages": "Trang đã liên kết",
+      "no_description": "Đây là một trang trống. Sao bạn không viết gì đó bên trong và xem nó xuất hiện ở đây giống như phần giữ chỗ này",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Đã cập nhật trang",
+            "message": "Đã cập nhật trang thành công"
+          },
+          "error": {
+            "title": "Cập nhật trang thất bại",
+            "message": "Cập nhật trang thất bại"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Đã xóa trang",
+            "message": "Đã xóa trang thành công"
+          },
+          "error": {
+            "title": "Xóa trang thất bại",
+            "message": "Xóa trang thất bại"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Nhấp để bỏ phiếu thuận",
       "click_to_downvote": "Nhấp để bỏ phiếu chống",
@@ -240,54 +330,6 @@
       "invalid_state_transition": {
         "title": "Không thể cập nhật mục công việc",
         "message": "Thay đổi trạng thái không được phép cho một số mục công việc. Đảm bảo thay đổi trạng thái được cho phép."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Bật quy trình làm việc",
-        "description": "Thiết lập quy trình làm việc để kiểm soát việc di chuyển của mục công việc",
-        "no_states_tooltip": "Chưa có trạng thái nào được thêm vào quy trình làm việc.",
-        "toast": {
-          "loading": {
-            "enabling": "Đang bật quy trình làm việc",
-            "disabling": "Đang tắt quy trình làm việc"
-          },
-          "success": {
-            "title": "Thành công!",
-            "message": "Đã bật quy trình làm việc thành công."
-          },
-          "error": {
-            "title": "Lỗi!",
-            "message": "Không thể bật quy trình làm việc. Vui lòng thử lại."
-          }
-        }
-      },
-      "heading": "Quy trình làm việc",
-      "description": "Tự động hóa các chuyển đổi của mục công việc và thiết lập quy tắc để kiểm soát cách các tác vụ di chuyển trong quy trình dự án của bạn.",
-      "add_button": "Thêm quy trình làm việc mới",
-      "search": "Tìm kiếm quy trình làm việc",
-      "detail": {
-        "define": "Xác định quy trình làm việc",
-        "add_states": "Thêm trạng thái",
-        "unmapped_states": {
-          "title": "Đã phát hiện trạng thái chưa được ánh xạ",
-          "description": "Một số mục công việc của các loại đã chọn hiện đang ở trong những trạng thái không tồn tại trong quy trình làm việc này.",
-          "note": "Nếu bạn bật quy trình làm việc này, các mục đó sẽ tự động được chuyển sang trạng thái ban đầu của quy trình làm việc này.",
-          "label": "Trạng thái bị thiếu",
-          "tooltip": "Một số mục công việc đang ở trong những trạng thái chưa được ánh xạ tới quy trình làm việc này. Mở quy trình làm việc để xem lại."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Tất cả trạng thái đều đang được sử dụng",
-          "description": "Tất cả trạng thái được định nghĩa cho dự án này đã có trong quy trình làm việc hiện tại của bạn."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Quy trình làm việc này áp dụng cho bất kỳ loại mục công việc nào chưa được gán cho quy trình làm việc nào."
-      },
-      "create": {
-        "heading": "Tạo quy trình làm việc mới"
       }
     }
   },

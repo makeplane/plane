@@ -6,6 +6,7 @@
     "select_releases": "Sélectionner des livraisons",
     "overview": "Vue d’ensemble",
     "scope": "Portée",
+    "changelog": "Journal des modifications",
     "page_title": {
       "scope": "Livraison - {name} | Portée",
       "scope_fallback": "Livraison | Portée"

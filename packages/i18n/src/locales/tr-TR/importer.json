@@ -43,6 +43,8 @@
     "import": "İmport Et",
     "serial_number": "Sıra No.",
     "project": "Proje",
+    "teamspace": "Takım Alanı",
+    "destination": "Hedef",
     "workspace": "Workspace",
     "status": "Durum",
     "summary": "Özet",
@@ -88,7 +90,6 @@
     "import_to_existing_project": "Mevcut projeye aktar",
     "import_to_existing_project_description": "Aşağıdaki açılır menüden mevcut bir projeyi seçin.",
     "state_mapping_automatic_creation": "Tüm Jira durumları Plane'de otomatik olarak oluşturulacaktır.",
-    "atlassian_security_settings": "Atlassian Güvenlik Ayarları",
     "email_description": "Bu, kişisel erişim tokeninize bağlı emaildir",
     "jira_domain": "Jira Domain",
     "jira_domain_description": "Bu, Jira instance'ınızın domainidir",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Notion verilerinizi Plane projelerine aktarın.",
     "steps": {
+      "title_select_destination": "Hedef Seçin",
+      "description_select_destination": "Lütfen Notion verileriniz için hedefi seçin.",
       "title_upload_zip": "Notion'dan Dışa Aktarılan ZIP'i Yükle",
       "description_upload_zip": "Lütfen Notion verilerinizi içeren ZIP dosyasını yükleyin."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Yükleme tamamlandı!",
       "upload_complete_description": "Notion verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
       "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    },
+    "select_destination": {
+      "destination_type": "Hedef Türü",
+      "select_destination_type": "Hedef Türü Seçin",
+      "select_project": "Proje Seçin",
+      "no_projects_found": "Proje bulunamadı",
+      "select_teamspace": "Takım Alanı Seçin",
+      "no_teamspaces_found": "Takım alanı bulunamadı",
+      "unknown_project": "Bilinmeyen Proje",
+      "unknown_teamspace": "Bilinmeyen Takım Alanı"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Confluence verilerinizi Plane wiki'sine aktarın.",
     "steps": {
+      "title_select_destination": "Hedef Seçin",
+      "description_select_destination": "Lütfen Confluence verileriniz için hedefi seçin.",
       "title_upload_zip": "Confluence'dan Dışa Aktarılan ZIP'i Yükle",
       "description_upload_zip": "Lütfen Confluence verilerinizi içeren ZIP dosyasını yükleyin."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Yükleme tamamlandı!",
       "upload_complete_description": "Confluence verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
       "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    },
+    "select_destination": {
+      "destination_type": "Hedef Türü",
+      "select_destination_type": "Hedef Türü Seçin",
+      "select_project": "Proje Seçin",
+      "no_projects_found": "Proje bulunamadı",
+      "select_teamspace": "Takım Alanı Seçin",
+      "no_teamspaces_found": "Takım alanı bulunamadı",
+      "unknown_project": "Bilinmeyen Proje",
+      "unknown_teamspace": "Bilinmeyen Takım Alanı"
     }
   },
   "flatfile_importer": {

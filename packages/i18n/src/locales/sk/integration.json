@@ -194,6 +194,10 @@
       "server_error_states": "Chyba servera pri načítavaní stavov"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Prepojte a synchronizujte svoje repozitáre Bitbucket Data Center s Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Overenie tokenov externých IdP pre prístup k API.",
@@ -302,6 +306,7 @@
     "generic_error": "Pri spracovaní vašej požiadavky sa vyskytla neočakávaná chyba",
     "connection_not_found": "Požadované pripojenie nebolo nájdené",
     "multiple_connections_found": "Bolo nájdených viacero pripojení, keď sa očakávalo iba jedno",
+    "cannot_create_multiple_connections": "Už ste prepojili svoju organizáciu s pracovným priestorom. Pred pripojením nového prepojenia najprv odpojte existujúce.",
     "installation_not_found": "Požadovaná inštalácia nebola nájdená",
     "user_not_found": "Požadovaný používateľ nebol nájdený",
     "error_fetching_token": "Zlyhalo načítanie autentifikačného tokenu",
@@ -315,6 +320,7 @@
     "pulling": "Sťahuje sa",
     "timed_out": "Časový limit vypršal",
     "pulled": "Stiahnuté",
+    "progressing": "Prebieha",
     "transforming": "Transformuje sa",
     "transformed": "Transformované",
     "pushing": "Nahrávajú sa",

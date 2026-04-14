@@ -3,11 +3,17 @@
     "label": "Tipi di elemento di lavoro",
     "label_lowercase": "tipi di elementi di lavoro",
     "settings": {
-      "title": "Tipi di elemento di lavoro",
+      "description": "Personalizza e aggiungi le tue proprietà per adattarle alle esigenze del tuo team.",
       "properties": {
         "title": "Proprietà personalizzate",
+        "description": "Crea e personalizza le proprietà.",
         "tooltip": "Ogni tipo di elemento di lavoro viene fornito con un set predefinito di proprietà come Titolo, Descrizione, Assegnatario, Stato, Priorità, Data di inizio, Data di scadenza, Modulo, Ciclo etc. Puoi anche personalizzare e aggiungere le tue proprietà per adattarle alle esigenze del tuo team.",
         "add_button": "Aggiungi nuova proprietà",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importa dallo spazio di lavoro"
+          }
+        },
         "dropdown": {
           "label": "Tipo di proprietà",
           "placeholder": "Seleziona tipo"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Crea nuova proprietà personalizzata",
+            "update": "Aggiorna proprietà personalizzata"
+          },
           "form": {
             "display_name": {
               "placeholder": "Titolo"
@@ -216,6 +226,46 @@
           "description": "Nuove proprietà che aggiungi per questo tipo di elemento di lavoro appariranno qui."
         }
       },
+      "types": {
+        "title": "Tipi",
+        "description": "Crea e personalizza tipi di elementi di lavoro con proprietà.",
+        "sort_options": {
+          "project_count": "Numero di progetti di cui fa parte"
+        },
+        "filter_options": {
+          "show_active": "Mostra attivi",
+          "show_inactive": "Mostra inattivi"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Crea nuovo",
+            "import_from_workspace": "Importa dallo spazio di lavoro"
+          },
+          "banner": {
+            "with_access": "Abilita i tipi di elementi di lavoro per importare i tipi dal livello dello spazio di lavoro",
+            "without_access": "I tipi di elementi di lavoro sono disabilitati. Contatta l'admin dello spazio di lavoro per abilitarli nelle impostazioni dello spazio di lavoro."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Proprietà personalizzate",
+        "add_button": "Aggiungi proprietà",
+        "modal": {
+          "title": "Aggiungi proprietà",
+          "empty": {
+            "title": "Nessuna proprietà disponibile",
+            "description": "Tutte le proprietà sono già state collegate a questo tipo."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Scollega proprietà",
+          "description": "Scollegando questa proprietà verranno eliminati permanentemente tutti i suoi valori su ogni elemento di lavoro che utilizza questo tipo. Questa azione non può essere annullata.",
+          "input_label": "Digita",
+          "input_label_suffix": "per continuare:",
+          "confirm": "Scollega proprietà",
+          "loading": "Scollegamento"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Elimina questo tipo",
         "description": "L'eliminazione dei tipi può comportare la perdita di dati esistenti.",
@@ -256,6 +306,7 @@
         "error": {
           "title": "Errore!",
           "message": {
+            "default": "Impossibile creare il tipo di elemento di lavoro. Riprova!",
             "conflict": "Il tipo {name} esiste già. Scegli un nome diverso."
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "Errore!",
           "message": {
+            "default": "Impossibile aggiornare il tipo di elemento di lavoro. Riprova!",
             "conflict": "Il tipo {name} esiste già. Scegli un nome diverso."
           }
         }

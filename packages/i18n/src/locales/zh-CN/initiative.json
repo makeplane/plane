@@ -10,6 +10,8 @@
     "all_initiatives": "所有计划",
     "delete_initiative": "删除计划",
     "fill_all_required_fields": "请填写所有必填字段。",
+    "archive_initiative": "归档计划",
+    "archive_confirm_message": "您确定要归档该计划吗？所有已归档的计划稍后都可以恢复。",
     "archive_description": "仅已完成或已关闭的计划可以归档",
     "toast": {
       "create_success": "计划 {name} 创建成功。",
@@ -24,6 +26,9 @@
         "success": "计划已成功归档。",
         "error": "归档计划失败",
         "initiative_cannot_be_archived_in_this_state": "当前状态下的计划无法归档"
+      },
+      "restore": {
+        "error": "无法恢复计划。请重试。"
       },
       "link_copied": "计划链接已复制到剪贴板。",
       "project_update_success": "计划项目更新成功。",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "尚未添加范围",
         "description": "将项目或史诗添加到此计划以开始。",
+        "description_projects": "在此空间中链接项目并跟踪该工作。",
+        "description_epics": "在此空间中链接史诗并跟踪该工作。",
         "primary_button": {
           "text": "添加范围"
         }
+      },
+      "board": {
+        "no_epics": "此计划中没有史诗",
+        "no_projects": "此计划中没有项目",
+        "enable_project_states": "项目状态未启用",
+        "enable_project_states_description": "在工作区设置中启用项目状态以使用基于状态的分组。"
       }
     },
     "initiative_settings": {

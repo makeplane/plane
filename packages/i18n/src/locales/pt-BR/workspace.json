@@ -141,13 +141,7 @@
     "summary_of_projects": "Resumo dos projetos",
     "project_insights": "Insights do projeto",
     "started_work_items": "{entity} iniciados",
-    "total_work_items": "Total de {entity}",
-    "total_projects": "Total de projetos",
-    "total_admins": "Total de administradores",
-    "total_users": "Total de usuários",
-    "total_intake": "Receita total",
     "un_started_work_items": "{entity} não iniciados",
-    "total_guests": "Total de convidados",
     "completed_work_items": "{entity} concluídos",
     "total": "Total de {entity}",
     "projects_by_status": "Projetos por status",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Ainda não há páginas arquivadas",
         "description": "Arquive páginas fora do seu radar. Acesse-as aqui quando necessário."
+      },
+      "shared": {
+        "title": "Ainda não há páginas compartilhadas",
+        "description": "As páginas que outros compartilharam com você aparecerão aqui."
       }
     }
   },

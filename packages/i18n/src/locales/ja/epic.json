@@ -49,6 +49,23 @@
           "text": "エピックを追加"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "エピックのコピーを作成します。",
+        "description2": "複製の際にすべてのプロパティデータが削除されます。",
+        "epics_not_enabled": "エピックが有効になっていません"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "エピックを複製しました"
+        },
+        "error": {
+          "message": "エピックの複製に失敗しました"
+        }
+      }
     }
   },
   "epic_relation": {

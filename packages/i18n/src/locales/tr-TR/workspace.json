@@ -141,13 +141,7 @@
     "summary_of_projects": "Projelerin Özeti",
     "project_insights": "Proje İçgörüleri",
     "started_work_items": "Başlatılan {entity}",
-    "total_work_items": "Toplam {entity}",
-    "total_projects": "Toplam Proje",
-    "total_admins": "Toplam Yönetici",
-    "total_users": "Toplam Kullanıcı",
-    "total_intake": "Toplam Gelir",
     "un_started_work_items": "Başlanmamış {entity}",
-    "total_guests": "Toplam Misafir",
     "completed_work_items": "Tamamlanmış {entity}",
     "total": "Toplam {entity}",
     "projects_by_status": "Durumuna göre projeler",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Henüz arşivlenmiş sayfa yok",
         "description": "Radarınızda olmayan sayfaları arşivleyin. Gerektiğinde bunlara buradan erişin."
+      },
+      "shared": {
+        "title": "Henüz paylaşılan sayfa yok",
+        "description": "Başkalarının sizinle paylaştığı sayfalar burada görünecek."
       }
     }
   },

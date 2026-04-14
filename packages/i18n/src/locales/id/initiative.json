@@ -10,6 +10,8 @@
     "all_initiatives": "Semua Inisiatif",
     "delete_initiative": "Hapus Inisiatif",
     "fill_all_required_fields": "Harap isi semua bidang yang diperlukan.",
+    "archive_initiative": "Arsipkan Inisiatif",
+    "archive_confirm_message": "Apakah Anda yakin ingin mengarsipkan inisiatif? Semua inisiatif yang diarsipkan dapat dipulihkan nanti.",
     "archive_description": "Hanya inisiatif yang selesai atau ditutup yang dapat diarsipkan",
     "toast": {
       "create_success": "Inisiatif {name} berhasil dibuat.",
@@ -24,6 +26,9 @@
         "success": "Inisiatif berhasil diarsipkan.",
         "error": "Gagal mengarsipkan inisiatif",
         "initiative_cannot_be_archived_in_this_state": "Inisiatif tidak dapat diarsipkan dalam status ini"
+      },
+      "restore": {
+        "error": "Inisiatif tidak dapat dipulihkan. Silakan coba lagi."
       },
       "link_copied": "Tautan inisiatif disalin ke clipboard.",
       "project_update_success": "Proyek inisiatif berhasil diperbarui.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Belum ada ruang lingkup yang ditambahkan ke inisiatif ini",
         "description": "Hubungkan proyek dan epik ke inisiatif ini untuk memulai.",
+        "description_projects": "Hubungkan proyek dan lacak pekerjaan tersebut di ruang ini.",
+        "description_epics": "Hubungkan epik dan lacak pekerjaan tersebut di ruang ini.",
         "primary_button": {
           "text": "Tambah ruang lingkup"
         }
+      },
+      "board": {
+        "no_epics": "Tidak ada epik dalam inisiatif ini",
+        "no_projects": "Tidak ada proyek dalam inisiatif ini",
+        "enable_project_states": "Status proyek tidak diaktifkan",
+        "enable_project_states_description": "Aktifkan status proyek dari pengaturan ruang kerja untuk menggunakan pengelompokan berbasis status."
       }
     },
     "initiative_settings": {

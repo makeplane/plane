@@ -27,6 +27,9 @@
           "loading": "Використання"
         }
       },
+      "new_project_template": "Новий темплейт проєкту",
+      "new_work_item_template": "Новий темплейт робочої одиниці",
+      "new_page_template": "Новий темплейт сторінки",
       "template_source": {
         "workspace": {
           "info": "Походить з воркспейсу"
@@ -170,8 +173,15 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Некоректна email адреса",
-              "required": "Email підтримки обов'язковий",
               "maxLength": "Email підтримки має бути менше 255 символів"
+            }
+          },
+          "website": {
+            "label": "URL вебсайту",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Некоректний URL",
+              "maxLength": "URL має бути менше 800 символів"
             }
           },
           "privacy_policy_url": {
@@ -231,6 +241,9 @@
       },
       "no_sub_work_items": {
         "description": "Немає під-робочих елементів. Додайте один, щоб краще структурувати свою роботу."
+      },
+      "no_modules": {
+        "description": "Ще немає модулів. Організуйте роботу в підпроєкти з окремими керівниками та виконавцями."
       },
       "page": {
         "no_templates": {

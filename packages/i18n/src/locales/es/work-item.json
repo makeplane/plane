@@ -20,6 +20,7 @@
       "due_date": "Agregar fecha de vencimiento",
       "parent": "Agregar elemento de trabajo padre",
       "sub_issue": "Agregar sub-elemento de trabajo",
+      "dependency": "Agregar dependencia",
       "relation": "Agregar relación",
       "link": "Agregar enlace",
       "existing": "Agregar elemento de trabajo existente"
@@ -60,7 +61,12 @@
         "attachment_count": "Cantidad de archivos adjuntos",
         "created_on": "Creado el",
         "sub_issue": "Sub-elemento de trabajo",
-        "work_item_count": "Recuento de elementos de trabajo"
+        "work_item_count": "Recuento de elementos de trabajo",
+        "customer_count": "Cantidad de clientes",
+        "customer_request_count": "Cantidad de solicitudes de clientes",
+        "customer": "Cliente",
+        "requests": "Solicitud de cliente",
+        "releases": "Lanzamientos"
       },
       "extra": {
         "show_sub_issues": "Mostrar sub-elementos",
@@ -110,6 +116,43 @@
       "copy_link": {
         "success": "Enlace del comentario copiado al portapapeles",
         "error": "Error al copiar el enlace del comentario. Inténtelo de nuevo más tarde."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Agregar respuesta",
+          "placeholder": "Agregar respuesta"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Error al obtener las respuestas"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Respuesta creada correctamente"
+            },
+            "error": {
+              "message": "Error al crear la respuesta"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Respuesta actualizada correctamente"
+            },
+            "error": {
+              "message": "Error al actualizar la respuesta"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Respuesta eliminada correctamente"
+            },
+            "error": {
+              "message": "Error al eliminar la respuesta"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +219,53 @@
       "deselect_all": "Deseleccionar todo"
     },
     "open_in_full_screen": "Abrir elemento de trabajo en pantalla completa",
+    "duplicate": {
+      "modal": {
+        "title": "Hacer una copia a otro proyecto",
+        "description1": "Esto crea una copia del elemento de trabajo.",
+        "description2": "Todos los datos de propiedades se eliminarán al duplicar.",
+        "placeholder": "Selecciona un proyecto"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Elemento de trabajo duplicado correctamente"
+        },
+        "error": {
+          "message": "Error al duplicar el elemento de trabajo"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Enlazar páginas",
+      "show_wiki_pages": "Mostrar páginas de wiki",
+      "link_pages_to": "Enlazar páginas a",
+      "linked_pages": "Páginas enlazadas",
+      "no_description": "Esta página está vacía. Escribe algo aquí y véalo como este marcador de posición",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Páginas actualizadas",
+            "message": "Páginas actualizadas correctamente"
+          },
+          "error": {
+            "title": "Error al actualizar páginas",
+            "message": "Error al actualizar páginas"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Página eliminada",
+            "message": "Página eliminada correctamente"
+          },
+          "error": {
+            "title": "Error al eliminar página",
+            "message": "Error al eliminar página"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Haz clic para votar a favor",
       "click_to_downvote": "Haz clic para votar en contra",
@@ -240,54 +330,6 @@
       "invalid_state_transition": {
         "title": "No se pueden actualizar elementos de trabajo",
         "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Habilitar flujos de trabajo",
-        "description": "Configura flujos de trabajo para controlar el movimiento de los elementos de trabajo",
-        "no_states_tooltip": "No hay estados agregados al flujo de trabajo.",
-        "toast": {
-          "loading": {
-            "enabling": "Habilitando flujos de trabajo",
-            "disabling": "Deshabilitando flujos de trabajo"
-          },
-          "success": {
-            "title": "¡Éxito!",
-            "message": "Los flujos de trabajo se habilitaron correctamente."
-          },
-          "error": {
-            "title": "¡Error!",
-            "message": "No se pudieron habilitar los flujos de trabajo. Inténtalo de nuevo."
-          }
-        }
-      },
-      "heading": "Flujos de trabajo",
-      "description": "Automatiza las transiciones de los elementos de trabajo y define reglas para controlar cómo las tareas avanzan por el flujo de tu proyecto.",
-      "add_button": "Agregar nuevo flujo de trabajo",
-      "search": "Buscar flujos de trabajo",
-      "detail": {
-        "define": "Definir flujo de trabajo",
-        "add_states": "Agregar estados",
-        "unmapped_states": {
-          "title": "Se detectaron estados no asignados",
-          "description": "Algunos elementos de trabajo de los tipos seleccionados se encuentran actualmente en estados que no existen en este flujo de trabajo.",
-          "note": "Si habilitas este flujo de trabajo, esos elementos se moverán automáticamente al estado inicial de este flujo de trabajo.",
-          "label": "Estados faltantes",
-          "tooltip": "Algunos elementos de trabajo están en estados que no están asignados a este flujo de trabajo. Abre el flujo de trabajo para revisarlo."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Todos los estados están en uso",
-          "description": "Todos los estados definidos para este proyecto ya están presentes en tu flujo de trabajo actual."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Este flujo de trabajo se aplica a cualquier tipo de elemento de trabajo que no esté asignado a un flujo de trabajo."
-      },
-      "create": {
-        "heading": "Crear nuevo flujo de trabajo"
       }
     }
   },

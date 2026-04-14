@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "페이지를 만들거나 컬렉션에 추가할 수 없습니다. 다시 시도해 주세요.",
       "collection_link_copied": "컬렉션 링크가 클립보드에 복사되었습니다."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "업그레이드하여 위키 잠금 해제",
+      "description": "Plane Pro로 공개 페이지, 버전 기록, 공유 페이지, 실시간 협업, 작업 공간 페이지를 활용해 위키, 전사 문서 및 지식 베이스를 구축하세요.",
+      "upgrade_button": {
+        "text": "업그레이드"
+      },
+      "learn_more_button": {
+        "text": "자세히 알아보기"
+      },
+      "download_button": {
+        "text": "데이터 다운로드",
+        "loading": "다운로드 중"
+      },
+      "tabs": {
+        "nested_pages": "중첩 페이지",
+        "add_embeds": "임베드 추가",
+        "publish_pages": "페이지 게시",
+        "comments": "댓글"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "중첩 페이지는 유료 플랜이 필요합니다. 업그레이드하여 잠금을 해제하세요."
+    }
   }
 }

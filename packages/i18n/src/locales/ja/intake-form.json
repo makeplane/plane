@@ -5,8 +5,6 @@
       "sub-title": "チームに何を作業してほしいか伝えましょう。",
       "name": "名前",
       "email": "メール",
-      "about": "この作業項目は何についてですか？",
-      "description": "何が起きるべきか説明してください",
       "description_placeholder": "チームが状況とニーズを把握できるよう、必要なだけ詳細を追加してください。",
       "loading": "作成中",
       "create_work_item": "作業項目を作成",

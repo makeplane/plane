@@ -95,16 +95,28 @@
       "scope_and_demand": "Rozsah a dopyt",
       "custom": "Vlastná analytika"
     },
+    "total": "Celkový počet {entity}",
+    "started_work_items": "Spustené {entity}",
+    "backlog_work_items": "{entity} v backlogu",
+    "un_started_work_items": "Nespustené {entity}",
+    "completed_work_items": "Dokončené {entity}",
+    "project_insights": "Prehľad projektu",
+    "summary_of_projects": "Súhrn projektov",
+    "all_projects": "Všetky projekty",
+    "trend_on_charts": "Trend na grafoch",
+    "active_projects": "Aktívne projekty",
+    "customized_insights": "Prispôsobené prehľady",
+    "created_vs_resolved": "Vytvorené vs Vyriešené",
     "empty_state": {
-      "customized_insights": {
-        "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu.",
-        "title": "Zatiaľ žiadne údaje"
+      "project_insights": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu."
       },
       "created_vs_resolved": {
-        "description": "Pracovné položky vytvorené a vyriešené v priebehu času sa zobrazia tu.",
-        "title": "Zatiaľ žiadne údaje"
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Pracovné položky vytvorené a vyriešené v priebehu času sa zobrazia tu."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Zatiaľ žiadne údaje",
         "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu."
       },
@@ -132,29 +144,11 @@
         "description": "Analýza trendov príjmu sa zobrazí tu. Pridajte pracovné položky do príjmu, aby ste mohli sledovať trendy."
       }
     },
-    "created_vs_resolved": "Vytvorené vs Vyriešené",
-    "customized_insights": "Prispôsobené prehľady",
-    "backlog_work_items": "{entity} v backlogu",
-    "active_projects": "Aktívne projekty",
-    "trend_on_charts": "Trend na grafoch",
-    "all_projects": "Všetky projekty",
-    "summary_of_projects": "Súhrn projektov",
-    "project_insights": "Prehľad projektu",
-    "started_work_items": "Spustené {entity}",
-    "total_work_items": "Celkový počet {entity}",
-    "total_projects": "Celkový počet projektov",
-    "total_admins": "Celkový počet administrátorov",
-    "total_users": "Celkový počet používateľov",
-    "total_intake": "Celkový príjem",
-    "un_started_work_items": "Nespustené {entity}",
-    "total_guests": "Celkový počet hostí",
-    "completed_work_items": "Dokončené {entity}",
-    "total": "Celkový počet {entity}",
+    "upgrade_to_plan": "Inovujte na {plan}, aby ste odomkli kartu {tab}",
+    "workitem_resolved_vs_pending": "Vyriešené vs. čakajúce pracovné položky",
     "projects_by_status": "Projekty podľa stavu",
     "active_users": "Aktívni používatelia",
-    "intake_trends": "Trendy prijímania",
-    "workitem_resolved_vs_pending": "Vyriešené vs. čakajúce pracovné položky",
-    "upgrade_to_plan": "Inovujte na {plan}, aby ste odomkli kartu {tab}"
+    "intake_trends": "Trendy prijímania"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektov}}",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Zatiaľ žiadne archivované stránky",
         "description": "Archivujte stránky, ktoré nie sú vo vašom radare. Keď ich budete potrebovať, pristupujte k nim tu."
+      },
+      "shared": {
+        "title": "Zatiaľ žiadne zdieľané stránky",
+        "description": "Stránky, ktoré s vami zdieľali iní, sa zobrazia tu."
       }
     }
   },

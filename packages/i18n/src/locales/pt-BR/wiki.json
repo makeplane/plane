@@ -1,4 +1,29 @@
 {
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Faça upgrade para desbloquear o Wiki",
+      "description": "Desbloqueie páginas públicas, histórico de versões, páginas compartilhadas, colaboração em tempo real e páginas do espaço de trabalho para wikis, documentos da empresa e bases de conhecimento com o Plane Pro.",
+      "upgrade_button": {
+        "text": "Fazer upgrade"
+      },
+      "learn_more_button": {
+        "text": "Saiba mais"
+      },
+      "download_button": {
+        "text": "Baixar dados",
+        "loading": "Baixando"
+      },
+      "tabs": {
+        "nested_pages": "Páginas aninhadas",
+        "add_embeds": "Adicionar incorporações",
+        "publish_pages": "Publicar páginas",
+        "comments": "Comentários"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "As páginas aninhadas exigem um plano pago. Faça upgrade para desbloquear."
+    }
+  },
   "wiki_collections": {
     "predefined": {
       "general": "Geral",

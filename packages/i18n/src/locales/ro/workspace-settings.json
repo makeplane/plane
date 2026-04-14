@@ -67,13 +67,19 @@
       },
       "billing_and_plans": {
         "title": "Facturare și Abonamente",
+        "heading": "Facturare și abonamente",
+        "description": "Alege abonamentul tău, gestionează abonamentele și actualizează cu ușurință pe măsură ce nevoile tale cresc.",
         "current_plan": "Abonament curent",
         "free_plan": "Folosești în prezent abonamentul gratuit",
         "view_plans": "Vezi abonamentele"
       },
       "exports": {
         "title": "Exporturi",
+        "heading": "Exporturi",
+        "description": "Exportă datele proiectelor tale în diverse formate și accesează istoricul exporturilor cu link-uri de descărcare.",
         "exporting": "Se exportă",
+        "exporting_projects": "Se exportă proiectul",
+        "format": "Format",
         "previous_exports": "Exporturi anterioare",
         "export_separate_files": "Exportă datele în fișiere separate",
         "filters_info": "Aplică filtre pentru a exporta elemente de lucru specifice în funcție de criteriile tale.",
@@ -93,6 +99,8 @@
       },
       "webhooks": {
         "title": "Puncte de notificare (Webhooks)",
+        "heading": "Webhook-uri",
+        "description": "Automatizează notificările către servicii externe când se produc evenimente ale proiectului.",
         "add_webhook": "Adaugă punct de notificare (webhook)",
         "modal": {
           "title": "Creează punct de notificare (webhook)",
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrări",
+        "heading": "Integrări",
+        "description": "Conectează-te cu instrumente și servicii populare pentru a sincroniza munca ta în întregul ecosistem al fluxului de lucru.",
         "page_title": "Lucrează cu datele tale Plane în aplicațiile disponibile sau în ale tale proprii.",
         "page_description": "Vizualizează toate integrările utilizate de acest spațiu de lucru sau de tine."
       },
       "imports": {
-        "title": "Importuri"
+        "title": "Importuri",
+        "heading": "Importuri",
+        "description": "Conectează-te și importă date din instrumentele tale existente de gestionare a proiectelor pentru a-ți simplifica integrarea fluxului de lucru."
       },
       "worklogs": {
-        "title": "Jurnale de lucru"
+        "title": "Jurnale de lucru",
+        "heading": "Jurnale de lucru",
+        "description": "Descarcă jurnale de lucru (timesheet-uri) pentru oricine din orice proiect."
       },
       "group_syncing": {
         "title": "Sincronizare grupuri",
@@ -242,7 +256,10 @@
         "description": "Configurați domeniul dvs. și activați Single sign-on"
       },
       "project_states": {
-        "title": "Stări de proiect"
+        "title": "Stări de proiect",
+        "heading": "Vezi prezentarea progresului pentru toate proiectele.",
+        "description": "Stările proiectelor sunt o funcție exclusivă Plane pentru urmărirea progresului tuturor proiectelor tale după orice proprietate a proiectului.",
+        "go_to_settings": "Mergi la setări"
       },
       "projects": {
         "title": "Proiecte",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Spații de echipă"
+        "title": "Spații de echipă",
+        "heading": "Spații de echipă",
+        "description": "Vezi munca echipei tale într-un spațiu separat, cu proiecte conectate, sarcini, diagrame de echipă, pagini și vizualizări."
       },
       "initiatives": {
-        "title": "Inițiative"
+        "title": "Inițiative",
+        "heading": "Inițiative",
+        "description": "Deblochează cel mai înalt nivel de organizare pentru toată munca ta în Plane."
       },
       "customers": {
-        "title": "Clienți"
+        "title": "Clienți",
+        "heading": "Gestionează munca după ce este important pentru clienții tăi.",
+        "description": "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului."
+      },
+      "templates": {
+        "title": "Șabloane",
+        "heading": "Șabloane",
+        "description": "Economisește 80% din timpul petrecut creând proiecte, activități și pagini atunci când folosești șabloane."
+      },
+      "relations": {
+        "title": "Relații",
+        "heading": "Relații",
+        "description": "Creează și gestionează tipurile de relații care conectează activitățile din spațiul tău de lucru."
       },
       "releases": {
         "title": "Lansări",
@@ -269,6 +302,12 @@
           "release_not_found": "Lansarea pe care o cauți nu există.",
           "unknown": "Ceva nu a mers bine. Te rugăm să încerci din nou."
         }
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script-uri",
+        "new_script": "Script nou",
+        "description": "Automatizează fluxurile tale de lucru cu scripturi personalizate și reguli de automatizare."
       },
       "cancel_trial": {
         "title": "Anulează mai întâi perioada de probă.",
@@ -282,6 +321,17 @@
       },
       "applications": {
         "title": "Applications",
+        "disconnect": "Deconectează",
+        "webhook_secret": {
+          "label": "Secret webhook",
+          "description": "Secret folosit pentru a verifica cererile webhook primite.",
+          "placeholder": "Introdu o cheie secretă aleatorie"
+        },
+        "invalid_website_error": "Site web invalid",
+        "app_consent_no_access_title": "Cerere de instalare",
+        "app_consent_unapproved_title": "Această aplicație nu a fost încă revizuită sau aprobată de Plane.",
+        "app_consent_unapproved_description": "Asigură-te că ai încredere în această aplicație înainte de a o conecta la spațiul tău de lucru.",
+        "go_to_app": "Mergi la aplicație",
         "applicationId_copied": "ID-ul aplicației copiat în clipboard",
         "clientId_copied": "ID-ul clientului copiat în clipboard",
         "clientSecret_copied": "Secretul clientului copiat în clipboard",
@@ -319,7 +369,6 @@
         "app_description_error": "Descrierea aplicației este obligatorie",
         "app_slug_title": "Slug-ul aplicației",
         "app_slug_error": "Slug-ul aplicației este obligatoriu",
-        "app_maker_title": "Maker-ul aplicației",
         "app_maker_error": "Maker-ul aplicației este obligatoriu",
         "webhook_url_title": "URL-ul webhook-ului",
         "webhook_url_error": "URL-ul webhook-ului este obligatoriu",
@@ -380,7 +429,6 @@
         "video_url_title": "URL-ul video",
         "video_url_error": "URL-ul video este obligatoriu",
         "invalid_video_url_error": "URL-ul video este invalid",
-        "setup_url_title": "URL-ul setup-ului",
         "setup_url_error": "URL-ul setup-ului este obligatoriu",
         "invalid_setup_url_error": "URL-ul setup-ului este invalid",
         "configuration_url_title": "URL-ul configurării",

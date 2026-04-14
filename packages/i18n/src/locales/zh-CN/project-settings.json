@@ -37,6 +37,8 @@
       "project_subscribers_description": "请选择将接收该项目通知的成员。"
     },
     "states": {
+      "heading": "状态",
+      "description": "定义和自定义工作流状态以跟踪工作项的进度。",
       "describe_this_state_for_your_members": "为您的成员描述此状态。",
       "empty_state": {
         "title": "{groupKey} 组中没有状态",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "标签",
+      "description": "创建自定义标签以分类和组织您的工作项",
       "label_title": "标签标题",
       "label_title_is_required": "标签标题为必填项",
       "label_max_char": "标签名称不应超过255个字符",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "估算",
+      "description": "设置估算系统以跟踪和传达每个工作项所需的工作量。",
       "label": "估算",
       "title": "为我的项目启用估算",
-      "description": "它们有助于您传达团队的复杂性和工作量。",
+      "enable_description": "它们有助于您传达团队的复杂性和工作量。",
       "no_estimate": "无估算",
       "new": "新估算系统",
       "create": {
@@ -112,6 +118,16 @@
             "title": "估算重新排序失败",
             "message": "我们无法重新排序估算，请重试"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "估算系统已创建",
+            "message": "创建并启用成功"
+          },
+          "error": {
+            "title": "错误",
+            "message": "出现错误"
+          }
         }
       },
       "validation": {
@@ -125,6 +141,25 @@
         "remove_empty": "估算不能为空。请在每个字段中输入值或删除没有值的字段。",
         "fill": "请填写此估算字段",
         "repeat": "估算值不能重复"
+      },
+      "systems": {
+        "points": {
+          "label": "点数",
+          "fibonacci": "斐波那契",
+          "linear": "线性",
+          "squares": "平方",
+          "custom": "自定义"
+        },
+        "categories": {
+          "label": "类别",
+          "t_shirt_sizes": "T恤尺码",
+          "easy_to_hard": "简单到困难",
+          "custom": "自定义"
+        },
+        "time": {
+          "label": "时间",
+          "hours": "小时"
+        }
       },
       "edit": {
         "title": "编辑估算系统",
@@ -143,6 +178,8 @@
     },
     "automations": {
       "label": "自动化",
+      "heading": "自动化",
+      "description": "配置自动化操作以简化项目管理工作流并减少手动任务。",
       "auto-archive": {
         "title": "自动归档已关闭的工作项",
         "description": "Plane 将自动归档已完成或已取消的工作项。",
@@ -175,6 +212,116 @@
         "description": "配置 GitHub 和其他集成以同步您的项目工作项。"
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "启用工作流",
+        "description": "设置工作流以控制工作项的流转",
+        "no_states_tooltip": "该工作流中尚未添加任何状态。",
+        "no_work_item_types_tooltip": "该工作流中尚未添加任何工作项类型。",
+        "no_states_or_work_item_types_tooltip": "该工作流中尚未添加任何状态或工作项类型。",
+        "toast": {
+          "loading": {
+            "enabling": "正在启用工作流",
+            "disabling": "正在停用工作流"
+          },
+          "success": {
+            "title": "成功！",
+            "message": "工作流已成功启用。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "启用工作流失败。请重试。"
+          }
+        }
+      },
+      "heading": "工作流",
+      "description": "自动化工作项流转，并设置规则来控制任务如何在项目流程中推进。",
+      "add_button": "添加新工作流",
+      "search": "搜索工作流",
+      "detail": {
+        "define": "定义工作流",
+        "add_states": "添加状态",
+        "unmapped_states": {
+          "title": "检测到未映射的状态",
+          "description": "所选类型的一些工作项当前处于该工作流中不存在的状态。",
+          "note": "如果启用该工作流，这些工作项将自动移动到该工作流的初始状态。",
+          "label": "缺失的状态",
+          "tooltip": "一些工作项处于未映射到该工作流的状态。打开工作流进行查看。"
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "所有状态均已在使用中",
+          "description": "为该项目定义的所有状态都已存在于当前工作流中。"
+        }
+      },
+      "default_footer": {
+        "fallback_message": "该工作流适用于未分配给任何工作流的任何工作项类型。"
+      },
+      "create": {
+        "heading": "创建新工作流",
+        "name": {
+          "placeholder": "添加唯一名称",
+          "validation": {
+            "max_length": "名称必须少于 255 个字符",
+            "required": "名称为必填项",
+            "invalid": "名称只能包含字母、数字、空格、连字符和撇号"
+          }
+        },
+        "description": {
+          "placeholder": "添加简短描述",
+          "validation": {
+            "invalid": "描述只能包含字母、数字、空格、连字符和撇号"
+          }
+        },
+        "work_item_type": {
+          "label": "工作项类型"
+        },
+        "success": {
+          "title": "成功！",
+          "message": "工作流创建成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "创建工作流失败。请重试。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "工作流更新成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "更新工作流失败。请重试。"
+        }
+      },
+      "delete": {
+        "loading": "正在删除工作流",
+        "success": {
+          "title": "成功！",
+          "message": "工作流删除成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "删除工作流失败。请重试。"
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "成功！",
+          "message": "状态添加成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "添加状态失败。请重试。"
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "工作项类型",
+      "description": "创建和自定义具有独特属性的不同类型工作项"
+    },
     "initiatives": {
       "heading": "计划",
       "sub_heading": "在 Plane 中为所有工作解锁最高级别的组织。",
@@ -190,98 +337,8 @@
     "customers": {
       "heading": "客户",
       "settings_heading": "根据客户的重要需求管理工作。",
-      "settings_sub_heading": "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。"
-    },
-    "epics": {
-      "properties": {
-        "title": "属性",
-        "description": "为您的史诗添加自定义属性。"
-      },
-      "disabled": "已禁用"
-    },
-    "cycles": {
-      "auto_schedule": {
-        "heading": "自动安排周期",
-        "description": "无需手动设置即可保持周期运行。",
-        "tooltip": "根据您选择的计划自动创建新周期。",
-        "edit_button": "编辑",
-        "form": {
-          "cycle_title": {
-            "label": "周期标题",
-            "placeholder": "标题",
-            "tooltip": "标题将为后续周期添加编号。例如：设计 - 1/2/3",
-            "validation": {
-              "required": "周期标题为必填项",
-              "max_length": "标题不得超过255个字符"
-            }
-          },
-          "cycle_duration": {
-            "label": "周期持续时间",
-            "unit": "周",
-            "validation": {
-              "required": "周期持续时间为必填项",
-              "min": "周期持续时间必须至少为1周",
-              "max": "周期持续时间不得超过30周",
-              "positive": "周期持续时间必须为正数"
-            }
-          },
-          "cooldown_period": {
-            "label": "冷却期",
-            "unit": "天",
-            "tooltip": "下一个周期开始前的周期间隔暂停期。",
-            "validation": {
-              "required": "冷却期为必填项",
-              "negative": "冷却期不能为负数"
-            }
-          },
-          "start_date": {
-            "label": "周期开始日",
-            "validation": {
-              "required": "开始日期为必填项",
-              "past": "开始日期不能是过去的日期"
-            }
-          },
-          "number_of_cycles": {
-            "label": "未来周期数",
-            "validation": {
-              "required": "周期数为必填项",
-              "min": "至少需要1个周期",
-              "max": "无法安排超过3个周期"
-            }
-          },
-          "auto_rollover": {
-            "label": "工作项自动结转",
-            "tooltip": "在周期完成的当天，将所有未完成的工作项移至下一个周期。"
-          }
-        },
-        "toast": {
-          "toggle": {
-            "loading_enable": "正在启用自动安排周期",
-            "loading_disable": "正在禁用自动安排周期",
-            "success": {
-              "title": "成功！",
-              "message": "自动安排周期已成功切换。"
-            },
-            "error": {
-              "title": "错误！",
-              "message": "切换自动安排周期失败。"
-            }
-          },
-          "save": {
-            "loading": "正在保存自动安排周期配置",
-            "success": {
-              "title": "成功！",
-              "message_create": "自动安排周期配置已成功保存。",
-              "message_update": "自动安排周期配置已成功更新。"
-            },
-            "error": {
-              "title": "错误！",
-              "message_create": "保存自动安排周期配置失败。",
-              "message_update": "更新自动安排周期配置失败。"
-            }
-          }
-        }
-      }
+      "settings_sub_heading": "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。",
+      "description": "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。"
     },
     "features": {
       "cycles": {
@@ -384,6 +441,112 @@
         "description": "里程碑提供了一个层，用于将工作项对齐到共享的完成日期。",
         "toggle_title": "启用里程碑",
         "toggle_description": "按里程碑截止日期组织工作项。"
+      },
+      "toasts": {
+        "loading": "正在更新项目功能...",
+        "success": "项目功能更新成功。",
+        "error": "更新项目功能时出现错误。请重试。"
+      }
+    },
+    "epics": {
+      "heading": "史诗",
+      "description": "适用于跨越多个周期并可跨模块的大体量工作",
+      "properties": {
+        "title": "属性",
+        "description": "为您的史诗添加自定义属性。"
+      },
+      "disabled": "已禁用"
+    },
+    "project_updates": {
+      "heading": "项目更新",
+      "description": "为此项目提供综合跟踪和进度监控"
+    },
+    "templates": {
+      "heading": "模板",
+      "description": "使用模板可节省 80% 创建项目、工作项和页面的时间。"
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "自动安排周期",
+        "description": "无需手动设置即可保持周期运行。",
+        "tooltip": "根据您选择的计划自动创建新周期。",
+        "edit_button": "编辑",
+        "form": {
+          "cycle_title": {
+            "label": "周期标题",
+            "placeholder": "标题",
+            "tooltip": "标题将为后续周期添加编号。例如：设计 - 1/2/3",
+            "validation": {
+              "required": "周期标题为必填项",
+              "max_length": "标题不得超过255个字符"
+            }
+          },
+          "cycle_duration": {
+            "label": "周期持续时间",
+            "unit": "周",
+            "validation": {
+              "required": "周期持续时间为必填项",
+              "min": "周期持续时间必须至少为1周",
+              "max": "周期持续时间不得超过30周",
+              "positive": "周期持续时间必须为正数"
+            }
+          },
+          "cooldown_period": {
+            "label": "冷却期",
+            "unit": "天",
+            "tooltip": "下一个周期开始前的周期间隔暂停期。",
+            "validation": {
+              "required": "冷却期为必填项",
+              "negative": "冷却期不能为负数"
+            }
+          },
+          "start_date": {
+            "label": "周期开始日",
+            "validation": {
+              "required": "开始日期为必填项",
+              "past": "开始日期不能是过去的日期"
+            }
+          },
+          "number_of_cycles": {
+            "label": "未来周期数",
+            "validation": {
+              "required": "周期数为必填项",
+              "min": "至少需要1个周期",
+              "max": "无法安排超过3个周期"
+            }
+          },
+          "auto_rollover": {
+            "label": "工作项自动结转",
+            "tooltip": "在周期完成的当天，将所有未完成的工作项移至下一个周期。"
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "正在启用自动安排周期",
+            "loading_disable": "正在禁用自动安排周期",
+            "success": {
+              "title": "成功！",
+              "message": "自动安排周期已成功切换。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "切换自动安排周期失败。"
+            }
+          },
+          "save": {
+            "loading": "正在保存自动安排周期配置",
+            "success": {
+              "title": "成功！",
+              "message_create": "自动安排周期配置已成功保存。",
+              "message_update": "自动安排周期配置已成功更新。"
+            },
+            "error": {
+              "title": "错误！",
+              "message_create": "保存自动安排周期配置失败。",
+              "message_update": "更新自动安排周期配置失败。"
+            }
+          }
+        }
       }
     }
   }

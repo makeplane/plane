@@ -27,6 +27,8 @@
       }
     },
     "delete": {
+      "title": "Xóa cập nhật",
+      "confirmation": "Bạn có chắc chắn muốn xóa cập nhật này? Đây là hành động không thể hoàn tác.",
       "success": {
         "title": "Cập nhật đã được xóa",
         "message": "Cập nhật đã được xóa thành công."
@@ -41,12 +43,20 @@
         "success": {
           "title": "Reaction đã được tạo",
           "message": "Reaction đã được tạo thành công."
+        },
+        "error": {
+          "title": "Không thể tạo reaction",
+          "message": "Không thể tạo reaction"
         }
       },
       "remove": {
         "success": {
           "title": "Reaction đã được xóa",
           "message": "Reaction đã được xóa thành công."
+        },
+        "error": {
+          "title": "Không thể xóa reaction",
+          "message": "Không thể xóa reaction"
         }
       }
     },

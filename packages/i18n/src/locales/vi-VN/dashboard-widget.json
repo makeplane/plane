@@ -6,9 +6,18 @@
           "short_label": "Cột",
           "long_label": "Biểu đồ cột",
           "chart_models": {
-            "basic": "Cơ bản",
-            "stacked": "Xếp chồng",
-            "grouped": "Nhóm"
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Cột cơ bản"
+            },
+            "stacked": {
+              "short_label": "Xếp chồng",
+              "long_label": "Cột xếp chồng"
+            },
+            "grouped": {
+              "short_label": "Nhóm",
+              "long_label": "Cột nhóm"
+            }
           },
           "orientation": {
             "label": "Hướng",
@@ -22,8 +31,14 @@
           "short_label": "Đường",
           "long_label": "Biểu đồ đường",
           "chart_models": {
-            "basic": "Cơ bản",
-            "multi_line": "Đa đường"
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Đường cơ bản"
+            },
+            "multi_line": {
+              "short_label": "Đa đường",
+              "long_label": "Đa đường"
+            }
           },
           "line_color": "Màu đường",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Vùng",
           "long_label": "Biểu đồ vùng",
           "chart_models": {
-            "basic": "Cơ bản",
-            "stacked": "Xếp chồng",
-            "comparison": "So sánh"
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Vùng cơ bản"
+            },
+            "stacked": {
+              "short_label": "Xếp chồng",
+              "long_label": "Vùng xếp chồng"
+            },
+            "comparison": {
+              "short_label": "So sánh",
+              "long_label": "Vùng so sánh"
+            }
           },
           "fill_color": "Màu tô"
         },
@@ -47,8 +71,14 @@
           "short_label": "Bánh rỗng",
           "long_label": "Biểu đồ bánh rỗng",
           "chart_models": {
-            "basic": "Cơ bản",
-            "progress": "Tiến độ"
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Bánh rỗng cơ bản"
+            },
+            "progress": {
+              "short_label": "Tiến độ",
+              "long_label": "Bánh rỗng tiến độ"
+            }
           },
           "center_value": "Giá trị trung tâm",
           "completed_color": "Màu hoàn thành"
@@ -57,7 +87,10 @@
           "short_label": "Bánh tròn",
           "long_label": "Biểu đồ bánh tròn",
           "chart_models": {
-            "basic": "Cơ bản"
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Bánh tròn"
+            }
           },
           "group": {
             "label": "Phần được nhóm",
@@ -77,9 +110,15 @@
             "count": "Số lượng"
           }
         },
-        "text": {
-          "short_label": "Văn bản",
-          "long_label": "Văn bản",
+        "number": {
+          "short_label": "Số",
+          "long_label": "Số",
+          "chart_models": {
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Số"
+            }
+          },
           "alignment": {
             "label": "Căn chỉnh văn bản",
             "left": "Trái",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Chọn một thuộc tính cho hàng để xem bảng này."
         }
       },
+      "sections": {
+        "charts": "Biểu đồ",
+        "text": "Văn bản"
+      },
       "color_palettes": {
         "modern": "Hiện đại",
         "horizon": "Chân trời",
@@ -115,18 +158,12 @@
           "label": "Đặt tên widget này",
           "placeholder": "vd., \"Việc cần làm hôm qua\", \"Tất cả hoàn thành\""
         },
-        "chart_type": "Loại biểu đồ",
-        "visualization_type": {
-          "label": "Kiểu trực quan hóa",
-          "placeholder": "Thêm kiểu trực quan hóa"
-        },
+        "widget_type": "Loại widget",
         "date_group": {
           "label": "Nhóm ngày",
           "placeholder": "Thêm nhóm ngày"
         },
-        "grouping": "Phân nhóm",
         "group_by": "Nhóm theo",
-        "stacking": "Xếp chồng",
         "stack_by": "Xếp chồng theo",
         "daily": "Hàng ngày",
         "weekly": "Hàng tuần",
@@ -220,7 +257,7 @@
             "y_axis_metric": "Chỉ số đang thiếu giá trị."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Chỉ số đang thiếu giá trị."
           }
@@ -232,6 +269,9 @@
           }
         },
         "ask_admin": "Yêu cầu quản trị viên của bạn cấu hình widget này."
+      },
+      "upgrade_required": {
+        "title": "Loại widget này không có trong gói của bạn."
       }
     },
     "create_modal": {

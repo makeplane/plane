@@ -10,6 +10,8 @@
     "all_initiatives": "Tutte le Iniziative",
     "delete_initiative": "Elimina Iniziativa",
     "fill_all_required_fields": "Si prega di compilare tutti i campi obbligatori.",
+    "archive_initiative": "Archivia iniziativa",
+    "archive_confirm_message": "Sei sicuro di voler archiviare l'iniziativa? Tutte le tue iniziative archiviate possono essere ripristinate in seguito.",
     "archive_description": "Solo le iniziative completate o chiuse possono essere archiviate",
     "toast": {
       "create_success": "Iniziativa {name} creata con successo.",
@@ -24,6 +26,9 @@
         "success": "Iniziativa archiviata correttamente.",
         "error": "Impossibile archiviare l'iniziativa",
         "initiative_cannot_be_archived_in_this_state": "L'iniziativa non può essere archiviata in questo stato"
+      },
+      "restore": {
+        "error": "Impossibile ripristinare l'iniziativa. Riprova."
       },
       "link_copied": "Link dell'iniziativa copiato negli appunti.",
       "project_update_success": "Progetti dell'iniziativa aggiornati con successo.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Nessun ambito aggiunto a questa iniziativa",
         "description": "Collega progetti e epiche e traccia quel lavoro in questo spazio.",
+        "description_projects": "Collega progetti e traccia quel lavoro in questo spazio.",
+        "description_epics": "Collega epiche e traccia quel lavoro in questo spazio.",
         "primary_button": {
           "text": "Aggiungi ambito"
         }
+      },
+      "board": {
+        "no_epics": "Nessuna epica in questa iniziativa",
+        "no_projects": "Nessun progetto in questa iniziativa",
+        "enable_project_states": "Stati dei progetti non abilitati",
+        "enable_project_states_description": "Abilita gli stati dei progetti dalle impostazioni dello spazio di lavoro per usare il raggruppamento per stato."
       }
     },
     "initiative_settings": {

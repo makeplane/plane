@@ -6,6 +6,7 @@
     "select_releases": "Seleccionar lanzamientos",
     "overview": "Resumen",
     "scope": "Alcance",
+    "changelog": "Registro de cambios",
     "page_title": {
       "scope": "Lanzamiento - {name} | Alcance",
       "scope_fallback": "Lanzamiento | Alcance"

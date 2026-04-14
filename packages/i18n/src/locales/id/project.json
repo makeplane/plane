@@ -16,10 +16,15 @@
     "remove_filters_to_see_all_cycles": "Hapus filter untuk melihat semua siklus",
     "remove_search_criteria_to_see_all_cycles": "Hapus kriteria pencarian untuk melihat semua siklus",
     "only_completed_cycles_can_be_archived": "Hanya siklus yang diselesaikan yang dapat diarsipkan",
+    "start_date": "Tanggal mulai",
+    "end_date": "Tanggal akhir",
+    "in_your_timezone": "Di zona waktu Anda",
     "transfer_work_items": "Transfer {count} item kerja",
     "transfer": {
       "no_cycles_available": "Tidak ada siklus lain yang tersedia untuk mentransfer item pekerjaan."
     },
+    "date_range": "Rentang tanggal",
+    "add_date": "Tambah tanggal",
     "active_cycle": {
       "label": "Siklus aktif",
       "progress": "Kemajuan",
@@ -223,11 +228,39 @@
             "title": "Tampilan bekerja berdasarkan properti item kerja.",
             "description": "Anda dapat membuat tampilan dari sini dengan sebanyak mungkin properti sebagai filter yang Anda anggap sesuai."
           }
+        },
+        "filter": {
+          "title": "Tidak ada tampilan yang cocok",
+          "description": "Tidak ada tampilan yang cocok dengan kriteria pencarian.\n Buat tampilan baru sebagai gantinya."
         }
       },
-      "filter": {
-        "title": "Tidak ada tampilan yang cocok",
-        "description": "Tidak ada tampilan yang cocok dengan kriteria pencarian.\n Buat tampilan baru sebagai gantinya."
+      "no_archived_issues": {
+        "title": "Belum ada item kerja yang diarsipkan",
+        "description": "Secara manual atau melalui otomatisasi, Anda dapat mengarsipkan item kerja yang selesai atau dibatalkan. Temukan di sini setelah diarsipkan.",
+        "primary_button": {
+          "text": "Atur otomatisasi"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Tidak ada item kerja yang ditemukan cocok dengan filter yang diterapkan",
+        "secondary_button": {
+          "text": "Hapus semua filter"
+        }
+      },
+      "public": {
+        "title": "Belum ada halaman publik",
+        "description": "Lihat halaman yang dibagikan dengan semua orang di proyek Anda tepat di sini.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "archived": {
+        "title": "Belum ada halaman yang diarsipkan",
+        "description": "Arsipkan halaman yang tidak ada dalam radar Anda. Akses di sini saat diperlukan."
+      },
+      "shared": {
+        "title": "Belum ada halaman yang dibagikan",
+        "description": "Halaman yang dibagikan orang lain kepada Anda akan muncul di sini."
       }
     },
     "delete_view": {
@@ -325,6 +358,13 @@
       "created_at": "Tanggal dibuat",
       "manual": "Manual"
     }
+  },
+  "project_members": {
+    "full_name": "Nama lengkap",
+    "display_name": "Nama tampilan",
+    "email": "Email",
+    "joining_date": "Tanggal bergabung",
+    "role": "Peran"
   },
   "project": {
     "members_import": {

@@ -6,6 +6,7 @@
     "select_releases": "Selecionar lançamentos",
     "overview": "Visão geral",
     "scope": "Escopo",
+    "changelog": "Changelog",
     "page_title": {
       "scope": "Lançamento - {name} | Escopo",
       "scope_fallback": "Lançamento | Escopo"

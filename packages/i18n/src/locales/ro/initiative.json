@@ -10,6 +10,8 @@
     "all_initiatives": "Toate Inițiativele",
     "delete_initiative": "Șterge Inițiativă",
     "fill_all_required_fields": "Te rugăm să completezi toate câmpurile obligatorii.",
+    "archive_initiative": "Arhivează inițiativa",
+    "archive_confirm_message": "Ești sigur că vrei să arhivezi inițiativa? Toate inițiativele arhivate pot fi restaurate mai târziu.",
     "archive_description": "Doar inițiativele finalizate sau închise pot fi arhivate",
     "toast": {
       "create_success": "Inițiativa {name} creată cu succes.",
@@ -24,6 +26,9 @@
         "success": "Inițiativă arhivată cu succes.",
         "error": "Arhivarea inițiativei a eșuat",
         "initiative_cannot_be_archived_in_this_state": "Inițiativa nu poate fi arhivată în această stare"
+      },
+      "restore": {
+        "error": "Inițiativa nu a putut fi restaurată. Te rugăm să încerci din nou."
       },
       "link_copied": "Link-ul inițiativei copiat în clipboard.",
       "project_update_success": "Proiectele inițiativei actualizate cu succes.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Nu a fost adăugat încă niciun domeniu la această inițiativă",
         "description": "Conectează proiecte și epice la inițiativă pentru a începe.",
+        "description_projects": "Conectează proiecte și urmărește munca în acest spațiu.",
+        "description_epics": "Conectează epice și urmărește munca în acest spațiu.",
         "primary_button": {
           "text": "Adaugă domeniu"
         }
+      },
+      "board": {
+        "no_epics": "Niciun epic în această inițiativă",
+        "no_projects": "Niciun proiect în această inițiativă",
+        "enable_project_states": "Stările proiectului nu sunt activate",
+        "enable_project_states_description": "Activează stările proiectului din setările spațiului de lucru pentru a utiliza gruparea după stare."
       }
     },
     "initiative_settings": {

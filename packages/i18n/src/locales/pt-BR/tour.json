@@ -110,6 +110,12 @@
         "description": "Um item de trabalho pode ser adiado para revisá-lo mais tarde. Ele será movido para o final da sua lista de solicitações abertas."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Pare de alternar abas. Conecte seu mundo.",
+        "description": "Conecte o GitHub e o Slack para acompanhar PRs e resumir conversas diretamente no Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navegação, reimaginada",

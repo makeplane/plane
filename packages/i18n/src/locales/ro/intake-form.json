@@ -5,8 +5,6 @@
       "sub-title": "Spune echipei pe ce ai dori să lucreze.",
       "name": "Nume",
       "email": "E-mail",
-      "about": "Despre ce este acest element de lucru?",
-      "description": "Descrie ce ar trebui să se întâmple",
       "description_placeholder": "Adaugă cât de multe detalii dorești pentru a ajuta echipa să identifice situația și nevoile tale.",
       "loading": "Se creează",
       "create_work_item": "Creează element de lucru",

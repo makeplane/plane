@@ -53,6 +53,9 @@
       "button": {
         "previous": "Wstecz",
         "next": "Dodaj akcję"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Po utworzeniu nie można zmienić typu wyzwalacza"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Wybierz opcję",
       "handler_name": {
         "add_comment": "Dodaj komentarz",
-        "change_property": "Zmień właściwość"
+        "change_property": "Zmień właściwość",
+        "run_script": "Uruchom skrypt"
       },
       "configuration": {
         "label": "Konfiguracja",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Dodaj komentarz"
+      },
+      "run_script_block": {
+        "title": "Uruchom skrypt"
       },
       "change_property_block": {
         "title": "Zmień właściwość"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Tytuł automatyzacji",
+      "scope": "Zakres",
+      "projects": "Projekty",
       "last_run_on": "Ostatnie uruchomienie",
       "created_on": "Utworzono",
       "last_updated_on": "Ostatnia aktualizacja",
@@ -229,6 +238,35 @@
         "title": "Automatyzacje",
         "description": "Automatyzacje to sposób na automatyzację zadań w Twoim projekcie.",
         "sub_description": "Odzyskaj 80% czasu administracyjnego, gdy używasz Automatyzacji."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Wybierz projekty, w których ma działać ta automatyzacja",
+        "all_projects": {
+          "label": "Wszystkie projekty",
+          "description": "Automatyzacja będzie działać dla wszystkich projektów w przestrzeni roboczej."
+        },
+        "select_projects": {
+          "label": "Wybierz projekty",
+          "description": "Automatyzacja będzie działać dla wybranych projektów w przestrzeni roboczej.",
+          "placeholder": "Wybierz projekty"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatyzacje",
+        "title": "Automatyzacje",
+        "description": "Standaryzuj procesy w całej przestrzeni roboczej za pomocą globalnych automatyzacji."
+      },
+      "table": {
+        "scope": {
+          "global": "Globalny",
+          "project": {
+            "label": "Projekt",
+            "multiple": "Wiele",
+            "all": "Wszystkie"
+          }
+        }
       }
     }
   }

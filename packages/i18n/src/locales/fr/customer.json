@@ -1,8 +1,9 @@
 {
   "customers": {
     "label": "{count, plural, one {Client} other {Clients}}",
-    "drop_down": {
-      "placeholder": "Sélectionner un client",
+    "open": "Ouvrir le client",
+    "dropdown": {
+      "placeholder": "Ajouter un client",
       "required": "Veuillez sélectionner un client",
       "no_selection": "Aucun client"
     },
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "Industrie",
+          "name": "Industrie",
           "placeholder": "Retail, e-Commerce, Fintech, Banque",
           "placeholder_short": "Ajouter un secteur",
           "validation": {}
@@ -79,6 +80,9 @@
           "validation": {
             "min_length": "Le revenu ne peut pas être inférieur à 0."
           }
+        },
+        "requests": {
+          "name": "Nombre de demandes"
         },
         "invalid_value": "Valeur de propriété invalide."
       },

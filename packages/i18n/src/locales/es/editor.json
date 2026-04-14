@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Por favor, ingrese una URL válida."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Describe el contenido de este bloque",
+      "generated_here": "Tu contenido de IA se generará aquí"
+    },
+    "block_types": {
+      "placeholder": "Seleccionar tipo de bloque",
+      "summarize_page": "Resumir página",
+      "custom_prompt": "Indicación personalizada"
+    },
+    "actions": {
+      "discard": "Descartar",
+      "generate": "Generar",
+      "generating": "Generando",
+      "rewriting": "Reescribiendo",
+      "rewrite": "Reescribir",
+      "use_this": "Usar esto",
+      "refine": "Refinar"
+    }
   }
 }

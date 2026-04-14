@@ -49,6 +49,23 @@
           "text": "添加史诗"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "这将创建史诗的副本。",
+        "description2": "复制时将移除所有属性数据。",
+        "epics_not_enabled": "史诗未启用"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "史诗复制成功"
+        },
+        "error": {
+          "message": "史诗复制失败"
+        }
+      }
     }
   },
   "epic_relation": {

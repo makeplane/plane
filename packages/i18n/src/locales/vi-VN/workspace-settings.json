@@ -66,14 +66,20 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Thanh toán và Kế hoạch",
+        "description": "Chọn gói của bạn, quản lý đăng ký và dễ dàng nâng cấp khi nhu cầu của bạn phát triển.",
         "title": "Thanh toán và Kế hoạch",
         "current_plan": "Kế hoạch hiện tại",
         "free_plan": "Bạn đang sử dụng kế hoạch miễn phí",
         "view_plans": "Xem kế hoạch"
       },
       "exports": {
+        "heading": "Xuất",
+        "description": "Xuất dữ liệu dự án của bạn dưới nhiều định dạng và truy cập lịch sử xuất với các liên kết tải xuống.",
         "title": "Xuất",
         "exporting": "Đang xuất",
+        "exporting_projects": "Đang xuất dự án",
+        "format": "Định dạng",
         "previous_exports": "Xuất trước đây",
         "export_separate_files": "Xuất dữ liệu thành các tệp riêng biệt",
         "filters_info": "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook",
+        "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi các sự kiện dự án xảy ra.",
         "title": "Webhooks",
         "add_webhook": "Thêm webhook",
         "modal": {
@@ -165,14 +173,20 @@
         }
       },
       "integrations": {
+        "heading": "Tích hợp",
+        "description": "Kết nối với các công cụ và dịch vụ phổ biến để đồng bộ hóa công việc của bạn trong toàn bộ hệ sinh thái quy trình làm việc.",
         "title": "Tích hợp",
         "page_title": "Làm việc với dữ liệu Plane của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
         "page_description": "Xem tất cả các tích hợp được workspace này hoặc bạn đang sử dụng."
       },
       "imports": {
+        "heading": "Nhập",
+        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc.",
         "title": "Nhập dữ liệu"
       },
       "worklogs": {
+        "heading": "Nhật ký công việc",
+        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào.",
         "title": "Nhật ký công việc"
       },
       "group_syncing": {
@@ -242,7 +256,10 @@
         "description": "Cấu hình miền của bạn và bật Đăng nhập một lần"
       },
       "project_states": {
-        "title": "Trạng thái dự án"
+        "title": "Trạng thái dự án",
+        "heading": "Xem tổng quan tiến độ cho tất cả dự án.",
+        "description": "Trạng thái Dự án là tính năng chỉ có trong Plane để theo dõi tiến độ của tất cả các dự án của bạn theo bất kỳ thuộc tính dự án nào.",
+        "go_to_settings": "Đi đến cài đặt"
       },
       "projects": {
         "title": "Dự án",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Không gian nhóm"
+        "title": "Không gian nhóm",
+        "heading": "Không gian nhóm",
+        "description": "Xem công việc của nhóm bạn trong một không gian riêng biệt với các dự án, nhiệm vụ, biểu đồ nhóm, trang và chế độ xem được liên kết."
       },
       "initiatives": {
-        "title": "Sáng kiến"
+        "title": "Sáng kiến",
+        "heading": "Sáng kiến",
+        "description": "Mở khóa cấp độ tổ chức cao nhất cho tất cả công việc của bạn trong Plane."
       },
       "customers": {
-        "title": "Khách hàng"
+        "title": "Khách hàng",
+        "heading": "Quản lý công việc theo những gì quan trọng đối với khách hàng của bạn.",
+        "description": "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng."
+      },
+      "templates": {
+        "title": "Mẫu",
+        "heading": "Mẫu",
+        "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu."
+      },
+      "relations": {
+        "title": "Quan hệ",
+        "heading": "Quan hệ",
+        "description": "Tạo và quản lý các loại quan hệ kết nối các mục công việc trong không gian làm việc của bạn."
       },
       "releases": {
         "title": "Bản phát hành",
@@ -289,6 +322,7 @@
         "your_apps": "Ứng dụng của bạn",
         "connect": "Kết nối",
         "connected": "Đã kết nối",
+        "disconnect": "Ngắt kết nối",
         "install": "Cài đặt",
         "installed": "Đã cài đặt",
         "configure": "Cấu hình",
@@ -319,8 +353,13 @@
         "app_description_error": "Mô tả ứng dụng là bắt buộc",
         "app_slug_title": "Slug ứng dụng",
         "app_slug_error": "Slug ứng dụng là bắt buộc",
-        "app_maker_title": "Người tạo ứng dụng",
         "app_maker_error": "Người tạo ứng dụng là bắt buộc",
+        "webhook_secret": {
+          "label": "Khóa bí mật Webhook",
+          "description": "Khóa bí mật được sử dụng để xác minh các yêu cầu webhook đến.",
+          "placeholder": "Nhập một khóa bí mật ngẫu nhiên"
+        },
+        "invalid_website_error": "Trang web không hợp lệ",
         "webhook_url_title": "URL Webhook",
         "webhook_url_error": "URL Webhook là bắt buộc",
         "invalid_webhook_url_error": "URL Webhook không hợp lệ",
@@ -380,7 +419,6 @@
         "video_url_title": "URL Video",
         "video_url_error": "URL Video là bắt buộc",
         "invalid_video_url_error": "URL Video không hợp lệ",
-        "setup_url_title": "URL Cài đặt",
         "setup_url_error": "URL Cài đặt là bắt buộc",
         "invalid_setup_url_error": "URL Cài đặt không hợp lệ",
         "configuration_url_title": "URL Cấu hình",
@@ -396,6 +434,10 @@
         "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
         "uploading": "Đang tải lên...",
         "upload_and_save": "Tải lên và lưu",
+        "app_consent_no_access_title": "Yêu cầu cài đặt",
+        "app_consent_unapproved_title": "Ứng dụng này chưa được Plane xem xét hoặc phê duyệt.",
+        "app_consent_unapproved_description": "Hãy chắc chắn rằng bạn tin tưởng ứng dụng này trước khi kết nối nó với không gian làm việc của bạn.",
+        "go_to_app": "Đi đến ứng dụng",
         "app_credentials_regenrated": {
           "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
           "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script",
+        "new_script": "Script mới",
+        "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
       }
     },
     "empty_state": {

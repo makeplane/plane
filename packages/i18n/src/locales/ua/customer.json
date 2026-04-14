@@ -79,9 +79,12 @@
           "placeholder_short": "Додати ревеню",
           "validation": {
             "min_length": "Ревеню не може бути менше 0."
-          },
-          "invalid_value": "Недійсний ревеню."
-        }
+          }
+        },
+        "requests": {
+          "name": "К-сть запитів"
+        },
+        "invalid_value": "Недійсне значення властивості."
       },
       "custom": {
         "title": "Кастомні проперті",

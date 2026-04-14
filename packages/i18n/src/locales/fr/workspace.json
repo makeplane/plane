@@ -141,13 +141,7 @@
     "summary_of_projects": "Résumé des projets",
     "project_insights": "Aperçus du projet",
     "started_work_items": "{entity} commencés",
-    "total_work_items": "Total des {entity}",
-    "total_projects": "Total des projets",
-    "total_admins": "Total des administrateurs",
-    "total_users": "Nombre total d’utilisateurs",
-    "total_intake": "Revenu total",
     "un_started_work_items": "{entity} non commencés",
-    "total_guests": "Nombre total d’invités",
     "completed_work_items": "{entity} terminés",
     "total": "Total des {entity}",
     "projects_by_status": "Projets par statut",
@@ -162,6 +156,7 @@
       "label": "Ajouter un Projet"
     },
     "network": {
+      "label": "Réseau",
       "private": {
         "title": "Privé",
         "description": "Accessible uniquement sur invitation"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "Pas encore de Pages archivées",
         "description": "Archivez les Pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
+      },
+      "shared": {
+        "title": "Pas encore de pages partagées",
+        "description": "Les pages que d’autres ont partagées avec vous apparaîtront ici."
       }
     }
   },

@@ -43,6 +43,8 @@
     "import": "Nhập",
     "serial_number": "STT.",
     "project": "Dự án",
+    "teamspace": "Không gian nhóm",
+    "destination": "Đích đến",
     "workspace": "Workspace",
     "status": "Trạng thái",
     "summary": "Tóm tắt",
@@ -88,7 +90,6 @@
     "import_to_existing_project": "Nhập vào dự án hiện có",
     "import_to_existing_project_description": "Chọn một dự án hiện có từ menu thả xuống bên dưới.",
     "state_mapping_automatic_creation": "Tất cả các trạng thái Jira sẽ được tự động tạo trong Plane.",
-    "atlassian_security_settings": "Cài đặt bảo mật Atlassian",
     "email_description": "Đây là email được liên kết với mã thông báo truy cập cá nhân của bạn",
     "jira_domain": "Tên miền Jira",
     "jira_domain_description": "Đây là tên miền của phiên bản Jira của bạn",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Nhập dữ liệu Notion của bạn vào các dự án Plane.",
     "steps": {
+      "title_select_destination": "Chọn đích đến",
+      "description_select_destination": "Vui lòng chọn đích đến cho dữ liệu Notion của bạn.",
       "title_upload_zip": "Tải lên ZIP xuất từ Notion",
       "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Notion của bạn."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Tải lên hoàn tất!",
       "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Notion của bạn.",
       "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    },
+    "select_destination": {
+      "destination_type": "Loại đích đến",
+      "select_destination_type": "Chọn loại đích đến",
+      "select_project": "Chọn dự án",
+      "no_projects_found": "Không tìm thấy dự án",
+      "select_teamspace": "Chọn không gian nhóm",
+      "no_teamspaces_found": "Không tìm thấy không gian nhóm",
+      "unknown_project": "Dự án không xác định",
+      "unknown_teamspace": "Không gian nhóm không xác định"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Nhập dữ liệu Confluence của bạn vào wiki Plane.",
     "steps": {
+      "title_select_destination": "Chọn đích đến",
+      "description_select_destination": "Vui lòng chọn đích đến cho dữ liệu Confluence của bạn.",
       "title_upload_zip": "Tải lên ZIP xuất từ Confluence",
       "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Confluence của bạn."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Tải lên hoàn tất!",
       "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Confluence của bạn.",
       "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    },
+    "select_destination": {
+      "destination_type": "Loại đích đến",
+      "select_destination_type": "Chọn loại đích đến",
+      "select_project": "Chọn dự án",
+      "no_projects_found": "Không tìm thấy dự án",
+      "select_teamspace": "Chọn không gian nhóm",
+      "no_teamspaces_found": "Không tìm thấy không gian nhóm",
+      "unknown_project": "Dự án không xác định",
+      "unknown_teamspace": "Không gian nhóm không xác định"
     }
   },
   "flatfile_importer": {

@@ -1,8 +1,9 @@
 {
   "customers": {
     "label": "{count, plural, one {Zákazník} other {Zákazníci}}",
-    "drop_down": {
-      "placeholder": "Vyberte zákazníka",
+    "open": "Otevřít zákazníka",
+    "dropdown": {
+      "placeholder": "Přidat zákazníka",
       "required": "Vyberte prosím zákazníka",
       "no_selection": "Žádní zákazníci"
     },
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "Průmysl",
+          "name": "Průmysl",
           "placeholder": "Maloobchod, e-Commerce, Fintech, Bankovnictví",
           "placeholder_short": "Přidat odvětví",
           "validation": {}
@@ -79,6 +80,9 @@
           "validation": {
             "min_length": "Příjem nemůže být menší než 0."
           }
+        },
+        "requests": {
+          "name": "Počet požadavků"
         },
         "invalid_value": "Neplatná hodnota vlastnosti."
       },

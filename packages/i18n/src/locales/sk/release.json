@@ -6,6 +6,7 @@
     "select_releases": "Vybrať vydania",
     "overview": "Prehľad",
     "scope": "Rozsah",
+    "changelog": "Zoznam zmien",
     "page_title": {
       "scope": "Vydanie - {name} | Rozsah",
       "scope_fallback": "Vydanie | Rozsah"

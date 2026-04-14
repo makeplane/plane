@@ -141,13 +141,7 @@
     "summary_of_projects": "プロジェクトの概要",
     "project_insights": "プロジェクトのインサイト",
     "started_work_items": "開始された{entity}",
-    "total_work_items": "{entity}の合計",
-    "total_projects": "プロジェクト合計",
-    "total_admins": "管理者の合計",
-    "total_users": "ユーザー総数",
-    "total_intake": "総収入",
     "un_started_work_items": "未開始の{entity}",
-    "total_guests": "ゲストの合計",
     "completed_work_items": "完了した{entity}",
     "total": "{entity}の合計",
     "projects_by_status": "ステータス別のプロジェクト",
@@ -162,6 +156,7 @@
       "label": "プロジェクトを追加"
     },
     "network": {
+      "label": "ネットワーク",
       "private": {
         "title": "非公開",
         "description": "招待された人のみアクセス可能"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "まだアーカイブされたページがありません",
         "description": "注目していないページをアーカイブします。必要な時にここでアクセスできます。"
+      },
+      "shared": {
+        "title": "共有されたページはまだありません",
+        "description": "他のメンバーがあなたと共有したページがここに表示されます。"
       }
     }
   },

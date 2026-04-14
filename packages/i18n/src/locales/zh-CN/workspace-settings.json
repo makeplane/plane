@@ -66,14 +66,20 @@
         }
       },
       "billing_and_plans": {
+        "heading": "账单与计划",
+        "description": "选择您的计划、管理订阅，并随着需求增长轻松升级。",
         "title": "账单与计划",
         "current_plan": "当前计划",
         "free_plan": "您目前使用的是免费计划",
         "view_plans": "查看计划"
       },
       "exports": {
+        "heading": "导出",
+        "description": "以多种格式导出项目数据，并通过下载链接访问导出历史记录。",
         "title": "导出",
         "exporting": "导出中",
+        "exporting_projects": "正在导出项目",
+        "format": "格式",
         "previous_exports": "以前的导出",
         "export_separate_files": "将数据导出为单独的文件",
         "filters_info": "应用筛选器以根据您的条件导出特定工作项。",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "在项目事件发生时自动向外部服务发送通知。",
         "title": "Webhooks",
         "add_webhook": "添加 webhook",
         "modal": {
@@ -165,14 +173,20 @@
         }
       },
       "integrations": {
+        "heading": "集成",
+        "description": "与流行的工具和服务连接，在整个工作流生态系统中同步您的工作。",
         "title": "集成",
         "page_title": "在可用的应用或您自己的应用中使用您的 Plane 数据。",
         "page_description": "查看此工作区或您正在使用的所有集成。"
       },
       "imports": {
+        "heading": "导入",
+        "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。",
         "title": "导入"
       },
       "worklogs": {
+        "heading": "工作日志",
+        "description": "为任何项目中的任何人下载工作日志（即工时表）。",
         "title": "工作日志"
       },
       "group_syncing": {
@@ -242,6 +256,9 @@
         "description": "配置您的域名并启用单点登录"
       },
       "project_states": {
+        "heading": "查看所有项目的进度概览。",
+        "description": "项目状态是 Plane 独有的功能，用于按任何项目属性跟踪您所有项目的进度。",
+        "go_to_settings": "前往设置",
         "title": "项目状态"
       },
       "projects": {
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
+        "heading": "团队空间",
+        "description": "在独立的空间中查看团队的工作，包含已链接的项目、任务、团队图表、页面和视图。",
         "title": "团队空间"
       },
       "initiatives": {
+        "heading": "计划",
+        "description": "在 Plane 中为所有工作解锁最高级别的组织。",
         "title": "计划"
       },
       "customers": {
+        "heading": "根据客户的重要需求管理工作。",
+        "description": "将客户请求与工作项关联，按请求分配优先级，并将工作项的状态汇总到客户记录中。很快，您将能够与 CRM 或支持工具集成，以便更好地按客户属性管理工作。",
         "title": "客户"
+      },
+      "templates": {
+        "title": "模板",
+        "heading": "模板",
+        "description": "使用模板可节省 80% 创建项目、工作项和页面的时间。"
+      },
+      "relations": {
+        "title": "关系",
+        "heading": "关系",
+        "description": "创建和管理连接工作区中工作项的关系类型。"
       },
       "releases": {
         "title": "发布",
@@ -289,6 +322,7 @@
         "your_apps": "您的应用",
         "connect": "连接",
         "connected": "已连接",
+        "disconnect": "断开连接",
         "install": "安装",
         "installed": "已安装",
         "configure": "配置",
@@ -319,8 +353,8 @@
         "app_description_error": "应用描述为必填项",
         "app_slug_title": "应用别名",
         "app_slug_error": "应用别名为必填项",
-        "app_maker_title": "应用制作者",
         "app_maker_error": "应用制作者为必填项",
+        "invalid_website_error": "无效的网站",
         "webhook_url_title": "Webhook URL",
         "webhook_url_error": "Webhook URL为必填项",
         "invalid_webhook_url_error": "无效的Webhook URL",
@@ -382,7 +416,6 @@
         "video_url_title": "视频URL",
         "video_url_error": "视频URL是必填项",
         "invalid_video_url_error": "无效的视频URL",
-        "setup_url_title": "设置URL",
         "setup_url_error": "设置URL是必填项",
         "invalid_setup_url_error": "无效的设置URL",
         "configuration_url_title": "配置URL",
@@ -428,12 +461,21 @@
           "description": "我们将在此接收来自安装了您应用的工作区的 Webhook 事件和更新。",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Webhook 密钥",
+          "description": "用于验证传入 Webhook 请求的密钥。",
+          "placeholder": "输入随机密钥"
+        },
         "redirect_uris": {
           "label": "重定向 URI（以空格分隔）",
           "description": "用户在通过 Plane 认证后将被重定向到此路径。",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "安装请求",
         "app_consent_no_access_description": "此应用只能在工作区管理员安装后才能安装。请联系您的工作区管理员以继续。",
+        "app_consent_unapproved_title": "此应用尚未经过 Plane 审核或批准。",
+        "app_consent_unapproved_description": "在将此应用连接到您的工作区之前，请确保您信任此应用。",
+        "go_to_app": "前往应用",
         "enable_app_mentions": "启用应用提及",
         "enable_app_mentions_tooltip": "启用此功能后，用户可以提及或分配工作项到此应用。",
         "scopes": "范围",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "使用与您的工作和知识库原生连接的 AI，让您的任务变得更智能、更快速。"
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "脚本",
+        "new_script": "新建脚本",
+        "description": "使用自定义脚本和自动化规则自动化您的工作流程。"
       }
     },
     "empty_state": {

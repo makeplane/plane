@@ -43,6 +43,8 @@
     "import": "Importuj",
     "serial_number": "Nr seryjny",
     "project": "Projekt",
+    "teamspace": "Teamspace",
+    "destination": "Miejsce docelowe",
     "workspace": "Workspace",
     "status": "Status",
     "summary": "Podsumowanie",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Wszystkie stavy Jira zostaną automatycznie utworzone w Plane.",
     "personal_access_token": "Osobisty Token Dostępu",
     "user_email": "Email użytkownika",
-    "atlassian_security_settings": "Ustawienia bezpieczeństwa Atlassian",
     "email_description": "To jest email powiązany z Twoim osobistym tokenem dostępu",
     "jira_domain": "Domena Jira",
     "jira_domain_description": "To jest domena Twojej instancji Jira",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Importuj swoje dane Notion do projektów Plane.",
     "steps": {
+      "title_select_destination": "Wybierz miejsce docelowe",
+      "description_select_destination": "Wybierz miejsce docelowe dla swoich danych Notion.",
       "title_upload_zip": "Prześlij wyeksportowany ZIP z Notion",
       "description_upload_zip": "Proszę przesłać plik ZIP zawierający dane z Notion."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Przesyłanie zakończone!",
       "upload_complete_description": "Kliknij \"Rozpocznij import\", aby rozpocząć przetwarzanie danych Notion.",
       "upload_progress_message": "Proszę nie zamykać tego okna."
+    },
+    "select_destination": {
+      "destination_type": "Typ miejsca docelowego",
+      "select_destination_type": "Wybierz typ miejsca docelowego",
+      "select_project": "Wybierz projekt",
+      "no_projects_found": "Nie znaleziono projektów",
+      "select_teamspace": "Wybierz teamspace",
+      "no_teamspaces_found": "Nie znaleziono teamspejsów",
+      "unknown_project": "Nieznany projekt",
+      "unknown_teamspace": "Nieznany teamspace"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Importuj swoje dane Confluence do wiki Plane.",
     "steps": {
+      "title_select_destination": "Wybierz miejsce docelowe",
+      "description_select_destination": "Wybierz miejsce docelowe dla swoich danych Confluence.",
       "title_upload_zip": "Prześlij wyeksportowany ZIP z Confluence",
       "description_upload_zip": "Proszę przesłać plik ZIP zawierający dane z Confluence."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Przesyłanie zakończone!",
       "upload_complete_description": "Kliknij \"Rozpocznij import\", aby rozpocząć przetwarzanie danych Confluence.",
       "upload_progress_message": "Proszę nie zamykać tego okna."
+    },
+    "select_destination": {
+      "destination_type": "Typ miejsca docelowego",
+      "select_destination_type": "Wybierz typ miejsca docelowego",
+      "select_project": "Wybierz projekt",
+      "no_projects_found": "Nie znaleziono projektów",
+      "select_teamspace": "Wybierz teamspace",
+      "no_teamspaces_found": "Nie znaleziono teamspejsów",
+      "unknown_project": "Nieznany projekt",
+      "unknown_teamspace": "Nieznany teamspace"
     }
   },
   "flatfile_importer": {

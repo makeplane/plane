@@ -10,6 +10,8 @@
     "all_initiatives": "Tất cả Sáng kiến",
     "delete_initiative": "Xóa Sáng kiến",
     "fill_all_required_fields": "Vui lòng điền vào tất cả các trường bắt buộc.",
+    "archive_initiative": "Lưu trữ sáng kiến",
+    "archive_confirm_message": "Bạn có chắc chắn muốn lưu trữ sáng kiến này? Tất cả sáng kiến đã lưu trữ có thể được khôi phục sau.",
     "archive_description": "Chỉ các sáng kiến đã hoàn thành hoặc đã đóng mới có thể lưu trữ",
     "toast": {
       "create_success": "Sáng kiến {name} đã được tạo thành công.",
@@ -24,6 +26,9 @@
         "success": "Đã lưu trữ sáng kiến thành công.",
         "error": "Không thể lưu trữ sáng kiến",
         "initiative_cannot_be_archived_in_this_state": "Không thể lưu trữ sáng kiến ở trạng thái này"
+      },
+      "restore": {
+        "error": "Không thể khôi phục sáng kiến. Vui lòng thử lại."
       },
       "link_copied": "Liên kết sáng kiến đã được sao chép vào clipboard.",
       "project_update_success": "Dự án sáng kiến đã được cập nhật thành công.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Chưa thêm phạm vi nào đến sáng kiến này",
         "description": "Kết nối dự án và epic với sáng kiến này để bắt đầu.",
+        "description_projects": "Liên kết dự án và theo dõi công việc đó trong không gian này.",
+        "description_epics": "Liên kết epic và theo dõi công việc đó trong không gian này.",
         "primary_button": {
           "text": "Thêm phạm vi"
         }
+      },
+      "board": {
+        "no_epics": "Không có epic nào trong sáng kiến này",
+        "no_projects": "Không có dự án nào trong sáng kiến này",
+        "enable_project_states": "Chưa bật trạng thái dự án",
+        "enable_project_states_description": "Bật trạng thái dự án từ cài đặt không gian làm việc để sử dụng nhóm dựa trên trạng thái."
       }
     },
     "initiative_settings": {

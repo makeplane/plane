@@ -76,10 +76,13 @@
         "revenue": {
           "name": "레베뉴",
           "placeholder": "이것은 고객이 연간 창출하는 수익입니다.",
+          "placeholder_short": "레베뉴 추가",
           "validation": {
-            "min_length": "레베뉴는 0보다 작을 수 없습니다.",
-            "max_length": "레베뉴는 2147483647을 초과할 수 없습니다."
+            "min_length": "레베뉴는 0보다 작을 수 없습니다."
           }
+        },
+        "requests": {
+          "name": "리퀘스트 수"
         },
         "invalid_value": "유효하지 않은 프로퍼티 값입니다."
       },

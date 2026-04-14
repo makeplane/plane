@@ -10,6 +10,8 @@
     "all_initiatives": "Todas as Iniciativas",
     "delete_initiative": "Excluir Iniciativa",
     "fill_all_required_fields": "Por favor, preencha todos os campos obrigatórios.",
+    "archive_initiative": "Arquivar Iniciativa",
+    "archive_confirm_message": "Tem certeza de que deseja arquivar a iniciativa? Todas as suas iniciativas arquivadas podem ser restauradas posteriormente.",
     "archive_description": "Somente iniciativas concluídas ou fechadas podem ser arquivadas",
     "toast": {
       "create_success": "Iniciativa {name} criada com sucesso.",
@@ -24,6 +26,9 @@
         "success": "Iniciativa arquivada com sucesso.",
         "error": "Falha ao arquivar a iniciativa",
         "initiative_cannot_be_archived_in_this_state": "A iniciativa não pode ser arquivada neste estado"
+      },
+      "restore": {
+        "error": "A iniciativa não pôde ser restaurada. Por favor, tente novamente."
       },
       "link_copied": "Link da iniciativa copiado para a área de transferência.",
       "project_update_success": "Projetos da iniciativa atualizados com sucesso.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Nenhum escopo adicionado à iniciativa",
         "description": "Conecte projetos e épicos à iniciativa para começar.",
+        "description_projects": "Conecte projetos e acompanhe o trabalho neste espaço.",
+        "description_epics": "Conecte épicos e acompanhe o trabalho neste espaço.",
         "primary_button": {
           "text": "Adicionar escopo"
         }
+      },
+      "board": {
+        "no_epics": "Nenhum épico nesta iniciativa",
+        "no_projects": "Nenhum projeto nesta iniciativa",
+        "enable_project_states": "Estados de projeto não habilitados",
+        "enable_project_states_description": "Habilite os estados de projeto nas configurações do espaço de trabalho para usar o agrupamento baseado em estado."
       }
     },
     "initiative_settings": {

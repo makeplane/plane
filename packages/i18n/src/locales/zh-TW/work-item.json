@@ -20,6 +20,7 @@
       "due_date": "新增截止日期",
       "parent": "新增父工作事項",
       "sub_issue": "新增子工作事項",
+      "dependency": "新增相依性",
       "relation": "新增關聯",
       "link": "新增連結",
       "existing": "新增現有工作事項"
@@ -60,7 +61,12 @@
         "attachment_count": "附件數量",
         "created_on": "建立於",
         "sub_issue": "子工作事項",
-        "work_item_count": "工作事項數量"
+        "work_item_count": "工作事項數量",
+        "customer_count": "客戶數量",
+        "customer_request_count": "客戶請求數量",
+        "customer": "客戶",
+        "requests": "客戶請求",
+        "releases": "發佈"
       },
       "extra": {
         "show_sub_issues": "顯示子工作事項",
@@ -110,6 +116,43 @@
       "copy_link": {
         "success": "評論連結已複製到剪貼簿",
         "error": "複製評論連結時出錯。請稍後再試。"
+      },
+      "replies": {
+        "create": {
+          "submit_button": "新增回覆",
+          "placeholder": "新增回覆"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "取得回覆失敗"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "回覆建立成功"
+            },
+            "error": {
+              "message": "建立回覆失敗"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "回覆更新成功"
+            },
+            "error": {
+              "message": "更新回覆失敗"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "回覆刪除成功"
+            },
+            "error": {
+              "message": "刪除回覆失敗"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +219,53 @@
       "deselect_all": "取消全選"
     },
     "open_in_full_screen": "以全螢幕開啟工作事項",
+    "duplicate": {
+      "modal": {
+        "title": "複製到另一個專案",
+        "description1": "此操作將建立此工作事項的副本。",
+        "description2": "複製時所有屬性資料都將被移除。",
+        "placeholder": "選擇專案"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "工作事項複製成功"
+        },
+        "error": {
+          "message": "工作事項複製失敗"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "連結頁面",
+      "show_wiki_pages": "顯示 Wiki 頁面",
+      "link_pages_to": "連結頁面至",
+      "linked_pages": "已連結的頁面",
+      "no_description": "這是一個空白頁面。何不在裡面寫點什麼，就像這個佔位符一樣顯示在這裡",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "頁面已更新",
+            "message": "頁面更新成功"
+          },
+          "error": {
+            "title": "頁面更新失敗",
+            "message": "頁面更新失敗"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "頁面已移除",
+            "message": "頁面移除成功"
+          },
+          "error": {
+            "title": "頁面移除失敗",
+            "message": "頁面移除失敗"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "點擊贊成",
       "click_to_downvote": "點擊反對",
@@ -240,54 +330,6 @@
       "invalid_state_transition": {
         "title": "無法更新工作項目",
         "message": "某些工作項目不允許狀態變更。請確保狀態變更是允許的。"
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "啟用工作流程",
-        "description": "設定工作流程以控制工作項目的流轉",
-        "no_states_tooltip": "此工作流程尚未新增任何狀態。",
-        "toast": {
-          "loading": {
-            "enabling": "正在啟用工作流程",
-            "disabling": "正在停用工作流程"
-          },
-          "success": {
-            "title": "成功！",
-            "message": "工作流程已成功啟用。"
-          },
-          "error": {
-            "title": "錯誤！",
-            "message": "啟用工作流程失敗。請再試一次。"
-          }
-        }
-      },
-      "heading": "工作流程",
-      "description": "自動化工作項目轉換，並設定規則以控制任務如何在專案流程中推進。",
-      "add_button": "新增工作流程",
-      "search": "搜尋工作流程",
-      "detail": {
-        "define": "定義工作流程",
-        "add_states": "新增狀態",
-        "unmapped_states": {
-          "title": "偵測到未對應的狀態",
-          "description": "所選類型的某些工作項目目前位於此工作流程中不存在的狀態。",
-          "note": "如果您啟用此工作流程，這些項目將自動移動到此工作流程的初始狀態。",
-          "label": "缺少的狀態",
-          "tooltip": "某些工作項目位於未對應到此工作流程的狀態。開啟工作流程以檢視。"
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "所有狀態都已在使用中",
-          "description": "此專案定義的所有狀態都已存在於您目前的工作流程中。"
-        }
-      },
-      "default_footer": {
-        "fallback_message": "此工作流程適用於任何未指派給任何工作流程的工作項目類型。"
-      },
-      "create": {
-        "heading": "建立新工作流程"
       }
     }
   },

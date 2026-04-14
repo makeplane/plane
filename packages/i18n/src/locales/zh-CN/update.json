@@ -38,16 +38,16 @@
           "title": "反应未创建",
           "message": "反应未创建。"
         }
-      }
-    },
-    "remove": {
-      "success": {
-        "title": "反应已移除",
-        "message": "反应已成功移除。"
       },
-      "error": {
-        "title": "反应未移除",
-        "message": "反应未移除。"
+      "remove": {
+        "success": {
+          "title": "反应已移除",
+          "message": "反应已成功移除。"
+        },
+        "error": {
+          "title": "反应未移除",
+          "message": "反应未移除。"
+        }
       }
     },
     "progress": {

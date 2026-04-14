@@ -43,6 +43,8 @@
     "import": "Import",
     "serial_number": "Č. poř.",
     "project": "Projekt",
+    "teamspace": "Týmový prostor",
+    "destination": "Cíl",
     "workspace": "workspace",
     "status": "Stav",
     "summary": "Souhrn",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Všechny stavy Jira budou v Plane vytvořeny automaticky.",
     "personal_access_token": "Osobní přístupový token",
     "user_email": "Uživatelský e-mail",
-    "atlassian_security_settings": "Nastavení zabezpečení Atlassian",
     "email_description": "Toto je e-mail spojený s vaším osobním přístupovým tokenem",
     "jira_domain": "Jira doména",
     "jira_domain_description": "Toto je doména vaší Jira instance",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Importujte svá data z Notion do projektů Plane.",
     "steps": {
+      "title_select_destination": "Vyberte cíl",
+      "description_select_destination": "Vyberte prosím cíl pro vaše data z Notion.",
       "title_upload_zip": "Nahrát exportovaný ZIP z Notion",
       "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Notion."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Nahrávání dokončeno!",
       "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Notion.",
       "upload_progress_message": "Prosím nezavírejte toto okno."
+    },
+    "select_destination": {
+      "destination_type": "Typ cíle",
+      "select_destination_type": "Vyberte typ cíle",
+      "select_project": "Vybrat projekt",
+      "no_projects_found": "Nenalezeny žádné projekty",
+      "select_teamspace": "Vybrat týmový prostor",
+      "no_teamspaces_found": "Nenalezeny žádné týmové prostory",
+      "unknown_project": "Neznámý projekt",
+      "unknown_teamspace": "Neznámý týmový prostor"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Importujte svá data z Confluence do wiki Plane.",
     "steps": {
+      "title_select_destination": "Vyberte cíl",
+      "description_select_destination": "Vyberte prosím cíl pro vaše data z Confluence.",
       "title_upload_zip": "Nahrát exportovaný ZIP z Confluence",
       "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Confluence."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Nahrávání dokončeno!",
       "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Confluence.",
       "upload_progress_message": "Prosím nezavírejte toto okno."
+    },
+    "select_destination": {
+      "destination_type": "Typ cíle",
+      "select_destination_type": "Vyberte typ cíle",
+      "select_project": "Vybrat projekt",
+      "no_projects_found": "Nenalezeny žádné projekty",
+      "select_teamspace": "Vybrat týmový prostor",
+      "no_teamspaces_found": "Nenalezeny žádné týmové prostory",
+      "unknown_project": "Neznámý projekt",
+      "unknown_teamspace": "Neznámý týmový prostor"
     }
   },
   "flatfile_importer": {

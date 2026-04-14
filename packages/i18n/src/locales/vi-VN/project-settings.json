@@ -37,6 +37,8 @@
       "project_subscribers_description": "Chọn các thành viên sẽ nhận thông báo cho dự án này."
     },
     "states": {
+      "heading": "Trạng thái",
+      "description": "Xác định và tùy chỉnh trạng thái quy trình làm việc để theo dõi tiến độ các mục công việc của bạn.",
       "describe_this_state_for_your_members": "Mô tả trạng thái này cho thành viên của bạn.",
       "empty_state": {
         "title": "Không có trạng thái trong nhóm {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Nhãn",
+      "description": "Tạo nhãn tùy chỉnh để phân loại và tổ chức các mục công việc của bạn",
       "label_title": "Tiêu đề nhãn",
       "label_title_is_required": "Tiêu đề nhãn là bắt buộc",
       "label_max_char": "Tên nhãn không nên vượt quá 255 ký tự",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Ước tính",
+      "description": "Thiết lập hệ thống ước tính để theo dõi và truyền đạt nỗ lực cần thiết cho mỗi mục công việc.",
       "label": "Ước tính",
       "title": "Bật ước tính cho dự án của tôi",
-      "description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
+      "enable_description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
       "no_estimate": "Không có ước tính",
       "new": "Hệ thống ước tính mới",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Sắp xếp lại ước tính thất bại",
             "message": "Chúng tôi không thể sắp xếp lại ước tính, vui lòng thử lại"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Đã tạo hệ thống ước tính",
+            "message": "Đã tạo và bật thành công"
+          },
+          "error": {
+            "title": "Lỗi",
+            "message": "Đã xảy ra lỗi"
+          }
         }
       },
       "validation": {
@@ -122,6 +138,7 @@
         "empty": "Giá trị ước tính không được để trống",
         "already_exists": "Giá trị ước tính này đã tồn tại",
         "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'",
+        "remove_empty": "Ước tính không thể để trống. Hãy nhập giá trị vào mỗi trường hoặc xóa những trường bạn không có giá trị.",
         "fill": "Vui lòng điền vào trường ước tính này",
         "repeat": "Giá trị ước tính không thể lặp lại"
       },
@@ -161,6 +178,8 @@
     },
     "automations": {
       "label": "Tự động hóa",
+      "heading": "Tự động hóa",
+      "description": "Cấu hình các hành động tự động để tinh giản quy trình quản lý dự án và giảm công việc thủ công.",
       "auto-archive": {
         "title": "Tự động lưu trữ mục công việc đã đóng",
         "description": "Plane sẽ tự động lưu trữ các mục công việc đã hoàn thành hoặc đã hủy.",
@@ -193,6 +212,116 @@
         "description": "Cấu hình GitHub và các tích hợp khác để đồng bộ hóa các mục công việc dự án của bạn."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Bật quy trình làm việc",
+        "description": "Thiết lập quy trình làm việc để kiểm soát việc di chuyển mục công việc",
+        "no_states_tooltip": "Chưa có trạng thái nào được thêm vào quy trình làm việc.",
+        "no_work_item_types_tooltip": "Chưa có loại mục công việc nào được thêm vào quy trình làm việc.",
+        "no_states_or_work_item_types_tooltip": "Chưa có trạng thái hoặc loại mục công việc nào được thêm vào quy trình làm việc.",
+        "toast": {
+          "loading": {
+            "enabling": "Đang bật quy trình làm việc",
+            "disabling": "Đang tắt quy trình làm việc"
+          },
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã bật quy trình làm việc thành công."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể bật quy trình làm việc. Vui lòng thử lại."
+          }
+        }
+      },
+      "heading": "Quy trình làm việc",
+      "description": "Tự động hóa việc chuyển đổi mục công việc và đặt quy tắc để kiểm soát cách các nhiệm vụ di chuyển qua luồng dự án của bạn.",
+      "add_button": "Thêm quy trình làm việc mới",
+      "search": "Tìm kiếm quy trình làm việc",
+      "detail": {
+        "define": "Xác định quy trình làm việc",
+        "add_states": "Thêm trạng thái",
+        "unmapped_states": {
+          "title": "Đã phát hiện trạng thái chưa ánh xạ",
+          "description": "Một số mục công việc của các loại đã chọn hiện đang ở trạng thái không tồn tại trong quy trình làm việc này.",
+          "note": "Nếu bạn bật quy trình làm việc này, các mục này sẽ tự động chuyển sang trạng thái ban đầu của quy trình làm việc.",
+          "label": "Trạng thái bị thiếu",
+          "tooltip": "Một số mục công việc đang ở trạng thái không được ánh xạ đến quy trình làm việc này. Mở quy trình làm việc để xem xét."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tất cả trạng thái đang được sử dụng",
+          "description": "Tất cả trạng thái đã xác định cho dự án này đã có trong quy trình làm việc hiện tại của bạn."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Quy trình làm việc này áp dụng cho bất kỳ loại mục công việc nào không được gán cho một quy trình làm việc."
+      },
+      "create": {
+        "heading": "Tạo quy trình làm việc mới",
+        "name": {
+          "placeholder": "Thêm tên duy nhất",
+          "validation": {
+            "max_length": "Tên phải ít hơn 255 ký tự",
+            "required": "Tên là bắt buộc",
+            "invalid": "Tên chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch nối và dấu nháy đơn"
+          }
+        },
+        "description": {
+          "placeholder": "Thêm mô tả ngắn",
+          "validation": {
+            "invalid": "Mô tả chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch nối và dấu nháy đơn"
+          }
+        },
+        "work_item_type": {
+          "label": "Loại mục công việc"
+        },
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã tạo quy trình làm việc thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể tạo quy trình làm việc. Vui lòng thử lại."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã cập nhật quy trình làm việc thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể cập nhật quy trình làm việc. Vui lòng thử lại."
+        }
+      },
+      "delete": {
+        "loading": "Đang xóa quy trình làm việc",
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã xóa quy trình làm việc thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể xóa quy trình làm việc. Vui lòng thử lại."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã thêm trạng thái thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể thêm trạng thái. Vui lòng thử lại."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Loại mục công việc",
+      "description": "Tạo và tùy chỉnh các loại mục công việc khác nhau với các thuộc tính riêng"
+    },
     "initiatives": {
       "heading": "Sáng kiến",
       "sub_heading": "Mở khóa cấp độ tổ chức cao nhất cho tất cả công việc của bạn trong Plane.",
@@ -208,14 +337,25 @@
     "customers": {
       "heading": "Khách hàng",
       "settings_heading": "Quản lý công việc theo những gì quan trọng đối với khách hàng của bạn.",
-      "settings_sub_heading": "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng."
+      "settings_sub_heading": "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng.",
+      "description": "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng."
     },
     "epics": {
+      "heading": "Epic",
+      "description": "Cho các khối lượng công việc lớn trải dài qua nhiều chu kỳ và có thể tồn tại qua các mô-đun",
       "properties": {
         "title": "Thuộc tính",
         "description": "Thêm thuộc tính tùy chỉnh vào epic của bạn."
       },
       "disabled": "Đã vô hiệu hóa"
+    },
+    "project_updates": {
+      "heading": "Cập nhật dự án",
+      "description": "Theo dõi và giám sát tiến độ được hợp nhất cho dự án này"
+    },
+    "templates": {
+      "heading": "Mẫu",
+      "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu."
     },
     "cycles": {
       "auto_schedule": {
@@ -402,6 +542,11 @@
         "description": "Cột mốc cung cấp một lớp để điều chỉnh các mục công việc theo các ngày hoàn thành chung.",
         "toggle_title": "Bật cột mốc",
         "toggle_description": "Tổ chức các mục công việc theo thời hạn cột mốc."
+      },
+      "toasts": {
+        "loading": "Đang cập nhật tính năng dự án...",
+        "success": "Đã cập nhật tính năng dự án thành công.",
+        "error": "Đã xảy ra lỗi khi cập nhật tính năng dự án. Vui lòng thử lại."
       }
     }
   }

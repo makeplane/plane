@@ -49,6 +49,23 @@
           "text": "Tambah epik"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Ini membuat salinan epik.",
+        "description2": "Semua data properti akan dihapus saat menduplikasi.",
+        "epics_not_enabled": "Epik tidak diaktifkan"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epik berhasil diduplikasi"
+        },
+        "error": {
+          "message": "Gagal menduplikasi epik"
+        }
+      }
     }
   },
   "epic_relation": {

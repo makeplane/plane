@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "請輸入有效的 URL。"
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "描述此區塊的內容",
+      "generated_here": "您的 AI 內容將會在此處生成"
+    },
+    "block_types": {
+      "placeholder": "選擇區塊類型",
+      "summarize_page": "摘要頁面",
+      "custom_prompt": "自訂提示"
+    },
+    "actions": {
+      "discard": "捨棄",
+      "generate": "生成",
+      "generating": "生成中",
+      "rewriting": "重寫中",
+      "rewrite": "重寫",
+      "use_this": "使用此項",
+      "refine": "精煉"
+    }
   }
 }

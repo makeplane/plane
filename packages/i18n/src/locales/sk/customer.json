@@ -81,6 +81,9 @@
             "min_length": "Príjem nemôže byť menej ako 0."
           }
         },
+        "requests": {
+          "name": "Počet požiadaviek"
+        },
         "invalid_value": "Neplatná hodnota vlastnosti."
       },
       "custom": {

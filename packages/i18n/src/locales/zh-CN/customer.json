@@ -1,6 +1,7 @@
 {
   "customers": {
     "label": "{count, plural, one {客户} other {客户}}",
+    "open": "打开客户",
     "dropdown": {
       "placeholder": "选择客户",
       "required": "请选择客户",
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "行业",
+          "name": "行业",
           "placeholder": "零售、电商、金融科技、银行",
           "placeholder_short": "添加行业",
           "validation": {}
@@ -77,9 +78,11 @@
           "placeholder": "这是客户的年收入。",
           "placeholder_short": "添加收入",
           "validation": {
-            "min_length": "收入不能小于0。",
-            "max_length": "收入不能大于2147483647。"
+            "min_length": "收入不能小于0。"
           }
+        },
+        "requests": {
+          "name": "请求数量"
         },
         "invalid_value": "无效的收入值。"
       },
@@ -138,7 +141,8 @@
           },
           "error": {
             "title": "无法启用客户功能。",
-            "message": "请稍后重试或返回此页面。如果问题仍然存在，请联系支持。"
+            "message": "请稍后重试或返回此页面。如果问题仍然存在，请联系支持。",
+            "action": "联系支持"
           }
         },
         "disable": {

@@ -141,13 +141,7 @@
     "summary_of_projects": "專案摘要",
     "project_insights": "專案洞察",
     "started_work_items": "已開始的{entity}",
-    "total_work_items": "{entity}總數",
-    "total_projects": "專案總數",
-    "total_admins": "管理員總數",
-    "total_users": "使用者總數",
-    "total_intake": "總收入",
     "un_started_work_items": "未開始的{entity}",
-    "total_guests": "訪客總數",
     "completed_work_items": "已完成的{entity}",
     "total": "{entity}總數",
     "projects_by_status": "按狀態分類的專案",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "還沒有歸檔的頁面",
         "description": "歸檔不在您雷達上的頁面。需要時在這裡訪問它們。"
+      },
+      "shared": {
+        "title": "尚無共享頁面",
+        "description": "其他人與您共享的頁面會顯示在這裡。"
       }
     }
   },

@@ -20,6 +20,7 @@
       "due_date": "Ajouter une date d’échéance",
       "parent": "Ajouter un élément de travail parent",
       "sub_issue": "Ajouter un sous-élément de travail",
+      "dependency": "Ajouter une dépendance",
       "relation": "Ajouter une relation",
       "link": "Ajouter un lien",
       "existing": "Ajouter un élément de travail existant"
@@ -60,7 +61,12 @@
         "attachment_count": "Nombre de pièces jointes",
         "created_on": "Créé le",
         "sub_issue": "Sous-élément de travail",
-        "work_item_count": "Nombre d’éléments de travail"
+        "work_item_count": "Nombre d’éléments de travail",
+        "customer_count": "Nombre de clients",
+        "customer_request_count": "Nombre de demandes client",
+        "customer": "Client",
+        "requests": "Demande client",
+        "releases": "Versions"
       },
       "extra": {
         "show_sub_issues": "Afficher les sous-éléments",
@@ -110,6 +116,43 @@
       "copy_link": {
         "success": "Lien du commentaire copié dans le presse-papiers",
         "error": "Erreur lors de la copie du lien du commentaire. Veuillez réessayer plus tard."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Ajouter une réponse",
+          "placeholder": "Ajouter une réponse"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Échec de la récupération des réponses"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Réponse créée avec succès"
+            },
+            "error": {
+              "message": "Échec de la création de la réponse"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Réponse mise à jour avec succès"
+            },
+            "error": {
+              "message": "Échec de la mise à jour de la réponse"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Réponse supprimée avec succès"
+            },
+            "error": {
+              "message": "Échec de la suppression de la réponse"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +219,53 @@
       "deselect_all": "Tout désélectionner"
     },
     "open_in_full_screen": "Ouvrir l’élément de travail en plein écran",
+    "duplicate": {
+      "modal": {
+        "title": "Faire une copie vers un autre projet",
+        "description1": "Cela crée une copie de l’élément de travail.",
+        "description2": "Toutes les données de propriétés seront supprimées lors de la duplication.",
+        "placeholder": "Sélectionner un projet"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Élément de travail dupliqué avec succès"
+        },
+        "error": {
+          "message": "Échec de la duplication de l’élément de travail"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Lier les pages",
+      "show_wiki_pages": "Afficher les pages Wiki",
+      "link_pages_to": "Lier les pages à",
+      "linked_pages": "Pages liées",
+      "no_description": "Cette page est vide. Pourquoi ne pas écrire quelque chose à l’intérieur et le voir apparaître ici comme ce placeholder",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Pages mises à jour",
+            "message": "Pages mises à jour avec succès"
+          },
+          "error": {
+            "title": "Échec de la mise à jour des pages",
+            "message": "Échec de la mise à jour des pages"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Page supprimée",
+            "message": "Page supprimée avec succès"
+          },
+          "error": {
+            "title": "Échec de la suppression de la page",
+            "message": "Échec de la suppression de la page"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Cliquez pour voter pour",
       "click_to_downvote": "Cliquez pour voter contre",
@@ -240,54 +330,6 @@
       "invalid_state_transition": {
         "title": "Impossible de mettre à jour les éléments de travail",
         "message": "Le changement d'état n'est pas autorisé pour certains éléments de travail. Assurez-vous que le changement d'état est autorisé."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Activer les workflows",
-        "description": "Définissez des workflows pour contrôler le déplacement des éléments de travail",
-        "no_states_tooltip": "Aucun état n'a été ajouté au workflow.",
-        "toast": {
-          "loading": {
-            "enabling": "Activation des workflows",
-            "disabling": "Désactivation des workflows"
-          },
-          "success": {
-            "title": "Succès !",
-            "message": "Les workflows ont été activés avec succès."
-          },
-          "error": {
-            "title": "Erreur !",
-            "message": "Impossible d'activer les workflows. Veuillez réessayer."
-          }
-        }
-      },
-      "heading": "Flux de travail",
-      "description": "Automatisez les transitions des éléments de travail et définissez des règles pour contrôler la façon dont les tâches progressent dans le pipeline de votre projet.",
-      "add_button": "Ajouter un nouveau workflow",
-      "search": "Rechercher des workflows",
-      "detail": {
-        "define": "Définir le workflow",
-        "add_states": "Ajouter des états",
-        "unmapped_states": {
-          "title": "États non mappés détectés",
-          "description": "Certains éléments de travail des types sélectionnés se trouvent actuellement dans des états qui n'existent pas dans ce workflow.",
-          "note": "Si vous activez ce workflow, ces éléments seront automatiquement déplacés vers l'état initial de ce workflow.",
-          "label": "États manquants",
-          "tooltip": "Certains éléments de travail se trouvent dans des états qui ne sont pas mappés à ce workflow. Ouvrez le workflow pour le vérifier."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Tous les états sont utilisés",
-          "description": "Tous les états définis pour ce projet sont déjà présents dans votre workflow actuel."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Ce workflow s'applique à tout type d'élément de travail qui n'est associé à aucun workflow."
-      },
-      "create": {
-        "heading": "Créer un nouveau workflow"
       }
     }
   },

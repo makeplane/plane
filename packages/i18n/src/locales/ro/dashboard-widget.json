@@ -6,9 +6,18 @@
           "short_label": "Bară",
           "long_label": "Grafic cu bare",
           "chart_models": {
-            "basic": "De bază",
-            "stacked": "Stivuit",
-            "grouped": "Grupat"
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Bare de bază"
+            },
+            "stacked": {
+              "short_label": "Stivuit",
+              "long_label": "Bare stivuite"
+            },
+            "grouped": {
+              "short_label": "Grupat",
+              "long_label": "Bare grupate"
+            }
           },
           "orientation": {
             "label": "Orientare",
@@ -22,8 +31,14 @@
           "short_label": "Linie",
           "long_label": "Grafic cu linii",
           "chart_models": {
-            "basic": "De bază",
-            "multi_line": "Multi-linie"
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Linie de bază"
+            },
+            "multi_line": {
+              "short_label": "Multi-linie",
+              "long_label": "Multi-linie"
+            }
           },
           "line_color": "Culoarea liniei",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Arie",
           "long_label": "Grafic arie",
           "chart_models": {
-            "basic": "De bază",
-            "stacked": "Stivuit",
-            "comparison": "Comparație"
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Arie de bază"
+            },
+            "stacked": {
+              "short_label": "Stivuit",
+              "long_label": "Arie stivuită"
+            },
+            "comparison": {
+              "short_label": "Comparație",
+              "long_label": "Arie de comparație"
+            }
           },
           "fill_color": "Culoare de umplere"
         },
@@ -47,8 +71,14 @@
           "short_label": "Gogoașă",
           "long_label": "Grafic gogoașă",
           "chart_models": {
-            "basic": "De bază",
-            "progress": "Progres"
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Gogoașă de bază"
+            },
+            "progress": {
+              "short_label": "Progres",
+              "long_label": "Gogoașă de progres"
+            }
           },
           "center_value": "Valoare centrală",
           "completed_color": "Culoare completat"
@@ -57,7 +87,10 @@
           "short_label": "Plăcintă",
           "long_label": "Grafic plăcintă",
           "chart_models": {
-            "basic": "De bază"
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Plăcintă"
+            }
           },
           "group": {
             "label": "Bucăți grupate",
@@ -77,9 +110,15 @@
             "count": "Număr"
           }
         },
-        "text": {
-          "short_label": "Text",
-          "long_label": "Text",
+        "number": {
+          "short_label": "Număr",
+          "long_label": "Număr",
+          "chart_models": {
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Număr"
+            }
+          },
           "alignment": {
             "label": "Aliniere text",
             "left": "Stânga",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Selectați o proprietate pentru rânduri pentru a vizualiza acest tabel."
         }
       },
+      "sections": {
+        "charts": "Grafice",
+        "text": "Text"
+      },
       "color_palettes": {
         "modern": "Modern",
         "horizon": "Orizont",
@@ -115,11 +158,7 @@
           "label": "Denumește acest widget",
           "placeholder": "ex., \"De făcut ieri\", \"Toate Completate\""
         },
-        "chart_type": "Tip grafic",
-        "visualization_type": {
-          "label": "Tip vizualizare",
-          "placeholder": "Adaugă tip vizualizare"
-        },
+        "widget_type": "Tip widget",
         "date_group": {
           "label": "Grupare după dată",
           "placeholder": "Adaugă grupare după dată"
@@ -218,7 +257,7 @@
             "y_axis_metric": "Metrica lipsește o valoare."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Metrica lipsește o valoare."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "Întreabă administratorul tău pentru a configura acest widget."
+      },
+      "upgrade_required": {
+        "title": "Acest tip de widget nu este inclus în planul tău."
       }
     },
     "create_modal": {

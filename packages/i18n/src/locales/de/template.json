@@ -236,6 +236,9 @@
       "no_labels": {
         "description": "Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
       },
+      "no_modules": {
+        "description": "Noch keine Module. Organisieren Sie Arbeit in Unterprojekte mit dedizierten Verantwortlichen und Bearbeitern."
+      },
       "no_work_items": {
         "description": "Noch keine Arbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."
       },

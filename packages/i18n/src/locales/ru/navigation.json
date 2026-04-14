@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Стикеры",
     "projects": "Проекты",
     "pages": "Страницы",
     "new_work_item": "Новый рабочий элемент",
@@ -24,7 +25,8 @@
     "upgrade_plan": "Апгрейд план",
     "plane_pro": "Плейн Про",
     "business": "Бизнес",
-    "recurring_work_items": "Повторяющиеся рабочие элементы"
+    "customers": "Клиенты",
+    "releases": "Релизы"
   },
   "command_k": {
     "empty_state": {

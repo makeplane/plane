@@ -110,6 +110,12 @@
         "description": "Item pekerjaan dapat ditunda untuk ditinjau di lain waktu. Ini akan dipindahkan ke bagian bawah daftar permintaan terbuka Anda."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Berhenti berpindah tab. Hubungkan dunia Anda.",
+        "description": "Tautkan GitHub, Slack untuk melacak PR dan meringkas obrolan langsung di Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigasi, dibayangkan ulang",

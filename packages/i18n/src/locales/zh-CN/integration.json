@@ -194,6 +194,10 @@
       "server_error_states": "加载状态时服务器错误"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "将您的 Bitbucket Data Center 仓库与 Plane 连接并同步。"
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "验证外部 IdP 令牌以进行 API 访问。",
@@ -316,6 +320,7 @@
     "pulling": "拉取中",
     "timed_out": "超时",
     "pulled": "已拉取",
+    "progressing": "进行中",
     "transforming": "转换中",
     "transformed": "已转换",
     "pushing": "推送中",

@@ -6,9 +6,18 @@
           "short_label": "バー",
           "long_label": "バー チャート",
           "chart_models": {
-            "basic": "ベーシック",
-            "stacked": "スタックド",
-            "grouped": "グループド"
+            "basic": {
+              "short_label": "ベーシック",
+              "long_label": "ベーシックバー"
+            },
+            "stacked": {
+              "short_label": "スタックド",
+              "long_label": "スタックドバー"
+            },
+            "grouped": {
+              "short_label": "グループド",
+              "long_label": "グループドバー"
+            }
           },
           "orientation": {
             "label": "オリエンテーション",
@@ -22,8 +31,14 @@
           "short_label": "ライン",
           "long_label": "ライン チャート",
           "chart_models": {
-            "basic": "ベーシック",
-            "multi_line": "マルチライン"
+            "basic": {
+              "short_label": "ベーシック",
+              "long_label": "ベーシックライン"
+            },
+            "multi_line": {
+              "short_label": "マルチライン",
+              "long_label": "マルチライン"
+            }
           },
           "line_color": "ライン カラー",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "エリア",
           "long_label": "エリア チャート",
           "chart_models": {
-            "basic": "ベーシック",
-            "stacked": "スタックド",
-            "comparison": "コンパリソン"
+            "basic": {
+              "short_label": "ベーシック",
+              "long_label": "ベーシックエリア"
+            },
+            "stacked": {
+              "short_label": "スタックド",
+              "long_label": "スタックドエリア"
+            },
+            "comparison": {
+              "short_label": "コンパリソン",
+              "long_label": "コンパリソンエリア"
+            }
           },
           "fill_color": "フィル カラー"
         },
@@ -47,8 +71,14 @@
           "short_label": "ドーナツ",
           "long_label": "ドーナツ チャート",
           "chart_models": {
-            "basic": "ベーシック",
-            "progress": "プログレス"
+            "basic": {
+              "short_label": "ベーシック",
+              "long_label": "ベーシックドーナツ"
+            },
+            "progress": {
+              "short_label": "プログレス",
+              "long_label": "プログレスドーナツ"
+            }
           },
           "center_value": "センター バリュー",
           "completed_color": "コンプリーテッド カラー"
@@ -57,7 +87,10 @@
           "short_label": "パイ",
           "long_label": "パイ チャート",
           "chart_models": {
-            "basic": "ベーシック"
+            "basic": {
+              "short_label": "ベーシック",
+              "long_label": "パイ"
+            }
           },
           "group": {
             "label": "グループド ピーセズ",
@@ -77,17 +110,23 @@
             "count": "カウント"
           }
         },
-        "text": {
-          "short_label": "テキスト",
-          "long_label": "テキスト",
-          "alignment": {
-            "label": "テキスト アラインメント",
-            "left": "レフト",
-            "center": "センター",
-            "right": "ライト",
-            "placeholder": "テキスト アラインメント アッド"
+        "number": {
+          "short_label": "数値",
+          "long_label": "数値",
+          "chart_models": {
+            "basic": {
+              "short_label": "ベーシック",
+              "long_label": "数値"
+            }
           },
-          "text_color": "テキスト カラー"
+          "alignment": {
+            "label": "テキストの配置",
+            "left": "左",
+            "center": "中央",
+            "right": "右",
+            "placeholder": "テキストの配置を追加"
+          },
+          "text_color": "文字色"
         },
         "table_chart": {
           "short_label": "表",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "この表を表示するには行のプロパティを選択してください。"
         }
       },
+      "sections": {
+        "charts": "チャート",
+        "text": "テキスト"
+      },
       "color_palettes": {
         "modern": "モダン",
         "horizon": "ホライゾン",
@@ -115,11 +158,7 @@
           "label": "ネーム ディス ウィジェット",
           "placeholder": "例: \"トゥードゥー イェスタデイ\", \"オール コンプリート\""
         },
-        "chart_type": "チャート タイプ",
-        "visualization_type": {
-          "label": "ビジュアライゼーション タイプ",
-          "placeholder": "ビジュアライゼーション タイプ アッド"
-        },
+        "widget_type": "ウィジェットタイプ",
         "date_group": {
           "label": "デート グループ",
           "placeholder": "デート グループ アッド"
@@ -218,9 +257,9 @@
             "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
           }
         },
-        "text": {
+        "number": {
           "basic": {
-            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+            "y_axis_metric": "メトリックに値がありません。"
           }
         },
         "table_chart": {
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "アスク ユア アドミン トゥ コンフィギュア ディス ウィジェット"
+      },
+      "upgrade_required": {
+        "title": "このウィジェットタイプはご利用のプランに含まれていません。"
       }
     },
     "create_modal": {

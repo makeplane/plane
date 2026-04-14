@@ -43,6 +43,8 @@
     "import": "Importar",
     "serial_number": "Nº de Série",
     "project": "Projeto",
+    "teamspace": "Espaço de equipe",
+    "destination": "Destino",
     "workspace": "Workspace",
     "status": "Status",
     "summary": "Resumo",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Todos os status do Jira serão criados automaticamente no Plane.",
     "personal_access_token": "Token de Acesso Pessoal",
     "user_email": "Email do Usuário",
-    "atlassian_security_settings": "Configurações de Segurança do Atlassian",
     "email_description": "Este é o email vinculado ao seu token de acesso pessoal",
     "jira_domain": "Domínio do Jira",
     "jira_domain_description": "Este é o domínio da sua instância do Jira",
@@ -171,8 +172,20 @@
   "notion_importer": {
     "notion_importer_description": "Importe seus dados do Notion para projetos do Plane.",
     "steps": {
+      "title_select_destination": "Selecionar Destino",
+      "description_select_destination": "Por favor, selecione o destino para seus dados do Notion.",
       "title_upload_zip": "Enviar ZIP exportado do Notion",
       "description_upload_zip": "Por favor, envie o arquivo ZIP contendo seus dados do Notion."
+    },
+    "select_destination": {
+      "destination_type": "Tipo de Destino",
+      "select_destination_type": "Selecionar Tipo de Destino",
+      "select_project": "Selecionar Projeto",
+      "no_projects_found": "Nenhum projeto encontrado",
+      "select_teamspace": "Selecionar Espaço de Equipe",
+      "no_teamspaces_found": "Nenhum espaço de equipe encontrado",
+      "unknown_project": "Projeto Desconhecido",
+      "unknown_teamspace": "Espaço de Equipe Desconhecido"
     },
     "upload": {
       "drop_file_here": "Solte seu arquivo zip do Notion aqui",
@@ -201,8 +214,20 @@
   "confluence_importer": {
     "confluence_importer_description": "Importe seus dados do Confluence para o wiki do Plane.",
     "steps": {
+      "title_select_destination": "Selecionar Destino",
+      "description_select_destination": "Por favor, selecione o destino para seus dados do Confluence.",
       "title_upload_zip": "Enviar ZIP exportado do Confluence",
       "description_upload_zip": "Por favor, envie o arquivo ZIP contendo seus dados do Confluence."
+    },
+    "select_destination": {
+      "destination_type": "Tipo de Destino",
+      "select_destination_type": "Selecionar Tipo de Destino",
+      "select_project": "Selecionar Projeto",
+      "no_projects_found": "Nenhum projeto encontrado",
+      "select_teamspace": "Selecionar Espaço de Equipe",
+      "no_teamspaces_found": "Nenhum espaço de equipe encontrado",
+      "unknown_project": "Projeto Desconhecido",
+      "unknown_teamspace": "Espaço de Equipe Desconhecido"
     },
     "upload": {
       "drop_file_here": "Solte seu arquivo zip do Confluence aqui",

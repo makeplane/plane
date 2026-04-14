@@ -141,13 +141,7 @@
     "summary_of_projects": "Resumen de proyectos",
     "project_insights": "Información del proyecto",
     "started_work_items": "{entity} iniciados",
-    "total_work_items": "Total de {entity}",
-    "total_projects": "Total de proyectos",
-    "total_admins": "Total de administradores",
-    "total_users": "Total de usuarios",
-    "total_intake": "Ingreso total",
     "un_started_work_items": "{entity} no iniciados",
-    "total_guests": "Total de invitados",
     "completed_work_items": "{entity} completados",
     "total": "Total de {entity}",
     "projects_by_status": "Proyectos por estado",
@@ -162,6 +156,7 @@
       "label": "Agregar Proyecto"
     },
     "network": {
+      "label": "Red",
       "private": {
         "title": "Privado",
         "description": "Accesible solo por invitación"
@@ -195,7 +190,8 @@
       "archived_projects": "Archivados"
     },
     "common": {
-      "months_count": "{months, plural, one{# mes} other{# meses}}"
+      "months_count": "{months, plural, one{# mes} other{# meses}}",
+      "days_count": "{days, plural, one{# día} other{# días}}"
     },
     "empty_state": {
       "general": {
@@ -316,6 +312,10 @@
       "archived": {
         "title": "Aún no hay Pages archivadas",
         "description": "Archiva las Pages que no estén en tu radar. Accede a ellas aquí cuando las necesites."
+      },
+      "shared": {
+        "title": "Aún no hay páginas compartidas",
+        "description": "Las páginas que otros han compartido contigo aparecerán aquí."
       }
     }
   },

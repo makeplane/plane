@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Karteczki",
     "projects": "Projekty",
     "pages": "Strony",
     "new_work_item": "Nowy element pracy",
@@ -25,7 +26,7 @@
     "plane_pro": "Plejn Pro",
     "business": "Biznes",
     "customers": "Kastomerzy",
-    "recurring_work_items": "Elementy pracy cykliczne"
+    "releases": "Wydania"
   },
   "command_k": {
     "empty_state": {

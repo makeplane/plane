@@ -6,6 +6,7 @@
     "select_releases": "选择发布",
     "overview": "概览",
     "scope": "范围",
+    "changelog": "更新日志",
     "page_title": {
       "scope": "发布 - {name} | 范围",
       "scope_fallback": "发布 | 范围"

@@ -49,6 +49,23 @@
           "text": "Dodaj epiki"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Tworzy to kopię epika.",
+        "description2": "Podczas duplikowania wszystkie dane właściwości zostaną usunięte.",
+        "epics_not_enabled": "Epiki nie są włączone"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epik zduplikowano pomyślnie"
+        },
+        "error": {
+          "message": "Nie udało się zduplikować epika"
+        }
+      }
     }
   },
   "epic_relation": {

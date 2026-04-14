@@ -67,13 +67,19 @@
       },
       "billing_and_plans": {
         "title": "Facturation & Plans",
+        "heading": "Facturation & Plans",
+        "description": "Choisissez votre forfait, gérez vos abonnements et passez facilement à une version supérieure au fur et à mesure que vos besoins évoluent.",
         "current_plan": "Plan actuel",
         "free_plan": "Vous utilisez actuellement le plan gratuit",
         "view_plans": "Voir les plans"
       },
       "exports": {
         "title": "Exportations",
+        "heading": "Exportations",
+        "description": "Exportez les données de votre projet dans différents formats et accédez à votre historique d’exportations avec les liens de téléchargement.",
         "exporting": "Exportation",
+        "exporting_projects": "Exportation du projet",
+        "format": "Format",
         "previous_exports": "Exportations précédentes",
         "export_separate_files": "Exporter les données dans des fichiers séparés",
         "filters_info": "Appliquez des filtres pour exporter des éléments de travail spécifiques selon vos critères.",
@@ -93,6 +99,8 @@
       },
       "webhooks": {
         "title": "Webhooks",
+        "heading": "Webhooks",
+        "description": "Automatisez les notifications vers des services externes lors d’événements du projet.",
         "add_webhook": "Ajouter un webhook",
         "modal": {
           "title": "Créer un webhook",
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Intégrations",
+        "heading": "Intégrations",
+        "description": "Connectez-vous avec des outils et services populaires pour synchroniser votre travail dans tout votre écosystème.",
         "page_title": "Travaillez avec vos données Plane dans les applications disponibles ou dans les vôtres.",
         "page_description": "Affichez toutes les intégrations utilisées par cet espace de travail ou par vous."
       },
       "imports": {
-        "title": "Importations"
+        "title": "Importations",
+        "heading": "Importations",
+        "description": "Connectez et importez des données depuis vos outils de gestion de projet existants pour simplifier l’intégration de votre flux de travail."
       },
       "worklogs": {
-        "title": "Journaux de travail"
+        "title": "Journaux de travail",
+        "heading": "Journaux de travail",
+        "description": "Téléchargez les journaux de travail (feuilles de temps) pour n’importe qui dans n’importe quel projet."
       },
       "group_syncing": {
         "title": "Synchronisation des groupes",
@@ -242,7 +256,10 @@
         "description": "Configurez votre domaine et activez l'authentification unique"
       },
       "project_states": {
-        "title": "États du projet"
+        "title": "États du projet",
+        "heading": "Consultez la vue d’ensemble de la progression pour tous les projets.",
+        "description": "Les États de projet sont une fonctionnalité exclusive à Plane pour suivre la progression de tous vos projets par n’importe quelle propriété de projet.",
+        "go_to_settings": "Aller aux paramètres"
       },
       "projects": {
         "title": "Projets",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Espaces d'équipe"
+        "title": "Espaces d'équipe",
+        "heading": "Teamspaces",
+        "description": "Consultez le travail de votre équipe dans un espace séparé avec des projets liés, des tâches, des graphiques d’équipe, des pages et des vues."
       },
       "initiatives": {
-        "title": "Initiatives"
+        "title": "Initiatives",
+        "heading": "Initiatives",
+        "description": "Débloquez le niveau d’organisation le plus élevé pour tout votre travail dans Plane."
       },
       "customers": {
-        "title": "Clients"
+        "title": "Clients",
+        "heading": "Gérez le travail en fonction de ce qui compte pour vos clients.",
+        "description": "Transformez les demandes des clients en éléments de travail, attribuez une priorité en fonction des demandes et associez les états des éléments de travail aux enregistrements des clients. Bientôt, vous pourrez intégrer votre CRM ou outil de support pour une meilleure gestion du travail selon les attributs des clients."
+      },
+      "templates": {
+        "title": "Modèles",
+        "heading": "Modèles",
+        "description": "Économisez 80% du temps consacré à la création de projets, d’éléments de travail et de pages en utilisant des modèles."
+      },
+      "relations": {
+        "title": "Relations",
+        "heading": "Relations",
+        "description": "Créez et gérez des types de relations qui connectent les éléments de travail dans votre espace de travail."
       },
       "releases": {
         "title": "Livraisons",
@@ -289,6 +322,7 @@
         "your_apps": "Vos applications",
         "connect": "Connecter",
         "connected": "Connecté",
+        "disconnect": "Déconnecter",
         "install": "Installer",
         "installed": "Installé",
         "configure": "Configurer",
@@ -319,7 +353,7 @@
         "app_description_error": "La description de l'application est requise",
         "app_slug_title": "Slug de l'application",
         "app_slug_error": "Le slug de l'application est requis",
-        "app_maker_title": "Créateur de l'application",
+        "invalid_website_error": "Site web invalide",
         "app_maker_error": "Le créateur de l'application est requis",
         "webhook_url_title": "URL du Webhook",
         "webhook_url_error": "L'URL du webhook est requise",
@@ -382,7 +416,6 @@
         "video_url_title": "URL de la vidéo",
         "video_url_error": "La URL de la vidéo est requise",
         "invalid_video_url_error": "URL de la vidéo invalide",
-        "setup_url_title": "URL de configuration",
         "setup_url_error": "La URL de configuration est requise",
         "invalid_setup_url_error": "URL de configuration invalide",
         "configuration_url_title": "URL de configuration",
@@ -428,12 +461,21 @@
           "description": "C'est ici que nous enverrons les événements et mises à jour webhook depuis les espaces de travail où votre application est installée.",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Secret Webhook",
+          "description": "Secret utilisé pour vérifier les requêtes webhook entrantes.",
+          "placeholder": "Saisissez une clé secrète aléatoire"
+        },
         "redirect_uris": {
           "label": "URI de redirection (séparés par des espaces)",
           "description": "Les utilisateurs seront redirigés vers ce chemin après s'être authentifiés avec Plane.",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "Demande d’installation",
         "app_consent_no_access_description": "Cette application ne peut être installée qu'après qu'un administrateur de l'espace de travail l'ait installée. Contactez l'administrateur de votre espace de travail pour continuer.",
+        "app_consent_unapproved_title": "Cette application n’a pas encore été examinée ni approuvée par Plane.",
+        "app_consent_unapproved_description": "Assurez-vous de faire confiance à cette application avant de la connecter à votre espace de travail.",
+        "go_to_app": "Aller à l’application",
         "enable_app_mentions": "Activer les mentions de l'application",
         "enable_app_mentions_tooltip": "Lorsque cela est activé, les utilisateurs peuvent mentionner ou attribuer des éléments de travail à cette application.",
         "scopes": "Périmètres",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Voir votre travail devenir plus intelligent et plus rapide avec l'IA qui est connectée de manière native à votre travail et à votre base de connaissances."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "Nouveau script",
+        "description": "Automatisez vos flux de travail avec des scripts personnalisés et des règles d’automatisation."
       }
     },
     "empty_state": {

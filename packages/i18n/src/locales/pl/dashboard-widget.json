@@ -6,9 +6,18 @@
           "short_label": "Słupek",
           "long_label": "Wykres słupkowy",
           "chart_models": {
-            "basic": "Podstawowy",
-            "stacked": "Spiętrzony",
-            "grouped": "Zgrupowany"
+            "basic": {
+              "short_label": "Podstawowy",
+              "long_label": "Podstawowy słupkowy"
+            },
+            "stacked": {
+              "short_label": "Spiętrzony",
+              "long_label": "Spiętrzony słupkowy"
+            },
+            "grouped": {
+              "short_label": "Zgrupowany",
+              "long_label": "Zgrupowany słupkowy"
+            }
           },
           "orientation": {
             "label": "Orientacja",
@@ -22,8 +31,14 @@
           "short_label": "Linia",
           "long_label": "Wykres liniowy",
           "chart_models": {
-            "basic": "Podstawowy",
-            "multi_line": "Wieloliniowy"
+            "basic": {
+              "short_label": "Podstawowy",
+              "long_label": "Podstawowy liniowy"
+            },
+            "multi_line": {
+              "short_label": "Wieloliniowy",
+              "long_label": "Wieloliniowy"
+            }
           },
           "line_color": "Kolor linii",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Obszar",
           "long_label": "Wykres obszarowy",
           "chart_models": {
-            "basic": "Podstawowy",
-            "stacked": "Spiętrzony",
-            "comparison": "Porównawczy"
+            "basic": {
+              "short_label": "Podstawowy",
+              "long_label": "Podstawowy obszarowy"
+            },
+            "stacked": {
+              "short_label": "Spiętrzony",
+              "long_label": "Spiętrzony obszarowy"
+            },
+            "comparison": {
+              "short_label": "Porównawczy",
+              "long_label": "Porównawczy obszarowy"
+            }
           },
           "fill_color": "Kolor wypełnienia"
         },
@@ -47,8 +71,14 @@
           "short_label": "Donut",
           "long_label": "Wykres donutowy",
           "chart_models": {
-            "basic": "Podstawowy",
-            "progress": "Postęp"
+            "basic": {
+              "short_label": "Podstawowy",
+              "long_label": "Podstawowy donut"
+            },
+            "progress": {
+              "short_label": "Postęp",
+              "long_label": "Donut postępu"
+            }
           },
           "center_value": "Wartość centralna",
           "completed_color": "Kolor ukończenia"
@@ -57,7 +87,10 @@
           "short_label": "Kołowy",
           "long_label": "Wykres kołowy",
           "chart_models": {
-            "basic": "Podstawowy"
+            "basic": {
+              "short_label": "Podstawowy",
+              "long_label": "Kołowy"
+            }
           },
           "group": {
             "label": "Zgrupowane fragmenty",
@@ -77,9 +110,15 @@
             "count": "Liczba"
           }
         },
-        "text": {
-          "short_label": "Tekst",
-          "long_label": "Tekst",
+        "number": {
+          "short_label": "Liczba",
+          "long_label": "Liczba",
+          "chart_models": {
+            "basic": {
+              "short_label": "Podstawowy",
+              "long_label": "Liczba"
+            }
+          },
           "alignment": {
             "label": "Wyrównanie tekstu",
             "left": "Do lewej",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Wybierz właściwość dla wierszy, aby wyświetlić tę tabelę."
         }
       },
+      "sections": {
+        "charts": "Wykresy",
+        "text": "Tekst"
+      },
       "color_palettes": {
         "modern": "Nowoczesna",
         "horizon": "Horyzontalna",
@@ -115,11 +158,7 @@
           "label": "Nazwij ten widżet",
           "placeholder": "np. \"Do zrobienia wczoraj\", \"Wszystkie ukończone\""
         },
-        "chart_type": "Typ wykresu",
-        "visualization_type": {
-          "label": "Typ wizualizacji",
-          "placeholder": "Dodaj typ wizualizacji"
-        },
+        "widget_type": "Typ widżetu",
         "date_group": {
           "label": "Grupa dat",
           "placeholder": "Dodaj grupę dat"
@@ -218,7 +257,7 @@
             "y_axis_metric": "Metryka nie ma wartości."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Metryka nie ma wartości."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "Poproś swojego administratora o skonfigurowanie tego widżetu."
+      },
+      "upgrade_required": {
+        "title": "Ten typ widżetu nie jest zawarty w Twoim planie."
       }
     },
     "create_modal": {

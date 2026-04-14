@@ -43,6 +43,8 @@
     "import": "导入",
     "serial_number": "序号",
     "project": "项目",
+    "teamspace": "团队空间",
+    "destination": "目标",
     "workspace": "工作区",
     "status": "状态",
     "summary": "摘要",
@@ -88,7 +90,6 @@
     "import_to_existing_project": "导入到现有项目",
     "import_to_existing_project_description": "从下面的下拉菜单中选择一个现有项目。",
     "state_mapping_automatic_creation": "所有 Jira 状态都将在 Plane 中自动创建。",
-    "atlassian_security_settings": "Atlassian 安全设置",
     "email_description": "这是与您的个人访问令牌关联的邮箱",
     "jira_domain": "Jira 域名",
     "jira_domain_description": "这是您的 Jira 实例的域名",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "将您的 Notion 数据导入到 Plane 项目中。",
     "steps": {
+      "title_select_destination": "选择目标",
+      "description_select_destination": "请选择您 Notion 数据的目标。",
       "title_upload_zip": "上传 Notion 导出的 ZIP 文件",
       "description_upload_zip": "请上传包含您的 Notion 数据的 ZIP 文件。"
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "上传完成！",
       "upload_complete_description": "点击\"开始导入\"开始处理您的 Notion 数据。",
       "upload_progress_message": "请不要关闭此窗口。"
+    },
+    "select_destination": {
+      "destination_type": "目标类型",
+      "select_destination_type": "选择目标类型",
+      "select_project": "选择项目",
+      "no_projects_found": "未找到项目",
+      "select_teamspace": "选择团队空间",
+      "no_teamspaces_found": "未找到团队空间",
+      "unknown_project": "未知项目",
+      "unknown_teamspace": "未知团队空间"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "将您的 Confluence 数据导入到 Plane 维基中。",
     "steps": {
+      "title_select_destination": "选择目标",
+      "description_select_destination": "请选择您 Confluence 数据的目标。",
       "title_upload_zip": "上传 Confluence 导出的 ZIP 文件",
       "description_upload_zip": "请上传包含您的 Confluence 数据的 ZIP 文件。"
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "上传完成！",
       "upload_complete_description": "点击\"开始导入\"开始处理您的 Confluence 数据。",
       "upload_progress_message": "请不要关闭此窗口。"
+    },
+    "select_destination": {
+      "destination_type": "目标类型",
+      "select_destination_type": "选择目标类型",
+      "select_project": "选择项目",
+      "no_projects_found": "未找到项目",
+      "select_teamspace": "选择团队空间",
+      "no_teamspaces_found": "未找到团队空间",
+      "unknown_project": "未知项目",
+      "unknown_teamspace": "未知团队空间"
     }
   },
   "flatfile_importer": {

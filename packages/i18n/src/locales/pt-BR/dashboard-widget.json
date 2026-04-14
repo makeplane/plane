@@ -6,9 +6,18 @@
           "short_label": "Barra",
           "long_label": "Gráfico de barras",
           "chart_models": {
-            "basic": "Básico",
-            "stacked": "Empilhado",
-            "grouped": "Agrupado"
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Barra básica"
+            },
+            "stacked": {
+              "short_label": "Empilhado",
+              "long_label": "Barra empilhada"
+            },
+            "grouped": {
+              "short_label": "Agrupado",
+              "long_label": "Barra agrupada"
+            }
           },
           "orientation": {
             "label": "Orientação",
@@ -22,8 +31,14 @@
           "short_label": "Linha",
           "long_label": "Gráfico de linha",
           "chart_models": {
-            "basic": "Básico",
-            "multi_line": "Múltiplas linhas"
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Linha básica"
+            },
+            "multi_line": {
+              "short_label": "Múltiplas linhas",
+              "long_label": "Múltiplas linhas"
+            }
           },
           "line_color": "Cor da linha",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Área",
           "long_label": "Gráfico de área",
           "chart_models": {
-            "basic": "Básico",
-            "stacked": "Empilhado",
-            "comparison": "Comparação"
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Área básica"
+            },
+            "stacked": {
+              "short_label": "Empilhado",
+              "long_label": "Área empilhada"
+            },
+            "comparison": {
+              "short_label": "Comparação",
+              "long_label": "Área de comparação"
+            }
           },
           "fill_color": "Cor de preenchimento"
         },
@@ -47,8 +71,14 @@
           "short_label": "Rosca",
           "long_label": "Gráfico de rosca",
           "chart_models": {
-            "basic": "Básico",
-            "progress": "Progresso"
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Rosca básica"
+            },
+            "progress": {
+              "short_label": "Progresso",
+              "long_label": "Rosca de progresso"
+            }
           },
           "center_value": "Valor central",
           "completed_color": "Cor de concluído"
@@ -57,7 +87,10 @@
           "short_label": "Pizza",
           "long_label": "Gráfico de pizza",
           "chart_models": {
-            "basic": "Básico"
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Pizza"
+            }
           },
           "group": {
             "label": "Pedaços agrupados",
@@ -77,9 +110,15 @@
             "count": "Contagem"
           }
         },
-        "text": {
-          "short_label": "Texto",
-          "long_label": "Texto",
+        "number": {
+          "short_label": "Número",
+          "long_label": "Número",
+          "chart_models": {
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Número"
+            }
+          },
           "alignment": {
             "label": "Alinhamento do texto",
             "left": "Esquerda",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Selecione uma propriedade para as linhas para visualizar esta tabela."
         }
       },
+      "sections": {
+        "charts": "Gráficos",
+        "text": "Texto"
+      },
       "color_palettes": {
         "modern": "Moderno",
         "horizon": "Horizonte",
@@ -115,18 +158,12 @@
           "label": "Nomear este widget",
           "placeholder": "ex., \"A fazer ontem\", \"Todos Completos\""
         },
-        "chart_type": "Tipo de gráfico",
-        "visualization_type": {
-          "label": "Tipo de visualização",
-          "placeholder": "Adicionar tipo de visualização"
-        },
+        "widget_type": "Tipo de widget",
         "date_group": {
           "label": "Grupo de data",
           "placeholder": "Adicionar grupo de data"
         },
-        "grouping": "Agrupamento",
         "group_by": "Agrupar por",
-        "stacking": "Empilhamento",
         "stack_by": "Empilhar por",
         "daily": "Diário",
         "weekly": "Semanal",
@@ -220,7 +257,7 @@
             "y_axis_metric": "A métrica está sem um valor."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "A métrica está sem um valor."
           }
@@ -232,6 +269,9 @@
           }
         },
         "ask_admin": "Peça ao seu administrador para configurar este widget."
+      },
+      "upgrade_required": {
+        "title": "Este tipo de widget não está incluído no seu plano."
       }
     },
     "create_modal": {

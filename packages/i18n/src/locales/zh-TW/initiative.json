@@ -10,6 +10,8 @@
     "all_initiatives": "所有倡議",
     "delete_initiative": "刪除倡議",
     "fill_all_required_fields": "請填寫所有必填欄位。",
+    "archive_initiative": "封存倡議",
+    "archive_confirm_message": "您確定要封存此倡議嗎？所有已封存的倡議稍後都可以還原。",
     "archive_description": "僅已完成或已關閉的倡議可以封存",
     "toast": {
       "create_success": "倡議 {name} 已成功創建。",
@@ -24,6 +26,9 @@
         "success": "倡議已成功封存。",
         "error": "封存倡議失敗",
         "initiative_cannot_be_archived_in_this_state": "此狀態下的倡議無法封存"
+      },
+      "restore": {
+        "error": "無法還原倡議，請再試一次。"
       },
       "link_copied": "倡議連結已複製到剪貼板。",
       "project_update_success": "倡議專案已成功更新。",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "尚未添加範圍",
         "description": "將項目或史詩連接到此倡議以開始。",
+        "description_projects": "連接專案並在此空間中追蹤該工作。",
+        "description_epics": "連接史詩並在此空間中追蹤該工作。",
         "primary_button": {
           "text": "添加範圍"
         }
+      },
+      "board": {
+        "no_epics": "此倡議中沒有史詩",
+        "no_projects": "此倡議中沒有專案",
+        "enable_project_states": "專案狀態未啟用",
+        "enable_project_states_description": "從工作區設定啟用專案狀態以使用依狀態分組。"
       }
     },
     "initiative_settings": {

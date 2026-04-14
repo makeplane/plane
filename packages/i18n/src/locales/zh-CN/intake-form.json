@@ -5,8 +5,6 @@
       "sub-title": "让团队知道您希望他们处理什么。",
       "name": "名称",
       "email": "邮箱",
-      "about": "此工作项是关于什么的？",
-      "description": "描述应该发生什么",
       "description_placeholder": "添加尽可能多的细节，帮助团队了解您的情况和需求。",
       "loading": "创建中",
       "create_work_item": "创建工作项",

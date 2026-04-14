@@ -3,11 +3,17 @@
     "label": "워크 아이템 타입",
     "label_lowercase": "워크 아이템 타입",
     "settings": {
-      "title": "워크 아이템 타입",
+      "description": "팀의 요구에 맞게 자신만의 프로퍼티를 사용자 정의하고 추가하세요.",
       "properties": {
         "title": "커스텀 프로퍼티",
+        "description": "프로퍼티를 생성하고 사용자 정의하세요.",
         "tooltip": "각 워크 아이템 타입에는 제목, 설명, 담당자, 상태, 우선순위, 시작 날짜, 마감일, 모듈, 사이클 등과 같은 기본 프로퍼티 세트가 함께 제공됩니다. 팀의 요구에 맞게 자신만의 프로퍼티를 사용자 정의하고 추가할 수도 있습니다.",
         "add_button": "새 프로퍼티 추가",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "워크스페이스에서 가져오기"
+          }
+        },
         "dropdown": {
           "label": "프로퍼티 타입",
           "placeholder": "타입 선택"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "새 커스텀 프로퍼티 생성",
+            "update": "커스텀 프로퍼티 업데이트"
+          },
           "form": {
             "display_name": {
               "placeholder": "타이틀"
@@ -216,6 +226,46 @@
           "description": "이 워크 아이템 타입에 대해 추가하는 새 프로퍼티가 여기에 표시됩니다."
         }
       },
+      "types": {
+        "title": "타입",
+        "description": "프로퍼티로 작업 항목 유형을 생성하고 사용자 정의하세요.",
+        "sort_options": {
+          "project_count": "소속된 프로젝트 수"
+        },
+        "filter_options": {
+          "show_active": "활성 표시",
+          "show_inactive": "비활성 표시"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "새로 생성",
+            "import_from_workspace": "워크스페이스에서 가져오기"
+          },
+          "banner": {
+            "with_access": "워크스페이스 수준에서 타입을 가져오려면 작업 항목 유형을 활성화하세요",
+            "without_access": "작업 항목 유형이 비활성화되어 있습니다. 워크스페이스 관리자에게 문의하여 워크스페이스 설정에서 활성화하세요."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "커스텀 프로퍼티",
+        "add_button": "프로퍼티 추가",
+        "modal": {
+          "title": "프로퍼티 추가",
+          "empty": {
+            "title": "사용 가능한 프로퍼티 없음",
+            "description": "모든 프로퍼티가 이미 이 타입에 연결되어 있습니다."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "프로퍼티 연결 해제",
+          "description": "이 프로퍼티의 연결을 해제하면 이 타입을 사용하는 모든 작업 항목에서 해당 값이 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다.",
+          "input_label": "입력",
+          "input_label_suffix": "계속하려면:",
+          "confirm": "프로퍼티 연결 해제",
+          "loading": "연결 해제 중"
+        }
+      },
       "item_delete_confirmation": {
         "title": "이 유형 삭제",
         "description": "유형을 삭제하면 기존 데이터가 손실될 수 있습니다.",
@@ -256,7 +306,8 @@
         "error": {
           "title": "에러!",
           "message": {
-            "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요."
+            "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요.",
+            "default": "작업 항목 유형 생성에 실패했습니다. 다시 시도해 주세요!"
           }
         }
       }
@@ -272,7 +323,8 @@
         "error": {
           "title": "에러!",
           "message": {
-            "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요."
+            "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요.",
+            "default": "작업 항목 유형 업데이트에 실패했습니다. 다시 시도해 주세요!"
           }
         }
       }

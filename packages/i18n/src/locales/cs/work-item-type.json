@@ -3,11 +3,17 @@
     "label": "Typy pracovních položek",
     "label_lowercase": "typy pracovních položek",
     "settings": {
-      "title": "Typy pracovních položek",
+      "description": "Přizpůsobte si a přidejte vlastní vlastnosti, abyste to upravili podle potřeb vašeho týmu.",
       "properties": {
         "title": "Vlastní vlastnosti",
+        "description": "Vytvářejte a přizpůsobujte vlastnosti.",
         "tooltip": "Každý typ pracovních položek má výchozí sadu vlastností jako Název, Popis, Přiřazený, Stav, Priorita, Datum zahájení, Datum splatnosti, Modul, Cyklus atd. Můžete také přizpůsobit a přidat své vlastní vlastnosti, aby vyhovovaly potřebám vašeho týmu.",
         "add_button": "Přidat novou vlastnost",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importovat z pracovního prostoru"
+          }
+        },
         "dropdown": {
           "label": "Typ vlastnosti",
           "placeholder": "Vyberte typ"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Vytvořit novou vlastní vlastnost",
+            "update": "Aktualizovat vlastní vlastnost"
+          },
           "form": {
             "display_name": {
               "placeholder": "Název"
@@ -216,6 +226,46 @@
           "description": "Nové vlastnosti, které přidáte pro tento typ pracovních položek, se zde zobrazí."
         }
       },
+      "types": {
+        "title": "Typy",
+        "description": "Vytvářejte a přizpůsobujte typy pracovních položek s vlastnostmi.",
+        "sort_options": {
+          "project_count": "Počet projektů, do kterých patří"
+        },
+        "filter_options": {
+          "show_active": "Zobrazit aktivní",
+          "show_inactive": "Zobrazit neaktivní"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Vytvořit nový",
+            "import_from_workspace": "Importovat z pracovního prostoru"
+          },
+          "banner": {
+            "with_access": "Povolte typy pracovních položek pro import typů z úrovně pracovního prostoru",
+            "without_access": "Typy pracovních položek jsou zakázány. Kontaktujte správce pracovního prostoru, aby je povolil v nastavení pracovního prostoru."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Vlastní vlastnosti",
+        "add_button": "Přidat vlastnosti",
+        "modal": {
+          "title": "Přidat vlastnosti",
+          "empty": {
+            "title": "Žádné vlastnosti nejsou k dispozici",
+            "description": "Všechny vlastnosti jsou již propojeny s tímto typem."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Zrušit propojení vlastnosti",
+          "description": "Zrušení propojení této vlastnosti trvale odstraní všechny její hodnoty napříč každou pracovní položkou používající tento typ. Tuto akci nelze vrátit zpět.",
+          "input_label": "Napište",
+          "input_label_suffix": "pro pokračování:",
+          "confirm": "Zrušit propojení vlastnosti",
+          "loading": "Rušení propojení"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Smazat tento typ",
         "description": "Odstranění typů může vést ke ztrátě stávajících dat.",
@@ -256,6 +306,7 @@
         "error": {
           "title": "Chyba!",
           "message": {
+            "default": "Nepodařilo se vytvořit typ pracovní položky. Zkuste to prosím znovu!",
             "conflict": "Typ {name} již existuje. Zvolte jiné jméno."
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "Chyba!",
           "message": {
+            "default": "Nepodařilo se aktualizovat typ pracovní položky. Zkuste to prosím znovu!",
             "conflict": "Typ {name} již existuje. Zvolte jiné jméno."
           }
         }

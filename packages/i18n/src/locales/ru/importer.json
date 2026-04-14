@@ -77,7 +77,9 @@
     "add_seat_msg_paid": "Вы пытаетесь импортировать {additionalUserCount} незарегистрированных пользователей, и у вас всего {currentWorkspaceSubscriptionAvailableSeats} мест доступно в текущем плане. Чтобы продолжить импорт, купите как минимум {extraSeatRequired} дополнительных мест.",
     "skip_user_import_title": "Пропустить импорт данных пользователя",
     "skip_user_import_description": "Пропуск импорта пользователя приведет к тому, что рабочие элементы, комментарии и другие данные от {serviceName} будут созданы пользователем, выполняющим миграцию в Plane. Вы все еще можете вручную добавить пользователей позже.",
-    "invalid_pat": "Недействительный личный токен доступа"
+    "invalid_pat": "Недействительный личный токен доступа",
+    "teamspace": "Командное пространство",
+    "destination": "Назначение"
   },
   "jira_importer": {
     "jira_importer_description": "Импортируйте ваши данные Jira в проекты Plane.",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Все статусы Jira будут созданы в Plane автоматически.",
     "personal_access_token": "Личный токен доступа",
     "user_email": "Электронная почта пользователя",
-    "atlassian_security_settings": "Настройки безопасности Atlassian",
     "email_description": "Это электронная почта, связанная с вашим личным токеном доступа",
     "jira_domain": "Домен Jira",
     "jira_domain_description": "Это домен вашей инстанции Jira",
@@ -172,7 +173,19 @@
     "notion_importer_description": "Импортируйте ваши данные Notion в проекты Plane.",
     "steps": {
       "title_upload_zip": "Загрузить ZIP-экспорт из Notion",
-      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Notion."
+      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Notion.",
+      "title_select_destination": "Выбрать назначение",
+      "description_select_destination": "Пожалуйста, выберите назначение для ваших данных Notion."
+    },
+    "select_destination": {
+      "destination_type": "Тип назначения",
+      "select_destination_type": "Выберите тип назначения",
+      "select_project": "Выбрать проект",
+      "no_projects_found": "Проекты не найдены",
+      "select_teamspace": "Выбрать командное пространство",
+      "no_teamspaces_found": "Командные пространства не найдены",
+      "unknown_project": "Неизвестный проект",
+      "unknown_teamspace": "Неизвестное командное пространство"
     },
     "upload": {
       "drop_file_here": "Перетащите ваш zip-файл Notion сюда",
@@ -202,7 +215,19 @@
     "confluence_importer_description": "Импортируйте ваши данные Confluence в вики Plane.",
     "steps": {
       "title_upload_zip": "Загрузить ZIP-экспорт из Confluence",
-      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Confluence."
+      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Confluence.",
+      "title_select_destination": "Выбрать назначение",
+      "description_select_destination": "Пожалуйста, выберите назначение для ваших данных Confluence."
+    },
+    "select_destination": {
+      "destination_type": "Тип назначения",
+      "select_destination_type": "Выберите тип назначения",
+      "select_project": "Выбрать проект",
+      "no_projects_found": "Проекты не найдены",
+      "select_teamspace": "Выбрать командное пространство",
+      "no_teamspaces_found": "Командные пространства не найдены",
+      "unknown_project": "Неизвестный проект",
+      "unknown_teamspace": "Неизвестное командное пространство"
     },
     "upload": {
       "drop_file_here": "Перетащите ваш zip-файл Confluence сюда",

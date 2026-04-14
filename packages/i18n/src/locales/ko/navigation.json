@@ -25,7 +25,8 @@
     "plane_pro": "플레인 프로",
     "business": "비즈니스",
     "customers": "커스터머스",
-    "recurring_work_items": "반복 작업 항목"
+    "stickies": "스티키",
+    "releases": "릴리스"
   },
   "command_k": {
     "empty_state": {

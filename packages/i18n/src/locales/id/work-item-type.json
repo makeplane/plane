@@ -3,11 +3,17 @@
     "label": "Tipe Item Kerja",
     "label_lowercase": "tipe item kerja",
     "settings": {
-      "title": "Tipe Item Kerja",
+      "description": "Sesuaikan dan tambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
       "properties": {
         "title": "Properti kustom",
+        "description": "Buat dan sesuaikan properti.",
         "tooltip": "Setiap tipe item kerja dilengkapi dengan serangkaian properti default seperti Judul, Deskripsi, Penerima tugas, Status, Prioritas, Tanggal mulai, Tanggal jatuh tempo, Modul, Siklus, dll. Anda juga dapat menyesuaikan dan menambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
         "add_button": "Tambah properti baru",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Impor dari ruang kerja"
+          }
+        },
         "dropdown": {
           "label": "Tipe properti",
           "placeholder": "Pilih tipe"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Buat properti kustom baru",
+            "update": "Perbarui properti kustom"
+          },
           "form": {
             "display_name": {
               "placeholder": "Judul"
@@ -216,6 +226,46 @@
           "description": "Properti baru yang Anda tambahkan untuk tipe item kerja ini akan ditampilkan di sini."
         }
       },
+      "types": {
+        "title": "Tipe",
+        "description": "Buat dan sesuaikan tipe item kerja dengan properti.",
+        "sort_options": {
+          "project_count": "Jumlah proyek yang menjadi bagian"
+        },
+        "filter_options": {
+          "show_active": "Tampilkan aktif",
+          "show_inactive": "Tampilkan tidak aktif"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Buat baru",
+            "import_from_workspace": "Impor dari ruang kerja"
+          },
+          "banner": {
+            "with_access": "Aktifkan tipe item kerja untuk mengimpor tipe dari level ruang kerja",
+            "without_access": "Tipe item kerja dinonaktifkan. Hubungi admin ruang kerja untuk mengaktifkannya di pengaturan ruang kerja."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Properti kustom",
+        "add_button": "Tambah properti",
+        "modal": {
+          "title": "Tambah properti",
+          "empty": {
+            "title": "Tidak ada properti tersedia",
+            "description": "Semua properti telah ditautkan ke tipe ini."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Lepas tautan properti",
+          "description": "Melepas tautan properti ini akan menghapus secara permanen semua nilainya di setiap item kerja yang menggunakan tipe ini. Tindakan ini tidak dapat dibatalkan.",
+          "input_label": "Ketik",
+          "input_label_suffix": "untuk melanjutkan:",
+          "confirm": "Lepas tautan properti",
+          "loading": "Melepas tautan"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Hapus jenis ini",
         "description": "Penghapusan tipe dapat menyebabkan hilangnya data yang ada.",
@@ -256,6 +306,7 @@
         "error": {
           "title": "Kesalahan!",
           "message": {
+            "default": "Gagal membuat tipe item kerja. Silakan coba lagi!",
             "conflict": "Tipe {name} sudah ada. Pilih nama lain."
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "Kesalahan!",
           "message": {
+            "default": "Gagal memperbarui tipe item kerja. Silakan coba lagi!",
             "conflict": "Tipe {name} sudah ada. Pilih nama lain."
           }
         }

@@ -110,6 +110,12 @@
         "description": "Element pracy można odłożyć, aby przejrzeć go później. Zostanie przeniesiony na dół listy otwartych zgłoszeń."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Przestań przełączać karty. Połącz swój świat.",
+        "description": "Połącz GitHub, Slack, aby śledzić PR-y i podsumowywać czaty bezpośrednio w Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Nawigacja, na nowo przemyślana",

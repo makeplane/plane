@@ -6,6 +6,7 @@
     "select_releases": "Selectează lansări",
     "overview": "Prezentare generală",
     "scope": "Scop",
+    "changelog": "Jurnal de modificări",
     "page_title": {
       "scope": "Lansare - {name} | Scop",
       "scope_fallback": "Lansare | Scop"

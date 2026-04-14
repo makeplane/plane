@@ -110,6 +110,12 @@
         "description": "Ein Arbeitselement kann zurückgestellt werden, um es zu einem späteren Zeitpunkt zu überprüfen. Es wird an das Ende Ihrer offenen Anfragenliste verschoben."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Schluss mit dem Wechseln zwischen Tabs. Verbinden Sie Ihre Welt.",
+        "description": "Verknüpfen Sie GitHub und Slack, um PRs zu verfolgen und Chats direkt in Plane AI zusammenzufassen."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigation, neu gedacht",

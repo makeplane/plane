@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Preferințe",
+      "description": "Personalizează experiența aplicației așa cum lucrezi"
+    },
     "notifications": {
+      "heading": "Notificări prin e-mail",
+      "description": "Rămâi la curent cu activitățile la care ești abonat. Activează această opțiune pentru a primi notificări.",
       "select_default_view": "Selectează vizualizarea implicită",
       "compact": "Compact",
       "full": "Ecran complet"
+    },
+    "security": {
+      "heading": "Securitate"
+    },
+    "api_tokens": {
+      "title": "Tokenuri de acces personale",
+      "description": "Generează tokenuri API securizate pentru a integra datele tale cu sisteme și aplicații externe."
+    },
+    "activity": {
+      "heading": "Activitate",
+      "description": "Urmărește acțiunile și modificările tale recente din toate proiectele și activitățile."
+    },
+    "connections": {
+      "title": "Conexiuni",
+      "heading": "Conexiuni",
+      "description": "Gestionează setările conexiunilor spațiului tău de lucru."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Profil",
       "security": "Securitate",
       "activity": "Activitate",
-      "appearance": "Aspect",
+      "preferences": "Preferințe",
       "notifications": "Notificări",
+      "api-tokens": "Tokenuri de acces personale",
       "connections": "Conexiuni"
     },
     "tabs": {

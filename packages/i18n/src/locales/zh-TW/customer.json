@@ -81,6 +81,9 @@
             "min_length": "收入不能少於0。"
           }
         },
+        "requests": {
+          "name": "請求數量"
+        },
         "invalid_value": "無效的收入值。"
       },
       "custom": {

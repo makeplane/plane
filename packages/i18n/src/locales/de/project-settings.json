@@ -421,6 +421,8 @@
         "title": "Workflows aktivieren",
         "description": "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",
         "no_states_tooltip": "Keine Status wurden dem Workflow hinzugefügt.",
+        "no_work_item_types_tooltip": "Keine Arbeitsaufgabentypen wurden dem Workflow hinzugefügt.",
+        "no_states_or_work_item_types_tooltip": "Keine Status oder Arbeitsaufgabentypen wurden dem Workflow hinzugefügt.",
         "toast": {
           "loading": {
             "enabling": "Workflows werden aktiviert",

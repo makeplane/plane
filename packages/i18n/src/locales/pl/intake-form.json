@@ -5,8 +5,6 @@
       "sub-title": "Daj zespołowi znać, nad czym chciałbyś, aby pracował.",
       "name": "Nazwa",
       "email": "E-mail",
-      "about": "Czego dotyczy ten element pracy?",
-      "description": "Opisz, co powinno się wydarzyć",
       "description_placeholder": "Dodaj tyle szczegółów, ile chcesz, aby zespół mógł zidentyfikować Twoją sytuację i potrzeby.",
       "loading": "Tworzenie",
       "create_work_item": "Utwórz element pracy",

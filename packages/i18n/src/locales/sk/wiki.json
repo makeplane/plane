@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "Stránku sa nepodarilo vytvoriť alebo pridať do kolekcie. Skúste to prosím znova.",
       "collection_link_copied": "Odkaz na kolekciu bol skopírovaný do schránky."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Upgradujte a odomknite Wiki",
+      "description": "Odomknite verejné stránky, históriu verzií, zdieľané stránky, spoluprácu v reálnom čase a stránky pracovného priestoru pre wiki, firemnú dokumentáciu a databázy znalostí s Plane Pro.",
+      "upgrade_button": {
+        "text": "Upgradovať"
+      },
+      "learn_more_button": {
+        "text": "Zistiť viac"
+      },
+      "download_button": {
+        "text": "Stiahnuť údaje",
+        "loading": "Sťahovanie"
+      },
+      "tabs": {
+        "nested_pages": "Vnorené stránky",
+        "add_embeds": "Pridať vložené prvky",
+        "publish_pages": "Publikovať stránky",
+        "comments": "Komentáre"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Vnorené stránky vyžadujú platený plán. Upgradujte a odomknite ich."
+    }
   }
 }

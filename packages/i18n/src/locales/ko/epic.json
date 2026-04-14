@@ -34,6 +34,23 @@
     "add_selected_epics": "선택한 에픽 추가",
     "epic_link_copied_to_clipboard": "에픽 링크가 클립보드에 복사되었습니다.",
     "project_link_copied_to_clipboard": "프로젝트 링크가 클립보드에 복사되었습니다",
+    "duplicate": {
+      "modal": {
+        "description1": "에픽의 복사본을 생성합니다.",
+        "description2": "복제하는 동안 모든 속성 데이터가 제거됩니다.",
+        "epics_not_enabled": "에픽이 활성화되지 않음"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "에픽이 성공적으로 복제되었습니다"
+        },
+        "error": {
+          "message": "에픽 복제에 실패했습니다"
+        }
+      }
+    },
     "empty_state": {
       "general": {
         "title": "에픽을 만들고 다른 사람 또는 자신에게 할당하세요",

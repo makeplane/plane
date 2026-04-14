@@ -3,6 +3,9 @@
     "settings": {
       "title": "Modelos",
       "description": "Economize 80% do tempo gasto na criação de projetos, itens de trabalho e páginas quando você usa modelos.",
+      "new_project_template": "Novo modelo de projeto",
+      "new_work_item_template": "Novo modelo de item de trabalho",
+      "new_page_template": "Novo modelo de página",
       "options": {
         "project": {
           "label": "Modelos de projeto"
@@ -157,6 +160,14 @@
               "required": "Pelo menos uma palavra-chave é obrigatória"
             }
           },
+          "website": {
+            "label": "URL do site",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL inválida",
+              "maxLength": "A URL deve ter menos de 800 caracteres"
+            }
+          },
           "company_name": {
             "label": "Nazwa firmy",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Nieprawidłowy adres e-mail",
-              "required": "Email podpory jest wymagany",
               "maxLength": "Email podpory powinien mieć mniej niż 255 znaków"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Ainda não há etiquetas. Crie etiquetas para ajudar a organizar e filtrar itens de trabalho em seu projeto."
+      },
+      "no_modules": {
+        "description": "Ainda não há módulos. Organize o trabalho em subprojetos com líderes e responsáveis dedicados."
       },
       "no_work_items": {
         "description": "Não há itens de trabalho ainda. Adicione um para estruturar seu trabalho melhor."
@@ -297,6 +310,23 @@
       "description": {
         "prefix": "Tem certeza que deseja remover o modelo-",
         "suffix": "? Este modelo não estará mais disponível para usuários no marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Adicionar novo modelo",
+        "project": "Adicionar novo modelo"
+      },
+      "label": {
+        "project": "Escolher um modelo de projeto",
+        "page": "Escolher a partir do modelo"
+      },
+      "tooltip": {
+        "work_item": "Escolher um modelo de item de trabalho"
+      },
+      "no_results": {
+        "work_item": "Nenhum modelo encontrado.",
+        "project": "Nenhum modelo encontrado."
       }
     }
   }

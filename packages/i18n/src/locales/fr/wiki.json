@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "La page n'a pas pu être créée ou ajoutée à la collection. Veuillez réessayer.",
       "collection_link_copied": "Lien de la collection copié dans le presse-papiers."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Mettez à niveau pour débloquer le Wiki",
+      "description": "Débloquez les pages publiques, l’historique des versions, les pages partagées, la collaboration en temps réel et les pages d’espace de travail pour les wikis, la documentation d’entreprise et les bases de connaissances avec Plane Pro.",
+      "upgrade_button": {
+        "text": "Mettre à niveau"
+      },
+      "learn_more_button": {
+        "text": "En savoir plus"
+      },
+      "download_button": {
+        "text": "Télécharger les données",
+        "loading": "Téléchargement"
+      },
+      "tabs": {
+        "nested_pages": "Pages imbriquées",
+        "add_embeds": "Ajouter des intégrations",
+        "publish_pages": "Publier des pages",
+        "comments": "Commentaires"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Les pages imbriquées nécessitent un forfait payant. Mettez à niveau pour débloquer."
+    }
   }
 }

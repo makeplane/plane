@@ -6,6 +6,7 @@
     "select_releases": "Releases auswählen",
     "overview": "Übersicht",
     "scope": "Umfang",
+    "changelog": "Änderungsprotokoll",
     "page_title": {
       "scope": "Release – {name} | Umfang",
       "scope_fallback": "Release | Umfang"

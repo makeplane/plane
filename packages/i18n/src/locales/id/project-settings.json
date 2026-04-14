@@ -37,6 +37,8 @@
       "project_subscribers_description": "Pilih anggota yang akan menerima notifikasi untuk proyek ini."
     },
     "states": {
+      "heading": "Status",
+      "description": "Tentukan dan sesuaikan status alur kerja untuk melacak kemajuan item kerja Anda.",
       "describe_this_state_for_your_members": "Jelaskan status ini untuk anggota Anda.",
       "empty_state": {
         "title": "Tidak ada status yang tersedia untuk grup {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Label",
+      "description": "Buat label kustom untuk mengkategorikan dan mengatur item kerja Anda",
       "label_title": "Judul label",
       "label_title_is_required": "Judul label diperlukan",
       "label_max_char": "Nama label tidak boleh lebih dari 255 karakter",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Perkiraan",
       "label": "Perkiraan",
       "title": "Aktifkan perkiraan untuk proyek saya",
       "description": "Ini membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
+      "enable_description": "Ini membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
       "no_estimate": "Tidak ada perkiraan",
       "new": "Sistem perkiraan baru",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Pengurutan ulang estimasi gagal",
             "message": "Kami tidak dapat mengurutkan ulang estimasi, silakan coba lagi"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistem estimasi dibuat",
+            "message": "Berhasil dibuat dan diaktifkan"
+          },
+          "error": {
+            "title": "Kesalahan",
+            "message": "Terjadi kesalahan"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Otomatisasi",
+      "heading": "Otomatisasi",
+      "description": "Konfigurasikan aksi otomatis untuk menyederhanakan alur kerja manajemen proyek Anda dan mengurangi tugas manual.",
       "auto-archive": {
         "title": "Arsip otomatis item kerja yang ditutup",
         "description": "Plane akan mengarsipkan secara otomatis item kerja yang telah selesai atau dibatalkan.",
@@ -194,6 +212,116 @@
         "description": "Konfigurasikan GitHub dan integrasi lainnya untuk menyinkronkan item kerja proyek Anda."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Aktifkan alur kerja",
+        "description": "Atur alur kerja untuk mengontrol pergerakan item kerja",
+        "no_states_tooltip": "Tidak ada status yang ditambahkan ke alur kerja.",
+        "no_work_item_types_tooltip": "Tidak ada tipe item kerja yang ditambahkan ke alur kerja.",
+        "no_states_or_work_item_types_tooltip": "Tidak ada status atau tipe item kerja yang ditambahkan ke alur kerja.",
+        "toast": {
+          "loading": {
+            "enabling": "Mengaktifkan alur kerja",
+            "disabling": "Menonaktifkan alur kerja"
+          },
+          "success": {
+            "title": "Berhasil!",
+            "message": "Alur kerja berhasil diaktifkan."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Gagal mengaktifkan alur kerja. Silakan coba lagi."
+          }
+        }
+      },
+      "heading": "Alur Kerja",
+      "description": "Otomatisasi transisi item kerja dan tetapkan aturan untuk mengontrol bagaimana tugas berpindah melalui pipeline proyek Anda.",
+      "add_button": "Tambah alur kerja baru",
+      "search": "Cari alur kerja",
+      "detail": {
+        "define": "Tentukan alur kerja",
+        "add_states": "Tambah status",
+        "unmapped_states": {
+          "title": "Status tak terpetakan terdeteksi",
+          "description": "Beberapa item kerja untuk tipe yang dipilih saat ini berada dalam status yang tidak ada dalam alur kerja ini.",
+          "note": "Jika Anda mengaktifkan alur kerja ini, item ini akan otomatis dipindahkan ke status awal untuk alur kerja ini.",
+          "label": "Status hilang",
+          "tooltip": "Beberapa item kerja berada dalam status yang tidak dipetakan ke alur kerja ini. Buka alur kerja untuk meninjau."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Semua status sedang digunakan",
+          "description": "Semua status yang ditentukan untuk proyek ini sudah ada dalam alur kerja Anda saat ini."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Alur kerja ini berlaku untuk tipe item kerja apa pun yang tidak ditetapkan ke alur kerja."
+      },
+      "create": {
+        "heading": "Buat alur kerja baru",
+        "name": {
+          "placeholder": "Tambah nama unik",
+          "validation": {
+            "max_length": "Nama harus kurang dari 255 karakter",
+            "required": "Nama diperlukan",
+            "invalid": "Nama hanya boleh berisi huruf, angka, spasi, tanda hubung, dan apostrof"
+          }
+        },
+        "description": {
+          "placeholder": "Tambah deskripsi singkat",
+          "validation": {
+            "invalid": "Deskripsi hanya boleh berisi huruf, angka, spasi, tanda hubung, dan apostrof"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipe item kerja"
+        },
+        "success": {
+          "title": "Berhasil!",
+          "message": "Alur kerja berhasil dibuat."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal membuat alur kerja. Silakan coba lagi."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Alur kerja berhasil diperbarui."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal memperbarui alur kerja. Silakan coba lagi."
+        }
+      },
+      "delete": {
+        "loading": "Menghapus alur kerja",
+        "success": {
+          "title": "Berhasil!",
+          "message": "Alur kerja berhasil dihapus."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal menghapus alur kerja. Silakan coba lagi."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Status berhasil ditambahkan."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Gagal menambahkan status. Silakan coba lagi."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipe item kerja",
+      "description": "Buat dan sesuaikan berbagai tipe item kerja dengan properti unik"
+    },
     "initiatives": {
       "heading": "Inisiatif",
       "sub_heading": "Buka level organisasi tertinggi untuk semua pekerjaan Anda di Plane.",
@@ -209,14 +337,25 @@
     "customers": {
       "heading": "Pelanggan",
       "settings_heading": "Kelola pekerjaan berdasarkan apa yang penting bagi pelanggan Anda.",
-      "settings_sub_heading": "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan."
+      "settings_sub_heading": "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan.",
+      "description": "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan."
     },
     "epics": {
+      "heading": "Epik",
+      "description": "Untuk badan pekerjaan yang lebih besar yang mencakup beberapa siklus dan dapat hidup di berbagai modul",
       "properties": {
         "title": "Properti",
         "description": "Tambahkan properti kustom ke epic Anda."
       },
       "disabled": "Dinonaktifkan"
+    },
+    "project_updates": {
+      "heading": "Pembaruan Proyek",
+      "description": "Pelacakan terpadu dan pemantauan kemajuan untuk proyek ini"
+    },
+    "templates": {
+      "heading": "Templat",
+      "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman saat Anda menggunakan templat."
     },
     "cycles": {
       "auto_schedule": {

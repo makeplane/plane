@@ -67,12 +67,18 @@
       },
       "billing_and_plans": {
         "title": "Fatturazione e Piani",
+        "heading": "Fatturazione e piani",
+        "description": "Scegli il tuo piano, gestisci gli abbonamenti e aggiorna facilmente man mano che le tue esigenze crescono.",
         "current_plan": "Piano attuale",
         "free_plan": "Stai attualmente utilizzando il piano gratuito",
         "view_plans": "Visualizza piani"
       },
       "exports": {
         "title": "Esportazioni",
+        "heading": "Esportazioni",
+        "description": "Esporta i dati del tuo progetto in vari formati e accedi alla cronologia delle esportazioni con i link per il download.",
+        "exporting_projects": "Esportazione del progetto",
+        "format": "Formato",
         "exporting": "Esportazione in corso",
         "previous_exports": "Esportazioni precedenti",
         "export_separate_files": "Esporta i dati in file separati",
@@ -93,6 +99,8 @@
       },
       "webhooks": {
         "title": "Webhooks",
+        "heading": "Webhook",
+        "description": "Automatizza le notifiche verso servizi esterni quando si verificano eventi del progetto.",
         "add_webhook": "Aggiungi webhook",
         "modal": {
           "title": "Crea webhook",
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrazioni",
+        "heading": "Integrazioni",
+        "description": "Connettiti a strumenti e servizi popolari per sincronizzare il tuo lavoro nell'intero ecosistema del tuo flusso di lavoro.",
         "page_title": "Lavora con i tuoi dati Plane nelle app disponibili o nelle tue.",
         "page_description": "Visualizza tutte le integrazioni utilizzate da questo workspace o da te."
       },
       "imports": {
-        "title": "Importazioni"
+        "title": "Importazioni",
+        "heading": "Importazioni",
+        "description": "Connetti e importa dati dai tuoi strumenti di gestione progetti esistenti per ottimizzare l'integrazione del flusso di lavoro."
       },
       "worklogs": {
-        "title": "Registrazioni di lavoro"
+        "title": "Registrazioni di lavoro",
+        "heading": "Registrazioni di lavoro",
+        "description": "Scarica le registrazioni di lavoro, alias timesheet, per chiunque in qualsiasi progetto."
       },
       "group_syncing": {
         "title": "Sincronizzazione gruppi",
@@ -242,7 +256,10 @@
         "description": "Configura il tuo dominio e abilita Single sign-on"
       },
       "project_states": {
-        "title": "Stati del progetto"
+        "title": "Stati del progetto",
+        "heading": "Visualizza una panoramica dei progressi per tutti i progetti.",
+        "description": "Gli stati dei progetti sono una funzionalità esclusiva di Plane per tracciare i progressi di tutti i tuoi progetti in base a qualsiasi proprietà del progetto.",
+        "go_to_settings": "Vai alle impostazioni"
       },
       "projects": {
         "title": "Progetti",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Teamspaces"
+        "title": "Teamspaces",
+        "heading": "Teamspace",
+        "description": "Visualizza il lavoro del tuo team in uno spazio separato con progetti collegati, attività, grafici del team, pagine e visualizzazioni."
       },
       "initiatives": {
-        "title": "Iniziative"
+        "title": "Iniziative",
+        "heading": "Iniziative",
+        "description": "Sblocca il più alto livello di organizzazione per tutto il tuo lavoro in Plane."
       },
       "customers": {
-        "title": "Clienti"
+        "title": "Clienti",
+        "heading": "Gestisci il lavoro in base a ciò che è importante per i tuoi clienti.",
+        "description": "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti."
+      },
+      "templates": {
+        "title": "Modelli",
+        "heading": "Modelli",
+        "description": "Risparmia l'80% del tempo dedicato alla creazione di progetti, elementi di lavoro e pagine quando usi i modelli."
+      },
+      "relations": {
+        "title": "Relazioni",
+        "heading": "Relazioni",
+        "description": "Crea e gestisci tipi di relazione che collegano elementi di lavoro nel tuo spazio di lavoro."
       },
       "releases": {
         "title": "Rilasci",
@@ -289,6 +322,7 @@
         "your_apps": "Le tue app",
         "connect": "Connetti",
         "connected": "Connesso",
+        "disconnect": "Disconnetti",
         "install": "Installa",
         "installed": "Installato",
         "configure": "Configura",
@@ -319,7 +353,7 @@
         "app_description_error": "La descrizione dell'app è obbligatoria",
         "app_slug_title": "Slug dell'app",
         "app_slug_error": "Lo slug dell'app è obbligatorio",
-        "app_maker_title": "Creatore dell'app",
+        "invalid_website_error": "Sito web non valido",
         "app_maker_error": "Il creatore dell'app è obbligatorio",
         "webhook_url_title": "URL del Webhook",
         "webhook_url_error": "L'URL del webhook è obbligatorio",
@@ -380,7 +414,6 @@
         "video_url_title": "URL del Video",
         "video_url_error": "Il URL del video è obbligatorio",
         "invalid_video_url_error": "URL del video non valido",
-        "setup_url_title": "URL di Setup",
         "setup_url_error": "Il URL di setup è obbligatorio",
         "invalid_setup_url_error": "URL di setup non valido",
         "configuration_url_title": "URL di configurazione",
@@ -426,12 +459,21 @@
           "description": "Qui invieremo eventi e aggiornamenti webhook dagli workspace in cui la tua app è installata.",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Secret del webhook",
+          "description": "Secret utilizzato per verificare le richieste webhook in arrivo.",
+          "placeholder": "Inserisci una chiave segreta casuale"
+        },
         "redirect_uris": {
           "label": "URI di reindirizzamento (separate da spazi)",
           "description": "Gli utenti verranno reindirizzati a questo percorso dopo essersi autenticati con Plane.",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "Richiesta di installazione",
         "app_consent_no_access_description": "Questa app può essere installata solo dopo che un amministratore del workspace l'ha installata. Contatta l'amministratore del tuo workspace per procedere.",
+        "app_consent_unapproved_title": "Questa app non è stata ancora esaminata o approvata da Plane.",
+        "app_consent_unapproved_description": "Assicurati di fidarti di questa app prima di connetterla al tuo spazio di lavoro.",
+        "go_to_app": "Vai all'app",
         "enable_app_mentions": "Abilita menzioni dell'app",
         "enable_app_mentions_tooltip": "Quando è abilitato, gli utenti possono menzionare o assegnare Work Item a questa applicazione.",
         "scopes": "Ambiti",
@@ -458,6 +500,12 @@
         "build_your_own_app": "Crea la tua app",
         "edit_app_details": "Modifica i dettagli dell'app",
         "internal": "Interno"
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script",
+        "new_script": "Nuovo script",
+        "description": "Automatizza i tuoi flussi di lavoro con script personalizzati e regole di automazione."
       },
       "plane-intelligence": {
         "title": "Plane AI",

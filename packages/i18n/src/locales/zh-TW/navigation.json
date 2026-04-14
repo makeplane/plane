@@ -1,10 +1,11 @@
 {
   "sidebar": {
+    "stickies": "便利貼",
+    "your_work": "你的工作",
     "projects": "專案",
     "pages": "頁面",
     "new_work_item": "新工作項目",
     "home": "首頁",
-    "your_work": "你的工作",
     "inbox": "收件匣",
     "workspace": "工作區",
     "views": "視圖",
@@ -25,7 +26,7 @@
     "plane_pro": "平面專業版",
     "business": "商業",
     "customers": "客戶",
-    "recurring_work_items": "重複工作項目"
+    "releases": "發佈"
   },
   "command_k": {
     "empty_state": {

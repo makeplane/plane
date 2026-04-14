@@ -49,6 +49,23 @@
           "text": "添加史詩"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "此操作將建立此 Epic 的副本。",
+        "description2": "複製時所有屬性資料都將被移除。",
+        "epics_not_enabled": "Epic 未啟用"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic 複製成功"
+        },
+        "error": {
+          "message": "Epic 複製失敗"
+        }
+      }
     }
   },
   "epic_relation": {

@@ -10,6 +10,8 @@
     "all_initiatives": "Toutes les initiatives",
     "delete_initiative": "Supprimer l'initiative",
     "fill_all_required_fields": "Veuillez remplir tous les champs obligatoires.",
+    "archive_initiative": "Archiver l’initiative",
+    "archive_confirm_message": "Êtes-vous sûr de vouloir archiver l’initiative ? Toutes vos initiatives archivées peuvent être restaurées ultérieurement.",
     "archive_description": "Seules les initiatives terminées ou fermées peuvent être archivées",
     "toast": {
       "create_success": "Initiative {name} créée avec succès.",
@@ -24,6 +26,9 @@
         "success": "Initiative archivée avec succès.",
         "error": "Échec de l’archivage de l’initiative",
         "initiative_cannot_be_archived_in_this_state": "L’initiative ne peut pas être archivée dans cet état"
+      },
+      "restore": {
+        "error": "L’initiative n’a pas pu être restaurée. Veuillez réessayer."
       },
       "link_copied": "Lien de l'initiative copié dans le presse-papiers.",
       "project_update_success": "Projets de l'initiative mis à jour avec succès.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Aucun périmètre ajouté à cette initiative",
         "description": "Connectez des projets et des épiques et suivez ce travail dans cet espace.",
+        "description_projects": "Liez des projets et suivez ce travail dans cet espace.",
+        "description_epics": "Liez des Epics et suivez ce travail dans cet espace.",
         "primary_button": {
           "text": "Ajouter un périmètre"
         }
+      },
+      "board": {
+        "no_epics": "Aucun Epic dans cette initiative",
+        "no_projects": "Aucun projet dans cette initiative",
+        "enable_project_states": "États de projet non activés",
+        "enable_project_states_description": "Activez les états de projet depuis les paramètres de l’espace de travail pour utiliser le regroupement par état."
       }
     },
     "initiative_settings": {

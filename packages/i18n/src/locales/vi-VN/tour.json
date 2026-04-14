@@ -110,6 +110,12 @@
         "description": "Một mục công việc có thể được hoãn lại để xem xét sau. Nó sẽ được di chuyển xuống cuối danh sách yêu cầu mở của bạn."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Ngừng chuyển tab. Kết nối thế giới của bạn.",
+        "description": "Kết nối GitHub, Slack để theo dõi PR và tóm tắt trò chuyện trực tiếp trong Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Điều hướng, được tưởng tượng lại",

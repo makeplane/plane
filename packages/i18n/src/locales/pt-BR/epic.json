@@ -49,6 +49,23 @@
           "text": "Adicionar épicos"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Isto cria uma cópia do épico.",
+        "description2": "Todos os dados de propriedades serão removidos ao duplicar.",
+        "epics_not_enabled": "Épicos não habilitados"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Épico duplicado com sucesso"
+        },
+        "error": {
+          "message": "Falha ao duplicar o épico"
+        }
+      }
     }
   },
   "epic_relation": {

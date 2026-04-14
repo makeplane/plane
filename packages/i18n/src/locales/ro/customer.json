@@ -46,7 +46,8 @@
           "name": "Angajați",
           "placeholder": "Numărul de angajați dacă clientul tău este o afacere.",
           "validation": {
-            "min_length": "Angajații nu pot fi mai puțini de 0."
+            "min_length": "Angajații nu pot fi mai puțini de 0.",
+            "max_length": "Numărul de angajați nu poate depăși 2147483647"
           }
         },
         "size": {
@@ -75,10 +76,15 @@
         "revenue": {
           "name": "Venit",
           "placeholder": "Acesta este venitul pe care clientul tău îl generează anual.",
+          "placeholder_short": "Adaugă venit",
           "validation": {
             "min_length": "Venitul nu poate fi mai mic de 0."
           }
-        }
+        },
+        "requests": {
+          "name": "Nr. de cereri"
+        },
+        "invalid_value": "Valoare de proprietate invalidă."
       },
       "custom": {
         "title": "Proprietăți personalizate",

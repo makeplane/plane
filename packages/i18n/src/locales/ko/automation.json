@@ -53,6 +53,9 @@
       "button": {
         "previous": "뒤로",
         "next": "액션 추가"
+      },
+      "warning": {
+        "disabled_trigger_switching": "생성 후에는 트리거 유형을 변경할 수 없습니다"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "옵션 선택",
       "handler_name": {
         "add_comment": "댓글 추가",
-        "change_property": "속성 변경"
+        "change_property": "속성 변경",
+        "run_script": "스크립트 실행"
       },
       "configuration": {
         "label": "설정",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "댓글 추가"
+      },
+      "run_script_block": {
+        "title": "스크립트 실행"
       },
       "change_property_block": {
         "title": "속성 변경"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "자동화 제목",
+      "scope": "범위",
+      "projects": "프로젝트",
       "last_run_on": "마지막 실행일",
       "created_on": "생성일",
       "last_updated_on": "마지막 업데이트일",
@@ -229,6 +238,35 @@
         "title": "자동화",
         "description": "자동화는 프로젝트의 작업을 자동화하는 방법입니다.",
         "sub_description": "자동화를 사용하면 관리 시간의 80%를 절약할 수 있습니다."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "이 자동화를 실행할 프로젝트를 선택하세요",
+        "all_projects": {
+          "label": "모든 프로젝트",
+          "description": "작업 공간의 모든 프로젝트에서 자동화가 실행됩니다."
+        },
+        "select_projects": {
+          "label": "프로젝트 선택",
+          "description": "작업 공간에서 선택한 프로젝트에 대해 자동화가 실행됩니다.",
+          "placeholder": "프로젝트 선택"
+        }
+      },
+      "settings": {
+        "sidebar_label": "자동화",
+        "title": "자동화",
+        "description": "글로벌 자동화로 작업 공간 전체의 프로세스를 표준화하세요."
+      },
+      "table": {
+        "scope": {
+          "global": "글로벌",
+          "project": {
+            "label": "프로젝트",
+            "multiple": "여러 개",
+            "all": "전체"
+          }
+        }
       }
     }
   }

@@ -43,6 +43,8 @@
     "import": "Impor",
     "serial_number": "Sr No.",
     "project": "Projek",
+    "teamspace": "Teamspace",
+    "destination": "Destinasi",
     "workspace": "Workspace",
     "status": "Status",
     "summary": "Ringkasan",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Semua status Jira akan dibuat secara otomatis di Plane.",
     "personal_access_token": "Token Akses Personal",
     "user_email": "Email Pengguna",
-    "atlassian_security_settings": "Pengaturan Keamanan Atlassian",
     "email_description": "Ini adalah email yang terkait dengan token akses personal Anda",
     "jira_domain": "Domain Jira",
     "jira_domain_description": "Ini adalah domain instansi Jira Anda",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Impor data Notion Anda ke proyek Plane.",
     "steps": {
+      "title_select_destination": "Pilih Destinasi",
+      "description_select_destination": "Silakan pilih destinasi untuk data Notion Anda.",
       "title_upload_zip": "Unggah ZIP yang Diekspor dari Notion",
       "description_upload_zip": "Silakan unggah file ZIP yang berisi data Notion Anda."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Unggah selesai!",
       "upload_complete_description": "Klik \"Mulai Impor\" untuk memulai memproses data Notion Anda.",
       "upload_progress_message": "Harap jangan tutup jendela ini."
+    },
+    "select_destination": {
+      "destination_type": "Tipe Destinasi",
+      "select_destination_type": "Pilih Tipe Destinasi",
+      "select_project": "Pilih Proyek",
+      "no_projects_found": "Tidak ada proyek ditemukan",
+      "select_teamspace": "Pilih Teamspace",
+      "no_teamspaces_found": "Tidak ada teamspace ditemukan",
+      "unknown_project": "Proyek Tidak Dikenal",
+      "unknown_teamspace": "Teamspace Tidak Dikenal"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Impor data Confluence Anda ke wiki Plane.",
     "steps": {
+      "title_select_destination": "Pilih Destinasi",
+      "description_select_destination": "Silakan pilih destinasi untuk data Confluence Anda.",
       "title_upload_zip": "Unggah ZIP yang Diekspor dari Confluence",
       "description_upload_zip": "Silakan unggah file ZIP yang berisi data Confluence Anda."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Unggah selesai!",
       "upload_complete_description": "Klik \"Mulai Impor\" untuk memulai memproses data Confluence Anda.",
       "upload_progress_message": "Harap jangan tutup jendela ini."
+    },
+    "select_destination": {
+      "destination_type": "Tipe Destinasi",
+      "select_destination_type": "Pilih Tipe Destinasi",
+      "select_project": "Pilih Proyek",
+      "no_projects_found": "Tidak ada proyek ditemukan",
+      "select_teamspace": "Pilih Teamspace",
+      "no_teamspaces_found": "Tidak ada teamspace ditemukan",
+      "unknown_project": "Proyek Tidak Dikenal",
+      "unknown_teamspace": "Teamspace Tidak Dikenal"
     }
   },
   "flatfile_importer": {

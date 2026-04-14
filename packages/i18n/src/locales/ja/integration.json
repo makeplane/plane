@@ -194,6 +194,10 @@
       "server_error_states": "状態の読み込み中にサーバーエラーが発生しました"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Bitbucket Data CenterのリポジトリをPlaneと連携・同期します。"
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "外部IdPトークンをAPI アクセス用に検証します。",
@@ -316,6 +320,7 @@
     "pulling": "取得中",
     "timed_out": "タイムアウト",
     "pulled": "取得済み",
+    "progressing": "進行中",
     "transforming": "変換中",
     "transformed": "変換済み",
     "pushing": "送信中",

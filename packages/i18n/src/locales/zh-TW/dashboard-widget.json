@@ -6,9 +6,18 @@
           "short_label": "條形",
           "long_label": "條形圖",
           "chart_models": {
-            "basic": "基本",
-            "stacked": "堆疊",
-            "grouped": "分組"
+            "basic": {
+              "short_label": "基本",
+              "long_label": "基本條形"
+            },
+            "stacked": {
+              "short_label": "堆疊",
+              "long_label": "堆疊條形"
+            },
+            "grouped": {
+              "short_label": "分組",
+              "long_label": "分組條形"
+            }
           },
           "orientation": {
             "label": "方向",
@@ -22,8 +31,14 @@
           "short_label": "線形",
           "long_label": "線形圖",
           "chart_models": {
-            "basic": "基本",
-            "multi_line": "多線"
+            "basic": {
+              "short_label": "基本",
+              "long_label": "基本線形"
+            },
+            "multi_line": {
+              "short_label": "多線",
+              "long_label": "多線"
+            }
           },
           "line_color": "線條顏色",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "面積",
           "long_label": "面積圖",
           "chart_models": {
-            "basic": "基本",
-            "stacked": "堆疊",
-            "comparison": "比較"
+            "basic": {
+              "short_label": "基本",
+              "long_label": "基本面積"
+            },
+            "stacked": {
+              "short_label": "堆疊",
+              "long_label": "堆疊面積"
+            },
+            "comparison": {
+              "short_label": "比較",
+              "long_label": "比較面積"
+            }
           },
           "fill_color": "填充顏色"
         },
@@ -47,8 +71,14 @@
           "short_label": "環形",
           "long_label": "環形圖",
           "chart_models": {
-            "basic": "基本",
-            "progress": "進度"
+            "basic": {
+              "short_label": "基本",
+              "long_label": "基本環形"
+            },
+            "progress": {
+              "short_label": "進度",
+              "long_label": "進度環形"
+            }
           },
           "center_value": "中心值",
           "completed_color": "完成顏色"
@@ -57,7 +87,10 @@
           "short_label": "餅形",
           "long_label": "餅形圖",
           "chart_models": {
-            "basic": "基本"
+            "basic": {
+              "short_label": "基本",
+              "long_label": "餅形"
+            }
           },
           "group": {
             "label": "分組片段",
@@ -77,9 +110,15 @@
             "count": "計數"
           }
         },
-        "text": {
-          "short_label": "文字",
-          "long_label": "文字",
+        "number": {
+          "short_label": "數字",
+          "long_label": "數字",
+          "chart_models": {
+            "basic": {
+              "short_label": "基本",
+              "long_label": "數字"
+            }
+          },
           "alignment": {
             "label": "文字對齊",
             "left": "左對齊",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "選擇行的屬性以查看此表格。"
         }
       },
+      "sections": {
+        "charts": "圖表",
+        "text": "文字"
+      },
       "color_palettes": {
         "modern": "現代",
         "horizon": "地平線",
@@ -115,11 +158,7 @@
           "label": "為此小工具命名",
           "placeholder": "例如，\"昨日待辦\", \"全部完成\""
         },
-        "chart_type": "圖表類型",
-        "visualization_type": {
-          "label": "視覺化類型",
-          "placeholder": "添加視覺化類型"
-        },
+        "widget_type": "小工具類型",
         "date_group": {
           "label": "日期分組",
           "placeholder": "添加日期分組"
@@ -218,7 +257,7 @@
             "y_axis_metric": "指標缺少值。"
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "指標缺少值。"
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "請管理員配置此小工具。"
+      },
+      "upgrade_required": {
+        "title": "您的方案未包含此小工具類型。"
       }
     },
     "create_modal": {

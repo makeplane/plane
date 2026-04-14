@@ -1,9 +1,10 @@
 {
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
-    "drop_down": {
-      "placeholder": "Seleccionar cliente",
-      "required": "Por favor seleccione un cliente",
+    "open": "Abrir cliente",
+    "dropdown": {
+      "placeholder": "Agregar cliente",
+      "required": "Por favor selecciona un cliente",
       "no_selection": "Sin clientes"
     },
     "upgrade": {
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "Industria",
+          "name": "Industria",
           "placeholder": "Retail, e-Commerce, Fintech, Banca",
           "placeholder_short": "Agregar industria",
           "validation": {}
@@ -79,6 +80,9 @@
           "validation": {
             "min_length": "Los ingresos no pueden ser menores que 0."
           }
+        },
+        "requests": {
+          "name": "N.º de solicitudes"
         },
         "invalid_value": "Valor de propiedad no válido."
       },
@@ -137,7 +141,8 @@
           },
           "error": {
             "title": "No se puede habilitar la función de clientes.",
-            "message": "Inténtalo de nuevo o vuelve más tarde. Si el problema persiste, contacta con el soporte."
+            "message": "Inténtalo de nuevo o vuelve más tarde. Si el problema persiste, contacta con el soporte.",
+            "action": "Hablar con soporte"
           }
         },
         "disable": {

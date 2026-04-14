@@ -141,13 +141,7 @@
     "summary_of_projects": "Riepilogo dei progetti",
     "project_insights": "Approfondimenti sul progetto",
     "started_work_items": "{entity} iniziati",
-    "total_work_items": "Totale {entity}",
-    "total_projects": "Progetti totali",
-    "total_admins": "Totale amministratori",
-    "total_users": "Totale utenti",
-    "total_intake": "Entrate totali",
     "un_started_work_items": "{entity} non avviati",
-    "total_guests": "Totale ospiti",
     "completed_work_items": "{entity} completati",
     "total": "Totale {entity}",
     "projects_by_status": "Progetti per stato",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Nessuna pagina archiviata ancora",
         "description": "Archivia le pagine che non sono nella tua lista di priorità. Accedile qui quando necessario."
+      },
+      "shared": {
+        "title": "Nessuna pagina condivisa ancora",
+        "description": "Le pagine che altri hanno condiviso con te appariranno qui."
       }
     }
   },

@@ -141,13 +141,7 @@
     "summary_of_projects": "프로젝트 요약",
     "project_insights": "프로젝트 인사이트",
     "started_work_items": "시작된 {entity}",
-    "total_work_items": "총 {entity}",
-    "total_projects": "총 프로젝트 수",
-    "total_admins": "총 관리자 수",
-    "total_users": "총 사용자 수",
-    "total_intake": "총 수입",
     "un_started_work_items": "시작되지 않은 {entity}",
-    "total_guests": "총 게스트 수",
     "completed_work_items": "완료된 {entity}",
     "total": "총 {entity}",
     "projects_by_status": "상태별 프로젝트",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "아직 보관된 페이지가 없습니다",
         "description": "현재 관심 없는 페이지를 보관하세요. 필요할 때 여기서 액세스하세요."
+      },
+      "shared": {
+        "title": "아직 공유된 페이지가 없습니다",
+        "description": "다른 사람이 공유한 페이지가 여기에 표시됩니다."
       }
     }
   },

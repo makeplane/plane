@@ -37,6 +37,8 @@
       "project_subscribers_description": "Seleziona i membri che riceveranno le notifiche per questo progetto."
     },
     "states": {
+      "heading": "Stati",
+      "description": "Definisci e personalizza gli stati del flusso di lavoro per tracciare l'avanzamento dei tuoi elementi di lavoro.",
       "describe_this_state_for_your_members": "Descrivi questo stato per i tuoi membri.",
       "empty_state": {
         "title": "Nessuno stato disponibile per il gruppo {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etichette",
+      "description": "Crea etichette personalizzate per categorizzare e organizzare i tuoi elementi di lavoro",
       "label_title": "Titolo etichetta",
       "label_title_is_required": "Il titolo dell'etichetta è obbligatorio",
       "label_max_char": "Il nome dell'etichetta non deve superare i 255 caratteri",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Stime",
+      "description": "Imposta sistemi di stima per tracciare e comunicare lo sforzo richiesto per ogni elemento di lavoro.",
       "label": "Stime",
       "title": "Abilita le stime per il mio progetto",
-      "description": "Ti aiutano a comunicare la complessità e il carico di lavoro del team.",
+      "enable_description": "Ti aiutano a comunicare la complessità e il carico di lavoro del team.",
       "no_estimate": "Nessuna stima",
       "new": "Nuovo sistema di stima",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Riordinamento stime fallito",
             "message": "Non siamo riusciti a riordinare le stime, riprova"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistema di stima creato",
+            "message": "Creato e abilitato con successo"
+          },
+          "error": {
+            "title": "Errore",
+            "message": "Qualcosa è andato storto"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automatizzazioni",
+      "heading": "Automazioni",
+      "description": "Configura azioni automatizzate per ottimizzare il flusso di gestione del progetto e ridurre le attività manuali.",
       "auto-archive": {
         "title": "Archivia automaticamente gli elementi di lavoro chiusi",
         "description": "Plane archiverà automaticamente gli elementi di lavoro che sono stati completati o annullati.",
@@ -194,6 +212,116 @@
         "description": "Configura GitHub e altre integrazioni per sincronizzare i tuoi elementi di lavoro del progetto."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Abilita flussi di lavoro",
+        "description": "Imposta flussi di lavoro per controllare il movimento degli elementi di lavoro",
+        "no_states_tooltip": "Nessuno stato è stato aggiunto al flusso di lavoro.",
+        "no_work_item_types_tooltip": "Nessun tipo di elemento di lavoro è stato aggiunto al flusso di lavoro.",
+        "no_states_or_work_item_types_tooltip": "Nessuno stato o tipo di elemento di lavoro è stato aggiunto al flusso di lavoro.",
+        "toast": {
+          "loading": {
+            "enabling": "Abilitazione dei flussi di lavoro",
+            "disabling": "Disabilitazione dei flussi di lavoro"
+          },
+          "success": {
+            "title": "Successo!",
+            "message": "Flussi di lavoro abilitati con successo."
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile abilitare i flussi di lavoro. Riprova."
+          }
+        }
+      },
+      "heading": "Flussi di lavoro",
+      "description": "Automatizza le transizioni degli elementi di lavoro e imposta regole per controllare come le attività si spostano nella pipeline del tuo progetto.",
+      "add_button": "Aggiungi nuovo flusso di lavoro",
+      "search": "Cerca flussi di lavoro",
+      "detail": {
+        "define": "Definisci flusso di lavoro",
+        "add_states": "Aggiungi stati",
+        "unmapped_states": {
+          "title": "Stati non mappati rilevati",
+          "description": "Alcuni elementi di lavoro per i tipi selezionati si trovano attualmente in stati che non esistono in questo flusso di lavoro.",
+          "note": "Se abiliti questo flusso di lavoro, questi elementi verranno spostati automaticamente allo stato iniziale di questo flusso di lavoro.",
+          "label": "Stati mancanti",
+          "tooltip": "Alcuni elementi di lavoro si trovano in stati non mappati a questo flusso di lavoro. Apri il flusso di lavoro per rivedere."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tutti gli stati sono in uso",
+          "description": "Tutti gli stati definiti per questo progetto sono già presenti nel tuo flusso di lavoro corrente."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Questo flusso di lavoro si applica a qualsiasi tipo di elemento di lavoro che non è assegnato a un flusso di lavoro."
+      },
+      "create": {
+        "heading": "Crea nuovo flusso di lavoro",
+        "name": {
+          "placeholder": "Aggiungi un nome univoco",
+          "validation": {
+            "max_length": "Il nome deve essere di meno di 255 caratteri",
+            "required": "Il nome è obbligatorio",
+            "invalid": "Il nome può contenere solo lettere, numeri, spazi, trattini e apostrofi"
+          }
+        },
+        "description": {
+          "placeholder": "Aggiungi una breve descrizione",
+          "validation": {
+            "invalid": "La descrizione può contenere solo lettere, numeri, spazi, trattini e apostrofi"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipo di elemento di lavoro"
+        },
+        "success": {
+          "title": "Successo!",
+          "message": "Flusso di lavoro creato con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Impossibile creare il flusso di lavoro. Riprova."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Successo!",
+          "message": "Flusso di lavoro aggiornato con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Impossibile aggiornare il flusso di lavoro. Riprova."
+        }
+      },
+      "delete": {
+        "loading": "Eliminazione del flusso di lavoro",
+        "success": {
+          "title": "Successo!",
+          "message": "Flusso di lavoro eliminato con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Impossibile eliminare il flusso di lavoro. Riprova."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Successo!",
+          "message": "Stati aggiunti con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Impossibile aggiungere gli stati. Riprova."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipi di elementi di lavoro",
+      "description": "Crea e personalizza diversi tipi di elementi di lavoro con proprietà uniche"
+    },
     "initiatives": {
       "heading": "Iniziative",
       "sub_heading": "Sblocca il livello più alto di organizzazione per tutto il tuo lavoro in Plane.",
@@ -209,14 +337,25 @@
     "customers": {
       "heading": "Clienti",
       "settings_heading": "Gestisci il lavoro in base a ciò che è importante per i tuoi clienti.",
-      "settings_sub_heading": "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti."
+      "settings_sub_heading": "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti.",
+      "description": "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti."
     },
     "epics": {
+      "heading": "Epiche",
+      "description": "Per corpi di lavoro più grandi che attraversano diversi cicli e possono estendersi su più moduli",
       "properties": {
         "title": "Proprietà",
         "description": "Aggiungi proprietà personalizzate alla tua epica."
       },
       "disabled": "Disabilitato"
+    },
+    "project_updates": {
+      "heading": "Aggiornamenti del progetto",
+      "description": "Monitoraggio consolidato e tracciamento dell'avanzamento di questo progetto"
+    },
+    "templates": {
+      "heading": "Modelli",
+      "description": "Risparmia l'80% del tempo speso nella creazione di progetti, elementi di lavoro e pagine quando usi i modelli."
     },
     "cycles": {
       "auto_schedule": {

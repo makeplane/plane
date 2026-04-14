@@ -3,11 +3,17 @@
     "label": "İş Öğesi Tipleri",
     "label_lowercase": "iş öğesi tipleri",
     "settings": {
-      "title": "İş Öğesi Tipleri",
+      "description": "Ekibinizin ihtiyaçlarına göre özelleştirin ve kendi özelliklerinizi ekleyin.",
       "properties": {
         "title": "Özel özellikler",
+        "description": "Özellikler oluşturun ve özelleştirin.",
         "tooltip": "Her iş öğesi tipi, Başlık, Açıklama, Atanan Kişi, Durum, Öncelik, Başlangıç tarihi, Bitiş tarihi, Modül, Döngü vb. gibi varsayılan bir özellik seti ile gelir. Ayrıca ekibinizin ihtiyaçlarına göre kendi özelliklerinizi özelleştirebilir ve ekleyebilirsiniz.",
         "add_button": "Yeni özellik ekle",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Çalışma alanından içe aktar"
+          }
+        },
         "dropdown": {
           "label": "Özellik tipi",
           "placeholder": "Tip seçin"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Yeni özel özellik oluştur",
+            "update": "Özel özelliği güncelle"
+          },
           "form": {
             "display_name": {
               "placeholder": "Başlık"
@@ -216,6 +226,46 @@
           "description": "Bu iş öğesi tipi için eklediğiniz yeni özellikler burada gösterilecektir."
         }
       },
+      "types": {
+        "title": "Türler",
+        "description": "Özelliklere sahip iş öğesi türleri oluşturun ve özelleştirin.",
+        "sort_options": {
+          "project_count": "Dahil olduğu proje sayısı"
+        },
+        "filter_options": {
+          "show_active": "Aktifleri göster",
+          "show_inactive": "Pasifleri göster"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Yeni oluştur",
+            "import_from_workspace": "Çalışma alanından içe aktar"
+          },
+          "banner": {
+            "with_access": "Çalışma alanı seviyesinden türleri içe aktarmak için iş öğesi türlerini etkinleştirin",
+            "without_access": "İş öğesi türleri devre dışı. Çalışma alanı ayarlarından etkinleştirmek için çalışma alanı yöneticisiyle iletişime geçin."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Özel özellikler",
+        "add_button": "Özellik ekle",
+        "modal": {
+          "title": "Özellik ekle",
+          "empty": {
+            "title": "Kullanılabilir özellik yok",
+            "description": "Tüm özellikler zaten bu türe bağlandı."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Özelliğin bağlantısını kaldır",
+          "description": "Bu özelliğin bağlantısını kaldırmak, bu türü kullanan her iş öğesindeki tüm değerlerini kalıcı olarak siler. Bu işlem geri alınamaz.",
+          "input_label": "Yazın",
+          "input_label_suffix": "devam etmek için:",
+          "confirm": "Özelliğin bağlantısını kaldır",
+          "loading": "Bağlantı kaldırılıyor"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Bu türü sil",
         "description": "Türlerin silinmesi mevcut verilerin kaybına yol açabilir.",
@@ -256,6 +306,7 @@
         "error": {
           "title": "Hata!",
           "message": {
+            "default": "İş öğesi tipi oluşturulamadı. Lütfen tekrar deneyin!",
             "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "Hata!",
           "message": {
+            "default": "İş öğesi tipi güncellenemedi. Lütfen tekrar deneyin!",
             "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
           }
         }

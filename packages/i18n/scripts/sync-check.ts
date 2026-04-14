@@ -15,69 +15,16 @@
 //   npx tsx packages/i18n/scripts/sync-check.ts          # Report only
 //   npx tsx packages/i18n/scripts/sync-check.ts --ci      # Exit 1 if issues found
 
-import fs from "node:fs";
-import path from "node:path";
+import type { LocaleData } from "./lib/locale-io.js";
+import { LOCALES_DIR, listLocales, loadLocale } from "./lib/locale-io.js";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-const LOCALES_DIR = path.resolve(import.meta.dirname, "../src/locales");
-
-/** Recursively flatten an object into dot-notation keys. */
-function flattenKeys(obj: Record<string, unknown>, prefix = ""): string[] {
-  const keys: string[] = [];
-  for (const [k, v] of Object.entries(obj)) {
-    const full = prefix ? `${prefix}.${k}` : k;
-    if (v !== null && typeof v === "object" && !Array.isArray(v)) {
-      keys.push(...flattenKeys(v as Record<string, unknown>, full));
-    } else {
-      keys.push(full);
-    }
-  }
-  return keys;
-}
-
 /** Format a number with commas (e.g. 7712 -> "7,712"). */
 function fmt(n: number): string {
   return n.toLocaleString("en-US");
-}
-
-// ---------------------------------------------------------------------------
-// Load locale data
-// ---------------------------------------------------------------------------
-
-interface NamespaceData {
-  name: string; // file stem, e.g. "translations"
-  keys: Set<string>; // flattened dot-notation keys
-}
-
-interface LocaleData {
-  locale: string;
-  namespaces: NamespaceData[];
-  allKeys: Set<string>;
-}
-
-async function loadLocale(locale: string): Promise<LocaleData> {
-  const localeDir = path.join(LOCALES_DIR, locale);
-  const files = fs.readdirSync(localeDir).filter((f) => f.endsWith(".json"));
-
-  const namespaces: NamespaceData[] = [];
-  const allKeys = new Set<string>();
-
-  for (const file of files) {
-    const filePath = path.join(localeDir, file);
-    const obj: Record<string, unknown> = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-    const name = path.basename(file, ".json");
-    const keys = flattenKeys(obj);
-    const keySet = new Set(keys);
-    namespaces.push({ name, keys: keySet });
-    for (const key of keys) {
-      allKeys.add(key);
-    }
-  }
-
-  return { locale, namespaces, allKeys };
 }
 
 // ---------------------------------------------------------------------------
@@ -184,15 +131,11 @@ function compareToEnglish(enKeys: Set<string>, other: LocaleData): LocaleCompari
 // Main
 // ---------------------------------------------------------------------------
 
-async function main() {
+function main() {
   const ciMode = process.argv.includes("--ci");
 
   // Discover all locale directories
-  const entries = fs.readdirSync(LOCALES_DIR, { withFileTypes: true });
-  const localeDirs = entries
-    .filter((e) => e.isDirectory())
-    .map((e) => e.name)
-    .sort();
+  const localeDirs = listLocales();
 
   if (!localeDirs.includes("en")) {
     console.error("ERROR: English locale (en) not found in", LOCALES_DIR);
@@ -202,7 +145,7 @@ async function main() {
   // Load all locales
   const localeDataMap = new Map<string, LocaleData>();
   for (const locale of localeDirs) {
-    localeDataMap.set(locale, await loadLocale(locale));
+    localeDataMap.set(locale, loadLocale(locale));
   }
 
   const enData = localeDataMap.get("en")!;
@@ -301,7 +244,9 @@ async function main() {
   }
 }
 
-main().catch((err) => {
+try {
+  main();
+} catch (err) {
   console.error("Sync check failed:", err);
   process.exit(1);
-});
+}

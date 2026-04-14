@@ -6,6 +6,7 @@
     "select_releases": "リリースを選択",
     "overview": "概要",
     "scope": "スコープ",
+    "changelog": "変更履歴",
     "page_title": {
       "scope": "リリース - {name} | スコープ",
       "scope_fallback": "リリース | スコープ"

@@ -6,9 +6,18 @@
           "short_label": "Бар",
           "long_label": "Бар чарт",
           "chart_models": {
-            "basic": "Базовий",
-            "stacked": "Стековий",
-            "grouped": "Згрупований"
+            "basic": {
+              "short_label": "Базовий",
+              "long_label": "Базовий бар"
+            },
+            "stacked": {
+              "short_label": "Стековий",
+              "long_label": "Стековий бар"
+            },
+            "grouped": {
+              "short_label": "Згрупований",
+              "long_label": "Згрупований бар"
+            }
           },
           "orientation": {
             "label": "Орієнтація",
@@ -22,8 +31,14 @@
           "short_label": "Лайн",
           "long_label": "Лайн чарт",
           "chart_models": {
-            "basic": "Базовий",
-            "multi_line": "Мульти-лайн"
+            "basic": {
+              "short_label": "Базовий",
+              "long_label": "Базова лінія"
+            },
+            "multi_line": {
+              "short_label": "Мульти-лайн",
+              "long_label": "Мульти-лайн"
+            }
           },
           "line_color": "Колір лінії",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Еріа",
           "long_label": "Еріа чарт",
           "chart_models": {
-            "basic": "Базовий",
-            "stacked": "Стековий",
-            "comparison": "Порівняльний"
+            "basic": {
+              "short_label": "Базовий",
+              "long_label": "Базова область"
+            },
+            "stacked": {
+              "short_label": "Стековий",
+              "long_label": "Стекова область"
+            },
+            "comparison": {
+              "short_label": "Порівняльний",
+              "long_label": "Порівняльна область"
+            }
           },
           "fill_color": "Колір заповнення"
         },
@@ -47,8 +71,14 @@
           "short_label": "Донат",
           "long_label": "Донат чарт",
           "chart_models": {
-            "basic": "Базовий",
-            "progress": "Прогрес"
+            "basic": {
+              "short_label": "Базовий",
+              "long_label": "Базовий донат"
+            },
+            "progress": {
+              "short_label": "Прогрес",
+              "long_label": "Прогрес-донат"
+            }
           },
           "center_value": "Центральне значення",
           "completed_color": "Колір завершення"
@@ -57,7 +87,10 @@
           "short_label": "Пай",
           "long_label": "Пай чарт",
           "chart_models": {
-            "basic": "Базовий"
+            "basic": {
+              "short_label": "Базовий",
+              "long_label": "Пай"
+            }
           },
           "group": {
             "label": "Згруповані частини",
@@ -77,9 +110,15 @@
             "count": "Кількість"
           }
         },
-        "text": {
-          "short_label": "Текст",
-          "long_label": "Текст",
+        "number": {
+          "short_label": "Номер",
+          "long_label": "Номер",
+          "chart_models": {
+            "basic": {
+              "short_label": "Базовий",
+              "long_label": "Номер"
+            }
+          },
           "alignment": {
             "label": "Вирівнювання тексту",
             "left": "Зліва",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Виберіть властивість для рядків, щоб переглянути цю таблицю."
         }
       },
+      "sections": {
+        "charts": "Чарти",
+        "text": "Текст"
+      },
       "color_palettes": {
         "modern": "Модерн",
         "horizon": "Горизон",
@@ -115,11 +158,7 @@
           "label": "Назвіть цей віджет",
           "placeholder": "напр., \"Туду на вчора\", \"Все Завершено\""
         },
-        "chart_type": "Тип чарту",
-        "visualization_type": {
-          "label": "Тип візуалізації",
-          "placeholder": "Додати тип візуалізації"
-        },
+        "widget_type": "Тип віджета",
         "date_group": {
           "label": "Група дати",
           "placeholder": "Додати групу дати"
@@ -218,7 +257,7 @@
             "y_axis_metric": "Відсутнє значення метрики."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Відсутнє значення метрики."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "Попросіть адміністратора налаштувати цей віджет."
+      },
+      "upgrade_required": {
+        "title": "Цей тип віджета не включено у ваш план."
       }
     },
     "create_modal": {

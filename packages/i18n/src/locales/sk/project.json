@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Ukladajte filtre ako pohľady.",
+        "description": "Pohľady sú uložené filtre na jednoduchý prístup. Zdieľajte ich v tíme.",
+        "primary_button": {
+          "text": "Vytvoriť prvý pohľad",
+          "comic": {
+            "title": "Pohľady pracujú s vlastnosťami položiek.",
+            "description": "Vytvorte pohľad s požadovanými filtrami."
+          }
+        },
+        "filter": {
+          "title": "Žiadne zodpovedajúce pohľady",
+          "description": "Žiadne pohľady nezodpovedajú kritériám vyhľadávania.\n Vytvorte namiesto toho nový pohľad."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Zatiaľ žiadne archivované pracovné položky",
+        "description": "Manuálne alebo pomocou automatizácie môžete archivovať pracovné položky, ktoré sú dokončené alebo zrušené. Po archivácii ich nájdete tu.",
+        "primary_button": {
+          "text": "Nastaviť automatizáciu"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Nenašli sa žiadne pracovné položky zodpovedajúce použitým filtrom",
+        "secondary_button": {
+          "text": "Zrušiť všetky filtre"
+        }
+      },
+      "public": {
+        "title": "Zatiaľ žiadne verejné stránky",
+        "description": "Stránky zdieľané so všetkými vo vašom projekte uvidíte tu.",
+        "primary_button": {
+          "text": "Vytvorte svoju prvú stránku"
+        }
+      },
+      "archived": {
+        "title": "Zatiaľ žiadne archivované stránky",
+        "description": "Archivujte stránky, ktoré nepotrebujete. Prístup k nim máte tu, keď ich budete potrebovať."
+      },
+      "shared": {
+        "title": "Zatiaľ žiadne zdieľané stránky",
+        "description": "Stránky, ktoré s vami zdieľali iní, sa zobrazia tu."
+      }
+    },
+    "delete_view": {
+      "title": "Ste si istí, že chcete vymazať toto zobrazenie?",
+      "content": "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia."
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "Modul zmazaný",
         "error": "Mazanie zlyhalo"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "Ukladajte filtre ako pohľady.",
-        "description": "Pohľady sú uložené filtre na jednoduchý prístup. Zdieľajte ich v tíme.",
-        "primary_button": {
-          "text": "Vytvoriť prvý pohľad",
-          "comic": {
-            "title": "Pohľady pracujú s vlastnosťami položiek.",
-            "description": "Vytvorte pohľad s požadovanými filtrami."
-          }
-        }
-      },
-      "filter": {
-        "title": "Žiadne zodpovedajúce zobrazenia",
-        "description": "Vytvorte nové zobrazenie."
-      }
-    },
-    "delete_view": {
-      "title": "Ste si istí, že chcete vymazať toto zobrazenie?",
-      "content": "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia."
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "Dátum vytvorenia",
       "manual": "Manuálne"
     }
+  },
+  "project_members": {
+    "full_name": "Celé meno",
+    "display_name": "Zobrazované meno",
+    "email": "E-mail",
+    "joining_date": "Dátum pripojenia",
+    "role": "Rola"
   },
   "project": {
     "members_import": {

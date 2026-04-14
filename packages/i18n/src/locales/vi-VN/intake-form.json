@@ -5,8 +5,6 @@
       "sub-title": "Cho nhóm biết bạn muốn họ làm việc về điều gì.",
       "name": "Tên",
       "email": "Email",
-      "about": "Mục công việc này là về gì?",
-      "description": "Mô tả điều nên xảy ra",
       "description_placeholder": "Thêm càng nhiều chi tiết càng tốt để giúp nhóm nắm tình huống và nhu cầu của bạn.",
       "loading": "Đang tạo",
       "create_work_item": "Tạo mục công việc",

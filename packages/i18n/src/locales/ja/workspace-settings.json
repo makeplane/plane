@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "請求とプラン",
+        "description": "プランを選択してサブスクリプションを管理し、ニーズの拡大に応じて簡単にアップグレードできます。",
         "title": "請求とプラン",
         "current_plan": "現在のプラン",
         "free_plan": "現在フリープランを使用中です",
         "view_plans": "プランを表示"
       },
       "exports": {
+        "heading": "エクスポート",
+        "description": "プロジェクトデータをさまざまな形式でエクスポートし、ダウンロードリンク付きのエクスポート履歴にアクセスできます。",
         "title": "エクスポート",
         "exporting": "エクスポート中",
         "previous_exports": "過去のエクスポート",
         "export_separate_files": "データを個別のファイルにエクスポート",
+        "exporting_projects": "プロジェクトをエクスポート中",
+        "format": "形式",
         "filters_info": "フィルターを適用して、条件に基づいて特定の作業項目をエクスポートします。",
         "modal": {
           "title": "エクスポート先",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook",
+        "description": "プロジェクトイベントが発生したときに、外部サービスへの通知を自動化します。",
         "title": "Webhook",
         "add_webhook": "Webhookを追加",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "インテグレーション",
+        "heading": "インテグレーション",
+        "description": "人気のツールやサービスと接続して、ワークフローエコシステム全体で作業を同期します。",
         "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
         "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
       },
       "imports": {
-        "title": "インポート"
+        "title": "インポート",
+        "heading": "インポート",
+        "description": "既存のプロジェクト管理ツールからデータを接続・インポートして、ワークフロー統合を効率化します。"
       },
       "worklogs": {
-        "title": "作業ログ"
+        "title": "作業ログ",
+        "heading": "作業ログ",
+        "description": "あらゆるプロジェクトの誰の作業ログ（タイムシート）でもダウンロードできます。"
       },
       "group_syncing": {
         "title": "グループ同期",
@@ -242,7 +256,10 @@
         "description": "ドメインを設定し、シングルサインオンを有効にします"
       },
       "project_states": {
-        "title": "プロジェクトの状態"
+        "title": "プロジェクトの状態",
+        "heading": "すべてのプロジェクトの進捗概要を確認します。",
+        "description": "プロジェクトステータスは、任意のプロジェクトプロパティでプロジェクトの進捗を追跡するためのPlane専用の機能です。",
+        "go_to_settings": "設定へ移動"
       },
       "projects": {
         "title": "プロジェクト",
@@ -253,13 +270,19 @@
         }
       },
       "teamspaces": {
-        "title": "チームスペース"
+        "title": "チームスペース",
+        "heading": "チームスペース",
+        "description": "リンクされたプロジェクト、タスク、チームチャート、ページ、ビューを使って、チームの作業を別のスペースで確認します。"
       },
       "initiatives": {
-        "title": "イニシアチブ"
+        "title": "イニシアチブ",
+        "heading": "イニシアチブ",
+        "description": "Planeのすべての作業に対して最高レベルの組織化を実現します。"
       },
       "customers": {
-        "title": "顧客"
+        "title": "顧客",
+        "heading": "顧客にとって重要なことに基づいて業務を管理します。",
+        "description": "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。"
       },
       "releases": {
         "title": "リリース",
@@ -269,6 +292,16 @@
           "release_not_found": "お探しのリリースは存在しません。",
           "unknown": "問題が発生しました。もう一度お試しください。"
         }
+      },
+      "templates": {
+        "title": "テンプレート",
+        "heading": "テンプレート",
+        "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成にかかる時間を80%短縮できます。"
+      },
+      "relations": {
+        "title": "関連",
+        "heading": "関連",
+        "description": "ワークスペース全体で作業項目を接続する関連タイプを作成・管理します。"
       },
       "cancel_trial": {
         "title": "まずトライアルをキャンセルしてください。",
@@ -289,6 +322,7 @@
         "your_apps": "あなたのアプリ",
         "connect": "接続",
         "connected": "接続済み",
+        "disconnect": "切断",
         "install": "インストール",
         "installed": "インストール済み",
         "configure": "設定",
@@ -319,7 +353,7 @@
         "app_description_error": "アプリの説明は必須です",
         "app_slug_title": "アプリのスラッグ",
         "app_slug_error": "アプリのスラッグは必須です",
-        "app_maker_title": "アプリ作成者",
+        "invalid_website_error": "無効なWebサイト",
         "app_maker_error": "アプリ作成者は必須です",
         "webhook_url_title": "WebhookのURL",
         "webhook_url_error": "WebhookのURLは必須です",
@@ -382,7 +416,6 @@
         "video_url_title": "ビデオURL",
         "video_url_error": "ビデオURLは必須です",
         "invalid_video_url_error": "無効なビデオURL",
-        "setup_url_title": "セットアップURL",
         "setup_url_error": "セットアップURLは必須です",
         "invalid_setup_url_error": "無効なセットアップURL",
         "configuration_url_title": "設定URL",
@@ -428,12 +461,21 @@
           "description": "これは、アプリがインストールされているワークスペースからのWebhookイベントや更新を送信する場所です。",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Webhookシークレット",
+          "description": "受信するWebhookリクエストを検証するために使用するシークレット。",
+          "placeholder": "ランダムなシークレットキーを入力"
+        },
         "redirect_uris": {
           "label": "リダイレクトURI（スペース区切り）",
           "description": "ユーザーは Plane で認証した後、このパスにリダイレクトされます。",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "インストールリクエスト",
         "app_consent_no_access_description": "このアプリは、ワークスペースの管理者がインストールした後にのみインストールできます。続行するには、ワークスペースの管理者に連絡してください。",
+        "app_consent_unapproved_title": "このアプリはまだPlaneによってレビューまたは承認されていません。",
+        "app_consent_unapproved_description": "ワークスペースに接続する前に、このアプリを信頼できることを確認してください。",
+        "go_to_app": "アプリへ移動",
         "enable_app_mentions": "アプリのメンションを有効にする",
         "enable_app_mentions_tooltip": "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。",
         "scopes": "スコープ",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "スクリプト",
+        "new_script": "新しいスクリプト",
+        "description": "カスタムスクリプトと自動化ルールでワークフローを自動化します。"
       }
     },
     "empty_state": {

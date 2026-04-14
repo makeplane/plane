@@ -27,6 +27,8 @@
       }
     },
     "delete": {
+      "title": "Güncellemeyi sil",
+      "confirmation": "Bu güncellemeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
       "success": {
         "title": "Güncelleme silindi",
         "message": "Güncelleme başarıyla silindi."

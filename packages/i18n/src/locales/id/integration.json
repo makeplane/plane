@@ -194,6 +194,10 @@
       "server_error_states": "Kesalahan server saat memuat status"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Hubungkan dan sinkronkan repositori Bitbucket Data Center Anda dengan Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Validasi token IdP eksternal untuk akses API.",
@@ -302,6 +306,7 @@
     "generic_error": "Terjadi kesalahan tak terduga saat memproses permintaan Anda",
     "connection_not_found": "Koneksi yang diminta tidak dapat ditemukan",
     "multiple_connections_found": "Beberapa koneksi ditemukan saat hanya satu yang diharapkan",
+    "cannot_create_multiple_connections": "Anda telah menghubungkan organisasi Anda dengan ruang kerja. Silakan putuskan koneksi yang ada sebelum menghubungkan yang baru.",
     "installation_not_found": "Instalasi yang diminta tidak dapat ditemukan",
     "user_not_found": "Pengguna yang diminta tidak dapat ditemukan",
     "error_fetching_token": "Gagal mengambil token autentikasi",
@@ -315,6 +320,7 @@
     "pulling": "Menarik",
     "timed_out": "Waktu habis",
     "pulled": "Ditarik",
+    "progressing": "Berjalan",
     "transforming": "Mentransformasi",
     "transformed": "Ditransformasi",
     "pushing": "Mendorong",

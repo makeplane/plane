@@ -67,13 +67,19 @@
       },
       "billing_and_plans": {
         "title": "Faturalandırma ve Planlar",
+        "heading": "Faturalandırma ve Planlar",
+        "description": "Planınızı seçin, abonelikleri yönetin ve ihtiyaçlarınız arttıkça kolayca yükseltin.",
         "current_plan": "Mevcut plan",
         "free_plan": "Şu anda ücretsiz planı kullanıyorsunuz",
         "view_plans": "Planları görüntüle"
       },
       "exports": {
         "title": "Dışa Aktarımlar",
+        "heading": "Dışa Aktarımlar",
+        "description": "Proje verilerinizi çeşitli formatlarda dışa aktarın ve indirme bağlantılarıyla dışa aktarma geçmişinize erişin.",
         "exporting": "Dışa aktarılıyor",
+        "exporting_projects": "Proje dışa aktarılıyor",
+        "format": "Format",
         "previous_exports": "Önceki dışa aktarımlar",
         "export_separate_files": "Verileri ayrı dosyalara aktar",
         "filters_info": "Kriterlerinize göre belirli iş öğelerini dışa aktarmak için filtreler uygulayın.",
@@ -93,6 +99,8 @@
       },
       "webhooks": {
         "title": "Webhook'lar",
+        "heading": "Webhook'lar",
+        "description": "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
         "add_webhook": "Webhook ekle",
         "modal": {
           "title": "Webhook oluştur",
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Entegrasyonlar",
+        "heading": "Entegrasyonlar",
+        "description": "Tüm iş akışı ekosisteminizde işinizi senkronize etmek için popüler araçlar ve hizmetlerle bağlantı kurun.",
         "page_title": "Plane verilerinizi mevcut uygulamalarda veya kendi uygulamalarınızda kullanın.",
         "page_description": "Bu çalışma alanı veya sizin tarafınızdan kullanılan tüm entegrasyonları görüntüleyin."
       },
       "imports": {
-        "title": "İmportlar"
+        "title": "İmportlar",
+        "heading": "İmportlar",
+        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın."
       },
       "worklogs": {
-        "title": "Workloglar"
+        "title": "Workloglar",
+        "heading": "Workloglar",
+        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin."
       },
       "group_syncing": {
         "title": "Grup senkronizasyonu",
@@ -242,7 +256,10 @@
         "description": "Alan adınızı yapılandırın ve Tek oturum açmayı etkinleştirin"
       },
       "project_states": {
-        "title": "Proje durumları"
+        "title": "Proje durumları",
+        "heading": "Tüm projeler için ilerleme özetini görün.",
+        "description": "Proje Durumları, herhangi bir proje özelliğine göre tüm projelerinizin ilerlemesini takip etmek için Plane'e özgü bir özelliktir.",
+        "go_to_settings": "Ayarlara git"
       },
       "projects": {
         "title": "Projeler",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Timspeys"
+        "title": "Timspeys",
+        "heading": "Takım Alanları",
+        "description": "Bağlantılı projeler, görevler, takım grafikleri, sayfalar ve görünümlerle ekibinizin işini ayrı bir alanda görün."
       },
       "initiatives": {
-        "title": "İnisiyatifler"
+        "title": "İnisiyatifler",
+        "heading": "İnisiyatifler",
+        "description": "Plane'deki tüm işleriniz için en üst düzey organizasyonu açın."
       },
       "customers": {
-        "title": "Kastımerlar"
+        "title": "Kastımerlar",
+        "heading": "Müşterileriniz için önemli olana göre işleri yönetin.",
+        "description": "Müşteri taleplerini iş öğelerine taşıyın, taleplere göre öncelik atayın ve iş öğesi durumlarını müşteri kayıtlarına yansıtın. Yakında, müşteri özelliklerine göre daha iyi iş yönetimi için CRM veya Destek aracınızla entegre olacaksınız."
+      },
+      "templates": {
+        "title": "Şablonlar",
+        "heading": "Şablonlar",
+        "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmaya harcanan zamanın %80'ini tasarruf edin."
+      },
+      "relations": {
+        "title": "İlişkiler",
+        "heading": "İlişkiler",
+        "description": "Çalışma alanınızdaki iş öğelerini birbirine bağlayan ilişki türlerini oluşturun ve yönetin."
       },
       "releases": {
         "title": "Sürümler",
@@ -289,6 +322,7 @@
         "your_apps": "Aplikasyonlarınız",
         "connect": "Bağlan",
         "connected": "Bağlandı",
+        "disconnect": "Bağlantıyı kes",
         "install": "Yükle",
         "installed": "Yüklendi",
         "configure": "Yapılandır",
@@ -319,8 +353,8 @@
         "app_description_error": "Aplikasyon açıklaması gerekli",
         "app_slug_title": "Aplikasyon slag",
         "app_slug_error": "Aplikasyon slag gerekli",
-        "app_maker_title": "Aplikasyon Meykır",
         "app_maker_error": "Aplikasyon meykır gerekli",
+        "invalid_website_error": "Geçersiz web sitesi",
         "webhook_url_title": "Webhuk URL",
         "webhook_url_error": "Webhuk URL gerekli",
         "invalid_webhook_url_error": "Geçersiz webhuk URL",
@@ -380,7 +414,6 @@
         "video_url_title": "Video URL",
         "video_url_error": "Video URL gerekli",
         "invalid_video_url_error": "Geçersiz video URL",
-        "setup_url_title": "Kurulum URL",
         "setup_url_error": "Kurulum URL gerekli",
         "invalid_setup_url_error": "Geçersiz kurulum URL",
         "configuration_url_title": "Yapılandırma URL",
@@ -426,12 +459,21 @@
           "description": "Uygulamanızın yüklü olduğu çalışma alanlarından webhook olaylarını ve güncellemelerini buraya göndereceğiz.",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Webhook Gizli Anahtarı",
+          "description": "Gelen webhook isteklerini doğrulamak için kullanılan gizli anahtar.",
+          "placeholder": "Rastgele bir gizli anahtar girin"
+        },
         "redirect_uris": {
           "label": "Yönlendirme URI'leri (boşluk ile ayrılmış)",
           "description": "Kullanıcılar Plane ile kimlik doğrulaması yaptıktan sonra bu yola yönlendirilecektir.",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "Yükleme talebi",
         "app_consent_no_access_description": "Bu uygulama yalnızca bir workspace yöneticisi tarafından kurulduktan sonra yüklenebilir. Devam etmek için workspace yöneticinizle iletişime geçin.",
+        "app_consent_unapproved_title": "Bu uygulama henüz Plane tarafından incelenmedi veya onaylanmadı.",
+        "app_consent_unapproved_description": "Bu uygulamayı çalışma alanınıza bağlamadan önce güvendiğinizden emin olun.",
+        "go_to_app": "Uygulamaya git",
         "enable_app_mentions": "Uygulama bahsini etkinleştir",
         "enable_app_mentions_tooltip": "Bu etkinleştirildiğinde, kullanıcılar Çalışma Öğelerini bu uygulamaya atayabilir veya bahsedebilir.",
         "scopes": "Kapsamlar",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Komut Dosyaları",
+        "new_script": "Yeni Komut Dosyası",
+        "description": "İş akışlarınızı özel komut dosyaları ve otomasyon kurallarıyla otomatikleştirin."
       }
     },
     "empty_state": {

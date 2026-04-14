@@ -3,11 +3,17 @@
     "label": "Tipuri de Elemente de Lucru",
     "label_lowercase": "tipuri de elemente de lucru",
     "settings": {
-      "title": "Tipuri de Elemente de Lucru",
+      "description": "Personalizează și adaugă propriile proprietăți pentru a le adapta nevoilor echipei tale.",
       "properties": {
         "title": "Proprietăți personalizate",
+        "description": "Creează și personalizează proprietăți.",
         "tooltip": "Fiecare tip de element de lucru vine cu un set implicit de proprietăți precum Titlu, Descriere, Responsabil, Stare, Prioritate, Data de început, Data scadentă, Modul, Ciclu etc. De asemenea, poți personaliza și adăuga propriile proprietăți pentru a le adapta nevoilor echipei tale.",
         "add_button": "Adaugă proprietate nouă",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importă din spațiul de lucru"
+          }
+        },
         "dropdown": {
           "label": "Tip de proprietate",
           "placeholder": "Selectează tipul"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Creează o proprietate personalizată nouă",
+            "update": "Actualizează proprietatea personalizată"
+          },
           "form": {
             "display_name": {
               "placeholder": "Titlu"
@@ -216,6 +226,46 @@
           "description": "Noile proprietăți pe care le adaugi pentru acest tip de element de lucru vor apărea aici."
         }
       },
+      "types": {
+        "title": "Tipuri",
+        "description": "Creează și personalizează tipuri de activități cu proprietăți.",
+        "sort_options": {
+          "project_count": "Numărul de proiecte din care face parte"
+        },
+        "filter_options": {
+          "show_active": "Afișează active",
+          "show_inactive": "Afișează inactive"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Creează nou",
+            "import_from_workspace": "Importă din spațiul de lucru"
+          },
+          "banner": {
+            "with_access": "Activează tipurile de activități pentru a importa tipuri de la nivelul spațiului de lucru",
+            "without_access": "Tipurile de activități sunt dezactivate. Contactează administratorul spațiului de lucru pentru a le activa în setările spațiului de lucru."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Proprietăți personalizate",
+        "add_button": "Adaugă proprietăți",
+        "modal": {
+          "title": "Adaugă proprietăți",
+          "empty": {
+            "title": "Nu există proprietăți disponibile",
+            "description": "Toate proprietățile au fost deja conectate la acest tip."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Deconectează proprietatea",
+          "description": "Deconectarea acestei proprietăți va șterge permanent toate valorile sale din fiecare activitate care folosește acest tip. Această acțiune nu poate fi anulată.",
+          "input_label": "Tastează",
+          "input_label_suffix": "pentru a continua:",
+          "confirm": "Deconectează proprietatea",
+          "loading": "Se deconectează"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Șterge acest tip",
         "description": "Ștergerea tipurilor poate duce la pierderea datelor existente.",
@@ -256,7 +306,8 @@
         "error": {
           "title": "Eroare!",
           "message": {
-            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume.",
+            "default": "Crearea tipului de activitate a eșuat. Te rugăm să încerci din nou!"
           }
         }
       }
@@ -272,7 +323,8 @@
         "error": {
           "title": "Eroare!",
           "message": {
-            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume.",
+            "default": "Actualizarea tipului de activitate a eșuat. Te rugăm să încerci din nou!"
           }
         }
       }

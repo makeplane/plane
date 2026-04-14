@@ -3,11 +3,17 @@
     "label": "Loại mục công việc",
     "label_lowercase": "loại mục công việc",
     "settings": {
-      "title": "Loại mục công việc",
+      "description": "Tùy chỉnh và thêm thuộc tính riêng của bạn để điều chỉnh theo nhu cầu của nhóm.",
       "properties": {
-        "title": "Thuộc tính tùy chỉnh",
+        "title": "Thuộc tính",
+        "description": "Tạo và tùy chỉnh thuộc tính.",
         "tooltip": "Mỗi loại mục công việc đi kèm với một bộ thuộc tính mặc định như Tiêu đề, Mô tả, Người được giao, Trạng thái, Ưu tiên, Ngày bắt đầu, Ngày đến hạn, Module, Chu kỳ, v.v. Bạn cũng có thể tùy chỉnh và thêm thuộc tính riêng của mình để phù hợp với nhu cầu của nhóm bạn.",
         "add_button": "Thêm thuộc tính mới",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Nhập từ không gian làm việc"
+          }
+        },
         "dropdown": {
           "label": "Loại thuộc tính",
           "placeholder": "Chọn loại"
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Tạo thuộc tính tùy chỉnh mới",
+            "update": "Cập nhật thuộc tính tùy chỉnh"
+          },
           "form": {
             "display_name": {
               "placeholder": "Tiêu đề"
@@ -216,6 +226,46 @@
           "description": "Các thuộc tính mới bạn thêm cho loại mục công việc này sẽ hiển thị ở đây."
         }
       },
+      "types": {
+        "title": "Loại",
+        "description": "Tạo và tùy chỉnh loại mục công việc với các thuộc tính.",
+        "sort_options": {
+          "project_count": "Số lượng dự án sử dụng"
+        },
+        "filter_options": {
+          "show_active": "Hiển thị đang hoạt động",
+          "show_inactive": "Hiển thị không hoạt động"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Tạo mới",
+            "import_from_workspace": "Nhập từ không gian làm việc"
+          },
+          "banner": {
+            "with_access": "Bật loại mục công việc để nhập các loại từ cấp không gian làm việc",
+            "without_access": "Loại mục công việc đã bị tắt. Liên hệ quản trị viên không gian làm việc để bật trong cài đặt không gian làm việc."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Thuộc tính tùy chỉnh",
+        "add_button": "Thêm thuộc tính",
+        "modal": {
+          "title": "Thêm thuộc tính",
+          "empty": {
+            "title": "Không có thuộc tính nào khả dụng",
+            "description": "Tất cả thuộc tính đã được liên kết với loại này."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Hủy liên kết thuộc tính",
+          "description": "Việc hủy liên kết thuộc tính này sẽ xóa vĩnh viễn tất cả các giá trị của nó trên mỗi mục công việc sử dụng loại này. Hành động này không thể hoàn tác.",
+          "input_label": "Nhập",
+          "input_label_suffix": "để tiếp tục:",
+          "confirm": "Hủy liên kết thuộc tính",
+          "loading": "Đang hủy liên kết"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Xóa loại này",
         "description": "Việc xóa các loại có thể dẫn đến mất dữ liệu hiện có.",
@@ -256,6 +306,7 @@
         "error": {
           "title": "Lỗi!",
           "message": {
+            "default": "Không thể tạo loại mục công việc. Vui lòng thử lại!",
             "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "Lỗi!",
           "message": {
+            "default": "Không thể cập nhật loại mục công việc. Vui lòng thử lại!",
             "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
           }
         }

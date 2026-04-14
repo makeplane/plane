@@ -67,12 +67,18 @@
       },
       "billing_and_plans": {
         "title": "Faturamento e planos",
+        "heading": "Faturamento e planos",
+        "description": "Escolha seu plano, gerencie assinaturas e faça upgrade facilmente conforme suas necessidades crescem.",
         "current_plan": "Plano atual",
         "free_plan": "Você está usando o plano gratuito atualmente",
         "view_plans": "Ver planos"
       },
       "exports": {
         "title": "Exportações",
+        "heading": "Exportações",
+        "description": "Exporte os dados do seu projeto em vários formatos e acesse seu histórico de exportações com links para download.",
+        "exporting_projects": "Exportando projeto",
+        "format": "Formato",
         "exporting": "Exportando",
         "previous_exports": "Exportações anteriores",
         "export_separate_files": "Exporte os dados em arquivos separados",
@@ -93,6 +99,8 @@
       },
       "webhooks": {
         "title": "Webhooks",
+        "heading": "Webhooks",
+        "description": "Automatize notificações para serviços externos quando ocorrerem eventos do projeto.",
         "add_webhook": "Adicionar webhook",
         "modal": {
           "title": "Criar webhook",
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrações",
+        "heading": "Integrações",
+        "description": "Conecte-se com ferramentas e serviços populares para sincronizar seu trabalho em todo o seu ecossistema de fluxo de trabalho.",
         "page_title": "Trabalhe com seus dados do Plane em aplicativos disponíveis ou nos seus próprios.",
         "page_description": "Veja todas as integrações em uso por este workspace ou por você."
       },
       "imports": {
-        "title": "Importações"
+        "title": "Importações",
+        "heading": "Importações",
+        "description": "Conecte e importe dados das suas ferramentas de gerenciamento de projetos existentes para otimizar a integração do seu fluxo de trabalho."
       },
       "worklogs": {
-        "title": "Registros de trabalho"
+        "title": "Registros de trabalho",
+        "heading": "Registros de trabalho",
+        "description": "Baixe registros de trabalho, também conhecidos como folhas de ponto, de qualquer pessoa em qualquer projeto."
       },
       "group_syncing": {
         "title": "Sincronização de grupos",
@@ -242,7 +256,10 @@
         "description": "Configure seu domínio e habilite o Single sign-on"
       },
       "project_states": {
-        "title": "Estados do projeto"
+        "title": "Estados do projeto",
+        "heading": "Veja uma visão geral do progresso de todos os projetos.",
+        "description": "Os Estados de projeto são um recurso exclusivo do Plane para acompanhar o progresso de todos os seus projetos por qualquer propriedade do projeto.",
+        "go_to_settings": "Ir para as configurações"
       },
       "projects": {
         "title": "Projetos",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Espaços de equipe"
+        "title": "Espaços de equipe",
+        "heading": "Espaços de equipe",
+        "description": "Veja o trabalho da sua equipe em um espaço separado com projetos vinculados, tarefas, gráficos de equipe, páginas e visualizações."
       },
       "initiatives": {
-        "title": "Iniciativas"
+        "title": "Iniciativas",
+        "heading": "Iniciativas",
+        "description": "Desbloqueie o mais alto nível de organização para todo o seu trabalho no Plane."
       },
       "customers": {
-        "title": "Clientes"
+        "title": "Clientes",
+        "heading": "Gerencie o trabalho pelo que é importante para seus clientes.",
+        "description": "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente."
+      },
+      "templates": {
+        "title": "Modelos",
+        "heading": "Modelos",
+        "description": "Economize 80% do tempo gasto na criação de projetos, itens de trabalho e páginas quando você usar modelos."
+      },
+      "relations": {
+        "title": "Relações",
+        "heading": "Relações",
+        "description": "Crie e gerencie tipos de relação que conectam itens de trabalho em todo o seu espaço de trabalho."
       },
       "releases": {
         "title": "Lançamentos",
@@ -282,6 +315,17 @@
       },
       "applications": {
         "title": "Aplicativos",
+        "disconnect": "Desconectar",
+        "webhook_secret": {
+          "label": "Segredo do webhook",
+          "description": "Segredo usado para verificar as solicitações de webhook recebidas.",
+          "placeholder": "Digite uma chave secreta aleatória"
+        },
+        "invalid_website_error": "Site inválido",
+        "app_consent_no_access_title": "Solicitação para instalar",
+        "app_consent_unapproved_title": "Este aplicativo ainda não foi revisado ou aprovado pelo Plane.",
+        "app_consent_unapproved_description": "Certifique-se de confiar neste aplicativo antes de conectá-lo ao seu espaço de trabalho.",
+        "go_to_app": "Ir para o aplicativo",
         "applicationId_copied": "ID da aplicação copiado para a área de transferência",
         "clientId_copied": "ID do cliente copiado para a área de transferência",
         "clientSecret_copied": "Chave secreta do cliente copiado para a área de transferência",
@@ -319,7 +363,6 @@
         "app_description_error": "Descrição do aplicativo é obrigatória",
         "app_slug_title": "Slug do aplicativo",
         "app_slug_error": "Slug do aplicativo é obrigatório",
-        "app_maker_title": "Criador de aplicativos",
         "app_maker_error": "Criador de aplicativos é obrigatório",
         "webhook_url_title": "URL do webhook",
         "webhook_url_error": "URL do webhook é obrigatória",
@@ -380,7 +423,6 @@
         "video_url_title": "URL do Vídeo",
         "video_url_error": "URL do Vídeo é obrigatória",
         "invalid_video_url_error": "URL do Vídeo inválida",
-        "setup_url_title": "URL de Configuração",
         "setup_url_error": "URL de Configuração é obrigatória",
         "invalid_setup_url_error": "URL de Configuração inválida",
         "configuration_url_title": "URL de Configuração",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Veja seu trabalho se tornar mais inteligente e mais rápido com IA que está conectada de forma nativa ao seu trabalho e base de conhecimentos."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "Novo Script",
+        "description": "Automatize seus fluxos de trabalho com scripts personalizados e regras de automação."
       }
     },
     "empty_state": {

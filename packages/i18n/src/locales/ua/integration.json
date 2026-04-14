@@ -194,6 +194,10 @@
       "server_error_states": "Помилка сервера при завантаженні станів"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Підключайте та синхронізуйте ваші репозиторії Bitbucket Data Center з Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Перевірка токенів зовнішніх IdP для доступу до API.",
@@ -306,13 +310,15 @@
     "user_not_found": "Запитаний користувач не знайдений",
     "error_fetching_token": "Не вдалося отримати токен аутентифікації",
     "invalid_app_credentials": "Наданий токен аутентифікації недійсний",
-    "invalid_app_installation_id": "Не вдалося встановити застосунок"
+    "invalid_app_installation_id": "Не вдалося встановити застосунок",
+    "cannot_create_multiple_connections": "Ви вже підключили вашу організацію до робочого простору. Будь ласка, відключіть існуюче підключення перед створенням нового."
   },
   "import_status": {
     "queued": "В черзі",
     "created": "Створено",
     "initiated": "Ініційовано",
     "pulling": "Отримання",
+    "progressing": "Виконується",
     "timed_out": "Час вийшов",
     "pulled": "Отримано",
     "transforming": "Трансформація",

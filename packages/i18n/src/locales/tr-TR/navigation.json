@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Yapışkan Notlar",
     "projects": "Projeler",
     "pages": "Sayfalar",
     "new_work_item": "Yeni iş öğesi",
@@ -25,7 +26,7 @@
     "plane_pro": "Pleyn Pro",
     "business": "Biznis",
     "customers": "Kastımırs",
-    "recurring_work_items": "Yinelenen iş öğeleri"
+    "releases": "Sürümler"
   },
   "command_k": {
     "empty_state": {

@@ -5,8 +5,6 @@
       "sub-title": "Beritahu tim tentang apa yang ingin Anda kerjakan.",
       "name": "Nama",
       "email": "Email",
-      "about": "Tentang apa item kerja ini?",
-      "description": "Jelaskan apa yang seharusnya terjadi",
       "description_placeholder": "Tambahkan detail sebanyak yang Anda suka untuk membantu tim mengidentifikasi situasi dan kebutuhan Anda.",
       "loading": "Membuat",
       "create_work_item": "Buat item kerja",

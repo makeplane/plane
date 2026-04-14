@@ -3,9 +3,15 @@
     "label": "Tipos de Item de Trabalho",
     "label_lowercase": "tipos de item de trabalho",
     "settings": {
-      "title": "Tipos de Item de Trabalho",
+      "description": "Personalize e adicione suas próprias propriedades para adaptar às necessidades da sua equipe.",
       "properties": {
         "title": "Propriedades personalizadas",
+        "description": "Crie e personalize propriedades.",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importar do espaço de trabalho"
+          }
+        },
         "tooltip": "Cada tipo de item de trabalho vem com um conjunto padrão de propriedades como Título, Descrição, Responsável, Estado, Prioridade, Data de início, Data de vencimento, Módulo, Ciclo etc. Você também pode personalizar e adicionar suas próprias propriedades para adaptar às necessidades da sua equipe.",
         "add_button": "Adicionar nova propriedade",
         "dropdown": {
@@ -143,6 +149,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Criar nova propriedade personalizada",
+            "update": "Atualizar propriedade personalizada"
+          },
           "form": {
             "display_name": {
               "placeholder": "Título"
@@ -216,6 +226,46 @@
           "description": "Novas propriedades que você adicionar para este tipo de item de trabalho aparecerão aqui."
         }
       },
+      "types": {
+        "title": "Tipos",
+        "description": "Crie e personalize tipos de itens de trabalho com propriedades.",
+        "sort_options": {
+          "project_count": "Número de projetos dos quais faz parte"
+        },
+        "filter_options": {
+          "show_active": "Mostrar ativos",
+          "show_inactive": "Mostrar inativos"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Criar novo",
+            "import_from_workspace": "Importar do espaço de trabalho"
+          },
+          "banner": {
+            "with_access": "Habilite os tipos de item de trabalho para importar tipos do nível do espaço de trabalho",
+            "without_access": "Os tipos de item de trabalho estão desabilitados. Entre em contato com o administrador do espaço de trabalho para habilitá-los nas configurações do espaço de trabalho."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Propriedades personalizadas",
+        "add_button": "Adicionar propriedades",
+        "modal": {
+          "title": "Adicionar propriedades",
+          "empty": {
+            "title": "Nenhuma propriedade disponível",
+            "description": "Todas as propriedades já foram vinculadas a este tipo."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Desvincular propriedade",
+          "description": "Desvincular esta propriedade excluirá permanentemente todos os seus valores em todos os itens de trabalho que usam este tipo. Esta ação não pode ser desfeita.",
+          "input_label": "Digite",
+          "input_label_suffix": "para continuar:",
+          "confirm": "Desvincular propriedade",
+          "loading": "Desvinculando"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Excluir este tipo",
         "description": "A exclusão de tipos pode levar à perda de dados existentes.",
@@ -256,6 +306,7 @@
         "error": {
           "title": "Erro!",
           "message": {
+            "default": "Falha ao criar o tipo de item de trabalho. Tente novamente!",
             "conflict": "O tipo {name} já existe. Escolha um nome diferente."
           }
         }
@@ -272,6 +323,7 @@
         "error": {
           "title": "Erro!",
           "message": {
+            "default": "Falha ao atualizar o tipo de item de trabalho. Tente novamente!",
             "conflict": "O tipo {name} já existe. Escolha um nome diferente."
           }
         }

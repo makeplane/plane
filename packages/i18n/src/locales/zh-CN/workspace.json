@@ -141,13 +141,7 @@
     "summary_of_projects": "项目概览",
     "project_insights": "项目洞察",
     "started_work_items": "已开始的{entity}",
-    "total_work_items": "{entity}总数",
-    "total_projects": "项目总数",
-    "total_admins": "管理员总数",
-    "total_users": "用户总数",
-    "total_intake": "总收入",
     "un_started_work_items": "未开始的{entity}",
-    "total_guests": "访客总数",
     "completed_work_items": "已完成的{entity}",
     "total": "{entity}总数",
     "projects_by_status": "按状态分类的项目",
@@ -162,6 +156,7 @@
       "label": "添加项目"
     },
     "network": {
+      "label": "网络",
       "private": {
         "title": "私有",
         "description": "仅限邀请访问"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "还没有已归档的页面",
         "description": "归档不在您关注范围内的页面。需要时可以在这里访问它们。"
+      },
+      "shared": {
+        "title": "尚无共享页面",
+        "description": "其他人与您共享的页面将显示在此处。"
       }
     }
   },

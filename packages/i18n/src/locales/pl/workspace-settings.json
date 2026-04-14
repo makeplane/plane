@@ -34,7 +34,8 @@
             "max_length": "Nazwa przestrzeni nie może przekraczać 80 znaków"
           },
           "company_size": {
-            "required": "Rozmiar firmy jest wymagany"
+            "required": "Rozmiar firmy jest wymagany",
+            "select_a_range": "Wybierz rozmiar organizacji"
           }
         }
       },
@@ -66,12 +67,18 @@
       },
       "billing_and_plans": {
         "title": "Rozliczenia i plany",
+        "heading": "Rozliczenia i plany",
+        "description": "Wybierz plan, zarządzaj subskrypcjami i łatwo dokonaj uaktualnienia w miarę rozwoju Twoich potrzeb.",
         "current_plan": "Obecny plan",
         "free_plan": "Używasz bezpłatnego planu",
         "view_plans": "Wyświetl plany"
       },
       "exports": {
         "title": "Eksporty",
+        "heading": "Eksporty",
+        "description": "Eksportuj dane projektu w różnych formatach i uzyskaj dostęp do historii eksportów z linkami do pobrania.",
+        "exporting_projects": "Eksportowanie projektu",
+        "format": "Format",
         "exporting": "Eksportowanie",
         "previous_exports": "Poprzednie eksporty",
         "export_separate_files": "Eksportuj dane do oddzielnych plików",
@@ -92,6 +99,8 @@
       },
       "webhooks": {
         "title": "Webhooki",
+        "heading": "Webhooki",
+        "description": "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
         "add_webhook": "Dodaj webhook",
         "modal": {
           "title": "Utwórz webhook",
@@ -165,14 +174,20 @@
       },
       "integrations": {
         "title": "Integracje",
+        "heading": "Integracje",
+        "description": "Łącz się z popularnymi narzędziami i usługami, aby synchronizować pracę w całym ekosystemie przepływu pracy.",
         "page_title": "Pracuj ze swoimi danymi Plane w dostępnych aplikacjach lub we własnych.",
         "page_description": "Zobacz wszystkie integracje używane przez tę przestrzeń roboczą lub przez Ciebie."
       },
       "imports": {
-        "title": "Importy"
+        "title": "Importy",
+        "heading": "Importy",
+        "description": "Łącz i importuj dane z istniejących narzędzi do zarządzania projektami, aby usprawnić integrację przepływu pracy."
       },
       "worklogs": {
-        "title": "Logi pracy"
+        "title": "Logi pracy",
+        "heading": "Logi pracy",
+        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie."
       },
       "group_syncing": {
         "title": "Synchronizacja grup",
@@ -241,7 +256,10 @@
         "description": "Skonfiguruj swoją domenę i włącz logowanie jednokrotne"
       },
       "project_states": {
-        "title": "Stany projektu"
+        "title": "Stany projektu",
+        "heading": "Zobacz przegląd postępu dla wszystkich projektów.",
+        "description": "Stany projektów to funkcja Plane służąca do śledzenia postępu wszystkich projektów według dowolnej właściwości projektu.",
+        "go_to_settings": "Przejdź do ustawień"
       },
       "projects": {
         "title": "Projekty",
@@ -252,13 +270,19 @@
         }
       },
       "teamspaces": {
-        "title": "Przestrzenie zespołu"
+        "title": "Przestrzenie zespołu",
+        "heading": "Teamspejsy",
+        "description": "Zobacz pracę swojego zespołu w osobnej przestrzeni z połączonymi projektami, zadaniami, wykresami zespołu, stronami i widokami."
       },
       "initiatives": {
-        "title": "Inicjatywy"
+        "title": "Inicjatywy",
+        "heading": "Inicjatywy",
+        "description": "Odblokuj najwyższy poziom organizacji dla całej swojej pracy w Plane."
       },
       "customers": {
-        "title": "Klienci"
+        "title": "Klienci",
+        "heading": "Zarządzaj pracą według tego, co jest ważne dla Twoich klientów.",
+        "description": "Przenieś prośby klientów do elementów pracy, przypisuj priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zintegrujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta."
       },
       "releases": {
         "title": "Wydania",
@@ -268,6 +292,16 @@
           "release_not_found": "Szukane wydanie nie istnieje.",
           "unknown": "Coś poszło nie tak. Spróbuj ponownie."
         }
+      },
+      "templates": {
+        "title": "Szablony",
+        "heading": "Szablony",
+        "description": "Zaoszczędź 80% czasu poświęcanego na tworzenie projektów, elementów pracy i stron, gdy używasz szablonów."
+      },
+      "relations": {
+        "title": "Relacje",
+        "heading": "Relacje",
+        "description": "Twórz typy relacji i zarządzaj nimi, które łączą elementy pracy w całej przestrzeni roboczej."
       },
       "cancel_trial": {
         "title": "Najpierw anuluj swój okres próbny.",
@@ -288,6 +322,7 @@
         "your_apps": "Twoje aplikacje",
         "connect": "Połącz",
         "connected": "Połączono",
+        "disconnect": "Odłącz",
         "install": "Zainstaluj",
         "installed": "Zainstalowano",
         "configure": "Konfiguruj",
@@ -318,7 +353,7 @@
         "app_description_error": "Opis aplikacji jest wymagany",
         "app_slug_title": "Slug aplikacji",
         "app_slug_error": "Slug aplikacji jest wymagany",
-        "app_maker_title": "Twórca aplikacji",
+        "invalid_website_error": "Nieprawidłowa strona internetowa",
         "app_maker_error": "Twórca aplikacji jest wymagany",
         "webhook_url_title": "URL Webhooka",
         "webhook_url_error": "URL webhooka jest wymagany",
@@ -379,7 +414,6 @@
         "video_url_title": "URL Filmu",
         "video_url_error": "URL Filmu jest wymagany",
         "invalid_video_url_error": "Nieprawidłowy URL Filmu",
-        "setup_url_title": "URL Konfiguracji",
         "setup_url_error": "URL Konfiguracji jest wymagany",
         "invalid_setup_url_error": "Nieprawidłowy URL Konfiguracji",
         "configuration_url_title": "URL Konfiguracji",
@@ -425,12 +459,21 @@
           "description": "Tutaj będziemy wysyłać zdarzenia webhook i aktualizacje z przestrzeni roboczych, w których zainstalowano Twoją aplikację.",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Sekret webhooka",
+          "description": "Sekret używany do weryfikacji przychodzących żądań webhooka.",
+          "placeholder": "Wprowadź losowy klucz sekretny"
+        },
         "redirect_uris": {
           "label": "URI przekierowań (oddzielone spacją)",
           "description": "Użytkownicy zostaną przekierowani na tę ścieżkę po uwierzytelnieniu się w Plane.",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "Prośba o instalację",
         "app_consent_no_access_description": "Aplikacja może być zainstalowana dopiero po tym, jak administrator workspace ją zainstaluje. Skontaktuj się z administratorem workspace, aby kontynuować.",
+        "app_consent_unapproved_title": "Ta aplikacja nie została jeszcze sprawdzona ani zatwierdzona przez Plane.",
+        "app_consent_unapproved_description": "Upewnij się, że ufasz tej aplikacji, zanim połączysz ją ze swoją przestrzenią roboczą.",
+        "go_to_app": "Przejdź do aplikacji",
         "enable_app_mentions": "Włącz wzmianki o aplikacji",
         "enable_app_mentions_tooltip": "Po włączeniu tej opcji użytkownicy mogą wspominać lub przypisywać elementy pracy do tej aplikacji.",
         "scopes": "Zakresy",
@@ -462,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Twoja praca staje się inteligentniejsza i szybsza dzięki AI, która jest natywnie połączona z Twoją pracą i bazą wiedzy."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skrypty",
+        "new_script": "Nowy skrypt",
+        "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
       }
     },
     "empty_state": {

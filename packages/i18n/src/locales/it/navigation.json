@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Stickies",
     "projects": "Progetti",
     "pages": "Pagine",
     "new_work_item": "Nuovo elemento di lavoro",
@@ -24,7 +25,8 @@
     "upgrade_plan": "Piano di aggiornamento",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "recurring_work_items": "Elementi di lavoro ricorrenti"
+    "customers": "Clienti",
+    "releases": "Versioni"
   },
   "command_k": {
     "empty_state": {

@@ -43,6 +43,8 @@
     "import": "導入",
     "serial_number": "序號",
     "project": "專案",
+    "teamspace": "團隊空間",
+    "destination": "目的地",
     "workspace": "工作區",
     "status": "狀態",
     "summary": "摘要",
@@ -88,7 +90,6 @@
     "import_to_existing_project": "匯入到現有專案",
     "import_to_existing_project_description": "從下方的下拉選選單中選擇一個現有專案。",
     "state_mapping_automatic_creation": "所有 Jira 狀態都將在 Plane 中自動建立。",
-    "atlassian_security_settings": "Atlassian 安全設置",
     "email_description": "這是與您的個人訪問令牌關聯的郵箱",
     "jira_domain": "Jira 域名",
     "jira_domain_description": "這是您的 Jira 實例的域名",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "將您的 Notion 資料匯入到 Plane 專案中。",
     "steps": {
+      "title_select_destination": "選擇目的地",
+      "description_select_destination": "請選擇您 Notion 資料的目的地。",
       "title_upload_zip": "上傳 Notion 匯出的 ZIP 檔案",
       "description_upload_zip": "請上傳包含您的 Notion 資料的 ZIP 檔案。"
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "上傳完成！",
       "upload_complete_description": "點擊「開始匯入」開始處理您的 Notion 資料。",
       "upload_progress_message": "請不要關閉此視窗。"
+    },
+    "select_destination": {
+      "destination_type": "目的地類型",
+      "select_destination_type": "選擇目的地類型",
+      "select_project": "選擇專案",
+      "no_projects_found": "找不到專案",
+      "select_teamspace": "選擇團隊空間",
+      "no_teamspaces_found": "找不到團隊空間",
+      "unknown_project": "未知專案",
+      "unknown_teamspace": "未知團隊空間"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "將您的 Confluence 資料匯入到 Plane 維基中。",
     "steps": {
+      "title_select_destination": "選擇目的地",
+      "description_select_destination": "請選擇您 Confluence 資料的目的地。",
       "title_upload_zip": "上傳 Confluence 匯出的 ZIP 檔案",
       "description_upload_zip": "請上傳包含您的 Confluence 資料的 ZIP 檔案。"
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "上傳完成！",
       "upload_complete_description": "點擊「開始匯入」開始處理您的 Confluence 資料。",
       "upload_progress_message": "請不要關閉此視窗。"
+    },
+    "select_destination": {
+      "destination_type": "目的地類型",
+      "select_destination_type": "選擇目的地類型",
+      "select_project": "選擇專案",
+      "no_projects_found": "找不到專案",
+      "select_teamspace": "選擇團隊空間",
+      "no_teamspaces_found": "找不到團隊空間",
+      "unknown_project": "未知專案",
+      "unknown_teamspace": "未知團隊空間"
     }
   },
   "flatfile_importer": {

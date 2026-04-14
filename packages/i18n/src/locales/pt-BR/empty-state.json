@@ -274,6 +274,9 @@
       "title": "Acompanhe folhas de ponto para todos os membros",
       "description": "Registre tempo em itens de trabalho para ver folhas de ponto detalhadas para qualquer membro da equipe em projetos."
     },
+    "group_syncing": {
+      "title": "Ainda não há mapeamentos de grupos"
+    },
     "customers_setting": {
       "title": "Ative o gerenciamento de clientes para começar.",
       "cta_primary": "Ativar"
@@ -282,6 +285,15 @@
       "title": "Ainda não há modelos",
       "description": "Reduza o tempo de configuração criando modelos para projetos, itens de trabalho e páginas — e comece novo trabalho em segundos.",
       "cta_primary": "Criar modelo"
+    },
+    "workflows": {
+      "title": "Ainda não há fluxos de trabalho",
+      "description": "Crie fluxos de trabalho para gerenciar o progresso dos seus itens de trabalho.",
+      "cta_primary": "Adicionar novo fluxo de trabalho",
+      "states": {
+        "title": "Adicionar estados",
+        "description": "Selecione os estados pelos quais o item de trabalho progride."
+      }
     }
   }
 }

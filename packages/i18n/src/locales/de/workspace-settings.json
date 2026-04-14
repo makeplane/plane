@@ -258,7 +258,8 @@
       "project_states": {
         "heading": "Fortschrittsübersicht für alle Projekte anzeigen.",
         "description": "Projektstatus ist eine Plane-exklusive Funktion zur Verfolgung des Fortschritts aller Ihrer Projekte nach beliebiger Projekteigenschaft.",
-        "title": "Projektstatus"
+        "title": "Projektstatus",
+        "go_to_settings": "Zu den Einstellungen"
       },
       "projects": {
         "title": "Projekte",
@@ -342,6 +343,7 @@
         "your_apps": "Ihre Apps",
         "connect": "Verbinden",
         "connected": "Verbunden",
+        "disconnect": "Trennen",
         "install": "Installieren",
         "installed": "Installiert",
         "configure": "Konfigurieren",

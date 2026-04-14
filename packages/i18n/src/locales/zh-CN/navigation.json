@@ -1,10 +1,11 @@
 {
   "sidebar": {
+    "stickies": "便签",
+    "your_work": "我的工作",
     "projects": "项目",
     "pages": "页面",
     "new_work_item": "新工作项",
     "home": "主页",
-    "your_work": "我的工作",
     "inbox": "收件箱",
     "workspace": "工作区",
     "views": "视图",
@@ -25,7 +26,7 @@
     "plane_pro": "Plane Pro",
     "business": "商业版",
     "customers": "客户",
-    "recurring_work_items": "重复工作项"
+    "releases": "发布"
   },
   "command_k": {
     "empty_state": {

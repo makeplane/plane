@@ -6,6 +6,7 @@
     "select_releases": "選擇發佈",
     "overview": "總覽",
     "scope": "範圍",
+    "changelog": "更新日誌",
     "page_title": {
       "scope": "發佈 - {name} | 範圍",
       "scope_fallback": "發佈 | 範圍"

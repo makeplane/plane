@@ -37,6 +37,8 @@
       "project_subscribers_description": "Selectați membrii care vor primi notificări pentru acest proiect."
     },
     "states": {
+      "heading": "Stări",
+      "description": "Definește și personalizează stările fluxului de lucru pentru a urmări progresul activităților tale.",
       "describe_this_state_for_your_members": "Descrie această stare pentru membrii tăi.",
       "empty_state": {
         "title": "Nicio stare disponibilă pentru grupul {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etichete",
+      "description": "Creează etichete personalizate pentru a categoriza și organiza activitățile tale",
       "label_title": "Titlu etichetă",
       "label_title_is_required": "Titlul etichetei este obligatoriu",
       "label_max_char": "Numele etichetei nu trebuie să depășească 255 de caractere",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimări",
+      "description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
       "label": "Estimări",
       "title": "Activează estimările pentru proiectul meu",
-      "description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
+      "enable_description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
       "no_estimate": "Fără estimare",
       "new": "Noul sistem de estimare",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Reordonarea estimărilor a eșuat",
             "message": "Nu am putut reordona estimările, te rugăm să încerci din nou"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistem de estimări creat",
+            "message": "Creat și activat cu succes"
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Ceva a mers greșit"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automatizări",
+      "heading": "Automatizări",
+      "description": "Configurează acțiuni automate pentru a-ți eficientiza fluxul de lucru al proiectului și a reduce sarcinile manuale.",
       "auto-archive": {
         "title": "Auto-arhivează activitățile finalizate",
         "description": "Plane va arhiva automat activitățile care au fost finalizate sau anulate.",
@@ -194,6 +212,116 @@
         "description": "Configurează GitHub și alte integrări pentru a sincroniza elementele de lucru ale proiectului tău."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Activează fluxurile de lucru",
+        "description": "Setează fluxuri de lucru pentru a controla mișcarea activităților",
+        "no_states_tooltip": "Nu există stări adăugate în fluxul de lucru.",
+        "no_work_item_types_tooltip": "Nu există tipuri de activități adăugate în fluxul de lucru.",
+        "no_states_or_work_item_types_tooltip": "Nu există stări sau tipuri de activități adăugate în fluxul de lucru.",
+        "toast": {
+          "loading": {
+            "enabling": "Se activează fluxurile de lucru",
+            "disabling": "Se dezactivează fluxurile de lucru"
+          },
+          "success": {
+            "title": "Succes!",
+            "message": "Fluxurile de lucru au fost activate cu succes."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Activarea fluxurilor de lucru a eșuat. Te rugăm să încerci din nou."
+          }
+        }
+      },
+      "heading": "Fluxuri de lucru",
+      "description": "Automatizează tranzițiile activităților și setează reguli pentru a controla modul în care sarcinile se deplasează prin fluxul proiectului tău.",
+      "add_button": "Adaugă flux de lucru nou",
+      "search": "Caută fluxuri de lucru",
+      "detail": {
+        "define": "Definește fluxul de lucru",
+        "add_states": "Adaugă stări",
+        "unmapped_states": {
+          "title": "Stări nemapate detectate",
+          "description": "Unele activități pentru tipurile selectate sunt în prezent în stări care nu există în acest flux de lucru.",
+          "note": "Dacă activezi acest flux de lucru, aceste elemente se vor muta automat în starea inițială a acestui flux de lucru.",
+          "label": "Stări lipsă",
+          "tooltip": "Unele activități sunt în stări care nu sunt mapate la acest flux de lucru. Deschide fluxul de lucru pentru a revizui."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Toate stările sunt utilizate",
+          "description": "Toate stările definite pentru acest proiect sunt deja prezente în fluxul tău de lucru curent."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Acest flux de lucru se aplică oricărui tip de activitate care nu este atribuit unui flux de lucru."
+      },
+      "create": {
+        "heading": "Creează flux de lucru nou",
+        "name": {
+          "placeholder": "Adaugă un nume unic",
+          "validation": {
+            "max_length": "Numele trebuie să aibă mai puțin de 255 de caractere",
+            "required": "Numele este obligatoriu",
+            "invalid": "Numele poate conține doar litere, cifre, spații, cratime și apostrofe"
+          }
+        },
+        "description": {
+          "placeholder": "Adaugă o scurtă descriere",
+          "validation": {
+            "invalid": "Descrierea poate conține doar litere, cifre, spații, cratime și apostrofe"
+          }
+        },
+        "work_item_type": {
+          "label": "Tip de activitate"
+        },
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru creat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Crearea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru actualizat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Actualizarea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "delete": {
+        "loading": "Se șterge fluxul de lucru",
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru șters cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Ștergerea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Succes!",
+          "message": "Stări adăugate cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Adăugarea stărilor a eșuat. Te rugăm să încerci din nou."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipuri de activități",
+      "description": "Creează și personalizează diferite tipuri de activități cu proprietăți unice"
+    },
     "initiatives": {
       "heading": "Inițiative",
       "sub_heading": "Deblochează cel mai înalt nivel de organizare pentru tot lucrul tău în Plane.",
@@ -209,14 +337,25 @@
     "customers": {
       "heading": "Clienți",
       "settings_heading": "Gestionează munca după ce este important pentru clienții tăi.",
-      "settings_sub_heading": "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului."
+      "settings_sub_heading": "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului.",
+      "description": "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului."
     },
     "epics": {
+      "heading": "Epice",
+      "description": "Pentru corpuri mai mari de muncă care acoperă mai multe cicluri și pot trăi între module",
       "properties": {
         "title": "Proprietăți",
         "description": "Adaugă proprietăți personalizate la epicul tău."
       },
       "disabled": "Dezactivat"
+    },
+    "project_updates": {
+      "heading": "Actualizări proiect",
+      "description": "Urmărire consolidată și monitorizare a progresului pentru acest proiect"
+    },
+    "templates": {
+      "heading": "Șabloane",
+      "description": "Economisește 80% din timpul petrecut creând proiecte, activități și pagini atunci când folosești șabloane."
     },
     "cycles": {
       "auto_schedule": {

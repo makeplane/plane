@@ -228,11 +228,39 @@
             "title": "Las vistas funcionan sobre las propiedades de los Elementos de trabajo.",
             "description": "Puedes crear una vista desde aquí con tantas propiedades como filtros como consideres apropiado."
           }
+        },
+        "filter": {
+          "title": "No hay vistas coincidentes",
+          "description": "Ninguna vista coincide con los criterios de búsqueda.\n Crea una nueva vista en su lugar."
         }
       },
-      "filter": {
-        "title": "No hay vistas coincidentes",
-        "description": "Ninguna vista coincide con los criterios de búsqueda.\n Crea una nueva vista en su lugar."
+      "no_archived_issues": {
+        "title": "Aún no hay elementos de trabajo archivados",
+        "description": "Manualmente o mediante automatización, puedes archivar elementos de trabajo que estén completados o cancelados. Encuéntralos aquí una vez archivados.",
+        "primary_button": {
+          "text": "Configurar automatización"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No se encontraron elementos de trabajo que coincidan con los filtros aplicados",
+        "secondary_button": {
+          "text": "Limpiar todos los filtros"
+        }
+      },
+      "public": {
+        "title": "Aún no hay páginas públicas",
+        "description": "Ve las páginas compartidas con todos en tu proyecto aquí mismo.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "archived": {
+        "title": "Aún no hay páginas archivadas",
+        "description": "Archiva las páginas que no estén en tu radar. Accede a ellas aquí cuando las necesites."
+      },
+      "shared": {
+        "title": "Aún no hay páginas compartidas",
+        "description": "Las páginas que otros han compartido contigo aparecerán aquí."
       }
     },
     "delete_view": {
@@ -330,6 +358,13 @@
       "created_at": "Fecha de creación",
       "manual": "Manual"
     }
+  },
+  "project_members": {
+    "full_name": "Nombre completo",
+    "display_name": "Nombre para mostrar",
+    "email": "Correo electrónico",
+    "joining_date": "Fecha de ingreso",
+    "role": "Rol"
   },
   "project": {
     "members_import": {

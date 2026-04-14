@@ -274,6 +274,9 @@
       "title": "Śledź karty czasu pracy dla wszystkich członków",
       "description": "Rejestruj czas w elementach roboczych, aby wyświetlać szczegółowe karty czasu pracy dla każdego członka zespołu w projektach."
     },
+    "group_syncing": {
+      "title": "Brak mapowań grup"
+    },
     "customers_setting": {
       "title": "Włącz zarządzanie klientami, aby rozpocząć.",
       "cta_primary": "Włącz"
@@ -282,6 +285,15 @@
       "title": "Brak szablonów",
       "description": "Skróć czas konfiguracji, tworząc szablony dla projektów, elementów roboczych i stron — i rozpocznij nową pracę w ciągu kilku sekund.",
       "cta_primary": "Utwórz szablon"
+    },
+    "workflows": {
+      "title": "Brak przepływów pracy",
+      "description": "Utwórz przepływy pracy, aby zarządzać postępem elementów pracy.",
+      "cta_primary": "Dodaj nowy przepływ pracy",
+      "states": {
+        "title": "Dodaj stany",
+        "description": "Wybierz stany, przez które przechodzi element pracy."
+      }
     }
   }
 }

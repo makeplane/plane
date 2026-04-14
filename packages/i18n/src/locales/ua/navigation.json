@@ -25,7 +25,8 @@
     "plane_pro": "Плейн Про",
     "business": "Бізнес",
     "customers": "Кастомерз",
-    "recurring_work_items": "Повторювані робочі елементи"
+    "stickies": "Стікі",
+    "releases": "Релізи"
   },
   "command_k": {
     "empty_state": {

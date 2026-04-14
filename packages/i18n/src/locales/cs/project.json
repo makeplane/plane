@@ -228,11 +228,39 @@
             "title": "Pohledy pracují s vlastnostmi položek.",
             "description": "Vytvořte pohled s požadovanými filtry."
           }
+        },
+        "filter": {
+          "title": "Žádné odpovídající pohledy",
+          "description": "Žádné pohledy neodpovídají kritériím hledání.\n Místo toho vytvořte nový pohled."
         }
       },
-      "filter": {
-        "title": "Žádné odpovídající pohledy",
-        "description": "Vytvořte nový pohled."
+      "no_archived_issues": {
+        "title": "Zatím žádné archivované pracovní položky",
+        "description": "Ručně nebo pomocí automatizace můžete archivovat pracovní položky, které jsou dokončené nebo zrušené. Jakmile budou archivovány, najdete je zde.",
+        "primary_button": {
+          "text": "Nastavit automatizaci"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Nebyly nalezeny žádné pracovní položky odpovídající použitým filtrům",
+        "secondary_button": {
+          "text": "Vymazat všechny filtry"
+        }
+      },
+      "public": {
+        "title": "Zatím žádné veřejné stránky",
+        "description": "Zde uvidíte stránky sdílené se všemi ve vašem projektu.",
+        "primary_button": {
+          "text": "Vytvořte svou první stránku"
+        }
+      },
+      "archived": {
+        "title": "Zatím žádné archivované stránky",
+        "description": "Archivujte stránky, které nejsou na vašem radaru. Přistupujte k nim odtud, když je budete potřebovat."
+      },
+      "shared": {
+        "title": "Zatím žádné sdílené stránky",
+        "description": "Stránky, které s vámi ostatní sdíleli, se objeví zde."
       }
     },
     "delete_view": {
@@ -379,5 +407,12 @@
         }
       }
     }
+  },
+  "project_members": {
+    "full_name": "Celé jméno",
+    "display_name": "Zobrazované jméno",
+    "email": "E-mail",
+    "joining_date": "Datum připojení",
+    "role": "Role"
   }
 }

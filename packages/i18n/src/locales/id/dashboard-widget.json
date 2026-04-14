@@ -6,9 +6,18 @@
           "short_label": "Bar",
           "long_label": "Grafik bar",
           "chart_models": {
-            "basic": "Dasar",
-            "stacked": "Bertumpuk",
-            "grouped": "Dikelompokkan"
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Bar dasar"
+            },
+            "stacked": {
+              "short_label": "Bertumpuk",
+              "long_label": "Bar bertumpuk"
+            },
+            "grouped": {
+              "short_label": "Dikelompokkan",
+              "long_label": "Bar dikelompokkan"
+            }
           },
           "orientation": {
             "label": "Orientasi",
@@ -22,8 +31,14 @@
           "short_label": "Garis",
           "long_label": "Grafik garis",
           "chart_models": {
-            "basic": "Dasar",
-            "multi_line": "Multi-garis"
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Garis dasar"
+            },
+            "multi_line": {
+              "short_label": "Multi-garis",
+              "long_label": "Multi-garis"
+            }
           },
           "line_color": "Warna garis",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Area",
           "long_label": "Grafik area",
           "chart_models": {
-            "basic": "Dasar",
-            "stacked": "Bertumpuk",
-            "comparison": "Perbandingan"
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Area dasar"
+            },
+            "stacked": {
+              "short_label": "Bertumpuk",
+              "long_label": "Area bertumpuk"
+            },
+            "comparison": {
+              "short_label": "Perbandingan",
+              "long_label": "Area perbandingan"
+            }
           },
           "fill_color": "Warna isi"
         },
@@ -47,8 +71,14 @@
           "short_label": "Donat",
           "long_label": "Grafik donat",
           "chart_models": {
-            "basic": "Dasar",
-            "progress": "Progres"
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Donat dasar"
+            },
+            "progress": {
+              "short_label": "Progres",
+              "long_label": "Donat progres"
+            }
           },
           "center_value": "Nilai tengah",
           "completed_color": "Warna selesai"
@@ -57,7 +87,10 @@
           "short_label": "Pai",
           "long_label": "Grafik pai",
           "chart_models": {
-            "basic": "Dasar"
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Pai"
+            }
           },
           "group": {
             "label": "Potongan dikelompokkan",
@@ -77,9 +110,15 @@
             "count": "Jumlah"
           }
         },
-        "text": {
-          "short_label": "Teks",
-          "long_label": "Teks",
+        "number": {
+          "short_label": "Angka",
+          "long_label": "Angka",
+          "chart_models": {
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Angka"
+            }
+          },
           "alignment": {
             "label": "Perataan teks",
             "left": "Kiri",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Pilih properti untuk baris untuk melihat tabel ini."
         }
       },
+      "sections": {
+        "charts": "Grafik",
+        "text": "Teks"
+      },
       "color_palettes": {
         "modern": "Modern",
         "horizon": "Horizon",
@@ -115,11 +158,7 @@
           "label": "Beri nama widget ini",
           "placeholder": "contoh, \"Tugas kemarin\", \"Semua Selesai\""
         },
-        "chart_type": "Tipe grafik",
-        "visualization_type": {
-          "label": "Tipe visualisasi",
-          "placeholder": "Tambah tipe visualisasi"
-        },
+        "widget_type": "Tipe widget",
         "date_group": {
           "label": "Kelompok tanggal",
           "placeholder": "Tambah kelompok tanggal"
@@ -218,7 +257,7 @@
             "y_axis_metric": "Metrik tidak memiliki nilai."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Metrik tidak memiliki nilai."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "Tanyakan admin Anda untuk mengonfigurasi widget ini."
+      },
+      "upgrade_required": {
+        "title": "Tipe widget ini tidak termasuk dalam paket Anda."
       }
     },
     "create_modal": {

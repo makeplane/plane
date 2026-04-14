@@ -3,6 +3,9 @@
     "settings": {
       "title": "Plantillas",
       "description": "Ahorra un 80% del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando utilizas plantillas.",
+      "new_project_template": "Nueva plantilla de proyecto",
+      "new_work_item_template": "Nueva plantilla de elemento de trabajo",
+      "new_page_template": "Nueva plantilla de página",
       "options": {
         "project": {
           "label": "Plantillas de proyecto"
@@ -157,6 +160,14 @@
               "required": "Al menos una palabra clave es obligatoria"
             }
           },
+          "website": {
+            "label": "URL del sitio web",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
           "company_name": {
             "label": "Nombre de la empresa",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Dirección de correo electrónico no válida",
-              "required": "El correo electrónico de soporte es obligatorio",
               "maxLength": "El correo electrónico de soporte debe tener menos de 255 caracteres"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+      },
+      "no_modules": {
+        "description": "Aún no hay módulos. Organiza el trabajo en subproyectos con líderes y responsables dedicados."
       },
       "no_work_items": {
         "description": "Aún no hay elementos de trabajo. Añade uno para estructurar tu trabajo mejor."

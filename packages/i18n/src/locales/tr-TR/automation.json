@@ -53,6 +53,9 @@
       "button": {
         "previous": "Geri",
         "next": "Eylem ekle"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Oluşturulduktan sonra tetikleyici türünü değiştiremezsiniz"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Bir seçenek seçin",
       "handler_name": {
         "add_comment": "Yorum ekle",
-        "change_property": "Özelliği değiştir"
+        "change_property": "Özelliği değiştir",
+        "run_script": "Komut Dosyası Çalıştır"
       },
       "configuration": {
         "label": "Yapılandırma",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Yorum ekle"
+      },
+      "run_script_block": {
+        "title": "Komut dosyası çalıştır"
       },
       "change_property_block": {
         "title": "Özelliği değiştir"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Otomasyon başlığı",
+      "scope": "Kapsam",
+      "projects": "Projeler",
       "last_run_on": "Son çalıştırma",
       "created_on": "Oluşturulma tarihi",
       "last_updated_on": "Son güncelleme",
@@ -229,6 +238,35 @@
         "title": "Otomasyonlar",
         "description": "Otomasyonlar, projenizdeki görevleri otomatikleştirmenin bir yoludur.",
         "sub_description": "Otomasyonları kullandığınızda yönetim zamanınızın %80'ini geri kazanın."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Bu otomasyonun çalıştırılacağı projeleri seçin",
+        "all_projects": {
+          "label": "Tüm projeler",
+          "description": "Otomasyon, çalışma alanındaki tüm projeler için çalışacak."
+        },
+        "select_projects": {
+          "label": "Projeleri seç",
+          "description": "Otomasyon, çalışma alanındaki seçilen projeler için çalışacak.",
+          "placeholder": "Projeleri seç"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Otomasyonlar",
+        "title": "Otomasyonlar",
+        "description": "Global otomasyonlarla çalışma alanınızdaki süreçleri standartlaştırın."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Proje",
+            "multiple": "Birden fazla",
+            "all": "Tümü"
+          }
+        }
       }
     }
   }

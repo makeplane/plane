@@ -141,13 +141,7 @@
     "summary_of_projects": "Ringkasan Proyek",
     "project_insights": "Wawasan Proyek",
     "started_work_items": "{entity} yang telah dimulai",
-    "total_work_items": "Total {entity}",
-    "total_projects": "Total Proyek",
-    "total_admins": "Total Admin",
-    "total_users": "Total Pengguna",
-    "total_intake": "Total Pemasukan",
     "un_started_work_items": "{entity} yang belum dimulai",
-    "total_guests": "Total Tamu",
     "completed_work_items": "{entity} yang telah selesai",
     "total": "Total {entity}",
     "projects_by_status": "Proyek berdasarkan status",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Belum ada halaman yang diarsipkan",
         "description": "Arsipkan halaman yang tidak di radar Anda. Akses di sini saat diperlukan."
+      },
+      "shared": {
+        "title": "Belum ada halaman yang dibagikan",
+        "description": "Halaman yang dibagikan orang lain kepada Anda akan muncul di sini."
       }
     }
   },

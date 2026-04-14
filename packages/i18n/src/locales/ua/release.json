@@ -6,6 +6,7 @@
     "select_releases": "Вибрати релізи",
     "overview": "Огляд",
     "scope": "Обсяг",
+    "changelog": "Журнал змін",
     "page_title": {
       "scope": "Реліз - {name} | Обсяг",
       "scope_fallback": "Реліз | Обсяг"

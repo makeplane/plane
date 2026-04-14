@@ -16,10 +16,15 @@
     "remove_filters_to_see_all_cycles": "Elimină filtrele pentru a vedea toate ciclurile",
     "remove_search_criteria_to_see_all_cycles": "Elimină criteriile de căutare pentru a vedea toate ciclurile",
     "only_completed_cycles_can_be_archived": "Doar ciclurile finalizate pot fi arhivate",
+    "start_date": "Data de început",
+    "end_date": "Data de sfârșit",
+    "in_your_timezone": "În fusul tău orar",
     "transfer_work_items": "Transferați {count} elemente de lucru",
     "transfer": {
       "no_cycles_available": "Nu există alte cicluri disponibile pentru a transfera elemente de lucru."
     },
+    "date_range": "Interval de date",
+    "add_date": "Adaugă data",
     "active_cycle": {
       "label": "Ciclu activ",
       "progress": "Progres",
@@ -223,11 +228,39 @@
             "title": "Perspectivele funcționează pe baza proprietăților activităților.",
             "description": "Poți crea o perspectivă de aici, cu oricâte proprietăți și filtre consideri necesare."
           }
+        },
+        "filter": {
+          "title": "Nicio perspectivă potrivită",
+          "description": "Nicio perspectivă nu se potrivește criteriilor de căutare.\n Creează o nouă perspectivă în schimb."
         }
       },
-      "filter": {
-        "title": "Nicio perspectivă potrivită",
-        "description": "Nicio perspectivă nu se potrivește criteriilor de căutare.\n Creează o nouă perspectivă în schimb."
+      "no_archived_issues": {
+        "title": "Nicio activitate arhivată încă",
+        "description": "Manual sau prin automatizare, poți arhiva activitățile care sunt finalizate sau anulate. Găsește-le aici odată arhivate.",
+        "primary_button": {
+          "text": "Setează automatizare"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Nu s-au găsit activități care să corespundă filtrelor aplicate",
+        "secondary_button": {
+          "text": "Șterge toate filtrele"
+        }
+      },
+      "public": {
+        "title": "Nicio pagină publică încă",
+        "description": "Vezi paginile distribuite cu toată lumea din proiectul tău chiar aici.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "archived": {
+        "title": "Nicio pagină arhivată încă",
+        "description": "Arhivează paginile care nu îți sunt pe radar. Accesează-le aici când ai nevoie."
+      },
+      "shared": {
+        "title": "Nicio pagină partajată încă",
+        "description": "Paginile pe care alții le-au partajat cu tine vor apărea aici."
       }
     },
     "delete_view": {
@@ -302,6 +335,13 @@
         }
       }
     }
+  },
+  "project_members": {
+    "full_name": "Nume complet",
+    "display_name": "Nume afișat",
+    "email": "Email",
+    "joining_date": "Data înscrierii",
+    "role": "Rol"
   },
   "project_modules": {
     "status": {

@@ -3,6 +3,9 @@
     "settings": {
       "title": "Šablony",
       "description": "Ušetřete 80 % času stráveného vytvářením projektů, pracovních položek a stránek, když používáte šablony.",
+      "new_project_template": "Nová šablona projektu",
+      "new_work_item_template": "Nová šablona pracovní položky",
+      "new_page_template": "Nová šablona stránky",
       "options": {
         "project": {
           "label": "Šablony projektů"
@@ -157,6 +160,14 @@
               "required": "Alespoň jedno klíčové slovo je povinné"
             }
           },
+          "website": {
+            "label": "URL webové stránky",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by měla být kratší než 800 znaků"
+            }
+          },
           "company_name": {
             "label": "Název společnosti",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Neplatná emailová adresa",
-              "required": "Email podpory je povinný",
               "maxLength": "Email podpory by měl být kratší než 255 znaků"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": "Zatím žádné štítky. Vytvořte štítky, abyste pomohli organizovat a filtrovat pracovní položky v projektu."
+      },
+      "no_modules": {
+        "description": "Zatím žádné moduly. Organizujte práci do dílčích projektů s vyhrazenými vedoucími a přiřazenými osobami."
       },
       "no_work_items": {
         "description": "Zatím žádné pracovní položky. Přidejte jednu, abyste strukturovali svou práci lépe."

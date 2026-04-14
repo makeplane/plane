@@ -6,6 +6,7 @@
     "select_releases": "Pilih rilis",
     "overview": "Ringkasan",
     "scope": "Cakupan",
+    "changelog": "Changelog",
     "page_title": {
       "scope": "Rilis - {name} | Cakupan",
       "scope_fallback": "Rilis | Cakupan"

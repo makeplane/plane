@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "청구 및 플랜",
+        "description": "플랜을 선택하고, 구독을 관리하며, 필요에 따라 손쉽게 업그레이드하세요.",
         "title": "청구 및 플랜",
         "current_plan": "현재 플랜",
         "free_plan": "현재 무료 플랜을 사용 중입니다",
         "view_plans": "플랜 보기"
       },
       "exports": {
+        "heading": "내보내기",
+        "description": "프로젝트 데이터를 다양한 형식으로 내보내고 다운로드 링크가 포함된 내보내기 기록에 접근하세요.",
         "title": "내보내기",
         "exporting": "내보내기 중",
         "previous_exports": "이전 내보내기",
         "export_separate_files": "데이터를 별도의 파일로 내보내기",
+        "exporting_projects": "프로젝트 내보내는 중",
+        "format": "포맷",
         "filters_info": "기준에 따라 특정 작업 항목을 내보내려면 필터를 적용하세요.",
         "modal": {
           "title": "내보내기",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "웹훅",
+        "description": "프로젝트 이벤트가 발생할 때 외부 서비스로 알림을 자동화하세요.",
         "title": "웹훅",
         "add_webhook": "웹훅 추가",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "인테그레이션",
+        "heading": "인테그레이션",
+        "description": "인기 있는 도구 및 서비스와 연결하여 전체 워크플로우 에코시스템에서 작업을 동기화하세요.",
         "page_title": "Plane 데이터를 사용 가능한 앱이나 본인 소유 앱에서 활용하세요.",
         "page_description": "이 워크스페이스 또는 사용자가 사용하는 모든 통합을 확인하세요."
       },
       "imports": {
-        "title": "임포트"
+        "title": "임포트",
+        "heading": "임포트",
+        "description": "기존 프로젝트 관리 도구에서 데이터를 연결하고 가져와 워크플로우 통합을 간소화하세요."
       },
       "worklogs": {
-        "title": "워크로그"
+        "title": "워크로그",
+        "heading": "워크로그",
+        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요."
       },
       "group_syncing": {
         "title": "그룹 동기화",
@@ -242,7 +256,10 @@
         "description": "도메인을 구성하고 Single sign-on을 활성화하세요"
       },
       "project_states": {
-        "title": "프로젝트 스테이트"
+        "title": "프로젝트 스테이트",
+        "heading": "모든 프로젝트의 진행 상황 개요를 확인하세요.",
+        "description": "프로젝트 스테이트는 어떤 프로젝트 속성으로든 모든 프로젝트의 진행 상황을 추적하는 Plane 전용 기능입니다.",
+        "go_to_settings": "설정으로 이동"
       },
       "projects": {
         "title": "프로젝트",
@@ -253,13 +270,19 @@
         }
       },
       "teamspaces": {
-        "title": "팀스페이스"
+        "title": "팀스페이스",
+        "heading": "팀스페이스",
+        "description": "연결된 프로젝트, 태스크, 팀 차트, 페이지 및 뷰와 함께 별도의 공간에서 팀의 작업을 확인하세요."
       },
       "initiatives": {
-        "title": "이니셔티브"
+        "title": "이니셔티브",
+        "heading": "이니셔티브",
+        "description": "Plane에서 모든 작업에 대한 최고 수준의 조직화를 활용하세요."
       },
       "customers": {
-        "title": "커스터머"
+        "title": "커스터머",
+        "heading": "고객에게 중요한 것을 기준으로 작업을 관리하세요.",
+        "description": "고객 요청을 작업 항목으로 가져오고, 요청에 따라 우선순위를 지정하고, 작업 항목의 상태를 고객 기록에 통합합니다. 곧 CRM이나 지원 도구와 통합하여 고객 속성별로 더 나은 작업 관리를 제공할 예정입니다."
       },
       "releases": {
         "title": "릴리스",
@@ -269,6 +292,16 @@
           "release_not_found": "찾으시는 릴리스가 존재하지 않습니다.",
           "unknown": "문제가 발생했습니다. 다시 시도해 주세요."
         }
+      },
+      "templates": {
+        "title": "템플릿",
+        "heading": "템플릿",
+        "description": "템플릿을 사용하면 프로젝트, 작업 항목, 페이지를 생성하는 데 걸리는 시간을 80% 절약할 수 있습니다."
+      },
+      "relations": {
+        "title": "관계",
+        "heading": "관계",
+        "description": "작업 공간 전반의 작업 항목을 연결하는 관계 타입을 생성하고 관리하세요."
       },
       "cancel_trial": {
         "title": "먼저 트라이얼을 취소하세요.",
@@ -289,6 +322,7 @@
         "your_apps": "내 앱",
         "connect": "연결",
         "connected": "연결됨",
+        "disconnect": "연결 해제",
         "install": "설치",
         "installed": "설치됨",
         "configure": "설정",
@@ -319,7 +353,6 @@
         "app_description_error": "앱 설명은 필수입니다",
         "app_slug_title": "앱 슬러그",
         "app_slug_error": "앱 슬러그는 필수입니다",
-        "app_maker_title": "앱 제작자",
         "app_maker_error": "앱 제작자는 필수입니다",
         "webhook_url_title": "웹훅 URL",
         "webhook_url_error": "웹훅 URL은 필수입니다",
@@ -380,7 +413,6 @@
         "video_url_title": "비디오 URL",
         "video_url_error": "비디오 URL은 필수입니다",
         "invalid_video_url_error": "유효하지 않은 비디오 URL",
-        "setup_url_title": "설정 URL",
         "setup_url_error": "설정 URL은 필수입니다",
         "invalid_setup_url_error": "유효하지 않은 설정 URL",
         "configuration_url_title": "설정 URL",
@@ -426,12 +458,22 @@
           "description": "앱이 설치된 작업 공간에서 발생하는 웹훅 이벤트와 업데이트를 여기에 전송합니다.",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "웹훅 시크릿",
+          "description": "들어오는 웹훅 요청을 검증하는 데 사용되는 시크릿입니다.",
+          "placeholder": "임의의 시크릿 키를 입력하세요"
+        },
         "redirect_uris": {
           "label": "리디렉션 URI(공백으로 구분)",
           "description": "사용자가 Plane에서 인증을 완료하면 이 경로로 리디렉션됩니다.",
           "placeholder": "https://example.com https://example.com/"
         },
+        "invalid_website_error": "유효하지 않은 웹사이트",
+        "app_consent_no_access_title": "설치 요청",
         "app_consent_no_access_description": "이 앱은 워크스페이스 관리자가 설치한 후에만 설치할 수 있습니다. 계속 진행하려면 워크스페이스 관리자에게 문의하세요.",
+        "app_consent_unapproved_title": "이 앱은 아직 Plane의 검토나 승인을 받지 않았습니다.",
+        "app_consent_unapproved_description": "워크스페이스에 연결하기 전에 이 앱을 신뢰할 수 있는지 확인하세요.",
+        "go_to_app": "앱으로 이동",
         "enable_app_mentions": "앱 멘션 활성화",
         "enable_app_mentions_tooltip": "이 기능을 활성화하면 사용자가 워크 아이템을 이 애플리케이션에 언급하거나 할당할 수 있습니다.",
         "scopes": "범위",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "스크립트",
+        "new_script": "새 스크립트",
+        "description": "커스텀 스크립트와 자동화 규칙으로 워크플로우를 자동화하세요."
       }
     },
     "empty_state": {

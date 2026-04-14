@@ -5,8 +5,6 @@
       "sub-title": "Ekibe ne üzerinde çalışmalarını istediğinizi bildirin.",
       "name": "Ad",
       "email": "E-posta",
-      "about": "Bu iş öğesi ne hakkında?",
-      "description": "Ne olması gerektiğini açıklayın",
       "description_placeholder": "Ekip durumunuzu ve ihtiyaçlarınızı anlasın diye istediğiniz kadar ayrıntı ekleyin.",
       "loading": "Oluşturuluyor",
       "create_work_item": "İş öğesi oluştur",

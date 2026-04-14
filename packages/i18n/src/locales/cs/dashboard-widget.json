@@ -6,9 +6,18 @@
           "short_label": "Sloupec",
           "long_label": "Graf sloupcový",
           "chart_models": {
-            "basic": "Základní",
-            "stacked": "Skládaný",
-            "grouped": "Skupinový"
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Základní sloupec"
+            },
+            "stacked": {
+              "short_label": "Skládaný",
+              "long_label": "Skládaný sloupec"
+            },
+            "grouped": {
+              "short_label": "Skupinový",
+              "long_label": "Skupinový sloupec"
+            }
           },
           "orientation": {
             "label": "Orientace",
@@ -22,8 +31,14 @@
           "short_label": "Čára",
           "long_label": "Graf čárový",
           "chart_models": {
-            "basic": "Základní",
-            "multi_line": "Více čar"
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Základní čára"
+            },
+            "multi_line": {
+              "short_label": "Více čar",
+              "long_label": "Více čar"
+            }
           },
           "line_color": "Barva čáry",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Oblast",
           "long_label": "Graf oblastní",
           "chart_models": {
-            "basic": "Základní",
-            "stacked": "Skládaný",
-            "comparison": "Srovnání"
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Základní oblast"
+            },
+            "stacked": {
+              "short_label": "Skládaný",
+              "long_label": "Skládaná oblast"
+            },
+            "comparison": {
+              "short_label": "Srovnání",
+              "long_label": "Srovnávací oblast"
+            }
           },
           "fill_color": "Barva výplně"
         },
@@ -47,8 +71,14 @@
           "short_label": "Donut",
           "long_label": "Graf donut",
           "chart_models": {
-            "basic": "Základní",
-            "progress": "Pokrok"
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Základní donut"
+            },
+            "progress": {
+              "short_label": "Pokrok",
+              "long_label": "Donut pokroku"
+            }
           },
           "center_value": "Hodnota uprostřed",
           "completed_color": "Barva dokončeno"
@@ -57,7 +87,10 @@
           "short_label": "Koláč",
           "long_label": "Graf koláčový",
           "chart_models": {
-            "basic": "Základní"
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Koláč"
+            }
           },
           "group": {
             "label": "Skupinové kusy",
@@ -77,9 +110,15 @@
             "count": "Počet"
           }
         },
-        "text": {
-          "short_label": "Text",
-          "long_label": "Text",
+        "number": {
+          "short_label": "Číslo",
+          "long_label": "Číslo",
+          "chart_models": {
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Číslo"
+            }
+          },
           "alignment": {
             "label": "Zarovnání textu",
             "left": "Vlevo",
@@ -104,10 +143,14 @@
           "configure_rows_hint": "Vyberte vlastnost pro řádky pro zobrazení této tabulky."
         }
       },
+      "sections": {
+        "charts": "Grafy",
+        "text": "Text"
+      },
       "color_palettes": {
-        "modern_tech": "Moderní technologie",
-        "ocean_deep": "Hluboký oceán",
-        "sunset_vibes": "Vibes západu slunce"
+        "modern": "Moderní",
+        "horizon": "Horizont",
+        "earthen": "Zemitá"
       },
       "common": {
         "add_widget": "Přidat widget",
@@ -115,11 +158,7 @@
           "label": "Pojmenujte tento widget",
           "placeholder": "např. \"Úkoly včera\", \"Vše dokončeno\""
         },
-        "chart_type": "Typ grafu",
-        "visualization_type": {
-          "label": "Typ vizualizace",
-          "placeholder": "Přidat typ vizualizace"
-        },
+        "widget_type": "Typ widgetu",
         "date_group": {
           "label": "Skupina dat",
           "placeholder": "Přidat skupinu dat"
@@ -218,7 +257,7 @@
             "y_axis_metric": "Metrika chybí."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Metrika chybí."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "Požádejte svého správce, aby konfiguroval tento widget."
+      },
+      "upgrade_required": {
+        "title": "Tento typ widgetu není součástí vašeho plánu."
       }
     },
     "create_modal": {

@@ -49,6 +49,23 @@
           "text": "Epikler ekle"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Bu, epiğin bir kopyasını oluşturur.",
+        "description2": "Çoğaltılırken tüm özellik verileri kaldırılacaktır.",
+        "epics_not_enabled": "Epikler etkin değil"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epik başarıyla çoğaltıldı"
+        },
+        "error": {
+          "message": "Epik çoğaltılamadı"
+        }
+      }
     }
   },
   "epic_relation": {

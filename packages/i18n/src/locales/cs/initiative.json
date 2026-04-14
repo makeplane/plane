@@ -10,6 +10,8 @@
     "all_initiatives": "Všechny iniciativy",
     "delete_initiative": "Smazat iniciativu",
     "fill_all_required_fields": "Vyplňte prosím všechna povinná pole.",
+    "archive_initiative": "Archivovat iniciativu",
+    "archive_confirm_message": "Opravdu chcete archivovat iniciativu? Všechny archivované iniciativy lze později obnovit.",
     "archive_description": "Archivovat lze pouze dokončené nebo uzavřené iniciativy",
     "toast": {
       "create_success": "Iniciativa {name} byla úspěšně vytvořena.",
@@ -24,6 +26,9 @@
         "success": "Iniciativa byla úspěšně archivována.",
         "error": "Iniciativu se nepodařilo archivovat",
         "initiative_cannot_be_archived_in_this_state": "Iniciativu v tomto stavu nelze archivovat"
+      },
+      "restore": {
+        "error": "Iniciativu nelze obnovit. Zkuste to prosím znovu."
       },
       "link_copied": "Odkaz na iniciativu byl zkopírován do schránky.",
       "project_update_success": "Projekty iniciativy byly úspěšně aktualizovány.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Zatím nebyl přidán žádný rozsah do této iniciativy",
         "description": "Propojte projekty a epiky a sledujte práci v tomto prostoru.",
+        "description_projects": "Propojte projekty a sledujte práci v tomto prostoru.",
+        "description_epics": "Propojte epiky a sledujte práci v tomto prostoru.",
         "primary_button": {
           "text": "Přidat rozsah"
         }
+      },
+      "board": {
+        "no_epics": "V této iniciativě nejsou žádné epiky",
+        "no_projects": "V této iniciativě nejsou žádné projekty",
+        "enable_project_states": "Stavy projektů nejsou povoleny",
+        "enable_project_states_description": "Povolte stavy projektů v nastavení pracovního prostoru pro použití seskupení podle stavu."
       }
     },
     "initiative_settings": {

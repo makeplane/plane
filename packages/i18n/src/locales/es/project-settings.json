@@ -37,6 +37,8 @@
       "project_subscribers_description": "Seleccione los miembros que recibirán notificaciones para este proyecto."
     },
     "states": {
+      "heading": "Estados",
+      "description": "Define y personaliza los estados del flujo de trabajo para rastrear el progreso de tus elementos de trabajo.",
       "describe_this_state_for_your_members": "Describe este estado para tus miembros.",
       "empty_state": {
         "title": "No estados disponibles para el grupo {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etiquetas",
+      "description": "Crea etiquetas personalizadas para categorizar y organizar tus elementos de trabajo",
       "label_title": "Título de la etiqueta",
       "label_title_is_required": "El título de la etiqueta es requerido",
       "label_max_char": "El nombre de la etiqueta no debe exceder 255 caracteres",
@@ -52,6 +56,8 @@
       }
     },
     "estimates": {
+      "heading": "Estimaciones",
+      "enable_description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
       "label": "Estimaciones",
       "title": "Activar estimaciones para mi proyecto",
       "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
@@ -112,6 +118,16 @@
             "title": "Error al reordenar estimaciones",
             "message": "No pudimos reordenar las estimaciones, por favor intenta de nuevo"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistema de estimaciones creado",
+            "message": "Creado y habilitado correctamente"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Algo salió mal"
+          }
         }
       },
       "validation": {
@@ -161,6 +177,8 @@
       "select": "Seleccionar un sistema de estimaciones"
     },
     "automations": {
+      "heading": "Automatizaciones",
+      "description": "Configura acciones automatizadas para optimizar tu flujo de trabajo de gestión de proyectos y reducir tareas manuales.",
       "label": "Automatizaciones",
       "auto-archive": {
         "title": "Archivar automáticamente elementos de trabajo cerrados",
@@ -194,6 +212,116 @@
         "description": "Configura GitHub y otras integraciones para sincronizar los elementos de trabajo de tu proyecto."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Habilitar flujos de trabajo",
+        "description": "Configura flujos de trabajo para controlar el movimiento de los elementos de trabajo",
+        "no_states_tooltip": "No se han agregado estados al flujo de trabajo.",
+        "no_work_item_types_tooltip": "No se han agregado tipos de elementos de trabajo al flujo de trabajo.",
+        "no_states_or_work_item_types_tooltip": "No se han agregado estados ni tipos de elementos de trabajo al flujo de trabajo.",
+        "toast": {
+          "loading": {
+            "enabling": "Habilitando flujos de trabajo",
+            "disabling": "Deshabilitando flujos de trabajo"
+          },
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Flujos de trabajo habilitados correctamente."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "Error al habilitar los flujos de trabajo. Por favor, inténtalo de nuevo."
+          }
+        }
+      },
+      "heading": "Flujos de trabajo",
+      "description": "Automatiza las transiciones de elementos de trabajo y establece reglas para controlar cómo se mueven las tareas a través del flujo de tu proyecto.",
+      "add_button": "Agregar nuevo flujo de trabajo",
+      "search": "Buscar flujos de trabajo",
+      "detail": {
+        "define": "Definir flujo de trabajo",
+        "add_states": "Agregar estados",
+        "unmapped_states": {
+          "title": "Estados no asignados detectados",
+          "description": "Algunos elementos de trabajo para los tipos seleccionados están actualmente en estados que no existen en este flujo de trabajo.",
+          "note": "Si habilitas este flujo de trabajo, estos elementos se moverán automáticamente al estado inicial de este flujo de trabajo.",
+          "label": "Estados faltantes",
+          "tooltip": "Algunos elementos de trabajo están en estados que no están asignados a este flujo de trabajo. Abre el flujo de trabajo para revisarlo."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Todos los estados están en uso",
+          "description": "Todos los estados definidos para este proyecto ya están presentes en tu flujo de trabajo actual."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Este flujo de trabajo se aplica a cualquier tipo de elemento de trabajo que no esté asignado a un flujo de trabajo."
+      },
+      "create": {
+        "heading": "Crear nuevo flujo de trabajo",
+        "name": {
+          "placeholder": "Agrega un nombre único",
+          "validation": {
+            "max_length": "El nombre debe tener menos de 255 caracteres",
+            "required": "El nombre es obligatorio",
+            "invalid": "El nombre solo puede contener letras, números, espacios, guiones y apóstrofes"
+          }
+        },
+        "description": {
+          "placeholder": "Agrega una descripción breve",
+          "validation": {
+            "invalid": "La descripción solo puede contener letras, números, espacios, guiones y apóstrofes"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipo de elemento de trabajo"
+        },
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Flujo de trabajo creado correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al crear el flujo de trabajo. Por favor, inténtalo de nuevo."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Flujo de trabajo actualizado correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al actualizar el flujo de trabajo. Por favor, inténtalo de nuevo."
+        }
+      },
+      "delete": {
+        "loading": "Eliminando flujo de trabajo",
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Flujo de trabajo eliminado correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al eliminar el flujo de trabajo. Por favor, inténtalo de nuevo."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Estados agregados correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al agregar los estados. Por favor, inténtalo de nuevo."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipos de elemento de trabajo",
+      "description": "Crea y personaliza diferentes tipos de elementos de trabajo con propiedades únicas"
+    },
     "initiatives": {
       "heading": "Iniciativas",
       "sub_heading": "Desbloquea el nivel más alto de organización para todo tu trabajo en Plane",
@@ -209,14 +337,25 @@
     "customers": {
       "heading": "Clientes",
       "settings_heading": "Administra el trabajo según lo que es importante para tus clientes.",
-      "settings_sub_heading": "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes."
+      "settings_sub_heading": "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes.",
+      "description": "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes."
     },
     "epics": {
+      "heading": "Epics",
+      "description": "Para cuerpos de trabajo más grandes que abarcan varios ciclos y pueden vivir a través de módulos",
       "properties": {
         "title": "Propiedades",
         "description": "Agrega propiedades personalizadas a tu épica."
       },
       "disabled": "Deshabilitado"
+    },
+    "project_updates": {
+      "heading": "Actualizaciones del proyecto",
+      "description": "Seguimiento consolidado y monitoreo del progreso de este proyecto"
+    },
+    "templates": {
+      "heading": "Plantillas",
+      "description": "Ahorra el 80 % del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando usas plantillas."
     },
     "cycles": {
       "auto_schedule": {

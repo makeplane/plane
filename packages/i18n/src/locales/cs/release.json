@@ -6,6 +6,7 @@
     "select_releases": "Vyberte vydání",
     "overview": "Přehled",
     "scope": "Rozsah",
+    "changelog": "Changelog",
     "page_title": {
       "scope": "Vydání - {name} | Rozsah",
       "scope_fallback": "Vydání | Rozsah"

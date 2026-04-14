@@ -274,6 +274,9 @@
       "title": "Tüm üyeler için zaman çizelgelerini takip edin",
       "description": "Projeler arasında herhangi bir ekip üyesi için ayrıntılı zaman çizelgelerini görmek için iş öğelerinde zaman kaydedin."
     },
+    "group_syncing": {
+      "title": "Henüz grup eşlemesi yok"
+    },
     "customers_setting": {
       "title": "Başlamak için müşteri yönetimini etkinleştirin.",
       "cta_primary": "Etkinleştir"
@@ -282,6 +285,15 @@
       "title": "Henüz şablon yok",
       "description": "Projeler, iş öğeleri ve sayfalar için şablonlar oluşturarak kurulum süresini azaltın — ve saniyeler içinde yeni çalışmaya başlayın.",
       "cta_primary": "Şablon oluştur"
+    },
+    "workflows": {
+      "title": "Henüz iş akışı yok",
+      "description": "İş öğelerinizin ilerlemesini yönetmek için iş akışları oluşturun.",
+      "cta_primary": "Yeni iş akışı ekle",
+      "states": {
+        "title": "Durum ekle",
+        "description": "İş öğesinin ilerlediği durumları seçin."
+      }
     }
   }
 }

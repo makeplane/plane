@@ -141,13 +141,7 @@
     "summary_of_projects": "Tóm tắt dự án",
     "project_insights": "Thông tin chi tiết dự án",
     "started_work_items": "{entity} đã bắt đầu",
-    "total_work_items": "Tổng số {entity}",
-    "total_projects": "Tổng số dự án",
-    "total_admins": "Tổng số quản trị viên",
-    "total_users": "Tổng số người dùng",
-    "total_intake": "Tổng thu",
     "un_started_work_items": "{entity} chưa bắt đầu",
-    "total_guests": "Tổng số khách",
     "completed_work_items": "{entity} đã hoàn thành",
     "total": "Tổng số {entity}",
     "projects_by_status": "Dự án theo trạng thái",
@@ -162,6 +156,7 @@
       "label": "Thêm dự án"
     },
     "network": {
+      "label": "Mạng",
       "private": {
         "title": "Riêng tư",
         "description": "Chỉ truy cập bằng lời mời"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "Chưa có trang đã lưu trữ",
         "description": "Lưu trữ các trang không nằm trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần thiết."
+      },
+      "shared": {
+        "title": "Chưa có trang được chia sẻ",
+        "description": "Các trang mà người khác đã chia sẻ với bạn sẽ xuất hiện ở đây."
       }
     }
   },

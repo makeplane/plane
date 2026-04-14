@@ -37,6 +37,8 @@
       "project_subscribers_description": "Bu proje için bildirim alacak üyeleri seçin."
     },
     "states": {
+      "heading": "Durumlar",
+      "description": "İş öğelerinizin ilerlemesini izlemek için iş akışı durumlarını tanımlayın ve özelleştirin.",
       "describe_this_state_for_your_members": "Bu durumu üyeleriniz için açıklayın.",
       "empty_state": {
         "title": "{groupKey} grubu için durum yok",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etiketler",
+      "description": "İş öğelerinizi kategorize etmek ve düzenlemek için özel etiketler oluşturun",
       "label_title": "Etiket başlığı",
       "label_title_is_required": "Etiket başlığı gereklidir",
       "label_max_char": "Etiket adı 255 karakteri geçmemeli",
@@ -52,16 +56,21 @@
       }
     },
     "estimates": {
+      "heading": "Tahminler",
       "label": "Tahminler",
       "title": "Projem için tahminleri etkinleştir",
       "description": "Takımınızın karmaşıklık ve iş yükünü iletişim kurmanıza yardımcı olurlar.",
+      "enable_description": "Takımın karmaşıklığını ve iş yükünü iletmenize yardımcı olurlar.",
       "no_estimate": "Tahmin yok",
+      "new": "Yeni tahmin sistemi",
       "create": {
         "custom": "Özel",
         "start_from_scratch": "Sıfırdan başla",
         "choose_template": "Şablon seç",
         "choose_estimate_system": "Tahmin sistemi seç",
-        "enter_estimate_point": "Tahmin puanı girin"
+        "enter_estimate_point": "Tahmin puanı girin",
+        "step": "Adım {step} / {total}",
+        "label": "Tahmin oluştur"
       },
       "toasts": {
         "created": {
@@ -129,8 +138,28 @@
         "empty": "Tahmin değeri boş olamaz.",
         "already_exists": "Tahmin değeri zaten var.",
         "unsaved_changes": "Kaydedilmemiş değişiklikleriniz var, bitirmeden önce lütfen kaydedin",
+        "remove_empty": "Tahmin boş olamaz. Her alana bir değer girin veya değeri olmayanları kaldırın.",
         "fill": "Lütfen bu estimasyon alanını doldurun",
         "repeat": "Estimasyon değeri tekrar edemez"
+      },
+      "systems": {
+        "points": {
+          "label": "Puanlar",
+          "fibonacci": "Fibonacci",
+          "linear": "Doğrusal",
+          "squares": "Kareler",
+          "custom": "Özel"
+        },
+        "categories": {
+          "label": "Kategoriler",
+          "t_shirt_sizes": "Tişört Boyutları",
+          "easy_to_hard": "Kolaydan zora",
+          "custom": "Özel"
+        },
+        "time": {
+          "label": "Zaman",
+          "hours": "Saat"
+        }
       },
       "edit": {
         "title": "Estimasyon sistemini düzenle",
@@ -149,6 +178,8 @@
     },
     "automations": {
       "label": "Otomasyonlar",
+      "heading": "Otomasyonlar",
+      "description": "Proje yönetimi iş akışınızı kolaylaştırmak ve manuel görevleri azaltmak için otomatik eylemleri yapılandırın.",
       "auto-archive": {
         "title": "Tamamlanan iş öğelerini otomatik arşivle",
         "description": "Plane, tamamlanan veya iptal edilen iş öğelerini otomatik arşivleyecek.",
@@ -181,6 +212,116 @@
         "description": "Proje iş öğelerinizi senkronize etmek için GitHub ve diğer entegrasyonları konfigüre edin."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "İş akışlarını etkinleştir",
+        "description": "İş öğesi hareketini kontrol etmek için iş akışları ayarlayın",
+        "no_states_tooltip": "İş akışına durum eklenmemiş.",
+        "no_work_item_types_tooltip": "İş akışına iş öğesi türü eklenmemiş.",
+        "no_states_or_work_item_types_tooltip": "İş akışına durum veya iş öğesi türü eklenmemiş.",
+        "toast": {
+          "loading": {
+            "enabling": "İş akışları etkinleştiriliyor",
+            "disabling": "İş akışları devre dışı bırakılıyor"
+          },
+          "success": {
+            "title": "Başarılı!",
+            "message": "İş akışları başarıyla etkinleştirildi."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "İş akışları etkinleştirilemedi. Lütfen tekrar deneyin."
+          }
+        }
+      },
+      "heading": "İş Akışları",
+      "description": "İş öğesi geçişlerini otomatikleştirin ve görevlerin proje süreciniz boyunca nasıl hareket ettiğini kontrol etmek için kurallar belirleyin.",
+      "add_button": "Yeni iş akışı ekle",
+      "search": "İş akışlarında ara",
+      "detail": {
+        "define": "İş akışı tanımla",
+        "add_states": "Durum ekle",
+        "unmapped_states": {
+          "title": "Eşlenmemiş durumlar tespit edildi",
+          "description": "Seçili türlerdeki bazı iş öğeleri şu anda bu iş akışında bulunmayan durumlarda.",
+          "note": "Bu iş akışını etkinleştirirseniz, bu öğeler otomatik olarak bu iş akışının başlangıç durumuna taşınır.",
+          "label": "Eksik durumlar",
+          "tooltip": "Bazı iş öğeleri bu iş akışına eşlenmemiş durumlarda. İncelemek için iş akışını açın."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tüm durumlar kullanımda",
+          "description": "Bu proje için tanımlanan tüm durumlar zaten mevcut iş akışınızda mevcut."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Bu iş akışı, bir iş akışına atanmamış herhangi bir iş öğesi türüne uygulanır."
+      },
+      "create": {
+        "heading": "Yeni iş akışı oluştur",
+        "name": {
+          "placeholder": "Benzersiz bir ad ekleyin",
+          "validation": {
+            "max_length": "Ad 255 karakterden az olmalıdır",
+            "required": "Ad gereklidir",
+            "invalid": "Ad yalnızca harfler, rakamlar, boşluklar, tireler ve kesme işaretleri içerebilir"
+          }
+        },
+        "description": {
+          "placeholder": "Kısa bir açıklama ekleyin",
+          "validation": {
+            "invalid": "Açıklama yalnızca harfler, rakamlar, boşluklar, tireler ve kesme işaretleri içerebilir"
+          }
+        },
+        "work_item_type": {
+          "label": "İş öğesi türü"
+        },
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş akışı başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş akışı oluşturulamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş akışı başarıyla güncellendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş akışı güncellenemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "delete": {
+        "loading": "İş akışı siliniyor",
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş akışı başarıyla silindi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş akışı silinemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Durumlar başarıyla eklendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Durumlar eklenemedi. Lütfen tekrar deneyin."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "İş öğesi Türleri",
+      "description": "Benzersiz özelliklere sahip farklı iş öğesi türleri oluşturun ve özelleştirin"
+    },
     "initiatives": {
       "heading": "İnisiyatifler",
       "sub_heading": "Plane'deki tüm işleriniz için en üst seviye organizasyonu aktive edin.",
@@ -196,14 +337,25 @@
     "customers": {
       "heading": "Kastımerlar",
       "settings_heading": "Kastımerlarınız için önemli olan şeylere göre işleri yönetin.",
-      "settings_sub_heading": "Kastımer taleplerini iş öğelerine dönüştürün, taleplere göre önceliklendirin ve iş öğesi durumlarını kastımer kayıtlarıyla senkronize edin. Yakında CRM veya destek araçlarınızla entegre olarak kastımer özelliklerine göre daha iyi iş yönetimi yapabileceksiniz."
+      "settings_sub_heading": "Kastımer taleplerini iş öğelerine dönüştürün, taleplere göre önceliklendirin ve iş öğesi durumlarını kastımer kayıtlarıyla senkronize edin. Yakında CRM veya destek araçlarınızla entegre olarak kastımer özelliklerine göre daha iyi iş yönetimi yapabileceksiniz.",
+      "description": "Müşteri taleplerini iş öğelerine taşıyın, taleplere göre öncelik atayın ve iş öğesi durumlarını müşteri kayıtlarına yansıtın. Yakında, müşteri özelliklerine göre daha iyi iş yönetimi için CRM veya Destek aracınızla entegre olacaksınız."
     },
     "epics": {
+      "heading": "Epikler",
+      "description": "Birkaç döngüye yayılan ve modüller arasında yaşayabilen daha büyük iş gövdeleri için",
       "properties": {
         "title": "Propertiler",
         "description": "Epiğinize özel propertiler ekleyin."
       },
       "disabled": "Deaktive"
+    },
+    "project_updates": {
+      "heading": "Proje Güncellemeleri",
+      "description": "Bu proje için birleştirilmiş takip ve ilerleme izleme"
+    },
+    "templates": {
+      "heading": "Şablonlar",
+      "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmaya harcanan zamanın %80'ini tasarruf edin."
     },
     "cycles": {
       "auto_schedule": {
@@ -390,6 +542,11 @@
         "description": "Kilometre taşları, iş öğelerini ortak tamamlanma tarihlerine doğru hizalamak için bir katman sağlar.",
         "toggle_title": "Kilometre taşlarını etkinleştir",
         "toggle_description": "İş öğelerini kilometre taşı son tarihleri ile organize edin."
+      },
+      "toasts": {
+        "loading": "Proje özelliği güncelleniyor...",
+        "success": "Proje özelliği başarıyla güncellendi.",
+        "error": "Proje özelliği güncellenirken bir şeyler yanlış gitti. Lütfen tekrar deneyin."
       }
     }
   }

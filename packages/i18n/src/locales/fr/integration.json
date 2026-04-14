@@ -194,6 +194,10 @@
       "server_error_states": "Erreur serveur lors du chargement des états"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Connectez et synchronisez vos dépôts Bitbucket Data Center avec Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Valider les jetons IdP externes pour l'accès API.",
@@ -316,6 +320,7 @@
     "pulling": "Extraction",
     "timed_out": "Temps écoulé",
     "pulled": "Extrait",
+    "progressing": "En progression",
     "transforming": "Transformation",
     "transformed": "Transformé",
     "pushing": "Envoi",

@@ -43,6 +43,8 @@
     "import": "Importă",
     "serial_number": "Nr. Sr.",
     "project": "Proiect",
+    "teamspace": "Spațiu de echipă",
+    "destination": "Destinație",
     "workspace": "Workspace",
     "status": "Status",
     "summary": "Sumar",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Toate stările Jira vor fi create automat în Plane.",
     "personal_access_token": "Token de Acces Personal",
     "user_email": "Email Utilizator",
-    "atlassian_security_settings": "Setări de Securitate Atlassian",
     "email_description": "Acesta este emailul asociat cu tokenul tău de acces personal",
     "jira_domain": "Domeniu Jira",
     "jira_domain_description": "Acesta este domeniul instanței tale Jira",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Importați datele dvs. Notion în proiectele Plane.",
     "steps": {
+      "title_select_destination": "Selectați destinația",
+      "description_select_destination": "Vă rugăm să selectați destinația pentru datele dvs. Notion.",
       "title_upload_zip": "Încărcați ZIP-ul exportat din Notion",
       "description_upload_zip": "Vă rugăm să încărcați fișierul ZIP care conține datele dvs. Notion."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Încărcare completă!",
       "upload_complete_description": "Faceți clic pe \"Începeți importul\" pentru a începe procesarea datelor dvs. Notion.",
       "upload_progress_message": "Vă rugăm să nu închideți această fereastră."
+    },
+    "select_destination": {
+      "destination_type": "Tip destinație",
+      "select_destination_type": "Selectați tipul destinației",
+      "select_project": "Selectați proiectul",
+      "no_projects_found": "Nu s-au găsit proiecte",
+      "select_teamspace": "Selectați spațiul de echipă",
+      "no_teamspaces_found": "Nu s-au găsit spații de echipă",
+      "unknown_project": "Proiect necunoscut",
+      "unknown_teamspace": "Spațiu de echipă necunoscut"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Importați datele dvs. Confluence în wiki-ul Plane.",
     "steps": {
+      "title_select_destination": "Selectați destinația",
+      "description_select_destination": "Vă rugăm să selectați destinația pentru datele dvs. Confluence.",
       "title_upload_zip": "Încărcați ZIP-ul exportat din Confluence",
       "description_upload_zip": "Vă rugăm să încărcați fișierul ZIP care conține datele dvs. Confluence."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Încărcare completă!",
       "upload_complete_description": "Faceți clic pe \"Începeți importul\" pentru a începe procesarea datelor dvs. Confluence.",
       "upload_progress_message": "Vă rugăm să nu închideți această fereastră."
+    },
+    "select_destination": {
+      "destination_type": "Tip destinație",
+      "select_destination_type": "Selectați tipul destinației",
+      "select_project": "Selectați proiectul",
+      "no_projects_found": "Nu s-au găsit proiecte",
+      "select_teamspace": "Selectați spațiul de echipă",
+      "no_teamspaces_found": "Nu s-au găsit spații de echipă",
+      "unknown_project": "Proiect necunoscut",
+      "unknown_teamspace": "Spațiu de echipă necunoscut"
     }
   },
   "flatfile_importer": {

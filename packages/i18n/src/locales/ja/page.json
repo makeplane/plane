@@ -1,33 +1,4 @@
 {
-  "pages": {
-    "link_pages": "ページを接続",
-    "show_wiki_pages": "Wikiページを表示",
-    "link_pages_to": "ページを接続",
-    "linked_pages": "リンクされたページ",
-    "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
-    "toasts": {
-      "link": {
-        "success": {
-          "title": "ページが更新されました",
-          "message": "ページが正常に更新されました"
-        },
-        "error": {
-          "title": "ページが更新されませんでした",
-          "message": "ページを更新できませんでした"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "ページが削除されました",
-          "message": "ページが正常に削除されました"
-        },
-        "error": {
-          "title": "ページが削除されませんでした",
-          "message": "ページを削除できませんでした"
-        }
-      }
-    }
-  },
   "page_navigation_pane": {
     "tabs": {
       "outline": {
@@ -62,6 +33,43 @@
           "title": "画像がありません",
           "description": "画像を追加してここで確認してください。"
         }
+      },
+      "comments": {
+        "label": "コメント",
+        "empty_state": {
+          "title": "コメントがありません",
+          "description": "コメントを追加してここで確認してください。"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "付箋の名前は100文字を超えることはできません。",
+        "already_exists": "説明のない付箋がすでに存在します"
+      },
+      "created": {
+        "title": "付箋を作成しました",
+        "message": "付箋が正常に作成されました"
+      },
+      "not_created": {
+        "title": "付箋が作成されませんでした",
+        "message": "付箋を作成できませんでした"
+      },
+      "updated": {
+        "title": "付箋を更新しました",
+        "message": "付箋が正常に更新されました"
+      },
+      "not_updated": {
+        "title": "付箋が更新されませんでした",
+        "message": "付箋を更新できませんでした"
+      },
+      "removed": {
+        "title": "付箋を削除しました",
+        "message": "付箋が正常に削除されました"
+      },
+      "not_removed": {
+        "title": "付箋が削除されませんでした",
+        "message": "付箋を削除できませんでした"
       }
     },
     "open_button": "ナビゲーションパネルを開く",
@@ -70,12 +78,30 @@
   },
   "page_actions": {
     "move_page": {
+      "submit_button": {
+        "default": "移動",
+        "loading": "移動中"
+      },
+      "cannot_move_to_teamspace": "プライベートページおよび共有ページはチームスペースに移動できません。",
       "placeholders": {
+        "workspace_to_all": "プロジェクトとチームスペースを検索",
+        "workspace_to_project": "プロジェクトを検索",
+        "project_to_all": "プロジェクトとチームスペースを検索",
+        "project_to_project": "プロジェクトを検索",
+        "teamspace_to_all": "プロジェクトとチームスペースを検索",
         "project_to_all_with_wiki": "Wiki コレクション、プロジェクト、チームスペースを検索",
         "project_to_project_with_wiki": "Wiki コレクションとプロジェクトを検索",
         "teamspace_to_all_with_wiki": "Wiki コレクション、プロジェクト、チームスペースを検索"
       },
       "toasts": {
+        "success": {
+          "title": "成功！",
+          "message": "ページを移動しました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "ページを移動できませんでした。後でもう一度お試しください。"
+        },
         "collection_error": {
           "title": "Wiki に移動しました",
           "message": "ページは Wiki に移動されましたが、選択したコレクションに追加できませんでした。ページは General に残ります。"

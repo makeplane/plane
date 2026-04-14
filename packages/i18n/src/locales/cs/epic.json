@@ -49,6 +49,23 @@
           "text": "Přidat epiky"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Toto vytvoří kopii epiky.",
+        "description2": "Při duplikování budou odstraněna všechna data vlastností.",
+        "epics_not_enabled": "Epiky nejsou povoleny"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epika úspěšně duplikována"
+        },
+        "error": {
+          "message": "Duplikování epiky se nezdařilo"
+        }
+      }
     }
   },
   "epic_relation": {

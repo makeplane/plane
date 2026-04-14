@@ -3,6 +3,9 @@
     "settings": {
       "title": "模板",
       "description": "使用模板可節省80%的專案、工作項目和頁面創建時間。",
+      "new_project_template": "新專案模板",
+      "new_work_item_template": "新工作事項模板",
+      "new_page_template": "新頁面模板",
       "options": {
         "project": {
           "label": "專案模板"
@@ -157,6 +160,14 @@
               "required": "至少需要一個關鍵詞"
             }
           },
+          "website": {
+            "label": "網站 URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "無效的 URL",
+              "maxLength": "URL 應少於 800 個字元"
+            }
+          },
           "company_name": {
             "label": "公司名稱",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "無效的電子郵件地址",
-              "required": "支持電子郵件為必填項",
               "maxLength": "支持電子郵件應少於255個字符"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " 尚無標籤。創建標籤以幫助組織和篩選專案中的工作項目。"
+      },
+      "no_modules": {
+        "description": "尚無模組。將工作組織成具有專門負責人和受讓人的子專案。"
       },
       "no_work_items": {
         "description": "尚無工作項目。添加一個以更好地組織您的工作。"

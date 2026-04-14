@@ -53,6 +53,9 @@
       "button": {
         "previous": "戻る",
         "next": "アクションを追加"
+      },
+      "warning": {
+        "disabled_trigger_switching": "作成後はトリガータイプを変更できません"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "オプションを選択",
       "handler_name": {
         "add_comment": "コメントを追加",
-        "change_property": "プロパティを変更"
+        "change_property": "プロパティを変更",
+        "run_script": "スクリプトを実行"
       },
       "configuration": {
         "label": "設定",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "コメントを追加"
+      },
+      "run_script_block": {
+        "title": "スクリプトを実行"
       },
       "change_property_block": {
         "title": "プロパティを変更"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "自動化タイトル",
+      "scope": "スコープ",
+      "projects": "プロジェクト",
       "last_run_on": "最終実行日",
       "created_on": "作成日",
       "last_updated_on": "最終更新日",
@@ -229,6 +238,35 @@
         "title": "自動化",
         "description": "自動化は、プロジェクト内のタスクを自動化する方法です。",
         "sub_description": "自動化を使用すると、管理時間の80%を節約できます。"
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "この自動化を実行するプロジェクトを選択",
+        "all_projects": {
+          "label": "すべてのプロジェクト",
+          "description": "自動化はワークスペース内のすべてのプロジェクトで実行されます。"
+        },
+        "select_projects": {
+          "label": "プロジェクトを選択",
+          "description": "自動化はワークスペース内の選択したプロジェクトで実行されます。",
+          "placeholder": "プロジェクトを選択"
+        }
+      },
+      "settings": {
+        "sidebar_label": "自動化",
+        "title": "自動化",
+        "description": "グローバル自動化でワークスペース全体のプロセスを標準化します。"
+      },
+      "table": {
+        "scope": {
+          "global": "グローバル",
+          "project": {
+            "label": "プロジェクト",
+            "multiple": "複数",
+            "all": "すべて"
+          }
+        }
       }
     }
   }

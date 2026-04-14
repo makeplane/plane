@@ -1,6 +1,7 @@
 {
   "customers": {
     "label": "{count, plural, one {Клиент} other {Клиенты}}",
+    "open": "Открыть клиента",
     "dropdown": {
       "placeholder": "Выберите клиента",
       "required": "Пожалуйста, выберите клиента",
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "Отрасль",
+          "name": "Отрасль",
           "placeholder": "Розничная торговля, e-Commerce, Финтех, Банковское дело",
           "placeholder_short": "Добавьте отрасль",
           "validation": {}
@@ -79,6 +80,9 @@
           "validation": {
             "min_length": "Доход не может быть меньше 0."
           }
+        },
+        "requests": {
+          "name": "Кол-во запросов"
         },
         "invalid_value": "Некорректное значение свойства."
       },

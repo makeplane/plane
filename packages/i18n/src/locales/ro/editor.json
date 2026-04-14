@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Vă rugăm să introduceți o adresă URL validă."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Descrie conținutul acestui bloc",
+      "generated_here": "Conținutul tău AI va fi generat aici"
+    },
+    "block_types": {
+      "placeholder": "Selectează tipul blocului",
+      "summarize_page": "Rezumă pagina",
+      "custom_prompt": "Prompt personalizat"
+    },
+    "actions": {
+      "discard": "Renunță",
+      "generate": "Generează",
+      "generating": "Se generează",
+      "rewriting": "Se rescrie",
+      "rewrite": "Rescrie",
+      "use_this": "Folosește aceasta",
+      "refine": "Rafinează"
+    }
   }
 }

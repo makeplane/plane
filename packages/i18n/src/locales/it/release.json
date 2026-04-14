@@ -6,6 +6,7 @@
     "select_releases": "Seleziona rilasci",
     "overview": "Panoramica",
     "scope": "Ambito",
+    "changelog": "Changelog",
     "page_title": {
       "scope": "Rilascio - {name} | Ambito",
       "scope_fallback": "Rilascio | Ambito"

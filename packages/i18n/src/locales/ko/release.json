@@ -6,6 +6,7 @@
     "select_releases": "릴리스 선택",
     "overview": "개요",
     "scope": "범위",
+    "changelog": "변경 로그",
     "page_title": {
       "scope": "릴리스 - {name} | 범위",
       "scope_fallback": "릴리스 | 범위"

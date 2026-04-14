@@ -53,6 +53,9 @@
       "button": {
         "previous": "Quay lại",
         "next": "Thêm hành động"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Bạn không thể thay đổi loại kích hoạt sau khi đã tạo"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Chọn một tùy chọn",
       "handler_name": {
         "add_comment": "Thêm bình luận",
-        "change_property": "Thay đổi thuộc tính"
+        "change_property": "Thay đổi thuộc tính",
+        "run_script": "Chạy script"
       },
       "configuration": {
         "label": "Cấu hình",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Thêm bình luận"
+      },
+      "run_script_block": {
+        "title": "Chạy script"
       },
       "change_property_block": {
         "title": "Thay đổi thuộc tính"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Tiêu đề tự động hóa",
+      "scope": "Phạm vi",
+      "projects": "Dự án",
       "last_run_on": "Chạy lần cuối vào",
       "created_on": "Được tạo vào",
       "last_updated_on": "Cập nhật lần cuối vào",
@@ -229,6 +238,35 @@
         "title": "Tự động hóa",
         "description": "Tự động hóa là cách để tự động hóa các tác vụ trong dự án của bạn.",
         "sub_description": "Lấy lại 80% thời gian quản trị của bạn khi sử dụng Tự động hóa."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Chọn các dự án để chạy tự động hóa này",
+        "all_projects": {
+          "label": "Tất cả dự án",
+          "description": "Tự động hóa sẽ chạy cho tất cả dự án trong không gian làm việc."
+        },
+        "select_projects": {
+          "label": "Chọn dự án",
+          "description": "Tự động hóa sẽ chạy cho các dự án đã chọn trong không gian làm việc.",
+          "placeholder": "Chọn dự án"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Tự động hóa",
+        "title": "Tự động hóa",
+        "description": "Chuẩn hóa quy trình trong toàn bộ không gian làm việc với tự động hóa toàn cục."
+      },
+      "table": {
+        "scope": {
+          "global": "Toàn cục",
+          "project": {
+            "label": "Dự án",
+            "multiple": "Nhiều",
+            "all": "Tất cả"
+          }
+        }
       }
     }
   }

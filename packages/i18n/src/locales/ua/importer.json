@@ -32,6 +32,8 @@
     }
   },
   "importers": {
+    "teamspace": "Командний простір",
+    "destination": "Призначення",
     "imports": "Імпорти",
     "logo": "Лого",
     "import_message": "Імпортуйте ваші дані {serviceName} у проджекти Плейн.",
@@ -88,7 +90,6 @@
     "import_to_existing_project": "Імпортувати в існуючий проєкт",
     "import_to_existing_project_description": "Виберіть існуючий проєкт зі спадного списку нижче.",
     "state_mapping_automatic_creation": "Усі статуси Jira будуть автоматично створені в Plane.",
-    "atlassian_security_settings": "Налаштування Безпеки Atlassian",
     "email_description": "Це емейл, пов'язаний з вашим персональним токеном доступу",
     "jira_domain": "Домен Jira",
     "jira_domain_description": "Це домен вашого інстансу Jira",
@@ -172,7 +173,19 @@
     "notion_importer_description": "Імпортуйте ваші дані Notion у проекти Plane.",
     "steps": {
       "title_upload_zip": "Завантажити експортований ZIP з Notion",
-      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Notion."
+      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Notion.",
+      "title_select_destination": "Вибрати призначення",
+      "description_select_destination": "Будь ласка, виберіть призначення для ваших даних Notion."
+    },
+    "select_destination": {
+      "destination_type": "Тип призначення",
+      "select_destination_type": "Виберіть тип призначення",
+      "select_project": "Виберіть проект",
+      "no_projects_found": "Проекти не знайдено",
+      "select_teamspace": "Виберіть командний простір",
+      "no_teamspaces_found": "Командні простори не знайдено",
+      "unknown_project": "Невідомий проект",
+      "unknown_teamspace": "Невідомий командний простір"
     },
     "upload": {
       "drop_file_here": "Перетягніть ваш zip файл Notion сюди",
@@ -202,7 +215,19 @@
     "confluence_importer_description": "Імпортуйте ваші дані Confluence у вікі Plane.",
     "steps": {
       "title_upload_zip": "Завантажити експортований ZIP з Confluence",
-      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Confluence."
+      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Confluence.",
+      "title_select_destination": "Вибрати призначення",
+      "description_select_destination": "Будь ласка, виберіть призначення для ваших даних Confluence."
+    },
+    "select_destination": {
+      "destination_type": "Тип призначення",
+      "select_destination_type": "Виберіть тип призначення",
+      "select_project": "Виберіть проект",
+      "no_projects_found": "Проекти не знайдено",
+      "select_teamspace": "Виберіть командний простір",
+      "no_teamspaces_found": "Командні простори не знайдено",
+      "unknown_project": "Невідомий проект",
+      "unknown_teamspace": "Невідомий командний простір"
     },
     "upload": {
       "drop_file_here": "Перетягніть ваш zip файл Confluence сюди",

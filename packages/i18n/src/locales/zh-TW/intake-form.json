@@ -5,8 +5,6 @@
       "sub-title": "讓團隊知道您希望他們處理的內容。",
       "name": "名稱",
       "email": "電子郵件",
-      "about": "此工作項目的內容是什麼？",
-      "description": "描述應該發生什麼",
       "description_placeholder": "盡量提供詳細資訊，協助團隊了解您的情況與需求。",
       "loading": "建立中",
       "create_work_item": "建立工作項目",

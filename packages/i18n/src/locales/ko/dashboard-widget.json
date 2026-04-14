@@ -6,9 +6,18 @@
           "short_label": "바",
           "long_label": "바 차트",
           "chart_models": {
-            "basic": "베이직",
-            "stacked": "스택드",
-            "grouped": "그룹드"
+            "basic": {
+              "short_label": "베이직",
+              "long_label": "베이직 바"
+            },
+            "stacked": {
+              "short_label": "스택드",
+              "long_label": "스택드 바"
+            },
+            "grouped": {
+              "short_label": "그룹드",
+              "long_label": "그룹드 바"
+            }
           },
           "orientation": {
             "label": "오리엔테이션",
@@ -22,8 +31,14 @@
           "short_label": "라인",
           "long_label": "라인 차트",
           "chart_models": {
-            "basic": "베이직",
-            "multi_line": "멀티 라인"
+            "basic": {
+              "short_label": "베이직",
+              "long_label": "베이직 라인"
+            },
+            "multi_line": {
+              "short_label": "멀티 라인",
+              "long_label": "멀티 라인"
+            }
           },
           "line_color": "라인 컬러",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "에어리어",
           "long_label": "에어리어 차트",
           "chart_models": {
-            "basic": "베이직",
-            "stacked": "스택드",
-            "comparison": "컴패리슨"
+            "basic": {
+              "short_label": "베이직",
+              "long_label": "베이직 에어리어"
+            },
+            "stacked": {
+              "short_label": "스택드",
+              "long_label": "스택드 에어리어"
+            },
+            "comparison": {
+              "short_label": "컴패리슨",
+              "long_label": "컴패리슨 에어리어"
+            }
           },
           "fill_color": "필 컬러"
         },
@@ -47,8 +71,14 @@
           "short_label": "도넛",
           "long_label": "도넛 차트",
           "chart_models": {
-            "basic": "베이직",
-            "progress": "프로그레스"
+            "basic": {
+              "short_label": "베이직",
+              "long_label": "베이직 도넛"
+            },
+            "progress": {
+              "short_label": "프로그레스",
+              "long_label": "프로그레스 도넛"
+            }
           },
           "center_value": "센터 밸류",
           "completed_color": "컴플리티드 컬러"
@@ -57,7 +87,10 @@
           "short_label": "파이",
           "long_label": "파이 차트",
           "chart_models": {
-            "basic": "베이직"
+            "basic": {
+              "short_label": "베이직",
+              "long_label": "파이"
+            }
           },
           "group": {
             "label": "그룹드 피시스",
@@ -77,9 +110,15 @@
             "count": "카운트"
           }
         },
-        "text": {
-          "short_label": "텍스트",
-          "long_label": "텍스트",
+        "number": {
+          "short_label": "넘버",
+          "long_label": "넘버",
+          "chart_models": {
+            "basic": {
+              "short_label": "베이직",
+              "long_label": "넘버"
+            }
+          },
           "alignment": {
             "label": "텍스트 얼라인먼트",
             "left": "레프트",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "이 테이블을 보려면 행에 대한 속성을 선택하세요."
         }
       },
+      "sections": {
+        "charts": "차트",
+        "text": "텍스트"
+      },
       "color_palettes": {
         "modern": "모던",
         "horizon": "호라이즌",
@@ -115,11 +158,7 @@
           "label": "이 위젯의 이름 지정",
           "placeholder": "예: \"어제의 할 일\", \"모두 완료\""
         },
-        "chart_type": "차트 타입",
-        "visualization_type": {
-          "label": "비주얼라이제이션 타입",
-          "placeholder": "비주얼라이제이션 타입 추가"
-        },
+        "widget_type": "위젯 타입",
         "date_group": {
           "label": "데이트 그룹",
           "placeholder": "데이트 그룹 추가"
@@ -218,7 +257,7 @@
             "y_axis_metric": "메트릭에 값이 없습니다."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "메트릭에 값이 없습니다."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "이 위젯을 구성하려면 관리자에게 문의하세요."
+      },
+      "upgrade_required": {
+        "title": "이 위젯 타입은 현재 플랜에 포함되어 있지 않습니다."
       }
     },
     "create_modal": {

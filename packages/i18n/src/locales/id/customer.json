@@ -46,7 +46,8 @@
           "name": "Karyawan",
           "placeholder": "Jumlah karyawan jika pelanggan Anda adalah bisnis.",
           "validation": {
-            "min_length": "Karyawan tidak boleh kurang dari 0."
+            "min_length": "Karyawan tidak boleh kurang dari 0.",
+            "max_length": "Jumlah karyawan tidak boleh melebihi 2147483647"
           }
         },
         "size": {
@@ -75,10 +76,15 @@
         "revenue": {
           "name": "Pendapatan",
           "placeholder": "Ini adalah pendapatan yang dihasilkan pelanggan Anda setiap tahun.",
+          "placeholder_short": "Tambah pendapatan",
           "validation": {
             "min_length": "Pendapatan tidak boleh kurang dari 0."
           }
-        }
+        },
+        "requests": {
+          "name": "Jumlah permintaan"
+        },
+        "invalid_value": "Nilai properti tidak valid."
       },
       "custom": {
         "title": "Properti kustom",

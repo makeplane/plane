@@ -110,6 +110,12 @@
         "description": "Pracovná položka môže byť odložená na preskúmanie neskôr. Presunie sa na koniec vášho zoznamu otvorených žiadostí."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Prestaňte prepínať medzi kartami. Prepojte svoj svet.",
+        "description": "Prepojte GitHub a Slack, aby ste mohli sledovať PR a sumarizovať chaty priamo v Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigácia, znovu premyslená",

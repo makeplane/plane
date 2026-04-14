@@ -49,6 +49,23 @@
           "text": "Thêm epic"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Thao tác này tạo một bản sao của epic.",
+        "description2": "Tất cả dữ liệu thuộc tính sẽ bị xóa khi sao chép.",
+        "epics_not_enabled": "Epics chưa được bật"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Đã sao chép epic thành công"
+        },
+        "error": {
+          "message": "Không thể sao chép epic"
+        }
+      }
     }
   },
   "epic_relation": {

@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "환경 설정",
+      "description": "작업 방식에 맞게 앱 환경을 사용자 정의하세요"
+    },
     "notifications": {
+      "heading": "이메일 알림",
+      "description": "구독한 작업 항목에 대한 최신 정보를 유지하세요. 알림을 받으려면 이 기능을 활성화하세요.",
       "select_default_view": "기본 보기 선택",
       "compact": "컴팩트",
       "full": "전체 화면"
+    },
+    "security": {
+      "heading": "보안"
+    },
+    "api_tokens": {
+      "title": "퍼스널 액세스 토큰",
+      "description": "보안 API 토큰을 생성하여 외부 시스템 및 애플리케이션과 데이터를 통합하세요."
+    },
+    "activity": {
+      "heading": "활동",
+      "description": "모든 프로젝트 및 작업 항목에 걸친 최근 작업과 변경 사항을 추적하세요."
+    },
+    "connections": {
+      "title": "커넥션",
+      "heading": "커넥션",
+      "description": "작업 공간 연결 설정을 관리하세요."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "프로필",
       "security": "보안",
       "activity": "활동",
-      "appearance": "외관",
+      "preferences": "환경 설정",
       "notifications": "알림",
+      "api-tokens": "퍼스널 액세스 토큰",
       "connections": "커넥션"
     },
     "tabs": {

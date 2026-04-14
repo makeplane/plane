@@ -43,6 +43,8 @@
     "import": "Importa",
     "serial_number": "Nr. di serie",
     "project": "Progetto",
+    "teamspace": "Teamspace",
+    "destination": "Destinazione",
     "workspace": "workspace",
     "status": "Stato",
     "summary": "Sommario",
@@ -88,7 +90,6 @@
     "state_mapping_automatic_creation": "Tutti gli stati Jira verranno creati automaticamente in Plane.",
     "personal_access_token": "Token di accesso personale",
     "user_email": "Email utente",
-    "atlassian_security_settings": "Impostazioni di sicurezza Atlassian",
     "email_description": "Questa è l'email collegata al tuo token di accesso personale",
     "jira_domain": "Dominio Jira",
     "jira_domain_description": "Questo è il dominio della tua istanza Jira",
@@ -171,6 +172,8 @@
   "notion_importer": {
     "notion_importer_description": "Importa i tuoi dati Notion nei progetti Plane.",
     "steps": {
+      "title_select_destination": "Seleziona destinazione",
+      "description_select_destination": "Seleziona la destinazione per i tuoi dati Notion.",
       "title_upload_zip": "Carica ZIP esportato da Notion",
       "description_upload_zip": "Carica il file ZIP contenente i tuoi dati Notion."
     },
@@ -196,11 +199,23 @@
       "upload_complete_message": "Caricamento completato!",
       "upload_complete_description": "Clicca su \"Inizia importazione\" per iniziare l'elaborazione dei tuoi dati Notion.",
       "upload_progress_message": "Non chiudere questa finestra."
+    },
+    "select_destination": {
+      "destination_type": "Tipo di destinazione",
+      "select_destination_type": "Seleziona tipo di destinazione",
+      "select_project": "Seleziona progetto",
+      "no_projects_found": "Nessun progetto trovato",
+      "select_teamspace": "Seleziona teamspace",
+      "no_teamspaces_found": "Nessun teamspace trovato",
+      "unknown_project": "Progetto sconosciuto",
+      "unknown_teamspace": "Teamspace sconosciuto"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Importa i tuoi dati Confluence nel wiki di Plane.",
     "steps": {
+      "title_select_destination": "Seleziona destinazione",
+      "description_select_destination": "Seleziona la destinazione per i tuoi dati Confluence.",
       "title_upload_zip": "Carica ZIP esportato da Confluence",
       "description_upload_zip": "Carica il file ZIP contenente i tuoi dati Confluence."
     },
@@ -226,6 +241,16 @@
       "upload_complete_message": "Caricamento completato!",
       "upload_complete_description": "Clicca su \"Inizia importazione\" per iniziare l'elaborazione dei tuoi dati Confluence.",
       "upload_progress_message": "Non chiudere questa finestra."
+    },
+    "select_destination": {
+      "destination_type": "Tipo di destinazione",
+      "select_destination_type": "Seleziona tipo di destinazione",
+      "select_project": "Seleziona progetto",
+      "no_projects_found": "Nessun progetto trovato",
+      "select_teamspace": "Seleziona teamspace",
+      "no_teamspaces_found": "Nessun teamspace trovato",
+      "unknown_project": "Progetto sconosciuto",
+      "unknown_teamspace": "Teamspace sconosciuto"
     }
   },
   "flatfile_importer": {

@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Facturación y Planes",
+        "description": "Elige tu plan, gestiona las suscripciones y actualiza fácilmente a medida que crecen tus necesidades.",
         "title": "Facturación y Planes",
         "current_plan": "Plan actual",
         "free_plan": "Actualmente estás usando el plan gratuito",
         "view_plans": "Ver planes"
       },
       "exports": {
+        "heading": "Exportaciones",
+        "description": "Exporta los datos de tu proyecto en varios formatos y accede a tu historial de exportaciones con enlaces de descarga.",
         "title": "Exportaciones",
         "exporting": "Exportando",
         "previous_exports": "Exportaciones anteriores",
         "export_separate_files": "Exportar los datos en archivos separados",
+        "exporting_projects": "Exportando proyecto",
+        "format": "Formato",
         "filters_info": "Aplica filtros para exportar elementos de trabajo específicos según tus criterios.",
         "modal": {
           "title": "Exportar a",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automatiza las notificaciones a servicios externos cuando ocurren eventos del proyecto.",
         "title": "Webhooks",
         "add_webhook": "Agregar webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integraciones",
+        "heading": "Integraciones",
+        "description": "Conéctate con herramientas y servicios populares para sincronizar tu trabajo en todo tu ecosistema de flujo de trabajo.",
         "page_title": "Trabaja con tus datos de Plane en aplicaciones disponibles o en las tuyas propias.",
         "page_description": "Ver todas las integraciones en uso por este espacio de trabajo o por ti."
       },
       "imports": {
-        "title": "Importaciones"
+        "title": "Importaciones",
+        "heading": "Importaciones",
+        "description": "Conecta e importa datos desde tus herramientas de gestión de proyectos existentes para optimizar la integración de tu flujo de trabajo."
       },
       "worklogs": {
-        "title": "Registros de trabajo"
+        "title": "Registros de trabajo",
+        "heading": "Registros de trabajo",
+        "description": "Descarga los registros de trabajo, también conocidos como hojas de tiempo, de cualquier persona en cualquier proyecto."
       },
       "group_syncing": {
         "title": "Sincronización de grupos",
@@ -242,7 +256,10 @@
         "description": "Configure su dominio y habilite el inicio de sesión único"
       },
       "project_states": {
-        "title": "Estados del proyecto"
+        "title": "Estados del proyecto",
+        "heading": "Ver resumen de progreso de todos los proyectos.",
+        "description": "Los Estados de proyecto son una función exclusiva de Plane para rastrear el progreso de todos tus proyectos por cualquier propiedad del proyecto.",
+        "go_to_settings": "Ir a configuración"
       },
       "projects": {
         "title": "Proyectos",
@@ -253,13 +270,29 @@
         }
       },
       "teamspaces": {
-        "title": "Espacios de equipo"
+        "title": "Espacios de equipo",
+        "heading": "Espacios de equipo",
+        "description": "Ve el trabajo de tu equipo en un espacio separado con proyectos, tareas, gráficos de equipo, páginas y vistas vinculados."
       },
       "initiatives": {
-        "title": "Iniciativas"
+        "title": "Iniciativas",
+        "heading": "Iniciativas",
+        "description": "Desbloquea el nivel más alto de organización para todo tu trabajo en Plane."
       },
       "customers": {
-        "title": "Clientes"
+        "title": "Clientes",
+        "heading": "Gestiona el trabajo según lo que es importante para tus clientes.",
+        "description": "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes."
+      },
+      "templates": {
+        "title": "Plantillas",
+        "heading": "Plantillas",
+        "description": "Ahorra el 80 % del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando usas plantillas."
+      },
+      "relations": {
+        "title": "Relaciones",
+        "heading": "Relaciones",
+        "description": "Crea y gestiona tipos de relaciones que conectan elementos de trabajo en tu espacio de trabajo."
       },
       "releases": {
         "title": "Lanzamientos",
@@ -289,6 +322,7 @@
         "your_apps": "Tus aplicaciones",
         "connect": "Conectar",
         "connected": "Conectado",
+        "disconnect": "Desconectar",
         "install": "Instalar",
         "installed": "Instalado",
         "configure": "Configurar",
@@ -319,8 +353,8 @@
         "app_description_error": "La descripción de la aplicación es obligatoria",
         "app_slug_title": "Slug de la aplicación",
         "app_slug_error": "El slug de la aplicación es obligatorio",
-        "app_maker_title": "Creador de la aplicación",
         "app_maker_error": "El creador de la aplicación es obligatorio",
+        "invalid_website_error": "Sitio web inválido",
         "webhook_url_title": "URL del Webhook",
         "webhook_url_error": "La URL del webhook es obligatoria",
         "invalid_webhook_url_error": "URL del webhook inválida",
@@ -382,7 +416,6 @@
         "video_url_title": "URL del Video",
         "video_url_error": "El URL del Video es requerido",
         "invalid_video_url_error": "URL del Video inválida",
-        "setup_url_title": "URL de Configuración",
         "setup_url_error": "La URL de Configuración es requerida",
         "invalid_setup_url_error": "URL de Configuración inválida",
         "configuration_url_title": "URL de Configuración",
@@ -428,12 +461,21 @@
           "description": "Aquí es donde enviaremos eventos y actualizaciones de webhook desde los espacios de trabajo donde está instalada su aplicación.",
           "placeholder": "https://example.com/webhook"
         },
+        "webhook_secret": {
+          "label": "Secreto del webhook",
+          "description": "Secreto utilizado para verificar las solicitudes entrantes del webhook.",
+          "placeholder": "Ingresa una clave secreta aleatoria"
+        },
         "redirect_uris": {
           "label": "URIs de redirección (separadas por espacios)",
           "description": "Los usuarios serán redirigidos a esta ruta después de haberse autenticado con Plane.",
           "placeholder": "https://example.com https://example.com/"
         },
+        "app_consent_no_access_title": "Solicitud de instalación",
         "app_consent_no_access_description": "Esta aplicación solo se puede instalar después de que un administrador del espacio de trabajo la instale. Contacta con el administrador de tu espacio de trabajo para continuar.",
+        "app_consent_unapproved_title": "Esta aplicación aún no ha sido revisada ni aprobada por Plane.",
+        "app_consent_unapproved_description": "Asegúrate de confiar en esta aplicación antes de conectarla a tu espacio de trabajo.",
+        "go_to_app": "Ir a la aplicación",
         "enable_app_mentions": "Habilitar menciones de la aplicación",
         "enable_app_mentions_tooltip": "Cuando esto está habilitado, los usuarios pueden mencionar o asignar elementos de trabajo a esta aplicación.",
         "scopes": "Ámbitos",
@@ -463,6 +505,12 @@
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Ve tu trabajo obtener más inteligente y más rápido con IA que está conectada de forma nativa a tu trabajo y base de conocimientos."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "Nuevo script",
+        "description": "Automatiza tus flujos de trabajo con scripts personalizados y reglas de automatización."
       }
     },
     "empty_state": {

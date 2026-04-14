@@ -10,6 +10,8 @@
     "all_initiatives": "すべてのイニシアチブ",
     "delete_initiative": "イニシアチブを削除",
     "fill_all_required_fields": "すべての必須フィールドに入力してください。",
+    "archive_initiative": "イニシアチブをアーカイブ",
+    "archive_confirm_message": "イニシアチブをアーカイブしてもよろしいですか？アーカイブしたイニシアチブは後で復元できます。",
     "archive_description": "完了またはクローズ済みのイニシアチブのみアーカイブできます",
     "toast": {
       "create_success": "イニシアチブ {name} が正常に作成されました。",
@@ -24,6 +26,9 @@
         "success": "イニシアチブをアーカイブしました。",
         "error": "イニシアチブをアーカイブできませんでした",
         "initiative_cannot_be_archived_in_this_state": "この状態のイニシアチブはアーカイブできません"
+      },
+      "restore": {
+        "error": "イニシアチブを復元できませんでした。もう一度お試しください。"
       },
       "link_copied": "イニシアチブのリンクがクリップボードにコピーされました。",
       "project_update_success": "イニシアチブのプロジェクトが正常に更新されました。",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "まだスコープが追加されていません",
         "description": "このイニシアチブにプロジェクトとエピックをリンクし、その作業をこのスペースで追跡します。",
+        "description_projects": "プロジェクトをリンクし、その作業をこのスペースで追跡します。",
+        "description_epics": "エピックをリンクし、その作業をこのスペースで追跡します。",
         "primary_button": {
           "text": "スコープを追加"
         }
+      },
+      "board": {
+        "no_epics": "このイニシアチブにはエピックがありません",
+        "no_projects": "このイニシアチブにはプロジェクトがありません",
+        "enable_project_states": "プロジェクトのステータスが有効になっていません",
+        "enable_project_states_description": "ステータスベースのグループ化を使用するには、ワークスペース設定からプロジェクトのステータスを有効にしてください。"
       }
     },
     "initiative_settings": {

@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "stickies": "Notas adhesivas",
     "projects": "Proyectos",
     "pages": "Páginas",
     "new_work_item": "Nuevo elemento de trabajo",
@@ -25,7 +26,7 @@
     "plane_pro": "Plane Pro",
     "business": "Business",
     "customers": "Clientes",
-    "recurring_work_items": "Tareas recurrentes"
+    "releases": "Lanzamientos"
   },
   "command_k": {
     "empty_state": {

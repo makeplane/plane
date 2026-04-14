@@ -10,6 +10,8 @@
     "all_initiatives": "Alle Initiativen",
     "delete_initiative": "Initiative Löschen",
     "fill_all_required_fields": "Bitte füllen Sie alle erforderlichen Felder aus.",
+    "archive_initiative": "Initiative archivieren",
+    "archive_confirm_message": "Möchten Sie die Initiative wirklich archivieren? Alle Ihre archivierten Initiativen können später wiederhergestellt werden.",
     "archive_description": "Nur abgeschlossene oder geschlossene Initiativen können archiviert werden",
     "toast": {
       "create_success": "Initiative {name} erfolgreich erstellt.",
@@ -24,6 +26,9 @@
         "success": "Initiative erfolgreich archiviert.",
         "error": "Initiative konnte nicht archiviert werden",
         "initiative_cannot_be_archived_in_this_state": "Initiative kann in diesem Status nicht archiviert werden"
+      },
+      "restore": {
+        "error": "Initiative konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut."
       },
       "link_copied": "Initiativenlink in die Zwischenablage kopiert.",
       "project_update_success": "Initiativenprojekte erfolgreich aktualisiert.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Noch kein Umfang zu dieser Initiative hinzugefügt",
         "description": "Verknüpfen Sie Projekte und Epics und verfolgen Sie diese Arbeit in diesem Raum.",
+        "description_projects": "Verknüpfen Sie Projekte und verfolgen Sie diese Arbeit in diesem Raum.",
+        "description_epics": "Verknüpfen Sie Epics und verfolgen Sie diese Arbeit in diesem Raum.",
         "primary_button": {
           "text": "Umfang hinzufügen"
         }
+      },
+      "board": {
+        "no_epics": "Keine Epics in dieser Initiative",
+        "no_projects": "Keine Projekte in dieser Initiative",
+        "enable_project_states": "Projektstatus nicht aktiviert",
+        "enable_project_states_description": "Aktivieren Sie Projektstatus in den Arbeitsbereichseinstellungen, um die statusbasierte Gruppierung zu verwenden."
       }
     },
     "initiative_settings": {

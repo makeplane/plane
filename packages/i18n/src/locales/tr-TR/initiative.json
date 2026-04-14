@@ -10,6 +10,8 @@
     "all_initiatives": "Tüm İnisiyatifler",
     "delete_initiative": "İnisiyatif Sil",
     "fill_all_required_fields": "Lütfen tüm zorunlu alanları doldurun.",
+    "archive_initiative": "İnisiyatifi Arşivle",
+    "archive_confirm_message": "İnisiyatifi arşivlemek istediğinizden emin misiniz? Arşivlenen tüm inisiyatifleriniz daha sonra geri yüklenebilir.",
     "archive_description": "Yalnızca tamamlanmış veya kapatılmış inisiyatifler arşivlenebilir",
     "toast": {
       "create_success": "İnisiyatif {name} başarıyla oluşturuldu.",
@@ -24,6 +26,9 @@
         "success": "İnisiyatif başarıyla arşivlendi.",
         "error": "İnisiyatif arşivlenemedi",
         "initiative_cannot_be_archived_in_this_state": "İnisiyatif bu durumda arşivlenemez"
+      },
+      "restore": {
+        "error": "İnisiyatif geri yüklenemedi. Lütfen tekrar deneyin."
       },
       "link_copied": "İnisiyatif bağlantısı panoya kopyalandı.",
       "project_update_success": "İnisiyatif projeleri başarıyla güncellendi.",
@@ -68,9 +73,17 @@
       "empty_state": {
         "title": "Henüz kapsam eklenmedi",
         "description": "Projeleri ve epikleri inisiyatife bağlayın ve bu alanda çalışmayı takip edin.",
+        "description_projects": "Projeleri bağlayın ve bu alandaki çalışmayı takip edin.",
+        "description_epics": "Epikleri bağlayın ve bu alandaki çalışmayı takip edin.",
         "primary_button": {
           "text": "Kapsam ekle"
         }
+      },
+      "board": {
+        "no_epics": "Bu inisiyatifte epik yok",
+        "no_projects": "Bu inisiyatifte proje yok",
+        "enable_project_states": "Proje durumları etkin değil",
+        "enable_project_states_description": "Durum tabanlı gruplamayı kullanmak için çalışma alanı ayarlarından proje durumlarını etkinleştirin."
       }
     },
     "initiative_settings": {

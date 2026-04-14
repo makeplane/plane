@@ -1,6 +1,7 @@
 {
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clienti}}",
+    "open": "Apri cliente",
     "dropdown": {
       "placeholder": "Seleziona cliente",
       "required": "Seleziona un cliente",
@@ -57,7 +58,7 @@
           }
         },
         "domain": {
-          "domain": "Industria",
+          "name": "Industria",
           "placeholder": "Retail, e-Commerce, Fintech, Banca",
           "placeholder_short": "Aggiungi settore",
           "validation": {}
@@ -79,6 +80,9 @@
           "validation": {
             "min_length": "Il fatturato non può essere inferiore a 0."
           }
+        },
+        "requests": {
+          "name": "N. di richieste"
         },
         "invalid_value": "Valore proprietà non valido."
       },

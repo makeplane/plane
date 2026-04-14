@@ -49,6 +49,23 @@
           "text": "Ajouter des Epics"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Cela crée une copie de l’Epic.",
+        "description2": "Toutes les données de propriétés seront supprimées lors de la duplication.",
+        "epics_not_enabled": "Epics non activés"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic dupliqué avec succès"
+        },
+        "error": {
+          "message": "Échec de la duplication de l’Epic"
+        }
+      }
     }
   },
   "epic_relation": {

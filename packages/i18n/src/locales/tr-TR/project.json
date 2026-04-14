@@ -228,11 +228,39 @@
             "title": "Görünümler İş Öğesi özellikleri üzerinde çalışır.",
             "description": "Buradan istediğiniz kadar özellikle filtre içeren bir görünüm oluşturabilirsiniz."
           }
+        },
+        "filter": {
+          "title": "Eşleşen görünüm yok",
+          "description": "Arama kriterleriyle eşleşen görünüm yok.\n Bunun yerine yeni bir görünüm oluşturun."
         }
       },
-      "filter": {
-        "title": "Eşleşen görünüm yok",
-        "description": "Arama kriterleriyle eşleşen görünüm yok.\n Bunun yerine yeni bir görünüm oluşturun."
+      "no_archived_issues": {
+        "title": "Henüz arşivlenmiş iş öğesi yok",
+        "description": "Manuel olarak veya otomasyon aracılığıyla, tamamlanan veya iptal edilen iş öğelerini arşivleyebilirsiniz. Arşivlendikten sonra burada bulabilirsiniz.",
+        "primary_button": {
+          "text": "Otomasyon ayarla"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Uygulanan filtrelerle eşleşen iş öğesi bulunamadı",
+        "secondary_button": {
+          "text": "Tüm filtreleri temizle"
+        }
+      },
+      "public": {
+        "title": "Henüz genel sayfa yok",
+        "description": "Projenizdeki herkesle paylaşılan sayfaları burada görün.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "archived": {
+        "title": "Henüz arşivlenmiş sayfa yok",
+        "description": "Radarınızda olmayan sayfaları arşivleyin. İhtiyaç duyduğunuzda buradan erişin."
+      },
+      "shared": {
+        "title": "Henüz paylaşılan sayfa yok",
+        "description": "Başkalarının sizinle paylaştığı sayfalar burada görünecek."
       }
     },
     "delete_view": {
@@ -330,6 +358,13 @@
       "created_at": "Oluşturulma tarihi",
       "manual": "Manuel"
     }
+  },
+  "project_members": {
+    "full_name": "Ad soyad",
+    "display_name": "Görünen ad",
+    "email": "E-posta",
+    "joining_date": "Katılma tarihi",
+    "role": "Rol"
   },
   "project": {
     "members_import": {

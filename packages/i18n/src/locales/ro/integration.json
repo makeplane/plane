@@ -194,6 +194,10 @@
       "server_error_states": "Eroare de server la încărcarea stărilor"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Conectează și sincronizează depozitele tale Bitbucket Data Center cu Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Validează tokenurile IdP externe pentru accesul la API.",
@@ -302,6 +306,7 @@
     "generic_error": "A apărut o eroare neașteptată în timpul procesării cererii tale",
     "connection_not_found": "Conexiunea solicitată nu a putut fi găsită",
     "multiple_connections_found": "Au fost găsite mai multe conexiuni când se aștepta doar una",
+    "cannot_create_multiple_connections": "Ai conectat deja organizația ta cu un spațiu de lucru. Te rugăm să deconectezi conexiunea existentă înainte de a conecta una nouă.",
     "installation_not_found": "Instalarea solicitată nu a putut fi găsită",
     "user_not_found": "Utilizatorul solicitat nu a putut fi găsit",
     "error_fetching_token": "Nu s-a putut prelua tokenul de autentificare",
@@ -315,6 +320,7 @@
     "pulling": "Se extrag",
     "timed_out": "Timp expirat",
     "pulled": "Extras",
+    "progressing": "În desfășurare",
     "transforming": "Se transformă",
     "transformed": "Transformat",
     "pushing": "Se încarcă",

@@ -37,6 +37,8 @@
       "project_subscribers_description": "Wybierz członków, którzy będą otrzymywać powiadomienia dotyczące tego projektu."
     },
     "states": {
+      "heading": "Stany",
+      "description": "Definiuj i dostosowuj stany przepływu pracy, aby śledzić postęp elementów pracy.",
       "describe_this_state_for_your_members": "Opisz ten stan członkom projektu.",
       "empty_state": {
         "title": "Brak stanów w grupie {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etykiety",
+      "description": "Twórz niestandardowe etykiety, aby kategoryzować i organizować swoje elementy pracy",
       "label_title": "Nazwa etykiety",
       "label_title_is_required": "Nazwa etykiety jest wymagana",
       "label_max_char": "Nazwa etykiety nie może mieć więcej niż 255 znaków",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Szacunki",
+      "description": "Skonfiguruj systemy szacowania, aby śledzić i komunikować nakład pracy wymagany dla każdego elementu pracy.",
       "label": "Szacunki",
       "title": "Włącz szacunki dla mojego projektu",
-      "description": "Pomagają w komunikacji o złożoności i obciążeniu zespołu.",
+      "enable_description": "Pomagają w komunikacji o złożoności i obciążeniu zespołu.",
       "no_estimate": "Bez szacunku",
       "new": "Nowy system szacowania",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Nie udało się przestawić szacunków",
             "message": "Nie mogliśmy przestawić szacunków, spróbuj ponownie"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "System szacowania utworzony",
+            "message": "Utworzono i włączono pomyślnie"
+          },
+          "error": {
+            "title": "Błąd",
+            "message": "Coś poszło nie tak"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automatyzacja",
+      "heading": "Automatyzacje",
+      "description": "Skonfiguruj automatyczne akcje, aby usprawnić przepływ zarządzania projektem i zmniejszyć liczbę zadań ręcznych.",
       "auto-archive": {
         "title": "Automatyczna archiwizacja zamkniętych elementów",
         "description": "Plane będzie automatycznie archiwizował elementy, które zostały ukończone lub anulowane.",
@@ -194,6 +212,116 @@
         "description": "Skonfiguruj GitHub i inne integracje, aby synchronizować elementy pracy projektu."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Włącz przepływy pracy",
+        "description": "Ustaw przepływy pracy, aby kontrolować przemieszczanie się elementów pracy",
+        "no_states_tooltip": "Do przepływu pracy nie dodano żadnych stanów.",
+        "no_work_item_types_tooltip": "Do przepływu pracy nie dodano żadnych typów elementów pracy.",
+        "no_states_or_work_item_types_tooltip": "Do przepływu pracy nie dodano żadnych stanów ani typów elementów pracy.",
+        "toast": {
+          "loading": {
+            "enabling": "Włączanie przepływów pracy",
+            "disabling": "Wyłączanie przepływów pracy"
+          },
+          "success": {
+            "title": "Sukces!",
+            "message": "Przepływy pracy włączono pomyślnie."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się włączyć przepływów pracy. Spróbuj ponownie."
+          }
+        }
+      },
+      "heading": "Przepływy pracy",
+      "description": "Automatyzuj przejścia elementów pracy i ustaw reguły kontrolujące, jak zadania przechodzą przez potok projektu.",
+      "add_button": "Dodaj nowy przepływ pracy",
+      "search": "Szukaj przepływów pracy",
+      "detail": {
+        "define": "Zdefiniuj przepływ pracy",
+        "add_states": "Dodaj stany",
+        "unmapped_states": {
+          "title": "Wykryto niezmapowane stany",
+          "description": "Niektóre elementy pracy dla wybranych typów znajdują się obecnie w stanach, które nie istnieją w tym przepływie pracy.",
+          "note": "Jeśli włączysz ten przepływ pracy, te elementy zostaną automatycznie przeniesione do stanu początkowego tego przepływu pracy.",
+          "label": "Brakujące stany",
+          "tooltip": "Niektóre elementy pracy znajdują się w stanach, które nie są zmapowane do tego przepływu pracy. Otwórz przepływ pracy, aby sprawdzić."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Wszystkie stany są używane",
+          "description": "Wszystkie zdefiniowane stany dla tego projektu są już obecne w Twoim obecnym przepływie pracy."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Ten przepływ pracy stosuje się do każdego typu elementu pracy, który nie jest przypisany do przepływu pracy."
+      },
+      "create": {
+        "heading": "Utwórz nowy przepływ pracy",
+        "name": {
+          "placeholder": "Dodaj unikalną nazwę",
+          "validation": {
+            "max_length": "Nazwa musi mieć mniej niż 255 znaków",
+            "required": "Nazwa jest wymagana",
+            "invalid": "Nazwa może zawierać tylko litery, cyfry, spacje, myślniki i apostrofy"
+          }
+        },
+        "description": {
+          "placeholder": "Dodaj krótki opis",
+          "validation": {
+            "invalid": "Opis może zawierać tylko litery, cyfry, spacje, myślniki i apostrofy"
+          }
+        },
+        "work_item_type": {
+          "label": "Typ elementu pracy"
+        },
+        "success": {
+          "title": "Sukces!",
+          "message": "Przepływ pracy utworzono pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie udało się utworzyć przepływu pracy. Spróbuj ponownie."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Przepływ pracy zaktualizowano pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie udało się zaktualizować przepływu pracy. Spróbuj ponownie."
+        }
+      },
+      "delete": {
+        "loading": "Usuwanie przepływu pracy",
+        "success": {
+          "title": "Sukces!",
+          "message": "Przepływ pracy usunięto pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie udało się usunąć przepływu pracy. Spróbuj ponownie."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Stany dodano pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie udało się dodać stanów. Spróbuj ponownie."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Typy elementów pracy",
+      "description": "Twórz i dostosowuj różne typy elementów pracy z unikalnymi właściwościami"
+    },
     "initiatives": {
       "heading": "Inicjatywy",
       "sub_heading": "Odblokuj najwyższy poziom organizacji dla całej swojej pracy w Plane.",
@@ -209,14 +337,25 @@
     "customers": {
       "heading": "Klienci",
       "settings_heading": "Zarządzaj pracą według tego, co jest ważne dla Twoich klientów.",
-      "settings_sub_heading": "Przenieś prośby klientów do elementów pracy, przypisz priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zaintregujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta."
+      "settings_sub_heading": "Przenieś prośby klientów do elementów pracy, przypisz priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zaintregujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta.",
+      "description": "Przenieś prośby klientów do elementów pracy, przypisuj priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zintegrujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta."
     },
     "epics": {
+      "heading": "Epiki",
+      "description": "Dla większych obszarów pracy obejmujących kilka cykli i mogących funkcjonować w różnych modułach",
       "properties": {
         "title": "Właściwości",
         "description": "Dodaj niestandardowe właściwości do swojego epiku."
       },
       "disabled": "Wyłączone"
+    },
+    "project_updates": {
+      "heading": "Aktualizacje projektu",
+      "description": "Skonsolidowane śledzenie i monitorowanie postępu dla tego projektu"
+    },
+    "templates": {
+      "heading": "Szablony",
+      "description": "Zaoszczędź 80% czasu poświęcanego na tworzenie projektów, elementów pracy i stron, gdy używasz szablonów."
     },
     "cycles": {
       "auto_schedule": {

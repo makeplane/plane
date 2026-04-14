@@ -194,6 +194,10 @@
       "server_error_states": "Ошибка сервера при загрузке состояний"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Подключите и синхронизируйте репозитории Bitbucket Data Center с Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Проверка токенов внешних IdP для доступа к API.",
@@ -316,6 +320,7 @@
     "pulling": "Извлечение",
     "timed_out": "Время истекло",
     "pulled": "Извлечено",
+    "progressing": "В процессе",
     "transforming": "Преобразование",
     "transformed": "Преобразовано",
     "pushing": "Отправка",

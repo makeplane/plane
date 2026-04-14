@@ -6,9 +6,18 @@
           "short_label": "Столбец",
           "long_label": "Столбчатая диаграмма",
           "chart_models": {
-            "basic": "Базовый",
-            "stacked": "С накоплением",
-            "grouped": "Сгруппированный"
+            "basic": {
+              "short_label": "Базовый",
+              "long_label": "Базовый столбчатый"
+            },
+            "stacked": {
+              "short_label": "С накоплением",
+              "long_label": "Столбчатый с накоплением"
+            },
+            "grouped": {
+              "short_label": "Сгруппированный",
+              "long_label": "Сгруппированный столбчатый"
+            }
           },
           "orientation": {
             "label": "Ориентация",
@@ -22,8 +31,14 @@
           "short_label": "Линия",
           "long_label": "Линейная диаграмма",
           "chart_models": {
-            "basic": "Базовый",
-            "multi_line": "Многолинейный"
+            "basic": {
+              "short_label": "Базовый",
+              "long_label": "Базовая линия"
+            },
+            "multi_line": {
+              "short_label": "Многолинейный",
+              "long_label": "Многолинейный"
+            }
           },
           "line_color": "Цвет линии",
           "line_type": {
@@ -37,9 +52,18 @@
           "short_label": "Область",
           "long_label": "Диаграмма области",
           "chart_models": {
-            "basic": "Базовый",
-            "stacked": "С накоплением",
-            "comparison": "Сравнительный"
+            "basic": {
+              "short_label": "Базовый",
+              "long_label": "Базовая область"
+            },
+            "stacked": {
+              "short_label": "С накоплением",
+              "long_label": "Область с накоплением"
+            },
+            "comparison": {
+              "short_label": "Сравнительный",
+              "long_label": "Сравнительная область"
+            }
           },
           "fill_color": "Цвет заливки"
         },
@@ -47,8 +71,14 @@
           "short_label": "Кольцо",
           "long_label": "Кольцевая диаграмма",
           "chart_models": {
-            "basic": "Базовый",
-            "progress": "Прогресс"
+            "basic": {
+              "short_label": "Базовый",
+              "long_label": "Базовое кольцо"
+            },
+            "progress": {
+              "short_label": "Прогресс",
+              "long_label": "Кольцо прогресса"
+            }
           },
           "center_value": "Центральное значение",
           "completed_color": "Цвет завершения"
@@ -57,7 +87,10 @@
           "short_label": "Круг",
           "long_label": "Круговая диаграмма",
           "chart_models": {
-            "basic": "Базовый"
+            "basic": {
+              "short_label": "Базовый",
+              "long_label": "Круговая"
+            }
           },
           "group": {
             "label": "Сгруппированные сегменты",
@@ -77,9 +110,15 @@
             "count": "Количество"
           }
         },
-        "text": {
-          "short_label": "Текст",
-          "long_label": "Текст",
+        "number": {
+          "short_label": "Число",
+          "long_label": "Число",
+          "chart_models": {
+            "basic": {
+              "short_label": "Базовый",
+              "long_label": "Число"
+            }
+          },
           "alignment": {
             "label": "Выравнивание текста",
             "left": "По левому краю",
@@ -104,6 +143,10 @@
           "configure_rows_hint": "Выберите свойство для строк, чтобы просмотреть эту таблицу."
         }
       },
+      "sections": {
+        "charts": "Диаграммы",
+        "text": "Текст"
+      },
       "color_palettes": {
         "modern": "Современная",
         "horizon": "Горизонт",
@@ -115,11 +158,7 @@
           "label": "Назовите этот виджет",
           "placeholder": "например, \"Задачи на вчера\", \"Все завершённые\""
         },
-        "chart_type": "Тип диаграммы",
-        "visualization_type": {
-          "label": "Тип визуализации",
-          "placeholder": "Добавить тип визуализации"
-        },
+        "widget_type": "Тип виджета",
         "date_group": {
           "label": "Группировка по дате",
           "placeholder": "Добавить группировку по дате"
@@ -218,7 +257,7 @@
             "y_axis_metric": "Отсутствует значение для метрики."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Отсутствует значение для метрики."
           }
@@ -230,6 +269,9 @@
           }
         },
         "ask_admin": "Попросите администратора настроить этот виджет."
+      },
+      "upgrade_required": {
+        "title": "Этот тип виджета не входит в ваш тарифный план."
       }
     },
     "create_modal": {

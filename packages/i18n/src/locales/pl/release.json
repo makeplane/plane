@@ -6,6 +6,7 @@
     "select_releases": "Wybierz wydania",
     "overview": "Przegląd",
     "scope": "Zakres",
+    "changelog": "Dziennik zmian",
     "page_title": {
       "scope": "Wydanie - {name} | Zakres",
       "scope_fallback": "Wydanie | Zakres"

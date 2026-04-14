@@ -49,6 +49,23 @@
           "text": "Aggiungi epiche"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Questo crea una copia dell'epica.",
+        "description2": "Tutti i dati delle proprietà verranno rimossi durante la duplicazione.",
+        "epics_not_enabled": "Epiche non abilitate"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epica duplicata con successo"
+        },
+        "error": {
+          "message": "Impossibile duplicare l'epica"
+        }
+      }
     }
   },
   "epic_relation": {

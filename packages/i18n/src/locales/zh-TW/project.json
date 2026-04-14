@@ -228,11 +228,39 @@
             "title": "檢視基於工作事項屬性運作。",
             "description": "您可以從這裡建立檢視，使用您認為合適的屬性作為篩選器。"
           }
+        },
+        "filter": {
+          "title": "沒有符合的檢視",
+          "description": "沒有檢視符合搜尋條件。\n改為建立新檢視。"
         }
       },
-      "filter": {
-        "title": "沒有符合的檢視",
-        "description": "沒有檢視符合搜尋條件。\n改為建立新檢視。"
+      "no_archived_issues": {
+        "title": "尚無已封存的工作事項",
+        "description": "您可以手動或透過自動化封存已完成或已取消的工作事項。封存後會在這裡找到它們。",
+        "primary_button": {
+          "text": "設定自動化"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "找不到符合所套用篩選器的工作事項",
+        "secondary_button": {
+          "text": "清除所有篩選器"
+        }
+      },
+      "public": {
+        "title": "尚無公開頁面",
+        "description": "在此檢視與專案中所有人共享的頁面。",
+        "primary_button": {
+          "text": "建立您的第一個頁面"
+        }
+      },
+      "archived": {
+        "title": "尚無已封存的頁面",
+        "description": "封存不在您雷達上的頁面。需要時在此處存取。"
+      },
+      "shared": {
+        "title": "尚無共享頁面",
+        "description": "其他人與您共享的頁面會顯示在這裡。"
       }
     },
     "delete_view": {
@@ -330,6 +358,13 @@
       "created_at": "建立日期",
       "manual": "手動"
     }
+  },
+  "project_members": {
+    "full_name": "全名",
+    "display_name": "顯示名稱",
+    "email": "電子郵件",
+    "joining_date": "加入日期",
+    "role": "角色"
   },
   "project": {
     "members_import": {

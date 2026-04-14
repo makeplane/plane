@@ -34,6 +34,23 @@
     "add_selected_epics": "Додати вибрані епіки",
     "epic_link_copied_to_clipboard": "Посилання на епік скопійовано в буфер обміну.",
     "project_link_copied_to_clipboard": "Посилання на проджект скопійовано в буфер обміну",
+    "duplicate": {
+      "modal": {
+        "description1": "Це створить копію епіка.",
+        "description2": "Усі дані властивостей будуть видалені під час дублювання.",
+        "epics_not_enabled": "Епіки не увімкнено"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Епік успішно дубльовано"
+        },
+        "error": {
+          "message": "Не вдалося дублювати епік"
+        }
+      }
+    },
     "empty_state": {
       "general": {
         "title": "Створіть епік і призначте його комусь, навіть собі",

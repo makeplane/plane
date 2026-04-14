@@ -5,8 +5,6 @@
       "sub-title": "Dajte tímu vedieť, na čom by ste chceli, aby pracoval.",
       "name": "Meno",
       "email": "E-mail",
-      "about": "O čom je táto pracovná položka?",
-      "description": "Opíšte, čo by sa malo stať",
       "description_placeholder": "Pridajte toľko detailov, koľko chcete, aby tím identifikoval vašu situáciu a potreby.",
       "loading": "Vytváram",
       "create_work_item": "Vytvoriť pracovnú položku",

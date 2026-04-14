@@ -16,10 +16,15 @@
     "remove_filters_to_see_all_cycles": "Remova os filtros para ver todos os ciclos",
     "remove_search_criteria_to_see_all_cycles": "Remova os critérios de pesquisa para ver todos os ciclos",
     "only_completed_cycles_can_be_archived": "Apenas ciclos concluídos podem ser arquivados",
+    "start_date": "Data de início",
+    "end_date": "Data de término",
+    "in_your_timezone": "No seu fuso horário",
     "transfer_work_items": "Transferir {count} itens de trabalho",
     "transfer": {
       "no_cycles_available": "Não há outros ciclos disponíveis para transferir itens de trabalho."
     },
+    "date_range": "Intervalo de datas",
+    "add_date": "Adicionar data",
     "active_cycle": {
       "label": "Ciclo ativo",
       "progress": "Progresso",
@@ -223,11 +228,39 @@
             "title": "As visualizações funcionam sobre as propriedades do item de trabalho.",
             "description": "Você pode criar uma visualização a partir daqui com quantas propriedades como filtros que você achar adequado."
           }
+        },
+        "filter": {
+          "title": "Nenhuma visualização correspondente",
+          "description": "Nenhuma visualização corresponde aos critérios de pesquisa.\n Crie uma nova visualização em vez disso."
         }
       },
-      "filter": {
-        "title": "Nenhuma visualização correspondente",
-        "description": "Nenhuma visualização corresponde aos critérios de pesquisa.\nCrie uma nova visualização em vez disso."
+      "no_archived_issues": {
+        "title": "Ainda não há itens de trabalho arquivados",
+        "description": "Manualmente ou através de automação, você pode arquivar itens de trabalho concluídos ou cancelados. Encontre-os aqui depois de arquivados.",
+        "primary_button": {
+          "text": "Definir automação"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Nenhum item de trabalho encontrado correspondente aos filtros aplicados",
+        "secondary_button": {
+          "text": "Limpar todos os filtros"
+        }
+      },
+      "public": {
+        "title": "Ainda não há páginas públicas",
+        "description": "Veja aqui as páginas compartilhadas com todos do seu projeto.",
+        "primary_button": {
+          "text": "Crie sua primeira página"
+        }
+      },
+      "archived": {
+        "title": "Ainda não há páginas arquivadas",
+        "description": "Arquive páginas que não estão no seu radar. Acesse-as aqui quando precisar."
+      },
+      "shared": {
+        "title": "Ainda não há páginas compartilhadas",
+        "description": "As páginas que outros compartilharam com você aparecerão aqui."
       }
     },
     "delete_view": {
@@ -325,6 +358,13 @@
       "created_at": "Data de criação",
       "manual": "Manual"
     }
+  },
+  "project_members": {
+    "full_name": "Nome completo",
+    "display_name": "Nome de exibição",
+    "email": "E-mail",
+    "joining_date": "Data de entrada",
+    "role": "Cargo"
   },
   "project": {
     "members_import": {

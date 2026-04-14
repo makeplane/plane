@@ -37,6 +37,8 @@
       "project_subscribers_description": "Selecione os membros que receberão notificações deste projeto."
     },
     "states": {
+      "heading": "Estados",
+      "description": "Defina e personalize os estados de fluxo de trabalho para acompanhar o progresso dos seus itens de trabalho.",
       "describe_this_state_for_your_members": "Descreva este estado para seus membros.",
       "empty_state": {
         "title": "Nenhum estado disponível para o grupo {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etiquetas",
+      "description": "Crie etiquetas personalizadas para categorizar e organizar seus itens de trabalho",
       "label_title": "Título da etiqueta",
       "label_title_is_required": "O título da etiqueta é obrigatório",
       "label_max_char": "O nome da etiqueta não deve exceder 255 caracteres",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimativas",
       "label": "Estimativas",
       "title": "Habilitar estimativas para meu projeto",
       "description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
+      "enable_description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
       "no_estimate": "Sem estimativa",
       "new": "Novo sistema de estimativa",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Falha ao reordenar estimativas",
             "message": "Não foi possível reordenar as estimativas, tente novamente"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistema de estimativa criado",
+            "message": "Criado e habilitado com sucesso"
+          },
+          "error": {
+            "title": "Erro",
+            "message": "Algo deu errado"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automações",
+      "heading": "Automações",
+      "description": "Configure ações automatizadas para otimizar seu fluxo de trabalho de gerenciamento de projetos e reduzir tarefas manuais.",
       "auto-archive": {
         "title": "Arquivar automaticamente itens de trabalho fechados",
         "description": "O Plane arquivará automaticamente os itens de trabalho que foram concluídos ou cancelados.",
@@ -194,6 +212,116 @@
         "description": "Configure o GitHub e outras integrações para sincronizar os itens de trabalho do seu projeto."
       }
     },
+    "workflows": {
+      "toggle": {
+        "title": "Habilitar fluxos de trabalho",
+        "description": "Defina fluxos de trabalho para controlar a movimentação dos itens de trabalho",
+        "no_states_tooltip": "Nenhum estado foi adicionado ao fluxo de trabalho.",
+        "no_work_item_types_tooltip": "Nenhum tipo de item de trabalho foi adicionado ao fluxo de trabalho.",
+        "no_states_or_work_item_types_tooltip": "Nenhum estado ou tipo de item de trabalho foi adicionado ao fluxo de trabalho.",
+        "toast": {
+          "loading": {
+            "enabling": "Habilitando fluxos de trabalho",
+            "disabling": "Desabilitando fluxos de trabalho"
+          },
+          "success": {
+            "title": "Sucesso!",
+            "message": "Fluxos de trabalho habilitados com sucesso."
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Falha ao habilitar os fluxos de trabalho. Tente novamente."
+          }
+        }
+      },
+      "heading": "Fluxos de trabalho",
+      "description": "Automatize as transições dos itens de trabalho e defina regras para controlar como as tarefas avançam pelo fluxo do seu projeto.",
+      "add_button": "Adicionar novo fluxo de trabalho",
+      "search": "Pesquisar fluxos de trabalho",
+      "detail": {
+        "define": "Definir fluxo de trabalho",
+        "add_states": "Adicionar estados",
+        "unmapped_states": {
+          "title": "Estados não mapeados detectados",
+          "description": "Alguns itens de trabalho dos tipos selecionados estão atualmente em estados que não existem neste fluxo de trabalho.",
+          "note": "Se você habilitar este fluxo de trabalho, esses itens serão movidos automaticamente para o estado inicial deste fluxo de trabalho.",
+          "label": "Estados ausentes",
+          "tooltip": "Alguns itens de trabalho estão em estados que não estão mapeados para este fluxo de trabalho. Abra o fluxo de trabalho para revisar."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Todos os estados estão em uso",
+          "description": "Todos os estados definidos para este projeto já estão presentes no seu fluxo de trabalho atual."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Este fluxo de trabalho se aplica a qualquer tipo de item de trabalho que não esteja atribuído a um fluxo de trabalho."
+      },
+      "create": {
+        "heading": "Criar novo fluxo de trabalho",
+        "name": {
+          "placeholder": "Adicione um nome único",
+          "validation": {
+            "max_length": "O nome deve ter menos de 255 caracteres",
+            "required": "O nome é obrigatório",
+            "invalid": "O nome só pode conter letras, números, espaços, hifens e apóstrofos"
+          }
+        },
+        "description": {
+          "placeholder": "Adicione uma breve descrição",
+          "validation": {
+            "invalid": "A descrição só pode conter letras, números, espaços, hifens e apóstrofos"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipo de item de trabalho"
+        },
+        "success": {
+          "title": "Sucesso!",
+          "message": "Fluxo de trabalho criado com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao criar o fluxo de trabalho. Tente novamente."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sucesso!",
+          "message": "Fluxo de trabalho atualizado com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao atualizar o fluxo de trabalho. Tente novamente."
+        }
+      },
+      "delete": {
+        "loading": "Excluindo fluxo de trabalho",
+        "success": {
+          "title": "Sucesso!",
+          "message": "Fluxo de trabalho excluído com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao excluir o fluxo de trabalho. Tente novamente."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Sucesso!",
+          "message": "Estados adicionados com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao adicionar estados. Tente novamente."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipos de item de trabalho",
+      "description": "Crie e personalize diferentes tipos de itens de trabalho com propriedades únicas"
+    },
     "initiatives": {
       "heading": "Iniciativas",
       "sub_heading": "Desbloqueie o mais alto nível de organização para todo o seu trabalho no Plane.",
@@ -209,14 +337,25 @@
     "customers": {
       "heading": "Clientes",
       "settings_heading": "Gerencie o trabalho pelo que é importante para seus clientes.",
-      "settings_sub_heading": "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente."
+      "settings_sub_heading": "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente.",
+      "description": "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente."
     },
     "epics": {
+      "heading": "Épicos",
+      "description": "Para corpos maiores de trabalho que abrangem vários ciclos e podem existir entre módulos",
       "properties": {
         "title": "Propriedades",
         "description": "Adicione propriedades personalizadas ao seu épico."
       },
       "disabled": "Desativado"
+    },
+    "project_updates": {
+      "heading": "Atualizações do projeto",
+      "description": "Acompanhamento consolidado e monitoramento do progresso para este projeto"
+    },
+    "templates": {
+      "heading": "Modelos",
+      "description": "Economize 80% do tempo gasto na criação de projetos, itens de trabalho e páginas quando você usar modelos."
     },
     "cycles": {
       "auto_schedule": {

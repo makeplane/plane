@@ -3,6 +3,9 @@
     "settings": {
       "title": "Șabloane",
       "description": "Economisește 80% din timpul petrecut pentru crearea proiectelor, a elementelor de lucru și a paginilor când folosești șabloane.",
+      "new_project_template": "Șablon de proiect nou",
+      "new_work_item_template": "Șablon de activitate nou",
+      "new_page_template": "Șablon de pagină nou",
       "options": {
         "project": {
           "label": "Șabloane de proiect"
@@ -157,6 +160,14 @@
               "required": "Cel puțin un cuvânt cheie este obligatoriu"
             }
           },
+          "website": {
+            "label": "URL site web",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
           "company_name": {
             "label": "Numele companiei",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Adresa email-ului este invalidă",
-              "required": "Adresa email-ului este obligatorie",
               "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Nu există etichete încă. Creează etichete pentru a ajuta la organizarea și filtrarea elementelor de lucru în proiectul tău."
+      },
+      "no_modules": {
+        "description": "Nu există module încă. Organizează munca în sub-proiecte cu lideri și responsabili dedicați."
       },
       "no_work_items": {
         "description": "Nu există elemente de lucru încă. Adaugă unul pentru a structura mai bine munca ta."
