@@ -78,6 +78,7 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
               </Tabs.Content>
               <Tabs.Content value="pql_filters">
                 <FiltersRowPQLSection
+                  hideSubmit={rest.variant === "modal"}
                   disableSubmit={rest.variant === "modal"}
                   layoutFilters={filter}
                   pqlEditorRef={pqlEditorRef}

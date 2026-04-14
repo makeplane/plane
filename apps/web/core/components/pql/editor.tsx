@@ -17,10 +17,13 @@ import type { PQLEditorHandle, PQLEditorProps } from "@plane/editor";
 import { PQLEditorWithRef } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 
-type Props = Pick<PQLEditorProps, "disableSubmit" | "fieldDefs" | "isSubmitting" | "onChange" | "onSubmit" | "value">;
+type Props = Pick<
+  PQLEditorProps,
+  "disableSubmit" | "fieldDefs" | "hideSubmit" | "isSubmitting" | "onChange" | "onSubmit" | "value"
+>;
 
 export const PQLEditor = forwardRef(function PQLEditor(props: Props, ref: React.ForwardedRef<PQLEditorHandle>) {
-  const { disableSubmit, fieldDefs, isSubmitting, onChange, onSubmit, value } = props;
+  const { disableSubmit, fieldDefs, hideSubmit, isSubmitting, onChange, onSubmit, value } = props;
   // translation
   const { t } = useTranslation();
 
@@ -32,6 +35,7 @@ export const PQLEditor = forwardRef(function PQLEditor(props: Props, ref: React.
       onChange={onChange}
       onSubmit={onSubmit}
       disableSubmit={disableSubmit}
+      hideSubmit={hideSubmit}
       isSubmitting={isSubmitting}
       placeholder={t("pql.placeholder")}
       fieldDefs={fieldDefs}

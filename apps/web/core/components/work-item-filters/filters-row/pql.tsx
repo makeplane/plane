@@ -94,12 +94,14 @@ function constructFieldDefsFromConfigs(
 
 type Props = {
   disableSubmit?: boolean;
+  hideSubmit?: boolean;
   layoutFilters: WorkItemFilterInstance;
   pqlEditorRef?: React.ForwardedRef<PQLEditorHandle>;
 };
 
 export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
   disableSubmit,
+  hideSubmit,
   layoutFilters,
   pqlEditorRef,
 }: Props) {
@@ -161,7 +163,8 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
             stripped: val.text,
           })
         }
-        disableSubmit={disableSubmit || !pqlFiltersInstance.hasChanges}
+        hideSubmit={hideSubmit}
+        disableSubmit={disableSubmit}
         isSubmitting={isSubmitting}
         ref={pqlEditorRef}
       />

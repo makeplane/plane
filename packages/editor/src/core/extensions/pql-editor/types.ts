@@ -359,8 +359,10 @@ export type PQLEditorProps = {
   autoFocus?: boolean;
   /** Wrapper element class name */
   className?: string;
-  /** When true, hides the submit button and disables the Enter key submit shortcut */
+  /** When true, disables the submit button */
   disableSubmit?: boolean;
+  /** When true, hides the submit button and disables the Enter key submit shortcut */
+  hideSubmit?: boolean;
   editable: boolean;
   /** Inner contenteditable element class name */
   editorClassName?: string;

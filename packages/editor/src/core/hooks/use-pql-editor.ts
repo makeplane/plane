@@ -37,6 +37,7 @@ import { PQLCustomPropertyFieldExtension } from "../extensions/pql-editor/custom
 type UsePQLEditorArgs = Pick<PQLEditorProps, "onChange" | "onSubmit" | "value"> & {
   autoFocus: boolean;
   disableSubmit?: boolean;
+  hideSubmit?: boolean;
   dropdownStateRef: React.MutableRefObject<DropdownState>;
   editable: boolean;
   editorClassName?: string;
@@ -69,6 +70,7 @@ function isDateContext(context: SuggestionContext, fieldMap: Map<string, FieldDe
 export const usePQLEditor = ({
   autoFocus,
   disableSubmit,
+  hideSubmit,
   dropdownStateRef,
   editable,
   editorClassName,
@@ -277,7 +279,7 @@ export const usePQLEditor = ({
         onParseResult: handleParseResult,
         onContextChange: handleContextChange,
         onSubmit,
-        getIsSubmitDisabled: () => !!disableSubmitRef.current || parseErrorsRef.current,
+        getIsSubmitDisabled: () => !!hideSubmit || !!disableSubmitRef.current || parseErrorsRef.current,
         getDropdownState: () => dropdownStateRef.current,
         onDropdownNavigate: handleDropdownNavigate,
         onDropdownAccept: handleDropdownAccept,

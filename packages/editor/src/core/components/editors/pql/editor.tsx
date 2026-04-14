@@ -41,6 +41,7 @@ function PQLEditor(
     editorClassName,
     fieldDefs,
     forwardedRef,
+    hideSubmit,
     isSubmitting = false,
     onChange,
     onSubmit,
@@ -79,6 +80,7 @@ function PQLEditor(
   const { editor, hasErrors, selectOption } = usePQLEditor({
     autoFocus: !!autoFocus,
     disableSubmit,
+    hideSubmit,
     dropdownStateRef,
     editable,
     editorClassName,
@@ -113,32 +115,34 @@ function PQLEditor(
           className="size-full font-code text-13 [&_.pql-editor-content]:wrap-break-word"
         />
 
-        <div className="shrink-0 flex">
-          <Tooltip
-            tooltipContent={
-              <span className="flex items-center gap-1">
-                Enter
-                <CornerDownLeft className="size-3" />
-              </span>
-            }
-          >
-            <Button
-              variant="secondary"
-              size="base"
-              onClick={() =>
-                void onSubmit?.({
-                  json: editor.getJSON(),
-                  text: editor.getText(),
-                })
+        {!hideSubmit && (
+          <div className="shrink-0 flex">
+            <Tooltip
+              tooltipContent={
+                <span className="flex items-center gap-1">
+                  Enter
+                  <CornerDownLeft className="size-3" />
+                </span>
               }
-              className="shrink-0 transition-colors duration-200"
-              loading={isSubmitting}
-              disabled={disableSubmit || hasErrors}
             >
-              Run
-            </Button>
-          </Tooltip>
-        </div>
+              <Button
+                variant="primary"
+                size="base"
+                onClick={() =>
+                  void onSubmit?.({
+                    json: editor.getJSON(),
+                    text: editor.getText(),
+                  })
+                }
+                className="shrink-0 transition-colors duration-200"
+                loading={isSubmitting}
+                disabled={disableSubmit || hasErrors}
+              >
+                Run
+              </Button>
+            </Tooltip>
+          </div>
+        )}
       </div>
 
       {/* Resize grip — bottom-right corner, native textarea style */}
