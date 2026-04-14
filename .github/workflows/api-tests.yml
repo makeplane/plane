@@ -1,10 +1,6 @@
-name: api pytests
+name: API Pytest Suite
 
 on:
-  pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
-    paths:
-      - "apps/api/**"
   workflow_dispatch:
     inputs:
       test_marker:
@@ -17,6 +13,11 @@ on:
         required: false
         default: false
         type: boolean
+      branch:
+        description: "Branch to run tests against"
+        required: false
+        default: "preview"
+        type: string
   workflow_call:
     inputs:
       test_marker:
@@ -29,6 +30,11 @@ on:
         required: false
         default: false
         type: boolean
+      branch:
+        description: "Branch to run tests against"
+        required: false
+        default: "preview"
+        type: string
     secrets:
       AWS_EKS_ROLE_ARN:
         required: false
@@ -51,6 +57,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch || 'preview' }}
 
       - name: Configure AWS credentials to assume the secret role
         uses: aws-actions/configure-aws-credentials@v6
@@ -139,6 +147,9 @@ jobs:
           python-version: "3.12"
           cache: "pip"
           cache-dependency-path: apps/api/requirements/test.txt
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y libldap2-dev libsasl2-dev
 
       - name: Install test dependencies
         working-directory: apps/api

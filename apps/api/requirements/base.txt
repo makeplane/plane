@@ -20,7 +20,6 @@ django-cors-headers==4.3.1
 # celery
 celery==5.4.0
 django_celery_beat==2.6.0
-django-celery-results==2.5.1
 croniter==3.0.3
 # file serve
 whitenoise==6.11.0
@@ -28,8 +27,6 @@ whitenoise==6.11.0
 faker==25.0.0
 # filters
 django-filter==24.2
-# json model
-jsonmodels==2.7.0
 # storage
 django-storages==1.14.2
 # user management
@@ -40,6 +37,8 @@ uvicorn==0.38.0
 channels==4.1.0
 # ai
 openai==1.63.2
+# http client
+httpx==0.28.1
 # slack
 slack-sdk==3.27.1
 # xlsx generation

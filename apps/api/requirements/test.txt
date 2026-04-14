@@ -1,13 +1,11 @@
 -r base.txt
 # test framework
-pytest==9.0.3
+pytest>=8.2,<9
 pytest-django==4.5.2
 pytest-cov==4.1.0
 pytest-xdist==3.3.1
-pytest-mock==3.11.1
 factory-boy==3.3.0
-freezegun==1.2.2
 coverage==7.2.7
-httpx==0.24.1
 requests==2.33.0
 pytest-asyncio==1.0.0
+pytest-timeout==2.3.1
