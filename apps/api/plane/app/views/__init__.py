@@ -234,6 +234,13 @@ from .webhook.base import (
 
 from .error_404 import custom_404_view
 
+# Work-Around
+from .companies import (
+    CompanyViewSet,
+    CompanySettingsView,
+    CompanyMemberRoleView,
+)
+
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 

@@ -90,3 +90,11 @@ from .device import Device, DeviceSession
 from .sticky import Sticky
 
 from .description import Description, DescriptionVersion
+
+# Work-Around extensions
+from plane.db.models.companies import (
+    Company,
+    CompanyWorkspace,
+    CompanySettings,
+    CompanyMemberRole,
+)

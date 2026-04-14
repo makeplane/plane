@@ -133,3 +133,11 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+# Work-Around
+from plane.app.serializers.companies import (
+    CompanySerializer,
+    CompanyLiteSerializer,
+    CompanySettingsSerializer,
+    CompanyMemberRoleSerializer,
+)
