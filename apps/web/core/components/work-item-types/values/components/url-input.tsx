@@ -79,28 +79,35 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
 
   if (!isEditing) {
     return (
-      <button
-        type="button"
-        className={cn(
-          "group w-full flex items-center justify-between gap-4 px-2 py-1.5 rounded-md outline-none",
-          {
-            "cursor-not-allowed": isDisabled,
-            "hover:bg-layer-transparent-hover": !isDisabled,
-            "bg-layer-1": isEditing,
-          },
-          buttonClassName
-        )}
-        onClick={() => !isDisabled && setIsEditing(true)}
-        disabled={isDisabled}
-      >
-        {urlComponents ? (
-          <TruncatedUrl url={urlComponents} />
-        ) : data?.[0] ? (
-          <span className="text-body-xs-regular text-tertiary">{data?.[0]}</span>
-        ) : (
-          <span className="text-body-xs-regular text-placeholder">Add URL</span>
-        )}
-        {!isEditing && (
+      <>
+        <div
+          role="button"
+          tabIndex={isDisabled ? -1 : 0}
+          className={cn(
+            "group w-full flex items-center justify-between gap-4 px-2 py-1.5 rounded-md outline-none",
+            {
+              "cursor-not-allowed": isDisabled,
+              "hover:bg-layer-transparent-hover": !isDisabled,
+              "bg-layer-1": isEditing,
+              "border-[0.5px] border-danger-primary": Boolean(error),
+            },
+            buttonClassName
+          )}
+          onClick={() => !isDisabled && setIsEditing(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!isDisabled) setIsEditing(true);
+            }
+          }}
+        >
+          {urlComponents ? (
+            <TruncatedUrl url={urlComponents} />
+          ) : data?.[0] ? (
+            <span className="text-body-xs-regular text-tertiary">{data?.[0]}</span>
+          ) : (
+            <span className="text-body-xs-regular text-placeholder">Add URL</span>
+          )}
           <div className="flex items-center gap-1 group-hover:opacity-100">
             {urlComponents && (
               <a
@@ -118,8 +125,13 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
               <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
             </button>
           </div>
+        </div>
+        {Boolean(error) && (
+          <span className="text-caption-md-medium text-danger-primary">
+            {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+          </span>
         )}
-      </button>
+      </>
     );
   }
 
