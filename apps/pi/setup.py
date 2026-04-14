@@ -67,7 +67,7 @@ setup(
             "ruff==0.5.5",
             "pylint==3.1.0",
             "types-requests==2.32.0.20240712",
-            "pytest==8.3.2",
+            "pytest==9.0.3",
         ],
     },
     cmdclass={
