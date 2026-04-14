@@ -1,0 +1,165 @@
+name: api pytests
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths:
+      - "apps/api/**"
+  workflow_dispatch:
+    inputs:
+      test_marker:
+        description: "pytest -m filter"
+        required: false
+        default: "unit or contract or smoke"
+        type: string
+      run_slow_tests:
+        description: "Include slow-marked tests"
+        required: false
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      test_marker:
+        description: "pytest -m filter"
+        required: false
+        default: "unit or contract or smoke"
+        type: string
+      run_slow_tests:
+        description: "Include slow-marked tests"
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      AWS_EKS_ROLE_ARN:
+        required: false
+      AWS_SECRET_ROLE_ARN:
+        required: false
+      AWS_SECRET_NAME:
+        required: false
+      AWS_REGION:
+        required: false
+      EKS_CLUSTER_NAME:
+        required: false
+
+jobs:
+  run-pytests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials to assume the secret role
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_SECRET_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Retrieve deploy secrets
+        run: |
+          SECRET_JSON=$(aws secretsmanager get-secret-value \
+            --secret-id ${{ secrets.AWS_SECRET_NAME || 'github-actions/github-actions-secrets' }} \
+            --query SecretString \
+            --output text)
+
+          REDIS_URL=$(echo "$SECRET_JSON" | jq -r '.redis_url')
+          echo "::add-mask::$REDIS_URL"
+
+          DELIMITER=$(openssl rand -hex 16)
+          {
+            echo "redis_url<<${DELIMITER}"
+            echo "$REDIS_URL"
+            echo "${DELIMITER}"
+          } >> "$GITHUB_ENV"
+
+      - name: Configure AWS credentials to assume the EKS role
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_EKS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ secrets.AWS_REGION || 'us-east-1' }} \
+            --name ${{ secrets.EKS_CLUSTER_NAME || 'plane-eks-dev' }}
+
+      - name: Create test database
+        run: |
+          set -e
+          DB_NAME="t${{ github.run_id }}"
+
+          cat <<EOF | kubectl apply -f -
+          ---
+          apiVersion: db.movetokube.com/v1alpha1
+          kind: Postgres
+          metadata:
+            name: ${DB_NAME}
+            namespace: postgres-operator
+          spec:
+            database: ${DB_NAME}
+            dropOnDelete: true
+            schemas:
+              - public
+          ---
+          apiVersion: db.movetokube.com/v1alpha1
+          kind: PostgresUser
+          metadata:
+            name: ${DB_NAME}-apptest
+            namespace: postgres-operator
+          spec:
+            database: ${DB_NAME}
+            role: ${DB_NAME}_apptest
+            privileges: OWNER
+            secretName: ${DB_NAME}-apptest-secret
+          EOF
+
+          SECRET_NAME="${DB_NAME}-apptest-secret-${DB_NAME}-apptest"
+          echo "Waiting for database secret ${SECRET_NAME} to be created..."
+          kubectl wait --for=jsonpath='{.data.POSTGRES_URL}' \
+            secret/${SECRET_NAME} \
+            -n postgres-operator \
+            --timeout=120s
+
+          PG_URI=$(kubectl get secret "${SECRET_NAME}" -n postgres-operator -o jsonpath='{.data.POSTGRES_URL}' | base64 -d)
+          echo "::add-mask::$PG_URI"
+          DELIMITER=$(openssl rand -hex 16)
+          {
+            echo "DATABASE_URL<<${DELIMITER}"
+            echo "$PG_URI"
+            echo "${DELIMITER}"
+          } >> "$GITHUB_ENV"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: apps/api/requirements/test.txt
+
+      - name: Install test dependencies
+        working-directory: apps/api
+        run: pip install -r requirements/test.txt
+
+      - name: Run pytest
+        working-directory: apps/api
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          REDIS_URL: ${{ env.redis_url }}
+          SECRET_KEY: ci-test-secret-key
+        run: |
+          MARKER="${{ inputs.test_marker || 'unit or contract or smoke' }}"
+          if [[ "${{ inputs.run_slow_tests }}" == "true" ]]; then
+            MARKER="${MARKER} or slow"
+          fi
+          pytest -m "${MARKER}" --timeout=60
+
+      - name: Cleanup test database
+        if: always()
+        run: |
+          DB_NAME="t${{ github.run_id }}"
+          kubectl delete postgres "${DB_NAME}" -n postgres-operator --ignore-not-found || true
+          kubectl delete postgresuser "${DB_NAME}-apptest" -n postgres-operator --ignore-not-found || true
