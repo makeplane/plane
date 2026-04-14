@@ -173,7 +173,7 @@ export abstract class WorkspaceNotificationStore implements IWorkspaceNotificati
           }
         }
       })
-      // .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
+      .filter((n) => (this.filters.read ? !n.read_at : true))
       .map((n) => n.id);
     return workspaceNotificationIds;
   });
