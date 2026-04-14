@@ -22,7 +22,6 @@ from pi.core.vectordb import VectorStore
 log = logger.getChild(__name__)
 
 vector_db = VectorStore()
-# embedding_component = settings.vector_db.EMBED_COMPONENT
 
 
 class PageChunkRetriever(BaseRetriever):
@@ -41,14 +40,25 @@ class PageChunkRetriever(BaseRetriever):
             log.error("Neither project id nor workspace id provided")
             return []
 
-        response = vector_db.pages_search_semantic(
-            query=query,
-            workspace_id=workspace_id,
-            project_id=project_id,
-            user_id=user_id,
-            threshold=self.chunk_similarity_threshold,
-            output_fields=["id", "name", "description"],
-        )
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+        if check_ml_model_configured_sync():
+            response = vector_db.pages_search_semantic(
+                query=query,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                user_id=user_id,
+                threshold=self.chunk_similarity_threshold,
+                output_fields=["id", "name", "description"],
+            )
+        else:
+            response = vector_db.pages_search_text(
+                query=query,
+                workspace_id=workspace_id,
+                user_id=user_id,
+                project_id=project_id,
+                output_fields=["id", "name", "description"],
+            )
 
         return self._parse_response(response)
 
@@ -64,14 +74,25 @@ class PageChunkRetriever(BaseRetriever):
             log.error("Neither project id nor workspace id provided")
             return []
 
-        response = await vector_db.async_pages_search_semantic(
-            query=query,
-            workspace_id=workspace_id,
-            project_id=project_id,
-            user_id=user_id,
-            threshold=self.chunk_similarity_threshold,
-            output_fields=["id", "name", "description"],
-        )
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured
+
+        if await check_ml_model_configured():
+            response = await vector_db.async_pages_search_semantic(
+                query=query,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                user_id=user_id,
+                threshold=self.chunk_similarity_threshold,
+                output_fields=["id", "name", "description"],
+            )
+        else:
+            response = await vector_db.async_pages_search_text(
+                query=query,
+                workspace_id=workspace_id,
+                user_id=user_id,
+                project_id=project_id,
+                output_fields=["id", "name", "description"],
+            )
 
         return self._parse_response(response)
 

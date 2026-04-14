@@ -19,7 +19,6 @@ from pi import settings
 from pi.core.vectordb import VectorStore
 
 vector_db = VectorStore()
-# embedding_component = settings.vector_db.EMBED_COMPONENT
 
 log = logger.getChild(__name__)
 
@@ -33,13 +32,24 @@ class DocsRetriever(BaseRetriever):
         query: str,
         run_manager: CallbackManagerForRetrieverRun,
     ) -> list[Document]:
-        """Asynchronously retrieves relevant issue documents based on semantic search query."""
+        """Retrieves relevant documentation.
 
-        response = vector_db.docs_search_semantic(
-            query=query,
-            threshold=self.chunk_similarity_threshold,
-            output_fields=["id", "section", "subsection", "content"],
-        )
+        Uses semantic search when an ML model is configured, otherwise falls back to
+        text-only (BM25) search so Pi features remain functional without an embedding model.
+        """
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+        if check_ml_model_configured_sync():
+            response = vector_db.docs_search_semantic(
+                query=query,
+                threshold=self.chunk_similarity_threshold,
+                output_fields=["id", "section", "subsection", "content"],
+            )
+        else:
+            response = vector_db.docs_search_text(
+                query=query,
+                output_fields=["id", "section", "subsection", "content"],
+            )
 
         return self._parse_response(response)
 
@@ -48,13 +58,23 @@ class DocsRetriever(BaseRetriever):
         query: str,
         run_manager: AsyncCallbackManagerForRetrieverRun,
     ) -> list[Document]:
-        """Asynchronously retrieves relevant issue documents based on semantic search query."""
+        """Asynchronously retrieves relevant documentation based on semantic or text search.
 
-        response = await vector_db.async_docs_search_semantic(
-            query=query,
-            threshold=self.chunk_similarity_threshold,
-            output_fields=["id", "section", "subsection", "content"],
-        )
+        Falls back to BM25 text search when no ML model is configured.
+        """
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured
+
+        if await check_ml_model_configured():
+            response = await vector_db.async_docs_search_semantic(
+                query=query,
+                threshold=self.chunk_similarity_threshold,
+                output_fields=["id", "section", "subsection", "content"],
+            )
+        else:
+            response = await vector_db.async_docs_search_text(
+                query=query,
+                output_fields=["id", "section", "subsection", "content"],
+            )
 
         return self._parse_response(response)
 

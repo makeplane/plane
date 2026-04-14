@@ -387,8 +387,20 @@ async def execute_tools_for_ask_mode(
 
         # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (conversation history) content
         # Static content (system prompt + context_block) should remain constant for cache hits
-        _base_prompt = pai_ask_system_prompt if not is_guest_user else pai_ask_system_prompt_sensitive_version
-        system_prompt_to_use = f"{_base_prompt}\n\n{WRITE_TODOS_SYSTEM_PROMPT_ASK}\n\n{context_block}"
+        from pi.services.chat.prompt_mixins import TEXT_ONLY_AGENTIC_SEARCH_STRATEGY
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+        base_prompt = pai_ask_system_prompt if not is_guest_user else pai_ask_system_prompt_sensitive_version
+        ml_model_configured = check_ml_model_configured_sync()
+        if not is_guest_user and not ml_model_configured:
+            base_prompt = base_prompt + "\n\n" + TEXT_ONLY_AGENTIC_SEARCH_STRATEGY
+            log.info("ChatID: %s - Agentic text search strategy INJECTED (no embedding model configured)", chat_id)
+        else:
+            log.info(
+                "ChatID: %s - Agentic text search strategy SKIPPED (ml_model_configured=%s, is_guest=%s)", chat_id, ml_model_configured, is_guest_user
+            )
+
+        system_prompt_to_use = f"{base_prompt}\n\n{WRITE_TODOS_SYSTEM_PROMPT_ASK}\n\n{context_block}"
 
         # Message-level cache_control works with both ChatAnthropic and LiteLLM
         if should_cache_messages(chatbot_instance.switch_llm):
@@ -770,7 +782,9 @@ async def execute_tools_for_ask_mode(
             has_more_tool_calls = bool(getattr(ai_message, "tool_calls", None))
             if has_more_tool_calls:
                 try:
-                    if hasattr(ai_message, "content") and ai_message.content:
+                    # Only emit reasoning if it wasn't already streamed during _orchestrate_llm_step_with_ui_ticks
+                    already_streamed = bool(stream_result_followup.get("streamed_reasoning_chunks"))
+                    if not already_streamed and hasattr(ai_message, "content") and ai_message.content:
                         reasoning_content = extract_text_from_content(ai_message.content).strip()
                         # Strip content after delimiter (keep only reasoning part)
                         ANSWER_DELIMITER = "ππANSWERππ"

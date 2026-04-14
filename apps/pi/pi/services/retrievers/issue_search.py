@@ -37,19 +37,47 @@ class IssueRetriever(BaseRetriever):
         project_id: str = "",
         user_id: str = "",
     ) -> list[Document]:
-        """Asynchronously retrieves relevant issue documents based on semantic search query."""
+        """Retrieves relevant issue documents.
 
-        response = vector_db.issue_search_semantic(
+        When an ML model is configured, runs both semantic and text search and merges
+        results (hybrid mode). When no ML model is available, falls back to text-only
+        (BM25) search so Pi features remain functional without an embedding model.
+        """
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+        text_response = vector_db.issue_search_text(
             query_title=query,
             query_description="",
             workspace_id=workspace_id,
             project_id=project_id,
             user_id=user_id,
-            threshold=self.chunk_similarity_threshold,
             output_fields=["id", "name", "description"],
         )
 
-        return self._parse_response(response)
+        if check_ml_model_configured_sync():
+            sem_response = vector_db.issue_search_semantic(
+                query_title=query,
+                query_description="",
+                workspace_id=workspace_id,
+                project_id=project_id,
+                user_id=user_id,
+                threshold=self.chunk_similarity_threshold,
+                output_fields=["id", "name", "description"],
+            )
+            response = sem_response + text_response
+        else:
+            response = text_response
+
+        # Remove duplicates based on issue id
+        seen_ids: set = set()
+        unique_response = []
+        for hit in response:
+            issue_id = hit.get("ID") or hit.get("id")
+            if issue_id not in seen_ids:
+                seen_ids.add(issue_id)
+                unique_response.append(hit)
+
+        return self._parse_response(unique_response)
 
     async def _aget_relevant_documents(
         self,
@@ -59,17 +87,12 @@ class IssueRetriever(BaseRetriever):
         project_id: str = "",
         user_id: str = "",
     ) -> list[Document]:
-        """Asynchronously retrieves relevant issue documents based on semantic search query."""
+        """Asynchronously retrieves relevant issue documents.
 
-        sem_task = vector_db.async_issue_search_semantic(
-            query_title=query,
-            query_description="",
-            workspace_id=workspace_id,
-            project_id=project_id,
-            user_id=user_id,
-            threshold=self.chunk_similarity_threshold,
-            output_fields=["id", "name", "description"],
-        )
+        When an ML model is configured, runs semantic search and text search concurrently
+        and merges results (hybrid mode). When no ML model is available, falls back to
+        text-only search so Pi features remain functional without an embedding model.
+        """
 
         text_task = vector_db.async_issue_search_text(
             query_title=query,
@@ -80,11 +103,23 @@ class IssueRetriever(BaseRetriever):
             output_fields=["id", "name", "description"],
         )
 
-        # Run both tasks concurrently
-        resp_sem, resp_text = await asyncio.gather(sem_task, text_task)
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured
 
-        # Combine the results from both tasks
-        response = resp_sem + resp_text
+        if await check_ml_model_configured():
+            sem_task = vector_db.async_issue_search_semantic(
+                query_title=query,
+                query_description="",
+                workspace_id=workspace_id,
+                project_id=project_id,
+                user_id=user_id,
+                threshold=self.chunk_similarity_threshold,
+                output_fields=["id", "name", "description"],
+            )
+            resp_sem, resp_text = await asyncio.gather(sem_task, text_task)
+            response = resp_sem + resp_text
+        else:
+            response = await text_task
+
         # Remove duplicates based on issue_id
         seen_issue_ids = set()
         unique_response = []

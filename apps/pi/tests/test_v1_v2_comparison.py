@@ -2441,15 +2441,17 @@ class APITester:
 
         results_data = []
         for result in self.results:
-            results_data.append({
-                "endpoint_name": result.endpoint_name,
-                "v1_url": result.v1_url,
-                "v2_url": result.v2_url,
-                "status": result.status.value,
-                "message": result.message,
-                "differences": result.differences,
-                "error": result.error,
-            })
+            results_data.append(
+                {
+                    "endpoint_name": result.endpoint_name,
+                    "v1_url": result.v1_url,
+                    "v2_url": result.v2_url,
+                    "status": result.status.value,
+                    "message": result.message,
+                    "differences": result.differences,
+                    "error": result.error,
+                }
+            )
 
         with open(output_file, "w") as f:
             json.dump(results_data, f, indent=2)

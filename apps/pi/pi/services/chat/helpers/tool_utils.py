@@ -31,6 +31,7 @@ from typing import Union
 from pi import logger
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 from pi.services.chat.prompts import WRITE_TODOS_SYSTEM_PROMPT_BUILD
+from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
 
 log = logger.getChild(__name__)
 
@@ -739,14 +740,16 @@ def tool_name_shown_to_user(tool_name: str) -> str:
     if tool_name.startswith("mcp_"):
         return _clean_tool_display_name(tool_name[4:] or tool_name)
 
+    _semantic_available = check_ml_model_configured_sync()
+
     tool_to_user_map = {
-        "vector_search_tool": "Semantic search",
+        "vector_search_tool": "Semantic search" if _semantic_available else "Agentic search",
         "structured_db_tool": "Database querying",
         "search_current_cycle": "Find Current Cycle",
         "fetch_cycle_details": "Cycle Details",
         "list_recent_cycles": "Recent Cycles",
-        "pages_search_tool": "Semantic search of pages",
-        "docs_search_tool": "Semantic search of docs",
+        "pages_search_tool": "Semantic search of pages" if _semantic_available else "Agentic search of pages",
+        "docs_search_tool": "Semantic search of docs" if _semantic_available else "Agentic search of docs",
         "web_search_tool": "Web search",
         "action_executor_agent": "Action Execution",
         # Entity search tools
@@ -1335,8 +1338,9 @@ def build_method_prompt(
     is_guest_user: bool = False,
 ) -> str:
     from pi.services.chat.prompt_mixins import RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION
+    from pi.services.chat.prompt_mixins import TEXT_ONLY_AGENTIC_SEARCH_STRATEGY
+    from pi.services.chat.prompt_mixins import get_retrieval_tool_descriptions
     from pi.services.chat.prompts import ANSWER_DELIMITER_BUILD_MODE
-    from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import TOOL_CALL_REASONING_REINFORCEMENT
     from pi.services.chat.prompts import mcp_tool_instructions_build_mode
     from pi.services.chat.prompts import plane_context
@@ -1696,14 +1700,13 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 
 **IMPORTANT**: Analyze the user's request carefully to identify ALL required actions, not just the obvious ones.
 
+{get_retrieval_tool_descriptions() if not is_guest_user else RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION}
 **CATEGORY RE-SELECTION TOOL (reselect_action_categories):**
 - If you realize the available tools are insufficient to fulfil the user's request (e.g. you need cycle tools but only workitem tools are loaded), call `reselect_action_categories` with `reason` and `additional_categories`.
 - {uses_line}.
 - After calling it, newly requested categories will be added and you should proceed with the expanded toolset.
 - Only use this if the tools you need are genuinely missing — do not call it speculatively.
 {categories_line}
-
-{RETRIEVAL_TOOL_DESCRIPTIONS if not is_guest_user else RETRIEVAL_TOOL_DESCRIPTIONS_SENSITIVE_VERSION}
 
 **Execution Guidelines:**
 - Use `entity_search` for entity resolution, NOT vector_search_tool
@@ -1714,13 +1717,20 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 
 {WORK_TREE_INSTRUCTIONS}
 """  # noqa: E501
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+    ml_model_configured = check_ml_model_configured_sync()
+    if not is_guest_user and not ml_model_configured:
+        method_prompt += "\n\n" + TEXT_ONLY_AGENTIC_SEARCH_STRATEGY
+        log.info("Build mode: Agentic text search strategy INJECTED (no embedding model configured)")
+    else:
+        log.info("Build mode: Agentic text search strategy SKIPPED (ml_model_configured=%s, is_guest=%s)", ml_model_configured, is_guest_user)
 
     # Add MCP tool instructions if MCP tools are available
     if mcp_tools:
         method_prompt += f"""
 {mcp_tool_instructions_build_mode}
 """
-
     if project_id:
         method_prompt += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
     else:

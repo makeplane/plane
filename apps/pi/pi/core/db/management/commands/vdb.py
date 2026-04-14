@@ -225,8 +225,10 @@ def init_vector_pipelines(force: bool = typer.Option(False, "--force", "-f", hel
     """
     ml_model_id = ML_MODEL_ID
     if not ml_model_id:
-        typer.echo("Error: OPENSEARCH_ML_MODEL_ID not configured")
-        raise typer.Exit(code=1)
+        log.warning("No embedding model configured — skipping vector pipeline initialization. " "Pi will run in text-only (BM25) search mode.")
+        typer.echo("  ⚠ No embedding model configured — skipping pipeline initialization.")
+        typer.echo("    Pi will run in text-only (BM25) search mode.")
+        return
 
     typer.echo("Starting OpenSearch pipelines initialization...")
     typer.echo("-" * 40)
@@ -378,18 +380,22 @@ def init_opensearch_index(index_name: str = typer.Option(..., "--index-name", "-
             ml_model_id = ML_MODEL_ID
 
             if not ml_model_id:
-                typer.echo("Error: OPENSEARCH_ML_MODEL_ID not configured")
-                raise typer.Exit(code=1)
-
-            typer.echo(f"Checking pipeline '{pipeline_name}'...")
-            try:
-                vdb.os.ingest.get_pipeline(id=pipeline_name)
-                typer.echo(f"Pipeline '{pipeline_name}' already exists")
-            except Exception:
-                typer.echo(f"Creating pipeline '{pipeline_name}'...")
-                pipeline_body = get_pipeline_body(ml_model_id)
-                vdb.os.ingest.put_pipeline(id=pipeline_name, body=pipeline_body)
-                typer.echo(f"Created pipeline '{pipeline_name}'")
+                log.warning(
+                    "No embedding model configured — skipping pipeline setup for index '%s'. "
+                    "Index will be created without a neural pipeline (BM25 search only).",
+                    index_name,
+                )
+                typer.echo(f"  ⚠ No embedding model — skipping pipeline '{pipeline_name}' (index will still be created for BM25 search).")
+            else:
+                typer.echo(f"Checking pipeline '{pipeline_name}'...")
+                try:
+                    vdb.os.ingest.get_pipeline(id=pipeline_name)
+                    typer.echo(f"Pipeline '{pipeline_name}' already exists")
+                except Exception:
+                    typer.echo(f"Creating pipeline '{pipeline_name}'...")
+                    pipeline_body = get_pipeline_body(ml_model_id)
+                    vdb.os.ingest.put_pipeline(id=pipeline_name, body=pipeline_body)
+                    typer.echo(f"Created pipeline '{pipeline_name}'")
 
         # 2. Setup Index
         typer.echo(f"Checking index '{actual_index_name}'...")

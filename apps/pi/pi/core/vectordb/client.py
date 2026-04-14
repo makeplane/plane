@@ -239,6 +239,53 @@ class VectorStore:
         response = await self.async_os.search(index=PAGES_INDEX, body=os_query)
         return parse_semantic_search_response(response, threshold, *output_fields)
 
+    def issue_search_text(
+        self,
+        query_title: str,
+        query_description: str | None,
+        workspace_id: str,
+        issue_id: str | None = None,
+        user_id: str | None = None,
+        project_id: str | None = None,
+        min_score_percent: int = 70,
+        min_filter: float = 0.1,
+        output_fields: list[str] = ["name"],
+    ):
+        """
+        Synchronously search for similar issues based on text similarity.
+        """
+        search_body = build_issue_text_search_query(query_title, query_description, workspace_id, issue_id, project_id, user_id)
+        try:
+            response = self.os.search(index=ISSUE_INDEX, body=search_body)
+        except TransportError as e:
+            if "too_many_nested_clauses" in str(e):
+                log.warning("Text similarity query exceeded maxClauseCount; retrying without fuzziness")
+                fallback_search_body = build_issue_text_search_query(
+                    query_title=query_title,
+                    query_description=query_description,
+                    workspace_id=workspace_id,
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    user_id=user_id,
+                    force_no_fuzziness=True,
+                )
+                try:
+                    response = self.os.search(index=ISSUE_INDEX, body=fallback_search_body)
+                except Exception as fallback_error:
+                    log.error(
+                        "Fallback text similarity search failed: %s fallback search body: %s",
+                        fallback_error,
+                        fallback_search_body,
+                    )
+                    return []
+            else:
+                log.error(f"Error searching for similar issues based on text similarity: {e} search body: {search_body}")
+                return []
+        except Exception as e:
+            log.error(f"Error searching for similar issues based on text similarity: {e} search body: {search_body}")
+            return []
+        return parse_text_search_response(response, min_score_percent, min_filter, *output_fields)
+
     async def async_issue_search_text(
         self,
         query_title: str,
@@ -315,6 +362,104 @@ class VectorStore:
         neural_query = {"neural": {"content_semantic": {"query_text": query, "model_id": get_ml_model_id_sync(), "k": 10}}}
         response = await self.async_os.search(index=DOCS_INDEX, body={"query": neural_query})
         return parse_semantic_search_response(response, threshold, *output_fields)
+
+    def pages_search_text(
+        self,
+        query: str,
+        workspace_id: str,
+        user_id: str,
+        project_id: str | None = None,
+        min_score_percent: int = 70,
+        min_filter: float = 0.1,
+        output_fields: list[str] = ["name", "page_id", "description"],
+    ):
+        """
+        Synchronously search for pages using BM25 full-text matching.
+
+        Used as a fallback when no ML model is configured and semantic search is unavailable.
+        """
+        from pi.core.vectordb.utils import build_pages_text_search_query
+        from pi.core.vectordb.utils import parse_text_search_response
+
+        search_body = build_pages_text_search_query(query, workspace_id, user_id, project_id)
+        try:
+            response = self.os.search(index=PAGES_INDEX, body=search_body)
+        except Exception as e:
+            log.error("Error in pages text search: %s query: %s", e, search_body)
+            return []
+        return parse_text_search_response(response, min_score_percent, min_filter, *output_fields)
+
+    async def async_pages_search_text(
+        self,
+        query: str,
+        workspace_id: str,
+        user_id: str,
+        project_id: str | None = None,
+        min_score_percent: int = 70,
+        min_filter: float = 0.1,
+        output_fields: list[str] = ["name", "page_id", "description"],
+    ):
+        """
+        Asynchronously search for pages using BM25 full-text matching.
+
+        Used as a fallback when no ML model is configured and semantic search is unavailable.
+        """
+        from pi.core.vectordb.utils import build_pages_text_search_query
+        from pi.core.vectordb.utils import parse_text_search_response
+
+        search_body = build_pages_text_search_query(query, workspace_id, user_id, project_id)
+        try:
+            response = await self.async_os.search(index=PAGES_INDEX, body=search_body)
+        except Exception as e:
+            log.error("Error in pages text search: %s query: %s", e, search_body)
+            return []
+        return parse_text_search_response(response, min_score_percent, min_filter, *output_fields)
+
+    def docs_search_text(
+        self,
+        query: str,
+        min_score_percent: int = 70,
+        min_filter: float = 0.1,
+        output_fields: list[str] = ["content"],
+    ):
+        """
+        Synchronously search documentation using BM25 full-text matching.
+
+        Used as a fallback when no ML model is configured and semantic search is unavailable.
+        """
+        from pi.core.vectordb.utils import build_docs_text_search_query
+        from pi.core.vectordb.utils import parse_text_search_response
+
+        search_body = build_docs_text_search_query(query)
+        try:
+            response = self.os.search(index=DOCS_INDEX, body=search_body)
+        except Exception as e:
+            log.error("Error in docs text search: %s query: %s", e, search_body)
+            return []
+        return parse_text_search_response(response, min_score_percent, min_filter, *output_fields)
+
+    async def async_docs_search_text(
+        self,
+        query: str,
+        min_score_percent: int = 70,
+        min_filter: float = 0.1,
+        output_fields: list[str] = ["content"],
+    ):
+        """
+        Asynchronously search documentation using BM25 full-text matching.
+
+        Used as a fallback when no ML model is configured and semantic search is unavailable.
+        """
+        from pi.core.vectordb.utils import build_docs_text_search_query
+        from pi.core.vectordb.utils import parse_text_search_response
+
+        search_body = build_docs_text_search_query(query)
+        try:
+            response = await self.async_os.search(index=DOCS_INDEX, body=search_body)
+        except Exception as e:
+            log.error("Error in docs text search: %s query: %s", e, search_body)
+            return []
+        return parse_text_search_response(response, min_score_percent, min_filter, *output_fields)
 
     async def async_feed(self, index_name, docs):
         """

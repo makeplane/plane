@@ -316,3 +316,68 @@ def get_ml_model_id_sync() -> Optional[str]:
     # Cache the None result to avoid repeated failed queries
     _cache_initialized = True
     return None
+
+
+def check_ml_model_configured_sync() -> bool:
+    """
+    Check if an ML model is configured without using the in-memory cache.
+    This is required for long-lived background workers (like Celery) to dynamically pick up
+    new models added by users without requiring a container restart.
+
+    Returns:
+        bool: True if an active model exists, False otherwise.
+    """
+    # Check environment variable
+    env_model_id = settings.vector_db.ML_MODEL_ID
+    if env_model_id and env_model_id.strip():
+        return True
+
+    # Check database dynamically
+    try:
+        for session in get_sync_session():
+            statement = (
+                select(EmbeddingModel)
+                .where(EmbeddingModel.is_active.is_(True))  # type: ignore[attr-defined]
+                .where(EmbeddingModel.deleted_at.is_(None))  # type: ignore[union-attr]
+                .limit(1)
+            )
+            result = session.execute(statement)
+            if result.scalar_one_or_none():
+                return True
+            break  # Only use first session
+    except Exception as e:
+        log.error("Could not check ML model dynamic config: %s", e)
+
+    return False
+
+
+async def check_ml_model_configured() -> bool:
+    """
+    Check if an ML model is configured without using the in-memory cache (async version).
+    This is required for dynamically picking up new models added by users without requiring a container restart.
+
+    Returns:
+        bool: True if an active model exists, False otherwise.
+    """
+    # Check environment variable
+    env_model_id = settings.vector_db.ML_MODEL_ID
+    if env_model_id and env_model_id.strip():
+        return True
+
+    # Check database dynamically
+    try:
+        async for session in get_async_session():
+            statement = (
+                select(EmbeddingModel)
+                .where(EmbeddingModel.is_active.is_(True))  # type: ignore[attr-defined]
+                .where(EmbeddingModel.deleted_at.is_(None))  # type: ignore[union-attr]
+                .limit(1)
+            )
+            result = await session.execute(statement)
+            if result.scalar_one_or_none():
+                return True
+            break  # Only use first session
+    except Exception as e:
+        log.error("Could not check ML model dynamic config: %s", e)
+
+    return False

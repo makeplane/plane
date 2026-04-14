@@ -1100,10 +1100,10 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
     ),
     "advanced_search": ToolMetadata(
         name="workitems_advanced_search",
-        description="PREFERRED tool for finding work items. Use this for: "
-        "(1) text/name search — find work items by title keywords (e.g. query='capex', query='login bug'), "
-        "(2) metadata filtering — filter by priority, state_group, assignee, project, cycle, module, labels, "
-        "(3) combined — text search + filters together (e.g. query='capex' with filters={'priority': 'high'}). "
+        description="PREFERRED tool for filtering work items by metadata. Use this for: "
+        "(1) structured metadata filtering — filter by priority, state_group, assignee, project, cycle, labels, "
+        "(2) combined queries — metadata filters + text search together (e.g. query='capex' with filters={'priority': 'high'}). "
+        "DO NOT use this tool for pure text/semantic searches without metadata filters (use vector_search_tool instead). "
         "Faster and more accurate than structured_db_tool. Supports AND/OR/NOT filter logic.",
         sdk_method="advanced_search_work_items",
         pre_handler=_advanced_search_pre_handler,

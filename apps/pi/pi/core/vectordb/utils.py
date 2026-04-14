@@ -238,6 +238,76 @@ def build_issue_text_search_query(
     return search_body
 
 
+def build_pages_text_search_query(query: str, workspace_id: str, user_id: str, project_id: str | None) -> Dict[str, Any]:
+    """
+    Build a text search query for pages using OpenSearch match queries.
+
+    Mirrors the access/scope filtering of build_pages_semantic_query but uses
+    BM25 full-text matching instead of neural/knn queries, so no ML model is needed.
+    """
+    scope_filter: Dict[str, Any] = {"term": {"project_ids": project_id}} if project_id else {"term": {"workspace_id": workspace_id}}
+
+    access_filter: Dict[str, Any] = {
+        "bool": {
+            "should": [
+                {"term": {"access": "0"}},  # public page
+                {"bool": {"must": [{"term": {"access": "1"}}, {"term": {"owned_by_id": user_id}}]}},  # private + owned
+            ],
+            "minimum_should_match": 1,
+        }
+    }
+
+    combined_filter: List[Dict[str, Any]] = [scope_filter, access_filter, {"term": {"is_deleted": "false"}}]
+
+    use_fuzziness = len(re.findall(r"\b\w+\b", query)) <= 8 and '"' not in query
+    match_body: Dict[str, Any] = {"query": query}
+    if use_fuzziness:
+        match_body.update({"fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"})
+    else:
+        match_body["minimum_should_match"] = "50%"
+
+    return {
+        "query": {
+            "bool": {
+                "should": [
+                    {"match": {"name": match_body}},
+                    {"match": {"description": match_body}},
+                ],
+                "filter": combined_filter,
+                "minimum_should_match": 1,
+            }
+        }
+    }
+
+
+def build_docs_text_search_query(query: str) -> Dict[str, Any]:
+    """
+    Build a text search query for documentation using OpenSearch match queries.
+
+    Used as a fallback when no ML model is configured and semantic search is unavailable.
+    Searches the content, section, and subsection fields with BM25 scoring.
+    """
+    use_fuzziness = len(re.findall(r"\b\w+\b", query)) <= 8 and '"' not in query
+    match_body: Dict[str, Any] = {"query": query}
+    if use_fuzziness:
+        match_body.update({"fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "60%"})
+    else:
+        match_body["minimum_should_match"] = "50%"
+
+    return {
+        "query": {
+            "bool": {
+                "should": [
+                    {"match": {"content": match_body}},
+                    {"match": {"section": {"query": query, "boost": 0.5}}},
+                    {"match": {"subsection": {"query": query, "boost": 0.3}}},
+                ],
+                "minimum_should_match": 1,
+            }
+        }
+    }
+
+
 def parse_semantic_search_response(response: Dict[str, Any], threshold: float = 0.77, *fields) -> List[Dict[str, Any]]:
     """
     Parse OpenSearch semantic search response.

@@ -187,16 +187,29 @@ async def get_dupes(data: DupeSearchRequest):
 
         # Get initial candidates from vector similarity search
         vector_start = time.time()
-        resp_sem = await vector_db.async_issue_search_semantic(
-            query_title,
-            query_description,
-            workspace_id,
-            issue_id,
-            user_id,
-            project_id=project_id,
-            threshold=semantic_cutoff,
-            output_fields=dupe_output_fields,
-        )
+        from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured
+
+        if await check_ml_model_configured():
+            resp_sem = await vector_db.async_issue_search_semantic(
+                query_title,
+                query_description,
+                workspace_id,
+                issue_id,
+                user_id,
+                project_id=project_id,
+                threshold=semantic_cutoff,
+                output_fields=dupe_output_fields,
+            )
+        else:
+            resp_sem = await vector_db.async_issue_search_text(
+                query_title=query_title,
+                query_description=query_description,
+                workspace_id=workspace_id,
+                issue_id=issue_id,
+                user_id=user_id,
+                project_id=project_id,
+                output_fields=dupe_output_fields,
+            )
         vector_duration = time.time() - vector_start
         tracking_data["vector_search_duration_ms"] = vector_duration * 1000
 

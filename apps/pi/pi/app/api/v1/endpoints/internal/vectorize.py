@@ -69,6 +69,14 @@ async def trigger_global_vectorization(
     Returns:
         JSONResponse with accepted and skipped workspace IDs
     """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured
+
+    if not await check_ml_model_configured():
+        log.info("Skipping global vectorization: no embedding model configured")
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"accepted": [], "skipped": [], "message": "No embedding model configured"},
+        )
 
     log.info("Fetching all workspace IDs from Plane database")
 
@@ -143,6 +151,15 @@ async def trigger_vectorization(
     Returns:
         JSONResponse with accepted and skipped workspace IDs
     """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured
+
+    if not await check_ml_model_configured():
+        log.info("Skipping workspace vectorization: no embedding model configured")
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"accepted": [], "skipped": body.workspace_ids, "message": "No embedding model configured"},
+        )
+
     accepted, skipped = [], []
 
     for ws in body.workspace_ids:

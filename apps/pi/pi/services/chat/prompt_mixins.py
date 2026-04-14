@@ -173,6 +173,138 @@ RETRIEVAL_TOOL_DESCRIPTIONS = """
 """  # noqa: E501
 
 
+RETRIEVAL_TOOL_DESCRIPTIONS_TEXT_ONLY = """
+
+1. **vector_search_tool**: For keyword search on work-item title and description fields.
+   - USE FOR: Finding work items by specific keywords, terms, or phrases in their title or description
+   - STRATEGY: Search is keyword-based (BM25). Apply the Agentic Text Search Strategy — retry with spell corrections, synonyms, and paraphrases before giving up.
+   - NOT FOR: Comments, updates, activity streams, state changes, metadata queries, presentation/output-formatting instructions
+   - RETURNS: Text results and a list of work-item IDs
+
+
+2. **structured_db_tool**: For pulling structured data from Plane's database using natural language queries.
+   - USE FOR: **Complex aggregations** (counts, groupings), **cross-entity joins** (e.g. issues in cycles spanning projects), custom SQL-like logic.
+   - NOT FOR: **Listing entities** (use entity_list), **searching/filtering work items by name or metadata** (use workitems_advanced_search), keyword search.
+   - ACCEPTS: Natural language query and optional issue_ids/page_ids from prior searches
+   - NOTE: This is a text2sql tool - slower and more expensive than specialized tools. **Avoid if entity_list or workitems_advanced_search can answer.**
+   - IMPORTANT: If the query is about finding work items by title/name keywords AND/OR filtering by priority/state/assignee/etc., use workitems_advanced_search instead.
+
+3. **workitems_advanced_search**: For **searching and filtering** work items — both text search AND metadata filters.
+   - USE FOR: **Text/name search** (finding work items by title keywords like 'capex', 'login bug', etc.) AND/OR **metadata filtering** (priority, state_group, assignee, project, cycle, module, labels)
+   - PREFER OVER structured_db_tool: For ANY query that searches work items by name/title/keyword AND/OR filters by metadata fields
+   - SUPPORTS: `query` param for text search, `filters` param with AND/OR/NOT logic, or BOTH combined
+   - Do NOT put filter logic (e.g. "priority:high") inside `query`. Use the `filters` dict for that.
+   - Examples: query="capex", filters={{'priority': 'high'}}, or BOTH: query="capex" + filters={{'priority': 'high'}}
+   - This is faster and more accurate than structured_db_tool for work item search/filter queries
+
+4. **entity_list**: **PRIMARY TOOL** for listing entities by type.
+   - USE FOR: Listing workitems, projects, cycles, labels, states, modules, initiatives, teamspaces, workspace members, project members, etc.
+   - PARAMS: entity_type (required), project_id, cycle_id, module_id, work_item_id
+   - PAGINATION: per_page (default 25), page, cursor
+   - FILTER/SORT: order_by, expand, cycle_view (params depend on entity_type support)
+   - Entity types: workitems, projects, cycles, modules, labels, states, intake, types, archived_cycles, archived_modules, cycle_workitems, module_workitems, activity, comments, attachments, links, worklogs, initiatives, teamspaces, stickies, customers, workspace_members, project_members
+
+5. **entity_retrieve**: For retrieving a **single entity by ID**.
+   - USE FOR: Getting details of a specific project, workitem, cycle, module, label, state, initiative, teamspace, sticky, customer, intake item, type, or property
+   - PARAMS: entity_type (required), entity_id (required), project_id (auto-filled from context for project-scoped entities), work_item_id (for workitem-scoped entities like properties), type_id (for properties)
+   - Entity types: projects, workitems, cycles, modules, labels, states, intake, types, properties, initiatives, teamspaces, stickies, customers
+   - NOTE: For project-scoped entities (workitems, cycles, modules, labels, states, intake, types, properties), project_id is auto-filled from context if available
+
+6. **pages_search_tool**: For keyword search in content of Plane Pages (notepad).
+   - USE FOR: Finding pages that contain specific keywords or phrases in their content or title
+   - STRATEGY: Search is keyword-based (BM25). Apply the Agentic Text Search Strategy — retry with spell corrections, synonyms, and paraphrases before giving up.
+   - NOT FOR: Page metadata queries (who created, when created)
+   - RETURNS: Text results and a list of page IDs
+
+7. **docs_search_tool**: For searching Plane's official documentation by keywords.
+   - USE FOR: Finding documentation by feature names, specific terms, how-to topics
+   - STRATEGY: Search is keyword-based (BM25). Apply the Agentic Text Search Strategy — retry with related terms and paraphrases before giving up.
+   - RETURNS: Formatted documentation search results
+
+8. **web_search_tool**: For searching the public web for up-to-date external information.
+   - USE FOR: Current events, external references, or info not covered by Plane data/docs
+   - RETURNS: Summarized web search results with sources
+"""  # noqa: E501
+
+
+TEXT_ONLY_AGENTIC_SEARCH_STRATEGY = """
+## Agentic Text Search Strategy
+
+In this deployment, all search tools use keyword matching (BM25) with fuzzy matching, not semantic/embedding-based search.
+This includes `vector_search_tool`, `pages_search_tool`, `docs_search_tool`, and **the `query` parameter of `workitems_advanced_search`**.
+
+### How the search engine works (use this to craft better queries)
+- The engine matches individual words, not meaning. "authentication setup" finds docs containing
+  those words, but NOT docs that only say "login configuration".
+- Minor typos are handled automatically (e.g., "authenication" still matches "authentication").
+  You do NOT need to fix typos — focus on vocabulary variation instead.
+- Queries work best with 3-5 keywords. The engine requires ~70% of your query terms to match,
+  so a 5-word query only needs ~4 words to hit. This means you can pack synonyms and related
+  terms into a SINGLE query to broaden recall efficiently.
+  Example: instead of searching "SSO" alone, search "SSO single sign-on SAML OAuth" — any
+  document containing ~4 of those 5 terms will match.
+
+### Search protocol (3 attempts max per tool, then move on)
+
+1. **Attempt 1 — User's terms + synonyms in one query (up to 5 keywords)**:
+   Start with the user's core keywords combined with the most likely synonyms.
+   - Example: user asks about "login issues" → search "login sign-in authentication issues errors"
+   - Example: user asks about "SSO setup" → search "SSO single sign-on SAML OIDC setup"
+   - Example: user asks about "sprint planning" → search "sprint cycle iteration planning"
+
+2. **Attempt 2 — Rephrase with alternate vocabulary**:
+   If Attempt 1 returned no useful results, try completely different terminology for the same concept.
+   Expand abbreviations and use domain-specific terms.
+   - "auth" → "authentication", "mgmt" → "management", "CX" → "customer experience"
+   - "capex" → "capital expenditure budget"
+   - "k8s" → "kubernetes deployment"
+
+3. **Attempt 3 — Decompose into core noun(s)**:
+   Strip the query down to 1-2 essential nouns. This casts the widest net.
+   - "payment gateway timeout error" → "payment gateway"
+   - "how to configure SMTP email" → "SMTP email"
+
+### Plane-specific vocabulary
+- When crafting search queries, use the terminology bridge in the Plane context above to translate
+  common terms (e.g., "issue" → "work item", "sprint" → "cycle") into Plane's vocabulary.
+
+### Tool Choice: Search vs Advanced Search
+- For general text/keyword queries (e.g., "what issues mention jql?"), **always use `vector_search_tool`**.
+- Do NOT use `workitems_advanced_search` for free-text search; restrict it to structured attribute filtering (status, assignee, etc).
+
+### When NOT to retry search tools
+- If you got results but they are **irrelevant to the question**, retrying the same tool with
+  different words is unlikely to help — try a **different tool** instead (e.g., switch from
+  vector_search_tool to structured_db_tool or workitems_advanced_search).
+- If the user is asking for **counts, lists, aggregations, or metadata** (who created, when,
+  how many), use structured_db_tool, entity_list, or workitems_advanced_search — these are NOT
+  search queries.
+- If the user references a **specific work item by identifier** (e.g., "PROJECT-123"), use
+  workitems_advanced_search with search_mode="by_identifier", not a search tool.
+- After exhausting 3 attempts across a tool with no useful results, report what you tried and
+  move on. Do NOT keep retrying the same tool.
+
+### CRITICAL: Execute retries yourself — never ask the user
+- You MUST execute the retry attempts yourself by making additional tool calls with varied queries.
+- Do NOT suggest broader terms to the user or ask "would you like me to try X?" — just try it.
+- Only after YOU have exhausted the attempts above should you report no results.
+"""  # noqa: E501
+
+
+def get_retrieval_tool_descriptions() -> str:
+    """Return the appropriate retrieval tool descriptions based on whether semantic search is available.
+
+    When an ML model (embedding model) is configured, returns the full semantic search descriptions.
+    When no ML model is available, returns keyword-search-oriented descriptions so the LLM
+    composes more precise, term-based queries suited to BM25 text matching.
+    """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+    if check_ml_model_configured_sync():
+        return RETRIEVAL_TOOL_DESCRIPTIONS
+    return RETRIEVAL_TOOL_DESCRIPTIONS_TEXT_ONLY
+
+
 TOOL_CALL_REASONING_REINFORCEMENT = """## Final mandatory requirement: reasoning for every tool call
 
 You MUST include clear reasoning in your **assistant message content** both **before** and **after** each tool call.

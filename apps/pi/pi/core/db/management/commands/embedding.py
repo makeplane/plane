@@ -302,15 +302,33 @@ def init_embedding_model(
 
             # Step 3: Determine which model to use and validate it
             model_key = model or settings.vector_db.EMBEDDING_MODEL
+            if not model_key or not model_key.strip():
+                log.warning(
+                    "EMBEDDING_MODEL is not set — skipping embedding model initialization. "
+                    "Pi will run in text-only (BM25) search mode. "
+                    "To enable semantic search, set EMBEDDING_MODEL and re-run."
+                )
+                typer.echo("  ⚠ EMBEDDING_MODEL is not set — skipping embedding model initialization.")
+                typer.echo("    Pi will run in text-only (BM25) search mode.")
+                return
+
             log.info("Using embedding model: %s", model_key)
 
             # Validate model key
             try:
                 config = get_embedding_model_config(model_key)
-            except ValueError as e:
-                typer.echo(f"Error: {e}")
-                typer.echo(f"Available models: {', '.join(get_available_embedding_models())}")
-                sys.exit(1)
+            except ValueError:
+                log.warning(
+                    "EMBEDDING_MODEL='%s' is not a recognised model — skipping embedding model initialization. "
+                    "Pi will run in text-only (BM25) search mode. "
+                    "Available models: %s",
+                    model_key,
+                    ", ".join(get_available_embedding_models()),
+                )
+                typer.echo(f"  ⚠ EMBEDDING_MODEL='{model_key}' is not a recognised model — skipping initialization.")
+                typer.echo(f"    Available models: {', '.join(get_available_embedding_models())}")
+                typer.echo("    Pi will run in text-only (BM25) search mode.")
+                return
 
             # Step 4: Check if we can auto-create a model (check API key based on provider)
             api_key = os.getenv(config["api_key_env"], "")
@@ -321,17 +339,17 @@ def init_embedding_model(
                 typer.echo("No active embedding model found in database")
                 typer.echo(f"{config['api_key_env']} is not set (needed to auto-create model)")
                 typer.echo("")
-                typer.echo("Please either:")
+                typer.echo("If you do not want to use semantic search, skip the below step.")
+                typer.echo("If you intend to use semantic search with an embedding model, please set it up by either:")
                 typer.echo("  1. Set OPENSEARCH_ML_MODEL_ID environment variable, OR")
                 typer.echo(f"  2. Set {config['api_key_env']} and run: python -m pi.manage create-embedding-model --model {model_key}")
-                sys.exit(1)
+            else:
+                # Step 5: Auto-create the model
+                log.info("%s found, auto-creating embedding model...", config["api_key_env"])
+                typer.echo(f"Creating embedding model ({model_key}) automatically...")
 
-            # Step 5: Auto-create the model
-            log.info("%s found, auto-creating embedding model...", config["api_key_env"])
-            typer.echo(f"Creating embedding model ({model_key}) automatically...")
-
-            # Call the setup function
-            await _setup_embedding_model_internal(model_key)
+                # Call the setup function
+                await _setup_embedding_model_internal(model_key)
 
         except Exception as e:
             log.error("Failed to ensure embedding model: %s", e, exc_info=True)
@@ -697,40 +715,102 @@ def check_embedding_dimension():
     ml_model_id = ML_MODEL_ID
 
     if not embedding_model_key or not embedding_model_key.strip():
+        # No embedding model configured at all — this is expected for self-hosted users
+        # who rely on agentic (BM25) text search. Warn but do NOT abort startup.
         model_check_skipped = True
-        log.warning("EMBEDDING_MODEL is not set")
-        typer.echo("  ❌ EMBEDDING_MODEL is required")
-        raise typer.Exit(code=1)
+        log.warning(
+            "EMBEDDING_MODEL is not set — skipping ML model dimension check. "
+            "Pi will run in text-only (BM25) search mode. "
+            "Semantic search is disabled until an embedding model is configured."
+        )
+        typer.echo("  ⚠ EMBEDDING_MODEL is not set — running in text-only search mode (no semantic search).")
+        typer.echo("    To enable semantic search, configure an embedding model and re-run init-embedding-model.")
 
-    if not ml_model_id:
+    elif not ml_model_id:
+        # EMBEDDING_MODEL key is set but no OpenSearch model ID is available yet
+        # (neither in env nor in DB). This is a partial setup — warn but don't abort.
         model_check_skipped = True
-        log.warning("No ML model ID available")
-
-        typer.echo("  ⚠ No ML model ID found")
-
-        typer.echo("  You must either:")
-        typer.echo("    - Set OPENSEARCH_ML_MODEL_ID (required for Cloud OpenSearch)")
-        typer.echo("    - OR run: python -m pi.manage create-embedding-model --force (self-hosted OpenSearch)")
+        log.warning(
+            "EMBEDDING_MODEL=%s is configured but no OpenSearch ML model ID was found "
+            "(OPENSEARCH_ML_MODEL_ID not set and no active model in database). "
+            "Pi will run in text-only (BM25) search mode until the model is deployed. "
+            "Run: python -m pi.manage init-embedding-model to complete setup.",
+            embedding_model_key,
+        )
+        typer.echo(f"  ⚠ EMBEDDING_MODEL={embedding_model_key} but no ML model ID found.")
+        typer.echo("    Pi will run in text-only search mode.")
+        typer.echo("    To complete setup: python -m pi.manage init-embedding-model")
 
     else:
         typer.echo(f"  ML Model ID: {ml_model_id}")
-        try:
-            predict_response = vdb.test_ml_model(ml_model_id, test_input=["hi"])
-            embedding = _extract_embedding_from_predict(predict_response)
 
-            if embedding is not None:
-                model_dim = len(embedding)
-                if model_dim != configured_dim:
-                    msg = f"ML model {ml_model_id}: model produces dimension={model_dim}, config has {configured_dim}"
-                    mismatches.append(msg)
-                    typer.echo(f"  Result: MISMATCH — model dimension={model_dim}, config={configured_dim}")
-                else:
-                    typer.echo(f"  Result: OK (dimension={model_dim})")
+        # Validate model state in OpenSearch before testing inference
+        try:
+            model_status = vdb.get_ml_model_status(ml_model_id)
+            model_state = model_status.get("model_state", "unknown")
+            model_name_os = model_status.get("name", "unknown")
+
+            if model_state.lower() != "deployed":
+                model_check_skipped = True
+                log.warning(
+                    "Embedding model %s (name=%s) is not in DEPLOYED state (current: %s). "
+                    "Pi will run in text-only (BM25) search mode. "
+                    "Deploy the model and restart to enable semantic search.",
+                    ml_model_id,
+                    model_name_os,
+                    model_state,
+                )
+                typer.echo(f"  ⚠ Model {ml_model_id} state={model_state} (expected: DEPLOYED)")
+                typer.echo("    Pi will run in text-only search mode until the model is deployed.")
             else:
-                typer.echo("  Warning: Could not extract embedding vector")
+                typer.echo(f"  Model state: {model_state} (name={model_name_os})")
+
+                # Test inference and dimension
+                try:
+                    predict_response = vdb.test_ml_model(ml_model_id, test_input=["hi"])
+                    embedding = _extract_embedding_from_predict(predict_response)
+
+                    if embedding is not None:
+                        model_dim = len(embedding)
+                        if model_dim != configured_dim:
+                            msg = f"ML model {ml_model_id} produces dimension={model_dim} " f"but OPENSEARCH_EMBEDDING_DIMENSION={configured_dim}"
+                            mismatches.append(msg)
+                            typer.echo(f"  Result: MISMATCH — model dimension={model_dim}, config={configured_dim}")
+                        else:
+                            typer.echo(f"  Result: OK (dimension={model_dim})")
+                    else:
+                        model_check_skipped = True
+                        log.warning(
+                            "Could not extract embedding vector from model %s response. " "Pi will run in text-only search mode.",
+                            ml_model_id,
+                        )
+                        typer.echo("  ⚠ Could not extract embedding vector from model response")
+                        typer.echo("    Pi will run in text-only search mode.")
+
+                except Exception as exc:
+                    model_check_skipped = True
+                    log.warning(
+                        "Embedding model inference test failed for model_id=%s: %s. "
+                        "Pi will run in text-only (BM25) search mode. "
+                        "Verify the model is correctly deployed and the model ID is valid.",
+                        ml_model_id,
+                        exc,
+                    )
+                    typer.echo(f"  ⚠ Model inference test failed: {exc}")
+                    typer.echo("    Pi will run in text-only search mode.")
 
         except Exception as exc:
-            typer.echo(f"  Warning: Could not run model inference ({exc})")
+            model_check_skipped = True
+            log.warning(
+                "Could not retrieve status for embedding model_id=%s from OpenSearch: %s. "
+                "The model ID may be incorrect or the model may not exist. "
+                "Pi will run in text-only (BM25) search mode.",
+                ml_model_id,
+                exc,
+            )
+            typer.echo(f"  ⚠ Could not retrieve model status from OpenSearch: {exc}")
+            typer.echo(f"    model_id={ml_model_id} may be incorrect or the model may not exist.")
+            typer.echo("    Pi will run in text-only search mode.")
 
     vdb.os.close()
 
@@ -740,16 +820,19 @@ def check_embedding_dimension():
     typer.echo("=" * 60)
 
     if mismatches:
-        typer.echo("  DIMENSION MISMATCH DETECTED")
+        typer.echo("  ❌ DIMENSION MISMATCH DETECTED — startup aborted")
         for m in mismatches:
             typer.echo(f"    - {m}")
+        typer.echo("")
+        typer.echo("  Fix: update OPENSEARCH_EMBEDDING_DIMENSION to match the model, then re-create indices.")
+        raise typer.Exit(code=1)
 
-    elif model_check_skipped:
-        typer.echo(f"  Index dimensions match config ({configured_dim})")
-        typer.echo("  Model dimension check skipped")
+    if model_check_skipped:
+        typer.echo(f"  ⚠ Index check complete ({checked} index(es) checked). Model dimension check skipped.")
+        typer.echo("    Semantic search is disabled — Pi will use text-only (BM25) search.")
 
     else:
-        typer.echo(f"  All checks passed — dimension={configured_dim}")
+        typer.echo(f"  ✓ All checks passed — dimension={configured_dim}")
 
     raise typer.Exit(code=0)
 

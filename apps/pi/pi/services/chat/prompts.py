@@ -12,8 +12,8 @@
 from langchain_core.prompts import PromptTemplate
 
 from pi.services.actions.registry import get_router_categories
-from pi.services.chat.prompt_mixins import RETRIEVAL_TOOL_DESCRIPTIONS
 from pi.services.chat.prompt_mixins import TOOL_CALL_REASONING_REINFORCEMENT
+from pi.services.chat.prompt_mixins import get_retrieval_tool_descriptions
 from pi.services.chat.prompt_mixins import plane_context
 
 # Build dynamic category help text from registry
@@ -112,7 +112,7 @@ Rules:
 - Provide a brief rationale per selection.
 - If the user's request doesn't require any action, is about retrieving information from the database or a how-to guide, or is about planning the next steps, add the retrieval_tools category.
   ** A brief description of the retrieval tools for your perusal:**
-  {RETRIEVAL_TOOL_DESCRIPTIONS}
+  {get_retrieval_tool_descriptions()}
 
 **CRITICAL - UNSUPPORTED REQUESTS (return empty list []):**
 If the user's request falls into any of these categories, return an EMPTY LIST immediately:

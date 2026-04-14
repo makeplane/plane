@@ -864,6 +864,12 @@ def trigger_live_sync(self):
     Periodic task that triggers live sync by querying the database directly.
     This replaces the API-based approach with direct database access.
     """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+    if not check_ml_model_configured_sync():
+        log.info("Skipping live sync: no embedding model configured")
+        return {"status": "skipped", "reason": "no_embedding_model", "dispatched": 0}
+
     try:
         # Get eligible workspaces directly from database
         eligible_workspaces = get_eligible_workspaces()
@@ -939,6 +945,12 @@ def workspace_plan_sync(self):
 
     Environment variable: CELERY_WORKSPACE_PLAN_SYNC_ENABLED (default: enabled)
     """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+    if not check_ml_model_configured_sync():
+        log.info("Skipping workspace plan sync: no embedding model configured")
+        return {"status": "skipped", "reason": "no_embedding_model"}
+
     try:
         # Step 1: Handle non-Pro workspaces (remove vector data and disable live sync)
         downgrade_result = disable_live_sync_for_non_pro_workspaces()
@@ -1056,6 +1068,12 @@ def vectorization_scheduler(self):
     This prevents overwhelming the system when there are many workspaces (e.g., 10k+)
     needing vectorization.
     """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+    if not check_ml_model_configured_sync():
+        log.info("Skipping vectorization scheduler: no embedding model configured")
+        return {"status": "skipped", "reason": "no_embedding_model"}
+
     try:
         with db_session() as session:
             # Count currently running jobs
@@ -1934,6 +1952,12 @@ def sync_docs_periodic_task(self):
     Returns:
         Dictionary with sync results
     """
+    from pi.services.retrievers.pg_store.embedding_model import check_ml_model_configured_sync
+
+    if not check_ml_model_configured_sync():
+        log.info("Skipping periodic docs sync task: no embedding model configured")
+        return {"status": "skipped", "reason": "no_embedding_model"}
+
     log.info("Starting periodic docs sync task")
 
     async def _sync_docs():

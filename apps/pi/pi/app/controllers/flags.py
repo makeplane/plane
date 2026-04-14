@@ -145,8 +145,8 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
 
 def _env_readiness_from_caps(caps: _EnvCapabilities) -> Dict[FeatureKey, bool]:
     return {
-        settings.feature_flags.AI_CHAT: bool(caps.llm_present and caps.embedding_present and caps.opensearch),
-        settings.feature_flags.AI_DEDUPE: bool(caps.llm_present and caps.embedding_present),
+        settings.feature_flags.AI_CHAT: bool(caps.llm_present),
+        settings.feature_flags.AI_DEDUPE: bool(caps.llm_present),
         settings.feature_flags.AI_CONVERSE: bool(caps.groq),
         settings.feature_flags.AI_FILE_UPLOADS: bool(caps.uploads),
         settings.feature_flags.AI_PAGES_BLOCKS: bool(caps.llm_present),
