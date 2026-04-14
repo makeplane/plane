@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 import { BellRing, Clock } from "lucide-react";
 // plane imports
 import { Avatar } from "@plane/propel/avatar";
+import type { TNotification } from "@plane/types";
 import { Row } from "@plane/ui";
 import {
   calculateTimeAgo,
@@ -44,7 +45,8 @@ type TNotificationItem = {
 export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
   const { workspaceSlug, notificationId, onNotificationClick } = props;
   // hooks
-  const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
+  const { currentSelectedNotificationId, setCurrentSelectedNotificationId, setHighlightedActivityIds } =
+    useWorkspaceNotifications();
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -63,6 +65,9 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
   const notificationField = notification?.data?.issue_activity.field || undefined;
   const notificationTriggeredBy = notification.triggered_by_details || undefined;
 
+  const getActivityIdFromNotification = (n: TNotification): string | undefined =>
+    n.data?.issue_activity?.field === "comment" ? n.data?.issue_activity?.new_identifier : n.data?.issue_activity?.id;
+
   const handleNotificationIssuePeekOverview = async () => {
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
       onNotificationClick?.();
@@ -70,8 +75,18 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
       setPeekIssue(undefined);
       setCurrentSelectedNotificationId(notificationId);
 
+      const isUnread = !notification.read_at;
+
+      // highlight the activity/comment referenced by this notification
+      if (isUnread) {
+        const activityId = getActivityIdFromNotification(notification);
+        if (activityId) {
+          setHighlightedActivityIds([activityId]);
+        }
+      }
+
       // make the notification as read
-      if (notification.read_at === null) {
+      if (isUnread) {
         try {
           await markNotificationAsRead(workspaceSlug);
         } catch (error) {
