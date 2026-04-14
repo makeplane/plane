@@ -251,9 +251,9 @@ export class IssueRelationStore implements IIssueRelationStore {
       // While removing one relation, reverse of the relation should also be removed
       const reverseRelatedType = REVERSE_RELATIONS[relationType];
       const relatedIndex = this.relationMap[related_issue]?.[reverseRelatedType]?.findIndex(
-        (_issueId) => _issueId === related_issue
+        (_issueId) => _issueId === issueId
       );
-      if (relationIndex >= 0)
+      if (relatedIndex !== undefined && relatedIndex >= 0)
         runInAction(() => {
           this.relationMap[related_issue]?.[reverseRelatedType]?.splice(relatedIndex, 1);
         });
