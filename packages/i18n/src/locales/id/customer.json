@@ -1,0 +1,377 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Pelanggan} other {Pelanggan}}",
+    "open": "Buka pelanggan",
+    "dropdown": {
+      "placeholder": "Pilih pelanggan",
+      "required": "Silakan pilih pelanggan",
+      "no_selection": "Tidak ada pelanggan"
+    },
+    "upgrade": {
+      "title": "Prioritaskan dan kelola pekerjaan dengan Pelanggan.",
+      "description": "Petakan pekerjaan Anda ke pelanggan dan prioritaskan berdasarkan atribut pelanggan."
+    },
+    "properties": {
+      "default": {
+        "title": "Properti default",
+        "customer_name": {
+          "name": "Nama pelanggan",
+          "placeholder": "Ini bisa nama orang atau bisnis",
+          "validation": {
+            "required": "Nama pelanggan diperlukan.",
+            "max_length": "Nama pelanggan tidak boleh lebih dari 255 karakter."
+          }
+        },
+        "description": {
+          "name": "Deskripsi",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Masukkan email",
+          "validation": {
+            "required": "Email diperlukan.",
+            "pattern": "Alamat email tidak valid."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "URL apa pun dengan https:// akan berfungsi.",
+          "placeholder_short": "Tambah website",
+          "validation": {
+            "pattern": "URL website tidak valid"
+          }
+        },
+        "employees": {
+          "name": "Karyawan",
+          "placeholder": "Jumlah karyawan jika pelanggan Anda adalah bisnis.",
+          "validation": {
+            "min_length": "Karyawan tidak boleh kurang dari 0."
+          }
+        },
+        "size": {
+          "name": "Ukuran",
+          "placeholder": "Tambah ukuran perusahaan",
+          "validation": {
+            "min_length": "Ukuran tidak valid"
+          }
+        },
+        "domain": {
+          "name": "Industri",
+          "placeholder": "Retail, e-Commerce, Fintech, Perbankan",
+          "placeholder_short": "Tambah industri",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Tahap",
+          "placeholder": "Pilih tahap",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Status Kontrak",
+          "placeholder": "Pilih status kontrak",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Pendapatan",
+          "placeholder": "Ini adalah pendapatan yang dihasilkan pelanggan Anda setiap tahun.",
+          "validation": {
+            "min_length": "Pendapatan tidak boleh kurang dari 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Properti kustom",
+        "info": "Tambahkan atribut unik pelanggan Anda ke Plane sehingga Anda dapat mengelola item kerja atau catatan pelanggan dengan lebih baik."
+      },
+      "empty_state": {
+        "title": "Anda belum memiliki properti kustom.",
+        "description": "Properti kustom yang ingin Anda lihat di item kerja, di tempat lain di Plane, atau di luar Plane di CRM atau alat lain, akan muncul di sini ketika Anda menambahkannya."
+      },
+      "add": {
+        "primary_button": "Tambah properti baru"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Lead yang berkualifikasi penjualan",
+      "contract_negotiation": "Negosiasi kontrak",
+      "closed_won": "Menang",
+      "closed_lost": "Kalah"
+    },
+    "contract_status": {
+      "active": "Aktif",
+      "pre_contract": "Pra-kontrak",
+      "signed": "Ditandatangani",
+      "inactive": "Tidak aktif"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Kami tidak dapat menemukan catatan pelanggan itu.",
+        "description": "Tautan ke catatan ini mungkin salah atau catatan ini mungkin telah dihapus.",
+        "primary_button": "Pergi ke pelanggan",
+        "secondary_button": "Tambah pelanggan"
+      },
+      "search": {
+        "title": "Sepertinya Anda tidak memiliki catatan pelanggan yang cocok dengan istilah itu.",
+        "description": "Coba dengan istilah pencarian lain atau hubungi kami jika Anda yakin seharusnya melihat hasil untuk istilah itu."
+      },
+      "list": {
+        "title": "Kelola volume, ritme, dan aliran pekerjaan Anda berdasarkan apa yang penting bagi pelanggan Anda.",
+        "description": "Dengan Pelanggan, fitur khusus Plane, Anda sekarang dapat membuat pelanggan baru dari awal dan menghubungkannya dengan pekerjaan Anda. Segera, Anda akan membawa mereka dari alat lain bersama dengan atribut kustom mereka yang penting bagi Anda.",
+        "primary_button": "Tambahkan pelanggan pertama Anda"
+      }
+    },
+    "settings": {
+      "unauthorized": "Anda tidak diizinkan untuk mengakses halaman ini.",
+      "description": "Lacak dan kelola hubungan pelanggan dalam alur kerja Anda.",
+      "enable": "Aktifkan Pelanggan",
+      "toasts": {
+        "enable": {
+          "loading": "Mengaktifkan fitur pelanggan...",
+          "success": {
+            "title": "Anda telah mengaktifkan Pelanggan untuk workspace ini.",
+            "message": "Anda tidak dapat mematikannya lagi."
+          },
+          "error": {
+            "title": "Kami tidak dapat mengaktifkan Pelanggan kali ini.",
+            "message": "Coba lagi atau kembali ke layar ini nanti. Jika masih tidak berfungsi.",
+            "action": "Bicara dengan dukungan"
+          }
+        },
+        "disable": {
+          "loading": "Menonaktifkan fitur pelanggan...",
+          "success": {
+            "title": "Pelanggan dinonaktifkan",
+            "message": "Fitur pelanggan berhasil dinonaktifkan!"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Gagal menonaktifkan fitur pelanggan!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Kami tidak bisa mendapatkan daftar pelanggan Anda.",
+          "message": "Coba lagi atau segarkan halaman ini."
+        }
+      },
+      "copy_link": {
+        "title": "Anda menyalin tautan langsung ke pelanggan ini.",
+        "message": "Tempel di mana saja dan itu akan langsung mengarah kembali ke sini."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} sekarang tersedia",
+          "message": "Anda dapat mereferensikan pelanggan ini dalam item kerja dan juga melacak permintaan dari mereka.",
+          "actions": {
+            "view": "Lihat",
+            "copy_link": "Salin tautan",
+            "copied": "Disalin!"
+          }
+        },
+        "error": {
+          "title": "Kami tidak dapat membuat catatan itu kali ini.",
+          "message": "Coba simpan lagi atau salin teks yang belum disimpan ke entri baru, sebaiknya di tab lain."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sukses!",
+          "message": "Pelanggan berhasil diperbarui!"
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Tidak dapat memperbarui pelanggan. Coba lagi!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Kami tidak dapat mengunggah logo pelanggan.",
+          "message": "Coba simpan logo lagi atau mulai dari awal."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Anda telah menghapus item kerja dari catatan pelanggan ini.",
+            "message": "Kami juga telah secara otomatis menghapus pelanggan ini dari item kerja."
+          },
+          "error": {
+            "title": "Kami tidak dapat menghapus item kerja dari catatan pelanggan ini kali ini.",
+            "message": "Kami juga telah secara otomatis menghapus pelanggan ini dari item kerja."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Kami tidak dapat menambahkan item kerja ke catatan pelanggan ini kali ini.",
+            "message": "Coba tambahkan item kerja itu lagi atau kembali nanti. Jika masih tidak berfungsi, hubungi kami."
+          },
+          "success": {
+            "title": "Anda telah menambahkan item kerja ke catatan pelanggan ini.",
+            "message": "Kami juga telah secara otomatis menambahkan pelanggan ini ke item kerja."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Edit",
+      "copy_link": "Salin tautan ke pelanggan",
+      "delete": "Hapus"
+    },
+    "create": {
+      "label": "Buat catatan pelanggan",
+      "loading": "Membuat",
+      "cancel": "Batal"
+    },
+    "update": {
+      "label": "Perbarui pelanggan",
+      "loading": "Memperbarui"
+    },
+    "delete": {
+      "title": "Apakah Anda yakin ingin menghapus catatan pelanggan {customer_name}?",
+      "description": "Semua data terkait dengan catatan ini akan dihapus secara permanen. Anda tidak dapat memulihkan catatan ini nanti."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Belum ada permintaan untuk ditampilkan.",
+          "description": "Buat permintaan dari pelanggan Anda sehingga Anda dapat menautkannya ke item kerja.",
+          "button": "Tambah permintaan baru"
+        },
+        "search": {
+          "title": "Sepertinya Anda tidak memiliki permintaan yang cocok dengan istilah itu.",
+          "description": "Coba dengan istilah pencarian lain atau hubungi kami jika Anda yakin seharusnya melihat hasil untuk istilah itu."
+        }
+      },
+      "label": "{count, plural, one {Permintaan} other {Permintaan}}",
+      "add": "Tambah permintaan",
+      "create": "Buat permintaan",
+      "update": "Perbarui permintaan",
+      "form": {
+        "name": {
+          "placeholder": "Beri nama permintaan ini",
+          "validation": {
+            "required": "Nama diperlukan.",
+            "max_length": "Nama permintaan tidak boleh melebihi 255 karakter."
+          }
+        },
+        "description": {
+          "placeholder": "Jelaskan sifat permintaan atau tempel komentar pelanggan ini dari alat lain."
+        },
+        "source": {
+          "add": "Tambah sumber",
+          "update": "Perbarui sumber",
+          "url": {
+            "label": "URL",
+            "required": "Url diperlukan",
+            "invalid": "URL website tidak valid"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Tautan disalin",
+          "message": "Tautan permintaan pelanggan disalin ke clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Mengunggah lampiran...",
+            "success": {
+              "title": "Lampiran diunggah",
+              "message": "Lampiran telah berhasil diunggah."
+            },
+            "error": {
+              "title": "Lampiran tidak diunggah",
+              "message": "Lampiran tidak dapat diunggah."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Error!",
+              "message": "Hanya satu file yang dapat diunggah dalam satu waktu."
+            }
+          },
+          "length": {
+            "message": "File harus berukuran {size}MB atau kurang"
+          },
+          "remove": {
+            "success": {
+              "title": "Lampiran dihapus",
+              "message": "Lampiran telah berhasil dihapus"
+            },
+            "error": {
+              "title": "Lampiran tidak dihapus",
+              "message": "Lampiran tidak dapat dihapus"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Sukses!",
+              "message": "Sumber berhasil diperbarui!"
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Tidak dapat memperbarui sumber."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Error!",
+              "message": "Tidak dapat menambahkan item kerja ke permintaan. Coba lagi."
+            },
+            "success": {
+              "title": "Sukses!",
+              "message": "Item kerja ditambahkan ke permintaan."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Permintaan berhasil diperbarui!",
+            "title": "Sukses!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Tidak dapat memperbarui permintaan. Coba lagi!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Permintaan berhasil dibuat!",
+            "title": "Sukses!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Tidak dapat membuat permintaan. Coba lagi!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Item kerja tertaut",
+      "link": "Tautkan item kerja",
+      "empty_state": {
+        "list": {
+          "title": "Sepertinya Anda belum memiliki item kerja tertaut ke pelanggan ini.",
+          "description": "Tautkan item kerja yang ada dari proyek mana pun di sini sehingga Anda dapat melacaknya berdasarkan pelanggan ini.",
+          "button": "Tautkan item kerja"
+        }
+      },
+      "action": {
+        "remove_epic": "Hapus epic",
+        "remove": "Hapus item kerja"
+      }
+    },
+    "sidebar": {
+      "properties": "Properti"
+    }
+  }
+}

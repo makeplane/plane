@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "所有 Epic",
+    "label": "{count, plural, one {Epic} other {Epic}}",
+    "new": "新 Epic",
+    "adding": "新增 Epic 中",
+    "create": {
+      "success": "Epic 建立成功"
+    },
+    "add": {
+      "press_enter": "按 'Enter' 以新增另一個 Epic",
+      "label": "新增 Epic"
+    },
+    "title": {
+      "label": "Epic 標題",
+      "required": "Epic 標題為必填。"
+    },
+    "archive": {
+      "description": "只有已完成或取消的 Epic\n可以歸檔",
+      "label": "歸檔 Epic",
+      "confirm_message": "確定要歸檔此 Epic 嗎？所有已歸檔的 Epic 之後都可以還原。",
+      "success": {
+        "label": "歸檔成功",
+        "message": "可在專案歸檔中查看您的歸檔。"
+      },
+      "failed": {
+        "message": "無法歸檔 Epic，請重試。"
+      }
+    }
+  },
+  "epics": {
+    "label": "史詩",
+    "no_epics_selected": "未選擇史詩",
+    "add_selected_epics": "添加選定的史詩",
+    "epic_link_copied_to_clipboard": "史詩連結已複製到剪貼板。",
+    "project_link_copied_to_clipboard": "專案連結已複製到剪貼板",
+    "empty_state": {
+      "general": {
+        "title": "創建一個史詩並分配給某人，甚至是您自己",
+        "description": "對於跨越多個週期並可以跨模塊存在的較大工作體，請創建一個史詩。將專案中的工作項目和子工作項目連接到史詩，並從概覽跳轉到工作項目。",
+        "primary_button": {
+          "text": "創建史詩"
+        }
+      },
+      "section": {
+        "title": "還沒有史詩",
+        "description": "開始添加史詩以管理和追蹤進度。",
+        "primary_button": {
+          "text": "添加史詩"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "未找到匹配的史詩"
+      },
+      "no_epics": {
+        "title": "未找到史詩"
+      }
+    }
+  }
+}

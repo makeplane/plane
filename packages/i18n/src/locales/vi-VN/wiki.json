@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Chung",
+      "private": "Riêng tư",
+      "shared": "Được chia sẻ",
+      "archived": "Đã lưu trữ"
+    },
+    "fallback_name": "Bộ sưu tập",
+    "form": {
+      "name_required": "Tiêu đề bộ sưu tập là bắt buộc",
+      "name_max_length": "Tên bộ sưu tập phải ít hơn 255 ký tự",
+      "name_placeholder_create": "Đặt tiêu đề cho bộ sưu tập",
+      "name_placeholder_edit": "Tên bộ sưu tập"
+    },
+    "create_modal": {
+      "title": "Tạo bộ sưu tập",
+      "submit": "Tạo bộ sưu tập"
+    },
+    "edit_modal": {
+      "title": "Chỉnh sửa bộ sưu tập"
+    },
+    "delete_modal": {
+      "title": "Xóa bộ sưu tập",
+      "page_count": "Bộ sưu tập này có {pageCount} trang. Chọn điều sẽ xảy ra với chúng.",
+      "transfer_title": "Chuyển trang và xóa bộ sưu tập",
+      "transfer_description": "Di chuyển tất cả các trang sang bộ sưu tập khác trước khi xóa. Các trang và quyền của chúng sẽ được giữ nguyên.",
+      "transfer_warning": "Các trang được chuyển sẽ kế thừa quyền của bộ sưu tập đã chọn.",
+      "transfer_target_label": "Chuyển trang đến",
+      "transfer_target_placeholder": "Chọn một bộ sưu tập",
+      "delete_with_pages_title": "Xóa bộ sưu tập cùng các trang",
+      "delete_with_pages_description": "Xóa vĩnh viễn bộ sưu tập và tất cả các trang của nó. Hành động này không thể hoàn tác.",
+      "submit": "Xóa bộ sưu tập"
+    },
+    "header": {
+      "add_page": "Thêm trang"
+    },
+    "menu": {
+      "create_new_page": "Tạo trang mới",
+      "add_existing_page": "Thêm trang hiện có",
+      "edit_collection": "Chỉnh sửa bộ sưu tập",
+      "collection_options": "Tùy chọn bộ sưu tập"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Tìm kiếm trang",
+      "success_message": "Đã thêm {count} trang vào bộ sưu tập.",
+      "error_message": "Không thể di chuyển các trang. Vui lòng thử lại.",
+      "no_pages_found": "Không tìm thấy trang nào khớp với tìm kiếm của bạn",
+      "no_pages_available": "Không có trang nào để di chuyển",
+      "submit": "Di chuyển"
+    },
+    "list": {
+      "invite_only": "Chỉ dành cho người được mời",
+      "remove_error": "Không thể xóa trang khỏi bộ sưu tập.",
+      "no_matching_pages": "Không có trang nào phù hợp",
+      "remove_search_criteria": "Xóa tiêu chí tìm kiếm để xem tất cả các trang",
+      "remove_filters": "Xóa bộ lọc để xem tất cả các trang",
+      "no_pages_title": "Chưa có trang nào",
+      "no_pages_description": "Bộ sưu tập này hiện chưa có trang nào.",
+      "untitled": "Không tiêu đề",
+      "restricted_access": "Truy cập bị hạn chế",
+      "collapse_page": "Thu gọn trang",
+      "expand_page": "Mở rộng trang",
+      "page_actions": "Thao tác trang",
+      "page_link_copied": "Đã sao chép liên kết trang vào bộ nhớ tạm.",
+      "columns": {
+        "page_name": "Tên trang",
+        "owner": "Chủ sở hữu",
+        "nested_pages": "Trang lồng nhau",
+        "last_activity": "Hoạt động gần nhất",
+        "actions": "Thao tác"
+      }
+    },
+    "toasts": {
+      "created": "Đã tạo bộ sưu tập thành công.",
+      "create_error": "Không thể tạo bộ sưu tập. Vui lòng thử lại.",
+      "renamed": "Đã đổi tên bộ sưu tập thành công.",
+      "rename_error": "Không thể cập nhật bộ sưu tập. Vui lòng thử lại.",
+      "transferred_deleted": "Các trang đã được chuyển và bộ sưu tập đã bị xóa.",
+      "deleted_with_pages": "Bộ sưu tập và các trang của nó đã bị xóa.",
+      "delete_error": "Không thể xóa bộ sưu tập. Vui lòng thử lại.",
+      "target_required": "Vui lòng chọn một bộ sưu tập để chuyển các trang đến.",
+      "create_page_error": "Không thể tạo trang. Vui lòng thử lại.",
+      "create_page_in_collection_error": "Không thể tạo trang hoặc thêm trang vào bộ sưu tập. Vui lòng thử lại.",
+      "collection_link_copied": "Đã sao chép liên kết bộ sưu tập vào bộ nhớ tạm."
+    }
+  }
+}

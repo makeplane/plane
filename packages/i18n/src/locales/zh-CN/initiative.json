@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "概览",
+    "label": "计划",
+    "placeholder": "{count, plural, one{# 计划} other{# 计划}}",
+    "add_initiative": "添加计划",
+    "create_initiative": "创建计划",
+    "update_initiative": "更新计划",
+    "initiative_name": "计划名称",
+    "all_initiatives": "所有计划",
+    "delete_initiative": "删除计划",
+    "fill_all_required_fields": "请填写所有必填字段。",
+    "archive_description": "仅已完成或已关闭的计划可以归档",
+    "toast": {
+      "create_success": "计划 {name} 创建成功。",
+      "create_error": "创建计划失败。请重试！",
+      "update_success": "计划 {name} 更新成功。",
+      "update_error": "更新计划失败。请重试！",
+      "delete": {
+        "success": "计划删除成功。",
+        "error": "删除计划失败"
+      },
+      "archive": {
+        "success": "计划已成功归档。",
+        "error": "归档计划失败",
+        "initiative_cannot_be_archived_in_this_state": "当前状态下的计划无法归档"
+      },
+      "link_copied": "计划链接已复制到剪贴板。",
+      "project_update_success": "计划项目更新成功。",
+      "project_update_error": "更新计划项目失败。请重试！",
+      "epic_update_success": "史诗{count, plural, one {已成功添加到计划。} other {已成功添加到计划。}}",
+      "epic_update_error": "将史诗添加到计划失败。请稍后重试。",
+      "state_update_success": "倡议状态已成功更新。",
+      "state_update_error": "更新倡议状态失败。请重试！",
+      "label_update_error": "无法更新倡议标签。请再试一次！"
+    },
+    "empty_state": {
+      "general": {
+        "title": "使用计划在最高层级组织工作",
+        "description": "当您需要组织跨越多个项目和团队的工作时，计划就派上用场了。将项目和史诗连接到计划，查看自动汇总的更新，在深入细节之前先看全局。",
+        "primary_button": {
+          "text": "创建计划"
+        }
+      },
+      "search": {
+        "title": "没有匹配的计划",
+        "description": "未检测到符合匹配条件的计划。\n 创建一个新计划。",
+        "archived_description": "未检测到符合条件的已归档计划。"
+      },
+      "not_found": {
+        "title": "计划不存在",
+        "description": "您要查找的计划不存在、已被归档或已被删除。",
+        "primary_button": {
+          "text": "查看其他计划"
+        }
+      },
+      "epics": {
+        "title": "没有匹配的史诗",
+        "subHeading": "要查看所有史诗，请清除所有应用的筛选器。",
+        "action": "清除筛选器"
+      }
+    },
+    "scope": {
+      "view_scope": "查看范围",
+      "breakdown": "范围分解",
+      "add_scope": "添加范围",
+      "label": "范围",
+      "empty_state": {
+        "title": "尚未添加范围",
+        "description": "将项目或史诗添加到此计划以开始。",
+        "primary_button": {
+          "text": "添加范围"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "标签",
+        "description": "使用标签来组织和规划您的计划。"
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "删除标签",
+        "content": "您确定要删除 {labelName} 吗？这将从所有计划中移除该标签，并从所有正在以此标签进行筛选的视图中移除。"
+      },
+      "toast": {
+        "delete_error": "无法删除计划标签。请重试。",
+        "label_already_exists": "标签已存在"
+      }
+    }
+  }
+}

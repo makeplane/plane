@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "projects": "Проєкти",
+    "pages": "Сторінки",
+    "new_work_item": "Нова робоча одиниця",
+    "home": "Головна",
+    "your_work": "Ваша робота",
+    "inbox": "Вхідні",
+    "workspace": "Робочий простір",
+    "views": "Подання",
+    "analytics": "Аналітика",
+    "work_items": "Робочі одиниці",
+    "cycles": "Цикли",
+    "modules": "Модулі",
+    "intake": "Надходження",
+    "drafts": "Чернетки",
+    "favorites": "Вибране",
+    "pro": "Pro",
+    "upgrade": "Підвищити",
+    "pi_chat": "ШІ Чат",
+    "initiatives": "Інішіативз",
+    "teamspaces": "Тімспейсиз",
+    "epics": "Епікс",
+    "upgrade_plan": "Апгрейд план",
+    "plane_pro": "Плейн Про",
+    "business": "Бізнес",
+    "customers": "Кастомерз",
+    "recurring_work_items": "Повторювані робочі елементи"
+  },
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Немає результатів"
+      }
+    }
+  }
+}

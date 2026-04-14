@@ -1,0 +1,156 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Release} other {Releases}}",
+    "no_release": "No release",
+    "unreleased": "Unreleased",
+    "select_releases": "Select releases",
+    "overview": "Overview",
+    "scope": "Scope",
+    "changelog": "Changelog",
+    "page_title": {
+      "scope": "Release - {name} | Scope",
+      "scope_fallback": "Release | Scope"
+    },
+    "properties": "Properties",
+    "target_date": "Target date",
+    "lead": "Lead",
+    "release_tag": "Tag",
+    "labels": "Labels",
+    "description_placeholder": "Add a description...",
+    "progress": "Progress",
+    "completed_work_items": "Completed work items",
+    "pending_work_items": "Pending work items",
+    "cancelled_work_items": "Cancelled work items",
+    "scope_page": {
+      "work_items": "Work items",
+      "add_work_items": "Add work items",
+      "remove_from_release": "Remove from release",
+      "empty_state": {
+        "title": "No work items",
+        "description": "Add work items to define the release scope."
+      },
+      "confirm_remove": {
+        "content": "Are you sure you want to remove this work item from the release? It will remain in the project.",
+        "primary_button": {
+          "default": "Remove",
+          "loading": "Removing"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "No scope yet",
+      "description": "Add work items to the release to track their completion for this release.",
+      "add_scope": "Add scope",
+      "not_found": {
+        "title": "Release not found",
+        "description": "The release may have been deleted.",
+        "primary_button": "Back to releases"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Work item added} other {Work items added}}",
+      "work_items_error": "Failed to add work items"
+    },
+    "count_releases": "{count, plural, one {# release} other {# releases}}",
+    "actions": {
+      "delete": "delete"
+    },
+    "delete_modal": {
+      "title": "Delete release",
+      "content": "Are you sure you want to delete release \"{releaseName}\"? This action cannot be undone."
+    },
+    "settings": {
+      "heading": {
+        "title": "Releases",
+        "description": "Manage project deliverables with precision using Releases."
+      },
+      "toggle": {
+        "title": "Enable Releases",
+        "description": "Workspace members will have view access to the scope within their respective projects."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Enabling releases...",
+          "success": {
+            "title": "Releases enabled",
+            "message": "Releases have been enabled for this workspace."
+          },
+          "error": {
+            "title": "Error",
+            "message": "Failed to enable releases. Please try again."
+          }
+        },
+        "disable": {
+          "loading": "Disabling releases...",
+          "success": {
+            "title": "Releases disabled",
+            "message": "Releases have been disabled for this workspace."
+          },
+          "error": {
+            "title": "Error",
+            "message": "Failed to disable releases. Please try again."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Release tags",
+        "labels": "Labels"
+      },
+      "tags": {
+        "title": "Release tags",
+        "description": "Categorise and filter your releases using tags.",
+        "add": "Add Tag",
+        "empty_state": "No tags yet. Create your first tag.",
+        "errors": {
+          "version_required": "Version is required.",
+          "version_already_exists": "A tag with this version already exists.",
+          "generic": "Something went wrong. Please try again."
+        },
+        "delete_modal": {
+          "title": "Delete tag",
+          "content": "Are you sure you want to delete the tag \"{tagVersion}\"? This action cannot be undone."
+        },
+        "actions": {
+          "edit": "Edit tag",
+          "delete": "Delete tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag deleted successfully.",
+            "error": "Failed to delete tag. Please try again."
+          }
+        }
+      },
+      "labels": {
+        "title": "Labels",
+        "description": "Structure and organise your initiatives with labels.",
+        "add": "Add Label",
+        "empty_state": "No labels yet. Create your first label.",
+        "errors": {
+          "name_required": "Name is required.",
+          "name_already_exists": "A label with this name already exists.",
+          "generic": "Something went wrong. Please try again."
+        },
+        "modal": {
+          "name_placeholder": "Label name",
+          "pick_color": "Pick label color"
+        },
+        "actions": {
+          "edit": "Edit label",
+          "delete": "Delete label"
+        },
+        "drag_to_reorder": "Drag to reorder",
+        "delete_modal": {
+          "title": "Delete label",
+          "content": "Are you sure you want to delete the label \"{labelName}\"? This action cannot be undone."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Label deleted successfully.",
+            "error": "Failed to delete label. Please try again."
+          }
+        }
+      }
+    }
+  }
+}

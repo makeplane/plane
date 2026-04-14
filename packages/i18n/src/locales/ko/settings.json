@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "이메일 변경",
+        "description": "확인 링크를 받으려면 새 이메일 주소를 입력하세요.",
+        "toasts": {
+          "success_title": "성공!",
+          "success_message": "이메일이 업데이트되었습니다. 다시 로그인하세요."
+        },
+        "form": {
+          "email": {
+            "label": "새 이메일",
+            "placeholder": "이메일을 입력하세요",
+            "errors": {
+              "required": "이메일은 필수입니다",
+              "invalid": "유효하지 않은 이메일입니다",
+              "exists": "이미 존재하는 이메일입니다. 다른 주소를 사용하세요.",
+              "validation_failed": "이메일 확인에 실패했습니다. 다시 시도하세요."
+            }
+          },
+          "code": {
+            "label": "고유 코드",
+            "placeholder": "123456",
+            "helper_text": "인증 코드가 새 이메일로 전송되었습니다.",
+            "errors": {
+              "required": "고유 코드는 필수입니다",
+              "invalid": "잘못된 인증 코드입니다. 다시 시도하세요."
+            }
+          }
+        },
+        "actions": {
+          "continue": "계속",
+          "confirm": "확인",
+          "cancel": "취소"
+        },
+        "states": {
+          "sending": "전송 중…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "기본 보기 선택",
+      "compact": "컴팩트",
+      "full": "전체 화면"
+    }
+  },
+  "profile": {
+    "label": "프로필",
+    "page_label": "나의 작업",
+    "work": "작업",
+    "details": {
+      "joined_on": "가입일",
+      "time_zone": "시간대"
+    },
+    "stats": {
+      "workload": "작업량",
+      "overview": "개요",
+      "created": "생성된 작업 항목",
+      "assigned": "할당된 작업 항목",
+      "subscribed": "구독된 작업 항목",
+      "state_distribution": {
+        "title": "상태별 작업 항목",
+        "empty": "작업 항목을 생성하여 상태별 그래프에서 분석을 확인하세요."
+      },
+      "priority_distribution": {
+        "title": "우선순위별 작업 항목",
+        "empty": "작업 항목을 생성하여 우선순위별 그래프에서 분석을 확인하세요."
+      },
+      "recent_activity": {
+        "title": "최근 활동",
+        "empty": "데이터를 찾을 수 없습니다. 입력을 확인하세요",
+        "button": "오늘의 활동 다운로드",
+        "button_loading": "다운로드 중"
+      }
+    },
+    "actions": {
+      "profile": "프로필",
+      "security": "보안",
+      "activity": "활동",
+      "appearance": "외관",
+      "notifications": "알림",
+      "connections": "커넥션"
+    },
+    "tabs": {
+      "summary": "요약",
+      "assigned": "할당됨",
+      "created": "생성됨",
+      "subscribed": "구독됨",
+      "activity": "활동"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "아직 활동 없음",
+        "description": "새 작업 항목을 생성하여 시작하세요! 세부 정보와 속성을 추가하세요. Plane에서 더 많은 것을 탐색하여 활동을 확인하세요."
+      },
+      "assigned": {
+        "title": "할당된 작업 항목 없음",
+        "description": "할당된 작업 항목을 여기에서 추적할 수 있습니다."
+      },
+      "created": {
+        "title": "작업 항목 없음",
+        "description": "생성한 모든 작업 항목이 여기에 표시됩니다. 여기에서 직접 추적하세요."
+      },
+      "subscribed": {
+        "title": "작업 항목 없음",
+        "description": "관심 있는 작업 항목을 구독하고 여기에서 모두 추적하세요."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "시스템 기본값"
+      },
+      "light": {
+        "label": "라이트"
+      },
+      "dark": {
+        "label": "다크"
+      },
+      "light_contrast": {
+        "label": "라이트 고대비"
+      },
+      "dark_contrast": {
+        "label": "다크 고대비"
+      },
+      "custom": {
+        "label": "사용자 정의 테마"
+      }
+    }
+  }
+}

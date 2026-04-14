@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {作業項目} other {作業項目}}",
+    "all": "すべての作業項目",
+    "edit": "作業項目を編集",
+    "title": {
+      "label": "作業項目のタイトル",
+      "required": "作業項目のタイトルは必須です。"
+    },
+    "add": {
+      "press_enter": "Enterを押して別の作業項目を追加",
+      "label": "作業項目を追加",
+      "cycle": {
+        "failed": "作業項目をサイクルに追加できませんでした。もう一度お試しください。",
+        "success": "{count, plural, one {作業項目} other {作業項目}}をサイクルに追加しました。",
+        "loading": "{count, plural, one {作業項目} other {作業項目}}をサイクルに追加中"
+      },
+      "assignee": "担当者を追加",
+      "start_date": "開始日を追加",
+      "due_date": "期限日を追加",
+      "parent": "親作業項目を追加",
+      "sub_issue": "サブ作業項目を追加",
+      "relation": "関連を追加",
+      "link": "リンクを追加",
+      "existing": "既存の作業項目を追加"
+    },
+    "remove": {
+      "label": "作業項目を削除",
+      "cycle": {
+        "loading": "サイクルから作業項目を削除中",
+        "success": "作業項目をサイクルから削除しました。",
+        "failed": "作業項目をサイクルから削除できませんでした。もう一度お試しください。"
+      },
+      "module": {
+        "loading": "モジュールから作業項目を削除中",
+        "success": "作業項目をモジュールから削除しました。",
+        "failed": "作業項目をモジュールから削除できませんでした。もう一度お試しください。"
+      },
+      "parent": {
+        "label": "親作業項目を削除"
+      }
+    },
+    "new": "新規作業項目",
+    "adding": "作業項目を追加中",
+    "create": {
+      "success": "作業項目を作成しました"
+    },
+    "priority": {
+      "urgent": "緊急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "display": {
+      "properties": {
+        "label": "表示プロパティ",
+        "id": "ID",
+        "issue_type": "作業項目タイプ",
+        "sub_issue_count": "サブ作業項目数",
+        "attachment_count": "添付ファイル数",
+        "created_on": "作成日",
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
+      },
+      "extra": {
+        "show_sub_issues": "サブ作業項目を表示",
+        "show_empty_groups": "空のグループを表示"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "このレイアウトは次の順序で並べ替えられています：",
+      "list": "リスト",
+      "kanban": "ボード",
+      "calendar": "カレンダー",
+      "spreadsheet": "テーブル",
+      "gantt": "タイムライン",
+      "title": {
+        "list": "リストレイアウト",
+        "kanban": "ボードレイアウト",
+        "calendar": "カレンダーレイアウト",
+        "spreadsheet": "テーブルレイアウト",
+        "gantt": "タイムラインレイアウト"
+      }
+    },
+    "states": {
+      "active": "アクティブ",
+      "backlog": "バックログ"
+    },
+    "comments": {
+      "placeholder": "コメントを追加",
+      "switch": {
+        "private": "プライベートコメントに切り替え",
+        "public": "公開コメントに切り替え"
+      },
+      "create": {
+        "success": "コメントを作成しました",
+        "error": "コメントの作成に失敗しました。後でもう一度お試しください。"
+      },
+      "update": {
+        "success": "コメントを更新しました",
+        "error": "コメントの更新に失敗しました。後でもう一度お試しください。"
+      },
+      "remove": {
+        "success": "コメントを削除しました",
+        "error": "コメントの削除に失敗しました。後でもう一度お試しください。"
+      },
+      "upload": {
+        "error": "アセットのアップロードに失敗しました。後でもう一度お試しください。"
+      },
+      "copy_link": {
+        "success": "コメントリンクがクリップボードにコピーされました",
+        "error": "コメントリンクのコピーに失敗しました。後でもう一度お試しください。"
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "作業項目が存在しません",
+        "description": "お探しの作業項目は存在しないか、アーカイブされているか、削除されています。",
+        "primary_button": {
+          "text": "他の作業項目を表示"
+        }
+      }
+    },
+    "sibling": {
+      "label": "兄弟作業項目"
+    },
+    "archive": {
+      "description": "完了またはキャンセルされた\n作業項目のみアーカイブできます",
+      "label": "作業項目をアーカイブ",
+      "confirm_message": "作業項目をアーカイブしてもよろしいですか？アーカイブされた作業項目は後で復元できます。",
+      "success": {
+        "label": "アーカイブ成功",
+        "message": "アーカイブはプロジェクトのアーカイブで確認できます。"
+      },
+      "failed": {
+        "message": "作業項目をアーカイブできませんでした。もう一度お試しください。"
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "復元成功",
+        "message": "作業項目はプロジェクトの作業項目で確認できます。"
+      },
+      "failed": {
+        "message": "作業項目を復元できませんでした。もう一度お試しください。"
+      }
+    },
+    "relation": {
+      "relates_to": "関連する",
+      "duplicate": "重複する",
+      "blocked_by": "ブロックされている",
+      "blocking": "ブロックしている",
+      "start_before": "開始前",
+      "start_after": "開始後",
+      "finish_before": "終了前",
+      "finish_after": "終了後",
+      "implements": "実装",
+      "implemented_by": "実装元"
+    },
+    "copy_link": "作業項目のリンクをコピー",
+    "delete": {
+      "label": "作業項目を削除",
+      "error": "作業項目の削除中にエラーが発生しました"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "作業項目を購読しました",
+        "unsubscribed": "作業項目の購読を解除しました"
+      }
+    },
+    "select": {
+      "error": "少なくとも1つの作業項目を選択してください",
+      "empty": "作業項目が選択されていません",
+      "add_selected": "選択した作業項目を追加",
+      "select_all": "すべて選択",
+      "deselect_all": "すべての選択を解除"
+    },
+    "open_in_full_screen": "作業項目をフルスクリーンで開く",
+    "vote": {
+      "click_to_upvote": "クリックして賛成票を投じる",
+      "click_to_downvote": "クリックして反対票を投じる",
+      "click_to_view_upvotes": "クリックして賛成票を表示",
+      "click_to_view_downvotes": "クリックして反対票を表示"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "サブ作業項目を更新しました",
+      "error": "サブ作業項目の更新中にエラーが発生しました"
+    },
+    "remove": {
+      "success": "サブ作業項目を削除しました",
+      "error": "サブ作業項目の削除中にエラーが発生しました"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "適用されたフィルターに一致するサブ作業項目がありません。",
+        "description": "すべてのサブ作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      },
+      "list_filters": {
+        "title": "適用されたフィルターに一致する作業項目がありません。",
+        "description": "すべての作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "一致する作業項目が見つかりません"
+      },
+      "no_issues": {
+        "title": "作業項目が見つかりません"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "コメントがまだありません",
+        "description": "コメントは作業項目のディスカッションとフォローアップのスペースとして使用できます"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "作業項目をアーカイブできません",
+        "message": "完了または取り消し状態グループに属する作業項目のみアーカイブできます。"
+      },
+      "invalid_issue_start_date": {
+        "title": "作業項目を更新できません",
+        "message": "選択された開始日が一部の作業項目の期限日を超えています。開始日が期限日より前になるようにしてください。"
+      },
+      "invalid_issue_target_date": {
+        "title": "作業項目を更新できません",
+        "message": "選択された期限日が一部の作業項目の開始日より前になっています。期限日が開始日より後になるようにしてください。"
+      },
+      "invalid_state_transition": {
+        "title": "作業項目を更新できません",
+        "message": "一部の作業項目では状態の変更が許可されていません。状態の変更が許可されていることを確認してください。"
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "ワークフローを有効化",
+        "description": "ワークアイテムの移動を制御するためのワークフローを設定します",
+        "no_states_tooltip": "ワークフローに状態が追加されていません。",
+        "toast": {
+          "loading": {
+            "enabling": "ワークフローを有効化しています",
+            "disabling": "ワークフローを無効化しています"
+          },
+          "success": {
+            "title": "成功！",
+            "message": "ワークフローが正常に有効化されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "ワークフローを有効化できませんでした。もう一度お試しください。"
+          }
+        }
+      },
+      "heading": "ワークフロー",
+      "description": "作業項目の遷移を自動化し、タスクがプロジェクトのパイプラインをどのように進むかを制御するルールを設定します。",
+      "add_button": "新しいワークフローを追加",
+      "search": "ワークフローを検索",
+      "detail": {
+        "define": "ワークフローを定義",
+        "add_states": "状態を追加",
+        "unmapped_states": {
+          "title": "未マッピングの状態が検出されました",
+          "description": "選択したタイプの一部の作業項目は、現在このワークフローに存在しない状態にあります。",
+          "note": "このワークフローを有効にすると、それらの項目はこのワークフローの初期状態に自動的に移動します。",
+          "label": "不足している状態",
+          "tooltip": "一部の作業項目は、このワークフローにマッピングされていない状態にあります。確認するにはワークフローを開いてください。"
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "すべての状態が使用中です",
+          "description": "このプロジェクトで定義されているすべての状態は、すでに現在のワークフローに含まれています。"
+        }
+      },
+      "default_footer": {
+        "fallback_message": "このワークフローは、どのワークフローにも割り当てられていない作業項目タイプに適用されます。"
+      },
+      "create": {
+        "heading": "新しいワークフローを作成"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "定期作業項目",
+      "description": "繰り返しの作業を1回設定するだけで、繰り返しを管理します。時間が来たらここにすべて表示されます。",
+      "new_recurring_work_item": "新しい定期作業項目",
+      "update_recurring_work_item": "定期作業項目を更新",
+      "form": {
+        "interval": {
+          "title": "スケジュール",
+          "start_date": {
+            "validation": {
+              "required": "開始日は必須です"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "間隔タイプは必須です"
+            }
+          }
+        },
+        "button": {
+          "create": "定期作業項目を作成",
+          "update": "定期作業項目を更新"
+        }
+      },
+      "create_button": {
+        "label": "定期作業項目を作成",
+        "no_permission": "定期作業項目を作成するにはプロジェクト管理者に連絡してください"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "あなたの作業を自動化",
+        "description": "一度設定すれば、期限が来たときに自動で再作成します。定期作業をより簡単にするにはBusinessへアップグレードしてください。"
+      },
+      "no_templates": {
+        "button": "最初の定期作業項目を作成"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "定期作業項目が作成されました",
+          "message": "{name}（定期作業項目）がワークスペースで利用可能になりました。"
+        },
+        "error": {
+          "title": "定期作業項目を作成できませんでした。",
+          "message": "もう一度詳細を保存するか、別のタブで新しい定期作業項目にコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "定期作業項目が変更されました",
+          "message": "{name}（定期作業項目）が変更されました。"
+        },
+        "error": {
+          "title": "この定期作業項目の変更を保存できませんでした。",
+          "message": "もう一度詳細を保存するか、後でこの定期作業項目に戻ってください。問題が解決しない場合はご連絡ください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "定期作業項目が削除されました",
+          "message": "{name}（定期作業項目）がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "定期作業項目を削除できませんでした。",
+          "message": "もう一度削除するか、後で再度お試しください。それでも削除できない場合はご連絡ください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "定期作業項目を削除",
+      "description": {
+        "prefix": "定期作業項目「",
+        "suffix": "」を削除してもよろしいですか？この定期作業項目に関連するすべてのデータは完全に削除されます。この操作は元に戻せません。"
+      }
+    }
+  }
+}

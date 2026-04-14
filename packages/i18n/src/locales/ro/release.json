@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Lansare} other {Lansări}}",
+    "no_release": "Nicio lansare",
+    "unreleased": "Nelansat",
+    "select_releases": "Selectează lansări",
+    "overview": "Prezentare generală",
+    "scope": "Scop",
+    "page_title": {
+      "scope": "Lansare - {name} | Scop",
+      "scope_fallback": "Lansare | Scop"
+    },
+    "properties": "Proprietăți",
+    "target_date": "Data țintă",
+    "lead": "Responsabil",
+    "release_tag": "Tag",
+    "labels": "Etichete",
+    "description_placeholder": "Adăugați o descriere...",
+    "progress": "Progres",
+    "completed_work_items": "Activități finalizate",
+    "pending_work_items": "Activități în așteptare",
+    "cancelled_work_items": "Activități anulate",
+    "scope_page": {
+      "work_items": "Activități",
+      "add_work_items": "Adăugați activități",
+      "remove_from_release": "Eliminați din lansare",
+      "empty_state": {
+        "title": "Fără activități",
+        "description": "Adăugați activități pentru a defini scopul lansării."
+      },
+      "confirm_remove": {
+        "content": "Sigur doriți să eliminați această activitate din lansare? Va rămâne în proiect.",
+        "primary_button": {
+          "default": "Elimină",
+          "loading": "Se elimină"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Încă fără domeniu",
+      "description": "Adăugați elemente de lucru la lansare pentru a urmări finalizarea lor pentru această lansare.",
+      "add_scope": "Adaugă domeniu",
+      "not_found": {
+        "title": "Lansarea nu a fost găsită",
+        "description": "Lansarea a putut fi ștearsă.",
+        "primary_button": "Înapoi la lansări"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Activitate adăugată} other {Activități adăugate}}",
+      "work_items_error": "Nu s-au putut adăuga activitățile"
+    },
+    "count_releases": "{count, plural, one {# lansare} other {# lansări}}",
+    "actions": {
+      "delete": "Șterge"
+    },
+    "delete_modal": {
+      "title": "Șterge lansarea",
+      "content": "Sigur vrei să ștergi lansarea \"{releaseName}\"? Această acțiune nu poate fi anulată."
+    },
+    "settings": {
+      "heading": {
+        "title": "Lansări",
+        "description": "Gestionează cu precizie livrabilele proiectului folosind lansări."
+      },
+      "toggle": {
+        "title": "Activează lansările",
+        "description": "Membrii spațiului de lucru vor avea acces de vizualizare la scop în proiectele lor."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Se activează lansările...",
+          "success": {
+            "title": "Lansări activate",
+            "message": "Lansările au fost activate pentru acest spațiu de lucru."
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Activarea lansărilor a eșuat. Te rugăm să încerci din nou."
+          }
+        },
+        "disable": {
+          "loading": "Se dezactivează lansările...",
+          "success": {
+            "title": "Lansări dezactivate",
+            "message": "Lansările au fost dezactivate pentru acest spațiu de lucru."
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Dezactivarea lansărilor a eșuat. Te rugăm să încerci din nou."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Taguri de lansare",
+        "labels": "Etichete"
+      },
+      "tags": {
+        "title": "Taguri de lansare",
+        "description": "Categorizează și filtrează lansările folosind taguri.",
+        "add": "Adaugă tag",
+        "empty_state": "Nu există încă taguri. Creează primul tău tag.",
+        "errors": {
+          "version_required": "Versiunea este obligatorie.",
+          "version_already_exists": "Există deja un tag cu această versiune.",
+          "generic": "Ceva nu a mers bine. Te rugăm să încerci din nou."
+        },
+        "delete_modal": {
+          "title": "Șterge tagul",
+          "content": "Sigur vrei să ștergi tagul \"{tagVersion}\"? Această acțiune nu poate fi anulată."
+        },
+        "actions": {
+          "edit": "Editează tagul",
+          "delete": "Șterge tagul"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tagul a fost șters cu succes.",
+            "error": "Ștergerea tagului a eșuat. Te rugăm să încerci din nou."
+          }
+        }
+      },
+      "labels": {
+        "title": "Etichete",
+        "description": "Structurează și organizează inițiativele cu etichete.",
+        "add": "Adaugă etichetă",
+        "empty_state": "Nu există încă etichete. Creează prima ta etichetă.",
+        "errors": {
+          "name_required": "Numele este obligatoriu.",
+          "name_already_exists": "Există deja o etichetă cu acest nume.",
+          "generic": "Ceva nu a mers bine. Te rugăm să încerci din nou."
+        },
+        "modal": {
+          "name_placeholder": "Numele etichetei",
+          "pick_color": "Alege culoarea etichetei"
+        },
+        "actions": {
+          "edit": "Editează eticheta",
+          "delete": "Șterge eticheta"
+        },
+        "drag_to_reorder": "Trage pentru a reordona",
+        "delete_modal": {
+          "title": "Șterge eticheta",
+          "content": "Sigur vrei să ștergi eticheta \"{labelName}\"? Această acțiune nu poate fi anulată."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Eticheta a fost ștearsă cu succes.",
+            "error": "Ștergerea etichetei a eșuat. Te rugăm să încerci din nou."
+          }
+        }
+      }
+    }
+  }
+}

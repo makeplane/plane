@@ -1,0 +1,380 @@
+{
+  "customers": {
+    "label": "{count, plural, one {客戶} other {客戶}}",
+    "open": "開啟客戶",
+    "dropdown": {
+      "placeholder": "選擇客戶",
+      "required": "請選擇客戶",
+      "no_selection": "沒有客戶"
+    },
+    "upgrade": {
+      "title": "使用客戶功能優先處理和管理工作。",
+      "description": "將您的工作映射到客戶並按客戶屬性進行優先排序。"
+    },
+    "properties": {
+      "default": {
+        "title": "默認屬性",
+        "customer_name": {
+          "name": "客戶名稱",
+          "placeholder": "這可以是個人或企業的名稱",
+          "validation": {
+            "required": "客戶名稱為必填項。",
+            "max_length": "客戶名稱不能超過255個字符。"
+          }
+        },
+        "description": {
+          "name": "描述",
+          "validation": {}
+        },
+        "email": {
+          "name": "電子郵件",
+          "placeholder": "輸入電子郵件",
+          "validation": {
+            "required": "電子郵件為必填項。",
+            "pattern": "無效的電子郵件地址。"
+          }
+        },
+        "website_url": {
+          "name": "網站",
+          "placeholder": "任何帶有https://的網址都可以使用。",
+          "placeholder_short": "添加網站",
+          "validation": {
+            "pattern": "無效的網站網址"
+          }
+        },
+        "employees": {
+          "name": "員工數",
+          "placeholder": "如果您的客戶是企業，則為員工數量。",
+          "validation": {
+            "min_length": "員工數不能少於0。",
+            "max_length": "員工數不能大於2147483647。"
+          }
+        },
+        "size": {
+          "name": "規模",
+          "placeholder": "添加公司規模",
+          "validation": {
+            "min_length": "無效的規模"
+          }
+        },
+        "domain": {
+          "name": "行業",
+          "placeholder": "零售、電子商務、金融科技、銀行",
+          "placeholder_short": "添加行業",
+          "validation": {}
+        },
+        "stage": {
+          "name": "階段",
+          "placeholder": "選擇階段",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "合約狀態",
+          "placeholder": "選擇合約狀態",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "收入",
+          "placeholder": "這是您的客戶每年產生的收入。",
+          "placeholder_short": "添加收入",
+          "validation": {
+            "min_length": "收入不能少於0。"
+          }
+        },
+        "invalid_value": "無效的收入值。"
+      },
+      "custom": {
+        "title": "自定義屬性",
+        "info": "將您客戶的獨特屬性添加到Plane，以便您可以更好地管理工作項目或客戶記錄。"
+      },
+      "empty_state": {
+        "title": "您還沒有任何自定義屬性。",
+        "description": "您希望在工作項目中、Plane其他地方或Plane外部的CRM或其他工具中看到的自定義屬性，當您添加它們時將顯示在這裡。"
+      },
+      "add": {
+        "primary_button": "添加新屬性"
+      }
+    },
+    "stage": {
+      "lead": "潛在客戶",
+      "sales_qualified_lead": "合格銷售線索",
+      "contract_negotiation": "合約談判",
+      "closed_won": "已成交",
+      "closed_lost": "未成交"
+    },
+    "contract_status": {
+      "active": "活躍",
+      "pre_contract": "合約前",
+      "signed": "已簽署",
+      "inactive": "非活躍"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "我們無法找到該客戶記錄。",
+        "description": "此記錄的鏈接可能錯誤或此記錄可能已被刪除。",
+        "primary_button": "前往客戶",
+        "secondary_button": "添加客戶"
+      },
+      "search": {
+        "title": "您似乎沒有與該條件匹配的客戶記錄。",
+        "description": "嘗試使用其他搜索條件，或者如果您確信應該看到該條件的結果，請聯繫我們。"
+      },
+      "list": {
+        "title": "根據對您客戶重要的事項管理您工作的量、節奏和流程。",
+        "description": "使用客戶功能（Plane獨有功能），您現在可以從頭開始創建新客戶並將其連接到您的工作。很快，您將能夠從其他工具中引入客戶，以及對您重要的自定義屬性。",
+        "primary_button": "添加您的第一個客戶"
+      }
+    },
+    "settings": {
+      "unauthorized": "您無權訪問此頁面。",
+      "description": "在您的工作流程中追踪和管理客戶關係。",
+      "enable": "啟用客戶功能",
+      "toasts": {
+        "enable": {
+          "loading": "正在啟用客戶功能...",
+          "success": {
+            "title": "您已為此工作區開啟客戶功能。",
+            "message": "您無法再次關閉它。"
+          },
+          "error": {
+            "title": "我們無法這次開啟客戶功能。",
+            "message": "請再試一次或稍後回到此畫面。如果仍然不起作用。",
+            "action": "聯繫支持"
+          }
+        },
+        "disable": {
+          "loading": "正在禁用客戶功能...",
+          "success": {
+            "title": "客戶功能已禁用",
+            "message": "客戶功能已成功禁用！"
+          },
+          "error": {
+            "title": "錯誤",
+            "message": "禁用客戶功能失敗！"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "我們無法獲取您的客戶列表。",
+          "message": "請再試一次或刷新此頁面。"
+        }
+      },
+      "copy_link": {
+        "title": "您已複製此客戶的直接鏈接。",
+        "message": "粘貼在任何地方，它都會直接帶回這裡。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name}現已可用",
+          "message": "您可以在工作項目中引用此客戶，並追踪來自他們的請求。",
+          "actions": {
+            "view": "查看",
+            "copy_link": "複製鏈接",
+            "copied": "已複製！"
+          }
+        },
+        "error": {
+          "title": "我們這次無法創建該記錄。",
+          "message": "嘗試再次保存它或將未保存的文本複製到新條目，最好在另一個標籤頁中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "客戶更新成功！"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "無法更新客戶。請再試一次！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "我們無法上傳客戶的標誌。",
+          "message": "嘗試再次保存標誌或從頭開始。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "您已從此客戶記錄中移除工作項目。",
+            "message": "我們也已自動從工作項目中移除此客戶。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "我們這次無法從此客戶記錄中移除該工作項目。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "我們這次無法將該工作項目添加到此客戶記錄。",
+            "message": "嘗試再次添加該工作項目或稍後再來。如果仍然不起作用，請聯繫我們。"
+          },
+          "success": {
+            "title": "您已將工作項目添加到此客戶記錄。",
+            "message": "我們也已自動將此客戶添加到工作項目中。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "編輯",
+      "copy_link": "複製客戶鏈接",
+      "delete": "刪除"
+    },
+    "create": {
+      "label": "創建客戶記錄",
+      "loading": "創建中",
+      "cancel": "取消"
+    },
+    "update": {
+      "label": "更新客戶",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "您確定要刪除客戶記錄{customer_name}嗎？",
+      "description": "與此記錄關聯的所有數據將被永久刪除。您以後無法恢復此記錄。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "目前還沒有要顯示的請求。",
+          "description": "創建來自您客戶的請求，以便您可以將它們鏈接到工作項目。",
+          "button": "添加新請求"
+        },
+        "search": {
+          "title": "您似乎沒有與該條件匹配的請求。",
+          "description": "嘗試使用其他搜索條件，或者如果您確信應該看到該條件的結果，請聯繫我們。"
+        }
+      },
+      "label": "{count, plural, one {請求} other {請求}}",
+      "add": "添加請求",
+      "create": "創建請求",
+      "update": "更新請求",
+      "form": {
+        "name": {
+          "placeholder": "為此請求命名",
+          "validation": {
+            "required": "名稱為必填項。",
+            "max_length": "請求名稱不應超過255個字符。"
+          }
+        },
+        "description": {
+          "placeholder": "描述請求的性質或從另一個工具粘貼此客戶的評論。"
+        },
+        "source": {
+          "add": "添加來源",
+          "update": "更新來源",
+          "url": {
+            "label": "網址",
+            "required": "網址為必填項",
+            "invalid": "無效的網站網址"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "鏈接已複製",
+          "message": "客戶請求鏈接已複製到剪貼板。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "正在上傳附件...",
+            "success": {
+              "title": "附件已上傳",
+              "message": "附件已成功上傳。"
+            },
+            "error": {
+              "title": "附件未上傳",
+              "message": "無法上傳附件。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "錯誤！",
+              "message": "一次只能上傳一個文件。"
+            }
+          },
+          "length": {
+            "message": "文件大小必須為{size}MB或更小"
+          },
+          "remove": {
+            "success": {
+              "title": "附件已移除",
+              "message": "附件已成功移除"
+            },
+            "error": {
+              "title": "附件未移除",
+              "message": "無法移除附件"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "來源更新成功！"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "無法更新來源。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "錯誤！",
+              "message": "無法將工作項目添加到請求中。請再試一次。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "已將工作項目添加到請求中。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "請求更新成功！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法更新請求。請再試一次！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "請求創建成功！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法創建請求。請再試一次！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "鏈接的工作項目",
+      "link": "鏈接工作項目",
+      "empty_state": {
+        "list": {
+          "title": "您似乎還沒有將工作項目鏈接到此客戶。",
+          "description": "在此處鏈接任何專案的現有工作項目，以便您可以按此客戶追踪它們。",
+          "button": "鏈接工作項目"
+        }
+      },
+      "action": {
+        "remove_epic": "移除史詩",
+        "remove": "移除工作項目"
+      }
+    },
+    "sidebar": {
+      "properties": "屬性"
+    }
+  }
+}

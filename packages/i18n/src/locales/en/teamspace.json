@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Teamspaces",
+    "empty_state": {
+      "general": {
+        "title": "Teamspaces unlock better organization and tracking in Plane.",
+        "description": "Create a dedicated surface for every real-world team, separate from all other work surfaces in Plane, and customize them to suit how your team works.",
+        "primary_button": {
+          "text": "Create a new teamspace"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "You haven’t linked any teamspaces yet.",
+          "description": "Teamspace and project owners can manage access to projects."
+        }
+      },
+      "primary_button": {
+        "text": "Add teamspace"
+      },
+      "secondary_button": {
+        "text": "Learn more"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Teamspace name",
+          "members": "Members",
+          "accountType": "Account type"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Remove teamspace"
+            },
+            "confirm": {
+              "title": "Remove {teamspaceName} from {projectName}",
+              "description": "When you remove this teamspace from a linked project, members here will lose access to the linked project."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "No matching teamspaces found"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {You linked a teamspace to this project.} other {You linked # teamspaces to this project.}}",
+            "description": "{additionalCount, plural, =0 {Teamspace {firstTeamspaceName} is now linked to this project.} other {Teamspace {firstTeamspaceName} and {additionalCount} more are now linked to this project.}}"
+          },
+          "error": {
+            "title": "That didn’t go through.",
+            "description": "Try that again or reload this page before trying again."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "You removed that teamspace from this project.",
+            "description": "Teamspace {teamspaceName} was removed from {projectName}."
+          },
+          "error": {
+            "title": "That didn’t go through.",
+            "description": "Try that again or reload this page before trying again."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Search for teamspaces",
+        "info": {
+          "title": "Adding a teamspace grants all teamspace members access to this project.",
+          "link": "Learn more"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "You don’t have any teamspaces to link.",
+            "description": "Either you aren’t in a teamspace that you can link or you have already linked all available teamspaces."
+          },
+          "no_results": {
+            "title": "That doesn’t match any of your teamspaces.",
+            "description": "Try another term or make sure you have teamspaces to link."
+          }
+        },
+        "primary_button": {
+          "text": "Link selected teamspace(s)"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Create team-specific work items.",
+        "description": "Work items that are assigned to members of this team in any linked project will automatically show up here. If you expect to see some work items here, make sure your linked projects have work items assigned to members of this team or create work items.",
+        "primary_button": {
+          "text": "Add work items to a linked project"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "There are no team-specific work items for the filters applied",
+        "description": "Change some of those filters or clear them all to see work items relevant to this space.",
+        "secondary_button": {
+          "text": "Clear all filters"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "None of your linked projects have an active cycle.",
+        "description": "Active cycles in linked projects will automatically show up here. If you expect to see an active cycle, make sure it is running in a linked project right now."
+      },
+      "completed": {
+        "title": "None of your linked projects have a completed cycle.",
+        "description": "Completed cycles in linked projects will automatically show up here. If you expect to see a completed cycle, make sure it is also completed in a linked project."
+      },
+      "upcoming": {
+        "title": "None of your linked projects have an upcoming cycle.",
+        "description": "Upcoming cycles in linked projects will automatically show up here. If you expect to see an upcoming cycle, make sure it is there in a linked project, too."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Your team's views of your work without disrupting any other views in your workspace",
+        "description": "See your team's work in views that are saved just for your team and separately from a project's views.",
+        "primary_button": {
+          "text": "Create a view"
+        }
+      },
+      "filter": {
+        "title": "No matching views",
+        "description": "No views match the search criteria.\n Create a new view instead."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "House your team's knowledge in Team Pages.",
+        "description": "Unlike pages in a project, you can save knowledge specific to a team in a separate set of pages here. Get all the features of Pages, create best practices docs, and team wikis easily.",
+        "primary_button": {
+          "text": "Create your first team page"
+        }
+      },
+      "filter": {
+        "title": "No matching pages",
+        "description": "Remove the filters to see all pages"
+      },
+      "search": {
+        "title": "No matching pages",
+        "description": "Remove the search criteria to see all pages"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "None of your linked projects have published work items.",
+        "description": "Create some work items in one or more of those projects to see progress by dates, states, and priority."
+      },
+      "relation": {
+        "blocking": {
+          "title": "You don't have any work items blocking a teammate.",
+          "description": "Good job! You have cleared the path for your team. You are a good team player."
+        },
+        "blocked": {
+          "title": "You don't have any teammate's work items blocking you.",
+          "description": "Good news! You can make progress on all your assigned work items."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "None of your linked projects have published work items.",
+          "description": "Create some work items in one or more of those projects to see distribution of work by project and team members."
+        },
+        "filter": {
+          "title": "There are no team stats for the filters applied.",
+          "description": "Create some work items in one or more of those projects to see distribution of work by project and team members."
+        }
+      }
+    }
+  }
+}

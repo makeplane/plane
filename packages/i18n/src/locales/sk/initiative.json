@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Prehľad",
+    "label": "Iniciatívy",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciatívy}}",
+    "add_initiative": "Pridať Iniciatívu",
+    "create_initiative": "Vytvoriť Iniciatívu",
+    "update_initiative": "Aktualizovať Iniciatívu",
+    "initiative_name": "Názov iniciatívy",
+    "all_initiatives": "Všetky Iniciatívy",
+    "delete_initiative": "Odstrániť Iniciatívu",
+    "fill_all_required_fields": "Prosím, vyplňte všetky povinné polia.",
+    "archive_description": "Archivovať možno len dokončené alebo zatvorené iniciatívy",
+    "toast": {
+      "create_success": "Iniciatíva {name} bola úspešne vytvorená.",
+      "create_error": "Nepodarilo sa vytvoriť iniciatívu. Skúste to znova!",
+      "update_success": "Iniciatíva {name} bola úspešne aktualizovaná.",
+      "update_error": "Nepodarilo sa aktualizovať iniciatívu. Skúste to znova!",
+      "delete": {
+        "success": "Iniciatíva bola úspešne odstránená.",
+        "error": "Nepodarilo sa odstrániť Iniciatívu"
+      },
+      "archive": {
+        "success": "Iniciatíva bola úspešne archivovaná.",
+        "error": "Nepodarilo sa archivovať iniciatívu",
+        "initiative_cannot_be_archived_in_this_state": "Iniciatívu v tomto stave nie je možné archivovať"
+      },
+      "link_copied": "Odkaz na iniciatívu bol skopírovaný do schránky.",
+      "project_update_success": "Projekty iniciatívy boli úspešne aktualizované.",
+      "project_update_error": "Nepodarilo sa aktualizovať projekty iniciatívy. Skúste to znova!",
+      "epic_update_success": "Epik{count, plural, one { bol úspešne pridaný do Iniciatívy.} other {y boli úspešne pridané do Iniciatívy.}}",
+      "epic_update_error": "Pridanie Epiku do Iniciatívy zlyhalo. Skúste to neskôr znova.",
+      "state_update_success": "Stav iniciatívy bol úspešne aktualizovaný.",
+      "state_update_error": "Nepodarilo sa aktualizovať stav iniciatívy. Skúste to prosím znova!",
+      "label_update_error": "Nepodarilo sa aktualizovať štítky iniciatívy. Skúste to prosím znova!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizujte prácu na najvyššej úrovni s Iniciatívami",
+        "description": "Keď potrebujete organizovať prácu zahŕňajúcu niekoľko projektov a tímov, Iniciatívy sú užitočné. Prepojte projekty a epiky s iniciatívami, pozrite si automaticky zosumarizované aktualizácie a uvidíte lesy skôr, než sa dostanete k stromom.",
+        "primary_button": {
+          "text": "Vytvoriť iniciatívu"
+        }
+      },
+      "search": {
+        "title": "Žiadne zodpovedajúce iniciatívy",
+        "description": "Neboli zistené žiadne iniciatívy so zodpovedajúcimi kritériami.\n Namiesto toho vytvorte novú iniciatívu.",
+        "archived_description": "Neboli zistené žiadne archivované iniciatívy so zodpovedajúcimi kritériami."
+      },
+      "not_found": {
+        "title": "Iniciatíva neexistuje",
+        "description": "Iniciatíva, ktorú hľadáte, neexistuje, bola archivovaná alebo bola odstránená.",
+        "primary_button": {
+          "text": "Zobraziť iné Iniciatívy"
+        }
+      },
+      "epics": {
+        "title": "Nemáte žiadne epiky, ktoré by zodpovedali filtrom, ktoré ste použili.",
+        "subHeading": "Aby ste videli všetky epiky, vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      }
+    },
+    "scope": {
+      "view_scope": "Zobraziť rozsah",
+      "breakdown": "Rozklad rozsahu",
+      "add_scope": "Pridať rozsah",
+      "label": "Rozsah",
+      "empty_state": {
+        "title": "Zatiaľ nebol pridaný žiadny rozsah do tejto iniciatívy",
+        "description": "Prepojte projekty a epiky s iniciatívou, aby ste mohli začať.",
+        "primary_button": {
+          "text": "Pridať rozsah"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Štítky",
+        "description": "Štruktúrujte a organizujte svoje iniciatívy pomocou štítkov."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Odstrániť štítok",
+        "content": "Naozaj chcete odstrániť {labelName}? Týmto sa odstráni štítok zo všetkých iniciatív a zo všetkých pohľadov, kde je štítok filtrovaný."
+      },
+      "toast": {
+        "delete_error": "Štítok iniciatívy sa nepodarilo odstrániť. Skúste to znova.",
+        "label_already_exists": "Štítok už existuje"
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Panoramica",
+    "label": "Iniziative",
+    "placeholder": "{count, plural, one{# iniziativa} other{# iniziative}}",
+    "add_initiative": "Aggiungi Iniziativa",
+    "create_initiative": "Crea Iniziativa",
+    "update_initiative": "Aggiorna Iniziativa",
+    "initiative_name": "Nome dell'iniziativa",
+    "all_initiatives": "Tutte le Iniziative",
+    "delete_initiative": "Elimina Iniziativa",
+    "fill_all_required_fields": "Si prega di compilare tutti i campi obbligatori.",
+    "archive_description": "Solo le iniziative completate o chiuse possono essere archiviate",
+    "toast": {
+      "create_success": "Iniziativa {name} creata con successo.",
+      "create_error": "Impossibile creare l'iniziativa. Si prega di riprovare!",
+      "update_success": "Iniziativa {name} aggiornata con successo.",
+      "update_error": "Impossibile aggiornare l'iniziativa. Si prega di riprovare!",
+      "delete": {
+        "success": "Iniziativa eliminata con successo.",
+        "error": "Impossibile eliminare l'iniziativa"
+      },
+      "archive": {
+        "success": "Iniziativa archiviata correttamente.",
+        "error": "Impossibile archiviare l'iniziativa",
+        "initiative_cannot_be_archived_in_this_state": "L'iniziativa non può essere archiviata in questo stato"
+      },
+      "link_copied": "Link dell'iniziativa copiato negli appunti.",
+      "project_update_success": "Progetti dell'iniziativa aggiornati con successo.",
+      "project_update_error": "Impossibile aggiornare i progetti dell'iniziativa. Si prega di riprovare!",
+      "epic_update_success": "Epic{count, plural, one { aggiunto all'iniziativa con successo.} other {s aggiunti all'iniziativa con successo.}}",
+      "epic_update_error": "Aggiunta dell'epic all'iniziativa fallita. Si prega di riprovare più tardi.",
+      "state_update_success": "Stato dell'iniziativa aggiornato con successo.",
+      "state_update_error": "Aggiornamento dello stato dell'iniziativa non riuscito. Per favore riprova!",
+      "label_update_error": "Impossibile aggiornare le etichette dell'iniziativa. Riprova!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizza il lavoro al livello più alto con le Iniziative",
+        "description": "Quando hai bisogno di organizzare il lavoro che attraversa diversi progetti e team, le Iniziative sono utili. Collega progetti ed epiche alle iniziative, vedi aggiornamenti automaticamente aggregati e osserva le foreste prima di arrivare agli alberi.",
+        "primary_button": {
+          "text": "Crea un'iniziativa"
+        }
+      },
+      "search": {
+        "title": "Nessuna iniziativa corrispondente",
+        "description": "Nessuna iniziativa rilevata con i criteri corrispondenti.\n Crea una nuova iniziativa invece.",
+        "archived_description": "Nessuna iniziativa archiviata rilevata con i criteri corrispondenti."
+      },
+      "not_found": {
+        "title": "L'iniziativa non esiste",
+        "description": "L'iniziativa che stai cercando non esiste, è stata archiviata o è stata eliminata.",
+        "primary_button": {
+          "text": "Visualizza altre iniziative"
+        }
+      },
+      "epics": {
+        "title": "Non hai epiche che corrispondono ai filtri che hai applicato.",
+        "subHeading": "Per vedere tutte le epiche, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
+      }
+    },
+    "scope": {
+      "view_scope": "Visualizza ambito",
+      "breakdown": "Scomposizione ambito",
+      "add_scope": "Aggiungi ambito",
+      "label": "Ambito",
+      "empty_state": {
+        "title": "Nessun ambito aggiunto a questa iniziativa",
+        "description": "Collega progetti e epiche e traccia quel lavoro in questo spazio.",
+        "primary_button": {
+          "text": "Aggiungi ambito"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Etichette",
+        "description": "Struttura e organizza le tue iniziative con le etichette."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Elimina etichetta",
+        "content": "Sei sicuro di voler eliminare {labelName}? Questo rimuoverà l'etichetta da tutte le iniziative e da tutte le visualizzazioni in cui l'etichetta è filtrata."
+      },
+      "toast": {
+        "delete_error": "L'etichetta dell'iniziativa non può essere eliminata. Riprova.",
+        "label_already_exists": "L'etichetta esiste già"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "projects": "Projetos",
+    "pages": "Páginas",
+    "new_work_item": "Novo item",
+    "home": "Home",
+    "your_work": "Seu trabalho",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Visualizações",
+    "analytics": "Analytics",
+    "work_items": "Itens",
+    "cycles": "Ciclos",
+    "modules": "Módulos",
+    "intake": "Intake",
+    "drafts": "Rascunhos",
+    "favorites": "Favoritos",
+    "pro": "Pro",
+    "upgrade": "Upgrade",
+    "pi_chat": "Chat AI",
+    "initiatives": "Iniciativas",
+    "teamspaces": "Espaços de equipe",
+    "epics": "Épicos",
+    "upgrade_plan": "Atualizar plano",
+    "plane_pro": "Plane Pro",
+    "business": "Business",
+    "customers": "Clientes",
+    "recurring_work_items": "Itens de trabalho recorrentes"
+  },
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenhum resultado encontrado"
+      }
+    }
+  }
+}

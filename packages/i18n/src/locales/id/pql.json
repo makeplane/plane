@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Tanggal dan waktu saat ini"
+        },
+        "today": {
+          "description": "Tanggal hari ini"
+        },
+        "start_of_day": {
+          "description": "Awal hari ini"
+        },
+        "end_of_day": {
+          "description": "Akhir hari ini"
+        },
+        "start_of_week": {
+          "description": "Awal minggu ini"
+        },
+        "end_of_week": {
+          "description": "Akhir minggu ini"
+        },
+        "start_of_month": {
+          "description": "Awal bulan ini"
+        },
+        "end_of_month": {
+          "description": "Akhir bulan ini"
+        },
+        "start_of_year": {
+          "description": "Awal tahun ini"
+        },
+        "end_of_year": {
+          "description": "Akhir tahun ini"
+        },
+        "days_ago": {
+          "description": "Tanggal n hari yang lalu"
+        },
+        "days_from_now": {
+          "description": "Tanggal n hari dari sekarang"
+        },
+        "weeks_ago": {
+          "description": "Tanggal n minggu yang lalu"
+        },
+        "weeks_from_now": {
+          "description": "Tanggal n minggu dari sekarang"
+        },
+        "months_ago": {
+          "description": "Tanggal n bulan yang lalu"
+        },
+        "months_from_now": {
+          "description": "Tanggal n bulan dari sekarang"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Pengguna yang sedang masuk"
+        },
+        "members_of": {
+          "description": "Anggota dari \"project:<id>\" atau \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Semua anggota ruang kerja"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Siklus yang aktif hari ini"
+        },
+        "completed_cycles": {
+          "description": "Siklus yang tanggal akhirnya telah lewat"
+        },
+        "upcoming_cycles": {
+          "description": "Siklus yang tanggal mulainya di masa depan"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Tanggal jatuh tempo telah lewat DAN status masih terbuka"
+        },
+        "has_no_assignee": {
+          "description": "Item pekerjaan tidak memiliki penugasan"
+        },
+        "has_no_label": {
+          "description": "Item pekerjaan tidak memiliki label"
+        },
+        "is_top_level": {
+          "description": "Bukan sub-item pekerjaan (tidak memiliki induk)"
+        },
+        "is_sub_work_item": {
+          "description": "Adalah sub-item pekerjaan (memiliki induk)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "Adalah item pekerjaan masukan"
+        },
+        "is_draft": {
+          "description": "Adalah item pekerjaan draf"
+        },
+        "is_archived": {
+          "description": "Diarsipkan"
+        },
+        "has_children": {
+          "description": "Memiliki setidaknya satu sub-item pekerjaan"
+        },
+        "has_start_and_due_dates": {
+          "description": "Memiliki tanggal mulai dan tanggal jatuh tempo"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Item pekerjaan yang terkait dengan item yang diberikan"
+        },
+        "blocked_by": {
+          "description": "Item pekerjaan yang diblokir oleh item yang diberikan"
+        },
+        "blocks": {
+          "description": "Item pekerjaan yang memblokir item yang diberikan"
+        },
+        "child_of": {
+          "description": "Sub-item pekerjaan dari item yang diberikan"
+        },
+        "parent_of": {
+          "description": "Item pekerjaan induk dari item yang diberikan"
+        },
+        "duplicate_of": {
+          "description": "Item pekerjaan yang ditandai sebagai duplikat dari item yang diberikan"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Bidang pernah diatur ke nilai ini"
+        },
+        "was": {
+          "description": "Bidang sebelumnya memiliki nilai ini (telah diubah)"
+        },
+        "changed_from": {
+          "description": "Bidang diubah dari nilai ini"
+        },
+        "changed_to": {
+          "description": "Bidang diubah ke nilai ini"
+        },
+        "changed": {
+          "description": "Bidang telah diubah"
+        },
+        "updated_by": {
+          "description": "Item pekerjaan diperbarui oleh pengguna ini"
+        },
+        "commented_by": {
+          "description": "Item pekerjaan dikomentari oleh pengguna ini"
+        },
+        "field_changed_by": {
+          "description": "Bidang diubah oleh pengguna ini"
+        },
+        "was_assigned_to": {
+          "description": "Item pekerjaan ditugaskan ke pengguna ini"
+        },
+        "changed_after": {
+          "description": "Bidang diubah setelah tanggal ini"
+        },
+        "changed_before": {
+          "description": "Bidang diubah sebelum tanggal ini"
+        },
+        "field_changed_after": {
+          "description": "Bidang diubah setelah tanggal ini"
+        },
+        "field_changed_before": {
+          "description": "Bidang diubah sebelum tanggal ini"
+        },
+        "changed_to_after": {
+          "description": "Bidang diubah ke nilai ini setelah tanggal ini"
+        },
+        "changed_to_before": {
+          "description": "Bidang diubah ke nilai ini sebelum tanggal ini"
+        },
+        "field_changed_between": {
+          "description": "Bidang diubah di antara tanggal-tanggal ini"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "navigasi",
+      "accept": "terima",
+      "close": "tutup",
+      "pick_date": "Pilih tanggal"
+    },
+    "placeholder": "Ketik kueri dan tekan \"ENTER\" untuk memfilter...",
+    "error": "Kesalahan saat mengirim kueri. Silakan periksa dan coba lagi."
+  }
+}

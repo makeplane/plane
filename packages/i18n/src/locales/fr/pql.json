@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Date et heure actuelles"
+        },
+        "today": {
+          "description": "Date d'aujourd'hui"
+        },
+        "start_of_day": {
+          "description": "Début d'aujourd'hui"
+        },
+        "end_of_day": {
+          "description": "Fin d'aujourd'hui"
+        },
+        "start_of_week": {
+          "description": "Début de la semaine en cours"
+        },
+        "end_of_week": {
+          "description": "Fin de la semaine en cours"
+        },
+        "start_of_month": {
+          "description": "Début du mois en cours"
+        },
+        "end_of_month": {
+          "description": "Fin du mois en cours"
+        },
+        "start_of_year": {
+          "description": "Début de l'année en cours"
+        },
+        "end_of_year": {
+          "description": "Fin de l'année en cours"
+        },
+        "days_ago": {
+          "description": "Date il y a n jours"
+        },
+        "days_from_now": {
+          "description": "Date dans n jours"
+        },
+        "weeks_ago": {
+          "description": "Date il y a n semaines"
+        },
+        "weeks_from_now": {
+          "description": "Date dans n semaines"
+        },
+        "months_ago": {
+          "description": "Date il y a n mois"
+        },
+        "months_from_now": {
+          "description": "Date dans n mois"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Utilisateur actuellement connecté"
+        },
+        "members_of": {
+          "description": "Membres de \"project:<id>\" ou \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Tous les membres de l'espace de travail"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Cycle actif aujourd'hui"
+        },
+        "completed_cycles": {
+          "description": "Cycles dont la date de fin est passée"
+        },
+        "upcoming_cycles": {
+          "description": "Cycles dont la date de début est dans le futur"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "La date d'échéance est passée ET l'état est ouvert"
+        },
+        "has_no_assignee": {
+          "description": "L'élément de travail n'a pas d'assigné"
+        },
+        "has_no_label": {
+          "description": "L'élément de travail n'a pas d'étiquettes"
+        },
+        "is_top_level": {
+          "description": "Pas un sous-élément (sans parent)"
+        },
+        "is_sub_work_item": {
+          "description": "Est un sous-élément (a un parent)"
+        },
+        "is_epic": {
+          "description": "Épopée"
+        },
+        "is_intake": {
+          "description": "Est un élément d'entrée"
+        },
+        "is_draft": {
+          "description": "Est un brouillon"
+        },
+        "is_archived": {
+          "description": "Est archivé"
+        },
+        "has_children": {
+          "description": "A au moins un sous-élément"
+        },
+        "has_start_and_due_dates": {
+          "description": "A une date de début et une date d'échéance"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Éléments liés à cet élément"
+        },
+        "blocked_by": {
+          "description": "Éléments bloqués par cet élément"
+        },
+        "blocks": {
+          "description": "Éléments qui bloquent cet élément"
+        },
+        "child_of": {
+          "description": "Sous-éléments de cet élément"
+        },
+        "parent_of": {
+          "description": "Élément parent de cet élément"
+        },
+        "duplicate_of": {
+          "description": "Éléments marqués comme doublons de cet élément"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Le champ a déjà eu cette valeur"
+        },
+        "was": {
+          "description": "Le champ avait précédemment cette valeur (modifié depuis)"
+        },
+        "changed_from": {
+          "description": "Le champ a été modifié depuis cette valeur"
+        },
+        "changed_to": {
+          "description": "Le champ a été modifié vers cette valeur"
+        },
+        "changed": {
+          "description": "Le champ a été modifié"
+        },
+        "updated_by": {
+          "description": "Élément mis à jour par cet utilisateur"
+        },
+        "commented_by": {
+          "description": "Élément commenté par cet utilisateur"
+        },
+        "field_changed_by": {
+          "description": "Champ modifié par cet utilisateur"
+        },
+        "was_assigned_to": {
+          "description": "Élément assigné à cet utilisateur"
+        },
+        "changed_after": {
+          "description": "Champ modifié après cette date"
+        },
+        "changed_before": {
+          "description": "Champ modifié avant cette date"
+        },
+        "field_changed_after": {
+          "description": "Champ modifié après cette date"
+        },
+        "field_changed_before": {
+          "description": "Champ modifié avant cette date"
+        },
+        "changed_to_after": {
+          "description": "Champ modifié vers cette valeur après cette date"
+        },
+        "changed_to_before": {
+          "description": "Champ modifié vers cette valeur avant cette date"
+        },
+        "field_changed_between": {
+          "description": "Champ modifié entre ces dates"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "naviguer",
+      "accept": "accepter",
+      "close": "fermer",
+      "pick_date": "Choisir une date"
+    },
+    "placeholder": "Saisissez une requête et appuyez sur \"ENTRÉE\" pour filtrer...",
+    "error": "Erreur lors de la soumission de la requête. Veuillez vérifier et réessayer."
+  }
+}

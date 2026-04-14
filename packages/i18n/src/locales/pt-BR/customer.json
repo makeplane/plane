@@ -1,0 +1,371 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Cliente} other {Clientes}}",
+    "upgrade": {
+      "title": "Priorize e gerencie trabalho com Clientes.",
+      "description": "Mapeie seu trabalho para clientes e priorize por atributos de cliente."
+    },
+    "properties": {
+      "default": {
+        "title": "Propriedades padrão",
+        "customer_name": {
+          "name": "Nome do cliente",
+          "placeholder": "Pode ser o nome da pessoa ou empresa",
+          "validation": {
+            "required": "Nome do cliente é obrigatório.",
+            "max_length": "Nome do cliente não pode ter mais de 255 caracteres."
+          }
+        },
+        "description": {
+          "name": "Descrição",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Digite o email",
+          "validation": {
+            "required": "Email é obrigatório.",
+            "pattern": "Endereço de email inválido."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Qualquer URL com https:// funcionará.",
+          "placeholder_short": "Adicionar website",
+          "validation": {
+            "pattern": "URL do website inválida"
+          }
+        },
+        "employees": {
+          "name": "Funcionários",
+          "placeholder": "Número de funcionários se seu cliente for uma empresa.",
+          "validation": {
+            "min_length": "Funcionários não pode ser menos que 0."
+          }
+        },
+        "size": {
+          "name": "Tamanho",
+          "placeholder": "Adicionar tamanho da empresa",
+          "validation": {
+            "min_length": "Tamanho inválido"
+          }
+        },
+        "domain": {
+          "name": "Indústria",
+          "placeholder": "Varejo, e-Commerce, Fintech, Bancário",
+          "placeholder_short": "Adicionar indústria",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Estágio",
+          "placeholder": "Selecionar estágio",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Status do Contrato",
+          "placeholder": "Selecionar status do contrato",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Receita",
+          "placeholder": "Esta é a receita que seu cliente gera anualmente.",
+          "validation": {
+            "min_length": "Receita não pode ser menor que 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Propriedades personalizadas",
+        "info": "Adicione os atributos exclusivos dos seus clientes ao Plane para que você possa gerenciar melhor os itens de trabalho ou registros de clientes."
+      },
+      "empty_state": {
+        "title": "Você ainda não tem nenhuma propriedade personalizada.",
+        "description": "Propriedades personalizadas que você gostaria de ver em itens de trabalho, em outros lugares no Plane, ou fora do Plane em um CRM ou outra ferramenta, aparecerão aqui quando você adicioná-las."
+      },
+      "add": {
+        "primary_button": "Adicionar nova propriedade"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Lead qualificado para vendas",
+      "contract_negotiation": "Negociação de contrato",
+      "closed_won": "Fechado ganho",
+      "closed_lost": "Fechado perdido"
+    },
+    "contract_status": {
+      "active": "Ativo",
+      "pre_contract": "Pré-contrato",
+      "signed": "Assinado",
+      "inactive": "Inativo"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Não conseguimos encontrar esse registro de cliente.",
+        "description": "O link para este registro pode estar errado ou este registro pode ter sido excluído.",
+        "primary_button": "Ir para clientes",
+        "secondary_button": "Adicionar um cliente"
+      },
+      "search": {
+        "title": "Parece que você não tem registros de clientes correspondentes a esse termo.",
+        "description": "Tente com outro termo de pesquisa ou entre em contato conosco se você tem certeza de que deveria ver resultados para esse termo."
+      },
+      "list": {
+        "title": "Gerencie o volume, ritmo e fluxo do seu trabalho pelo que é importante para seus clientes.",
+        "description": "Com Clientes, um recurso exclusivo do Plane, agora você pode criar novos clientes do zero e conectá-los ao seu trabalho. Em breve, você poderá trazê-los de outras ferramentas junto com seus atributos personalizados que são importantes para você.",
+        "primary_button": "Adicione seu primeiro cliente"
+      }
+    },
+    "settings": {
+      "unauthorized": "Você não está autorizado a acessar esta página.",
+      "description": "Acompanhe e gerencie relacionamentos com clientes em seu fluxo de trabalho.",
+      "enable": "Habilitar Clientes",
+      "toasts": {
+        "enable": {
+          "loading": "Habilitando recurso de clientes...",
+          "success": {
+            "title": "Você ativou Clientes para este workspace.",
+            "message": "Você não pode desativá-lo novamente."
+          },
+          "error": {
+            "title": "Não conseguimos ativar Clientes desta vez.",
+            "message": "Tente novamente ou volte a esta tela mais tarde. Se ainda não funcionar.",
+            "action": "Falar com suporte"
+          }
+        },
+        "disable": {
+          "loading": "Desabilitando recurso de clientes...",
+          "success": {
+            "title": "Clientes desabilitados",
+            "message": "Recurso de clientes desabilitado com sucesso!"
+          },
+          "error": {
+            "title": "Erro",
+            "message": "Falha ao desabilitar recurso de clientes!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Não conseguimos obter sua lista de clientes.",
+          "message": "Tente novamente ou atualize esta página."
+        }
+      },
+      "copy_link": {
+        "title": "Você copiou o link direto para este cliente.",
+        "message": "Cole em qualquer lugar e ele levará de volta para cá."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} agora está disponível",
+          "message": "Você pode fazer referência a este cliente em itens de trabalho e também acompanhar solicitações deles.",
+          "actions": {
+            "view": "Visualizar",
+            "copy_link": "Copiar link",
+            "copied": "Copiado!"
+          }
+        },
+        "error": {
+          "title": "Não conseguimos criar esse registro desta vez.",
+          "message": "Tente salvá-lo novamente ou copie seu texto não salvo para uma nova entrada, preferencialmente em outra aba."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sucesso!",
+          "message": "Cliente atualizado com sucesso!"
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Não foi possível atualizar o cliente. Tente novamente!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Não conseguimos enviar o logotipo do cliente.",
+          "message": "Tente salvar o logotipo novamente ou comece do zero."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Você removeu um item de trabalho do registro deste cliente.",
+            "message": "Também removemos automaticamente este cliente do item de trabalho."
+          },
+          "error": {
+            "title": "Não conseguimos remover esse item de trabalho do registro deste cliente desta vez.",
+            "message": "Também removemos automaticamente este cliente do item de trabalho."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Não conseguimos adicionar esse item de trabalho ao registro deste cliente desta vez.",
+            "message": "Tente adicionar esse item de trabalho novamente ou volte a ele mais tarde. Se ainda não funcionar, entre em contato conosco."
+          },
+          "success": {
+            "title": "Você adicionou um item de trabalho ao registro deste cliente.",
+            "message": "Também adicionamos automaticamente este cliente ao item de trabalho."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Editar",
+      "copy_link": "Copiar link para cliente",
+      "delete": "Excluir"
+    },
+    "create": {
+      "label": "Criar registro de cliente",
+      "loading": "Criando",
+      "cancel": "Cancelar"
+    },
+    "update": {
+      "label": "Atualizar cliente",
+      "loading": "Atualizando"
+    },
+    "delete": {
+      "title": "Tem certeza que deseja excluir o registro do cliente {customer_name}?",
+      "description": "Todos os dados associados a este registro serão excluídos permanentemente. Você não poderá restaurar este registro posteriormente."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Ainda não há solicitações para mostrar.",
+          "description": "Crie solicitações de seus clientes para que você possa vinculá-las a itens de trabalho.",
+          "button": "Adicionar nova solicitação"
+        },
+        "search": {
+          "title": "Parece que você não tem solicitações correspondentes a esse termo.",
+          "description": "Tente com outro termo de pesquisa ou entre em contato conosco se você tem certeza de que deveria ver resultados para esse termo."
+        }
+      },
+      "label": "{count, plural, one {Solicitação} other {Solicitações}}",
+      "add": "Adicionar solicitação",
+      "create": "Criar solicitação",
+      "update": "Atualizar solicitação",
+      "form": {
+        "name": {
+          "placeholder": "Nomeie esta solicitação",
+          "validation": {
+            "required": "Nome é obrigatório.",
+            "max_length": "Nome da solicitação não deve exceder 255 caracteres."
+          }
+        },
+        "description": {
+          "placeholder": "Descreva a natureza da solicitação ou cole o comentário deste cliente de outra ferramenta."
+        },
+        "source": {
+          "add": "Adicionar fonte",
+          "update": "Atualizar fonte",
+          "url": {
+            "label": "URL",
+            "required": "URL é obrigatória",
+            "invalid": "URL do website inválida"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Link copiado",
+          "message": "Link da solicitação do cliente copiado para a área de transferência."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Enviando anexo...",
+            "success": {
+              "title": "Anexo enviado",
+              "message": "O anexo foi enviado com sucesso."
+            },
+            "error": {
+              "title": "Anexo não enviado",
+              "message": "O anexo não pôde ser enviado."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Erro!",
+              "message": "Apenas um arquivo pode ser enviado por vez."
+            }
+          },
+          "length": {
+            "message": "O arquivo deve ter {size}MB ou menos"
+          },
+          "remove": {
+            "success": {
+              "title": "Anexo removido",
+              "message": "O anexo foi removido com sucesso"
+            },
+            "error": {
+              "title": "Anexo não removido",
+              "message": "O anexo não pôde ser removido"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Sucesso!",
+              "message": "Fonte atualizada com sucesso!"
+            },
+            "error": {
+              "title": "Erro!",
+              "message": "Não foi possível atualizar a fonte."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Erro!",
+              "message": "Não foi possível adicionar itens de trabalho à solicitação. Tente novamente."
+            },
+            "success": {
+              "title": "Sucesso!",
+              "message": "Itens de trabalho adicionados à solicitação."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Solicitação atualizada com sucesso!",
+            "title": "Sucesso!"
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Não foi possível atualizar a solicitação. Tente novamente!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Solicitação criada com sucesso!",
+            "title": "Sucesso!"
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Não foi possível criar a solicitação. Tente novamente!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Itens de trabalho vinculados",
+      "link": "Vincular itens de trabalho",
+      "empty_state": {
+        "list": {
+          "title": "Parece que você ainda não tem itens de trabalho vinculados a este cliente.",
+          "description": "Vincule itens de trabalho existentes de qualquer projeto aqui para que você possa rastreá-los por este cliente.",
+          "button": "Vincular item de trabalho"
+        }
+      },
+      "action": {
+        "remove_epic": "Remover épico",
+        "remove": "Remover item de trabalho"
+      }
+    },
+    "sidebar": {
+      "properties": "Propriedades"
+    }
+  }
+}

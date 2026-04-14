@@ -1,0 +1,199 @@
+{
+  "teamspaces": {
+    "label": "Tímspejsy",
+    "empty_state": {
+      "general": {
+        "title": "Tímspejsy odomykajú lepšiu organizáciu a sledovanie v Plene.",
+        "description": "Vytvorte vyhradený priestor pre každý reálny tím, oddelený od všetkých ostatných pracovných priestorov v Plene, a prispôsobte ich tak, aby vyhovovali spôsobu práce vášho tímu.",
+        "primary_button": {
+          "text": "Vytvoriť nový tímspejs"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Zatiaľ ste neprepojili žiadne tímspejsy.",
+          "description": "Vlastníci tímspejsu a projektu môžu spravovať prístup k projektom."
+        }
+      },
+      "primary_button": {
+        "text": "Prepojiť tímspejs"
+      },
+      "secondary_button": {
+        "text": "Dozvedieť sa viac"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Názov tímspejsu",
+          "members": "Členovia",
+          "accountType": "Typ účtu"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Odstrániť tímspejs"
+            },
+            "confirm": {
+              "title": "Odstrániť {teamspaceName} z {projectName}",
+              "description": "Keď odstránite tento tímspejs z prepojeného projektu, členovia tu stratia prístup k prepojenému projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Neboli nájdené žiadne zodpovedajúce tímspejsy"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Prepojili ste tímspejs s týmto projektom.} other {Prepojili ste # tímspejsov s týmto projektom.}}",
+            "description": "{additionalCount, plural, =0 {Tímspejs {firstTeamspaceName} je teraz prepojený s týmto projektom.} other {Tímspejs {firstTeamspaceName} a {additionalCount} ďalších je teraz prepojených s týmto projektom.}}"
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Odstránili ste tento tímspejs z tohto projektu.",
+            "description": "Tímspejs {teamspaceName} bol odstránený z {projectName}."
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Hľadať tímspejsy",
+        "info": {
+          "title": "Pridanie tímspejsu poskytuje všetkým členom tímspejsu prístup k tomuto projektu.",
+          "link": "Dozvedieť sa viac"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nemáte žiadne tímspejsy na prepojenie.",
+            "description": "Buď nie ste v tímspejse, ktorý môžete prepojiť, alebo ste už prepojili všetky dostupné tímspejsy."
+          },
+          "no_results": {
+            "title": "To nezodpovedá žiadnemu z vašich tímspejsov.",
+            "description": "Skúste iný výraz alebo sa uistite, že máte tímspejsy na prepojenie."
+          }
+        },
+        "primary_button": {
+          "text": "Prepojiť vybrané tímspejsy"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Vytvorte pracovné položky špecifické pre tím.",
+        "description": "Pracovné položky, ktoré sú priradené členom tohto tímu v akomkoľvek prepojenom projekte, sa tu automaticky zobrazia. Ak očakávate, že tu uvidíte nejaké pracovné položky, uistite sa, že vaše prepojené projekty majú pracovné položky priradené členom tohto tímu alebo vytvorte pracovné položky.",
+        "primary_button": {
+          "text": "Pridať pracovné položky do prepojeného projektu"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Pre použité filtre neexistujú žiadne pracovné položky špecifické pre tím",
+        "description": "Zmeňte niektoré z týchto filtrov alebo ich všetky vymažte, aby ste videli pracovné položky relevantné pre tento priestor.",
+        "secondary_button": {
+          "text": "Vymazať všetky filtre"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Žiadny z vašich prepojených projektov nemá aktívny cyklus.",
+        "description": "Aktívne cykly v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že uvidíte aktívny cyklus, uistite sa, že práve teraz beží v prepojenom projekte."
+      },
+      "completed": {
+        "title": "Žiadny z vašich prepojených projektov nemá dokončený cyklus.",
+        "description": "Dokončené cykly v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že uvidíte dokončený cyklus, uistite sa, že je taktiež dokončený v prepojenom projekte."
+      },
+      "upcoming": {
+        "title": "Žiadny z vašich prepojených projektov nemá nadchádzajúci cyklus.",
+        "description": "Nadchádzajúce cykly v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že uvidíte nadchádzajúci cyklus, uistite sa, že je aj v prepojenom projekte."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Pohľady vášho tímu na vašu prácu bez narušenia akýchkoľvek iných pohľadov vo vašom vorkspejse",
+        "description": "Pozrite si prácu svojho tímu v pohľadoch, ktoré sú uložené len pre váš tím a oddelene od pohľadov projektu.",
+        "primary_button": {
+          "text": "Vytvoriť pohľad"
+        }
+      },
+      "project_view": {
+        "title": "Žiadny z vašich prepojených projektov nemá verejné pohľady.",
+        "description": "Verejné pohľady v prepojených projektoch sa tu automaticky zobrazia. Aby ste tu videli verejné pohľady z prepojených projektov, uistite sa, že tieto projekty majú verejné pohľady prístupné všetkým členom projektu."
+      },
+      "filter": {
+        "title": "Žiadne zodpovedajúce pohľady",
+        "description": "Žiadne pohľady nezodpovedajú kritériám vyhľadávania.\n Namiesto toho vytvorte nový pohľad."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Umiestnite znalosti svojho tímu na Stránky tímu.",
+        "description": "Na rozdiel od stránok v projekte môžete tu uložiť znalosti špecifické pre tím v samostatnej sade stránok. Získajte všetky funkcie Stránok, vytvárajte dokumenty s osvedčenými postupmi a tímové wiki jednoducho.",
+        "primary_button": {
+          "text": "Vytvorte svoju prvú tímovú stránku"
+        }
+      },
+      "project_page": {
+        "title": "Žiadny z vašich prepojených projektov nemá verejné stránky.",
+        "description": "Verejné stránky v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že tu uvidíte verejné stránky, uistite sa, že vaše prepojené projekty majú verejné stránky dostupné všetkým členom projektu."
+      },
+      "filter": {
+        "title": "Žiadne zodpovedajúce stránky",
+        "description": "Odstráňte filtre, aby ste videli všetky stránky"
+      },
+      "search": {
+        "title": "Žiadne zodpovedajúce stránky",
+        "description": "Odstráňte kritériá vyhľadávania, aby ste videli všetky stránky"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Žiadny z vašich prepojených projektov nemá zverejnené pracovné položky.",
+        "description": "Vytvorte niekoľko pracovných položiek v jednom alebo viacerých z týchto projektov, aby ste videli pokrok podľa dátumov, stavov a priorít."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Nemáte žiadne pracovné položky, ktoré by blokovali tímového kolegu.",
+          "description": "Dobrá práca! Vyčistili ste cestu pre svoj tím. Ste dobrý tímový hráč."
+        },
+        "blocked": {
+          "title": "Nemáte žiadne pracovné položky tímového kolegu, ktoré by vás blokovali.",
+          "description": "Dobré správy! Môžete pokročiť vo všetkých vašich priradených pracovných položkách."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Žiadny z vašich prepojených projektov nemá zverejnené pracovné položky.",
+          "description": "Vytvorte niekoľko pracovných položiek v jednom alebo viacerých z týchto projektov, aby ste videli rozdelenie práce podľa projektu a členov tímu."
+        },
+        "filter": {
+          "title": "Pre použité filtre neexistujú žiadne tímové štatistiky.",
+          "description": "Vytvorte niekoľko pracovných položiek v jednom alebo viacerých z týchto projektov, aby ste videli rozdelenie práce podľa projektu a členov tímu."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Lanzamiento} other {Lanzamientos}}",
+    "no_release": "Sin lanzamiento",
+    "unreleased": "Sin publicar",
+    "select_releases": "Seleccionar lanzamientos",
+    "overview": "Resumen",
+    "scope": "Alcance",
+    "page_title": {
+      "scope": "Lanzamiento - {name} | Alcance",
+      "scope_fallback": "Lanzamiento | Alcance"
+    },
+    "properties": "Propiedades",
+    "target_date": "Fecha objetivo",
+    "lead": "Responsable",
+    "release_tag": "Etiqueta",
+    "labels": "Etiquetas",
+    "description_placeholder": "Añadir una descripción...",
+    "progress": "Progreso",
+    "completed_work_items": "Elementos de trabajo completados",
+    "pending_work_items": "Elementos de trabajo pendientes",
+    "cancelled_work_items": "Elementos de trabajo cancelados",
+    "scope_page": {
+      "work_items": "Elementos de trabajo",
+      "add_work_items": "Añadir elementos de trabajo",
+      "remove_from_release": "Quitar del lanzamiento",
+      "empty_state": {
+        "title": "No hay elementos de trabajo",
+        "description": "Añada elementos de trabajo para definir el alcance del lanzamiento."
+      },
+      "confirm_remove": {
+        "content": "¿Seguro que quieres quitar este elemento de trabajo del lanzamiento? Seguirá en el proyecto.",
+        "primary_button": {
+          "default": "Quitar",
+          "loading": "Quitando"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Aún no hay alcance",
+      "description": "Añade elementos de trabajo al lanzamiento para hacer un seguimiento de su finalización en este lanzamiento.",
+      "add_scope": "Agregar alcance",
+      "not_found": {
+        "title": "Lanzamiento no encontrado",
+        "description": "Es posible que se haya eliminado el lanzamiento.",
+        "primary_button": "Volver a lanzamientos"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Elemento de trabajo añadido} other {Elementos de trabajo añadidos}}",
+      "work_items_error": "No se pudieron añadir los elementos de trabajo"
+    },
+    "count_releases": "{count, plural, one {# lanzamiento} other {# lanzamientos}}",
+    "actions": {
+      "delete": "Eliminar"
+    },
+    "delete_modal": {
+      "title": "Eliminar lanzamiento",
+      "content": "¿Seguro que quieres eliminar el lanzamiento \"{releaseName}\"? Esta acción no se puede deshacer."
+    },
+    "settings": {
+      "heading": {
+        "title": "Lanzamientos",
+        "description": "Gestiona las entregas del proyecto con precisión usando lanzamientos."
+      },
+      "toggle": {
+        "title": "Habilitar lanzamientos",
+        "description": "Los miembros del espacio de trabajo tendrán acceso de visualización al alcance dentro de sus respectivos proyectos."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Habilitando lanzamientos...",
+          "success": {
+            "title": "Lanzamientos habilitados",
+            "message": "Los lanzamientos se han habilitado para este espacio de trabajo."
+          },
+          "error": {
+            "title": "Error",
+            "message": "No se pudieron habilitar los lanzamientos. Inténtalo de nuevo."
+          }
+        },
+        "disable": {
+          "loading": "Deshabilitando lanzamientos...",
+          "success": {
+            "title": "Lanzamientos deshabilitados",
+            "message": "Los lanzamientos se han deshabilitado para este espacio de trabajo."
+          },
+          "error": {
+            "title": "Error",
+            "message": "No se pudieron deshabilitar los lanzamientos. Inténtalo de nuevo."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Tags de lanzamiento",
+        "labels": "Etiquetas"
+      },
+      "tags": {
+        "title": "Tags de lanzamiento",
+        "description": "Categoriza y filtra tus lanzamientos usando tags.",
+        "add": "Agregar tag",
+        "empty_state": "Aún no hay tags. Crea tu primer tag.",
+        "errors": {
+          "version_required": "La versión es obligatoria.",
+          "version_already_exists": "Ya existe un tag con esta versión.",
+          "generic": "Algo salió mal. Inténtalo de nuevo."
+        },
+        "delete_modal": {
+          "title": "Eliminar tag",
+          "content": "¿Seguro que quieres eliminar el tag \"{tagVersion}\"? Esta acción no se puede deshacer."
+        },
+        "actions": {
+          "edit": "Editar tag",
+          "delete": "Eliminar tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag eliminado correctamente.",
+            "error": "No se pudo eliminar el tag. Inténtalo de nuevo."
+          }
+        }
+      },
+      "labels": {
+        "title": "Etiquetas",
+        "description": "Estructura y organiza tus iniciativas con etiquetas.",
+        "add": "Agregar etiqueta",
+        "empty_state": "Aún no hay etiquetas. Crea tu primera etiqueta.",
+        "errors": {
+          "name_required": "El nombre es obligatorio.",
+          "name_already_exists": "Ya existe una etiqueta con este nombre.",
+          "generic": "Algo salió mal. Inténtalo de nuevo."
+        },
+        "modal": {
+          "name_placeholder": "Nombre de la etiqueta",
+          "pick_color": "Elige el color de la etiqueta"
+        },
+        "actions": {
+          "edit": "Editar etiqueta",
+          "delete": "Eliminar etiqueta"
+        },
+        "drag_to_reorder": "Arrastra para reordenar",
+        "delete_modal": {
+          "title": "Eliminar etiqueta",
+          "content": "¿Seguro que quieres eliminar la etiqueta \"{labelName}\"? Esta acción no se puede deshacer."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Etiqueta eliminada correctamente.",
+            "error": "No se pudo eliminar la etiqueta. Inténtalo de nuevo."
+          }
+        }
+      }
+    }
+  }
+}

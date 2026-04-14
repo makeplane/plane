@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "GitHub 저장소에서 작업 항목을 가져오고 동기화합니다."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jira 프로젝트 및 에픽에서 작업 항목과 에픽을 가져옵니다."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "작업 항목을 CSV 파일로 내보냅니다.",
+      "short_description": "CSV로 내보내기"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "작업 항목을 Excel 파일로 내보냅니다.",
+      "short_description": "Excel로 내보내기"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "작업 항목을 Excel 파일로 내보냅니다.",
+      "short_description": "Excel로 내보내기"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "작업 항목을 JSON 파일로 내보냅니다.",
+      "short_description": "JSON으로 내보내기"
+    }
+  },
+  "importers": {
+    "imports": "임포트",
+    "logo": "로고",
+    "import_message": "플레인 프로젝트로 {serviceName} 데이터를 임포트하세요.",
+    "deactivate": "비활성화",
+    "deactivating": "비활성화 중",
+    "migrating": "마이그레이팅 중",
+    "migrations": "마이그레이션",
+    "refreshing": "리프레싱 중",
+    "import": "임포트",
+    "serial_number": "시리얼 넘버",
+    "project": "프로젝트",
+    "workspace": "워크스페이스",
+    "status": "스테이터스",
+    "summary": "요약",
+    "total_batches": "전체 배치",
+    "imported_batches": "임포트된 배치",
+    "re_run": "재실행",
+    "cancel": "취소",
+    "start_time": "시작 시간",
+    "no_jobs_found": "작업을 찾을 수 없습니다",
+    "no_project_imports": "아직 {serviceName} 프로젝트를 임포트하지 않았습니다.",
+    "cancel_import_job": "임포트 작업 취소",
+    "cancel_import_job_confirmation": "이 임포트 작업을 취소하시겠습니까? 이 프로젝트에 대한 임포트 프로세스가 중지됩니다.",
+    "re_run_import_job": "임포트 작업 재실행",
+    "re_run_import_job_confirmation": "이 임포트 작업을 재실행하시겠습니까? 이 프로젝트에 대한 임포트 프로세스가 다시 시작됩니다.",
+    "upload_csv_file": "사용자 데이터를 임포트하려면 CSV 파일을 업로드하세요.",
+    "connect_importer": "{serviceName} 연결",
+    "migration_assistant": "마이그레이션 어시스턴트",
+    "migration_assistant_description": "강력한 어시스턴트로 {serviceName} 프로젝트를 플레인으로 원활하게 마이그레이션하세요.",
+    "token_helper": "다음에서 얻을 수 있습니다",
+    "personal_access_token": "퍼스널 액세스 토큰",
+    "source_token_expired": "토큰 만료됨",
+    "source_token_expired_description": "제공된 토큰이 만료되었습니다. 비활성화하고 새 자격 증명으로 다시 연결하세요.",
+    "user_email": "사용자 이메일",
+    "select_state": "스테이트 선택",
+    "select_service_project": "{serviceName} 프로젝트 선택",
+    "loading_service_projects": "{serviceName} 프로젝트 로딩 중",
+    "select_service_workspace": "{serviceName} 워크스페이스 선택",
+    "loading_service_workspaces": "{serviceName} 워크스페이스 로딩 중",
+    "select_priority": "프라이오리티 선택",
+    "select_service_team": "{serviceName} 팀 선택",
+    "add_seat_msg_free_trial": "등록되지 않은 사용자 {additionalUserCount}명을 임포트하려고 하는데 현재 플랜에서 사용 가능한 시트는 {currentWorkspaceSubscriptionAvailableSeats}개뿐입니다. 임포트를 계속하려면 지금 업그레이드하세요.",
+    "add_seat_msg_paid": "등록되지 않은 사용자 {additionalUserCount}명을 임포트하려고 하는데 현재 플랜에서 사용 가능한 시트는 {currentWorkspaceSubscriptionAvailableSeats}개뿐입니다. 임포트를 계속하려면 최소 {extraSeatRequired}개의 추가 시트를 구매하세요.",
+    "skip_user_import_title": "사용자 데이터 임포트 건너뛰기",
+    "skip_user_import_description": "사용자 임포트를 건너뛰면 {serviceName}의 작업 항목, 댓글 및 기타 데이터가 플레인에서 마이그레이션을 수행하는 사용자에 의해 생성됩니다. 나중에 수동으로 사용자를 추가할 수 있습니다.",
+    "invalid_pat": "유효하지 않은 퍼스널 액세스 토큰"
+  },
+  "jira_importer": {
+    "jira_importer_description": "지라 데이터를 플레인 프로젝트로 임포트하세요.",
+    "create_project_automatically": "프로젝트 자동 생성",
+    "create_project_automatically_description": "지라 프로젝트 세부 정보를 기반으로 새 프로젝트를 생성합니다.",
+    "import_to_existing_project": "기존 프로젝트로 가져오기",
+    "import_to_existing_project_description": "아래 드롭다운 메뉴에서 기존 프로젝트를 선택하세요.",
+    "state_mapping_automatic_creation": "모든 지라 상태가 플레인에서 자동으로 생성됩니다.",
+    "personal_access_token": "퍼스널 액세스 토큰",
+    "user_email": "사용자 이메일",
+    "atlassian_security_settings": "아틀라시안 보안 설정",
+    "email_description": "이것은 퍼스널 액세스 토큰에 연결된 이메일입니다",
+    "jira_domain": "지라 도메인",
+    "jira_domain_description": "이것은 지라 인스턴스의 도메인입니다",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "지라 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_jira": "지라 구성",
+      "description_configure_jira": "데이터를 마이그레이션하려는 지라 워크스페이스를 선택하세요.",
+      "title_import_users": "사용자 임포트",
+      "description_import_users": "지라에서 플레인으로 마이그레이션하려는 사용자를 추가하세요. 또는 이 단계를 건너뛰고 나중에 수동으로 사용자를 추가할 수 있습니다.",
+      "title_map_states": "스테이트 매핑",
+      "description_map_states": "저희는 최선을 다해 지라 상태를 플레인 스테이트에 자동으로 매칭했습니다. 진행하기 전에 남은 스테이트를 매핑하세요. 스테이트를 생성하고 수동으로 매핑할 수도 있습니다.",
+      "title_map_priorities": "프라이오리티 매핑",
+      "description_map_priorities": "저희는 최선을 다해 프라이오리티를 자동으로 매칭했습니다. 진행하기 전에 남은 프라이오리티를 매핑하세요.",
+      "title_summary": "요약",
+      "description_summary": "지라에서 플레인으로 마이그레이션될 데이터의 요약입니다.",
+      "custom_jql_filter": "사용자 지정 JQL 필터",
+      "jql_filter_description": "JQL을 사용하여 가져올 특정 이슈를 필터링합니다.",
+      "project_code": "프로젝트",
+      "enter_filters_placeholder": "필터 입력 (예: status = 'In Progress')",
+      "validating_query": "쿼리 확인 중...",
+      "validation_successful_work_items_selected": "확인 성공, {count} 개의 작업 항목 선택됨.",
+      "run_syntax_check": "구문 검사를 실행하여 쿼리 확인",
+      "refresh": "새로 고침",
+      "check_syntax": "구문 확인",
+      "no_work_items_selected": "쿼리에 의해 선택된 작업 항목이 없습니다.",
+      "validation_error_default": "쿼리를 확인하는 동안 문제가 발생했습니다."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "아사나 데이터를 플레인 프로젝트로 임포트하세요.",
+    "select_asana_priority_field": "아사나 프라이오리티 필드 선택",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "아사나 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_asana": "아사나 구성",
+      "description_configure_asana": "데이터를 마이그레이션하려는 아사나 워크스페이스와 프로젝트를 선택하세요.",
+      "title_map_states": "스테이트 매핑",
+      "description_map_states": "플레인 프로젝트 상태에 매핑하려는 아사나 스테이트를 선택하세요.",
+      "title_map_priorities": "프라이오리티 매핑",
+      "description_map_priorities": "플레인 프로젝트 프라이오리티에 매핑하려는 아사나 프라이오리티를 선택하세요.",
+      "title_summary": "요약",
+      "description_summary": "아사나에서 플레인으로 마이그레이션될 데이터의 요약입니다."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "리니어 데이터를 플레인 프로젝트로 임포트하세요.",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "리니어 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_linear": "리니어 구성",
+      "description_configure_linear": "데이터를 마이그레이션하려는 리니어 팀을 선택하세요.",
+      "title_map_states": "스테이트 매핑",
+      "description_map_states": "저희는 최선을 다해 리니어 상태를 플레인 스테이트에 자동으로 매칭했습니다. 진행하기 전에 남은 스테이트를 매핑하세요. 스테이트를 생성하고 수동으로 매핑할 수도 있습니다.",
+      "title_map_priorities": "프라이오리티 매핑",
+      "description_map_priorities": "플레인 프로젝트 프라이오리티에 매핑하려는 리니어 프라이오리티를 선택하세요.",
+      "title_summary": "요약",
+      "description_summary": "리니어에서 플레인으로 마이그레이션될 데이터의 요약입니다."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "지라 서버 데이터를 플레인 프로젝트로 임포트하세요.",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "지라 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_jira": "지라 구성",
+      "description_configure_jira": "데이터를 마이그레이션하려는 지라 워크스페이스를 선택하세요.",
+      "title_map_states": "스테이트 매핑",
+      "description_map_states": "플레인 프로젝트 상태에 매핑하려는 지라 스테이트를 선택하세요.",
+      "title_map_priorities": "프라이오리티 매핑",
+      "description_map_priorities": "플레인 프로젝트 프라이오리티에 매핑하려는 지라 프라이오리티를 선택하세요.",
+      "title_summary": "요약",
+      "description_summary": "지라에서 플레인으로 마이그레이션될 데이터의 요약입니다."
+    },
+    "import_epics": {
+      "title": "에픽을 작업 항목으로 가져오기",
+      "description": "이 옵션을 활성화하면 에픽이 에픽 작업 항목 유형을 가진 작업 항목으로 가져와집니다."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Notion 데이터를 Plane 프로젝트로 가져옵니다.",
+    "steps": {
+      "title_upload_zip": "Notion 내보낸 ZIP 업로드",
+      "description_upload_zip": "Notion 데이터가 포함된 ZIP 파일을 업로드해 주세요."
+    },
+    "upload": {
+      "drop_file_here": "Notion zip 파일을 여기에 드롭하세요",
+      "upload_title": "Notion 내보내기 업로드",
+      "upload_from_url": "URL에서 가져오기",
+      "upload_from_url_description": "계속하려면 ZIP 내보내기의 공개 URL을 붙여넣으세요.",
+      "drag_drop_description": "Notion 내보내기 zip 파일을 드래그 앤 드롭하거나 클릭해서 찾아보기",
+      "file_type_restriction": "Notion에서 내보낸 .zip 파일만 지원됩니다",
+      "select_file": "파일 선택",
+      "uploading": "업로드 중...",
+      "preparing_upload": "업로드 준비 중...",
+      "confirming_upload": "업로드 확인 중...",
+      "confirming": "확인 중...",
+      "upload_complete": "업로드 완료",
+      "upload_failed": "업로드 실패",
+      "start_import": "가져오기 시작",
+      "retry_upload": "업로드 재시도",
+      "upload": "업로드",
+      "ready": "준비완료",
+      "error": "오류",
+      "upload_complete_message": "업로드 완료!",
+      "upload_complete_description": "\"가져오기 시작\"을 클릭하여 Notion 데이터 처리를 시작하세요.",
+      "upload_progress_message": "이 창을 닫지 마세요."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Confluence 데이터를 Plane 위키로 가져옵니다.",
+    "steps": {
+      "title_upload_zip": "Confluence 내보낸 ZIP 업로드",
+      "description_upload_zip": "Confluence 데이터가 포함된 ZIP 파일을 업로드해 주세요."
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip 파일을 여기에 드롭하세요",
+      "upload_title": "Confluence 내보내기 업로드",
+      "upload_from_url": "URL에서 가져오기",
+      "upload_from_url_description": "계속하려면 ZIP 내보내기의 공개 URL을 붙여넣으세요.",
+      "drag_drop_description": "Confluence 내보내기 zip 파일을 드래그 앤 드롭하거나 클릭해서 찾아보기",
+      "file_type_restriction": "Confluence에서 내보낸 .zip 파일만 지원됩니다",
+      "select_file": "파일 선택",
+      "uploading": "업로드 중...",
+      "preparing_upload": "업로드 준비 중...",
+      "confirming_upload": "업로드 확인 중...",
+      "confirming": "확인 중...",
+      "upload_complete": "업로드 완료",
+      "upload_failed": "업로드 실패",
+      "start_import": "가져오기 시작",
+      "retry_upload": "업로드 재시도",
+      "upload": "업로드",
+      "ready": "준비완료",
+      "error": "오류",
+      "upload_complete_message": "업로드 완료!",
+      "upload_complete_description": "\"가져오기 시작\"을 클릭하여 Confluence 데이터 처리를 시작하세요.",
+      "upload_progress_message": "이 창을 닫지 마세요."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "CSV 데이터를 플레인 프로젝트로 임포트하세요.",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "CSV 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_csv": "CSV 구성",
+      "description_configure_csv": "CSV 파일을 업로드하고 플레인 필드에 매핑할 필드를 구성하세요."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "CSV 파일에서 Plane 프로젝트로 작업 항목을 가져옵니다.",
+    "steps": {
+      "title_select_project": "프로젝트 선택",
+      "description_select_project": "작업 항목을 가져올 Plane 프로젝트를 선택하십시오.",
+      "title_upload_csv": "CSV 업로드",
+      "description_upload_csv": "작업 항목이 포함된 CSV 파일을 업로드하십시오. 파일에는 이름, 설명, 우선 순위, 날짜 및 상태 그룹에 대한 열이 포함되어야 합니다."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "클릭업 데이터를 플레인 프로젝트로 임포트하세요.",
+    "select_service_space": "{serviceName} 스페이스 선택",
+    "select_service_folder": "{serviceName} 폴더 선택",
+    "selected": "선택됨",
+    "users": "사용자",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "클릭업 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_clickup": "클릭업 구성",
+      "description_configure_clickup": "데이터를 마이그레이션하려는 클릭업 팀, 스페이스 및 폴더를 선택하세요.",
+      "title_map_states": "스테이트 매핑",
+      "description_map_states": "저희는 최선을 다해 클릭업 상태를 플레인 스테이트에 자동으로 매칭했습니다. 진행하기 전에 남은 스테이트를 매핑하세요. 스테이트를 생성하고 수동으로 매핑할 수도 있습니다.",
+      "title_map_priorities": "프라이오리티 매핑",
+      "description_map_priorities": "플레인 프로젝트 프라이오리티에 매핑하려는 클릭업 프라이오리티를 선택하세요.",
+      "title_summary": "요약",
+      "description_summary": "클릭업에서 플레인으로 마이그레이션될 데이터의 요약입니다.",
+      "pull_additional_data_title": "코멘트와 첨부파일 임포트"
+    }
+  }
+}

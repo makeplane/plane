@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "Імпортуйте одиниці з репозиторіїв GitHub."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Імпортуйте одиниці та епіки з Jira."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Експортуйте одиниці у формат CSV.",
+      "short_description": "Експортувати як CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Експортуйте одиниці у формат Excel.",
+      "short_description": "Експортувати як Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Експортуйте одиниці у формат Excel.",
+      "short_description": "Експортувати як Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Експортуйте одиниці у формат JSON.",
+      "short_description": "Експортувати як JSON"
+    }
+  },
+  "importers": {
+    "imports": "Імпорти",
+    "logo": "Лого",
+    "import_message": "Імпортуйте ваші дані {serviceName} у проджекти Плейн.",
+    "deactivate": "Деактивувати",
+    "deactivating": "Деактивація",
+    "migrating": "Міграція",
+    "migrations": "Міграції",
+    "refreshing": "Оновлення",
+    "import": "Імпорт",
+    "serial_number": "Ср №",
+    "project": "Проджект",
+    "workspace": "Воркспейс",
+    "status": "Статус",
+    "summary": "Підсумок",
+    "total_batches": "Всього Батчів",
+    "imported_batches": "Імпортованих Батчів",
+    "re_run": "Перезапуск",
+    "cancel": "Скасувати",
+    "start_time": "Час Початку",
+    "no_jobs_found": "Джоби не знайдені",
+    "no_project_imports": "Ви ще не імпортували жодного проджекту {serviceName}.",
+    "cancel_import_job": "Скасувати джоб імпорту",
+    "cancel_import_job_confirmation": "Ви впевнені, що хочете скасувати цей джоб імпорту? Це зупинить процес імпорту для цього проджекту.",
+    "re_run_import_job": "Перезапустити джоб імпорту",
+    "re_run_import_job_confirmation": "Ви впевнені, що хочете перезапустити цей джоб імпорту? Це перезапустить процес імпорту для цього проджекту.",
+    "upload_csv_file": "Завантажте CSV файл для імпорту даних користувачів.",
+    "connect_importer": "Підключити {serviceName}",
+    "migration_assistant": "Міграційний Асистент",
+    "migration_assistant_description": "Безпроблемно мігруйте ваші проджекти {serviceName} до Плейн за допомогою нашого потужного асистента.",
+    "token_helper": "Ви отримаєте це з вашого",
+    "personal_access_token": "Персональний Токен Доступу",
+    "source_token_expired": "Токен Прострочено",
+    "source_token_expired_description": "Наданий токен прострочено. Будь ласка, деактивуйте та підключіться знову з новим набором креденшиалів.",
+    "user_email": "Емейл Користувача",
+    "select_state": "Виберіть Стейт",
+    "select_service_project": "Виберіть Проджект {serviceName}",
+    "loading_service_projects": "Завантаження проджектів {serviceName}",
+    "select_service_workspace": "Виберіть Воркспейс {serviceName}",
+    "loading_service_workspaces": "Завантаження Воркспейсів {serviceName}",
+    "select_priority": "Виберіть Пріоритет",
+    "select_service_team": "Виберіть Команду {serviceName}",
+    "add_seat_msg_free_trial": "Ви намагаєтеся імпортувати {additionalUserCount} незареєстрованих користувачів, і у вас є лише {currentWorkspaceSubscriptionAvailableSeats} доступних місць у поточному плані. Щоб продовжити імпорт, оновіть зараз.",
+    "add_seat_msg_paid": "Ви намагаєтеся імпортувати {additionalUserCount} незареєстрованих користувачів, і у вас є лише {currentWorkspaceSubscriptionAvailableSeats} доступних місць у поточному плані. Щоб продовжити імпорт, придбайте щонайменше {extraSeatRequired} додаткових місць.",
+    "skip_user_import_title": "Пропустити імпорт даних Користувача",
+    "skip_user_import_description": "Пропуск імпорту користувачів призведе до того, що робочі елементи, коментарі та інші дані з {serviceName} будуть створені користувачем, який виконує міграцію в Плейн. Ви все ще можете вручну додати користувачів пізніше.",
+    "invalid_pat": "Недійсний Персональний Токен Доступу"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Імпортуйте ваші дані Jira у проджекти Плейн.",
+    "personal_access_token": "Персональний Токен Доступу",
+    "user_email": "Емейл Користувача",
+    "create_project_automatically": "Створити проєкт автоматично",
+    "create_project_automatically_description": "Ми створимо для вас новий проєкт на основі даних проєкту Jira.",
+    "import_to_existing_project": "Імпортувати в існуючий проєкт",
+    "import_to_existing_project_description": "Виберіть існуючий проєкт зі спадного списку нижче.",
+    "state_mapping_automatic_creation": "Усі статуси Jira будуть автоматично створені в Plane.",
+    "atlassian_security_settings": "Налаштування Безпеки Atlassian",
+    "email_description": "Це емейл, пов'язаний з вашим персональним токеном доступу",
+    "jira_domain": "Домен Jira",
+    "jira_domain_description": "Це домен вашого інстансу Jira",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані Jira. Після створення проджекту виберіть його тут.",
+      "title_configure_jira": "Налаштувати Jira",
+      "description_configure_jira": "Будь ласка, виберіть воркспейс Jira, з якого ви хочете мігрувати ваші дані.",
+      "title_import_users": "Імпортувати Користувачів",
+      "description_import_users": "Будь ласка, додайте користувачів, яких ви бажаєте мігрувати з Jira до Плейн. Альтернативно, ви можете пропустити цей крок і додати користувачів вручну пізніше.",
+      "title_map_states": "Мапування Стейтів",
+      "description_map_states": "Ми автоматично зіставили статуси Jira зі стейтами Плейн, наскільки це було можливо. Будь ласка, зіставте всі стейти, що залишилися, перед тим як продовжити, ви також можете створити стейти та мапити їх вручну.",
+      "title_map_priorities": "Мапування Пріоритетів",
+      "description_map_priorities": "Ми автоматично зіставили пріоритети, наскільки це було можливо. Будь ласка, зіставте всі пріоритети, що залишилися, перед тим як продовжити.",
+      "title_summary": "Підсумок",
+      "description_summary": "Ось підсумок даних, які будуть мігровані з Jira до Плейн.",
+      "custom_jql_filter": "Користувацький фільтр JQL",
+      "jql_filter_description": "Використовуйте JQL для фільтрації конкретних задач для імпорту.",
+      "project_code": "ПРОЕКТ",
+      "enter_filters_placeholder": "Введіть фільтри (напр. status = 'In Progress')",
+      "validating_query": "Перевірка запиту...",
+      "validation_successful_work_items_selected": "Перевірка успішна, вибрано {count} робочих елементів.",
+      "run_syntax_check": "Запустити перевірку синтаксису для перевірки вашого запиту",
+      "refresh": "Оновити",
+      "check_syntax": "Перевірити синтаксис",
+      "no_work_items_selected": "Запит не вибрав жодного робочого елемента.",
+      "validation_error_default": "Щось пішло не так під час перевірки запиту."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Імпортуйте ваші дані Asana у проджекти Плейн.",
+    "select_asana_priority_field": "Виберіть Поле Пріоритету Asana",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані Asana. Після створення проджекту виберіть його тут.",
+      "title_configure_asana": "Налаштувати Asana",
+      "description_configure_asana": "Будь ласка, виберіть воркспейс і проджект Asana, з якого ви хочете мігрувати ваші дані.",
+      "title_map_states": "Мапування Стейтів",
+      "description_map_states": "Будь ласка, виберіть стейти Asana, які ви хочете мапити до статусів проджекту Плейн.",
+      "title_map_priorities": "Мапування Пріоритетів",
+      "description_map_priorities": "Будь ласка, виберіть пріоритети Asana, які ви хочете мапити до пріоритетів проджекту Плейн.",
+      "title_summary": "Підсумок",
+      "description_summary": "Ось підсумок даних, які будуть мігровані з Asana до Плейн."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Імпортуйте ваші дані Linear у проджекти Плейн.",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані Linear. Після створення проджекту виберіть його тут.",
+      "title_configure_linear": "Налаштувати Linear",
+      "description_configure_linear": "Будь ласка, виберіть команду Linear, з якої ви хочете мігрувати ваші дані.",
+      "title_map_states": "Мапування Стейтів",
+      "description_map_states": "Ми автоматично зіставили статуси Linear зі стейтами Плейн, наскільки це було можливо. Будь ласка, зіставте всі стейти, що залишилися, перед тим як продовжити, ви також можете створити стейти та мапити їх вручну.",
+      "title_map_priorities": "Мапування Пріоритетів",
+      "description_map_priorities": "Будь ласка, виберіть пріоритети Linear, які ви хочете мапити до пріоритетів проджекту Плейн.",
+      "title_summary": "Підсумок",
+      "description_summary": "Ось підсумок даних, які будуть мігровані з Linear до Плейн."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Імпортуйте ваші дані Jira Server/Data Center у проджекти Плейн.",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані Jira. Після створення проджекту виберіть його тут.",
+      "title_configure_jira": "Налаштувати Jira",
+      "description_configure_jira": "Будь ласка, виберіть воркспейс Jira, з якого ви хочете мігрувати ваші дані.",
+      "title_map_states": "Мапування Стейтів",
+      "description_map_states": "Будь ласка, виберіть стейти Jira, які ви хочете мапити до статусів проджекту Плейн.",
+      "title_map_priorities": "Мапування Пріоритетів",
+      "description_map_priorities": "Будь ласка, виберіть пріоритети Jira, які ви хочете мапити до пріоритетів проджекту Плейн.",
+      "title_summary": "Підсумок",
+      "description_summary": "Ось підсумок даних, які будуть мігровані з Jira до Плейн."
+    },
+    "import_epics": {
+      "title": "Імпортувати епіки як робочі елементи",
+      "description": "Якщо цей параметр увімкнено, ваші епіки будуть імпортовані як робочі елементи з типом робочого елемента 'епік'."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Імпортуйте ваші дані Notion у проекти Plane.",
+    "steps": {
+      "title_upload_zip": "Завантажити експортований ZIP з Notion",
+      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Notion."
+    },
+    "upload": {
+      "drop_file_here": "Перетягніть ваш zip файл Notion сюди",
+      "upload_title": "Завантажити експорт Notion",
+      "upload_from_url": "Імпортувати за URL-адресою",
+      "upload_from_url_description": "Вставте публічну URL-адресу вашого ZIP-експорту, щоб продовжити.",
+      "drag_drop_description": "Перетягніть ваш zip файл експорту Notion або натисніть для перегляду",
+      "file_type_restriction": "Підтримуються лише .zip файли, експортовані з Notion",
+      "select_file": "Вибрати файл",
+      "uploading": "Завантаження...",
+      "preparing_upload": "Підготовка завантаження...",
+      "confirming_upload": "Підтвердження завантаження...",
+      "confirming": "Підтвердження...",
+      "upload_complete": "Завантаження завершено",
+      "upload_failed": "Завантаження не вдалося",
+      "start_import": "Почати імпорт",
+      "retry_upload": "Повторити завантаження",
+      "upload": "Завантажити",
+      "ready": "Готово",
+      "error": "Помилка",
+      "upload_complete_message": "Завантаження завершено!",
+      "upload_complete_description": "Натисніть \"Почати імпорт\", щоб розпочати обробку ваших даних Notion.",
+      "upload_progress_message": "Будь ласка, не закривайте це вікно."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Імпортуйте ваші дані Confluence у вікі Plane.",
+    "steps": {
+      "title_upload_zip": "Завантажити експортований ZIP з Confluence",
+      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Перетягніть ваш zip файл Confluence сюди",
+      "upload_title": "Завантажити експорт Confluence",
+      "upload_from_url": "Імпортувати за URL-адресою",
+      "upload_from_url_description": "Вставте публічну URL-адресу вашого ZIP-експорту, щоб продовжити.",
+      "drag_drop_description": "Перетягніть ваш zip файл експорту Confluence або натисніть для перегляду",
+      "file_type_restriction": "Підтримуються лише .zip файли, експортовані з Confluence",
+      "select_file": "Вибрати файл",
+      "uploading": "Завантаження...",
+      "preparing_upload": "Підготовка завантаження...",
+      "confirming_upload": "Підтвердження завантаження...",
+      "confirming": "Підтвердження...",
+      "upload_complete": "Завантаження завершено",
+      "upload_failed": "Завантаження не вдалося",
+      "start_import": "Почати імпорт",
+      "retry_upload": "Повторити завантаження",
+      "upload": "Завантажити",
+      "ready": "Готово",
+      "error": "Помилка",
+      "upload_complete_message": "Завантаження завершено!",
+      "upload_complete_description": "Натисніть \"Почати імпорт\", щоб розпочати обробку ваших даних Confluence.",
+      "upload_progress_message": "Будь ласка, не закривайте це вікно."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Імпортуйте ваші дані CSV у проджекти Плейн.",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані CSV. Після створення проджекту виберіть його тут.",
+      "title_configure_csv": "Налаштувати CSV",
+      "description_configure_csv": "Будь ласка, завантажте ваш CSV файл і налаштуйте поля, які будуть мапитися до полів Плейн."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "Імпортуйте робочі елементи з файлів CSV у проекти Plane.",
+    "steps": {
+      "title_select_project": "Вибрати проект",
+      "description_select_project": "Будь ласка, виберіть проект Plane, куди ви хочете імпортувати ваші робочі елементи.",
+      "title_upload_csv": "Завантажити CSV",
+      "description_upload_csv": "Завантажте свій CSV-файл, що містить робочі елементи. Файл повинен включати стовпці для назви, опису, пріоритету, дат та групи станів."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Імпортуйте ваші дані ClickUp у проджекти Плейн.",
+    "select_service_space": "Виберіть {serviceName} Простір",
+    "select_service_folder": "Виберіть {serviceName} Папку",
+    "selected": "Вибрано",
+    "users": "Користувачі",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані ClickUp. Після створення проджекту виберіть його тут.",
+      "title_configure_clickup": "Налаштувати ClickUp",
+      "description_configure_clickup": "Будь ласка, виберіть команду ClickUp, простір і папку, з якої ви хочете мігрувати ваші дані.",
+      "title_map_states": "Мапування Стейтів",
+      "description_map_states": "Ми автоматично зіставили статуси ClickUp зі стейтами Плейн, наскільки це було можливо. Будь ласка, зіставте всі стейти, що залишилися, перед тим як продовжити, ви також можете створити стейти та мапити їх вручну.",
+      "title_map_priorities": "Мапування Пріоритетів",
+      "description_map_priorities": "Будь ласка, виберіть пріоритети ClickUp, які ви хочете мапити до пріоритетів проджекту Плейн.",
+      "title_summary": "Підсумок",
+      "description_summary": "Ось підсумок даних, які будуть мігровані з ClickUp до Плейн.",
+      "pull_additional_data_title": "Імпортувати коментарі та прикріплення"
+    }
+  }
+}

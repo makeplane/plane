@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Không gian nhóm",
+    "empty_state": {
+      "general": {
+        "title": "Không gian nhóm mở khóa tổ chức và theo dõi tốt hơn trong Plane.",
+        "description": "Tạo một bề mặt dành riêng cho mỗi nhóm trong thực tế, tách biệt với tất cả các bề mặt làm việc khác trong Plane, và tùy chỉnh chúng để phù hợp với cách nhóm của bạn làm việc.",
+        "primary_button": {
+          "text": "Tạo không gian nhóm mới"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Bạn chưa liên kết bất kỳ không gian nhóm nào.",
+          "description": "Chủ sở hữu không gian nhóm và dự án có thể quản lý quyền truy cập vào các dự án."
+        }
+      },
+      "primary_button": {
+        "text": "Liên kết không gian nhóm"
+      },
+      "secondary_button": {
+        "text": "Tìm hiểu thêm"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Tên không gian nhóm",
+          "members": "Thành viên",
+          "accountType": "Loại tài khoản"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Xóa không gian nhóm"
+            },
+            "confirm": {
+              "title": "Xóa {teamspaceName} khỏi {projectName}",
+              "description": "Khi bạn xóa không gian nhóm này khỏi dự án liên kết, các thành viên ở đây sẽ mất quyền truy cập vào dự án liên kết."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Không tìm thấy không gian nhóm phù hợp"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bạn đã liên kết một không gian nhóm với dự án này.} other {Bạn đã liên kết # không gian nhóm với dự án này.}}",
+            "description": "{additionalCount, plural, =0 {Không gian nhóm {firstTeamspaceName} hiện đã được liên kết với dự án này.} other {Không gian nhóm {firstTeamspaceName} và {additionalCount} không gian khác hiện đã được liên kết với dự án này.}}"
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bạn đã xóa không gian nhóm đó khỏi dự án này.",
+            "description": "Không gian nhóm {teamspaceName} đã được xóa khỏi {projectName}."
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Tìm kiếm không gian nhóm",
+        "info": {
+          "title": "Thêm không gian nhóm cấp cho tất cả thành viên không gian nhóm quyền truy cập vào dự án này.",
+          "link": "Tìm hiểu thêm"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bạn không có không gian nhóm nào để liên kết.",
+            "description": "Hoặc bạn không ở trong không gian nhóm mà bạn có thể liên kết hoặc bạn đã liên kết tất cả các không gian nhóm có sẵn."
+          },
+          "no_results": {
+            "title": "Điều đó không khớp với bất kỳ không gian nhóm nào của bạn.",
+            "description": "Hãy thử một thuật ngữ khác hoặc đảm bảo bạn có không gian nhóm để liên kết."
+          }
+        },
+        "primary_button": {
+          "text": "Liên kết không gian nhóm đã chọn"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Tạo mục công việc cụ thể cho nhóm.",
+        "description": "Các mục công việc được gán cho thành viên của nhóm này trong bất kỳ dự án liên kết nào sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một số mục công việc ở đây, hãy đảm bảo dự án liên kết của bạn có mục công việc được gán cho thành viên của nhóm này hoặc tạo mục công việc.",
+        "primary_button": {
+          "text": "Thêm mục công việc vào dự án liên kết"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Không có mục công việc cụ thể cho nhóm nào cho các bộ lọc đã áp dụng",
+        "description": "Thay đổi một số bộ lọc đó hoặc xóa tất cả để xem các mục công việc liên quan đến không gian này.",
+        "secondary_button": {
+          "text": "Xóa tất cả bộ lọc"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Không có dự án liên kết nào của bạn có chu kỳ đang hoạt động.",
+        "description": "Các chu kỳ đang hoạt động trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một chu kỳ đang hoạt động, hãy đảm bảo nó đang chạy trong một dự án liên kết ngay bây giờ."
+      },
+      "completed": {
+        "title": "Không có dự án liên kết nào của bạn có chu kỳ đã hoàn thành.",
+        "description": "Các chu kỳ đã hoàn thành trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một chu kỳ đã hoàn thành, hãy đảm bảo nó cũng đã hoàn thành trong một dự án liên kết."
+      },
+      "upcoming": {
+        "title": "Không có dự án liên kết nào của bạn có chu kỳ sắp tới.",
+        "description": "Các chu kỳ sắp tới trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một chu kỳ sắp tới, hãy đảm bảo nó cũng có trong một dự án liên kết."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Góc nhìn của nhóm bạn về công việc của bạn mà không làm gián đoạn bất kỳ góc nhìn nào khác trong workspace của bạn",
+        "description": "Xem công việc của nhóm bạn trong các góc nhìn được lưu chỉ dành cho nhóm của bạn và tách biệt với góc nhìn của dự án.",
+        "primary_button": {
+          "text": "Tạo một góc nhìn"
+        }
+      },
+      "filter": {
+        "title": "Không có góc nhìn phù hợp",
+        "description": "Không có góc nhìn nào phù hợp với tiêu chí tìm kiếm.\n Tạo góc nhìn mới thay thế."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Lưu trữ kiến thức của nhóm bạn trong Trang Nhóm.",
+        "description": "Không giống như các trang trong một dự án, bạn có thể lưu kiến thức cụ thể cho một nhóm trong một bộ trang riêng biệt ở đây. Nhận tất cả các tính năng của Trang, tạo tài liệu thực hành tốt nhất và wiki nhóm một cách dễ dàng.",
+        "primary_button": {
+          "text": "Tạo trang nhóm đầu tiên của bạn"
+        }
+      },
+      "filter": {
+        "title": "Không có trang phù hợp",
+        "description": "Loại bỏ bộ lọc để xem tất cả các trang"
+      },
+      "search": {
+        "title": "Không có trang phù hợp",
+        "description": "Loại bỏ tiêu chí tìm kiếm để xem tất cả các trang"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Không có dự án liên kết nào của bạn có mục công việc đã xuất bản.",
+        "description": "Tạo một số mục công việc trong một hoặc nhiều dự án đó để xem tiến độ theo ngày, trạng thái và ưu tiên."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Bạn không có bất kỳ mục công việc nào đang chặn một đồng đội.",
+          "description": "Làm tốt lắm! Bạn đã dọn đường cho nhóm của mình. Bạn là một người chơi đồng đội tốt."
+        },
+        "blocked": {
+          "title": "Bạn không có bất kỳ mục công việc nào của đồng đội đang chặn bạn.",
+          "description": "Tin tốt! Bạn có thể tiến triển trong tất cả các mục công việc được gán cho bạn."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Không có dự án liên kết nào của bạn có mục công việc đã xuất bản.",
+          "description": "Tạo một số mục công việc trong một hoặc nhiều dự án đó để xem phân phối công việc theo dự án và thành viên nhóm."
+        },
+        "filter": {
+          "title": "Không có thống kê nhóm nào cho các bộ lọc đã áp dụng.",
+          "description": "Tạo một số mục công việc trong một hoặc nhiều dự án đó để xem phân phối công việc theo dự án và thành viên nhóm."
+        }
+      }
+    }
+  }
+}

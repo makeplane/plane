@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Tạo mục công việc",
+      "sub-title": "Cho nhóm biết bạn muốn họ làm việc về điều gì.",
+      "name": "Tên",
+      "email": "Email",
+      "about": "Mục công việc này là về gì?",
+      "description": "Mô tả điều nên xảy ra",
+      "description_placeholder": "Thêm càng nhiều chi tiết càng tốt để giúp nhóm nắm tình huống và nhu cầu của bạn.",
+      "loading": "Đang tạo",
+      "create_work_item": "Tạo mục công việc",
+      "errors": {
+        "name": "Tên là bắt buộc",
+        "name_max_length": "Tên phải ít hơn 255 ký tự",
+        "email": "Email là bắt buộc",
+        "email_invalid": "Địa chỉ email không hợp lệ",
+        "title": "Tiêu đề là bắt buộc",
+        "title_max_length": "Tiêu đề phải ít hơn 255 ký tự"
+      }
+    },
+    "success": {
+      "title": "Mục công việc của bạn đã vào hàng đợi của nhóm.",
+      "description": "Nhóm giờ có thể phê duyệt hoặc loại bỏ mục công việc này khỏi hàng đợi tiếp nhận.",
+      "primary_button": {
+        "text": "Thêm mục công việc khác"
+      },
+      "secondary_button": {
+        "text": "Tìm hiểu thêm về Tiếp nhận"
+      }
+    },
+    "how_it_works": {
+      "title": "Cách hoạt động?",
+      "heading": "Đây là biểu mẫu Tiếp nhận.",
+      "description": "Tiếp nhận là tính năng Plane cho phép quản trị viên và quản lý dự án nhận mục công việc từ bên ngoài vào dự án.",
+      "steps": {
+        "step_1": "Biểu mẫu ngắn này cho phép bạn tạo mục công việc mới trong dự án Plane.",
+        "step_2": "Khi bạn gửi biểu mẫu này, một mục công việc mới sẽ được tạo trong Tiếp nhận của dự án đó.",
+        "step_3": "Ai đó từ dự án hoặc nhóm sẽ xem xét.",
+        "step_4": "Nếu họ phê duyệt, mục công việc sẽ chuyển vào hàng đợi công việc của dự án. Nếu không sẽ bị từ chối.",
+        "step_5": "Để kiểm tra trạng thái mục công việc đó, hãy liên hệ quản lý dự án, quản trị viên hoặc người gửi cho bạn liên kết trang này."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Chọn loại mục công việc",
+        "search_placeholder": "Tìm loại mục công việc"
+      },
+      "actions": {
+        "select_properties": "Chọn thuộc tính"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Ghi chú của bạn",
+    "placeholder": "Nhấp vào đây để nhập",
+    "all": "Tất cả ghi chú",
+    "no-data": "Ghi lại một ý tưởng, nắm bắt một cảm hứng, hoặc ghi lại một suy nghĩ chợt nảy ra. Thêm ghi chú để bắt đầu.",
+    "add": "Thêm ghi chú",
+    "search_placeholder": "Tìm kiếm theo tiêu đề",
+    "delete": "Xóa ghi chú",
+    "delete_confirmation": "Bạn có chắc chắn muốn xóa ghi chú này không?",
+    "empty_state": {
+      "simple": "Ghi lại một ý tưởng, nắm bắt một cảm hứng, hoặc ghi lại một suy nghĩ chợt nảy ra. Thêm ghi chú để bắt đầu.",
+      "general": {
+        "title": "Ghi chú là ghi chú nhanh và việc cần làm mà bạn ghi lại ngay lập tức.",
+        "description": "Dễ dàng nắm bắt ý tưởng và sáng tạo của bạn bằng cách tạo ghi chú có thể truy cập từ mọi nơi, mọi lúc.",
+        "primary_button": {
+          "text": "Thêm ghi chú"
+        }
+      },
+      "search": {
+        "title": "Điều này không khớp với bất kỳ ghi chú nào của bạn.",
+        "description": "Thử sử dụng các thuật ngữ khác, hoặc nếu bạn chắc chắn\ntìm kiếm là chính xác, hãy cho chúng tôi biết.",
+        "primary_button": {
+          "text": "Thêm ghi chú"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Tên ghi chú không thể vượt quá 100 ký tự.",
+        "already_exists": "Đã tồn tại một ghi chú không có mô tả"
+      },
+      "created": {
+        "title": "Đã tạo ghi chú",
+        "message": "Ghi chú đã được tạo thành công"
+      },
+      "not_created": {
+        "title": "Chưa tạo ghi chú",
+        "message": "Không thể tạo ghi chú"
+      },
+      "updated": {
+        "title": "Đã cập nhật ghi chú",
+        "message": "Ghi chú đã được cập nhật thành công"
+      },
+      "not_updated": {
+        "title": "Chưa cập nhật ghi chú",
+        "message": "Không thể cập nhật ghi chú"
+      },
+      "removed": {
+        "title": "Đã xóa ghi chú",
+        "message": "Ghi chú đã được xóa thành công"
+      },
+      "not_removed": {
+        "title": "Chưa xóa ghi chú",
+        "message": "Không thể xóa ghi chú"
+      }
+    }
+  }
+}

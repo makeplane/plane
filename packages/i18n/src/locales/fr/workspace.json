@@ -1,0 +1,379 @@
+{
+  "workspace_creation": {
+    "heading": "Créez votre espace de travail",
+    "subheading": "Pour commencer à utiliser Plane, vous devez créer ou rejoindre un espace de travail.",
+    "form": {
+      "name": {
+        "label": "Nommez votre espace de travail",
+        "placeholder": "Quelque chose de familier et reconnaissable est toujours préférable."
+      },
+      "url": {
+        "label": "Définissez l’URL de votre espace de travail",
+        "placeholder": "Tapez ou collez une URL",
+        "edit_slug": "Vous ne pouvez modifier que le slug de l’URL"
+      },
+      "organization_size": {
+        "label": "Combien de personnes utiliseront cet espace de travail ?",
+        "placeholder": "Sélectionnez une plage"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Seul l’administrateur de votre instance peut créer des espaces de travail",
+        "description": "Si vous connaissez l’adresse e-mail de votre administrateur d’instance, cliquez sur le bouton ci-dessous pour le contacter.",
+        "request_button": "Contacter l’administrateur d’instance"
+      },
+      "validation": {
+        "name_alphanumeric": "Les noms d’espaces de travail ne peuvent contenir que (' '), ('-'), ('_') et des caractères alphanumériques.",
+        "name_length": "Limitez votre nom à 80 caractères.",
+        "url_alphanumeric": "Les URL ne peuvent contenir que ('-') et des caractères alphanumériques.",
+        "url_length": "Limitez votre URL à 48 caractères.",
+        "url_already_taken": "L’URL de l’espace de travail est déjà prise !"
+      }
+    },
+    "request_email": {
+      "subject": "Demande d’un nouvel espace de travail",
+      "body": "Bonjour administrateur(s) d’instance,\n\nVeuillez créer un nouvel espace de travail avec l’URL [/workspace-name] pour [objectif de création de l'espace de travail].\n\nMerci,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Créer l’espace de travail",
+      "loading": "Création de l’espace de travail"
+    },
+    "toast": {
+      "success": {
+        "title": "Succès",
+        "message": "Espace de travail créé avec succès"
+      },
+      "error": {
+        "title": "Erreur",
+        "message": "L’espace de travail n’a pas pu être créé. Veuillez réessayer."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Aperçu de vos projets, activités et métriques",
+        "description": "Bienvenue sur Plane, nous sommes ravis de vous avoir parmi nous. Créez votre premier projet et suivez vos éléments de travail, et cette page se transformera en un espace qui vous aide à progresser. Les administrateurs verront également les éléments qui aident leur équipe à progresser.",
+        "primary_button": {
+          "text": "Construisez votre premier projet",
+          "comic": {
+            "title": "Tout commence par un projet dans Plane",
+            "description": "Un projet peut être la feuille de route d’un produit, une campagne marketing ou le lancement d’une nouvelle voiture."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analytique",
+    "page_label": "{workspace} - Analytique",
+    "open_tasks": "Total des tâches ouvertes",
+    "error": "Une erreur s’est produite lors de la récupération des données.",
+    "work_items_closed_in": "Éléments de travail fermés dans",
+    "selected_projects": "Projets sélectionnés",
+    "total_members": "Total des membres",
+    "total_cycles": "Total des Cycles",
+    "total_modules": "Total des Modules",
+    "pending_work_items": {
+      "title": "Éléments de travail en attente",
+      "empty_state": "L’analyse des éléments de travail en attente par acteur apparaît ici."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Éléments de travail fermés dans l’année",
+      "empty_state": "Fermez des éléments de travail pour voir leur analyse sous forme de graphique."
+    },
+    "most_work_items_created": {
+      "title": "Plus d’éléments de travail créés",
+      "empty_state": "Les acteurs et le nombre d’éléments de travail créés par eux apparaissent ici."
+    },
+    "most_work_items_closed": {
+      "title": "Plus d’éléments de travail fermés",
+      "empty_state": "Les acteurs et le nombre d’éléments de travail fermés par eux apparaissent ici."
+    },
+    "tabs": {
+      "scope_and_demand": "Scope et Demande",
+      "custom": "Analytique Personnalisée"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s’afficheront ici.",
+        "title": "Pas encore de données"
+      },
+      "created_vs_resolved": {
+        "description": "Les éléments de travail créés et résolus au fil du temps s’afficheront ici.",
+        "title": "Pas encore de données"
+      },
+      "project_insights": {
+        "title": "Pas encore de données",
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s’afficheront ici."
+      },
+      "general": {
+        "title": "Suivez les progrès, les charges de travail et les affectations. Identifiez les tendances, levez les blocages et travaillez plus rapidement",
+        "description": "Surveillez le scope par rapport à la demande, suivez les estimations et les éventuels glissements de périmètre. Assurez-vous que les membres de votre équipe et vos équipes sont performants, et veillez à ce que votre projet avance dans les délais impartis.",
+        "primary_button": {
+          "text": "Commencez votre premier projet",
+          "comic": {
+            "title": "L’analytics fonctionne mieux avec les Cycles + Modules",
+            "description": "D’abord, encadrez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments qui s’étendent sur plus d’un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Pas encore de données",
+        "description": "Les analyses de progression du cycle apparaîtront ici. Ajoutez des éléments de travail aux cycles pour commencer à suivre la progression."
+      },
+      "module_progress": {
+        "title": "Pas encore de données",
+        "description": "Les analyses de progression du module apparaîtront ici. Ajoutez des éléments de travail aux modules pour commencer à suivre la progression."
+      },
+      "intake_trends": {
+        "title": "Pas encore de données",
+        "description": "Les analyses des tendances d'entrée apparaîtront ici. Ajoutez des éléments de travail à l'entrée pour commencer à suivre les tendances."
+      }
+    },
+    "created_vs_resolved": "Créé vs Résolu",
+    "customized_insights": "Informations personnalisées",
+    "backlog_work_items": "{entity} en backlog",
+    "active_projects": "Projets actifs",
+    "trend_on_charts": "Tendance sur les graphiques",
+    "all_projects": "Tous les projets",
+    "summary_of_projects": "Résumé des projets",
+    "project_insights": "Aperçus du projet",
+    "started_work_items": "{entity} commencés",
+    "total_work_items": "Total des {entity}",
+    "total_projects": "Total des projets",
+    "total_admins": "Total des administrateurs",
+    "total_users": "Nombre total d’utilisateurs",
+    "total_intake": "Revenu total",
+    "un_started_work_items": "{entity} non commencés",
+    "total_guests": "Nombre total d’invités",
+    "completed_work_items": "{entity} terminés",
+    "total": "Total des {entity}",
+    "projects_by_status": "Projets par statut",
+    "active_users": "Utilisateurs actifs",
+    "intake_trends": "Tendances des admissions",
+    "workitem_resolved_vs_pending": "Éléments de travail résolus vs en attente",
+    "upgrade_to_plan": "Passez à {plan} pour débloquer {tab}"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Projet} other {Projets}}",
+    "create": {
+      "label": "Ajouter un Projet"
+    },
+    "network": {
+      "private": {
+        "title": "Privé",
+        "description": "Accessible uniquement sur invitation"
+      },
+      "public": {
+        "title": "Public",
+        "description": "Accessible à tous dans l’espace de travail, sauf les invités"
+      }
+    },
+    "error": {
+      "permission": "Vous n’avez pas la permission d’effectuer cette action.",
+      "cycle_delete": "Échec de la suppression du cycle",
+      "module_delete": "Échec de la suppression du module",
+      "issue_delete": "Échec de la suppression de l’élément de travail"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Non commencé",
+      "started": "Commencé",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "sort": {
+      "manual": "Manuel",
+      "name": "Nom",
+      "created_at": "Date de création",
+      "members_length": "Nombre de membres"
+    },
+    "scope": {
+      "my_projects": "Mes projets",
+      "archived_projects": "Archivés"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# mois} other{# mois}}",
+      "days_count": "{days, plural, one{# jour} other{# jours}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Aucun projet actif",
+        "description": "Considérez chaque projet comme le parent d’activités axées sur les objectifs. Les projets regroupent les tâches, les cycles et les modules et, avec l'aide de vos collègues, vous aident à atteindre ces objectifs. Créez un nouveau projet ou filtrez les projets archivés.",
+        "primary_button": {
+          "text": "Commencez votre premier projet",
+          "comic": {
+            "title": "Tout commence par un projet dans Plane",
+            "description": "Un projet peut être la feuille de route d’un produit, une campagne marketing ou le lancement d’une nouvelle voiture."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Aucun projet",
+        "description": "Pour créer des éléments de travail ou gérer votre travail, vous devez créer un projet ou faire partie d’un projet.",
+        "primary_button": {
+          "text": "Commencez votre premier projet",
+          "comic": {
+            "title": "Tout commence par un projet dans Plane",
+            "description": "Un projet peut être la feuille de route d’un produit, une campagne marketing ou le lancement d’une nouvelle voiture."
+          }
+        }
+      },
+      "filter": {
+        "title": "Aucun projet correspondant",
+        "description": "Aucun projet détecté avec les critères correspondants.\n Créez plutôt un nouveau projet."
+      },
+      "search": {
+        "description": "Aucun projet détecté avec les critères correspondants.\nCréez plutôt un nouveau projet"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Ajouter une vue",
+    "empty_state": {
+      "all-issues": {
+        "title": "Aucun élément de travail dans le projet",
+        "description": "Premier projet terminé ! Maintenant, découpez votre travail en tâches gérables à l’aide d’éléments de travail. C’est parti !",
+        "primary_button": {
+          "text": "Créer un nouvel élément de travail"
+        }
+      },
+      "assigned": {
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Les éléments de travail qui vous sont assignés peuvent être suivis ici.",
+        "primary_button": {
+          "text": "Créer un nouvel élément de travail"
+        }
+      },
+      "created": {
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Tous les éléments de travail que vous créez arrivent ici, suivez-les directement ici.",
+        "primary_button": {
+          "text": "Créer un nouvel élément de travail"
+        }
+      },
+      "subscribed": {
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Abonnez-vous aux éléments de travail qui vous intéressent, suivez-les tous ici."
+      },
+      "custom-view": {
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Les éléments de travail qui correspondent aux filtres, suivez-les tous ici."
+      }
+    },
+    "delete_view": {
+      "title": "Êtes-vous sûr de vouloir supprimer cette vue ?",
+      "content": "Si vous confirmez, toutes les options de tri, de filtrage et d’affichage et la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Créer un brouillon d’élément de travail",
+    "empty_state": {
+      "title": "Les éléments de travail partiellement rédigés, et bientôt les commentaires, apparaîtront ici.",
+      "description": "Pour essayer, commencez à ajouter un élément de travail et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",
+      "primary_button": {
+        "text": "Créez votre premier brouillon"
+      }
+    },
+    "delete_modal": {
+      "title": "Supprimer le brouillon",
+      "description": "Êtes-vous sûr de vouloir supprimer ce brouillon ? Cette action ne peut pas être annulée."
+    },
+    "toasts": {
+      "created": {
+        "success": "Brouillon créé",
+        "error": "L’élément de travail n’a pas pu être créé. Veuillez réessayer."
+      },
+      "deleted": {
+        "success": "Brouillon supprimé"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Écrivez une note, un document ou une base de connaissances complète. Obtenez l'aide de Galileo, l'assistant IA de Plane, pour commencer",
+        "description": "Les Pages sont des espaces de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, disposez-les à l'aide d'une bibliothèque de composants et gardez-les tous dans le contexte de votre projet. Pour faciliter la rédaction de tout document, invoquez Galileo, l'IA de Plane, avec un raccourci ou un clic sur un bouton.",
+        "primary_button": {
+          "text": "Créez votre première Page"
+        }
+      },
+      "private": {
+        "title": "Pas encore de Pages privées",
+        "description": "Gardez vos pensées privées ici. Quand vous serez prêt à partager, l'équipe n'est qu'à un clic.",
+        "primary_button": {
+          "text": "Créez votre première Page"
+        }
+      },
+      "public": {
+        "title": "Pas encore de Pages d'espace de travail",
+        "description": "Voyez les Pages partagées avec tout le monde dans votre espace de travail ici même.",
+        "primary_button": {
+          "text": "Créez votre première Page"
+        }
+      },
+      "archived": {
+        "title": "Pas encore de Pages archivées",
+        "description": "Archivez les Pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Aucun Cycle actif",
+        "description": "Les Cycles de vos projets qui incluent une période englobant la date d'aujourd'hui dans leur intervalle. Trouvez ici la progression et les détails de tous vos Cycles actifs."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Importer des membres depuis un CSV",
+      "description": "Téléchargez un CSV avec les colonnes : Email, Display Name, First Name, Last Name, Role (5, 15 ou 20)",
+      "dropzone": {
+        "active": "Déposez le fichier CSV ici",
+        "inactive": "Glissez-déposez ou cliquez pour télécharger",
+        "file_type": "Seuls les fichiers .csv sont pris en charge"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "import": "Importer",
+        "try_again": "Réessayer",
+        "close": "Fermer",
+        "done": "Terminé"
+      },
+      "progress": {
+        "uploading": "Téléchargement...",
+        "importing": "Importation..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Échec de l'importation",
+          "complete": "Importation terminée"
+        },
+        "message": {
+          "seat_limit": "Impossible d'importer les membres en raison de restrictions de places.",
+          "success": "{count} membre{plural} ajouté{plural} avec succès à l'espace de travail.",
+          "no_imports": "Aucun membre n'a été importé depuis le fichier CSV."
+        },
+        "stats": {
+          "successful": "Réussi",
+          "failed": "Échoué"
+        },
+        "download_errors": "Télécharger les erreurs"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Fichier invalide",
+          "message": "Seuls les fichiers CSV sont pris en charge."
+        },
+        "import_failed": {
+          "title": "Échec de l'importation",
+          "message": "Une erreur s'est produite."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "module": {
+    "label": "{count, plural, one {mô-đun} other {mô-đun}}",
+    "no_module": "Không có mô-đun"
+  }
+}

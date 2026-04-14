@@ -1,0 +1,380 @@
+{
+  "workspace_creation": {
+    "heading": "Çalışma Alanınızı Oluşturun",
+    "subheading": "Plane'i kullanmaya başlamak için bir çalışma alanı oluşturmalı veya katılmalısınız.",
+    "form": {
+      "name": {
+        "label": "Çalışma Alanınıza Ad Verin",
+        "placeholder": "Tanıdık ve tanınabilir bir şey her zaman iyidir."
+      },
+      "url": {
+        "label": "Çalışma Alanı URL'nizi Belirleyin",
+        "placeholder": "URL yazın veya yapıştırın",
+        "edit_slug": "Yalnızca URL'nin kısa adını düzenleyebilirsiniz"
+      },
+      "organization_size": {
+        "label": "Bu çalışma alanını kaç kişi kullanacak?",
+        "placeholder": "Bir aralık seçin"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Yalnızca örnek yöneticiniz çalışma alanları oluşturabilir",
+        "description": "Örnek yöneticinizin e-posta adresini biliyorsanız, iletişime geçmek için aşağıdaki düğmeye tıklayın.",
+        "request_button": "Örnek yönetici iste"
+      },
+      "validation": {
+        "name_alphanumeric": "Çalışma alanı adları yalnızca (' '), ('-'), ('_') ve alfasayısal karakterler içerebilir.",
+        "name_length": "Adınızı 80 karakterle sınırlayın.",
+        "url_alphanumeric": "URL'ler yalnızca ('-') ve alfasayısal karakterler içerebilir.",
+        "url_length": "URL'nizi 48 karakterle sınırlayın.",
+        "url_already_taken": "Çalışma alanı URL'si zaten alınmış!"
+      }
+    },
+    "request_email": {
+      "subject": "Yeni çalışma alanı isteği",
+      "body": "Merhaba örnek yönetici(ler),\n\nLütfen [çalışma-alanı-adı] URL'si ile [çalışma alanı oluşturma amacı] için yeni bir çalışma alanı oluşturun.\n\nTeşekkürler,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Çalışma alanı oluştur",
+      "loading": "Çalışma alanı oluşturuluyor"
+    },
+    "toast": {
+      "success": {
+        "title": "Başarılı",
+        "message": "Çalışma alanı başarıyla oluşturuldu"
+      },
+      "error": {
+        "title": "Hata",
+        "message": "Çalışma alanı oluşturulamadı. Lütfen tekrar deneyin."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Projelerinizin, aktivitenizin ve metriklerinizin genel görünümü",
+        "description": "Plane'e hoş geldiniz, sizi aramızda görmekten heyecan duyuyoruz. İlk projenizi oluşturun ve iş öğelerinizi takip edin, bu sayfa ilerlemenize yardımcı olacak bir alana dönüşecek. Yöneticiler ayrıca ekiplerinin ilerlemesine yardımcı olacak öğeler görecek.",
+        "primary_button": {
+          "text": "İlk projenizi oluşturun",
+          "comic": {
+            "title": "Plane'de her şey bir projeyle başlar",
+            "description": "Bir proje, bir ürünün yol haritası, bir pazarlama kampanyası veya yeni bir araba lansmanı olabilir."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analitik",
+    "page_label": "{workspace} - Analitik",
+    "open_tasks": "Toplam açık görev",
+    "error": "Veri alınırken bir hata oluştu.",
+    "work_items_closed_in": "Kapanan iş öğeleri",
+    "selected_projects": "Seçilen projeler",
+    "total_members": "Toplam üye",
+    "total_cycles": "Toplam döngü",
+    "total_modules": "Toplam modül",
+    "pending_work_items": {
+      "title": "Bekleyen iş öğeleri",
+      "empty_state": "Ekip arkadaşlarınız tarafından bekleyen iş öğelerinin analizi burada görünür."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Bir yılda kapanan iş öğeleri",
+      "empty_state": "Aynı grafikte analizini görmek için iş öğelerini kapatın."
+    },
+    "most_work_items_created": {
+      "title": "En çok iş öğesi oluşturan",
+      "empty_state": "Ekip arkadaşlarınız ve onların oluşturduğu iş öğesi sayıları burada görünür."
+    },
+    "most_work_items_closed": {
+      "title": "En çok iş öğesi kapatan",
+      "empty_state": "Ekip arkadaşlarınız ve onların kapattığı iş öğesi sayıları burada görünür."
+    },
+    "tabs": {
+      "scope_and_demand": "Kapsam ve Talep",
+      "custom": "Özel Analitik"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir.",
+        "title": "Henüz veri yok"
+      },
+      "created_vs_resolved": {
+        "description": "Zaman içinde oluşturulan ve çözümlenen iş öğeleri burada gösterilecektir.",
+        "title": "Henüz veri yok"
+      },
+      "project_insights": {
+        "title": "Henüz veri yok",
+        "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir."
+      },
+      "general": {
+        "title": "İlerlemeyi, iş yüklerini ve tahsisleri takip edin. Eğilimleri tespit edin, engelleri kaldırın ve işi hızlandırın",
+        "description": "Kapsam ile talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve takımlar bazında performans alın ve projenizin zamanında çalıştığından emin olun.",
+        "primary_button": {
+          "text": "İlk projenizi başlatın",
+          "comic": {
+            "title": "Analitik en iyi Döngüler + Modüller ile çalışır",
+            "description": "İlk olarak, sorunlarınızı Döngülere sınırlandırın ve eğer mümkünse, bir döngüden fazla süren sorunları Modüllere gruplandırın. Sol navigasyonda ikisini de kontrol edin."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Henüz veri yok",
+        "description": "Döngü ilerleme analizleri burada görünecek. İlerlemesini izlemeye başlamak için döngülere iş öğeleri ekleyin."
+      },
+      "module_progress": {
+        "title": "Henüz veri yok",
+        "description": "Modül ilerleme analizleri burada görünecek. İlerlemesini izlemeye başlamak için modüllere iş öğeleri ekleyin."
+      },
+      "intake_trends": {
+        "title": "Henüz veri yok",
+        "description": "Intake eğilim analizleri burada görünecek. Eğilimleri izlemeye başlamak için intake'e iş öğeleri ekleyin."
+      }
+    },
+    "created_vs_resolved": "Oluşturulan vs Çözülen",
+    "customized_insights": "Özelleştirilmiş İçgörüler",
+    "backlog_work_items": "Backlog {entity}",
+    "active_projects": "Aktif Projeler",
+    "trend_on_charts": "Grafiklerdeki eğilim",
+    "all_projects": "Tüm Projeler",
+    "summary_of_projects": "Projelerin Özeti",
+    "project_insights": "Proje İçgörüleri",
+    "started_work_items": "Başlatılan {entity}",
+    "total_work_items": "Toplam {entity}",
+    "total_projects": "Toplam Proje",
+    "total_admins": "Toplam Yönetici",
+    "total_users": "Toplam Kullanıcı",
+    "total_intake": "Toplam Gelir",
+    "un_started_work_items": "Başlanmamış {entity}",
+    "total_guests": "Toplam Misafir",
+    "completed_work_items": "Tamamlanmış {entity}",
+    "total": "Toplam {entity}",
+    "projects_by_status": "Durumuna göre projeler",
+    "active_users": "Aktif kullanıcılar",
+    "intake_trends": "Alım Eğilimleri",
+    "workitem_resolved_vs_pending": "Çözülen vs bekleyen iş öğeleri",
+    "upgrade_to_plan": "{tab} sekmesini açmak için {plan} planına geçin"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Proje} other {Projeler}}",
+    "create": {
+      "label": "Proje Ekle"
+    },
+    "network": {
+      "label": "Ağ",
+      "private": {
+        "title": "Özel",
+        "description": "Yalnızca davetle erişilebilir"
+      },
+      "public": {
+        "title": "Herkese Açık",
+        "description": "Çalışma alanındaki herkes (Misafirler hariç) katılabilir"
+      }
+    },
+    "error": {
+      "permission": "Bu işlemi yapma izniniz yok.",
+      "cycle_delete": "Döngü silinemedi",
+      "module_delete": "Modül silinemedi",
+      "issue_delete": "İş öğesi silinemedi"
+    },
+    "state": {
+      "backlog": "Bekleme Listesi",
+      "unstarted": "Başlatılmadı",
+      "started": "Başlatıldı",
+      "completed": "Tamamlandı",
+      "cancelled": "İptal Edildi"
+    },
+    "sort": {
+      "manual": "Manuel",
+      "name": "Ad",
+      "created_at": "Oluşturulma tarihi",
+      "members_length": "Üye sayısı"
+    },
+    "scope": {
+      "my_projects": "Projelerim",
+      "archived_projects": "Arşivlenmiş"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# ay} other{# ay}}",
+      "days_count": "{days, plural, one{# gün} other{# gün}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Aktif proje yok",
+        "description": "Her projeyi hedef odaklı çalışmanın üst öğesi olarak düşünün. Projeler, İşler, Döngüler ve Modüllerin yaşadığı ve meslektaşlarınızla birlikte bu hedefe ulaşmanıza yardımcı olan yerlerdir. Yeni bir proje oluşturun veya arşivlenmiş projeler için filtreleyin.",
+        "primary_button": {
+          "text": "İlk projenizi başlatın",
+          "comic": {
+            "title": "Plane'de her şey bir projeyle başlar",
+            "description": "Bir proje, bir ürünün yol haritası, bir pazarlama kampanyası veya yeni bir araba lansmanı olabilir."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Proje yok",
+        "description": "İş öğesi oluşturmak veya işlerinizi yönetmek için bir proje oluşturmalı veya bir parçası olmalısınız.",
+        "primary_button": {
+          "text": "İlk projenizi başlatın",
+          "comic": {
+            "title": "Plane'de her şey bir projeyle başlar",
+            "description": "Bir proje, bir ürünün yol haritası, bir pazarlama kampanyası veya yeni bir araba lansmanı olabilir."
+          }
+        }
+      },
+      "filter": {
+        "title": "Eşleşen proje yok",
+        "description": "Eşleşen kriterlerle proje bulunamadı.\n Bunun yerine yeni bir proje oluşturun."
+      },
+      "search": {
+        "description": "Eşleşen kriterlerle proje bulunamadı.\nBunun yerine yeni bir proje oluşturun"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Görünüm ekle",
+    "empty_state": {
+      "all-issues": {
+        "title": "Projede iş öğesi yok",
+        "description": "İlk projeniz tamamlandı! Şimdi, işlerinizi izlenebilir parçalara bölün. Hadi başlayalım!",
+        "primary_button": {
+          "text": "Yeni iş öğesi oluştur"
+        }
+      },
+      "assigned": {
+        "title": "Henüz iş öğesi yok",
+        "description": "Size atanan iş öğeleri buradan takip edilebilir.",
+        "primary_button": {
+          "text": "Yeni iş öğesi oluştur"
+        }
+      },
+      "created": {
+        "title": "Henüz iş öğesi yok",
+        "description": "Sizin oluşturduğunuz tüm iş öğeleri burada görünecek, doğrudan buradan takip edin.",
+        "primary_button": {
+          "text": "Yeni iş öğesi oluştur"
+        }
+      },
+      "subscribed": {
+        "title": "Henüz iş öğesi yok",
+        "description": "İlgilendiğiniz iş öğelerine abone olun, hepsini buradan takip edin."
+      },
+      "custom-view": {
+        "title": "Henüz iş öğesi yok",
+        "description": "Filtrelere uyan iş öğeleri burada takip edilebilir."
+      }
+    },
+    "delete_view": {
+      "title": "Bu görünümü silmek istediğinizden emin misiniz?",
+      "content": "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Taslak iş öğesi oluştur",
+    "empty_state": {
+      "title": "Yarı yazılmış iş öğeleri ve yakında yorumlar burada görünecek.",
+      "description": "Bunu denemek için bir iş öğesi eklemeye başlayın ve yarıda bırakın veya ilk taslağınızı aşağıda oluşturun. 😉",
+      "primary_button": {
+        "text": "İlk taslağınızı oluşturun"
+      }
+    },
+    "delete_modal": {
+      "title": "Taslağı sil",
+      "description": "Bu taslağı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    },
+    "toasts": {
+      "created": {
+        "success": "Taslak oluşturuldu",
+        "error": "İş öğesi oluşturulamadı. Lütfen tekrar deneyin."
+      },
+      "deleted": {
+        "success": "Taslak silindi"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Bir not, bir belge veya tam bir bilgi tabanı yazın. Başlamanıza yardımcı olması için Plane'in yapay zeka asistanı Galileo'yu alın",
+        "description": "Sayfalar, Plane'deki düşünce saksı alanıdır. Toplantı notları alın, bunları kolayca biçimlendirin, iş öğelerini gömin, bunları bir bileşen kitaplığı kullanarak düzenleyin ve hepsini projenizin bağlamında tutun. Herhangi bir belgeyi kısa sürede yapmak için, Plane'in yapay zekası Galileo'yu bir kısayolla veya bir düğmeye tıklayarak çağırın.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "private": {
+        "title": "Henüz özel sayfa yok",
+        "description": "Özel düşüncelerinizi burada saklayın. Paylaşmaya hazır olduğunuzda, ekip sadece bir tık uzaklıkta.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "public": {
+        "title": "Henüz çalışma alanı sayfası yok",
+        "description": "Çalışma alanınızdaki herkesle paylaşılan sayfaları burada görün.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "archived": {
+        "title": "Henüz arşivlenmiş sayfa yok",
+        "description": "Radarınızda olmayan sayfaları arşivleyin. Gerektiğinde bunlara buradan erişin."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Aktif döngü yok",
+        "description": "Projelerinizin, bugünün tarihini aralığı içinde kapsayan herhangi bir dönemi içeren döngüleri. Tüm aktif döngünüzün ilerlemesini ve detaylarını burada bulun."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "CSV'den üye içe aktar",
+      "description": "Şu sütunları içeren bir CSV yükleyin: Email, Display Name, First Name, Last Name, Role (5, 15 veya 20)",
+      "dropzone": {
+        "active": "CSV dosyasını buraya bırakın",
+        "inactive": "Sürükle bırak veya yüklemek için tıklayın",
+        "file_type": "Yalnızca .csv dosyaları desteklenir"
+      },
+      "buttons": {
+        "cancel": "İptal",
+        "import": "İçe Aktar",
+        "try_again": "Tekrar Dene",
+        "close": "Kapat",
+        "done": "Tamamlandı"
+      },
+      "progress": {
+        "uploading": "Yükleniyor...",
+        "importing": "İçe aktarılıyor..."
+      },
+      "summary": {
+        "title": {
+          "failed": "İçe Aktarma Başarısız",
+          "complete": "İçe Aktarma Tamamlandı"
+        },
+        "message": {
+          "seat_limit": "Koltuk sınırlamaları nedeniyle üyeler içe aktarılamıyor.",
+          "success": "Çalışma alanına başarıyla {count} üye eklendi.",
+          "no_imports": "CSV dosyasından hiçbir üye içe aktarılmadı."
+        },
+        "stats": {
+          "successful": "Başarılı",
+          "failed": "Başarısız"
+        },
+        "download_errors": "Hataları indir"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Geçersiz dosya",
+          "message": "Yalnızca CSV dosyaları desteklenir."
+        },
+        "import_failed": {
+          "title": "İçe aktarma başarısız",
+          "message": "Bir şeyler ters gitti."
+        }
+      }
+    }
+  }
+}

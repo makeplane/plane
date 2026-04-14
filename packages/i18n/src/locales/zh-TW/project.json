@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "建立時間",
+      "updated_at": "更新時間",
+      "name": "名稱"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "新增週期",
+    "more_details": "更多詳細資訊",
+    "cycle": "週期",
+    "update_cycle": "更新週期",
+    "create_cycle": "建立週期",
+    "no_matching_cycles": "沒有符合的週期",
+    "remove_filters_to_see_all_cycles": "移除篩選器以檢視所有週期",
+    "remove_search_criteria_to_see_all_cycles": "移除搜尋條件以檢視所有週期",
+    "only_completed_cycles_can_be_archived": "只有已完成的週期可以封存",
+    "start_date": "開始日期",
+    "end_date": "結束日期",
+    "in_your_timezone": "在您的時區",
+    "transfer_work_items": "轉移 {count} 工作事項",
+    "transfer": {
+      "no_cycles_available": "沒有其他可用的週期來轉移工作項目。"
+    },
+    "date_range": "日期範圍",
+    "add_date": "新增日期",
+    "active_cycle": {
+      "label": "使用中的週期",
+      "progress": "進度",
+      "chart": "燃盡圖",
+      "priority_issue": "優先順序工作事項",
+      "assignees": "指派對象",
+      "issue_burndown": "工作事項燃盡",
+      "ideal": "理想",
+      "current": "目前",
+      "labels": "標籤",
+      "trailing": "落後",
+      "leading": "領先"
+    },
+    "upcoming_cycle": {
+      "label": "即將到來的週期"
+    },
+    "completed_cycle": {
+      "label": "已完成的週期"
+    },
+    "status": {
+      "days_left": "剩餘天數",
+      "completed": "已完成",
+      "yet_to_start": "尚未開始",
+      "in_progress": "進行中",
+      "draft": "草稿"
+    },
+    "action": {
+      "restore": {
+        "title": "還原週期",
+        "success": {
+          "title": "週期已還原",
+          "description": "週期已還原。"
+        },
+        "failed": {
+          "title": "週期還原失敗",
+          "description": "無法還原週期。請再試一次。"
+        }
+      },
+      "favorite": {
+        "loading": "將週期加入我的最愛",
+        "success": {
+          "description": "週期已加入我的最愛。",
+          "title": "成功！"
+        },
+        "failed": {
+          "description": "無法將週期加入我的最愛。請再試一次。",
+          "title": "錯誤！"
+        }
+      },
+      "unfavorite": {
+        "loading": "從我的最愛移除週期",
+        "success": {
+          "description": "週期已從我的最愛移除。",
+          "title": "成功！"
+        },
+        "failed": {
+          "description": "無法從我的最愛移除週期。請再試一次。",
+          "title": "錯誤！"
+        }
+      },
+      "update": {
+        "loading": "更新週期中",
+        "success": {
+          "description": "週期更新成功。",
+          "title": "成功！"
+        },
+        "failed": {
+          "description": "更新週期時發生錯誤。請再試一次。",
+          "title": "錯誤！"
+        },
+        "error": {
+          "already_exists": "給定日期範圍內已有週期，如果您要建立草稿週期，可以移除兩個日期來執行此操作。"
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "在週期中分組和時間區段化您的工作。",
+        "description": "將工作分解為時間區段化的區塊，從您的專案截止日期向後設定日期，並以團隊的方式取得具體進展。",
+        "primary_button": {
+          "text": "設定您的第一個週期",
+          "comic": {
+            "title": "週期是重複的時間區段。",
+            "description": "衝刺、迭代，或您用於每週或每兩週追蹤工作的任何其他術語都是週期。"
+          }
+        }
+      },
+      "no_issues": {
+        "title": "週期中沒有新增工作事項",
+        "description": "新增或建立您希望在此週期內時間區段化和交付的工作事項",
+        "primary_button": {
+          "text": "建立新工作事項"
+        },
+        "secondary_button": {
+          "text": "新增現有工作事項"
+        }
+      },
+      "completed_no_issues": {
+        "title": "週期中沒有工作事項",
+        "description": "週期中沒有工作事項。工作事項已被轉移或隱藏。若要檢視隱藏的工作事項（如果有），請相應地更新您的顯示屬性。"
+      },
+      "active": {
+        "title": "沒有使用中的週期",
+        "description": "使用中的週期包括任何期間內包含今天日期的週期。在這裡找到使用中週期的進度和詳細資訊。"
+      },
+      "archived": {
+        "title": "尚無已封存的週期",
+        "description": "為了整理您的專案，可以封存已完成的週期。一旦封存，您可以在這裡找到它們。"
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "建立工作事項並指派給某人，甚至是您自己",
+        "description": "將工作事項視為工作、任務、工作或待辦事項。我們喜歡這樣。工作事項及其子工作事項通常是指派給團隊成員的以時間為基礎的可執行項目。您的團隊建立、指派和完成工作事項，以推動您的專案朝向其目標前進。",
+        "primary_button": {
+          "text": "建立您的第一個工作事項",
+          "comic": {
+            "title": "工作事項是 Plane 中的基本單位。",
+            "description": "重新設計 Plane 使用者介面、重塑公司品牌或推出新的燃料噴射系統都是可能有子工作事項的工作事項範例。"
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "尚無已封存的工作事項",
+        "description": "透過手動或自動化的方式，您可以封存已完成或取消的工作事項。一旦封存，您可以在這裡找到它們。",
+        "primary_button": {
+          "text": "設定自動化"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "找不到符合套用篩選器的工作事項",
+        "secondary_button": {
+          "text": "清除所有篩選器"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "新增模組",
+    "update_module": "更新模組",
+    "create_module": "建立模組",
+    "archive_module": "封存模組",
+    "restore_module": "還原模組",
+    "delete_module": "刪除模組",
+    "empty_state": {
+      "general": {
+        "title": "將您的專案里程碑對應到模組並輕鬆追蹤彙總工作。",
+        "description": "屬於邏輯、階層式上層的一組工作事項形成一個模組。將其視為一種依專案里程碑追蹤工作的方式。它們有自己的期間和截止日期以及分析，可協助您了解您距離里程碑有多近或多遠。",
+        "primary_button": {
+          "text": "建立您的第一個模組",
+          "comic": {
+            "title": "模組協助依階層結構分組工作。",
+            "description": "購物車模組、底盤模組和倉庫模組都是這種分組的好例子。"
+          }
+        }
+      },
+      "no_issues": {
+        "title": "模組中沒有工作事項",
+        "description": "建立或新增您想要作為此模組一部分完成的工作事項",
+        "primary_button": {
+          "text": "建立新工作事項"
+        },
+        "secondary_button": {
+          "text": "新增現有工作事項"
+        }
+      },
+      "archived": {
+        "title": "尚無已封存的模組",
+        "description": "為了整理您的專案，可以封存已完成或取消的模組。一旦封存，您可以在這裡找到它們。"
+      },
+      "sidebar": {
+        "in_active": "此模組尚未啟用。",
+        "invalid_date": "日期無效。請輸入有效日期。"
+      }
+    },
+    "quick_actions": {
+      "archive_module": "封存模組",
+      "archive_module_description": "只有已完成或取消的\n模組可以封存。",
+      "delete_module": "刪除模組"
+    },
+    "toast": {
+      "copy": {
+        "success": "模組連結已複製到剪貼簿"
+      },
+      "delete": {
+        "success": "模組刪除成功",
+        "error": "刪除模組失敗"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "為您的專案儲存篩選的檢視。依需要建立多個檢視",
+        "description": "檢視是您經常使用或想要輕鬆存取的已儲存篩選器集。專案中的所有同事都可以看到每個人的檢視，並選擇最適合他們需求的檢視。",
+        "primary_button": {
+          "text": "建立您的第一個檢視",
+          "comic": {
+            "title": "檢視基於工作事項屬性運作。",
+            "description": "您可以從這裡建立檢視，使用您認為合適的屬性作為篩選器。"
+          }
+        }
+      },
+      "filter": {
+        "title": "沒有符合的檢視",
+        "description": "沒有檢視符合搜尋條件。\n改為建立新檢視。"
+      }
+    },
+    "delete_view": {
+      "title": "您確定要刪除此視圖嗎？",
+      "content": "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。"
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "撰寫筆記、文件或完整的知識庫。讓 Galileo（Plane 的 AI 助手）協助您開始",
+        "description": "頁面是 Plane 中的思考筆記空間。記下會議筆記，輕鬆格式化，嵌入工作事項，使用元件庫排版，並將它們全部保留在專案的上下文中。若要快速完成任何文件，可以使用快速鍵或按鈕來呼叫 Plane 的 AI Galileo。",
+        "primary_button": {
+          "text": "建立您的第一個頁面"
+        }
+      },
+      "private": {
+        "title": "尚無私人頁面",
+        "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點選一下即可。",
+        "primary_button": {
+          "text": "建立您的第一個頁面"
+        }
+      },
+      "public": {
+        "title": "尚無公開頁面",
+        "description": "在這裡檢視與專案中所有人分享的頁面。",
+        "primary_button": {
+          "text": "建立您的第一個頁面"
+        }
+      },
+      "archived": {
+        "title": "尚無已封存的頁面",
+        "description": "封存不在您雷達上的頁面。需要時在這裡存取它們。"
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "進件功能未啟用於此專案。",
+        "description": "進件可協助您管理專案的傳入請求，並將它們新增為工作流程中的工作事項。從專案設定啟用進件以管理請求。",
+        "primary_button": {
+          "text": "管理功能"
+        }
+      },
+      "cycle": {
+        "title": "週期功能未啟用於此專案。",
+        "description": "將工作分解成時間區段化的區塊，從專案截止日期向後設定日期，並以團隊的方式取得具體進展。啟用專案的週期功能以開始使用。",
+        "primary_button": {
+          "text": "管理功能"
+        }
+      },
+      "module": {
+        "title": "模組未啟用於此專案。",
+        "description": "模組是專案的基本組成部分。從專案設定啟用模組以開始使用。",
+        "primary_button": {
+          "text": "管理功能"
+        }
+      },
+      "page": {
+        "title": "頁面未啟用於此專案。",
+        "description": "頁面是專案的基本組成部分。從專案設定啟用頁面以開始使用。",
+        "primary_button": {
+          "text": "管理功能"
+        }
+      },
+      "view": {
+        "title": "檢視未啟用於此專案。",
+        "description": "檢視是專案的基本組成部分。從專案設定啟用檢視以開始使用。",
+        "primary_button": {
+          "text": "管理功能"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "待辦事項",
+      "planned": "已規劃",
+      "in_progress": "進行中",
+      "paused": "已暫停",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "layout": {
+      "list": "清單版面配置",
+      "board": "圖庫版面配置",
+      "timeline": "時間軸版面配置"
+    },
+    "order_by": {
+      "name": "名稱",
+      "progress": "進度",
+      "issues": "工作事項數量",
+      "due_date": "截止日期",
+      "created_at": "建立日期",
+      "manual": "手動"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "從CSV匯入成員",
+      "description": "上傳包含以下欄位的CSV：電子郵件與角色（5=訪客，15=成員，20=管理員）。使用者必須已是工作區成員。",
+      "download_sample": "下載範例CSV",
+      "dropzone": {
+        "active": "將CSV檔案放在這裡",
+        "inactive": "拖放或點擊上傳",
+        "file_type": "僅支援.csv檔案"
+      },
+      "buttons": {
+        "cancel": "取消",
+        "import": "匯入",
+        "try_again": "重試",
+        "close": "關閉",
+        "done": "完成"
+      },
+      "progress": {
+        "uploading": "上傳中...",
+        "importing": "匯入中..."
+      },
+      "summary": {
+        "title": {
+          "complete": "匯入完成"
+        },
+        "message": {
+          "success": "成功將{count}名成員匯入專案。",
+          "no_imports": "CSV檔案中未匯入任何新成員。"
+        },
+        "stats": {
+          "added": "已新增",
+          "reactivated": "已重新啟用",
+          "already_members": "已是成員",
+          "skipped": "已略過"
+        },
+        "download_errors": "下載略過詳情"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "無效檔案",
+          "message": "僅支援CSV檔案。"
+        },
+        "import_failed": {
+          "title": "匯入失敗",
+          "message": "發生錯誤。"
+        }
+      }
+    }
+  }
+}

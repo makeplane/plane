@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "待處理",
+        "description": "待處理"
+      },
+      "declined": {
+        "title": "已拒絕",
+        "description": "已拒絕"
+      },
+      "snoozed": {
+        "title": "已延後",
+        "description": "還剩 {days, plural, one{# 天} other{# 天}}"
+      },
+      "accepted": {
+        "title": "已接受",
+        "description": "已接受"
+      },
+      "duplicate": {
+        "title": "重複",
+        "description": "重複"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "拒絕工作事項",
+        "content": "您確定要拒絕工作事項 {value} 嗎？"
+      },
+      "delete": {
+        "title": "刪除工作事項",
+        "content": "您確定要刪除工作事項 {value} 嗎？",
+        "success": "工作事項刪除成功"
+      }
+    },
+    "errors": {
+      "snooze_permission": "只有專案管理員可以延後/取消延後工作事項",
+      "accept_permission": "只有專案管理員可以接受工作事項",
+      "decline_permission": "只有專案管理員可以拒絕工作事項"
+    },
+    "actions": {
+      "accept": "接受",
+      "decline": "拒絕",
+      "snooze": "延後",
+      "unsnooze": "取消延後",
+      "copy": "複製工作事項連結",
+      "delete": "刪除",
+      "open": "開啟工作事項",
+      "mark_as_duplicate": "標記為重複",
+      "move": "將 {value} 移至專案工作事項"
+    },
+    "source": {
+      "in-app": "應用程式內"
+    },
+    "order_by": {
+      "created_at": "建立時間",
+      "updated_at": "更新時間",
+      "id": "ID"
+    },
+    "label": "進件",
+    "page_label": "{workspace} - 進件",
+    "modal": {
+      "title": "建立進件工作事項"
+    },
+    "tabs": {
+      "open": "開啟",
+      "closed": "已關閉"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "沒有開啟的工作事項",
+        "description": "在這裡尋找開啟的工作事項。建立新工作事項。"
+      },
+      "sidebar_closed_tab": {
+        "title": "沒有已關閉的工作事項",
+        "description": "所有已接受或拒絕的工作事項都可以在這裡找到。"
+      },
+      "sidebar_filter": {
+        "title": "沒有符合的工作事項",
+        "description": "沒有工作事項符合進件中套用的篩選條件。建立新工作事項。"
+      },
+      "detail": {
+        "title": "選擇工作事項以檢視其詳細資訊。"
+      }
+    }
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {工作事項} other {工作事項}}",
+    "all": "所有工作事項",
+    "edit": "編輯工作事項",
+    "title": {
+      "label": "工作事項標題",
+      "required": "工作事項標題為必填。"
+    },
+    "add": {
+      "press_enter": "按 'Enter' 以新增另一個工作事項",
+      "label": "新增工作事項",
+      "cycle": {
+        "failed": "無法將工作事項新增到週期。請再試一次。",
+        "success": "{count, plural, one {工作事項} other {工作事項}} 已成功新增到週期。",
+        "loading": "正在將 {count, plural, one {工作事項} other {工作事項}} 新增到週期"
+      },
+      "assignee": "新增指派對象",
+      "start_date": "新增開始日期",
+      "due_date": "新增截止日期",
+      "parent": "新增父工作事項",
+      "sub_issue": "新增子工作事項",
+      "relation": "新增關聯",
+      "link": "新增連結",
+      "existing": "新增現有工作事項"
+    },
+    "remove": {
+      "label": "移除工作事項",
+      "cycle": {
+        "loading": "正在從週期移除工作事項",
+        "success": "已成功從週期移除工作事項。",
+        "failed": "無法從週期移除工作事項。請再試一次。"
+      },
+      "module": {
+        "loading": "正在從模組移除工作事項",
+        "success": "已成功從模組移除工作事項。",
+        "failed": "無法從模組移除工作事項。請再試一次。"
+      },
+      "parent": {
+        "label": "移除父工作事項"
+      }
+    },
+    "new": "新工作事項",
+    "adding": "新增工作事項中",
+    "create": {
+      "success": "工作事項建立成功"
+    },
+    "priority": {
+      "urgent": "緊急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "display": {
+      "properties": {
+        "label": "顯示屬性",
+        "id": "ID",
+        "issue_type": "工作事項類型",
+        "sub_issue_count": "子工作事項數量",
+        "attachment_count": "附件數量",
+        "created_on": "建立於",
+        "sub_issue": "子工作事項",
+        "work_item_count": "工作事項數量"
+      },
+      "extra": {
+        "show_sub_issues": "顯示子工作事項",
+        "show_empty_groups": "顯示空群組"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "此版面配置依據以下條件排序",
+      "list": "清單",
+      "kanban": "看板",
+      "calendar": "日曆",
+      "spreadsheet": "試算表",
+      "gantt": "甘特圖",
+      "title": {
+        "list": "清單版面配置",
+        "kanban": "看板版面配置",
+        "calendar": "日曆版面配置",
+        "spreadsheet": "試算表版面配置",
+        "gantt": "甘特圖版面配置"
+      }
+    },
+    "states": {
+      "active": "使用中",
+      "backlog": "待辦事項"
+    },
+    "comments": {
+      "placeholder": "新增留言",
+      "switch": {
+        "private": "切換為私人留言",
+        "public": "切換為公開留言"
+      },
+      "create": {
+        "success": "留言建立成功",
+        "error": "留言建立失敗。請稍後再試。"
+      },
+      "update": {
+        "success": "留言更新成功",
+        "error": "留言更新失敗。請稍後再試。"
+      },
+      "remove": {
+        "success": "留言移除成功",
+        "error": "留言移除失敗。請稍後再試。"
+      },
+      "upload": {
+        "error": "資產上傳失敗。請稍後再試。"
+      },
+      "copy_link": {
+        "success": "評論連結已複製到剪貼簿",
+        "error": "複製評論連結時出錯。請稍後再試。"
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "工作事項不存在",
+        "description": "您尋找的工作事項不存在、已封存或已刪除。",
+        "primary_button": {
+          "text": "檢視其他工作事項"
+        }
+      }
+    },
+    "sibling": {
+      "label": "同層級工作事項"
+    },
+    "archive": {
+      "description": "只有已完成或取消的\n工作事項可以封存",
+      "label": "封存工作事項",
+      "confirm_message": "您確定要封存工作事項嗎？所有已封存的工作事項稍後都可以還原。",
+      "success": {
+        "label": "封存成功",
+        "message": "您的封存可以在專案封存中找到。"
+      },
+      "failed": {
+        "message": "無法封存工作事項。請再試一次。"
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "還原成功",
+        "message": "您的工作事項可以在專案工作事項中找到。"
+      },
+      "failed": {
+        "message": "無法還原工作事項。請再試一次。"
+      }
+    },
+    "relation": {
+      "relates_to": "與此相關",
+      "duplicate": "此項重複",
+      "blocked_by": "被此阻礙",
+      "blocking": "阻礙此項",
+      "start_before": "在之前開始",
+      "start_after": "在之後開始",
+      "finish_before": "在之前完成",
+      "finish_after": "在之後完成",
+      "implements": "實現",
+      "implemented_by": "實現者"
+    },
+    "copy_link": "複製工作事項連結",
+    "delete": {
+      "label": "刪除工作事項",
+      "error": "刪除工作事項時發生錯誤"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "已成功訂閱工作事項",
+        "unsubscribed": "已成功取消訂閱工作事項"
+      }
+    },
+    "select": {
+      "error": "請至少選擇一個工作事項",
+      "empty": "未選擇工作事項",
+      "add_selected": "新增已選取的工作事項",
+      "select_all": "全選",
+      "deselect_all": "取消全選"
+    },
+    "open_in_full_screen": "以全螢幕開啟工作事項",
+    "vote": {
+      "click_to_upvote": "點擊贊成",
+      "click_to_downvote": "點擊反對",
+      "click_to_view_upvotes": "點擊查看贊成票",
+      "click_to_view_downvotes": "點擊查看反對票"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "子工作事項更新成功",
+      "error": "更新子工作事項時發生錯誤"
+    },
+    "remove": {
+      "success": "子工作事項移除成功",
+      "error": "移除子工作事項時發生錯誤"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您沒有符合您應用過的過濾器的子工作事項。",
+        "description": "要查看所有子工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      },
+      "list_filters": {
+        "title": "您沒有符合您應用過的過濾器的工作事項。",
+        "description": "要查看所有工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "找不到符合的工作事項"
+      },
+      "no_issues": {
+        "title": "找不到工作事項"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "尚無留言",
+        "description": "留言可用作工作事項的討論和後續追蹤空間"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "無法歸檔工作項目",
+        "message": "只有屬於已完成或已取消狀態組的工作項目可以被歸檔。"
+      },
+      "invalid_issue_start_date": {
+        "title": "無法更新工作項目",
+        "message": "選擇的開始日期晚於某些工作項目的截止日期。請確保開始日期早於截止日期。"
+      },
+      "invalid_issue_target_date": {
+        "title": "無法更新工作項目",
+        "message": "選擇的截止日期早於某些工作項目的開始日期。請確保截止日期晚於開始日期。"
+      },
+      "invalid_state_transition": {
+        "title": "無法更新工作項目",
+        "message": "某些工作項目不允許狀態變更。請確保狀態變更是允許的。"
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "啟用工作流程",
+        "description": "設定工作流程以控制工作項目的流轉",
+        "no_states_tooltip": "此工作流程尚未新增任何狀態。",
+        "toast": {
+          "loading": {
+            "enabling": "正在啟用工作流程",
+            "disabling": "正在停用工作流程"
+          },
+          "success": {
+            "title": "成功！",
+            "message": "工作流程已成功啟用。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "啟用工作流程失敗。請再試一次。"
+          }
+        }
+      },
+      "heading": "工作流程",
+      "description": "自動化工作項目轉換，並設定規則以控制任務如何在專案流程中推進。",
+      "add_button": "新增工作流程",
+      "search": "搜尋工作流程",
+      "detail": {
+        "define": "定義工作流程",
+        "add_states": "新增狀態",
+        "unmapped_states": {
+          "title": "偵測到未對應的狀態",
+          "description": "所選類型的某些工作項目目前位於此工作流程中不存在的狀態。",
+          "note": "如果您啟用此工作流程，這些項目將自動移動到此工作流程的初始狀態。",
+          "label": "缺少的狀態",
+          "tooltip": "某些工作項目位於未對應到此工作流程的狀態。開啟工作流程以檢視。"
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "所有狀態都已在使用中",
+          "description": "此專案定義的所有狀態都已存在於您目前的工作流程中。"
+        }
+      },
+      "default_footer": {
+        "fallback_message": "此工作流程適用於任何未指派給任何工作流程的工作項目類型。"
+      },
+      "create": {
+        "heading": "建立新工作流程"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "重複工作項目",
+      "description": "設定一次重複工作，我們將處理重複。當需要時，您將在此處看到所有內容。",
+      "new_recurring_work_item": "新增重複工作項目",
+      "update_recurring_work_item": "更新重複工作項目",
+      "form": {
+        "interval": {
+          "title": "排程",
+          "start_date": {
+            "validation": {
+              "required": "開始日期為必填"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "間隔類型為必填"
+            }
+          }
+        },
+        "button": {
+          "create": "建立重複工作項目",
+          "update": "更新重複工作項目"
+        }
+      },
+      "create_button": {
+        "label": "建立重複工作項目",
+        "no_permission": "請聯繫您的專案管理員以建立重複工作項目"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "自動化您的工作",
+        "description": "只需設定一次，到期時我們會自動為您建立。升級至商業版，讓重複工作變得輕鬆無憂。"
+      },
+      "no_templates": {
+        "button": "建立您的第一個重複工作項目"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "已建立重複工作項目",
+          "message": "{name}，該重複工作項目，現已在您的工作區中可用。"
+        },
+        "error": {
+          "title": "本次無法建立該重複工作項目。",
+          "message": "請再試一次儲存您的資訊，或將其複製到新的重複工作項目中，建議在其他分頁操作。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "重複工作項目已變更",
+          "message": "{name}，該重複工作項目，已被變更。"
+        },
+        "error": {
+          "title": "無法儲存該重複工作項目的變更。",
+          "message": "請再試一次儲存您的資訊，或稍後再回來變更該重複工作項目。如果仍有問題，請聯繫我們。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "已刪除重複工作項目",
+          "message": "{name}，該重複工作項目，已從您的工作區中刪除。"
+        },
+        "error": {
+          "title": "無法刪除該重複工作項目。",
+          "message": "請再試一次刪除，或稍後再試。如果仍無法刪除，請聯繫我們。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "刪除重複工作項目",
+      "description": {
+        "prefix": "您確定要刪除重複工作項目-",
+        "suffix": "嗎？與該重複工作項目相關的所有資料將被永久移除。此操作無法撤銷。"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "projects": "Projeler",
+    "pages": "Sayfalar",
+    "new_work_item": "Yeni iş öğesi",
+    "home": "Ana Sayfa",
+    "your_work": "Çalışmalarınız",
+    "inbox": "Gelen Kutusu",
+    "workspace": "Çalışma Alanı",
+    "views": "Görünümler",
+    "analytics": "Analizler",
+    "work_items": "İş öğeleri",
+    "cycles": "Döngüler",
+    "modules": "Modüller",
+    "intake": "Talep",
+    "drafts": "Taslaklar",
+    "favorites": "Favoriler",
+    "pro": "Pro",
+    "upgrade": "Yükselt",
+    "pi_chat": "AI Çet",
+    "initiatives": "İnisiyetivs",
+    "teamspaces": "Timspeys",
+    "epics": "Epiks",
+    "upgrade_plan": "Apgreyd plen",
+    "plane_pro": "Pleyn Pro",
+    "business": "Biznis",
+    "customers": "Kastımırs",
+    "recurring_work_items": "Yinelenen iş öğeleri"
+  },
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Sonuç bulunamadı"
+      }
+    }
+  }
+}

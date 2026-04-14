@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Oluşturulma tarihi",
+      "updated_at": "Güncelleme tarihi",
+      "name": "Ad"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Döngü ekle",
+    "more_details": "Daha fazla detay",
+    "cycle": "Döngü",
+    "update_cycle": "Döngüyü güncelle",
+    "create_cycle": "Döngü oluştur",
+    "no_matching_cycles": "Eşleşen döngü yok",
+    "remove_filters_to_see_all_cycles": "Tüm döngüleri görmek için filtreleri kaldırın",
+    "remove_search_criteria_to_see_all_cycles": "Tüm döngüleri görmek için arama kriterlerini kaldırın",
+    "only_completed_cycles_can_be_archived": "Yalnızca tamamlanmış döngüler arşivlenebilir",
+    "start_date": "Başlangıç tarihi",
+    "end_date": "Bitiş tarihi",
+    "in_your_timezone": "Saat diliminizde",
+    "transfer_work_items": "{count} iş öğesini aktar",
+    "transfer": {
+      "no_cycles_available": "İş öğelerini aktaracak başka döngü bulunamadı."
+    },
+    "date_range": "Tarih aralığı",
+    "add_date": "Tarih ekle",
+    "active_cycle": {
+      "label": "Aktif döngü",
+      "progress": "İlerleme",
+      "chart": "Burndown grafiği",
+      "priority_issue": "Öncelikli iş öğeleri",
+      "assignees": "Atananlar",
+      "issue_burndown": "İş öğesi burndown",
+      "ideal": "İdeal",
+      "current": "Mevcut",
+      "labels": "Etiketler",
+      "trailing": "Geride",
+      "leading": "İlerde"
+    },
+    "upcoming_cycle": {
+      "label": "Yaklaşan döngü"
+    },
+    "completed_cycle": {
+      "label": "Tamamlanan döngü"
+    },
+    "status": {
+      "days_left": "Kalan gün",
+      "completed": "Tamamlandı",
+      "yet_to_start": "Başlamadı",
+      "in_progress": "Devam Ediyor",
+      "draft": "Taslak"
+    },
+    "action": {
+      "restore": {
+        "title": "Döngüyü geri yükle",
+        "success": {
+          "title": "Döngü geri yüklendi",
+          "description": "Döngü başarıyla geri yüklendi."
+        },
+        "failed": {
+          "title": "Döngü geri yüklenemedi",
+          "description": "Döngü geri yüklenemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "favorite": {
+        "loading": "Döngü favorilere ekleniyor",
+        "success": {
+          "description": "Döngü favorilere eklendi.",
+          "title": "Başarılı!"
+        },
+        "failed": {
+          "description": "Döngü favorilere eklenemedi. Lütfen tekrar deneyin.",
+          "title": "Hata!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Döngü favorilerden kaldırılıyor",
+        "success": {
+          "description": "Döngü favorilerden kaldırıldı.",
+          "title": "Başarılı!"
+        },
+        "failed": {
+          "description": "Döngü favorilerden kaldırılamadı. Lütfen tekrar deneyin.",
+          "title": "Hata!"
+        }
+      },
+      "update": {
+        "loading": "Döngü güncelleniyor",
+        "success": {
+          "description": "Döngü başarıyla güncellendi.",
+          "title": "Başarılı!"
+        },
+        "failed": {
+          "description": "Döngü güncellenirken hata oluştu. Lütfen tekrar deneyin.",
+          "title": "Hata!"
+        },
+        "error": {
+          "already_exists": "Belirtilen tarihlerde zaten bir döngünüz var, taslak bir döngü oluşturmak istiyorsanız, her iki tarihi de kaldırarak oluşturabilirsiniz."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "İşlerinizi Döngülerde gruplayın ve zamanlayın.",
+        "description": "İşleri zaman dilimlerine bölün, proje son teslim tarihinden geriye çalışarak tarihler belirleyin ve takım olarak somut ilerleme kaydedin.",
+        "primary_button": {
+          "text": "İlk döngünüzü ayarlayın",
+          "comic": {
+            "title": "Döngüler tekrarlayan zaman dilimleridir.",
+            "description": "Haftalık veya iki haftalık iş takibi için kullandığınız sprint, iterasyon veya başka bir terim bir döngüdür."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Döngüye iş öğesi eklenmedi",
+        "description": "Bu döngüde tamamlamak istediğiniz iş öğelerini ekleyin veya oluşturun",
+        "primary_button": {
+          "text": "Yeni iş öğesi oluştur"
+        },
+        "secondary_button": {
+          "text": "Varolan iş öğesi ekle"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Döngüde iş öğesi yok",
+        "description": "Döngüde iş öğesi yok. İş öğeleri ya aktarıldı ya da gizlendi. Gizli iş öğelerini görmek için görüntüleme özelliklerinizi güncelleyin."
+      },
+      "active": {
+        "title": "Aktif döngü yok",
+        "description": "Aktif bir döngü, bugünün tarihini içeren herhangi bir dönemi kapsar. Aktif döngünün ilerleme ve detaylarını burada bulabilirsiniz."
+      },
+      "archived": {
+        "title": "Henüz arşivlenmiş döngü yok",
+        "description": "Projenizi düzenli tutmak için tamamlanmış döngüleri arşivleyin. Arşivlendikten sonra burada bulabilirsiniz."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Bir iş öğesi oluşturun ve birine, hatta kendinize atayın",
+        "description": "İş öğelerini işler, görevler, çalışma veya JTBD olarak düşünün. Bir iş öğesi ve alt iş öğeleri genellikle takım üyelerinize atanan zaman temelli eylemlerdir. Takımınız, projenizi hedefine doğru ilerletmek için iş öğeleri oluşturur, atar ve tamamlar.",
+        "primary_button": {
+          "text": "İlk iş öğenizi oluşturun",
+          "comic": {
+            "title": "İş öğeleri Plane'de yapı taşlarıdır.",
+            "description": "Plane UI'yi yeniden tasarlamak, şirketi yeniden markalaştırmak veya yeni yakıt enjeksiyon sistemini başlatmak, muhtemelen alt iş öğeleri olan iş öğesi örnekleridir."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Henüz arşivlenmiş iş öğesi yok",
+        "description": "Tamamlanan veya iptal edilen iş öğelerini manuel olarak veya otomasyonla arşivleyebilirsiniz. Arşivlendikten sonra burada bulabilirsiniz.",
+        "primary_button": {
+          "text": "Otomasyon ayarla"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Uygulanan filtrelerle eşleşen iş öğesi bulunamadı",
+        "secondary_button": {
+          "text": "Tüm filtreleri temizle"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Modül Ekle",
+    "update_module": "Modülü Güncelle",
+    "create_module": "Modül Oluştur",
+    "archive_module": "Modülü Arşivle",
+    "restore_module": "Modülü Geri Yükle",
+    "delete_module": "Modülü sil",
+    "empty_state": {
+      "general": {
+        "title": "Proje kilometre taşlarınızı Modüllere eşleyin ve toplu işleri kolayca takip edin.",
+        "description": "Mantıksal bir üst öğeye ait iş öğeleri grubu bir modül oluşturur. Bunları bir kilometre taşını takip etmenin bir yolu olarak düşünün. Kendi dönemleri ve son teslim tarihleri ile birlikte, bir kilometre taşına ne kadar yakın veya uzak olduğunuzu görmenize yardımcı olacak analitiklere sahiptirler.",
+        "primary_button": {
+          "text": "İlk modülünüzü oluşturun",
+          "comic": {
+            "title": "Modüller işleri hiyerarşiye göre gruplamaya yardımcı olur.",
+            "description": "Bir araba modülü, bir şasi modülü ve bir depo modülü bu gruplandırmanın iyi örnekleridir."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Modülde iş öğesi yok",
+        "description": "Bu modülün bir parçası olarak gerçekleştirmek istediğiniz iş öğelerini oluşturun veya ekleyin",
+        "primary_button": {
+          "text": "Yeni iş öğeleri oluştur"
+        },
+        "secondary_button": {
+          "text": "Varolan bir iş öğesi ekle"
+        }
+      },
+      "archived": {
+        "title": "Henüz arşivlenmiş Modül yok",
+        "description": "Projenizi düzenli tutmak için tamamlanmış veya iptal edilmiş modülleri arşivleyin. Arşivlendikten sonra burada bulabilirsiniz."
+      },
+      "sidebar": {
+        "in_active": "Bu modül henüz aktif değil.",
+        "invalid_date": "Geçersiz tarih. Lütfen geçerli bir tarih girin."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Modülü arşivle",
+      "archive_module_description": "Yalnızca tamamlanmış veya iptal edilmiş\nmodüller arşivlenebilir.",
+      "delete_module": "Modülü sil"
+    },
+    "toast": {
+      "copy": {
+        "success": "Modül bağlantısı panoya kopyalandı"
+      },
+      "delete": {
+        "success": "Modül başarıyla silindi",
+        "error": "Modül silinemedi"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Projeniz için filtreli görünümleri kaydedin. İhtiyacınız olduğu kadar oluşturun",
+        "description": "Görünümler, sık kullandığınız veya kolay erişim istediğiniz kayıtlı filtrelerdir. Bir projedeki tüm meslektaşlarınız herkesin görünümlerini görebilir ve ihtiyaçlarına en uygun olanı seçebilir.",
+        "primary_button": {
+          "text": "İlk görünümünüzü oluşturun",
+          "comic": {
+            "title": "Görünümler İş Öğesi özellikleri üzerinde çalışır.",
+            "description": "Buradan istediğiniz kadar özellikle filtre içeren bir görünüm oluşturabilirsiniz."
+          }
+        }
+      },
+      "filter": {
+        "title": "Eşleşen görünüm yok",
+        "description": "Arama kriterleriyle eşleşen görünüm yok.\n Bunun yerine yeni bir görünüm oluşturun."
+      }
+    },
+    "delete_view": {
+      "title": "Bu görünümü silmek istediğinizden emin misiniz?",
+      "content": "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Bir not, belge veya tam bir bilgi bankası yazın. Plane'in AI asistanı Galileo'nun başlamanıza yardımcı olmasını sağlayın",
+        "description": "Sayfalar Plane'de düşüncelerinizi döktüğünüz alanlardır. Toplantı notları alın, kolayca biçimlendirin, iş öğelerini yerleştirin, bir bileşen kitaplığı kullanarak düzenleyin ve hepsini proje bağlamınızda tutun. Herhangi bir belgeyi hızlıca tamamlamak için bir kısayol veya düğme ile Plane'in AI'sı Galileo'yu çağırın.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "private": {
+        "title": "Henüz özel sayfa yok",
+        "description": "Özel düşüncelerinizi burada saklayın. Paylaşmaya hazır olduğunuzda, ekip bir tık uzağınızda.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "public": {
+        "title": "Henüz genel sayfa yok",
+        "description": "Projenizdeki herkesle paylaşılan sayfaları burada görün.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "archived": {
+        "title": "Henüz arşivlenmiş sayfa yok",
+        "description": "Radarınızda olmayan sayfaları arşivleyin. İhtiyaç duyduğunuzda buradan erişin."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Talep bu proje için etkin değil.",
+        "description": "Talep, projenize gelen istekleri yönetmenize ve bunları iş akışınıza iş öğesi olarak eklemenize yardımcı olur. İstekleri yönetmek için proje ayarlarından talebi etkinleştirin.",
+        "primary_button": {
+          "text": "Özellikleri yönet"
+        }
+      },
+      "cycle": {
+        "title": "Döngüler bu proje için etkin değil.",
+        "description": "İşleri zaman dilimlerine bölün, proje son teslim tarihinden geriye çalışarak tarihler belirleyin ve takım olarak somut ilerleme kaydedin. Döngüleri kullanmaya başlamak için projenizde döngü özelliğini etkinleştirin.",
+        "primary_button": {
+          "text": "Özellikleri yönet"
+        }
+      },
+      "module": {
+        "title": "Modüller bu proje için etkin değil.",
+        "description": "Modüller projenizin yapı taşlarıdır. Kullanmaya başlamak için proje ayarlarından modülleri etkinleştirin.",
+        "primary_button": {
+          "text": "Özellikleri yönet"
+        }
+      },
+      "page": {
+        "title": "Sayfalar bu proje için etkin değil.",
+        "description": "Sayfalar projenizin yapı taşlarıdır. Kullanmaya başlamak için proje ayarlarından sayfaları etkinleştirin.",
+        "primary_button": {
+          "text": "Özellikleri yönet"
+        }
+      },
+      "view": {
+        "title": "Görünümler bu proje için etkin değil.",
+        "description": "Görünümler projenizin yapı taşlarıdır. Kullanmaya başlamak için proje ayarlarından görünümleri etkinleştirin.",
+        "primary_button": {
+          "text": "Özellikleri yönet"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Bekleme Listesi",
+      "planned": "Planlandı",
+      "in_progress": "Devam Ediyor",
+      "paused": "Duraklatıldı",
+      "completed": "Tamamlandı",
+      "cancelled": "İptal Edildi"
+    },
+    "layout": {
+      "list": "Liste düzeni",
+      "board": "Galeri düzeni",
+      "timeline": "Zaman çizelgesi düzeni"
+    },
+    "order_by": {
+      "name": "Ad",
+      "progress": "İlerleme",
+      "issues": "İş öğesi sayısı",
+      "due_date": "Son tarih",
+      "created_at": "Oluşturulma tarihi",
+      "manual": "Manuel"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "CSV'den üye içe aktar",
+      "description": "Şu sütunları içeren bir CSV yükleyin: E-posta ve Rol (5=Misafir, 15=Üye, 20=Yönetici). Kullanıcılar zaten çalışma alanı üyesi olmalıdır.",
+      "download_sample": "Örnek CSV indir",
+      "dropzone": {
+        "active": "CSV dosyasını buraya bırakın",
+        "inactive": "Sürükle bırak veya yüklemek için tıklayın",
+        "file_type": "Yalnızca .csv dosyaları desteklenir"
+      },
+      "buttons": {
+        "cancel": "İptal",
+        "import": "İçe Aktar",
+        "try_again": "Tekrar Dene",
+        "close": "Kapat",
+        "done": "Tamamlandı"
+      },
+      "progress": {
+        "uploading": "Yükleniyor...",
+        "importing": "İçe aktarılıyor..."
+      },
+      "summary": {
+        "title": {
+          "complete": "İçe Aktarma Tamamlandı"
+        },
+        "message": {
+          "success": "Projeye başarıyla {count} üye içe aktarıldı.",
+          "no_imports": "CSV dosyasından yeni üye içe aktarılmadı."
+        },
+        "stats": {
+          "added": "Eklendi",
+          "reactivated": "Yeniden etkinleştirildi",
+          "already_members": "Zaten üyeler",
+          "skipped": "Atlandı"
+        },
+        "download_errors": "Atlanan ayrıntıları indir"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Geçersiz dosya",
+          "message": "Yalnızca CSV dosyaları desteklenir."
+        },
+        "import_failed": {
+          "title": "İçe aktarma başarısız",
+          "message": "Bir şeyler ters gitti."
+        }
+      }
+    }
+  }
+}

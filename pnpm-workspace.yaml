@@ -191,7 +191,9 @@ catalog:
   hast-util-to-mdast: 10.1.2
   helmet: 7.2.0
   husky: 9.1.7
-  intl-messageformat: 10.7.18
+  i18next: 25.10.9
+  i18next-icu: 2.4.3
+  i18next-resources-to-backend: 1.2.1
   ioredis: 5.9.3
   is-emoji-supported: 0.0.5
   isbot: 5.1.35
@@ -240,6 +242,7 @@ catalog:
   react-fast-compare: 3.2.2
   react-grid-layout: 1.5.3
   react-hook-form: 7.71.2
+  react-i18next: 16.6.6
   react-is: 18.3.1
   react-markdown: 9.1.0
   react-masonry-component: 6.3.0

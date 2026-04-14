@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Espaços de equipe",
+    "empty_state": {
+      "general": {
+        "title": "Espaços de equipe desbloqueiam melhor organização e rastreamento no Plane.",
+        "description": "Crie uma superfície dedicada para cada equipe do mundo real, separada de todas as outras superfícies de trabalho no Plane, e personalize-as para se adequarem à forma como sua equipe trabalha.",
+        "primary_button": {
+          "text": "Criar um novo espaço de equipe"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Você ainda não vinculou nenhum espaço de equipe.",
+          "description": "Proprietários de espaços de equipe e projetos podem gerenciar o acesso aos projetos."
+        }
+      },
+      "primary_button": {
+        "text": "Vincular um espaço de equipe"
+      },
+      "secondary_button": {
+        "text": "Saiba mais"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nome do espaço de equipe",
+          "members": "Membros",
+          "accountType": "Tipo de conta"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Remover espaço de equipe"
+            },
+            "confirm": {
+              "title": "Remover {teamspaceName} de {projectName}",
+              "description": "Quando você remove este espaço de equipe de um projeto vinculado, os membros aqui perderão o acesso ao projeto vinculado."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nenhum espaço de equipe correspondente encontrado"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Você vinculou um espaço de equipe a este projeto.} other {Você vinculou # espaços de equipe a este projeto.}}",
+            "description": "{additionalCount, plural, =0 {O espaço de equipe {firstTeamspaceName} agora está vinculado a este projeto.} other {O espaço de equipe {firstTeamspaceName} e mais {additionalCount} agora estão vinculados a este projeto.}}"
+          },
+          "error": {
+            "title": "Isso não funcionou.",
+            "description": "Tente novamente ou recarregue esta página antes de tentar novamente."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Você removeu esse espaço de equipe deste projeto.",
+            "description": "O espaço de equipe {teamspaceName} foi removido de {projectName}."
+          },
+          "error": {
+            "title": "Isso não funcionou.",
+            "description": "Tente novamente ou recarregue esta página antes de tentar novamente."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Pesquisar espaços de equipe",
+        "info": {
+          "title": "Adicionar um espaço de equipe concede a todos os membros do espaço de equipe acesso a este projeto.",
+          "link": "Saiba mais"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Você não tem nenhum espaço de equipe para vincular.",
+            "description": "Ou você não está em um espaço de equipe que pode vincular ou já vinculou todos os espaços de equipe disponíveis."
+          },
+          "no_results": {
+            "title": "Isso não corresponde a nenhum dos seus espaços de equipe.",
+            "description": "Tente outro termo ou certifique-se de que você tem espaços de equipe para vincular."
+          }
+        },
+        "primary_button": {
+          "text": "Vincular espaço(s) de equipe selecionado(s)"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Crie itens de trabalho específicos da equipe.",
+        "description": "Itens de trabalho que são atribuídos a membros desta equipe em qualquer projeto vinculado aparecerão automaticamente aqui. Se você espera ver alguns itens de trabalho aqui, certifique-se de que seus projetos vinculados tenham itens de trabalho atribuídos a membros desta equipe ou crie itens de trabalho.",
+        "primary_button": {
+          "text": "Adicionar itens de trabalho a um projeto vinculado"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Não há itens de trabalho específicos da equipe para os filtros aplicados",
+        "description": "Altere alguns desses filtros ou limpe todos eles para ver itens de trabalho relevantes para este espaço.",
+        "secondary_button": {
+          "text": "Limpar todos os filtros"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Nenhum dos seus projetos vinculados tem um ciclo ativo.",
+        "description": "Ciclos ativos em projetos vinculados aparecerão automaticamente aqui. Se você espera ver um ciclo ativo, certifique-se de que ele esteja em execução em um projeto vinculado agora."
+      },
+      "completed": {
+        "title": "Nenhum dos seus projetos vinculados tem um ciclo concluído.",
+        "description": "Ciclos concluídos em projetos vinculados aparecerão automaticamente aqui. Se você espera ver um ciclo concluído, certifique-se de que ele também esteja concluído em um projeto vinculado."
+      },
+      "upcoming": {
+        "title": "Nenhum dos seus projetos vinculados tem um ciclo próximo.",
+        "description": "Ciclos próximos em projetos vinculados aparecerão automaticamente aqui. Se você espera ver um ciclo próximo, certifique-se de que ele também esteja em um projeto vinculado."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "As visualizações da sua equipe do seu trabalho sem interromper outras visualizações em seu workspace",
+        "description": "Veja o trabalho da sua equipe em visualizações que são salvas apenas para sua equipe e separadamente das visualizações de um projeto.",
+        "primary_button": {
+          "text": "Criar uma visualização"
+        }
+      },
+      "filter": {
+        "title": "Nenhuma visualização correspondente",
+        "description": "Nenhuma visualização corresponde aos critérios de pesquisa.\n Crie uma nova visualização em vez disso."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Armazene o conhecimento da sua equipe nas Páginas da Equipe.",
+        "description": "Diferentemente das páginas em um projeto, você pode salvar conhecimento específico para uma equipe em um conjunto separado de páginas aqui. Obtenha todos os recursos de Páginas, crie documentos de melhores práticas e wikis de equipe facilmente.",
+        "primary_button": {
+          "text": "Crie sua primeira página de equipe"
+        }
+      },
+      "filter": {
+        "title": "Nenhuma página correspondente",
+        "description": "Remova os filtros para ver todas as páginas"
+      },
+      "search": {
+        "title": "Nenhuma página correspondente",
+        "description": "Remova os critérios de pesquisa para ver todas as páginas"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Nenhum dos seus projetos vinculados tem itens de trabalho publicados.",
+        "description": "Crie alguns itens de trabalho em um ou mais desses projetos para ver o progresso por datas, estados e prioridade."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Você não tem nenhum item de trabalho bloqueando um colega de equipe.",
+          "description": "Bom trabalho! Você liberou o caminho para sua equipe. Você é um bom jogador de equipe."
+        },
+        "blocked": {
+          "title": "Você não tem itens de trabalho de colegas bloqueando você.",
+          "description": "Boas notícias! Você pode progredir em todos os seus itens de trabalho atribuídos."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Nenhum dos seus projetos vinculados tem itens de trabalho publicados.",
+          "description": "Crie alguns itens de trabalho em um ou mais desses projetos para ver a distribuição de trabalho por projeto e membros da equipe."
+        },
+        "filter": {
+          "title": "Não há estatísticas de equipe para os filtros aplicados.",
+          "description": "Crie alguns itens de trabalho em um ou mais desses projetos para ver a distribuição de trabalho por projeto e membros da equipe."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Balken",
+          "long_label": "Balkendiagramm",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Standard-Balken"
+            },
+            "stacked": {
+              "short_label": "Gestapelt",
+              "long_label": "Gestapelter Balken"
+            },
+            "grouped": {
+              "short_label": "Gruppiert",
+              "long_label": "Gruppierter Balken"
+            }
+          },
+          "orientation": {
+            "label": "Ausrichtung",
+            "horizontal": "Horizontal",
+            "vertical": "Vertikal",
+            "placeholder": "Ausrichtung hinzufügen"
+          },
+          "bar_color": "Balkenfarbe"
+        },
+        "line_chart": {
+          "short_label": "Linie",
+          "long_label": "Liniendiagramm",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Standard-Linie"
+            },
+            "multi_line": {
+              "short_label": "Mehrere Linien",
+              "long_label": "Mehrere Linien"
+            }
+          },
+          "line_color": "Linienfarbe",
+          "line_type": {
+            "label": "Linientyp",
+            "solid": "Durchgezogen",
+            "dashed": "Gestrichelt",
+            "placeholder": "Linientyp hinzufügen"
+          }
+        },
+        "area_chart": {
+          "short_label": "Fläche",
+          "long_label": "Flächendiagramm",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Standard-Fläche"
+            },
+            "stacked": {
+              "short_label": "Gestapelt",
+              "long_label": "Gestapelte Fläche"
+            },
+            "comparison": {
+              "short_label": "Vergleich",
+              "long_label": "Vergleichsfläche"
+            }
+          },
+          "fill_color": "Füllfarbe"
+        },
+        "donut_chart": {
+          "short_label": "Donut",
+          "long_label": "Donutdiagramm",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Standard-Donut"
+            },
+            "progress": {
+              "short_label": "Fortschritt",
+              "long_label": "Fortschritts-Donut"
+            }
+          },
+          "center_value": "Mittenwert",
+          "completed_color": "Farbe für Abgeschlossen"
+        },
+        "pie_chart": {
+          "short_label": "Kreis",
+          "long_label": "Kreisdiagramm",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Kreis"
+            }
+          },
+          "group": {
+            "label": "Gruppierte Stücke",
+            "group_thin_pieces": "Dünne Stücke gruppieren",
+            "minimum_threshold": {
+              "label": "Mindestschwelle",
+              "placeholder": "Schwelle hinzufügen"
+            },
+            "name_group": {
+              "label": "Gruppenname",
+              "placeholder": "\"Weniger als 5%\""
+            }
+          },
+          "show_values": "Werte anzeigen",
+          "value_type": {
+            "percentage": "Prozentsatz",
+            "count": "Anzahl"
+          }
+        },
+        "number": {
+          "short_label": "Zahl",
+          "long_label": "Zahl",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Zahl"
+            }
+          },
+          "alignment": {
+            "label": "Textausrichtung",
+            "left": "Links",
+            "center": "Zentriert",
+            "right": "Rechts",
+            "placeholder": "Textausrichtung hinzufügen"
+          },
+          "text_color": "Textfarbe"
+        },
+        "table_chart": {
+          "short_label": "Tabelle",
+          "long_label": "Tabellendiagramm",
+          "chart_models": {
+            "basic": {
+              "short_label": "Standard",
+              "long_label": "Tabelle"
+            }
+          },
+          "columns": "Spalten",
+          "rows": "Zeilen",
+          "rows_placeholder": "Zeilen hinzufügen",
+          "configure_rows_hint": "Wählen Sie eine Eigenschaft für Zeilen aus, um diese Tabelle anzuzeigen."
+        }
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Horizont",
+        "earthen": "Erdtöne"
+      },
+      "sections": {
+        "charts": "Diagramme",
+        "text": "Text"
+      },
+      "common": {
+        "add_widget": "Widget hinzufügen",
+        "widget_title": {
+          "label": "Widget benennen",
+          "placeholder": "z.B. \"Zu erledigen gestern\", \"Alle Abgeschlossen\""
+        },
+        "widget_type": "Widget-Typ",
+        "date_group": {
+          "label": "Datumsgruppe",
+          "placeholder": "Datumsgruppe hinzufügen"
+        },
+        "group_by": "Gruppieren nach",
+        "stack_by": "Stapeln nach",
+        "daily": "Täglich",
+        "weekly": "Wöchentlich",
+        "monthly": "Monatlich",
+        "yearly": "Jährlich",
+        "work_item_count": "Anzahl der Arbeitsaufgaben",
+        "estimate_point": "Schätzpunkt",
+        "pending_work_item": "Ausstehende Arbeitsaufgaben",
+        "completed_work_item": "Abgeschlossene Arbeitsaufgaben",
+        "in_progress_work_item": "Arbeitsaufgaben in Bearbeitung",
+        "blocked_work_item": "Blockierte Arbeitsaufgaben",
+        "work_item_due_this_week": "Diese Woche fällige Arbeitsaufgaben",
+        "work_item_due_today": "Heute fällige Arbeitsaufgaben",
+        "color_scheme": {
+          "label": "Farbschema",
+          "placeholder": "Farbschema hinzufügen"
+        },
+        "smoothing": "Glättung",
+        "markers": "Markierungen",
+        "legends": "Legenden",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Deckkraft",
+          "placeholder": "Deckkraft hinzufügen"
+        },
+        "border": "Rahmen",
+        "widget_configuration": "Widget-Konfiguration",
+        "configure_widget": "Widget konfigurieren",
+        "guides": "Hilfslinien",
+        "style": "Stil",
+        "area_appearance": "Flächenerscheinung",
+        "comparison_line_appearance": "Erscheinung der Vergleichslinie",
+        "add_property": "Eigenschaft hinzufügen",
+        "add_metric": "Metrik hinzufügen"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          },
+          "stacked": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert.",
+            "group_by": "Stapeln nach fehlt ein Wert."
+          },
+          "grouped": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert.",
+            "group_by": "Gruppieren nach fehlt ein Wert."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          },
+          "multi_line": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert.",
+            "group_by": "Gruppieren nach fehlt ein Wert."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          },
+          "stacked": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert.",
+            "group_by": "Stapeln nach fehlt ein Wert."
+          },
+          "comparison": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          },
+          "progress": {
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Der X-Achse fehlt ein Wert.",
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          }
+        },
+        "number": {
+          "basic": {
+            "y_axis_metric": "Der Metrik fehlt ein Wert."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Spalten fehlt ein Wert.",
+            "group_by": "Zeilen fehlt ein Wert."
+          }
+        },
+        "ask_admin": "Bitten Sie Ihren Administrator, dieses Widget zu konfigurieren."
+      },
+      "upgrade_required": {
+        "title": "Dieser Widget-Typ ist in Ihrem Plan nicht enthalten."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Neues Dashboard erstellen",
+        "update": "Dashboard aktualisieren"
+      },
+      "title": {
+        "label": "Benennen Sie Ihr Dashboard.",
+        "placeholder": "\"Kapazität über Projekte\", \"Arbeitsbelastung nach Team\", \"Status über alle Projekte\"",
+        "required_error": "Titel ist erforderlich"
+      },
+      "project": {
+        "label": "Projekte auswählen",
+        "placeholder": "Daten aus diesen Projekten werden dieses Dashboard antreiben.",
+        "required_error": "Projekte sind erforderlich"
+      },
+      "filters_label": "Legen Sie Filter für die oben genannten Datenquellen fest",
+      "create_dashboard": "Dashboard erstellen",
+      "update_dashboard": "Dashboard aktualisieren"
+    },
+    "delete_modal": {
+      "heading": "Dashboard löschen"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Präsentieren Sie Ihren Fortschritt in Dashboards, die auf Abruf und für immer verfügbar sind.",
+        "description": "Erstellen Sie jedes benötigte Dashboard und passen Sie das Aussehen Ihrer Daten für die perfekte Darstellung Ihres Fortschritts an.",
+        "coming_soon_to_mobile": "Bald auch in der mobilen App verfügbar",
+        "card_1": {
+          "title": "Für alle Ihre Projekte",
+          "description": "Erhalten Sie einen vollständigen Überblick über Ihren Workspace mit allen Projekten oder segmentieren Sie Ihre Arbeitsdaten für die perfekte Ansicht Ihres Fortschritts."
+        },
+        "card_2": {
+          "title": "Für alle Daten in Plane",
+          "description": "Gehen Sie über die vordefinierten Analysen und vorgefertigten Zyklusdiagramme hinaus, um Teams, Initiativen oder andere Dinge so zu betrachten, wie Sie es noch nie zuvor getan haben."
+        },
+        "card_3": {
+          "title": "Für alle Ihre Visualisierungsbedürfnisse",
+          "description": "Wählen Sie aus mehreren anpassbaren Diagrammen mit feingranularen Steuerungen, um Ihre Arbeitsdaten genau so zu sehen und zu zeigen, wie Sie es wünschen."
+        },
+        "card_4": {
+          "title": "Auf Abruf und dauerhaft",
+          "description": "Einmal erstellen, für immer behalten mit automatischen Aktualisierungen Ihrer Daten, kontextbezogenen Kennzeichnungen für Umfangsänderungen und teilbaren Permalinks."
+        },
+        "card_5": {
+          "title": "Exporte und geplante Kommunikation",
+          "description": "Für die Fälle, in denen Links nicht funktionieren, exportieren Sie Ihre Dashboards als einmalige PDFs oder planen Sie, dass sie automatisch an Stakeholder gesendet werden."
+        },
+        "card_6": {
+          "title": "Automatisch angepasstes Layout für alle Geräte",
+          "description": "Passen Sie die Größe Ihrer Widgets für das gewünschte Layout an und sehen Sie es auf Mobilgeräten, Tablets und anderen Browsern genau gleich."
+        }
+      },
+      "dashboards_list": {
+        "title": "Visualisieren Sie Daten in Widgets, erstellen Sie Ihre Dashboards mit Widgets und sehen Sie die neuesten Informationen auf Abruf.",
+        "description": "Erstellen Sie Ihre Dashboards mit benutzerdefinierten Widgets, die Ihre Daten im angegebenen Umfang anzeigen. Erhalten Sie Dashboards für alle Ihre Arbeiten über Projekte und Teams hinweg und teilen Sie Permalinks mit Stakeholdern für die Nachverfolgung auf Abruf."
+      },
+      "dashboards_search": {
+        "title": "Das stimmt nicht mit einem Dashboard-Namen überein.",
+        "description": "Stellen Sie sicher, dass Ihre Abfrage korrekt ist, oder versuchen Sie eine andere Abfrage."
+      },
+      "widgets_list": {
+        "title": "Visualisieren Sie Ihre Daten, wie Sie es wünschen.",
+        "description": "Verwenden Sie Linien, Balken, Kreise und andere Formate, um Ihre Daten\nso zu sehen, wie Sie es von den angegebenen Quellen wünschen."
+      },
+      "widget_data": {
+        "title": "Hier gibt es nichts zu sehen",
+        "description": "Aktualisieren Sie oder fügen Sie Daten hinzu, um sie hier zu sehen."
+      }
+    },
+    "common": {
+      "editing": "Bearbeitung"
+    }
+  }
+}

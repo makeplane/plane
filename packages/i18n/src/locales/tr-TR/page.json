@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "Sayfaları bağla",
+    "show_wiki_pages": "Wiki sayfalarını görüntüle",
+    "link_pages_to": "Sayfaları bağla",
+    "linked_pages": "Bağlı sayfalar",
+    "no_description": "Bu sayfa boş. Buraya bir şey yazın ve bunu buradaki yer tutucu olarak görün.",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Sayfalar güncellendi",
+          "message": "Sayfalar başarıyla güncellendi"
+        },
+        "error": {
+          "title": "Sayfalar güncellenemedi",
+          "message": "Sayfalar güncellenemedi"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Sayfa silindi",
+          "message": "Sayfa başarıyla silindi"
+        },
+        "error": {
+          "title": "Sayfa silinemedi",
+          "message": "Sayfa silinemedi"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Ana Hat",
+        "empty_state": {
+          "title": "Eksik başlıklar",
+          "description": "Bu sayfaya bazı başlıklar ekleyelim ki burada görebilelim."
+        }
+      },
+      "info": {
+        "label": "Bilgi",
+        "document_info": {
+          "words": "Kelimeler",
+          "characters": "Karakterler",
+          "paragraphs": "Paragraflar",
+          "read_time": "Okuma süresi"
+        },
+        "actors_info": {
+          "edited_by": "Düzenleyen",
+          "created_by": "Oluşturan"
+        },
+        "version_history": {
+          "label": "Sürüm geçmişi",
+          "current_version": "Mevcut sürüm",
+          "highlight_changes": "Değişiklikleri vurgula"
+        }
+      },
+      "assets": {
+        "label": "Varlıklar",
+        "download_button": "İndir",
+        "empty_state": {
+          "title": "Eksik görseller",
+          "description": "Burada görmek için görseller ekleyin."
+        }
+      }
+    },
+    "open_button": "Navigasyon panelini aç",
+    "close_button": "Navigasyon panelini kapat",
+    "outline_floating_button": "Ana hatları aç"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "Wiki koleksiyonlarını, projeleri ve takım alanlarını ara",
+        "project_to_project_with_wiki": "Wiki koleksiyonlarını ve projeleri ara",
+        "teamspace_to_all_with_wiki": "Wiki koleksiyonlarını, projeleri ve takım alanlarını ara"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "Wiki'ye taşındı",
+          "message": "Sayfa wiki'ye taşındı, ancak seçilen koleksiyona eklenemedi. General içinde kalır."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Koleksiyondan kaldır",
+      "success_message": "Sayfa koleksiyondan kaldırıldı.",
+      "error_message": "Sayfa koleksiyondan kaldırılamadı. Lütfen tekrar deneyin."
+    }
+  }
+}

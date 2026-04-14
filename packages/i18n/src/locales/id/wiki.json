@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Umum",
+      "private": "Pribadi",
+      "shared": "Dibagikan",
+      "archived": "Diarsipkan"
+    },
+    "fallback_name": "Koleksi",
+    "form": {
+      "name_required": "Judul koleksi wajib diisi",
+      "name_max_length": "Nama koleksi harus kurang dari 255 karakter",
+      "name_placeholder_create": "Beri judul untuk koleksi",
+      "name_placeholder_edit": "Nama koleksi"
+    },
+    "create_modal": {
+      "title": "Buat koleksi",
+      "submit": "Buat koleksi"
+    },
+    "edit_modal": {
+      "title": "Edit koleksi"
+    },
+    "delete_modal": {
+      "title": "Hapus koleksi",
+      "page_count": "Koleksi ini memiliki {pageCount} halaman. Pilih apa yang akan terjadi pada halaman tersebut.",
+      "transfer_title": "Pindahkan halaman dan hapus koleksi",
+      "transfer_description": "Pindahkan semua halaman ke koleksi lain sebelum menghapus. Halaman dan izinnya akan tetap dipertahankan.",
+      "transfer_warning": "Halaman yang dipindahkan akan mewarisi izin dari koleksi yang dipilih.",
+      "transfer_target_label": "Pindahkan halaman ke",
+      "transfer_target_placeholder": "Pilih koleksi",
+      "delete_with_pages_title": "Hapus koleksi beserta halamannya",
+      "delete_with_pages_description": "Hapus koleksi dan semua halamannya secara permanen. Tindakan ini tidak dapat dibatalkan.",
+      "submit": "Hapus koleksi"
+    },
+    "header": {
+      "add_page": "Tambah halaman"
+    },
+    "menu": {
+      "create_new_page": "Buat halaman baru",
+      "add_existing_page": "Tambah halaman yang sudah ada",
+      "edit_collection": "Edit koleksi",
+      "collection_options": "Opsi koleksi"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Cari halaman",
+      "success_message": "{count} halaman ditambahkan ke koleksi.",
+      "error_message": "Halaman tidak dapat dipindahkan. Silakan coba lagi.",
+      "no_pages_found": "Tidak ada halaman yang cocok dengan pencarian Anda",
+      "no_pages_available": "Tidak ada halaman yang tersedia untuk dipindahkan",
+      "submit": "Pindahkan"
+    },
+    "list": {
+      "invite_only": "Hanya undangan",
+      "remove_error": "Halaman tidak dapat dihapus dari koleksi.",
+      "no_matching_pages": "Tidak ada halaman yang cocok",
+      "remove_search_criteria": "Hapus kriteria pencarian untuk melihat semua halaman",
+      "remove_filters": "Hapus filter untuk melihat semua halaman",
+      "no_pages_title": "Belum ada halaman",
+      "no_pages_description": "Koleksi ini belum memiliki halaman.",
+      "untitled": "Tanpa judul",
+      "restricted_access": "Akses terbatas",
+      "collapse_page": "Ciutkan halaman",
+      "expand_page": "Bentangkan halaman",
+      "page_actions": "Aksi halaman",
+      "page_link_copied": "Tautan halaman disalin ke clipboard.",
+      "columns": {
+        "page_name": "Nama halaman",
+        "owner": "Pemilik",
+        "nested_pages": "Halaman bertingkat",
+        "last_activity": "Aktivitas terakhir",
+        "actions": "Aksi"
+      }
+    },
+    "toasts": {
+      "created": "Koleksi berhasil dibuat.",
+      "create_error": "Koleksi tidak dapat dibuat. Silakan coba lagi.",
+      "renamed": "Nama koleksi berhasil diubah.",
+      "rename_error": "Koleksi tidak dapat diperbarui. Silakan coba lagi.",
+      "transferred_deleted": "Halaman dipindahkan dan koleksi dihapus.",
+      "deleted_with_pages": "Koleksi dan halamannya dihapus.",
+      "delete_error": "Koleksi tidak dapat dihapus. Silakan coba lagi.",
+      "target_required": "Silakan pilih koleksi tujuan untuk memindahkan halaman.",
+      "create_page_error": "Halaman tidak dapat dibuat. Silakan coba lagi.",
+      "create_page_in_collection_error": "Halaman tidak dapat dibuat atau ditambahkan ke koleksi. Silakan coba lagi.",
+      "collection_link_copied": "Tautan koleksi disalin ke clipboard."
+    }
+  }
+}

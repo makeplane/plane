@@ -1,0 +1,330 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Vorlagen",
+      "new_project_template": "Neue Projektvorlage",
+      "new_work_item_template": "Neue Arbeitselementvorlage",
+      "new_page_template": "Neue Seitenvorlage",
+      "description": "Sparen Sie 80% der Zeit, die für die Erstellung von Projekten, Arbeitsaufgaben und Seiten aufgewendet wird, wenn Sie Vorlagen verwenden.",
+      "options": {
+        "project": {
+          "label": "Projektvorlagen"
+        },
+        "work_item": {
+          "label": "Arbeitsaufgabenvorlagen"
+        },
+        "page": {
+          "label": "Seitenvorlagen"
+        }
+      },
+      "create_template": {
+        "label": "Vorlage erstellen",
+        "no_permission": {
+          "project": "Kontaktieren Sie Ihren Projektadministrator, um Vorlagen zu erstellen",
+          "workspace": "Kontaktieren Sie Ihren Workspace-Administrator, um Vorlagen zu erstellen"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Vorlage verwenden",
+          "loading": "Verwenden"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Vom Workspace abgeleitet"
+        },
+        "project": {
+          "info": "Vom Projekt abgeleitet"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Benennen Sie Ihre Projektvorlage.",
+              "validation": {
+                "required": "Vorlagenname ist erforderlich",
+                "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+              }
+            },
+            "description": {
+              "placeholder": "Beschreiben Sie, wann und wie diese Vorlage verwendet werden soll."
+            }
+          },
+          "name": {
+            "placeholder": "Benennen Sie Ihr Projekt.",
+            "validation": {
+              "required": "Projekttitel ist erforderlich",
+              "maxLength": "Projekttitel sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "description": {
+            "placeholder": "Beschreiben Sie den Zweck und die Ziele dieses Projekts."
+          },
+          "button": {
+            "create": "Projektvorlage erstellen",
+            "update": "Projektvorlage aktualisieren"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Benennen Sie Ihre Arbeitsaufgabenvorlage.",
+              "validation": {
+                "required": "Vorlagenname ist erforderlich",
+                "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+              }
+            },
+            "description": {
+              "placeholder": "Beschreiben Sie, wann und wie diese Vorlage verwendet werden soll."
+            }
+          },
+          "name": {
+            "placeholder": "Geben Sie dieser Arbeitsaufgabe einen Titel.",
+            "validation": {
+              "required": "Arbeitsaufgabentitel ist erforderlich",
+              "maxLength": "Arbeitsaufgabentitel sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "description": {
+            "placeholder": "Beschreiben Sie diese Arbeitsaufgabe so, dass klar ist, was Sie erreichen werden, wenn Sie diese abschließen."
+          },
+          "button": {
+            "create": "Arbeitsaufgabenvorlage erstellen",
+            "update": "Arbeitsaufgabenvorlage aktualisieren"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Benennen Sie Ihre Seitenvorlage.",
+              "validation": {
+                "required": "Vorlagenname ist erforderlich",
+                "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+              }
+            },
+            "description": {
+              "placeholder": "Beschreiben Sie, wann und wie diese Vorlage verwendet werden soll."
+            }
+          },
+          "name": {
+            "placeholder": "Unbenannte Seite",
+            "validation": {
+              "maxLength": "Seitentitel sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "button": {
+            "create": "Seitenvorlage erstellen",
+            "update": "Seitenvorlage aktualisieren"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Veröffentlichungseinstellungen} other {Im Marketplace veröffentlichen}}",
+          "unpublish_action": "Vom Marketplace zurückziehen",
+          "title": "Machen Sie Ihre Vorlage entdeckbar und erkennbar.",
+          "name": {
+            "label": "Vorlagenname",
+            "placeholder": "Benennen Sie Ihre Vorlage",
+            "validation": {
+              "required": "Vorlagenname ist erforderlich",
+              "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "short_description": {
+            "label": "Kurze Beschreibung",
+            "placeholder": "Diese Vorlage ist ideal für Projektmanager, die mehrere Projekte gleichzeitig verwalten.",
+            "validation": {
+              "required": "Kurze Beschreibung ist erforderlich"
+            }
+          },
+          "description": {
+            "label": "Beschreibung",
+            "placeholder": "Steigern Sie die Produktivität und optimieren Sie die Kommunikation mit unserer Sprach-zu-Text-Integration.\n• Echtzeit-Transkription: Konvertieren Sie gesprochene Wörter sofort in präzisen Text.\n• Aufgaben- und Kommentarerstellung: Fügen Sie Aufgaben, Beschreibungen und Kommentare über Sprachbefehle hinzu.",
+            "validation": {
+              "required": "Beschreibung ist erforderlich"
+            }
+          },
+          "category": {
+            "label": "Kategorie",
+            "placeholder": "Wählen Sie, wo Sie denken, dass dies am besten passt. Sie können mehrere auswählen.",
+            "validation": {
+              "required": "Mindestens eine Kategorie ist erforderlich"
+            }
+          },
+          "keywords": {
+            "label": "Schlüsselwörter",
+            "placeholder": "Verwenden Sie Begriffe, die Sie denken, dass Ihre Benutzer beim Suchen nach dieser Vorlage verwenden werden.",
+            "helperText": "Geben Sie Schlüsselwörter ein, die wahrscheinlich helfen, diese von der Suche zu finden.",
+            "validation": {
+              "required": "Mindestens ein Schlüsselwort ist erforderlich"
+            }
+          },
+          "company_name": {
+            "label": "Unternehmensname",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Unternehmensname ist erforderlich",
+              "maxLength": "Unternehmensname sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "website": {
+            "label": "Website-URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Ungültige URL",
+              "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
+            }
+          },
+          "contact_email": {
+            "label": "Support-E-Mail",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Ungültige E-Mail-Adresse",
+              "maxLength": "Support-E-Mail sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link zu Ihrer Datenschutzerklärung",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Ungültige URL",
+              "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link zu Ihren Nutzungsbedingungen",
+            "placeholder": "https://planes.so/terms-of-service",
+            "validation": {
+              "invalid": "Ungültige URL",
+              "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
+            }
+          },
+          "cover_image": {
+            "label": "Fügen Sie ein Cover-Bild hinzu, das im Marketplace angezeigt wird",
+            "upload_title": "Cover-Bild hochladen",
+            "upload_placeholder": "Klicken Sie, um ein Cover-Bild hochzuladen, oder ziehen Sie es hierher",
+            "drop_here": "Hier ablegen",
+            "click_to_upload": "Klicken Sie, um ein Cover-Bild hochzuladen",
+            "invalid_file_or_exceeds_size_limit": "Ungültige Datei oder Überschreitung der Größe. Bitte versuchen Sie es erneut.",
+            "upload_and_save": "Hochladen und speichern",
+            "uploading": "Hochladen",
+            "remove": "Entfernen",
+            "removing": "Entfernen",
+            "validation": {
+              "required": "Cover-Bild ist erforderlich"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Dokumente und Bilder einfügen, die Sie denken, dass die Anzeigende dieser Vorlage hilfreich sein können.",
+            "validation": {
+              "required": "Mindestens ein Screenshot ist erforderlich"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Vorlagen",
+        "description": "Mit Projekt-, Arbeitsaufgaben- und Seitenvorlagen in Plane müssen Sie kein Projekt von Grund auf neu erstellen oder Arbeitsaufgabeneigenschaften manuell festlegen.",
+        "sub_description": "Sparen Sie 80% Ihrer Administrationszeit, wenn Sie Vorlagen verwenden."
+      },
+      "no_templates": {
+        "button": "Erstellen Sie Ihre erste Vorlage"
+      },
+      "no_labels": {
+        "description": "Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
+      },
+      "no_work_items": {
+        "description": "Noch keine Arbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."
+      },
+      "no_sub_work_items": {
+        "description": "Noch keine Unterarbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Es gibt keine Vorlagen, auf die Sie Zugriff haben.",
+          "description": "Bitte erstellen Sie eine Vorlage"
+        },
+        "no_results": {
+          "title": "Das entspricht keiner Vorlage.",
+          "description": "Versuchen Sie es mit anderen Suchbegriffen."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Vorlage erstellt",
+          "message": "{templateName}, die {templateType}-Vorlage, ist jetzt für Ihren Workspace verfügbar."
+        },
+        "error": {
+          "title": "Wir konnten diese Vorlage diesmal nicht erstellen.",
+          "message": "Versuchen Sie, Ihre Details erneut zu speichern oder kopieren Sie sie in eine neue Vorlage, vorzugsweise in einem anderen Tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Vorlage geändert",
+          "message": "{templateName}, die {templateType}-Vorlage, wurde geändert."
+        },
+        "error": {
+          "title": "Wir konnten Änderungen an dieser Vorlage nicht speichern.",
+          "message": "Versuchen Sie, Ihre Details erneut zu speichern oder kommen Sie später zu dieser Vorlage zurück. Wenn es immer noch Probleme gibt, kontaktieren Sie uns."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Vorlage gelöscht",
+          "message": "{templateName}, die {templateType}-Vorlage, wurde jetzt aus Ihrem Workspace gelöscht."
+        },
+        "error": {
+          "title": "Wir konnten diese Vorlage nicht löschen.",
+          "message": "Versuchen Sie, sie erneut zu löschen oder kommen Sie später darauf zurück. Wenn Sie sie dann nicht löschen können, kontaktieren Sie uns."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Vorlage zurückgezogen",
+          "message": "{templateName}, die {templateType}-Vorlage, wurde jetzt zurückgezogen."
+        },
+        "error": {
+          "title": "Wir konnten diese Vorlage nicht zurückziehen.",
+          "message": "Versuchen Sie, sie erneut zurückzuziehen oder kommen Sie später darauf zurück. Wenn Sie sie dann nicht zurückziehen können, kontaktieren Sie uns."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Vorlage löschen",
+      "description": {
+        "prefix": "Sind Sie sicher, dass Sie die Vorlage löschen möchten-",
+        "suffix": "? Alle mit der Vorlage verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Vorlage zurückziehen",
+      "description": {
+        "prefix": "Sind Sie sicher, dass Sie die Vorlage zurückziehen möchten-",
+        "suffix": "? Diese Vorlage wird den Benutzern im Marketplace nicht mehr zur Verfügung stehen."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Neue Vorlage hinzufügen",
+        "project": "Neue Vorlage hinzufügen"
+      },
+      "label": {
+        "project": "Projektvorlage auswählen",
+        "page": "Aus Vorlage wählen"
+      },
+      "tooltip": {
+        "work_item": "Arbeitselement-Vorlage auswählen"
+      },
+      "no_results": {
+        "work_item": "Keine Vorlagen gefunden.",
+        "project": "Keine Vorlagen gefunden."
+      }
+    }
+  }
+}

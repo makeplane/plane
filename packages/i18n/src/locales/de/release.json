@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Release} other {Releases}}",
+    "no_release": "Kein Release",
+    "unreleased": "Nicht veröffentlicht",
+    "select_releases": "Releases auswählen",
+    "overview": "Übersicht",
+    "scope": "Umfang",
+    "page_title": {
+      "scope": "Release – {name} | Umfang",
+      "scope_fallback": "Release | Umfang"
+    },
+    "properties": "Eigenschaften",
+    "target_date": "Zieltermin",
+    "lead": "Verantwortlich",
+    "release_tag": "Tag",
+    "labels": "Labels",
+    "description_placeholder": "Beschreibung hinzufügen...",
+    "progress": "Fortschritt",
+    "completed_work_items": "Abgeschlossene Arbeitselemente",
+    "pending_work_items": "Ausstehende Arbeitselemente",
+    "cancelled_work_items": "Abgebrochene Arbeitselemente",
+    "scope_page": {
+      "work_items": "Arbeitselemente",
+      "add_work_items": "Arbeitselemente hinzufügen",
+      "remove_from_release": "Aus Release entfernen",
+      "empty_state": {
+        "title": "Keine Arbeitselemente",
+        "description": "Fügen Sie Arbeitselemente hinzu, um den Umfang des Releases festzulegen."
+      },
+      "confirm_remove": {
+        "content": "Möchten Sie dieses Arbeitselement wirklich aus dem Release entfernen? Es bleibt im Projekt.",
+        "primary_button": {
+          "default": "Entfernen",
+          "loading": "Wird entfernt"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Noch kein Umfang",
+      "description": "Fügen Sie Arbeitselemente zum Release hinzu, um deren Abschluss für dieses Release zu verfolgen.",
+      "add_scope": "Umfang hinzufügen",
+      "not_found": {
+        "title": "Release nicht gefunden",
+        "description": "Das Release wurde möglicherweise gelöscht.",
+        "primary_button": "Zurück zu Releases"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Arbeitselement hinzugefügt} other {Arbeitselemente hinzugefügt}}",
+      "work_items_error": "Arbeitselemente konnten nicht hinzugefügt werden."
+    },
+    "count_releases": "{count, plural, one {# Release} other {# Releases}}",
+    "actions": {
+      "delete": "Löschen"
+    },
+    "delete_modal": {
+      "title": "Release löschen",
+      "content": "Möchten Sie den Release \"{releaseName}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "settings": {
+      "heading": {
+        "title": "Releases",
+        "description": "Verwalten Sie Projektlieferungen präzise mit Releases."
+      },
+      "toggle": {
+        "title": "Releases aktivieren",
+        "description": "Mitglieder des Arbeitsbereichs haben in ihren jeweiligen Projekten Ansichtszugriff auf den Umfang."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Releases werden aktiviert...",
+          "success": {
+            "title": "Releases aktiviert",
+            "message": "Releases wurden für diesen Arbeitsbereich aktiviert."
+          },
+          "error": {
+            "title": "Fehler",
+            "message": "Releases konnten nicht aktiviert werden. Bitte versuchen Sie es erneut."
+          }
+        },
+        "disable": {
+          "loading": "Releases werden deaktiviert...",
+          "success": {
+            "title": "Releases deaktiviert",
+            "message": "Releases wurden für diesen Arbeitsbereich deaktiviert."
+          },
+          "error": {
+            "title": "Fehler",
+            "message": "Releases konnten nicht deaktiviert werden. Bitte versuchen Sie es erneut."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Release-Tags",
+        "labels": "Labels"
+      },
+      "tags": {
+        "title": "Release-Tags",
+        "description": "Kategorisieren und filtern Sie Ihre Releases mit Tags.",
+        "add": "Tag hinzufügen",
+        "empty_state": "Noch keine Tags. Erstellen Sie Ihren ersten Tag.",
+        "errors": {
+          "version_required": "Version ist erforderlich.",
+          "version_already_exists": "Ein Tag mit dieser Version existiert bereits.",
+          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        },
+        "delete_modal": {
+          "title": "Tag löschen",
+          "content": "Möchten Sie den Tag \"{tagVersion}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+        },
+        "actions": {
+          "edit": "Tag bearbeiten",
+          "delete": "Tag löschen"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag erfolgreich gelöscht.",
+            "error": "Tag konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+          }
+        }
+      },
+      "labels": {
+        "title": "Labels",
+        "description": "Strukturieren und organisieren Sie Ihre Initiativen mit Labels.",
+        "add": "Label hinzufügen",
+        "empty_state": "Noch keine Labels. Erstellen Sie Ihr erstes Label.",
+        "errors": {
+          "name_required": "Name ist erforderlich.",
+          "name_already_exists": "Ein Label mit diesem Namen existiert bereits.",
+          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        },
+        "modal": {
+          "name_placeholder": "Labelname",
+          "pick_color": "Labelfarbe auswählen"
+        },
+        "actions": {
+          "edit": "Label bearbeiten",
+          "delete": "Label löschen"
+        },
+        "drag_to_reorder": "Zum Neuordnen ziehen",
+        "delete_modal": {
+          "title": "Label löschen",
+          "content": "Möchten Sie das Label \"{labelName}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Label erfolgreich gelöscht.",
+            "error": "Label konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+          }
+        }
+      }
+    }
+  }
+}

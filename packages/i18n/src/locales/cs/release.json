@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Vydání} other {Vydání}}",
+    "no_release": "Žádné vydání",
+    "unreleased": "Nevydáno",
+    "select_releases": "Vyberte vydání",
+    "overview": "Přehled",
+    "scope": "Rozsah",
+    "page_title": {
+      "scope": "Vydání - {name} | Rozsah",
+      "scope_fallback": "Vydání | Rozsah"
+    },
+    "properties": "Vlastnosti",
+    "target_date": "Cílové datum",
+    "lead": "Vedoucí",
+    "release_tag": "Tag",
+    "labels": "Štítky",
+    "description_placeholder": "Přidejte popis...",
+    "progress": "Průběh",
+    "completed_work_items": "Dokončené pracovní položky",
+    "pending_work_items": "Čekající pracovní položky",
+    "cancelled_work_items": "Zrušené pracovní položky",
+    "scope_page": {
+      "work_items": "Pracovní položky",
+      "add_work_items": "Přidat pracovní položky",
+      "remove_from_release": "Odebrat z vydání",
+      "empty_state": {
+        "title": "Žádné pracovní položky",
+        "description": "Přidejte pracovní položky pro vymezení rozsahu vydání."
+      },
+      "confirm_remove": {
+        "content": "Opravdu chcete odebrat tuto pracovní položku z vydání? V projektu zůstane.",
+        "primary_button": {
+          "default": "Odebrat",
+          "loading": "Odebírání"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Zatím žádný rozsah",
+      "description": "Přidejte pracovní položky k vydání a sledujte jejich dokončení pro toto vydání.",
+      "add_scope": "Přidat rozsah",
+      "not_found": {
+        "title": "Vydání nenalezeno",
+        "description": "Vydání mohlo být smazáno.",
+        "primary_button": "Zpět na vydání"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Pracovní položka přidána} other {Pracovní položky přidány}}",
+      "work_items_error": "Nepodařilo se přidat pracovní položky"
+    },
+    "count_releases": "{count, plural, one {# vydání} other {# vydání}}",
+    "actions": {
+      "delete": "Smazat"
+    },
+    "delete_modal": {
+      "title": "Smazat vydání",
+      "content": "Opravdu chcete smazat vydání \"{releaseName}\"? Tuto akci nelze vrátit zpět."
+    },
+    "settings": {
+      "heading": {
+        "title": "Vydání",
+        "description": "Spravujte projektové dodávky s přesností pomocí vydání."
+      },
+      "toggle": {
+        "title": "Povolit vydání",
+        "description": "Členové pracovního prostoru budou mít ve svých příslušných projektech přístup k zobrazení rozsahu."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Povolují se vydání...",
+          "success": {
+            "title": "Vydání povolena",
+            "message": "Vydání byla pro tento pracovní prostor povolena."
+          },
+          "error": {
+            "title": "Chyba",
+            "message": "Nepodařilo se povolit vydání. Zkuste to prosím znovu."
+          }
+        },
+        "disable": {
+          "loading": "Zakazují se vydání...",
+          "success": {
+            "title": "Vydání zakázána",
+            "message": "Vydání byla pro tento pracovní prostor zakázána."
+          },
+          "error": {
+            "title": "Chyba",
+            "message": "Nepodařilo se zakázat vydání. Zkuste to prosím znovu."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Tagy vydání",
+        "labels": "Štítky"
+      },
+      "tags": {
+        "title": "Tagy vydání",
+        "description": "Kategorizujte a filtrujte svá vydání pomocí tagů.",
+        "add": "Přidat tag",
+        "empty_state": "Zatím žádné tagy. Vytvořte svůj první tag.",
+        "errors": {
+          "version_required": "Verze je povinná.",
+          "version_already_exists": "Tag s touto verzí již existuje.",
+          "generic": "Něco se pokazilo. Zkuste to prosím znovu."
+        },
+        "delete_modal": {
+          "title": "Smazat tag",
+          "content": "Opravdu chcete smazat tag \"{tagVersion}\"? Tuto akci nelze vrátit zpět."
+        },
+        "actions": {
+          "edit": "Upravit tag",
+          "delete": "Smazat tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag byl úspěšně smazán.",
+            "error": "Tag se nepodařilo smazat. Zkuste to prosím znovu."
+          }
+        }
+      },
+      "labels": {
+        "title": "Štítky",
+        "description": "Strukturujte a organizujte své iniciativy pomocí štítků.",
+        "add": "Přidat štítek",
+        "empty_state": "Zatím žádné štítky. Vytvořte svůj první štítek.",
+        "errors": {
+          "name_required": "Název je povinný.",
+          "name_already_exists": "Štítek s tímto názvem již existuje.",
+          "generic": "Něco se pokazilo. Zkuste to prosím znovu."
+        },
+        "modal": {
+          "name_placeholder": "Název štítku",
+          "pick_color": "Vyberte barvu štítku"
+        },
+        "actions": {
+          "edit": "Upravit štítek",
+          "delete": "Smazat štítek"
+        },
+        "drag_to_reorder": "Přetažením změňte pořadí",
+        "delete_modal": {
+          "title": "Smazat štítek",
+          "content": "Opravdu chcete smazat štítek \"{labelName}\"? Tuto akci nelze vrátit zpět."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Štítek byl úspěšně smazán.",
+            "error": "Štítek se nepodařilo smazat. Zkuste to prosím znovu."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Pracovná položka} few {Pracovné položky} other {Pracovných položiek}}",
+    "all": "Všetky pracovné položky",
+    "edit": "Upraviť pracovnú položku",
+    "title": {
+      "label": "Názov pracovnej položky",
+      "required": "Názov pracovnej položky je povinný."
+    },
+    "add": {
+      "press_enter": "Stlačte 'Enter' pre pridanie ďalšej pracovnej položky",
+      "label": "Pridať pracovnú položku",
+      "cycle": {
+        "failed": "Pridanie pracovnej položky do cyklu zlyhalo. Skúste to prosím znova.",
+        "success": "{count, plural, one {Pracovná položka} few {Pracovné položky} other {Pracovných položiek}} pridaná do cyklu.",
+        "loading": "Pridávanie {count, plural, one {pracovnej položky} few {pracovných položiek} other {pracovných položiek}} do cyklu"
+      },
+      "assignee": "Pridať priradených",
+      "start_date": "Pridať dátum začiatku",
+      "due_date": "Pridať termín",
+      "parent": "Pridať nadradenú pracovnú položku",
+      "sub_issue": "Pridať podriadenú pracovnú položku",
+      "relation": "Pridať vzťah",
+      "link": "Pridať odkaz",
+      "existing": "Pridať existujúcu pracovnú položku"
+    },
+    "remove": {
+      "label": "Odstrániť pracovnú položku",
+      "cycle": {
+        "loading": "Odstraňovanie pracovnej položky z cyklu",
+        "success": "Pracovná položka odstránená z cyklu.",
+        "failed": "Odstránenie pracovnej položky z cyklu zlyhalo. Skúste to prosím znova."
+      },
+      "module": {
+        "loading": "Odstraňovanie pracovnej položky z modulu",
+        "success": "Pracovná položka odstránená z modulu.",
+        "failed": "Odstránenie pracovnej položky z modulu zlyhalo. Skúste to prosím znova."
+      },
+      "parent": {
+        "label": "Odstrániť nadradenú pracovnú položku"
+      }
+    },
+    "new": "Nová pracovná položka",
+    "adding": "Pridávanie pracovnej položky",
+    "create": {
+      "success": "Pracovná položka bola úspešne vytvorená"
+    },
+    "priority": {
+      "urgent": "Naliehavá",
+      "high": "Vysoká",
+      "medium": "Stredná",
+      "low": "Nízka"
+    },
+    "display": {
+      "properties": {
+        "label": "Zobrazované vlastnosti",
+        "id": "ID",
+        "issue_type": "Typ pracovnej položky",
+        "sub_issue_count": "Počet podriadených položiek",
+        "attachment_count": "Počet príloh",
+        "created_on": "Vytvorené dňa",
+        "sub_issue": "Podriadená položka",
+        "work_item_count": "Počet pracovných položiek"
+      },
+      "extra": {
+        "show_sub_issues": "Zobraziť podriadené položky",
+        "show_empty_groups": "Zobraziť prázdne skupiny"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Toto rozloženie je triedené podľa",
+      "list": "Zoznam",
+      "kanban": "Nástenka",
+      "calendar": "Kalendár",
+      "spreadsheet": "Tabuľka",
+      "gantt": "Časová os",
+      "title": {
+        "list": "Zoznamové rozloženie",
+        "kanban": "Nástenkové rozloženie",
+        "calendar": "Kalendárové rozloženie",
+        "spreadsheet": "Tabuľkové rozloženie",
+        "gantt": "Rozloženie časovej osi"
+      }
+    },
+    "states": {
+      "active": "Aktívne",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "placeholder": "Pridať komentár",
+      "switch": {
+        "private": "Prepnúť na súkromný komentár",
+        "public": "Prepnúť na verejný komentár"
+      },
+      "create": {
+        "success": "Komentár bol úspešne vytvorený",
+        "error": "Vytvorenie komentára zlyhalo. Skúste to prosím neskôr."
+      },
+      "update": {
+        "success": "Komentár bol úspešne aktualizovaný",
+        "error": "Aktualizácia komentára zlyhala. Skúste to prosím neskôr."
+      },
+      "remove": {
+        "success": "Komentár bol úspešne odstránený",
+        "error": "Odstránenie komentára zlyhalo. Skúste to prosím neskôr."
+      },
+      "upload": {
+        "error": "Nahratie prílohy zlyhalo. Skúste to prosím neskôr."
+      },
+      "copy_link": {
+        "success": "Odkaz na komentár bol skopírovaný do schránky",
+        "error": "Chyba pri kopírovaní odkazu na komentár. Skúste to prosím neskôr."
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Pracovná položka neexistuje",
+        "description": "Pracovná položka, ktorú hľadáte, neexistuje, bola archivovaná alebo zmazaná.",
+        "primary_button": {
+          "text": "Zobraziť ďalšie pracovné položky"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Súvisiace pracovné položky"
+    },
+    "archive": {
+      "description": "Archivovať je možné iba dokončené alebo zrušené\npracovné položky",
+      "label": "Archivovať pracovnú položku",
+      "confirm_message": "Naozaj chcete archivovať túto pracovnú položku? Všetky archivované položky je možné neskôr obnoviť.",
+      "success": {
+        "label": "Archivácia úspešná",
+        "message": "Vaše archívy nájdete v archívoch projektu."
+      },
+      "failed": {
+        "message": "Archivácia pracovnej položky zlyhala. Skúste to prosím znova."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Obnovenie úspešné",
+        "message": "Vaša pracovná položka je na nájdenie v pracovných položkách projektu."
+      },
+      "failed": {
+        "message": "Obnovenie pracovnej položky zlyhalo. Skúste to prosím znova."
+      }
+    },
+    "relation": {
+      "relates_to": "Súvisiace s",
+      "duplicate": "Duplikát",
+      "blocked_by": "Blokované",
+      "blocking": "Blokujúce",
+      "start_before": "Začína pred",
+      "start_after": "Začína po",
+      "finish_before": "Končí pred",
+      "finish_after": "Končí po",
+      "implements": "Implementuje",
+      "implemented_by": "Implementované"
+    },
+    "copy_link": "Kopírovať odkaz na pracovnú položku",
+    "delete": {
+      "label": "Zmazať pracovnú položku",
+      "error": "Chyba pri mazaní pracovnej položky"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Pracovná položka úspešne prihlásená na odber",
+        "unsubscribed": "Odber pracovnej položky zrušený"
+      }
+    },
+    "select": {
+      "error": "Vyberte aspoň jednu pracovnú položku",
+      "empty": "Nie sú vybrané žiadne pracovné položky",
+      "add_selected": "Pridať vybrané pracovné položky",
+      "select_all": "Vybrať všetko",
+      "deselect_all": "Zrušiť výber všetkého"
+    },
+    "open_in_full_screen": "Otvoriť pracovnú položku na celú obrazovku",
+    "vote": {
+      "click_to_upvote": "Kliknite pre hlasovanie hore",
+      "click_to_downvote": "Kliknite pre hlasovanie dole",
+      "click_to_view_upvotes": "Kliknite pre zobrazenie hlasov hore",
+      "click_to_view_downvotes": "Kliknite pre zobrazenie hlasov dole"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Podriadená pracovná položka bola úspešne aktualizovaná",
+      "error": "Chyba pri aktualizácii podriadenej položky"
+    },
+    "remove": {
+      "success": "Podriadená pracovná položka bola úspešne odstránená",
+      "error": "Chyba pri odstraňovaní podriadenej položky"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nemáte podriadené pracovné položky, ktoré zodpovedajú použitým filtrom.",
+        "description": "Pre zobrazenie všetkých podriadených pracovných položiek vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      },
+      "list_filters": {
+        "title": "Nemáte pracovné položky, ktoré zodpovedajú použitým filtrom.",
+        "description": "Pre zobrazenie všetkých pracovných položiek vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Žiadne zodpovedajúce položky"
+      },
+      "no_issues": {
+        "title": "Žiadne položky"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Žiadne komentáre",
+        "description": "Komentáre slúžia na diskusiu a sledovanie položiek."
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Nemožno archivovať pracovné položky",
+        "message": "Archivovať je možné iba pracovné položky patriace do skupín stavov Dokončené alebo Zrušené."
+      },
+      "invalid_issue_start_date": {
+        "title": "Nemožno aktualizovať pracovné položky",
+        "message": "Vybraný dátum začiatku nasleduje po termíne dokončenia niektorých pracovných položiek. Zabezpečte, aby dátum začiatku predchádzal termínu dokončenia."
+      },
+      "invalid_issue_target_date": {
+        "title": "Nemožno aktualizovať pracovné položky",
+        "message": "Vybraný termín dokončenia predchádza dátumu začiatku niektorých pracovných položiek. Zabezpečte, aby termín dokončenia nasledoval po dátume začiatku."
+      },
+      "invalid_state_transition": {
+        "title": "Nemožno aktualizovať pracovné položky",
+        "message": "Zmena stavu nie je povolená pre niektoré pracovné položky. Uistite sa, že zmena stavu je povolená."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Povoliť pracovné postupy",
+        "description": "Nastavte pracovné postupy na riadenie pohybu pracovných položiek",
+        "no_states_tooltip": "Do pracovného postupu neboli pridané žiadne stavy.",
+        "toast": {
+          "loading": {
+            "enabling": "Povoľovanie pracovných postupov",
+            "disabling": "Vypínanie pracovných postupov"
+          },
+          "success": {
+            "title": "Úspech!",
+            "message": "Pracovné postupy boli úspešne povolené."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Pracovné postupy sa nepodarilo povoliť. Skúste to znova."
+          }
+        }
+      },
+      "heading": "Pracovné postupy",
+      "description": "Automatizujte prechody pracovných položiek a nastavte pravidlá, ktoré riadia, ako sa úlohy pohybujú cez tok projektu.",
+      "add_button": "Pridať nový pracovný postup",
+      "search": "Hľadať pracovné postupy",
+      "detail": {
+        "define": "Definovať pracovný postup",
+        "add_states": "Pridať stavy",
+        "unmapped_states": {
+          "title": "Zistené nenamapované stavy",
+          "description": "Niektoré pracovné položky vybraných typov sa momentálne nachádzajú v stavoch, ktoré v tomto pracovnom postupe neexistujú.",
+          "note": "Ak povolíte tento pracovný postup, tieto položky sa automaticky presunú do počiatočného stavu tohto pracovného postupu.",
+          "label": "Chýbajúce stavy",
+          "tooltip": "Niektoré pracovné položky sú v stavoch, ktoré nie sú namapované na tento pracovný postup. Otvorte pracovný postup a skontrolujte ho."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Všetky stavy sa používajú",
+          "description": "Všetky stavy definované pre tento projekt sú už prítomné vo vašom aktuálnom pracovnom postupe."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Tento pracovný postup sa vzťahuje na každý typ pracovnej položky, ktorý nie je priradený k žiadnemu pracovnému postupu."
+      },
+      "create": {
+        "heading": "Vytvoriť nový pracovný postup"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Opakujúce sa pracovné položky",
+      "description": "Nastavte opakujúce sa pracovné položky raz a my sa postaráme o opakovanie. Všetko sa tu zobrazí, keď bude čas.",
+      "new_recurring_work_item": "Nová opakujúca sa úloha",
+      "update_recurring_work_item": "Upraviť opakujúcu sa úlohu",
+      "form": {
+        "interval": {
+          "title": "Plán",
+          "start_date": {
+            "validation": {
+              "required": "Dátum začiatku je povinný"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ intervalu je povinný"
+            }
+          }
+        },
+        "button": {
+          "create": "Vytvoriť opakujúcu sa úlohu",
+          "update": "Upraviť opakujúcu sa úlohu"
+        }
+      },
+      "create_button": {
+        "label": "Vytvoriť opakujúcu sa úlohu",
+        "no_permission": "Kontaktujte správcu projektu pre vytvorenie opakujúcich sa úloh"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Vaša práca na autopilote",
+        "description": "Nastavte raz. Pripomenieme vám to, keď bude čas. Upgradujte na Business, aby bola opakovaná práca bez námahy."
+      },
+      "no_templates": {
+        "button": "Vytvorte svoju prvú opakujúcu sa úlohu"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Opakujúca sa úloha vytvorená",
+          "message": "{name}, opakujúca sa úloha, je teraz dostupná vo vašom pracovnom priestore."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa tentokrát nepodarilo vytvoriť.",
+          "message": "Skúste znova uložiť detaily alebo ich skopírujte do novej opakujúcej sa úlohy, ideálne v inom okne."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Opakujúca sa úloha upravená",
+          "message": "{name}, opakujúca sa úloha, bola upravená."
+        },
+        "error": {
+          "title": "Zmeny tejto opakujúcej sa úlohy sa nepodarilo uložiť.",
+          "message": "Skúste znova uložiť detaily alebo sa k tejto úlohe vráťte neskôr. Ak problém pretrváva, kontaktujte nás."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Opakujúca sa úloha odstránená",
+          "message": "{name}, opakujúca sa úloha, bola odstránená z vášho pracovného priestoru."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa nepodarilo odstrániť.",
+          "message": "Skúste ju odstrániť znova alebo sa k nej vráťte neskôr. Ak sa vám ju stále nedarí odstrániť, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Odstrániť opakujúcu sa úlohu",
+      "description": {
+        "prefix": "Naozaj chcete odstrániť opakujúcu sa úlohu-",
+        "suffix": "? Všetky údaje súvisiace s touto opakujúcou sa úlohou budú natrvalo odstránené. Táto akcia je nevratná."
+      }
+    }
+  }
+}

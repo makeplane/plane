@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Importa elementi di lavoro dai repository GitHub e sincronizzali."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importa elementi di lavoro ed epic dai progetti e dagli epic di Jira."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Esporta elementi di lavoro in un file CSV.",
+      "short_description": "Esporta come CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Esporta elementi di lavoro in un file Excel.",
+      "short_description": "Esporta come Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Esporta elementi di lavoro in un file Excel.",
+      "short_description": "Esporta come Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Esporta elementi di lavoro in un file JSON.",
+      "short_description": "Esporta come JSON"
+    }
+  },
+  "importers": {
+    "imports": "Importazioni",
+    "logo": "Logo",
+    "import_message": "Importa i tuoi dati {serviceName} nel progetto plane.",
+    "deactivate": "Disattiva",
+    "deactivating": "Disattivazione",
+    "migrating": "Migrando",
+    "migrations": "Migrazioni",
+    "refreshing": "Aggiornando",
+    "import": "Importa",
+    "serial_number": "Nr. di serie",
+    "project": "Progetto",
+    "workspace": "workspace",
+    "status": "Stato",
+    "summary": "Sommario",
+    "total_batches": "Totale batch",
+    "imported_batches": "Batch importati",
+    "re_run": "Rerun",
+    "cancel": "Cancella",
+    "start_time": "Tempo di inizio",
+    "no_jobs_found": "Nessun lavoro trovato",
+    "no_project_imports": "Non hai importato ancora progetti {serviceName}.",
+    "cancel_import_job": "Cancella lavoro di importazione",
+    "cancel_import_job_confirmation": "Sei sicuro di voler cancellare questo lavoro di importazione? Questo fermerà il processo di importazione per questo progetto.",
+    "re_run_import_job": "Rerun import job",
+    "re_run_import_job_confirmation": "Are you sure you want to re-run this import job? This will restart the import process for this project.",
+    "upload_csv_file": "Carica un file CSV per importare i dati utente.",
+    "connect_importer": "Connetti {serviceName}",
+    "migration_assistant": "Assistente di migrazione",
+    "migration_assistant_description": "Migra senza sforzo i tuoi progetti {serviceName} su Plane con il nostro potente assistente.",
+    "token_helper": "Lo ottieni da",
+    "personal_access_token": "Token di accesso personale",
+    "source_token_expired": "Token scaduto",
+    "source_token_expired_description": "Il token fornito è scaduto. Per favore disattiva e riconnetti con un nuovo set di credenziali.",
+    "user_email": "Email utente",
+    "select_state": "Seleziona stato",
+    "select_service_project": "Seleziona {serviceName} Progetto",
+    "loading_service_projects": "Caricamento {serviceName} progetti",
+    "select_service_workspace": "Seleziona {serviceName} workspace",
+    "loading_service_workspaces": "Caricamento {serviceName} workspaces",
+    "select_priority": "Seleziona priorità",
+    "select_service_team": "Seleziona {serviceName} Team",
+    "add_seat_msg_free_trial": "Stai cercando di importare {additionalUserCount} utenti non registrati e hai solo {currentWorkspaceSubscriptionAvailableSeats} posti disponibili nel piano corrente. Per continuare, aggiorna ora.",
+    "add_seat_msg_paid": "Stai cercando di importare {additionalUserCount} utenti non registrati e hai solo {currentWorkspaceSubscriptionAvailableSeats} posti disponibili nel piano corrente. Per continuare, acquista almeno {extraSeatRequired} posti extra.",
+    "skip_user_import_title": "Skip importing User data",
+    "skip_user_import_description": "Skipping user import will result in work items, comments, and other data from {serviceName} being created by the user performing the migration in Plane. You can still manually add users later.",
+    "invalid_pat": "Token di accesso personale non valido"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Importa i tuoi dati Jira nel progetto Plane.",
+    "create_project_automatically": "Crea progetto automaticamente",
+    "create_project_automatically_description": "Creeremo un nuovo progetto per te basato sui dettagli del progetto Jira.",
+    "import_to_existing_project": "Importa in un progetto esistente",
+    "import_to_existing_project_description": "Scegli un progetto esistente dal menu a discesa qui sotto.",
+    "state_mapping_automatic_creation": "Tutti gli stati Jira verranno creati automaticamente in Plane.",
+    "personal_access_token": "Token di accesso personale",
+    "user_email": "Email utente",
+    "atlassian_security_settings": "Impostazioni di sicurezza Atlassian",
+    "email_description": "Questa è l'email collegata al tuo token di accesso personale",
+    "jira_domain": "Dominio Jira",
+    "jira_domain_description": "Questo è il dominio della tua istanza Jira",
+    "steps": {
+      "title_configure_plane": "Configura Plane",
+      "description_configure_plane": "Per prima cosa crea il progetto in Plane dove intendi migrare i tuoi dati Jira. Una volta creato il progetto, selezionalo qui.",
+      "title_configure_jira": "Configura Jira",
+      "description_configure_jira": "Per favore seleziona lo spazio di lavoro Jira da cui vuoi migrare i tuoi dati.",
+      "title_import_users": "Importa utenti",
+      "description_import_users": "Per favore aggiungi gli utenti che desideri migrare da Jira a Plane. In alternativa, puoi saltare questo passaggio e aggiungere utenti manualmente più tardi.",
+      "title_map_states": "Mappa stati",
+      "description_map_states": "Abbiamo automaticamente mappato gli stati Jira ai stati Plane in base alla migliore nostra capacità. Per favore mappa qualsiasi stato rimanente prima di procedere, puoi anche creare stati e mapparli manualmente.",
+      "title_map_priorities": "Mappa priorità",
+      "description_map_priorities": "Abbiamo automaticamente mappato le priorità in base alla migliore nostra capacità. Per favore mappa qualsiasi priorità rimanente prima di procedere.",
+      "title_summary": "Sommario",
+      "description_summary": "Questo è un sommario dei dati che verranno migrati da Jira a Plane.",
+      "custom_jql_filter": "Filtro JQL Personalizzato",
+      "jql_filter_description": "Usa JQL per filtrare ticket specifici per l'importazione.",
+      "project_code": "PROGETTO",
+      "enter_filters_placeholder": "Inserisci filtri (es. status = 'In Progress')",
+      "validating_query": "Convalida query in corso...",
+      "validation_successful_work_items_selected": "Convalida riuscita, {count} elementi di lavoro selezionati.",
+      "run_syntax_check": "Esegui controllo sintassi per verificare la tua query",
+      "refresh": "Aggiorna",
+      "check_syntax": "Controlla Sintassi",
+      "no_work_items_selected": "Nessun elemento di lavoro selezionato dalla query.",
+      "validation_error_default": "Qualcosa è andato storto durante la convalida della query."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Importa i tuoi dati Asana nel progetto Plane.",
+    "select_asana_priority_field": "Seleziona campo priorità Asana",
+    "steps": {
+      "title_configure_plane": "Configura Plane",
+      "description_configure_plane": "Per prima cosa crea il progetto in Plane dove intendi migrare i tuoi dati Asana. Una volta creato il progetto, selezionalo qui.",
+      "title_configure_asana": "Configura Asana",
+      "description_configure_asana": "Per favore seleziona lo spazio di lavoro e il progetto Asana da cui vuoi migrare i tuoi dati.",
+      "title_map_states": "Mappa stati",
+      "description_map_states": "Per favore seleziona gli stati Asana che desideri mappare ai stati del progetto Plane.",
+      "title_map_priorities": "Mappa priorità",
+      "description_map_priorities": "Per favore seleziona le priorità Asana che desideri mappare ai priorità del progetto Plane.",
+      "title_summary": "Sommario",
+      "description_summary": "Questo è un sommario dei dati che verranno migrati da Asana a Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Importa i tuoi dati Linear nel progetto Plane.",
+    "steps": {
+      "title_configure_plane": "Configura Plane",
+      "description_configure_plane": "Per prima cosa crea il progetto in Plane dove intendi migrare i tuoi dati Linear. Una volta creato il progetto, selezionalo qui.",
+      "title_configure_linear": "Configura Linear",
+      "description_configure_linear": "Per favore seleziona il team Linear da cui vuoi migrare i tuoi dati.",
+      "title_map_states": "Mappa stati",
+      "description_map_states": "Abbiamo automaticamente mappato gli stati Linear ai stati Plane in base alla migliore nostra capacità. Per favore mappa qualsiasi stato rimanente prima di procedere, puoi anche creare stati e mapparli manualmente.",
+      "title_map_priorities": "Mappa priorità",
+      "description_map_priorities": "Per favore seleziona le priorità Linear che desideri mappare ai priorità del progetto Plane.",
+      "title_summary": "Sommario",
+      "description_summary": "Questo è un sommario dei dati che verranno migrati da Linear a Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Importa i tuoi dati Jira Server/Data Center nel progetto Plane.",
+    "steps": {
+      "title_configure_plane": "Configura Plane",
+      "description_configure_plane": "Per prima cosa crea il progetto in Plane dove intendi migrare i tuoi dati Jira. Una volta creato il progetto, selezionalo qui.",
+      "title_configure_jira": "Configura Jira",
+      "description_configure_jira": "Per favore seleziona lo spazio di lavoro Jira da cui vuoi migrare i tuoi dati.",
+      "title_map_states": "Mappa stati",
+      "description_map_states": "Per favore seleziona gli stati Jira che desideri mappare ai stati del progetto Plane.",
+      "title_map_priorities": "Mappa priorità",
+      "description_map_priorities": "Per favore seleziona le priorità Jira che desideri mappare ai priorità del progetto Plane.",
+      "title_summary": "Sommario",
+      "description_summary": "Questo è un sommario dei dati che verranno migrati da Jira a Plane."
+    },
+    "import_epics": {
+      "title": "Importa epic come elementi di lavoro",
+      "description": "Con questa opzione abilitata, i tuoi epic verranno importati come elementi di lavoro con il tipo di elemento di lavoro epic."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Importa i tuoi dati Notion nei progetti Plane.",
+    "steps": {
+      "title_upload_zip": "Carica ZIP esportato da Notion",
+      "description_upload_zip": "Carica il file ZIP contenente i tuoi dati Notion."
+    },
+    "upload": {
+      "drop_file_here": "Trascina qui il tuo file zip di Notion",
+      "upload_title": "Carica esportazione Notion",
+      "upload_from_url": "Importa da URL",
+      "upload_from_url_description": "Incolla l'URL pubblico della tua esportazione ZIP per procedere.",
+      "drag_drop_description": "Trascina e rilascia il tuo file zip di esportazione Notion, o clicca per sfogliare",
+      "file_type_restriction": "Sono supportati solo file .zip esportati da Notion",
+      "select_file": "Seleziona file",
+      "uploading": "Caricamento...",
+      "preparing_upload": "Preparazione caricamento...",
+      "confirming_upload": "Conferma caricamento...",
+      "confirming": "Conferma...",
+      "upload_complete": "Caricamento completato",
+      "upload_failed": "Caricamento fallito",
+      "start_import": "Inizia importazione",
+      "retry_upload": "Riprova caricamento",
+      "upload": "Carica",
+      "ready": "Pronto",
+      "error": "Errore",
+      "upload_complete_message": "Caricamento completato!",
+      "upload_complete_description": "Clicca su \"Inizia importazione\" per iniziare l'elaborazione dei tuoi dati Notion.",
+      "upload_progress_message": "Non chiudere questa finestra."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Importa i tuoi dati Confluence nel wiki di Plane.",
+    "steps": {
+      "title_upload_zip": "Carica ZIP esportato da Confluence",
+      "description_upload_zip": "Carica il file ZIP contenente i tuoi dati Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Trascina qui il tuo file zip di Confluence",
+      "upload_title": "Carica esportazione Confluence",
+      "upload_from_url": "Importa da URL",
+      "upload_from_url_description": "Incolla l'URL pubblico della tua esportazione ZIP per procedere.",
+      "drag_drop_description": "Trascina e rilascia il tuo file zip di esportazione Confluence, o clicca per sfogliare",
+      "file_type_restriction": "Sono supportati solo file .zip esportati da Confluence",
+      "select_file": "Seleziona file",
+      "uploading": "Caricamento...",
+      "preparing_upload": "Preparazione caricamento...",
+      "confirming_upload": "Conferma caricamento...",
+      "confirming": "Conferma...",
+      "upload_complete": "Caricamento completato",
+      "upload_failed": "Caricamento fallito",
+      "start_import": "Inizia importazione",
+      "retry_upload": "Riprova caricamento",
+      "upload": "Carica",
+      "ready": "Pronto",
+      "error": "Errore",
+      "upload_complete_message": "Caricamento completato!",
+      "upload_complete_description": "Clicca su \"Inizia importazione\" per iniziare l'elaborazione dei tuoi dati Confluence.",
+      "upload_progress_message": "Non chiudere questa finestra."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Importa i tuoi dati CSV nel progetto Plane.",
+    "steps": {
+      "title_configure_plane": "Configura Plane",
+      "description_configure_plane": "Per prima cosa crea il progetto in Plane dove intendi migrare i tuoi dati CSV. Una volta creato il progetto, selezionalo qui.",
+      "title_configure_csv": "Configura CSV",
+      "description_configure_csv": "Per favore carica il tuo file CSV e configura i campi da mappare ai campi Plane."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "Importa elementi di lavoro da file CSV nei progetti Plane.",
+    "steps": {
+      "title_select_project": "Seleziona progetto",
+      "description_select_project": "Seleziona il progetto Plane in cui desideri importare i tuoi elementi di lavoro.",
+      "title_upload_csv": "Carica CSV",
+      "description_upload_csv": "Carica il tuo file CSV contenente gli elementi di lavoro. Il file dovrebbe includere colonne per nome, descrizione, priorità, date e gruppo di stato."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Importa i tuoi dati ClickUp nei progetti Plane.",
+    "select_service_space": "Seleziona {serviceName} Spazio",
+    "select_service_folder": "Seleziona {serviceName} Cartella",
+    "selected": "Selezionato",
+    "users": "Utenti",
+    "steps": {
+      "title_configure_plane": "Configura Plane",
+      "description_configure_plane": "Per prima cosa crea il progetto in Plane dove intendi migrare i tuoi dati ClickUp. Una volta creato il progetto, selezionalo qui.",
+      "title_configure_clickup": "Configura ClickUp",
+      "description_configure_clickup": "Per favore seleziona il team, lo spazio e la cartella ClickUp da cui vuoi migrare i tuoi dati.",
+      "title_map_states": "Mappa stati",
+      "description_map_states": "Abbiamo automaticamente mappato gli stati ClickUp ai stati Plane in base alla migliore nostra capacità. Per favore mappa qualsiasi stato rimanente prima di procedere, puoi anche creare stati e mapparli manualmente.",
+      "title_map_priorities": "Mappa priorità",
+      "description_map_priorities": "Per favore seleziona le priorità ClickUp che desideri mappare ai priorità del progetto Plane.",
+      "title_summary": "Sommario",
+      "description_summary": "Questo è un sommario dei dati che verranno migrati da ClickUp a Plane.",
+      "pull_additional_data_title": "Importa commenti e allegati"
+    }
+  }
+}

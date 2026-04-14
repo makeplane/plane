@@ -1,0 +1,310 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Cột",
+          "long_label": "Biểu đồ cột",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "stacked": "Xếp chồng",
+            "grouped": "Nhóm"
+          },
+          "orientation": {
+            "label": "Hướng",
+            "horizontal": "Ngang",
+            "vertical": "Dọc",
+            "placeholder": "Thêm hướng"
+          },
+          "bar_color": "Màu cột"
+        },
+        "line_chart": {
+          "short_label": "Đường",
+          "long_label": "Biểu đồ đường",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "multi_line": "Đa đường"
+          },
+          "line_color": "Màu đường",
+          "line_type": {
+            "label": "Kiểu đường",
+            "solid": "Liền",
+            "dashed": "Đứt khúc",
+            "placeholder": "Thêm kiểu đường"
+          }
+        },
+        "area_chart": {
+          "short_label": "Vùng",
+          "long_label": "Biểu đồ vùng",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "stacked": "Xếp chồng",
+            "comparison": "So sánh"
+          },
+          "fill_color": "Màu tô"
+        },
+        "donut_chart": {
+          "short_label": "Bánh rỗng",
+          "long_label": "Biểu đồ bánh rỗng",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "progress": "Tiến độ"
+          },
+          "center_value": "Giá trị trung tâm",
+          "completed_color": "Màu hoàn thành"
+        },
+        "pie_chart": {
+          "short_label": "Bánh tròn",
+          "long_label": "Biểu đồ bánh tròn",
+          "chart_models": {
+            "basic": "Cơ bản"
+          },
+          "group": {
+            "label": "Phần được nhóm",
+            "group_thin_pieces": "Nhóm phần mỏng",
+            "minimum_threshold": {
+              "label": "Ngưỡng tối thiểu",
+              "placeholder": "Thêm ngưỡng"
+            },
+            "name_group": {
+              "label": "Tên nhóm",
+              "placeholder": "\"Ít hơn 5%\""
+            }
+          },
+          "show_values": "Hiển thị giá trị",
+          "value_type": {
+            "percentage": "Phần trăm",
+            "count": "Số lượng"
+          }
+        },
+        "text": {
+          "short_label": "Văn bản",
+          "long_label": "Văn bản",
+          "alignment": {
+            "label": "Căn chỉnh văn bản",
+            "left": "Trái",
+            "center": "Giữa",
+            "right": "Phải",
+            "placeholder": "Thêm căn chỉnh văn bản"
+          },
+          "text_color": "Màu văn bản"
+        },
+        "table_chart": {
+          "short_label": "Bảng",
+          "long_label": "Biểu đồ bảng",
+          "chart_models": {
+            "basic": {
+              "short_label": "Cơ bản",
+              "long_label": "Bảng"
+            }
+          },
+          "columns": "Cột",
+          "rows": "Hàng",
+          "rows_placeholder": "Thêm hàng",
+          "configure_rows_hint": "Chọn một thuộc tính cho hàng để xem bảng này."
+        }
+      },
+      "color_palettes": {
+        "modern": "Hiện đại",
+        "horizon": "Chân trời",
+        "earthen": "Đất"
+      },
+      "common": {
+        "add_widget": "Thêm widget",
+        "widget_title": {
+          "label": "Đặt tên widget này",
+          "placeholder": "vd., \"Việc cần làm hôm qua\", \"Tất cả hoàn thành\""
+        },
+        "chart_type": "Loại biểu đồ",
+        "visualization_type": {
+          "label": "Kiểu trực quan hóa",
+          "placeholder": "Thêm kiểu trực quan hóa"
+        },
+        "date_group": {
+          "label": "Nhóm ngày",
+          "placeholder": "Thêm nhóm ngày"
+        },
+        "grouping": "Phân nhóm",
+        "group_by": "Nhóm theo",
+        "stacking": "Xếp chồng",
+        "stack_by": "Xếp chồng theo",
+        "daily": "Hàng ngày",
+        "weekly": "Hàng tuần",
+        "monthly": "Hàng tháng",
+        "yearly": "Hàng năm",
+        "work_item_count": "Số lượng mục công việc",
+        "estimate_point": "Điểm ước tính",
+        "pending_work_item": "Mục công việc đang chờ",
+        "completed_work_item": "Mục công việc đã hoàn thành",
+        "in_progress_work_item": "Mục công việc đang thực hiện",
+        "blocked_work_item": "Mục công việc bị chặn",
+        "work_item_due_this_week": "Mục công việc đến hạn tuần này",
+        "work_item_due_today": "Mục công việc đến hạn hôm nay",
+        "color_scheme": {
+          "label": "Bảng màu",
+          "placeholder": "Thêm bảng màu"
+        },
+        "smoothing": "Làm mịn",
+        "markers": "Điểm đánh dấu",
+        "legends": "Chú thích",
+        "tooltips": "Chú giải",
+        "opacity": {
+          "label": "Độ trong suốt",
+          "placeholder": "Thêm độ trong suốt"
+        },
+        "border": "Viền",
+        "widget_configuration": "Cấu hình widget",
+        "configure_widget": "Cấu hình widget",
+        "guides": "Hướng dẫn",
+        "style": "Kiểu",
+        "area_appearance": "Giao diện vùng",
+        "comparison_line_appearance": "Giao diện đường so sánh",
+        "add_property": "Thêm thuộc tính",
+        "add_metric": "Thêm chỉ số"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "stacked": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Xếp chồng theo đang thiếu giá trị."
+          },
+          "grouped": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Nhóm theo đang thiếu giá trị."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "multi_line": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Nhóm theo đang thiếu giá trị."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "stacked": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Xếp chồng theo đang thiếu giá trị."
+          },
+          "comparison": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "progress": {
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Cột đang thiếu giá trị.",
+            "group_by": "Hàng đang thiếu giá trị."
+          }
+        },
+        "ask_admin": "Yêu cầu quản trị viên của bạn cấu hình widget này."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Tạo dashboard mới",
+        "update": "Cập nhật dashboard"
+      },
+      "title": {
+        "label": "Đặt tên dashboard của bạn.",
+        "placeholder": "\"Năng lực giữa các dự án\", \"Khối lượng công việc theo nhóm\", \"Trạng thái trên tất cả các dự án\"",
+        "required_error": "Yêu cầu tiêu đề"
+      },
+      "project": {
+        "label": "Chọn dự án",
+        "placeholder": "Dữ liệu từ các dự án này sẽ cung cấp cho dashboard này.",
+        "required_error": "Yêu cầu dự án"
+      },
+      "filters_label": "Thiết lập bộ lọc cho các nguồn dữ liệu ở trên",
+      "create_dashboard": "Tạo dashboard",
+      "update_dashboard": "Cập nhật dashboard"
+    },
+    "delete_modal": {
+      "heading": "Xóa dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Trình bày tiến độ của bạn trong các dashboard theo yêu cầu, vĩnh viễn.",
+        "description": "Xây dựng bất kỳ dashboard nào bạn cần và tùy chỉnh cách dữ liệu của bạn hiển thị để có bản trình bày hoàn hảo về tiến độ của bạn.",
+        "coming_soon_to_mobile": "Sắp có trên ứng dụng di động",
+        "card_1": {
+          "title": "Cho tất cả dự án của bạn",
+          "description": "Có cái nhìn tổng quan về workspace của bạn với tất cả các dự án hoặc chia dữ liệu công việc của bạn để có cái nhìn hoàn hảo về tiến độ của bạn."
+        },
+        "card_2": {
+          "title": "Cho bất kỳ dữ liệu nào trong Plane",
+          "description": "Vượt xa Analytics có sẵn và biểu đồ Chu kỳ đã làm sẵn để xem các nhóm, sáng kiến hoặc bất cứ thứ gì khác như bạn chưa từng thấy trước đây."
+        },
+        "card_3": {
+          "title": "Cho tất cả nhu cầu trực quan hóa dữ liệu của bạn",
+          "description": "Chọn từ nhiều biểu đồ có thể tùy chỉnh với các điều khiển chi tiết để xem và hiển thị dữ liệu công việc của bạn chính xác như cách bạn muốn."
+        },
+        "card_4": {
+          "title": "Theo yêu cầu và vĩnh viễn",
+          "description": "Xây dựng một lần, giữ mãi mãi với tự động làm mới dữ liệu của bạn, cờ theo ngữ cảnh cho thay đổi phạm vi, và permalinks có thể chia sẻ."
+        },
+        "card_5": {
+          "title": "Xuất và lịch trình liên lạc",
+          "description": "Cho những lúc liên kết không hoạt động, lấy dashboard của bạn ra dưới dạng PDF một lần hoặc lên lịch để tự động gửi cho các bên liên quan."
+        },
+        "card_6": {
+          "title": "Tự động bố trí cho tất cả thiết bị",
+          "description": "Điều chỉnh kích thước widget của bạn cho bố cục bạn muốn và xem nó giống hệt nhau trên di động, máy tính bảng và các trình duyệt khác."
+        }
+      },
+      "dashboards_list": {
+        "title": "Trực quan hóa dữ liệu trong widget, xây dựng dashboard của bạn với widget, và xem mới nhất theo yêu cầu.",
+        "description": "Xây dựng dashboard của bạn với Widget tùy chỉnh hiển thị dữ liệu của bạn trong phạm vi bạn chỉ định. Nhận dashboard cho tất cả công việc của bạn trên các dự án và nhóm và chia sẻ permalinks với các bên liên quan để theo dõi theo yêu cầu."
+      },
+      "dashboards_search": {
+        "title": "Điều đó không khớp với tên dashboard.",
+        "description": "Đảm bảo truy vấn của bạn là đúng hoặc thử một truy vấn khác."
+      },
+      "widgets_list": {
+        "title": "Trực quan hóa dữ liệu của bạn theo cách bạn muốn.",
+        "description": "Sử dụng đường, cột, bánh tròn và các định dạng khác để xem dữ liệu của bạn\ntheo cách bạn muốn từ các nguồn bạn chỉ định."
+      },
+      "widget_data": {
+        "title": "Không có gì để xem ở đây",
+        "description": "Làm mới hoặc thêm dữ liệu để xem nó ở đây."
+      }
+    },
+    "common": {
+      "editing": "Đang chỉnh sửa"
+    }
+  }
+}

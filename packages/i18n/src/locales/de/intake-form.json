@@ -1,0 +1,52 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Arbeitselement erstellen",
+      "sub-title": "Lassen Sie das Team wissen, woran Sie arbeiten möchten.",
+      "name": "Name",
+      "email": "E-Mail",
+      "description_placeholder": "Fügen Sie so viele Details hinzu, wie Sie möchten, damit das Team Ihre Situation und Bedürfnisse erkennt.",
+      "loading": "Wird erstellt",
+      "create_work_item": "Arbeitselement erstellen",
+      "errors": {
+        "name": "Name ist erforderlich",
+        "name_max_length": "Name darf maximal 255 Zeichen haben",
+        "email": "E-Mail ist erforderlich",
+        "email_invalid": "Ungültige E-Mail-Adresse",
+        "title": "Titel ist erforderlich",
+        "title_max_length": "Titel darf maximal 255 Zeichen haben"
+      }
+    },
+    "success": {
+      "title": "Super! Ihr Arbeitselement ist jetzt in der Team-Warteschlange.",
+      "description": "Das Team kann dieses Arbeitselement jetzt aus der Intake-Warteschlange genehmigen oder verwerfen.",
+      "primary_button": {
+        "text": "Weiteres Arbeitselement hinzufügen"
+      },
+      "secondary_button": {
+        "text": "Mehr über Intake erfahren"
+      }
+    },
+    "how_it_works": {
+      "title": "Wie funktioniert es?",
+      "heading": "Dies ist ein Intake-Formular.",
+      "description": "Intake ist eine Plane-Funktion, mit der Projekt-Admins und Manager Arbeitselemente von außen in ihre Projekte holen können.",
+      "steps": {
+        "step_1": "Dieses kurze Formular ermöglicht die Erstellung eines neuen Arbeitselements in einem Plane-Projekt.",
+        "step_2": "Wenn Sie dieses Formular absenden, wird ein neues Arbeitselement im Intake dieses Projekts erstellt.",
+        "step_3": "Jemand aus diesem Projekt oder Team wird es prüfen.",
+        "step_4": "Wenn sie es genehmigen, wird dieses Arbeitselement in die Projekt-Warteschlange verschoben. Andernfalls wird es abgelehnt.",
+        "step_5": "Um den Status dieses Arbeitselements zu erfahren, wenden Sie sich an den Projektmanager, Admin oder die Person, die Ihnen den Link zu dieser Seite geschickt hat."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Arbeitselementtyp auswählen",
+        "search_placeholder": "Nach Arbeitselementtyp suchen"
+      },
+      "actions": {
+        "select_properties": "Eigenschaften auswählen"
+      }
+    }
+  }
+}

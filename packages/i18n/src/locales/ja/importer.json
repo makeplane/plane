@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "GitHubリポジトリから作業項目をインポートして同期します。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jiraプロジェクトとエピックから作業項目とエピックをインポートします。"
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "作業項目をCSVファイルにエクスポートします。",
+      "short_description": "CSVとしてエクスポート"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "作業項目をExcelファイルにエクスポートします。",
+      "short_description": "Excelとしてエクスポート"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "作業項目をExcelファイルにエクスポートします。",
+      "short_description": "Excelとしてエクスポート"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "作業項目をJSONファイルにエクスポートします。",
+      "short_description": "JSONとしてエクスポート"
+    }
+  },
+  "importers": {
+    "imports": "インポート",
+    "logo": "ロゴ",
+    "import_message": "{serviceName}のデータをPlaneプロジェクトにインポートします。",
+    "deactivate": "無効化",
+    "deactivating": "無効化中",
+    "migrating": "移行中",
+    "migrations": "移行",
+    "refreshing": "更新中",
+    "import": "インポート",
+    "serial_number": "番号",
+    "project": "プロジェクト",
+    "workspace": "ワークスペース",
+    "status": "ステータス",
+    "summary": "概要",
+    "total_batches": "合計バッチ数",
+    "imported_batches": "インポート済みバッチ",
+    "re_run": "再実行",
+    "cancel": "キャンセル",
+    "start_time": "開始時間",
+    "no_jobs_found": "ジョブが見つかりません",
+    "no_project_imports": "まだ{serviceName}プロジェクトをインポートしていません。",
+    "cancel_import_job": "インポートジョブをキャンセル",
+    "cancel_import_job_confirmation": "このインポートジョブをキャンセルしてもよろしいですか？このプロジェクトのインポートプロセスが停止します。",
+    "re_run_import_job": "インポートジョブを再実行",
+    "re_run_import_job_confirmation": "このインポートジョブを再実行してもよろしいですか？このプロジェクトのインポートプロセスが再開されます。",
+    "upload_csv_file": "ユーザーデータをインポートするためにCSVファイルをアップロードしてください。",
+    "connect_importer": "{serviceName}に接続",
+    "migration_assistant": "移行アシスタント",
+    "migration_assistant_description": "強力なアシスタントで{serviceName}プロジェクトをPlaneにシームレスに移行します。",
+    "token_helper": "これはあなたの以下から取得できます",
+    "personal_access_token": "個人アクセストークン",
+    "source_token_expired": "トークンの有効期限切れ",
+    "source_token_expired_description": "提供されたトークンの有効期限が切れています。無効化して新しい認証情報で再接続してください。",
+    "user_email": "ユーザーメール",
+    "select_state": "状態を選択",
+    "select_service_project": "{serviceName}プロジェクトを選択",
+    "loading_service_projects": "{serviceName}プロジェクトを読み込み中",
+    "select_service_workspace": "{serviceName}ワークスペースを選択",
+    "loading_service_workspaces": "{serviceName}ワークスペースを読み込み中",
+    "select_priority": "優先度を選択",
+    "select_service_team": "{serviceName}チームを選択",
+    "add_seat_msg_free_trial": "未登録の{additionalUserCount}人のユーザーをインポートしようとしていますが、現在のプランでは{currentWorkspaceSubscriptionAvailableSeats}席しか利用できません。インポートを続けるにはアップグレードしてください。",
+    "add_seat_msg_paid": "未登録の{additionalUserCount}人のユーザーをインポートしようとしていますが、現在のプランでは{currentWorkspaceSubscriptionAvailableSeats}席しか利用できません。インポートを続けるには少なくとも{extraSeatRequired}席追加購入してください。",
+    "skip_user_import_title": "ユーザーデータのインポートをスキップ",
+    "skip_user_import_description": "ユーザーのインポートをスキップすると、{serviceName}からの作業項目、コメント、その他のデータはPlaneで移行を実行しているユーザーによって作成されます。後でユーザーを手動で追加することもできます。",
+    "invalid_pat": "無効な個人アクセストークン"
+  },
+  "jira_importer": {
+    "jira_importer_description": "JiraのデータをPlaneプロジェクトにインポートします。",
+    "create_project_automatically": "プロジェクトを自動的に作成する",
+    "create_project_automatically_description": "Jiraのプロジェクト詳細に基づいて、新しいプロジェクトを作成します。",
+    "import_to_existing_project": "既存のプロジェクトにインポートする",
+    "import_to_existing_project_description": "下のドロップダウンメニューから既存のプロジェクトを選択してください。",
+    "state_mapping_automatic_creation": "すべてのJiraステータスがPlaneで自動的に作成されます。",
+    "personal_access_token": "個人アクセストークン",
+    "user_email": "ユーザーメール",
+    "atlassian_security_settings": "Atlassianセキュリティ設定",
+    "email_description": "これは個人アクセストークンに紐付けられたメールアドレスです",
+    "jira_domain": "Jiraドメイン",
+    "jira_domain_description": "これはあなたのJiraインスタンスのドメインです",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずJiraデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_jira": "Jiraを設定",
+      "description_configure_jira": "データを移行したいJiraワークスペースを選択してください。",
+      "title_import_users": "ユーザーをインポート",
+      "description_import_users": "JiraからPlaneに移行したいユーザーを追加してください。または、このステップをスキップして後でユーザーを手動で追加することもできます。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "Jiraのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "優先度を可能な限り自動的にマッチングしました。残りの優先度をマッピングしてから進めてください。",
+      "title_summary": "サマリー",
+      "description_summary": "JiraからPlaneに移行されるデータのサマリーです。",
+      "custom_jql_filter": "カスタム JQL フィルター",
+      "jql_filter_description": "JQLを使用して、インポートする特定の課題をフィルタリングします。",
+      "project_code": "プロジェクト",
+      "enter_filters_placeholder": "フィルターを入力 (例: status = 'In Progress')",
+      "validating_query": "クエリを検証中...",
+      "validation_successful_work_items_selected": "検証に成功しました。{count} 件の作業項目が選択されました。",
+      "run_syntax_check": "構文チェックを実行してクエリを確認する",
+      "refresh": "更新",
+      "check_syntax": "構文チェック",
+      "no_work_items_selected": "クエリによって選択された作業項目はありません。",
+      "validation_error_default": "クエリの検証中に問題が発生しました。"
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "AsanaのデータをPlaneプロジェクトにインポートします。",
+    "select_asana_priority_field": "Asana優先度フィールドを選択",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずAsanaデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_asana": "Asanaを設定",
+      "description_configure_asana": "データを移行したいAsanaワークスペースとプロジェクトを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "PlaneプロジェクトのステータスにマッピングしたいAsanaの状態を選択してください。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "Planeプロジェクトの優先度にマッピングしたいAsanaの優先度を選択してください。",
+      "title_summary": "サマリー",
+      "description_summary": "AsanaからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "LinearのデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずLinearデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_linear": "Linearを設定",
+      "description_configure_linear": "データを移行したいLinearチームを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "Linearのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "Planeプロジェクトの優先度にマッピングしたいLinearの優先度を選択してください。",
+      "title_summary": "サマリー",
+      "description_summary": "LinearからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Jira Server/Data CenterのデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずJiraデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_jira": "Jiraを設定",
+      "description_configure_jira": "データを移行したいJiraワークスペースを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "PlaneプロジェクトのステータスにマッピングしたいJiraの状態を選択してください。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "Planeプロジェクトの優先度にマッピングしたいJiraの優先度を選択してください。",
+      "title_summary": "サマリー",
+      "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
+    },
+    "import_epics": {
+      "title": "エピックを作業アイテムとしてインポートする",
+      "description": "これを有効にすると、エピックはエピック作業アイテムタイプを持つ作業アイテムとしてインポートされます。"
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "NotionデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_upload_zip": "Notion エクスポート ZIP をアップロード",
+      "description_upload_zip": "Notionデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Notion zip ファイルをここにドロップ",
+      "upload_title": "Notion エクスポートをアップロード",
+      "upload_from_url": "URLからインポート",
+      "upload_from_url_description": "ZIPエクスポートの公開URLを貼り付けて続行してください。",
+      "drag_drop_description": "Notion エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Notionからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Notionデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "ConfluenceデータをPlaneウィキにインポートします。",
+    "steps": {
+      "title_upload_zip": "Confluence エクスポート ZIP をアップロード",
+      "description_upload_zip": "Confluenceデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip ファイルをここにドロップ",
+      "upload_title": "Confluence エクスポートをアップロード",
+      "upload_from_url": "URLからインポート",
+      "upload_from_url_description": "ZIPエクスポートの公開URLを貼り付けて続行してください。",
+      "drag_drop_description": "Confluence エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Confluenceからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Confluenceデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずCSVデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_csv": "CSVを設定",
+      "description_configure_csv": "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。"
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "CSVファイルからPlaneプロジェクトにワークアイテムをインポートします。",
+    "steps": {
+      "title_select_project": "プロジェクトを選択",
+      "description_select_project": "ワークアイテムをインポートするPlaneプロジェクトを選択してください。",
+      "title_upload_csv": "CSVをアップロード",
+      "description_upload_csv": "ワークアイテムを含むCSVファイルをアップロードしてください。ファイルには、名前、説明、優先度、日付、およびステータスグループの列が含まれている必要があります。"
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUpのデータをPlaneプロジェクトにインポートします。",
+    "select_service_space": "{serviceName}スペースを選択",
+    "select_service_folder": "{serviceName}フォルダーを選択",
+    "selected": "選択済み",
+    "users": "ユーザー",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずClickUpデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_clickup": "ClickUpを設定",
+      "description_configure_clickup": "ClickUpチーム、スペース、フォルダーを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "ClickUpのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "ClickUpの優先度をPlaneの優先度にマッピングしてください。",
+      "title_summary": "サマリー",
+      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。",
+      "pull_additional_data_title": "コメントと添付ファイルをインポート"
+    }
+  }
+}

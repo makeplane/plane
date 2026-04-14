@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "Сторінки з'єднати",
+    "show_wiki_pages": "Показати сторінки Wiki",
+    "link_pages_to": "Сторінки з'єднати до",
+    "linked_pages": "Пов'язані сторінки",
+    "no_description": "Ця сторінка порожня. Напишіть щось і подивіться це тут як цей замісник",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Сторінки оновлені",
+          "message": "Сторінки були успішно оновлені"
+        },
+        "error": {
+          "title": "Сторінки не оновлені",
+          "message": "Сторінки не оновлені"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Сторінка видалена",
+          "message": "Сторінка була успішно видалена"
+        },
+        "error": {
+          "title": "Сторінка не видалена",
+          "message": "Сторінка не видалена"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Відсутні заголовки",
+          "description": "Давайте додамо кілька заголовків на цю сторінку, щоб побачити їх тут."
+        }
+      },
+      "info": {
+        "label": "Інформація",
+        "document_info": {
+          "words": "Слова",
+          "characters": "Символи",
+          "paragraphs": "Абзаци",
+          "read_time": "Час читання"
+        },
+        "actors_info": {
+          "edited_by": "Відредаговано",
+          "created_by": "Створено"
+        },
+        "version_history": {
+          "label": "Історія версій",
+          "current_version": "Поточна версія",
+          "highlight_changes": "Виділити зміни"
+        }
+      },
+      "assets": {
+        "label": "Ресурси",
+        "download_button": "Завантажити",
+        "empty_state": {
+          "title": "Відсутні зображення",
+          "description": "Додайте зображення, щоб побачити їх тут."
+        }
+      }
+    },
+    "open_button": "Відкрити панель навігації",
+    "close_button": "Закрити панель навігації",
+    "outline_floating_button": "Відкрити структуру"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "Шукати колекції wiki, проєкти та командні простори",
+        "project_to_project_with_wiki": "Шукати колекції wiki та проєкти",
+        "teamspace_to_all_with_wiki": "Шукати колекції wiki, проєкти та командні простори"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "Переміщено до wiki",
+          "message": "Сторінку було переміщено до wiki, але не вдалося додати її до вибраної колекції. Вона залишається в General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Видалити з колекції",
+      "success_message": "Сторінку видалено з колекції.",
+      "error_message": "Не вдалося видалити сторінку з колекції. Спробуйте ще раз."
+    }
+  }
+}

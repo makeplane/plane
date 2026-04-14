@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "一般",
+      "private": "非公開",
+      "shared": "共有",
+      "archived": "アーカイブ済み"
+    },
+    "fallback_name": "コレクション",
+    "form": {
+      "name_required": "コレクション名は必須です",
+      "name_max_length": "コレクション名は255文字未満である必要があります",
+      "name_placeholder_create": "コレクションにタイトルを付けてください",
+      "name_placeholder_edit": "コレクション名"
+    },
+    "create_modal": {
+      "title": "コレクションを作成",
+      "submit": "コレクションを作成"
+    },
+    "edit_modal": {
+      "title": "コレクションを編集"
+    },
+    "delete_modal": {
+      "title": "コレクションを削除",
+      "page_count": "このコレクションには {pageCount} 件のページがあります。どうするか選択してください。",
+      "transfer_title": "ページを移動してコレクションを削除",
+      "transfer_description": "削除する前に、すべてのページを別のコレクションへ移動します。ページと権限は保持されます。",
+      "transfer_warning": "移動したページは、選択したコレクションの権限を引き継ぎます。",
+      "transfer_target_label": "ページの移動先",
+      "transfer_target_placeholder": "コレクションを選択",
+      "delete_with_pages_title": "ページごとコレクションを削除",
+      "delete_with_pages_description": "コレクションとすべてのページを完全に削除します。この操作は元に戻せません。",
+      "submit": "コレクションを削除"
+    },
+    "header": {
+      "add_page": "ページを追加"
+    },
+    "menu": {
+      "create_new_page": "新しいページを作成",
+      "add_existing_page": "既存のページを追加",
+      "edit_collection": "コレクションを編集",
+      "collection_options": "コレクションのオプション"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "ページを検索",
+      "success_message": "{count} 件のページをコレクションに追加しました。",
+      "error_message": "ページを移動できませんでした。もう一度お試しください。",
+      "no_pages_found": "検索条件に一致するページが見つかりません",
+      "no_pages_available": "移動できるページがありません",
+      "submit": "移動"
+    },
+    "list": {
+      "invite_only": "招待制",
+      "remove_error": "ページをコレクションから削除できませんでした。",
+      "no_matching_pages": "一致するページがありません",
+      "remove_search_criteria": "検索条件を削除するとすべてのページが表示されます",
+      "remove_filters": "フィルターを削除するとすべてのページが表示されます",
+      "no_pages_title": "まだページがありません",
+      "no_pages_description": "このコレクションにはまだページがありません。",
+      "untitled": "無題",
+      "restricted_access": "アクセス制限あり",
+      "collapse_page": "ページを折りたたむ",
+      "expand_page": "ページを展開",
+      "page_actions": "ページ操作",
+      "page_link_copied": "ページリンクをクリップボードにコピーしました。",
+      "columns": {
+        "page_name": "ページ名",
+        "owner": "所有者",
+        "nested_pages": "ネストされたページ",
+        "last_activity": "最終アクティビティ",
+        "actions": "操作"
+      }
+    },
+    "toasts": {
+      "created": "コレクションを作成しました。",
+      "create_error": "コレクションを作成できませんでした。もう一度お試しください。",
+      "renamed": "コレクション名を変更しました。",
+      "rename_error": "コレクションを更新できませんでした。もう一度お試しください。",
+      "transferred_deleted": "ページを移動し、コレクションを削除しました。",
+      "deleted_with_pages": "コレクションとそのページを削除しました。",
+      "delete_error": "コレクションを削除できませんでした。もう一度お試しください。",
+      "target_required": "ページの移動先となるコレクションを選択してください。",
+      "create_page_error": "ページを作成できませんでした。もう一度お試しください。",
+      "create_page_in_collection_error": "ページを作成するか、コレクションに追加できませんでした。もう一度お試しください。",
+      "collection_link_copied": "コレクションリンクをクリップボードにコピーしました。"
+    }
+  }
+}

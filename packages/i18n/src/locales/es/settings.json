@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Cambiar correo electrónico",
+        "description": "Introduce una nueva dirección de correo electrónico para recibir un enlace de verificación.",
+        "toasts": {
+          "success_title": "¡Éxito!",
+          "success_message": "Correo electrónico actualizado correctamente. Inicia sesión de nuevo."
+        },
+        "form": {
+          "email": {
+            "label": "Nuevo correo electrónico",
+            "placeholder": "Introduce tu correo electrónico",
+            "errors": {
+              "required": "El correo electrónico es obligatorio",
+              "invalid": "El correo electrónico no es válido",
+              "exists": "El correo electrónico ya existe. Usa uno diferente.",
+              "validation_failed": "La validación del correo electrónico falló. Inténtalo de nuevo."
+            }
+          },
+          "code": {
+            "label": "Código único",
+            "placeholder": "123456",
+            "helper_text": "Código de verificación enviado a tu nuevo correo electrónico.",
+            "errors": {
+              "required": "El código único es obligatorio",
+              "invalid": "Código de verificación inválido. Inténtalo de nuevo."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continuar",
+          "confirm": "Confirmar",
+          "cancel": "Cancelar"
+        },
+        "states": {
+          "sending": "Enviando…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Seleccionar vista predeterminada",
+      "compact": "Compacto",
+      "full": "Pantalla completa"
+    }
+  },
+  "profile": {
+    "label": "Perfil",
+    "page_label": "Tu trabajo",
+    "work": "Trabajo",
+    "details": {
+      "joined_on": "Se unió el",
+      "time_zone": "Zona horaria"
+    },
+    "stats": {
+      "workload": "Carga de trabajo",
+      "overview": "Resumen",
+      "created": "Elementos de trabajo creados",
+      "assigned": "Elementos de trabajo asignados",
+      "subscribed": "Elementos de trabajo suscritos",
+      "state_distribution": {
+        "title": "Elementos de trabajo por estado",
+        "empty": "Crea elementos de trabajo para verlos por estados en el gráfico para un mejor análisis."
+      },
+      "priority_distribution": {
+        "title": "Elementos de trabajo por Prioridad",
+        "empty": "Crea elementos de trabajo para verlos por prioridad en el gráfico para un mejor análisis."
+      },
+      "recent_activity": {
+        "title": "Actividad reciente",
+        "empty": "No pudimos encontrar datos. Por favor revisa tus entradas",
+        "button": "Descargar actividad de hoy",
+        "button_loading": "Descargando"
+      }
+    },
+    "actions": {
+      "profile": "Perfil",
+      "security": "Seguridad",
+      "activity": "Actividad",
+      "appearance": "Apariencia",
+      "notifications": "Notificaciones",
+      "connections": "Conexiones"
+    },
+    "tabs": {
+      "summary": "Resumen",
+      "assigned": "Asignado",
+      "created": "Creado",
+      "subscribed": "Suscrito",
+      "activity": "Actividad"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Aún no hay actividades",
+        "description": "¡Comienza creando un nuevo elemento de trabajo! Agrégale detalles y propiedades. Explora más en Plane para ver tu actividad."
+      },
+      "assigned": {
+        "title": "No hay elementos de trabajo asignados a ti",
+        "description": "Los elementos de trabajo asignados a ti se pueden rastrear desde aquí."
+      },
+      "created": {
+        "title": "Aún no hay elementos de trabajo",
+        "description": "Todos los elementos de trabajo creados por ti aparecen aquí, rastréalos directamente aquí."
+      },
+      "subscribed": {
+        "title": "Aún no hay elementos de trabajo",
+        "description": "Suscríbete a los elementos de trabajo que te interesen, rastréalos todos aquí."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferencia del sistema"
+      },
+      "light": {
+        "label": "Claro"
+      },
+      "dark": {
+        "label": "Oscuro"
+      },
+      "light_contrast": {
+        "label": "Claro de alto contraste"
+      },
+      "dark_contrast": {
+        "label": "Oscuro de alto contraste"
+      },
+      "custom": {
+        "label": "Tema personalizado"
+      }
+    }
+  }
+}

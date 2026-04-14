@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Změnit e-mail",
+        "description": "Zadejte novou e-mailovou adresu a obdržíte ověřovací odkaz.",
+        "toasts": {
+          "success_title": "Úspěch!",
+          "success_message": "E-mail byl úspěšně aktualizován. Přihlaste se znovu."
+        },
+        "form": {
+          "email": {
+            "label": "Nový e-mail",
+            "placeholder": "Zadejte svůj e-mail",
+            "errors": {
+              "required": "E-mail je povinný",
+              "invalid": "E-mail je neplatný",
+              "exists": "E-mail již existuje. Použijte jiný.",
+              "validation_failed": "Ověření e-mailu se nezdařilo. Zkuste to znovu."
+            }
+          },
+          "code": {
+            "label": "Jedinečný kód",
+            "placeholder": "123456",
+            "helper_text": "Ověřovací kód byl odeslán na váš nový e-mail.",
+            "errors": {
+              "required": "Jedinečný kód je povinný",
+              "invalid": "Neplatný ověřovací kód. Zkuste to znovu."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Pokračovat",
+          "confirm": "Potvrdit",
+          "cancel": "Zrušit"
+        },
+        "states": {
+          "sending": "Odesílání…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Vybrat výchozí zobrazení",
+      "compact": "Kompaktní",
+      "full": "Celá obrazovka"
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Vaše práce",
+    "work": "Práce",
+    "details": {
+      "joined_on": "Připojeno dne",
+      "time_zone": "Časové pásmo"
+    },
+    "stats": {
+      "workload": "Vytížení",
+      "overview": "Přehled",
+      "created": "Vytvořené položky",
+      "assigned": "Přiřazené položky",
+      "subscribed": "Odebírané položky",
+      "state_distribution": {
+        "title": "Položky podle stavu",
+        "empty": "Vytvářejte položky pro analýzu stavů."
+      },
+      "priority_distribution": {
+        "title": "Položky podle priority",
+        "empty": "Vytvářejte položky pro analýzu priorit."
+      },
+      "recent_activity": {
+        "title": "Nedávná aktivita",
+        "empty": "Nenalezena žádná aktivita.",
+        "button": "Stáhnout dnešní aktivitu",
+        "button_loading": "Stahování"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Zabezpečení",
+      "activity": "Aktivita",
+      "appearance": "Vzhled",
+      "notifications": "Oznámení",
+      "connections": "Spojení"
+    },
+    "tabs": {
+      "summary": "Shrnutí",
+      "assigned": "Přiřazeno",
+      "created": "Vytvořeno",
+      "subscribed": "Odebíráno",
+      "activity": "Aktivita"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Žádná aktivita",
+        "description": "Vytvořte pracovní položku pro začátek."
+      },
+      "assigned": {
+        "title": "Žádné přiřazené pracovní položky",
+        "description": "Zde uvidíte přiřazené pracovní položky."
+      },
+      "created": {
+        "title": "Žádné vytvořené pracovní položky",
+        "description": "Zde jsou pracovní položky, které jste vytvořili."
+      },
+      "subscribed": {
+        "title": "Žádné odebírané pracovní položky",
+        "description": "Odebírejte pracovní položky, které vás zajímají, a sledujte je zde."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Systémové předvolby"
+      },
+      "light": {
+        "label": "Světlé"
+      },
+      "dark": {
+        "label": "Tmavé"
+      },
+      "light_contrast": {
+        "label": "Světlý vysoký kontrast"
+      },
+      "dark_contrast": {
+        "label": "Tmavý vysoký kontrast"
+      },
+      "custom": {
+        "label": "Vlastní téma"
+      }
+    }
+  }
+}

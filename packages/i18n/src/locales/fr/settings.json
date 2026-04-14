@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Changer d’adresse e-mail",
+        "description": "Saisissez une nouvelle adresse e-mail pour recevoir un lien de vérification.",
+        "toasts": {
+          "success_title": "Succès !",
+          "success_message": "Adresse e-mail mise à jour. Veuillez vous reconnecter."
+        },
+        "form": {
+          "email": {
+            "label": "Nouvelle adresse e-mail",
+            "placeholder": "Saisissez votre e-mail",
+            "errors": {
+              "required": "L’e-mail est requis",
+              "invalid": "L’e-mail est invalide",
+              "exists": "Cette adresse e-mail existe déjà. Utilisez-en une autre.",
+              "validation_failed": "Échec de la validation de l’e-mail. Veuillez réessayer."
+            }
+          },
+          "code": {
+            "label": "Code unique",
+            "placeholder": "123456",
+            "helper_text": "Code de vérification envoyé à votre nouvel e-mail.",
+            "errors": {
+              "required": "Le code unique est requis",
+              "invalid": "Code de vérification invalide. Veuillez réessayer."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continuer",
+          "confirm": "Confirmer",
+          "cancel": "Annuler"
+        },
+        "states": {
+          "sending": "Envoi…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Sélectionner la vue par défaut",
+      "compact": "Compact",
+      "full": "Plein écran"
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Votre travail",
+    "work": "Travail",
+    "details": {
+      "joined_on": "Inscrit le",
+      "time_zone": "Fuseau horaire"
+    },
+    "stats": {
+      "workload": "Charge de travail",
+      "overview": "Vue d’ensemble",
+      "created": "Éléments de travail créés",
+      "assigned": "Éléments de travail assignés",
+      "subscribed": "Éléments de travail suivis",
+      "state_distribution": {
+        "title": "Éléments de travail par état",
+        "empty": "Créez des éléments de travail pour les visualiser par état dans le graphique pour une meilleure analyse."
+      },
+      "priority_distribution": {
+        "title": "Éléments de travail par priorité",
+        "empty": "Créez des éléments de travail pour les visualiser par priorité dans le graphique pour une meilleure analyse."
+      },
+      "recent_activity": {
+        "title": "Activité récente",
+        "empty": "Nous n’avons pas trouvé de données. Veuillez consulter vos contributions",
+        "button": "Télécharger l'activité du jour",
+        "button_loading": "Téléchargement"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "activity": "Activité",
+      "appearance": "Apparence",
+      "notifications": "Notifications",
+      "connections": "Connexions"
+    },
+    "tabs": {
+      "summary": "Résumé",
+      "assigned": "Assigné",
+      "created": "Créé",
+      "subscribed": "Suivi",
+      "activity": "Activité"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Aucune activité pour le moment",
+        "description": "Commencez par créer un nouvel élément de travail ! Ajoutez-y des détails et des propriétés. Explorez davantage Plane pour voir votre activité."
+      },
+      "assigned": {
+        "title": "Aucun élément de travail ne vous est assigné",
+        "description": "Les éléments de travail qui vous sont assignés peuvent être suivis ici."
+      },
+      "created": {
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Tous les éléments de travail que vous créez apparaissent ici, suivez-les directement ici."
+      },
+      "subscribed": {
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Abonnez-vous aux éléments de travail qui vous intéressent, suivez-les tous ici."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Préférence système"
+      },
+      "light": {
+        "label": "Clair"
+      },
+      "dark": {
+        "label": "Sombre"
+      },
+      "light_contrast": {
+        "label": "Contraste clair élevé"
+      },
+      "dark_contrast": {
+        "label": "Contraste sombre élevé"
+      },
+      "custom": {
+        "label": "Thème personnalisé"
+      }
+    }
+  }
+}

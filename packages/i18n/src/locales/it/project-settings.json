@@ -1,0 +1,414 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Inserisci l'ID del progetto",
+      "please_select_a_timezone": "Seleziona un fuso orario",
+      "archive_project": {
+        "title": "Archivia progetto",
+        "description": "Archiviare un progetto lo rimuoverà dal menu di navigazione laterale, anche se potrai sempre accedervi dalla pagina dei progetti. Potrai ripristinare il progetto o eliminarlo quando vuoi.",
+        "button": "Archivia progetto"
+      },
+      "delete_project": {
+        "title": "Elimina progetto",
+        "description": "Eliminando un progetto, tutti i dati e le risorse all'interno di esso verranno rimossi definitivamente e non potranno essere recuperati.",
+        "button": "Elimina il mio progetto"
+      },
+      "toast": {
+        "success": "Progetto aggiornato con successo",
+        "error": "Impossibile aggiornare il progetto. Per favore, riprova."
+      }
+    },
+    "members": {
+      "label": "Membri",
+      "project_lead": "Responsabile del progetto",
+      "default_assignee": "Assegnatario predefinito",
+      "guest_super_permissions": {
+        "title": "Concedi accesso in sola lettura a tutti gli elementi di lavoro per gli utenti ospiti:",
+        "sub_heading": "Questo permetterà agli ospiti di visualizzare tutti gli elementi di lavoro del progetto."
+      },
+      "invite_members": {
+        "title": "Invita membri",
+        "sub_heading": "Invita membri a lavorare sul tuo progetto.",
+        "select_co_worker": "Seleziona un collega"
+      },
+      "project_lead_description": "Seleziona il responsabile del progetto.",
+      "default_assignee_description": "Seleziona l’assegnatario predefinito del progetto.",
+      "project_subscribers": "Iscritti al progetto",
+      "project_subscribers_description": "Seleziona i membri che riceveranno le notifiche per questo progetto."
+    },
+    "states": {
+      "describe_this_state_for_your_members": "Descrivi questo stato per i tuoi membri.",
+      "empty_state": {
+        "title": "Nessuno stato disponibile per il gruppo {groupKey}",
+        "description": "Crea un nuovo stato"
+      }
+    },
+    "labels": {
+      "label_title": "Titolo etichetta",
+      "label_title_is_required": "Il titolo dell'etichetta è obbligatorio",
+      "label_max_char": "Il nome dell'etichetta non deve superare i 255 caratteri",
+      "toast": {
+        "error": "Errore durante l'aggiornamento dell'etichetta"
+      }
+    },
+    "estimates": {
+      "label": "Stime",
+      "title": "Abilita le stime per il mio progetto",
+      "description": "Ti aiutano a comunicare la complessità e il carico di lavoro del team.",
+      "no_estimate": "Nessuna stima",
+      "new": "Nuovo sistema di stima",
+      "create": {
+        "custom": "Personalizzato",
+        "start_from_scratch": "Inizia da zero",
+        "choose_template": "Scegli un modello",
+        "choose_estimate_system": "Scegli un sistema di stima",
+        "enter_estimate_point": "Inserisci stima",
+        "step": "Passo {step} di {total}",
+        "label": "Crea stima"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Stima creata",
+            "message": "La stima è stata creata con successo"
+          },
+          "error": {
+            "title": "Creazione stima fallita",
+            "message": "Non siamo riusciti a creare la nuova stima, riprova."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Stima modificata",
+            "message": "La stima è stata aggiornata nel tuo progetto."
+          },
+          "error": {
+            "title": "Modifica stima fallita",
+            "message": "Non siamo riusciti a modificare la stima, riprova"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Successo!",
+            "message": "Le stime sono state abilitate."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Successo!",
+            "message": "Le stime sono state disabilitate."
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile disabilitare la stima. Riprova"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Stime riordinate",
+            "message": "Le stime sono state riordinate nel tuo progetto."
+          },
+          "error": {
+            "title": "Riordinamento stime fallito",
+            "message": "Non siamo riusciti a riordinare le stime, riprova"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "La stima deve essere maggiore di 0.",
+        "unable_to_process": "Non possiamo elaborare la tua richiesta, riprova.",
+        "numeric": "La stima deve essere un valore numerico.",
+        "character": "La stima deve essere un valore di carattere.",
+        "empty": "Il valore della stima non può essere vuoto.",
+        "already_exists": "Il valore della stima esiste già.",
+        "unsaved_changes": "Hai delle modifiche non salvate. Salva prima di cliccare su Fatto",
+        "remove_empty": "La stima non può essere vuota. Inserisci un valore in ogni campo o rimuovi quelli per cui non hai valori.",
+        "fill": "Compila questo campo di stima",
+        "repeat": "Il valore della stima non può essere ripetuto"
+      },
+      "systems": {
+        "points": {
+          "label": "Punti",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineare",
+          "squares": "Quadrati",
+          "custom": "Personalizzato"
+        },
+        "categories": {
+          "label": "Categorie",
+          "t_shirt_sizes": "Taglie T-Shirt",
+          "easy_to_hard": "Da facile a difficile",
+          "custom": "Personalizzato"
+        },
+        "time": {
+          "label": "Tempo",
+          "hours": "Ore"
+        }
+      },
+      "edit": {
+        "title": "Modifica sistema di stime",
+        "add_or_update": {
+          "title": "Aggiungi, aggiorna o rimuovi stime",
+          "description": "Gestisci il sistema attuale aggiungendo, aggiornando o rimuovendo punti o categorie."
+        },
+        "switch": {
+          "title": "Cambia tipo di stima",
+          "description": "Converti il tuo sistema a punti in sistema a categorie e viceversa."
+        }
+      },
+      "switch": "Cambia sistema di stime",
+      "current": "Sistema di stime attuale",
+      "select": "Seleziona un sistema di stime"
+    },
+    "automations": {
+      "label": "Automatizzazioni",
+      "auto-archive": {
+        "title": "Archivia automaticamente gli elementi di lavoro chiusi",
+        "description": "Plane archiverà automaticamente gli elementi di lavoro che sono stati completati o annullati.",
+        "duration": "Archivia automaticamente gli elementi di lavoro chiusi per"
+      },
+      "auto-close": {
+        "title": "Chiudi automaticamente gli elementi di lavoro",
+        "description": "Plane chiuderà automaticamente gli elementi di lavoro che non sono stati completati o annullati.",
+        "duration": "Chiudi automaticamente gli elementi di lavoro inattivi per",
+        "auto_close_status": "Stato di chiusura automatica"
+      },
+      "auto-remind": {
+        "title": "Promemoria automatici",
+        "description": "Plane invierà automaticamente promemoria via email e notifiche in-app per mantenere il tuo team in linea con le scadenze.",
+        "duration": "Invia promemoria prima di"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Nessuna etichetta ancora",
+        "description": "Crea etichette per aiutare a organizzare e filtrare gli elementi di lavoro nel tuo progetto."
+      },
+      "estimates": {
+        "title": "Nessun sistema di stime ancora",
+        "description": "Crea un set di stime per comunicare la quantità di lavoro per elemento di lavoro.",
+        "primary_button": "Aggiungi sistema di stime"
+      },
+      "integrations": {
+        "title": "Nessuna integrazione configurata",
+        "description": "Configura GitHub e altre integrazioni per sincronizzare i tuoi elementi di lavoro del progetto."
+      }
+    },
+    "initiatives": {
+      "heading": "Iniziative",
+      "sub_heading": "Sblocca il livello più alto di organizzazione per tutto il tuo lavoro in Plane.",
+      "title": "Abilita Iniziative",
+      "description": "Imposta obiettivi più grandi per monitorare i progressi",
+      "toast": {
+        "updating": "Aggiornamento della funzionalità iniziative",
+        "enable_success": "Funzionalità iniziative abilitata con successo.",
+        "disable_success": "Funzionalità iniziative disabilitata con successo.",
+        "error": "Impossibile aggiornare la funzionalità iniziative!"
+      }
+    },
+    "customers": {
+      "heading": "Clienti",
+      "settings_heading": "Gestisci il lavoro in base a ciò che è importante per i tuoi clienti.",
+      "settings_sub_heading": "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti."
+    },
+    "epics": {
+      "properties": {
+        "title": "Proprietà",
+        "description": "Aggiungi proprietà personalizzate alla tua epica."
+      },
+      "disabled": "Disabilitato"
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Pianificazione automatica dei cicli",
+        "description": "Mantieni i cicli in movimento senza configurazione manuale.",
+        "tooltip": "Crea automaticamente nuovi cicli in base alla pianificazione scelta.",
+        "edit_button": "Modifica",
+        "form": {
+          "cycle_title": {
+            "label": "Titolo del ciclo",
+            "placeholder": "Titolo",
+            "tooltip": "Il titolo sarà seguito da numeri per i cicli successivi. Ad esempio: Design - 1/2/3",
+            "validation": {
+              "required": "Il titolo del ciclo è obbligatorio",
+              "max_length": "Il titolo non deve superare 255 caratteri"
+            }
+          },
+          "cycle_duration": {
+            "label": "Durata del ciclo",
+            "unit": "Settimane",
+            "validation": {
+              "required": "La durata del ciclo è obbligatoria",
+              "min": "La durata del ciclo deve essere di almeno 1 settimana",
+              "max": "La durata del ciclo non può superare 30 settimane",
+              "positive": "La durata del ciclo deve essere positiva"
+            }
+          },
+          "cooldown_period": {
+            "label": "Periodo di raffreddamento",
+            "unit": "giorni",
+            "tooltip": "Pausa tra i cicli prima dell'inizio del successivo.",
+            "validation": {
+              "required": "Il periodo di raffreddamento è obbligatorio",
+              "negative": "Il periodo di raffreddamento non può essere negativo"
+            }
+          },
+          "start_date": {
+            "label": "Giorno di inizio del ciclo",
+            "validation": {
+              "required": "La data di inizio è obbligatoria",
+              "past": "La data di inizio non può essere nel passato"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Numero di cicli futuri",
+            "validation": {
+              "required": "Il numero di cicli è obbligatorio",
+              "min": "È richiesto almeno 1 ciclo",
+              "max": "Non è possibile pianificare più di 3 cicli"
+            }
+          },
+          "auto_rollover": {
+            "label": "Trasferimento automatico degli elementi di lavoro",
+            "tooltip": "Il giorno del completamento di un ciclo, spostare tutti gli elementi di lavoro non completati nel ciclo successivo."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Attivazione pianificazione automatica dei cicli",
+            "loading_disable": "Disattivazione pianificazione automatica dei cicli",
+            "success": {
+              "title": "Successo!",
+              "message": "Pianificazione automatica dei cicli attivata con successo."
+            },
+            "error": {
+              "title": "Errore!",
+              "message": "Attivazione della pianificazione automatica dei cicli non riuscita."
+            }
+          },
+          "save": {
+            "loading": "Salvataggio configurazione pianificazione automatica dei cicli",
+            "success": {
+              "title": "Successo!",
+              "message_create": "Configurazione pianificazione automatica dei cicli salvata con successo.",
+              "message_update": "Configurazione pianificazione automatica dei cicli aggiornata con successo."
+            },
+            "error": {
+              "title": "Errore!",
+              "message_create": "Salvataggio configurazione pianificazione automatica dei cicli non riuscito.",
+              "message_update": "Aggiornamento configurazione pianificazione automatica dei cicli non riuscito."
+            }
+          }
+        }
+      }
+    },
+    "features": {
+      "cycles": {
+        "title": "Cicli",
+        "short_title": "Cicli",
+        "description": "Pianifica il lavoro in periodi flessibili che si adattano al ritmo e al tempo unici di questo progetto.",
+        "toggle_title": "Abilita cicli",
+        "toggle_description": "Pianifica il lavoro in periodi di tempo mirati."
+      },
+      "modules": {
+        "title": "Moduli",
+        "short_title": "Moduli",
+        "description": "Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati.",
+        "toggle_title": "Abilita moduli",
+        "toggle_description": "I membri del progetto potranno creare e modificare moduli."
+      },
+      "views": {
+        "title": "Viste",
+        "short_title": "Viste",
+        "description": "Salva ordinamenti, filtri e opzioni di visualizzazione personalizzati o condividili con il tuo team.",
+        "toggle_title": "Abilita viste",
+        "toggle_description": "I membri del progetto potranno creare e modificare viste."
+      },
+      "pages": {
+        "title": "Pagine",
+        "short_title": "Pagine",
+        "description": "Crea e modifica contenuti liberi: note, documenti, qualsiasi cosa.",
+        "toggle_title": "Abilita pagine",
+        "toggle_description": "I membri del progetto potranno creare e modificare pagine."
+      },
+      "intake": {
+        "intake_responsibility": "Responsabilità di accettazione",
+        "intake_sources": "Fonti di accettazione",
+        "title": "Ricezione",
+        "short_title": "Ricezione",
+        "description": "Consenti ai non membri di condividere bug, feedback e suggerimenti; senza interrompere il tuo flusso di lavoro.",
+        "toggle_title": "Abilita ricezione",
+        "toggle_description": "Consenti ai membri del progetto di creare richieste di ricezione nell'app.",
+        "toggle_tooltip_on": "Chiedi all'admin del progetto di attivarlo.",
+        "toggle_tooltip_off": "Chiedi all'admin del progetto di disattivarlo.",
+        "notify_assignee": {
+          "title": "Notifica assegnatari",
+          "description": "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche"
+        },
+        "in_app": {
+          "title": "In-app",
+          "description": "Ricevi nuovi elementi di lavoro da membri e ospiti nel tuo spazio di lavoro senza disturbare quelli esistenti."
+        },
+        "email": {
+          "title": "Email",
+          "description": "Raccogli nuovi elementi di lavoro da chiunque invii un'email a un indirizzo email Plane.",
+          "fieldName": "ID email"
+        },
+        "form": {
+          "title": "Moduli",
+          "description": "Consenti a persone esterne al tuo spazio di lavoro di creare potenziali nuovi elementi di lavoro tramite un modulo dedicato e sicuro.",
+          "fieldName": "URL modulo predefinito",
+          "create_forms": "Crea moduli utilizzando i tipi di elementi di lavoro",
+          "manage_forms": "Gestisci moduli",
+          "manage_forms_tooltip": "Chiedi all'admin dello spazio di lavoro di gestirlo.",
+          "create_form": "Crea modulo",
+          "edit_form": "Modifica dettagli modulo",
+          "form_title": "Titolo modulo",
+          "form_title_required": "Il titolo del modulo è obbligatorio",
+          "work_item_type": "Tipo di elemento di lavoro",
+          "remove_property": "Rimuovi proprietà",
+          "select_properties": "Seleziona proprietà",
+          "search_placeholder": "Cerca proprietà",
+          "toasts": {
+            "success_create": "Modulo di accettazione creato con successo",
+            "success_update": "Modulo di accettazione aggiornato con successo",
+            "error_create": "Impossibile creare il modulo di accettazione",
+            "error_update": "Impossibile aggiornare il modulo di accettazione"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Impostazione degli assegnatari...",
+            "success": {
+              "title": "Successo!",
+              "message": "Assegnatari impostati con successo."
+            },
+            "error": {
+              "title": "Errore!",
+              "message": "Qualcosa è andato storto durante l'impostazione degli assegnatari. Riprova."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Monitoraggio del tempo",
+        "short_title": "Monitoraggio del tempo",
+        "description": "Registra il tempo trascorso su elementi di lavoro e progetti.",
+        "toggle_title": "Abilita monitoraggio del tempo",
+        "toggle_description": "I membri del progetto potranno registrare il tempo lavorato."
+      },
+      "milestones": {
+        "title": "Traguardi",
+        "short_title": "Traguardi",
+        "description": "I traguardi forniscono un livello per allineare gli elementi di lavoro verso date di completamento condivise.",
+        "toggle_title": "Abilita traguardi",
+        "toggle_description": "Organizza gli elementi di lavoro per scadenze dei traguardi."
+      },
+      "toasts": {
+        "loading": "Aggiornamento funzionalità progetto...",
+        "success": "Funzionalità progetto aggiornata con successo.",
+        "error": "Qualcosa è andato storto durante l'aggiornamento della funzionalità progetto. Riprova."
+      }
+    }
+  }
+}

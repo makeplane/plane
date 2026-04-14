@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Toate Sarcinile majore",
+    "label": "{count, plural, one {Sarcină majoră} other {Sarcini majore}}",
+    "new": "Sarcină majoră",
+    "adding": "Se adaugă sarcină majoră",
+    "create": {
+      "success": "Sarcină majoră creată cu succes"
+    },
+    "add": {
+      "press_enter": "Apasă 'Enter' pentru a adăuga o altă sarcină majoră",
+      "label": "Adaugă sarcină majoră"
+    },
+    "title": {
+      "label": "Titlu sarcină majoră",
+      "required": "Titlul sarcinii majore este obligatoriu."
+    },
+    "archive": {
+      "description": "Doar sarcinile majore finalizate sau anulate\npot fi arhivate",
+      "label": "Arhivează sarcina majoră",
+      "confirm_message": "Ești sigur că vrei să arhivezi sarcina majoră? Toate sarcinile majore arhivate pot fi restaurate mai târziu.",
+      "success": {
+        "label": "Arhivare reușită",
+        "message": "Arhivele tale se găsesc în arhivele proiectului."
+      },
+      "failed": {
+        "message": "Sarcina majoră nu a putut fi arhivată. Te rugăm să încerci din nou."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epice",
+    "no_epics_selected": "Niciun epic selectat",
+    "add_selected_epics": "Adaugă epicele selectate",
+    "epic_link_copied_to_clipboard": "Link-ul epicului copiat în clipboard.",
+    "project_link_copied_to_clipboard": "Link-ul proiectului copiat în clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Creează un epic și atribuie-l cuiva, chiar și ție",
+        "description": "Pentru corpuri mai mari de muncă care acoperă mai multe cicluri și pot trăi în mai multe module, creează un epic. Leagă elemente de lucru și sub-elemente de lucru într-un proiect la un epic și sari într-un element de lucru din prezentarea generală.",
+        "primary_button": {
+          "text": "Creează un Epic"
+        }
+      },
+      "section": {
+        "title": "Încă nu există epice",
+        "description": "Începe să adaugi epice pentru a gestiona și urmări progresul.",
+        "primary_button": {
+          "text": "Adaugă epice"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Nu s-au găsit epice care să se potrivească"
+      },
+      "no_epics": {
+        "title": "Nu s-au găsit epice"
+      }
+    }
+  }
+}

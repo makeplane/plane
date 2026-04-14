@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Alterar e-mail",
+        "description": "Digite um novo endereço de e-mail para receber um link de verificação.",
+        "toasts": {
+          "success_title": "Sucesso!",
+          "success_message": "E-mail atualizado com sucesso. Faça login novamente."
+        },
+        "form": {
+          "email": {
+            "label": "Novo e-mail",
+            "placeholder": "Digite seu e-mail",
+            "errors": {
+              "required": "O e-mail é obrigatório",
+              "invalid": "O e-mail é inválido",
+              "exists": "O e-mail já existe. Use outro.",
+              "validation_failed": "Falha na validação do e-mail. Tente novamente."
+            }
+          },
+          "code": {
+            "label": "Código único",
+            "placeholder": "123456",
+            "helper_text": "Código de verificação enviado para o novo e-mail.",
+            "errors": {
+              "required": "O código único é obrigatório",
+              "invalid": "Código de verificação inválido. Tente novamente."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continuar",
+          "confirm": "Confirmar",
+          "cancel": "Cancelar"
+        },
+        "states": {
+          "sending": "Enviando…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Selecionar visualização padrão",
+      "compact": "Compacto",
+      "full": "Tela cheia"
+    }
+  },
+  "profile": {
+    "label": "Perfil",
+    "page_label": "Seu trabalho",
+    "work": "Trabalho",
+    "details": {
+      "joined_on": "Entrou em",
+      "time_zone": "Fuso horário"
+    },
+    "stats": {
+      "workload": "Carga de trabalho",
+      "overview": "Visão geral",
+      "created": "Itens de trabalho criados",
+      "assigned": "Itens de trabalho atribuídos",
+      "subscribed": "Itens de trabalho inscritos",
+      "state_distribution": {
+        "title": "Itens de trabalho por estado",
+        "empty": "Crie itens de trabalho para visualizá-los por estado no gráfico para uma melhor análise."
+      },
+      "priority_distribution": {
+        "title": "Itens de trabalho por prioridade",
+        "empty": "Crie itens de trabalho para visualizá-los por prioridade no gráfico para uma melhor análise."
+      },
+      "recent_activity": {
+        "title": "Atividade recente",
+        "empty": "Não foi possível encontrar dados. Por favor, verifique suas entradas",
+        "button": "Baixar atividade de hoje",
+        "button_loading": "Baixando"
+      }
+    },
+    "actions": {
+      "profile": "Perfil",
+      "security": "Segurança",
+      "activity": "Atividade",
+      "appearance": "Aparência",
+      "notifications": "Notificações",
+      "connections": "Conexões"
+    },
+    "tabs": {
+      "summary": "Resumo",
+      "assigned": "Atribuído",
+      "created": "Criado",
+      "subscribed": "Inscrito",
+      "activity": "Atividade"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Nenhuma atividade ainda",
+        "description": "Comece criando um novo item de trabalho! Adicione detalhes e propriedades a ele. Explore mais no Plane para ver sua atividade."
+      },
+      "assigned": {
+        "title": "Nenhum item de trabalho atribuído a você",
+        "description": "Os itens de trabalho atribuídos a você podem ser rastreados aqui."
+      },
+      "created": {
+        "title": "Nenhum item de trabalho ainda",
+        "description": "Todos os itens de trabalho criados por você vêm aqui, rastreie-os aqui diretamente."
+      },
+      "subscribed": {
+        "title": "Nenhum item de trabalho ainda",
+        "description": "Inscreva-se nos itens de trabalho nos quais você está interessado, rastreie todos eles aqui."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferência do sistema"
+      },
+      "light": {
+        "label": "Claro"
+      },
+      "dark": {
+        "label": "Escuro"
+      },
+      "light_contrast": {
+        "label": "Alto contraste claro"
+      },
+      "dark_contrast": {
+        "label": "Alto contraste escuro"
+      },
+      "custom": {
+        "label": "Tema personalizado"
+      }
+    }
+  }
+}

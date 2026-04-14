@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Tüm Epikler",
+    "label": "{count, plural, one {Epik} other {Epikler}}",
+    "new": "Yeni Epik",
+    "adding": "Epik ekleniyor",
+    "create": {
+      "success": "Epik başarıyla oluşturuldu"
+    },
+    "add": {
+      "press_enter": "Başka bir epik eklemek için 'Enter'a basın",
+      "label": "Epik Ekle"
+    },
+    "title": {
+      "label": "Epik Başlığı",
+      "required": "Epik başlığı gereklidir."
+    },
+    "archive": {
+      "description": "Yalnızca tamamlanmış veya iptal edilmiş\nepikler arşivlenebilir",
+      "label": "Epiki Arşivle",
+      "confirm_message": "Epiki arşivlemek istediğinizden emin misiniz? Arşivlenen tüm epikler daha sonra geri yüklenebilir.",
+      "success": {
+        "label": "Arşivleme başarılı",
+        "message": "Arşivleriniz proje arşivlerinde bulunabilir."
+      },
+      "failed": {
+        "message": "Epik arşivlenemedi. Lütfen tekrar deneyin."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epikler",
+    "no_epics_selected": "Seçili epik yok",
+    "add_selected_epics": "Seçili epikleri ekle",
+    "epic_link_copied_to_clipboard": "Epik bağlantısı panoya kopyalandı.",
+    "project_link_copied_to_clipboard": "Proje bağlantısı panoya kopyalandı",
+    "empty_state": {
+      "general": {
+        "title": "Bir epik oluşturun ve birisine, hatta kendinize atayın",
+        "description": "Birkaç döngüye yayılan ve modüller arasında yaşayabilen daha büyük iş kütleleri için bir epik oluşturun. Bir projedeki iş öğelerini ve alt iş öğelerini bir epiğe bağlayın ve genel bakıştan bir iş öğesine atlayın.",
+        "primary_button": {
+          "text": "Bir Epik Oluştur"
+        }
+      },
+      "section": {
+        "title": "Henüz epik yok",
+        "description": "İlerlemeyi yönetmek ve izlemek için epikler eklemeye başlayın.",
+        "primary_button": {
+          "text": "Epikler ekle"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Eşleşen epik bulunamadı"
+      },
+      "no_epics": {
+        "title": "Epik bulunamadı"
+      }
+    }
+  }
+}

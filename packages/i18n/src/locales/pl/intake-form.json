@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Utwórz element pracy",
+      "sub-title": "Daj zespołowi znać, nad czym chciałbyś, aby pracował.",
+      "name": "Nazwa",
+      "email": "E-mail",
+      "about": "Czego dotyczy ten element pracy?",
+      "description": "Opisz, co powinno się wydarzyć",
+      "description_placeholder": "Dodaj tyle szczegółów, ile chcesz, aby zespół mógł zidentyfikować Twoją sytuację i potrzeby.",
+      "loading": "Tworzenie",
+      "create_work_item": "Utwórz element pracy",
+      "errors": {
+        "name": "Nazwa jest wymagana",
+        "name_max_length": "Nazwa nie może przekraczać 255 znaków",
+        "email": "E-mail jest wymagany",
+        "email_invalid": "Nieprawidłowy adres e-mail",
+        "title": "Tytuł jest wymagany",
+        "title_max_length": "Tytuł nie może przekraczać 255 znaków"
+      }
+    },
+    "success": {
+      "title": "Twój element pracy jest teraz w kolejce zespołu.",
+      "description": "Zespół może teraz zatwierdzić lub odrzucić ten element pracy z kolejki zgłoszeń.",
+      "primary_button": {
+        "text": "Dodaj kolejny element pracy"
+      },
+      "secondary_button": {
+        "text": "Dowiedz się więcej o zgłoszeniach"
+      }
+    },
+    "how_it_works": {
+      "title": "Jak to działa?",
+      "heading": "To jest formularz zgłoszeń.",
+      "description": "Zgłoszenia to funkcja Plane, która pozwala administratorom i kierownikom projektów przyjmować elementy pracy z zewnątrz do swoich projektów.",
+      "steps": {
+        "step_1": "Ten krótki formularz pozwala utworzyć nowy element pracy w projekcie Plane.",
+        "step_2": "Po wysłaniu formularza w zgłoszeniach tego projektu zostanie utworzony nowy element pracy.",
+        "step_3": "Ktoś z tego projektu lub zespołu to sprawdzi.",
+        "step_4": "Jeśli zatwierdzą, element zostanie przeniesiony do kolejki pracy projektu. W przeciwnym razie zostanie odrzucony.",
+        "step_5": "Aby sprawdzić status elementu, skontaktuj się z kierownikiem projektu, administratorem lub osobą, która przesłała Ci link do tej strony."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Wybierz typ elementu pracy",
+        "search_placeholder": "Szukaj typu elementu pracy"
+      },
+      "actions": {
+        "select_properties": "Wybierz właściwości"
+      }
+    }
+  }
+}

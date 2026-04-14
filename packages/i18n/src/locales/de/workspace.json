@@ -1,0 +1,378 @@
+{
+  "workspace_creation": {
+    "heading": "Erstellen Sie einen Arbeitsbereich",
+    "subheading": "Um Plane verwenden zu können, müssen Sie einen Arbeitsbereich erstellen oder beitreten.",
+    "form": {
+      "name": {
+        "label": "Geben Sie Ihrem Arbeitsbereich einen Namen",
+        "placeholder": "Etwas Bekanntes und Wiedererkennbares wäre sinnvoll."
+      },
+      "url": {
+        "label": "Legen Sie die URL Ihres Arbeitsbereichs fest",
+        "placeholder": "Geben Sie eine URL ein oder fügen Sie sie ein",
+        "edit_slug": "Sie können nur den Slug-Teil der URL bearbeiten"
+      },
+      "organization_size": {
+        "label": "Wie viele Personen werden diesen Bereich nutzen?",
+        "placeholder": "Wählen Sie einen Bereich"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Nur der Instanzadministrator kann Arbeitsbereiche erstellen",
+        "description": "Wenn Sie die E-Mail Ihres Instanzadministrators kennen, klicken Sie unten, um ihn zu kontaktieren.",
+        "request_button": "Instanzadministrator bitten"
+      },
+      "validation": {
+        "name_alphanumeric": "Arbeitsbereichsnamen dürfen nur (' '), ('-'), ('_') und alphanumerische Zeichen enthalten.",
+        "name_length": "Name ist auf 80 Zeichen begrenzt.",
+        "url_alphanumeric": "URLs dürfen nur ('-') und alphanumerische Zeichen enthalten.",
+        "url_length": "URL ist auf 48 Zeichen begrenzt.",
+        "url_already_taken": "Die Arbeitsbereichs-URL ist bereits vergeben!"
+      }
+    },
+    "request_email": {
+      "subject": "Anfrage für einen neuen Arbeitsbereich",
+      "body": "Hallo Admin,\n\nBitte erstellen Sie einen neuen Arbeitsbereich mit der URL [/workspace-name] für [Zweck].\n\nDanke,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Arbeitsbereich erstellen",
+      "loading": "Arbeitsbereich wird erstellt"
+    },
+    "toast": {
+      "success": {
+        "title": "Erfolg",
+        "message": "Arbeitsbereich erfolgreich erstellt"
+      },
+      "error": {
+        "title": "Fehler",
+        "message": "Arbeitsbereich konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Übersicht über Projekte, Aktivitäten und Kennzahlen",
+        "description": "Willkommen bei Plane, wir freuen uns, dass Sie hier sind. Erstellen Sie Ihr erstes Projekt, verfolgen Sie Arbeitselemente und diese Seite verwandelt sich in einen Ort für Ihren Fortschritt. Administratoren sehen hier zusätzlich teamrelevante Elemente.",
+        "primary_button": {
+          "text": "Erstes Projekt erstellen",
+          "comic": {
+            "title": "Alles beginnt mit einem Projekt in Plane",
+            "description": "Ein Projekt kann eine Produkt-Roadmap, eine Marketingkampagne oder die Markteinführung eines neuen Autos sein."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analysen",
+    "page_label": "{workspace} - Analysen",
+    "open_tasks": "Insgesamt offene Aufgaben",
+    "error": "Fehler beim Laden der Daten.",
+    "work_items_closed_in": "Arbeitselemente, die abgeschlossen wurden in",
+    "selected_projects": "Ausgewählte Projekte",
+    "total_members": "Gesamtmitglieder",
+    "total_cycles": "Zyklen insgesamt",
+    "total_modules": "Module insgesamt",
+    "pending_work_items": {
+      "title": "Ausstehende Arbeitselemente",
+      "empty_state": "Hier wird eine Analyse der ausstehenden Elemente nach Mitarbeitern angezeigt."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Arbeitselemente, die in einem Jahr abgeschlossen wurden",
+      "empty_state": "Schließen Sie Elemente ab, um eine Analyse im Diagramm zu sehen."
+    },
+    "most_work_items_created": {
+      "title": "Die meisten erstellten Elemente",
+      "empty_state": "Zeigt die Mitarbeiter und die Anzahl der von ihnen erstellten Elemente."
+    },
+    "most_work_items_closed": {
+      "title": "Die meisten abgeschlossenen Elemente",
+      "empty_state": "Zeigt die Mitarbeiter und die Anzahl der von ihnen abgeschlossenen Elemente."
+    },
+    "tabs": {
+      "scope_and_demand": "Umfang und Nachfrage",
+      "custom": "Benutzerdefinierte Analysen"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "created_vs_resolved": {
+        "description": "Im Laufe der Zeit erstellte und gelöste Arbeitselemente werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "project_insights": {
+        "title": "Noch keine Daten",
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
+      },
+      "general": {
+        "title": "Verfolgen Sie Fortschritt, Arbeitsbelastung und Zuweisungen. Erkennen Sie Trends, beseitigen Sie Hindernisse und arbeiten Sie schneller",
+        "description": "Sehen Sie Umfang vs. Nachfrage, Schätzungen und Scope Creep. Messen Sie die Leistung von Teammitgliedern und Teams und stellen Sie sicher, dass Ihr Projekt rechtzeitig abgeschlossen wird.",
+        "primary_button": {
+          "text": "Erstes Projekt starten",
+          "comic": {
+            "title": "Analytics funktioniert am besten mit Zyklen + Modulen",
+            "description": "Begrenzen Sie zunächst Ihre Arbeitselemente zeitlich in Zyklen und gruppieren Sie, wenn möglich, Arbeitselemente, die mehr als einen Zyklus umfassen, in Module. Schauen Sie sich beide in der linken Navigation an."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Noch keine Daten",
+        "description": "Analyse des Zyklusfortschritts wird hier angezeigt. Fügen Sie Arbeitsaufgaben zu Zyklen hinzu, um den Fortschritt zu verfolgen."
+      },
+      "module_progress": {
+        "title": "Noch keine Daten",
+        "description": "Analyse des Modulfortschritts wird hier angezeigt. Fügen Sie Arbeitsaufgaben zu Modulen hinzu, um den Fortschritt zu verfolgen."
+      },
+      "intake_trends": {
+        "title": "Noch keine Daten",
+        "description": "Analyse der Intake-Trends wird hier angezeigt. Fügen Sie Arbeitsaufgaben zum Intake hinzu, um Trends zu verfolgen."
+      }
+    },
+    "created_vs_resolved": "Erstellt vs Gelöst",
+    "customized_insights": "Individuelle Einblicke",
+    "backlog_work_items": "Backlog-{entity}",
+    "active_projects": "Aktive Projekte",
+    "trend_on_charts": "Trend in Diagrammen",
+    "all_projects": "Alle Projekte",
+    "summary_of_projects": "Projektübersicht",
+    "project_insights": "Projekteinblicke",
+    "started_work_items": "Begonnene {entity}",
+    "un_started_work_items": "Nicht begonnene {entity}",
+    "completed_work_items": "Abgeschlossene {entity}",
+    "total": "Gesamte {entity}",
+    "projects_by_status": "Projekte nach Status",
+    "active_users": "Aktive Nutzer",
+    "intake_trends": "Aufnahmetrends",
+    "workitem_resolved_vs_pending": "Gelöste vs. ausstehende Arbeitsaufgaben",
+    "upgrade_to_plan": "Upgrade auf {plan}, um {tab} freizuschalten"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Projekt} few {Projekte} other {Projekte}}",
+    "create": {
+      "label": "Projekt hinzufügen"
+    },
+    "network": {
+      "label": "Netzwerk",
+      "private": {
+        "title": "Privat",
+        "description": "Nur auf Einladung zugänglich"
+      },
+      "public": {
+        "title": "Öffentlich",
+        "description": "Jeder im Arbeitsbereich außer Gästen kann beitreten"
+      }
+    },
+    "error": {
+      "permission": "Sie haben keine Berechtigung für diese Aktion.",
+      "cycle_delete": "Löschen des Zyklus fehlgeschlagen",
+      "module_delete": "Löschen des Moduls fehlgeschlagen",
+      "issue_delete": "Löschen des Arbeitselements fehlgeschlagen"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Nicht begonnen",
+      "started": "Gestartet",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen"
+    },
+    "sort": {
+      "manual": "Manuell",
+      "name": "Name",
+      "created_at": "Erstellungsdatum",
+      "members_length": "Mitgliederanzahl"
+    },
+    "scope": {
+      "my_projects": "Meine Projekte",
+      "archived_projects": "Archiviert"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# Monat} few{# Monate} other{# Monate}}",
+      "days_count": "{days, plural, one{# Tag} few{# Tage} other{# Tagen}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Keine aktiven Projekte",
+        "description": "Ein Projekt ist einem übergeordneten Ziel zugeordnet. Projekte enthalten Aufgaben, Zyklen und Module. Erstellen Sie ein neues oder filtern Sie archivierte.",
+        "primary_button": {
+          "text": "Erstes Projekt erstellen",
+          "comic": {
+            "title": "Alles beginnt mit einem Projekt in Plane",
+            "description": "Ein Projekt kann eine Produkt-Roadmap, eine Marketingkampagne oder die Markteinführung eines neuen Autos sein."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Keine Projekte",
+        "description": "Um Arbeitselemente zu erstellen, müssen Sie ein Projekt erstellen oder Teil eines Projekts sein.",
+        "primary_button": {
+          "text": "Erstes Projekt erstellen",
+          "comic": {
+            "title": "Alles beginnt mit einem Projekt in Plane",
+            "description": "Ein Projekt kann eine Produkt-Roadmap, eine Marketingkampagne oder die Markteinführung eines neuen Autos sein."
+          }
+        }
+      },
+      "filter": {
+        "title": "Keine passenden Projekte",
+        "description": "Keine Projekte entsprechen Ihren Kriterien.\nErstellen Sie ein neues."
+      },
+      "search": {
+        "description": "Keine Projekte entsprechen Ihren Suchkriterien.\nErstellen Sie ein neues."
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Ansicht hinzufügen",
+    "empty_state": {
+      "all-issues": {
+        "title": "Keine Arbeitselemente im Projekt",
+        "description": "Erstellen Sie Ihr erstes Element und verfolgen Sie Ihren Fortschritt!",
+        "primary_button": {
+          "text": "Arbeitselement erstellen"
+        }
+      },
+      "assigned": {
+        "title": "Keine zugewiesenen Elemente",
+        "description": "Hier werden Ihnen zugewiesene Elemente angezeigt.",
+        "primary_button": {
+          "text": "Arbeitselement erstellen"
+        }
+      },
+      "created": {
+        "title": "Keine erstellten Elemente",
+        "description": "Hier werden von Ihnen erstellte Elemente angezeigt.",
+        "primary_button": {
+          "text": "Arbeitselement erstellen"
+        }
+      },
+      "subscribed": {
+        "title": "Keine abonnierten Elemente",
+        "description": "Abonnieren Sie Elemente, die Sie interessieren."
+      },
+      "custom-view": {
+        "title": "Keine passenden Elemente",
+        "description": "Hier werden Elemente angezeigt, die den Filterkriterien entsprechen."
+      }
+    },
+    "delete_view": {
+      "title": "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?",
+      "content": "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Einen Entwurf für ein Element erstellen",
+    "empty_state": {
+      "title": "Entwürfe für Elemente und Kommentare werden hier angezeigt.",
+      "description": "Beginnen Sie mit dem Erstellen eines Arbeitselements und lassen Sie es als Entwurf.",
+      "primary_button": {
+        "text": "Ersten Entwurf erstellen"
+      }
+    },
+    "delete_modal": {
+      "title": "Entwurf löschen",
+      "description": "Möchten Sie diesen Entwurf wirklich löschen? Diese Aktion ist nicht umkehrbar."
+    },
+    "toasts": {
+      "created": {
+        "success": "Entwurf erstellt",
+        "error": "Erstellung fehlgeschlagen"
+      },
+      "deleted": {
+        "success": "Entwurf gelöscht"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Schreiben Sie eine Notiz, ein Dokument oder eine vollständige Wissensdatenbank. Holen Sie sich Galileo, Planes KI-Assistent, um Ihnen den Einstieg zu erleichtern",
+        "description": "Seiten sind Gedankenspeicher in Plane. Notieren Sie Meeting-Notizen, formatieren Sie sie einfach, betten Sie Arbeitsaufgaben ein, gestalten Sie sie mit einer Bibliothek von Komponenten und behalten Sie sie alle im Kontext Ihres Projekts. Um die Arbeit an einem Dokument zu verkürzen, rufen Sie Galileo, Planes KI, mit einer Tastenkombination oder einem Knopfdruck auf.",
+        "primary_button": {
+          "text": "Erstellen Sie Ihre erste Seite"
+        }
+      },
+      "private": {
+        "title": "Noch keine privaten Seiten",
+        "description": "Bewahren Sie hier Ihre privaten Gedanken auf. Wenn Sie bereit sind zu teilen, ist das Team nur einen Klick entfernt.",
+        "primary_button": {
+          "text": "Erstellen Sie Ihre erste Seite"
+        }
+      },
+      "public": {
+        "title": "Noch keine Arbeitsbereich-Seiten",
+        "description": "Sehen Sie hier Seiten, die mit allen in Ihrem Arbeitsbereich geteilt werden.",
+        "primary_button": {
+          "text": "Erstellen Sie Ihre erste Seite"
+        }
+      },
+      "archived": {
+        "title": "Noch keine archivierten Seiten",
+        "description": "Archivieren Sie Seiten, die nicht auf Ihrem Radar sind. Greifen Sie bei Bedarf hier darauf zu."
+      },
+      "shared": {
+        "title": "Noch keine geteilten Seiten",
+        "description": "Seiten, die andere mit Ihnen geteilt haben, werden hier angezeigt."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Keine aktiven Zyklen",
+        "description": "Zyklen Ihrer Projekte, die einen Zeitraum einschließen, der das heutige Datum umfasst. Finden Sie hier den Fortschritt und Details zu all Ihren aktiven Zyklen."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Mitglieder aus CSV importieren",
+      "description": "Laden Sie eine CSV mit Spalten hoch: Email, Display Name, First Name, Last Name, Role (5, 15 oder 20)",
+      "dropzone": {
+        "active": "CSV-Datei hier ablegen",
+        "inactive": "Ziehen Sie eine Datei hierher oder klicken Sie zum Hochladen",
+        "file_type": "Nur .csv-Dateien werden unterstützt"
+      },
+      "buttons": {
+        "cancel": "Abbrechen",
+        "import": "Importieren",
+        "try_again": "Erneut versuchen",
+        "close": "Schließen",
+        "done": "Fertig"
+      },
+      "progress": {
+        "uploading": "Hochladen...",
+        "importing": "Importieren..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Import fehlgeschlagen",
+          "complete": "Import abgeschlossen"
+        },
+        "message": {
+          "seat_limit": "Mitglieder können aufgrund von Platzbeschränkungen nicht importiert werden.",
+          "success": "{count} Mitglied{plural} erfolgreich zum Arbeitsbereich hinzugefügt.",
+          "no_imports": "Es wurden keine Mitglieder aus der CSV-Datei importiert."
+        },
+        "stats": {
+          "successful": "Erfolgreich",
+          "failed": "Fehlgeschlagen"
+        },
+        "download_errors": "Fehler herunterladen"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Ungültige Datei",
+          "message": "Nur CSV-Dateien werden unterstützt."
+        },
+        "import_failed": {
+          "title": "Import fehlgeschlagen",
+          "message": "Etwas ist schief gelaufen."
+        }
+      }
+    }
+  }
+}

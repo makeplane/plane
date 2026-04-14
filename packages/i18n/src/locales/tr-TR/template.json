@@ -1,0 +1,317 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Şablonlar",
+      "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmak için harcanan zamanın %80'ini tasarruf edin.",
+      "options": {
+        "project": {
+          "label": "Proje şablonları"
+        },
+        "work_item": {
+          "label": "İş öğesi şablonları"
+        },
+        "page": {
+          "label": "Sayfa şablonları"
+        }
+      },
+      "create_template": {
+        "label": "Şablon oluştur",
+        "no_permission": {
+          "project": "Şablon oluşturmak için proje admininizle iletişime geçin",
+          "workspace": "Şablon oluşturmak için workspace admininizle iletişime geçin"
+        }
+      },
+      "use_template": {
+        "button": "Şablonu kullan"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Workspace'den türetildi"
+        },
+        "project": {
+          "info": "Projeden türetildi"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Proje şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Projenizi adlandırın.",
+            "validation": {
+              "required": "Proje başlığı gereklidir",
+              "maxLength": "Proje başlığı 255 karakterden az olmalıdır"
+            }
+          },
+          "description": {
+            "placeholder": "Bu projenin amacını ve hedeflerini açıklayın."
+          },
+          "button": {
+            "create": "Proje şablonu oluştur",
+            "update": "Proje şablonunu güncelle"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "İş-öğesi şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Bu iş öğesine bir başlık verin.",
+            "validation": {
+              "required": "İş öğesi başlığı gereklidir",
+              "maxLength": "İş öğesi başlığı 255 karakterden az olmalıdır"
+            }
+          },
+          "description": {
+            "placeholder": "Bu iş öğesini, tamamladığınızda ne başaracağınız açık olacak şekilde açıklayın."
+          },
+          "button": {
+            "create": "İş-öğesi şablonu oluştur",
+            "update": "İş-öğesi şablonunu güncelle"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Sayfa şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Başlıksız sayfa",
+            "validation": {
+              "maxLength": "Sayfa adı 255 karakterden az olmalıdır"
+            }
+          },
+          "button": {
+            "create": "Sayfa şablonu oluştur",
+            "update": "Sayfa şablonunu güncelle"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Yayın ayarları} other {Marketplace'de yayınla}}",
+          "unpublish_action": "Marketplace'den kaldır",
+          "title": "Şablonunuzu keşfedilebilir ve tanınabilir yapın.",
+          "name": {
+            "label": "Şablon adı",
+            "placeholder": "Şablonunuzu adlandırın",
+            "validation": {
+              "required": "Şablon adı gereklidir",
+              "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+            }
+          },
+          "short_description": {
+            "label": "Kısa açıklama",
+            "placeholder": "Bu şablon, aynı anda birden fazla projeyi yöneten Proje Yöneticileri için mükemmeldir.",
+            "validation": {
+              "required": "Kısa açıklama gereklidir"
+            }
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Konuşma-Metin entegrasyonumuzla üretkenliği artırın ve iletişimi kolaylaştırın.\n• Gerçek zamanlı dönüştürme: Söylenen kelimeleri anında doğru metne dönüştürün.\n• Görev ve yorum oluşturma: Sesli komutlarla görevler, açıklamalar ve yorumlar ekleyin.",
+            "validation": {
+              "required": "Açıklama gereklidir"
+            }
+          },
+          "category": {
+            "label": "Kategori",
+            "placeholder": "En uygun olduğunu düşündüğünüz yeri seçin. Birden fazla seçim yapabilirsiniz.",
+            "validation": {
+              "required": "En az bir kategori gereklidir"
+            }
+          },
+          "keywords": {
+            "label": "Anahtar kelimeler",
+            "placeholder": "Kullanıcılarınızın bu şablonu ararken arayacağını düşündüğünüz terimleri kullanın.",
+            "helperText": "Virgül ile ayrılmış anahtar kelimeleri girin, bu, insanların bu şablonu aramadan bulmasına yardımcı olacaktır.",
+            "validation": {
+              "required": "En az bir anahtar kelime gereklidir"
+            }
+          },
+          "company_name": {
+            "label": "Şirket adı",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Şirket adı gereklidir",
+              "maxLength": "Şirket adı 255 karakterden az olmalıdır"
+            }
+          },
+          "contact_email": {
+            "label": "Destek e-postası",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Geçersiz e-posta adresi",
+              "required": "Destek e-postası gereklidir",
+              "maxLength": "Destek e-postası 255 karakterden az olmalıdır"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Gizlilik politikası bağlantısı",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Kullanım koşulları bağlantısı",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
+          "cover_image": {
+            "label": "Pazaryerinde görüntülenecek bir kapak resmi ekleyin",
+            "upload_title": "Kapak resmi yükle",
+            "upload_placeholder": "Kapak resmi yüklemek için tıklayın veya sürükleyip bırakın",
+            "drop_here": "Buraya bırakın",
+            "click_to_upload": "Yüklemek için tıklayın",
+            "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor. Lütfen tekrar deneyin.",
+            "upload_and_save": "Yükle ve kaydet",
+            "uploading": "Yükleniyor",
+            "remove": "Kaldır",
+            "removing": "Kaldırılıyor",
+            "validation": {
+              "required": "Kapak resmi gereklidir"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Bu şablonun görüntüleyicilerini etkileyeceğini düşündüğünüz belgeleri ve resimleri ekleyin.",
+            "validation": {
+              "required": "En az bir ekran görüntüsü gereklidir"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Şablonlar",
+        "description": "Plane'deki proje, iş-öğesi ve sayfa şablonlarıyla, bir projeyi sıfırdan oluşturmanız veya iş öğesi özelliklerini manuel olarak ayarlamanız gerekmez.",
+        "sub_description": "Şablonları kullandığınızda admin zamanınızın %80'ini geri kazanın."
+      },
+      "no_templates": {
+        "button": "İlk şablonunuzu oluşturun"
+      },
+      "no_labels": {
+        "description": "Henüz etiket yok. Projenizde iş öğelerini düzenlemek ve filtrelemek için etiketler oluşturun."
+      },
+      "no_work_items": {
+        "description": "Henüz iş öğesi yok. Bir tane ekleyin, işinizi daha iyi yapılandırın."
+      },
+      "no_sub_work_items": {
+        "description": "Henüz alt iş öğesi yok. Bir tane ekleyin, işinizi daha iyi yapılandırın."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Erişiminiz olan şablon yok.",
+          "description": "Lütfen bir şablon oluşturun"
+        },
+        "no_results": {
+          "title": "Bu bir şablonla eşleşmedi.",
+          "description": "Başka terimlerle arama yapmayı deneyin."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Şablon oluşturuldu",
+          "message": "{templateType} şablonu olan {templateName}, artık workspace'iniz için kullanılabilir."
+        },
+        "error": {
+          "title": "Bu sefer o şablonu oluşturamadık.",
+          "message": "Detaylarınızı tekrar kaydetmeyi deneyin veya tercihen başka bir sekmede yeni bir şablona kopyalayın."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Şablon değiştirildi",
+          "message": "{templateType} şablonu olan {templateName} değiştirildi."
+        },
+        "error": {
+          "title": "Bu şablondaki değişiklikleri kaydedemedik.",
+          "message": "Detaylarınızı tekrar kaydetmeyi deneyin veya daha sonra bu şablona geri dönün. Hala sorun yaşıyorsanız, bizimle iletişime geçin."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Şablon silindi",
+          "message": "{templateType} şablonu olan {templateName} artık workspace'inizden silindi."
+        },
+        "error": {
+          "title": "O şablonu bu sefer silemedik.",
+          "message": "Tekrar silmeyi deneyin veya daha sonra tekrar gelin. O zaman silemezseniz bizimle iletişime geçin."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Şablon yayından kaldırıldı",
+          "message": "{templateType} şablonu olan {templateName} marketplace'den kaldırıldı."
+        },
+        "error": {
+          "title": "Şablonu yayından kaldıramadık.",
+          "message": "Tekrar yayından kaldırmayı deneyin veya daha sonra tekrar gelin. O zaman kaldıramazsanız bizimle iletişime geçin."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Şablonu sil",
+      "description": {
+        "prefix": "Şablonu silmek istediğinizden emin misiniz-",
+        "suffix": "? Şablonla ilgili tüm veriler kalıcı olarak kaldırılacak. Bu işlem geri alınamaz."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Şablonu yayından kaldır",
+      "description": {
+        "prefix": "Şablonu yayından kaldırmak istediğinizden emin misiniz-",
+        "suffix": "? Şablon marketplace'den kaldırılacak ve diğerleri için artık mevcut olmayacak."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Yeni şablon ekle",
+        "project": "Yeni şablon ekle"
+      },
+      "label": {
+        "project": "Bir proje şablonu seçin",
+        "page": "Şablon seç"
+      },
+      "tooltip": {
+        "work_item": "Bir iş öğesi şablonu seçin"
+      },
+      "no_results": {
+        "work_item": "Şablon bulunamadı.",
+        "project": "Şablon bulunamadı."
+      }
+    }
+  }
+}

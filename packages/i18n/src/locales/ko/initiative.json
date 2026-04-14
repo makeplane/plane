@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "개요",
+    "label": "이니셔티브",
+    "placeholder": "{count, plural, one{# 이니셔티브} other{# 이니셔티브}}",
+    "add_initiative": "이니셔티브 추가",
+    "create_initiative": "이니셔티브 생성",
+    "update_initiative": "이니셔티브 업데이트",
+    "initiative_name": "이니셔티브 이름",
+    "all_initiatives": "모든 이니셔티브",
+    "delete_initiative": "이니셔티브 삭제",
+    "fill_all_required_fields": "모든 필수 필드를 입력해 주세요.",
+    "archive_description": "완료되었거나 종료된 이니셔티브만 보관할 수 있습니다",
+    "toast": {
+      "create_success": "이니셔티브 {name} 성공적으로 생성되었습니다.",
+      "create_error": "이니셔티브 생성에 실패했습니다. 다시 시도해 주세요!",
+      "update_success": "이니셔티브 {name} 성공적으로 업데이트되었습니다.",
+      "update_error": "이니셔티브 업데이트에 실패했습니다. 다시 시도해 주세요!",
+      "delete": {
+        "success": "이니셔티브가 성공적으로 삭제되었습니다.",
+        "error": "이니셔티브 삭제에 실패했습니다"
+      },
+      "archive": {
+        "success": "이니셔티브가 보관되었습니다.",
+        "error": "이니셔티브를 보관하지 못했습니다",
+        "initiative_cannot_be_archived_in_this_state": "이 상태의 이니셔티브는 보관할 수 없습니다"
+      },
+      "link_copied": "이니셔티브 링크가 클립보드에 복사되었습니다.",
+      "project_update_success": "이니셔티브 프로젝트가 성공적으로 업데이트되었습니다.",
+      "project_update_error": "이니셔티브 프로젝트 업데이트에 실패했습니다. 다시 시도해 주세요!",
+      "epic_update_success": "에픽{count, plural, one {이 이니셔티브에 성공적으로 추가되었습니다.} other {들이 이니셔티브에 성공적으로 추가되었습니다.}}",
+      "epic_update_error": "이니셔티브에 에픽 추가에 실패했습니다. 나중에 다시 시도해 주세요.",
+      "state_update_success": "이니셔티브 상태가 성공적으로 업데이트되었습니다.",
+      "state_update_error": "이니셔티브 상태를 업데이트하지 못했습니다. 다시 시도해 주세요!",
+      "label_update_error": "이니셔티브 레이블 업데이트에 실패했습니다. 다시 시도해주세요!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "이니셔티브로 최고 수준에서 작업을 구성하세요",
+        "description": "여러 프로젝트와 팀에 걸친 작업을 구성해야 할 때 이니셔티브가 유용합니다. 프로젝트와 에픽을 이니셔티브에 연결하고, 자동으로 롤업된 업데이트를 보고, 세부 사항을 보기 전에 전체 그림을 볼 수 있습니다.",
+        "primary_button": {
+          "text": "이니셔티브 만들기"
+        }
+      },
+      "search": {
+        "title": "일치하는 이니셔티브 없음",
+        "description": "일치하는 기준의 이니셔티브가 감지되지 않았습니다.\n 대신 새 이니셔티브를 만드세요.",
+        "archived_description": "일치하는 기준의 보관된 이니셔티브가 감지되지 않았습니다."
+      },
+      "not_found": {
+        "title": "이니셔티브가 존재하지 않습니다",
+        "description": "찾고 있는 이니셔티브가 존재하지 않거나, 보관되었거나, 삭제되었습니다.",
+        "primary_button": {
+          "text": "다른 이니셔티브 보기"
+        }
+      },
+      "epics": {
+        "title": "이니셔티브가 존재하지 않습니다",
+        "subHeading": "모든 이니셔티브를 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      }
+    },
+    "scope": {
+      "view_scope": "범위 보기",
+      "breakdown": "범위 분해",
+      "add_scope": "범위 추가",
+      "label": "범위",
+      "empty_state": {
+        "title": "아직 이니셔티브에 범위가 추가되지 않았습니다",
+        "description": "이 이니셔티브에 프로젝트와 에픽을 연결하고 그 작업을 이 공간에서 추적하세요.",
+        "primary_button": {
+          "text": "범위 추가"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "레이블",
+        "description": "레이블로 이니셔티브를 구조화하고 정리하세요."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "레이블 삭제",
+        "content": "{labelName}을(를) 삭제하시겠습니까? 이렇게 하면 모든 이니셔티브와 해당 레이블이 필터링된 모든 뷰에서 레이블이 제거됩니다."
+      },
+      "toast": {
+        "delete_error": "이니셔티브 레이블을 삭제할 수 없습니다. 다시 시도하세요.",
+        "label_already_exists": "레이블이 이미 존재합니다"
+      }
+    }
+  }
+}

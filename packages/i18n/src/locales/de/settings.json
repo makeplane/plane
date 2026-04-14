@@ -1,0 +1,156 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "E-Mail ändern",
+        "description": "Gib eine neue E-Mail-Adresse ein, um einen Verifizierungslink zu erhalten.",
+        "toasts": {
+          "success_title": "Erfolg!",
+          "success_message": "E-Mail erfolgreich aktualisiert. Bitte melde dich erneut an."
+        },
+        "form": {
+          "email": {
+            "label": "Neue E-Mail",
+            "placeholder": "Gib deine E-Mail ein",
+            "errors": {
+              "required": "E-Mail ist erforderlich",
+              "invalid": "E-Mail ist ungültig",
+              "exists": "E-Mail existiert bereits. Bitte nutze eine andere.",
+              "validation_failed": "E-Mail-Verifizierung fehlgeschlagen. Bitte versuche es erneut."
+            }
+          },
+          "code": {
+            "label": "Einmaliger Code",
+            "placeholder": "123456",
+            "helper_text": "Verifizierungscode wurde an deine neue E-Mail gesendet.",
+            "errors": {
+              "required": "Einmaliger Code ist erforderlich",
+              "invalid": "Ungültiger Verifizierungscode. Bitte versuche es erneut."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Weiter",
+          "confirm": "Bestätigen",
+          "cancel": "Abbrechen"
+        },
+        "states": {
+          "sending": "Wird gesendet…"
+        }
+      }
+    },
+    "notifications": {
+      "heading": "E-Mail-Benachrichtigungen",
+      "description": "Bleiben Sie bei Arbeitselementen auf dem Laufenden, die Sie abonniert haben. Aktivieren Sie dies, um benachrichtigt zu werden.",
+      "select_default_view": "Standardansicht auswählen",
+      "compact": "Kompakt",
+      "full": "Vollbild"
+    },
+    "preferences": {
+      "heading": "Einstellungen",
+      "description": "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an"
+    },
+    "security": {
+      "heading": "Sicherheit"
+    },
+    "api_tokens": {
+      "title": "Persönliche Zugriffstoken",
+      "description": "Generieren Sie sichere API-Token, um Ihre Daten mit externen Systemen und Anwendungen zu integrieren."
+    },
+    "activity": {
+      "heading": "Aktivität",
+      "description": "Verfolgen Sie Ihre letzten Aktionen und Änderungen über alle Projekte und Arbeitselemente hinweg."
+    },
+    "connections": {
+      "title": "Verbindungen",
+      "heading": "Verbindungen",
+      "description": "Verwalten Sie Ihre Arbeitsbereich-Verbindungseinstellungen."
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Ihre Arbeit",
+    "work": "Arbeit",
+    "details": {
+      "joined_on": "Beigetreten am",
+      "time_zone": "Zeitzone"
+    },
+    "stats": {
+      "workload": "Auslastung",
+      "overview": "Übersicht",
+      "created": "Erstellte Elemente",
+      "assigned": "Zugewiesene Elemente",
+      "subscribed": "Abonnierte Elemente",
+      "state_distribution": {
+        "title": "Elemente nach Status",
+        "empty": "Erstellen Sie Arbeitselemente, um eine Statusanalyse zu sehen."
+      },
+      "priority_distribution": {
+        "title": "Elemente nach Priorität",
+        "empty": "Erstellen Sie Arbeitselemente, um eine Prioritätsanalyse zu sehen."
+      },
+      "recent_activity": {
+        "title": "Letzte Aktivität",
+        "empty": "Keine Aktivität gefunden.",
+        "button": "Heutige Aktivität herunterladen",
+        "button_loading": "Wird heruntergeladen"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Sicherheit",
+      "activity": "Aktivität",
+      "preferences": "Einstellungen",
+      "api-tokens": "Persönliche Zugriffstoken",
+      "notifications": "Benachrichtigungen",
+      "connections": "Verbindungen"
+    },
+    "tabs": {
+      "summary": "Zusammenfassung",
+      "assigned": "Zugewiesen",
+      "created": "Erstellt",
+      "subscribed": "Abonniert",
+      "activity": "Aktivität"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Keine Aktivität",
+        "description": "Erstellen Sie ein Arbeitselement, um zu beginnen."
+      },
+      "assigned": {
+        "title": "Keine zugewiesenen Arbeitselemente",
+        "description": "Hier werden Ihnen zugewiesene Arbeitselemente angezeigt."
+      },
+      "created": {
+        "title": "Keine erstellten Arbeitselemente",
+        "description": "Hier werden von Ihnen erstellte Arbeitselemente angezeigt."
+      },
+      "subscribed": {
+        "title": "Keine abonnierten Arbeitselemente",
+        "description": "Abonnieren Sie die Arbeitselemente, die Sie interessieren, und verfolgen Sie sie hier."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Systemeinstellungen"
+      },
+      "light": {
+        "label": "Hell"
+      },
+      "dark": {
+        "label": "Dunkel"
+      },
+      "light_contrast": {
+        "label": "Heller hoher Kontrast"
+      },
+      "dark_contrast": {
+        "label": "Dunkler hoher Kontrast"
+      },
+      "custom": {
+        "label": "Benutzerdefiniertes Theme"
+      }
+    }
+  }
+}

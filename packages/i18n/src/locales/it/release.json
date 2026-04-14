@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Rilascio} other {Rilasci}}",
+    "no_release": "Nessun rilascio",
+    "unreleased": "Non rilasciato",
+    "select_releases": "Seleziona rilasci",
+    "overview": "Panoramica",
+    "scope": "Ambito",
+    "page_title": {
+      "scope": "Rilascio - {name} | Ambito",
+      "scope_fallback": "Rilascio | Ambito"
+    },
+    "properties": "Proprietà",
+    "target_date": "Data obiettivo",
+    "lead": "Responsabile",
+    "release_tag": "Tag",
+    "labels": "Etichette",
+    "description_placeholder": "Aggiungi una descrizione...",
+    "progress": "Avanzamento",
+    "completed_work_items": "Elementi di lavoro completati",
+    "pending_work_items": "Elementi di lavoro in sospeso",
+    "cancelled_work_items": "Elementi di lavoro annullati",
+    "scope_page": {
+      "work_items": "Elementi di lavoro",
+      "add_work_items": "Aggiungi elementi di lavoro",
+      "remove_from_release": "Rimuovi dal rilascio",
+      "empty_state": {
+        "title": "Nessun elemento di lavoro",
+        "description": "Aggiungi elementi di lavoro per definire l’ambito del rilascio."
+      },
+      "confirm_remove": {
+        "content": "Rimuovere questo elemento di lavoro dal rilascio? Rimarrà nel progetto.",
+        "primary_button": {
+          "default": "Rimuovi",
+          "loading": "Rimozione in corso"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Nessun ambito ancora",
+      "description": "Aggiungi elementi di lavoro alla release per tracciarne il completamento per questa release.",
+      "add_scope": "Aggiungi ambito",
+      "not_found": {
+        "title": "Rilascio non trovato",
+        "description": "Il rilascio potrebbe essere stato eliminato.",
+        "primary_button": "Torna ai rilasci"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Elemento di lavoro aggiunto} other {Elementi di lavoro aggiunti}}",
+      "work_items_error": "Impossibile aggiungere gli elementi di lavoro"
+    },
+    "count_releases": "{count, plural, one {# rilascio} other {# rilasci}}",
+    "actions": {
+      "delete": "Elimina"
+    },
+    "delete_modal": {
+      "title": "Elimina rilascio",
+      "content": "Sei sicuro di voler eliminare il rilascio \"{releaseName}\"? Questa azione non può essere annullata."
+    },
+    "settings": {
+      "heading": {
+        "title": "Rilasci",
+        "description": "Gestisci con precisione le consegne del progetto con i rilasci."
+      },
+      "toggle": {
+        "title": "Abilita rilasci",
+        "description": "I membri del workspace avranno accesso in sola visualizzazione all'ambito nei rispettivi progetti."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Abilitazione dei rilasci...",
+          "success": {
+            "title": "Rilasci abilitati",
+            "message": "I rilasci sono stati abilitati per questo workspace."
+          },
+          "error": {
+            "title": "Errore",
+            "message": "Impossibile abilitare i rilasci. Riprova."
+          }
+        },
+        "disable": {
+          "loading": "Disabilitazione dei rilasci...",
+          "success": {
+            "title": "Rilasci disabilitati",
+            "message": "I rilasci sono stati disabilitati per questo workspace."
+          },
+          "error": {
+            "title": "Errore",
+            "message": "Impossibile disabilitare i rilasci. Riprova."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Tag di rilascio",
+        "labels": "Etichette"
+      },
+      "tags": {
+        "title": "Tag di rilascio",
+        "description": "Classifica e filtra i tuoi rilasci usando i tag.",
+        "add": "Aggiungi tag",
+        "empty_state": "Nessun tag ancora. Crea il tuo primo tag.",
+        "errors": {
+          "version_required": "La versione è obbligatoria.",
+          "version_already_exists": "Esiste già un tag con questa versione.",
+          "generic": "Si è verificato un errore. Riprova."
+        },
+        "delete_modal": {
+          "title": "Elimina tag",
+          "content": "Sei sicuro di voler eliminare il tag \"{tagVersion}\"? Questa azione non può essere annullata."
+        },
+        "actions": {
+          "edit": "Modifica tag",
+          "delete": "Elimina tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag eliminato con successo.",
+            "error": "Impossibile eliminare il tag. Riprova."
+          }
+        }
+      },
+      "labels": {
+        "title": "Etichette",
+        "description": "Struttura e organizza le tue iniziative con le etichette.",
+        "add": "Aggiungi etichetta",
+        "empty_state": "Nessuna etichetta ancora. Crea la tua prima etichetta.",
+        "errors": {
+          "name_required": "Il nome è obbligatorio.",
+          "name_already_exists": "Esiste già un'etichetta con questo nome.",
+          "generic": "Si è verificato un errore. Riprova."
+        },
+        "modal": {
+          "name_placeholder": "Nome etichetta",
+          "pick_color": "Scegli il colore dell'etichetta"
+        },
+        "actions": {
+          "edit": "Modifica etichetta",
+          "delete": "Elimina etichetta"
+        },
+        "drag_to_reorder": "Trascina per riordinare",
+        "delete_modal": {
+          "title": "Elimina etichetta",
+          "content": "Sei sicuro di voler eliminare l'etichetta \"{labelName}\"? Questa azione non può essere annullata."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Etichetta eliminata con successo.",
+            "error": "Impossibile eliminare l'etichetta. Riprova."
+          }
+        }
+      }
+    }
+  }
+}

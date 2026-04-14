@@ -1,0 +1,81 @@
+{
+  "epic": {
+    "all": "All Epics",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "new": "New Epic",
+    "adding": "Adding epic",
+    "create": {
+      "success": "Epic created successfully"
+    },
+    "add": {
+      "press_enter": "Press 'Enter' to add another epic",
+      "label": "Add Epic"
+    },
+    "title": {
+      "label": "Epic Title",
+      "required": "Epic title is required."
+    },
+    "archive": {
+      "description": "Only completed or canceled\nepics can be archived",
+      "label": "Archive Epic",
+      "confirm_message": "Are you sure you want to archive the epic? All your archived epics can be restored later.",
+      "success": {
+        "label": "Archive success",
+        "message": "Your archives can be found in project archives."
+      },
+      "failed": {
+        "message": "Epic could not be archived. Please try again."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "No epics selected",
+    "add_selected_epics": "Add selected epics",
+    "epic_link_copied_to_clipboard": "Epic link copied to clipboard.",
+    "project_link_copied_to_clipboard": "Project link copied to clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Create an epic and assign it to someone, even yourself",
+        "description": "For larger bodies of work that span several cycles and can live across modules, create an epic. Link work items and sub-work items in a project to an epic and jump into a work item from the overview.",
+        "primary_button": {
+          "text": "Create an Epic"
+        }
+      },
+      "section": {
+        "title": "No epics yet",
+        "description": "Start adding epics to manage and track the progress.",
+        "primary_button": {
+          "text": "Add epics"
+        }
+      }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "This creates a copy of the epic.",
+        "description2": "All property data will be removed while duplicating.",
+        "epics_not_enabled": "Epics not enabled"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate epic"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No matching epics found"
+      },
+      "no_epics": {
+        "title": "No epics found"
+      }
+    }
+  }
+}

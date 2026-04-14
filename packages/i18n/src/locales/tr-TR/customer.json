@@ -1,0 +1,383 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Müşteri} other {Müşteriler}}",
+    "open": "Müşteriyi aç",
+    "dropdown": {
+      "placeholder": "Müşteri seç",
+      "required": "Lütfen bir müşteri seçin",
+      "no_selection": "Müşteri yok"
+    },
+    "upgrade": {
+      "title": "Müşterilerle işleri önceliklendir ve yönet.",
+      "description": "İşlerinizi müşterilere göre eşleştirin ve müşteri özelliklerine göre önceliklendirin."
+    },
+    "properties": {
+      "default": {
+        "title": "Varsayılan özellikler",
+        "customer_name": {
+          "name": "Müşteri adı",
+          "placeholder": "Bu kişi veya işletmenin adı olabilir",
+          "validation": {
+            "required": "Müşteri adı gereklidir.",
+            "max_length": "Müşteri adı 255 karakterden fazla olamaz."
+          }
+        },
+        "description": {
+          "name": "Açıklama",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Email girin",
+          "validation": {
+            "required": "Email gereklidir.",
+            "pattern": "Geçersiz email adresi."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "https:// ile başlayan herhangi bir URL çalışacaktır.",
+          "placeholder_short": "Website ekle",
+          "validation": {
+            "pattern": "Geçersiz website URL'si"
+          }
+        },
+        "employees": {
+          "name": "Çalışanlar",
+          "placeholder": "Müşteriniz bir işletme ise çalışan sayısı.",
+          "validation": {
+            "min_length": "Çalışanlar 0'dan az olamaz.",
+            "max_length": "Çalışan sayısı 2147483647'yi aşamaz"
+          }
+        },
+        "size": {
+          "name": "Büyüklük",
+          "placeholder": "Şirket büyüklüğü ekle",
+          "validation": {
+            "min_length": "Geçersiz büyüklük"
+          }
+        },
+        "domain": {
+          "name": "Sektör",
+          "placeholder": "Perakende, e-Ticaret, Fintek, Bankacılık",
+          "placeholder_short": "Sektör ekle",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Aşama",
+          "placeholder": "Aşama seç",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Kontrat Durumu",
+          "placeholder": "Kontrat durumu seç",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Gelir",
+          "placeholder": "Bu, müşterinizin yıllık olarak ürettiği gelirdir.",
+          "placeholder_short": "Gelir ekle",
+          "validation": {
+            "min_length": "Gelir 0'dan az olamaz."
+          }
+        },
+        "requests": {
+          "name": "Talep sayısı"
+        },
+        "invalid_value": "Geçersiz özellik değeri."
+      },
+      "custom": {
+        "title": "Özel özellikler",
+        "info": "İş öğelerini veya müşteri kayıtlarını daha iyi yönetebilmeniz için müşterilerinizin benzersiz özelliklerini Plane'e ekleyin."
+      },
+      "empty_state": {
+        "title": "Henüz özel özelliğiniz yok.",
+        "description": "İş öğelerinde, Plane'in başka yerlerinde veya CRM gibi Plane dışındaki bir araçta görmek istediğiniz özel özellikler, eklediğinizde burada görünecektir."
+      },
+      "add": {
+        "primary_button": "Yeni özellik ekle"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Satış onaylı lead",
+      "contract_negotiation": "Kontrat görüşmesi",
+      "closed_won": "Kazanıldı",
+      "closed_lost": "Kaybedildi"
+    },
+    "contract_status": {
+      "active": "Aktif",
+      "pre_contract": "Kontrat öncesi",
+      "signed": "İmzalandı",
+      "inactive": "İnaktif"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Bu müşteri kaydını bulamadık.",
+        "description": "Bu kayda giden bağlantı yanlış olabilir veya bu kayıt silinmiş olabilir.",
+        "primary_button": "Müşterilere git",
+        "secondary_button": "Müşteri ekle"
+      },
+      "search": {
+        "title": "Bu terimle eşleşen müşteri kayıtlarınız yok gibi görünüyor.",
+        "description": "Başka bir arama terimiyle deneyin veya o terim için sonuç görmeniz gerektiğinden eminseniz bizimle iletişime geçin."
+      },
+      "list": {
+        "title": "İşinizin hacmini, ritmini ve akışını müşterileriniz için önemli olana göre yönetin.",
+        "description": "Plane'e özel bir özellik olan Müşteriler ile artık sıfırdan yeni müşteriler oluşturabilir ve bunları işinizle bağlantılandırabilirsiniz. Yakında, onları sizin için önemli olan özel özellikleriyle birlikte diğer araçlardan da getirebileceksiniz.",
+        "primary_button": "İlk müşterinizi ekleyin"
+      }
+    },
+    "settings": {
+      "unauthorized": "Bu sayfaya erişme yetkiniz yok.",
+      "description": "İş akışınızda müşteri ilişkilerini takip edin ve yönetin.",
+      "enable": "Müşterileri Etkinleştir",
+      "toasts": {
+        "enable": {
+          "loading": "Müşteriler özelliği etkinleştiriliyor...",
+          "success": {
+            "title": "Bu workspace için Müşterileri etkinleştirdiniz.",
+            "message": "Üyeler artık müşteri kayıtları ekleyebilir, bunları iş öğelerine bağlayabilir ve daha fazlasını yapabilir."
+          },
+          "error": {
+            "title": "Bu sefer Müşterileri etkinleştiremedik.",
+            "message": "Tekrar deneyin veya daha sonra bu ekrana geri dönün. Hala çalışmazsa.",
+            "action": "Destek ile görüşün"
+          }
+        },
+        "disable": {
+          "loading": "Müşteriler özelliği devre dışı bırakılıyor...",
+          "success": {
+            "title": "Müşteriler devre dışı",
+            "message": "Müşteriler özelliği başarıyla devre dışı bırakıldı!"
+          },
+          "error": {
+            "title": "Hata",
+            "message": "Müşteriler özelliği devre dışı bırakılamadı!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Müşteri listenizi alamadık.",
+          "message": "Tekrar deneyin veya bu sayfayı yenileyin."
+        }
+      },
+      "copy_link": {
+        "title": "Bu müşteriye doğrudan bağlantıyı kopyaladınız.",
+        "message": "Herhangi bir yere yapıştırın ve doğrudan buraya yönlendirecektir."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} artık kullanılabilir",
+          "message": "Bu müşteriyi iş öğelerinde referans gösterebilir ve onlardan gelen talepleri de takip edebilirsiniz.",
+          "actions": {
+            "view": "Görüntüle",
+            "copy_link": "Bağlantıyı kopyala",
+            "copied": "Kopyalandı!"
+          }
+        },
+        "error": {
+          "title": "Bu sefer o kaydı oluşturamadık.",
+          "message": "Tekrar kaydetmeyi deneyin veya kaydedilmemiş metninizi tercihen başka bir sekmede yeni bir girişe kopyalayın."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Müşteri başarıyla güncellendi!"
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Müşteri güncellenemedi. Tekrar deneyin!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Müşterinin logosunu yükleyemedik.",
+          "message": "Logoyu tekrar kaydetmeyi deneyin veya sıfırdan başlayın."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Bu müşterinin kaydından bir iş öğesini kaldırdınız.",
+            "message": "Bu müşteriyi iş öğesinden de otomatik olarak kaldırdık."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Bu sefer o iş öğesini bu müşterinin kaydından kaldıramadık."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Bu sefer o iş öğesini bu müşterinin kaydına ekleyemedik.",
+            "message": "O iş öğesini tekrar eklemeyi deneyin veya daha sonra geri dönün. Hala çalışmazsa, bize ulaşın."
+          },
+          "success": {
+            "title": "Bu müşterinin kaydına bir iş öğesi eklediniz.",
+            "message": "Bu müşteriyi iş öğesine de otomatik olarak ekledik."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Düzenle",
+      "copy_link": "Müşteri bağlantısını kopyala",
+      "delete": "Sil"
+    },
+    "create": {
+      "label": "Müşteri kaydı oluştur",
+      "loading": "Oluşturuluyor",
+      "cancel": "İptal"
+    },
+    "update": {
+      "label": "Müşteriyi güncelle",
+      "loading": "Güncelleniyor"
+    },
+    "delete": {
+      "title": "{customer_name} müşteri kaydını silmek istediğinizden emin misiniz?",
+      "description": "Bu kayıtla ilişkili tüm veriler kalıcı olarak silinecek. Bu kaydı daha sonra geri yükleyemezsiniz."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Henüz gösterilecek talep yok.",
+          "description": "Müşterilerinizden iş öğelerine bağlayabileceğiniz talepler oluşturun.",
+          "button": "Yeni talep ekle"
+        },
+        "search": {
+          "title": "Bu terimle eşleşen talepleriniz yok gibi görünüyor.",
+          "description": "Başka bir arama terimiyle deneyin veya o terim için sonuç görmeniz gerektiğinden eminseniz bizimle iletişime geçin."
+        }
+      },
+      "label": "{count, plural, one {Talep} other {Talepler}}",
+      "add": "Talep ekle",
+      "create": "Talep oluştur",
+      "update": "Talebi güncelle",
+      "form": {
+        "name": {
+          "placeholder": "Bu talebi adlandırın",
+          "validation": {
+            "required": "İsim gereklidir.",
+            "max_length": "Talep adı 255 karakteri geçmemelidir."
+          }
+        },
+        "description": {
+          "placeholder": "Talebin niteliğini açıklayın veya bu müşterinin başka bir araçtaki yorumunu yapıştırın."
+        },
+        "source": {
+          "add": "Kaynak ekle",
+          "update": "Kaynağı güncelle",
+          "url": {
+            "label": "URL",
+            "required": "URL gereklidir",
+            "invalid": "Geçersiz website URL'si"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Bağlantı kopyalandı",
+          "message": "Müşteri talebi bağlantısı panoya kopyalandı."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Ek yükleniyor...",
+            "success": {
+              "title": "Ek yüklendi",
+              "message": "Ek başarıyla yüklendi."
+            },
+            "error": {
+              "title": "Ek yüklenemedi",
+              "message": "Ek yüklenemedi."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Hata!",
+              "message": "Bir seferde yalnızca bir dosya yüklenebilir."
+            }
+          },
+          "length": {
+            "message": "Dosya {size}MB veya daha küçük boyutta olmalıdır"
+          },
+          "remove": {
+            "success": {
+              "title": "Ek kaldırıldı",
+              "message": "Ek başarıyla kaldırıldı"
+            },
+            "error": {
+              "title": "Ek kaldırılamadı",
+              "message": "Ek kaldırılamadı"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Kaynak başarıyla güncellendi!"
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Kaynak güncellenemedi."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Hata!",
+              "message": "Talebe iş öğeleri eklenemedi. Tekrar deneyin."
+            },
+            "success": {
+              "title": "Başarılı!",
+              "message": "Talebe iş öğeleri eklendi."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Talep başarıyla güncellendi!",
+            "title": "Başarılı!"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Talep güncellenemedi. Tekrar deneyin!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Talep başarıyla oluşturuldu!",
+            "title": "Başarılı!"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Talep oluşturulamadı. Tekrar deneyin!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Bağlantılı iş öğeleri",
+      "link": "İş öğelerini bağla",
+      "empty_state": {
+        "list": {
+          "title": "Bu müşteriye henüz bağlı iş öğeniz yok gibi görünüyor.",
+          "description": "Herhangi bir projeden mevcut iş öğelerini buraya bağlayın, böylece onları bu müşteriye göre takip edebilirsiniz.",
+          "button": "İş öğesi bağla"
+        }
+      },
+      "action": {
+        "remove_epic": "Epik'i kaldır",
+        "remove": "İş öğesini kaldır"
+      }
+    },
+    "sidebar": {
+      "properties": "Özellikler"
+    }
+  }
+}

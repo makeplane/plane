@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "條形",
+          "long_label": "條形圖",
+          "chart_models": {
+            "basic": "基本",
+            "stacked": "堆疊",
+            "grouped": "分組"
+          },
+          "orientation": {
+            "label": "方向",
+            "horizontal": "水平",
+            "vertical": "垂直",
+            "placeholder": "添加方向"
+          },
+          "bar_color": "條形顏色"
+        },
+        "line_chart": {
+          "short_label": "線形",
+          "long_label": "線形圖",
+          "chart_models": {
+            "basic": "基本",
+            "multi_line": "多線"
+          },
+          "line_color": "線條顏色",
+          "line_type": {
+            "label": "線條類型",
+            "solid": "實線",
+            "dashed": "虛線",
+            "placeholder": "添加線條類型"
+          }
+        },
+        "area_chart": {
+          "short_label": "面積",
+          "long_label": "面積圖",
+          "chart_models": {
+            "basic": "基本",
+            "stacked": "堆疊",
+            "comparison": "比較"
+          },
+          "fill_color": "填充顏色"
+        },
+        "donut_chart": {
+          "short_label": "環形",
+          "long_label": "環形圖",
+          "chart_models": {
+            "basic": "基本",
+            "progress": "進度"
+          },
+          "center_value": "中心值",
+          "completed_color": "完成顏色"
+        },
+        "pie_chart": {
+          "short_label": "餅形",
+          "long_label": "餅形圖",
+          "chart_models": {
+            "basic": "基本"
+          },
+          "group": {
+            "label": "分組片段",
+            "group_thin_pieces": "分組細片段",
+            "minimum_threshold": {
+              "label": "最小閾值",
+              "placeholder": "添加閾值"
+            },
+            "name_group": {
+              "label": "命名組",
+              "placeholder": "\"小於5%\""
+            }
+          },
+          "show_values": "顯示數值",
+          "value_type": {
+            "percentage": "百分比",
+            "count": "計數"
+          }
+        },
+        "text": {
+          "short_label": "文字",
+          "long_label": "文字",
+          "alignment": {
+            "label": "文字對齊",
+            "left": "左對齊",
+            "center": "居中",
+            "right": "右對齊",
+            "placeholder": "添加文字對齊"
+          },
+          "text_color": "文字顏色"
+        },
+        "table_chart": {
+          "short_label": "表格",
+          "long_label": "表格圖表",
+          "chart_models": {
+            "basic": {
+              "short_label": "基本",
+              "long_label": "表格"
+            }
+          },
+          "columns": "列",
+          "rows": "行",
+          "rows_placeholder": "添加行",
+          "configure_rows_hint": "選擇行的屬性以查看此表格。"
+        }
+      },
+      "color_palettes": {
+        "modern": "現代",
+        "horizon": "地平線",
+        "earthen": "大地"
+      },
+      "common": {
+        "add_widget": "添加小工具",
+        "widget_title": {
+          "label": "為此小工具命名",
+          "placeholder": "例如，\"昨日待辦\", \"全部完成\""
+        },
+        "chart_type": "圖表類型",
+        "visualization_type": {
+          "label": "視覺化類型",
+          "placeholder": "添加視覺化類型"
+        },
+        "date_group": {
+          "label": "日期分組",
+          "placeholder": "添加日期分組"
+        },
+        "group_by": "分組依據",
+        "stack_by": "堆疊依據",
+        "daily": "每日",
+        "weekly": "每週",
+        "monthly": "每月",
+        "yearly": "每年",
+        "work_item_count": "工作項目數量",
+        "estimate_point": "估算點數",
+        "pending_work_item": "待處理工作項目",
+        "completed_work_item": "已完成工作項目",
+        "in_progress_work_item": "進行中工作項目",
+        "blocked_work_item": "被阻礙工作項目",
+        "work_item_due_this_week": "本週到期工作項目",
+        "work_item_due_today": "今日到期工作項目",
+        "color_scheme": {
+          "label": "配色方案",
+          "placeholder": "添加配色方案"
+        },
+        "smoothing": "平滑",
+        "markers": "標記",
+        "legends": "圖例",
+        "tooltips": "提示框",
+        "opacity": {
+          "label": "透明度",
+          "placeholder": "添加透明度"
+        },
+        "border": "邊框",
+        "widget_configuration": "小工具配置",
+        "configure_widget": "配置小工具",
+        "guides": "指南",
+        "style": "樣式",
+        "area_appearance": "區域外觀",
+        "comparison_line_appearance": "比較線外觀",
+        "add_property": "添加屬性",
+        "add_metric": "添加指標"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "堆疊依據缺少值。"
+          },
+          "grouped": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "分組依據缺少值。"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "multi_line": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "分組依據缺少值。"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "堆疊依據缺少值。"
+          },
+          "comparison": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "progress": {
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "列缺少值。",
+            "group_by": "行缺少值。"
+          }
+        },
+        "ask_admin": "請管理員配置此小工具。"
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "創建新儀表板",
+        "update": "更新儀表板"
+      },
+      "title": {
+        "label": "為您的儀表板命名。",
+        "placeholder": "\"跨專案的容量\", \"團隊的工作負載\", \"跨所有專案的狀態\"",
+        "required_error": "標題為必填項"
+      },
+      "project": {
+        "label": "選擇專案",
+        "placeholder": "來自這些專案的數據將為此儀表板提供支持。",
+        "required_error": "專案為必填項"
+      },
+      "filters_label": "為上述資料來源設定篩選條件",
+      "create_dashboard": "創建儀表板",
+      "update_dashboard": "更新儀表板"
+    },
+    "delete_modal": {
+      "heading": "刪除儀表板"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "在按需、永久的儀表板中展示您的進度。",
+        "description": "構建您需要的任何儀表板，並自定義數據的外觀，以完美地展示您的進度。",
+        "coming_soon_to_mobile": "即將登陸移動應用",
+        "card_1": {
+          "title": "適用於所有專案",
+          "description": "通過所有專案獲得工作區的完整全局視圖，或者切片您的工作數據，獲得完美的進度視圖。"
+        },
+        "card_2": {
+          "title": "適用於Plane中的任何數據",
+          "description": "超越現成的分析和預製的週期圖表，以前所未有的方式查看團隊、倡議或其他任何內容。"
+        },
+        "card_3": {
+          "title": "滿足所有數據可視化需求",
+          "description": "從多種可自定義的圖表中選擇，具有精細的控制，以準確地按照您想要的方式查看和展示您的工作數據。"
+        },
+        "card_4": {
+          "title": "按需和永久",
+          "description": "一次構建，永久保留，自動刷新您的數據，範圍變更的上下文標誌，以及可共享的永久鏈接。"
+        },
+        "card_5": {
+          "title": "導出和定時通訊",
+          "description": "對於鏈接不起作用的時候，將您的儀表板導出為一次性PDF，或者安排自動發送給利益相關者。"
+        },
+        "card_6": {
+          "title": "適用於所有設備的自動佈局",
+          "description": "調整小工具大小以獲得您想要的佈局，並在移動設備、平板電腦和其他瀏覽器上以完全相同的方式查看。"
+        }
+      },
+      "dashboards_list": {
+        "title": "在小工具中可視化數據，用小工具構建儀表板，並按需查看最新信息。",
+        "description": "使用自定義小工具構建儀表板，以您指定的範圍顯示數據。獲取跨專案和團隊的所有工作的儀表板，並與利益相關者共享永久鏈接，以便按需追踪。"
+      },
+      "dashboards_search": {
+        "title": "這與儀表板名稱不匹配。",
+        "description": "確保您的查詢正確或嘗試另一個查詢。"
+      },
+      "widgets_list": {
+        "title": "按照您想要的方式可視化數據。",
+        "description": "使用線條、條形、餅圖和其他格式，以您想要的方式\n從您指定的源查看數據。"
+      },
+      "widget_data": {
+        "title": "這裡沒有內容",
+        "description": "刷新或添加數據以在此處查看。"
+      }
+    },
+    "common": {
+      "editing": "編輯中"
+    }
+  }
+}

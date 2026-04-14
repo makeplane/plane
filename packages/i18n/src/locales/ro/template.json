@@ -1,0 +1,320 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Șabloane",
+      "description": "Economisește 80% din timpul petrecut pentru crearea proiectelor, a elementelor de lucru și a paginilor când folosești șabloane.",
+      "options": {
+        "project": {
+          "label": "Șabloane de proiect"
+        },
+        "work_item": {
+          "label": "Șabloane de elemente de lucru"
+        },
+        "page": {
+          "label": "Șabloane de pagină"
+        }
+      },
+      "create_template": {
+        "label": "Creează șablon",
+        "no_permission": {
+          "project": "Contactează administratorul proiectului pentru a crea șabloane",
+          "workspace": "Contactează administratorul workspace-ului pentru a crea șabloane"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Folosește șablon",
+          "loading": "Folosind"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivat din workspace"
+        },
+        "project": {
+          "info": "Derivat din proiect"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Denumește șablonul tău de proiect.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Denumește proiectul tău.",
+            "validation": {
+              "required": "Titlul proiectului este obligatoriu",
+              "maxLength": "Titlul proiectului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "description": {
+            "placeholder": "Descrie scopul și obiectivele acestui proiect."
+          },
+          "button": {
+            "create": "Creează șablon de proiect",
+            "update": "Actualizează șablon de proiect"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Denumește șablonul tău de element de lucru.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Dă acestui element de lucru un titlu.",
+            "validation": {
+              "required": "Titlul elementului de lucru este obligatoriu",
+              "maxLength": "Titlul elementului de lucru trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "description": {
+            "placeholder": "Descrie acest element de lucru astfel încât să fie clar ce vei realiza când îl vei completa."
+          },
+          "button": {
+            "create": "Creează șablon de element de lucru",
+            "update": "Actualizează șablon de element de lucru"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Numele șablonului paginii.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Pagina fără nume",
+            "validation": {
+              "maxLength": "Numele paginii trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "button": {
+            "create": "Creează șablon de pagină",
+            "update": "Actualizează șablon de pagină"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Setări de publicare} other {Publică pe Marketplace}}",
+          "unpublish_action": "Elimină din Marketplace",
+          "title": "Faceți-vă șablonul detectabil și recunoscut.",
+          "name": {
+            "label": "Numele șablonului",
+            "placeholder": "Numele șablonului",
+            "validation": {
+              "required": "Numele șablonului este obligatoriu",
+              "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "short_description": {
+            "label": "Descriere scurtă",
+            "placeholder": "Acest șablon este excelent pentru managerii proiectelor care gestionează mai multe proiecte în același timp.",
+            "validation": {
+              "required": "Descrierea scurtă este obligatorie"
+            }
+          },
+          "description": {
+            "label": "Descriere",
+            "placeholder": "Îmbunătățiți productivitatea și optimizați comunicarea cu integrarea noastră Vorbire-În-Text.\n• Transcriere în timp real: Convertiți cuvintele rostite în text precis instantaneu.\n• Crearea sarcinilor și comentariilor: Adăugați sarcini, descrieri și comentarii prin comenzi vocale.",
+            "validation": {
+              "required": "Descrierea este obligatorie"
+            }
+          },
+          "category": {
+            "label": "Categorie",
+            "placeholder": "Alege unde crezi că acest șablon încalcă cel mai bine. Poți alege mai multe.",
+            "validation": {
+              "required": "Cel puțin o categorie este obligatorie"
+            }
+          },
+          "keywords": {
+            "label": "Cuvinte cheie",
+            "placeholder": "Folosește termeni care crezi că utilizatorii vor căuta atunci când vor căuta acest șablon.",
+            "helperText": "Introduceți cuvinte cheie separate de virgule care vor ajuta oamenii să găsească acest lucru din căutare.",
+            "validation": {
+              "required": "Cel puțin un cuvânt cheie este obligatoriu"
+            }
+          },
+          "company_name": {
+            "label": "Numele companiei",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Numele companiei este obligatoriu",
+              "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "contact_email": {
+            "label": "Email de suport",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Adresa email-ului este invalidă",
+              "required": "Adresa email-ului este obligatorie",
+              "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link către politică de confidențialitate",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link către termenii de utilizare",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "cover_image": {
+            "label": "Adăugați o imagine de copertă care va fi afișată în marketplace",
+            "upload_title": "Încarcă imagine de copertă",
+            "upload_placeholder": "Faceți clic pentru a încărca sau trageți și plasați pentru a încărca o imagine de copertă",
+            "drop_here": "Plasați aici",
+            "click_to_upload": "Faceți clic pentru a încărca",
+            "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune. Vă rugăm să încercați din nou.",
+            "upload_and_save": "Încarcă și salvează",
+            "uploading": "Se încarcă",
+            "remove": "Elimină",
+            "removing": "Se elimină",
+            "validation": {
+              "required": "Imaginea de copertă este obligatorie"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include documente și capturi de ecran care credeți că vor face vizualizatorii acestui șablon mai interesanți.",
+            "validation": {
+              "required": "Cel puțin o captură de ecran este obligatorie"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Șabloane",
+        "description": "Cu șabloane de proiect, element de lucru și pagină în Plane, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
+        "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Șabloane."
+      },
+      "no_templates": {
+        "button": "Creează primul tău șablon"
+      },
+      "no_labels": {
+        "description": " Nu există etichete încă. Creează etichete pentru a ajuta la organizarea și filtrarea elementelor de lucru în proiectul tău."
+      },
+      "no_work_items": {
+        "description": "Nu există elemente de lucru încă. Adaugă unul pentru a structura mai bine munca ta."
+      },
+      "no_sub_work_items": {
+        "description": "Nu există sub-elemente de lucru încă. Adaugă unul pentru a structura mai bine munca ta."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Nu există șabloane la care aveți acces.",
+          "description": "Vă rugăm să creați un șablon"
+        },
+        "no_results": {
+          "title": "Aceasta nu se potrivește cu un șablon.",
+          "description": "Încercați să căutați cu alți termeni."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Șablon creat",
+          "message": "{templateName}, șablonul de {templateType}, este acum disponibil pentru workspace-ul tău."
+        },
+        "error": {
+          "title": "Nu am putut crea acel șablon de data aceasta.",
+          "message": "Încearcă să salvezi detaliile din nou sau copiază-le într-un nou șablon, de preferință într-o altă filă."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Șablon modificat",
+          "message": "{templateName}, șablonul de {templateType}, a fost modificat."
+        },
+        "error": {
+          "title": "Nu am putut salva modificările la acest șablon.",
+          "message": "Încearcă să salvezi detaliile din nou sau revino la acest șablon mai târziu. Dacă tot apar probleme, contactează-ne."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Șablon șters",
+          "message": "{templateName}, șablonul de {templateType}, a fost acum șters din workspace-ul tău."
+        },
+        "error": {
+          "title": "Nu am putut șterge acel șablon.",
+          "message": "Încearcă să-l ștergi din nou sau revino la el mai târziu. Dacă nu îl poți șterge nici atunci, contactează-ne."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Șablon retras",
+          "message": "{templateName}, șablonul de {templateType}, a fost retras de pe marketplace."
+        },
+        "error": {
+          "title": "Nu am putut retrage șablonul.",
+          "message": "Încearcă să-l retragi din nou sau revino la el mai târziu. Dacă nu îl poți retrage nici atunci, contactează-ne."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Șterge șablon",
+      "description": {
+        "prefix": "Ești sigur că vrei să ștergi șablonul-",
+        "suffix": "? Toate datele legate de șablon vor fi eliminate permanent. Această acțiune nu poate fi anulată."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retrage șablonul",
+      "description": {
+        "prefix": "Ești sigur că vrei să retragi șablonul-",
+        "suffix": "? Șablonul va fi retras din marketplace și nu va mai fi disponibil pentru alții."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Adaugă șablon nou",
+        "project": "Adaugă șablon nou"
+      },
+      "label": {
+        "project": "Alege un șablon de proiect",
+        "page": "Alege un șablon"
+      },
+      "tooltip": {
+        "work_item": "Alege un șablon de element de lucru"
+      },
+      "no_results": {
+        "work_item": "Nu s-au găsit șabloane.",
+        "project": "Nu s-au găsit șabloane."
+      }
+    }
+  }
+}

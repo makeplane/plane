@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "General",
+      "private": "Privado",
+      "shared": "Compartido",
+      "archived": "Archivado"
+    },
+    "fallback_name": "Colección",
+    "form": {
+      "name_required": "El título de la colección es obligatorio",
+      "name_max_length": "El nombre de la colección debe tener menos de 255 caracteres",
+      "name_placeholder_create": "Ponle un título a la colección",
+      "name_placeholder_edit": "Nombre de la colección"
+    },
+    "create_modal": {
+      "title": "Crear una colección",
+      "submit": "Crear colección"
+    },
+    "edit_modal": {
+      "title": "Editar colección"
+    },
+    "delete_modal": {
+      "title": "Eliminar colección",
+      "page_count": "Esta colección tiene {pageCount} páginas. Elige qué debe pasar con ellas.",
+      "transfer_title": "Transferir páginas y eliminar colección",
+      "transfer_description": "Mueve todas las páginas a otra colección antes de eliminarla. Se conservarán las páginas y sus permisos.",
+      "transfer_warning": "Las páginas movidas heredarán los permisos de la colección seleccionada.",
+      "transfer_target_label": "Mover páginas a",
+      "transfer_target_placeholder": "Selecciona una colección",
+      "delete_with_pages_title": "Eliminar colección con páginas",
+      "delete_with_pages_description": "Elimina permanentemente la colección y todas sus páginas. Esta acción no se puede deshacer.",
+      "submit": "Eliminar colección"
+    },
+    "header": {
+      "add_page": "Añadir página"
+    },
+    "menu": {
+      "create_new_page": "Crear nueva página",
+      "add_existing_page": "Añadir página existente",
+      "edit_collection": "Editar colección",
+      "collection_options": "Opciones de la colección"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Buscar páginas",
+      "success_message": "Se añadieron {count} páginas a la colección.",
+      "error_message": "No se pudieron mover las páginas. Inténtalo de nuevo.",
+      "no_pages_found": "No se encontraron páginas que coincidan con tu búsqueda",
+      "no_pages_available": "No hay páginas disponibles para mover",
+      "submit": "Mover"
+    },
+    "list": {
+      "invite_only": "Solo por invitación",
+      "remove_error": "No se pudo quitar la página de la colección.",
+      "no_matching_pages": "No hay páginas coincidentes",
+      "remove_search_criteria": "Quita los criterios de búsqueda para ver todas las páginas",
+      "remove_filters": "Quita los filtros para ver todas las páginas",
+      "no_pages_title": "Aún no hay páginas",
+      "no_pages_description": "Esta colección no tiene páginas por ahora.",
+      "untitled": "Sin título",
+      "restricted_access": "Acceso restringido",
+      "collapse_page": "Contraer página",
+      "expand_page": "Expandir página",
+      "page_actions": "Acciones de la página",
+      "page_link_copied": "Enlace de la página copiado al portapapeles.",
+      "columns": {
+        "page_name": "Nombre de la página",
+        "owner": "Propietario",
+        "nested_pages": "Páginas anidadas",
+        "last_activity": "Última actividad",
+        "actions": "Acciones"
+      }
+    },
+    "toasts": {
+      "created": "Colección creada correctamente.",
+      "create_error": "No se pudo crear la colección. Inténtalo de nuevo.",
+      "renamed": "Colección renombrada correctamente.",
+      "rename_error": "No se pudo actualizar la colección. Inténtalo de nuevo.",
+      "transferred_deleted": "Las páginas se transfirieron y la colección se eliminó.",
+      "deleted_with_pages": "La colección y sus páginas se eliminaron.",
+      "delete_error": "No se pudo eliminar la colección. Inténtalo de nuevo.",
+      "target_required": "Selecciona una colección a la que mover las páginas.",
+      "create_page_error": "No se pudo crear la página. Inténtalo de nuevo.",
+      "create_page_in_collection_error": "No se pudo crear la página o añadirla a la colección. Inténtalo de nuevo.",
+      "collection_link_copied": "Enlace de la colección copiado al portapapeles."
+    }
+  }
+}

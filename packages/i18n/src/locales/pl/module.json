@@ -1,0 +1,6 @@
+{
+  "module": {
+    "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
+    "no_module": "Brak modułu"
+  }
+}

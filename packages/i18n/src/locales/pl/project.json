@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Utworzono dnia",
+      "updated_at": "Zaktualizowano dnia",
+      "name": "Nazwa"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Dodaj cykl",
+    "more_details": "Więcej szczegółów",
+    "cycle": "Cykl",
+    "update_cycle": "Zaktualizuj cykl",
+    "create_cycle": "Utwórz cykl",
+    "no_matching_cycles": "Brak pasujących cykli",
+    "remove_filters_to_see_all_cycles": "Usuń filtry, aby wyświetlić wszystkie cykle",
+    "remove_search_criteria_to_see_all_cycles": "Usuń kryteria wyszukiwania, aby wyświetlić wszystkie cykle",
+    "only_completed_cycles_can_be_archived": "Można archiwizować tylko ukończone cykle",
+    "start_date": "Data początku",
+    "end_date": "Data końca",
+    "in_your_timezone": "W Twojej strefie czasowej",
+    "transfer_work_items": "Przenieś {count} elementów pracy",
+    "transfer": {
+      "no_cycles_available": "Brak innych cykli dostępnych do przeniesienia elementów pracy."
+    },
+    "date_range": "Zakres dat",
+    "add_date": "Dodaj datę",
+    "active_cycle": {
+      "label": "Aktywny cykl",
+      "progress": "Postęp",
+      "chart": "Wykres burndown",
+      "priority_issue": "Elementy o wysokim priorytecie",
+      "assignees": "Przypisani",
+      "issue_burndown": "Burndown elementów pracy",
+      "ideal": "Idealny",
+      "current": "Obecny",
+      "labels": "Etykiety",
+      "trailing": "Opóźnienie",
+      "leading": "Wyprzedzenie"
+    },
+    "upcoming_cycle": {
+      "label": "Nadchodzący cykl"
+    },
+    "completed_cycle": {
+      "label": "Ukończony cykl"
+    },
+    "status": {
+      "days_left": "Pozostało dni",
+      "completed": "Ukończono",
+      "yet_to_start": "Jeszcze nierozpoczęty",
+      "in_progress": "W trakcie",
+      "draft": "Szkic"
+    },
+    "action": {
+      "restore": {
+        "title": "Przywróć cykl",
+        "success": {
+          "title": "Cykl przywrócony",
+          "description": "Cykl został przywrócony."
+        },
+        "failed": {
+          "title": "Przywracanie nie powiodło się",
+          "description": "Nie udało się przywrócić cyklu."
+        }
+      },
+      "favorite": {
+        "loading": "Dodawanie do ulubionych",
+        "success": {
+          "description": "Cykl dodano do ulubionych.",
+          "title": "Sukces!"
+        },
+        "failed": {
+          "description": "Nie udało się dodać do ulubionych.",
+          "title": "Błąd!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Usuwanie z ulubionych",
+        "success": {
+          "description": "Cykl usunięto z ulubionych.",
+          "title": "Sukces!"
+        },
+        "failed": {
+          "description": "Nie udało się usunąć z ulubionych.",
+          "title": "Błąd!"
+        }
+      },
+      "update": {
+        "loading": "Aktualizowanie cyklu",
+        "success": {
+          "description": "Cykl zaktualizowano.",
+          "title": "Sukces!"
+        },
+        "failed": {
+          "description": "Aktualizacja nie powiodła się.",
+          "title": "Błąd!"
+        },
+        "error": {
+          "already_exists": "Cykl o tych datach już istnieje. Aby mieć szkic, usuń daty."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Grupuj pracę w cykle.",
+        "description": "Ograniczaj pracę w czasie, śledź terminy i monitoruj postępy.",
+        "primary_button": {
+          "text": "Utwórz pierwszy cykl",
+          "comic": {
+            "title": "Cykle to powtarzalne okresy czasu.",
+            "description": "Sprint, iteracja lub inny okres, w którym śledzisz pracę."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Brak elementów w cyklu",
+        "description": "Dodaj elementy, które chcesz śledzić.",
+        "primary_button": {
+          "text": "Utwórz element"
+        },
+        "secondary_button": {
+          "text": "Dodaj istniejący element"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Brak elementów w cyklu",
+        "description": "Elementy zostały przeniesione lub ukryte. Aby je zobaczyć, zmień właściwości."
+      },
+      "active": {
+        "title": "Brak aktywnego cyklu",
+        "description": "Aktywny cykl obejmuje aktualną datę. Będzie wyświetlany tutaj."
+      },
+      "archived": {
+        "title": "Brak zarchiwizowanych cykli",
+        "description": "Archiwizuj ukończone cykle, aby zachować porządek."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Utwórz i przypisz element pracy",
+        "description": "Elementy to zadania, które przypisujesz sobie lub zespołowi. Śledź ich postęp.",
+        "primary_button": {
+          "text": "Utwórz pierwszy element",
+          "comic": {
+            "title": "Elementy to podstawowe zadania",
+            "description": "Przykłady: przeprojektowanie interfejsu, rebranding, nowy system."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Brak zarchiwizowanych elementów",
+        "description": "Archiwizuj elementy ukończone lub anulowane. Skonfiguruj automatyzację.",
+        "primary_button": {
+          "text": "Skonfiguruj automatyzację"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Brak pasujących elementów",
+        "secondary_button": {
+          "text": "Wyczyść filtry"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Dodaj moduł",
+    "update_module": "Zaktualizuj moduł",
+    "create_module": "Utwórz moduł",
+    "archive_module": "Archiwizuj moduł",
+    "restore_module": "Przywróć moduł",
+    "delete_module": "Usuń moduł",
+    "empty_state": {
+      "general": {
+        "title": "Grupuj etapy w moduły.",
+        "description": "Moduły grupują elementy pod wspólnym nadrzędnym celem. Śledź terminy i postępy.",
+        "primary_button": {
+          "text": "Utwórz pierwszy moduł",
+          "comic": {
+            "title": "Moduły grupują elementy hierarchicznie.",
+            "description": "Przykłady: moduł koszyka, podwozia, magazynu."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Brak elementów w module",
+        "description": "Dodaj elementy do modułu.",
+        "primary_button": {
+          "text": "Utwórz elementy"
+        },
+        "secondary_button": {
+          "text": "Dodaj istniejący element"
+        }
+      },
+      "archived": {
+        "title": "Brak zarchiwizowanych modułów",
+        "description": "Archiwizuj moduły ukończone lub anulowane."
+      },
+      "sidebar": {
+        "in_active": "Moduł nie jest aktywny.",
+        "invalid_date": "Nieprawidłowa data. Wpisz prawidłową."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Archiwizuj moduł",
+      "archive_module_description": "Można archiwizować tylko ukończone/anulowane moduły.",
+      "delete_module": "Usuń moduł"
+    },
+    "toast": {
+      "copy": {
+        "success": "Link do modułu skopiowano"
+      },
+      "delete": {
+        "success": "Moduł usunięto",
+        "error": "Nie udało się usunąć modułu"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Zapisuj filtry jako widoki.",
+        "description": "Widoki to zapisane filtry zapewniające łatwy dostęp. Udostępnij je zespołowi.",
+        "primary_button": {
+          "text": "Utwórz pierwszy widok",
+          "comic": {
+            "title": "Widoki działają z właściwościami elementów pracy.",
+            "description": "Utwórz widok z żądanymi filtrami."
+          }
+        }
+      },
+      "filter": {
+        "title": "Brak pasujących widoków",
+        "description": "Utwórz nowy widok."
+      }
+    },
+    "delete_view": {
+      "title": "Czy na pewno chcesz usunąć ten widok?",
+      "content": "Jeśli potwierdzisz, wszystkie opcje sortowania, filtrowania i wyświetlania + układ, który wybrałeś dla tego widoku, zostaną trwale usunięte bez możliwości przywrócenia."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Notuj, dokumentuj lub twórz bazę wiedzy. Użyj AI Galileo.",
+        "description": "Strony to obszar na Twoje myśli. Pisz, formatuj, osadzaj elementy i używaj komponentów.",
+        "primary_button": {
+          "text": "Utwórz pierwszą stronę"
+        }
+      },
+      "private": {
+        "title": "Brak prywatnych stron",
+        "description": "Przechowuj prywatne notatki. Udostępnij je później, gdy będziesz gotowy.",
+        "primary_button": {
+          "text": "Utwórz stronę"
+        }
+      },
+      "public": {
+        "title": "Brak publicznych stron",
+        "description": "Tutaj zobaczysz strony udostępnione w projekcie.",
+        "primary_button": {
+          "text": "Utwórz stronę"
+        }
+      },
+      "archived": {
+        "title": "Brak zarchiwizowanych stron",
+        "description": "Archiwizuj strony do późniejszego użytku."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Zgłoszenia nie są włączone",
+        "description": "Włącz zgłoszenia w ustawieniach projektu, aby zarządzać prośbami.",
+        "primary_button": {
+          "text": "Zarządzaj funkcjami"
+        }
+      },
+      "cycle": {
+        "title": "Cykle nie są włączone",
+        "description": "Włącz cykle, aby ograniczać pracę w czasie.",
+        "primary_button": {
+          "text": "Zarządzaj funkcjami"
+        }
+      },
+      "module": {
+        "title": "Moduły nie są włączone",
+        "description": "Włącz moduły w ustawieniach projektu.",
+        "primary_button": {
+          "text": "Zarządzaj funkcjami"
+        }
+      },
+      "page": {
+        "title": "Strony nie są włączone",
+        "description": "Włącz strony w ustawieniach projektu.",
+        "primary_button": {
+          "text": "Zarządzaj funkcjami"
+        }
+      },
+      "view": {
+        "title": "Widoki nie są włączone",
+        "description": "Włącz widoki w ustawieniach projektu.",
+        "primary_button": {
+          "text": "Zarządzaj funkcjami"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Planowane",
+      "in_progress": "W trakcie",
+      "paused": "Wstrzymane",
+      "completed": "Ukończone",
+      "cancelled": "Anulowane"
+    },
+    "layout": {
+      "list": "Lista",
+      "board": "Tablica",
+      "timeline": "Oś czasu"
+    },
+    "order_by": {
+      "name": "Nazwa",
+      "progress": "Postęp",
+      "issues": "Liczba elementów",
+      "due_date": "Termin",
+      "created_at": "Data utworzenia",
+      "manual": "Ręcznie"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "Importuj członków z CSV",
+      "description": "Prześlij CSV z kolumnami: Email i Rola (5=Gość, 15=Członek, 20=Administrator). Użytkownicy muszą już należeć do przestrzeni roboczej.",
+      "download_sample": "Pobierz przykładowy CSV",
+      "dropzone": {
+        "active": "Upuść plik CSV tutaj",
+        "inactive": "Przeciągnij i upuść lub kliknij, aby przesłać",
+        "file_type": "Obsługiwane są tylko pliki .csv"
+      },
+      "buttons": {
+        "cancel": "Anuluj",
+        "import": "Importuj",
+        "try_again": "Spróbuj ponownie",
+        "close": "Zamknij",
+        "done": "Gotowe"
+      },
+      "progress": {
+        "uploading": "Przesyłanie...",
+        "importing": "Importowanie..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Import zakończony"
+        },
+        "message": {
+          "success": "Pomyślnie zaimportowano {count} członk{plural} do projektu.",
+          "no_imports": "Z pliku CSV nie zaimportowano żadnych nowych członków."
+        },
+        "stats": {
+          "added": "Dodano",
+          "reactivated": "Ponownie aktywowano",
+          "already_members": "Już członkowie",
+          "skipped": "Pominięto"
+        },
+        "download_errors": "Pobierz szczegóły pominiętych"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Nieprawidłowy plik",
+          "message": "Obsługiwane są tylko pliki CSV."
+        },
+        "import_failed": {
+          "title": "Import nie powiódł się",
+          "message": "Coś poszło nie tak."
+        }
+      }
+    }
+  }
+}

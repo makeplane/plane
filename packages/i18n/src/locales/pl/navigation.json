@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "projects": "Projekty",
+    "pages": "Strony",
+    "new_work_item": "Nowy element pracy",
+    "home": "Strona główna",
+    "your_work": "Twoja praca",
+    "inbox": "Skrzynka odbiorcza",
+    "workspace": "Przestrzeń robocza",
+    "views": "Widoki",
+    "analytics": "Analizy",
+    "work_items": "Elementy pracy",
+    "cycles": "Cykle",
+    "modules": "Moduły",
+    "intake": "Zgłoszenia",
+    "drafts": "Szkice",
+    "favorites": "Ulubione",
+    "pro": "Pro",
+    "upgrade": "Uaktualnij",
+    "pi_chat": "AI Czat",
+    "initiatives": "Inicjatywy",
+    "teamspaces": "Timspeisy",
+    "epics": "Epiki",
+    "upgrade_plan": "Apgrejduj plan",
+    "plane_pro": "Plejn Pro",
+    "business": "Biznes",
+    "customers": "Kastomerzy",
+    "recurring_work_items": "Elementy pracy cykliczne"
+  },
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nie znaleziono wyników"
+      }
+    }
+  }
+}

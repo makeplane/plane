@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Wszystkie epiki",
+    "label": "{count, plural, one {Epik} other {Epiki}}",
+    "new": "Nowy epik",
+    "adding": "Dodawanie epiku",
+    "create": {
+      "success": "Epik utworzono pomyślnie"
+    },
+    "add": {
+      "press_enter": "Naciśnij 'Enter', aby dodać kolejny epik",
+      "label": "Dodaj epik"
+    },
+    "title": {
+      "label": "Tytuł epiku",
+      "required": "Tytuł epiku jest wymagany."
+    },
+    "archive": {
+      "description": "Tylko ukończone lub anulowane epiki\nmogą być zarchiwizowane",
+      "label": "Archiwizuj epik",
+      "confirm_message": "Czy na pewno chcesz zarchiwizować epik? Wszystkie zarchiwizowane epiki można później przywrócić.",
+      "success": {
+        "label": "Archiwizacja udana",
+        "message": "Twoje archiwa znajdują się w archiwach projektu."
+      },
+      "failed": {
+        "message": "Nie udało się zarchiwizować epiku. Spróbuj ponownie."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epiki",
+    "no_epics_selected": "Nie wybrano epików",
+    "add_selected_epics": "Dodaj wybrane epiki",
+    "epic_link_copied_to_clipboard": "Link do epika skopiowany do schowka.",
+    "project_link_copied_to_clipboard": "Link do projektu skopiowany do schowka",
+    "empty_state": {
+      "general": {
+        "title": "Utwórz epik i przypisz go do kogoś, nawet do siebie",
+        "description": "W przypadku większych obszarów pracy, które obejmują kilka cykli i mogą istnieć w różnych modułach, utwórz epik. Połącz elementy pracy i podelementy pracy w projekcie z epikiem i przejdź do elementu pracy z przeglądu.",
+        "primary_button": {
+          "text": "Utwórz Epik"
+        }
+      },
+      "section": {
+        "title": "Brak epików",
+        "description": "Zacznij dodawać epiki, aby zarządzać i śledzić postęp.",
+        "primary_button": {
+          "text": "Dodaj epiki"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Nie znaleziono pasujących epików"
+      },
+      "no_epics": {
+        "title": "Nie znaleziono epików"
+      }
+    }
+  }
+}

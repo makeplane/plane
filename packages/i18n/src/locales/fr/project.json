@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Créé le",
+      "updated_at": "Mis à jour le",
+      "name": "Nom"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Ajouter un cycle",
+    "more_details": "Plus de détails",
+    "cycle": "Cycle",
+    "update_cycle": "Mettre à jour le cycle",
+    "create_cycle": "Créer un cycle",
+    "no_matching_cycles": "Aucun cycle correspondant",
+    "remove_filters_to_see_all_cycles": "Supprimez les filtres pour voir tous les cycles",
+    "remove_search_criteria_to_see_all_cycles": "Supprimez les critères de recherche pour voir tous les cycles",
+    "only_completed_cycles_can_be_archived": "Seuls les cycles terminés peuvent être archivés",
+    "start_date": "Date de début",
+    "end_date": "Date de fin",
+    "in_your_timezone": "Dans votre fuseau horaire",
+    "transfer_work_items": "Transférer {count} éléments de travail",
+    "transfer": {
+      "no_cycles_available": "Aucun autre cycle disponible pour transférer les éléments de travail."
+    },
+    "date_range": "Plage de dates",
+    "add_date": "Ajouter une date",
+    "active_cycle": {
+      "label": "Cycle actif",
+      "progress": "Progression",
+      "chart": "Graphique d’avancement",
+      "priority_issue": "Éléments de travail prioritaires",
+      "assignees": "Assignés",
+      "issue_burndown": "Graphique d’avancement des éléments",
+      "ideal": "Idéal",
+      "current": "Actuel",
+      "labels": "Étiquettes",
+      "trailing": "En retard",
+      "leading": "En avance"
+    },
+    "upcoming_cycle": {
+      "label": "Cycle à venir"
+    },
+    "completed_cycle": {
+      "label": "Cycle terminé"
+    },
+    "status": {
+      "days_left": "Jours restants",
+      "completed": "Terminé",
+      "yet_to_start": "Pas encore commencé",
+      "in_progress": "En cours",
+      "draft": "Brouillon"
+    },
+    "action": {
+      "restore": {
+        "title": "Restaurer le cycle",
+        "success": {
+          "title": "Cycle restauré",
+          "description": "Le cycle a été restauré."
+        },
+        "failed": {
+          "title": "Échec de la restauration du cycle",
+          "description": "Le cycle n’a pas pu être restauré. Veuillez réessayer."
+        }
+      },
+      "favorite": {
+        "loading": "Ajout du cycle aux favoris",
+        "success": {
+          "description": "Cycle ajouté aux favoris.",
+          "title": "Succès !"
+        },
+        "failed": {
+          "description": "Impossible d’ajouter le cycle aux favoris. Veuillez réessayer.",
+          "title": "Erreur !"
+        }
+      },
+      "unfavorite": {
+        "loading": "Suppression du cycle des favoris",
+        "success": {
+          "description": "Cycle retiré des favoris.",
+          "title": "Succès !"
+        },
+        "failed": {
+          "description": "Impossible de retirer le cycle des favoris. Veuillez réessayer.",
+          "title": "Erreur !"
+        }
+      },
+      "update": {
+        "loading": "Mise à jour du cycle",
+        "success": {
+          "description": "Cycle mis à jour avec succès.",
+          "title": "Succès !"
+        },
+        "failed": {
+          "description": "Erreur lors de la mise à jour du cycle. Veuillez réessayer.",
+          "title": "Erreur !"
+        },
+        "error": {
+          "already_exists": "Vous avez déjà un cycle aux dates indiquées. Si vous souhaitez créer un cycle en brouillon, vous pouvez le faire en supprimant les deux dates."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Regroupez et planifiez votre travail en Cycles.",
+        "description": "Découpez le travail en périodes définies, planifiez à rebours depuis la date limite de votre projet pour fixer les dates, et progressez concrètement en équipe.",
+        "primary_button": {
+          "text": "Définissez votre premier cycle",
+          "comic": {
+            "title": "Les cycles sont des périodes répétitives.",
+            "description": "Un sprint, une itération, ou tout autre terme que vous utilisez pour le suivi hebdomadaire ou bimensuel du travail est un cycle."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Aucun élément de travail ajouté au cycle",
+        "description": "Ajoutez ou créez des éléments de travail que vous souhaitez planifier et livrer dans ce cycle",
+        "primary_button": {
+          "text": "Créer un nouvel élément de travail"
+        },
+        "secondary_button": {
+          "text": "Ajouter un élément existant"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Aucun élément de travail dans le cycle",
+        "description": "Aucun élément de travail dans le cycle. Les éléments sont soit transférés soit masqués. Pour voir les éléments masqués s’il y en a, mettez à jour vos propriétés d’affichage en conséquence."
+      },
+      "active": {
+        "title": "Aucun cycle actif",
+        "description": "Un cycle actif inclut toute période qui englobe la date d’aujourd’hui dans sa plage. Trouvez ici la progression et les détails du cycle actif."
+      },
+      "archived": {
+        "title": "Aucun cycle archivé pour le moment",
+        "description": "Pour organiser votre projet, archivez les cycles terminés. Retrouvez-les ici une fois archivés."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Créez un élément de travail et assignez-le à quelqu’un, même à vous-même",
+        "description": "Pensez aux éléments de travail comme des tâches, du travail, ou des JTBD (Jobs To Be Done). Un élément de travail et ses sous-éléments sont généralement des actions temporelles assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des éléments de travail pour faire progresser votre projet vers son objectif.",
+        "primary_button": {
+          "text": "Créez votre premier élément de travail",
+          "comic": {
+            "title": "Les éléments de travail sont les blocs de construction dans Plane.",
+            "description": "Refondre l’interface de Plane, Renouveler l’image de marque de l’entreprise, ou Lancer le nouveau système d’injection de carburant sont des exemples d’éléments de travail qui ont probablement des sous-éléments."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Aucun élément de travail archivé pour le moment",
+        "description": "Manuellement ou par automatisation, vous pouvez archiver les éléments de travail terminés ou annulés. Retrouvez-les ici une fois archivés.",
+        "primary_button": {
+          "text": "Configurer l’automatisation"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Aucun élément de travail trouvé correspondant aux filtres appliqués",
+        "secondary_button": {
+          "text": "Effacer tous les filtres"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Ajouter un module",
+    "update_module": "Mettre à jour le module",
+    "create_module": "Créer un module",
+    "archive_module": "Archiver le module",
+    "restore_module": "Restaurer le module",
+    "delete_module": "Supprimer le module",
+    "empty_state": {
+      "general": {
+        "title": "Associez vos jalons de projet aux Modules et suivez facilement le travail agrégé.",
+        "description": "Un groupe d’éléments de travail qui appartiennent à un parent logique et hiérarchique forme un module. Considérez-les comme un moyen de suivre le travail par étapes clés du projet. Ils ont leurs propres périodes et délais ainsi que des analyses pour vous aider à voir à quel point vous êtes proche ou pas d’atteindre une étape clé.",
+        "primary_button": {
+          "text": "Construisez votre premier module",
+          "comic": {
+            "title": "Les modules aident à regrouper le travail par étapes clés.",
+            "description": "Un module « panier », un module « châssis » et un module « entrepôt » sont tous de bons exemples de ce regroupement."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Aucun élément de travail dans le module",
+        "description": "Créez ou ajoutez des éléments de travail que vous souhaitez accomplir dans le cadre de ce module",
+        "primary_button": {
+          "text": "Créer de nouveaux éléments de travail"
+        },
+        "secondary_button": {
+          "text": "Ajouter un élément existant"
+        }
+      },
+      "archived": {
+        "title": "Aucun module archivé pour le moment",
+        "description": "Pour organiser votre projet, archivez les modules terminés ou annulés. Retrouvez-les ici une fois archivés."
+      },
+      "sidebar": {
+        "in_active": "Ce module n’est pas encore actif.",
+        "invalid_date": "Date invalide. Veuillez entrer une date valide."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Archiver le module",
+      "archive_module_description": "Seuls les modules terminés ou\nannulés peuvent être archivés.",
+      "delete_module": "Supprimer le module"
+    },
+    "toast": {
+      "copy": {
+        "success": "Lien du module copié dans le presse-papiers"
+      },
+      "delete": {
+        "success": "Module supprimé avec succès",
+        "error": "Échec de la suppression du module"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
+        "description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez avoir un accès facile. Tous les acteurs d’un projet peuvent voir les vues de chacun et choisir celle qui convient le mieux à leurs besoins.",
+        "primary_button": {
+          "text": "Créez votre première vue",
+          "comic": {
+            "title": "Les vues fonctionnent sur les propriétés des éléments de travail.",
+            "description": "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que souhaité."
+          }
+        }
+      },
+      "filter": {
+        "title": "Aucune vue correspondante",
+        "description": "Aucune vue ne correspond aux critères de recherche.\n Créez plutôt une nouvelle vue."
+      }
+    },
+    "delete_view": {
+      "title": "Êtes-vous sûr de vouloir supprimer cette vue ?",
+      "content": "Si vous confirmez, toutes les options de tri, de filtrage et d’affichage et la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Rédigez une note, un document ou une base de connaissances complète. Obtenez l’aide de Galileo, l’assistant IA de Plane, pour commencer",
+        "description": "Les Pages sont un espace de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, disposez-les à l’aide d’une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet. Pour faciliter la rédaction de tout document, faites appel à Galileo, l’IA de Plane, avec un raccourci ou un clic sur un bouton.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "private": {
+        "title": "Pas encore de pages privées",
+        "description": "Ici vos écrits sont personnels et privés. Quand vous serez prêt à les partager, l'équipe n’est qu’à un clic.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "public": {
+        "title": "Pas encore de pages publiques",
+        "description": "Consultez ici les pages partagées avec tout le monde dans votre projet.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "archived": {
+        "title": "Pas encore de pages archivées",
+        "description": "Archivez les pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "L’Intake n’est pas activé pour le projet.",
+        "description": "L’Intake vous aide à gérer les demandes entrantes dans votre projet et à les ajouter comme éléments de travail dans votre flux. Activez l’Intake depuis les paramètres du projet pour gérer les demandes.",
+        "primary_button": {
+          "text": "Gérer les fonctionnalités"
+        }
+      },
+      "cycle": {
+        "title": "Les Cycles ne sont pas activés pour ce projet.",
+        "description": "Découpez le travail en segments temporels, planifiez à rebours depuis la date d’échéance de votre projet pour définir les étapes, et progressez concrètement en équipe. Activez la fonctionnalité Cycles pour votre projet pour commencer à les utiliser.",
+        "primary_button": {
+          "text": "Gérer les fonctionnalités"
+        }
+      },
+      "module": {
+        "title": "Les Modules ne sont pas activés pour le projet.",
+        "description": "Les Modules sont les éléments constitutifs de votre projet. Activez les modules depuis les paramètres du projet pour commencer à les utiliser.",
+        "primary_button": {
+          "text": "Gérer les fonctionnalités"
+        }
+      },
+      "page": {
+        "title": "Les Pages ne sont pas activées pour le projet.",
+        "description": "Les Pages sont les éléments constitutifs de votre projet. Activez les pages depuis les paramètres du projet pour commencer à les utiliser.",
+        "primary_button": {
+          "text": "Gérer les fonctionnalités"
+        }
+      },
+      "view": {
+        "title": "Les Vues ne sont pas activées pour le projet.",
+        "description": "Les Vues sont les éléments constitutifs de votre projet. Activez les vues depuis les paramètres du projet pour commencer à les utiliser.",
+        "primary_button": {
+          "text": "Gérer les fonctionnalités"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Planifié",
+      "in_progress": "En cours",
+      "paused": "En pause",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "layout": {
+      "list": "Vue liste",
+      "board": "Vue galerie",
+      "timeline": "Vue chronologique"
+    },
+    "order_by": {
+      "name": "Nom",
+      "progress": "Progression",
+      "issues": "Nombre d’éléments de travail",
+      "due_date": "Date d’échéance",
+      "created_at": "Date de création",
+      "manual": "Manuel"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "Importer des membres depuis un CSV",
+      "description": "Téléchargez un CSV avec les colonnes : E-mail et Rôle (5=Invité, 15=Membre, 20=Administrateur). Les utilisateurs doivent déjà être membres de l'espace de travail.",
+      "download_sample": "Télécharger un CSV d'exemple",
+      "dropzone": {
+        "active": "Déposez le fichier CSV ici",
+        "inactive": "Glissez-déposez ou cliquez pour télécharger",
+        "file_type": "Seuls les fichiers .csv sont pris en charge"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "import": "Importer",
+        "try_again": "Réessayer",
+        "close": "Fermer",
+        "done": "Terminé"
+      },
+      "progress": {
+        "uploading": "Téléchargement...",
+        "importing": "Importation..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Importation terminée"
+        },
+        "message": {
+          "success": "{count} membre{plural} importé{plural} avec succès dans le projet.",
+          "no_imports": "Aucun nouveau membre n'a été importé depuis le fichier CSV."
+        },
+        "stats": {
+          "added": "Ajoutés",
+          "reactivated": "Réactivés",
+          "already_members": "Déjà membres",
+          "skipped": "Ignorés"
+        },
+        "download_errors": "Télécharger les détails ignorés"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Fichier invalide",
+          "message": "Seuls les fichiers CSV sont pris en charge."
+        },
+        "import_failed": {
+          "title": "Échec de l'importation",
+          "message": "Une erreur s'est produite."
+        }
+      }
+    }
+  }
+}

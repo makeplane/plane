@@ -1,0 +1,350 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bar",
+          "long_label": "Bar chart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic bar"
+            },
+            "stacked": {
+              "short_label": "Stacked",
+              "long_label": "Stacked bar"
+            },
+            "grouped": {
+              "short_label": "Grouped",
+              "long_label": "Grouped bar"
+            }
+          },
+          "orientation": {
+            "label": "Orientation",
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "placeholder": "Add orientation"
+          },
+          "bar_color": "Bar color"
+        },
+        "line_chart": {
+          "short_label": "Line",
+          "long_label": "Line chart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic line"
+            },
+            "multi_line": {
+              "short_label": "Multi-line",
+              "long_label": "Multi-line"
+            }
+          },
+          "line_color": "Line color",
+          "line_type": {
+            "label": "Line type",
+            "solid": "Solid",
+            "dashed": "Dashed",
+            "placeholder": "Add line type"
+          }
+        },
+        "area_chart": {
+          "short_label": "Area",
+          "long_label": "Area chart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic area"
+            },
+            "stacked": {
+              "short_label": "Stacked",
+              "long_label": "Stacked area"
+            },
+            "comparison": {
+              "short_label": "Comparison",
+              "long_label": "Comparison area"
+            }
+          },
+          "fill_color": "Fill color"
+        },
+        "donut_chart": {
+          "short_label": "Donut",
+          "long_label": "Donut chart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic donut"
+            },
+            "progress": {
+              "short_label": "Progress",
+              "long_label": "Progress donut"
+            }
+          },
+          "center_value": "Center value",
+          "completed_color": "Completed color"
+        },
+        "pie_chart": {
+          "short_label": "Pie",
+          "long_label": "Pie chart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Pie"
+            }
+          },
+          "group": {
+            "label": "Grouped pieces",
+            "group_thin_pieces": "Group thin pieces",
+            "minimum_threshold": {
+              "label": "Minimum threshold",
+              "placeholder": "Add threshold"
+            },
+            "name_group": {
+              "label": "Name group",
+              "placeholder": "\"Less than 5%\""
+            }
+          },
+          "show_values": "Show values",
+          "value_type": {
+            "percentage": "Percentage",
+            "count": "Count"
+          }
+        },
+        "number": {
+          "short_label": "Number",
+          "long_label": "Number",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Number"
+            }
+          },
+          "alignment": {
+            "label": "Text alignment",
+            "left": "Left",
+            "center": "Center",
+            "right": "Right",
+            "placeholder": "Add text alignment"
+          },
+          "text_color": "Text color"
+        },
+        "table_chart": {
+          "short_label": "Table",
+          "long_label": "Table chart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Table"
+            }
+          },
+          "columns": "Columns",
+          "rows": "Rows",
+          "rows_placeholder": "Add rows",
+          "configure_rows_hint": "Select a property for rows to view this table."
+        }
+      },
+      "sections": {
+        "charts": "Charts",
+        "text": "Text"
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Horizon",
+        "earthen": "Earthen"
+      },
+      "common": {
+        "add_widget": "Add widget",
+        "widget_title": {
+          "label": "Name this widget",
+          "placeholder": "e.g., \"To-do yesterday\", \"All Complete\""
+        },
+        "widget_type": "Widget type",
+        "date_group": {
+          "label": "Date group",
+          "placeholder": "Add date group"
+        },
+        "group_by": "Group by",
+        "stack_by": "Stack by",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "work_item_count": "Work item count",
+        "estimate_point": "Estimate point",
+        "pending_work_item": "Pending work items",
+        "completed_work_item": "Completed work items",
+        "in_progress_work_item": "In progress work items",
+        "blocked_work_item": "Blocked work items",
+        "work_item_due_this_week": "Work items due this week",
+        "work_item_due_today": "Work items due today",
+        "color_scheme": {
+          "label": "Color scheme",
+          "placeholder": "Add color scheme"
+        },
+        "smoothing": "Smoothing",
+        "markers": "Markers",
+        "legends": "Legends",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opacity",
+          "placeholder": "Add opacity"
+        },
+        "border": "Border",
+        "widget_configuration": "Widget configuration",
+        "configure_widget": "Configure widget",
+        "guides": "Guides",
+        "style": "Style",
+        "area_appearance": "Area appearance",
+        "comparison_line_appearance": "Compare-line appearance",
+        "add_property": "Add property",
+        "add_metric": "Add metric"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
+          },
+          "stacked": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Stack by is missing a value."
+          },
+          "grouped": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Group by is missing a value."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
+          },
+          "multi_line": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Group by is missing a value."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
+          },
+          "stacked": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Stack by is missing a value."
+          },
+          "comparison": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
+          },
+          "progress": {
+            "y_axis_metric": "Metric is missing a value."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
+          }
+        },
+        "number": {
+          "basic": {
+            "y_axis_metric": "Metric is missing a value."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Columns is missing a value.",
+            "group_by": "Rows is missing a value."
+          }
+        },
+        "ask_admin": "Ask your admin to configure this widget."
+      },
+      "upgrade_required": {
+        "title": "This widget type isn't included in your plan."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Create new dashboard",
+        "update": "Update dashboard"
+      },
+      "title": {
+        "label": "Name your dashboard.",
+        "placeholder": "\"Capacity across projects\", \"Workload by team\", \"State across all projects\"",
+        "required_error": "Title is required"
+      },
+      "project": {
+        "label": "Choose projects",
+        "placeholder": "Data from these projects will power this dashboard.",
+        "required_error": "Projects are required"
+      },
+      "filters_label": "Set filters for datasources above",
+      "create_dashboard": "Create dashboard",
+      "update_dashboard": "Update dashboard"
+    },
+    "delete_modal": {
+      "heading": "Delete dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Present your progress in on-demand, forever dashboards.",
+        "description": "Build any dashboard you need to and customize how your data looks for the perfect presentation of your progress.",
+        "coming_soon_to_mobile": "Coming soon to the mobile app",
+        "card_1": {
+          "title": "For all your projects",
+          "description": "Get a total god-view of your workspace with all your projects or slice your work data for that perfect view your progress."
+        },
+        "card_2": {
+          "title": "For any data in Plane",
+          "description": "Go beyond out-of-the-box Analytics and readymade Cycle charts to look at teams', initiatives, or anything else like you haven't before."
+        },
+        "card_3": {
+          "title": "For all your data viz needs",
+          "description": "Choose from several customizable charts with fine-grained controls to see and show your work data exactly how you want to."
+        },
+        "card_4": {
+          "title": "On-demand and permanent",
+          "description": "Build once, keep forever with automatic refreshes of your data, contextual flags for scope changes, and shareable permalinks."
+        },
+        "card_5": {
+          "title": "Exports and scheduled comms",
+          "description": "For those times when links don't work, get your dashboards out into one-time PDFs or schedule them to be sent to stakeholders automatically."
+        },
+        "card_6": {
+          "title": "Auto-laid out for all devices",
+          "description": "Resize your widgets for the layout you want and see it the exact same across mobile, tablet, and other browsers."
+        }
+      },
+      "dashboards_list": {
+        "title": "Visualize data in widgets, build your dashboards with widgets, and see the latest on demand.",
+        "description": "Build your dashboards with Custom Widgets that show your data in the scope you specify. Get dashboards for all your work across projects and teams and share permalinks with stakeholders for on-demand tracking."
+      },
+      "dashboards_search": {
+        "title": "That doesn't match a dashboard's name.",
+        "description": "Make sure your query is right or try another query."
+      },
+      "widgets_list": {
+        "title": "Visualize your data how you want to.",
+        "description": "Use lines, bars, pies, and other formats to see your data\nthe way you want to from the sources you specify."
+      },
+      "widget_data": {
+        "title": "Nothing to see here",
+        "description": "Refresh or add data to see it here."
+      }
+    },
+    "common": {
+      "editing": "Editing"
+    }
+  }
+}

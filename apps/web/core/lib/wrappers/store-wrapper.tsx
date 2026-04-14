@@ -16,8 +16,6 @@ import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { reaction } from "mobx";
 import { useTheme } from "next-themes";
-import type { TLanguage } from "@plane/i18n";
-import { useTranslation } from "@plane/i18n";
 // helpers
 import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
@@ -37,7 +35,6 @@ function StoreWrapper(props: TStoreWrapper) {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: userProfile } = useUserProfile();
-  const { changeLanguage } = useTranslation();
   const { unreadNotificationsCount } = useWorkspaceNotifications();
 
   // Track if we've initialized theme from server (one-time only)
@@ -121,11 +118,6 @@ function StoreWrapper(props: TStoreWrapper) {
     // Update previous theme for next comparison
     previousThemeRef.current = currentTheme;
   }, [userProfile?.theme]);
-
-  useEffect(() => {
-    if (!userProfile?.language) return;
-    changeLanguage(userProfile?.language as TLanguage);
-  }, [userProfile?.language, changeLanguage]);
 
   /**
    * Desktop badge count: sync unread notification count to the native app icon.

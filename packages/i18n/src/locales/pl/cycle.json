@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Dodaj elementy pracy, aby śledzić postęp"
+      },
+      "chart": {
+        "title": "Dodaj elementy pracy, aby wyświetlić wykres burndown."
+      },
+      "priority_issue": {
+        "title": "Tutaj pojawią się elementy o wysokim priorytecie."
+      },
+      "assignee": {
+        "title": "Przypisz elementy, aby zobaczyć podział przypisania."
+      },
+      "label": {
+        "title": "Dodaj etykiety, aby przeprowadzić analizę według etykiet."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
+    "no_cycle": "Brak cyklu"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Dodaj elementy pracy do cyklu, aby zobaczyć jego\n postęp"
+      },
+      "priority": {
+        "title": "Obserwuj elementy pracy o wysokim priorytecie\n realizowane w cyklu na pierwszy rzut oka."
+      },
+      "assignee": {
+        "title": "Dodaj przypisanych do elementów pracy, aby zobaczyć\n podział pracy według przypisanych osób."
+      },
+      "label": {
+        "title": "Dodaj etykiety do elementów pracy, aby zobaczyć\n podział pracy według etykiet."
+      }
+    }
+  }
+}

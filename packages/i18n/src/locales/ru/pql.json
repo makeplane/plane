@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Текущая дата и время"
+        },
+        "today": {
+          "description": "Сегодняшняя дата"
+        },
+        "start_of_day": {
+          "description": "Начало сегодняшнего дня"
+        },
+        "end_of_day": {
+          "description": "Конец сегодняшнего дня"
+        },
+        "start_of_week": {
+          "description": "Начало текущей недели"
+        },
+        "end_of_week": {
+          "description": "Конец текущей недели"
+        },
+        "start_of_month": {
+          "description": "Начало текущего месяца"
+        },
+        "end_of_month": {
+          "description": "Конец текущего месяца"
+        },
+        "start_of_year": {
+          "description": "Начало текущего года"
+        },
+        "end_of_year": {
+          "description": "Конец текущего года"
+        },
+        "days_ago": {
+          "description": "Дата n дней назад"
+        },
+        "days_from_now": {
+          "description": "Дата через n дней"
+        },
+        "weeks_ago": {
+          "description": "Дата n недель назад"
+        },
+        "weeks_from_now": {
+          "description": "Дата через n недель"
+        },
+        "months_ago": {
+          "description": "Дата n месяцев назад"
+        },
+        "months_from_now": {
+          "description": "Дата через n месяцев"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Текущий авторизованный пользователь"
+        },
+        "members_of": {
+          "description": "Участники \"project:<id>\" или \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Все участники рабочего пространства"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Активный цикл сегодня"
+        },
+        "completed_cycles": {
+          "description": "Циклы, дата окончания которых прошла"
+        },
+        "upcoming_cycles": {
+          "description": "Циклы, дата начала которых в будущем"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Срок выполнения прошёл И статус открыт"
+        },
+        "has_no_assignee": {
+          "description": "Рабочий элемент не имеет исполнителя"
+        },
+        "has_no_label": {
+          "description": "Рабочий элемент не имеет меток"
+        },
+        "is_top_level": {
+          "description": "Не является подрабочим элементом (нет родительского)"
+        },
+        "is_sub_work_item": {
+          "description": "Является подрабочим элементом (есть родительский)"
+        },
+        "is_epic": {
+          "description": "Эпик"
+        },
+        "is_intake": {
+          "description": "Является входящим рабочим элементом"
+        },
+        "is_draft": {
+          "description": "Является черновиком рабочего элемента"
+        },
+        "is_archived": {
+          "description": "Заархивировано"
+        },
+        "has_children": {
+          "description": "Имеет хотя бы один подрабочий элемент"
+        },
+        "has_start_and_due_dates": {
+          "description": "Имеет дату начала и срок выполнения"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Рабочие элементы, связанные с данным элементом"
+        },
+        "blocked_by": {
+          "description": "Рабочие элементы, заблокированные данным элементом"
+        },
+        "blocks": {
+          "description": "Рабочие элементы, блокирующие данный элемент"
+        },
+        "child_of": {
+          "description": "Подрабочие элементы данного элемента"
+        },
+        "parent_of": {
+          "description": "Родительский рабочий элемент данного элемента"
+        },
+        "duplicate_of": {
+          "description": "Рабочие элементы, отмеченные как дубликаты данного элемента"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Поле когда-либо имело это значение"
+        },
+        "was": {
+          "description": "Поле ранее имело это значение (изменено)"
+        },
+        "changed_from": {
+          "description": "Поле было изменено с этого значения"
+        },
+        "changed_to": {
+          "description": "Поле было изменено на это значение"
+        },
+        "changed": {
+          "description": "Поле было изменено"
+        },
+        "updated_by": {
+          "description": "Рабочий элемент обновлён этим пользователем"
+        },
+        "commented_by": {
+          "description": "Рабочий элемент прокомментирован этим пользователем"
+        },
+        "field_changed_by": {
+          "description": "Поле изменено этим пользователем"
+        },
+        "was_assigned_to": {
+          "description": "Рабочий элемент назначен этому пользователю"
+        },
+        "changed_after": {
+          "description": "Поле изменено после этой даты"
+        },
+        "changed_before": {
+          "description": "Поле изменено до этой даты"
+        },
+        "field_changed_after": {
+          "description": "Поле изменено после этой даты"
+        },
+        "field_changed_before": {
+          "description": "Поле изменено до этой даты"
+        },
+        "changed_to_after": {
+          "description": "Поле изменено на это значение после этой даты"
+        },
+        "changed_to_before": {
+          "description": "Поле изменено на это значение до этой даты"
+        },
+        "field_changed_between": {
+          "description": "Поле изменено между этими датами"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "навигация",
+      "accept": "принять",
+      "close": "закрыть",
+      "pick_date": "Выбрать дату"
+    },
+    "placeholder": "Введите запрос и нажмите \"ENTER\" для фильтрации...",
+    "error": "Ошибка при отправке запроса. Проверьте и попробуйте снова."
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Všechny epiky",
+    "label": "{count, plural, one {Epik} other {Epiky}}",
+    "new": "Nový epik",
+    "adding": "Přidávám epik",
+    "create": {
+      "success": "Epik úspěšně vytvořen"
+    },
+    "add": {
+      "press_enter": "Pro přidání dalšího epiku stiskněte 'Enter'",
+      "label": "Přidat epik"
+    },
+    "title": {
+      "label": "Název epiku",
+      "required": "Název epiku je povinný."
+    },
+    "archive": {
+      "description": "Lze archivovat pouze dokončené nebo zrušené\nepiky",
+      "label": "Archivovat epiku",
+      "confirm_message": "Opravdu chcete archivovat epiku? Všechny archivované epiky lze později obnovit.",
+      "success": {
+        "label": "Archivace úspěšná",
+        "message": "Vaše archivy najdete v archivech projektu."
+      },
+      "failed": {
+        "message": "Epiku se nepodařilo archivovat. Zkuste to prosím znovu."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epiky",
+    "no_epics_selected": "Žádné epiky nejsou vybrány",
+    "add_selected_epics": "Přidat vybrané epiky",
+    "epic_link_copied_to_clipboard": "Odkaz na epik byl zkopírován do schránky.",
+    "project_link_copied_to_clipboard": "Odkaz na projekt byl zkopírován do schránky",
+    "empty_state": {
+      "general": {
+        "title": "Vytvořte epik a přiřaďte ho někomu, i sobě",
+        "description": "Pro větší objemy práce, které se rozprostírají přes několik cyklů a mohou žít napříč moduly, vytvořte epik. Propojte pracovní položky a sub-pracovní položky v projektu s epikem a přejděte do pracovní položky z přehledu.",
+        "primary_button": {
+          "text": "Vytvořit epik"
+        }
+      },
+      "section": {
+        "title": "Zatím žádné epiky",
+        "description": "Začněte přidávat epiky pro správu a sledování pokroku.",
+        "primary_button": {
+          "text": "Přidat epiky"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Žádné shodné epiky nenalezeny"
+      },
+      "no_epics": {
+        "title": "Žádné epiky nenalezeny"
+      }
+    }
+  }
+}

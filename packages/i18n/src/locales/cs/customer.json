@@ -1,0 +1,379 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Zákazník} other {Zákazníci}}",
+    "drop_down": {
+      "placeholder": "Vyberte zákazníka",
+      "required": "Vyberte prosím zákazníka",
+      "no_selection": "Žádní zákazníci"
+    },
+    "upgrade": {
+      "title": "Stanovte priority a spravujte práci se zákazníky.",
+      "description": "Propojte svou práci se zákazníky a určete priority podle jejich atributů."
+    },
+    "properties": {
+      "default": {
+        "title": "Výchozí vlastnosti",
+        "customer_name": {
+          "name": "Jméno zákazníka",
+          "placeholder": "Může to být jméno osoby nebo firmy",
+          "validation": {
+            "required": "Jméno zákazníka je povinné.",
+            "max_length": "Jméno zákazníka nesmí být delší než 255 znaků."
+          }
+        },
+        "description": {
+          "name": "Popis",
+          "validation": {}
+        },
+        "email": {
+          "name": "E-mail",
+          "placeholder": "Zadejte e-mail",
+          "validation": {
+            "required": "E-mail je povinný.",
+            "pattern": "Neplatná e-mailová adresa."
+          }
+        },
+        "website_url": {
+          "name": "Webová stránka",
+          "placeholder": "Jakákoli URL s https:// bude fungovat.",
+          "placeholder_short": "Přidat webovou stránku",
+          "validation": {
+            "pattern": "Neplatná URL webové stránky"
+          }
+        },
+        "employees": {
+          "name": "Zaměstnanci",
+          "placeholder": "Počet zaměstnanců, pokud je váš zákazník firma.",
+          "validation": {
+            "min_length": "Počet zaměstnanců nemůže být menší než 0.",
+            "max_length": "Počet zaměstnanců nemůže být větší než 2147483647."
+          }
+        },
+        "size": {
+          "name": "Velikost",
+          "placeholder": "Přidat velikost firmy",
+          "validation": {
+            "min_length": "Neplatná velikost"
+          }
+        },
+        "domain": {
+          "domain": "Průmysl",
+          "placeholder": "Maloobchod, e-Commerce, Fintech, Bankovnictví",
+          "placeholder_short": "Přidat odvětví",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Fáze",
+          "placeholder": "Vybrat fázi",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Stav smlouvy",
+          "placeholder": "Vybrat stav smlouvy",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Příjem",
+          "placeholder": "Toto je roční příjem generovaný vaším zákazníkem.",
+          "placeholder_short": "Přidat příjem",
+          "validation": {
+            "min_length": "Příjem nemůže být menší než 0."
+          }
+        },
+        "invalid_value": "Neplatná hodnota vlastnosti."
+      },
+      "custom": {
+        "title": "Vlastní vlastnosti",
+        "info": "Přidejte jedinečné atributy svých zákazníků do Plane, abyste mohli lépe spravovat pracovní položky nebo záznamy zákazníků."
+      },
+      "empty_state": {
+        "title": "Přidat vlastní vlastnosti",
+        "description": "Vlastní vlastnosti, které chcete ručně nebo automaticky mapovat do vašeho CRM, se zobrazí zde."
+      },
+      "add": {
+        "primary_button": "Přidat novou vlastnost"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Kvalifikovaný lead",
+      "contract_negotiation": "Jednání o smlouvě",
+      "closed_won": "Uzavřeno - vyhráno",
+      "closed_lost": "Uzavřeno - prohráno"
+    },
+    "contract_status": {
+      "active": "Aktivní",
+      "pre_contract": "Před smlouvou",
+      "signed": "Podepsáno",
+      "inactive": "Neaktivní"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Tento záznam zákazníka jsme nenašli.",
+        "description": "Odkaz na tento záznam může být nesprávný nebo tento záznam mohl být smazán.",
+        "primary_button": "Přejít na zákazníky",
+        "secondary_button": "Přidat zákazníka"
+      },
+      "search": {
+        "title": "Zdá se, že nemáte žádné záznamy zákazníků odpovídající tomuto výrazu.",
+        "description": "Zkuste jiný vyhledávací výraz nebo nás kontaktujte, pokud jste si jisti, že by se měly zobrazit výsledky pro tento výraz."
+      },
+      "list": {
+        "title": "Spravujte objem, tempo a tok vaší práce podle toho, co je důležité pro vaše zákazníky.",
+        "description": "S funkcí Zákazníci, která je výhradně v Plane, můžete nyní vytvářet nové zákazníky od nuly a propojit je s vaší prací. Brzy je budete moci importovat z jiných nástrojů spolu s jejich vlastními atributy, které jsou pro vás důležité.",
+        "primary_button": "Přidejte svého prvního zákazníka"
+      }
+    },
+    "settings": {
+      "unauthorized": "Nemáte oprávnění k přístupu na tuto stránku.",
+      "description": "Sledujte a spravujte vztahy se zákazníky ve vašem pracovním postupu.",
+      "enable": "Povolit zákazníky",
+      "toasts": {
+        "enable": {
+          "loading": "Povolování funkce zákazníků...",
+          "success": {
+            "title": "Zapnuli jste funkci Zákazníci pro tento pracovní prostor.",
+            "message": "I membri possono ora aggiungere record clienti, collegarli agli elementi di lavoro e altro ancora."
+          },
+          "error": {
+            "title": "Tentokrát se nám nepodařilo zapnout funkci Zákazníci.",
+            "message": "Zkuste to znovu nebo se vraťte na tuto obrazovku později. Pokud to stále nefunguje.",
+            "action": "Kontaktujte podporu"
+          }
+        },
+        "disable": {
+          "loading": "Vypínání funkce zákazníků...",
+          "success": {
+            "title": "Zákazníci vypnuti",
+            "message": "Funkce Zákazníci byla úspěšně vypnuta!"
+          },
+          "error": {
+            "title": "Chyba",
+            "message": "Nepodařilo se vypnout funkci Zákazníci!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Nepodařilo se nám získat váš seznam zákazníků.",
+          "message": "Zkuste to znovu nebo obnovte tuto stránku."
+        }
+      },
+      "copy_link": {
+        "title": "Zkopírovali jste přímý odkaz na tohoto zákazníka.",
+        "message": "Vložte jej kamkoli a vrátí vás přímo sem."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} je nyní k dispozici",
+          "message": "Můžete odkazovat na tohoto zákazníka v pracovních položkách a sledovat jejich požadavky.",
+          "actions": {
+            "view": "Zobrazit",
+            "copy_link": "Kopírovat odkaz",
+            "copied": "Zkopírováno!"
+          }
+        },
+        "error": {
+          "title": "Tentokrát se nám nepodařilo vytvořit tento záznam.",
+          "message": "Zkuste jej uložit znovu nebo zkopírujte neuložený text do nové položky, nejlépe v jiné záložce."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Zákazník byl úspěšně aktualizován!"
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodařilo se aktualizovat zákazníka. Zkuste to znovu!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Nepodařilo se nám nahrát logo zákazníka.",
+          "message": "Zkuste logo uložit znovu nebo začněte od začátku."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Odstranili jste pracovní položku z tohoto záznamu zákazníka.",
+            "message": "Tento zákazník byl také automaticky odstraněn z pracovní položky."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Tentokrát se nám nepodařilo odstranit tuto pracovní položku ze záznamu zákazníka."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Tentokrát se nám nepodařilo přidat tuto pracovní položku do tohoto záznamu zákazníka.",
+            "message": "Zkuste přidat tuto pracovní položku znovu nebo se k ní vraťte později. Pokud to stále nefunguje, kontaktujte nás."
+          },
+          "success": {
+            "title": "Přidali jste pracovní položku do tohoto záznamu zákazníka.",
+            "message": "Tento zákazník byl také automaticky přidán do pracovní položky."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Upravit",
+      "copy_link": "Kopírovat odkaz na zákazníka",
+      "delete": "Smazat"
+    },
+    "create": {
+      "label": "Crea un record cliente",
+      "loading": "Vytváření",
+      "cancel": "Zrušit"
+    },
+    "update": {
+      "label": "Aktualizovat zákazníka",
+      "loading": "Aktualizace..."
+    },
+    "delete": {
+      "title": "Opravdu chcete smazat záznam zákazníka {customer_name}?",
+      "description": "Všechna data spojená s tímto záznamem budou trvale smazána. Tento záznam nebude možné později obnovit."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Zatím nejsou k dispozici žádné požadavky.",
+          "description": "Vytvářejte požadavky od vašich zákazníků, abyste je mohli propojit s pracovními položkami.",
+          "button": "Přidat nový požadavek"
+        },
+        "search": {
+          "title": "Zdá se, že nemáte žádné požadavky odpovídající tomuto výrazu.",
+          "description": "Zkuste jiný vyhledávací výraz nebo nás kontaktujte, pokud jste si jisti, že by se měly zobrazit výsledky pro tento výraz."
+        }
+      },
+      "label": "{count, plural, one {Požadavek} other {Požadavky}}",
+      "add": "Přidat požadavek",
+      "create": "Vytvořit požadavek",
+      "update": "Aktualizovat požadavek",
+      "form": {
+        "name": {
+          "placeholder": "Pojmenujte tento požadavek",
+          "validation": {
+            "required": "Název je povinný.",
+            "max_length": "Název požadavku nesmí přesáhnout 255 znaků."
+          }
+        },
+        "description": {
+          "placeholder": "Popište povahu požadavku nebo vložte komentář tohoto zákazníka z jiného nástroje."
+        },
+        "source": {
+          "add": "Přidat zdroj",
+          "update": "Aktualizovat zdroj",
+          "url": {
+            "label": "URL",
+            "required": "URL je povinná",
+            "invalid": "Neplatná URL webové stránky"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Odkaz zkopírován",
+          "message": "Odkaz na požadavek zákazníka byl zkopírován do schránky."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Nahrávání přílohy...",
+            "success": {
+              "title": "Příloha nahrána",
+              "message": "Příloha byla úspěšně nahrána."
+            },
+            "error": {
+              "title": "Příloha nebyla nahrána",
+              "message": "Přílohu se nepodařilo nahrát."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Chyba!",
+              "message": "Najednou lze nahrát pouze jeden soubor."
+            }
+          },
+          "length": {
+            "message": "Soubor musí mít velikost {size} MB nebo méně"
+          },
+          "remove": {
+            "success": {
+              "title": "Příloha odstraněna",
+              "message": "Příloha byla úspěšně odstraněna"
+            },
+            "error": {
+              "title": "Příloha nebyla odstraněna",
+              "message": "Přílohu se nepodařilo odstranit"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Úspěch!",
+              "message": "Zdroj byl úspěšně aktualizován!"
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se aktualizovat zdroj."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se přidat pracovní položky k požadavku. Zkuste to znovu."
+            },
+            "success": {
+              "title": "Úspěch!",
+              "message": "Pracovní položky byly přidány k požadavku."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Požadavek byl úspěšně aktualizován!",
+            "title": "Úspěch!"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodařilo se aktualizovat požadavek. Zkuste to znovu!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Požadavek byl úspěšně vytvořen!",
+            "title": "Úspěch!"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodařilo se vytvořit požadavek. Zkuste to znovu!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Propojené pracovní položky",
+      "link": "Propojit pracovní položky",
+      "empty_state": {
+        "list": {
+          "title": "Zdá se, že jste zatím nepropojili žádné pracovní položky s tímto zákazníkem.",
+          "description": "Propojte existující pracovní položky z jakéhokoli projektu zde, abyste je mohli sledovat podle tohoto zákazníka.",
+          "button": "Propojit pracovní položku"
+        }
+      },
+      "action": {
+        "remove_epic": "Odstranit epiku",
+        "remove": "Odstranit pracovní položku"
+      }
+    },
+    "sidebar": {
+      "properties": "Vlastnosti"
+    }
+  }
+}

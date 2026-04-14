@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "name": "名前"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "サイクルを追加",
+    "more_details": "詳細情報",
+    "cycle": "サイクル",
+    "update_cycle": "サイクルを更新",
+    "create_cycle": "サイクルを作成",
+    "no_matching_cycles": "一致するサイクルがありません",
+    "remove_filters_to_see_all_cycles": "すべてのサイクルを表示するにはフィルターを解除してください",
+    "remove_search_criteria_to_see_all_cycles": "すべてのサイクルを表示するには検索条件を解除してください",
+    "only_completed_cycles_can_be_archived": "完了したサイクルのみアーカイブできます",
+    "start_date": "開始日",
+    "end_date": "終了日",
+    "in_your_timezone": "あなたのタイムゾーン",
+    "transfer_work_items": "作業項目を転送 {count}",
+    "transfer": {
+      "no_cycles_available": "作業アイテムを転送できる他のサイクルがありません。"
+    },
+    "date_range": "日付範囲",
+    "add_date": "日付を追加",
+    "active_cycle": {
+      "label": "アクティブなサイクル",
+      "progress": "進捗",
+      "chart": "バーンダウンチャート",
+      "priority_issue": "優先作業項目",
+      "assignees": "担当者",
+      "issue_burndown": "作業項目バーンダウン",
+      "ideal": "理想",
+      "current": "現在",
+      "labels": "ラベル",
+      "trailing": "遅れ",
+      "leading": "リード"
+    },
+    "upcoming_cycle": {
+      "label": "今後のサイクル"
+    },
+    "completed_cycle": {
+      "label": "完了したサイクル"
+    },
+    "status": {
+      "days_left": "残り日数",
+      "completed": "完了",
+      "yet_to_start": "開始前",
+      "in_progress": "進行中",
+      "draft": "下書き"
+    },
+    "action": {
+      "restore": {
+        "title": "サイクルを復元",
+        "success": {
+          "title": "サイクルが復元されました",
+          "description": "サイクルが復元されました。"
+        },
+        "failed": {
+          "title": "サイクルの復元に失敗",
+          "description": "サイクルを復元できませんでした。もう一度お試しください。"
+        }
+      },
+      "favorite": {
+        "loading": "お気に入りにサイクルを追加中",
+        "success": {
+          "description": "サイクルがお気に入りに追加されました。",
+          "title": "成功！"
+        },
+        "failed": {
+          "description": "サイクルをお気に入りに追加できませんでした。もう一度お試しください。",
+          "title": "エラー！"
+        }
+      },
+      "unfavorite": {
+        "loading": "お気に入りからサイクルを削除中",
+        "success": {
+          "description": "サイクルがお気に入りから削除されました。",
+          "title": "成功！"
+        },
+        "failed": {
+          "description": "サイクルをお気に入りから削除できませんでした。もう一度お試しください。",
+          "title": "エラー！"
+        }
+      },
+      "update": {
+        "loading": "サイクルを更新中",
+        "success": {
+          "description": "サイクルが正常に更新されました。",
+          "title": "成功！"
+        },
+        "failed": {
+          "description": "サイクルの更新中にエラーが発生しました。もう一度お試しください。",
+          "title": "エラー！"
+        },
+        "error": {
+          "already_exists": "指定した日付のサイクルは既に存在します。下書きサイクルを作成する場合は、両方の日付を削除してください。"
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "サイクルで作業をグループ化してタイムボックス化します。",
+        "description": "作業をタイムボックス化された単位に分割し、プロジェクトの期限から逆算して日付を設定し、チームとして具体的な進捗を作ります。",
+        "primary_button": {
+          "text": "最初のサイクルを設定",
+          "comic": {
+            "title": "サイクルは繰り返されるタイムボックスです。",
+            "description": "スプリント、イテレーション、または週次や隔週の作業追跡に使用するその他の用語がサイクルです。"
+          }
+        }
+      },
+      "no_issues": {
+        "title": "サイクルに作業項目が追加されていません",
+        "description": "このサイクル内でタイムボックス化して提供したい作業項目を追加または作成します",
+        "primary_button": {
+          "text": "新しい作業項目を作成"
+        },
+        "secondary_button": {
+          "text": "既存の作業項目を追加"
+        }
+      },
+      "completed_no_issues": {
+        "title": "サイクルに作業項目がありません",
+        "description": "サイクルに作業項目がありません。作業項目は転送されたか非表示になっています。非表示の作業項目がある場合は、表示プロパティを更新して確認してください。"
+      },
+      "active": {
+        "title": "アクティブなサイクルがありません",
+        "description": "アクティブなサイクルには、その期間内に今日の日付が含まれるものが該当します。アクティブなサイクルの進捗と詳細をここで確認できます。"
+      },
+      "archived": {
+        "title": "アーカイブされたサイクルがまだありません",
+        "description": "プロジェクトを整理するために、完了したサイクルをアーカイブします。アーカイブ後はここで確認できます。"
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "作業項目を作成して誰かに割り当てましょう。自分自身でも構いません",
+        "description": "作業項目は、仕事、タスク、作業、またはJTBD（私たちが好む用語）と考えてください。作業項目とそのサブ作業項目は通常、チームメンバーに割り当てられる時間ベースのアクションアイテムです。チームは作業項目を作成、割り当て、完了することでプロジェクトの目標に向かって進みます。",
+        "primary_button": {
+          "text": "最初の作業項目を作成",
+          "comic": {
+            "title": "作業項目はPlaneの構成要素です。",
+            "description": "PlaneのUIの再設計、会社のリブランド、新しい燃料噴射システムの立ち上げなどは、サブ作業項目を持つ可能性が高い作業項目の例です。"
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "アーカイブされた作業項目がまだありません",
+        "description": "手動または自動化を通じて、完了またはキャンセルされた作業項目をアーカイブできます。アーカイブ後はここで確認できます。",
+        "primary_button": {
+          "text": "自動化を設定"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "適用されたフィルターに一致する作業項目が見つかりません",
+        "secondary_button": {
+          "text": "すべてのフィルターをクリア"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "モジュールを追加",
+    "update_module": "モジュールを更新",
+    "create_module": "モジュールを作成",
+    "archive_module": "モジュールをアーカイブ",
+    "restore_module": "モジュールを復元",
+    "delete_module": "モジュールを削除",
+    "empty_state": {
+      "general": {
+        "title": "プロジェクトのマイルストーンをモジュールにマッピングし、集計された作業を簡単に追跡できます。",
+        "description": "論理的で階層的な親に属する作業項目のグループがモジュールを形成します。プロジェクトのマイルストーンで作業を追跡する方法として考えてください。期間や期限があり、マイルストーンまでの進捗状況を確認できる分析機能も備えています。",
+        "primary_button": {
+          "text": "最初のモジュールを作成",
+          "comic": {
+            "title": "モジュールは階層的に作業をグループ化するのに役立ちます。",
+            "description": "カートモジュール、シャーシモジュール、倉庫モジュールは、このグループ化の良い例です。"
+          }
+        }
+      },
+      "no_issues": {
+        "title": "モジュールに作業項目がありません",
+        "description": "このモジュールの一部として達成したい作業項目を作成または追加してください",
+        "primary_button": {
+          "text": "新しい作業項目を作成"
+        },
+        "secondary_button": {
+          "text": "既存の作業項目を追加"
+        }
+      },
+      "archived": {
+        "title": "アーカイブされたモジュールがまだありません",
+        "description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。アーカイブ後はここで確認できます。"
+      },
+      "sidebar": {
+        "in_active": "このモジュールはまだアクティブではありません。",
+        "invalid_date": "無効な日付です。有効な日付を入力してください。"
+      }
+    },
+    "quick_actions": {
+      "archive_module": "モジュールをアーカイブ",
+      "archive_module_description": "完了またはキャンセルされた\nモジュールのみアーカイブできます。",
+      "delete_module": "モジュールを削除"
+    },
+    "toast": {
+      "copy": {
+        "success": "モジュールのリンクがクリップボードにコピーされました"
+      },
+      "delete": {
+        "success": "モジュールが正常に削除されました",
+        "error": "モジュールを削除できませんでした"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "プロジェクトのフィルター付きビューを保存します。必要な数だけ作成できます",
+        "description": "ビューは、頻繁に使用するフィルターや簡単にアクセスしたいフィルターの集合です。プロジェクト内のすべての同僚が全員のビューを確認でき、自分のニーズに最も合うものを選択できます。",
+        "primary_button": {
+          "text": "最初のビューを作成",
+          "comic": {
+            "title": "ビューは作業項目のプロパティの上で機能します。",
+            "description": "ここから、必要に応じて多くのプロパティやフィルターを使用してビューを作成できます。"
+          }
+        }
+      },
+      "filter": {
+        "title": "一致するビューがありません",
+        "description": "検索条件に一致するビューがありません。\n代わりに新しいビューを作成してください。"
+      }
+    },
+    "delete_view": {
+      "title": "このビューを削除してもよろしいですか？",
+      "content": "確認すると、このビューに選択したすべてのソート、フィルター、表示オプション + レイアウトが復元不可能な形で完全に削除されます。"
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "メモ、ドキュメント、または完全なナレッジベースを作成しましょう。PlaneのAIアシスタントGalileoが開始をサポートします",
+        "description": "ページはPlaneの思考整理スペースです。会議のメモを取り、簡単に整形し、作業項目を埋め込み、コンポーネントライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保存できます。ドキュメントを素早く作成するには、ショートカットまたはボタンのクリックでPlaneのAI、Galileoを呼び出してください。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "private": {
+        "title": "プライベートページがまだありません",
+        "description": "プライベートな考えをここに保存しましょう。共有する準備ができたら、チームはクリック一つで共有できます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "public": {
+        "title": "公開ページがまだありません",
+        "description": "プロジェクト内の全員と共有されているページをここで確認できます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "archived": {
+        "title": "アーカイブされたページがまだありません",
+        "description": "注目していないページをアーカイブします。必要な時にここでアクセスできます。"
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "インテークがプロジェクトで有効になっていません。",
+        "description": "インテークは、プロジェクトへの受信リクエストを管理し、ワークフローに作業項目として追加するのに役立ちます。リクエストを管理するには、プロジェクト設定でインテークを有効にしてください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "cycle": {
+        "title": "サイクルがこのプロジェクトで有効になっていません。",
+        "description": "時間枠で作業を分割し、プロジェクトの期限から逆算して日付を設定し、チームとして具体的な進捗を作ります。サイクルを使用するには、プロジェクトでサイクル機能を有効にしてください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "module": {
+        "title": "モジュールがプロジェクトで有効になっていません。",
+        "description": "モジュールはプロジェクトの構成要素です。モジュールを使用するには、プロジェクト設定でモジュールを有効にしてください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "page": {
+        "title": "ページがプロジェクトで有効になっていません。",
+        "description": "ページはプロジェクトの構成要素です。ページを使用するには、プロジェクト設定でページを有効にしてください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "view": {
+        "title": "ビューがプロジェクトで有効になっていません。",
+        "description": "ビューはプロジェクトの構成要素です。ビューを使用するには、プロジェクト設定でビューを有効にしてください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "バックログ",
+      "planned": "計画済み",
+      "in_progress": "進行中",
+      "paused": "一時停止",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "layout": {
+      "list": "リスト表示",
+      "board": "ギャラリー表示",
+      "timeline": "タイムライン表示"
+    },
+    "order_by": {
+      "name": "名前",
+      "progress": "進捗",
+      "issues": "作業項目数",
+      "due_date": "期限",
+      "created_at": "作成日",
+      "manual": "手動"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "CSVからメンバーをインポート",
+      "description": "次の列を含むCSVをアップロード：メールアドレスとロール（5=ゲスト、15=メンバー、20=管理者）。ユーザーはすでにワークスペースのメンバーである必要があります。",
+      "download_sample": "サンプルCSVをダウンロード",
+      "dropzone": {
+        "active": "CSVファイルをここにドロップ",
+        "inactive": "ドラッグ＆ドロップまたはクリックしてアップロード",
+        "file_type": ".csvファイルのみサポートされています"
+      },
+      "buttons": {
+        "cancel": "キャンセル",
+        "import": "インポート",
+        "try_again": "再試行",
+        "close": "閉じる",
+        "done": "完了"
+      },
+      "progress": {
+        "uploading": "アップロード中...",
+        "importing": "インポート中..."
+      },
+      "summary": {
+        "title": {
+          "complete": "インポート完了"
+        },
+        "message": {
+          "success": "{count}人のメンバーをプロジェクトにインポートしました。",
+          "no_imports": "CSVファイルから新しいメンバーはインポートされませんでした。"
+        },
+        "stats": {
+          "added": "追加",
+          "reactivated": "再有効化",
+          "already_members": "既にメンバー",
+          "skipped": "スキップ"
+        },
+        "download_errors": "スキップ詳細をダウンロード"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "無効なファイル",
+          "message": "CSVファイルのみサポートされています。"
+        },
+        "import_failed": {
+          "title": "インポート失敗",
+          "message": "問題が発生しました。"
+        }
+      }
+    }
+  }
+}

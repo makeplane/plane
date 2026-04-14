@@ -1,0 +1,6 @@
+{
+  "module": {
+    "label": "{count, plural, one {模組} other {模組}}",
+    "no_module": "無模組"
+  }
+}

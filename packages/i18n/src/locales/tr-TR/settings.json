@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "E-postayı değiştir",
+        "description": "Doğrulama bağlantısı almak için yeni bir e-posta adresi girin.",
+        "toasts": {
+          "success_title": "Başarılı!",
+          "success_message": "E-posta başarıyla güncellendi. Lütfen tekrar giriş yapın."
+        },
+        "form": {
+          "email": {
+            "label": "Yeni e-posta",
+            "placeholder": "E-postanızı girin",
+            "errors": {
+              "required": "E-posta zorunludur",
+              "invalid": "E-posta geçersiz",
+              "exists": "E-posta zaten mevcut. Başka bir tane kullanın.",
+              "validation_failed": "E-posta doğrulaması başarısız oldu. Lütfen tekrar deneyin."
+            }
+          },
+          "code": {
+            "label": "Benzersiz kod",
+            "placeholder": "123456",
+            "helper_text": "Doğrulama kodu yeni e-postanıza gönderildi.",
+            "errors": {
+              "required": "Benzersiz kod zorunludur",
+              "invalid": "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Devam et",
+          "confirm": "Onayla",
+          "cancel": "İptal et"
+        },
+        "states": {
+          "sending": "Gönderiliyor…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Varsayılan görünümü seç",
+      "compact": "Kompakt",
+      "full": "Tam ekran"
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Sizin İşleriniz",
+    "work": "İş",
+    "details": {
+      "joined_on": "Katılma tarihi",
+      "time_zone": "Saat Dilimi"
+    },
+    "stats": {
+      "workload": "İş Yükü",
+      "overview": "Genel Bakış",
+      "created": "Oluşturulan iş öğeleri",
+      "assigned": "Atanan iş öğeleri",
+      "subscribed": "Abone olunan iş öğeleri",
+      "state_distribution": {
+        "title": "Duruma göre iş öğeleri",
+        "empty": "Daha iyi analiz için durumlarına göre iş öğelerini görmek üzere iş öğesi oluşturun."
+      },
+      "priority_distribution": {
+        "title": "Önceliğe göre iş öğeleri",
+        "empty": "Daha iyi analiz için önceliklerine göre iş öğelerini görmek üzere iş öğesi oluşturun."
+      },
+      "recent_activity": {
+        "title": "Son aktiviteler",
+        "empty": "Veri bulunamadı. Lütfen girdilerinizi kontrol edin",
+        "button": "Bugünün aktivitesini indir",
+        "button_loading": "İndiriliyor"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Güvenlik",
+      "activity": "Aktivite",
+      "appearance": "Görünüm",
+      "notifications": "Bildirimler",
+      "connections": "Bağlantılar"
+    },
+    "tabs": {
+      "summary": "Özet",
+      "assigned": "Atanan",
+      "created": "Oluşturulan",
+      "subscribed": "Abone olunan",
+      "activity": "Aktivite"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Henüz aktivite yok",
+        "description": "Yeni bir iş öğesi oluşturarak başlayın! Detaylar ve özellikler ekleyin. Aktivitenizi görmek için Plane'de daha fazlasını keşfedin."
+      },
+      "assigned": {
+        "title": "Size atanan iş öğesi yok",
+        "description": "Size atanan iş öğeleri buradan takip edilebilir."
+      },
+      "created": {
+        "title": "Henüz iş öğesi yok",
+        "description": "Sizin oluşturduğunuz tüm iş öğeleri burada görünecek, doğrudan buradan takip edin."
+      },
+      "subscribed": {
+        "title": "Henüz iş öğesi yok",
+        "description": "İlgilendiğiniz iş öğelerine abone olun, hepsini buradan takip edin."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Sistem tercihi"
+      },
+      "light": {
+        "label": "Açık"
+      },
+      "dark": {
+        "label": "Koyu"
+      },
+      "light_contrast": {
+        "label": "Yüksek kontrastlı açık"
+      },
+      "dark_contrast": {
+        "label": "Yüksek kontrastlı koyu"
+      },
+      "custom": {
+        "label": "Özel tema"
+      }
+    }
+  }
+}

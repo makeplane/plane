@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {릴리스} other {릴리스}}",
+    "no_release": "릴리스 없음",
+    "unreleased": "미출시",
+    "select_releases": "릴리스 선택",
+    "overview": "개요",
+    "scope": "범위",
+    "page_title": {
+      "scope": "릴리스 - {name} | 범위",
+      "scope_fallback": "릴리스 | 범위"
+    },
+    "properties": "속성",
+    "target_date": "목표일",
+    "lead": "담당자",
+    "release_tag": "태그",
+    "labels": "라벨",
+    "description_placeholder": "설명 추가...",
+    "progress": "진행 상황",
+    "completed_work_items": "완료된 작업 항목",
+    "pending_work_items": "대기 중인 작업 항목",
+    "cancelled_work_items": "취소된 작업 항목",
+    "scope_page": {
+      "work_items": "작업 항목",
+      "add_work_items": "작업 항목 추가",
+      "remove_from_release": "릴리스에서 제거",
+      "empty_state": {
+        "title": "작업 항목 없음",
+        "description": "릴리스 범위를 정의하려면 작업 항목을 추가하세요."
+      },
+      "confirm_remove": {
+        "content": "이 작업 항목을 릴리스에서 제거하시겠습니까? 프로젝트에는 그대로 남습니다.",
+        "primary_button": {
+          "default": "제거",
+          "loading": "제거 중"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "아직 범위가 없습니다",
+      "description": "이 릴리스의 완료를 추적하려면 릴리스에 작업 항목을 추가하세요.",
+      "add_scope": "범위 추가",
+      "not_found": {
+        "title": "릴리스를 찾을 수 없음",
+        "description": "릴리스가 삭제되었을 수 있습니다.",
+        "primary_button": "릴리스로 돌아가기"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {작업 항목이 추가됨} other {작업 항목이 추가됨}}",
+      "work_items_error": "작업 항목을 추가하지 못했습니다"
+    },
+    "count_releases": "{count, plural, one {# 릴리스} other {# 릴리스}}",
+    "actions": {
+      "delete": "삭제"
+    },
+    "delete_modal": {
+      "title": "릴리스 삭제",
+      "content": "릴리스 \"{releaseName}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+    },
+    "settings": {
+      "heading": {
+        "title": "릴리스",
+        "description": "릴리스를 사용해 프로젝트 산출물을 정확하게 관리하세요."
+      },
+      "toggle": {
+        "title": "릴리스 사용",
+        "description": "워크스페이스 구성원은 각자의 프로젝트에서 범위를 볼 수 있습니다."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "릴리스를 사용하는 중...",
+          "success": {
+            "title": "릴리스가 활성화됨",
+            "message": "이 워크스페이스에서 릴리스가 활성화되었습니다."
+          },
+          "error": {
+            "title": "오류",
+            "message": "릴리스를 활성화하지 못했습니다. 다시 시도해 주세요."
+          }
+        },
+        "disable": {
+          "loading": "릴리스를 비활성화하는 중...",
+          "success": {
+            "title": "릴리스가 비활성화됨",
+            "message": "이 워크스페이스에서 릴리스가 비활성화되었습니다."
+          },
+          "error": {
+            "title": "오류",
+            "message": "릴리스를 비활성화하지 못했습니다. 다시 시도해 주세요."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "릴리스 태그",
+        "labels": "라벨"
+      },
+      "tags": {
+        "title": "릴리스 태그",
+        "description": "태그를 사용해 릴리스를 분류하고 필터링하세요.",
+        "add": "태그 추가",
+        "empty_state": "아직 태그가 없습니다. 첫 번째 태그를 만들어 주세요.",
+        "errors": {
+          "version_required": "버전은 필수입니다.",
+          "version_already_exists": "이 버전의 태그가 이미 존재합니다.",
+          "generic": "문제가 발생했습니다. 다시 시도해 주세요."
+        },
+        "delete_modal": {
+          "title": "태그 삭제",
+          "content": "태그 \"{tagVersion}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        },
+        "actions": {
+          "edit": "태그 수정",
+          "delete": "태그 삭제"
+        },
+        "toasts": {
+          "delete": {
+            "success": "태그가 삭제되었습니다.",
+            "error": "태그를 삭제하지 못했습니다. 다시 시도해 주세요."
+          }
+        }
+      },
+      "labels": {
+        "title": "라벨",
+        "description": "라벨을 사용해 이니셔티브를 구조화하고 정리하세요.",
+        "add": "라벨 추가",
+        "empty_state": "아직 라벨이 없습니다. 첫 번째 라벨을 만들어 주세요.",
+        "errors": {
+          "name_required": "이름은 필수입니다.",
+          "name_already_exists": "이 이름의 라벨이 이미 존재합니다.",
+          "generic": "문제가 발생했습니다. 다시 시도해 주세요."
+        },
+        "modal": {
+          "name_placeholder": "라벨 이름",
+          "pick_color": "라벨 색상 선택"
+        },
+        "actions": {
+          "edit": "라벨 수정",
+          "delete": "라벨 삭제"
+        },
+        "drag_to_reorder": "드래그하여 순서 변경",
+        "delete_modal": {
+          "title": "라벨 삭제",
+          "content": "라벨 \"{labelName}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        },
+        "toasts": {
+          "delete": {
+            "success": "라벨이 삭제되었습니다.",
+            "error": "라벨을 삭제하지 못했습니다. 다시 시도해 주세요."
+          }
+        }
+      }
+    }
+  }
+}

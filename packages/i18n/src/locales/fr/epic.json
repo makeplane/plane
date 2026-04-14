@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Tous les Epics",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "new": "Nouvel Epic",
+    "adding": "Ajout d’un epic",
+    "create": {
+      "success": "Epic créé avec succès"
+    },
+    "add": {
+      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epic",
+      "label": "Ajouter un Epic"
+    },
+    "title": {
+      "label": "Titre de l’Epic",
+      "required": "Le titre de l’Epic est requis."
+    },
+    "archive": {
+      "description": "Seuls les epics terminés ou annulés\npeuvent être archivés",
+      "label": "Archiver l'Epic",
+      "confirm_message": "Êtes-vous sûr de vouloir archiver l'epic ? Tous vos epics archivés pourront être restaurés plus tard.",
+      "success": {
+        "label": "Archivage réussi",
+        "message": "Vos archives se trouvent dans les archives du projet."
+      },
+      "failed": {
+        "message": "L'epic n'a pas pu être archivé. Veuillez réessayer."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "Aucun Epic sélectionné",
+    "add_selected_epics": "Ajouter les Epics sélectionnés",
+    "epic_link_copied_to_clipboard": "Lien de l'Epic copié dans le presse-papiers.",
+    "project_link_copied_to_clipboard": "Lien du projet copié dans le presse-papiers",
+    "empty_state": {
+      "general": {
+        "title": "Créez un Epic et assignez-le à quelqu'un, même à vous-même",
+        "description": "Pour des travaux plus importants qui s'étendent sur plusieurs Cycles et peuvent exister dans plusieurs Modules, créez un Epic. Liez des éléments de travail et des sous-éléments de travail dans un projet à un Epic et accédez à un élément de travail depuis la vue d'ensemble.",
+        "primary_button": {
+          "text": "Créer un Epic"
+        }
+      },
+      "section": {
+        "title": "Pas encore d'Epics",
+        "description": "Commencez à ajouter des Epics pour gérer et suivre les progrès.",
+        "primary_button": {
+          "text": "Ajouter des Epics"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Aucun Epic correspondant trouvé"
+      },
+      "no_epics": {
+        "title": "Aucun Epic trouvé"
+      }
+    }
+  }
+}

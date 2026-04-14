@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Criar um item de trabalho",
+      "sub-title": "Informe à equipe sobre o que você gostaria que eles trabalhassem.",
+      "name": "Nome",
+      "email": "E-mail",
+      "about": "Sobre o que é este item de trabalho?",
+      "description": "Descreva o que deveria acontecer",
+      "description_placeholder": "Adicione quantos detalhes quiser para ajudar a equipe a identificar sua situação e necessidades.",
+      "loading": "Criando",
+      "create_work_item": "Criar item de trabalho",
+      "errors": {
+        "name": "Nome é obrigatório",
+        "name_max_length": "O nome deve ter menos de 255 caracteres",
+        "email": "E-mail é obrigatório",
+        "email_invalid": "Endereço de e-mail inválido",
+        "title": "Título é obrigatório",
+        "title_max_length": "O título deve ter menos de 255 caracteres"
+      }
+    },
+    "success": {
+      "title": "Seu item de trabalho está na fila da equipe.",
+      "description": "A equipe pode aprovar ou descartar este item de trabalho da fila de admissão.",
+      "primary_button": {
+        "text": "Adicionar outro item de trabalho"
+      },
+      "secondary_button": {
+        "text": "Saiba mais sobre Admissão"
+      }
+    },
+    "how_it_works": {
+      "title": "Como funciona?",
+      "heading": "Este é um formulário de Admissão.",
+      "description": "Admissão é um recurso do Plane que permite que administradores e gerentes de projeto recebam itens de trabalho externos em seus projetos.",
+      "steps": {
+        "step_1": "Este formulário curto permite criar um novo item de trabalho em um projeto Plane.",
+        "step_2": "Ao enviar este formulário, um novo item de trabalho é criado na Admissão desse projeto.",
+        "step_3": "Alguém desse projeto ou equipe irá revisar.",
+        "step_4": "Se aprovarem, este item será movido para a fila de trabalho do projeto. Caso contrário, será rejeitado.",
+        "step_5": "Para verificar o status desse item, entre em contato com o gerente do projeto, administrador ou quem enviou o link desta página."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Selecionar tipo de item de trabalho",
+        "search_placeholder": "Pesquisar tipo de item de trabalho"
+      },
+      "actions": {
+        "select_properties": "Selecionar propriedades"
+      }
+    }
+  }
+}

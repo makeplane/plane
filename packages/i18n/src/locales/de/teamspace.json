@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Teamspaces",
+    "empty_state": {
+      "general": {
+        "title": "Teamspaces ermöglichen bessere Organisation und Nachverfolgung in Plane.",
+        "description": "Erstellen Sie eine dedizierte Oberfläche für jedes reale Team, getrennt von allen anderen Arbeitsoberflächen in Plane, und passen Sie sie an die Arbeitsweise Ihres Teams an.",
+        "primary_button": {
+          "text": "Neuen Teamspace erstellen"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Sie haben noch keine Teamspaces verknüpft.",
+          "description": "Teamspace- und Projektbesitzer können den Zugriff auf Projekte verwalten."
+        }
+      },
+      "primary_button": {
+        "text": "Teamspace verknüpfen"
+      },
+      "secondary_button": {
+        "text": "Mehr erfahren"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Teamspace-Name",
+          "members": "Mitglieder",
+          "accountType": "Kontotyp"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Teamspace entfernen"
+            },
+            "confirm": {
+              "title": "{teamspaceName} aus {projectName} entfernen",
+              "description": "Wenn Sie diesen Teamspace aus einem verknüpften Projekt entfernen, verlieren die Mitglieder hier den Zugriff auf das verknüpfte Projekt."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Keine passenden Teamspaces gefunden"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Sie haben einen Teamspace mit diesem Projekt verknüpft.} other {Sie haben # Teamspaces mit diesem Projekt verknüpft.}}",
+            "description": "{additionalCount, plural, =0 {Teamspace {firstTeamspaceName} ist jetzt mit diesem Projekt verknüpft.} other {Teamspace {firstTeamspaceName} und {additionalCount} weitere sind jetzt mit diesem Projekt verknüpft.}}"
+          },
+          "error": {
+            "title": "Das hat nicht funktioniert.",
+            "description": "Versuchen Sie es erneut oder laden Sie diese Seite neu, bevor Sie es erneut versuchen."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Sie haben diesen Teamspace aus diesem Projekt entfernt.",
+            "description": "Teamspace {teamspaceName} wurde aus {projectName} entfernt."
+          },
+          "error": {
+            "title": "Das hat nicht funktioniert.",
+            "description": "Versuchen Sie es erneut oder laden Sie diese Seite neu, bevor Sie es erneut versuchen."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Nach Teamspaces suchen",
+        "info": {
+          "title": "Durch das Hinzufügen eines Teamspaces erhalten alle Teamspace-Mitglieder Zugriff auf dieses Projekt.",
+          "link": "Mehr erfahren"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Sie haben keine Teamspaces zum Verknüpfen.",
+            "description": "Entweder sind Sie nicht in einem Teamspace, den Sie verknüpfen können, oder Sie haben bereits alle verfügbaren Teamspaces verknüpft."
+          },
+          "no_results": {
+            "title": "Das entspricht keinem Ihrer Teamspaces.",
+            "description": "Versuchen Sie einen anderen Begriff oder stellen Sie sicher, dass Sie Teamspaces zum Verknüpfen haben."
+          }
+        },
+        "primary_button": {
+          "text": "Ausgewählte Teamspace(s) verknüpfen"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Erstellen Sie teamspezifische Arbeitsaufgaben.",
+        "description": "Arbeitsaufgaben, die Mitgliedern dieses Teams in einem verknüpften Projekt zugewiesen sind, werden hier automatisch angezeigt. Wenn Sie erwarten, hier einige Arbeitsaufgaben zu sehen, stellen Sie sicher, dass Ihre verknüpften Projekte Arbeitsaufgaben haben, die Mitgliedern dieses Teams zugewiesen sind, oder erstellen Sie Arbeitsaufgaben.",
+        "primary_button": {
+          "text": "Arbeitsaufgaben zu einem verknüpften Projekt hinzufügen"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Es gibt keine teamspezifischen Arbeitsaufgaben für die angewendeten Filter",
+        "description": "Ändern Sie einige dieser Filter oder löschen Sie sie alle, um Arbeitsaufgaben zu sehen, die für diesen Bereich relevant sind.",
+        "secondary_button": {
+          "text": "Alle Filter löschen"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Keines Ihrer verknüpften Projekte hat einen aktiven Zyklus.",
+        "description": "Aktive Zyklen in verknüpften Projekten werden hier automatisch angezeigt. Wenn Sie erwarten, einen aktiven Zyklus zu sehen, stellen Sie sicher, dass er gerade in einem verknüpften Projekt läuft."
+      },
+      "completed": {
+        "title": "Keines Ihrer verknüpften Projekte hat einen abgeschlossenen Zyklus.",
+        "description": "Abgeschlossene Zyklen in verknüpften Projekten werden hier automatisch angezeigt. Wenn Sie erwarten, einen abgeschlossenen Zyklus zu sehen, stellen Sie sicher, dass er auch in einem verknüpften Projekt abgeschlossen ist."
+      },
+      "upcoming": {
+        "title": "Keines Ihrer verknüpften Projekte hat einen bevorstehenden Zyklus.",
+        "description": "Bevorstehende Zyklen in verknüpften Projekten werden hier automatisch angezeigt. Wenn Sie erwarten, einen bevorstehenden Zyklus zu sehen, stellen Sie sicher, dass er auch in einem verknüpften Projekt vorhanden ist."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Die Ansichten Ihres Teams auf Ihre Arbeit, ohne andere Ansichten in Ihrem Workspace zu stören",
+        "description": "Sehen Sie die Arbeit Ihres Teams in Ansichten, die nur für Ihr Team gespeichert werden und getrennt von den Ansichten eines Projekts sind.",
+        "primary_button": {
+          "text": "Ansicht erstellen"
+        }
+      },
+      "filter": {
+        "title": "Keine passenden Ansichten",
+        "description": "Keine Ansichten entsprechen den Suchkriterien.\n Erstellen Sie stattdessen eine neue Ansicht."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Bewahren Sie das Wissen Ihres Teams in Team-Seiten auf.",
+        "description": "Im Gegensatz zu Seiten in einem Projekt können Sie hier teamspezifisches Wissen in einem separaten Satz von Seiten speichern. Nutzen Sie alle Funktionen von Seiten, erstellen Sie Best-Practices-Dokumente und Team-Wikis ganz einfach.",
+        "primary_button": {
+          "text": "Erstellen Sie Ihre erste Team-Seite"
+        }
+      },
+      "filter": {
+        "title": "Keine passenden Seiten",
+        "description": "Entfernen Sie die Filter, um alle Seiten zu sehen"
+      },
+      "search": {
+        "title": "Keine passenden Seiten",
+        "description": "Entfernen Sie die Suchkriterien, um alle Seiten zu sehen"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Keines Ihrer verknüpften Projekte hat veröffentlichte Arbeitsaufgaben.",
+        "description": "Erstellen Sie einige Arbeitsaufgaben in einem oder mehreren dieser Projekte, um den Fortschritt nach Datum, Status und Priorität zu sehen."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Sie haben keine Arbeitsaufgaben, die einen Teamkollegen blockieren.",
+          "description": "Gut gemacht! Sie haben den Weg für Ihr Team freigemacht. Sie sind ein guter Teamplayer."
+        },
+        "blocked": {
+          "title": "Sie haben keine Arbeitsaufgaben von Teamkollegen, die Sie blockieren.",
+          "description": "Gute Nachrichten! Sie können bei allen Ihnen zugewiesenen Arbeitsaufgaben Fortschritte erzielen."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Keines Ihrer verknüpften Projekte hat veröffentlichte Arbeitsaufgaben.",
+          "description": "Erstellen Sie einige Arbeitsaufgaben in einem oder mehreren dieser Projekte, um die Verteilung der Arbeit nach Projekt und Teammitgliedern zu sehen."
+        },
+        "filter": {
+          "title": "Es gibt keine Team-Statistiken für die angewendeten Filter.",
+          "description": "Erstellen Sie einige Arbeitsaufgaben in einem oder mehreren dieser Projekte, um die Verteilung der Arbeit nach Projekt und Teammitgliedern zu sehen."
+        }
+      }
+    }
+  }
+}

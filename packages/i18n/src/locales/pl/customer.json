@@ -1,0 +1,380 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Klient} other {Klienci}}",
+    "open": "Otwórz klienta",
+    "dropdown": {
+      "placeholder": "Wybierz klienta",
+      "required": "Proszę wybrać klienta",
+      "no_selection": "Brak klientów"
+    },
+    "upgrade": {
+      "title": "Priorytetyzuj i zarządzaj pracą z Klientami.",
+      "description": "Mapuj swoją pracę do klientów i ustalaj priorytety według atrybutów klienta."
+    },
+    "properties": {
+      "default": {
+        "title": "Domyślne właściwości",
+        "customer_name": {
+          "name": "Nazwa klienta",
+          "placeholder": "To może być nazwa osoby lub firmy",
+          "validation": {
+            "required": "Nazwa klienta jest wymagana.",
+            "max_length": "Nazwa klienta nie może przekraczać 255 znaków."
+          }
+        },
+        "description": {
+          "name": "Opis",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Wprowadź email",
+          "validation": {
+            "required": "Email jest wymagany.",
+            "pattern": "Nieprawidłowy adres email."
+          }
+        },
+        "website_url": {
+          "name": "Strona internetowa",
+          "placeholder": "Każdy adres URL z https:// będzie działać.",
+          "placeholder_short": "Dodaj stronę",
+          "validation": {
+            "pattern": "Nieprawidłowy adres URL strony"
+          }
+        },
+        "employees": {
+          "name": "Pracownicy",
+          "placeholder": "Liczba pracowników, jeśli Twój klient jest firmą.",
+          "validation": {
+            "min_length": "Liczba pracowników nie może być mniejsza niż 0.",
+            "max_length": "Liczba pracowników nie może być większa niż 2147483647."
+          }
+        },
+        "size": {
+          "name": "Wielkość",
+          "placeholder": "Dodaj wielkość firmy",
+          "validation": {
+            "min_length": "Nieprawidłowa wielkość"
+          }
+        },
+        "domain": {
+          "name": "Branża",
+          "placeholder": "Retail, e-Commerce, Fintech, Bankowość",
+          "placeholder_short": "Dodaj branżę",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Etap",
+          "placeholder": "Wybierz etap",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Status kontraktu",
+          "placeholder": "Wybierz status kontraktu",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Przychód",
+          "placeholder": "To jest przychód, który Twój klient generuje rocznie.",
+          "placeholder_short": "Dodaj przychód",
+          "validation": {
+            "min_length": "Przychód nie może być mniejszy niż 0."
+          }
+        },
+        "invalid_value": "Nieprawidłowa wartość właściwości."
+      },
+      "custom": {
+        "title": "Niestandardowe właściwości",
+        "info": "Dodaj unikalne atrybuty swoich klientów do Plane, aby lepiej zarządzać elementami pracy lub rekordami klientów."
+      },
+      "empty_state": {
+        "title": "Nie masz jeszcze żadnych niestandardowych właściwości.",
+        "description": "Niestandardowe właściwości, które chciałbyś zobaczyć w elementach pracy, gdzie indziej w Plane lub poza Plane w CRM lub innym narzędziu, pojawią się tutaj, gdy je dodasz."
+      },
+      "add": {
+        "primary_button": "Dodaj nową właściwość"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Wykwalifikowany lead sprzedażowy",
+      "contract_negotiation": "Negocjacje kontraktu",
+      "closed_won": "Zamknięte wygrane",
+      "closed_lost": "Zamknięte przegrane"
+    },
+    "contract_status": {
+      "active": "Aktywny",
+      "pre_contract": "Przed-kontraktowy",
+      "signed": "Podpisany",
+      "inactive": "Nieaktywny"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Nie mogliśmy znaleźć tego rekordu klienta.",
+        "description": "Link do tego rekordu może być nieprawidłowy lub ten rekord mógł zostać usunięty.",
+        "primary_button": "Przejdź do klientów",
+        "secondary_button": "Dodaj klienta"
+      },
+      "search": {
+        "title": "Nie masz rekordów klientów pasujących do tego terminu.",
+        "description": "Spróbuj z innym terminem wyszukiwania lub skontaktuj się z nami, jeśli jesteś pewien, że powinieneś widzieć wyniki dla tego terminu."
+      },
+      "list": {
+        "title": "Zarządzaj wolumenem, tempem i przepływem swojej pracy według tego, co jest ważne dla Twoich klientów.",
+        "description": "Dzięki Klientom, funkcji dostępnej tylko w Plane, możesz teraz tworzyć nowych klientów od podstaw i łączyć ich ze swoją pracą. Wkrótce będziesz mógł importować ich z innych narzędzi wraz z niestandardowymi atrybutami, które są dla Ciebie ważne.",
+        "primary_button": "Dodaj swojego pierwszego klienta"
+      }
+    },
+    "settings": {
+      "unauthorized": "Nie masz uprawnień do dostępu do tej strony.",
+      "description": "Śledź i zarządzaj relacjami z klientami w swoim przepływie pracy.",
+      "enable": "Włącz Klientów",
+      "toasts": {
+        "enable": {
+          "loading": "Włączanie funkcji klientów...",
+          "success": {
+            "title": "Włączyłeś Klientów dla tego workspejsu.",
+            "message": "Nie możesz tego ponownie wyłączyć."
+          },
+          "error": {
+            "title": "Nie mogliśmy włączyć Klientów tym razem.",
+            "message": "Spróbuj ponownie lub wróć do tego ekranu później. Jeśli nadal nie działa.",
+            "action": "Porozmawiaj z pomocą techniczną"
+          }
+        },
+        "disable": {
+          "loading": "Wyłączanie funkcji klientów...",
+          "success": {
+            "title": "Klienci wyłączeni",
+            "message": "Funkcja Klientów została pomyślnie wyłączona!"
+          },
+          "error": {
+            "title": "Błąd",
+            "message": "Nie udało się wyłączyć funkcji klientów!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Nie mogliśmy pobrać Twojej listy klientów.",
+          "message": "Spróbuj ponownie lub odśwież tę stronę."
+        }
+      },
+      "copy_link": {
+        "title": "Skopiowałeś bezpośredni link do tego klienta.",
+        "message": "Wklej go gdziekolwiek, a zaprowadzi prosto tutaj."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} jest teraz dostępny",
+          "message": "Możesz odwoływać się do tego klienta w elementach pracy i śledzić od niego prośby.",
+          "actions": {
+            "view": "Zobacz",
+            "copy_link": "Kopiuj link",
+            "copied": "Skopiowano!"
+          }
+        },
+        "error": {
+          "title": "Nie mogliśmy utworzyć tego rekordu tym razem.",
+          "message": "Spróbuj zapisać go ponownie lub skopiuj niezapisany tekst do nowego wpisu, najlepiej w innej karcie."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Zaktualizowano klienta pomyślnie!"
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie można zaktualizować klienta. Spróbuj ponownie!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Nie mogliśmy przesłać logo klienta.",
+          "message": "Spróbuj zapisać logo ponownie lub zacznij od nowa."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Usunąłeś element pracy z rekordu tego klienta.",
+            "message": "Automatycznie usunęliśmy także tego klienta z elementu pracy."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie mogliśmy usunąć tego elementu pracy z rekordu tego klienta tym razem."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Nie mogliśmy dodać tego elementu pracy do rekordu tego klienta tym razem.",
+            "message": "Spróbuj dodać ten element pracy ponownie lub wróć do niego później. Jeśli nadal nie działa, skontaktuj się z nami."
+          },
+          "success": {
+            "title": "Dodałeś element pracy do rekordu tego klienta.",
+            "message": "Automatycznie dodaliśmy też tego klienta do elementu pracy."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Edytuj",
+      "copy_link": "Kopiuj link do klienta",
+      "delete": "Usuń"
+    },
+    "create": {
+      "label": "Utwórz rekord klienta",
+      "loading": "Tworzenie",
+      "cancel": "Anuluj"
+    },
+    "update": {
+      "label": "Aktualizuj klienta",
+      "loading": "Aktualizowanie"
+    },
+    "delete": {
+      "title": "Czy na pewno chcesz usunąć rekord klienta {customer_name}?",
+      "description": "Wszystkie dane związane z tym rekordem zostaną trwale usunięte. Nie będziesz mógł później przywrócić tego rekordu."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Nie ma jeszcze próśb do pokazania.",
+          "description": "Twórz prośby od swoich klientów, aby móc linkować je do elementów pracy.",
+          "button": "Dodaj nową prośbę"
+        },
+        "search": {
+          "title": "Nie masz próśb pasujących do tego terminu.",
+          "description": "Spróbuj z innym terminem wyszukiwania lub skontaktuj się z nami, jeśli jesteś pewien, że powinieneś widzieć wyniki dla tego terminu."
+        }
+      },
+      "label": "{count, plural, one {Prośba} other {Prośby}}",
+      "add": "Dodaj prośbę",
+      "create": "Utwórz prośbę",
+      "update": "Aktualizuj prośbę",
+      "form": {
+        "name": {
+          "placeholder": "Nazwij tę prośbę",
+          "validation": {
+            "required": "Nazwa jest wymagana.",
+            "max_length": "Nazwa prośby nie powinna przekraczać 255 znaków."
+          }
+        },
+        "description": {
+          "placeholder": "Opisz charakter prośby lub wklej komentarz tego klienta z innego narzędzia."
+        },
+        "source": {
+          "add": "Dodaj źródło",
+          "update": "Aktualizuj źródło",
+          "url": {
+            "label": "URL",
+            "required": "Url jest wymagany",
+            "invalid": "Nieprawidłowy adres URL strony"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Link skopiowany",
+          "message": "Link do prośby klienta skopiowany do schowka."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Przesyłanie załącznika...",
+            "success": {
+              "title": "Załącznik przesłany",
+              "message": "Załącznik został pomyślnie przesłany."
+            },
+            "error": {
+              "title": "Załącznik nie został przesłany",
+              "message": "Załącznik nie mógł zostać przesłany."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Błąd!",
+              "message": "Tylko jeden plik może być przesłany na raz."
+            }
+          },
+          "length": {
+            "message": "Plik musi mieć {size}MB lub mniej"
+          },
+          "remove": {
+            "success": {
+              "title": "Załącznik usunięty",
+              "message": "Załącznik został pomyślnie usunięty"
+            },
+            "error": {
+              "title": "Załącznik nie został usunięty",
+              "message": "Załącznik nie mógł zostać usunięty"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Sukces!",
+              "message": "Źródło zaktualizowane pomyślnie!"
+            },
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie można zaktualizować źródła."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Błąd!",
+              "message": "Nie można dodać elementów pracy do prośby. Spróbuj ponownie."
+            },
+            "success": {
+              "title": "Sukces!",
+              "message": "Dodano elementy pracy do prośby."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Prośba zaktualizowana pomyślnie!",
+            "title": "Sukces!"
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie można zaktualizować prośby. Spróbuj ponownie!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Prośba utworzona pomyślnie!",
+            "title": "Sukces!"
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie można utworzyć prośby. Spróbuj ponownie!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Połączone elementy pracy",
+      "link": "Połącz elementy pracy",
+      "empty_state": {
+        "list": {
+          "title": "Nie masz jeszcze połączonych elementów pracy z tym klientem.",
+          "description": "Połącz istniejące elementy pracy z dowolnego projektu tutaj, aby móc śledzić je według tego klienta.",
+          "button": "Połącz element pracy"
+        }
+      },
+      "action": {
+        "remove_epic": "Usuń epik",
+        "remove": "Usuń element pracy"
+      }
+    },
+    "sidebar": {
+      "properties": "Właściwości"
+    }
+  }
+}

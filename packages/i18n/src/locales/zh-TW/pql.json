@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "目前日期和時間"
+        },
+        "today": {
+          "description": "今天的日期"
+        },
+        "start_of_day": {
+          "description": "今天開始"
+        },
+        "end_of_day": {
+          "description": "今天結束"
+        },
+        "start_of_week": {
+          "description": "本週開始"
+        },
+        "end_of_week": {
+          "description": "本週結束"
+        },
+        "start_of_month": {
+          "description": "本月開始"
+        },
+        "end_of_month": {
+          "description": "本月結束"
+        },
+        "start_of_year": {
+          "description": "今年開始"
+        },
+        "end_of_year": {
+          "description": "今年結束"
+        },
+        "days_ago": {
+          "description": "n 天前的日期"
+        },
+        "days_from_now": {
+          "description": "n 天後的日期"
+        },
+        "weeks_ago": {
+          "description": "n 週前的日期"
+        },
+        "weeks_from_now": {
+          "description": "n 週後的日期"
+        },
+        "months_ago": {
+          "description": "n 個月前的日期"
+        },
+        "months_from_now": {
+          "description": "n 個月後的日期"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "目前登入的使用者"
+        },
+        "members_of": {
+          "description": "\"project:<id>\" 或 \"teamspace:<id>\" 的成員"
+        },
+        "workspace_members": {
+          "description": "所有工作區成員"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "今天活躍的週期"
+        },
+        "completed_cycles": {
+          "description": "結束日期已過的週期"
+        },
+        "upcoming_cycles": {
+          "description": "開始日期在未來的週期"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "截止日期已過且狀態為開放"
+        },
+        "has_no_assignee": {
+          "description": "工作項目沒有負責人"
+        },
+        "has_no_label": {
+          "description": "工作項目沒有標籤"
+        },
+        "is_top_level": {
+          "description": "不是子工作項目（沒有父項）"
+        },
+        "is_sub_work_item": {
+          "description": "是子工作項目（有父項）"
+        },
+        "is_epic": {
+          "description": "史詩"
+        },
+        "is_intake": {
+          "description": "是接收工作項目"
+        },
+        "is_draft": {
+          "description": "是草稿工作項目"
+        },
+        "is_archived": {
+          "description": "已封存"
+        },
+        "has_children": {
+          "description": "至少有一個子工作項目"
+        },
+        "has_start_and_due_dates": {
+          "description": "同時有開始日期和截止日期"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "與給定工作項目相關的工作項目"
+        },
+        "blocked_by": {
+          "description": "被給定工作項目阻塞的工作項目"
+        },
+        "blocks": {
+          "description": "阻塞給定工作項目的工作項目"
+        },
+        "child_of": {
+          "description": "給定工作項目的子工作項目"
+        },
+        "parent_of": {
+          "description": "給定工作項目的父工作項目"
+        },
+        "duplicate_of": {
+          "description": "標記為給定工作項目重複項的工作項目"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "欄位曾經被設定為此值"
+        },
+        "was": {
+          "description": "欄位之前是此值（已更改）"
+        },
+        "changed_from": {
+          "description": "欄位從此值更改"
+        },
+        "changed_to": {
+          "description": "欄位更改為此值"
+        },
+        "changed": {
+          "description": "欄位已更改"
+        },
+        "updated_by": {
+          "description": "此使用者更新的工作項目"
+        },
+        "commented_by": {
+          "description": "此使用者評論的工作項目"
+        },
+        "field_changed_by": {
+          "description": "此使用者更改的欄位"
+        },
+        "was_assigned_to": {
+          "description": "指派給此使用者的工作項目"
+        },
+        "changed_after": {
+          "description": "在此日期之後更改的欄位"
+        },
+        "changed_before": {
+          "description": "在此日期之前更改的欄位"
+        },
+        "field_changed_after": {
+          "description": "在此日期之後更改的欄位"
+        },
+        "field_changed_before": {
+          "description": "在此日期之前更改的欄位"
+        },
+        "changed_to_after": {
+          "description": "在此日期之後更改為此值的欄位"
+        },
+        "changed_to_before": {
+          "description": "在此日期之前更改為此值的欄位"
+        },
+        "field_changed_between": {
+          "description": "在這些日期之間更改的欄位"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "導航",
+      "accept": "確認",
+      "close": "關閉",
+      "pick_date": "選擇日期"
+    },
+    "placeholder": "輸入查詢並按 \"ENTER\" 進行篩選...",
+    "error": "提交查詢時發生錯誤。請檢查後重試。"
+  }
+}

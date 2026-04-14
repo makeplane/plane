@@ -1,0 +1,380 @@
+{
+  "workspace_creation": {
+    "heading": "Buat ruang kerja Anda",
+    "subheading": "Untuk mulai menggunakan Plane, Anda perlu membuat atau bergabung dengan ruang kerja.",
+    "form": {
+      "name": {
+        "label": "Nama ruang kerja Anda",
+        "placeholder": "Sesuatu yang familiar dan dapat dikenali selalu lebih baik."
+      },
+      "url": {
+        "label": "Atur URL ruang kerja Anda",
+        "placeholder": "Ketik atau tempel URL",
+        "edit_slug": "Anda hanya dapat mengedit slug URL"
+      },
+      "organization_size": {
+        "label": "Berapa banyak orang yang akan menggunakan ruang kerja ini?",
+        "placeholder": "Pilih rentang"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Hanya admin instansi Anda yang dapat membuat ruang kerja",
+        "description": "Jika Anda tahu alamat email admin instansi Anda, klik tombol di bawah ini untuk menghubungi mereka.",
+        "request_button": "Minta admin instansi"
+      },
+      "validation": {
+        "name_alphanumeric": "Nama ruang kerja hanya boleh berisi (' '), ('-'), ('_') dan karakter alfanumerik.",
+        "name_length": "Batasi nama Anda hingga 80 karakter.",
+        "url_alphanumeric": "URL hanya boleh berisi ('-') dan karakter alfanumerik.",
+        "url_length": "Batasi URL Anda hingga 48 karakter.",
+        "url_already_taken": "URL ruang kerja sudah diambil!"
+      }
+    },
+    "request_email": {
+      "subject": "Meminta ruang kerja baru",
+      "body": "Hai admin instansi,\n\nTolong buat ruang kerja baru dengan URL [/workspace-name] untuk [tujuan pembuatan ruang kerja].\n\nTerima kasih,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Buat ruang kerja",
+      "loading": "Membuat ruang kerja"
+    },
+    "toast": {
+      "success": {
+        "title": "Sukses",
+        "message": "Ruang kerja berhasil dibuat"
+      },
+      "error": {
+        "title": "Kesalahan",
+        "message": "Ruang kerja tidak dapat dibuat. Silakan coba lagi."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Ikhtisar proyek, aktivitas, dan metrik Anda",
+        "description": "Selamat datang di Plane, kami sangat senang memiliki Anda di sini. Buat proyek pertama Anda dan lacak item kerja Anda, dan halaman ini akan berubah menjadi ruang yang membantu Anda berkembang. Admin juga akan melihat item yang membantu tim mereka berkembang.",
+        "primary_button": {
+          "text": "Bangun proyek pertama Anda",
+          "comic": {
+            "title": "Segalanya dimulai dengan proyek di Plane",
+            "description": "Sebuah proyek bisa menjadi roadmap produk, kampanye pemasaran, atau meluncurkan mobil baru."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analitik",
+    "page_label": "{workspace} - Analitik",
+    "open_tasks": "Jumlah tugas terbuka",
+    "error": "Terjadi kesalahan dalam mengambil data.",
+    "work_items_closed_in": "Item kerja yang ditutup dalam",
+    "selected_projects": "Proyek yang dipilih",
+    "total_members": "Jumlah anggota total",
+    "total_cycles": "Jumlah siklus total",
+    "total_modules": "Jumlah modul total",
+    "pending_work_items": {
+      "title": "Item kerja yang menunggu",
+      "empty_state": "Analisis item kerja yang menunggu oleh rekan kerja muncul di sini."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Item kerja yang ditutup dalam setahun",
+      "empty_state": "Tutup item kerja untuk melihat analisis dari item kerja tersebut dalam bentuk grafik."
+    },
+    "most_work_items_created": {
+      "title": "Paling banyak item kerja yang dibuat",
+      "empty_state": "Rekan kerja dan jumlah item kerja yang mereka buat muncul di sini."
+    },
+    "most_work_items_closed": {
+      "title": "Paling banyak item kerja yang ditutup",
+      "empty_state": "Rekan kerja dan jumlah item kerja yang mereka tutup muncul di sini."
+    },
+    "tabs": {
+      "scope_and_demand": "Lingkup dan Permintaan",
+      "custom": "Analitik Kustom"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini.",
+        "title": "Belum ada data"
+      },
+      "created_vs_resolved": {
+        "description": "Item pekerjaan yang dibuat dan diselesaikan dari waktu ke waktu akan muncul di sini.",
+        "title": "Belum ada data"
+      },
+      "project_insights": {
+        "title": "Belum ada data",
+        "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini."
+      },
+      "general": {
+        "title": "Lacak kemajuan, beban kerja, dan alokasi. Temukan tren, hapus hambatan, dan percepat pekerjaan",
+        "description": "Lihat lingkup versus permintaan, perkiraan, dan perluasan lingkup. Dapatkan kinerja berdasarkan anggota tim dan tim, dan pastikan proyek Anda berjalan tepat waktu.",
+        "primary_button": {
+          "text": "Mulai proyek pertama Anda",
+          "comic": {
+            "title": "Analitik bekerja paling baik dengan Siklus + Modul",
+            "description": "Pertama, batasi waktu masalah Anda ke dalam Siklus dan, jika Anda bisa, kelompokkan masalah yang lebih dari satu siklus ke dalam Modul. Lihat keduanya di navigasi kiri."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Belum ada data",
+        "description": "Analitik kemajuan siklus akan muncul di sini. Tambahkan item kerja ke siklus untuk mulai melacak kemajuan."
+      },
+      "module_progress": {
+        "title": "Belum ada data",
+        "description": "Analitik kemajuan modul akan muncul di sini. Tambahkan item kerja ke modul untuk mulai melacak kemajuan."
+      },
+      "intake_trends": {
+        "title": "Belum ada data",
+        "description": "Analitik tren intake akan muncul di sini. Tambahkan item kerja ke intake untuk mulai melacak tren."
+      }
+    },
+    "created_vs_resolved": "Dibuat vs Diselesaikan",
+    "customized_insights": "Wawasan yang Disesuaikan",
+    "backlog_work_items": "{entity} backlog",
+    "active_projects": "Proyek Aktif",
+    "trend_on_charts": "Tren pada grafik",
+    "all_projects": "Semua Proyek",
+    "summary_of_projects": "Ringkasan Proyek",
+    "project_insights": "Wawasan Proyek",
+    "started_work_items": "{entity} yang telah dimulai",
+    "total_work_items": "Total {entity}",
+    "total_projects": "Total Proyek",
+    "total_admins": "Total Admin",
+    "total_users": "Total Pengguna",
+    "total_intake": "Total Pemasukan",
+    "un_started_work_items": "{entity} yang belum dimulai",
+    "total_guests": "Total Tamu",
+    "completed_work_items": "{entity} yang telah selesai",
+    "total": "Total {entity}",
+    "projects_by_status": "Proyek berdasarkan status",
+    "active_users": "Pengguna aktif",
+    "intake_trends": "Tren Penerimaan",
+    "workitem_resolved_vs_pending": "Item kerja yang diselesaikan vs tertunda",
+    "upgrade_to_plan": "Tingkatkan ke {plan} untuk membuka {tab}"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Proyek} other {Proyek}}",
+    "create": {
+      "label": "Tambah Proyek"
+    },
+    "network": {
+      "label": "Jaringan",
+      "private": {
+        "title": "Pribadi",
+        "description": "Dapat diakses hanya dengan undangan"
+      },
+      "public": {
+        "title": "Umum",
+        "description": "Siapa pun di ruang kerja kecuali Tamu dapat bergabung"
+      }
+    },
+    "error": {
+      "permission": "Anda tidak memiliki izin untuk melakukan tindakan ini.",
+      "cycle_delete": "Gagal menghapus siklus",
+      "module_delete": "Gagal menghapus modul",
+      "issue_delete": "Gagal menghapus item kerja"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Belum dimulai",
+      "started": "Dimulai",
+      "completed": "Selesai",
+      "cancelled": "Dibatalkan"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Nama",
+      "created_at": "Tanggal dibuat",
+      "members_length": "Jumlah anggota"
+    },
+    "scope": {
+      "my_projects": "Proyek saya",
+      "archived_projects": "Diarsipkan"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# bulan} other{# bulan}}",
+      "days_count": "{days, plural, one{# hari} other{# hari}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Tidak ada proyek aktif",
+        "description": "Anggap setiap proyek sebagai induk untuk pekerjaan yang terarah pada tujuan. Proyek adalah tempat di mana Pekerjaan, Siklus, dan Modul tinggal dan, bersama rekan-rekan Anda, membantu Anda mencapai tujuan tersebut. Buat proyek baru atau filter untuk proyek yang diarsipkan.",
+        "primary_button": {
+          "text": "Mulai proyek pertama Anda",
+          "comic": {
+            "title": "Segalanya dimulai dengan proyek di Plane",
+            "description": "Sebuah proyek bisa menjadi roadmap produk, kampanye pemasaran, atau meluncurkan mobil baru."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Tidak ada proyek",
+        "description": "Untuk membuat item kerja atau mengelola pekerjaan Anda, Anda perlu membuat proyek atau menjadi bagian dari salah satunya.",
+        "primary_button": {
+          "text": "Mulai proyek pertama Anda",
+          "comic": {
+            "title": "Segalanya dimulai dengan proyek di Plane",
+            "description": "Sebuah proyek bisa menjadi roadmap produk, kampanye pemasaran, atau meluncurkan mobil baru."
+          }
+        }
+      },
+      "filter": {
+        "title": "Tidak ada proyek yang cocok",
+        "description": "Tidak ada proyek yang terdeteksi dengan kriteria yang cocok.\n Buat proyek baru sebagai gantinya."
+      },
+      "search": {
+        "description": "Tidak ada proyek yang terdeteksi dengan kriteria yang cocok.\nBuat proyek baru sebagai gantinya"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Tambah tampilan",
+    "empty_state": {
+      "all-issues": {
+        "title": "Tidak ada item kerja dalam proyek",
+        "description": "Proyek pertama sudah selesai! Sekarang, bagi pekerjaan Anda menjadi bagian yang dapat dilacak dengan item kerja. Mari kita mulai!",
+        "primary_button": {
+          "text": "Buat item kerja baru"
+        }
+      },
+      "assigned": {
+        "title": "Belum ada item kerja",
+        "description": "Item kerja yang ditugaskan kepada Anda dapat dilacak dari sini.",
+        "primary_button": {
+          "text": "Buat item kerja baru"
+        }
+      },
+      "created": {
+        "title": "Belum ada item kerja",
+        "description": "Semua item kerja yang dibuat oleh Anda akan muncul di sini, lacak mereka langsung di sini.",
+        "primary_button": {
+          "text": "Buat item kerja baru"
+        }
+      },
+      "subscribed": {
+        "title": "Belum ada item kerja",
+        "description": "Langgan item kerja yang Anda minati, lacak semuanya di sini."
+      },
+      "custom-view": {
+        "title": "Belum ada item kerja",
+        "description": "Item kerja yang menerapkan filter ini, lacak semuanya di sini."
+      }
+    },
+    "delete_view": {
+      "title": "Apakah Anda yakin ingin menghapus tampilan ini?",
+      "content": "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Draf item kerja",
+    "empty_state": {
+      "title": "Item kerja setengah jadi, dan segera, komentar akan muncul di sini.",
+      "description": "Untuk mencoba ini, mulai dengan menambahkan item kerja dan tinggalkan di tengah jalan atau buat draf pertama Anda di bawah ini. 😉",
+      "primary_button": {
+        "text": "Buat draf pertama Anda"
+      }
+    },
+    "delete_modal": {
+      "title": "Hapus draf",
+      "description": "Apakah Anda yakin ingin menghapus draf ini? Tindakan ini tidak dapat dibatalkan."
+    },
+    "toasts": {
+      "created": {
+        "success": "Draf berhasil dibuat",
+        "error": "Item kerja tidak dapat dibuat. Silakan coba lagi."
+      },
+      "deleted": {
+        "success": "Draf berhasil dihapus"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap. Dapatkan Galileo, asisten AI Plane, untuk membantu Anda memulai",
+        "description": "Halaman adalah ruang pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda. Untuk mempersingkat pekerjaan dokumen apa pun, panggil Galileo, AI Plane, dengan pintasan atau klik tombol.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "private": {
+        "title": "Belum ada halaman pribadi",
+        "description": "Simpan pikiran pribadi Anda di sini. Ketika Anda siap berbagi, tim hanya berjarak satu klik.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "public": {
+        "title": "Belum ada halaman ruang kerja",
+        "description": "Lihat halaman yang dibagikan dengan semua orang di ruang kerja Anda di sini.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "archived": {
+        "title": "Belum ada halaman yang diarsipkan",
+        "description": "Arsipkan halaman yang tidak di radar Anda. Akses di sini saat diperlukan."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Tidak ada siklus aktif",
+        "description": "Siklus proyek Anda yang mencakup periode apa pun yang mencakup tanggal hari ini dalam rentangnya. Temukan kemajuan dan detail semua siklus aktif Anda di sini."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Impor anggota dari CSV",
+      "description": "Unggah CSV dengan kolom: Email, Display Name, First Name, Last Name, Role (5, 15, atau 20)",
+      "dropzone": {
+        "active": "Letakkan file CSV di sini",
+        "inactive": "Seret & lepas atau klik untuk mengunggah",
+        "file_type": "Hanya file .csv yang didukung"
+      },
+      "buttons": {
+        "cancel": "Batal",
+        "import": "Impor",
+        "try_again": "Coba Lagi",
+        "close": "Tutup",
+        "done": "Selesai"
+      },
+      "progress": {
+        "uploading": "Mengunggah...",
+        "importing": "Mengimpor..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Impor Gagal",
+          "complete": "Impor Selesai"
+        },
+        "message": {
+          "seat_limit": "Tidak dapat mengimpor anggota karena pembatasan tempat duduk.",
+          "success": "Berhasil menambahkan {count} anggota ke workspace.",
+          "no_imports": "Tidak ada anggota yang diimpor dari file CSV."
+        },
+        "stats": {
+          "successful": "Berhasil",
+          "failed": "Gagal"
+        },
+        "download_errors": "Unduh kesalahan"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "File tidak valid",
+          "message": "Hanya file CSV yang didukung."
+        },
+        "import_failed": {
+          "title": "Impor gagal",
+          "message": "Terjadi kesalahan."
+        }
+      }
+    }
+  }
+}

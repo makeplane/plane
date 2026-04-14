@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Takım Alanları",
+    "empty_state": {
+      "general": {
+        "title": "Takım Alanları Plane'de daha iyi organizasyon ve takip sağlar.",
+        "description": "Her gerçek dünya ekibi için Plane'deki diğer tüm çalışma alanlarından ayrı, özel bir alan oluşturun ve ekibinizin çalışma şekline uyacak şekilde özelleştirin.",
+        "primary_button": {
+          "text": "Yeni bir takım alanı oluştur"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Henüz hiç takım alanı bağlamadınız.",
+          "description": "Takım alanı ve proje sahipleri projelere erişimi yönetebilir."
+        }
+      },
+      "primary_button": {
+        "text": "Takım alanı bağla"
+      },
+      "secondary_button": {
+        "text": "Daha fazla bilgi"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Takım alanı adı",
+          "members": "Üyeler",
+          "accountType": "Hesap türü"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Takım alanını kaldır"
+            },
+            "confirm": {
+              "title": "{teamspaceName} takım alanını {projectName} projesinden kaldır",
+              "description": "Bu takım alanını bağlı bir projeden kaldırdığınızda, buradaki üyeler bağlı projeye erişimlerini kaybedecekler."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Eşleşen takım alanı bulunamadı"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bu projeye bir takım alanı bağladınız.} other {Bu projeye # takım alanı bağladınız.}}",
+            "description": "{additionalCount, plural, =0 {{firstTeamspaceName} takım alanı artık bu projeye bağlı.} other {{firstTeamspaceName} takım alanı ve {additionalCount} tanesi daha artık bu projeye bağlı.}}"
+          },
+          "error": {
+            "title": "İşlem başarısız oldu.",
+            "description": "Tekrar deneyin veya sayfayı yenileyip tekrar deneyin."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bu takım alanını projeden kaldırdınız.",
+            "description": "{teamspaceName} takım alanı {projectName} projesinden kaldırıldı."
+          },
+          "error": {
+            "title": "İşlem başarısız oldu.",
+            "description": "Tekrar deneyin veya sayfayı yenileyip tekrar deneyin."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Takım alanlarında ara",
+        "info": {
+          "title": "Bir takım alanı eklemek, tüm takım alanı üyelerine bu projeye erişim sağlar.",
+          "link": "Daha fazla bilgi"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bağlayabileceğiniz hiç takım alanınız yok.",
+            "description": "Ya bağlayabileceğiniz bir takım alanında değilsiniz ya da tüm mevcut takım alanlarını zaten bağladınız."
+          },
+          "no_results": {
+            "title": "Bu, takım alanlarınızdan hiçbiriyle eşleşmiyor.",
+            "description": "Başka bir terim deneyin veya bağlayabileceğiniz takım alanlarınız olduğundan emin olun."
+          }
+        },
+        "primary_button": {
+          "text": "Seçili takım alan(lar)ını bağla"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Takıma özel iş öğeleri oluşturun.",
+        "description": "Bağlı herhangi bir projede bu ekibin üyelerine atanan iş öğeleri otomatik olarak burada görünecektir. Burada bazı iş öğeleri görmeyi bekliyorsanız, bağlı projelerinizin bu ekibin üyelerine atanmış iş öğelerine sahip olduğundan emin olun veya iş öğeleri oluşturun.",
+        "primary_button": {
+          "text": "Bağlı bir projeye iş öğeleri ekle"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Uygulanan filtreler için takıma özel iş öğesi yok",
+        "description": "Bu filtrelerin bazılarını değiştirin veya bu alana uygun iş öğelerini görmek için hepsini temizleyin.",
+        "secondary_button": {
+          "text": "Tüm filtreleri temizle"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Bağlı projelerinizden hiçbirinin aktif bir döngüsü yok.",
+        "description": "Bağlı projelerdeki aktif döngüler otomatik olarak burada görünecektir. Aktif bir döngü görmeyi bekliyorsanız, şu anda bağlı bir projede çalıştığından emin olun."
+      },
+      "completed": {
+        "title": "Bağlı projelerinizden hiçbirinin tamamlanmış bir döngüsü yok.",
+        "description": "Bağlı projelerdeki tamamlanmış döngüler otomatik olarak burada görünecektir. Tamamlanmış bir döngü görmeyi bekliyorsanız, bağlı bir projede de tamamlandığından emin olun."
+      },
+      "upcoming": {
+        "title": "Bağlı projelerinizden hiçbirinin yaklaşan bir döngüsü yok.",
+        "description": "Bağlı projelerdeki yaklaşan döngüler otomatik olarak burada görünecektir. Yaklaşan bir döngü görmeyi bekliyorsanız, bağlı bir projede de olduğundan emin olun."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Çalışma alanınızdaki diğer görünümleri bozmadan ekibinizin çalışmalarınızın görünümleri",
+        "description": "Ekibinizin çalışmalarını sadece ekibiniz için kaydedilen ve bir projenin görünümlerinden ayrı olan görünümlerde görün.",
+        "primary_button": {
+          "text": "Bir görünüm oluştur"
+        }
+      },
+      "filter": {
+        "title": "Eşleşen görünüm yok",
+        "description": "Arama kriterlerine uygun görünüm yok.\n Bunun yerine yeni bir görünüm oluşturun."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Ekibinizin bilgilerini Takım Sayfalarında barındırın.",
+        "description": "Bir projedeki sayfaların aksine, bir ekibe özgü bilgileri burada ayrı bir sayfa setinde saklayabilirsiniz. Sayfaların tüm özelliklerini alın, en iyi uygulama dokümanları oluşturun ve ekip vikilerini kolayca oluşturun.",
+        "primary_button": {
+          "text": "İlk takım sayfanızı oluşturun"
+        }
+      },
+      "filter": {
+        "title": "Eşleşen sayfa yok",
+        "description": "Tüm sayfaları görmek için filtreleri kaldırın"
+      },
+      "search": {
+        "title": "Eşleşen sayfa yok",
+        "description": "Tüm sayfaları görmek için arama kriterlerini kaldırın"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Bağlı projelerinizden hiçbirinin yayınlanmış iş öğeleri yok.",
+        "description": "Tarihlere, durumlara ve önceliklere göre ilerlemeyi görmek için bu projelerden bir veya daha fazlasında bazı iş öğeleri oluşturun."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Bir takım arkadaşını engelleyen herhangi bir iş öğeniz yok.",
+          "description": "Aferin! Ekibiniz için yolu açtınız. İyi bir takım oyuncususunuz."
+        },
+        "blocked": {
+          "title": "Sizi engelleyen herhangi bir takım arkadaşının iş öğesi yok.",
+          "description": "İyi haber! Atanmış tüm iş öğelerinizde ilerleme kaydedebilirsiniz."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Bağlı projelerinizden hiçbirinin yayınlanmış iş öğeleri yok.",
+          "description": "Projeye ve ekip üyelerine göre iş dağılımını görmek için bu projelerden bir veya daha fazlasında bazı iş öğeleri oluşturun."
+        },
+        "filter": {
+          "title": "Uygulanan filtreler için takım istatistikleri yok.",
+          "description": "Projeye ve ekip üyelerine göre iş dağılımını görmek için bu projelerden bir veya daha fazlasında bazı iş öğeleri oluşturun."
+        }
+      }
+    }
+  }
+}

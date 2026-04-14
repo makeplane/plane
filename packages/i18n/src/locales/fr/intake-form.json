@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Créer un élément de travail",
+      "sub-title": "Faites savoir à l'équipe sur quoi vous aimeriez qu'elle travaille.",
+      "name": "Nom",
+      "email": "E-mail",
+      "about": "De quoi s'agit-il cet élément de travail ?",
+      "description": "Décrivez ce qui devrait se passer",
+      "description_placeholder": "Ajoutez autant de détails que vous le souhaitez pour aider l'équipe à identifier votre situation et vos besoins.",
+      "loading": "Création",
+      "create_work_item": "Créer l'élément de travail",
+      "errors": {
+        "name": "Le nom est requis",
+        "name_max_length": "Le nom doit contenir moins de 255 caractères",
+        "email": "L'e-mail est requis",
+        "email_invalid": "Adresse e-mail invalide",
+        "title": "Le titre est requis",
+        "title_max_length": "Le titre doit contenir moins de 255 caractères"
+      }
+    },
+    "success": {
+      "title": "Votre élément de travail est maintenant dans la file d'attente de l'équipe.",
+      "description": "L'équipe peut maintenant approuver ou rejeter cet élément de travail depuis sa file d'admission.",
+      "primary_button": {
+        "text": "Ajouter un autre élément de travail"
+      },
+      "secondary_button": {
+        "text": "En savoir plus sur l'admission"
+      }
+    },
+    "how_it_works": {
+      "title": "Comment ça marche ?",
+      "heading": "Ceci est un formulaire d'admission.",
+      "description": "L'admission est une fonctionnalité Plane qui permet aux administrateurs et chefs de projet de recevoir des éléments de travail externes dans leurs projets.",
+      "steps": {
+        "step_1": "Ce court formulaire vous permet de créer un nouvel élément de travail dans un projet Plane.",
+        "step_2": "Lorsque vous soumettez ce formulaire, un nouvel élément de travail est créé dans l'admission de ce projet.",
+        "step_3": "Quelqu'un de ce projet ou de l'équipe le examinera.",
+        "step_4": "S'ils l'approuvent, cet élément sera déplacé vers la file de travail du projet. Sinon, il sera rejeté.",
+        "step_5": "Pour connaître le statut de cet élément, contactez le chef de projet, l'administrateur ou la personne qui vous a envoyé le lien vers cette page."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Sélectionner le type d'élément de travail",
+        "search_placeholder": "Rechercher un type d'élément de travail"
+      },
+      "actions": {
+        "select_properties": "Sélectionner les propriétés"
+      }
+    }
+  }
+}

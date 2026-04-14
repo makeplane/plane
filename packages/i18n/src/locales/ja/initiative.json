@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "概要",
+    "label": "イニシアチブ",
+    "placeholder": "{count, plural, one{# イニシアチブ} other{# イニシアチブ}}",
+    "add_initiative": "イニシアチブを追加",
+    "create_initiative": "イニシアチブを作成",
+    "update_initiative": "イニシアチブを更新",
+    "initiative_name": "イニシアチブ名",
+    "all_initiatives": "すべてのイニシアチブ",
+    "delete_initiative": "イニシアチブを削除",
+    "fill_all_required_fields": "すべての必須フィールドに入力してください。",
+    "archive_description": "完了またはクローズ済みのイニシアチブのみアーカイブできます",
+    "toast": {
+      "create_success": "イニシアチブ {name} が正常に作成されました。",
+      "create_error": "イニシアチブの作成に失敗しました。もう一度お試しください！",
+      "update_success": "イニシアチブ {name} が正常に更新されました。",
+      "update_error": "イニシアチブの更新に失敗しました。もう一度お試しください！",
+      "delete": {
+        "success": "イニシアチブが正常に削除されました。",
+        "error": "イニシアチブの削除に失敗しました"
+      },
+      "archive": {
+        "success": "イニシアチブをアーカイブしました。",
+        "error": "イニシアチブをアーカイブできませんでした",
+        "initiative_cannot_be_archived_in_this_state": "この状態のイニシアチブはアーカイブできません"
+      },
+      "link_copied": "イニシアチブのリンクがクリップボードにコピーされました。",
+      "project_update_success": "イニシアチブのプロジェクトが正常に更新されました。",
+      "project_update_error": "イニシアチブのプロジェクトの更新に失敗しました。もう一度お試しください！",
+      "epic_update_success": "エピック{count, plural, one {がイニシアチブに正常に追加されました。} other {がイニシアチブに正常に追加されました。}}",
+      "epic_update_error": "イニシアチブへのエピックの追加に失敗しました。後でもう一度お試しください。",
+      "state_update_success": "イニシアチブの状態が正常に更新されました。",
+      "state_update_error": "イニシアチブの状態を更新できませんでした。もう一度お試しください！",
+      "label_update_error": "イニシアティブのラベルの更新に失敗しました。もう一度お試しください！"
+    },
+    "empty_state": {
+      "general": {
+        "title": "イニシアチブで最高レベルの作業を整理",
+        "description": "複数のプロジェクトやチームにまたがる作業を整理する必要がある場合、イニシアチブが役立ちます。プロジェクトとエピックをイニシアチブに接続し、自動的に集計された更新を確認し、木々を見る前に森を見ることができます。",
+        "primary_button": {
+          "text": "イニシアチブを作成"
+        }
+      },
+      "search": {
+        "title": "一致するイニシアチブがありません",
+        "description": "一致する条件のイニシアチブは検出されませんでした。\n 代わりに新しいイニシアチブを作成してください。",
+        "archived_description": "一致する条件のアーカイブされたイニシアチブは検出されませんでした。"
+      },
+      "not_found": {
+        "title": "イニシアチブが存在しません",
+        "description": "お探しのイニシアチブは存在しないか、アーカイブされたか、削除されました。",
+        "primary_button": {
+          "text": "他のイニシアチブを表示"
+        }
+      },
+      "epics": {
+        "title": "イニシアチブが存在しません",
+        "subHeading": "すべてのイニシアチブを表示するには、すべての適用されたフィルターを削除してください。",
+        "action": "フィルターを削除"
+      }
+    },
+    "scope": {
+      "view_scope": "スコープを表示",
+      "breakdown": "スコープの分解",
+      "add_scope": "スコープを追加",
+      "label": "スコープ",
+      "empty_state": {
+        "title": "まだスコープが追加されていません",
+        "description": "このイニシアチブにプロジェクトとエピックをリンクし、その作業をこのスペースで追跡します。",
+        "primary_button": {
+          "text": "スコープを追加"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "ラベル",
+        "description": "ラベルであなたの取り組みを整理・構造化しましょう。"
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "ラベルを削除",
+        "content": "{labelName} を削除してもよろしいですか？これにより、すべてのイニシアチブおよびラベルがフィルタリングされているビューからラベルが削除されます。"
+      },
+      "toast": {
+        "delete_error": "イニシアチブのラベルを削除できませんでした。もう一度お試しください。",
+        "label_already_exists": "ラベルは既に存在します"
+      }
+    }
+  }
+}

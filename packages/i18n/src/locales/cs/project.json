@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Vytvořeno dne",
+      "updated_at": "Aktualizováno dne",
+      "name": "Název"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Přidat cyklus",
+    "more_details": "Více detailů",
+    "cycle": "Cyklus",
+    "update_cycle": "Aktualizovat cyklus",
+    "create_cycle": "Vytvořit cyklus",
+    "no_matching_cycles": "Žádné odpovídající cykly",
+    "remove_filters_to_see_all_cycles": "Odeberte filtry pro zobrazení všech cyklů",
+    "remove_search_criteria_to_see_all_cycles": "Odeberte kritéria pro zobrazení všech cyklů",
+    "only_completed_cycles_can_be_archived": "Lze archivovat pouze dokončené cykly",
+    "start_date": "Začátek data",
+    "end_date": "Konec data",
+    "in_your_timezone": "V časovém pásmu",
+    "transfer_work_items": "Převést {count} pracovních položek",
+    "transfer": {
+      "no_cycles_available": "Žádné jiné cykly nejsou k dispozici pro přenos pracovních položek."
+    },
+    "date_range": "Období data",
+    "add_date": "Přidat datum",
+    "active_cycle": {
+      "label": "Aktivní cyklus",
+      "progress": "Pokrok",
+      "chart": "Burndown graf",
+      "priority_issue": "Vysoce prioritní položky",
+      "assignees": "Přiřazení",
+      "issue_burndown": "Burndown pracovních položek",
+      "ideal": "Ideální",
+      "current": "Aktuální",
+      "labels": "Štítky",
+      "trailing": "Zpoždění",
+      "leading": "Předstih"
+    },
+    "upcoming_cycle": {
+      "label": "Nadcházející cyklus"
+    },
+    "completed_cycle": {
+      "label": "Dokončený cyklus"
+    },
+    "status": {
+      "days_left": "Zbývá dnů",
+      "completed": "Dokončeno",
+      "yet_to_start": "Ještě nezačato",
+      "in_progress": "V průběhu",
+      "draft": "Koncept"
+    },
+    "action": {
+      "restore": {
+        "title": "Obnovit cyklus",
+        "success": {
+          "title": "Cyklus obnoven",
+          "description": "Cyklus byl obnoven."
+        },
+        "failed": {
+          "title": "Obnovení selhalo",
+          "description": "Obnovení cyklu se nezdařilo."
+        }
+      },
+      "favorite": {
+        "loading": "Přidávání do oblíbených",
+        "success": {
+          "description": "Cyklus přidán do oblíbených.",
+          "title": "Úspěch!"
+        },
+        "failed": {
+          "description": "Přidání do oblíbených selhalo.",
+          "title": "Chyba!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Odebírání z oblíbených",
+        "success": {
+          "description": "Cyklus odebrán z oblíbených.",
+          "title": "Úspěch!"
+        },
+        "failed": {
+          "description": "Odebrání selhalo.",
+          "title": "Chyba!"
+        }
+      },
+      "update": {
+        "loading": "Aktualizace cyklu",
+        "success": {
+          "description": "Cyklus aktualizován.",
+          "title": "Úspěch!"
+        },
+        "failed": {
+          "description": "Aktualizace selhala.",
+          "title": "Chyba!"
+        },
+        "error": {
+          "already_exists": "Cyklus s těmito daty již existuje. Pro koncept odstraňte data."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Seskupujte práci do cyklů.",
+        "description": "Časově ohraničte práci, sledujte termíny a dělejte pokroky.",
+        "primary_button": {
+          "text": "Vytvořte první cyklus",
+          "comic": {
+            "title": "Cykly jsou opakovaná časová období.",
+            "description": "Sprint, iterace nebo jakékoli jiné časové období pro sledování práce."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Žádné položky v cyklu",
+        "description": "Přidejte položky, které chcete sledovat.",
+        "primary_button": {
+          "text": "Vytvořit položku"
+        },
+        "secondary_button": {
+          "text": "Přidat existující položku"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Žádné položky v cyklu",
+        "description": "Položky byly přesunuty nebo skryty. Pro zobrazení upravte vlastnosti."
+      },
+      "active": {
+        "title": "Žádný aktivní cyklus",
+        "description": "Aktivní cyklus zahrnuje dnešní datum. Sledujte jeho průběh zde."
+      },
+      "archived": {
+        "title": "Žádné archivované cykly",
+        "description": "Archivujte dokončené cykly pro úklid."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Vytvořte a přiřaďte pracovní položku",
+        "description": "Položky jsou úkoly, které přiřazujete sobě nebo týmu. Sledujte jejich postup.",
+        "primary_button": {
+          "text": "Vytvořit první položku",
+          "comic": {
+            "title": "Položky jsou stavebními kameny",
+            "description": "Příklady: Redesign UI, Rebranding, Nový systém."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Žádné archivované položky",
+        "description": "Archivujte dokončené nebo zrušené položky. Nastavte automatizaci.",
+        "primary_button": {
+          "text": "Nastavit automatizaci"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Žádné odpovídající položky",
+        "secondary_button": {
+          "text": "Vymazat filtry"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Přidat modul",
+    "update_module": "Aktualizovat modul",
+    "create_module": "Vytvořit modul",
+    "archive_module": "Archivovat modul",
+    "restore_module": "Obnovit modul",
+    "delete_module": "Smazat modul",
+    "empty_state": {
+      "general": {
+        "title": "Seskupujte milníky do modulů.",
+        "description": "Moduly seskupují položky pod logického nadřazeného. Sledujte termíny a pokrok.",
+        "primary_button": {
+          "text": "Vytvořte první modul",
+          "comic": {
+            "title": "Moduly skupinují hierarchicky.",
+            "description": "Příklady: Modul košíku, podvozku, skladu."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Žádné položky v modulu",
+        "description": "Přidejte položky do modulu.",
+        "primary_button": {
+          "text": "Vytvořit položky"
+        },
+        "secondary_button": {
+          "text": "Přidat existující položku"
+        }
+      },
+      "archived": {
+        "title": "Žádné archivované moduly",
+        "description": "Archivujte dokončené nebo zrušené moduly."
+      },
+      "sidebar": {
+        "in_active": "Modul není aktivní.",
+        "invalid_date": "Neplatné datum. Zadejte platné."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Archivovat modul",
+      "archive_module_description": "Lze archivovat pouze dokončené/zrušené moduly.",
+      "delete_module": "Smazat modul"
+    },
+    "toast": {
+      "copy": {
+        "success": "Odkaz na modul zkopírován"
+      },
+      "delete": {
+        "success": "Modul smazán",
+        "error": "Mazání selhalo"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Ukládejte filtry jako pohledy.",
+        "description": "Pohledy jsou uložené filtry pro snadný přístup. Sdílejte je v týmu.",
+        "primary_button": {
+          "text": "Vytvořit první pohled",
+          "comic": {
+            "title": "Pohledy pracují s vlastnostmi položek.",
+            "description": "Vytvořte pohled s požadovanými filtry."
+          }
+        }
+      },
+      "filter": {
+        "title": "Žádné odpovídající pohledy",
+        "description": "Vytvořte nový pohled."
+      }
+    },
+    "delete_view": {
+      "title": "Opravdu chcete smazat tento pohled?",
+      "content": "Pokud potvrdíte, všechny možnosti řazení, filtrování a zobrazení + rozvržení, které jste vybrali pro tento pohled, budou trvale odstraněny a nelze je obnovit."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Pište poznámky, dokumenty nebo znalostní báze. Využijte AI Galileo.",
+        "description": "Stránky jsou prostorem pro myšlenky. Pište, formátujte, vkládejte položky a využívejte komponenty.",
+        "primary_button": {
+          "text": "Vytvořit první stránku"
+        }
+      },
+      "private": {
+        "title": "Žádné soukromé stránky",
+        "description": "Uchovávejte soukromé myšlenky. Sdílejte, až budete připraveni.",
+        "primary_button": {
+          "text": "Vytvořit stránku"
+        }
+      },
+      "public": {
+        "title": "Žádné veřejné stránky",
+        "description": "Zde uvidíte stránky sdílené v projektu.",
+        "primary_button": {
+          "text": "Vytvořit stránku"
+        }
+      },
+      "archived": {
+        "title": "Žádné archivované stránky",
+        "description": "Archivujte stránky pro pozdější přístup."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Příjem není povolen",
+        "description": "Aktivujte příjem v nastavení projektu pro správu požadavků.",
+        "primary_button": {
+          "text": "Spravovat funkce"
+        }
+      },
+      "cycle": {
+        "title": "Cykly nejsou povoleny",
+        "description": "Aktivujte cykly pro časové ohraničení práce.",
+        "primary_button": {
+          "text": "Spravovat funkce"
+        }
+      },
+      "module": {
+        "title": "Moduly nejsou povoleny",
+        "description": "Aktivujte moduly v nastavení projektu.",
+        "primary_button": {
+          "text": "Spravovat funkce"
+        }
+      },
+      "page": {
+        "title": "Stránky nejsou povoleny",
+        "description": "Aktivujte stránky v nastavení projektu.",
+        "primary_button": {
+          "text": "Spravovat funkce"
+        }
+      },
+      "view": {
+        "title": "Pohledy nejsou povoleny",
+        "description": "Aktivujte pohledy v nastavení projektu.",
+        "primary_button": {
+          "text": "Spravovat funkce"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Plánováno",
+      "in_progress": "V průběhu",
+      "paused": "Pozastaveno",
+      "completed": "Dokončeno",
+      "cancelled": "Zrušeno"
+    },
+    "layout": {
+      "list": "Seznam",
+      "board": "Nástěnka",
+      "timeline": "Časová osa"
+    },
+    "order_by": {
+      "name": "Název",
+      "progress": "Pokrok",
+      "issues": "Počet položek",
+      "due_date": "Termín",
+      "created_at": "Datum vytvoření",
+      "manual": "Ručně"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "Importovat členy z CSV",
+      "description": "Nahrajte CSV se sloupci: E-mail a Role (5=Host, 15=Člen, 20=Správce). Uživatelé musí být již členy pracovního prostoru.",
+      "download_sample": "Stáhnout ukázkové CSV",
+      "dropzone": {
+        "active": "Přetáhněte CSV soubor sem",
+        "inactive": "Přetáhněte nebo klikněte pro nahrání",
+        "file_type": "Podporovány jsou pouze soubory .csv"
+      },
+      "buttons": {
+        "cancel": "Zrušit",
+        "import": "Importovat",
+        "try_again": "Zkusit znovu",
+        "close": "Zavřít",
+        "done": "Hotovo"
+      },
+      "progress": {
+        "uploading": "Nahrávání...",
+        "importing": "Importování..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Import dokončen"
+        },
+        "message": {
+          "success": "Úspěšně importováno {count} člen{plural} do projektu.",
+          "no_imports": "Ze souboru CSV nebyli importováni žádní noví členové."
+        },
+        "stats": {
+          "added": "Přidáno",
+          "reactivated": "Znovu aktivováno",
+          "already_members": "Již členové",
+          "skipped": "Přeskočeno"
+        },
+        "download_errors": "Stáhnout podrobnosti přeskočených"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Neplatný soubor",
+          "message": "Podporovány jsou pouze CSV soubory."
+        },
+        "import_failed": {
+          "title": "Import selhal",
+          "message": "Něco se pokazilo."
+        }
+      }
+    }
+  }
+}

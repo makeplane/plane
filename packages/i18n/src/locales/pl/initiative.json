@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Przegląd",
+    "label": "Inicjatywy",
+    "placeholder": "{count, plural, one{# inicjatywa} other{# inicjatywy}}",
+    "add_initiative": "Dodaj Inicjatywę",
+    "create_initiative": "Utwórz Inicjatywę",
+    "update_initiative": "Aktualizuj Inicjatywę",
+    "initiative_name": "Nazwa inicjatywy",
+    "all_initiatives": "Wszystkie Inicjatywy",
+    "delete_initiative": "Usuń Inicjatywę",
+    "fill_all_required_fields": "Wypełnij wszystkie wymagane pola.",
+    "archive_description": "Archiwować można tylko ukończone lub zamknięte inicjatywy",
+    "toast": {
+      "create_success": "Inicjatywa {name} utworzona pomyślnie.",
+      "create_error": "Nie udało się utworzyć inicjatywy. Spróbuj ponownie!",
+      "update_success": "Inicjatywa {name} zaktualizowana pomyślnie.",
+      "update_error": "Nie udało się zaktualizować inicjatywy. Spróbuj ponownie!",
+      "delete": {
+        "success": "Inicjatywa usunięta pomyślnie.",
+        "error": "Nie udało się usunąć Inicjatywy"
+      },
+      "archive": {
+        "success": "Inicjatywa została pomyślnie zarchiwizowana.",
+        "error": "Nie udało się zarchiwizować inicjatywy",
+        "initiative_cannot_be_archived_in_this_state": "Nie można zarchiwizować inicjatywy w tym stanie"
+      },
+      "link_copied": "Link do inicjatywy skopiowany do schowka.",
+      "project_update_success": "Projekty inicjatywy zaktualizowane pomyślnie.",
+      "project_update_error": "Nie udało się zaktualizować projektów inicjatywy. Spróbuj ponownie!",
+      "epic_update_success": "Epik{count, plural, one { dodany do Inicjatywy pomyślnie.} other {i dodane do Inicjatywy pomyślnie.}}",
+      "epic_update_error": "Dodanie Epika do Inicjatywy nie powiodło się. Spróbuj ponownie później.",
+      "state_update_success": "Stan inicjatywy został pomyślnie zaktualizowany.",
+      "state_update_error": "Nie udało się zaktualizować stanu inicjatywy. Spróbuj ponownie!",
+      "label_update_error": "Nie udało się zaktualizować etykiet inicjatywy. Proszę spróbować ponownie!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizuj pracę na najwyższym poziomie z Inicjatywami",
+        "description": "Kiedy potrzebujesz zorganizować pracę obejmującą kilka projektów i zespołów, Inicjatywy są przydatne. Połącz projekty i epiki z inicjatywami, zobacz automatycznie zebrane aktualizacje i zobacz lasy, zanim dotrzesz do drzew.",
+        "primary_button": {
+          "text": "Utwórz inicjatywę"
+        }
+      },
+      "search": {
+        "title": "Brak pasujących inicjatyw",
+        "description": "Nie wykryto inicjatyw z pasującymi kryteriami.\n Zamiast tego utwórz nową inicjatywę.",
+        "archived_description": "Nie wykryto zarchiwizowanych inicjatyw z pasującymi kryteriami."
+      },
+      "not_found": {
+        "title": "Inicjatywa nie istnieje",
+        "description": "Inicjatywa, której szukasz, nie istnieje, została zarchiwizowana lub została usunięta.",
+        "primary_button": {
+          "text": "Zobacz inne Inicjatywy"
+        }
+      },
+      "epics": {
+        "title": "Nie masz inicjatyw, które pasują do filtrów, które zastosowałeś.",
+        "subHeading": "Aby zobaczyć wszystkie inicjatywy, usuń wszystkie zastosowane filtry.",
+        "action": "Usuń filtry"
+      }
+    },
+    "scope": {
+      "add_scope": "Dodaj zakres",
+      "view_scope": "Zobacz zakres",
+      "breakdown": "Rozbij zakres",
+      "label": "Zakres",
+      "empty_state": {
+        "title": "Nie dodano jeszcze zakresu do tej inicjatywy",
+        "description": "Połącz projekty i epiki z inicjatywą, aby rozpocząć.",
+        "primary_button": {
+          "text": "Dodaj zakres"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Etykiety",
+        "description": "Strukturyzuj i organizuj swoje inicjatywy za pomocą etykiet."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Usuń etykietę",
+        "content": "Czy na pewno chcesz usunąć {labelName}? Spowoduje to usunięcie etykiety ze wszystkich inicjatyw i ze wszystkich widoków, w których etykieta jest filtrowana."
+      },
+      "toast": {
+        "delete_error": "Nie można usunąć etykiety inicjatywy. Spróbuj ponownie.",
+        "label_already_exists": "Etykieta już istnieje"
+      }
+    }
+  }
+}

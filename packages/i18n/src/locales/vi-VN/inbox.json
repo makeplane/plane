@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Đang chờ xử lý",
+        "description": "Đang chờ xử lý"
+      },
+      "declined": {
+        "title": "Đã từ chối",
+        "description": "Đã từ chối"
+      },
+      "snoozed": {
+        "title": "Đã tạm hoãn",
+        "description": "Còn lại {days, plural, one{# ngày} other{# ngày}}"
+      },
+      "accepted": {
+        "title": "Đã chấp nhận",
+        "description": "Đã chấp nhận"
+      },
+      "duplicate": {
+        "title": "Trùng lặp",
+        "description": "Trùng lặp"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Từ chối mục công việc",
+        "content": "Bạn có chắc chắn muốn từ chối mục công việc {value} không?"
+      },
+      "delete": {
+        "title": "Xóa mục công việc",
+        "content": "Bạn có chắc chắn muốn xóa mục công việc {value} không?",
+        "success": "Đã xóa mục công việc thành công"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Chỉ quản trị viên dự án mới có thể tạm hoãn/hủy tạm hoãn mục công việc",
+      "accept_permission": "Chỉ quản trị viên dự án mới có thể chấp nhận mục công việc",
+      "decline_permission": "Chỉ quản trị viên dự án mới có thể từ chối mục công việc"
+    },
+    "actions": {
+      "accept": "Chấp nhận",
+      "decline": "Từ chối",
+      "snooze": "Tạm hoãn",
+      "unsnooze": "Hủy tạm hoãn",
+      "copy": "Sao chép liên kết mục công việc",
+      "delete": "Xóa",
+      "open": "Mở mục công việc",
+      "mark_as_duplicate": "Đánh dấu là trùng lặp",
+      "move": "Di chuyển {value} đến mục công việc dự án"
+    },
+    "source": {
+      "in-app": "Trong ứng dụng"
+    },
+    "order_by": {
+      "created_at": "Thời gian tạo",
+      "updated_at": "Thời gian cập nhật",
+      "id": "ID"
+    },
+    "label": "Thu thập",
+    "page_label": "{workspace} - Thu thập",
+    "modal": {
+      "title": "Tạo mục công việc thu thập"
+    },
+    "tabs": {
+      "open": "Chưa xử lý",
+      "closed": "Đã xử lý"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Không có mục công việc chưa xử lý",
+        "description": "Tìm mục công việc chưa xử lý tại đây. Tạo mục công việc mới."
+      },
+      "sidebar_closed_tab": {
+        "title": "Không có mục công việc đã xử lý",
+        "description": "Tất cả mục công việc đã chấp nhận hoặc từ chối có thể được tìm thấy ở đây."
+      },
+      "sidebar_filter": {
+        "title": "Không có mục công việc phù hợp",
+        "description": "Không có mục công việc trong thu thập phù hợp với bộ lọc của bạn. Tạo mục công việc mới."
+      },
+      "detail": {
+        "title": "Chọn một mục công việc để xem chi tiết."
+      }
+    }
+  }
+}

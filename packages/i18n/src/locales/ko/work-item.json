@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {작업 항목} other {작업 항목}}",
+    "all": "모든 작업 항목",
+    "edit": "작업 항목 편집",
+    "title": {
+      "label": "작업 항목 제목",
+      "required": "작업 항목 제목이 필요합니다."
+    },
+    "add": {
+      "press_enter": "다른 작업 항목을 추가하려면 'Enter'를 누르세요",
+      "label": "작업 항목 추가",
+      "cycle": {
+        "failed": "작업 항목을 주기에 추가할 수 없습니다. 다시 시도해주세요.",
+        "success": "{count, plural, one {작업 항목} other {작업 항목}}이 주기에 성공적으로 추가되었습니다.",
+        "loading": "{count, plural, one {작업 항목} other {작업 항목}}을 주기에 추가 중"
+      },
+      "assignee": "담당자 추가",
+      "start_date": "시작 날짜 추가",
+      "due_date": "마감일 추가",
+      "parent": "상위 작업 항목 추가",
+      "sub_issue": "하위 작업 항목 추가",
+      "relation": "관계 추가",
+      "link": "링크 추가",
+      "existing": "기존 작업 항목 추가"
+    },
+    "remove": {
+      "label": "작업 항목 제거",
+      "cycle": {
+        "loading": "작업 항목을 주기에서 제거 중",
+        "success": "작업 항목이 주기에서 성공적으로 제거되었습니다.",
+        "failed": "작업 항목을 주기에서 제거할 수 없습니다. 다시 시도해주세요."
+      },
+      "module": {
+        "loading": "작업 항목을 모듈에서 제거 중",
+        "success": "작업 항목이 모듈에서 성공적으로 제거되었습니다.",
+        "failed": "작업 항목을 모듈에서 제거할 수 없습니다. 다시 시도해주세요."
+      },
+      "parent": {
+        "label": "상위 작업 항목 제거"
+      }
+    },
+    "new": "새 작업 항목",
+    "adding": "작업 항목 추가 중",
+    "create": {
+      "success": "작업 항목이 성공적으로 생성되었습니다"
+    },
+    "priority": {
+      "urgent": "긴급",
+      "high": "높음",
+      "medium": "중간",
+      "low": "낮음"
+    },
+    "display": {
+      "properties": {
+        "label": "디스플레이 속성",
+        "id": "ID",
+        "issue_type": "작업 항목 유형",
+        "sub_issue_count": "하위 작업 항목 수",
+        "attachment_count": "첨부 파일 수",
+        "created_on": "생성일",
+        "sub_issue": "하위 작업 항목",
+        "work_item_count": "작업 항목 수"
+      },
+      "extra": {
+        "show_sub_issues": "하위 작업 항목 표시",
+        "show_empty_groups": "빈 그룹 표시"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "이 레이아웃은 다음 기준으로 정렬됩니다",
+      "list": "목록",
+      "kanban": "보드",
+      "calendar": "캘린더",
+      "spreadsheet": "테이블",
+      "gantt": "타임라인",
+      "title": {
+        "list": "목록 레이아웃",
+        "kanban": "보드 레이아웃",
+        "calendar": "캘린더 레이아웃",
+        "spreadsheet": "테이블 레이아웃",
+        "gantt": "타임라인 레이아웃"
+      }
+    },
+    "states": {
+      "active": "활성",
+      "backlog": "백로그"
+    },
+    "comments": {
+      "placeholder": "댓글 추가",
+      "switch": {
+        "private": "비공개 댓글로 전환",
+        "public": "공개 댓글로 전환"
+      },
+      "create": {
+        "success": "댓글이 성공적으로 생성되었습니다",
+        "error": "댓글 생성 실패. 나중에 다시 시도해주세요."
+      },
+      "update": {
+        "success": "댓글이 성공적으로 업데이트되었습니다",
+        "error": "댓글 업데이트 실패. 나중에 다시 시도해주세요."
+      },
+      "remove": {
+        "success": "댓글이 성공적으로 제거되었습니다",
+        "error": "댓글 제거 실패. 나중에 다시 시도해주세요."
+      },
+      "upload": {
+        "error": "자산 업로드 실패. 나중에 다시 시도해주세요."
+      },
+      "copy_link": {
+        "success": "댓글 링크가 클립보드에 복사되었습니다",
+        "error": "댓글 링크 복사 중 오류가 발생했습니다. 나중에 다시 시도해 주세요."
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "작업 항목이 존재하지 않습니다",
+        "description": "찾고 있는 작업 항목이 존재하지 않거나, 아카이브되었거나, 삭제되었습니다.",
+        "primary_button": {
+          "text": "다른 작업 항목 보기"
+        }
+      }
+    },
+    "sibling": {
+      "label": "형제 작업 항목"
+    },
+    "archive": {
+      "description": "완료되거나 취소된 작업 항목만 아카이브할 수 있습니다",
+      "label": "작업 항목 아카이브",
+      "confirm_message": "작업 항목을 아카이브하시겠습니까? 모든 아카이브된 작업 항목은 나중에 복원할 수 있습니다.",
+      "success": {
+        "label": "아카이브 성공",
+        "message": "아카이브된 항목은 프로젝트 아카이브에서 찾을 수 있습니다."
+      },
+      "failed": {
+        "message": "작업 항목을 아카이브할 수 없습니다. 다시 시도해주세요."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "복원 성공",
+        "message": "작업 항목을 프로젝트 작업 항목에서 찾을 수 있습니다."
+      },
+      "failed": {
+        "message": "작업 항목을 복원할 수 없습니다. 다시 시도해주세요."
+      }
+    },
+    "relation": {
+      "relates_to": "관련 있음",
+      "duplicate": "중복",
+      "blocked_by": "차단됨",
+      "blocking": "차단 중",
+      "start_before": "시작 이전",
+      "start_after": "시작 이후",
+      "finish_before": "완료 이전",
+      "finish_after": "완료 이후",
+      "implements": "구현",
+      "implemented_by": "구현 참조"
+    },
+    "copy_link": "작업 항목 링크 복사",
+    "delete": {
+      "label": "작업 항목 삭제",
+      "error": "작업 항목 삭제 중 오류 발생"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "작업 항목이 성공적으로 구독되었습니다",
+        "unsubscribed": "작업 항목 구독이 성공적으로 취소되었습니다"
+      }
+    },
+    "select": {
+      "error": "최소 하나의 작업 항목을 선택하세요",
+      "empty": "선택된 작업 항목 없음",
+      "add_selected": "선택된 작업 항목 추가",
+      "select_all": "모두 선택",
+      "deselect_all": "모두 선택 해제"
+    },
+    "open_in_full_screen": "작업 항목을 전체 화면으로 열기",
+    "vote": {
+      "click_to_upvote": "클릭하여 추천",
+      "click_to_downvote": "클릭하여 비추천",
+      "click_to_view_upvotes": "클릭하여 추천 목록 보기",
+      "click_to_view_downvotes": "클릭하여 비추천 목록 보기"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "하위 작업 항목이 성공적으로 업데이트되었습니다",
+      "error": "하위 작업 항목 업데이트 중 오류 발생"
+    },
+    "remove": {
+      "success": "하위 작업 항목이 성공적으로 제거되었습니다",
+      "error": "하위 작업 항목 제거 중 오류 발생"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "적용된 필터에 일치하는 하위 작업 항목이 없습니다.",
+        "description": "모든 하위 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      },
+      "list_filters": {
+        "title": "적용된 필터에 일치하는 작업 항목이 없습니다.",
+        "description": "모든 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "일치하는 작업 항목 없음"
+      },
+      "no_issues": {
+        "title": "작업 항목 없음"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "댓글 없음",
+        "description": "댓글은 작업 항목에 대한 토론 및 후속 공간으로 사용할 수 있습니다"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "작업 항목을 아카이브할 수 없습니다",
+        "message": "완료됨 또는 취소됨 상태 그룹에 속한 작업 항목만 아카이브할 수 있습니다."
+      },
+      "invalid_issue_start_date": {
+        "title": "작업 항목을 업데이트할 수 없습니다",
+        "message": "선택한 시작 날짜가 일부 작업 항목의 마감일을 초과합니다. 시작 날짜가 마감일 이전인지 확인하세요."
+      },
+      "invalid_issue_target_date": {
+        "title": "작업 항목을 업데이트할 수 없습니다",
+        "message": "선택한 마감일이 일부 작업 항목의 시작 날짜보다 앞섭니다. 마감일이 시작 날짜 이후인지 확인하세요."
+      },
+      "invalid_state_transition": {
+        "title": "작업 항목을 업데이트할 수 없습니다",
+        "message": "일부 작업 항목에 대해 상태 변경이 허용되지 않습니다. 상태 변경이 허용되는지 확인하세요."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "워크플로우 활성화",
+        "description": "워크 아이템 이동을 제어할 수 있도록 워크플로우를 설정하세요.",
+        "no_states_tooltip": "워크플로우에 추가된 스테이트가 없습니다.",
+        "toast": {
+          "loading": {
+            "enabling": "워크플로우 활성화 중",
+            "disabling": "워크플로우 비활성화 중"
+          },
+          "success": {
+            "title": "성공!",
+            "message": "워크플로우가 성공적으로 활성화되었습니다."
+          },
+          "error": {
+            "title": "오류!",
+            "message": "워크플로우를 활성화하지 못했습니다. 다시 시도해 주세요."
+          }
+        }
+      },
+      "heading": "워크플로우",
+      "description": "워크 아이템 전환을 자동화하고 작업이 프로젝트 파이프라인을 따라 어떻게 이동하는지 제어하는 규칙을 설정하세요.",
+      "add_button": "새 워크플로우 추가",
+      "search": "워크플로우 검색",
+      "detail": {
+        "define": "워크플로우 정의",
+        "add_states": "스테이트 추가",
+        "unmapped_states": {
+          "title": "매핑되지 않은 스테이트가 감지되었습니다",
+          "description": "선택한 타입의 일부 워크 아이템이 현재 이 워크플로우에 존재하지 않는 스테이트에 있습니다.",
+          "note": "이 워크플로우를 활성화하면 해당 항목은 이 워크플로우의 초기 스테이트로 자동 이동합니다.",
+          "label": "누락된 스테이트",
+          "tooltip": "일부 워크 아이템이 이 워크플로우에 매핑되지 않은 스테이트에 있습니다. 검토하려면 워크플로우를 여세요."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "모든 스테이트가 이미 사용 중입니다",
+          "description": "이 프로젝트에 정의된 모든 스테이트가 이미 현재 워크플로우에 포함되어 있습니다."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "이 워크플로우는 어떤 워크플로우에도 할당되지 않은 모든 워크 아이템 타입에 적용됩니다."
+      },
+      "create": {
+        "heading": "새 워크플로우 만들기"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "반복 작업 항목",
+      "description": "반복 작업을 한 번 설정하고, 반복을 관리해 드립니다. 시간이 되면 여기에 모두 표시됩니다.",
+      "new_recurring_work_item": "새 반복 작업 항목",
+      "update_recurring_work_item": "반복 작업 항목 수정",
+      "form": {
+        "interval": {
+          "title": "일정",
+          "start_date": {
+            "validation": {
+              "required": "시작일은 필수입니다"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "반복 유형은 필수입니다"
+            }
+          }
+        },
+        "button": {
+          "create": "반복 작업 항목 생성",
+          "update": "반복 작업 항목 수정"
+        }
+      },
+      "create_button": {
+        "label": "반복 작업 항목 생성",
+        "no_permission": "반복 작업 항목을 생성하려면 프로젝트 관리자에게 문의하세요"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "자동으로 처리되는 작업",
+        "description": "한 번만 설정하세요. 기한이 되면 자동으로 다시 생성됩니다. 반복 작업을 더 쉽게 하려면 비즈니스 요금제로 업그레이드하세요."
+      },
+      "no_templates": {
+        "button": "첫 반복 작업 항목 생성"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "반복 작업 항목이 생성되었습니다",
+          "message": "{name} 반복 작업 항목이 워크스페이스에서 사용할 수 있습니다."
+        },
+        "error": {
+          "title": "반복 작업 항목을 생성하지 못했습니다.",
+          "message": "다시 한 번 저장하거나, 새 반복 작업 항목에 복사해 보세요. 가능하다면 다른 탭에서 시도해 보세요."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "반복 작업 항목이 변경되었습니다",
+          "message": "{name} 반복 작업 항목이 변경되었습니다."
+        },
+        "error": {
+          "title": "반복 작업 항목 변경을 저장하지 못했습니다.",
+          "message": "다시 한 번 저장하거나, 나중에 이 반복 작업 항목으로 돌아와 주세요. 문제가 계속되면 문의해 주세요."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "반복 작업 항목이 삭제되었습니다",
+          "message": "{name} 반복 작업 항목이 워크스페이스에서 삭제되었습니다."
+        },
+        "error": {
+          "title": "반복 작업 항목을 삭제하지 못했습니다.",
+          "message": "다시 삭제를 시도하거나 나중에 다시 시도해 보세요. 계속 삭제할 수 없다면 문의해 주세요."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "반복 작업 항목 삭제",
+      "description": {
+        "prefix": "반복 작업 항목-",
+        "suffix": "을(를) 삭제하시겠습니까? 반복 작업 항목과 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
+      }
+    }
+  }
+}

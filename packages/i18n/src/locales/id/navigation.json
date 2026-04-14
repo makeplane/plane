@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "projects": "Projek",
+    "pages": "Halaman",
+    "new_work_item": "Item kerja baru",
+    "home": "Beranda",
+    "your_work": "Pekerjaan anda",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Views",
+    "analytics": "Analitik",
+    "work_items": "Item kerja",
+    "cycles": "Siklus",
+    "modules": "Modul",
+    "intake": "Intake",
+    "drafts": "Draft",
+    "favorites": "Favorit",
+    "pro": "Pro",
+    "upgrade": "Upgrade",
+    "pi_chat": "Plane AI",
+    "initiatives": "Inisiatif",
+    "teamspaces": "Teamspaces",
+    "epics": "Epics",
+    "upgrade_plan": "Tingkatkan paket",
+    "plane_pro": "Plane Pro",
+    "business": "Bisnis",
+    "customers": "Pelanggan",
+    "recurring_work_items": "Tugas Berulang"
+  },
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Tidak ada hasil ditemukan"
+      }
+    }
+  }
+}

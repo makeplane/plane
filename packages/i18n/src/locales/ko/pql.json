@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "현재 날짜 및 시간"
+        },
+        "today": {
+          "description": "오늘 날짜"
+        },
+        "start_of_day": {
+          "description": "오늘 시작"
+        },
+        "end_of_day": {
+          "description": "오늘 종료"
+        },
+        "start_of_week": {
+          "description": "이번 주 시작"
+        },
+        "end_of_week": {
+          "description": "이번 주 종료"
+        },
+        "start_of_month": {
+          "description": "이번 달 시작"
+        },
+        "end_of_month": {
+          "description": "이번 달 종료"
+        },
+        "start_of_year": {
+          "description": "올해 시작"
+        },
+        "end_of_year": {
+          "description": "올해 종료"
+        },
+        "days_ago": {
+          "description": "n일 전 날짜"
+        },
+        "days_from_now": {
+          "description": "n일 후 날짜"
+        },
+        "weeks_ago": {
+          "description": "n주 전 날짜"
+        },
+        "weeks_from_now": {
+          "description": "n주 후 날짜"
+        },
+        "months_ago": {
+          "description": "n달 전 날짜"
+        },
+        "months_from_now": {
+          "description": "n달 후 날짜"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "현재 로그인한 사용자"
+        },
+        "members_of": {
+          "description": "\"project:<id>\" 또는 \"teamspace:<id>\"의 멤버"
+        },
+        "workspace_members": {
+          "description": "모든 워크스페이스 멤버"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "오늘 활성 사이클"
+        },
+        "completed_cycles": {
+          "description": "종료일이 지난 사이클"
+        },
+        "upcoming_cycles": {
+          "description": "시작일이 미래인 사이클"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "마감일이 지났고 상태가 열려 있음"
+        },
+        "has_no_assignee": {
+          "description": "작업 항목에 담당자가 없음"
+        },
+        "has_no_label": {
+          "description": "작업 항목에 레이블이 없음"
+        },
+        "is_top_level": {
+          "description": "하위 작업 항목이 아님 (상위 항목 없음)"
+        },
+        "is_sub_work_item": {
+          "description": "하위 작업 항목 (상위 항목 있음)"
+        },
+        "is_epic": {
+          "description": "에픽"
+        },
+        "is_intake": {
+          "description": "접수 작업 항목"
+        },
+        "is_draft": {
+          "description": "초안 작업 항목"
+        },
+        "is_archived": {
+          "description": "보관됨"
+        },
+        "has_children": {
+          "description": "하위 작업 항목이 하나 이상 있음"
+        },
+        "has_start_and_due_dates": {
+          "description": "시작일과 마감일이 모두 있음"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "주어진 작업 항목과 관련된 작업 항목"
+        },
+        "blocked_by": {
+          "description": "주어진 작업 항목에 의해 차단된 작업 항목"
+        },
+        "blocks": {
+          "description": "주어진 작업 항목을 차단하는 작업 항목"
+        },
+        "child_of": {
+          "description": "주어진 작업 항목의 하위 작업 항목"
+        },
+        "parent_of": {
+          "description": "주어진 작업 항목의 상위 작업 항목"
+        },
+        "duplicate_of": {
+          "description": "주어진 작업 항목의 중복으로 표시된 작업 항목"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "필드가 이 값으로 설정된 적 있음"
+        },
+        "was": {
+          "description": "필드가 이전에 이 값이었음 (변경됨)"
+        },
+        "changed_from": {
+          "description": "필드가 이 값에서 변경됨"
+        },
+        "changed_to": {
+          "description": "필드가 이 값으로 변경됨"
+        },
+        "changed": {
+          "description": "필드가 변경됨"
+        },
+        "updated_by": {
+          "description": "이 사용자가 업데이트한 작업 항목"
+        },
+        "commented_by": {
+          "description": "이 사용자가 댓글을 단 작업 항목"
+        },
+        "field_changed_by": {
+          "description": "이 사용자가 변경한 필드"
+        },
+        "was_assigned_to": {
+          "description": "이 사용자에게 할당된 작업 항목"
+        },
+        "changed_after": {
+          "description": "이 날짜 이후에 변경된 필드"
+        },
+        "changed_before": {
+          "description": "이 날짜 이전에 변경된 필드"
+        },
+        "field_changed_after": {
+          "description": "이 날짜 이후에 변경된 필드"
+        },
+        "field_changed_before": {
+          "description": "이 날짜 이전에 변경된 필드"
+        },
+        "changed_to_after": {
+          "description": "이 날짜 이후에 이 값으로 변경된 필드"
+        },
+        "changed_to_before": {
+          "description": "이 날짜 이전에 이 값으로 변경된 필드"
+        },
+        "field_changed_between": {
+          "description": "이 날짜들 사이에 변경된 필드"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "탐색",
+      "accept": "수락",
+      "close": "닫기",
+      "pick_date": "날짜 선택"
+    },
+    "placeholder": "쿼리를 입력하고 \"ENTER\"를 눌러 필터링하세요...",
+    "error": "쿼리 제출 중 오류가 발생했습니다. 확인 후 다시 시도하세요."
+  }
+}

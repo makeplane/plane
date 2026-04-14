@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "작업 항목 만들기",
+      "sub-title": "팀에 어떤 작업을 원하는지 알려주세요.",
+      "name": "이름",
+      "email": "이메일",
+      "about": "이 작업 항목은 무엇에 관한 것인가요?",
+      "description": "무슨 일이 일어나야 하는지 설명하세요",
+      "description_placeholder": "팀이 상황과 요구 사항을 파악할 수 있도록 필요한 만큼 자세히 작성해 주세요.",
+      "loading": "만드는 중",
+      "create_work_item": "작업 항목 만들기",
+      "errors": {
+        "name": "이름은 필수입니다",
+        "name_max_length": "이름은 255자 미만이어야 합니다",
+        "email": "이메일은 필수입니다",
+        "email_invalid": "유효하지 않은 이메일 주소입니다",
+        "title": "제목은 필수입니다",
+        "title_max_length": "제목은 255자 미만이어야 합니다"
+      }
+    },
+    "success": {
+      "title": "작업 항목이 팀 대기열에 추가되었습니다.",
+      "description": "팀에서 이 작업 항목을 인테이크 대기열에서 승인하거나 삭제할 수 있습니다.",
+      "primary_button": {
+        "text": "다른 작업 항목 추가"
+      },
+      "secondary_button": {
+        "text": "인테이크 자세히 알아보기"
+      }
+    },
+    "how_it_works": {
+      "title": "작동 방식",
+      "heading": "인테이크 양식입니다.",
+      "description": "인테이크는 프로젝트 관리자와 매니저가 외부의 작업 항목을 프로젝트로 가져올 수 있는 Plane 기능입니다.",
+      "steps": {
+        "step_1": "이 간단한 양식으로 Plane 프로젝트에 새 작업 항목을 만들 수 있습니다.",
+        "step_2": "이 양식을 제출하면 해당 프로젝트의 인테이크에 새 작업 항목이 생성됩니다.",
+        "step_3": "해당 프로젝트 또는 팀의 누군가가 검토합니다.",
+        "step_4": "승인되면 이 작업 항목은 프로젝트의 작업 대기열로 이동합니다. 그렇지 않으면 거부됩니다.",
+        "step_5": "해당 작업 항목의 상태를 확인하려면 프로젝트 매니저, 관리자 또는 이 페이지 링크를 보낸 분에게 연락하세요."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "작업 항목 유형 선택",
+        "search_placeholder": "작업 항목 유형 검색"
+      },
+      "actions": {
+        "select_properties": "속성 선택"
+      }
+    }
+  }
+}

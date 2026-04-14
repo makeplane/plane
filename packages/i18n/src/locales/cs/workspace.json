@@ -1,0 +1,380 @@
+{
+  "workspace_creation": {
+    "heading": "Vytvořte si pracovní prostor",
+    "subheading": "Pro používání Plane musíte vytvořit nebo se připojit k pracovnímu prostoru.",
+    "form": {
+      "name": {
+        "label": "Pojmenujte svůj pracovní prostor",
+        "placeholder": "Vhodné je použít něco známého a rozpoznatelného."
+      },
+      "url": {
+        "label": "Nastavte URL vašeho prostoru",
+        "placeholder": "Zadejte nebo vložte URL",
+        "edit_slug": "Můžete upravit pouze část URL (slug)"
+      },
+      "organization_size": {
+        "label": "Kolik lidí bude tento prostor používat?",
+        "placeholder": "Vyberte rozsah"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Pouze správce instance může vytvářet pracovní prostory",
+        "description": "Pokud znáte e-mail správce instance, klikněte na tlačítko níže pro kontakt.",
+        "request_button": "Požádat správce instance"
+      },
+      "validation": {
+        "name_alphanumeric": "Názvy pracovních prostorů mohou obsahovat pouze (' '), ('-'), ('_') a alfanumerické znaky.",
+        "name_length": "Název omezen na 80 znaků.",
+        "url_alphanumeric": "URL mohou obsahovat pouze ('-') a alfanumerické znaky.",
+        "url_length": "URL omezena na 48 znaků.",
+        "url_already_taken": "URL pracovního prostoru je již obsazena!"
+      }
+    },
+    "request_email": {
+      "subject": "Žádost o nový pracovní prostor",
+      "body": "Ahoj správci,\n\nProsím vytvořte nový pracovní prostor s URL [/workspace-name] pro [účel vytvoření].\n\nDíky,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Vytvořit pracovní prostor",
+      "loading": "Vytváření pracovního prostoru"
+    },
+    "toast": {
+      "success": {
+        "title": "Úspěch",
+        "message": "Pracovní prostor úspěšně vytvořen"
+      },
+      "error": {
+        "title": "Chyba",
+        "message": "Vytvoření pracovního prostoru se nezdařilo. Zkuste to prosím znovu."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Přehled projektů, aktivit a metrik",
+        "description": "Vítejte v Plane, jsme rádi, že jste zde. Vytvořte první projekt, sledujte pracovní položky a tato stránka se promění v prostor pro váš pokrok. Správci zde uvidí i položky pomáhající týmu.",
+        "primary_button": {
+          "text": "Vytvořte první projekt",
+          "comic": {
+            "title": "Vše začíná projektem v Plane",
+            "description": "Projektem může být roadmapa produktu, marketingová kampaň nebo uvedení nového auta."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analytika",
+    "page_label": "{workspace} - Analytika",
+    "open_tasks": "Celkem otevřených úkolů",
+    "error": "Při načítání dat došlo k chybě.",
+    "work_items_closed_in": "Pracovní položky uzavřené v",
+    "selected_projects": "Vybrané projekty",
+    "total_members": "Celkem členů",
+    "total_cycles": "Celkem cyklů",
+    "total_modules": "Celkem modulů",
+    "pending_work_items": {
+      "title": "Čekající pracovní položky",
+      "empty_state": "Zde se zobrazí analýza čekajících položek podle spolupracovníků."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Pracovní položky uzavřené v roce",
+      "empty_state": "Uzavírejte položky pro zobrazení analýzy v grafu."
+    },
+    "most_work_items_created": {
+      "title": "Nejvíce vytvořených položek",
+      "empty_state": "Zobrazí se spolupracovníci a počet jimi vytvořených položek."
+    },
+    "most_work_items_closed": {
+      "title": "Nejvíce uzavřených položek",
+      "empty_state": "Zobrazí se spolupracovníci a počet jimi uzavřených položek."
+    },
+    "tabs": {
+      "scope_and_demand": "Rozsah a poptávka",
+      "custom": "Vlastní analytika"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí.",
+        "title": "Zatím žádná data"
+      },
+      "created_vs_resolved": {
+        "description": "Pracovní položky vytvořené a vyřešené v průběhu času se zde zobrazí.",
+        "title": "Zatím žádná data"
+      },
+      "project_insights": {
+        "title": "Zatím žádná data",
+        "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí."
+      },
+      "general": {
+        "title": "Sledujte pokrok, pracovní zátěž a alokace. Odhalte trendy, odstraňte překážky a zrychlete práci",
+        "description": "Porovnávejte rozsah s poptávkou, odhady a rozšiřování rozsahu. Získejte výkonnost podle členů týmu a týmů a zajistěte, aby váš projekt běžel včas.",
+        "primary_button": {
+          "text": "Začněte svůj první projekt",
+          "comic": {
+            "title": "Analytika funguje nejlépe s Cykly + Moduly",
+            "description": "Nejprve časově ohraničte své problémy do Cyklů a pokud můžete, seskupte problémy, které trvají déle než jeden cyklus, do Modulů. Podívejte se na obojí v levé navigaci."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Zatím žádná data",
+        "description": "Analýza postupu cyklu se zobrazí zde. Přidejte pracovní položky do cyklů, abyste mohli sledovat postup."
+      },
+      "module_progress": {
+        "title": "Zatím žádná data",
+        "description": "Analýza postupu modulu se zobrazí zde. Přidejte pracovní položky do modulů, abyste mohli sledovat postup."
+      },
+      "intake_trends": {
+        "title": "Zatím žádná data",
+        "description": "Analýza trendů příjmu se zobrazí zde. Přidejte pracovní položky do příjmu, abyste mohli sledovat trendy."
+      }
+    },
+    "created_vs_resolved": "Vytvořeno vs Vyřešeno",
+    "customized_insights": "Přizpůsobené přehledy",
+    "backlog_work_items": "Backlog {entity}",
+    "active_projects": "Aktivní projekty",
+    "trend_on_charts": "Trend na grafech",
+    "all_projects": "Všechny projekty",
+    "summary_of_projects": "Souhrn projektů",
+    "project_insights": "Přehled projektu",
+    "started_work_items": "Zahájené {entity}",
+    "total_work_items": "Celkový počet {entity}",
+    "total_projects": "Celkový počet projektů",
+    "total_admins": "Celkový počet administrátorů",
+    "total_users": "Celkový počet uživatelů",
+    "total_intake": "Celkový příjem",
+    "un_started_work_items": "Nezahájené {entity}",
+    "total_guests": "Celkový počet hostů",
+    "completed_work_items": "Dokončené {entity}",
+    "total": "Celkový počet {entity}",
+    "projects_by_status": "Projekty podle stavu",
+    "active_users": "Aktivní uživatelé",
+    "intake_trends": "Trendy příjmů",
+    "workitem_resolved_vs_pending": "Vyřešené vs. čekající pracovní položky",
+    "upgrade_to_plan": "Přejděte na plán {plan}, abyste odemkli kartu {tab}"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",
+    "create": {
+      "label": "Přidat projekt"
+    },
+    "network": {
+      "label": "Síť",
+      "private": {
+        "title": "Soukromý",
+        "description": "Přístupné pouze na pozvání"
+      },
+      "public": {
+        "title": "Veřejný",
+        "description": "Kdokoli v prostoru kromě hostů se může připojit"
+      }
+    },
+    "error": {
+      "permission": "Nemáte oprávnění k této akci.",
+      "cycle_delete": "Odstranění cyklu se nezdařilo",
+      "module_delete": "Odstranění modulu se nezdařilo",
+      "issue_delete": "Odstranění pracovní položky se nezdařilo"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Nezačato",
+      "started": "Zahájeno",
+      "completed": "Dokončeno",
+      "cancelled": "Zrušeno"
+    },
+    "sort": {
+      "manual": "Ručně",
+      "name": "Název",
+      "created_at": "Datum vytvoření",
+      "members_length": "Počet členů"
+    },
+    "scope": {
+      "my_projects": "Moje projekty",
+      "archived_projects": "Archivované"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# měsíc} few{# měsíce} other{# měsíců}}",
+      "days_count": "{days, plural, one{# den} few{# dny} other{# dní}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Žádné aktivní projekty",
+        "description": "Projekt je nadřazený cílům. Projekty obsahují Úkoly, Cykly a Moduly. Vytvořte nový nebo filtrujte archivované.",
+        "primary_button": {
+          "text": "Začněte první projekt",
+          "comic": {
+            "title": "Vše začíná projektem v Plane",
+            "description": "Projektem může být roadmapa produktu, marketingová kampaň nebo uvedení nového auta."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Žádné projekty",
+        "description": "Pro vytváření pracovních položek potřebujete vytvořit nebo být součástí projektu.",
+        "primary_button": {
+          "text": "Začněte první projekt",
+          "comic": {
+            "title": "Vše začíná projektem v Plane",
+            "description": "Projektem může být roadmapa produktu, marketingová kampaň nebo uvedení nového auta."
+          }
+        }
+      },
+      "filter": {
+        "title": "Žádné odpovídající projekty",
+        "description": "Nenalezeny projekty odpovídající kritériím.\n Vytvořte nový."
+      },
+      "search": {
+        "description": "Nenalezeny projekty odpovídající kritériím.\nVytvořte nový."
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Přidat pohled",
+    "empty_state": {
+      "all-issues": {
+        "title": "Žádné pracovní položky v projektu",
+        "description": "Vytvořte první položku a sledujte svůj pokrok!",
+        "primary_button": {
+          "text": "Vytvořit pracovní položku"
+        }
+      },
+      "assigned": {
+        "title": "Žádné přiřazené položky",
+        "description": "Zde uvidíte položky přiřazené vám.",
+        "primary_button": {
+          "text": "Vytvořit pracovní položku"
+        }
+      },
+      "created": {
+        "title": "Žádné vytvořené položky",
+        "description": "Zde jsou položky, které jste vytvořili.",
+        "primary_button": {
+          "text": "Vytvořit pracovní položku"
+        }
+      },
+      "subscribed": {
+        "title": "Žádné odebírané položky",
+        "description": "Přihlaste se k odběru položek, které vás zajímají."
+      },
+      "custom-view": {
+        "title": "Žádné odpovídající položky",
+        "description": "Zobrazí se položky odpovídající filtru."
+      }
+    },
+    "delete_view": {
+      "title": "Opravdu chcete smazat tento pohled?",
+      "content": "Pokud potvrdíte, všechny možnosti řazení, filtrování a zobrazení + rozvržení, které jste vybrali pro tento pohled, budou trvale odstraněny a nelze je obnovit."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Vytvořit koncept položky",
+    "empty_state": {
+      "title": "Rozpracované položky a komentáře se zde zobrazí.",
+      "description": "Začněte vytvářet položku a nechte ji rozpracovanou.",
+      "primary_button": {
+        "text": "Vytvořit první koncept"
+      }
+    },
+    "delete_modal": {
+      "title": "Smazat koncept",
+      "description": "Opravdu chcete smazat tento koncept? Akce je nevratná."
+    },
+    "toasts": {
+      "created": {
+        "success": "Koncept vytvořen",
+        "error": "Vytvoření se nezdařilo"
+      },
+      "deleted": {
+        "success": "Koncept smazán"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Napište poznámku, dokument nebo celou znalostní bázi. Získejte pomoc od Galilea, AI asistenta Plane, abyste začali",
+        "description": "Stránky jsou prostor pro myšlenky v Plane. Zaznamenejte si poznámky z jednání, snadno je naformátujte, vložte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte je všechny v kontextu vašeho projektu. Abychom usnadnili práci s jakýmkoli dokumentem, vyvolejte Galilea, AI Plane, pomocí zkratky nebo kliknutím na tlačítko.",
+        "primary_button": {
+          "text": "Vytvořit svou první stránku"
+        }
+      },
+      "private": {
+        "title": "Zatím žádné soukromé stránky",
+        "description": "Udržujte své soukromé myšlenky zde. Až budete připraveni sdílet, tým je jen na kliknutí daleko.",
+        "primary_button": {
+          "text": "Vytvořit svou první stránku"
+        }
+      },
+      "public": {
+        "title": "Zatím žádné stránky pracovního prostoru",
+        "description": "Zde uvidíte stránky sdílené se všemi ve vašem pracovním prostoru.",
+        "primary_button": {
+          "text": "Vytvořit svou první stránku"
+        }
+      },
+      "archived": {
+        "title": "Zatím žádné archivované stránky",
+        "description": "Archivujte stránky, které nejsou na vašem radaru. Zde k nim získáte přístup, když je potřebujete."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Žádné aktivní cykly",
+        "description": "Cyklus vašich projektů, který zahrnuje jakékoli období, které zahrnuje dnešní datum ve svém rozsahu. Najděte pokrok a detaily všech vašich aktivních cyklů zde."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Importovat členy z CSV",
+      "description": "Nahrajte CSV se sloupci: Email, Display Name, First Name, Last Name, Role (5, 15 nebo 20)",
+      "dropzone": {
+        "active": "Přetáhněte CSV soubor sem",
+        "inactive": "Přetáhněte nebo klikněte pro nahrání",
+        "file_type": "Podporovány jsou pouze soubory .csv"
+      },
+      "buttons": {
+        "cancel": "Zrušit",
+        "import": "Importovat",
+        "try_again": "Zkusit znovu",
+        "close": "Zavřít",
+        "done": "Hotovo"
+      },
+      "progress": {
+        "uploading": "Nahrávání...",
+        "importing": "Importování..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Import selhal",
+          "complete": "Import dokončen"
+        },
+        "message": {
+          "seat_limit": "Nelze importovat členy kvůli omezení počtu míst.",
+          "success": "Úspěšně přidáno {count} člen{plural} do pracovního prostoru.",
+          "no_imports": "Ze souboru CSV nebyli importováni žádní členové."
+        },
+        "stats": {
+          "successful": "Úspěšné",
+          "failed": "Neúspěšné"
+        },
+        "download_errors": "Stáhnout chyby"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Neplatný soubor",
+          "message": "Podporovány jsou pouze CSV soubory."
+        },
+        "import_failed": {
+          "title": "Import selhal",
+          "message": "Něco se pokazilo."
+        }
+      }
+    }
+  }
+}

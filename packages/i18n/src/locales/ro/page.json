@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "Conectează pagini",
+    "show_wiki_pages": "Afișează pagini Wiki",
+    "link_pages_to": "Conectează pagini la",
+    "linked_pages": "Pagini conectate",
+    "no_description": "Această pagină este goală. Scrie ceva aici și vezi-l aici ca acest spațiu rezervat",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Pagini actualizate",
+          "message": "Pagini actualizate cu succes"
+        },
+        "error": {
+          "title": "Pagini năo actualizate",
+          "message": "Pagini năo pot fi actualizate"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Pagini șterse",
+          "message": "Pagini șterse cu succes"
+        },
+        "error": {
+          "title": "Pagini năo șterse",
+          "message": "Pagini năo pot fi șterse"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Contur",
+        "empty_state": {
+          "title": "Titluri lipsă",
+          "description": "Să punem câteva titluri în această pagină pentru a le vedea aici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Cuvinte",
+          "characters": "Caractere",
+          "paragraphs": "Paragrafe",
+          "read_time": "Timp de citire"
+        },
+        "actors_info": {
+          "edited_by": "Editat de",
+          "created_by": "Creat de"
+        },
+        "version_history": {
+          "label": "Istoricul versiunilor",
+          "current_version": "Versiunea curentă",
+          "highlight_changes": "Evidențiază modificările"
+        }
+      },
+      "assets": {
+        "label": "Resurse",
+        "download_button": "Descarcă",
+        "empty_state": {
+          "title": "Imagini lipsă",
+          "description": "Adăugați imagini pentru a le vedea aici."
+        }
+      }
+    },
+    "open_button": "Deschide panoul de navigare",
+    "close_button": "Închide panoul de navigare",
+    "outline_floating_button": "Deschide conturul"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "Caută colecții wiki, proiecte și spații de echipă",
+        "project_to_project_with_wiki": "Caută colecții wiki și proiecte",
+        "teamspace_to_all_with_wiki": "Caută colecții wiki, proiecte și spații de echipă"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "Mutată în wiki",
+          "message": "Pagina a fost mutată în wiki, dar nu a putut fi adăugată la colecția selectată. Rămâne în General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Elimină din colecție",
+      "success_message": "Pagina a fost eliminată din colecție.",
+      "error_message": "Pagina nu a putut fi eliminată din colecție. Te rugăm să încerci din nou."
+    }
+  }
+}

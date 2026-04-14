@@ -1,0 +1,106 @@
+{
+  "initiatives": {
+    "overview": "Overview",
+    "label": "Initiatives",
+    "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
+    "add_initiative": "Add Initiative",
+    "create_initiative": "Create Initiative",
+    "update_initiative": "Update Initiative",
+    "initiative_name": "Initiative name",
+    "all_initiatives": "All Initiatives",
+    "delete_initiative": "Delete Initiative",
+    "fill_all_required_fields": "Please fill in all required fields.",
+    "archive_initiative": "Archive Initiative",
+    "archive_confirm_message": "Are you sure you want to archive the initiative? All your archived initiatives can be restored later.",
+    "archive_description": "Only completed or closed initiatives can be archived",
+    "toast": {
+      "create_success": "Initiative {name} created successfully.",
+      "create_error": "Failed to create initiative. Please try again!",
+      "update_success": "Initiative {name} updated successfully.",
+      "update_error": "Failed to update initiative. Please try again!",
+      "delete": {
+        "success": "Initiative deleted successfully.",
+        "error": "Failed to delete Initiative"
+      },
+      "archive": {
+        "success": "Initiative archived successfully.",
+        "error": "Failed to archive Initiative",
+        "initiative_cannot_be_archived_in_this_state": "Initiative cannot be archived in this state"
+      },
+      "restore": {
+        "error": "Initiative could not be restored. Please try again."
+      },
+      "link_copied": "Initiative link copied to clipboard.",
+      "project_update_success": "Initiative projects updated successfully.",
+      "project_update_error": "Failed to update initiative projects. Please try again!",
+      "epic_update_success": "Epic{count, plural, one { added to Initiative successfully.} other {s added to Initiative successfully.}}",
+      "epic_update_error": "Epic addition to Initiative failed. Please try again later.",
+      "state_update_success": "Initiative state updated successfully.",
+      "state_update_error": "Failed to update initiative state. Please try again!",
+      "label_update_error": "Failed to update initiative labels. Please try again!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organize work at the highest level with Initiatives",
+        "description": "When you need to organize work spanning several projects and teams, Initiatives come in handy. Connect projects and epics to initiatives, see automatically rolled up updates, and see the forests before you get to the trees.",
+        "primary_button": {
+          "text": "Create an initiative"
+        }
+      },
+      "search": {
+        "title": "No matching initiatives",
+        "description": "No initiatives detected with the matching criteria.\n Create a new initiative instead.",
+        "archived_description": "No archived initiatives detected with the matching criteria."
+      },
+      "not_found": {
+        "title": "Initiative does not exist",
+        "description": "The initiative you are looking for does not exist, has been archived, or has been deleted.",
+        "primary_button": {
+          "text": "View other Initiatives"
+        }
+      },
+      "epics": {
+        "title": "You don't have epics that match the filters you have applied.",
+        "subHeading": "To see all epics, clear all applied filters.",
+        "action": "Clear filters"
+      }
+    },
+    "scope": {
+      "view_scope": "View scope",
+      "breakdown": "Scope breakdown",
+      "add_scope": "Add scope",
+      "label": "Scope",
+      "empty_state": {
+        "title": "No scope added to this initiative yet",
+        "description": "Link projects and epics and track that work in this space.",
+        "description_projects": "Link projects and track that work in this space.",
+        "description_epics": "Link epics and track that work in this space.",
+        "primary_button": {
+          "text": "Add scope"
+        }
+      },
+      "board": {
+        "no_epics": "No epics in this initiative",
+        "no_projects": "No projects in this initiative",
+        "enable_project_states": "Project states not enabled",
+        "enable_project_states_description": "Enable project states from workspace settings to use state-based grouping."
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Labels",
+        "description": "Structure and organise your initiatives with labels."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Delete label",
+        "content": "Are you sure you want to delete {labelName}? This will remove the label from all the initiatives and from any views where the label is being filtered upon."
+      },
+      "toast": {
+        "delete_error": "Initiative label could not be deleted. Please try again.",
+        "label_already_exists": "Label already exists"
+      }
+    }
+  }
+}

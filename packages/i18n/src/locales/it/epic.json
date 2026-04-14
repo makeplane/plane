@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Tutti gli Epic",
+    "label": "{count, plural, one {Epic} other {Epic}}",
+    "new": "Nuovo Epic",
+    "adding": "Aggiungendo Epic",
+    "create": {
+      "success": "Epic creato con successo"
+    },
+    "add": {
+      "press_enter": "Premi 'Invio' per aggiungere un altro Epic",
+      "label": "Aggiungi Epic"
+    },
+    "title": {
+      "label": "Titolo Epic",
+      "required": "Il titolo dell'Epic è obbligatorio."
+    },
+    "archive": {
+      "description": "Solo gli epic completati o annullati\npossono essere archiviati",
+      "label": "Archivia Epic",
+      "confirm_message": "Sei sicuro di voler archiviare l'epic? Tutti i tuoi epic archiviati possono essere ripristinati in seguito.",
+      "success": {
+        "label": "Archiviazione riuscita",
+        "message": "I tuoi archivi si trovano negli archivi del progetto."
+      },
+      "failed": {
+        "message": "Impossibile archiviare l'epic. Riprova."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epiche",
+    "no_epics_selected": "Nessuna epica selezionata",
+    "add_selected_epics": "Aggiungi epiche selezionate",
+    "epic_link_copied_to_clipboard": "Link dell'epica copiato negli appunti.",
+    "project_link_copied_to_clipboard": "Link del progetto copiato negli appunti",
+    "empty_state": {
+      "general": {
+        "title": "Crea un'epica e assegnala a qualcuno, anche a te stesso",
+        "description": "Per corpi di lavoro più grandi che attraversano diversi cicli e possono vivere su più moduli, crea un'epica. Collega elementi di lavoro e elementi di lavoro secondari in un progetto a un'epica e salta in un elemento di lavoro dalla panoramica.",
+        "primary_button": {
+          "text": "Crea un'epica"
+        }
+      },
+      "section": {
+        "title": "Nessuna epica ancora",
+        "description": "Inizia aggiungendo epiche per gestire e tracciare il progresso.",
+        "primary_button": {
+          "text": "Aggiungi epiche"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Nessuna epica corrispondente trovata"
+      },
+      "no_epics": {
+        "title": "Nessuna epica trovata"
+      }
+    }
+  }
+}

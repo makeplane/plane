@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Ruang Tim",
+    "empty_state": {
+      "general": {
+        "title": "Ruang Tim membuka organisasi dan pelacakan yang lebih baik di Plane.",
+        "description": "Buat permukaan khusus untuk setiap tim dunia nyata, terpisah dari semua permukaan kerja lain di Plane, dan sesuaikan dengan cara kerja tim Anda.",
+        "primary_button": {
+          "text": "Buat ruang tim baru"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Anda belum menautkan ruang tim apa pun.",
+          "description": "Pemilik ruang tim dan proyek dapat mengelola akses ke proyek."
+        }
+      },
+      "primary_button": {
+        "text": "Tautkan ruang tim"
+      },
+      "secondary_button": {
+        "text": "Pelajari lebih lanjut"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nama ruang tim",
+          "members": "Anggota",
+          "accountType": "Tipe akun"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Hapus ruang tim"
+            },
+            "confirm": {
+              "title": "Hapus {teamspaceName} dari {projectName}",
+              "description": "Saat Anda menghapus ruang tim ini dari proyek tertaut, anggota di sini akan kehilangan akses ke proyek tertaut."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Tidak ada ruang tim yang cocok ditemukan"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Anda menautkan ruang tim ke proyek ini.} other {Anda menautkan # ruang tim ke proyek ini.}}",
+            "description": "{additionalCount, plural, =0 {Ruang tim {firstTeamspaceName} sekarang tertaut ke proyek ini.} other {Ruang tim {firstTeamspaceName} dan {additionalCount} lainnya sekarang tertaut ke proyek ini.}}"
+          },
+          "error": {
+            "title": "Itu tidak berhasil.",
+            "description": "Coba lagi atau muat ulang halaman ini sebelum mencoba lagi."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Anda menghapus ruang tim itu dari proyek ini.",
+            "description": "Ruang tim {teamspaceName} telah dihapus dari {projectName}."
+          },
+          "error": {
+            "title": "Itu tidak berhasil.",
+            "description": "Coba lagi atau muat ulang halaman ini sebelum mencoba lagi."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Cari ruang tim",
+        "info": {
+          "title": "Menambahkan ruang tim memberikan akses ke proyek ini untuk semua anggota ruang tim.",
+          "link": "Pelajari lebih lanjut"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Anda tidak memiliki ruang tim untuk ditautkan.",
+            "description": "Anda tidak berada dalam ruang tim yang dapat Anda tautkan atau Anda telah menautkan semua ruang tim yang tersedia."
+          },
+          "no_results": {
+            "title": "Itu tidak cocok dengan ruang tim Anda.",
+            "description": "Coba istilah lain atau pastikan Anda memiliki ruang tim untuk ditautkan."
+          }
+        },
+        "primary_button": {
+          "text": "Tautkan ruang tim yang dipilih"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Buat item kerja khusus tim.",
+        "description": "Item kerja yang ditetapkan kepada anggota tim ini di proyek tertaut mana pun akan otomatis muncul di sini. Jika Anda berharap melihat beberapa item kerja di sini, pastikan proyek tertaut Anda memiliki item kerja yang ditetapkan ke anggota tim ini atau buat item kerja.",
+        "primary_button": {
+          "text": "Tambahkan item kerja ke proyek tertaut"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Tidak ada item kerja khusus tim untuk filter yang diterapkan",
+        "description": "Ubah beberapa filter tersebut atau hapus semuanya untuk melihat item kerja yang relevan dengan ruang ini.",
+        "secondary_button": {
+          "text": "Hapus semua filter"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki siklus aktif.",
+        "description": "Siklus aktif dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat siklus aktif, pastikan itu sedang berjalan di proyek tertaut saat ini."
+      },
+      "completed": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki siklus selesai.",
+        "description": "Siklus selesai dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat siklus selesai, pastikan itu juga selesai di proyek tertaut."
+      },
+      "upcoming": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki siklus mendatang.",
+        "description": "Siklus mendatang dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat siklus mendatang, pastikan itu ada di proyek tertaut juga."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Tampilan tim Anda tentang pekerjaan Anda tanpa mengganggu tampilan lain di workspace Anda",
+        "description": "Lihat pekerjaan tim Anda dalam tampilan yang disimpan hanya untuk tim Anda dan terpisah dari tampilan proyek.",
+        "primary_button": {
+          "text": "Buat tampilan"
+        }
+      },
+      "filter": {
+        "title": "Tidak ada tampilan yang cocok",
+        "description": "Tidak ada tampilan yang cocok dengan kriteria pencarian.\n Buat tampilan baru sebagai gantinya."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Simpan pengetahuan tim Anda di Halaman Tim.",
+        "description": "Tidak seperti halaman dalam proyek, Anda dapat menyimpan pengetahuan khusus untuk tim dalam kumpulan halaman terpisah di sini. Dapatkan semua fitur Halaman, buat dokumen praktik terbaik, dan wiki tim dengan mudah.",
+        "primary_button": {
+          "text": "Buat halaman tim pertama Anda"
+        }
+      },
+      "filter": {
+        "title": "Tidak ada halaman yang cocok",
+        "description": "Hapus filter untuk melihat semua halaman"
+      },
+      "search": {
+        "title": "Tidak ada halaman yang cocok",
+        "description": "Hapus kriteria pencarian untuk melihat semua halaman"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki item kerja yang dipublikasikan.",
+        "description": "Buat beberapa item kerja di satu atau lebih proyek tersebut untuk melihat kemajuan berdasarkan tanggal, status, dan prioritas."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Anda tidak memiliki item kerja yang memblokir rekan tim.",
+          "description": "Kerja bagus! Anda telah membersihkan jalur untuk tim Anda. Anda adalah pemain tim yang baik."
+        },
+        "blocked": {
+          "title": "Anda tidak memiliki item kerja rekan tim yang memblokir Anda.",
+          "description": "Kabar baik! Anda dapat membuat kemajuan pada semua item kerja yang ditugaskan kepada Anda."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Tidak ada proyek tertaut Anda yang memiliki item kerja yang dipublikasikan.",
+          "description": "Buat beberapa item kerja di satu atau lebih proyek tersebut untuk melihat distribusi pekerjaan berdasarkan proyek dan anggota tim."
+        },
+        "filter": {
+          "title": "Tidak ada statistik tim untuk filter yang diterapkan.",
+          "description": "Buat beberapa item kerja di satu atau lebih proyek tersebut untuk melihat distribusi pekerjaan berdasarkan proyek dan anggota tim."
+        }
+      }
+    }
+  }
+}

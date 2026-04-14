@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "Enlazar páginas",
+    "show_wiki_pages": "Mostrar páginas de wiki",
+    "link_pages_to": "Enlazar páginas a",
+    "linked_pages": "Páginas enlazadas",
+    "no_description": "Esta página está vacía. Escriba algo aquí y véalo como este marcador de posición",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Páginas actualizadas",
+          "message": "Páginas actualizadas con éxito"
+        },
+        "error": {
+          "title": "Páginas no actualizadas",
+          "message": "No se pudieron actualizar las páginas"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Página eliminada",
+          "message": "Página eliminada con éxito"
+        },
+        "error": {
+          "title": "Página no eliminada",
+          "message": "No se pudo eliminar la página"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Esquema",
+        "empty_state": {
+          "title": "Faltan encabezados",
+          "description": "Añade algunos encabezados a esta página para verlos aquí."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Palabras",
+          "characters": "Caracteres",
+          "paragraphs": "Párrafos",
+          "read_time": "Tiempo de lectura"
+        },
+        "actors_info": {
+          "edited_by": "Editado por",
+          "created_by": "Creado por"
+        },
+        "version_history": {
+          "label": "Historial de versiones",
+          "current_version": "Versión actual",
+          "highlight_changes": "Resaltar cambios"
+        }
+      },
+      "assets": {
+        "label": "Recursos",
+        "download_button": "Descargar",
+        "empty_state": {
+          "title": "Faltan imágenes",
+          "description": "Añade imágenes para verlas aquí."
+        }
+      }
+    },
+    "open_button": "Abrir panel de navegación",
+    "close_button": "Cerrar panel de navegación",
+    "outline_floating_button": "Abrir esquema"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "Buscar colecciones de wiki, proyectos y espacios de equipo",
+        "project_to_project_with_wiki": "Buscar colecciones de wiki y proyectos",
+        "teamspace_to_all_with_wiki": "Buscar colecciones de wiki, proyectos y espacios de equipo"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "Movida al wiki",
+          "message": "La página se movió al wiki, pero no pudo añadirse a la colección seleccionada. Permanece en General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Quitar de la colección",
+      "success_message": "Página quitada de la colección.",
+      "error_message": "No se pudo quitar la página de la colección. Inténtalo de nuevo."
+    }
+  }
+}

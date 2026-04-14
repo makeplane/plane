@@ -1,0 +1,379 @@
+{
+  "workspace_creation": {
+    "heading": "ワークスペースを作成",
+    "subheading": "Planeを使用するには、ワークスペースを作成するか参加する必要があります。",
+    "form": {
+      "name": {
+        "label": "ワークスペース名を設定",
+        "placeholder": "馴染みがあり認識しやすい名前が最適です。"
+      },
+      "url": {
+        "label": "ワークスペースのURLを設定",
+        "placeholder": "URLを入力または貼り付け",
+        "edit_slug": "URLのスラッグのみ編集可能です"
+      },
+      "organization_size": {
+        "label": "このワークスペースを何人で使用しますか？",
+        "placeholder": "範囲を選択"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "インスタンス管理者のみがワークスペースを作成できます",
+        "description": "インスタンス管理者のメールアドレスをご存知の場合は、下のボタンをクリックして連絡を取ってください。",
+        "request_button": "インスタンス管理者にリクエスト"
+      },
+      "validation": {
+        "name_alphanumeric": "ワークスペース名には (' '), ('-'), ('_') と英数字のみ使用できます。",
+        "name_length": "名前は80文字以内にしてください。",
+        "url_alphanumeric": "URLには ('-') と英数字のみ使用できます。",
+        "url_length": "URLは48文字以内にしてください。",
+        "url_already_taken": "ワークスペースのURLは既に使用されています！"
+      }
+    },
+    "request_email": {
+      "subject": "新規ワークスペースのリクエスト",
+      "body": "インスタンス管理者様\n\n[ワークスペース作成の目的]のために、URL [/workspace-name] の新規ワークスペースを作成していただけますでしょうか。\n\nよろしくお願いいたします。\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "ワークスペースを作成",
+      "loading": "ワークスペースを作成中"
+    },
+    "toast": {
+      "success": {
+        "title": "成功",
+        "message": "ワークスペースが正常に作成されました"
+      },
+      "error": {
+        "title": "エラー",
+        "message": "ワークスペースを作成できませんでした。もう一度お試しください。"
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "プロジェクト、アクティビティ、メトリクスの概要",
+        "description": "Planeへようこそ。ご利用いただき嬉しく思います。最初のプロジェクトを作成して作業項目を追跡すると、このページは進捗を把握するのに役立つスペースに変わります。管理者はチームの進捗に役立つ項目も表示されます。",
+        "primary_button": {
+          "text": "最初のプロジェクトを作成",
+          "comic": {
+            "title": "Planeではすべてがプロジェクトから始まります",
+            "description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などになります。"
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "アナリティクス",
+    "page_label": "{workspace} - アナリティクス",
+    "open_tasks": "オープンタスクの合計",
+    "error": "データの取得中にエラーが発生しました。",
+    "work_items_closed_in": "クローズされた作業項目",
+    "selected_projects": "選択されたプロジェクト",
+    "total_members": "メンバー総数",
+    "total_cycles": "サイクル総数",
+    "total_modules": "モジュール総数",
+    "pending_work_items": {
+      "title": "保留中の作業項目",
+      "empty_state": "同僚による保留中の作業項目の分析がここに表示されます。"
+    },
+    "work_items_closed_in_a_year": {
+      "title": "1年間でクローズされた作業項目",
+      "empty_state": "作業項目をクローズすると、グラフ形式で分析が表示されます。"
+    },
+    "most_work_items_created": {
+      "title": "作成された作業項目が最も多い",
+      "empty_state": "同僚と作成した作業項目の数がここに表示されます。"
+    },
+    "most_work_items_closed": {
+      "title": "クローズされた作業項目が最も多い",
+      "empty_state": "同僚とクローズした作業項目の数がここに表示されます。"
+    },
+    "tabs": {
+      "scope_and_demand": "スコープと需要",
+      "custom": "カスタムアナリティクス"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。",
+        "title": "まだデータがありません"
+      },
+      "created_vs_resolved": {
+        "description": "時間の経過とともに作成および解決された作業項目がここに表示されます。",
+        "title": "まだデータがありません"
+      },
+      "project_insights": {
+        "title": "まだデータがありません",
+        "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。"
+      },
+      "general": {
+        "title": "進捗、ワークロード、割り当てを追跡する。傾向を発見し、障害を除去し、作業をより迅速に進める",
+        "description": "範囲と需要、見積もり、スコープクリープを確認する。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが時間通りに実行されることを確実にする。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "アナリティクスはサイクル + モジュールで最もよく機能します",
+            "description": "まず、作業項目をサイクルに時間枠を設定し、可能であれば、複数のサイクルにまたがる作業項目をモジュールにグループ化してください。左側のナビゲーションで両方をチェックしてください。"
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "データがまだありません",
+        "description": "サイクルの進捗分析がここに表示されます。作業項目をサイクルに追加して進捗の追跡を開始してください。"
+      },
+      "module_progress": {
+        "title": "データがまだありません",
+        "description": "モジュールの進捗分析がここに表示されます。作業項目をモジュールに追加して進捗の追跡を開始してください。"
+      },
+      "intake_trends": {
+        "title": "データがまだありません",
+        "description": "インテークの傾向分析がここに表示されます。作業項目をインテークに追加して傾向の追跡を開始してください。"
+      }
+    },
+    "created_vs_resolved": "作成 vs 解決",
+    "customized_insights": "カスタマイズされたインサイト",
+    "backlog_work_items": "バックログの{entity}",
+    "active_projects": "アクティブなプロジェクト",
+    "trend_on_charts": "グラフの傾向",
+    "all_projects": "すべてのプロジェクト",
+    "summary_of_projects": "プロジェクトの概要",
+    "project_insights": "プロジェクトのインサイト",
+    "started_work_items": "開始された{entity}",
+    "total_work_items": "{entity}の合計",
+    "total_projects": "プロジェクト合計",
+    "total_admins": "管理者の合計",
+    "total_users": "ユーザー総数",
+    "total_intake": "総収入",
+    "un_started_work_items": "未開始の{entity}",
+    "total_guests": "ゲストの合計",
+    "completed_work_items": "完了した{entity}",
+    "total": "{entity}の合計",
+    "projects_by_status": "ステータス別のプロジェクト",
+    "active_users": "アクティブユーザー",
+    "intake_trends": "受け入れの傾向",
+    "workitem_resolved_vs_pending": "解決済み vs 保留中の作業項目",
+    "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",
+    "create": {
+      "label": "プロジェクトを追加"
+    },
+    "network": {
+      "private": {
+        "title": "非公開",
+        "description": "招待された人のみアクセス可能"
+      },
+      "public": {
+        "title": "公開",
+        "description": "ゲスト以外のワークスペースの全員が参加可能"
+      }
+    },
+    "error": {
+      "permission": "この操作を実行する権限がありません。",
+      "cycle_delete": "サイクルの削除に失敗しました",
+      "module_delete": "モジュールの削除に失敗しました",
+      "issue_delete": "作業項目の削除に失敗しました"
+    },
+    "state": {
+      "backlog": "バックログ",
+      "unstarted": "未開始",
+      "started": "開始済み",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "sort": {
+      "manual": "手動",
+      "name": "名前",
+      "created_at": "作成日",
+      "members_length": "メンバー数"
+    },
+    "scope": {
+      "my_projects": "自分のプロジェクト",
+      "archived_projects": "アーカイブ済み"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# ヶ月} other{# ヶ月}}",
+      "days_count": "{days, plural, one{# 日} other{# 日}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "アクティブなプロジェクトがありません",
+        "description": "各プロジェクトは目標指向の作業の親として考えてください。プロジェクトには作業、サイクル、モジュールが含まれ、同僚と共にその目標の達成を支援します。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "Planeではすべてがプロジェクトから始まります",
+            "description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などになります。"
+          }
+        }
+      },
+      "no_projects": {
+        "title": "プロジェクトがありません",
+        "description": "作業項目を作成したり作業を管理したりするには、プロジェクトを作成するか、プロジェクトのメンバーになる必要があります。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "Planeではすべてがプロジェクトから始まります",
+            "description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などになります。"
+          }
+        }
+      },
+      "filter": {
+        "title": "一致するプロジェクトがありません",
+        "description": "条件に一致するプロジェクトが見つかりません。\n代わりに新しいプロジェクトを作成してください。"
+      },
+      "search": {
+        "description": "条件に一致するプロジェクトが見つかりません。\n代わりに新しいプロジェクトを作成してください。"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "ビューを追加",
+    "empty_state": {
+      "all-issues": {
+        "title": "プロジェクトに作業項目がありません",
+        "description": "最初のプロジェクトが完了しました！次は、作業を追跡可能な作業項目に分割しましょう。始めましょう！",
+        "primary_button": {
+          "text": "新しい作業項目を作成"
+        }
+      },
+      "assigned": {
+        "title": "作業項目がまだありません",
+        "description": "あなたに割り当てられた作業項目をここで追跡できます。",
+        "primary_button": {
+          "text": "新しい作業項目を作成"
+        }
+      },
+      "created": {
+        "title": "作業項目がまだありません",
+        "description": "あなたが作成したすべての作業項目がここに表示され、直接追跡できます。",
+        "primary_button": {
+          "text": "新しい作業項目を作成"
+        }
+      },
+      "subscribed": {
+        "title": "作業項目がまだありません",
+        "description": "興味のある作業項目を購読して、ここですべてを追跡できます。"
+      },
+      "custom-view": {
+        "title": "作業項目がまだありません",
+        "description": "フィルターに該当する作業項目をここで追跡できます。"
+      }
+    },
+    "delete_view": {
+      "title": "このビューを削除してもよろしいですか？",
+      "content": "確認すると、このビューに選択したすべてのソート、フィルター、表示オプション + レイアウトが復元不可能な形で完全に削除されます。"
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "作業項目の下書き",
+    "empty_state": {
+      "title": "書きかけの作業項目、そしてまもなくコメントがここに表示されます。",
+      "description": "試してみるには、作業項目の追加を開始して途中で中断するか、以下で最初の下書きを作成してください。😉",
+      "primary_button": {
+        "text": "最初の下書きを作成"
+      }
+    },
+    "delete_modal": {
+      "title": "下書きを削除",
+      "description": "この下書きを削除してもよろしいですか？この操作は取り消せません。"
+    },
+    "toasts": {
+      "created": {
+        "success": "下書きを作成しました",
+        "error": "作業項目を作成できませんでした。もう一度お試しください。"
+      },
+      "deleted": {
+        "success": "下書きを削除しました"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "メモ、ドキュメント、または完全なナレッジベースを作成します。Planeのアシスタント、ガリレオが開始をサポートします",
+        "description": "ページはPlaneの思考整理スペースです。会議のメモを取り、簡単に整形し、作業項目を埋め込み、コンポーネントライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保存します。どんなドキュメントも短時間で作成するために、PlaneのAI、ガリレオをショートカットやボタンのクリックで呼び出すことができます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "private": {
+        "title": "まだプライベートページがありません",
+        "description": "プライベートな考えをここに保存します。共有する準備ができたら、チームは1クリックで共有できます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "public": {
+        "title": "まだワークスペースページがありません",
+        "description": "ワークスペースの全員と共有されているページをここで確認します。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "archived": {
+        "title": "まだアーカイブされたページがありません",
+        "description": "注目していないページをアーカイブします。必要な時にここでアクセスできます。"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "アクティブなサイクルがありません",
+        "description": "プロジェクトのサイクルには、その範囲内に今日の日付を含む期間が含まれます。ここですべてのアクティブなサイクルの進捗状況と詳細を確認できます。"
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "CSVからメンバーをインポート",
+      "description": "次の列を含むCSVをアップロード：Email, Display Name, First Name, Last Name, Role（5、15、または20）",
+      "dropzone": {
+        "active": "CSVファイルをここにドロップ",
+        "inactive": "ドラッグ＆ドロップまたはクリックしてアップロード",
+        "file_type": ".csvファイルのみサポートされています"
+      },
+      "buttons": {
+        "cancel": "キャンセル",
+        "import": "インポート",
+        "try_again": "再試行",
+        "close": "閉じる",
+        "done": "完了"
+      },
+      "progress": {
+        "uploading": "アップロード中...",
+        "importing": "インポート中..."
+      },
+      "summary": {
+        "title": {
+          "failed": "インポート失敗",
+          "complete": "インポート完了"
+        },
+        "message": {
+          "seat_limit": "シート制限によりメンバーをインポートできません。",
+          "success": "{count}人のメンバーをワークスペースに追加しました。",
+          "no_imports": "CSVファイルからメンバーがインポートされませんでした。"
+        },
+        "stats": {
+          "successful": "成功",
+          "failed": "失敗"
+        },
+        "download_errors": "エラーをダウンロード"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "無効なファイル",
+          "message": "CSVファイルのみサポートされています。"
+        },
+        "import_failed": {
+          "title": "インポート失敗",
+          "message": "問題が発生しました。"
+        }
+      }
+    }
+  }
+}

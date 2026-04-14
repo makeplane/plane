@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "所有史诗",
+    "label": "{count, plural, one {史诗} other {史诗}}",
+    "new": "新建史诗",
+    "adding": "正在添加史诗",
+    "create": {
+      "success": "史诗创建成功"
+    },
+    "add": {
+      "press_enter": "按'Enter'添加另一个史诗",
+      "label": "添加史诗"
+    },
+    "title": {
+      "label": "史诗标题",
+      "required": "史诗标题为必填项"
+    },
+    "archive": {
+      "description": "只有已完成或已取消的史诗\n可以归档",
+      "label": "归档史诗",
+      "confirm_message": "确定要归档该史诗吗？所有已归档的史诗之后都可以恢复。",
+      "success": {
+        "label": "归档成功",
+        "message": "可在项目归档中查看您的归档。"
+      },
+      "failed": {
+        "message": "无法归档史诗，请重试。"
+      }
+    }
+  },
+  "epics": {
+    "label": "史诗",
+    "no_epics_selected": "未选择史诗",
+    "add_selected_epics": "添加选定的史诗",
+    "epic_link_copied_to_clipboard": "史诗链接已复制到剪贴板。",
+    "project_link_copied_to_clipboard": "项目链接已复制到剪贴板",
+    "empty_state": {
+      "general": {
+        "title": "创建史诗并将其分配给某人，甚至是您自己",
+        "description": "对于跨越多个周期并可以跨模块的较大工作体量，创建一个史诗。将项目中的工作项和子工作项链接到史诗，并从概览中跳转到工作项。",
+        "primary_button": {
+          "text": "创建史诗"
+        }
+      },
+      "section": {
+        "title": "还没有史诗",
+        "description": "开始添加史诗以管理和跟踪进度。",
+        "primary_button": {
+          "text": "添加史诗"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "未找到匹配的史诗"
+      },
+      "no_epics": {
+        "title": "未找到史诗"
+      }
+    }
+  }
+}

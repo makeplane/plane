@@ -1,0 +1,371 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Khách hàng} other {Khách hàng}}",
+    "upgrade": {
+      "title": "Ưu tiên và quản lý công việc với Khách hàng.",
+      "description": "Ánh xạ công việc của bạn với khách hàng và ưu tiên theo thuộc tính khách hàng."
+    },
+    "properties": {
+      "default": {
+        "title": "Thuộc tính mặc định",
+        "customer_name": {
+          "name": "Tên khách hàng",
+          "placeholder": "Đây có thể là tên của người hoặc doanh nghiệp",
+          "validation": {
+            "required": "Tên khách hàng là bắt buộc.",
+            "max_length": "Tên khách hàng không thể nhiều hơn 255 ký tự."
+          }
+        },
+        "description": {
+          "name": "Mô tả",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Nhập email",
+          "validation": {
+            "required": "Email là bắt buộc.",
+            "pattern": "Địa chỉ email không hợp lệ."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Bất kỳ URL nào với https:// sẽ hoạt động.",
+          "placeholder_short": "Thêm website",
+          "validation": {
+            "pattern": "URL website không hợp lệ"
+          }
+        },
+        "employees": {
+          "name": "Nhân viên",
+          "placeholder": "Số lượng nhân viên nếu khách hàng của bạn là doanh nghiệp.",
+          "validation": {
+            "min_length": "Số nhân viên không thể ít hơn 0."
+          }
+        },
+        "size": {
+          "name": "Quy mô",
+          "placeholder": "Thêm quy mô công ty",
+          "validation": {
+            "min_length": "Quy mô không hợp lệ"
+          }
+        },
+        "domain": {
+          "name": "Ngành",
+          "placeholder": "Bán lẻ, Thương mại điện tử, Fintech, Ngân hàng",
+          "placeholder_short": "Thêm ngành",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Giai đoạn",
+          "placeholder": "Chọn giai đoạn",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Trạng thái hợp đồng",
+          "placeholder": "Chọn trạng thái hợp đồng",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Doanh thu",
+          "placeholder": "Đây là doanh thu khách hàng của bạn tạo ra hàng năm.",
+          "validation": {
+            "min_length": "Doanh thu không thể ít hơn 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Thuộc tính tùy chỉnh",
+        "info": "Thêm thuộc tính độc đáo của khách hàng vào Plane để bạn có thể quản lý mục công việc hoặc hồ sơ khách hàng tốt hơn."
+      },
+      "empty_state": {
+        "title": "Bạn chưa có thuộc tính tùy chỉnh nào.",
+        "description": "Thuộc tính tùy chỉnh mà bạn muốn thấy trong mục công việc, ở nơi khác trong Plane, hoặc bên ngoài Plane trong CRM hoặc công cụ khác, sẽ xuất hiện ở đây khi bạn thêm chúng."
+      },
+      "add": {
+        "primary_button": "Thêm thuộc tính mới"
+      }
+    },
+    "stage": {
+      "lead": "Tiềm năng",
+      "sales_qualified_lead": "Tiềm năng đủ điều kiện bán hàng",
+      "contract_negotiation": "Đàm phán hợp đồng",
+      "closed_won": "Đã đóng thành công",
+      "closed_lost": "Đã đóng thất bại"
+    },
+    "contract_status": {
+      "active": "Đang hoạt động",
+      "pre_contract": "Tiền hợp đồng",
+      "signed": "Đã ký",
+      "inactive": "Không hoạt động"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Chúng tôi không thể tìm thấy hồ sơ khách hàng đó.",
+        "description": "Liên kết đến hồ sơ này có thể sai hoặc hồ sơ này có thể đã bị xóa.",
+        "primary_button": "Đi đến khách hàng",
+        "secondary_button": "Thêm khách hàng"
+      },
+      "search": {
+        "title": "Có vẻ như bạn không có hồ sơ khách hàng phù hợp với thuật ngữ đó.",
+        "description": "Thử với thuật ngữ tìm kiếm khác hoặc liên hệ với chúng tôi nếu bạn chắc chắn nên thấy kết quả cho thuật ngữ đó."
+      },
+      "list": {
+        "title": "Quản lý khối lượng, nhịp độ và luồng công việc của bạn theo những gì quan trọng đối với khách hàng của bạn.",
+        "description": "Với Khách hàng, một tính năng chỉ có trong Plane, bây giờ bạn có thể tạo khách hàng mới từ đầu và kết nối họ với công việc của bạn. Sắp tới, bạn sẽ đưa họ từ các công cụ khác cùng với các thuộc tính tùy chỉnh quan trọng đối với bạn.",
+        "primary_button": "Thêm khách hàng đầu tiên của bạn"
+      }
+    },
+    "settings": {
+      "unauthorized": "Bạn không được phép truy cập trang này.",
+      "description": "Theo dõi và quản lý mối quan hệ khách hàng trong quy trình làm việc của bạn.",
+      "enable": "Kích hoạt Khách hàng",
+      "toasts": {
+        "enable": {
+          "loading": "Đang kích hoạt tính năng khách hàng...",
+          "success": {
+            "title": "Bạn đã bật Khách hàng cho workspace này.",
+            "message": "Bạn không thể tắt nó lại."
+          },
+          "error": {
+            "title": "Chúng tôi không thể bật Khách hàng lúc này.",
+            "message": "Thử lại hoặc quay lại màn hình này sau. Nếu vẫn không hoạt động.",
+            "action": "Nói chuyện với hỗ trợ"
+          }
+        },
+        "disable": {
+          "loading": "Đang vô hiệu hóa tính năng khách hàng...",
+          "success": {
+            "title": "Đã vô hiệu hóa Khách hàng",
+            "message": "Tính năng Khách hàng đã vô hiệu hóa thành công!"
+          },
+          "error": {
+            "title": "Lỗi",
+            "message": "Không thể vô hiệu hóa tính năng khách hàng!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Chúng tôi không thể lấy danh sách khách hàng của bạn.",
+          "message": "Thử lại hoặc làm mới trang này."
+        }
+      },
+      "copy_link": {
+        "title": "Bạn đã sao chép liên kết trực tiếp đến khách hàng này.",
+        "message": "Dán vào bất kỳ đâu và nó sẽ dẫn trở lại đây."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} hiện đã có sẵn",
+          "message": "Bạn có thể tham khảo khách hàng này trong mục công việc và theo dõi yêu cầu từ họ.",
+          "actions": {
+            "view": "Xem",
+            "copy_link": "Sao chép liên kết",
+            "copied": "Đã sao chép!"
+          }
+        },
+        "error": {
+          "title": "Chúng tôi không thể tạo hồ sơ lúc này.",
+          "message": "Thử lưu lại hoặc sao chép văn bản chưa lưu của bạn vào một mục mới, tốt nhất là trong tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã cập nhật khách hàng thành công!"
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể cập nhật khách hàng. Thử lại!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Chúng tôi không thể tải lên logo của khách hàng.",
+          "message": "Thử lưu logo lại hoặc bắt đầu từ đầu."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Bạn đã xóa một mục công việc khỏi hồ sơ của khách hàng này.",
+            "message": "Chúng tôi cũng đã tự động xóa khách hàng này khỏi mục công việc."
+          },
+          "error": {
+            "title": "Chúng tôi không thể xóa mục công việc đó khỏi hồ sơ của khách hàng này lúc này.",
+            "message": "Chúng tôi cũng đã tự động xóa khách hàng này khỏi mục công việc."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Chúng tôi không thể thêm mục công việc đó vào hồ sơ của khách hàng này lúc này.",
+            "message": "Thử thêm mục công việc đó lại hoặc quay lại sau. Nếu vẫn không hoạt động, hãy liên hệ với chúng tôi."
+          },
+          "success": {
+            "title": "Bạn đã thêm một mục công việc vào hồ sơ của khách hàng này.",
+            "message": "Chúng tôi cũng đã tự động thêm khách hàng này vào mục công việc."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Chỉnh sửa",
+      "copy_link": "Sao chép liên kết đến khách hàng",
+      "delete": "Xóa"
+    },
+    "create": {
+      "label": "Tạo hồ sơ khách hàng",
+      "loading": "Đang tạo",
+      "cancel": "Hủy"
+    },
+    "update": {
+      "label": "Cập nhật khách hàng",
+      "loading": "Đang cập nhật"
+    },
+    "delete": {
+      "title": "Bạn có chắc chắn muốn xóa hồ sơ khách hàng {customer_name}?",
+      "description": "Tất cả dữ liệu liên quan đến hồ sơ này sẽ bị xóa vĩnh viễn. Bạn không thể khôi phục hồ sơ này sau."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Chưa có yêu cầu nào để hiển thị.",
+          "description": "Tạo yêu cầu từ khách hàng của bạn để bạn có thể liên kết chúng với mục công việc.",
+          "button": "Thêm yêu cầu mới"
+        },
+        "search": {
+          "title": "Có vẻ như bạn không có yêu cầu phù hợp với thuật ngữ đó.",
+          "description": "Thử với thuật ngữ tìm kiếm khác hoặc liên hệ với chúng tôi nếu bạn chắc chắn nên thấy kết quả cho thuật ngữ đó."
+        }
+      },
+      "label": "{count, plural, one {Yêu cầu} other {Yêu cầu}}",
+      "add": "Thêm yêu cầu",
+      "create": "Tạo yêu cầu",
+      "update": "Cập nhật yêu cầu",
+      "form": {
+        "name": {
+          "placeholder": "Đặt tên cho yêu cầu này",
+          "validation": {
+            "required": "Tên là bắt buộc.",
+            "max_length": "Tên yêu cầu không nên vượt quá 255 ký tự."
+          }
+        },
+        "description": {
+          "placeholder": "Mô tả bản chất của yêu cầu hoặc dán bình luận của khách hàng này từ công cụ khác."
+        },
+        "source": {
+          "add": "Thêm nguồn",
+          "update": "Cập nhật nguồn",
+          "url": {
+            "label": "URL",
+            "required": "URL là bắt buộc",
+            "invalid": "URL website không hợp lệ"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Đã sao chép liên kết",
+          "message": "Liên kết yêu cầu khách hàng đã được sao chép vào clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Đang tải lên tệp đính kèm...",
+            "success": {
+              "title": "Đã tải lên tệp đính kèm",
+              "message": "Tệp đính kèm đã được tải lên thành công."
+            },
+            "error": {
+              "title": "Tệp đính kèm không được tải lên",
+              "message": "Không thể tải lên tệp đính kèm."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Lỗi!",
+              "message": "Chỉ có thể tải lên một tệp mỗi lần."
+            }
+          },
+          "length": {
+            "message": "Tệp phải có kích thước {size}MB hoặc nhỏ hơn"
+          },
+          "remove": {
+            "success": {
+              "title": "Đã xóa tệp đính kèm",
+              "message": "Tệp đính kèm đã được xóa thành công"
+            },
+            "error": {
+              "title": "Tệp đính kèm không được xóa",
+              "message": "Không thể xóa tệp đính kèm"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Đã cập nhật nguồn thành công!"
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể cập nhật nguồn."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể thêm mục công việc vào yêu cầu. Thử lại."
+            },
+            "success": {
+              "title": "Thành công!",
+              "message": "Đã thêm mục công việc vào yêu cầu."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Đã cập nhật yêu cầu thành công!",
+            "title": "Thành công!"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể cập nhật yêu cầu. Thử lại!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Đã tạo yêu cầu thành công!",
+            "title": "Thành công!"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể tạo yêu cầu. Thử lại!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Mục công việc đã liên kết",
+      "link": "Liên kết mục công việc",
+      "empty_state": {
+        "list": {
+          "title": "Có vẻ như bạn chưa liên kết mục công việc nào với khách hàng này.",
+          "description": "Liên kết mục công việc hiện có từ bất kỳ dự án nào ở đây để bạn có thể theo dõi chúng theo khách hàng này.",
+          "button": "Liên kết mục công việc"
+        }
+      },
+      "action": {
+        "remove_epic": "Xóa epic",
+        "remove": "Xóa mục công việc"
+      }
+    },
+    "sidebar": {
+      "properties": "Thuộc tính"
+    }
+  }
+}

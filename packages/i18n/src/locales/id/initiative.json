@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Ikhtisar",
+    "label": "Inisiatif",
+    "placeholder": "{count, plural, one{# inisiatif} other{# inisiatif}}",
+    "add_initiative": "Tambah Inisiatif",
+    "create_initiative": "Buat Inisiatif",
+    "update_initiative": "Perbarui Inisiatif",
+    "initiative_name": "Nama inisiatif",
+    "all_initiatives": "Semua Inisiatif",
+    "delete_initiative": "Hapus Inisiatif",
+    "fill_all_required_fields": "Harap isi semua bidang yang diperlukan.",
+    "archive_description": "Hanya inisiatif yang selesai atau ditutup yang dapat diarsipkan",
+    "toast": {
+      "create_success": "Inisiatif {name} berhasil dibuat.",
+      "create_error": "Gagal membuat inisiatif. Silakan coba lagi!",
+      "update_success": "Inisiatif {name} berhasil diperbarui.",
+      "update_error": "Gagal memperbarui inisiatif. Silakan coba lagi!",
+      "delete": {
+        "success": "Inisiatif berhasil dihapus.",
+        "error": "Gagal menghapus Inisiatif"
+      },
+      "archive": {
+        "success": "Inisiatif berhasil diarsipkan.",
+        "error": "Gagal mengarsipkan inisiatif",
+        "initiative_cannot_be_archived_in_this_state": "Inisiatif tidak dapat diarsipkan dalam status ini"
+      },
+      "link_copied": "Tautan inisiatif disalin ke clipboard.",
+      "project_update_success": "Proyek inisiatif berhasil diperbarui.",
+      "project_update_error": "Gagal memperbarui proyek inisiatif. Silakan coba lagi!",
+      "epic_update_success": "Epik{count, plural, one { berhasil ditambahkan ke Inisiatif.} other { berhasil ditambahkan ke Inisiatif.}}",
+      "epic_update_error": "Penambahan Epik ke Inisiatif gagal. Silakan coba lagi nanti.",
+      "state_update_success": "Status inisiatif berhasil diperbarui.",
+      "state_update_error": "Gagal memperbarui status inisiatif. Silakan coba lagi!",
+      "label_update_error": "Gagal memperbarui label inisiatif. Silakan coba lagi!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Atur pekerjaan di level tertinggi dengan Inisiatif",
+        "description": "Ketika Anda perlu mengatur pekerjaan yang mencakup beberapa proyek dan tim, Inisiatif sangat berguna. Hubungkan proyek dan epik ke inisiatif, lihat pembaruan yang otomatis digabungkan, dan lihat hutan sebelum Anda sampai ke pohon.",
+        "primary_button": {
+          "text": "Buat inisiatif"
+        }
+      },
+      "search": {
+        "title": "Tidak ada inisiatif yang cocok",
+        "description": "Tidak ada inisiatif yang terdeteksi dengan kriteria yang cocok.\n Buat inisiatif baru sebagai gantinya.",
+        "archived_description": "Tidak ada inisiatif yang diarsipkan terdeteksi dengan kriteria yang cocok."
+      },
+      "not_found": {
+        "title": "Inisiatif tidak ada",
+        "description": "Inisiatif yang Anda cari tidak ada, telah diarsipkan, atau telah dihapus.",
+        "primary_button": {
+          "text": "Lihat Inisiatif lain"
+        }
+      },
+      "epics": {
+        "title": "Anda tidak memiliki epik yang cocok dengan filter yang Anda terapkan.",
+        "subHeading": "Untuk melihat semua epik, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      }
+    },
+    "scope": {
+      "view_scope": "Lihat ruang lingkup",
+      "breakdown": "Pecahkan ruang lingkup",
+      "add_scope": "Tambah ruang lingkup",
+      "label": "Ruang lingkup",
+      "empty_state": {
+        "title": "Belum ada ruang lingkup yang ditambahkan ke inisiatif ini",
+        "description": "Hubungkan proyek dan epik ke inisiatif ini untuk memulai.",
+        "primary_button": {
+          "text": "Tambah ruang lingkup"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Label",
+        "description": "Strukturkan dan atur inisiatif Anda dengan label."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Hapus label",
+        "content": "Apakah Anda yakin ingin menghapus {labelName}? Ini akan menghapus label dari semua inisiatif dan dari semua tampilan yang sedang memfilter label tersebut."
+      },
+      "toast": {
+        "delete_error": "Label inisiatif tidak dapat dihapus. Silakan coba lagi.",
+        "label_already_exists": "Label sudah ada"
+      }
+    }
+  }
+}

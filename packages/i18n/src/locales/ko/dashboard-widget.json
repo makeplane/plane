@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "바",
+          "long_label": "바 차트",
+          "chart_models": {
+            "basic": "베이직",
+            "stacked": "스택드",
+            "grouped": "그룹드"
+          },
+          "orientation": {
+            "label": "오리엔테이션",
+            "horizontal": "호리젠탈",
+            "vertical": "버티컬",
+            "placeholder": "오리엔테이션 추가"
+          },
+          "bar_color": "바 컬러"
+        },
+        "line_chart": {
+          "short_label": "라인",
+          "long_label": "라인 차트",
+          "chart_models": {
+            "basic": "베이직",
+            "multi_line": "멀티 라인"
+          },
+          "line_color": "라인 컬러",
+          "line_type": {
+            "label": "라인 타입",
+            "solid": "솔리드",
+            "dashed": "대시드",
+            "placeholder": "라인 타입 추가"
+          }
+        },
+        "area_chart": {
+          "short_label": "에어리어",
+          "long_label": "에어리어 차트",
+          "chart_models": {
+            "basic": "베이직",
+            "stacked": "스택드",
+            "comparison": "컴패리슨"
+          },
+          "fill_color": "필 컬러"
+        },
+        "donut_chart": {
+          "short_label": "도넛",
+          "long_label": "도넛 차트",
+          "chart_models": {
+            "basic": "베이직",
+            "progress": "프로그레스"
+          },
+          "center_value": "센터 밸류",
+          "completed_color": "컴플리티드 컬러"
+        },
+        "pie_chart": {
+          "short_label": "파이",
+          "long_label": "파이 차트",
+          "chart_models": {
+            "basic": "베이직"
+          },
+          "group": {
+            "label": "그룹드 피시스",
+            "group_thin_pieces": "그룹 씬 피시스",
+            "minimum_threshold": {
+              "label": "미니멈 스레숄드",
+              "placeholder": "스레숄드 추가"
+            },
+            "name_group": {
+              "label": "네임 그룹",
+              "placeholder": "\"5% 미만\""
+            }
+          },
+          "show_values": "밸류 표시",
+          "value_type": {
+            "percentage": "퍼센티지",
+            "count": "카운트"
+          }
+        },
+        "text": {
+          "short_label": "텍스트",
+          "long_label": "텍스트",
+          "alignment": {
+            "label": "텍스트 얼라인먼트",
+            "left": "레프트",
+            "center": "센터",
+            "right": "라이트",
+            "placeholder": "텍스트 얼라인먼트 추가"
+          },
+          "text_color": "텍스트 컬러"
+        },
+        "table_chart": {
+          "short_label": "테이블",
+          "long_label": "테이블 차트",
+          "chart_models": {
+            "basic": {
+              "short_label": "기본",
+              "long_label": "테이블"
+            }
+          },
+          "columns": "열",
+          "rows": "행",
+          "rows_placeholder": "행 추가",
+          "configure_rows_hint": "이 테이블을 보려면 행에 대한 속성을 선택하세요."
+        }
+      },
+      "color_palettes": {
+        "modern": "모던",
+        "horizon": "호라이즌",
+        "earthen": "어슨"
+      },
+      "common": {
+        "add_widget": "위젯 추가",
+        "widget_title": {
+          "label": "이 위젯의 이름 지정",
+          "placeholder": "예: \"어제의 할 일\", \"모두 완료\""
+        },
+        "chart_type": "차트 타입",
+        "visualization_type": {
+          "label": "비주얼라이제이션 타입",
+          "placeholder": "비주얼라이제이션 타입 추가"
+        },
+        "date_group": {
+          "label": "데이트 그룹",
+          "placeholder": "데이트 그룹 추가"
+        },
+        "group_by": "그룹 바이",
+        "stack_by": "스택 바이",
+        "daily": "데일리",
+        "weekly": "위클리",
+        "monthly": "먼슬리",
+        "yearly": "이얼리",
+        "work_item_count": "워크 아이템 카운트",
+        "estimate_point": "에스티메이트 포인트",
+        "pending_work_item": "펜딩 워크 아이템",
+        "completed_work_item": "컴플리티드 워크 아이템",
+        "in_progress_work_item": "인 프로그레스 워크 아이템",
+        "blocked_work_item": "블럭드 워크 아이템",
+        "work_item_due_this_week": "이번 주 마감 워크 아이템",
+        "work_item_due_today": "오늘 마감 워크 아이템",
+        "color_scheme": {
+          "label": "컬러 스킴",
+          "placeholder": "컬러 스킴 추가"
+        },
+        "smoothing": "스무딩",
+        "markers": "마커",
+        "legends": "레전드",
+        "tooltips": "툴팁",
+        "opacity": {
+          "label": "오패시티",
+          "placeholder": "오패시티 추가"
+        },
+        "border": "보더",
+        "widget_configuration": "위젯 컨피규레이션",
+        "configure_widget": "위젯 컨피규어",
+        "guides": "가이드",
+        "style": "스타일",
+        "area_appearance": "에어리어 어피어런스",
+        "comparison_line_appearance": "컴패어-라인 어피어런스",
+        "add_property": "프로퍼티 추가",
+        "add_metric": "메트릭 추가"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          },
+          "stacked": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다.",
+            "group_by": "스택 바이에 값이 없습니다."
+          },
+          "grouped": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다.",
+            "group_by": "그룹 바이에 값이 없습니다."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          },
+          "multi_line": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다.",
+            "group_by": "그룹 바이에 값이 없습니다."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          },
+          "stacked": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다.",
+            "group_by": "스택 바이에 값이 없습니다."
+          },
+          "comparison": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          },
+          "progress": {
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X축에 값이 없습니다.",
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "메트릭에 값이 없습니다."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "열에 값이 없습니다.",
+            "group_by": "행에 값이 없습니다."
+          }
+        },
+        "ask_admin": "이 위젯을 구성하려면 관리자에게 문의하세요."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "새 대시보드 생성",
+        "update": "대시보드 업데이트"
+      },
+      "title": {
+        "label": "대시보드 이름을 지정하세요.",
+        "placeholder": "\"프로젝트 간 캐퍼시티\", \"팀별 워크로드\", \"모든 프로젝트의 스테이트\"",
+        "required_error": "타이틀은 필수입니다"
+      },
+      "project": {
+        "label": "프로젝트 선택",
+        "placeholder": "이 프로젝트들의 데이터가 이 대시보드를 지원합니다.",
+        "required_error": "프로젝트는 필수입니다"
+      },
+      "filters_label": "위 데이터 소스에 대한 필터 설정",
+      "create_dashboard": "대시보드 생성",
+      "update_dashboard": "대시보드 업데이트"
+    },
+    "delete_modal": {
+      "heading": "대시보드 삭제"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "온디맨드, 영구 대시보드로 진행 상황을 표시하세요.",
+        "description": "필요한 대시보드를 구축하고 데이터가 표시되는 방식을 사용자 지정하여 진행 상황을 완벽하게 표현하세요.",
+        "coming_soon_to_mobile": "모바일 앱에 곧 출시 예정",
+        "card_1": {
+          "title": "모든 프로젝트용",
+          "description": "모든 프로젝트가 있는 워크스페이스의 전체 뷰를 얻거나 작업 데이터를 분할하여 진행 상황을 완벽하게 볼 수 있습니다."
+        },
+        "card_2": {
+          "title": "플레인의 모든 데이터용",
+          "description": "기본 제공되는 애널리틱스와 미리 만들어진 사이클 차트를 넘어 팀, 이니셔티브 또는 다른 어떤 것도 전에 없던 방식으로 볼 수 있습니다."
+        },
+        "card_3": {
+          "title": "모든 데이터 시각화 요구 사항을 위해",
+          "description": "세밀한 제어 기능이 있는 다양한 사용자 정의 가능한 차트 중에서 선택하여 작업 데이터를 원하는 대로 정확하게 보고 표시할 수 있습니다."
+        },
+        "card_4": {
+          "title": "온디맨드 및 영구적",
+          "description": "한 번 구축하고 데이터 자동 새로 고침, 범위 변경을 위한 컨텍스트 플래그 및 공유 가능한 퍼머링크로 영원히 유지하세요."
+        },
+        "card_5": {
+          "title": "익스포트 및 예약된 커뮤니케이션",
+          "description": "링크가 작동하지 않을 때를 위해 대시보드를 일회성 PDF로 내보내거나 스테이크홀더에게 자동으로 전송되도록 예약하세요."
+        },
+        "card_6": {
+          "title": "모든 디바이스에 맞게 자동 레이아웃",
+          "description": "원하는 레이아웃에 맞게 위젯 크기를 조정하고 모바일, 태블릿 및 기타 브라우저에서 정확히 동일하게 볼 수 있습니다."
+        }
+      },
+      "dashboards_list": {
+        "title": "위젯에서 데이터를 시각화하고, 위젯으로 대시보드를 구축하고, 최신 정보를 온디맨드로 확인하세요.",
+        "description": "지정한 범위에서 데이터를 표시하는 커스텀 위젯으로 대시보드를 구축하세요. 프로젝트와 팀 전반의 모든 작업에 대한 대시보드를 얻고 온디맨드 추적을 위해 스테이크홀더와 퍼머링크를 공유하세요."
+      },
+      "dashboards_search": {
+        "title": "대시보드 이름과 일치하지 않습니다.",
+        "description": "쿼리가 올바른지 확인하거나 다른 쿼리를 시도하세요."
+      },
+      "widgets_list": {
+        "title": "원하는 방식으로 데이터를 시각화하세요.",
+        "description": "라인, 바, 파이 및 기타 포맷을 사용하여 지정한 소스에서\n원하는 방식으로 데이터를 볼 수 있습니다."
+      },
+      "widget_data": {
+        "title": "볼 수 있는 것이 없습니다",
+        "description": "새로 고침하거나 데이터를 추가하여 여기에서 확인하세요."
+      }
+    },
+    "common": {
+      "editing": "편집 중"
+    }
+  }
+}

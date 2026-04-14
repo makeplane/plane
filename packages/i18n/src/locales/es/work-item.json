@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Elemento de trabajo} other {Elementos de trabajo}}",
+    "all": "Todos los elementos de trabajo",
+    "edit": "Editar elemento de trabajo",
+    "title": {
+      "label": "Título del elemento de trabajo",
+      "required": "El título del elemento de trabajo es obligatorio."
+    },
+    "add": {
+      "press_enter": "Presiona 'Enter' para agregar otro elemento de trabajo",
+      "label": "Agregar elemento de trabajo",
+      "cycle": {
+        "failed": "No se pudo agregar el elemento de trabajo al ciclo. Por favor, inténtalo de nuevo.",
+        "success": "{count, plural, one {Elemento de trabajo agregado} other {Elementos de trabajo agregados}} al ciclo correctamente.",
+        "loading": "Agregando {count, plural, one {elemento de trabajo} other {elementos de trabajo}} al ciclo"
+      },
+      "assignee": "Agregar asignados",
+      "start_date": "Agregar fecha de inicio",
+      "due_date": "Agregar fecha de vencimiento",
+      "parent": "Agregar elemento de trabajo padre",
+      "sub_issue": "Agregar sub-elemento de trabajo",
+      "relation": "Agregar relación",
+      "link": "Agregar enlace",
+      "existing": "Agregar elemento de trabajo existente"
+    },
+    "remove": {
+      "label": "Eliminar elemento de trabajo",
+      "cycle": {
+        "loading": "Eliminando elemento de trabajo del ciclo",
+        "success": "Elemento de trabajo eliminado del ciclo correctamente.",
+        "failed": "No se pudo eliminar el elemento de trabajo del ciclo. Por favor, inténtalo de nuevo."
+      },
+      "module": {
+        "loading": "Eliminando elemento de trabajo del módulo",
+        "success": "Elemento de trabajo eliminado del módulo correctamente.",
+        "failed": "No se pudo eliminar el elemento de trabajo del módulo. Por favor, inténtalo de nuevo."
+      },
+      "parent": {
+        "label": "Eliminar elemento de trabajo padre"
+      }
+    },
+    "new": "Nuevo elemento de trabajo",
+    "adding": "Agregando elemento de trabajo",
+    "create": {
+      "success": "Elemento de trabajo creado correctamente"
+    },
+    "priority": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "display": {
+      "properties": {
+        "label": "Mostrar propiedades",
+        "id": "ID",
+        "issue_type": "Tipo de elemento de trabajo",
+        "sub_issue_count": "Cantidad de sub-elementos",
+        "attachment_count": "Cantidad de archivos adjuntos",
+        "created_on": "Creado el",
+        "sub_issue": "Sub-elemento de trabajo",
+        "work_item_count": "Recuento de elementos de trabajo"
+      },
+      "extra": {
+        "show_sub_issues": "Mostrar sub-elementos",
+        "show_empty_groups": "Mostrar grupos vacíos"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Este diseño está ordenado por",
+      "list": "Lista",
+      "kanban": "Tablero",
+      "calendar": "Calendario",
+      "spreadsheet": "Tabla",
+      "gantt": "Línea de tiempo",
+      "title": {
+        "list": "Diseño de lista",
+        "kanban": "Diseño de tablero",
+        "calendar": "Diseño de calendario",
+        "spreadsheet": "Diseño de tabla",
+        "gantt": "Diseño de línea de tiempo"
+      }
+    },
+    "states": {
+      "active": "Activo",
+      "backlog": "Pendientes"
+    },
+    "comments": {
+      "placeholder": "Agregar comentario",
+      "switch": {
+        "private": "Cambiar a comentario privado",
+        "public": "Cambiar a comentario público"
+      },
+      "create": {
+        "success": "Comentario creado correctamente",
+        "error": "Error al crear el comentario. Por favor, inténtalo más tarde."
+      },
+      "update": {
+        "success": "Comentario actualizado correctamente",
+        "error": "Error al actualizar el comentario. Por favor, inténtalo más tarde."
+      },
+      "remove": {
+        "success": "Comentario eliminado correctamente",
+        "error": "Error al eliminar el comentario. Por favor, inténtalo más tarde."
+      },
+      "upload": {
+        "error": "Error al subir el archivo. Por favor, inténtalo más tarde."
+      },
+      "copy_link": {
+        "success": "Enlace del comentario copiado al portapapeles",
+        "error": "Error al copiar el enlace del comentario. Inténtelo de nuevo más tarde."
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "El elemento de trabajo no existe",
+        "description": "El elemento de trabajo que buscas no existe, ha sido archivado o ha sido eliminado.",
+        "primary_button": {
+          "text": "Ver otros elementos de trabajo"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Elementos de trabajo hermanos"
+    },
+    "archive": {
+      "description": "Solo los elementos de trabajo completados\no cancelados pueden ser archivados",
+      "label": "Archivar elemento de trabajo",
+      "confirm_message": "¿Estás seguro de que quieres archivar el elemento de trabajo? Todos tus elementos archivados pueden ser restaurados más tarde.",
+      "success": {
+        "label": "Archivo exitoso",
+        "message": "Tus archivos se pueden encontrar en los archivos del proyecto."
+      },
+      "failed": {
+        "message": "No se pudo archivar el elemento de trabajo. Por favor, inténtalo de nuevo."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Restauración exitosa",
+        "message": "Tu elemento de trabajo se puede encontrar en los elementos de trabajo del proyecto."
+      },
+      "failed": {
+        "message": "No se pudo restaurar el elemento de trabajo. Por favor, inténtalo de nuevo."
+      }
+    },
+    "relation": {
+      "relates_to": "Se relaciona con",
+      "duplicate": "Duplicado de",
+      "blocked_by": "Bloqueado por",
+      "blocking": "Bloqueando",
+      "start_before": "Comienza antes",
+      "start_after": "Comienza después",
+      "finish_before": "Termina antes",
+      "finish_after": "Termina después",
+      "implements": "Implementa",
+      "implemented_by": "Implementado por"
+    },
+    "copy_link": "Copiar enlace del elemento de trabajo",
+    "delete": {
+      "label": "Eliminar elemento de trabajo",
+      "error": "Error al eliminar el elemento de trabajo"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Suscrito al elemento de trabajo correctamente",
+        "unsubscribed": "Desuscrito del elemento de trabajo correctamente"
+      }
+    },
+    "select": {
+      "error": "Por favor selecciona al menos un elemento de trabajo",
+      "empty": "No hay elementos de trabajo seleccionados",
+      "add_selected": "Agregar elementos seleccionados",
+      "select_all": "Seleccionar todo",
+      "deselect_all": "Deseleccionar todo"
+    },
+    "open_in_full_screen": "Abrir elemento de trabajo en pantalla completa",
+    "vote": {
+      "click_to_upvote": "Haz clic para votar a favor",
+      "click_to_downvote": "Haz clic para votar en contra",
+      "click_to_view_upvotes": "Haz clic para ver los votos a favor",
+      "click_to_view_downvotes": "Haz clic para ver los votos en contra"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Sub-elemento actualizado correctamente",
+      "error": "Error al actualizar el sub-elemento"
+    },
+    "remove": {
+      "success": "Sub-elemento eliminado correctamente",
+      "error": "Error al eliminar el sub-elemento"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "No tienes sub-elementos de trabajo que coincidan con los filtros que has aplicado.",
+        "description": "Para ver todos los sub-elementos de trabajo, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      },
+      "list_filters": {
+        "title": "No tienes elementos de trabajo que coincidan con los filtros que has aplicado.",
+        "description": "Para ver todos los elementos de trabajo, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No se encontraron elementos de trabajo coincidentes"
+      },
+      "no_issues": {
+        "title": "No se encontraron elementos de trabajo"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Aún no hay comentarios",
+        "description": "Los comentarios pueden usarse como un espacio de discusión y seguimiento para los elementos de trabajo"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "No se pueden archivar elementos de trabajo",
+        "message": "Solo los elementos de trabajo pertenecientes a grupos de estado Completado o Cancelado pueden ser archivados."
+      },
+      "invalid_issue_start_date": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "La fecha de inicio seleccionada es posterior a la fecha de vencimiento de algunos elementos de trabajo. Asegúrese de que la fecha de inicio sea anterior a la fecha de vencimiento."
+      },
+      "invalid_issue_target_date": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "La fecha de vencimiento seleccionada es anterior a la fecha de inicio de algunos elementos de trabajo. Asegúrese de que la fecha de vencimiento sea posterior a la fecha de inicio."
+      },
+      "invalid_state_transition": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Habilitar flujos de trabajo",
+        "description": "Configura flujos de trabajo para controlar el movimiento de los elementos de trabajo",
+        "no_states_tooltip": "No hay estados agregados al flujo de trabajo.",
+        "toast": {
+          "loading": {
+            "enabling": "Habilitando flujos de trabajo",
+            "disabling": "Deshabilitando flujos de trabajo"
+          },
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Los flujos de trabajo se habilitaron correctamente."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudieron habilitar los flujos de trabajo. Inténtalo de nuevo."
+          }
+        }
+      },
+      "heading": "Flujos de trabajo",
+      "description": "Automatiza las transiciones de los elementos de trabajo y define reglas para controlar cómo las tareas avanzan por el flujo de tu proyecto.",
+      "add_button": "Agregar nuevo flujo de trabajo",
+      "search": "Buscar flujos de trabajo",
+      "detail": {
+        "define": "Definir flujo de trabajo",
+        "add_states": "Agregar estados",
+        "unmapped_states": {
+          "title": "Se detectaron estados no asignados",
+          "description": "Algunos elementos de trabajo de los tipos seleccionados se encuentran actualmente en estados que no existen en este flujo de trabajo.",
+          "note": "Si habilitas este flujo de trabajo, esos elementos se moverán automáticamente al estado inicial de este flujo de trabajo.",
+          "label": "Estados faltantes",
+          "tooltip": "Algunos elementos de trabajo están en estados que no están asignados a este flujo de trabajo. Abre el flujo de trabajo para revisarlo."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Todos los estados están en uso",
+          "description": "Todos los estados definidos para este proyecto ya están presentes en tu flujo de trabajo actual."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Este flujo de trabajo se aplica a cualquier tipo de elemento de trabajo que no esté asignado a un flujo de trabajo."
+      },
+      "create": {
+        "heading": "Crear nuevo flujo de trabajo"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Tareas recurrentes",
+      "description": "Configura tu trabajo repetible una vez y nosotros nos encargaremos de las repeticiones. Verás todo aquí cuando sea necesario.",
+      "new_recurring_work_item": "Nueva tarea recurrente",
+      "update_recurring_work_item": "Actualizar tarea recurrente",
+      "form": {
+        "interval": {
+          "title": "Programación",
+          "start_date": {
+            "validation": {
+              "required": "La fecha de inicio es obligatoria"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "El tipo de intervalo es obligatorio"
+            }
+          }
+        },
+        "button": {
+          "create": "Crear tarea recurrente",
+          "update": "Actualizar tarea recurrente"
+        }
+      },
+      "create_button": {
+        "label": "Crear tarea recurrente",
+        "no_permission": "Contacta a tu administrador de proyecto para crear tareas recurrentes"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Tu trabajo, en piloto automático",
+        "description": "Configúralo una vez. Te lo recordaremos cuando sea necesario. Mejora a Business para que el trabajo recurrente sea sencillo."
+      },
+      "no_templates": {
+        "button": "Crea tu primera tarea recurrente"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Tarea recurrente creada",
+          "message": "{name}, la tarea recurrente, ya está disponible en tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos crear la tarea recurrente esta vez.",
+          "message": "Intenta guardar tus datos nuevamente o cópialos en una nueva tarea recurrente, preferiblemente en otra pestaña."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Tarea recurrente modificada",
+          "message": "{name}, la tarea recurrente, ha sido modificada."
+        },
+        "error": {
+          "title": "No pudimos guardar los cambios en esta tarea recurrente.",
+          "message": "Intenta guardar tus datos nuevamente o vuelve a esta tarea recurrente más tarde. Si el problema persiste, contáctanos."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Tarea recurrente eliminada",
+          "message": "{name}, la tarea recurrente, ha sido eliminada de tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos eliminar esa tarea recurrente.",
+          "message": "Intenta eliminarla de nuevo o vuelve más tarde. Si no puedes eliminarla entonces, contáctanos."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Eliminar tarea recurrente",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres eliminar la tarea recurrente-",
+        "suffix": "? Todos los datos relacionados con la tarea recurrente se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    }
+  }
+}

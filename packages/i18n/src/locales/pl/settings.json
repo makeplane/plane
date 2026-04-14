@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Zmień e-mail",
+        "description": "Wpisz nowy adres e-mail, aby otrzymać link weryfikacyjny.",
+        "toasts": {
+          "success_title": "Sukces!",
+          "success_message": "E-mail zaktualizowano. Zaloguj się ponownie."
+        },
+        "form": {
+          "email": {
+            "label": "Nowy e-mail",
+            "placeholder": "Wpisz swój e-mail",
+            "errors": {
+              "required": "E-mail jest wymagany",
+              "invalid": "E-mail jest nieprawidłowy",
+              "exists": "E-mail już istnieje. Użyj innego.",
+              "validation_failed": "Weryfikacja e-maila nie powiodła się. Spróbuj ponownie."
+            }
+          },
+          "code": {
+            "label": "Unikalny kod",
+            "placeholder": "123456",
+            "helper_text": "Kod weryfikacyjny wysłano na nowy e-mail.",
+            "errors": {
+              "required": "Unikalny kod jest wymagany",
+              "invalid": "Nieprawidłowy kod weryfikacyjny. Spróbuj ponownie."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Kontynuuj",
+          "confirm": "Potwierdź",
+          "cancel": "Anuluj"
+        },
+        "states": {
+          "sending": "Wysyłanie…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Wybierz widok domyślny",
+      "compact": "Kompaktowy",
+      "full": "Pełny ekran"
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Twoja praca",
+    "work": "Praca",
+    "details": {
+      "joined_on": "Dołączył(a) dnia",
+      "time_zone": "Strefa czasowa"
+    },
+    "stats": {
+      "workload": "Obciążenie",
+      "overview": "Przegląd",
+      "created": "Utworzone elementy",
+      "assigned": "Przypisane elementy",
+      "subscribed": "Subskrybowane elementy",
+      "state_distribution": {
+        "title": "Elementy według stanu",
+        "empty": "Twórz elementy, aby móc analizować stany."
+      },
+      "priority_distribution": {
+        "title": "Elementy według priorytetu",
+        "empty": "Twórz elementy, aby móc analizować priorytety."
+      },
+      "recent_activity": {
+        "title": "Ostatnia aktywność",
+        "empty": "Brak aktywności.",
+        "button": "Pobierz dzisiejszą aktywność",
+        "button_loading": "Pobieranie"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Bezpieczeństwo",
+      "activity": "Aktywność",
+      "appearance": "Wygląd",
+      "notifications": "Powiadomienia",
+      "connections": "Połączenia"
+    },
+    "tabs": {
+      "summary": "Podsumowanie",
+      "assigned": "Przypisane",
+      "created": "Utworzone",
+      "subscribed": "Subskrybowane",
+      "activity": "Aktywność"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Brak aktywności",
+        "description": "Utwórz element pracy, aby zacząć."
+      },
+      "assigned": {
+        "title": "Brak przypisanych elementów pracy",
+        "description": "Tutaj zobaczysz elementy pracy przypisane do Ciebie."
+      },
+      "created": {
+        "title": "Brak utworzonych elementów pracy",
+        "description": "Tutaj są elementy pracy, które utworzyłeś(aś)."
+      },
+      "subscribed": {
+        "title": "Brak subskrybowanych elementów pracy",
+        "description": "Subskrybuj interesujące Cię elementy pracy, a pojawią się tutaj."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferencje systemowe"
+      },
+      "light": {
+        "label": "Jasny"
+      },
+      "dark": {
+        "label": "Ciemny"
+      },
+      "light_contrast": {
+        "label": "Jasny wysoki kontrast"
+      },
+      "dark_contrast": {
+        "label": "Ciemny wysoki kontrast"
+      },
+      "custom": {
+        "label": "Motyw niestandardowy"
+      }
+    }
+  }
+}

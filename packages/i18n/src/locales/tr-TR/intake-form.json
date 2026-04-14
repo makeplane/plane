@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Bir iş öğesi oluştur",
+      "sub-title": "Ekibe ne üzerinde çalışmalarını istediğinizi bildirin.",
+      "name": "Ad",
+      "email": "E-posta",
+      "about": "Bu iş öğesi ne hakkında?",
+      "description": "Ne olması gerektiğini açıklayın",
+      "description_placeholder": "Ekip durumunuzu ve ihtiyaçlarınızı anlasın diye istediğiniz kadar ayrıntı ekleyin.",
+      "loading": "Oluşturuluyor",
+      "create_work_item": "İş öğesi oluştur",
+      "errors": {
+        "name": "Ad zorunludur",
+        "name_max_length": "Ad 255 karakterden az olmalıdır",
+        "email": "E-posta zorunludur",
+        "email_invalid": "Geçersiz e-posta adresi",
+        "title": "Başlık zorunludur",
+        "title_max_length": "Başlık 255 karakterden az olmalıdır"
+      }
+    },
+    "success": {
+      "title": "İş öğeniz artık ekibin kuyruğunda.",
+      "description": "Ekip bu iş öğesini alım kuyruğundan onaylayabilir veya atabilir.",
+      "primary_button": {
+        "text": "Başka bir iş öğesi ekle"
+      },
+      "secondary_button": {
+        "text": "Alım hakkında daha fazla bilgi"
+      }
+    },
+    "how_it_works": {
+      "title": "Nasıl çalışır?",
+      "heading": "Bu bir alım formudur.",
+      "description": "Alım, proje yöneticilerinin ve yöneticilerinin dışarıdan iş öğelerini projelerine almasını sağlayan bir Plane özelliğidir.",
+      "steps": {
+        "step_1": "Bu kısa form, bir Plane projesinde yeni bir iş öğesi oluşturmanızı sağlar.",
+        "step_2": "Bu formu gönderdiğinizde, o projenin alımında yeni bir iş öğesi oluşturulur.",
+        "step_3": "O proje veya ekipten biri inceleyecektir.",
+        "step_4": "Onaylarlarsa bu iş öğesi projenin iş kuyruğuna taşınır. Aksi takdirde reddedilir.",
+        "step_5": "Bu iş öğesinin durumunu öğrenmek için proje yöneticisi, yönetici veya size bu sayfanın bağlantısını gönderen kişiyle iletişime geçin."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "İş öğesi türü seç",
+        "search_placeholder": "İş öğesi türü ara"
+      },
+      "actions": {
+        "select_properties": "Özellikleri seç"
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Tất cả sử thi",
+    "label": "{count, plural, one {sử thi} other {sử thi}}",
+    "new": "Sử thi mới",
+    "adding": "Đang thêm sử thi",
+    "create": {
+      "success": "Đã tạo sử thi thành công"
+    },
+    "add": {
+      "press_enter": "Nhấn 'Enter' để thêm sử thi khác",
+      "label": "Thêm sử thi"
+    },
+    "title": {
+      "label": "Tiêu đề sử thi",
+      "required": "Tiêu đề sử thi là bắt buộc"
+    },
+    "archive": {
+      "description": "Chỉ những sử thi đã hoàn thành hoặc đã hủy\nmới có thể được lưu trữ",
+      "label": "Lưu trữ sử thi",
+      "confirm_message": "Bạn có chắc chắn muốn lưu trữ sử thi này? Tất cả sử thi đã lưu trữ có thể được khôi phục sau.",
+      "success": {
+        "label": "Lưu trữ thành công",
+        "message": "Kho lưu trữ của bạn có thể tìm thấy trong kho lưu trữ dự án."
+      },
+      "failed": {
+        "message": "Không thể lưu trữ sử thi. Vui lòng thử lại."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "Không có epic nào được chọn",
+    "add_selected_epics": "Thêm các epic đã chọn",
+    "epic_link_copied_to_clipboard": "Liên kết Epic đã được sao chép vào clipboard.",
+    "project_link_copied_to_clipboard": "Liên kết dự án đã được sao chép vào clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Tạo một epic và gán nó cho ai đó, thậm chí là chính bạn",
+        "description": "Đối với khối lượng công việc lớn hơn kéo dài qua nhiều chu kỳ và có thể tồn tại qua các module, hãy tạo một epic. Liên kết các mục công việc và mục công việc phụ trong một dự án với một epic và chuyển vào một mục công việc từ tổng quan.",
+        "primary_button": {
+          "text": "Tạo một Epic"
+        }
+      },
+      "section": {
+        "title": "Chưa có epic nào",
+        "description": "Bắt đầu thêm epic để quản lý và theo dõi tiến độ.",
+        "primary_button": {
+          "text": "Thêm epic"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Không tìm thấy epic phù hợp"
+      },
+      "no_epics": {
+        "title": "Không tìm thấy epic nào"
+      }
+    }
+  }
+}

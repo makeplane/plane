@@ -1,0 +1,383 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "생성일",
+      "updated_at": "업데이트일",
+      "name": "이름"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "주기 추가",
+    "more_details": "자세히 보기",
+    "cycle": "주기",
+    "update_cycle": "주기 업데이트",
+    "create_cycle": "주기 생성",
+    "no_matching_cycles": "일치하는 주기 없음",
+    "remove_filters_to_see_all_cycles": "모든 주기를 보려면 필터를 제거하세요",
+    "remove_search_criteria_to_see_all_cycles": "모든 주기를 보려면 검색 기준을 제거하세요",
+    "only_completed_cycles_can_be_archived": "완료된 주기만 아카이브할 수 있습니다",
+    "start_date": "시작일",
+    "end_date": "종료일",
+    "in_your_timezone": "내 시간대",
+    "transfer_work_items": "{count}개의 작업 항목 이전",
+    "transfer": {
+      "no_cycles_available": "작업 항목을 전송할 수 있는 다른 사이클이 없습니다."
+    },
+    "date_range": "날짜 범위",
+    "add_date": "날짜 추가",
+    "active_cycle": {
+      "label": "활성 주기",
+      "progress": "진행",
+      "chart": "버다운 차트",
+      "priority_issue": "우선순위 작업 항목",
+      "assignees": "담당자",
+      "issue_burndown": "작업 항목 버다운",
+      "ideal": "이상적인",
+      "current": "현재",
+      "labels": "레이블",
+      "trailing": "뒤처짐",
+      "leading": "앞섬"
+    },
+    "upcoming_cycle": {
+      "label": "다가오는 주기"
+    },
+    "completed_cycle": {
+      "label": "완료된 주기"
+    },
+    "status": {
+      "days_left": "남은 일수",
+      "completed": "완료됨",
+      "yet_to_start": "시작되지 않음",
+      "in_progress": "진행 중",
+      "draft": "초안"
+    },
+    "action": {
+      "restore": {
+        "title": "주기 복원",
+        "success": {
+          "title": "주기 복원됨",
+          "description": "주기가 복원되었습니다."
+        },
+        "failed": {
+          "title": "주기 복원 실패",
+          "description": "주기를 복원할 수 없습니다. 다시 시도해주세요."
+        }
+      },
+      "favorite": {
+        "loading": "주기를 즐겨찾기에 추가 중",
+        "success": {
+          "description": "주기가 즐겨찾기에 추가되었습니다.",
+          "title": "성공!"
+        },
+        "failed": {
+          "description": "주기를 즐겨찾기에 추가할 수 없습니다. 다시 시도해주세요.",
+          "title": "오류!"
+        }
+      },
+      "unfavorite": {
+        "loading": "주기를 즐겨찾기에서 제거 중",
+        "success": {
+          "description": "주기가 즐겨찾기에서 제거되었습니다.",
+          "title": "성공!"
+        },
+        "failed": {
+          "description": "주기를 즐겨찾기에서 제거할 수 없습니다. 다시 시도해주세요.",
+          "title": "오류!"
+        }
+      },
+      "update": {
+        "loading": "주기 업데이트 중",
+        "success": {
+          "description": "주기가 성공적으로 업데이트되었습니다.",
+          "title": "성공!"
+        },
+        "failed": {
+          "description": "주기 업데이트 중 오류 발생. 다시 시도해주세요.",
+          "title": "오류!"
+        },
+        "error": {
+          "already_exists": "주어진 날짜에 이미 주기가 있습니다. 초안 주기를 생성하려면 두 날짜를 모두 제거하세요."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "작업을 주기로 그룹화하고 시간 상자화하세요.",
+        "description": "작업을 시간 상자로 나누고, 프로젝트 마감일에서 역으로 날짜를 설정하며, 팀으로서 실질적인 진전을 이루세요.",
+        "primary_button": {
+          "text": "첫 번째 주기 설정",
+          "comic": {
+            "title": "주기는 반복적인 시간 상자입니다.",
+            "description": "스프린트, 반복 또는 주간 또는 격주로 작업을 추적하는 데 사용하는 다른 용어는 모두 주기입니다."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "주기에 추가된 작업 항목 없음",
+        "description": "이 주기 내에서 시간 상자화하고 전달하려는 작업 항목을 추가하거나 생성하세요",
+        "primary_button": {
+          "text": "새 작업 항목 생성"
+        },
+        "secondary_button": {
+          "text": "기존 작업 항목 추가"
+        }
+      },
+      "completed_no_issues": {
+        "title": "주기에 작업 항목 없음",
+        "description": "주기에 작업 항목이 없습니다. 작업 항목이 전송되었거나 숨겨져 있습니다. 숨겨진 작업 항목을 보려면 표시 속성을 적절히 업데이트하세요."
+      },
+      "active": {
+        "title": "활성 주기 없음",
+        "description": "활성 주기에는 오늘 날짜가 범위 내에 포함된 모든 기간이 포함됩니다. 여기에서 활성 주기의 진행 상황과 세부 정보를 확인하세요."
+      },
+      "archived": {
+        "title": "아카이브된 주기 없음",
+        "description": "프로젝트를 정리하려면 완료된 주기를 아카이브하세요. 아카이브된 주기는 여기에서 찾을 수 있습니다."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "작업 항목을 생성하고 누군가에게 할당하세요, 심지어 자신에게도",
+        "description": "작업 항목을 작업, 작업, 작업 또는 JTBD로 생각하세요. 작업 항목과 하위 작업 항목은 일반적으로 팀원에게 할당된 시간 기반 작업입니다. 팀은 작업 항목을 생성, 할당 및 완료하여 프로젝트 목표를 향해 나아갑니다.",
+        "primary_button": {
+          "text": "첫 번째 작업 항목 생성",
+          "comic": {
+            "title": "작업 항목은 Plane의 구성 요소입니다.",
+            "description": "Plane UI 재설계, 회사 리브랜딩 또는 새로운 연료 주입 시스템 출시와 같은 작업 항목은 하위 작업 항목이 있을 가능성이 큽니다."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "아카이브된 작업 항목 없음",
+        "description": "수동으로 또는 자동화를 통해 완료되거나 취소된 작업 항목을 아카이브할 수 있습니다. 아카이브된 항목은 여기에서 찾을 수 있습니다.",
+        "primary_button": {
+          "text": "자동화 설정"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "적용된 필터와 일치하는 작업 항목 없음",
+        "secondary_button": {
+          "text": "모든 필터 지우기"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "모듈 추가",
+    "update_module": "모듈 업데이트",
+    "create_module": "모듈 생성",
+    "archive_module": "모듈 아카이브",
+    "restore_module": "모듈 복원",
+    "delete_module": "모듈 삭제",
+    "empty_state": {
+      "general": {
+        "title": "프로젝트 마일스톤을 모듈로 매핑하고 집계된 작업을 쉽게 추적하세요.",
+        "description": "논리적이고 계층적인 부모에 속하는 작업 항목 그룹이 모듈을 형성합니다. 이를 프로젝트 마일스톤별로 작업을 추적하는 방법으로 생각하세요. 모듈은 자체 기간과 마감일을 가지며, 마일스톤에 얼마나 가까운지 또는 먼지를 확인하는 데 도움이 되는 분석을 제공합니다.",
+        "primary_button": {
+          "text": "첫 번째 모듈 생성",
+          "comic": {
+            "title": "모듈은 계층별로 작업을 그룹화하는 데 도움이 됩니다.",
+            "description": "카트 모듈, 섀시 모듈 및 창고 모듈은 모두 이 그룹화의 좋은 예입니다."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "모듈에 작업 항목 없음",
+        "description": "이 모듈의 일부로 완료하려는 작업 항목을 생성하거나 추가하세요",
+        "primary_button": {
+          "text": "새 작업 항목 생성"
+        },
+        "secondary_button": {
+          "text": "기존 작업 항목 추가"
+        }
+      },
+      "archived": {
+        "title": "아카이브된 모듈 없음",
+        "description": "프로젝트를 정리하려면 완료되거나 취소된 모듈을 아카이브하세요. 아카이브된 모듈은 여기에서 찾을 수 있습니다."
+      },
+      "sidebar": {
+        "in_active": "이 모듈은 아직 활성화되지 않았습니다.",
+        "invalid_date": "유효하지 않은 날짜입니다. 유효한 날짜를 입력하세요."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "모듈 아카이브",
+      "archive_module_description": "완료되거나 취소된 모듈만 아카이브할 수 있습니다.",
+      "delete_module": "모듈 삭제"
+    },
+    "toast": {
+      "copy": {
+        "success": "모듈 링크가 클립보드에 복사되었습니다"
+      },
+      "delete": {
+        "success": "모듈이 성공적으로 삭제되었습니다",
+        "error": "모듈 삭제 실패"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "프로젝트에 대한 필터링된 뷰를 저장하세요. 필요한 만큼 생성하세요",
+        "description": "뷰는 자주 사용하는 필터 또는 쉽게 접근하고 싶은 필터 세트입니다. 프로젝트의 모든 동료가 모든 사람의 뷰를 보고 자신에게 가장 적합한 뷰를 선택할 수 있습니다.",
+        "primary_button": {
+          "text": "첫 번째 뷰 생성",
+          "comic": {
+            "title": "뷰는 작업 항목 속성 위에서 작동합니다.",
+            "description": "여기에서 원하는 만큼의 속성을 필터로 사용하여 뷰를 생성할 수 있습니다."
+          }
+        }
+      },
+      "filter": {
+        "title": "일치하는 뷰 없음",
+        "description": "검색 기준과 일치하는 뷰가 없습니다. 대신 새 뷰를 생성하세요."
+      }
+    },
+    "delete_view": {
+      "title": "이 뷰를 삭제하시겠습니까?",
+      "content": "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Plane의 AI 도우미가 시작을 도와줍니다",
+        "description": "페이지는 Plane에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Plane의 AI를 호출하세요.",
+        "primary_button": {
+          "text": "첫 번째 페이지 생성"
+        }
+      },
+      "private": {
+        "title": "비공개 페이지 없음",
+        "description": "비공개 생각을 여기에 보관하세요. 공유할 준비가 되면 팀이 클릭 한 번으로 접근할 수 있습니다.",
+        "primary_button": {
+          "text": "첫 번째 페이지 생성"
+        }
+      },
+      "public": {
+        "title": "공개 페이지 없음",
+        "description": "프로젝트의 모든 사람과 공유된 페이지를 여기에서 확인하세요.",
+        "primary_button": {
+          "text": "첫 번째 페이지 생성"
+        }
+      },
+      "archived": {
+        "title": "아카이브된 페이지 없음",
+        "description": "레이더에 없는 페이지를 아카이브하세요. 필요할 때 여기에서 접근하세요."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "프로젝트에 접수가 활성화되지 않았습니다.",
+        "description": "접수는 프로젝트로 들어오는 요청을 관리하고 이를 워크플로우의 작업 항목으로 추가하는 데 도움이 됩니다. 프로젝트 설정에서 접수를 활성화하여 요청을 관리하세요.",
+        "primary_button": {
+          "text": "기능 관리"
+        }
+      },
+      "cycle": {
+        "title": "이 프로젝트에 주기가 활성화되지 않았습니다.",
+        "description": "작업을 시간 상자로 나누고, 프로젝트 마감일에서 역으로 날짜를 설정하며, 팀으로서 실질적인 진전을 이루세요. 프로젝트에 주기 기능을 활성화하여 사용하세요.",
+        "primary_button": {
+          "text": "기능 관리"
+        }
+      },
+      "module": {
+        "title": "프로젝트에 모듈이 활성화되지 않았습니다.",
+        "description": "모듈은 프로젝트의 구성 요소입니다. 프로젝트 설정에서 모듈을 활성화하여 사용하세요.",
+        "primary_button": {
+          "text": "기능 관리"
+        }
+      },
+      "page": {
+        "title": "프로젝트에 페이지가 활성화되지 않았습니다.",
+        "description": "페이지는 프로젝트의 구성 요소입니다. 프로젝트 설정에서 페이지를 활성화하여 사용하세요.",
+        "primary_button": {
+          "text": "기능 관리"
+        }
+      },
+      "view": {
+        "title": "프로젝트에 뷰가 활성화되지 않았습니다.",
+        "description": "뷰는 프로젝트의 구성 요소입니다. 프로젝트 설정에서 뷰를 활성화하여 사용하세요.",
+        "primary_button": {
+          "text": "기능 관리"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "백로그",
+      "planned": "계획됨",
+      "in_progress": "진행 중",
+      "paused": "일시 중지됨",
+      "completed": "완료됨",
+      "cancelled": "취소됨"
+    },
+    "layout": {
+      "list": "목록 레이아웃",
+      "board": "갤러리 레이아웃",
+      "timeline": "타임라인 레이아웃"
+    },
+    "order_by": {
+      "name": "이름",
+      "progress": "진행",
+      "issues": "작업 항목 수",
+      "due_date": "마감일",
+      "created_at": "생성일",
+      "manual": "수동"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "CSV에서 구성원 가져오기",
+      "description": "다음 열이 포함된 CSV 업로드: 이메일 및 역할(5=게스트, 15=멤버, 20=관리자). 사용자는 이미 워크스페이스 멤버여야 합니다.",
+      "download_sample": "샘플 CSV 다운로드",
+      "dropzone": {
+        "active": "CSV 파일을 여기에 놓으세요",
+        "inactive": "드래그 앤 드롭 또는 클릭하여 업로드",
+        "file_type": ".csv 파일만 지원됩니다"
+      },
+      "buttons": {
+        "cancel": "취소",
+        "import": "가져오기",
+        "try_again": "다시 시도",
+        "close": "닫기",
+        "done": "완료"
+      },
+      "progress": {
+        "uploading": "업로드 중...",
+        "importing": "가져오는 중..."
+      },
+      "summary": {
+        "title": {
+          "complete": "가져오기 완료"
+        },
+        "message": {
+          "success": "프로젝트에 {count}명의 구성원을 가져왔습니다.",
+          "no_imports": "CSV 파일에서 새 구성원을 가져오지 못했습니다."
+        },
+        "stats": {
+          "added": "추가됨",
+          "reactivated": "다시 활성화됨",
+          "already_members": "이미 멤버",
+          "skipped": "건너뜀"
+        },
+        "download_errors": "건너뛴 세부 정보 다운로드"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "잘못된 파일",
+          "message": "CSV 파일만 지원됩니다."
+        },
+        "import_failed": {
+          "title": "가져오기 실패",
+          "message": "문제가 발생했습니다."
+        }
+      }
+    }
+  }
+}

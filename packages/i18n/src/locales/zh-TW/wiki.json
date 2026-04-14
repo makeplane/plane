@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "一般",
+      "private": "私人",
+      "shared": "已分享",
+      "archived": "已封存"
+    },
+    "fallback_name": "集合",
+    "form": {
+      "name_required": "集合標題為必填",
+      "name_max_length": "集合名稱必須少於 255 個字元",
+      "name_placeholder_create": "為集合輸入標題",
+      "name_placeholder_edit": "集合名稱"
+    },
+    "create_modal": {
+      "title": "建立集合",
+      "submit": "建立集合"
+    },
+    "edit_modal": {
+      "title": "編輯集合"
+    },
+    "delete_modal": {
+      "title": "刪除集合",
+      "page_count": "此集合有 {pageCount} 個頁面。請選擇要如何處理它們。",
+      "transfer_title": "轉移頁面並刪除集合",
+      "transfer_description": "刪除前，請先將所有頁面移到另一個集合。頁面及其權限將會保留。",
+      "transfer_warning": "移動後的頁面將繼承所選集合的權限。",
+      "transfer_target_label": "將頁面移動到",
+      "transfer_target_placeholder": "選擇集合",
+      "delete_with_pages_title": "連同頁面一起刪除集合",
+      "delete_with_pages_description": "永久刪除集合及其所有頁面。此操作無法還原。",
+      "submit": "刪除集合"
+    },
+    "header": {
+      "add_page": "新增頁面"
+    },
+    "menu": {
+      "create_new_page": "建立新頁面",
+      "add_existing_page": "新增現有頁面",
+      "edit_collection": "編輯集合",
+      "collection_options": "集合選項"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "搜尋頁面",
+      "success_message": "已將 {count} 個頁面加入集合。",
+      "error_message": "無法移動頁面。請再試一次。",
+      "no_pages_found": "找不到符合搜尋條件的頁面",
+      "no_pages_available": "沒有可移動的頁面",
+      "submit": "移動"
+    },
+    "list": {
+      "invite_only": "僅限邀請",
+      "remove_error": "無法將頁面從集合中移除。",
+      "no_matching_pages": "沒有符合的頁面",
+      "remove_search_criteria": "移除搜尋條件以查看所有頁面",
+      "remove_filters": "移除篩選條件以查看所有頁面",
+      "no_pages_title": "尚無頁面",
+      "no_pages_description": "此集合目前沒有任何頁面。",
+      "untitled": "未命名",
+      "restricted_access": "受限存取",
+      "collapse_page": "收合頁面",
+      "expand_page": "展開頁面",
+      "page_actions": "頁面操作",
+      "page_link_copied": "頁面連結已複製到剪貼簿。",
+      "columns": {
+        "page_name": "頁面名稱",
+        "owner": "擁有者",
+        "nested_pages": "巢狀頁面",
+        "last_activity": "最後活動",
+        "actions": "操作"
+      }
+    },
+    "toasts": {
+      "created": "集合建立成功。",
+      "create_error": "無法建立集合。請再試一次。",
+      "renamed": "集合重新命名成功。",
+      "rename_error": "無法更新集合。請再試一次。",
+      "transferred_deleted": "頁面已轉移，集合已刪除。",
+      "deleted_with_pages": "集合及其頁面已刪除。",
+      "delete_error": "無法刪除集合。請再試一次。",
+      "target_required": "請選擇要將頁面移動到的集合。",
+      "create_page_error": "無法建立頁面。請再試一次。",
+      "create_page_in_collection_error": "無法建立頁面或將其加入集合。請再試一次。",
+      "collection_link_copied": "集合連結已複製到剪貼簿。"
+    }
+  }
+}

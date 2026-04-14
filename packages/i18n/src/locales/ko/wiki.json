@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "일반",
+      "private": "비공개",
+      "shared": "공유됨",
+      "archived": "보관됨"
+    },
+    "fallback_name": "컬렉션",
+    "form": {
+      "name_required": "컬렉션 제목은 필수입니다",
+      "name_max_length": "컬렉션 이름은 255자 미만이어야 합니다",
+      "name_placeholder_create": "컬렉션 제목을 입력하세요",
+      "name_placeholder_edit": "컬렉션 이름"
+    },
+    "create_modal": {
+      "title": "컬렉션 만들기",
+      "submit": "컬렉션 만들기"
+    },
+    "edit_modal": {
+      "title": "컬렉션 편집"
+    },
+    "delete_modal": {
+      "title": "컬렉션 삭제",
+      "page_count": "이 컬렉션에는 페이지가 {pageCount}개 있습니다. 어떻게 처리할지 선택하세요.",
+      "transfer_title": "페이지를 옮기고 컬렉션 삭제",
+      "transfer_description": "삭제하기 전에 모든 페이지를 다른 컬렉션으로 이동하세요. 페이지와 권한은 유지됩니다.",
+      "transfer_warning": "이동된 페이지는 선택한 컬렉션의 권한을 상속받습니다.",
+      "transfer_target_label": "페이지 이동 대상",
+      "transfer_target_placeholder": "컬렉션 선택",
+      "delete_with_pages_title": "페이지와 함께 컬렉션 삭제",
+      "delete_with_pages_description": "컬렉션과 모든 페이지를 영구적으로 삭제합니다. 이 작업은 되돌릴 수 없습니다.",
+      "submit": "컬렉션 삭제"
+    },
+    "header": {
+      "add_page": "페이지 추가"
+    },
+    "menu": {
+      "create_new_page": "새 페이지 만들기",
+      "add_existing_page": "기존 페이지 추가",
+      "edit_collection": "컬렉션 편집",
+      "collection_options": "컬렉션 옵션"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "페이지 검색",
+      "success_message": "페이지 {count}개가 컬렉션에 추가되었습니다.",
+      "error_message": "페이지를 이동할 수 없습니다. 다시 시도해 주세요.",
+      "no_pages_found": "검색과 일치하는 페이지가 없습니다",
+      "no_pages_available": "이동할 수 있는 페이지가 없습니다",
+      "submit": "이동"
+    },
+    "list": {
+      "invite_only": "초대 전용",
+      "remove_error": "페이지를 컬렉션에서 제거할 수 없습니다.",
+      "no_matching_pages": "일치하는 페이지가 없습니다",
+      "remove_search_criteria": "모든 페이지를 보려면 검색 조건을 제거하세요",
+      "remove_filters": "모든 페이지를 보려면 필터를 제거하세요",
+      "no_pages_title": "아직 페이지가 없습니다",
+      "no_pages_description": "이 컬렉션에는 아직 페이지가 없습니다.",
+      "untitled": "제목 없음",
+      "restricted_access": "접근 제한",
+      "collapse_page": "페이지 접기",
+      "expand_page": "페이지 펼치기",
+      "page_actions": "페이지 작업",
+      "page_link_copied": "페이지 링크가 클립보드에 복사되었습니다.",
+      "columns": {
+        "page_name": "페이지 이름",
+        "owner": "소유자",
+        "nested_pages": "중첩 페이지",
+        "last_activity": "최근 활동",
+        "actions": "작업"
+      }
+    },
+    "toasts": {
+      "created": "컬렉션이 생성되었습니다.",
+      "create_error": "컬렉션을 만들 수 없습니다. 다시 시도해 주세요.",
+      "renamed": "컬렉션 이름이 변경되었습니다.",
+      "rename_error": "컬렉션을 업데이트할 수 없습니다. 다시 시도해 주세요.",
+      "transferred_deleted": "페이지를 이동하고 컬렉션을 삭제했습니다.",
+      "deleted_with_pages": "컬렉션과 해당 페이지가 삭제되었습니다.",
+      "delete_error": "컬렉션을 삭제할 수 없습니다. 다시 시도해 주세요.",
+      "target_required": "페이지를 이동할 컬렉션을 선택해 주세요.",
+      "create_page_error": "페이지를 만들 수 없습니다. 다시 시도해 주세요.",
+      "create_page_in_collection_error": "페이지를 만들거나 컬렉션에 추가할 수 없습니다. 다시 시도해 주세요.",
+      "collection_link_copied": "컬렉션 링크가 클립보드에 복사되었습니다."
+    }
+  }
+}

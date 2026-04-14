@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Général",
+      "private": "Privé",
+      "shared": "Partagé",
+      "archived": "Archivé"
+    },
+    "fallback_name": "Collection",
+    "form": {
+      "name_required": "Le titre de la collection est requis",
+      "name_max_length": "Le nom de la collection doit comporter moins de 255 caractères",
+      "name_placeholder_create": "Donnez un titre à la collection",
+      "name_placeholder_edit": "Nom de la collection"
+    },
+    "create_modal": {
+      "title": "Créer une collection",
+      "submit": "Créer la collection"
+    },
+    "edit_modal": {
+      "title": "Modifier la collection"
+    },
+    "delete_modal": {
+      "title": "Supprimer la collection",
+      "page_count": "Cette collection contient {pageCount} pages. Choisissez ce qui doit leur arriver.",
+      "transfer_title": "Transférer les pages et supprimer la collection",
+      "transfer_description": "Déplacez toutes les pages vers une autre collection avant la suppression. Les pages et leurs autorisations sont conservées.",
+      "transfer_warning": "Les pages déplacées hériteront des autorisations de la collection sélectionnée.",
+      "transfer_target_label": "Déplacer les pages vers",
+      "transfer_target_placeholder": "Sélectionnez une collection",
+      "delete_with_pages_title": "Supprimer la collection avec ses pages",
+      "delete_with_pages_description": "Supprime définitivement la collection et toutes ses pages. Cette action est irréversible.",
+      "submit": "Supprimer la collection"
+    },
+    "header": {
+      "add_page": "Ajouter une page"
+    },
+    "menu": {
+      "create_new_page": "Créer une nouvelle page",
+      "add_existing_page": "Ajouter une page existante",
+      "edit_collection": "Modifier la collection",
+      "collection_options": "Options de la collection"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Rechercher des pages",
+      "success_message": "{count} pages ont été ajoutées à la collection.",
+      "error_message": "Les pages n'ont pas pu être déplacées. Veuillez réessayer.",
+      "no_pages_found": "Aucune page ne correspond à votre recherche",
+      "no_pages_available": "Aucune page disponible à déplacer",
+      "submit": "Déplacer"
+    },
+    "list": {
+      "invite_only": "Sur invitation uniquement",
+      "remove_error": "La page n'a pas pu être retirée de la collection.",
+      "no_matching_pages": "Aucune page correspondante",
+      "remove_search_criteria": "Supprimez les critères de recherche pour voir toutes les pages",
+      "remove_filters": "Supprimez les filtres pour voir toutes les pages",
+      "no_pages_title": "Aucune page pour le moment",
+      "no_pages_description": "Cette collection ne contient aucune page pour le moment.",
+      "untitled": "Sans titre",
+      "restricted_access": "Accès restreint",
+      "collapse_page": "Réduire la page",
+      "expand_page": "Développer la page",
+      "page_actions": "Actions de la page",
+      "page_link_copied": "Lien de la page copié dans le presse-papiers.",
+      "columns": {
+        "page_name": "Nom de la page",
+        "owner": "Propriétaire",
+        "nested_pages": "Pages imbriquées",
+        "last_activity": "Dernière activité",
+        "actions": "Actions"
+      }
+    },
+    "toasts": {
+      "created": "Collection créée avec succès.",
+      "create_error": "La collection n'a pas pu être créée. Veuillez réessayer.",
+      "renamed": "Collection renommée avec succès.",
+      "rename_error": "La collection n'a pas pu être mise à jour. Veuillez réessayer.",
+      "transferred_deleted": "Les pages ont été transférées et la collection supprimée.",
+      "deleted_with_pages": "La collection et ses pages ont été supprimées.",
+      "delete_error": "La collection n'a pas pu être supprimée. Veuillez réessayer.",
+      "target_required": "Veuillez sélectionner une collection vers laquelle déplacer les pages.",
+      "create_page_error": "La page n'a pas pu être créée. Veuillez réessayer.",
+      "create_page_in_collection_error": "La page n'a pas pu être créée ou ajoutée à la collection. Veuillez réessayer.",
+      "collection_link_copied": "Lien de la collection copié dans le presse-papiers."
+    }
+  }
+}

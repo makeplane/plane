@@ -1,0 +1,380 @@
+{
+  "workspace_creation": {
+    "heading": "建立您的工作區",
+    "subheading": "若要開始使用 Plane，您需要建立或加入工作區。",
+    "form": {
+      "name": {
+        "label": "為您的工作區命名",
+        "placeholder": "最好使用熟悉且容易識別的名稱。"
+      },
+      "url": {
+        "label": "設定您的工作區網址",
+        "placeholder": "輸入或貼上網址",
+        "edit_slug": "您只能編輯網址的片段"
+      },
+      "organization_size": {
+        "label": "有多少人會使用這個工作區？",
+        "placeholder": "選擇一個範圍"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "只有您的執行個體管理員可以建立工作區",
+        "description": "如果您知道您的執行個體管理員的電子郵件地址，請點選下方按鈕與他們聯絡。",
+        "request_button": "請求執行個體管理員"
+      },
+      "validation": {
+        "name_alphanumeric": "工作區名稱只能包含 (' ')、('-')、('_') 和英數字元。",
+        "name_length": "名稱請限制在 80 個字元以內。",
+        "url_alphanumeric": "網址只能包含 ('-') 和英數字元。",
+        "url_length": "網址請限制在 48 個字元以內。",
+        "url_already_taken": "工作區網址已被使用！"
+      }
+    },
+    "request_email": {
+      "subject": "請求新工作區",
+      "body": "您好，執行個體管理員：\n\n請以網址 [/workspace-name] 建立一個新工作區，用於 [建立工作區的目的]。\n\n謝謝，\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "建立工作區",
+      "loading": "建立工作區中"
+    },
+    "toast": {
+      "success": {
+        "title": "成功",
+        "message": "工作區建立成功"
+      },
+      "error": {
+        "title": "錯誤",
+        "message": "無法建立工作區。請再試一次。"
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "您的專案、活動和指標概覽",
+        "description": "歡迎使用 Plane，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作事項，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助他們團隊進展的項目。",
+        "primary_button": {
+          "text": "建立您的第一個專案",
+          "comic": {
+            "title": "在 Plane 中，一切都始於專案",
+            "description": "專案可以是產品的藍圖、行銷活動，或是推出新車。"
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "分析",
+    "page_label": "{workspace} - 分析",
+    "open_tasks": "開啟任務總數",
+    "error": "取得資料時發生錯誤。",
+    "work_items_closed_in": "已完成的工作事項數量在",
+    "selected_projects": "已選取的專案",
+    "total_members": "成員總數",
+    "total_cycles": "週期總數",
+    "total_modules": "模組總數",
+    "pending_work_items": {
+      "title": "待處理工作事項",
+      "empty_state": "在此顯示同事待處理工作事項的分析。"
+    },
+    "work_items_closed_in_a_year": {
+      "title": "年度完成工作事項",
+      "empty_state": "完成工作事項以圖表形式檢視分析。"
+    },
+    "most_work_items_created": {
+      "title": "最多工作事項建立者",
+      "empty_state": "在此顯示同事及其建立的工作事項數量。"
+    },
+    "most_work_items_closed": {
+      "title": "最多工作事項完成者",
+      "empty_state": "在此顯示同事及其完成的工作事項數量。"
+    },
+    "tabs": {
+      "scope_and_demand": "範圍與需求",
+      "custom": "自訂分析"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "指派給您的工作項目將依狀態分類顯示在此處。",
+        "title": "尚無資料"
+      },
+      "created_vs_resolved": {
+        "description": "隨著時間推移所建立與解決的工作項目將顯示在此處。",
+        "title": "尚無資料"
+      },
+      "project_insights": {
+        "title": "尚無資料",
+        "description": "指派給您的工作項目將依狀態分類顯示在此處。"
+      },
+      "general": {
+        "title": "追蹤進度、工作量和分配。發現趨勢，消除障礙，加速工作進展",
+        "description": "查看範圍與需求、估算和範圍蔓延。獲取團隊成員和團隊的績效，確保您的專案按時運行。",
+        "primary_button": {
+          "text": "開始您的第一個專案",
+          "comic": {
+            "title": "分析功能在週期 + 模組中效果最佳",
+            "description": "首先，將您的問題在週期中進行時間限制，如果可能的話，將跨越多個週期的問題分組到模組中。在左側導覽中查看這兩個功能。"
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "尚無資料",
+        "description": "循環進度分析將顯示在此處。將工作項目加入循環以開始追蹤進度。"
+      },
+      "module_progress": {
+        "title": "尚無資料",
+        "description": "模組進度分析將顯示在此處。將工作項目加入模組以開始追蹤進度。"
+      },
+      "intake_trends": {
+        "title": "尚無資料",
+        "description": "引入趨勢分析將顯示在此處。將工作項目加入引入以開始追蹤趨勢。"
+      }
+    },
+    "created_vs_resolved": "已建立 vs 已解決",
+    "customized_insights": "自訂化洞察",
+    "backlog_work_items": "待辦的{entity}",
+    "active_projects": "啟用中的專案",
+    "trend_on_charts": "圖表趨勢",
+    "all_projects": "所有專案",
+    "summary_of_projects": "專案摘要",
+    "project_insights": "專案洞察",
+    "started_work_items": "已開始的{entity}",
+    "total_work_items": "{entity}總數",
+    "total_projects": "專案總數",
+    "total_admins": "管理員總數",
+    "total_users": "使用者總數",
+    "total_intake": "總收入",
+    "un_started_work_items": "未開始的{entity}",
+    "total_guests": "訪客總數",
+    "completed_work_items": "已完成的{entity}",
+    "total": "{entity}總數",
+    "projects_by_status": "按狀態分類的專案",
+    "active_users": "活躍使用者",
+    "intake_trends": "入學趨勢",
+    "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
+    "upgrade_to_plan": "升級至 {plan} 以解鎖 {tab}"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {專案} other {專案}}",
+    "create": {
+      "label": "新增專案"
+    },
+    "network": {
+      "label": "網路",
+      "private": {
+        "title": "私人",
+        "description": "僅受邀者可存取"
+      },
+      "public": {
+        "title": "公開",
+        "description": "工作區中除了訪客以外的任何人都可以加入"
+      }
+    },
+    "error": {
+      "permission": "您沒有執行此操作的權限。",
+      "cycle_delete": "無法刪除週期",
+      "module_delete": "無法刪除模組",
+      "issue_delete": "無法刪除工作事項"
+    },
+    "state": {
+      "backlog": "待辦事項",
+      "unstarted": "未開始",
+      "started": "已開始",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "sort": {
+      "manual": "手動",
+      "name": "名稱",
+      "created_at": "建立日期",
+      "members_length": "成員數量"
+    },
+    "scope": {
+      "my_projects": "我的專案",
+      "archived_projects": "已封存"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# 個月} other{# 個月}}",
+      "days_count": "{days, plural, one{# 天} other{# 天}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "沒有使用中的專案",
+        "description": "請將每個專案視為目標導向工作的上層。專案是工作、週期和模組所在的地方，並與您的同事一起協助您達成目標。建立新專案或篩選已封存的專案。",
+        "primary_button": {
+          "text": "開始您的第一個專案",
+          "comic": {
+            "title": "在 Plane 中，一切都始於專案",
+            "description": "專案可以是產品的藍圖、行銷活動，或是推出新車。"
+          }
+        }
+      },
+      "no_projects": {
+        "title": "沒有專案",
+        "description": "若要建立工作事項或管理您的工作，您需要建立專案或成為專案的一部分。",
+        "primary_button": {
+          "text": "開始您的第一個專案",
+          "comic": {
+            "title": "在 Plane 中，一切都始於專案",
+            "description": "專案可以是產品的藍圖、行銷活動，或是推出新車。"
+          }
+        }
+      },
+      "filter": {
+        "title": "沒有符合的專案",
+        "description": "找不到符合篩選條件的專案。\n改為建立新專案。"
+      },
+      "search": {
+        "description": "找不到符合篩選條件的專案。\n改為建立新專案"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "新增檢視",
+    "empty_state": {
+      "all-issues": {
+        "title": "專案中沒有工作事項",
+        "description": "第一個專案完成！現在，將您的工作分割成可追蹤的工作事項。讓我們開始吧！",
+        "primary_button": {
+          "text": "建立新工作事項"
+        }
+      },
+      "assigned": {
+        "title": "尚無工作事項",
+        "description": "從這裡可以追蹤指派給您的工作事項。",
+        "primary_button": {
+          "text": "建立新工作事項"
+        }
+      },
+      "created": {
+        "title": "尚無工作事項",
+        "description": "您建立的所有工作事項都會出現在這裡，直接在這裡追蹤它們。",
+        "primary_button": {
+          "text": "建立新工作事項"
+        }
+      },
+      "subscribed": {
+        "title": "尚無工作事項",
+        "description": "訂閱您感興趣的工作事項，在這裡追蹤它們。"
+      },
+      "custom-view": {
+        "title": "尚無工作事項",
+        "description": "符合篩選條件的工作事項，在這裡追蹤它們。"
+      }
+    },
+    "delete_view": {
+      "title": "您確定要刪除此視圖嗎？",
+      "content": "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。"
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "建立工作事項草稿",
+    "empty_state": {
+      "title": "寫到一半的工作事項，以及即將推出的留言會出現在這裡。",
+      "description": "若要試用此功能，請開始新增工作事項並中途離開，或在下方建立您的第一個草稿。😉",
+      "primary_button": {
+        "text": "建立您的第一個草稿"
+      }
+    },
+    "delete_modal": {
+      "title": "刪除草稿",
+      "description": "您確定要刪除此草稿嗎？此操作無法復原。"
+    },
+    "toasts": {
+      "created": {
+        "success": "草稿已建立",
+        "error": "無法建立工作事項。請再試一次。"
+      },
+      "deleted": {
+        "success": "草稿已刪除"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Plane 的 AI 助手，幫助您開始",
+        "description": "頁面是 Plane 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Plane 的 AI。",
+        "primary_button": {
+          "text": "創建您的第一個頁面"
+        }
+      },
+      "private": {
+        "title": "還沒有私人頁面",
+        "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點擊一下即可。",
+        "primary_button": {
+          "text": "創建您的第一個頁面"
+        }
+      },
+      "public": {
+        "title": "還沒有工作空間頁面",
+        "description": "在這裡查看與工作空間中的每個人共享的頁面。",
+        "primary_button": {
+          "text": "創建您的第一個頁面"
+        }
+      },
+      "archived": {
+        "title": "還沒有歸檔的頁面",
+        "description": "歸檔不在您雷達上的頁面。需要時在這裡訪問它們。"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "沒有活動週期",
+        "description": "您的專案的週期，包括其範圍內包含今天日期的任何期間。在這裡查找所有活動週期的進度和詳情。"
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "從CSV匯入成員",
+      "description": "上傳包含以下欄位的CSV：Email, Display Name, First Name, Last Name, Role（5、15或20）",
+      "dropzone": {
+        "active": "將CSV檔案放在這裡",
+        "inactive": "拖放或點擊上傳",
+        "file_type": "僅支援.csv檔案"
+      },
+      "buttons": {
+        "cancel": "取消",
+        "import": "匯入",
+        "try_again": "重試",
+        "close": "關閉",
+        "done": "完成"
+      },
+      "progress": {
+        "uploading": "上傳中...",
+        "importing": "匯入中..."
+      },
+      "summary": {
+        "title": {
+          "failed": "匯入失敗",
+          "complete": "匯入完成"
+        },
+        "message": {
+          "seat_limit": "由於席位限制，無法匯入成員。",
+          "success": "成功將{count}名成員新增至工作區。",
+          "no_imports": "未從CSV檔案匯入任何成員。"
+        },
+        "stats": {
+          "successful": "成功",
+          "failed": "失敗"
+        },
+        "download_errors": "下載錯誤"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "無效檔案",
+          "message": "僅支援CSV檔案。"
+        },
+        "import_failed": {
+          "title": "匯入失敗",
+          "message": "發生錯誤。"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "現在の日時"
+        },
+        "today": {
+          "description": "今日の日付"
+        },
+        "start_of_day": {
+          "description": "今日の開始"
+        },
+        "end_of_day": {
+          "description": "今日の終了"
+        },
+        "start_of_week": {
+          "description": "今週の開始"
+        },
+        "end_of_week": {
+          "description": "今週の終了"
+        },
+        "start_of_month": {
+          "description": "今月の開始"
+        },
+        "end_of_month": {
+          "description": "今月の終了"
+        },
+        "start_of_year": {
+          "description": "今年の開始"
+        },
+        "end_of_year": {
+          "description": "今年の終了"
+        },
+        "days_ago": {
+          "description": "n日前の日付"
+        },
+        "days_from_now": {
+          "description": "n日後の日付"
+        },
+        "weeks_ago": {
+          "description": "n週前の日付"
+        },
+        "weeks_from_now": {
+          "description": "n週後の日付"
+        },
+        "months_ago": {
+          "description": "nヶ月前の日付"
+        },
+        "months_from_now": {
+          "description": "nヶ月後の日付"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "現在ログイン中のユーザー"
+        },
+        "members_of": {
+          "description": "\"project:<id>\" または \"teamspace:<id>\" のメンバー"
+        },
+        "workspace_members": {
+          "description": "すべてのワークスペースメンバー"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "今日アクティブなサイクル"
+        },
+        "completed_cycles": {
+          "description": "終了日が過ぎたサイクル"
+        },
+        "upcoming_cycles": {
+          "description": "開始日が将来のサイクル"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "期限切れかつ状態がオープン"
+        },
+        "has_no_assignee": {
+          "description": "作業アイテムに担当者がいない"
+        },
+        "has_no_label": {
+          "description": "作業アイテムにラベルがない"
+        },
+        "is_top_level": {
+          "description": "サブ作業アイテムでない（親がない）"
+        },
+        "is_sub_work_item": {
+          "description": "サブ作業アイテム（親がある）"
+        },
+        "is_epic": {
+          "description": "エピック"
+        },
+        "is_intake": {
+          "description": "受付作業アイテム"
+        },
+        "is_draft": {
+          "description": "下書き作業アイテム"
+        },
+        "is_archived": {
+          "description": "アーカイブ済み"
+        },
+        "has_children": {
+          "description": "少なくとも1つのサブ作業アイテムがある"
+        },
+        "has_start_and_due_dates": {
+          "description": "開始日と期日の両方がある"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "指定された作業アイテムに関連する作業アイテム"
+        },
+        "blocked_by": {
+          "description": "指定された作業アイテムによってブロックされた作業アイテム"
+        },
+        "blocks": {
+          "description": "指定された作業アイテムをブロックする作業アイテム"
+        },
+        "child_of": {
+          "description": "指定された作業アイテムのサブ作業アイテム"
+        },
+        "parent_of": {
+          "description": "指定された作業アイテムの親作業アイテム"
+        },
+        "duplicate_of": {
+          "description": "指定された作業アイテムの複製としてマークされた作業アイテム"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "フィールドがこの値に設定されたことがある"
+        },
+        "was": {
+          "description": "フィールドは以前この値だった（変更済み）"
+        },
+        "changed_from": {
+          "description": "フィールドがこの値から変更された"
+        },
+        "changed_to": {
+          "description": "フィールドがこの値に変更された"
+        },
+        "changed": {
+          "description": "フィールドが変更された"
+        },
+        "updated_by": {
+          "description": "このユーザーによって更新された作業アイテム"
+        },
+        "commented_by": {
+          "description": "このユーザーによってコメントされた作業アイテム"
+        },
+        "field_changed_by": {
+          "description": "このユーザーによって変更されたフィールド"
+        },
+        "was_assigned_to": {
+          "description": "このユーザーに割り当てられた作業アイテム"
+        },
+        "changed_after": {
+          "description": "この日付以降に変更されたフィールド"
+        },
+        "changed_before": {
+          "description": "この日付以前に変更されたフィールド"
+        },
+        "field_changed_after": {
+          "description": "この日付以降に変更されたフィールド"
+        },
+        "field_changed_before": {
+          "description": "この日付以前に変更されたフィールド"
+        },
+        "changed_to_after": {
+          "description": "この日付以降にこの値に変更されたフィールド"
+        },
+        "changed_to_before": {
+          "description": "この日付以前にこの値に変更されたフィールド"
+        },
+        "field_changed_between": {
+          "description": "これらの日付の間に変更されたフィールド"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "ナビゲート",
+      "accept": "確定",
+      "close": "閉じる",
+      "pick_date": "日付を選択"
+    },
+    "placeholder": "クエリを入力して \"ENTER\" を押してフィルタリング...",
+    "error": "クエリの送信中にエラーが発生しました。確認して再試行してください。"
+  }
+}

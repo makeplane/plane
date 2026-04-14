@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Item Kerja} other {Item Kerja}}",
+    "all": "Semua Item Kerja",
+    "edit": "Edit item kerja",
+    "title": {
+      "label": "Judul item kerja",
+      "required": "Judul item kerja diperlukan."
+    },
+    "add": {
+      "press_enter": "Tekan 'Enter' untuk menambahkan item kerja lainnya",
+      "label": "Tambah item kerja",
+      "cycle": {
+        "failed": "Item kerja tidak dapat ditambahkan ke siklus. Silakan coba lagi.",
+        "success": "{count, plural, one {Item Kerja} other {Item Kerja}} berhasil ditambahkan ke siklus.",
+        "loading": "Menambahkan {count, plural, one {item kerja} other {item kerja}} ke siklus"
+      },
+      "assignee": "Tambah penugasan",
+      "start_date": "Tambah tanggal mulai",
+      "due_date": "Tambah tanggal jatuh tempo",
+      "parent": "Tambah item kerja induk",
+      "sub_issue": "Tambah sub-item kerja",
+      "relation": "Tambah hubungan",
+      "link": "Tambah tautan",
+      "existing": "Tambah item kerja yang ada"
+    },
+    "remove": {
+      "label": "Hapus item kerja",
+      "cycle": {
+        "loading": "Menghapus item kerja dari siklus",
+        "success": "Item kerja berhasil dihapus dari siklus.",
+        "failed": "Item kerja tidak dapat dihapus dari siklus. Silakan coba lagi."
+      },
+      "module": {
+        "loading": "Menghapus item kerja dari modul",
+        "success": "Item kerja berhasil dihapus dari modul.",
+        "failed": "Item kerja tidak dapat dihapus dari modul. Silakan coba lagi."
+      },
+      "parent": {
+        "label": "Hapus item kerja induk"
+      }
+    },
+    "new": "Item Kerja Baru",
+    "adding": "Menambahkan item kerja",
+    "create": {
+      "success": "Item kerja berhasil dibuat"
+    },
+    "priority": {
+      "urgent": "Mendesak",
+      "high": "Tinggi",
+      "medium": "Sedang",
+      "low": "Rendah"
+    },
+    "display": {
+      "properties": {
+        "label": "Tampilkan Properti",
+        "id": "ID",
+        "issue_type": "Tipe item kerja",
+        "sub_issue_count": "Jumlah sub-item kerja",
+        "attachment_count": "Jumlah lampiran",
+        "created_on": "Dibuat pada",
+        "sub_issue": "Sub-item kerja",
+        "work_item_count": "Jumlah item kerja"
+      },
+      "extra": {
+        "show_sub_issues": "Tampilkan sub-item kerja",
+        "show_empty_groups": "Tampilkan grup kosong"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Tata letak ini diurutkan berdasarkan",
+      "list": "Daftar",
+      "kanban": "Papan",
+      "calendar": "Kalender",
+      "spreadsheet": "Tabel",
+      "gantt": "Garis Waktu",
+      "title": {
+        "list": "Tata Letak Daftar",
+        "kanban": "Tata Letak Papan",
+        "calendar": "Tata Letak Kalender",
+        "spreadsheet": "Tata Letak Tabel",
+        "gantt": "Tata Letak Garis Waktu"
+      }
+    },
+    "states": {
+      "active": "Aktif",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "placeholder": "Tambah komentar",
+      "switch": {
+        "private": "Beralih ke komentar pribadi",
+        "public": "Beralih ke komentar publik"
+      },
+      "create": {
+        "success": "Komentar berhasil dibuat",
+        "error": "Gagal membuat komentar. Silakan coba lagi nanti."
+      },
+      "update": {
+        "success": "Komentar berhasil diperbarui",
+        "error": "Gagal memperbarui komentar. Silakan coba lagi nanti."
+      },
+      "remove": {
+        "success": "Komentar berhasil dihapus",
+        "error": "Gagal menghapus komentar. Silakan coba lagi nanti."
+      },
+      "upload": {
+        "error": "Gagal mengunggah aset. Silakan coba lagi nanti."
+      },
+      "copy_link": {
+        "success": "Tautan komentar berhasil disalin ke clipboard",
+        "error": "Gagal menyalin tautan komentar. Silakan coba lagi nanti."
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Item kerja tidak ada",
+        "description": "Item kerja yang Anda cari tidak ada, telah diarsipkan, atau telah dihapus.",
+        "primary_button": {
+          "text": "Lihat item kerja lainnya"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Item kerja sejawat"
+    },
+    "archive": {
+      "description": "Hanya item kerja yang selesai atau dibatalkan\n yang dapat diarsipkan",
+      "label": "Arsip Item kerja",
+      "confirm_message": "Apakah Anda yakin ingin mengarsipkan item kerja ini? Semua item kerja yang diarsipkan dapat dipulihkan nanti.",
+      "success": {
+        "label": "Sukses mengarsipkan",
+        "message": "Arsip Anda dapat ditemukan di arsip proyek."
+      },
+      "failed": {
+        "message": "Item kerja tidak dapat diarsipkan. Silakan coba lagi."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Sukses memulihkan",
+        "message": "Item kerja Anda dapat ditemukan di item kerja proyek."
+      },
+      "failed": {
+        "message": "Item kerja tidak dapat dipulihkan. Silakan coba lagi."
+      }
+    },
+    "relation": {
+      "relates_to": "Berhubungan dengan",
+      "duplicate": "Duplikat dari",
+      "blocked_by": "Diblokir oleh",
+      "blocking": "Memblokir",
+      "start_before": "Mulai Sebelum",
+      "start_after": "Mulai Setelah",
+      "finish_before": "Selesai Sebelum",
+      "finish_after": "Selesai Setelah",
+      "implements": "Menerapkan",
+      "implemented_by": "Diterapkan oleh"
+    },
+    "copy_link": "Salin tautan item kerja",
+    "delete": {
+      "label": "Hapus item kerja",
+      "error": "Kesalahan saat menghapus item kerja"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Item kerja telah berhasil disubscribe",
+        "unsubscribed": "Item kerja telah berhasil dibatalkan subscribe"
+      }
+    },
+    "select": {
+      "error": "Silakan pilih setidaknya satu item kerja",
+      "empty": "Tidak ada item kerja yang dipilih",
+      "add_selected": "Tambah item kerja yang dipilih",
+      "select_all": "Pilih semua item kerja",
+      "deselect_all": "Batalkan pilihan semua item kerja"
+    },
+    "open_in_full_screen": "Buka item kerja dalam layar penuh",
+    "vote": {
+      "click_to_upvote": "Klik untuk memberi suara naik",
+      "click_to_downvote": "Klik untuk memberi suara turun",
+      "click_to_view_upvotes": "Klik untuk melihat suara naik",
+      "click_to_view_downvotes": "Klik untuk melihat suara turun"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Sub-item kerja berhasil diperbarui",
+      "error": "Kesalahan saat memperbarui sub-item kerja"
+    },
+    "remove": {
+      "success": "Sub-item kerja berhasil dihapus",
+      "error": "Kesalahan saat menghapus sub-item kerja"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Anda tidak memiliki sub-item kerja yang cocok dengan filter yang Anda terapkan.",
+        "description": "Untuk melihat semua sub-item kerja, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      },
+      "list_filters": {
+        "title": "Anda tidak memiliki item kerja yang cocok dengan filter yang Anda terapkan.",
+        "description": "Untuk melihat semua item kerja, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Tidak ada item kerja yang cocok ditemukan"
+      },
+      "no_issues": {
+        "title": "Tidak ada item kerja ditemukan"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Belum ada komentar",
+        "description": "Komentar dapat digunakan sebagai ruang diskusi dan tindak lanjut untuk item kerja"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Tidak dapat mengarsipkan item kerja",
+        "message": "Hanya item kerja yang termasuk dalam kelompok status Selesai atau Dibatalkan yang dapat diarsipkan."
+      },
+      "invalid_issue_start_date": {
+        "title": "Tidak dapat memperbarui item kerja",
+        "message": "Tanggal mulai yang dipilih melebihi tanggal jatuh tempo untuk beberapa item kerja. Pastikan tanggal mulai sebelum tanggal jatuh tempo."
+      },
+      "invalid_issue_target_date": {
+        "title": "Tidak dapat memperbarui item kerja",
+        "message": "Tanggal jatuh tempo yang dipilih mendahului tanggal mulai untuk beberapa item kerja. Pastikan tanggal jatuh tempo setelah tanggal mulai."
+      },
+      "invalid_state_transition": {
+        "title": "Tidak dapat memperbarui item kerja",
+        "message": "Perubahan status tidak diizinkan untuk beberapa item kerja. Pastikan perubahan status diizinkan."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Aktifkan alur kerja",
+        "description": "Atur alur kerja untuk mengontrol perpindahan item kerja",
+        "no_states_tooltip": "Tidak ada status yang ditambahkan ke alur kerja.",
+        "toast": {
+          "loading": {
+            "enabling": "Mengaktifkan alur kerja",
+            "disabling": "Menonaktifkan alur kerja"
+          },
+          "success": {
+            "title": "Berhasil!",
+            "message": "Alur kerja berhasil diaktifkan."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Gagal mengaktifkan alur kerja. Silakan coba lagi."
+          }
+        }
+      },
+      "heading": "Alur kerja",
+      "description": "Otomatiskan transisi item kerja dan tetapkan aturan untuk mengontrol bagaimana tugas bergerak melalui alur proyek Anda.",
+      "add_button": "Tambahkan alur kerja baru",
+      "search": "Cari alur kerja",
+      "detail": {
+        "define": "Tentukan alur kerja",
+        "add_states": "Tambahkan status",
+        "unmapped_states": {
+          "title": "Status yang belum dipetakan terdeteksi",
+          "description": "Beberapa item kerja untuk tipe yang dipilih saat ini berada dalam status yang tidak ada di alur kerja ini.",
+          "note": "Jika Anda mengaktifkan alur kerja ini, item-item tersebut akan otomatis dipindahkan ke status awal untuk alur kerja ini.",
+          "label": "Status yang hilang",
+          "tooltip": "Beberapa item kerja berada dalam status yang tidak dipetakan ke alur kerja ini. Buka alur kerja untuk meninjaunya."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Semua status sedang digunakan",
+          "description": "Semua status yang ditentukan untuk proyek ini sudah ada di alur kerja Anda saat ini."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Alur kerja ini berlaku untuk tipe item kerja apa pun yang tidak ditetapkan ke alur kerja mana pun."
+      },
+      "create": {
+        "heading": "Buat alur kerja baru"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Item kerja berulang",
+      "description": "Atur pekerjaan berulang sekali, dan kami akan mengurus ulangannya. Anda akan melihat semuanya di sini ketika waktunya tiba.",
+      "new_recurring_work_item": "Item kerja berulang baru",
+      "update_recurring_work_item": "Perbarui item kerja berulang",
+      "form": {
+        "interval": {
+          "title": "Jadwal",
+          "start_date": {
+            "validation": {
+              "required": "Tanggal mulai wajib diisi"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Jenis interval wajib diisi"
+            }
+          }
+        },
+        "button": {
+          "create": "Buat item kerja berulang",
+          "update": "Perbarui item kerja berulang"
+        }
+      },
+      "create_button": {
+        "label": "Buat item kerja berulang",
+        "no_permission": "Hubungi admin proyek Anda untuk membuat item kerja berulang"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Pekerjaan Anda, otomatis",
+        "description": "Atur sekali saja. Kami akan mengingatkannya saat waktunya tiba. Tingkatkan ke Bisnis untuk membuat pekerjaan berulang terasa mudah."
+      },
+      "no_templates": {
+        "button": "Buat item kerja berulang pertama Anda"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Item kerja berulang berhasil dibuat",
+          "message": "{name}, item kerja berulang, sekarang tersedia di ruang kerja Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat membuat item kerja berulang kali ini.",
+          "message": "Coba simpan detail Anda lagi atau salin ke item kerja berulang baru, sebaiknya di tab lain."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Item kerja berulang berhasil diubah",
+          "message": "{name}, item kerja berulang, telah diubah."
+        },
+        "error": {
+          "title": "Kami tidak dapat menyimpan perubahan pada item kerja berulang ini.",
+          "message": "Coba simpan detail Anda lagi atau kembali ke item kerja berulang ini nanti. Jika masih ada masalah, hubungi kami."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Item kerja berulang berhasil dihapus",
+          "message": "{name}, item kerja berulang, telah dihapus dari ruang kerja Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat menghapus item kerja berulang ini.",
+          "message": "Coba hapus lagi atau kembali nanti. Jika Anda masih tidak bisa menghapusnya, hubungi kami."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Hapus item kerja berulang",
+      "description": {
+        "prefix": "Apakah Anda yakin ingin menghapus item kerja berulang-",
+        "suffix": "? Semua data terkait item kerja berulang akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+      }
+    }
+  }
+}

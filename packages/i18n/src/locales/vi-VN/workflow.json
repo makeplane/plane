@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Cho phép mục công việc mới",
+      "work_item_creation_disable_tooltip": "Tạo mục công việc bị vô hiệu hóa cho trạng thái này",
+      "default_state": "Trạng thái mặc định cho phép tất cả thành viên tạo mục công việc mới. Điều này không thể thay đổi",
+      "state_change_count": "{count, plural, one {1 thay đổi trạng thái được cho phép} other {{count} thay đổi trạng thái được cho phép}}",
+      "movers_count": "{count, plural, one {1 người xem xét được liệt kê} other {{count} người xem xét được liệt kê}}",
+      "state_changes": {
+        "label": {
+          "default": "Thêm thay đổi trạng thái được cho phép",
+          "loading": "Đang thêm thay đổi trạng thái được cho phép"
+        },
+        "move_to": "Thay đổi trạng thái thành",
+        "movers": {
+          "label": "Khi được xem xét bởi",
+          "tooltip": "Người xem xét là những người được phép di chuyển mục công việc từ một trạng thái sang trạng thái khác.",
+          "add": "Thêm người xem xét"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Bạn không thể di chuyển mục công việc này đến đây."
+    },
+    "workflow_enabled": {
+      "label": "Thay đổi trạng thái"
+    },
+    "workflow_tree": {
+      "label": "Đối với mục công việc trong",
+      "state_change_label": "có thể di chuyển nó đến"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Kiểm soát sự hỗn loạn của thay đổi và xem xét với Quy trình làm việc.",
+        "description": "Đặt quy tắc cho nơi công việc của bạn di chuyển, bởi ai và khi nào với Quy trình làm việc trong Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Xem lịch sử thay đổi",
+      "reset_workflow": "Đặt lại quy trình làm việc"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Bạn có chắc muốn đặt lại quy trình làm việc này không?",
+        "description": "Nếu bạn đặt lại quy trình làm việc này, tất cả các quy tắc thay đổi trạng thái của bạn sẽ bị xóa và bạn sẽ phải tạo lại chúng để chạy chúng trong dự án này."
+      },
+      "delete_state_change": {
+        "title": "Bạn có chắc muốn xóa quy tắc thay đổi trạng thái này không?",
+        "description": "Sau khi xóa, bạn không thể hoàn tác thay đổi này và bạn sẽ phải đặt lại quy tắc nếu bạn muốn nó chạy cho dự án này."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} quy trình làm việc",
+        "success": {
+          "title": "Thành công",
+          "message": "Quy trình làm việc {action} thành công"
+        },
+        "error": {
+          "title": "Lỗi",
+          "message": "Quy trình làm việc không thể {action}. Vui lòng thử lại."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Thành công",
+          "message": "Quy trình làm việc đặt lại thành công"
+        },
+        "error": {
+          "title": "Lỗi đặt lại quy trình làm việc",
+          "message": "Quy trình làm việc không thể đặt lại. Vui lòng thử lại."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Lỗi thêm quy tắc thay đổi trạng thái",
+          "message": "Quy tắc thay đổi trạng thái không thể thêm. Vui lòng thử lại."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Lỗi sửa đổi quy tắc thay đổi trạng thái",
+          "message": "Quy tắc thay đổi trạng thái không thể sửa đổi. Vui lòng thử lại."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Lỗi xóa quy tắc thay đổi trạng thái",
+          "message": "Quy tắc thay đổi trạng thái không thể xóa. Vui lòng thử lại."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Lỗi sửa đổi người xem xét quy tắc thay đổi trạng thái",
+          "message": "Người xem xét quy tắc thay đổi trạng thái không thể sửa đổi. Vui lòng thử lại."
+        }
+      }
+    }
+  }
+}

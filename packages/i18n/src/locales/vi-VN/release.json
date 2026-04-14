@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Bản phát hành} other {Bản phát hành}}",
+    "no_release": "Không có bản phát hành",
+    "unreleased": "Chưa phát hành",
+    "select_releases": "Chọn bản phát hành",
+    "overview": "Tổng quan",
+    "scope": "Phạm vi",
+    "page_title": {
+      "scope": "Bản phát hành - {name} | Phạm vi",
+      "scope_fallback": "Bản phát hành | Phạm vi"
+    },
+    "properties": "Thuộc tính",
+    "target_date": "Ngày mục tiêu",
+    "lead": "Phụ trách",
+    "release_tag": "Thẻ",
+    "labels": "Nhãn",
+    "description_placeholder": "Thêm mô tả...",
+    "progress": "Tiến độ",
+    "completed_work_items": "Mục công việc đã hoàn thành",
+    "pending_work_items": "Mục công việc đang chờ",
+    "cancelled_work_items": "Mục công việc đã hủy",
+    "scope_page": {
+      "work_items": "Mục công việc",
+      "add_work_items": "Thêm mục công việc",
+      "remove_from_release": "Gỡ khỏi bản phát hành",
+      "empty_state": {
+        "title": "Chưa có mục công việc",
+        "description": "Thêm mục công việc để xác định phạm vi bản phát hành."
+      },
+      "confirm_remove": {
+        "content": "Bạn có chắc muốn gỡ mục công việc này khỏi bản phát hành? Nó vẫn còn trong dự án.",
+        "primary_button": {
+          "default": "Gỡ",
+          "loading": "Đang gỡ"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Chưa có phạm vi",
+      "description": "Thêm mục công việc vào bản phát hành để theo dõi việc hoàn thành của chúng cho bản phát hành này.",
+      "add_scope": "Thêm phạm vi",
+      "not_found": {
+        "title": "Không tìm thấy bản phát hành",
+        "description": "Bản phát hành có thể đã bị xóa.",
+        "primary_button": "Quay lại danh sách bản phát hành"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Đã thêm mục công việc} other {Đã thêm mục công việc}}",
+      "work_items_error": "Không thể thêm mục công việc"
+    },
+    "count_releases": "{count, plural, one {# bản phát hành} other {# bản phát hành}}",
+    "actions": {
+      "delete": "Xóa"
+    },
+    "delete_modal": {
+      "title": "Xóa bản phát hành",
+      "content": "Bạn có chắc chắn muốn xóa bản phát hành \"{releaseName}\" không? Hành động này không thể hoàn tác."
+    },
+    "settings": {
+      "heading": {
+        "title": "Bản phát hành",
+        "description": "Quản lý các hạng mục bàn giao của dự án một cách chính xác bằng bản phát hành."
+      },
+      "toggle": {
+        "title": "Bật bản phát hành",
+        "description": "Thành viên không gian làm việc sẽ có quyền xem phạm vi trong các dự án tương ứng của họ."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Đang bật bản phát hành...",
+          "success": {
+            "title": "Đã bật bản phát hành",
+            "message": "Bản phát hành đã được bật cho không gian làm việc này."
+          },
+          "error": {
+            "title": "Lỗi",
+            "message": "Không thể bật bản phát hành. Vui lòng thử lại."
+          }
+        },
+        "disable": {
+          "loading": "Đang tắt bản phát hành...",
+          "success": {
+            "title": "Đã tắt bản phát hành",
+            "message": "Bản phát hành đã được tắt cho không gian làm việc này."
+          },
+          "error": {
+            "title": "Lỗi",
+            "message": "Không thể tắt bản phát hành. Vui lòng thử lại."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Thẻ bản phát hành",
+        "labels": "Nhãn"
+      },
+      "tags": {
+        "title": "Thẻ bản phát hành",
+        "description": "Phân loại và lọc các bản phát hành của bạn bằng thẻ.",
+        "add": "Thêm thẻ",
+        "empty_state": "Chưa có thẻ nào. Hãy tạo thẻ đầu tiên của bạn.",
+        "errors": {
+          "version_required": "Phiên bản là bắt buộc.",
+          "version_already_exists": "Đã tồn tại một thẻ với phiên bản này.",
+          "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+        },
+        "delete_modal": {
+          "title": "Xóa thẻ",
+          "content": "Bạn có chắc chắn muốn xóa thẻ \"{tagVersion}\" không? Hành động này không thể hoàn tác."
+        },
+        "actions": {
+          "edit": "Chỉnh sửa thẻ",
+          "delete": "Xóa thẻ"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Đã xóa thẻ thành công.",
+            "error": "Không thể xóa thẻ. Vui lòng thử lại."
+          }
+        }
+      },
+      "labels": {
+        "title": "Nhãn",
+        "description": "Cấu trúc và sắp xếp các sáng kiến của bạn bằng nhãn.",
+        "add": "Thêm nhãn",
+        "empty_state": "Chưa có nhãn nào. Hãy tạo nhãn đầu tiên của bạn.",
+        "errors": {
+          "name_required": "Tên là bắt buộc.",
+          "name_already_exists": "Đã tồn tại một nhãn với tên này.",
+          "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+        },
+        "modal": {
+          "name_placeholder": "Tên nhãn",
+          "pick_color": "Chọn màu nhãn"
+        },
+        "actions": {
+          "edit": "Chỉnh sửa nhãn",
+          "delete": "Xóa nhãn"
+        },
+        "drag_to_reorder": "Kéo để sắp xếp lại",
+        "delete_modal": {
+          "title": "Xóa nhãn",
+          "content": "Bạn có chắc chắn muốn xóa nhãn \"{labelName}\" không? Hành động này không thể hoàn tác."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Đã xóa nhãn thành công.",
+            "error": "Không thể xóa nhãn. Vui lòng thử lại."
+          }
+        }
+      }
+    }
+  }
+}

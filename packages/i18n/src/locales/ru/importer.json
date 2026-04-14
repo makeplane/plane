@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "Импорт рабочих элементов из репозиториев GitHub с синхронизацией."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Импорт рабочих элементов и эпиков из проектов Jira."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Экспорт рабочих элементов в CSV-файл.",
+      "short_description": "Экспорт в csv"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Экспорт рабочих элементов в файл Excel.",
+      "short_description": "Экспорт в excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Экспорт рабочих элементов в файл Excel.",
+      "short_description": "Экспорт в excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Экспорт рабочих элементов в JSON-файл.",
+      "short_description": "Экспорт в json"
+    }
+  },
+  "importers": {
+    "imports": "Импорт",
+    "logo": "Логотип",
+    "import_message": "Импортируйте ваши данные {serviceName} в проекты Plane.",
+    "deactivate": "Деактивировать",
+    "deactivating": "Деактивируется",
+    "migrating": "Миграция",
+    "migrations": "Миграции",
+    "refreshing": "Обновление",
+    "import": "Импорт",
+    "serial_number": "Ср. №",
+    "project": "Проект",
+    "workspace": "workspace",
+    "status": "Статус",
+    "summary": "Резюме",
+    "total_batches": "Всего партий",
+    "imported_batches": "Импортированные партии",
+    "re_run": "Запустить снова",
+    "cancel": "Отменить",
+    "start_time": "Время начала",
+    "no_jobs_found": "Работы не найдены",
+    "no_project_imports": "Вы еще не импортировали ни одного проекта {serviceName}.",
+    "cancel_import_job": "Отменить задачу импорта",
+    "cancel_import_job_confirmation": "Вы уверены, что хотите отменить эту задачу импорта? Это остановит процесс импорта для этого проекта.",
+    "re_run_import_job": "Запустить задачу импорта снова",
+    "re_run_import_job_confirmation": "Вы уверены, что хотите запустить эту задачу импорта снова? Это перезапустит процесс импорта для этого проекта.",
+    "upload_csv_file": "Загрузите CSV файл для импорта данных пользователей.",
+    "connect_importer": "Подключить {serviceName}",
+    "migration_assistant": "Ассистент миграции",
+    "migration_assistant_description": "Бесшовно мигрируйте ваши проекты {serviceName} в Plane с помощью нашего мощного ассистента.",
+    "token_helper": "Вы получите это от вашего",
+    "personal_access_token": "Личный токен доступа",
+    "source_token_expired": "Токен истек",
+    "source_token_expired_description": "Предоставленный токен истек. Пожалуйста, деактивируйте и переподключите с новым набором учетных данных.",
+    "user_email": "Электронная почта пользователя",
+    "select_state": "Выбрать состояние",
+    "select_service_project": "Выбрать проект {serviceName}",
+    "loading_service_projects": "Загрузка проектов {serviceName}",
+    "select_service_workspace": "Выбрать {serviceName} рабочее пространство",
+    "loading_service_workspaces": "Загрузка рабочих пространств {serviceName}",
+    "select_priority": "Выбрать приоритет",
+    "select_service_team": "Выбрать команду {serviceName}",
+    "add_seat_msg_free_trial": "Вы пытаетесь импортировать {additionalUserCount} незарегистрированных пользователей, и у вас всего {currentWorkspaceSubscriptionAvailableSeats} мест доступно в текущем плане. Чтобы продолжить импорт, обновите сейчас.",
+    "add_seat_msg_paid": "Вы пытаетесь импортировать {additionalUserCount} незарегистрированных пользователей, и у вас всего {currentWorkspaceSubscriptionAvailableSeats} мест доступно в текущем плане. Чтобы продолжить импорт, купите как минимум {extraSeatRequired} дополнительных мест.",
+    "skip_user_import_title": "Пропустить импорт данных пользователя",
+    "skip_user_import_description": "Пропуск импорта пользователя приведет к тому, что рабочие элементы, комментарии и другие данные от {serviceName} будут созданы пользователем, выполняющим миграцию в Plane. Вы все еще можете вручную добавить пользователей позже.",
+    "invalid_pat": "Недействительный личный токен доступа"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Импортируйте ваши данные Jira в проекты Plane.",
+    "create_project_automatically": "Создать проект автоматически",
+    "create_project_automatically_description": "Мы создадим для вас новый проект на основе данных проекта Jira.",
+    "import_to_existing_project": "Импортировать в существующий проект",
+    "import_to_existing_project_description": "Выберите существующий проект из раскрывающегося списка ниже.",
+    "state_mapping_automatic_creation": "Все статусы Jira будут созданы в Plane автоматически.",
+    "personal_access_token": "Личный токен доступа",
+    "user_email": "Электронная почта пользователя",
+    "atlassian_security_settings": "Настройки безопасности Atlassian",
+    "email_description": "Это электронная почта, связанная с вашим личным токеном доступа",
+    "jira_domain": "Домен Jira",
+    "jira_domain_description": "Это домен вашей инстанции Jira",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные Jira. После создания проекта выберите его здесь.",
+      "title_configure_jira": "Настроить Jira",
+      "description_configure_jira": "Пожалуйста, выберите рабочее пространство Jira, из которого вы хотите мигрировать ваши данные.",
+      "title_import_users": "Импортировать пользователей",
+      "description_import_users": "Пожалуйста, добавьте пользователей, которых вы хотите мигрировать из Jira в Plane. В качестве альтернативы вы можете пропустить этот шаг и вручную добавить пользователей позже.",
+      "title_map_states": "Сопоставить состояния",
+      "description_map_states": "Мы автоматически сопоставили статусы Jira с состояниями Plane наилучшим образом. Пожалуйста, сопоставьте любые оставшиеся состояния перед продолжением, вы также можете создать состояния и сопоставить их вручную.",
+      "title_map_priorities": "Сопоставить приоритеты",
+      "description_map_priorities": "Мы автоматически сопоставили приоритеты наилучшим образом. Пожалуйста, сопоставьте любые оставшиеся приоритеты перед продолжением.",
+      "title_summary": "Резюме",
+      "description_summary": "Вот резюме данных, которые будут мигрированы из Jira в Plane.",
+      "custom_jql_filter": "Пользовательский фильтр JQL",
+      "jql_filter_description": "Используйте JQL для фильтрации конкретных задач для импорта.",
+      "project_code": "ПРОЕКТ",
+      "enter_filters_placeholder": "Введите фильтры (например, status = 'In Progress')",
+      "validating_query": "Проверка запроса...",
+      "validation_successful_work_items_selected": "Проверка успешна, выбрано {count} рабочих элементов.",
+      "run_syntax_check": "Запустить проверку синтаксиса для проверки вашего запроса",
+      "refresh": "Обновить",
+      "check_syntax": "Проверить синтаксис",
+      "no_work_items_selected": "Запрос не выбрал ни одного рабочего элемента.",
+      "validation_error_default": "Что-то пошло не так при проверке запроса."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Импортируйте ваши данные Asana в проекты Plane.",
+    "select_asana_priority_field": "Выберите поле приоритета Asana",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные Asana. После создания проекта выберите его здесь.",
+      "title_configure_asana": "Настроить Asana",
+      "description_configure_asana": "Пожалуйста, выберите рабочее пространство и проект Asana, из которых вы хотите мигрировать ваши данные.",
+      "title_map_states": "Сопоставить состояния",
+      "description_map_states": "Пожалуйста, выберите состояния Asana, которые вы хотите сопоставить с состояниями проектов Plane.",
+      "title_map_priorities": "Сопоставить приоритеты",
+      "description_map_priorities": "Пожалуйста, выберите приоритеты Asana, которые вы хотите сопоставить с приоритетами проектов Plane.",
+      "title_summary": "Резюме",
+      "description_summary": "Вот резюме данных, которые будут мигрированы из Asana в Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Импортируйте ваши данные Linear в проекты Plane.",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные Linear. После создания проекта выберите его здесь.",
+      "title_configure_linear": "Настроить Linear",
+      "description_configure_linear": "Пожалуйста, выберите команду Linear, из которой вы хотите мигрировать ваши данные.",
+      "title_map_states": "Сопоставить состояния",
+      "description_map_states": "Мы автоматически сопоставили статусы Linear с состояниями Plane наилучшим образом. Пожалуйста, сопоставьте любые оставшиеся состояния перед продолжением, вы также можете создать состояния и сопоставить их вручную.",
+      "title_map_priorities": "Сопоставить приоритеты",
+      "description_map_priorities": "Пожалуйста, выберите приоритеты Linear, которые вы хотите сопоставить с приоритетами проектов Plane.",
+      "title_summary": "Резюме",
+      "description_summary": "Вот резюме данных, которые будут мигрированы из Linear в Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Импортируйте ваши данные Jira Server/Data Center в проекты Plane.",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные Jira Server/Data Center. После создания проекта выберите его здесь.",
+      "title_configure_jira": "Настроить Jira",
+      "description_configure_jira": "Пожалуйста, выберите рабочее пространство Jira, из которого вы хотите мигрировать ваши данные.",
+      "title_map_states": "Сопоставить состояния",
+      "description_map_states": "Пожалуйста, выберите состояния Jira, которые вы хотите сопоставить с состояниями проектов Plane.",
+      "title_map_priorities": "Сопоставить приоритеты",
+      "description_map_priorities": "Пожалуйста, выберите приоритеты Jira, которые вы хотите сопоставить с приоритетами проектов Plane.",
+      "title_summary": "Резюме",
+      "description_summary": "Вот резюме данных, которые будут мигрированы из Jira Server/Data Center в Plane."
+    },
+    "import_epics": {
+      "title": "Импортировать эпики как рабочие элементы",
+      "description": "Если эта опция включена, ваши эпики будут импортированы как рабочие элементы с типом рабочего элемента 'эпик'."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Импортируйте ваши данные Notion в проекты Plane.",
+    "steps": {
+      "title_upload_zip": "Загрузить ZIP-экспорт из Notion",
+      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Notion."
+    },
+    "upload": {
+      "drop_file_here": "Перетащите ваш zip-файл Notion сюда",
+      "upload_title": "Загрузить экспорт Notion",
+      "upload_from_url": "Импорт по URL-адресу",
+      "upload_from_url_description": "Вставьте общедоступный URL-адрес вашего ZIP-экспорта, чтобы продолжить.",
+      "drag_drop_description": "Перетащите ваш zip-файл экспорта Notion или нажмите для просмотра",
+      "file_type_restriction": "Поддерживаются только .zip файлы, экспортированные из Notion",
+      "select_file": "Выбрать файл",
+      "uploading": "Загрузка...",
+      "preparing_upload": "Подготовка загрузки...",
+      "confirming_upload": "Подтверждение загрузки...",
+      "confirming": "Подтверждение...",
+      "upload_complete": "Загрузка завершена",
+      "upload_failed": "Загрузка не удалась",
+      "start_import": "Начать импорт",
+      "retry_upload": "Повторить загрузку",
+      "upload": "Загрузить",
+      "ready": "Готово",
+      "error": "Ошибка",
+      "upload_complete_message": "Загрузка завершена!",
+      "upload_complete_description": "Нажмите \"Начать импорт\", чтобы начать обработку ваших данных Notion.",
+      "upload_progress_message": "Пожалуйста, не закрывайте это окно."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Импортируйте ваши данные Confluence в вики Plane.",
+    "steps": {
+      "title_upload_zip": "Загрузить ZIP-экспорт из Confluence",
+      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Перетащите ваш zip-файл Confluence сюда",
+      "upload_title": "Загрузить экспорт Confluence",
+      "upload_from_url": "Импорт по URL-адресу",
+      "upload_from_url_description": "Вставьте общедоступный URL-адрес вашего ZIP-экспорта, чтобы продолжить.",
+      "drag_drop_description": "Перетащите ваш zip-файл экспорта Confluence или нажмите для просмотра",
+      "file_type_restriction": "Поддерживаются только .zip файлы, экспортированные из Confluence",
+      "select_file": "Выбрать файл",
+      "uploading": "Загрузка...",
+      "preparing_upload": "Подготовка загрузки...",
+      "confirming_upload": "Подтверждение загрузки...",
+      "confirming": "Подтверждение...",
+      "upload_complete": "Загрузка завершена",
+      "upload_failed": "Загрузка не удалась",
+      "start_import": "Начать импорт",
+      "retry_upload": "Повторить загрузку",
+      "upload": "Загрузить",
+      "ready": "Готово",
+      "error": "Ошибка",
+      "upload_complete_message": "Загрузка завершена!",
+      "upload_complete_description": "Нажмите \"Начать импорт\", чтобы начать обработку ваших данных Confluence.",
+      "upload_progress_message": "Пожалуйста, не закрывайте это окно."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Импортируйте ваши данные CSV в проекты Plane.",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные CSV. После создания проекта выберите его здесь.",
+      "title_configure_csv": "Настроить CSV",
+      "description_configure_csv": "Пожалуйста, загрузите ваш файл CSV и настройте поля для сопоставления с полями Plane."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "Импорт рабочих элементов из CSV-файлов в проекты Plane.",
+    "steps": {
+      "title_select_project": "Выбрать проект",
+      "description_select_project": "Пожалуйста, выберите проект Plane, в который вы хотите импортировать рабочие элементы.",
+      "title_upload_csv": "Загрузить CSV",
+      "description_upload_csv": "Загрузите CSV-файл, содержащий рабочие элементы. Файл должен включать столбцы для имени, описания, приоритета, дат и группы состояний."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Импортируйте ваши данные ClickUp в проекты Plane.",
+    "select_service_space": "Выберите {serviceName} Пространство",
+    "select_service_folder": "Выберите {serviceName} Папку",
+    "selected": "Выбрано",
+    "users": "Пользователи",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные ClickUp. После создания проекта выберите его здесь.",
+      "title_configure_clickup": "Настроить ClickUp",
+      "description_configure_clickup": "Пожалуйста, выберите команду ClickUp, пространство и папку, из которых вы хотите мигрировать ваши данные.",
+      "title_map_states": "Сопоставить состояния",
+      "description_map_states": "Мы автоматически сопоставили статусы ClickUp с состояниями Plane наилучшим образом. Пожалуйста, сопоставьте любые оставшиеся состояния перед продолжением, вы также можете создать состояния и сопоставить их вручную.",
+      "title_map_priorities": "Сопоставить приоритеты",
+      "description_map_priorities": "Пожалуйста, выберите приоритеты ClickUp, которые вы хотите сопоставить с приоритетами проектов Plane.",
+      "title_summary": "Резюме",
+      "description_summary": "Вот резюме данных, которые будут мигрированы из ClickUp в Plane.",
+      "pull_additional_data_title": "Получить комментарии и вложения"
+    }
+  }
+}

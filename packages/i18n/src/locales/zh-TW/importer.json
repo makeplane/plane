@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "從 GitHub 儲存庫匯入工作事項並同步。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "從 Jira 專案和 Epic 匯入工作事項和 Epic。"
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "將工作事項匯出為 CSV 檔案。",
+      "short_description": "匯出為 CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "將工作事項匯出為 Excel 檔案。",
+      "short_description": "匯出為 Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "將工作事項匯出為 Excel 檔案。",
+      "short_description": "匯出為 Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "將工作事項匯出為 JSON 檔案。",
+      "short_description": "匯出為 JSON"
+    }
+  },
+  "importers": {
+    "imports": "導入",
+    "logo": "標誌",
+    "import_message": "將您的 {serviceName} 數據導入到 Plane 專案中。",
+    "deactivate": "停用",
+    "deactivating": "停用中",
+    "migrating": "遷移中",
+    "migrations": "遷移",
+    "refreshing": "刷新中",
+    "import": "導入",
+    "serial_number": "序號",
+    "project": "專案",
+    "workspace": "工作區",
+    "status": "狀態",
+    "summary": "摘要",
+    "total_batches": "總批次",
+    "imported_batches": "已導入批次",
+    "re_run": "重新運行",
+    "cancel": "取消",
+    "start_time": "開始時間",
+    "no_jobs_found": "未找到任務",
+    "no_project_imports": "您尚未導入任何 {serviceName} 專案。",
+    "cancel_import_job": "取消導入任務",
+    "cancel_import_job_confirmation": "您確定要取消此導入任務嗎？這將停止此專案的導入過程。",
+    "re_run_import_job": "重新運行導入任務",
+    "re_run_import_job_confirmation": "您確定要重新運行此導入任務嗎？這將重新啟動此專案的導入過程。",
+    "upload_csv_file": "上傳 CSV 文件以導入用戶數據。",
+    "connect_importer": "連接 {serviceName}",
+    "migration_assistant": "遷移助手",
+    "migration_assistant_description": "使用我們強大的助手，將您的 {serviceName} 專案無縫遷移到 Plane。",
+    "token_helper": "您將從您的以下位置獲取",
+    "personal_access_token": "個人訪問令牌",
+    "source_token_expired": "令牌已過期",
+    "source_token_expired_description": "提供的令牌已過期。請停用並使用新的憑證重新連接。",
+    "user_email": "用戶郵箱",
+    "select_state": "選擇狀態",
+    "select_service_project": "選擇 {serviceName} 專案",
+    "loading_service_projects": "加載 {serviceName} 專案中",
+    "select_service_workspace": "選擇 {serviceName} 工作區",
+    "loading_service_workspaces": "加載 {serviceName} 工作區中",
+    "select_priority": "選擇優先級",
+    "select_service_team": "選擇 {serviceName} 團隊",
+    "add_seat_msg_free_trial": "您正嘗試導入 {additionalUserCount} 個未註冊用戶，但您當前計劃只有 {currentWorkspaceSubscriptionAvailableSeats} 個座位可用。要繼續導入，請立即升級。",
+    "add_seat_msg_paid": "您正嘗試導入 {additionalUserCount} 個未註冊用戶，但您當前計劃只有 {currentWorkspaceSubscriptionAvailableSeats} 個座位可用。要繼續導入，請至少購買 {extraSeatRequired} 個額外座位。",
+    "skip_user_import_title": "跳過導入用戶數據",
+    "skip_user_import_description": "跳過用戶導入將導致來自 {serviceName} 的工作項目、評論和其他數據由在 Plane 中執行遷移的用戶創建。您仍然可以稍後手動添加用戶。",
+    "invalid_pat": "無效的個人訪問令牌"
+  },
+  "jira_importer": {
+    "jira_importer_description": "將您的 Jira 數據導入到 Plane 專案中。",
+    "personal_access_token": "個人訪問令牌",
+    "user_email": "用戶郵箱",
+    "create_project_automatically": "自動建立專案",
+    "create_project_automatically_description": "我們將根據 Jira 專案詳情為您建立一個新專案。",
+    "import_to_existing_project": "匯入到現有專案",
+    "import_to_existing_project_description": "從下方的下拉選選單中選擇一個現有專案。",
+    "state_mapping_automatic_creation": "所有 Jira 狀態都將在 Plane 中自動建立。",
+    "atlassian_security_settings": "Atlassian 安全設置",
+    "email_description": "這是與您的個人訪問令牌關聯的郵箱",
+    "jira_domain": "Jira 域名",
+    "jira_domain_description": "這是您的 Jira 實例的域名",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Jira 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_jira": "配置 Jira",
+      "description_configure_jira": "請選擇您想要遷移數據的 Jira 工作區。",
+      "title_import_users": "導入用戶",
+      "description_import_users": "請添加您希望從 Jira 遷移到 Plane 的用戶。或者，您可以跳過此步驟，稍後手動添加用戶。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 Jira 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "我們已盡力自動匹配優先級。繼續之前，請映射任何剩餘的優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Jira 遷移到 Plane 的數據摘要。",
+      "custom_jql_filter": "自訂 JQL 過濾器",
+      "jql_filter_description": "使用 JQL 篩選要匯入的特定問題。",
+      "project_code": "專案",
+      "enter_filters_placeholder": "輸入過濾器（例如 status = 'In Progress'）",
+      "validating_query": "正在驗證查詢...",
+      "validation_successful_work_items_selected": "驗證成功，已選擇 {count} 個工作項目。",
+      "run_syntax_check": "執行語法檢查以驗證您的查詢",
+      "refresh": "重新整理",
+      "check_syntax": "檢查語法",
+      "no_work_items_selected": "查詢未選擇任何工作項目。",
+      "validation_error_default": "驗證查詢時出錯。"
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "將您的 Asana 數據導入到 Plane 專案中。",
+    "select_asana_priority_field": "選擇 Asana 優先級字段",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Asana 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_asana": "配置 Asana",
+      "description_configure_asana": "請選擇您想要遷移數據的 Asana 工作區和專案。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "請選擇您想要映射到 Plane 專案狀態的 Asana 狀態。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 Asana 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Asana 遷移到 Plane 的數據摘要。"
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "將您的 Linear 數據導入到 Plane 專案中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Linear 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_linear": "配置 Linear",
+      "description_configure_linear": "請選擇您想要遷移數據的 Linear 團隊。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 Linear 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 Linear 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Linear 遷移到 Plane 的數據摘要。"
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "將您的 Jira Server/Data Center 數據導入到 Plane 專案中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Jira 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_jira": "配置 Jira",
+      "description_configure_jira": "請選擇您想要遷移數據的 Jira 工作區。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "請選擇您想要映射到 Plane 專案狀態的 Jira 狀態。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 Jira 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Jira 遷移到 Plane 的數據摘要。"
+    },
+    "import_epics": {
+      "title": "將史詩匯入為工作項",
+      "description": "啟用此選項後，您的史詩將作為具有史詩工作項類型的工作項匯入。"
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "將您的 Notion 資料匯入到 Plane 專案中。",
+    "steps": {
+      "title_upload_zip": "上傳 Notion 匯出的 ZIP 檔案",
+      "description_upload_zip": "請上傳包含您的 Notion 資料的 ZIP 檔案。"
+    },
+    "upload": {
+      "drop_file_here": "將您的 Notion zip 檔案拖放到這裡",
+      "upload_title": "上傳 Notion 匯出檔案",
+      "upload_from_url": "從 URL 匯入",
+      "upload_from_url_description": "貼上您 ZIP 匯出檔案的公開 URL 以繼續。",
+      "drag_drop_description": "拖放您的 Notion 匯出 zip 檔案，或點擊瀏覽",
+      "file_type_restriction": "僅支援從 Notion 匯出的 .zip 檔案",
+      "select_file": "選擇檔案",
+      "uploading": "正在上傳...",
+      "preparing_upload": "正在準備上傳...",
+      "confirming_upload": "正在確認上傳...",
+      "confirming": "正在確認...",
+      "upload_complete": "上傳完成",
+      "upload_failed": "上傳失敗",
+      "start_import": "開始匯入",
+      "retry_upload": "重試上傳",
+      "upload": "上傳",
+      "ready": "就緒",
+      "error": "錯誤",
+      "upload_complete_message": "上傳完成！",
+      "upload_complete_description": "點擊「開始匯入」開始處理您的 Notion 資料。",
+      "upload_progress_message": "請不要關閉此視窗。"
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "將您的 Confluence 資料匯入到 Plane 維基中。",
+    "steps": {
+      "title_upload_zip": "上傳 Confluence 匯出的 ZIP 檔案",
+      "description_upload_zip": "請上傳包含您的 Confluence 資料的 ZIP 檔案。"
+    },
+    "upload": {
+      "drop_file_here": "將您的 Confluence zip 檔案拖放到這裡",
+      "upload_title": "上傳 Confluence 匯出檔案",
+      "upload_from_url": "從 URL 匯入",
+      "upload_from_url_description": "貼上您 ZIP 匯出檔案的公開 URL 以繼續。",
+      "drag_drop_description": "拖放您的 Confluence 匯出 zip 檔案，或點擊瀏覽",
+      "file_type_restriction": "僅支援從 Confluence 匯出的 .zip 檔案",
+      "select_file": "選擇檔案",
+      "uploading": "正在上傳...",
+      "preparing_upload": "正在準備上傳...",
+      "confirming_upload": "正在確認上傳...",
+      "confirming": "正在確認...",
+      "upload_complete": "上傳完成",
+      "upload_failed": "上傳失敗",
+      "start_import": "開始匯入",
+      "retry_upload": "重試上傳",
+      "upload": "上傳",
+      "ready": "就緒",
+      "error": "錯誤",
+      "upload_complete_message": "上傳完成！",
+      "upload_complete_description": "點擊「開始匯入」開始處理您的 Confluence 資料。",
+      "upload_progress_message": "請不要關閉此視窗。"
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "將您的 CSV 數據導入到 Plane 專案中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 CSV 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_csv": "配置 CSV",
+      "description_configure_csv": "請上傳您的 CSV 文件並配置要映射到 Plane 字段的字段。"
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "從 CSV 檔案匯入工作項到 Plane 專案。",
+    "steps": {
+      "title_select_project": "選擇專案",
+      "description_select_project": "請選擇您要匯入工作項的 Plane 專案。",
+      "title_upload_csv": "上傳 CSV",
+      "description_upload_csv": "上傳包含工作項的 CSV 檔案。檔案應包含名稱、描述、優先級、日期和狀態組的欄位。"
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "將您的 ClickUp 數據遷移到 Plane 專案中。",
+    "select_service_space": "選擇 {serviceName} 空間",
+    "select_service_folder": "選擇 {serviceName} 文件夾",
+    "selected": "已選擇",
+    "users": "用戶",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 ClickUp 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_clickup": "配置 ClickUp",
+      "description_configure_clickup": "請選擇您想要遷移數據的 ClickUp 團隊、空間和文件夾。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 ClickUp 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 ClickUp 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 ClickUp 遷移到 Plane 的數據摘要。",
+      "pull_additional_data_title": "導入評論和附件"
+    }
+  }
+}

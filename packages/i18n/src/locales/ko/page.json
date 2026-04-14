@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "페이지 연결",
+    "show_wiki_pages": "위키 페이지 표시",
+    "link_pages_to": "페이지 연결",
+    "linked_pages": "연결된 페이지",
+    "no_description": "이 페이지는 비어 있습니다. 여기에 무언가를 작성하고 이 플레이스홀더로 표시하세요.",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "페이지가 업데이트되었습니다",
+          "message": "페이지가 성공적으로 업데이트되었습니다."
+        },
+        "error": {
+          "title": "페이지가 업데이트되지 않았습니다",
+          "message": "페이지를 업데이트할 수 없습니다."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "페이지가 삭제되었습니다",
+          "message": "페이지가 성공적으로 삭제되었습니다."
+        },
+        "error": {
+          "title": "페이지가 삭제되지 않았습니다",
+          "message": "페이지를 삭제할 수 없습니다."
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "개요",
+        "empty_state": {
+          "title": "제목이 없습니다",
+          "description": "이 페이지에 제목을 추가하여 여기에서 확인해보세요."
+        }
+      },
+      "info": {
+        "label": "정보",
+        "document_info": {
+          "words": "단어",
+          "characters": "문자",
+          "paragraphs": "단락",
+          "read_time": "읽기 시간"
+        },
+        "actors_info": {
+          "edited_by": "편집자",
+          "created_by": "작성자"
+        },
+        "version_history": {
+          "label": "버전 기록",
+          "current_version": "현재 버전",
+          "highlight_changes": "변경 사항 강조 표시"
+        }
+      },
+      "assets": {
+        "label": "자산",
+        "download_button": "다운로드",
+        "empty_state": {
+          "title": "이미지가 없습니다",
+          "description": "이미지를 추가하여 여기에서 확인하세요."
+        }
+      }
+    },
+    "open_button": "네비게이션 패널 열기",
+    "close_button": "네비게이션 패널 닫기",
+    "outline_floating_button": "개요 열기"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "위키 컬렉션, 프로젝트 및 팀스페이스 검색",
+        "project_to_project_with_wiki": "위키 컬렉션 및 프로젝트 검색",
+        "teamspace_to_all_with_wiki": "위키 컬렉션, 프로젝트 및 팀스페이스 검색"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "위키로 이동됨",
+          "message": "페이지가 위키로 이동되었지만 선택한 컬렉션에 추가할 수 없었습니다. 페이지는 General에 그대로 유지됩니다."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "컬렉션에서 제거",
+      "success_message": "페이지가 컬렉션에서 제거되었습니다.",
+      "error_message": "페이지를 컬렉션에서 제거할 수 없습니다. 다시 시도해 주세요."
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Wydanie} other {Wydania}}",
+    "no_release": "Brak wydania",
+    "unreleased": "Niewydane",
+    "select_releases": "Wybierz wydania",
+    "overview": "Przegląd",
+    "scope": "Zakres",
+    "page_title": {
+      "scope": "Wydanie - {name} | Zakres",
+      "scope_fallback": "Wydanie | Zakres"
+    },
+    "properties": "Właściwości",
+    "target_date": "Data docelowa",
+    "lead": "Lider",
+    "release_tag": "Tag",
+    "labels": "Etykiety",
+    "description_placeholder": "Dodaj opis...",
+    "progress": "Postęp",
+    "completed_work_items": "Ukończone elementy pracy",
+    "pending_work_items": "Oczekujące elementy pracy",
+    "cancelled_work_items": "Anulowane elementy pracy",
+    "scope_page": {
+      "work_items": "Elementy pracy",
+      "add_work_items": "Dodaj elementy pracy",
+      "remove_from_release": "Usuń z wydania",
+      "empty_state": {
+        "title": "Brak elementów pracy",
+        "description": "Dodaj elementy pracy, aby określić zakres wydania."
+      },
+      "confirm_remove": {
+        "content": "Czy na pewno chcesz usunąć ten element pracy z wydania? Pozostanie w projekcie.",
+        "primary_button": {
+          "default": "Usuń",
+          "loading": "Usuwanie"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Brak zakresu",
+      "description": "Dodaj elementy pracy do wydania, aby śledzić ich ukończenie w tym wydaniu.",
+      "add_scope": "Dodaj zakres",
+      "not_found": {
+        "title": "Nie znaleziono wydania",
+        "description": "Wydanie mogło zostać usunięte.",
+        "primary_button": "Powrót do wydań"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Dodano element pracy} other {Dodano elementy pracy}}",
+      "work_items_error": "Nie udało się dodać elementów pracy"
+    },
+    "count_releases": "{count, plural, one {# wydanie} other {# wydania}}",
+    "actions": {
+      "delete": "Usuń"
+    },
+    "delete_modal": {
+      "title": "Usuń wydanie",
+      "content": "Czy na pewno chcesz usunąć wydanie \"{releaseName}\"? Tej akcji nie można cofnąć."
+    },
+    "settings": {
+      "heading": {
+        "title": "Wydania",
+        "description": "Zarządzaj dostawami projektu precyzyjnie dzięki wydaniom."
+      },
+      "toggle": {
+        "title": "Włącz wydania",
+        "description": "Członkowie przestrzeni roboczej będą mieć dostęp do podglądu zakresu w swoich projektach."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Włączanie wydań...",
+          "success": {
+            "title": "Wydania włączone",
+            "message": "Wydania zostały włączone w tej przestrzeni roboczej."
+          },
+          "error": {
+            "title": "Błąd",
+            "message": "Nie udało się włączyć wydań. Spróbuj ponownie."
+          }
+        },
+        "disable": {
+          "loading": "Wyłączanie wydań...",
+          "success": {
+            "title": "Wydania wyłączone",
+            "message": "Wydania zostały wyłączone w tej przestrzeni roboczej."
+          },
+          "error": {
+            "title": "Błąd",
+            "message": "Nie udało się wyłączyć wydań. Spróbuj ponownie."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Tagi wydań",
+        "labels": "Etykiety"
+      },
+      "tags": {
+        "title": "Tagi wydań",
+        "description": "Kategoryzuj i filtruj swoje wydania za pomocą tagów.",
+        "add": "Dodaj tag",
+        "empty_state": "Nie ma jeszcze tagów. Utwórz swój pierwszy tag.",
+        "errors": {
+          "version_required": "Wersja jest wymagana.",
+          "version_already_exists": "Tag z tą wersją już istnieje.",
+          "generic": "Coś poszło nie tak. Spróbuj ponownie."
+        },
+        "delete_modal": {
+          "title": "Usuń tag",
+          "content": "Czy na pewno chcesz usunąć tag \"{tagVersion}\"? Tej akcji nie można cofnąć."
+        },
+        "actions": {
+          "edit": "Edytuj tag",
+          "delete": "Usuń tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag został pomyślnie usunięty.",
+            "error": "Nie udało się usunąć tagu. Spróbuj ponownie."
+          }
+        }
+      },
+      "labels": {
+        "title": "Etykiety",
+        "description": "Strukturyzuj i organizuj swoje inicjatywy za pomocą etykiet.",
+        "add": "Dodaj etykietę",
+        "empty_state": "Nie ma jeszcze etykiet. Utwórz swoją pierwszą etykietę.",
+        "errors": {
+          "name_required": "Nazwa jest wymagana.",
+          "name_already_exists": "Etykieta o tej nazwie już istnieje.",
+          "generic": "Coś poszło nie tak. Spróbuj ponownie."
+        },
+        "modal": {
+          "name_placeholder": "Nazwa etykiety",
+          "pick_color": "Wybierz kolor etykiety"
+        },
+        "actions": {
+          "edit": "Edytuj etykietę",
+          "delete": "Usuń etykietę"
+        },
+        "drag_to_reorder": "Przeciągnij, aby zmienić kolejność",
+        "delete_modal": {
+          "title": "Usuń etykietę",
+          "content": "Czy na pewno chcesz usunąć etykietę \"{labelName}\"? Tej akcji nie można cofnąć."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Etykieta została pomyślnie usunięta.",
+            "error": "Nie udało się usunąć etykiety. Spróbuj ponownie."
+          }
+        }
+      }
+    }
+  }
+}

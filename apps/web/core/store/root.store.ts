@@ -13,7 +13,7 @@
 
 import { enableStaticRendering } from "mobx-react";
 // plane imports
-import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
+import { FALLBACK_LANGUAGE, setLanguage } from "@plane/i18n";
 import type { IWorkItemFilterStore } from "@plane/shared-state";
 import { RootWorkItemTypesStore, RootCustomPropertiesStore, WorkItemFilterStore } from "@plane/shared-state";
 import type {
@@ -431,7 +431,7 @@ export class CoreRootStore {
   resetOnSignOut() {
     // handling the system theme when user logged out from the app
     localStorage.setItem("theme", "system");
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, FALLBACK_LANGUAGE);
+    void setLanguage(FALLBACK_LANGUAGE);
     this.workflowsStore?.dispose?.();
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();

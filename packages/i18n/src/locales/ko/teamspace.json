@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "팀스페이스",
+    "empty_state": {
+      "general": {
+        "title": "팀스페이스는 플레인에서 더 나은 조직화와 추적을 가능하게 합니다.",
+        "description": "모든 실제 팀을 위한 전용 공간을 만들고, 플레인의 다른 모든 작업 공간과 분리하여 팀이 일하는 방식에 맞게 사용자 지정하세요.",
+        "primary_button": {
+          "text": "새 팀스페이스 만들기"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "아직 연결된 팀스페이스가 없습니다.",
+          "description": "팀스페이스와 프로젝트 소유자가 프로젝트에 대한 접근을 관리할 수 있습니다."
+        }
+      },
+      "primary_button": {
+        "text": "팀스페이스 연결"
+      },
+      "secondary_button": {
+        "text": "자세히 알아보기"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "팀스페이스 이름",
+          "members": "구성원",
+          "accountType": "계정 유형"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "팀스페이스 제거"
+            },
+            "confirm": {
+              "title": "{projectName}에서 {teamspaceName} 제거",
+              "description": "연결된 프로젝트에서 이 팀스페이스를 제거하면 여기의 구성원은 연결된 프로젝트에 대한 접근 권한을 잃게 됩니다."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "일치하는 팀스페이스를 찾을 수 없습니다"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {이 프로젝트에 팀스페이스를 연결했습니다.} other {이 프로젝트에 #개의 팀스페이스를 연결했습니다.}}",
+            "description": "{additionalCount, plural, =0 {팀스페이스 {firstTeamspaceName}가 이제 이 프로젝트에 연결되었습니다.} other {팀스페이스 {firstTeamspaceName}와 {additionalCount}개가 이제 이 프로젝트에 연결되었습니다.}}"
+          },
+          "error": {
+            "title": "처리되지 않았습니다.",
+            "description": "다시 시도하거나 페이지를 새로고침한 후 다시 시도해 주세요."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "이 프로젝트에서 해당 팀스페이스를 제거했습니다.",
+            "description": "팀스페이스 {teamspaceName}가 {projectName}에서 제거되었습니다."
+          },
+          "error": {
+            "title": "처리되지 않았습니다.",
+            "description": "다시 시도하거나 페이지를 새로고침한 후 다시 시도해 주세요."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "팀스페이스 검색",
+        "info": {
+          "title": "팀스페이스를 추가하면 모든 팀스페이스 구성원이 이 프로젝트에 접근할 수 있습니다.",
+          "link": "자세히 알아보기"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "연결할 팀스페이스가 없습니다.",
+            "description": "연결할 수 있는 팀스페이스에 속해 있지 않거나 이미 사용 가능한 모든 팀스페이스를 연결했습니다."
+          },
+          "no_results": {
+            "title": "일치하는 팀스페이스가 없습니다.",
+            "description": "다른 검색어를 시도하거나 연결할 팀스페이스가 있는지 확인하세요."
+          }
+        },
+        "primary_button": {
+          "text": "선택한 팀스페이스 연결"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "팀별 작업 항목을 만드세요.",
+        "description": "연결된 프로젝트에서 이 팀의 구성원에게 할당된 작업 항목이 여기에 자동으로 표시됩니다. 여기서 일부 작업 항목이 표시될 것으로 예상되는 경우, 연결된 프로젝트에 이 팀의 구성원에게 할당된 작업 항목이 있는지 확인하거나 작업 항목을 만드세요.",
+        "primary_button": {
+          "text": "연결된 프로젝트에 작업 항목 추가"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "적용된 필터에 대한 팀별 작업 항목이 없습니다",
+        "description": "필터 중 일부를 변경하거나 모두 지워 이 공간과 관련된 작업 항목을 확인하세요.",
+        "secondary_button": {
+          "text": "모든 필터 지우기"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "연결된 프로젝트에 활성 사이클이 없습니다.",
+        "description": "연결된 프로젝트의 활성 사이클이 여기에 자동으로 표시됩니다. 활성 사이클이 표시될 것으로 예상되는 경우, 연결된 프로젝트에서 현재 실행 중인지 확인하세요."
+      },
+      "completed": {
+        "title": "연결된 프로젝트에 완료된 사이클이 없습니다.",
+        "description": "연결된 프로젝트의 완료된 사이클이 여기에 자동으로 표시됩니다. 완료된 사이클이 표시될 것으로 예상되는 경우, 연결된 프로젝트에서도 완료되었는지 확인하세요."
+      },
+      "upcoming": {
+        "title": "연결된 프로젝트에 예정된 사이클이 없습니다.",
+        "description": "연결된 프로젝트의 예정된 사이클이 여기에 자동으로 표시됩니다. 예정된 사이클이 표시될 것으로 예상되는 경우, 연결된 프로젝트에도 있는지 확인하세요."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "워크스페이스의 다른 뷰를 방해하지 않고 작업에 대한 팀의 뷰",
+        "description": "팀을 위해 저장된 뷰와 프로젝트의 뷰와 별도로 팀의 작업을 확인하세요.",
+        "primary_button": {
+          "text": "뷰 만들기"
+        }
+      },
+      "filter": {
+        "title": "일치하는 뷰 없음",
+        "description": "검색 기준과 일치하는 뷰가 없습니다.\n 대신 새 뷰를 만드세요."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "팀 페이지에 팀의 지식을 저장하세요.",
+        "description": "프로젝트의 페이지와 달리, 여기에서 팀별 지식을 별도의 페이지 세트에 저장할 수 있습니다. 페이지의 모든 기능을 활용하고, 모범 사례 문서 및 팀 위키를 쉽게 만드세요.",
+        "primary_button": {
+          "text": "첫 번째 팀 페이지 만들기"
+        }
+      },
+      "filter": {
+        "title": "일치하는 페이지 없음",
+        "description": "모든 페이지를 보려면 필터를 제거하세요"
+      },
+      "search": {
+        "title": "일치하는 페이지 없음",
+        "description": "모든 페이지를 보려면 검색 기준을 제거하세요"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "연결된 프로젝트에 게시된 작업 항목이 없습니다.",
+        "description": "해당 프로젝트 중 하나 이상에서 일부 작업 항목을 생성하여 날짜, 상태 및 우선순위별 진행 상황을 확인하세요."
+      },
+      "relation": {
+        "blocking": {
+          "title": "팀원을 차단하는 작업 항목이 없습니다.",
+          "description": "잘했습니다! 팀을 위한 길을 열었습니다. 당신은 좋은 팀 플레이어입니다."
+        },
+        "blocked": {
+          "title": "팀원의 작업 항목이 당신을 차단하지 않습니다.",
+          "description": "좋은 소식! 할당된 모든 작업 항목에서 진행할 수 있습니다."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "연결된 프로젝트에 게시된 작업 항목이 없습니다.",
+          "description": "해당 프로젝트 중 하나 이상에서 일부 작업 항목을 생성하여 프로젝트 및 팀 구성원별 작업 분배를 확인하세요."
+        },
+        "filter": {
+          "title": "적용된 필터에 대한 팀 통계가 없습니다.",
+          "description": "해당 프로젝트 중 하나 이상에서 일부 작업 항목을 생성하여 프로젝트 및 팀 구성원별 작업 분배를 확인하세요."
+        }
+      }
+    }
+  }
+}

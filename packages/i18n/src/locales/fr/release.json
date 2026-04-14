@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Livraison} other {Livraisons}}",
+    "no_release": "Aucune livraison",
+    "unreleased": "Non livré",
+    "select_releases": "Sélectionner des livraisons",
+    "overview": "Vue d’ensemble",
+    "scope": "Portée",
+    "page_title": {
+      "scope": "Livraison - {name} | Portée",
+      "scope_fallback": "Livraison | Portée"
+    },
+    "properties": "Propriétés",
+    "target_date": "Date cible",
+    "lead": "Responsable",
+    "release_tag": "Tag",
+    "labels": "Étiquettes",
+    "description_placeholder": "Ajouter une description...",
+    "progress": "Progression",
+    "completed_work_items": "Éléments de travail terminés",
+    "pending_work_items": "Éléments de travail en attente",
+    "cancelled_work_items": "Éléments de travail annulés",
+    "scope_page": {
+      "work_items": "Éléments de travail",
+      "add_work_items": "Ajouter des éléments de travail",
+      "remove_from_release": "Retirer de la livraison",
+      "empty_state": {
+        "title": "Aucun élément de travail",
+        "description": "Ajoutez des éléments de travail pour définir la portée de la livraison."
+      },
+      "confirm_remove": {
+        "content": "Voulez-vous vraiment retirer cet élément de travail de la livraison ? Il restera dans le projet.",
+        "primary_button": {
+          "default": "Retirer",
+          "loading": "Retrait en cours"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Pas encore de portée",
+      "description": "Ajoutez des éléments de travail à la livraison pour suivre leur achèvement pour cette livraison.",
+      "add_scope": "Ajouter un périmètre",
+      "not_found": {
+        "title": "Livraison introuvable",
+        "description": "La livraison a peut-être été supprimée.",
+        "primary_button": "Retour aux livraisons"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Élément de travail ajouté} other {Éléments de travail ajoutés}}",
+      "work_items_error": "Impossible d’ajouter les éléments de travail"
+    },
+    "count_releases": "{count, plural, one {# livraison} other {# livraisons}}",
+    "actions": {
+      "delete": "Supprimer"
+    },
+    "delete_modal": {
+      "title": "Supprimer la livraison",
+      "content": "Voulez-vous vraiment supprimer la livraison \"{releaseName}\" ? Cette action est irréversible."
+    },
+    "settings": {
+      "heading": {
+        "title": "Livraisons",
+        "description": "Gérez les livrables du projet avec précision grâce aux livraisons."
+      },
+      "toggle": {
+        "title": "Activer les livraisons",
+        "description": "Les membres de l’espace de travail auront un accès en lecture à la portée dans leurs projets respectifs."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Activation des livraisons...",
+          "success": {
+            "title": "Livraisons activées",
+            "message": "Les livraisons ont été activées pour cet espace de travail."
+          },
+          "error": {
+            "title": "Erreur",
+            "message": "Impossible d’activer les livraisons. Veuillez réessayer."
+          }
+        },
+        "disable": {
+          "loading": "Désactivation des livraisons...",
+          "success": {
+            "title": "Livraisons désactivées",
+            "message": "Les livraisons ont été désactivées pour cet espace de travail."
+          },
+          "error": {
+            "title": "Erreur",
+            "message": "Impossible de désactiver les livraisons. Veuillez réessayer."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Tags de livraison",
+        "labels": "Étiquettes"
+      },
+      "tags": {
+        "title": "Tags de livraison",
+        "description": "Catégorisez et filtrez vos livraisons à l’aide de tags.",
+        "add": "Ajouter un tag",
+        "empty_state": "Pas encore de tags. Créez votre premier tag.",
+        "errors": {
+          "version_required": "La version est requise.",
+          "version_already_exists": "Un tag avec cette version existe déjà.",
+          "generic": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "delete_modal": {
+          "title": "Supprimer le tag",
+          "content": "Voulez-vous vraiment supprimer le tag \"{tagVersion}\" ? Cette action est irréversible."
+        },
+        "actions": {
+          "edit": "Modifier le tag",
+          "delete": "Supprimer le tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag supprimé avec succès.",
+            "error": "Impossible de supprimer le tag. Veuillez réessayer."
+          }
+        }
+      },
+      "labels": {
+        "title": "Étiquettes",
+        "description": "Structurez et organisez vos initiatives avec des étiquettes.",
+        "add": "Ajouter une étiquette",
+        "empty_state": "Pas encore d’étiquettes. Créez votre première étiquette.",
+        "errors": {
+          "name_required": "Le nom est requis.",
+          "name_already_exists": "Une étiquette portant ce nom existe déjà.",
+          "generic": "Une erreur s'est produite. Veuillez réessayer."
+        },
+        "modal": {
+          "name_placeholder": "Nom de l’étiquette",
+          "pick_color": "Choisir la couleur de l’étiquette"
+        },
+        "actions": {
+          "edit": "Modifier l’étiquette",
+          "delete": "Supprimer l’étiquette"
+        },
+        "drag_to_reorder": "Glisser pour réorganiser",
+        "delete_modal": {
+          "title": "Supprimer l’étiquette",
+          "content": "Voulez-vous vraiment supprimer l’étiquette \"{labelName}\" ? Cette action est irréversible."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Étiquette supprimée avec succès.",
+            "error": "Impossible de supprimer l’étiquette. Veuillez réessayer."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Generale",
+      "private": "Privato",
+      "shared": "Condiviso",
+      "archived": "Archiviato"
+    },
+    "fallback_name": "Raccolta",
+    "form": {
+      "name_required": "Il titolo della raccolta è obbligatorio",
+      "name_max_length": "Il nome della raccolta deve essere inferiore a 255 caratteri",
+      "name_placeholder_create": "Dai un titolo alla raccolta",
+      "name_placeholder_edit": "Nome della raccolta"
+    },
+    "create_modal": {
+      "title": "Crea una raccolta",
+      "submit": "Crea raccolta"
+    },
+    "edit_modal": {
+      "title": "Modifica raccolta"
+    },
+    "delete_modal": {
+      "title": "Elimina raccolta",
+      "page_count": "Questa raccolta contiene {pageCount} pagine. Scegli cosa deve accadere.",
+      "transfer_title": "Trasferisci le pagine ed elimina la raccolta",
+      "transfer_description": "Sposta tutte le pagine in un'altra raccolta prima di eliminarla. Le pagine e i relativi permessi verranno conservati.",
+      "transfer_warning": "Le pagine spostate erediteranno i permessi della raccolta selezionata.",
+      "transfer_target_label": "Sposta le pagine in",
+      "transfer_target_placeholder": "Seleziona una raccolta",
+      "delete_with_pages_title": "Elimina la raccolta con le pagine",
+      "delete_with_pages_description": "Elimina definitivamente la raccolta e tutte le sue pagine. Questa azione non può essere annullata.",
+      "submit": "Elimina raccolta"
+    },
+    "header": {
+      "add_page": "Aggiungi pagina"
+    },
+    "menu": {
+      "create_new_page": "Crea nuova pagina",
+      "add_existing_page": "Aggiungi pagina esistente",
+      "edit_collection": "Modifica raccolta",
+      "collection_options": "Opzioni della raccolta"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Cerca pagine",
+      "success_message": "{count} pagine aggiunte alla raccolta.",
+      "error_message": "Non è stato possibile spostare le pagine. Riprova.",
+      "no_pages_found": "Nessuna pagina trovata per la tua ricerca",
+      "no_pages_available": "Nessuna pagina disponibile da spostare",
+      "submit": "Sposta"
+    },
+    "list": {
+      "invite_only": "Solo su invito",
+      "remove_error": "Impossibile rimuovere la pagina dalla raccolta.",
+      "no_matching_pages": "Nessuna pagina corrispondente",
+      "remove_search_criteria": "Rimuovi i criteri di ricerca per vedere tutte le pagine",
+      "remove_filters": "Rimuovi i filtri per vedere tutte le pagine",
+      "no_pages_title": "Nessuna pagina ancora",
+      "no_pages_description": "Questa raccolta non contiene ancora alcuna pagina.",
+      "untitled": "Senza titolo",
+      "restricted_access": "Accesso limitato",
+      "collapse_page": "Comprimi pagina",
+      "expand_page": "Espandi pagina",
+      "page_actions": "Azioni pagina",
+      "page_link_copied": "Link della pagina copiato negli appunti.",
+      "columns": {
+        "page_name": "Nome pagina",
+        "owner": "Proprietario",
+        "nested_pages": "Pagine annidate",
+        "last_activity": "Ultima attività",
+        "actions": "Azioni"
+      }
+    },
+    "toasts": {
+      "created": "Raccolta creata con successo.",
+      "create_error": "Impossibile creare la raccolta. Riprova.",
+      "renamed": "Raccolta rinominata con successo.",
+      "rename_error": "Impossibile aggiornare la raccolta. Riprova.",
+      "transferred_deleted": "Le pagine sono state trasferite e la raccolta eliminata.",
+      "deleted_with_pages": "La raccolta e le sue pagine sono state eliminate.",
+      "delete_error": "Impossibile eliminare la raccolta. Riprova.",
+      "target_required": "Seleziona una raccolta in cui spostare le pagine.",
+      "create_page_error": "Impossibile creare la pagina. Riprova.",
+      "create_page_in_collection_error": "Impossibile creare la pagina o aggiungerla alla raccolta. Riprova.",
+      "collection_link_copied": "Link della raccolta copiato negli appunti."
+    }
+  }
+}

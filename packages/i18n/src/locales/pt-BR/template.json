@@ -1,0 +1,303 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Modelos",
+      "description": "Economize 80% do tempo gasto na criação de projetos, itens de trabalho e páginas quando você usa modelos.",
+      "options": {
+        "project": {
+          "label": "Modelos de projeto"
+        },
+        "work_item": {
+          "label": "Modelos de item de trabalho"
+        },
+        "page": {
+          "label": "Modelos de página"
+        }
+      },
+      "create_template": {
+        "label": "Criar modelo",
+        "no_permission": {
+          "project": "Entre em contato com o administrador do projeto para criar modelos",
+          "workspace": "Entre em contato com o administrador do workspace para criar modelos"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Usar modelo",
+          "loading": "Usando"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivado do workspace"
+        },
+        "project": {
+          "info": "Derivado do projeto"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Nomeie seu modelo de projeto.",
+              "validation": {
+                "required": "Nome do modelo é obrigatório",
+                "maxLength": "Nome do modelo deve ter menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Descreva quando e como usar este modelo."
+            }
+          },
+          "name": {
+            "placeholder": "Nomeie seu projeto.",
+            "validation": {
+              "required": "Título do projeto é obrigatório",
+              "maxLength": "Título do projeto deve ter menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Descreva o propósito e objetivos deste projeto."
+          },
+          "button": {
+            "create": "Criar modelo de projeto",
+            "update": "Atualizar modelo de projeto"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Nomeie seu modelo de item de trabalho.",
+              "validation": {
+                "required": "Nome do modelo é obrigatório",
+                "maxLength": "Nome do modelo deve ter menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Descreva quando e como usar este modelo."
+            }
+          },
+          "name": {
+            "placeholder": "Dê um título a este item de trabalho.",
+            "validation": {
+              "required": "Título do item de trabalho é obrigatório",
+              "maxLength": "Título do item de trabalho deve ter menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Descreva este item de trabalho para que fique claro o que você realizará quando concluí-lo."
+          },
+          "button": {
+            "create": "Criar modelo de item de trabalho",
+            "update": "Atualizar modelo de item de trabalho"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nomeie swoj szablon strony.",
+              "validation": {
+                "required": "Nazwa szablonu jest wymagana",
+                "maxLength": "Nazwa szablonu powinna mieć mniej niż 255 znaków"
+              }
+            },
+            "description": {
+              "placeholder": "Opisz, kiedy i jak używać tego szablonu."
+            }
+          },
+          "name": {
+            "placeholder": "Nieznana strona",
+            "validation": {
+              "maxLength": "Nazwa strony powinna mieć mniej niż 255 znaków"
+            }
+          },
+          "button": {
+            "create": "Utwórz szablon strony",
+            "update": "Aktualizuj szablon strony"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Configurações de publicação} other {Publicar no Marketplace}}",
+          "unpublish_action": "Remover do Marketplace",
+          "title": "Upewnij się, że szablon jest odkrywalny i rozpoznawalny.",
+          "name": {
+            "label": "Nazwa szablonu",
+            "placeholder": "Nazwij swoj szablon",
+            "validation": {
+              "required": "Nazwa szablonu jest wymagana",
+              "maxLength": "Nazwa szablonu powinna mieć mniej niż 255 znaków"
+            }
+          },
+          "short_description": {
+            "label": "Krótki opis",
+            "placeholder": "Ten szablon jest idealny dla menedżerów projektów, którzy zarządzają wieloma projektami jednocześnie.",
+            "validation": {
+              "required": "Krótki opis jest wymagany"
+            }
+          },
+          "description": {
+            "label": "Opis",
+            "placeholder": "Aumente a produtividade e otimize a comunicação com nossa integração de Fala-para-Texto.\n• Transcrição em tempo real: Converta palavras faladas em texto preciso instantaneamente.\n• Criação de tarefas e comentários: Adicione tarefas, descrições e comentários através de comandos de voz.",
+            "validation": {
+              "required": "Opis jest wymagany"
+            }
+          },
+          "category": {
+            "label": "Kategoria",
+            "placeholder": "Wybierz, gdzie uważasz, że pasuje najlepiej. Możesz wybrać więcej niż jedną.",
+            "validation": {
+              "required": "Przynajmniej jedna kategoria jest wymagana"
+            }
+          },
+          "keywords": {
+            "label": "Palavras-chave",
+            "placeholder": "Use termos que você acha que seus usuários procurarão ao buscar por este modelo.",
+            "helperText": "Insira palavras-chave separadas por vírgulas que ajudarão as pessoas a encontrar este modelo na pesquisa.",
+            "validation": {
+              "required": "Pelo menos uma palavra-chave é obrigatória"
+            }
+          },
+          "company_name": {
+            "label": "Nazwa firmy",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Nazwa firmy jest wymagana",
+              "maxLength": "Nazwa firmy powinna mieć mniej niż 255 znaków"
+            }
+          },
+          "contact_email": {
+            "label": "Email podpory",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Nieprawidłowy adres e-mail",
+              "required": "Email podpory jest wymagany",
+              "maxLength": "Email podpory powinien mieć mniej niż 255 znaków"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link do Twojej polityki prywatności",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Nieprawidłowy URL",
+              "maxLength": "URL powinien mieć mniej niż 800 znaków"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link do Twoich warunków użycia",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Nieprawidłowy URL",
+              "maxLength": "URL powinien mieć mniej niż 800 znaków"
+            }
+          },
+          "cover_image": {
+            "label": "Adicione uma imagem de capa que será exibida no marketplace",
+            "upload_title": "Enviar imagem de capa",
+            "upload_placeholder": "Clique para enviar ou arraste e solte para enviar uma imagem de capa",
+            "drop_here": "Solte aqui",
+            "click_to_upload": "Clique para enviar",
+            "invalid_file_or_exceeds_size_limit": "Arquivo inválido ou excede o limite de tamanho. Por favor, tente novamente.",
+            "upload_and_save": "Enviar e salvar",
+            "uploading": "Enviando",
+            "remove": "Remover",
+            "removing": "Removendo",
+            "validation": {
+              "required": "A imagem de capa é obrigatória"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Dołącz dokumenty i obrazy, które uważasz, że sprawią, że widzowie tego szablonu będą zainteresowani.",
+            "validation": {
+              "required": "Przynajmniej jedno zrzut ekranu jest wymagane"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Modelos",
+        "description": "Com modelos de projeto, item de trabalho e página no Plane, você não precisa criar um projeto do zero ou definir propriedades de item de trabalho manualmente.",
+        "sub_description": "Recupere 80% do seu tempo administrativo quando você usa Modelos."
+      },
+      "no_templates": {
+        "button": "Crie seu primeiro modelo"
+      },
+      "no_labels": {
+        "description": " Ainda não há etiquetas. Crie etiquetas para ajudar a organizar e filtrar itens de trabalho em seu projeto."
+      },
+      "no_work_items": {
+        "description": "Não há itens de trabalho ainda. Adicione um para estruturar seu trabalho melhor."
+      },
+      "no_sub_work_items": {
+        "description": "Não há itens de trabalho ainda. Adicione um para estruturar seu trabalho melhor."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Não há modelos aos quais você tem acesso.",
+          "description": "Por favor, crie um modelo"
+        },
+        "no_results": {
+          "title": "Isso não corresponde a nenhum modelo.",
+          "description": "Tente pesquisar com outros termos."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Modelo criado",
+          "message": "{templateName}, o modelo de {templateType}, agora está disponível para seu workspace."
+        },
+        "error": {
+          "title": "Não conseguimos criar esse modelo desta vez.",
+          "message": "Tente salvar seus detalhes novamente ou copie-os para um novo modelo, preferencialmente em outra aba."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Modelo alterado",
+          "message": "{templateName}, o modelo de {templateType}, foi alterado."
+        },
+        "error": {
+          "title": "Não conseguimos salvar alterações neste modelo.",
+          "message": "Tente salvar seus detalhes novamente ou volte a este modelo mais tarde. Se ainda houver problemas, entre em contato conosco."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Modelo excluído",
+          "message": "{templateName}, o modelo de {templateType}, foi excluído do seu workspace."
+        },
+        "error": {
+          "title": "Não conseguimos excluir esse modelo.",
+          "message": "Tente excluí-lo novamente ou volte a ele mais tarde. Se você não conseguir excluí-lo, entre em contato conosco."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Modelo removido",
+          "message": "{templateName}, o modelo de {templateType}, foi removido."
+        },
+        "error": {
+          "title": "Não conseguimos remover esse modelo desta vez.",
+          "message": "Tente removê-lo novamente ou volte a ele mais tarde. Se você não conseguir removê-lo, entre em contato conosco."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Excluir modelo",
+      "description": {
+        "prefix": "Tem certeza que deseja excluir o modelo-",
+        "suffix": "? Todos os dados relacionados ao modelo serão removidos permanentemente. Esta ação não pode ser desfeita."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Remover modelo",
+      "description": {
+        "prefix": "Tem certeza que deseja remover o modelo-",
+        "suffix": "? Este modelo não estará mais disponível para usuários no marketplace."
+      }
+    }
+  }
+}

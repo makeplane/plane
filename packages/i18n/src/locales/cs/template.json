@@ -1,0 +1,320 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Šablony",
+      "description": "Ušetřete 80 % času stráveného vytvářením projektů, pracovních položek a stránek, když používáte šablony.",
+      "options": {
+        "project": {
+          "label": "Šablony projektů"
+        },
+        "work_item": {
+          "label": "Šablony pracovních položek"
+        },
+        "page": {
+          "label": "Šablony stránek"
+        }
+      },
+      "create_template": {
+        "label": "Vytvořit šablonu",
+        "no_permission": {
+          "project": "Kontaktujte správce projektu, abyste vytvořili šablony",
+          "workspace": "Kontaktujte správce workspace, abyste vytvořili šablony"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Použít šablonu",
+          "loading": "Používání"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Odvozeno z workspace"
+        },
+        "project": {
+          "info": "Odvozeno z projektu"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Pojmenujte svou šablonu projektu.",
+              "validation": {
+                "required": "Název šablony je povinný",
+                "maxLength": "Název šablony by měl být kratší než 255 znaků"
+              }
+            },
+            "description": {
+              "placeholder": "Popište, kdy a jak tuto šablonu použít."
+            }
+          },
+          "name": {
+            "placeholder": "Pojmenujte svůj projekt.",
+            "validation": {
+              "required": "Název projektu je povinný",
+              "maxLength": "Název projektu by měl být kratší než 255 znaků"
+            }
+          },
+          "description": {
+            "placeholder": "Popište účel a cíle tohoto projektu."
+          },
+          "button": {
+            "create": "Vytvořit šablonu projektu",
+            "update": "Aktualizovat šablonu projektu"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Pojmenujte svou šablonu pracovních položek.",
+              "validation": {
+                "required": "Název šablony je povinný",
+                "maxLength": "Název šablony by měl být kratší než 255 znaků"
+              }
+            },
+            "description": {
+              "placeholder": "Popište, kdy a jak tuto šablonu použít."
+            }
+          },
+          "name": {
+            "placeholder": "Dejte této pracovní položce název.",
+            "validation": {
+              "required": "Název pracovní položky je povinný",
+              "maxLength": "Název pracovní položky by měl být kratší než 255 znaků"
+            }
+          },
+          "description": {
+            "placeholder": "Popište tuto pracovní položku, aby bylo jasné, co dosáhnete, když ji dokončíte."
+          },
+          "button": {
+            "create": "Vytvořit šablonu pracovní položky",
+            "update": "Aktualizovat šablonu pracovní položky"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Pojmenujte svou šablonu stránky.",
+              "validation": {
+                "required": "Název šablony je povinný",
+                "maxLength": "Název šablony by měl být kratší než 255 znaků"
+              }
+            },
+            "description": {
+              "placeholder": "Popište, kdy a jak tuto šablonu použít."
+            }
+          },
+          "name": {
+            "placeholder": "Neznámá stránka",
+            "validation": {
+              "maxLength": "Název stránky by měl být kratší než 255 znaků"
+            }
+          },
+          "button": {
+            "create": "Vytvořit šablonu stránky",
+            "update": "Aktualizovat šablonu stránky"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Nastavení publikování} other {Publikovat na Marketplace}}",
+          "unpublish_action": "Odebrat z Marketplace",
+          "title": "Uložte svou šablonu, aby byla pro vaše uživatele dostupná.",
+          "name": {
+            "label": "Název šablony",
+            "placeholder": "Pojmenujte svou šablonu",
+            "validation": {
+              "required": "Název šablony je povinný",
+              "maxLength": "Název šablony by měl být kratší než 255 znaků"
+            }
+          },
+          "short_description": {
+            "label": "Kráký popis",
+            "placeholder": "Tato šablona je skvělá pro manažery projektů, kteří spravují několik projektů najednou.",
+            "validation": {
+              "required": "Kráký popis je povinný"
+            }
+          },
+          "description": {
+            "label": "Popis",
+            "placeholder": "Vylepšete produktivitu a zjednodušte komunikaci s naší integrací rozpoznávání řeči.\n• Instantní přepis: Převádí hlas na přesný text okamžitě.\n• Vytvoření úkolu a komentáře: Vytvořte úkoly, popisy a komentáře pomocí hlasových příkazů.",
+            "validation": {
+              "required": "Popis je povinný"
+            }
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "validation": {
+              "required": "Musíte vybrat alespoň jednu kategorii"
+            }
+          },
+          "keywords": {
+            "label": "Klíčová slova",
+            "placeholder": "Použijte termíny, které si myslíte, že vaši uživatele při hledání této šablony použijí.",
+            "helperText": "Zadejte klíčová slova oddělená čárkami, která pomůžou lidem najít tuto šablonu z hledání.",
+            "validation": {
+              "required": "Alespoň jedno klíčové slovo je povinné"
+            }
+          },
+          "company_name": {
+            "label": "Název společnosti",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Název společnosti je povinný",
+              "maxLength": "Název společnosti by měl být kratší než 255 znaků"
+            }
+          },
+          "contact_email": {
+            "label": "Email podpory",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Neplatná emailová adresa",
+              "required": "Email podpory je povinný",
+              "maxLength": "Email podpory by měl být kratší než 255 znaků"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Odkaz na vaši ochranu osobních údajů",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by měla být kratší než 800 znaků"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Odkaz na vaše podmínky použití",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by měla být kratší než 800 znaků"
+            }
+          },
+          "cover_image": {
+            "label": "Přidejte obrázek, který bude zobrazen na Marketplace",
+            "upload_title": "Nahrát obrázek",
+            "upload_placeholder": "Klikněte pro nahrání nebo přetáhněte a upustěte obrázek",
+            "drop_here": "Sem",
+            "click_to_upload": "Klikněte pro nahrání",
+            "invalid_file_or_exceeds_size_limit": "Neplatný soubor nebo překročen limit velikosti. Zkuste to znovu.",
+            "upload_and_save": "Nahrát a uložit",
+            "uploading": "Nahrávání",
+            "remove": "Odstranit",
+            "removing": "Odstraňování",
+            "validation": {
+              "required": "Obrázek je povinný"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Připojte dokumenty a obrázky, které si myslíte, že vypadnou při zobrazení této šablony.",
+            "validation": {
+              "required": "Musíte přidat alespoň jeden screenshot"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Šablony",
+        "description": "S šablonami projektů, pracovních položek a stránek v Plane nemusíte vytvářet projekt od nuly nebo nastavovat vlastnosti pracovních položek ručně.",
+        "sub_description": "Získejte 80 % svého administrativního času zpět, když používáte šablony."
+      },
+      "no_templates": {
+        "button": "Vytvořte svou první šablonu"
+      },
+      "no_labels": {
+        "description": "Zatím žádné štítky. Vytvořte štítky, abyste pomohli organizovat a filtrovat pracovní položky v projektu."
+      },
+      "no_work_items": {
+        "description": "Zatím žádné pracovní položky. Přidejte jednu, abyste strukturovali svou práci lépe."
+      },
+      "no_sub_work_items": {
+        "description": "Zatím žádné podpracovní položky. Přidejte jednu, abyste strukturovali svou práci lépe."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Neexistují žádné šablony, ke kterým máte přístup.",
+          "description": "Prosím vytvořte šablonu"
+        },
+        "no_results": {
+          "title": "To neodpovídá žádné šabloně.",
+          "description": "Zkuste hledat s jinými termíny."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Šablona byla úspěšně vytvořena",
+          "message": "{templateName} byla úspěšně vytvořena a je nyní k dispozici pro váš workspace. Můžete ji nyní použít k vytvoření nových pracovních položek."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodařilo se vytvořit šablonu. Zkuste to znovu!"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Šablona byla úspěšně aktualizována",
+          "message": "{templateName} byla úspěšně aktualizována. Můžete ji nyní použít k vytvoření nových pracovních položek."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodařilo se aktualizovat šablonu. Zkuste to znovu!"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Šablona byla úspěšně smazána!"
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodařilo se smazat šablonu. Zkuste to znovu!"
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Šablona stažena",
+          "message": "{templateName}, šablona typu {templateType}, byla stažena z marketplace."
+        },
+        "error": {
+          "title": "Nepodařilo se stáhnout šablonu.",
+          "message": "Zkuste ji stáhnout znovu nebo se k ní vraťte později. Pokud ji stále nemůžete stáhnout, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Smazat šablonu",
+      "description": {
+        "prefix": "Opravdu chcete smazat šablonu-",
+        "suffix": "? Všechna data související se šablonou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Stáhnout šablonu",
+      "description": {
+        "prefix": "Opravdu chcete stáhnout šablonu-",
+        "suffix": "? Šablona bude stažena z marketplace a nebude více dostupná pro ostatní."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Přidat novou šablonu",
+        "project": "Přidat novou šablonu"
+      },
+      "label": {
+        "project": "Vybrat šablonu projektu",
+        "page": "Vybrat šablonu"
+      },
+      "tooltip": {
+        "work_item": "Vybrat šablonu pracovní položky"
+      },
+      "no_results": {
+        "work_item": "Nebyly nalezeny žádné šablony.",
+        "project": "Nebyly nalezeny žádné šablony."
+      }
+    }
+  }
+}

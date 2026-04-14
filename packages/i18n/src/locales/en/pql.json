@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Current datetime"
+        },
+        "today": {
+          "description": "Today's date"
+        },
+        "start_of_day": {
+          "description": "Start of today"
+        },
+        "end_of_day": {
+          "description": "End of today"
+        },
+        "start_of_week": {
+          "description": "Start of current week"
+        },
+        "end_of_week": {
+          "description": "End of current week"
+        },
+        "start_of_month": {
+          "description": "Start of current month"
+        },
+        "end_of_month": {
+          "description": "End of current month"
+        },
+        "start_of_year": {
+          "description": "Start of current year"
+        },
+        "end_of_year": {
+          "description": "End of current year"
+        },
+        "days_ago": {
+          "description": "Date n days in the past"
+        },
+        "days_from_now": {
+          "description": "Date n days in the future"
+        },
+        "weeks_ago": {
+          "description": "Date n weeks in the past"
+        },
+        "weeks_from_now": {
+          "description": "Date n weeks in the future"
+        },
+        "months_ago": {
+          "description": "Date n months in the past"
+        },
+        "months_from_now": {
+          "description": "Date n months in the future"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Current signed in user"
+        },
+        "members_of": {
+          "description": "Members of \"project:<id>\" or \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "All workspace members"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Cycle active today"
+        },
+        "completed_cycles": {
+          "description": "Cycles whose end date has passed"
+        },
+        "upcoming_cycles": {
+          "description": "Cycles whose start date is in the future"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Due date is past AND state is open"
+        },
+        "has_no_assignee": {
+          "description": "Work item has no assignee"
+        },
+        "has_no_label": {
+          "description": "Work item has no labels"
+        },
+        "is_top_level": {
+          "description": "Not a sub-work item(has no parent)"
+        },
+        "is_sub_work_item": {
+          "description": "Is a sub-work item(has a parent)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "Is an intake work item"
+        },
+        "is_draft": {
+          "description": "Is a draft work item"
+        },
+        "is_archived": {
+          "description": "Is archived"
+        },
+        "has_children": {
+          "description": "Has at least one sub-work item"
+        },
+        "has_start_and_due_dates": {
+          "description": "Has both start and due dates"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Work items related to the given work item"
+        },
+        "blocked_by": {
+          "description": "Work items blocked by the given work item"
+        },
+        "blocks": {
+          "description": "Work items that block the given work item"
+        },
+        "child_of": {
+          "description": "Sub-work items of the given work item"
+        },
+        "parent_of": {
+          "description": "Parent work item of the given work item"
+        },
+        "duplicate_of": {
+          "description": "Work items marked as duplicates of the given work item"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Field was ever set to this value"
+        },
+        "was": {
+          "description": "Field was previously this value (changed away from)"
+        },
+        "changed_from": {
+          "description": "Field was changed from this value"
+        },
+        "changed_to": {
+          "description": "Field was changed to this value"
+        },
+        "changed": {
+          "description": "Field was changed at all"
+        },
+        "updated_by": {
+          "description": "Work item updated by this user"
+        },
+        "commented_by": {
+          "description": "Work item commented by this user"
+        },
+        "field_changed_by": {
+          "description": "Field changed by this user"
+        },
+        "was_assigned_to": {
+          "description": "Work item was assigned to this user"
+        },
+        "changed_after": {
+          "description": "Field changed after this date"
+        },
+        "changed_before": {
+          "description": "Field changed before this date"
+        },
+        "field_changed_after": {
+          "description": "Field changed after this date"
+        },
+        "field_changed_before": {
+          "description": "Field changed before this date"
+        },
+        "changed_to_after": {
+          "description": "Field changed to this value after this date"
+        },
+        "changed_to_before": {
+          "description": "Field changed to this value before this date"
+        },
+        "field_changed_between": {
+          "description": "Field changed between these dates"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "navigate",
+      "accept": "accept",
+      "close": "close",
+      "pick_date": "Pick a date"
+    },
+    "placeholder": "Type a query and press \"ENTER\" to filter...",
+    "error": "Error submitting query. Please check and try again."
+  }
+}

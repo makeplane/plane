@@ -1,0 +1,113 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "General",
+      "private": "Private",
+      "shared": "Shared",
+      "archived": "Archived"
+    },
+    "fallback_name": "Collection",
+    "form": {
+      "name_required": "Collection title is required",
+      "name_max_length": "Collection name must be less than 255 characters",
+      "name_placeholder_create": "Give a title to the collection",
+      "name_placeholder_edit": "Collection name"
+    },
+    "create_modal": {
+      "title": "Create a collection",
+      "submit": "Create collection"
+    },
+    "edit_modal": {
+      "title": "Edit collection"
+    },
+    "delete_modal": {
+      "title": "Delete collection",
+      "page_count": "This collection has {pageCount} {pageCount, plural, one {page} other {pages}}. Choose what happens to them.",
+      "transfer_title": "Transfer pages and delete collection",
+      "transfer_description": "Move all pages to another collection before deleting. Pages and their permissions are preserved.",
+      "transfer_warning": "Moved pages will inherit the permissions of the selected collection.",
+      "transfer_target_label": "Move pages to",
+      "transfer_target_placeholder": "Select a collection",
+      "delete_with_pages_title": "Delete collection with pages",
+      "delete_with_pages_description": "Permanently delete the collection and all its pages. This action can't be undone.",
+      "submit": "Delete collection"
+    },
+    "header": {
+      "add_page": "Add page"
+    },
+    "menu": {
+      "create_new_page": "Create new page",
+      "add_existing_page": "Add existing page",
+      "edit_collection": "Edit collection",
+      "collection_options": "Collection options"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Search for pages",
+      "success_message": "{count} {count, plural, one {page} other {pages}} added to collection.",
+      "error_message": "Pages could not be moved. Please try again.",
+      "no_pages_found": "No pages found matching your search",
+      "no_pages_available": "No pages available to move",
+      "submit": "Move"
+    },
+    "list": {
+      "invite_only": "Invite only",
+      "remove_error": "Failed to remove page from collection.",
+      "no_matching_pages": "No matching pages",
+      "remove_search_criteria": "Remove the search criteria to see all pages",
+      "remove_filters": "Remove the filters to see all pages",
+      "no_pages_title": "No pages yet",
+      "no_pages_description": "This collection doesn't have any pages right now.",
+      "untitled": "Untitled",
+      "restricted_access": "Restricted Access",
+      "collapse_page": "Collapse page",
+      "expand_page": "Expand page",
+      "page_actions": "Page actions",
+      "page_link_copied": "Page link copied to clipboard.",
+      "columns": {
+        "page_name": "Page name",
+        "owner": "Owner",
+        "nested_pages": "Nested pages",
+        "last_activity": "Last activity",
+        "actions": "Actions"
+      }
+    },
+    "toasts": {
+      "created": "Collection created successfully.",
+      "create_error": "Collection could not be created. Please try again.",
+      "renamed": "Collection renamed successfully.",
+      "rename_error": "Collection could not be updated. Please try again.",
+      "transferred_deleted": "Pages transferred and collection deleted.",
+      "deleted_with_pages": "Collection and its pages deleted.",
+      "delete_error": "Collection could not be deleted. Please try again.",
+      "target_required": "Please select a collection to move pages to.",
+      "create_page_error": "Page could not be created. Please try again.",
+      "create_page_in_collection_error": "Page could not be created or added to the collection. Please try again.",
+      "collection_link_copied": "Collection link copied to clipboard."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Upgrade to unlock Wiki",
+      "description": "Unlock public pages, version history, shared pages, real-time collaboration, and workspace pages for wikis, company-wide docs, and knowledge bases with Plane Pro.",
+      "upgrade_button": {
+        "text": "Upgrade"
+      },
+      "learn_more_button": {
+        "text": "Learn more"
+      },
+      "download_button": {
+        "text": "Download data",
+        "loading": "Downloading"
+      },
+      "tabs": {
+        "nested_pages": "Nested Pages",
+        "add_embeds": "Add embeds",
+        "publish_pages": "Publish pages",
+        "comments": "Comments"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Nested pages require a paid plan. Upgrade to unlock."
+    }
+  }
+}

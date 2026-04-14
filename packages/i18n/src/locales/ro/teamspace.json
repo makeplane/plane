@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Spații de echipă",
+    "empty_state": {
+      "general": {
+        "title": "Spațiile de echipă deblochează o mai bună organizare și urmărire în Plane.",
+        "description": "Creează o suprafață dedicată pentru fiecare echipă din lumea reală, separată de toate celelalte suprafețe de lucru din Plane, și personalizează-le pentru a se potrivi cu modul în care lucrează echipa ta.",
+        "primary_button": {
+          "text": "Creează un nou spațiu de echipă"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Nu ai conectat încă niciun spațiu de echipă.",
+          "description": "Proprietarii spațiului de echipă și ai proiectului pot gestiona accesul la proiecte."
+        }
+      },
+      "primary_button": {
+        "text": "Conectează un spațiu de echipă"
+      },
+      "secondary_button": {
+        "text": "Află mai multe"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Numele spațiului de echipă",
+          "members": "Membri",
+          "accountType": "Tip de cont"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Elimină spațiul de echipă"
+            },
+            "confirm": {
+              "title": "Elimină {teamspaceName} din {projectName}",
+              "description": "Când elimini acest spațiu de echipă dintr-un proiect conectat, membrii de aici își vor pierde accesul la proiectul conectat."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nu s-au găsit spații de echipă potrivite"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Ai conectat un spațiu de echipă la acest proiect.} other {Ai conectat # spații de echipă la acest proiect.}}",
+            "description": "{additionalCount, plural, =0 {Spațiul de echipă {firstTeamspaceName} este acum conectat la acest proiect.} other {Spațiul de echipă {firstTeamspaceName} și încă {additionalCount} sunt acum conectate la acest proiect.}}"
+          },
+          "error": {
+            "title": "Nu a mers.",
+            "description": "Încearcă din nou sau reîncarcă această pagină înainte de a încerca din nou."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Ai eliminat acel spațiu de echipă din acest proiect.",
+            "description": "Spațiul de echipă {teamspaceName} a fost eliminat din {projectName}."
+          },
+          "error": {
+            "title": "Nu a mers.",
+            "description": "Încearcă din nou sau reîncarcă această pagină înainte de a încerca din nou."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Caută spații de echipă",
+        "info": {
+          "title": "Adăugarea unui spațiu de echipă oferă tuturor membrilor spațiului de echipă acces la acest proiect.",
+          "link": "Află mai multe"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nu ai niciun spațiu de echipă de conectat.",
+            "description": "Fie nu ești într-un spațiu de echipă pe care îl poți conecta, fie ai conectat deja toate spațiile de echipă disponibile."
+          },
+          "no_results": {
+            "title": "Nu se potrivește cu niciunul dintre spațiile tale de echipă.",
+            "description": "Încearcă un alt termen sau asigură-te că ai spații de echipă de conectat."
+          }
+        },
+        "primary_button": {
+          "text": "Conectează spațiile de echipă selectate"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Creează elemente de lucru specifice echipei.",
+        "description": "Elementele de lucru care sunt atribuite membrilor acestei echipe în orice proiect conectat vor apărea automat aici. Dacă te aștepți să vezi anumite elemente de lucru aici, asigură-te că proiectele tale conectate au elemente de lucru atribuite membrilor acestei echipe sau creează elemente de lucru.",
+        "primary_button": {
+          "text": "Adaugă elemente de lucru la un proiect conectat"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Nu există elemente de lucru specifice echipei pentru filtrele aplicate",
+        "description": "Schimbă unele dintre acele filtre sau șterge-le pe toate pentru a vedea elementele de lucru relevante pentru acest spațiu.",
+        "secondary_button": {
+          "text": "Șterge toate filtrele"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Niciunul dintre proiectele tale conectate nu are un ciclu activ.",
+        "description": "Ciclurile active din proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi un ciclu activ, asigură-te că rulează într-un proiect conectat chiar acum."
+      },
+      "completed": {
+        "title": "Niciunul dintre proiectele tale conectate nu are un ciclu finalizat.",
+        "description": "Ciclurile finalizate în proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi un ciclu finalizat, asigură-te că este, de asemenea, finalizat într-un proiect conectat."
+      },
+      "upcoming": {
+        "title": "Niciunul dintre proiectele tale conectate nu are un ciclu viitor.",
+        "description": "Ciclurile viitoare în proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi un ciclu viitor, asigură-te că există și într-un proiect conectat."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Vizualizările echipei tale asupra muncii tale fără a perturba alte vizualizări din spațiul tău de lucru",
+        "description": "Vezi munca echipei tale în vizualizări care sunt salvate doar pentru echipa ta și separat de vizualizările unui proiect.",
+        "primary_button": {
+          "text": "Creează o vizualizare"
+        }
+      },
+      "filter": {
+        "title": "Nicio vizualizare care să se potrivească",
+        "description": "Nicio vizualizare nu corespunde criteriilor de căutare.\n Creează o nouă vizualizare în schimb."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Găzduiește cunoștințele echipei tale în Paginile Echipei.",
+        "description": "Spre deosebire de paginile dintr-un proiect, poți salva cunoștințe specifice unei echipe într-un set separat de pagini aici. Obține toate funcțiile Paginilor, creează documente cu cele mai bune practici și wiki-uri de echipă cu ușurință.",
+        "primary_button": {
+          "text": "Creează prima ta pagină de echipă"
+        }
+      },
+      "filter": {
+        "title": "Nicio pagină care să se potrivească",
+        "description": "Elimină filtrele pentru a vedea toate paginile"
+      },
+      "search": {
+        "title": "Nicio pagină care să se potrivească",
+        "description": "Elimină criteriile de căutare pentru a vedea toate paginile"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Niciunul dintre proiectele tale conectate nu are elemente de lucru publicate.",
+        "description": "Creează câteva elemente de lucru într-unul sau mai multe dintre acele proiecte pentru a vedea progresul după date, stări și prioritate."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Nu ai niciun element de lucru care să blocheze un coleg de echipă.",
+          "description": "Bună treabă! Ai eliberat calea pentru echipa ta. Ești un bun jucător de echipă."
+        },
+        "blocked": {
+          "title": "Nu ai niciun element de lucru al colegilor tăi care să te blocheze.",
+          "description": "Vești bune! Poți face progrese în toate elementele de lucru atribuite ție."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Niciunul dintre proiectele tale conectate nu are elemente de lucru publicate.",
+          "description": "Creează câteva elemente de lucru într-unul sau mai multe dintre acele proiecte pentru a vedea distribuția muncii după proiect și membrii echipei."
+        },
+        "filter": {
+          "title": "Nu există statistici de echipă pentru filtrele aplicate.",
+          "description": "Creează câteva elemente de lucru într-unul sau mai multe dintre acele proiecte pentru a vedea distribuția muncii după proiect și membrii echipei."
+        }
+      }
+    }
+  }
+}

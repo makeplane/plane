@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Genel",
+      "private": "Özel",
+      "shared": "Paylaşılan",
+      "archived": "Arşivlenen"
+    },
+    "fallback_name": "Koleksiyon",
+    "form": {
+      "name_required": "Koleksiyon başlığı zorunludur",
+      "name_max_length": "Koleksiyon adı 255 karakterden kısa olmalıdır",
+      "name_placeholder_create": "Koleksiyona bir başlık verin",
+      "name_placeholder_edit": "Koleksiyon adı"
+    },
+    "create_modal": {
+      "title": "Koleksiyon oluştur",
+      "submit": "Koleksiyon oluştur"
+    },
+    "edit_modal": {
+      "title": "Koleksiyonu düzenle"
+    },
+    "delete_modal": {
+      "title": "Koleksiyonu sil",
+      "page_count": "Bu koleksiyonda {pageCount} sayfa var. Onlara ne olacağını seçin.",
+      "transfer_title": "Sayfaları taşı ve koleksiyonu sil",
+      "transfer_description": "Silmeden önce tüm sayfaları başka bir koleksiyona taşıyın. Sayfalar ve izinleri korunur.",
+      "transfer_warning": "Taşınan sayfalar seçilen koleksiyonun izinlerini devralır.",
+      "transfer_target_label": "Sayfaları şuraya taşı",
+      "transfer_target_placeholder": "Bir koleksiyon seçin",
+      "delete_with_pages_title": "Koleksiyonu sayfalarla birlikte sil",
+      "delete_with_pages_description": "Koleksiyonu ve tüm sayfalarını kalıcı olarak siler. Bu işlem geri alınamaz.",
+      "submit": "Koleksiyonu sil"
+    },
+    "header": {
+      "add_page": "Sayfa ekle"
+    },
+    "menu": {
+      "create_new_page": "Yeni sayfa oluştur",
+      "add_existing_page": "Var olan sayfa ekle",
+      "edit_collection": "Koleksiyonu düzenle",
+      "collection_options": "Koleksiyon seçenekleri"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Sayfa ara",
+      "success_message": "{count} sayfa koleksiyona eklendi.",
+      "error_message": "Sayfalar taşınamadı. Lütfen tekrar deneyin.",
+      "no_pages_found": "Aramanızla eşleşen sayfa bulunamadı",
+      "no_pages_available": "Taşınabilecek sayfa yok",
+      "submit": "Taşı"
+    },
+    "list": {
+      "invite_only": "Yalnızca davetliler",
+      "remove_error": "Sayfa koleksiyondan kaldırılamadı.",
+      "no_matching_pages": "Eşleşen sayfa yok",
+      "remove_search_criteria": "Tüm sayfaları görmek için arama kriterlerini kaldırın",
+      "remove_filters": "Tüm sayfaları görmek için filtreleri kaldırın",
+      "no_pages_title": "Henüz sayfa yok",
+      "no_pages_description": "Bu koleksiyonda şu anda hiç sayfa yok.",
+      "untitled": "Başlıksız",
+      "restricted_access": "Kısıtlı erişim",
+      "collapse_page": "Sayfayı daralt",
+      "expand_page": "Sayfayı genişlet",
+      "page_actions": "Sayfa işlemleri",
+      "page_link_copied": "Sayfa bağlantısı panoya kopyalandı.",
+      "columns": {
+        "page_name": "Sayfa adı",
+        "owner": "Sahip",
+        "nested_pages": "İç içe sayfalar",
+        "last_activity": "Son etkinlik",
+        "actions": "İşlemler"
+      }
+    },
+    "toasts": {
+      "created": "Koleksiyon başarıyla oluşturuldu.",
+      "create_error": "Koleksiyon oluşturulamadı. Lütfen tekrar deneyin.",
+      "renamed": "Koleksiyon başarıyla yeniden adlandırıldı.",
+      "rename_error": "Koleksiyon güncellenemedi. Lütfen tekrar deneyin.",
+      "transferred_deleted": "Sayfalar taşındı ve koleksiyon silindi.",
+      "deleted_with_pages": "Koleksiyon ve sayfaları silindi.",
+      "delete_error": "Koleksiyon silinemedi. Lütfen tekrar deneyin.",
+      "target_required": "Lütfen sayfaların taşınacağı bir koleksiyon seçin.",
+      "create_page_error": "Sayfa oluşturulamadı. Lütfen tekrar deneyin.",
+      "create_page_in_collection_error": "Sayfa oluşturulamadı veya koleksiyona eklenemedi. Lütfen tekrar deneyin.",
+      "collection_link_copied": "Koleksiyon bağlantısı panoya kopyalandı."
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Ubah email",
+        "description": "Masukkan alamat email baru untuk menerima tautan verifikasi.",
+        "toasts": {
+          "success_title": "Berhasil!",
+          "success_message": "Email berhasil diperbarui. Silakan masuk kembali."
+        },
+        "form": {
+          "email": {
+            "label": "Email baru",
+            "placeholder": "Masukkan email Anda",
+            "errors": {
+              "required": "Email wajib diisi",
+              "invalid": "Email tidak valid",
+              "exists": "Email sudah ada. Gunakan yang lain.",
+              "validation_failed": "Validasi email gagal. Coba lagi."
+            }
+          },
+          "code": {
+            "label": "Kode unik",
+            "placeholder": "123456",
+            "helper_text": "Kode verifikasi dikirim ke email baru Anda.",
+            "errors": {
+              "required": "Kode unik wajib diisi",
+              "invalid": "Kode verifikasi tidak valid. Coba lagi."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Lanjutkan",
+          "confirm": "Konfirmasi",
+          "cancel": "Batal"
+        },
+        "states": {
+          "sending": "Mengirim…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Pilih tampilan default",
+      "compact": "Ringkas",
+      "full": "Layar penuh"
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Pekerjaan Anda",
+    "work": "Pekerjaan",
+    "details": {
+      "joined_on": "Bergabung pada",
+      "time_zone": "Zona waktu"
+    },
+    "stats": {
+      "workload": "Beban kerja",
+      "overview": "Ikhtisar",
+      "created": "Item kerja yang dibuat",
+      "assigned": "Item kerja yang ditugaskan",
+      "subscribed": "Item kerja yang disubscribe",
+      "state_distribution": {
+        "title": "Item kerja berdasarkan status",
+        "empty": "Buat item kerja untuk melihatnya berdasarkan status dalam grafik untuk analisis yang lebih baik."
+      },
+      "priority_distribution": {
+        "title": "Item kerja berdasarkan Prioritas",
+        "empty": "Buat item kerja untuk melihatnya berdasarkan prioritas dalam grafik untuk analisis yang lebih baik."
+      },
+      "recent_activity": {
+        "title": "Aktivitas terkini",
+        "empty": "Kami tidak dapat menemukan data. Silakan lihat input Anda",
+        "button": "Unduh aktivitas hari ini",
+        "button_loading": "Mengunduh"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Keamanan",
+      "activity": "Aktivitas",
+      "appearance": "Tampilan",
+      "notifications": "Notifikasi",
+      "connections": "Koneksi"
+    },
+    "tabs": {
+      "summary": "Ringkasan",
+      "assigned": "Ditugaskan",
+      "created": "Dibuat",
+      "subscribed": "Disubscribe",
+      "activity": "Aktivitas"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Belum ada aktivitas",
+        "description": "Mulai dengan membuat item kerja baru! Tambahkan detail dan properti. Jelajahi lebih lanjut di Plane untuk melihat aktivitas Anda."
+      },
+      "assigned": {
+        "title": "Tidak ada item kerja yang ditugaskan kepada Anda",
+        "description": "Item kerja yang ditugaskan kepada Anda dapat dilacak dari sini."
+      },
+      "created": {
+        "title": "Belum ada item kerja",
+        "description": "Semua item kerja yang dibuat oleh Anda hadir di sini, dan lacak langsung di sini."
+      },
+      "subscribed": {
+        "title": "Belum ada item kerja",
+        "description": "Langganan item kerja yang Anda minati, lacak semuanya di sini."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferensi sistem"
+      },
+      "light": {
+        "label": "Cerah"
+      },
+      "dark": {
+        "label": "Gelap"
+      },
+      "light_contrast": {
+        "label": "Cerah kontras tinggi"
+      },
+      "dark_contrast": {
+        "label": "Gelap kontras tinggi"
+      },
+      "custom": {
+        "label": "Tema kustom"
+      }
+    }
+  }
+}

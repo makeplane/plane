@@ -1,0 +1,380 @@
+{
+  "workspace_creation": {
+    "heading": "작업 공간 생성",
+    "subheading": "Plane을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
+    "form": {
+      "name": {
+        "label": "작업 공간 이름",
+        "placeholder": "익숙하고 인식 가능한 이름이 가장 좋습니다."
+      },
+      "url": {
+        "label": "작업 공간 URL 설정",
+        "placeholder": "URL 입력 또는 붙여넣기",
+        "edit_slug": "URL의 슬러그만 편집할 수 있습니다"
+      },
+      "organization_size": {
+        "label": "이 작업 공간을 사용할 사람 수",
+        "placeholder": "범위 선택"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "작업 공간은 인스턴스 관리자만 생성할 수 있습니다",
+        "description": "인스턴스 관리자 이메일 주소를 알고 있다면 아래 버튼을 클릭하여 연락하세요.",
+        "request_button": "인스턴스 관리자 요청"
+      },
+      "validation": {
+        "name_alphanumeric": "작업 공간 이름에는 (' '), ('-'), ('_') 및 영숫자 문자만 포함될 수 있습니다.",
+        "name_length": "이름은 80자 이내로 제한하세요.",
+        "url_alphanumeric": "URL에는 ('-') 및 영숫자 문자만 포함될 수 있습니다.",
+        "url_length": "URL은 48자 이내로 제한하세요.",
+        "url_already_taken": "작업 공간 URL이 이미 사용 중입니다!"
+      }
+    },
+    "request_email": {
+      "subject": "새 작업 공간 요청",
+      "body": "안녕하세요 인스턴스 관리자님,\n\n[목적]을 위해 [/workspace-name] URL로 새 작업 공간을 생성해 주세요.\n\n감사합니다,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "작업 공간 생성",
+      "loading": "작업 공간 생성 중"
+    },
+    "toast": {
+      "success": {
+        "title": "성공",
+        "message": "작업 공간이 성공적으로 생성되었습니다"
+      },
+      "error": {
+        "title": "오류",
+        "message": "작업 공간을 생성할 수 없습니다. 다시 시도해주세요."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "프로젝트, 활동 및 메트릭 개요",
+        "description": "Plane에 오신 것을 환영합니다. 첫 번째 프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
+        "primary_button": {
+          "text": "첫 번째 프로젝트 생성",
+          "comic": {
+            "title": "Plane에서 모든 것은 프로젝트로 시작됩니다",
+            "description": "프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "분석",
+    "page_label": "{workspace} - 분석",
+    "open_tasks": "열린 작업 항목",
+    "error": "데이터를 가져오는 중 오류가 발생했습니다.",
+    "work_items_closed_in": "닫힌 작업 항목",
+    "selected_projects": "선택된 프로젝트",
+    "total_members": "총 멤버",
+    "total_cycles": "총 주기",
+    "total_modules": "총 모듈",
+    "pending_work_items": {
+      "title": "보류 중인 작업 항목",
+      "empty_state": "동료의 보류 중인 작업 항목 분석이 여기에 표시됩니다."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "1년 동안 닫힌 작업 항목",
+      "empty_state": "작업 항목을 닫아 그래프에서 분석을 확인하세요."
+    },
+    "most_work_items_created": {
+      "title": "가장 많은 작업 항목 생성",
+      "empty_state": "동료와 그들이 생성한 작업 항목 수가 여기에 표시됩니다."
+    },
+    "most_work_items_closed": {
+      "title": "가장 많은 작업 항목 닫힘",
+      "empty_state": "동료와 그들이 닫은 작업 항목 수가 여기에 표시됩니다."
+    },
+    "tabs": {
+      "scope_and_demand": "범위 및 수요",
+      "custom": "맞춤형 분석"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다.",
+        "title": "아직 데이터가 없습니다"
+      },
+      "created_vs_resolved": {
+        "description": "시간이 지나면서 생성되고 해결된 작업 항목이 여기에 표시됩니다.",
+        "title": "아직 데이터가 없습니다"
+      },
+      "project_insights": {
+        "title": "아직 데이터가 없습니다",
+        "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다."
+      },
+      "general": {
+        "title": "진행 상황, 워크로드 및 할당을 추적하세요. 트렌드를 파악하고 장애물을 제거하며 더 빠르게 작업하세요",
+        "description": "범위 대 수요, 추정치 및 범위 크리프를 확인하세요. 팀 구성원과 팀의 성과를 파악하고 프로젝트가 제시간에 실행되도록 하세요.",
+        "primary_button": {
+          "text": "첫 번째 프로젝트 시작",
+          "comic": {
+            "title": "분석은 사이클 + 모듈과 함께 가장 잘 작동합니다",
+            "description": "먼저 작업 항목을 사이클로 시간 제한을 두고, 가능하다면 한 사이클 이상 걸리는 작업 항목을 모듈로 그룹화하세요. 왼쪽 탐색에서 둘 다 확인하세요."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "아직 데이터가 없습니다",
+        "description": "사이클 진행 분석이 여기에 표시됩니다. 작업 항목을 사이클에 추가하여 진행 상황을 추적하세요."
+      },
+      "module_progress": {
+        "title": "아직 데이터가 없습니다",
+        "description": "모듈 진행 분석이 여기에 표시됩니다. 작업 항목을 모듈에 추가하여 진행 상황을 추적하세요."
+      },
+      "intake_trends": {
+        "title": "아직 데이터가 없습니다",
+        "description": "인테이크 트렌드 분석이 여기에 표시됩니다. 작업 항목을 인테이크에 추가하여 트렌드를 추적하세요."
+      }
+    },
+    "created_vs_resolved": "생성됨 vs 해결됨",
+    "customized_insights": "맞춤형 인사이트",
+    "backlog_work_items": "백로그 {entity}",
+    "active_projects": "활성 프로젝트",
+    "trend_on_charts": "차트의 추세",
+    "all_projects": "모든 프로젝트",
+    "summary_of_projects": "프로젝트 요약",
+    "project_insights": "프로젝트 인사이트",
+    "started_work_items": "시작된 {entity}",
+    "total_work_items": "총 {entity}",
+    "total_projects": "총 프로젝트 수",
+    "total_admins": "총 관리자 수",
+    "total_users": "총 사용자 수",
+    "total_intake": "총 수입",
+    "un_started_work_items": "시작되지 않은 {entity}",
+    "total_guests": "총 게스트 수",
+    "completed_work_items": "완료된 {entity}",
+    "total": "총 {entity}",
+    "projects_by_status": "상태별 프로젝트",
+    "active_users": "활성 사용자",
+    "intake_trends": "수용 추세",
+    "workitem_resolved_vs_pending": "해결된 vs 대기 중인 작업 항목",
+    "upgrade_to_plan": "{tab} 잠금 해제를 위해 {plan}(으)로 업그레이드하세요"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {프로젝트} other {프로젝트}}",
+    "create": {
+      "label": "프로젝트 추가"
+    },
+    "network": {
+      "label": "네트워크",
+      "private": {
+        "title": "비공개",
+        "description": "초대에 의해서만 접근 가능"
+      },
+      "public": {
+        "title": "공개",
+        "description": "게스트를 제외한 작업 공간의 모든 사람이 참여할 수 있습니다"
+      }
+    },
+    "error": {
+      "permission": "이 작업을 수행할 권한이 없습니다.",
+      "cycle_delete": "주기 삭제 실패",
+      "module_delete": "모듈 삭제 실패",
+      "issue_delete": "작업 항목 삭제 실패"
+    },
+    "state": {
+      "backlog": "백로그",
+      "unstarted": "시작되지 않음",
+      "started": "시작됨",
+      "completed": "완료됨",
+      "cancelled": "취소됨"
+    },
+    "sort": {
+      "manual": "수동",
+      "name": "이름",
+      "created_at": "생성일",
+      "members_length": "멤버 수"
+    },
+    "scope": {
+      "my_projects": "내 프로젝트",
+      "archived_projects": "아카이브"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# 개월} other{# 개월}}",
+      "days_count": "{days, plural, one{# 일} other{# 일}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "활성 프로젝트 없음",
+        "description": "각 프로젝트를 목표 지향 작업의 부모로 생각하세요. 프로젝트는 작업, 주기 및 모듈이 존재하는 곳이며, 동료와 함께 목표를 달성하는 데 도움이 됩니다. 새 프로젝트를 생성하거나 아카이브된 프로젝트를 필터링하세요.",
+        "primary_button": {
+          "text": "첫 번째 프로젝트 시작",
+          "comic": {
+            "title": "Plane에서 모든 것은 프로젝트로 시작됩니다",
+            "description": "프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "프로젝트 없음",
+        "description": "작업 항목을 생성하거나 작업을 관리하려면 프로젝트를 생성하거나 참여해야 합니다.",
+        "primary_button": {
+          "text": "첫 번째 프로젝트 시작",
+          "comic": {
+            "title": "Plane에서 모든 것은 프로젝트로 시작됩니다",
+            "description": "프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다."
+          }
+        }
+      },
+      "filter": {
+        "title": "일치하는 프로젝트 없음",
+        "description": "일치하는 프로젝트가 없습니다. 대신 새 프로젝트를 생성하세요."
+      },
+      "search": {
+        "description": "일치하는 프로젝트가 없습니다. 대신 새 프로젝트를 생성하세요"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "뷰 추가",
+    "empty_state": {
+      "all-issues": {
+        "title": "프로젝트에 작업 항목 없음",
+        "description": "첫 번째 프로젝트 완료! 이제 작업 항목을 추적 가능한 조각으로 나누세요. 시작합시다!",
+        "primary_button": {
+          "text": "새 작업 항목 생성"
+        }
+      },
+      "assigned": {
+        "title": "작업 항목 없음",
+        "description": "할당된 작업 항목을 여기에서 추적할 수 있습니다.",
+        "primary_button": {
+          "text": "새 작업 항목 생성"
+        }
+      },
+      "created": {
+        "title": "작업 항목 없음",
+        "description": "생성한 모든 작업 항목이 여기에 표시됩니다. 여기에서 직접 추적하세요.",
+        "primary_button": {
+          "text": "새 작업 항목 생성"
+        }
+      },
+      "subscribed": {
+        "title": "작업 항목 없음",
+        "description": "관심 있는 작업 항목을 구독하고 여기에서 모두 추적하세요."
+      },
+      "custom-view": {
+        "title": "작업 항목 없음",
+        "description": "필터가 적용된 작업 항목을 여기에서 모두 추적하세요."
+      }
+    },
+    "delete_view": {
+      "title": "이 뷰를 삭제하시겠습니까?",
+      "content": "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "작업 항목 초안",
+    "empty_state": {
+      "title": "작성 중인 작업 항목과 곧 댓글이 여기에 표시됩니다.",
+      "description": "이 기능을 사용해 보려면 작업 항목을 추가하고 중간에 멈추거나 아래에서 첫 번째 초안을 생성하세요. 😉",
+      "primary_button": {
+        "text": "첫 번째 초안 생성"
+      }
+    },
+    "delete_modal": {
+      "title": "초안 삭제",
+      "description": "이 초안을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+    },
+    "toasts": {
+      "created": {
+        "success": "초안 생성됨",
+        "error": "작업 항목을 생성할 수 없습니다. 다시 시도해주세요."
+      },
+      "deleted": {
+        "success": "초안 삭제됨"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "메모, 문서 또는 전체 지식 기반을 작성하세요. 플레인의 AI 어시스턴트인 갈릴레오가 시작하는 데 도움을 줍니다",
+        "description": "페이지는 플레인에서 생각을 정리하는 공간입니다. 회의 노트를 작성하고, 쉽게 포맷하고, 작업 항목을 포함시키고, 컴포넌트 라이브러리를 사용하여 레이아웃하고, 모든 것을 프로젝트 컨텍스트에 유지하세요. 어떤 문서든 빠르게 작업하려면 단축키나 버튼 클릭으로 플레인의 AI인 갈릴레오를 호출하세요.",
+        "primary_button": {
+          "text": "첫 번째 페이지 만들기"
+        }
+      },
+      "private": {
+        "title": "아직 개인 페이지가 없습니다",
+        "description": "여기에 개인 생각을 보관하세요. 공유할 준비가 되면, 팀은 클릭 한 번으로 가능합니다.",
+        "primary_button": {
+          "text": "첫 번째 페이지 만들기"
+        }
+      },
+      "public": {
+        "title": "아직 워크스페이스 페이지가 없습니다",
+        "description": "워크스페이스의 모든 사람과 공유된 페이지를 여기서 확인하세요.",
+        "primary_button": {
+          "text": "첫 번째 페이지 만들기"
+        }
+      },
+      "archived": {
+        "title": "아직 보관된 페이지가 없습니다",
+        "description": "현재 관심 없는 페이지를 보관하세요. 필요할 때 여기서 액세스하세요."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "활성 사이클 없음",
+        "description": "범위 내에 오늘 날짜를 포함하는 기간이 있는 프로젝트의 사이클입니다. 여기에서 모든 활성 사이클의 진행 상황과 세부 정보를 찾을 수 있습니다."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "CSV에서 구성원 가져오기",
+      "description": "다음 열이 포함된 CSV 업로드: Email, Display Name, First Name, Last Name, Role (5, 15 또는 20)",
+      "dropzone": {
+        "active": "CSV 파일을 여기에 놓으세요",
+        "inactive": "드래그 앤 드롭 또는 클릭하여 업로드",
+        "file_type": ".csv 파일만 지원됩니다"
+      },
+      "buttons": {
+        "cancel": "취소",
+        "import": "가져오기",
+        "try_again": "다시 시도",
+        "close": "닫기",
+        "done": "완료"
+      },
+      "progress": {
+        "uploading": "업로드 중...",
+        "importing": "가져오는 중..."
+      },
+      "summary": {
+        "title": {
+          "failed": "가져오기 실패",
+          "complete": "가져오기 완료"
+        },
+        "message": {
+          "seat_limit": "시트 제한으로 인해 구성원을 가져올 수 없습니다.",
+          "success": "{count}명의 구성원을 워크스페이스에 추가했습니다.",
+          "no_imports": "CSV 파일에서 구성원을 가져오지 못했습니다."
+        },
+        "stats": {
+          "successful": "성공",
+          "failed": "실패"
+        },
+        "download_errors": "오류 다운로드"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "잘못된 파일",
+          "message": "CSV 파일만 지원됩니다."
+        },
+        "import_failed": {
+          "title": "가져오기 실패",
+          "message": "문제가 발생했습니다."
+        }
+      }
+    }
+  }
+}

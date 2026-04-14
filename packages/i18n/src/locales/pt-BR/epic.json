@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Todos os Épicos",
+    "label": "{count, plural, one {Épico} other {Épicos}}",
+    "new": "Novo Épico",
+    "adding": "Adicionando épico",
+    "create": {
+      "success": "Épico criado com sucesso"
+    },
+    "add": {
+      "press_enter": "Pressione 'Enter' para adicionar outro épico",
+      "label": "Adicionar Épico"
+    },
+    "title": {
+      "label": "Título do Épico",
+      "required": "O título do épico é obrigatório."
+    },
+    "archive": {
+      "description": "Apenas épicos concluídos ou cancelados\npodem ser arquivados",
+      "label": "Arquivar Épico",
+      "confirm_message": "Tem certeza de que deseja arquivar o épico? Todos os seus épicos arquivados podem ser restaurados posteriormente.",
+      "success": {
+        "label": "Arquivamento bem-sucedido",
+        "message": "Seus arquivos podem ser encontrados nos arquivos do projeto."
+      },
+      "failed": {
+        "message": "Não foi possível arquivar o épico. Por favor, tente novamente."
+      }
+    }
+  },
+  "epics": {
+    "label": "Épicos",
+    "no_epics_selected": "Nenhum épico selecionado",
+    "add_selected_epics": "Adicionar épicos selecionados",
+    "epic_link_copied_to_clipboard": "Link do épico copiado para a área de transferência.",
+    "project_link_copied_to_clipboard": "Link do projeto copiado para a área de transferência",
+    "empty_state": {
+      "general": {
+        "title": "Crie um épico e atribua-o a alguém, até mesmo a você",
+        "description": "Para corpos maiores de trabalho que abrangem vários ciclos e podem viver em vários módulos, crie um épico. Vincule itens de trabalho e sub-itens de trabalho em um projeto a um épico e entre em um item de trabalho a partir da visão geral.",
+        "primary_button": {
+          "text": "Criar um Épico"
+        }
+      },
+      "section": {
+        "title": "Nenhum épico ainda",
+        "description": "Comece a adicionar épicos para gerenciar e acompanhar o progresso.",
+        "primary_button": {
+          "text": "Adicionar épicos"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Nenhum épico correspondente encontrado"
+      },
+      "no_epics": {
+        "title": "Nenhum épico encontrado"
+      }
+    }
+  }
+}

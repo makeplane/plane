@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Data e ora attuali"
+        },
+        "today": {
+          "description": "La data di oggi"
+        },
+        "start_of_day": {
+          "description": "Inizio di oggi"
+        },
+        "end_of_day": {
+          "description": "Fine di oggi"
+        },
+        "start_of_week": {
+          "description": "Inizio della settimana corrente"
+        },
+        "end_of_week": {
+          "description": "Fine della settimana corrente"
+        },
+        "start_of_month": {
+          "description": "Inizio del mese corrente"
+        },
+        "end_of_month": {
+          "description": "Fine del mese corrente"
+        },
+        "start_of_year": {
+          "description": "Inizio dell'anno corrente"
+        },
+        "end_of_year": {
+          "description": "Fine dell'anno corrente"
+        },
+        "days_ago": {
+          "description": "Data n giorni fa"
+        },
+        "days_from_now": {
+          "description": "Data tra n giorni"
+        },
+        "weeks_ago": {
+          "description": "Data n settimane fa"
+        },
+        "weeks_from_now": {
+          "description": "Data tra n settimane"
+        },
+        "months_ago": {
+          "description": "Data n mesi fa"
+        },
+        "months_from_now": {
+          "description": "Data tra n mesi"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Utente attualmente connesso"
+        },
+        "members_of": {
+          "description": "Membri di \"project:<id>\" o \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Tutti i membri dell'area di lavoro"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Ciclo attivo oggi"
+        },
+        "completed_cycles": {
+          "description": "Cicli la cui data di fine è passata"
+        },
+        "upcoming_cycles": {
+          "description": "Cicli la cui data di inizio è nel futuro"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "La data di scadenza è passata E lo stato è aperto"
+        },
+        "has_no_assignee": {
+          "description": "L'elemento di lavoro non ha un assegnatario"
+        },
+        "has_no_label": {
+          "description": "L'elemento di lavoro non ha etichette"
+        },
+        "is_top_level": {
+          "description": "Non è un sotto-elemento (nessun genitore)"
+        },
+        "is_sub_work_item": {
+          "description": "È un sotto-elemento (ha un genitore)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "È un elemento di intake"
+        },
+        "is_draft": {
+          "description": "È una bozza"
+        },
+        "is_archived": {
+          "description": "È archiviato"
+        },
+        "has_children": {
+          "description": "Ha almeno un sotto-elemento"
+        },
+        "has_start_and_due_dates": {
+          "description": "Ha sia la data di inizio che quella di scadenza"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Elementi di lavoro correlati all'elemento dato"
+        },
+        "blocked_by": {
+          "description": "Elementi di lavoro bloccati dall'elemento dato"
+        },
+        "blocks": {
+          "description": "Elementi di lavoro che bloccano l'elemento dato"
+        },
+        "child_of": {
+          "description": "Sotto-elementi dell'elemento dato"
+        },
+        "parent_of": {
+          "description": "Elemento padre dell'elemento dato"
+        },
+        "duplicate_of": {
+          "description": "Elementi di lavoro contrassegnati come duplicati dell'elemento dato"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Il campo è mai stato impostato su questo valore"
+        },
+        "was": {
+          "description": "Il campo era precedentemente questo valore (modificato)"
+        },
+        "changed_from": {
+          "description": "Il campo è stato modificato da questo valore"
+        },
+        "changed_to": {
+          "description": "Il campo è stato modificato a questo valore"
+        },
+        "changed": {
+          "description": "Il campo è stato modificato"
+        },
+        "updated_by": {
+          "description": "Elemento di lavoro aggiornato da questo utente"
+        },
+        "commented_by": {
+          "description": "Elemento di lavoro commentato da questo utente"
+        },
+        "field_changed_by": {
+          "description": "Campo modificato da questo utente"
+        },
+        "was_assigned_to": {
+          "description": "Elemento di lavoro assegnato a questo utente"
+        },
+        "changed_after": {
+          "description": "Campo modificato dopo questa data"
+        },
+        "changed_before": {
+          "description": "Campo modificato prima di questa data"
+        },
+        "field_changed_after": {
+          "description": "Campo modificato dopo questa data"
+        },
+        "field_changed_before": {
+          "description": "Campo modificato prima di questa data"
+        },
+        "changed_to_after": {
+          "description": "Campo modificato a questo valore dopo questa data"
+        },
+        "changed_to_before": {
+          "description": "Campo modificato a questo valore prima di questa data"
+        },
+        "field_changed_between": {
+          "description": "Campo modificato tra queste date"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "naviga",
+      "accept": "accetta",
+      "close": "chiudi",
+      "pick_date": "Scegli una data"
+    },
+    "placeholder": "Digita una query e premi \"INVIO\" per filtrare...",
+    "error": "Errore durante l'invio della query. Controlla e riprova."
+  }
+}

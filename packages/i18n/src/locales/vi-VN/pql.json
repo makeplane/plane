@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Ngày và giờ hiện tại"
+        },
+        "today": {
+          "description": "Ngày hôm nay"
+        },
+        "start_of_day": {
+          "description": "Bắt đầu hôm nay"
+        },
+        "end_of_day": {
+          "description": "Kết thúc hôm nay"
+        },
+        "start_of_week": {
+          "description": "Bắt đầu tuần này"
+        },
+        "end_of_week": {
+          "description": "Kết thúc tuần này"
+        },
+        "start_of_month": {
+          "description": "Bắt đầu tháng này"
+        },
+        "end_of_month": {
+          "description": "Kết thúc tháng này"
+        },
+        "start_of_year": {
+          "description": "Bắt đầu năm nay"
+        },
+        "end_of_year": {
+          "description": "Kết thúc năm nay"
+        },
+        "days_ago": {
+          "description": "Ngày n ngày trước"
+        },
+        "days_from_now": {
+          "description": "Ngày n ngày sau"
+        },
+        "weeks_ago": {
+          "description": "Ngày n tuần trước"
+        },
+        "weeks_from_now": {
+          "description": "Ngày n tuần sau"
+        },
+        "months_ago": {
+          "description": "Ngày n tháng trước"
+        },
+        "months_from_now": {
+          "description": "Ngày n tháng sau"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Người dùng đang đăng nhập"
+        },
+        "members_of": {
+          "description": "Thành viên của \"project:<id>\" hoặc \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Tất cả thành viên không gian làm việc"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Chu kỳ đang hoạt động hôm nay"
+        },
+        "completed_cycles": {
+          "description": "Các chu kỳ có ngày kết thúc đã qua"
+        },
+        "upcoming_cycles": {
+          "description": "Các chu kỳ có ngày bắt đầu trong tương lai"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Ngày đến hạn đã qua VÀ trạng thái đang mở"
+        },
+        "has_no_assignee": {
+          "description": "Mục công việc không có người được giao"
+        },
+        "has_no_label": {
+          "description": "Mục công việc không có nhãn"
+        },
+        "is_top_level": {
+          "description": "Không phải mục công việc con (không có mục cha)"
+        },
+        "is_sub_work_item": {
+          "description": "Là mục công việc con (có mục cha)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "Là mục công việc tiếp nhận"
+        },
+        "is_draft": {
+          "description": "Là bản nháp mục công việc"
+        },
+        "is_archived": {
+          "description": "Đã lưu trữ"
+        },
+        "has_children": {
+          "description": "Có ít nhất một mục công việc con"
+        },
+        "has_start_and_due_dates": {
+          "description": "Có cả ngày bắt đầu và ngày đến hạn"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Các mục công việc liên quan đến mục đã cho"
+        },
+        "blocked_by": {
+          "description": "Các mục công việc bị chặn bởi mục đã cho"
+        },
+        "blocks": {
+          "description": "Các mục công việc chặn mục đã cho"
+        },
+        "child_of": {
+          "description": "Các mục công việc con của mục đã cho"
+        },
+        "parent_of": {
+          "description": "Mục công việc cha của mục đã cho"
+        },
+        "duplicate_of": {
+          "description": "Các mục công việc được đánh dấu là bản sao của mục đã cho"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Trường đã từng được đặt thành giá trị này"
+        },
+        "was": {
+          "description": "Trường trước đây có giá trị này (đã thay đổi)"
+        },
+        "changed_from": {
+          "description": "Trường đã được thay đổi từ giá trị này"
+        },
+        "changed_to": {
+          "description": "Trường đã được thay đổi sang giá trị này"
+        },
+        "changed": {
+          "description": "Trường đã được thay đổi"
+        },
+        "updated_by": {
+          "description": "Mục công việc được cập nhật bởi người dùng này"
+        },
+        "commented_by": {
+          "description": "Mục công việc được bình luận bởi người dùng này"
+        },
+        "field_changed_by": {
+          "description": "Trường được thay đổi bởi người dùng này"
+        },
+        "was_assigned_to": {
+          "description": "Mục công việc đã được giao cho người dùng này"
+        },
+        "changed_after": {
+          "description": "Trường được thay đổi sau ngày này"
+        },
+        "changed_before": {
+          "description": "Trường được thay đổi trước ngày này"
+        },
+        "field_changed_after": {
+          "description": "Trường được thay đổi sau ngày này"
+        },
+        "field_changed_before": {
+          "description": "Trường được thay đổi trước ngày này"
+        },
+        "changed_to_after": {
+          "description": "Trường được thay đổi sang giá trị này sau ngày này"
+        },
+        "changed_to_before": {
+          "description": "Trường được thay đổi sang giá trị này trước ngày này"
+        },
+        "field_changed_between": {
+          "description": "Trường được thay đổi giữa các ngày này"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "điều hướng",
+      "accept": "chấp nhận",
+      "close": "đóng",
+      "pick_date": "Chọn ngày"
+    },
+    "placeholder": "Nhập truy vấn và nhấn \"ENTER\" để lọc...",
+    "error": "Lỗi khi gửi truy vấn. Vui lòng kiểm tra và thử lại."
+  }
+}

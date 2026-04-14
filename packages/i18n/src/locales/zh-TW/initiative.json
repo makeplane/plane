@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "概覽",
+    "label": "倡議",
+    "placeholder": "{count, plural, one{# 倡議} other{# 倡議}}",
+    "add_initiative": "添加倡議",
+    "create_initiative": "創建倡議",
+    "update_initiative": "更新倡議",
+    "initiative_name": "倡議名稱",
+    "all_initiatives": "所有倡議",
+    "delete_initiative": "刪除倡議",
+    "fill_all_required_fields": "請填寫所有必填欄位。",
+    "archive_description": "僅已完成或已關閉的倡議可以封存",
+    "toast": {
+      "create_success": "倡議 {name} 已成功創建。",
+      "create_error": "創建倡議失敗。請再試一次！",
+      "update_success": "倡議 {name} 已成功更新。",
+      "update_error": "更新倡議失敗。請再試一次！",
+      "delete": {
+        "success": "倡議已成功刪除。",
+        "error": "刪除倡議失敗"
+      },
+      "archive": {
+        "success": "倡議已成功封存。",
+        "error": "封存倡議失敗",
+        "initiative_cannot_be_archived_in_this_state": "此狀態下的倡議無法封存"
+      },
+      "link_copied": "倡議連結已複製到剪貼板。",
+      "project_update_success": "倡議專案已成功更新。",
+      "project_update_error": "更新倡議專案失敗。請再試一次！",
+      "epic_update_success": "史詩{count, plural, one {已成功添加到倡議。} other {已成功添加到倡議。}}",
+      "epic_update_error": "史詩添加到倡議失敗。請稍後再試。",
+      "state_update_success": "倡議狀態已成功更新。",
+      "state_update_error": "更新倡議狀態失敗。請再試一次！",
+      "label_update_error": "無法更新倡議標籤。請再試一次！"
+    },
+    "empty_state": {
+      "general": {
+        "title": "使用倡議在最高級別組織工作",
+        "description": "當您需要組織跨越多個專案和團隊的工作時，倡議就派上用場了。將專案和史詩連接到倡議，自動查看匯總的更新，並在深入樹木之前看到森林。",
+        "primary_button": {
+          "text": "創建倡議"
+        }
+      },
+      "search": {
+        "title": "沒有匹配的倡議",
+        "description": "沒有檢測到與匹配條件相符的倡議。\n 創建一個新的倡議代替。",
+        "archived_description": "未檢測到符合條件的已歸檔倡議。"
+      },
+      "not_found": {
+        "title": "倡議不存在",
+        "description": "您正在尋找的倡議不存在、已被歸檔或已被刪除。",
+        "primary_button": {
+          "text": "查看其他倡議"
+        }
+      },
+      "epics": {
+        "title": "沒有匹配的史詩",
+        "subHeading": "要查看所有史詩，請清除所有應用的篩選器。",
+        "action": "清除篩選器"
+      }
+    },
+    "scope": {
+      "view_scope": "查看範圍",
+      "breakdown": "範圍分解",
+      "add_scope": "添加範圍",
+      "label": "範圍",
+      "empty_state": {
+        "title": "尚未添加範圍",
+        "description": "將項目或史詩連接到此倡議以開始。",
+        "primary_button": {
+          "text": "添加範圍"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "標籤",
+        "description": "使用標籤來組織和規劃您的計畫。"
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "刪除標籤",
+        "content": "您確定要刪除 {labelName} 嗎？這將從所有計畫中移除該標籤，並從所有以該標籤進行篩選的檢視中移除。"
+      },
+      "toast": {
+        "delete_error": "無法刪除計畫標籤。請重試。",
+        "label_already_exists": "標籤已存在"
+      }
+    }
+  }
+}

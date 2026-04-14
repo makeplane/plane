@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "projects": "Projekty",
+    "pages": "Stránky",
+    "new_work_item": "Nová pracovní položka",
+    "home": "Domov",
+    "your_work": "Vaše práce",
+    "inbox": "Doručená pošta",
+    "workspace": "Pracovní prostor",
+    "views": "Pohledy",
+    "analytics": "Analytika",
+    "work_items": "Pracovní položky",
+    "cycles": "Cykly",
+    "modules": "Moduly",
+    "intake": "Příjem",
+    "drafts": "Koncepty",
+    "favorites": "Oblíbené",
+    "pro": "Pro",
+    "upgrade": "Upgrade",
+    "pi_chat": "Plane AI",
+    "initiatives": "Iniciativy",
+    "teamspaces": "Týmové prostory",
+    "epics": "Epiky",
+    "upgrade_plan": "Plán upgradu",
+    "plane_pro": "Plane Pro",
+    "business": "Byznys",
+    "customers": "Zákazníci",
+    "recurring_work_items": "Opakující se pracovní položky"
+  },
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenalezeny výsledky"
+      }
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Змінити email",
+        "description": "Введіть нову адресу електронної пошти, щоб отримати посилання для підтвердження.",
+        "toasts": {
+          "success_title": "Успіх!",
+          "success_message": "Email успішно оновлено. Увійдіть знову."
+        },
+        "form": {
+          "email": {
+            "label": "Новий email",
+            "placeholder": "Введіть свій email",
+            "errors": {
+              "required": "Email є обов’язковим",
+              "invalid": "Email недійсний",
+              "exists": "Email уже існує. Використайте інший.",
+              "validation_failed": "Не вдалося підтвердити email. Спробуйте ще раз."
+            }
+          },
+          "code": {
+            "label": "Унікальний код",
+            "placeholder": "123456",
+            "helper_text": "Код підтвердження надіслано на ваш новий email.",
+            "errors": {
+              "required": "Унікальний код є обов’язковим",
+              "invalid": "Недійсний код підтвердження. Спробуйте ще раз."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Продовжити",
+          "confirm": "Підтвердити",
+          "cancel": "Скасувати"
+        },
+        "states": {
+          "sending": "Надсилання…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Вибрати подання за замовчуванням",
+      "compact": "Компактний",
+      "full": "Повний екран"
+    }
+  },
+  "profile": {
+    "label": "Профіль",
+    "page_label": "Ваша робота",
+    "work": "Робота",
+    "details": {
+      "joined_on": "Приєднався",
+      "time_zone": "Часовий пояс"
+    },
+    "stats": {
+      "workload": "Навантаження",
+      "overview": "Огляд",
+      "created": "Створені одиниці",
+      "assigned": "Призначені одиниці",
+      "subscribed": "Підписані одиниці",
+      "state_distribution": {
+        "title": "Одиниці за станом",
+        "empty": "Створіть одиниці, щоб переглянути статистику станів."
+      },
+      "priority_distribution": {
+        "title": "Одиниці за пріоритетом",
+        "empty": "Створіть одиниці, щоб переглянути статистику пріоритетів."
+      },
+      "recent_activity": {
+        "title": "Нещодавня активність",
+        "empty": "Активність не знайдена.",
+        "button": "Завантажити сьогоднішню активність",
+        "button_loading": "Завантаження"
+      }
+    },
+    "actions": {
+      "profile": "Профіль",
+      "security": "Безпека",
+      "activity": "Активність",
+      "appearance": "Зовнішній вигляд",
+      "notifications": "Сповіщення",
+      "connections": "Коннекшнс"
+    },
+    "tabs": {
+      "summary": "Зведення",
+      "assigned": "Призначено",
+      "created": "Створено",
+      "subscribed": "Підписано",
+      "activity": "Активність"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Немає активності",
+        "description": "Створіть робочу одиницю, щоб почати."
+      },
+      "assigned": {
+        "title": "Немає призначених робочих одиниць",
+        "description": "Тут будуть відображатися одиниці, призначені вам."
+      },
+      "created": {
+        "title": "Немає створених робочих одиниць",
+        "description": "Тут будуть відображатися одиниці, які ви створили."
+      },
+      "subscribed": {
+        "title": "Немає підписаних робочих одиниць",
+        "description": "Підпишіться на потрібні одиниці, й вони з'являться тут."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Системні налаштування"
+      },
+      "light": {
+        "label": "Світла"
+      },
+      "dark": {
+        "label": "Темна"
+      },
+      "light_contrast": {
+        "label": "Світла з високою контрастністю"
+      },
+      "dark_contrast": {
+        "label": "Темна з високою контрастністю"
+      },
+      "custom": {
+        "label": "Користувацька тема"
+      }
+    }
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Sloupec",
+          "long_label": "Graf sloupcový",
+          "chart_models": {
+            "basic": "Základní",
+            "stacked": "Skládaný",
+            "grouped": "Skupinový"
+          },
+          "orientation": {
+            "label": "Orientace",
+            "horizontal": "Horizontální",
+            "vertical": "Vertikální",
+            "placeholder": "Přidat orientaci"
+          },
+          "bar_color": "Barva sloupce"
+        },
+        "line_chart": {
+          "short_label": "Čára",
+          "long_label": "Graf čárový",
+          "chart_models": {
+            "basic": "Základní",
+            "multi_line": "Více čar"
+          },
+          "line_color": "Barva čáry",
+          "line_type": {
+            "label": "Typ čáry",
+            "solid": "Pevná",
+            "dashed": "Čárkovaná",
+            "placeholder": "Přidat typ čáry"
+          }
+        },
+        "area_chart": {
+          "short_label": "Oblast",
+          "long_label": "Graf oblastní",
+          "chart_models": {
+            "basic": "Základní",
+            "stacked": "Skládaný",
+            "comparison": "Srovnání"
+          },
+          "fill_color": "Barva výplně"
+        },
+        "donut_chart": {
+          "short_label": "Donut",
+          "long_label": "Graf donut",
+          "chart_models": {
+            "basic": "Základní",
+            "progress": "Pokrok"
+          },
+          "center_value": "Hodnota uprostřed",
+          "completed_color": "Barva dokončeno"
+        },
+        "pie_chart": {
+          "short_label": "Koláč",
+          "long_label": "Graf koláčový",
+          "chart_models": {
+            "basic": "Základní"
+          },
+          "group": {
+            "label": "Skupinové kusy",
+            "group_thin_pieces": "Skupina tenkých kusů",
+            "minimum_threshold": {
+              "label": "Minimální práh",
+              "placeholder": "Přidat práh"
+            },
+            "name_group": {
+              "label": "Název skupiny",
+              "placeholder": "\"Méně než 5%\""
+            }
+          },
+          "show_values": "Zobrazit hodnoty",
+          "value_type": {
+            "percentage": "Procento",
+            "count": "Počet"
+          }
+        },
+        "text": {
+          "short_label": "Text",
+          "long_label": "Text",
+          "alignment": {
+            "label": "Zarovnání textu",
+            "left": "Vlevo",
+            "center": "Na střed",
+            "right": "Vpravo",
+            "placeholder": "Přidat zarovnání textu"
+          },
+          "text_color": "Barva textu"
+        },
+        "table_chart": {
+          "short_label": "Tabulka",
+          "long_label": "Tabulkový graf",
+          "chart_models": {
+            "basic": {
+              "short_label": "Základní",
+              "long_label": "Tabulka"
+            }
+          },
+          "columns": "Sloupce",
+          "rows": "Řádky",
+          "rows_placeholder": "Přidat řádky",
+          "configure_rows_hint": "Vyberte vlastnost pro řádky pro zobrazení této tabulky."
+        }
+      },
+      "color_palettes": {
+        "modern_tech": "Moderní technologie",
+        "ocean_deep": "Hluboký oceán",
+        "sunset_vibes": "Vibes západu slunce"
+      },
+      "common": {
+        "add_widget": "Přidat widget",
+        "widget_title": {
+          "label": "Pojmenujte tento widget",
+          "placeholder": "např. \"Úkoly včera\", \"Vše dokončeno\""
+        },
+        "chart_type": "Typ grafu",
+        "visualization_type": {
+          "label": "Typ vizualizace",
+          "placeholder": "Přidat typ vizualizace"
+        },
+        "date_group": {
+          "label": "Skupina dat",
+          "placeholder": "Přidat skupinu dat"
+        },
+        "group_by": "Skupina podle",
+        "stack_by": "Skládat podle",
+        "daily": "Denně",
+        "weekly": "Týdně",
+        "monthly": "Měsíčně",
+        "yearly": "Ročně",
+        "work_item_count": "Počet pracovních položek",
+        "estimate_point": "Odhadovaný bod",
+        "pending_work_item": "Čekající pracovní položky",
+        "completed_work_item": "Dokončené pracovní položky",
+        "in_progress_work_item": "Pracovní položky v procesu",
+        "blocked_work_item": "Blokované pracovní položky",
+        "work_item_due_this_week": "Pracovní položky splatné tento týden",
+        "work_item_due_today": "Pracovní položky splatné dnes",
+        "color_scheme": {
+          "label": "Barevné schéma",
+          "placeholder": "Přidat barevné schéma"
+        },
+        "smoothing": "Hladkost",
+        "markers": "Značky",
+        "legends": "Legendy",
+        "tooltips": "Nápovědy",
+        "opacity": {
+          "label": "Průhlednost",
+          "placeholder": "Přidat průhlednost"
+        },
+        "border": "Okraj",
+        "widget_configuration": "Konfigurace widgetu",
+        "configure_widget": "Konfigurovat widget",
+        "guides": "Pokyny",
+        "style": "Styl",
+        "area_appearance": "Vzhled oblasti",
+        "comparison_line_appearance": "Vzhled srovnávací čáry",
+        "add_property": "Přidat vlastnost",
+        "add_metric": "Přidat metriku"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí."
+          },
+          "stacked": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí.",
+            "group_by": "Skládat podle chybí vlastnost."
+          },
+          "grouped": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí.",
+            "group_by": "Skupina podle chybí vlastnost."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí."
+          },
+          "multi_line": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí.",
+            "group_by": "Skupina podle chybí vlastnost."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí."
+          },
+          "stacked": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí.",
+            "group_by": "Skládat podle chybí vlastnost."
+          },
+          "comparison": {
+            "x_axis_property": "Hodnota na ose x chybí.",
+            "y_axis_metric": "Metrika chybí."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Vlastnost chybí.",
+            "y_axis_metric": "Metrika chybí."
+          },
+          "progress": {
+            "y_axis_metric": "Metrika chybí."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Vlastnost chybí.",
+            "y_axis_metric": "Metrika chybí."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrika chybí."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Sloupcům chybí hodnota.",
+            "group_by": "Řádkům chybí hodnota."
+          }
+        },
+        "ask_admin": "Požádejte svého správce, aby konfiguroval tento widget."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Vytvořit nový dashboard",
+        "update": "Aktualizovat dashboard"
+      },
+      "title": {
+        "label": "Pojmenujte svůj dashboard.",
+        "placeholder": "\"Kapacita napříč projekty\", \"Zátěž podle týmu\", \"Stav napříč všemi projekty\"",
+        "required_error": "Název je povinný"
+      },
+      "project": {
+        "label": "Vyberte projekty",
+        "placeholder": "Data z těchto projektů budou pohánět tento dashboard.",
+        "required_error": "Projekty jsou povinné"
+      },
+      "filters_label": "Nastavte filtry pro výše uvedené zdroje dat",
+      "create_dashboard": "Vytvořit dashboard",
+      "update_dashboard": "Aktualizovat dashboard"
+    },
+    "delete_modal": {
+      "heading": "Smazat dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Prezentujte svůj pokrok v on-demand, navždy dashboardech.",
+        "description": "Vytvořte jakýkoli dashboard, který potřebujete, a přizpůsobte, jak vaše data vypadají pro dokonalou prezentaci vašeho pokroku.",
+        "coming_soon_to_mobile": "Brzy v mobilní aplikaci",
+        "card_1": {
+          "title": "Pro všechny vaše projekty",
+          "description": "Získejte celkový přehled o svém workspace s všemi vašimi projekty nebo rozřežte svá pracovní data pro dokonalý pohled na váš pokrok."
+        },
+        "card_2": {
+          "title": "Pro jakákoli data v Plane",
+          "description": "Překročte standardní analytiku a hotové cykly a podívejte se na týmy, iniciativy nebo cokoli jiného, jako jste to ještě neudělali."
+        },
+        "card_3": {
+          "title": "Pro všechny vaše potřeby vizualizace dat",
+          "description": "Vyberte si z několika přizpůsobitelných grafů s jemně laděnými ovládacími prvky, abyste viděli a ukázali svá pracovní data přesně tak, jak chcete."
+        },
+        "card_4": {
+          "title": "Na vyžádání a trvale",
+          "description": "Vytvořte jednou, uchovejte navždy s automatickými aktualizacemi vašich dat, kontextovými vlajkami pro změny rozsahu a sdílenými permalinkami."
+        },
+        "card_5": {
+          "title": "Exporty a plánované komunikace",
+          "description": "Pro ty časy, kdy odkazy nefungují, získejte své dashboardy do jednorázových PDF nebo je naplánujte, aby byly automaticky zasílány zúčastněným stranám."
+        },
+        "card_6": {
+          "title": "Automaticky uspořádáno pro všechna zařízení",
+          "description": "Změňte velikost svých widgetů pro požadované uspořádání a uvidíte to přesně stejně na mobilu, tabletu a dalších prohlížečích."
+        }
+      },
+      "dashboards_list": {
+        "title": "Vizualizujte data ve widgetech, vytvářejte své dashboardy s widgety a sledujte nejnovější na vyžádání.",
+        "description": "Vytvářejte své dashboardy s vlastním widgetem, který zobrazuje vaše data v rozsahu, který určíte. Získejte dashboardy pro všechny vaše práce napříč projekty a týmy a sdílejte permalink s zúčastněnými stranami pro sledování na vyžádání."
+      },
+      "dashboards_search": {
+        "title": "To neodpovídá názvu dashboardu.",
+        "description": "Ujistěte se, že váš dotaz je správný, nebo zkuste jiný dotaz."
+      },
+      "widgets_list": {
+        "title": "Vizualizujte svá data tak, jak chcete.",
+        "description": "Použijte čáry, sloupce, koláče a další formáty, abyste viděli svá data tak, jak chcete, z zdrojů, které určíte."
+      },
+      "widget_data": {
+        "title": "Zde není nic k vidění",
+        "description": "Obnovte nebo přidejte data, abyste je zde viděli."
+      }
+    },
+    "common": {
+      "editing": "Úpravy"
+    }
+  }
+}

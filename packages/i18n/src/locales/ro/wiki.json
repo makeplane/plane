@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "General",
+      "private": "Privat",
+      "shared": "Partajat",
+      "archived": "Arhivat"
+    },
+    "fallback_name": "Colecție",
+    "form": {
+      "name_required": "Titlul colecției este obligatoriu",
+      "name_max_length": "Numele colecției trebuie să aibă mai puțin de 255 de caractere",
+      "name_placeholder_create": "Dă un titlu colecției",
+      "name_placeholder_edit": "Numele colecției"
+    },
+    "create_modal": {
+      "title": "Creează o colecție",
+      "submit": "Creează colecția"
+    },
+    "edit_modal": {
+      "title": "Editează colecția"
+    },
+    "delete_modal": {
+      "title": "Șterge colecția",
+      "page_count": "Această colecție are {pageCount} pagini. Alege ce se întâmplă cu ele.",
+      "transfer_title": "Mută paginile și șterge colecția",
+      "transfer_description": "Mută toate paginile într-o altă colecție înainte de ștergere. Paginile și permisiunile lor vor fi păstrate.",
+      "transfer_warning": "Paginile mutate vor moșteni permisiunile colecției selectate.",
+      "transfer_target_label": "Mută paginile în",
+      "transfer_target_placeholder": "Selectează o colecție",
+      "delete_with_pages_title": "Șterge colecția împreună cu paginile",
+      "delete_with_pages_description": "Șterge definitiv colecția și toate paginile ei. Această acțiune nu poate fi anulată.",
+      "submit": "Șterge colecția"
+    },
+    "header": {
+      "add_page": "Adaugă pagină"
+    },
+    "menu": {
+      "create_new_page": "Creează o pagină nouă",
+      "add_existing_page": "Adaugă o pagină existentă",
+      "edit_collection": "Editează colecția",
+      "collection_options": "Opțiuni colecție"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Caută pagini",
+      "success_message": "{count} pagini au fost adăugate în colecție.",
+      "error_message": "Paginile nu au putut fi mutate. Te rugăm să încerci din nou.",
+      "no_pages_found": "Nu au fost găsite pagini care să corespundă căutării",
+      "no_pages_available": "Nu există pagini disponibile pentru mutare",
+      "submit": "Mută"
+    },
+    "list": {
+      "invite_only": "Doar pe bază de invitație",
+      "remove_error": "Pagina nu a putut fi eliminată din colecție.",
+      "no_matching_pages": "Nicio pagină potrivită",
+      "remove_search_criteria": "Elimină criteriile de căutare pentru a vedea toate paginile",
+      "remove_filters": "Elimină filtrele pentru a vedea toate paginile",
+      "no_pages_title": "Încă nu există pagini",
+      "no_pages_description": "Această colecție nu are momentan nicio pagină.",
+      "untitled": "Fără titlu",
+      "restricted_access": "Acces restricționat",
+      "collapse_page": "Restrânge pagina",
+      "expand_page": "Extinde pagina",
+      "page_actions": "Acțiuni pagină",
+      "page_link_copied": "Linkul paginii a fost copiat în clipboard.",
+      "columns": {
+        "page_name": "Nume pagină",
+        "owner": "Proprietar",
+        "nested_pages": "Pagini imbricate",
+        "last_activity": "Ultima activitate",
+        "actions": "Acțiuni"
+      }
+    },
+    "toasts": {
+      "created": "Colecția a fost creată cu succes.",
+      "create_error": "Colecția nu a putut fi creată. Te rugăm să încerci din nou.",
+      "renamed": "Colecția a fost redenumită cu succes.",
+      "rename_error": "Colecția nu a putut fi actualizată. Te rugăm să încerci din nou.",
+      "transferred_deleted": "Paginile au fost mutate, iar colecția a fost ștearsă.",
+      "deleted_with_pages": "Colecția și paginile ei au fost șterse.",
+      "delete_error": "Colecția nu a putut fi ștearsă. Te rugăm să încerci din nou.",
+      "target_required": "Te rugăm să selectezi o colecție în care să muți paginile.",
+      "create_page_error": "Pagina nu a putut fi creată. Te rugăm să încerci din nou.",
+      "create_page_in_collection_error": "Pagina nu a putut fi creată sau adăugată în colecție. Te rugăm să încerci din nou.",
+      "collection_link_copied": "Linkul colecției a fost copiat în clipboard."
+    }
+  }
+}

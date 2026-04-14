@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {发布} other {发布}}",
+    "no_release": "暂无发布",
+    "unreleased": "未发布",
+    "select_releases": "选择发布",
+    "overview": "概览",
+    "scope": "范围",
+    "page_title": {
+      "scope": "发布 - {name} | 范围",
+      "scope_fallback": "发布 | 范围"
+    },
+    "properties": "属性",
+    "target_date": "目标日期",
+    "lead": "负责人",
+    "release_tag": "标签",
+    "labels": "标签",
+    "description_placeholder": "添加描述...",
+    "progress": "进度",
+    "completed_work_items": "已完成工作项",
+    "pending_work_items": "待处理工作项",
+    "cancelled_work_items": "已取消工作项",
+    "scope_page": {
+      "work_items": "工作项",
+      "add_work_items": "添加工作项",
+      "remove_from_release": "从发布中移除",
+      "empty_state": {
+        "title": "暂无工作项",
+        "description": "添加工作项以定义发布范围。"
+      },
+      "confirm_remove": {
+        "content": "确定要从发布中移除此工作项吗？它仍将保留在项目中。",
+        "primary_button": {
+          "default": "移除",
+          "loading": "正在移除"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "暂无范围",
+      "description": "将工作项添加到此发布，以跟踪它们在此发布中的完成情况。",
+      "add_scope": "添加范围",
+      "not_found": {
+        "title": "未找到发布",
+        "description": "该发布可能已被删除。",
+        "primary_button": "返回发布列表"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {已添加工作项} other {已添加工作项}}",
+      "work_items_error": "添加工作项失败"
+    },
+    "count_releases": "{count, plural, one {# 发布} other {# 发布}}",
+    "actions": {
+      "delete": "删除"
+    },
+    "delete_modal": {
+      "title": "删除发布",
+      "content": "您确定要删除发布“{releaseName}”吗？此操作无法撤销。"
+    },
+    "settings": {
+      "heading": {
+        "title": "发布",
+        "description": "使用发布精准管理项目交付物。"
+      },
+      "toggle": {
+        "title": "启用发布",
+        "description": "工作区成员将在各自的项目中拥有该范围的查看权限。"
+      },
+      "toasts": {
+        "enable": {
+          "loading": "正在启用发布...",
+          "success": {
+            "title": "已启用发布",
+            "message": "已为该工作区启用发布。"
+          },
+          "error": {
+            "title": "错误",
+            "message": "启用发布失败。请重试。"
+          }
+        },
+        "disable": {
+          "loading": "正在禁用发布...",
+          "success": {
+            "title": "已禁用发布",
+            "message": "已为该工作区禁用发布。"
+          },
+          "error": {
+            "title": "错误",
+            "message": "禁用发布失败。请重试。"
+          }
+        }
+      },
+      "tabs": {
+        "tags": "发布标签",
+        "labels": "标签"
+      },
+      "tags": {
+        "title": "发布标签",
+        "description": "使用标签对发布进行分类和筛选。",
+        "add": "添加标签",
+        "empty_state": "还没有标签。创建您的第一个标签。",
+        "errors": {
+          "version_required": "版本为必填项。",
+          "version_already_exists": "已存在具有此版本的标签。",
+          "generic": "出了点问题。请重试。"
+        },
+        "delete_modal": {
+          "title": "删除标签",
+          "content": "您确定要删除标签“{tagVersion}”吗？此操作无法撤销。"
+        },
+        "actions": {
+          "edit": "编辑标签",
+          "delete": "删除标签"
+        },
+        "toasts": {
+          "delete": {
+            "success": "标签已成功删除。",
+            "error": "删除标签失败。请重试。"
+          }
+        }
+      },
+      "labels": {
+        "title": "标签",
+        "description": "使用标签来整理和组织您的计划。",
+        "add": "添加标签",
+        "empty_state": "还没有标签。创建您的第一个标签。",
+        "errors": {
+          "name_required": "名称为必填项。",
+          "name_already_exists": "已存在同名标签。",
+          "generic": "出了点问题。请重试。"
+        },
+        "modal": {
+          "name_placeholder": "标签名称",
+          "pick_color": "选择标签颜色"
+        },
+        "actions": {
+          "edit": "编辑标签",
+          "delete": "删除标签"
+        },
+        "drag_to_reorder": "拖动以重新排序",
+        "delete_modal": {
+          "title": "删除标签",
+          "content": "您确定要删除标签“{labelName}”吗？此操作无法撤销。"
+        },
+        "toasts": {
+          "delete": {
+            "success": "标签已成功删除。",
+            "error": "删除标签失败。请重试。"
+          }
+        }
+      }
+    }
+  }
+}

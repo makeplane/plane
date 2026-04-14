@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "GitHub depolarından iş öğelerini içe aktarın ve senkronize edin."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jira projelerinden ve epiklerinden iş öğelerini içe aktarın."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "İş öğelerini CSV dosyasına aktarın.",
+      "short_description": "CSV olarak aktar"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "İş öğelerini Excel dosyasına aktarın.",
+      "short_description": "Excel olarak aktar"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "İş öğelerini Excel dosyasına aktarın.",
+      "short_description": "Excel olarak aktar"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "İş öğelerini JSON dosyasına aktarın.",
+      "short_description": "JSON olarak aktar"
+    }
+  },
+  "importers": {
+    "imports": "İmportlar",
+    "logo": "Logo",
+    "import_message": "{serviceName} verilerinizi plane projelerine import edin.",
+    "deactivate": "Deaktif Et",
+    "deactivating": "Deaktif Ediliyor",
+    "migrating": "Taşınıyor",
+    "migrations": "Taşımalar",
+    "refreshing": "Yenileniyor",
+    "import": "İmport Et",
+    "serial_number": "Sıra No.",
+    "project": "Proje",
+    "workspace": "Workspace",
+    "status": "Durum",
+    "summary": "Özet",
+    "total_batches": "Toplam Batch",
+    "imported_batches": "İmport Edilen Batchler",
+    "re_run": "Tekrar Çalıştır",
+    "cancel": "İptal",
+    "start_time": "Başlangıç Zamanı",
+    "no_jobs_found": "İş bulunamadı",
+    "no_project_imports": "Henüz hiç {serviceName} projesi import etmediniz.",
+    "cancel_import_job": "İmport işini iptal et",
+    "cancel_import_job_confirmation": "Bu import işini iptal etmek istediğinizden emin misiniz? Bu, bu proje için import işlemini durduracaktır.",
+    "re_run_import_job": "İmport işini yeniden çalıştır",
+    "re_run_import_job_confirmation": "Bu import işini yeniden çalıştırmak istediğinizden emin misiniz? Bu, bu proje için import işlemini yeniden başlatacaktır.",
+    "upload_csv_file": "Kullanıcı verilerini import etmek için bir CSV dosyası yükleyin.",
+    "connect_importer": "{serviceName} Bağla",
+    "migration_assistant": "Taşıma Asistanı",
+    "migration_assistant_description": "{serviceName} projelerinizi güçlü asistanımızla Plane'e sorunsuzca taşıyın.",
+    "token_helper": "Bunu şuradan alacaksınız",
+    "personal_access_token": "Kişisel Erişim Tokeni",
+    "source_token_expired": "Token Süresi Doldu",
+    "source_token_expired_description": "Sağlanan tokenin süresi doldu. Lütfen deaktif edip yeni bir kimlik seti ile yeniden bağlanın.",
+    "user_email": "Kullanıcı Emaili",
+    "select_state": "Durum Seçin",
+    "select_service_project": "{serviceName} Projesi Seçin",
+    "loading_service_projects": "{serviceName} projeleri yükleniyor",
+    "select_service_workspace": "{serviceName} Workspace Seçin",
+    "loading_service_workspaces": "{serviceName} Workspaceleri Yükleniyor",
+    "select_priority": "Öncelik Seçin",
+    "select_service_team": "{serviceName} Takımı Seçin",
+    "add_seat_msg_free_trial": "{additionalUserCount} kayıtlı olmayan kullanıcı import etmeye çalışıyorsunuz ve mevcut planda sadece {currentWorkspaceSubscriptionAvailableSeats} koltuk kullanılabilir. İmport etmeye devam etmek için şimdi yükseltin.",
+    "add_seat_msg_paid": "{additionalUserCount} kayıtlı olmayan kullanıcı import etmeye çalışıyorsunuz ve mevcut planda sadece {currentWorkspaceSubscriptionAvailableSeats} koltuk kullanılabilir. İmport etmeye devam etmek için en az {extraSeatRequired} ekstra koltuk satın alın.",
+    "skip_user_import_title": "Kullanıcı verisi importunu atla",
+    "skip_user_import_description": "Kullanıcı importunu atlamak, {serviceName}'den gelen iş öğelerinin, yorumların ve diğer verilerin Plane'de taşımayı gerçekleştiren kullanıcı tarafından oluşturulmasıyla sonuçlanacaktır. Yine de daha sonra manuel olarak kullanıcı ekleyebilirsiniz.",
+    "invalid_pat": "Geçersiz Kişisel Erişim Tokeni"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Jira verilerinizi Plane projelerine import edin.",
+    "personal_access_token": "Kişisel Erişim Tokeni",
+    "user_email": "Kullanıcı Emaili",
+    "create_project_automatically": "Projeyi otomatik olarak oluştur",
+    "create_project_automatically_description": "Jira proje detaylarına göre sizin için yeni bir proje oluşturacağız.",
+    "import_to_existing_project": "Mevcut projeye aktar",
+    "import_to_existing_project_description": "Aşağıdaki açılır menüden mevcut bir projeyi seçin.",
+    "state_mapping_automatic_creation": "Tüm Jira durumları Plane'de otomatik olarak oluşturulacaktır.",
+    "atlassian_security_settings": "Atlassian Güvenlik Ayarları",
+    "email_description": "Bu, kişisel erişim tokeninize bağlı emaildir",
+    "jira_domain": "Jira Domain",
+    "jira_domain_description": "Bu, Jira instance'ınızın domainidir",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Jira verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_jira": "Jira'yı Yapılandır",
+      "description_configure_jira": "Lütfen verilerinizi taşımak istediğiniz Jira workspaceini seçin.",
+      "title_import_users": "Kullanıcıları İmport Et",
+      "description_import_users": "Lütfen Jira'dan Plane'e taşımak istediğiniz kullanıcıları ekleyin. Alternatif olarak, bu adımı atlayabilir ve daha sonra manuel olarak kullanıcı ekleyebilirsiniz.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Jira durumlarını elimizden geldiğince Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Öncelikleri elimizden geldiğince otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan öncelikleri eşleştirin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti.",
+      "custom_jql_filter": "Özel JQL Filtresi",
+      "jql_filter_description": "İçe aktarılacak belirli konuları filtrelemek için JQL kullanın.",
+      "project_code": "PROJE",
+      "enter_filters_placeholder": "Filtreleri girin (örn. status = 'In Progress')",
+      "validating_query": "Sorgu doğrulanıyor...",
+      "validation_successful_work_items_selected": "Doğrulama Başarılı, {count} İş Öğesi Seçildi.",
+      "run_syntax_check": "Sorgunuzu doğrulamak için sözdizimi kontrolünü çalıştırın",
+      "refresh": "Yenile",
+      "check_syntax": "Sözdizimini Kontrol Et",
+      "no_work_items_selected": "Sorgu tarafından hiçbir iş öğesi seçilmedi.",
+      "validation_error_default": "Sorgu doğrulanırken bir hata oluştu."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Asana verilerinizi Plane projelerine import edin.",
+    "select_asana_priority_field": "Asana Öncelik Alanını Seçin",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Asana verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_asana": "Asana'yı Yapılandır",
+      "description_configure_asana": "Lütfen verilerinizi taşımak istediğiniz Asana workspaceini ve projeyi seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Lütfen Plane proje durumlarına eşlemek istediğiniz Asana durumlarını seçin.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen Plane proje önceliklerine eşlemek istediğiniz Asana önceliklerini seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Asana'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Linear verilerinizi Plane projelerine import edin.",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Linear verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_linear": "Linear'ı Yapılandır",
+      "description_configure_linear": "Lütfen verilerinizi taşımak istediğiniz Linear takımını seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Linear durumlarını elimizden geldiğince Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen Plane proje önceliklerine eşlemek istediğiniz Linear önceliklerini seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Linear'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Jira Server/Data Center verilerinizi Plane projelerine import edin.",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Jira verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_jira": "Jira'yı Yapılandır",
+      "description_configure_jira": "Lütfen verilerinizi taşımak istediğiniz Jira workspaceini seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Lütfen Plane proje durumlarına eşlemek istediğiniz Jira durumlarını seçin.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen Plane proje önceliklerine eşlemek istediğiniz Jira önceliklerini seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
+    },
+    "import_epics": {
+      "title": "Epikleri İş Öğesi Olarak İçe Aktar",
+      "description": "Bu özellik etkinleştirildiğinde, epikleriniz epik iş öğesi türünde bir iş öğesi olarak içe aktarılacaktır."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Notion verilerinizi Plane projelerine aktarın.",
+    "steps": {
+      "title_upload_zip": "Notion'dan Dışa Aktarılan ZIP'i Yükle",
+      "description_upload_zip": "Lütfen Notion verilerinizi içeren ZIP dosyasını yükleyin."
+    },
+    "upload": {
+      "drop_file_here": "Notion zip dosyanızı buraya bırakın",
+      "upload_title": "Notion Dışa Aktarımını Yükle",
+      "upload_from_url": "URL'den içe aktar",
+      "upload_from_url_description": "Devam etmek için ZIP dışa aktarımınızın herkese açık URL'sini yapıştırın.",
+      "drag_drop_description": "Notion dışa aktarım zip dosyanızı sürükleyip bırakın veya göz atmak için tıklayın",
+      "file_type_restriction": "Yalnızca Notion'dan dışa aktarılan .zip dosyaları desteklenir",
+      "select_file": "Dosya Seç",
+      "uploading": "Yükleniyor...",
+      "preparing_upload": "Yükleme hazırlanıyor...",
+      "confirming_upload": "Yükleme onaylanıyor...",
+      "confirming": "Onaylanıyor...",
+      "upload_complete": "Yükleme tamamlandı",
+      "upload_failed": "Yükleme başarısız",
+      "start_import": "İçe Aktarmayı Başlat",
+      "retry_upload": "Yüklemeyi Yeniden Dene",
+      "upload": "Yükle",
+      "ready": "Hazır",
+      "error": "Hata",
+      "upload_complete_message": "Yükleme tamamlandı!",
+      "upload_complete_description": "Notion verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
+      "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Confluence verilerinizi Plane wiki'sine aktarın.",
+    "steps": {
+      "title_upload_zip": "Confluence'dan Dışa Aktarılan ZIP'i Yükle",
+      "description_upload_zip": "Lütfen Confluence verilerinizi içeren ZIP dosyasını yükleyin."
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip dosyanızı buraya bırakın",
+      "upload_title": "Confluence Dışa Aktarımını Yükle",
+      "upload_from_url": "URL'den içe aktar",
+      "upload_from_url_description": "Devam etmek için ZIP dışa aktarımınızın herkese açık URL'sini yapıştırın.",
+      "drag_drop_description": "Confluence dışa aktarım zip dosyanızı sürükleyip bırakın veya göz atmak için tıklayın",
+      "file_type_restriction": "Yalnızca Confluence'dan dışa aktarılan .zip dosyaları desteklenir",
+      "select_file": "Dosya Seç",
+      "uploading": "Yükleniyor...",
+      "preparing_upload": "Yükleme hazırlanıyor...",
+      "confirming_upload": "Yükleme onaylanıyor...",
+      "confirming": "Onaylanıyor...",
+      "upload_complete": "Yükleme tamamlandı",
+      "upload_failed": "Yükleme başarısız",
+      "start_import": "İçe Aktarmayı Başlat",
+      "retry_upload": "Yüklemeyi Yeniden Dene",
+      "upload": "Yükle",
+      "ready": "Hazır",
+      "error": "Hata",
+      "upload_complete_message": "Yükleme tamamlandı!",
+      "upload_complete_description": "Confluence verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
+      "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "CSV verilerinizi Plane projelerine import edin.",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce CSV verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_csv": "CSV'yi Yapılandır",
+      "description_configure_csv": "Lütfen CSV dosyanızı yükleyin ve Plane alanlarına eşlenecek alanları yapılandırın."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "CSV dosyalarından Plane projelerine iş öğelerini aktarın.",
+    "steps": {
+      "title_select_project": "Proje Seç",
+      "description_select_project": "Lütfen iş öğelerinizi içe aktarmak istediğiniz Plane projesini seçin.",
+      "title_upload_csv": "CSV Yükle",
+      "description_upload_csv": "İş öğelerini içeren CSV dosyanızı yükleyin. Dosya ad, açıklama, öncelik, tarihler và durum grubu sütunlarını içermelidir."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUp verilerinizi Plane projelerine import edin.",
+    "select_service_space": "{serviceName} Space Seçin",
+    "select_service_folder": "{serviceName} Folder Seçin",
+    "selected": "Seçildi",
+    "users": "Kullanıcılar",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce ClickUp verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_clickup": "ClickUp'ı Yapılandır",
+      "description_configure_clickup": "Lütfen ClickUp takımı, alan ve klasörünü seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "ClickUp durumlarını Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen ClickUp önceliklerini Plane proje önceliklerine eşlemek istediğinizi seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte ClickUp'dan Plane'e taşınacak verilerin bir özeti.",
+      "pull_additional_data_title": "Yorumları ve Ekleri İmport Et"
+    }
+  }
+}

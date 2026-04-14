@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Visão geral",
+    "label": "Iniciativas",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciativas}}",
+    "add_initiative": "Adicionar Iniciativa",
+    "create_initiative": "Criar Iniciativa",
+    "update_initiative": "Atualizar Iniciativa",
+    "initiative_name": "Nome da iniciativa",
+    "all_initiatives": "Todas as Iniciativas",
+    "delete_initiative": "Excluir Iniciativa",
+    "fill_all_required_fields": "Por favor, preencha todos os campos obrigatórios.",
+    "archive_description": "Somente iniciativas concluídas ou fechadas podem ser arquivadas",
+    "toast": {
+      "create_success": "Iniciativa {name} criada com sucesso.",
+      "create_error": "Falha ao criar iniciativa. Por favor, tente novamente!",
+      "update_success": "Iniciativa {name} atualizada com sucesso.",
+      "update_error": "Falha ao atualizar iniciativa. Por favor, tente novamente!",
+      "delete": {
+        "success": "Iniciativa excluída com sucesso.",
+        "error": "Falha ao excluir Iniciativa"
+      },
+      "archive": {
+        "success": "Iniciativa arquivada com sucesso.",
+        "error": "Falha ao arquivar a iniciativa",
+        "initiative_cannot_be_archived_in_this_state": "A iniciativa não pode ser arquivada neste estado"
+      },
+      "link_copied": "Link da iniciativa copiado para a área de transferência.",
+      "project_update_success": "Projetos da iniciativa atualizados com sucesso.",
+      "project_update_error": "Falha ao atualizar projetos da iniciativa. Por favor, tente novamente!",
+      "epic_update_success": "Épico{count, plural, one { adicionado à Iniciativa com sucesso.} other {s adicionados à Iniciativa com sucesso.}}",
+      "epic_update_error": "Adição de épico à Iniciativa falhou. Por favor, tente novamente mais tarde.",
+      "state_update_success": "O estado da iniciativa foi atualizado com sucesso.",
+      "state_update_error": "Falha ao atualizar o estado da iniciativa. Por favor, tente novamente!",
+      "label_update_error": "Falha ao atualizar os rótulos da iniciativa. Por favor, tente novamente!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organize trabalho no mais alto nível com Iniciativas",
+        "description": "Quando você precisa organizar trabalho abrangendo vários projetos e equipes, as Iniciativas são úteis. Conecte projetos e épicos às iniciativas, veja atualizações automaticamente agregadas e veja as florestas antes de chegar às árvores.",
+        "primary_button": {
+          "text": "Criar uma iniciativa"
+        }
+      },
+      "search": {
+        "title": "Nenhuma iniciativa correspondente",
+        "description": "Nenhuma iniciativa detectada com os critérios correspondentes.\n Crie uma nova iniciativa em vez disso.",
+        "archived_description": "Nenhuma iniciativa arquivada detectada com os critérios correspondentes."
+      },
+      "not_found": {
+        "title": "Iniciativa não existe",
+        "description": "A Iniciativa que você está procurando não existe, foi arquivada ou foi excluída.",
+        "primary_button": {
+          "text": "Ver outras Iniciativas"
+        }
+      },
+      "epics": {
+        "title": "Não há iniciativas que correspondem aos filtros que você aplicou.",
+        "subHeading": "Para ver todas as iniciativas, limpe todos os filtros aplicados.",
+        "action": "Limpar filtros"
+      }
+    },
+    "scope": {
+      "view_scope": "Ver escopo",
+      "breakdown": "Desmembrar escopo",
+      "add_scope": "Adicionar escopo",
+      "label": "Escopo",
+      "empty_state": {
+        "title": "Nenhum escopo adicionado à iniciativa",
+        "description": "Conecte projetos e épicos à iniciativa para começar.",
+        "primary_button": {
+          "text": "Adicionar escopo"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Rótulos",
+        "description": "Estruture e organize suas iniciativas com rótulos."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Excluir rótulo",
+        "content": "Tem certeza de que deseja excluir {labelName}? Isso removerá o rótulo de todas as iniciativas e de quaisquer visualizações onde o rótulo está sendo filtrado."
+      },
+      "toast": {
+        "delete_error": "Não foi possível excluir o rótulo da iniciativa. Tente novamente.",
+        "label_already_exists": "O rótulo já existe"
+      }
+    }
+  }
+}

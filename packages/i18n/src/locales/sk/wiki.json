@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Všeobecné",
+      "private": "Súkromné",
+      "shared": "Zdieľané",
+      "archived": "Archivované"
+    },
+    "fallback_name": "Kolekcia",
+    "form": {
+      "name_required": "Názov kolekcie je povinný",
+      "name_max_length": "Názov kolekcie musí mať menej ako 255 znakov",
+      "name_placeholder_create": "Zadajte názov kolekcie",
+      "name_placeholder_edit": "Názov kolekcie"
+    },
+    "create_modal": {
+      "title": "Vytvoriť kolekciu",
+      "submit": "Vytvoriť kolekciu"
+    },
+    "edit_modal": {
+      "title": "Upraviť kolekciu"
+    },
+    "delete_modal": {
+      "title": "Odstrániť kolekciu",
+      "page_count": "Táto kolekcia obsahuje {pageCount} stránok. Vyberte, čo sa s nimi má stať.",
+      "transfer_title": "Presunúť stránky a odstrániť kolekciu",
+      "transfer_description": "Pred odstránením presuňte všetky stránky do inej kolekcie. Stránky aj ich oprávnenia zostanú zachované.",
+      "transfer_warning": "Presunuté stránky zdedia oprávnenia vybratej kolekcie.",
+      "transfer_target_label": "Presunúť stránky do",
+      "transfer_target_placeholder": "Vyberte kolekciu",
+      "delete_with_pages_title": "Odstrániť kolekciu aj so stránkami",
+      "delete_with_pages_description": "Natrvalo odstráni kolekciu aj všetky jej stránky. Túto akciu nie je možné vrátiť späť.",
+      "submit": "Odstrániť kolekciu"
+    },
+    "header": {
+      "add_page": "Pridať stránku"
+    },
+    "menu": {
+      "create_new_page": "Vytvoriť novú stránku",
+      "add_existing_page": "Pridať existujúcu stránku",
+      "edit_collection": "Upraviť kolekciu",
+      "collection_options": "Možnosti kolekcie"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Hľadať stránky",
+      "success_message": "Do kolekcie bolo pridaných {count} stránok.",
+      "error_message": "Stránky sa nepodarilo presunúť. Skúste to prosím znova.",
+      "no_pages_found": "Neboli nájdené žiadne stránky zodpovedajúce vášmu vyhľadávaniu",
+      "no_pages_available": "Žiadne stránky na presun",
+      "submit": "Presunúť"
+    },
+    "list": {
+      "invite_only": "Len na pozvanie",
+      "remove_error": "Stránku sa nepodarilo odstrániť z kolekcie.",
+      "no_matching_pages": "Žiadne zodpovedajúce stránky",
+      "remove_search_criteria": "Odstráňte kritériá vyhľadávania a zobrazia sa všetky stránky",
+      "remove_filters": "Odstráňte filtre a zobrazia sa všetky stránky",
+      "no_pages_title": "Zatiaľ žiadne stránky",
+      "no_pages_description": "Táto kolekcia zatiaľ neobsahuje žiadne stránky.",
+      "untitled": "Bez názvu",
+      "restricted_access": "Obmedzený prístup",
+      "collapse_page": "Zbaliť stránku",
+      "expand_page": "Rozbaliť stránku",
+      "page_actions": "Akcie stránky",
+      "page_link_copied": "Odkaz na stránku bol skopírovaný do schránky.",
+      "columns": {
+        "page_name": "Názov stránky",
+        "owner": "Vlastník",
+        "nested_pages": "Vnorené stránky",
+        "last_activity": "Posledná aktivita",
+        "actions": "Akcie"
+      }
+    },
+    "toasts": {
+      "created": "Kolekcia bola úspešne vytvorená.",
+      "create_error": "Kolekciu sa nepodarilo vytvoriť. Skúste to prosím znova.",
+      "renamed": "Kolekcia bola úspešne premenovaná.",
+      "rename_error": "Kolekciu sa nepodarilo aktualizovať. Skúste to prosím znova.",
+      "transferred_deleted": "Stránky boli presunuté a kolekcia odstránená.",
+      "deleted_with_pages": "Kolekcia aj jej stránky boli odstránené.",
+      "delete_error": "Kolekciu sa nepodarilo odstrániť. Skúste to prosím znova.",
+      "target_required": "Vyberte prosím kolekciu, do ktorej chcete stránky presunúť.",
+      "create_page_error": "Stránku sa nepodarilo vytvoriť. Skúste to prosím znova.",
+      "create_page_in_collection_error": "Stránku sa nepodarilo vytvoriť alebo pridať do kolekcie. Skúste to prosím znova.",
+      "collection_link_copied": "Odkaz na kolekciu bol skopírovaný do schránky."
+    }
+  }
+}

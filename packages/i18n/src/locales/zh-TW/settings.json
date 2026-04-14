@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "變更電子郵件",
+        "description": "請輸入新的電子郵件地址以接收驗證連結。",
+        "toasts": {
+          "success_title": "成功！",
+          "success_message": "電子郵件已更新，請重新登入。"
+        },
+        "form": {
+          "email": {
+            "label": "新電子郵件",
+            "placeholder": "請輸入電子郵件",
+            "errors": {
+              "required": "電子郵件為必填",
+              "invalid": "電子郵件格式無效",
+              "exists": "電子郵件已存在，請使用其他信箱。",
+              "validation_failed": "電子郵件驗證失敗，請再試一次。"
+            }
+          },
+          "code": {
+            "label": "驗證碼",
+            "placeholder": "123456",
+            "helper_text": "驗證碼已傳送到你的新電子郵件。",
+            "errors": {
+              "required": "驗證碼為必填",
+              "invalid": "驗證碼無效，請再試一次。"
+            }
+          }
+        },
+        "actions": {
+          "continue": "繼續",
+          "confirm": "確認",
+          "cancel": "取消"
+        },
+        "states": {
+          "sending": "傳送中…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "選擇預設檢視",
+      "compact": "緊湊",
+      "full": "全螢幕"
+    }
+  },
+  "profile": {
+    "label": "個人資料",
+    "page_label": "您的工作",
+    "work": "工作",
+    "details": {
+      "joined_on": "加入於",
+      "time_zone": "時區"
+    },
+    "stats": {
+      "workload": "工作量",
+      "overview": "概覽",
+      "created": "已建立的工作事項",
+      "assigned": "已指派的工作事項",
+      "subscribed": "已訂閱的工作事項",
+      "state_distribution": {
+        "title": "依狀態分類的工作事項",
+        "empty": "建立工作事項以在圖表中檢視依狀態分類的工作事項，以便進行更好的分析。"
+      },
+      "priority_distribution": {
+        "title": "依優先順序分類的工作事項",
+        "empty": "建立工作事項以在圖表中檢視依優先順序分類的工作事項，以便進行更好的分析。"
+      },
+      "recent_activity": {
+        "title": "最近活動",
+        "empty": "我們找不到資料。請檢查您的輸入",
+        "button": "下載今天的活動",
+        "button_loading": "下載中"
+      }
+    },
+    "actions": {
+      "profile": "個人資料",
+      "security": "安全性",
+      "activity": "活動",
+      "appearance": "外觀",
+      "notifications": "通知",
+      "connections": "連接"
+    },
+    "tabs": {
+      "summary": "摘要",
+      "assigned": "已指派",
+      "created": "已建立",
+      "subscribed": "已訂閱",
+      "activity": "活動"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "尚無活動",
+        "description": "開始建立新工作事項！為其新增詳細資訊和屬性。探索更多 Plane 功能以檢視您的活動。"
+      },
+      "assigned": {
+        "title": "沒有指派給您的工作事項",
+        "description": "從這裡可以追蹤指派給您的工作事項。"
+      },
+      "created": {
+        "title": "尚無工作事項",
+        "description": "您建立的所有工作事項都會出現在這裡，直接在這裡追蹤它們。"
+      },
+      "subscribed": {
+        "title": "尚無工作事項",
+        "description": "訂閱您感興趣的工作事項，在這裡追蹤它們。"
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "系統偏好設定"
+      },
+      "light": {
+        "label": "淺色"
+      },
+      "dark": {
+        "label": "深色"
+      },
+      "light_contrast": {
+        "label": "高對比淺色"
+      },
+      "dark_contrast": {
+        "label": "高對比深色"
+      },
+      "custom": {
+        "label": "自訂主題"
+      }
+    }
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {mục công việc} other {mục công việc}}",
+    "all": "Tất cả mục công việc",
+    "edit": "Chỉnh sửa mục công việc",
+    "title": {
+      "label": "Tiêu đề mục công việc",
+      "required": "Tiêu đề mục công việc là bắt buộc"
+    },
+    "add": {
+      "press_enter": "Nhấn 'Enter' để thêm mục công việc khác",
+      "label": "Thêm mục công việc",
+      "cycle": {
+        "failed": "Không thể thêm mục công việc vào chu kỳ. Vui lòng thử lại.",
+        "success": "{count, plural, one {Mục công việc} other {Mục công việc}} đã được thêm vào chu kỳ thành công.",
+        "loading": "Đang thêm {count, plural, one {mục công việc} other {mục công việc}} vào chu kỳ"
+      },
+      "assignee": "Thêm người phụ trách",
+      "start_date": "Thêm ngày bắt đầu",
+      "due_date": "Thêm ngày hết hạn",
+      "parent": "Thêm mục công việc cha",
+      "sub_issue": "Thêm mục công việc con",
+      "relation": "Thêm mối quan hệ",
+      "link": "Thêm liên kết",
+      "existing": "Thêm mục công việc hiện có"
+    },
+    "remove": {
+      "label": "Xóa mục công việc",
+      "cycle": {
+        "loading": "Đang xóa mục công việc khỏi chu kỳ",
+        "success": "Đã xóa mục công việc khỏi chu kỳ thành công.",
+        "failed": "Không thể xóa mục công việc khỏi chu kỳ. Vui lòng thử lại."
+      },
+      "module": {
+        "loading": "Đang xóa mục công việc khỏi mô-đun",
+        "success": "Đã xóa mục công việc khỏi mô-đun thành công.",
+        "failed": "Không thể xóa mục công việc khỏi mô-đun. Vui lòng thử lại."
+      },
+      "parent": {
+        "label": "Xóa mục công việc cha"
+      }
+    },
+    "new": "Mục công việc mới",
+    "adding": "Đang thêm mục công việc",
+    "create": {
+      "success": "Đã tạo mục công việc thành công"
+    },
+    "priority": {
+      "urgent": "Khẩn cấp",
+      "high": "Cao",
+      "medium": "Trung bình",
+      "low": "Thấp"
+    },
+    "display": {
+      "properties": {
+        "label": "Hiển thị thuộc tính",
+        "id": "ID",
+        "issue_type": "Loại mục công việc",
+        "sub_issue_count": "Số lượng mục công việc con",
+        "attachment_count": "Số lượng tệp đính kèm",
+        "created_on": "Được tạo vào",
+        "sub_issue": "Mục công việc con",
+        "work_item_count": "Số lượng mục công việc"
+      },
+      "extra": {
+        "show_sub_issues": "Hiển thị mục công việc con",
+        "show_empty_groups": "Hiển thị nhóm trống"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Bố cục này được sắp xếp theo",
+      "list": "Danh sách",
+      "kanban": "Kanban",
+      "calendar": "Lịch",
+      "spreadsheet": "Bảng tính",
+      "gantt": "Dòng thời gian",
+      "title": {
+        "list": "Bố cục danh sách",
+        "kanban": "Bố cục kanban",
+        "calendar": "Bố cục lịch",
+        "spreadsheet": "Bố cục bảng tính",
+        "gantt": "Bố cục dòng thời gian"
+      }
+    },
+    "states": {
+      "active": "Hoạt động",
+      "backlog": "Tồn đọng"
+    },
+    "comments": {
+      "placeholder": "Thêm bình luận",
+      "switch": {
+        "private": "Chuyển sang bình luận riêng tư",
+        "public": "Chuyển sang bình luận công khai"
+      },
+      "create": {
+        "success": "Đã tạo bình luận thành công",
+        "error": "Không thể tạo bình luận. Vui lòng thử lại sau."
+      },
+      "update": {
+        "success": "Đã cập nhật bình luận thành công",
+        "error": "Không thể cập nhật bình luận. Vui lòng thử lại sau."
+      },
+      "remove": {
+        "success": "Đã xóa bình luận thành công",
+        "error": "Không thể xóa bình luận. Vui lòng thử lại sau."
+      },
+      "upload": {
+        "error": "Không thể tải lên tài nguyên. Vui lòng thử lại sau."
+      },
+      "copy_link": {
+        "success": "Liên kết bình luận đã được sao chép vào clipboard",
+        "error": "Lỗi khi sao chép liên kết bình luận. Vui lòng thử lại sau."
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Mục công việc không tồn tại",
+        "description": "Mục công việc bạn đang tìm kiếm không tồn tại, đã được lưu trữ hoặc đã bị xóa.",
+        "primary_button": {
+          "text": "Xem các mục công việc khác"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Mục công việc cùng cấp"
+    },
+    "archive": {
+      "description": "Chỉ những mục công việc đã hoàn thành hoặc đã hủy\ncó thể được lưu trữ",
+      "label": "Lưu trữ mục công việc",
+      "confirm_message": "Bạn có chắc chắn muốn lưu trữ mục công việc này không? Tất cả mục công việc đã lưu trữ có thể được khôi phục sau.",
+      "success": {
+        "label": "Lưu trữ thành công",
+        "message": "Mục đã lưu trữ của bạn có thể được tìm thấy trong phần lưu trữ của dự án."
+      },
+      "failed": {
+        "message": "Không thể lưu trữ mục công việc. Vui lòng thử lại."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Khôi phục thành công",
+        "message": "Mục công việc của bạn có thể được tìm thấy trong mục công việc của dự án."
+      },
+      "failed": {
+        "message": "Không thể khôi phục mục công việc. Vui lòng thử lại."
+      }
+    },
+    "relation": {
+      "relates_to": "Liên quan đến",
+      "duplicate": "Trùng lặp với",
+      "blocked_by": "Bị chặn bởi",
+      "blocking": "Đang chặn",
+      "start_before": "Bắt đầu Trước",
+      "start_after": "Bắt đầu Sau",
+      "finish_before": "Kết thúc Trước",
+      "finish_after": "Kết thúc Sau",
+      "implements": "Thực hiện",
+      "implemented_by": "Được thực hiện bởi"
+    },
+    "copy_link": "Sao chép liên kết mục công việc",
+    "delete": {
+      "label": "Xóa mục công việc",
+      "error": "Đã xảy ra lỗi khi xóa mục công việc"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Đã đăng ký mục công việc thành công",
+        "unsubscribed": "Đã hủy đăng ký mục công việc thành công"
+      }
+    },
+    "select": {
+      "error": "Vui lòng chọn ít nhất một mục công việc",
+      "empty": "Chưa chọn mục công việc",
+      "add_selected": "Thêm mục công việc đã chọn",
+      "select_all": "Chọn tất cả",
+      "deselect_all": "Bỏ chọn tất cả"
+    },
+    "open_in_full_screen": "Mở mục công việc trong chế độ toàn màn hình",
+    "vote": {
+      "click_to_upvote": "Nhấp để bỏ phiếu thuận",
+      "click_to_downvote": "Nhấp để bỏ phiếu chống",
+      "click_to_view_upvotes": "Nhấp để xem phiếu thuận",
+      "click_to_view_downvotes": "Nhấp để xem phiếu chống"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Đã cập nhật mục công việc con thành công",
+      "error": "Đã xảy ra lỗi khi cập nhật mục công việc con"
+    },
+    "remove": {
+      "success": "Đã xóa mục công việc con thành công",
+      "error": "Đã xảy ra lỗi khi xóa mục công việc con"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Bạn không có mục công việc con nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc con, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      },
+      "list_filters": {
+        "title": "Bạn không có mục công việc nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Không tìm thấy mục công việc phù hợp"
+      },
+      "no_issues": {
+        "title": "Không tìm thấy mục công việc"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Chưa có bình luận",
+        "description": "Bình luận có thể được sử dụng như không gian thảo luận và theo dõi cho mục công việc"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Không thể lưu trữ mục công việc",
+        "message": "Chỉ các mục công việc thuộc nhóm trạng thái Hoàn thành hoặc Đã hủy mới có thể được lưu trữ."
+      },
+      "invalid_issue_start_date": {
+        "title": "Không thể cập nhật mục công việc",
+        "message": "Ngày bắt đầu đã chọn vượt quá ngày đến hạn cho một số mục công việc. Đảm bảo ngày bắt đầu phải trước ngày đến hạn."
+      },
+      "invalid_issue_target_date": {
+        "title": "Không thể cập nhật mục công việc",
+        "message": "Ngày đến hạn đã chọn trước ngày bắt đầu cho một số mục công việc. Đảm bảo ngày đến hạn phải sau ngày bắt đầu."
+      },
+      "invalid_state_transition": {
+        "title": "Không thể cập nhật mục công việc",
+        "message": "Thay đổi trạng thái không được phép cho một số mục công việc. Đảm bảo thay đổi trạng thái được cho phép."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Bật quy trình làm việc",
+        "description": "Thiết lập quy trình làm việc để kiểm soát việc di chuyển của mục công việc",
+        "no_states_tooltip": "Chưa có trạng thái nào được thêm vào quy trình làm việc.",
+        "toast": {
+          "loading": {
+            "enabling": "Đang bật quy trình làm việc",
+            "disabling": "Đang tắt quy trình làm việc"
+          },
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã bật quy trình làm việc thành công."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể bật quy trình làm việc. Vui lòng thử lại."
+          }
+        }
+      },
+      "heading": "Quy trình làm việc",
+      "description": "Tự động hóa các chuyển đổi của mục công việc và thiết lập quy tắc để kiểm soát cách các tác vụ di chuyển trong quy trình dự án của bạn.",
+      "add_button": "Thêm quy trình làm việc mới",
+      "search": "Tìm kiếm quy trình làm việc",
+      "detail": {
+        "define": "Xác định quy trình làm việc",
+        "add_states": "Thêm trạng thái",
+        "unmapped_states": {
+          "title": "Đã phát hiện trạng thái chưa được ánh xạ",
+          "description": "Một số mục công việc của các loại đã chọn hiện đang ở trong những trạng thái không tồn tại trong quy trình làm việc này.",
+          "note": "Nếu bạn bật quy trình làm việc này, các mục đó sẽ tự động được chuyển sang trạng thái ban đầu của quy trình làm việc này.",
+          "label": "Trạng thái bị thiếu",
+          "tooltip": "Một số mục công việc đang ở trong những trạng thái chưa được ánh xạ tới quy trình làm việc này. Mở quy trình làm việc để xem lại."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tất cả trạng thái đều đang được sử dụng",
+          "description": "Tất cả trạng thái được định nghĩa cho dự án này đã có trong quy trình làm việc hiện tại của bạn."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Quy trình làm việc này áp dụng cho bất kỳ loại mục công việc nào chưa được gán cho quy trình làm việc nào."
+      },
+      "create": {
+        "heading": "Tạo quy trình làm việc mới"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Công việc lặp lại",
+      "description": "Thiết lập công việc lặp lại một lần, và chúng tôi sẽ chăm sóc các lặp lại. Bạn sẽ thấy tất cả ở đây khi đến lúc.",
+      "new_recurring_work_item": "Tạo mục công việc lặp lại mới",
+      "update_recurring_work_item": "Cập nhật mục công việc lặp lại",
+      "form": {
+        "interval": {
+          "title": "Lịch trình",
+          "start_date": {
+            "validation": {
+              "required": "Ngày bắt đầu là bắt buộc"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Loại khoảng thời gian là bắt buộc"
+            }
+          }
+        },
+        "button": {
+          "create": "Tạo mục công việc lặp lại",
+          "update": "Cập nhật mục công việc lặp lại"
+        }
+      },
+      "create_button": {
+        "label": "Tạo mục công việc lặp lại",
+        "no_permission": "Liên hệ quản trị viên dự án của bạn để tạo mục công việc lặp lại"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Công việc của bạn, tự động hóa",
+        "description": "Thiết lập một lần. Chúng tôi sẽ tự động lặp lại khi đến hạn. Nâng cấp lên Doanh nghiệp để công việc lặp lại trở nên dễ dàng."
+      },
+      "no_templates": {
+        "button": "Tạo mục công việc lặp lại đầu tiên của bạn"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Đã tạo mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, hiện đã có trong không gian làm việc của bạn."
+        },
+        "error": {
+          "title": "Không thể tạo mục công việc lặp lại lần này.",
+          "message": "Hãy thử lưu lại thông tin của bạn hoặc sao chép sang một mục công việc lặp lại mới, tốt nhất ở tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Đã thay đổi mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, đã được thay đổi."
+        },
+        "error": {
+          "title": "Không thể lưu thay đổi cho mục công việc lặp lại này.",
+          "message": "Hãy thử lưu lại thông tin hoặc quay lại mục công việc lặp lại này sau. Nếu vẫn gặp sự cố, hãy liên hệ với chúng tôi."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Đã xóa mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, đã bị xóa khỏi không gian làm việc của bạn."
+        },
+        "error": {
+          "title": "Không thể xóa mục công việc lặp lại này.",
+          "message": "Hãy thử xóa lại hoặc quay lại sau. Nếu vẫn không thể xóa, hãy liên hệ với chúng tôi."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Xóa mục công việc lặp lại",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn xóa mục công việc lặp lại-",
+        "suffix": "? Tất cả dữ liệu liên quan đến mục công việc lặp lại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    }
+  }
+}

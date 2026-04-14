@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Genel Bakış",
+    "label": "İnisiyatifler",
+    "placeholder": "{count, plural, one{# inisiyatif} other{# inisiyatif}}",
+    "add_initiative": "İnisiyatif Ekle",
+    "create_initiative": "İnisiyatif Oluştur",
+    "update_initiative": "İnisiyatif Güncelle",
+    "initiative_name": "İnisiyatif adı",
+    "all_initiatives": "Tüm İnisiyatifler",
+    "delete_initiative": "İnisiyatif Sil",
+    "fill_all_required_fields": "Lütfen tüm zorunlu alanları doldurun.",
+    "archive_description": "Yalnızca tamamlanmış veya kapatılmış inisiyatifler arşivlenebilir",
+    "toast": {
+      "create_success": "İnisiyatif {name} başarıyla oluşturuldu.",
+      "create_error": "İnisiyatif oluşturulamadı. Lütfen tekrar deneyin!",
+      "update_success": "İnisiyatif {name} başarıyla güncellendi.",
+      "update_error": "İnisiyatif güncellenemedi. Lütfen tekrar deneyin!",
+      "delete": {
+        "success": "İnisiyatif başarıyla silindi.",
+        "error": "İnisiyatif silinemedi"
+      },
+      "archive": {
+        "success": "İnisiyatif başarıyla arşivlendi.",
+        "error": "İnisiyatif arşivlenemedi",
+        "initiative_cannot_be_archived_in_this_state": "İnisiyatif bu durumda arşivlenemez"
+      },
+      "link_copied": "İnisiyatif bağlantısı panoya kopyalandı.",
+      "project_update_success": "İnisiyatif projeleri başarıyla güncellendi.",
+      "project_update_error": "İnisiyatif projeleri güncellenemedi. Lütfen tekrar deneyin!",
+      "epic_update_success": "Epik{count, plural, one { İnisiyatife başarıyla eklendi.} other {ler İnisiyatife başarıyla eklendi.}}",
+      "epic_update_error": "Epikin İnisiyatife eklenmesi başarısız oldu. Lütfen daha sonra tekrar deneyin.",
+      "state_update_success": "Girişim durumu başarıyla güncellendi.",
+      "state_update_error": "Girişim durumu güncellenemedi. Lütfen tekrar deneyin!",
+      "label_update_error": "Girişim etiketlerini güncelleme başarısız oldu. Lütfen tekrar deneyin!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "İnisiyatiflerle en üst düzeyde işleri organize edin",
+        "description": "Birkaç proje ve ekibi kapsayan işleri organize etmeniz gerektiğinde, İnisiyatifler işe yarar. Projeleri ve epikleri inisiyatiflere bağlayın, otomatik olarak toplanmış güncellemeleri görün ve ağaçlara ulaşmadan önce ormanları görün.",
+        "primary_button": {
+          "text": "Bir inisiyatif oluştur"
+        }
+      },
+      "search": {
+        "title": "Eşleşen inisiyatif yok",
+        "description": "Eşleşen kriterlere sahip inisiyatif tespit edilmedi.\n Bunun yerine yeni bir inisiyatif oluşturun.",
+        "archived_description": "Eşleşen kriterlere sahip arşivlenmiş inisiyatif tespit edilmedi."
+      },
+      "not_found": {
+        "title": "İnisiyatif mevcut değil",
+        "description": "Aradığınız İnisiyatif mevcut değil, arşivlenmiş veya silinmiş.",
+        "primary_button": {
+          "text": "Diğer İnisiyatifleri Görüntüle"
+        }
+      },
+      "epics": {
+        "title": "Eşleşen epik yok",
+        "subHeading": "Tüm epikleri görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
+      }
+    },
+    "scope": {
+      "view_scope": "Kapsamı görüntüle",
+      "breakdown": "Kapsamı çözümle",
+      "add_scope": "Kapsam ekle",
+      "label": "Kapsam",
+      "empty_state": {
+        "title": "Henüz kapsam eklenmedi",
+        "description": "Projeleri ve epikleri inisiyatife bağlayın ve bu alanda çalışmayı takip edin.",
+        "primary_button": {
+          "text": "Kapsam ekle"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Etiketler",
+        "description": "Girişimlerinizi etiketlerle yapılandırın ve düzenleyin."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Etiketi sil",
+        "content": "{labelName} etiketini silmek istediğinizden emin misiniz? Bu, etiketi tüm girişimlerden ve etikete göre filtrelenen tüm görünümlerden kaldıracaktır."
+      },
+      "toast": {
+        "delete_error": "Girişim etiketi silinemedi. Lütfen tekrar deneyin.",
+        "label_already_exists": "Etiket zaten var"
+      }
+    }
+  }
+}

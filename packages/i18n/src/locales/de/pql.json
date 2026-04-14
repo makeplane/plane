@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Aktuelles Datum und Uhrzeit"
+        },
+        "today": {
+          "description": "Heutiges Datum"
+        },
+        "start_of_day": {
+          "description": "Beginn des heutigen Tages"
+        },
+        "end_of_day": {
+          "description": "Ende des heutigen Tages"
+        },
+        "start_of_week": {
+          "description": "Beginn der aktuellen Woche"
+        },
+        "end_of_week": {
+          "description": "Ende der aktuellen Woche"
+        },
+        "start_of_month": {
+          "description": "Beginn des aktuellen Monats"
+        },
+        "end_of_month": {
+          "description": "Ende des aktuellen Monats"
+        },
+        "start_of_year": {
+          "description": "Beginn des aktuellen Jahres"
+        },
+        "end_of_year": {
+          "description": "Ende des aktuellen Jahres"
+        },
+        "days_ago": {
+          "description": "Datum vor n Tagen"
+        },
+        "days_from_now": {
+          "description": "Datum in n Tagen"
+        },
+        "weeks_ago": {
+          "description": "Datum vor n Wochen"
+        },
+        "weeks_from_now": {
+          "description": "Datum in n Wochen"
+        },
+        "months_ago": {
+          "description": "Datum vor n Monaten"
+        },
+        "months_from_now": {
+          "description": "Datum in n Monaten"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Aktuell angemeldeter Benutzer"
+        },
+        "members_of": {
+          "description": "Mitglieder von \"project:<id>\" oder \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Alle Arbeitsbereich-Mitglieder"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Heute aktiver Zyklus"
+        },
+        "completed_cycles": {
+          "description": "Zyklen, deren Enddatum vergangen ist"
+        },
+        "upcoming_cycles": {
+          "description": "Zyklen, deren Startdatum in der Zukunft liegt"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Fälligkeitsdatum ist vergangen UND Status ist offen"
+        },
+        "has_no_assignee": {
+          "description": "Arbeitselement hat keinen Verantwortlichen"
+        },
+        "has_no_label": {
+          "description": "Arbeitselement hat keine Etiketten"
+        },
+        "is_top_level": {
+          "description": "Kein Unter-Arbeitselement (kein übergeordnetes Element)"
+        },
+        "is_sub_work_item": {
+          "description": "Ist ein Unter-Arbeitselement (hat ein übergeordnetes Element)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "Ist ein Eingangs-Arbeitselement"
+        },
+        "is_draft": {
+          "description": "Ist ein Entwurf"
+        },
+        "is_archived": {
+          "description": "Ist archiviert"
+        },
+        "has_children": {
+          "description": "Hat mindestens ein Unter-Arbeitselement"
+        },
+        "has_start_and_due_dates": {
+          "description": "Hat sowohl Start- als auch Fälligkeitsdatum"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Arbeitselemente, die mit dem gegebenen Element verknüpft sind"
+        },
+        "blocked_by": {
+          "description": "Arbeitselemente, die durch das gegebene Element blockiert werden"
+        },
+        "blocks": {
+          "description": "Arbeitselemente, die das gegebene Element blockieren"
+        },
+        "child_of": {
+          "description": "Unter-Arbeitselemente des gegebenen Elements"
+        },
+        "parent_of": {
+          "description": "Übergeordnetes Arbeitselement des gegebenen Elements"
+        },
+        "duplicate_of": {
+          "description": "Arbeitselemente, die als Duplikate des gegebenen Elements markiert sind"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Feld wurde jemals auf diesen Wert gesetzt"
+        },
+        "was": {
+          "description": "Feld hatte zuvor diesen Wert (wurde geändert)"
+        },
+        "changed_from": {
+          "description": "Feld wurde von diesem Wert geändert"
+        },
+        "changed_to": {
+          "description": "Feld wurde auf diesen Wert geändert"
+        },
+        "changed": {
+          "description": "Feld wurde geändert"
+        },
+        "updated_by": {
+          "description": "Arbeitselement von diesem Benutzer aktualisiert"
+        },
+        "commented_by": {
+          "description": "Arbeitselement von diesem Benutzer kommentiert"
+        },
+        "field_changed_by": {
+          "description": "Feld von diesem Benutzer geändert"
+        },
+        "was_assigned_to": {
+          "description": "Arbeitselement wurde diesem Benutzer zugewiesen"
+        },
+        "changed_after": {
+          "description": "Feld nach diesem Datum geändert"
+        },
+        "changed_before": {
+          "description": "Feld vor diesem Datum geändert"
+        },
+        "field_changed_after": {
+          "description": "Feld nach diesem Datum geändert"
+        },
+        "field_changed_before": {
+          "description": "Feld vor diesem Datum geändert"
+        },
+        "changed_to_after": {
+          "description": "Feld nach diesem Datum auf diesen Wert geändert"
+        },
+        "changed_to_before": {
+          "description": "Feld vor diesem Datum auf diesen Wert geändert"
+        },
+        "field_changed_between": {
+          "description": "Feld zwischen diesen Daten geändert"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "navigieren",
+      "accept": "akzeptieren",
+      "close": "schließen",
+      "pick_date": "Datum auswählen"
+    },
+    "placeholder": "Geben Sie eine Abfrage ein und drücken Sie \"ENTER\" zum Filtern...",
+    "error": "Fehler beim Senden der Abfrage. Bitte überprüfen Sie und versuchen Sie es erneut."
+  }
+}

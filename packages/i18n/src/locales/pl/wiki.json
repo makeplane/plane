@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Ogólne",
+      "private": "Prywatne",
+      "shared": "Udostępnione",
+      "archived": "Zarchiwizowane"
+    },
+    "fallback_name": "Kolekcja",
+    "form": {
+      "name_required": "Tytuł kolekcji jest wymagany",
+      "name_max_length": "Nazwa kolekcji musi mieć mniej niż 255 znaków",
+      "name_placeholder_create": "Nadaj kolekcji tytuł",
+      "name_placeholder_edit": "Nazwa kolekcji"
+    },
+    "create_modal": {
+      "title": "Utwórz kolekcję",
+      "submit": "Utwórz kolekcję"
+    },
+    "edit_modal": {
+      "title": "Edytuj kolekcję"
+    },
+    "delete_modal": {
+      "title": "Usuń kolekcję",
+      "page_count": "Ta kolekcja zawiera {pageCount} stron. Wybierz, co ma się z nimi stać.",
+      "transfer_title": "Przenieś strony i usuń kolekcję",
+      "transfer_description": "Przed usunięciem przenieś wszystkie strony do innej kolekcji. Strony i ich uprawnienia zostaną zachowane.",
+      "transfer_warning": "Przeniesione strony odziedziczą uprawnienia wybranej kolekcji.",
+      "transfer_target_label": "Przenieś strony do",
+      "transfer_target_placeholder": "Wybierz kolekcję",
+      "delete_with_pages_title": "Usuń kolekcję wraz ze stronami",
+      "delete_with_pages_description": "Trwale usuwa kolekcję i wszystkie jej strony. Tej operacji nie można cofnąć.",
+      "submit": "Usuń kolekcję"
+    },
+    "header": {
+      "add_page": "Dodaj stronę"
+    },
+    "menu": {
+      "create_new_page": "Utwórz nową stronę",
+      "add_existing_page": "Dodaj istniejącą stronę",
+      "edit_collection": "Edytuj kolekcję",
+      "collection_options": "Opcje kolekcji"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Szukaj stron",
+      "success_message": "Dodano {count} stron do kolekcji.",
+      "error_message": "Nie udało się przenieść stron. Spróbuj ponownie.",
+      "no_pages_found": "Nie znaleziono stron pasujących do wyszukiwania",
+      "no_pages_available": "Brak stron dostępnych do przeniesienia",
+      "submit": "Przenieś"
+    },
+    "list": {
+      "invite_only": "Tylko na zaproszenie",
+      "remove_error": "Nie udało się usunąć strony z kolekcji.",
+      "no_matching_pages": "Brak pasujących stron",
+      "remove_search_criteria": "Usuń kryteria wyszukiwania, aby zobaczyć wszystkie strony",
+      "remove_filters": "Usuń filtry, aby zobaczyć wszystkie strony",
+      "no_pages_title": "Nie ma jeszcze żadnych stron",
+      "no_pages_description": "Ta kolekcja nie ma jeszcze żadnych stron.",
+      "untitled": "Bez tytułu",
+      "restricted_access": "Ograniczony dostęp",
+      "collapse_page": "Zwiń stronę",
+      "expand_page": "Rozwiń stronę",
+      "page_actions": "Akcje strony",
+      "page_link_copied": "Link do strony skopiowano do schowka.",
+      "columns": {
+        "page_name": "Nazwa strony",
+        "owner": "Właściciel",
+        "nested_pages": "Zagnieżdżone strony",
+        "last_activity": "Ostatnia aktywność",
+        "actions": "Akcje"
+      }
+    },
+    "toasts": {
+      "created": "Kolekcja została utworzona.",
+      "create_error": "Nie udało się utworzyć kolekcji. Spróbuj ponownie.",
+      "renamed": "Nazwa kolekcji została zmieniona.",
+      "rename_error": "Nie udało się zaktualizować kolekcji. Spróbuj ponownie.",
+      "transferred_deleted": "Strony zostały przeniesione, a kolekcja usunięta.",
+      "deleted_with_pages": "Kolekcja i jej strony zostały usunięte.",
+      "delete_error": "Nie udało się usunąć kolekcji. Spróbuj ponownie.",
+      "target_required": "Wybierz kolekcję, do której chcesz przenieść strony.",
+      "create_page_error": "Nie udało się utworzyć strony. Spróbuj ponownie.",
+      "create_page_in_collection_error": "Nie udało się utworzyć strony lub dodać jej do kolekcji. Spróbuj ponownie.",
+      "collection_link_copied": "Link do kolekcji skopiowano do schowka."
+    }
+  }
+}

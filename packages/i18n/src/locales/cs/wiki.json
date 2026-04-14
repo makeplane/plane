@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Obecné",
+      "private": "Soukromé",
+      "shared": "Sdílené",
+      "archived": "Archivované"
+    },
+    "fallback_name": "Kolekce",
+    "form": {
+      "name_required": "Název kolekce je povinný",
+      "name_max_length": "Název kolekce musí mít méně než 255 znaků",
+      "name_placeholder_create": "Zadejte název kolekce",
+      "name_placeholder_edit": "Název kolekce"
+    },
+    "create_modal": {
+      "title": "Vytvořit kolekci",
+      "submit": "Vytvořit kolekci"
+    },
+    "edit_modal": {
+      "title": "Upravit kolekci"
+    },
+    "delete_modal": {
+      "title": "Smazat kolekci",
+      "page_count": "Tato kolekce obsahuje {pageCount} stránek. Zvolte, co se s nimi stane.",
+      "transfer_title": "Přesunout stránky a smazat kolekci",
+      "transfer_description": "Před smazáním přesuňte všechny stránky do jiné kolekce. Stránky i jejich oprávnění zůstanou zachovány.",
+      "transfer_warning": "Přesunuté stránky převezmou oprávnění vybrané kolekce.",
+      "transfer_target_label": "Přesunout stránky do",
+      "transfer_target_placeholder": "Vyberte kolekci",
+      "delete_with_pages_title": "Smazat kolekci i se stránkami",
+      "delete_with_pages_description": "Trvale smaže kolekci i všechny její stránky. Tuto akci nelze vrátit zpět.",
+      "submit": "Smazat kolekci"
+    },
+    "header": {
+      "add_page": "Přidat stránku"
+    },
+    "menu": {
+      "create_new_page": "Vytvořit novou stránku",
+      "add_existing_page": "Přidat existující stránku",
+      "edit_collection": "Upravit kolekci",
+      "collection_options": "Možnosti kolekce"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Hledat stránky",
+      "success_message": "Do kolekce bylo přidáno {count} stránek.",
+      "error_message": "Stránky se nepodařilo přesunout. Zkuste to prosím znovu.",
+      "no_pages_found": "Nebyly nalezeny žádné stránky odpovídající vašemu hledání",
+      "no_pages_available": "Žádné stránky k přesunu",
+      "submit": "Přesunout"
+    },
+    "list": {
+      "invite_only": "Pouze na pozvání",
+      "remove_error": "Nepodařilo se odebrat stránku z kolekce.",
+      "no_matching_pages": "Žádné odpovídající stránky",
+      "remove_search_criteria": "Odstraňte kritéria vyhledávání a zobrazí se všechny stránky",
+      "remove_filters": "Odstraňte filtry a zobrazí se všechny stránky",
+      "no_pages_title": "Zatím žádné stránky",
+      "no_pages_description": "Tato kolekce zatím neobsahuje žádné stránky.",
+      "untitled": "Bez názvu",
+      "restricted_access": "Omezený přístup",
+      "collapse_page": "Sbalit stránku",
+      "expand_page": "Rozbalit stránku",
+      "page_actions": "Akce stránky",
+      "page_link_copied": "Odkaz na stránku byl zkopírován do schránky.",
+      "columns": {
+        "page_name": "Název stránky",
+        "owner": "Vlastník",
+        "nested_pages": "Vnořené stránky",
+        "last_activity": "Poslední aktivita",
+        "actions": "Akce"
+      }
+    },
+    "toasts": {
+      "created": "Kolekce byla úspěšně vytvořena.",
+      "create_error": "Kolekci se nepodařilo vytvořit. Zkuste to prosím znovu.",
+      "renamed": "Kolekce byla úspěšně přejmenována.",
+      "rename_error": "Kolekci se nepodařilo aktualizovat. Zkuste to prosím znovu.",
+      "transferred_deleted": "Stránky byly přesunuty a kolekce smazána.",
+      "deleted_with_pages": "Kolekce i její stránky byly smazány.",
+      "delete_error": "Kolekci se nepodařilo smazat. Zkuste to prosím znovu.",
+      "target_required": "Vyberte prosím kolekci, do které chcete stránky přesunout.",
+      "create_page_error": "Stránku se nepodařilo vytvořit. Zkuste to prosím znovu.",
+      "create_page_in_collection_error": "Stránku se nepodařilo vytvořit nebo přidat do kolekce. Zkuste to prosím znovu.",
+      "collection_link_copied": "Odkaz na kolekci byl zkopírován do schránky."
+    }
+  }
+}

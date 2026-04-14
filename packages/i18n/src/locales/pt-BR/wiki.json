@@ -1,0 +1,88 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Geral",
+      "private": "Privado",
+      "shared": "Compartilhado",
+      "archived": "Arquivado"
+    },
+    "fallback_name": "Coleção",
+    "form": {
+      "name_required": "O título da coleção é obrigatório",
+      "name_max_length": "O nome da coleção deve ter menos de 255 caracteres",
+      "name_placeholder_create": "Dê um título para a coleção",
+      "name_placeholder_edit": "Nome da coleção"
+    },
+    "create_modal": {
+      "title": "Criar uma coleção",
+      "submit": "Criar coleção"
+    },
+    "edit_modal": {
+      "title": "Editar coleção"
+    },
+    "delete_modal": {
+      "title": "Excluir coleção",
+      "page_count": "Esta coleção tem {pageCount} páginas. Escolha o que deve acontecer com elas.",
+      "transfer_title": "Transferir páginas e excluir coleção",
+      "transfer_description": "Mova todas as páginas para outra coleção antes de excluir. As páginas e suas permissões serão preservadas.",
+      "transfer_warning": "As páginas movidas herdarão as permissões da coleção selecionada.",
+      "transfer_target_label": "Mover páginas para",
+      "transfer_target_placeholder": "Selecione uma coleção",
+      "delete_with_pages_title": "Excluir coleção com páginas",
+      "delete_with_pages_description": "Exclui permanentemente a coleção e todas as suas páginas. Esta ação não pode ser desfeita.",
+      "submit": "Excluir coleção"
+    },
+    "header": {
+      "add_page": "Adicionar página"
+    },
+    "menu": {
+      "create_new_page": "Criar nova página",
+      "add_existing_page": "Adicionar página existente",
+      "edit_collection": "Editar coleção",
+      "collection_options": "Opções da coleção"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Pesquisar páginas",
+      "success_message": "{count} páginas adicionadas à coleção.",
+      "error_message": "Não foi possível mover as páginas. Tente novamente.",
+      "no_pages_found": "Nenhuma página encontrada para a sua busca",
+      "no_pages_available": "Nenhuma página disponível para mover",
+      "submit": "Mover"
+    },
+    "list": {
+      "invite_only": "Somente por convite",
+      "remove_error": "Não foi possível remover a página da coleção.",
+      "no_matching_pages": "Nenhuma página correspondente",
+      "remove_search_criteria": "Remova os critérios de busca para ver todas as páginas",
+      "remove_filters": "Remova os filtros para ver todas as páginas",
+      "no_pages_title": "Ainda não há páginas",
+      "no_pages_description": "Esta coleção ainda não tem páginas.",
+      "untitled": "Sem título",
+      "restricted_access": "Acesso restrito",
+      "collapse_page": "Recolher página",
+      "expand_page": "Expandir página",
+      "page_actions": "Ações da página",
+      "page_link_copied": "Link da página copiado para a área de transferência.",
+      "columns": {
+        "page_name": "Nome da página",
+        "owner": "Proprietário",
+        "nested_pages": "Páginas aninhadas",
+        "last_activity": "Última atividade",
+        "actions": "Ações"
+      }
+    },
+    "toasts": {
+      "created": "Coleção criada com sucesso.",
+      "create_error": "Não foi possível criar a coleção. Tente novamente.",
+      "renamed": "Coleção renomeada com sucesso.",
+      "rename_error": "Não foi possível atualizar a coleção. Tente novamente.",
+      "transferred_deleted": "As páginas foram transferidas e a coleção foi excluída.",
+      "deleted_with_pages": "A coleção e suas páginas foram excluídas.",
+      "delete_error": "Não foi possível excluir a coleção. Tente novamente.",
+      "target_required": "Selecione uma coleção para mover as páginas.",
+      "create_page_error": "Não foi possível criar a página. Tente novamente.",
+      "create_page_in_collection_error": "Não foi possível criar a página ou adicioná-la à coleção. Tente novamente.",
+      "collection_link_copied": "Link da coleção copiado para a área de transferência."
+    }
+  }
+}

@@ -1,0 +1,377 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Client} other {Clienți}}",
+    "open": "Deschide client",
+    "dropdown": {
+      "placeholder": "Selectează client",
+      "required": "Te rugăm să selectezi un client",
+      "no_selection": "Niciun client"
+    },
+    "upgrade": {
+      "title": "Prioritizează și gestionează munca cu Clienți.",
+      "description": "Mapează munca ta la clienți și prioritizează după atributele clientului."
+    },
+    "properties": {
+      "default": {
+        "title": "Proprietăți implicite",
+        "customer_name": {
+          "name": "Numele clientului",
+          "placeholder": "Acesta poate fi numele persoanei sau afacerii",
+          "validation": {
+            "required": "Numele clientului este obligatoriu.",
+            "max_length": "Numele clientului nu poate depăși 255 de caractere."
+          }
+        },
+        "description": {
+          "name": "Descriere",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Introduceți email",
+          "validation": {
+            "required": "Email-ul este obligatoriu.",
+            "pattern": "Adresă de email invalidă."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Orice URL cu https:// va funcționa.",
+          "placeholder_short": "Adaugă website",
+          "validation": {
+            "pattern": "URL de website invalid"
+          }
+        },
+        "employees": {
+          "name": "Angajați",
+          "placeholder": "Numărul de angajați dacă clientul tău este o afacere.",
+          "validation": {
+            "min_length": "Angajații nu pot fi mai puțini de 0."
+          }
+        },
+        "size": {
+          "name": "Dimensiune",
+          "placeholder": "Adaugă dimensiunea companiei",
+          "validation": {
+            "min_length": "Dimensiune invalidă"
+          }
+        },
+        "domain": {
+          "name": "Industrie",
+          "placeholder": "Retail, e-Commerce, Fintech, Banking",
+          "placeholder_short": "Adaugă industrie",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Etapă",
+          "placeholder": "Selectează etapa",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Stare Contract",
+          "placeholder": "Selectează starea contractului",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Venit",
+          "placeholder": "Acesta este venitul pe care clientul tău îl generează anual.",
+          "validation": {
+            "min_length": "Venitul nu poate fi mai mic de 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Proprietăți personalizate",
+        "info": "Adaugă atributele unice ale clienților tăi în Plane astfel încât să poți gestiona mai bine elementele de lucru sau înregistrările clienților."
+      },
+      "empty_state": {
+        "title": "Nu ai încă nicio proprietate personalizată.",
+        "description": "Proprietățile personalizate pe care ai dori să le vezi în elementele de lucru, în altă parte din Plane sau în afara Plane într-un CRM sau alt instrument, vor apărea aici când le adaugi."
+      },
+      "add": {
+        "primary_button": "Adaugă proprietate nouă"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Lead calificat pentru vânzări",
+      "contract_negotiation": "Negociere contract",
+      "closed_won": "Câștigat închis",
+      "closed_lost": "Pierdut închis"
+    },
+    "contract_status": {
+      "active": "Activ",
+      "pre_contract": "Pre-contract",
+      "signed": "Semnat",
+      "inactive": "Inactiv"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Nu am putut găsi acea înregistrare a clientului.",
+        "description": "Link-ul către această înregistrare ar putea fi greșit sau această înregistrare ar fi putut fi ștearsă.",
+        "primary_button": "Mergi la clienți",
+        "secondary_button": "Adaugă un client"
+      },
+      "search": {
+        "title": "Se pare că nu ai înregistrări de clienți care să corespundă acelui termen.",
+        "description": "Încearcă cu un alt termen de căutare sau contactează-ne dacă ești sigur că ar trebui să vezi rezultate pentru acel termen."
+      },
+      "list": {
+        "title": "Gestionează volumul, cadența și fluxul muncii tale în funcție de ce este important pentru clienții tăi.",
+        "description": "Cu Clienți, o funcție exclusivă Plane, poți crea acum noi clienți de la zero și să-i conectezi la munca ta. În curând, îi vei putea aduce din alte instrumente împreună cu atributele lor personalizate care contează pentru tine.",
+        "primary_button": "Adaugă primul tău client"
+      }
+    },
+    "settings": {
+      "unauthorized": "Nu ești autorizat să accesezi această pagină.",
+      "description": "Urmărește și gestionează relațiile cu clienții în fluxul tău de lucru.",
+      "enable": "Activează Clienți",
+      "toasts": {
+        "enable": {
+          "loading": "Se activează funcția de clienți...",
+          "success": {
+            "title": "Ai activat Clienți pentru acest workspace.",
+            "message": "Nu o poți dezactiva din nou."
+          },
+          "error": {
+            "title": "Nu am putut activa Clienți de această dată.",
+            "message": "Încearcă din nou sau revino la acest ecran mai târziu. Dacă tot nu funcționează.",
+            "action": "Vorbește cu suportul"
+          }
+        },
+        "disable": {
+          "loading": "Se dezactivează funcția de clienți...",
+          "success": {
+            "title": "Clienți dezactivați",
+            "message": "Funcția de clienți a fost dezactivată cu succes!"
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Nu s-a putut dezactiva funcția de clienți!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Nu am putut obține lista ta de clienți.",
+          "message": "Încearcă din nou sau reîmprospătează această pagină."
+        }
+      },
+      "copy_link": {
+        "title": "Ai copiat link-ul direct către acest client.",
+        "message": "Lipește-l oriunde și va duce direct înapoi aici."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} este acum disponibil",
+          "message": "Poți face referire la acest client în elementele de lucru și poți urmări, de asemenea, cererile de la ei.",
+          "actions": {
+            "view": "Vizualizează",
+            "copy_link": "Copiază link",
+            "copied": "Copiat!"
+          }
+        },
+        "error": {
+          "title": "Nu am putut crea acea înregistrare de această dată.",
+          "message": "Încearcă să o salvezi din nou sau copiază textul nesalvat într-o intrare nouă, de preferință într-o altă filă."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Client actualizat cu succes!"
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Nu s-a putut actualiza clientul. Încearcă din nou!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Nu am putut încărca logo-ul clientului.",
+          "message": "Încearcă să salvezi logo-ul din nou sau începe de la zero."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Ai eliminat un element de lucru din înregistrarea acestui client.",
+            "message": "Am eliminat automat acest client și din elementul de lucru."
+          },
+          "error": {
+            "title": "Nu am putut elimina acel element de lucru din înregistrarea acestui client de această dată.",
+            "message": "Am eliminat automat acest client și din elementul de lucru."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Nu am putut adăuga acel element de lucru la înregistrarea acestui client de această dată.",
+            "message": "Încearcă să adaugi acel element de lucru din nou sau revino la el mai târziu. Dacă tot nu funcționează, contactează-ne."
+          },
+          "success": {
+            "title": "Ai adăugat un element de lucru la înregistrarea acestui client.",
+            "message": "Am adăugat automat acest client și la elementul de lucru."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Editează",
+      "copy_link": "Copiază link către client",
+      "delete": "Șterge"
+    },
+    "create": {
+      "label": "Creează înregistrare client",
+      "loading": "Se creează",
+      "cancel": "Anulează"
+    },
+    "update": {
+      "label": "Actualizează client",
+      "loading": "Se actualizează"
+    },
+    "delete": {
+      "title": "Ești sigur că vrei să ștergi înregistrarea clientului {customer_name}?",
+      "description": "Toate datele asociate cu această înregistrare vor fi șterse permanent. Nu poți restaura această înregistrare mai târziu."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Nu există încă cereri de arătat.",
+          "description": "Creează cereri de la clienții tăi pentru a le putea lega de elementele de lucru.",
+          "button": "Adaugă cerere nouă"
+        },
+        "search": {
+          "title": "Se pare că nu ai cereri care să corespundă acelui termen.",
+          "description": "Încearcă cu un alt termen de căutare sau contactează-ne dacă ești sigur că ar trebui să vezi rezultate pentru acel termen."
+        }
+      },
+      "label": "{count, plural, one {Cerere} other {Cereri}}",
+      "add": "Adaugă cerere",
+      "create": "Creează cerere",
+      "update": "Actualizează cerere",
+      "form": {
+        "name": {
+          "placeholder": "Denumește această cerere",
+          "validation": {
+            "required": "Numele este obligatoriu.",
+            "max_length": "Numele cererii nu trebuie să depășească 255 de caractere."
+          }
+        },
+        "description": {
+          "placeholder": "Descrie natura cererii sau lipește comentariul acestui client din alt instrument."
+        },
+        "source": {
+          "add": "Adaugă sursă",
+          "update": "Actualizează sursă",
+          "url": {
+            "label": "URL",
+            "required": "URL-ul este obligatoriu",
+            "invalid": "URL de website invalid"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Link copiat",
+          "message": "Link-ul cererii clientului a fost copiat în clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Se încarcă atașamentul...",
+            "success": {
+              "title": "Atașament încărcat",
+              "message": "Atașamentul a fost încărcat cu succes."
+            },
+            "error": {
+              "title": "Atașament neîncărcat",
+              "message": "Atașamentul nu a putut fi încărcat."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Eroare!",
+              "message": "Doar un fișier poate fi încărcat la un moment dat."
+            }
+          },
+          "length": {
+            "message": "Fișierul trebuie să aibă {size}MB sau mai puțin în dimensiune"
+          },
+          "remove": {
+            "success": {
+              "title": "Atașament eliminat",
+              "message": "Atașamentul a fost eliminat cu succes"
+            },
+            "error": {
+              "title": "Atașament neeliminat",
+              "message": "Atașamentul nu a putut fi eliminat"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Succes!",
+              "message": "Sursă actualizată cu succes!"
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut actualiza sursa."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-au putut adăuga elemente de lucru la cerere. Încearcă din nou."
+            },
+            "success": {
+              "title": "Succes!",
+              "message": "S-au adăugat elemente de lucru la cerere."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Cerere actualizată cu succes!",
+            "title": "Succes!"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut actualiza cererea. Încearcă din nou!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Cerere creată cu succes!",
+            "title": "Succes!"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut crea cererea. Încearcă din nou!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Elemente de lucru legate",
+      "link": "Leagă elemente de lucru",
+      "empty_state": {
+        "list": {
+          "title": "Se pare că nu ai încă elemente de lucru legate de acest client.",
+          "description": "Leagă elementele de lucru existente din orice proiect aici pentru a le putea urmări după acest client.",
+          "button": "Leagă element de lucru"
+        }
+      },
+      "action": {
+        "remove_epic": "Elimină epic",
+        "remove": "Elimină element de lucru"
+      }
+    },
+    "sidebar": {
+      "properties": "Proprietăți"
+    }
+  }
+}

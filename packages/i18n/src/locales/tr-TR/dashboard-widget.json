@@ -1,0 +1,350 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bar",
+          "long_label": "Bar çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik bar"
+            },
+            "stacked": {
+              "short_label": "Stekt",
+              "long_label": "Stekt bar"
+            },
+            "grouped": {
+              "short_label": "Grupd",
+              "long_label": "Grupd bar"
+            }
+          },
+          "orientation": {
+            "label": "Oryantasyon",
+            "horizontal": "Horizontal",
+            "vertical": "Vertikal",
+            "placeholder": "Oryantasyon ekle"
+          },
+          "bar_color": "Bar rengi"
+        },
+        "line_chart": {
+          "short_label": "Layn",
+          "long_label": "Layn çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik layn"
+            },
+            "multi_line": {
+              "short_label": "Multi-layn",
+              "long_label": "Multi-layn"
+            }
+          },
+          "line_color": "Layn rengi",
+          "line_type": {
+            "label": "Layn tipi",
+            "solid": "Solid",
+            "dashed": "Deşt",
+            "placeholder": "Layn tipi ekle"
+          }
+        },
+        "area_chart": {
+          "short_label": "Eriya",
+          "long_label": "Eriya çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik eriya"
+            },
+            "stacked": {
+              "short_label": "Stekt",
+              "long_label": "Stekt eriya"
+            },
+            "comparison": {
+              "short_label": "Komperisın",
+              "long_label": "Komperisın eriya"
+            }
+          },
+          "fill_color": "Fil rengi"
+        },
+        "donut_chart": {
+          "short_label": "Donıt",
+          "long_label": "Donıt çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik donıt"
+            },
+            "progress": {
+              "short_label": "Progrıs",
+              "long_label": "Progrıs donıt"
+            }
+          },
+          "center_value": "Sentır değeri",
+          "completed_color": "Tamamlanmış rengi"
+        },
+        "pie_chart": {
+          "short_label": "Pay",
+          "long_label": "Pay çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Pay"
+            }
+          },
+          "group": {
+            "label": "Grupd parçalar",
+            "group_thin_pieces": "İnce parçaları grupla",
+            "minimum_threshold": {
+              "label": "Minimum treşhold",
+              "placeholder": "Treşhold ekle"
+            },
+            "name_group": {
+              "label": "Grup ismi",
+              "placeholder": "\"5%'den az\""
+            }
+          },
+          "show_values": "Değerleri göster",
+          "value_type": {
+            "percentage": "Yüzde",
+            "count": "Sayı"
+          }
+        },
+        "number": {
+          "short_label": "Nambır",
+          "long_label": "Nambır",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Nambır"
+            }
+          },
+          "alignment": {
+            "label": "Tekst hizalama",
+            "left": "Sol",
+            "center": "Sentır",
+            "right": "Sağ",
+            "placeholder": "Tekst hizalama ekle"
+          },
+          "text_color": "Tekst rengi"
+        },
+        "table_chart": {
+          "short_label": "Tablo",
+          "long_label": "Tablo grafiği",
+          "chart_models": {
+            "basic": {
+              "short_label": "Temel",
+              "long_label": "Tablo"
+            }
+          },
+          "columns": "Sütunlar",
+          "rows": "Satırlar",
+          "rows_placeholder": "Satır ekle",
+          "configure_rows_hint": "Bu tabloyu görüntülemek için satırlar için bir özellik seçin."
+        }
+      },
+      "sections": {
+        "charts": "Çarts",
+        "text": "Tekst"
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Horayzın",
+        "earthen": "Örtın"
+      },
+      "common": {
+        "add_widget": "Vicıt ekle",
+        "widget_title": {
+          "label": "Bu vicıtı adlandır",
+          "placeholder": "örn., \"Dünkü yapılacaklar\", \"Hepsi Tamamlandı\""
+        },
+        "widget_type": "Vicıt tipi",
+        "date_group": {
+          "label": "Deyt grup",
+          "placeholder": "Deyt grup ekle"
+        },
+        "group_by": "Grup bay",
+        "stack_by": "Stek bay",
+        "daily": "Deyli",
+        "weekly": "Vikli",
+        "monthly": "Mantli",
+        "yearly": "Yirli",
+        "work_item_count": "Work aytım sayısı",
+        "estimate_point": "Estimeyt poynt",
+        "pending_work_item": "Bekleyen work aytımlar",
+        "completed_work_item": "Tamamlanmış work aytımlar",
+        "in_progress_work_item": "Devam eden work aytımlar",
+        "blocked_work_item": "Bloklanmış work aytımlar",
+        "work_item_due_this_week": "Bu hafta dolan work aytımlar",
+        "work_item_due_today": "Bugün dolan work aytımlar",
+        "color_scheme": {
+          "label": "Renkler şeması",
+          "placeholder": "Renk şeması ekle"
+        },
+        "smoothing": "Smuting",
+        "markers": "Markırlar",
+        "legends": "Lecınds",
+        "tooltips": "Tultips",
+        "opacity": {
+          "label": "Opasiti",
+          "placeholder": "Opasiti ekle"
+        },
+        "border": "Bordır",
+        "widget_configuration": "Vicıt konfigürasyonu",
+        "configure_widget": "Vicıtı konfigüre et",
+        "guides": "Gaydlar",
+        "style": "Stayl",
+        "area_appearance": "Eriya görünümü",
+        "comparison_line_appearance": "Komperisın-layn görünümü",
+        "add_property": "Properti ekle",
+        "add_metric": "Metrik ekle"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "stacked": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Stek bay için değer eksik."
+          },
+          "grouped": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Grup bay için değer eksik."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "multi_line": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Grup bay için değer eksik."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "stacked": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Stek bay için değer eksik."
+          },
+          "comparison": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "progress": {
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "number": {
+          "basic": {
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Sütunlar için değer eksik.",
+            "group_by": "Satırlar için değer eksik."
+          }
+        },
+        "ask_admin": "Bu vicıtı konfigüre etmesi için admininize sorun."
+      },
+      "upgrade_required": {
+        "title": "Bu vicıt tipi planınıza dahil değil."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Yeni deşbord oluştur",
+        "update": "Deşbordu güncelle"
+      },
+      "title": {
+        "label": "Deşbordunuzu adlandırın.",
+        "placeholder": "\"Projeler arası kapasite\", \"Takıma göre iş yükü\", \"Tüm projelerdeki durum\"",
+        "required_error": "Başlık gerekli"
+      },
+      "project": {
+        "label": "Projeleri seç",
+        "placeholder": "Bu projelerden gelen veriler bu deşbordu besleyecek.",
+        "required_error": "Projeler gerekli"
+      },
+      "filters_label": "Yukarıdaki veri kaynakları için filtreler ayarlayın",
+      "create_dashboard": "Deşbord oluştur",
+      "update_dashboard": "Deşbordu güncelle"
+    },
+    "delete_modal": {
+      "heading": "Deşbordu sil"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "İlerlemeni talep üzerine, kalıcı deşbordlarda sun.",
+        "description": "İhtiyacın olan herhangi bir deşbordu oluştur ve verilerinin görünümünü mükemmel sunum için özelleştir.",
+        "coming_soon_to_mobile": "Yakında mobil uygulamada",
+        "card_1": {
+          "title": "Tüm projelerin için",
+          "description": "Tüm projelerinle workspeysin tanrı-bakışı görünümünü al veya ilerleme görünümün için work verilerini dilimle."
+        },
+        "card_2": {
+          "title": "Pleyn'deki herhangi bir veri için",
+          "description": "Hazır Analitiks ve hazır Saykıl çartlarının ötesine geç ve timleri, inisiyatifleri veya başka şeyleri daha önce görmediğin gibi gör."
+        },
+        "card_3": {
+          "title": "Tüm deyta viz ihtiyaçların için",
+          "description": "Work verilerini tam istediğin gibi görmek ve göstermek için ince ayarlı kontrollerle birkaç özelleştirilebilir çart arasından seç."
+        },
+        "card_4": {
+          "title": "Talep üzerine ve kalıcı",
+          "description": "Verilerinin otomatik yenilenmesi, skop değişiklikleri için kontekstual flagler ve paylaşılabilir permalinklerle bir kere oluştur, sonsuza kadar sakla."
+        },
+        "card_5": {
+          "title": "Eksportlar ve şedyuld komslar",
+          "description": "Linklerin çalışmadığı zamanlar için, deşbordlarını tek seferlik PDF'lere çıkar veya steykholderslara otomatik olarak gönderilmek üzere şedyul et."
+        },
+        "card_6": {
+          "title": "Tüm devayslar için oto-leyavt",
+          "description": "İstediğin leyavt için vicıtlarını yeniden boyutlandır ve mobil, tablet ve diğer bravzırlarda aynı şekilde gör."
+        }
+      },
+      "dashboards_list": {
+        "title": "Verileri vicıtlarda vizualize et, deşbordlarını vicıtlarla oluştur ve en güncel halini talep üzerine gör.",
+        "description": "Deşbordlarını, verilerini belirttiğin skopta gösteren Kastım Vicıtlarla oluştur. Projeler ve timler arasındaki tüm işin için deşbordlar al ve talep üzerine takip için steykholderlarla permalinkler paylaş."
+      },
+      "dashboards_search": {
+        "title": "Bu bir deşbordun ismiyle eşleşmiyor.",
+        "description": "Kverinin doğru olduğundan emin ol veya başka bir kveri dene."
+      },
+      "widgets_list": {
+        "title": "Verilerini istediğin gibi vizualize et.",
+        "description": "Verilerini belirttiğin kaynaklardan istediğin şekilde görmek için laynlar, barlar, paylar ve diğer formatları kullan."
+      },
+      "widget_data": {
+        "title": "Burada görülecek bir şey yok",
+        "description": "Burada görmek için yenile veya veri ekle."
+      }
+    },
+    "common": {
+      "editing": "Editliniyor"
+    }
+  }
+}

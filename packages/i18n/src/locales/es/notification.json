@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Bandeja de entrada",
+    "page_label": "{workspace} - Bandeja de entrada",
+    "options": {
+      "mark_all_as_read": "Marcar todo como leído",
+      "mark_read": "Marcar como leído",
+      "mark_unread": "Marcar como no leído",
+      "refresh": "Actualizar",
+      "filters": "Filtros de bandeja de entrada",
+      "show_unread": "Mostrar no leídos",
+      "show_snoozed": "Mostrar pospuestos",
+      "show_archived": "Mostrar archivados",
+      "mark_archive": "Archivar",
+      "mark_unarchive": "Desarchivar",
+      "mark_snooze": "Posponer",
+      "mark_unsnooze": "Quitar posposición"
+    },
+    "toasts": {
+      "read": "Notificación marcada como leída",
+      "unread": "Notificación marcada como no leída",
+      "archived": "Notificación marcada como archivada",
+      "unarchived": "Notificación marcada como no archivada",
+      "snoozed": "Notificación pospuesta",
+      "unsnoozed": "Notificación posposición cancelada"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Selecciona para ver detalles."
+      },
+      "all": {
+        "title": "No hay elementos de trabajo asignados",
+        "description": "Las actualizaciones de elementos de trabajo asignados a ti se pueden\n ver aquí"
+      },
+      "mentions": {
+        "title": "No hay elementos de trabajo asignados",
+        "description": "Las actualizaciones de elementos de trabajo asignados a ti se pueden\n ver aquí"
+      }
+    },
+    "tabs": {
+      "all": "Todo",
+      "mentions": "Menciones"
+    },
+    "filter": {
+      "assigned": "Asignado a mí",
+      "created": "Creado por mí",
+      "subscribed": "Suscrito por mí"
+    },
+    "snooze": {
+      "1_day": "1 día",
+      "3_days": "3 días",
+      "5_days": "5 días",
+      "1_week": "1 semana",
+      "2_weeks": "2 semanas",
+      "custom": "Personalizado"
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Поточна дата та час"
+        },
+        "today": {
+          "description": "Сьогоднішня дата"
+        },
+        "start_of_day": {
+          "description": "Початок сьогодні"
+        },
+        "end_of_day": {
+          "description": "Кінець сьогодні"
+        },
+        "start_of_week": {
+          "description": "Початок поточного тижня"
+        },
+        "end_of_week": {
+          "description": "Кінець поточного тижня"
+        },
+        "start_of_month": {
+          "description": "Початок поточного місяця"
+        },
+        "end_of_month": {
+          "description": "Кінець поточного місяця"
+        },
+        "start_of_year": {
+          "description": "Початок поточного року"
+        },
+        "end_of_year": {
+          "description": "Кінець поточного року"
+        },
+        "days_ago": {
+          "description": "Дата n днів тому"
+        },
+        "days_from_now": {
+          "description": "Дата через n днів"
+        },
+        "weeks_ago": {
+          "description": "Дата n тижнів тому"
+        },
+        "weeks_from_now": {
+          "description": "Дата через n тижнів"
+        },
+        "months_ago": {
+          "description": "Дата n місяців тому"
+        },
+        "months_from_now": {
+          "description": "Дата через n місяців"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Поточний авторизований користувач"
+        },
+        "members_of": {
+          "description": "Учасники \"project:<id>\" або \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Усі учасники робочого простору"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Активний цикл сьогодні"
+        },
+        "completed_cycles": {
+          "description": "Цикли, дата закінчення яких минула"
+        },
+        "upcoming_cycles": {
+          "description": "Цикли, дата початку яких у майбутньому"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Термін виконання минув І стан відкритий"
+        },
+        "has_no_assignee": {
+          "description": "Робочий елемент не має виконавця"
+        },
+        "has_no_label": {
+          "description": "Робочий елемент не має міток"
+        },
+        "is_top_level": {
+          "description": "Не є підробочим елементом (немає батьківського)"
+        },
+        "is_sub_work_item": {
+          "description": "Є підробочим елементом (має батьківський)"
+        },
+        "is_epic": {
+          "description": "Епік"
+        },
+        "is_intake": {
+          "description": "Є вхідним робочим елементом"
+        },
+        "is_draft": {
+          "description": "Є чернеткою робочого елемента"
+        },
+        "is_archived": {
+          "description": "Заархівовано"
+        },
+        "has_children": {
+          "description": "Має принаймні один підробочий елемент"
+        },
+        "has_start_and_due_dates": {
+          "description": "Має дату початку та дату завершення"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Робочі елементи, пов'язані з даним елементом"
+        },
+        "blocked_by": {
+          "description": "Робочі елементи, заблоковані даним елементом"
+        },
+        "blocks": {
+          "description": "Робочі елементи, що блокують даний елемент"
+        },
+        "child_of": {
+          "description": "Підробочі елементи даного елемента"
+        },
+        "parent_of": {
+          "description": "Батьківський робочий елемент даного елемента"
+        },
+        "duplicate_of": {
+          "description": "Робочі елементи, позначені як дублікати даного елемента"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Поле колись мало це значення"
+        },
+        "was": {
+          "description": "Поле раніше мало це значення (змінено)"
+        },
+        "changed_from": {
+          "description": "Поле було змінено з цього значення"
+        },
+        "changed_to": {
+          "description": "Поле було змінено на це значення"
+        },
+        "changed": {
+          "description": "Поле було змінено"
+        },
+        "updated_by": {
+          "description": "Робочий елемент оновлено цим користувачем"
+        },
+        "commented_by": {
+          "description": "Робочий елемент прокоментовано цим користувачем"
+        },
+        "field_changed_by": {
+          "description": "Поле змінено цим користувачем"
+        },
+        "was_assigned_to": {
+          "description": "Робочий елемент призначено цьому користувачеві"
+        },
+        "changed_after": {
+          "description": "Поле змінено після цієї дати"
+        },
+        "changed_before": {
+          "description": "Поле змінено до цієї дати"
+        },
+        "field_changed_after": {
+          "description": "Поле змінено після цієї дати"
+        },
+        "field_changed_before": {
+          "description": "Поле змінено до цієї дати"
+        },
+        "changed_to_after": {
+          "description": "Поле змінено на це значення після цієї дати"
+        },
+        "changed_to_before": {
+          "description": "Поле змінено на це значення до цієї дати"
+        },
+        "field_changed_between": {
+          "description": "Поле змінено між цими датами"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "навігація",
+      "accept": "прийняти",
+      "close": "закрити",
+      "pick_date": "Вибрати дату"
+    },
+    "placeholder": "Введіть запит і натисніть \"ENTER\" для фільтрації...",
+    "error": "Помилка при надсиланні запиту. Перевірте та спробуйте ще раз."
+  }
+}

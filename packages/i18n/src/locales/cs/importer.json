@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "Importujte položky z repozitářů GitHub."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importujte položky a epiky z Jira."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exportujte položky do CSV.",
+      "short_description": "Exportovat jako CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Exportujte položky do Excelu.",
+      "short_description": "Exportovat jako Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exportujte položky do Excelu.",
+      "short_description": "Exportovat jako Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exportujte položky do JSON.",
+      "short_description": "Exportovat jako JSON"
+    }
+  },
+  "importers": {
+    "imports": "Importy",
+    "logo": "Logo",
+    "import_message": "Importujte svá data {serviceName} do projektů Plane.",
+    "deactivate": "Deaktivovat",
+    "deactivating": "Deaktivace",
+    "migrating": "Migrace",
+    "migrations": "Migrace",
+    "refreshing": "Obnovování",
+    "import": "Import",
+    "serial_number": "Č. poř.",
+    "project": "Projekt",
+    "workspace": "workspace",
+    "status": "Stav",
+    "summary": "Souhrn",
+    "total_batches": "Celkové dávky",
+    "imported_batches": "Importované dávky",
+    "re_run": "Znovu spustit",
+    "cancel": "Zrušit",
+    "start_time": "Čas zahájení",
+    "no_jobs_found": "Žádné úkoly nenalezeny",
+    "no_project_imports": "Ještě jste neimportovali žádné projekty {serviceName}.",
+    "cancel_import_job": "Zrušit úlohu importu",
+    "cancel_import_job_confirmation": "Opravdu chcete zrušit tuto úlohu importu? Tímto zastavíte proces importu pro tento projekt.",
+    "re_run_import_job": "Znovu spustit úlohu importu",
+    "re_run_import_job_confirmation": "Opravdu chcete znovu spustit tuto úlohu importu? Tímto restartujete proces importu pro tento projekt.",
+    "upload_csv_file": "Nahrajte CSV soubor pro import uživatelských dat.",
+    "connect_importer": "Připojit {serviceName}",
+    "migration_assistant": "Asistent migrace",
+    "migration_assistant_description": "Bezproblémově migrujte své projekty {serviceName} do Plane s naším výkonným asistentem.",
+    "token_helper": "Toto získáte od svého",
+    "personal_access_token": "Osobní přístupový token",
+    "source_token_expired": "Token vypršel",
+    "source_token_expired_description": "Poskytnutý token vypršel. Prosím, deaktivujte a znovu se připojte s novou sadou přihlašovacích údajů.",
+    "user_email": "Uživatelský e-mail",
+    "select_state": "Vyberte stav",
+    "select_service_project": "Vyberte projekt {serviceName}",
+    "loading_service_projects": "Načítání projektů {serviceName}",
+    "select_service_workspace": "Vyberte {serviceName} workspace",
+    "loading_service_workspaces": "Načítání {serviceName} workspace",
+    "select_priority": "Vyberte prioritu",
+    "select_service_team": "Vyberte tým {serviceName}",
+    "add_seat_msg_free_trial": "Snažíte se importovat {additionalUserCount} neregistrovaných uživatelů a máte pouze {currentWorkspaceSubscriptionAvailableSeats} dostupných míst v aktuálním plánu. Pro pokračování v importu nyní upgradujte.",
+    "add_seat_msg_paid": "Snažíte se importovat {additionalUserCount} neregistrovaných uživatelů a máte pouze {currentWorkspaceSubscriptionAvailableSeats} dostupných míst v aktuálním plánu. Pro pokračování v importu zakupte alespoň {extraSeatRequired} další místa.",
+    "skip_user_import_title": "Přeskočit import uživatelských dat",
+    "skip_user_import_description": "Přeskočení importu uživatelů povede k tomu, že pracovní položky, komentáře a další data z {serviceName} budou vytvořeny uživatelem provádějícím migraci v Plane. Uživatelé mohou být později stále přidáni ručně.",
+    "invalid_pat": "Neplatný osobní přístupový token"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Importujte svá Jira data do projektů Plane.",
+    "create_project_automatically": "Vytvořit projekt automaticky",
+    "create_project_automatically_description": "Vytvoříme pro vás nový projekt na základě podrobností o projektu Jira.",
+    "import_to_existing_project": "Importovat do existujícího projektu",
+    "import_to_existing_project_description": "Vyberte existující projekt z rozbalovací nabídky níže.",
+    "state_mapping_automatic_creation": "Všechny stavy Jira budou v Plane vytvořeny automaticky.",
+    "personal_access_token": "Osobní přístupový token",
+    "user_email": "Uživatelský e-mail",
+    "atlassian_security_settings": "Nastavení zabezpečení Atlassian",
+    "email_description": "Toto je e-mail spojený s vaším osobním přístupovým tokenem",
+    "jira_domain": "Jira doména",
+    "jira_domain_description": "Toto je doména vaší Jira instance",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá Jira data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_jira": "Nastavte Jira",
+      "description_configure_jira": "Vyberte Jira workspace, ze kterého chcete migrovat svá data.",
+      "title_import_users": "Importovat uživatele",
+      "description_import_users": "Přidejte uživatele, které chcete migrovat z Jira do Plane. Alternativně můžete tento krok přeskočit a uživatele přidat ručně později.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Automaticky jsme přiřadili stavy Jira k stavům Plane co nejlépe. Před pokračováním prosím mapujte jakékoli zbývající stavy, můžete také vytvořit stavy a mapovat je ručně.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Automaticky jsme přiřadili priority co nejlépe. Před pokračováním prosím mapujte jakékoli zbývající priority.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z Jira do Plane.",
+      "custom_jql_filter": "Vlastní filtr JQL",
+      "jql_filter_description": "Použijte JQL pro filtrování konkrétních úkolů pro import.",
+      "project_code": "PROJEKT",
+      "enter_filters_placeholder": "Zadejte filtry (např. status = 'In Progress')",
+      "validating_query": "Ověřování dotazu...",
+      "validation_successful_work_items_selected": "Ověření úspěšné, vybráno {count} pracovních položek.",
+      "run_syntax_check": "Spustit kontrolu syntaxe pro ověření dotazu",
+      "refresh": "Obnovit",
+      "check_syntax": "Zkontrolovat syntaxi",
+      "no_work_items_selected": "Dotaz nevybral žádné pracovní položky.",
+      "validation_error_default": "Při ověřování dotazu se něco pokazilo."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Importujte svá Asana data do projektů Plane.",
+    "select_asana_priority_field": "Vyberte Asana pole priority",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá Asana data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_asana": "Nastavte Asana",
+      "description_configure_asana": "Vyberte Asana workspace a projekt, ze kterého chcete migrovat svá data.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Vyberte stavy Asana, které chcete mapovat na stavy projektů Plane.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Vyberte priority Asana, které chcete mapovat na priority projektů Plane.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z Asana do Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Importujte svá Linear data do projektů Plane.",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá Linear data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_linear": "Nastavte Linear",
+      "description_configure_linear": "Vyberte tým Linear, ze kterého chcete migrovat svá data.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Automaticky jsme přiřadili stavy Linear k stavům Plane co nejlépe. Před pokračováním prosím mapujte jakékoli zbývající stavy, můžete také vytvořit stavy a mapovat je ručně.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Vyberte priority Linear, které chcete mapovat na priority projektů Plane.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z Linear do Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Importujte svá Jira Server/Data Center data do projektů Plane.",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá Jira data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_jira": "Nastavte Jira",
+      "description_configure_jira": "Vyberte workspace Jira, ze kterého chcete migrovat svá data.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Vyberte stavy Jira, které chcete mapovat na stavy projektů Plane.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Vyberte priority Jira, které chcete mapovat na priority projektů Plane.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z Jira do Plane."
+    },
+    "import_epics": {
+      "title": "Importovat epiky jako pracovní položky",
+      "description": "S touto aktivovanou funkcí budou vaše epiky importovány jako pracovní položky s typem pracovní položky epika."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Importujte svá data z Notion do projektů Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrát exportovaný ZIP z Notion",
+      "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Notion."
+    },
+    "upload": {
+      "drop_file_here": "Přetáhněte váš Notion zip soubor sem",
+      "upload_title": "Nahrát export z Notion",
+      "upload_from_url": "Importovat z URL",
+      "upload_from_url_description": "Pro pokračování vložte veřejnou URL adresu vašeho ZIP exportu.",
+      "drag_drop_description": "Přetáhněte váš Notion export zip soubor nebo klikněte pro procházení",
+      "file_type_restriction": "Podporovány jsou pouze .zip soubory exportované z Notion",
+      "select_file": "Vybrat soubor",
+      "uploading": "Nahrávání...",
+      "preparing_upload": "Příprava nahrávání...",
+      "confirming_upload": "Potvrzování nahrávání...",
+      "confirming": "Potvrzování...",
+      "upload_complete": "Nahrávání dokončeno",
+      "upload_failed": "Nahrávání selhalo",
+      "start_import": "Spustit import",
+      "retry_upload": "Opakovat nahrávání",
+      "upload": "Nahrát",
+      "ready": "Připraveno",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávání dokončeno!",
+      "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Notion.",
+      "upload_progress_message": "Prosím nezavírejte toto okno."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Importujte svá data z Confluence do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrát exportovaný ZIP z Confluence",
+      "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Přetáhněte váš Confluence zip soubor sem",
+      "upload_title": "Nahrát export z Confluence",
+      "upload_from_url": "Importovat z URL",
+      "upload_from_url_description": "Pro pokračování vložte veřejnou URL adresu vašeho ZIP exportu.",
+      "drag_drop_description": "Přetáhněte váš Confluence export zip soubor nebo klikněte pro procházení",
+      "file_type_restriction": "Podporovány jsou pouze .zip soubory exportované z Confluence",
+      "select_file": "Vybrat soubor",
+      "uploading": "Nahrávání...",
+      "preparing_upload": "Příprava nahrávání...",
+      "confirming_upload": "Potvrzování nahrávání...",
+      "confirming": "Potvrzování...",
+      "upload_complete": "Nahrávání dokončeno",
+      "upload_failed": "Nahrávání selhalo",
+      "start_import": "Spustit import",
+      "retry_upload": "Opakovat nahrávání",
+      "upload": "Nahrát",
+      "ready": "Připraveno",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávání dokončeno!",
+      "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Confluence.",
+      "upload_progress_message": "Prosím nezavírejte toto okno."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Importujte svá CSV data do projektů Plane.",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá CSV data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_csv": "Nastavte CSV",
+      "description_configure_csv": "Nahrajte svůj CSV soubor a nakonfigurujte pole, která mají být mapována na pole Plane."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "Importujte pracovní položky ze souborů CSV do projektů Plane.",
+    "steps": {
+      "title_select_project": "Vybrat projekt",
+      "description_select_project": "Vyberte prosím projekt Plane, kam chcete importovat své pracovní položky.",
+      "title_upload_csv": "Nahrát CSV",
+      "description_upload_csv": "Nahrajte svůj soubor CSV obsahující pracovní položky. Soubor by měl obsahovat sloupce pro název, popis, prioritu, data a skupinu stavů."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Importujte svá ClickUp data do projektů Plane.",
+    "select_service_space": "Vyberte {serviceName} Space",
+    "select_service_folder": "Vyberte {serviceName} Folder",
+    "selected": "Vybráno",
+    "users": "Uživatelé",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá ClickUp data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_clickup": "Nastavte ClickUp",
+      "description_configure_clickup": "Vyberte ClickUp tým, prostor a složku, ze které chcete migrovat svá data.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Automaticky jsme přiřadili ClickUp stavy k stavům Plane co nejlépe. Před pokračováním prosím mapujte jakékoli zbývající stavy, můžete také vytvořit stavy a mapovat je ručně.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Vyberte ClickUp priority, kterou chcete mapovat na priority projektů Plane.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z ClickUp do Plane.",
+      "pull_additional_data_title": "Importovat komentáře a přílohy"
+    }
+  }
+}

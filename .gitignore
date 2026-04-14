@@ -118,5 +118,6 @@ temp/
 apps/pi/tests/test_results.json
 
 scripts/
+!packages/i18n/scripts/
 
 .agents

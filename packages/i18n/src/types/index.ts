@@ -12,4 +12,4 @@
  */
 
 export * from "./language";
-export * from "./translation";
+export type { TTranslationKeys } from "./keys.generated";

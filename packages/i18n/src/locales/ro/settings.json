@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Schimbă e-mailul",
+        "description": "Introduceți o nouă adresă de e-mail pentru a primi un link de verificare.",
+        "toasts": {
+          "success_title": "Succes!",
+          "success_message": "E-mail actualizat cu succes. Conectați-vă din nou."
+        },
+        "form": {
+          "email": {
+            "label": "E-mail nou",
+            "placeholder": "Introduceți e-mailul",
+            "errors": {
+              "required": "E-mailul este obligatoriu",
+              "invalid": "E-mailul este invalid",
+              "exists": "E-mailul există deja. Folosiți altul.",
+              "validation_failed": "Validarea e-mailului a eșuat. Încercați din nou."
+            }
+          },
+          "code": {
+            "label": "Cod unic",
+            "placeholder": "123456",
+            "helper_text": "Codul de verificare a fost trimis la noul e-mail.",
+            "errors": {
+              "required": "Codul unic este obligatoriu",
+              "invalid": "Cod de verificare invalid. Încercați din nou."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continuă",
+          "confirm": "Confirmă",
+          "cancel": "Anulează"
+        },
+        "states": {
+          "sending": "Se trimite…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "Selectează vizualizarea implicită",
+      "compact": "Compact",
+      "full": "Ecran complet"
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Munca ta",
+    "work": "Muncă",
+    "details": {
+      "joined_on": "S-a înscris la",
+      "time_zone": "Fus orar"
+    },
+    "stats": {
+      "workload": "Volum de muncă",
+      "overview": "Prezentare generală",
+      "created": "Activități create",
+      "assigned": "Activități atribuite",
+      "subscribed": "Activități urmărite",
+      "state_distribution": {
+        "title": "Activități după stare",
+        "empty": "Creează activități pentru a le vedea distribuite pe stări în grafic, pentru o analiză mai bună."
+      },
+      "priority_distribution": {
+        "title": "Activități după prioritate",
+        "empty": "Creează activități pentru a le vedea distribuite pe priorități în grafic, pentru o analiză mai bună."
+      },
+      "recent_activity": {
+        "title": "Activitate recentă",
+        "empty": "Nu am găsit date. Te rugăm să verifici activitățile tale.",
+        "button": "Descarcă activitatea de azi",
+        "button_loading": "Se descarcă"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Securitate",
+      "activity": "Activitate",
+      "appearance": "Aspect",
+      "notifications": "Notificări",
+      "connections": "Conexiuni"
+    },
+    "tabs": {
+      "summary": "Sumar",
+      "assigned": "Atribuite",
+      "created": "Create",
+      "subscribed": "Urmărite",
+      "activity": "Activitate"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Nicio activitate încă",
+        "description": "Începe prin a crea o nouă activitate! Adaugă detalii și proprietăți. Explorează mai mult în Plane pentru a-ți vedea activitatea."
+      },
+      "assigned": {
+        "title": "Nicio activitate atribuită ție",
+        "description": "Elementele de lucru care ți-au fost atribuite pot fi urmărite de aici."
+      },
+      "created": {
+        "title": "Nicio activitate creată",
+        "description": "Toate activitățile create de tine vor apărea aici. Le poți urmări direct din această pagină."
+      },
+      "subscribed": {
+        "title": "Nicio activitate urmărită",
+        "description": "Abonează-te la activitățile care te interesează și urmărește-le pe toate aici."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferință sistem"
+      },
+      "light": {
+        "label": "Luminos"
+      },
+      "dark": {
+        "label": "Întunecat"
+      },
+      "light_contrast": {
+        "label": "Luminos cu contrast ridicat"
+      },
+      "dark_contrast": {
+        "label": "Întunecat cu contrast ridicat"
+      },
+      "custom": {
+        "label": "Temă personalizată"
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Vue d'ensemble",
+    "label": "Initiatives",
+    "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
+    "add_initiative": "Ajouter une initiative",
+    "create_initiative": "Créer une initiative",
+    "update_initiative": "Mettre à jour l'initiative",
+    "initiative_name": "Nom de l'initiative",
+    "all_initiatives": "Toutes les initiatives",
+    "delete_initiative": "Supprimer l'initiative",
+    "fill_all_required_fields": "Veuillez remplir tous les champs obligatoires.",
+    "archive_description": "Seules les initiatives terminées ou fermées peuvent être archivées",
+    "toast": {
+      "create_success": "Initiative {name} créée avec succès.",
+      "create_error": "Échec de la création de l'initiative. Veuillez réessayer !",
+      "update_success": "Initiative {name} mise à jour avec succès.",
+      "update_error": "Échec de la mise à jour de l'initiative. Veuillez réessayer !",
+      "delete": {
+        "success": "Initiative supprimée avec succès.",
+        "error": "Échec de la suppression de l'initiative"
+      },
+      "archive": {
+        "success": "Initiative archivée avec succès.",
+        "error": "Échec de l’archivage de l’initiative",
+        "initiative_cannot_be_archived_in_this_state": "L’initiative ne peut pas être archivée dans cet état"
+      },
+      "link_copied": "Lien de l'initiative copié dans le presse-papiers.",
+      "project_update_success": "Projets de l'initiative mis à jour avec succès.",
+      "project_update_error": "Échec de la mise à jour des projets de l'initiative. Veuillez réessayer !",
+      "epic_update_success": "Epic{count, plural, one { ajouté à l'initiative avec succès.} other {s ajoutés à l'initiative avec succès.}}",
+      "epic_update_error": "L'ajout d'Epic à l'initiative a échoué. Veuillez réessayer plus tard.",
+      "state_update_success": "L'état de l'initiative a été mis à jour avec succès.",
+      "state_update_error": "Échec de la mise à jour de l'état de l'initiative. Veuillez réessayer !",
+      "label_update_error": "Échec de la mise à jour des étiquettes de l'initiative. Veuillez réessayer !"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organisez le travail au plus haut niveau avec les Initiatives",
+        "description": "Lorsque vous devez organiser un travail s'étendant sur plusieurs projets et équipes, les Initiatives sont utiles. Connectez des projets et des Epics aux initiatives, voyez automatiquement les mises à jour regroupées et voyez la forêt avant les arbres.",
+        "primary_button": {
+          "text": "Créer une initiative"
+        }
+      },
+      "search": {
+        "title": "Aucune initiative correspondante",
+        "description": "Aucune initiative détectée avec les critères correspondants.\n Créez plutôt une nouvelle initiative.",
+        "archived_description": "Aucune initiative archivée détectée avec les critères correspondants."
+      },
+      "not_found": {
+        "title": "L'initiative n'existe pas",
+        "description": "L'initiative que vous recherchez n'existe pas, a été archivée ou a été supprimée.",
+        "primary_button": {
+          "text": "Voir les autres initiatives"
+        }
+      },
+      "epics": {
+        "title": "Vous n'avez pas d'Epics qui correspondent aux filtres que vous avez appliqués.",
+        "subHeading": "Pour voir tous les Epics, effacez tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      }
+    },
+    "scope": {
+      "view_scope": "Voir le périmètre",
+      "breakdown": "Décomposition du périmètre",
+      "add_scope": "Ajouter un périmètre",
+      "label": "Périmètre",
+      "empty_state": {
+        "title": "Aucun périmètre ajouté à cette initiative",
+        "description": "Connectez des projets et des épiques et suivez ce travail dans cet espace.",
+        "primary_button": {
+          "text": "Ajouter un périmètre"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Étiquettes",
+        "description": "Structurez et organisez vos initiatives avec des étiquettes."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Supprimer l'étiquette",
+        "content": "Êtes-vous sûr de vouloir supprimer {labelName} ? Cela supprimera l'étiquette de toutes les initiatives et de toutes les vues où elle est filtrée."
+      },
+      "toast": {
+        "delete_error": "L'étiquette de l'initiative n'a pas pu être supprimée. Veuillez réessayer.",
+        "label_already_exists": "L'étiquette existe déjà"
+      }
+    }
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Mẫu",
+      "description": "Lưu 80% thời gian đã tiêu tốn trong việc tạo dự án, mục công việc và trang khi bạn sử dụng các mẫu.",
+      "options": {
+        "project": {
+          "label": "Mẫu dự án"
+        },
+        "work_item": {
+          "label": "Mẫu mục công việc"
+        },
+        "page": {
+          "label": "Mẫu trang"
+        }
+      },
+      "create_template": {
+        "label": "Tạo mẫu",
+        "no_permission": {
+          "project": "Liên hệ quản trị dự án của bạn để tạo mẫu",
+          "workspace": "Liên hệ quản trị workspace của bạn để tạo mẫu"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Sử dụng mẫu",
+          "loading": "Đang áp dụng"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Được thừa kế từ workspace"
+        },
+        "project": {
+          "info": "Được thừa kế từ dự án"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu dự án của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Đặt tên cho dự án của bạn.",
+            "validation": {
+              "required": "Tên dự án là bắt buộc",
+              "maxLength": "Tên dự án không nên vượt quá 255 ký tự"
+            }
+          },
+          "description": {
+            "placeholder": "Mô tả mục tiêu và mục tiêu của dự án này."
+          },
+          "button": {
+            "create": "Tạo mẫu dự án",
+            "update": "Cập nhật mẫu dự án"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu mục công việc của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Đặt tên cho mục công việc của bạn.",
+            "validation": {
+              "required": "Tên mục công việc là bắt buộc",
+              "maxLength": "Tên mục công việc không nên vượt quá 255 ký tự"
+            }
+          },
+          "description": {
+            "placeholder": "Mô tả mục công việc này để rõ ràng những gì bạn sẽ hoàn thành khi hoàn tất điều này."
+          },
+          "button": {
+            "create": "Tạo mẫu mục công việc",
+            "update": "Cập nhật mẫu mục công việc"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu trang của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Trang không có tên",
+            "validation": {
+              "maxLength": "Tên trang không nên vượt quá 255 ký tự"
+            }
+          },
+          "button": {
+            "create": "Tạo mẫu trang",
+            "update": "Cập nhật mẫu trang"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Cài đặt xuất bản} other {Xuất bản lên Marketplace}}",
+          "unpublish_action": "Gỡ khỏi Marketplace",
+          "title": "Làm cho mẫu của bạn dễ khám phá và nhận biết.",
+          "name": {
+            "label": "Tên mẫu",
+            "placeholder": "Đặt tên cho mẫu của bạn",
+            "validation": {
+              "required": "Tên mẫu là bắt buộc",
+              "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+            }
+          },
+          "short_description": {
+            "label": "Mô tả ngắn",
+            "placeholder": "Mẫu này rất phù hợp cho các Quản lý Dự án đang quản lý nhiều dự án cùng lúc.",
+            "validation": {
+              "required": "Mô tả ngắn là bắt buộc"
+            }
+          },
+          "description": {
+            "label": "Mô tả",
+            "placeholder": "Nâng cao năng suất và tối ưu hóa giao tiếp với tính năng Chuyển đổi Giọng nói thành Văn bản.\n• Chuyển đổi thời gian thực: Chuyển đổi lời nói thành văn bản chính xác ngay lập tức.\n• Tạo nhiệm vụ và bình luận: Thêm nhiệm vụ, mô tả và bình luận thông qua lệnh thoại.",
+            "validation": {
+              "required": "Mô tả là bắt buộc"
+            }
+          },
+          "category": {
+            "label": "Danh mục",
+            "placeholder": "Chọn nơi bạn nghĩ phù hợp nhất. Bạn có thể chọn nhiều hơn một.",
+            "validation": {
+              "required": "Cần ít nhất một danh mục"
+            }
+          },
+          "keywords": {
+            "label": "Từ khóa",
+            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này.",
+            "helperText": "Nhập các từ khóa được phân tách bằng dấu phẩy, có khả năng giúp người dùng tìm kiếm từ khóa này.",
+            "validation": {
+              "required": "Cần ít nhất một từ khóa"
+            }
+          },
+          "company_name": {
+            "label": "Tên công ty",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Tên công ty là bắt buộc",
+              "maxLength": "Tên công ty không nên vượt quá 255 ký tự"
+            }
+          },
+          "contact_email": {
+            "label": "Email hỗ trợ",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Địa chỉ email không hợp lệ",
+              "required": "Email hỗ trợ là bắt buộc",
+              "maxLength": "Email hỗ trợ không nên vượt quá 255 ký tự"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Liên kết đến chính sách bảo mật của bạn",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Liên kết đến điều khoản sử dụng của bạn",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "cover_image": {
+            "label": "Thêm ảnh bìa sẽ được hiển thị trong marketplace",
+            "upload_title": "Tải lên ảnh bìa",
+            "upload_placeholder": "Nhấp để tải lên hoặc kéo và thả để tải lên ảnh bìa",
+            "drop_here": "Thả vào đây",
+            "click_to_upload": "Nhấp để tải lên",
+            "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước. Vui lòng thử lại.",
+            "upload_and_save": "Tải lên và lưu",
+            "uploading": "Đang tải lên",
+            "remove": "Xóa",
+            "removing": "Đang xóa",
+            "validation": {
+              "required": "Ảnh bìa là bắt buộc"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Bao gồm tài liệu và hình ảnh mà bạn nghĩ sẽ giúp người xem hiểu rõ hơn về mẫu này.",
+            "validation": {
+              "required": "Cần ít nhất một ảnh chụp màn hình"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Mẫu",
+        "description": "Với mẫu dự án, mẫu mục công việc và mẫu trang trong Plane, bạn không phải tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc theo cách thủ công.",
+        "sub_description": "Nhận lại 80% thời gian quản lý của bạn khi bạn sử dụng Mẫu."
+      },
+      "no_templates": {
+        "button": "Tạo mẫu của bạn"
+      },
+      "no_labels": {
+        "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "no_work_items": {
+        "description": "Chưa có mục công việc nào. Thêm một để cấu trúc công việc của bạn tốt hơn."
+      },
+      "no_sub_work_items": {
+        "description": "Chưa có mục công việc con. Thêm một để cấu trúc công việc của bạn tốt hơn."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Không có mẫu nào mà bạn có quyền truy cập.",
+          "description": "Vui lòng tạo một mẫu"
+        },
+        "no_results": {
+          "title": "Điều đó không khớp với mẫu nào.",
+          "description": "Thử tìm kiếm bằng các thuật ngữ khác."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Mẫu đã được tạo",
+          "message": "{templateName}, mẫu {templateType}, hiện có sẵn cho workspace của bạn."
+        },
+        "error": {
+          "title": "Chúng tôi không thể tạo mẫu đó lần này.",
+          "message": "Thử lưu lại chi tiết của bạn hoặc sao chép chúng sang mẫu mới, nhất quán trong một tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Mẫu đã được thay đổi",
+          "message": "{templateName}, mẫu {templateType}, đã được thay đổi."
+        },
+        "error": {
+          "title": "Chúng tôi không thể lưu thay đổi cho mẫu này.",
+          "message": "Thử lưu lại chi tiết của bạn hoặc quay lại mẫu này sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Mẫu đã được xóa",
+          "message": "{templateName}, mẫu {templateType}, đã được xóa khỏi workspace của bạn."
+        },
+        "error": {
+          "title": "Chúng tôi không thể xóa mẫu đó lần này.",
+          "message": "Thử xóa nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Mẫu đã được gỡ xuất bản",
+          "message": "{templateName}, mẫu {templateType}, đã được gỡ xuất bản."
+        },
+        "error": {
+          "title": "Chúng tôi không thể gỡ xuất bản mẫu đó lần này.",
+          "message": "Thử gỡ xuất bản nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Xóa mẫu",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn xóa mẫu-",
+        "suffix": "? Tất cả dữ liệu liên quan đến mẫu sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Gỡ xuất bản mẫu",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn gỡ xuất bản mẫu-",
+        "suffix": "? Mẫu này sẽ không còn khả dụng cho người dùng trên marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Thêm mẫu mới",
+        "project": "Thêm mẫu mới"
+      },
+      "label": {
+        "project": "Chọn mẫu dự án",
+        "page": "Chọn từ mẫu"
+      },
+      "tooltip": {
+        "work_item": "Chọn mẫu mục công việc"
+      },
+      "no_results": {
+        "work_item": "Không tìm thấy mẫu.",
+        "project": "Không tìm thấy mẫu."
+      }
+    }
+  }
+}

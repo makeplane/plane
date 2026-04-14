@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Přehled",
+    "label": "Iniciativy",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciativy}}",
+    "add_initiative": "Přidat iniciativu",
+    "create_initiative": "Vytvořit iniciativu",
+    "update_initiative": "Aktualizovat iniciativu",
+    "initiative_name": "Název iniciativy",
+    "all_initiatives": "Všechny iniciativy",
+    "delete_initiative": "Smazat iniciativu",
+    "fill_all_required_fields": "Vyplňte prosím všechna povinná pole.",
+    "archive_description": "Archivovat lze pouze dokončené nebo uzavřené iniciativy",
+    "toast": {
+      "create_success": "Iniciativa {name} byla úspěšně vytvořena.",
+      "create_error": "Nepodařilo se vytvořit iniciativu. Zkuste to prosím znovu!",
+      "update_success": "Iniciativa {name} byla úspěšně aktualizována.",
+      "update_error": "Nepodařilo se aktualizovat iniciativu. Zkuste to prosím znovu!",
+      "delete": {
+        "success": "Iniciativa byla úspěšně smazána.",
+        "error": "Nepodařilo se smazat iniciativu"
+      },
+      "archive": {
+        "success": "Iniciativa byla úspěšně archivována.",
+        "error": "Iniciativu se nepodařilo archivovat",
+        "initiative_cannot_be_archived_in_this_state": "Iniciativu v tomto stavu nelze archivovat"
+      },
+      "link_copied": "Odkaz na iniciativu byl zkopírován do schránky.",
+      "project_update_success": "Projekty iniciativy byly úspěšně aktualizovány.",
+      "project_update_error": "Nepodařilo se aktualizovat projekty iniciativy. Zkuste to prosím znovu!",
+      "epic_update_success": "Epic{count, plural, one { byl úspěšně přidán do iniciativy.} other {y byly úspěšně přidány do iniciativy.}}",
+      "epic_update_error": "Přidání epiku do iniciativy se nezdařilo. Zkuste to prosím znovu později.",
+      "state_update_success": "Stav iniciativy byl úspěšně aktualizován.",
+      "state_update_error": "Nepodařilo se aktualizovat stav iniciativy. Zkuste to prosím znovu!",
+      "label_update_error": "Nepodařilo se aktualizovat štítky iniciativy. Zkuste to prosím znovu!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizujte práci na nejvyšší úrovni s iniciativami",
+        "description": "Když potřebujete organizovat práci, která se rozprostírá přes několik projektů a týmů, iniciativy jsou užitečné. Propojte projekty a epiky s iniciativami, sledujte automaticky shrnuté aktualizace a uvidíte lesy, než se dostanete k jednotlivým stromům.",
+        "primary_button": {
+          "text": "Vytvořit iniciativu"
+        }
+      },
+      "search": {
+        "title": "Žádné shodné iniciativy",
+        "description": "Žádné iniciativy nebyly detekovány s odpovídajícími kritérii.\n Vytvořte novou iniciativu místo toho.",
+        "archived_description": "Žádné archivované iniciativy nebyly detekovány s odpovídajícími kritérii."
+      },
+      "not_found": {
+        "title": "Iniciativa neexistuje",
+        "description": "Iniciativa, kterou hledáte, neexistuje, byla archivována nebo byla smazána.",
+        "primary_button": {
+          "text": "Zobrazit další iniciativy"
+        }
+      },
+      "epics": {
+        "title": "You don't have epics that match the filters you have applied.",
+        "subHeading": "To see all epics, clear all applied filters.",
+        "action": "Clear filters"
+      }
+    },
+    "scope": {
+      "view_scope": "Zobrazit rozsah",
+      "breakdown": "Rozklad rozsahu",
+      "add_scope": "Přidat rozsah",
+      "label": "Rozsah",
+      "empty_state": {
+        "title": "Zatím nebyl přidán žádný rozsah do této iniciativy",
+        "description": "Propojte projekty a epiky a sledujte práci v tomto prostoru.",
+        "primary_button": {
+          "text": "Přidat rozsah"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Štítky",
+        "description": "Strukturalizujte a organizujte své iniciativy pomocí štítků."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Smazat štítek",
+        "content": "Opravdu chcete odstranit {labelName}? Tímto odstraníte štítek ze všech iniciativ a ze všech zobrazení, kde je štítek filtrován."
+      },
+      "toast": {
+        "delete_error": "Štítek iniciativy nelze odstranit. Zkuste to prosím znovu.",
+        "label_already_exists": "Štítek již existuje"
+      }
+    }
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Plantillas",
+      "description": "Ahorra un 80% del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando utilizas plantillas.",
+      "options": {
+        "project": {
+          "label": "Plantillas de proyecto"
+        },
+        "work_item": {
+          "label": "Plantillas de elementos de trabajo"
+        },
+        "page": {
+          "label": "Plantillas de página"
+        }
+      },
+      "create_template": {
+        "label": "Crear plantilla",
+        "no_permission": {
+          "project": "Contacta con el administrador de tu proyecto para crear plantillas",
+          "workspace": "Contacta con el administrador de tu espacio de trabajo para crear plantillas"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Usar plantilla",
+          "loading": "Usando"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivado del espacio de trabajo"
+        },
+        "project": {
+          "info": "Derivado del proyecto"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de proyecto.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Nombra tu proyecto.",
+            "validation": {
+              "required": "El título del proyecto es obligatorio",
+              "maxLength": "El título del proyecto debe tener menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Describe el propósito y los objetivos de este proyecto."
+          },
+          "button": {
+            "create": "Crear plantilla de proyecto",
+            "update": "Actualizar plantilla de proyecto"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de elemento de trabajo.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Dale un título a este elemento de trabajo.",
+            "validation": {
+              "required": "El título del elemento de trabajo es obligatorio",
+              "maxLength": "El título del elemento de trabajo debe tener menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Describe este elemento de trabajo para que quede claro lo que conseguirás cuando lo completes."
+          },
+          "button": {
+            "create": "Crear plantilla de elemento de trabajo",
+            "update": "Actualizar plantilla de elemento de trabajo"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de página.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Página sin título",
+            "validation": {
+              "maxLength": "El nombre de la página debe tener menos de 255 caracteres"
+            }
+          },
+          "button": {
+            "create": "Crear plantilla de página",
+            "update": "Actualizar plantilla de página"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Configuración de publicación} other {Publicar en el Marketplace}}",
+          "unpublish_action": "Retirar del Marketplace",
+          "title": "Haga que su plantilla sea descubrible y reconocible.",
+          "name": {
+            "label": "Nombre de la plantilla",
+            "placeholder": "Nombra tu plantilla",
+            "validation": {
+              "required": "El nombre de la plantilla es obligatorio",
+              "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+            }
+          },
+          "short_description": {
+            "label": "Descripción corta",
+            "placeholder": "Esta plantilla es ideal para los Project Managers que gestionan varios proyectos al mismo tiempo.",
+            "validation": {
+              "required": "La descripción corta es obligatoria"
+            }
+          },
+          "description": {
+            "label": "Descripción",
+            "placeholder": "Mejora la productividad y simplifica la comunicación con nuestra integración de reconocimiento de voz.\n• Transcripción en tiempo real: Convierte palabras habladas en texto preciso instantáneamente.\n• Creación de tareas y comentarios: Añade tareas, descripciones y comentarios a través de comandos de voz.",
+            "validation": {
+              "required": "La descripción es obligatoria"
+            }
+          },
+          "category": {
+            "label": "Categoría",
+            "placeholder": "Elige dónde crees que esta plantilla se adapte mejor. Puedes elegir más de una.",
+            "validation": {
+              "required": "Al menos una categoría es obligatoria"
+            }
+          },
+          "keywords": {
+            "label": "Palabras clave",
+            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla.",
+            "helperText": "Introduce palabras clave separadas por comas que sean útiles para que los usuarios encuentren esta plantilla en la búsqueda.",
+            "validation": {
+              "required": "Al menos una palabra clave es obligatoria"
+            }
+          },
+          "company_name": {
+            "label": "Nombre de la empresa",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "El nombre de la empresa es obligatorio",
+              "maxLength": "El nombre de la empresa debe tener menos de 255 caracteres"
+            }
+          },
+          "contact_email": {
+            "label": "Correo electrónico de soporte",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Dirección de correo electrónico no válida",
+              "required": "El correo electrónico de soporte es obligatorio",
+              "maxLength": "El correo electrónico de soporte debe tener menos de 255 caracteres"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Enlace a tu política de privacidad",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Enlace a tus términos de uso",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "cover_image": {
+            "label": "Añade una imagen de portada que se mostrará en el Marketplace",
+            "upload_title": "Subir imagen de portada",
+            "upload_placeholder": "Haz clic para subir o arrastra y suelta para subir una imagen de portada",
+            "drop_here": "Soltar aquí",
+            "click_to_upload": "Haz clic para subir",
+            "invalid_file_or_exceeds_size_limit": "Archivo no válido o excede el límite de tamaño. Por favor, inténtalo de nuevo.",
+            "upload_and_save": "Subir y guardar",
+            "uploading": "Subiendo",
+            "remove": "Eliminar",
+            "removing": "Eliminando",
+            "validation": {
+              "required": "La imagen de portada es obligatoria"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Incluye documentos y capturas de pantalla que creas que harán que los usuarios de esta plantilla vean lo que puedes hacer con ella.",
+            "validation": {
+              "required": "Al menos una captura de pantalla es obligatoria"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Plantillas",
+        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Plane, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
+        "sub_description": "Recupera el 80% de tu tiempo de administración cuando utilizas Plantillas."
+      },
+      "no_templates": {
+        "button": "Crea tu primera plantilla"
+      },
+      "no_labels": {
+        "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+      },
+      "no_work_items": {
+        "description": "Aún no hay elementos de trabajo. Añade uno para estructurar tu trabajo mejor."
+      },
+      "no_sub_work_items": {
+        "description": "No hay sub-elementos de trabajo aún. Añade uno para estructurar tu trabajo mejor."
+      },
+      "page": {
+        "no_templates": {
+          "title": "No hay plantillas a las que tengas acceso.",
+          "description": "Por favor, crea una plantilla"
+        },
+        "no_results": {
+          "title": "Eso no coincide con ninguna plantilla.",
+          "description": "Intenta buscar con otros términos."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Plantilla creada",
+          "message": "{templateName}, la plantilla de {templateType}, ya está disponible para tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos crear esa plantilla esta vez.",
+          "message": "Intenta guardar tus detalles de nuevo o cópialos a una nueva plantilla, preferiblemente en otra pestaña."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Plantilla modificada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido modificada."
+        },
+        "error": {
+          "title": "No pudimos guardar los cambios en esta plantilla.",
+          "message": "Intenta guardar tus detalles de nuevo o vuelve a esta plantilla más tarde. Si sigues teniendo problemas, contacta con nosotros."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Plantilla eliminada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido eliminada de tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos eliminar esa plantilla esta vez.",
+          "message": "Intenta eliminarla de nuevo o vuelve a intentarlo más tarde. Si no puedes eliminarla entonces, contacta con nosotros."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Plantilla retirada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido retirada."
+        },
+        "error": {
+          "title": "No pudimos retirar esa plantilla esta vez.",
+          "message": "Intenta retirarla de nuevo o vuelve a intentarlo más tarde. Si no puedes retirarla entonces, contacta con nosotros."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Eliminar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres eliminar la plantilla-",
+        "suffix": "? Todos los datos relacionados con la plantilla se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retirar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres retirar la plantilla-",
+        "suffix": "? Esta plantilla ya no estará disponible para los usuarios en el marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Agregar nueva plantilla",
+        "project": "Agregar nueva plantilla"
+      },
+      "label": {
+        "project": "Seleccionar una plantilla de proyecto",
+        "page": "Elegir desde plantilla"
+      },
+      "tooltip": {
+        "work_item": "Seleccionar una plantilla de elemento de trabajo"
+      },
+      "no_results": {
+        "work_item": "No se encontraron plantillas.",
+        "project": "No se encontraron plantillas."
+      }
+    }
+  }
+}

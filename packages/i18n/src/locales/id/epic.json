@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "Semua Epik",
+    "label": "{count, plural, one {Epik} other {Epik}}",
+    "new": "Epik Baru",
+    "adding": "Menambahkan epik",
+    "create": {
+      "success": "Epik berhasil dibuat"
+    },
+    "add": {
+      "press_enter": "Tekan 'Enter' untuk menambahkan epik lain",
+      "label": "Tambahkan Epik"
+    },
+    "title": {
+      "label": "Judul Epik",
+      "required": "Judul epik wajib diisi."
+    },
+    "archive": {
+      "description": "Hanya epik yang selesai atau dibatalkan\nyang dapat diarsipkan",
+      "label": "Arsipkan Epik",
+      "confirm_message": "Apakah Anda yakin ingin mengarsipkan epik? Semua epik yang diarsipkan dapat dipulihkan nanti.",
+      "success": {
+        "label": "Arsip berhasil",
+        "message": "Arsip Anda dapat ditemukan di arsip proyek."
+      },
+      "failed": {
+        "message": "Epik tidak dapat diarsipkan. Silakan coba lagi."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epik",
+    "no_epics_selected": "Tidak ada epik yang dipilih",
+    "add_selected_epics": "Tambahkan epik yang dipilih",
+    "epic_link_copied_to_clipboard": "Tautan epik disalin ke clipboard.",
+    "project_link_copied_to_clipboard": "Tautan proyek disalin ke clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Buat epik dan tetapkan ke seseorang, bahkan diri Anda sendiri",
+        "description": "Untuk tubuh pekerjaan yang lebih besar yang mencakup beberapa siklus dan dapat hidup di berbagai modul, buat epik. Hubungkan item kerja dan sub-item kerja dalam proyek ke epik dan lompat ke item kerja dari ikhtisar.",
+        "primary_button": {
+          "text": "Buat Epik"
+        }
+      },
+      "section": {
+        "title": "Belum ada epik",
+        "description": "Mulai menambahkan epik untuk mengelola dan melacak kemajuan.",
+        "primary_button": {
+          "text": "Tambah epik"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Tidak ditemukan epik yang cocok"
+      },
+      "no_epics": {
+        "title": "Tidak ditemukan epik"
+      }
+    }
+  }
+}

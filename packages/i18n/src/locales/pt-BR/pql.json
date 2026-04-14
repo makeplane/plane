@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Data e hora atuais"
+        },
+        "today": {
+          "description": "A data de hoje"
+        },
+        "start_of_day": {
+          "description": "Início de hoje"
+        },
+        "end_of_day": {
+          "description": "Fim de hoje"
+        },
+        "start_of_week": {
+          "description": "Início da semana atual"
+        },
+        "end_of_week": {
+          "description": "Fim da semana atual"
+        },
+        "start_of_month": {
+          "description": "Início do mês atual"
+        },
+        "end_of_month": {
+          "description": "Fim do mês atual"
+        },
+        "start_of_year": {
+          "description": "Início do ano atual"
+        },
+        "end_of_year": {
+          "description": "Fim do ano atual"
+        },
+        "days_ago": {
+          "description": "Data de n dias atrás"
+        },
+        "days_from_now": {
+          "description": "Data daqui a n dias"
+        },
+        "weeks_ago": {
+          "description": "Data de n semanas atrás"
+        },
+        "weeks_from_now": {
+          "description": "Data daqui a n semanas"
+        },
+        "months_ago": {
+          "description": "Data de n meses atrás"
+        },
+        "months_from_now": {
+          "description": "Data daqui a n meses"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Usuário atualmente conectado"
+        },
+        "members_of": {
+          "description": "Membros de \"project:<id>\" ou \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Todos os membros do espaço de trabalho"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Ciclo ativo hoje"
+        },
+        "completed_cycles": {
+          "description": "Ciclos cuja data de término já passou"
+        },
+        "upcoming_cycles": {
+          "description": "Ciclos cuja data de início é no futuro"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Data de vencimento passou E o estado está aberto"
+        },
+        "has_no_assignee": {
+          "description": "Item de trabalho não tem responsável"
+        },
+        "has_no_label": {
+          "description": "Item de trabalho não tem rótulos"
+        },
+        "is_top_level": {
+          "description": "Não é um sub-item de trabalho (não tem pai)"
+        },
+        "is_sub_work_item": {
+          "description": "É um sub-item de trabalho (tem pai)"
+        },
+        "is_epic": {
+          "description": "Épico"
+        },
+        "is_intake": {
+          "description": "É um item de intake"
+        },
+        "is_draft": {
+          "description": "É um item de rascunho"
+        },
+        "is_archived": {
+          "description": "Está arquivado"
+        },
+        "has_children": {
+          "description": "Tem pelo menos um sub-item de trabalho"
+        },
+        "has_start_and_due_dates": {
+          "description": "Tem datas de início e vencimento"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Itens de trabalho relacionados ao item dado"
+        },
+        "blocked_by": {
+          "description": "Itens de trabalho bloqueados pelo item dado"
+        },
+        "blocks": {
+          "description": "Itens de trabalho que bloqueiam o item dado"
+        },
+        "child_of": {
+          "description": "Sub-itens do item de trabalho dado"
+        },
+        "parent_of": {
+          "description": "Item pai do item de trabalho dado"
+        },
+        "duplicate_of": {
+          "description": "Itens de trabalho marcados como duplicatas do item dado"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "O campo já foi definido como este valor"
+        },
+        "was": {
+          "description": "O campo era anteriormente este valor (mudou)"
+        },
+        "changed_from": {
+          "description": "O campo foi alterado deste valor"
+        },
+        "changed_to": {
+          "description": "O campo foi alterado para este valor"
+        },
+        "changed": {
+          "description": "O campo foi alterado"
+        },
+        "updated_by": {
+          "description": "Item de trabalho atualizado por este usuário"
+        },
+        "commented_by": {
+          "description": "Item de trabalho comentado por este usuário"
+        },
+        "field_changed_by": {
+          "description": "Campo alterado por este usuário"
+        },
+        "was_assigned_to": {
+          "description": "Item de trabalho foi atribuído a este usuário"
+        },
+        "changed_after": {
+          "description": "Campo alterado após esta data"
+        },
+        "changed_before": {
+          "description": "Campo alterado antes desta data"
+        },
+        "field_changed_after": {
+          "description": "Campo alterado após esta data"
+        },
+        "field_changed_before": {
+          "description": "Campo alterado antes desta data"
+        },
+        "changed_to_after": {
+          "description": "Campo alterado para este valor após esta data"
+        },
+        "changed_to_before": {
+          "description": "Campo alterado para este valor antes desta data"
+        },
+        "field_changed_between": {
+          "description": "Campo alterado entre estas datas"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "navegar",
+      "accept": "aceitar",
+      "close": "fechar",
+      "pick_date": "Escolher uma data"
+    },
+    "placeholder": "Digite uma consulta e pressione \"ENTER\" para filtrar...",
+    "error": "Erro ao enviar a consulta. Por favor, verifique e tente novamente."
+  }
+}

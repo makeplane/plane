@@ -1,0 +1,320 @@
+{
+  "templates": {
+    "settings": {
+      "title": "テンプレート",
+      "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成に費やす時間を80％節約できます。",
+      "options": {
+        "project": {
+          "label": "プロジェクトテンプレート"
+        },
+        "work_item": {
+          "label": "作業項目テンプレート"
+        },
+        "page": {
+          "label": "ページテンプレート"
+        }
+      },
+      "create_template": {
+        "label": "テンプレートを作成",
+        "no_permission": {
+          "project": "テンプレートを作成するには、プロジェクト管理者に連絡してください",
+          "workspace": "テンプレートを作成するには、ワークスペース管理者に連絡してください"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "テンプレートを使用",
+          "loading": "使用中"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "ワークスペースから派生"
+        },
+        "project": {
+          "info": "プロジェクトから派生"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "プロジェクトテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "プロジェクトに名前を付けてください。",
+            "validation": {
+              "required": "プロジェクトのタイトルは必須です",
+              "maxLength": "プロジェクトのタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "このプロジェクトの目的と目標を説明してください。"
+          },
+          "button": {
+            "create": "プロジェクトテンプレートを作成",
+            "update": "プロジェクトテンプレートを更新"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "作業項目テンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "この作業項目にタイトルを付けてください。",
+            "validation": {
+              "required": "作業項目のタイトルは必須です",
+              "maxLength": "作業項目のタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "この作業項目を完了したときに何を達成するのかが明確になるように説明してください。"
+          },
+          "button": {
+            "create": "作業項目テンプレートを作成",
+            "update": "作業項目テンプレートを更新"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "ページテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "未命名のページ",
+            "validation": {
+              "maxLength": "ページ名は255文字未満にしてください"
+            }
+          },
+          "button": {
+            "create": "ページテンプレートを作成",
+            "update": "ページテンプレートを更新"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {公開設定} other {マーケットプレイスに公開}}",
+          "unpublish_action": "マーケットプレイスから削除",
+          "title": "テンプレートを発見可能かつ認識可能にする",
+          "name": {
+            "label": "テンプレート名",
+            "placeholder": "テンプレートに名前を付けてください",
+            "validation": {
+              "required": "テンプレート名は必須です",
+              "maxLength": "テンプレート名は255文字未満にしてください"
+            }
+          },
+          "short_description": {
+            "label": "短い説明",
+            "placeholder": "このテンプレートは、同時に複数のプロジェクトを管理するプロジェクトマネージャーに最適です。",
+            "validation": {
+              "required": "短い説明は必須です"
+            }
+          },
+          "description": {
+            "label": "説明",
+            "placeholder": "音声認識機能を活用して生産性を向上させ、コミュニケーションを効率化しましょう。\n• リアルタイム文字起こし：話した言葉を瞬時に正確なテキストに変換します。\n• タスクとコメントの作成：音声コマンドでタスク、説明、コメントを追加できます。",
+            "validation": {
+              "required": "説明は必須です"
+            }
+          },
+          "category": {
+            "label": "カテゴリ",
+            "placeholder": "最も適切な場所を選択してください。複数のカテゴリを選択できます。",
+            "validation": {
+              "required": "少なくとも1つのカテゴリが必要です"
+            }
+          },
+          "keywords": {
+            "label": "キーワード",
+            "placeholder": "ユーザーがこのテンプレートを検索するときに使用する用語を使用してください。",
+            "helperText": "カンマで区切られたキーワードを入力して、人々がこれを検索から見つけるのに役立つようにしてください。",
+            "validation": {
+              "required": "少なくとも1つのキーワードが必要です"
+            }
+          },
+          "company_name": {
+            "label": "会社名",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "会社名は必須です",
+              "maxLength": "会社名は255文字未満にしてください"
+            }
+          },
+          "contact_email": {
+            "label": "サポートメールアドレス",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "無効なメールアドレス",
+              "required": "サポートメールアドレスは必須です",
+              "maxLength": "サポートメールアドレスは255文字未満にしてください"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "プライバシーポリシーのURL",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "利用規約のURL",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "cover_image": {
+            "label": "マーケットプレイスに表示されるカバー画像を追加",
+            "upload_title": "カバー画像をアップロード",
+            "upload_placeholder": "クリックしてアップロードするか、ドラッグ＆ドロップでカバー画像をアップロード",
+            "drop_here": "ここにドロップ",
+            "click_to_upload": "クリックしてアップロード",
+            "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズ制限を超えています。もう一度お試しください。",
+            "upload_and_save": "アップロードして保存",
+            "uploading": "アップロード中",
+            "remove": "削除",
+            "removing": "削除中",
+            "validation": {
+              "required": "カバー画像は必須です"
+            }
+          },
+          "attach_screenshots": {
+            "label": "ビューアーにこのテンプレートを理解させるためのドキュメントと画像を含めます。",
+            "validation": {
+              "required": "少なくとも1つのスクリーンショットが必要です"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "テンプレート",
+        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
+        "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
+      },
+      "no_templates": {
+        "button": "最初のテンプレートを作成"
+      },
+      "no_labels": {
+        "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
+      },
+      "no_work_items": {
+        "description": "まだ作業項目がありません。1つ追加して、より良い構造にしてください。"
+      },
+      "no_sub_work_items": {
+        "description": "まだサブ作業項目がありません。1つ追加して、より良い構造にしてください。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "アクセス可能なテンプレートがありません。",
+          "description": "テンプレートを作成してください"
+        },
+        "no_results": {
+          "title": "テンプレートと一致しませんでした。",
+          "description": "他の用語で検索してみてください。"
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "テンプレートが作成されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースで利用できるようになりました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを作成できませんでした。",
+          "message": "詳細を再度保存するか、できれば別のタブで新しいテンプレートにコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "テンプレートが変更されました",
+          "message": "{templateType}テンプレート「{templateName}」が変更されました。"
+        },
+        "error": {
+          "title": "このテンプレートの変更を保存できませんでした。",
+          "message": "詳細を再度保存するか、後でこのテンプレートに戻ってください。それでも問題が続く場合は、お問い合わせください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」が削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？テンプレートに関連するすべてのデータは完全に削除されます。このアクションは元に戻せません。"
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？このテンプレートはマーケットプレイスでユーザーが利用できなくなります。"
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "新しいテンプレートを追加",
+        "project": "新しいテンプレートを追加"
+      },
+      "label": {
+        "project": "プロジェクトテンプレートを選択",
+        "page": "テンプレートから選択"
+      },
+      "tooltip": {
+        "work_item": "作業項目テンプレートを選択"
+      },
+      "no_results": {
+        "work_item": "テンプレートが見つかりません。",
+        "project": "テンプレートが見つかりません。"
+      }
+    }
+  }
+}

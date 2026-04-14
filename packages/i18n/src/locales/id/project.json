@@ -1,0 +1,378 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Dibuat pada",
+      "updated_at": "Diperbarui pada",
+      "name": "Nama"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Tambah siklus",
+    "more_details": "Detail lebih lanjut",
+    "cycle": "Siklus",
+    "update_cycle": "Perbarui siklus",
+    "create_cycle": "Buat siklus",
+    "no_matching_cycles": "Tidak ada siklus yang cocok",
+    "remove_filters_to_see_all_cycles": "Hapus filter untuk melihat semua siklus",
+    "remove_search_criteria_to_see_all_cycles": "Hapus kriteria pencarian untuk melihat semua siklus",
+    "only_completed_cycles_can_be_archived": "Hanya siklus yang diselesaikan yang dapat diarsipkan",
+    "transfer_work_items": "Transfer {count} item kerja",
+    "transfer": {
+      "no_cycles_available": "Tidak ada siklus lain yang tersedia untuk mentransfer item pekerjaan."
+    },
+    "active_cycle": {
+      "label": "Siklus aktif",
+      "progress": "Kemajuan",
+      "chart": "Grafik burndown",
+      "priority_issue": "Item kerja prioritas",
+      "assignees": "Penugasan",
+      "issue_burndown": "Burndown item kerja",
+      "ideal": "Ideal",
+      "current": "Sekarang",
+      "labels": "Label",
+      "trailing": "Tertinggal",
+      "leading": "Memimpin"
+    },
+    "upcoming_cycle": {
+      "label": "Siklus mendatang"
+    },
+    "completed_cycle": {
+      "label": "Siklus selesai"
+    },
+    "status": {
+      "days_left": "Hari tersisa",
+      "completed": "Selesai",
+      "yet_to_start": "Belum dimulai",
+      "in_progress": "Sedang berlangsung",
+      "draft": "Draf"
+    },
+    "action": {
+      "restore": {
+        "title": "Pulihkan siklus",
+        "success": {
+          "title": "Siklus dipulihkan",
+          "description": "Siklus telah dipulihkan."
+        },
+        "failed": {
+          "title": "Pemulihan siklus gagal",
+          "description": "Siklus tidak dapat dipulihkan. Silakan coba lagi."
+        }
+      },
+      "favorite": {
+        "loading": "Menambahkan siklus ke favorit",
+        "success": {
+          "description": "Siklus ditambahkan ke favorit.",
+          "title": "Sukses!"
+        },
+        "failed": {
+          "description": "Gagal menambahkan siklus ke favorit. Silakan coba lagi.",
+          "title": "Kesalahan!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Menghapus siklus dari favorit",
+        "success": {
+          "description": "Siklus dihapus dari favorit.",
+          "title": "Sukses!"
+        },
+        "failed": {
+          "description": "Gagal menghapus siklus dari favorit. Silakan coba lagi.",
+          "title": "Kesalahan!"
+        }
+      },
+      "update": {
+        "loading": "Memperbarui siklus",
+        "success": {
+          "description": "Siklus berhasil diperbarui.",
+          "title": "Sukses!"
+        },
+        "failed": {
+          "description": "Kesalahan saat memperbarui siklus. Silakan coba lagi.",
+          "title": "Kesalahan!"
+        },
+        "error": {
+          "already_exists": "Anda sudah memiliki siklus pada tanggal yang diberikan, jika Anda ingin membuat siklus draf, Anda dapat melakukannya dengan menghapus kedua tanggal tersebut."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Kelompokkan dan bagi pekerjaan Anda dalam Siklus.",
+        "description": "Pecah pekerjaan menjadi bagian yang dibatasi waktu, kerjakan mundur dari tenggat waktu proyek Anda untuk menetapkan tanggal, dan buat kemajuan nyata sebagai tim.",
+        "primary_button": {
+          "text": "Tetapkan siklus pertama Anda",
+          "comic": {
+            "title": "Siklus adalah batas waktu berulang.",
+            "description": "Sprint, iterasi, dan istilah lain apa pun yang Anda gunakan untuk pelacakan pekerjaan mingguan atau dua mingguan adalah siklus."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Tidak ada item kerja yang ditambahkan ke siklus",
+        "description": "Tambahkan atau buat item kerja yang ingin Anda batasi waktu dan kirim dalam siklus ini",
+        "primary_button": {
+          "text": "Buat item kerja baru"
+        },
+        "secondary_button": {
+          "text": "Tambah item kerja yang ada"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Tidak ada item kerja dalam siklus",
+        "description": "Tidak ada item kerja dalam siklus. Item kerja baik ditransfer atau disembunyikan. Untuk melihat item kerja yang disembunyikan jika ada, perbarui properti tampilan Anda sesuai."
+      },
+      "active": {
+        "title": "Tidak ada siklus aktif",
+        "description": "Siklus aktif mencakup periode apa pun yang mencakup tanggal hari ini dalam rentangnya. Temukan kemajuan dan detail siklus aktif di sini."
+      },
+      "archived": {
+        "title": "Belum ada siklus yang diarsipkan",
+        "description": "Untuk membersihkan proyek Anda, arsipkan siklus yang telah diselesaikan. Temukan di sini setelah diarsipkan."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Buat item kerja dan tugaskan kepada seseorang, bahkan kepada diri Anda sendiri",
+        "description": "Anggap item kerja sebagai pekerjaan, tugas, atau JTBD. Yang kami suka. Item kerja dan sub-item kerjanya biasanya merupakan tindakan berbasis waktu yang ditugaskan kepada anggota tim Anda. Tim Anda membuat, menetapkan, dan menyelesaikan item kerja untuk memindahkan proyek Anda menuju tujuannya.",
+        "primary_button": {
+          "text": "Buat item kerja pertama Anda",
+          "comic": {
+            "title": "Item kerja adalah blok bangunan di Plane.",
+            "description": "Mendesain ulang UI Plane, Mengganti merek perusahaan, atau Meluncurkan sistem injeksi bahan bakar baru adalah contoh item kerja yang kemungkinan besar memiliki sub-item kerja."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Belum ada item kerja yang diarsipkan",
+        "description": "Secara manual atau melalui otomatisasi, Anda dapat mengarsipkan item kerja yang telah selesai atau dibatalkan. Temukan di sini setelah diarsipkan.",
+        "primary_button": {
+          "text": "Tetapkan otomatisasi"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Tidak ada item kerja ditemukan yang cocok dengan filter yang diterapkan",
+        "secondary_button": {
+          "text": "Bersihkan semua filter"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Tambah Modul",
+    "update_module": "Perbarui Modul",
+    "create_module": "Buat Modul",
+    "archive_module": "Arsipkan Modul",
+    "restore_module": "Pulihkan Modul",
+    "delete_module": "Hapus modul",
+    "empty_state": {
+      "general": {
+        "title": "Peta tonggak proyek Anda ke Modul dan lacak pekerjaan terakumulasi dengan mudah.",
+        "description": "Sekelompok item kerja yang tergolong dalam induk yang logis dan hierarkis membentuk satu modul. Anggap saja mereka sebagai cara untuk melacak pekerjaan berdasarkan tonggak proyek. Mereka memiliki periode dan tenggat waktu sendiri serta analitik untuk membantu Anda melihat seberapa dekat atau jauh Anda dari tonggak tersebut.",
+        "primary_button": {
+          "text": "Buat modul pertama Anda",
+          "comic": {
+            "title": "Modul membantu mengelompokkan pekerjaan menurut hierarki.",
+            "description": "Modul kereta, modul sasis, dan modul gudang adalah contoh bagus dari pengelompokan ini."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Tidak ada item kerja dalam modul",
+        "description": "Buat atau tambahkan item kerja yang ingin Anda capai sebagai bagian dari modul ini",
+        "primary_button": {
+          "text": "Buat item kerja baru"
+        },
+        "secondary_button": {
+          "text": "Tambahkan item kerja yang ada"
+        }
+      },
+      "archived": {
+        "title": "Belum ada Modul yang diarsipkan",
+        "description": "Untuk membersihkan proyek Anda, arsipkan modul yang telah selesai atau dibatalkan. Temukan di sini setelah diarsipkan."
+      },
+      "sidebar": {
+        "in_active": "Modul ini belum aktif.",
+        "invalid_date": "Tanggal tidak valid. Silakan masukkan tanggal yang valid."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Arsipkan modul",
+      "archive_module_description": "Hanya modul yang telah diselesaikan atau dibatalkan\n yang dapat diarsipkan.",
+      "delete_module": "Hapus modul"
+    },
+    "toast": {
+      "copy": {
+        "success": "Tautan modul disalin ke clipboard"
+      },
+      "delete": {
+        "success": "Modul berhasil dihapus",
+        "error": "Gagal menghapus modul"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Simpan tampilan yang difilter untuk proyek Anda. Buat sebanyak yang Anda perlukan",
+        "description": "Tampilan adalah sekumpulan filter yang disimpan yang Anda gunakan secara sering atau ingin akses mudah. Semua rekan Anda dalam proyek dapat melihat tampilan semua orang dan memilih yang paling sesuai dengan kebutuhan mereka.",
+        "primary_button": {
+          "text": "Buat tampilan pertama Anda",
+          "comic": {
+            "title": "Tampilan bekerja berdasarkan properti item kerja.",
+            "description": "Anda dapat membuat tampilan dari sini dengan sebanyak mungkin properti sebagai filter yang Anda anggap sesuai."
+          }
+        }
+      },
+      "filter": {
+        "title": "Tidak ada tampilan yang cocok",
+        "description": "Tidak ada tampilan yang cocok dengan kriteria pencarian.\n Buat tampilan baru sebagai gantinya."
+      }
+    },
+    "delete_view": {
+      "title": "Apakah Anda yakin ingin menghapus tampilan ini?",
+      "content": "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Tulis catatan, dokumen, atau seluruh basis pengetahuan. Dapatkan Galileo, asisten AI Plane, untuk membantu Anda memulai",
+        "description": "Halaman adalah ruang pemikiran di Plane. Catat notul rapat, format dengan mudah, sertakan item kerja, tata letak menggunakan perpustakaan komponen, dan simpan semua di dalam konteks proyek Anda. Untuk menyelesaikan dokumen dengan cepat, panggil Galileo, AI Plane, dengan pintasan atau dengan mengklik tombol.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "private": {
+        "title": "Belum ada halaman pribadi",
+        "description": "Simpan pemikiran pribadi Anda di sini. Ketika Anda sudah siap untuk berbagi, tim hanya seklik jarak.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "public": {
+        "title": "Belum ada halaman publik",
+        "description": "Lihat halaman yang dibagikan dengan semua orang di proyek Anda tepat di sini.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "archived": {
+        "title": "Belum ada halaman yang diarsipkan",
+        "description": "Arsipkan halaman yang tidak ada dalam radar Anda. Akses di sini saat diperlukan."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Intake tidak diaktifkan untuk proyek ini.",
+        "description": "Intake membantu Anda mengelola permintaan yang masuk ke proyek Anda dan menambahkannya sebagai item kerja dalam alur kerja Anda. Aktifkan intake dari pengaturan proyek untuk mengelola permintaan.",
+        "primary_button": {
+          "text": "Kelola fitur"
+        }
+      },
+      "cycle": {
+        "title": "Siklus tidak diaktifkan untuk proyek ini.",
+        "description": "Pecah pekerjaan menjadi bagian yang dibatasi waktu, kerjakan mundur dari tenggat waktu proyek Anda untuk menetapkan tanggal, dan buat kemajuan nyata sebagai tim. Aktifkan fitur siklus untuk proyek Anda agar dapat mulai menggunakannya.",
+        "primary_button": {
+          "text": "Kelola fitur"
+        }
+      },
+      "module": {
+        "title": "Modul tidak diaktifkan untuk proyek ini.",
+        "description": "Modul adalah blok bangunan dari proyek Anda. Aktifkan modul dari pengaturan proyek untuk mulai menggunakannya.",
+        "primary_button": {
+          "text": "Kelola fitur"
+        }
+      },
+      "page": {
+        "title": "Halaman tidak diaktifkan untuk proyek ini.",
+        "description": "Halaman adalah blok bangunan dari proyek Anda. Aktifkan halaman dari pengaturan proyek untuk mulai menggunakannya.",
+        "primary_button": {
+          "text": "Kelola fitur"
+        }
+      },
+      "view": {
+        "title": "Tampilan tidak diaktifkan untuk proyek ini.",
+        "description": "Tampilan adalah blok bangunan dari proyek Anda. Aktifkan tampilan dari pengaturan proyek untuk mulai menggunakannya.",
+        "primary_button": {
+          "text": "Kelola fitur"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Direncanakan",
+      "in_progress": "Dalam Proses",
+      "paused": "Dijeda",
+      "completed": "Selesai",
+      "cancelled": "Dibatalkan"
+    },
+    "layout": {
+      "list": "Tata letak daftar",
+      "board": "Tata letak galeri",
+      "timeline": "Tata letak garis waktu"
+    },
+    "order_by": {
+      "name": "Nama",
+      "progress": "Kemajuan",
+      "issues": "Jumlah item kerja",
+      "due_date": "Tanggal jatuh tempo",
+      "created_at": "Tanggal dibuat",
+      "manual": "Manual"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "Impor anggota dari CSV",
+      "description": "Unggah CSV dengan kolom: Email dan Peran (5=Tamu, 15=Anggota, 20=Admin). Pengguna harus sudah menjadi anggota workspace.",
+      "download_sample": "Unduh contoh CSV",
+      "dropzone": {
+        "active": "Letakkan file CSV di sini",
+        "inactive": "Seret & lepas atau klik untuk mengunggah",
+        "file_type": "Hanya file .csv yang didukung"
+      },
+      "buttons": {
+        "cancel": "Batal",
+        "import": "Impor",
+        "try_again": "Coba Lagi",
+        "close": "Tutup",
+        "done": "Selesai"
+      },
+      "progress": {
+        "uploading": "Mengunggah...",
+        "importing": "Mengimpor..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Impor Selesai"
+        },
+        "message": {
+          "success": "Berhasil mengimpor {count} anggota ke proyek.",
+          "no_imports": "Tidak ada anggota baru yang diimpor dari file CSV."
+        },
+        "stats": {
+          "added": "Ditambahkan",
+          "reactivated": "Diaktifkan kembali",
+          "already_members": "Sudah menjadi anggota",
+          "skipped": "Dilewati"
+        },
+        "download_errors": "Unduh detail yang dilewati"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "File tidak valid",
+          "message": "Hanya file CSV yang didukung."
+        },
+        "import_failed": {
+          "title": "Impor gagal",
+          "message": "Terjadi kesalahan."
+        }
+      }
+    }
+  }
+}

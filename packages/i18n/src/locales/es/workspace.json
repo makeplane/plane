@@ -1,0 +1,378 @@
+{
+  "workspace_creation": {
+    "heading": "Crea tu espacio de trabajo",
+    "subheading": "Para comenzar a usar Plane, necesitas crear o unirte a un espacio de trabajo.",
+    "form": {
+      "name": {
+        "label": "Nombra tu espacio de trabajo",
+        "placeholder": "Algo familiar y reconocible es siempre lo mejor."
+      },
+      "url": {
+        "label": "Establece la URL de tu espacio de trabajo",
+        "placeholder": "Escribe o pega una URL",
+        "edit_slug": "Solo puedes editar el slug de la URL"
+      },
+      "organization_size": {
+        "label": "¿Cuántas personas usarán este espacio de trabajo?",
+        "placeholder": "Selecciona un rango"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Solo el administrador de tu instancia puede crear espacios de trabajo",
+        "description": "Si conoces la dirección de correo electrónico del administrador de tu instancia, haz clic en el botón de abajo para ponerte en contacto con él.",
+        "request_button": "Solicitar administrador de instancia"
+      },
+      "validation": {
+        "name_alphanumeric": "Los nombres de espacios de trabajo solo pueden contener (' '), ('-'), ('_') y caracteres alfanuméricos.",
+        "name_length": "Limita tu nombre a 80 caracteres.",
+        "url_alphanumeric": "Las URLs solo pueden contener ('-') y caracteres alfanuméricos.",
+        "url_length": "Limita tu URL a 48 caracteres.",
+        "url_already_taken": "¡La URL del espacio de trabajo ya está en uso!"
+      }
+    },
+    "request_email": {
+      "subject": "Solicitando un nuevo espacio de trabajo",
+      "body": "Hola administrador(es) de instancia,\n\nPor favor, crea un nuevo espacio de trabajo con la URL [/nombre-espacio-trabajo] para [propósito de crear el espacio de trabajo].\n\nGracias,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Crear espacio de trabajo",
+      "loading": "Creando espacio de trabajo"
+    },
+    "toast": {
+      "success": {
+        "title": "Éxito",
+        "message": "Espacio de trabajo creado correctamente"
+      },
+      "error": {
+        "title": "Error",
+        "message": "No se pudo crear el espacio de trabajo. Por favor, inténtalo de nuevo."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Resumen de tus proyectos, actividad y métricas",
+        "description": "Bienvenido a Plane, estamos emocionados de tenerte aquí. Crea tu primer proyecto y rastrea tus elementos de trabajo, y esta página se transformará en un espacio que te ayuda a progresar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
+        "primary_button": {
+          "text": "Construye tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Análisis",
+    "page_label": "{workspace} - Análisis",
+    "open_tasks": "Total de tareas abiertas",
+    "error": "Hubo un error al obtener los datos.",
+    "work_items_closed_in": "Elementos de trabajo cerrados en",
+    "selected_projects": "Proyectos seleccionados",
+    "total_members": "Total de miembros",
+    "total_cycles": "Total de Ciclos",
+    "total_modules": "Total de Módulos",
+    "pending_work_items": {
+      "title": "Elementos de trabajo pendientes",
+      "empty_state": "El análisis de elementos de trabajo pendientes por compañeros aparece aquí."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Elementos de trabajo cerrados en un año",
+      "empty_state": "Cierra elementos de trabajo para ver su análisis en forma de gráfico."
+    },
+    "most_work_items_created": {
+      "title": "Más elementos de trabajo creados",
+      "empty_state": "Los compañeros y el número de elementos de trabajo creados por ellos aparecen aquí."
+    },
+    "most_work_items_closed": {
+      "title": "Más elementos de trabajo cerrados",
+      "empty_state": "Los compañeros y el número de elementos de trabajo cerrados por ellos aparecen aquí."
+    },
+    "tabs": {
+      "scope_and_demand": "Alcance y Demanda",
+      "custom": "Análisis Personalizado"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí.",
+        "title": "Aún no hay datos"
+      },
+      "created_vs_resolved": {
+        "description": "Los elementos de trabajo creados y resueltos con el tiempo aparecerán aquí.",
+        "title": "Aún no hay datos"
+      },
+      "project_insights": {
+        "title": "Aún no hay datos",
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí."
+      },
+      "general": {
+        "title": "Rastrea el progreso, las cargas de trabajo y las asignaciones. Identifica tendencias, elimina bloqueos y trabaja más rápido",
+        "description": "Ve alcance versus demanda, estimaciones y crecimiento del alcance. Obtén rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto se ejecute a tiempo.",
+        "primary_button": {
+          "text": "Inicia tu primer proyecto",
+          "comic": {
+            "title": "Analytics funciona mejor con Ciclos + Módulos",
+            "description": "Primero, encuadra tus elementos de trabajo en Ciclos y, si puedes, agrupa elementos que abarcan más de un ciclo en Módulos. Revisa ambos en la navegación izquierda."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del ciclo aparecerán aquí. Agrega elementos de trabajo a los ciclos para comenzar a rastrear el progreso."
+      },
+      "module_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del módulo aparecerán aquí. Agrega elementos de trabajo a los módulos para comenzar a rastrear el progreso."
+      },
+      "intake_trends": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de tendencias de entrada aparecerán aquí. Agrega elementos de trabajo a la entrada para comenzar a rastrear tendencias."
+      }
+    },
+    "created_vs_resolved": "Creado vs Resuelto",
+    "customized_insights": "Información personalizada",
+    "backlog_work_items": "{entity} en backlog",
+    "active_projects": "Proyectos activos",
+    "trend_on_charts": "Tendencia en gráficos",
+    "all_projects": "Todos los proyectos",
+    "summary_of_projects": "Resumen de proyectos",
+    "project_insights": "Información del proyecto",
+    "started_work_items": "{entity} iniciados",
+    "total_work_items": "Total de {entity}",
+    "total_projects": "Total de proyectos",
+    "total_admins": "Total de administradores",
+    "total_users": "Total de usuarios",
+    "total_intake": "Ingreso total",
+    "un_started_work_items": "{entity} no iniciados",
+    "total_guests": "Total de invitados",
+    "completed_work_items": "{entity} completados",
+    "total": "Total de {entity}",
+    "projects_by_status": "Proyectos por estado",
+    "active_users": "Usuarios activos",
+    "intake_trends": "Tendencias de admisión",
+    "workitem_resolved_vs_pending": "Elementos de trabajo resueltos vs pendientes",
+    "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Proyecto} other {Proyectos}}",
+    "create": {
+      "label": "Agregar Proyecto"
+    },
+    "network": {
+      "private": {
+        "title": "Privado",
+        "description": "Accesible solo por invitación"
+      },
+      "public": {
+        "title": "Público",
+        "description": "Cualquiera en el espacio de trabajo excepto Invitados puede unirse"
+      }
+    },
+    "error": {
+      "permission": "No tienes permiso para realizar esta acción.",
+      "cycle_delete": "Error al eliminar el ciclo",
+      "module_delete": "Error al eliminar el módulo",
+      "issue_delete": "Error al eliminar el elemento de trabajo"
+    },
+    "state": {
+      "backlog": "Pendiente",
+      "unstarted": "Sin iniciar",
+      "started": "Iniciado",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Nombre",
+      "created_at": "Fecha de creación",
+      "members_length": "Número de miembros"
+    },
+    "scope": {
+      "my_projects": "Mis proyectos",
+      "archived_projects": "Archivados"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# mes} other{# meses}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "No hay proyectos activos",
+        "description": "Piensa en cada proyecto como el padre para el trabajo orientado a objetivos. Los proyectos son donde viven las Tareas, Ciclos y Módulos y, junto con tus colegas, te ayudan a alcanzar ese objetivo. Crea un nuevo proyecto o filtra por proyectos archivados.",
+        "primary_button": {
+          "text": "Inicia tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Sin proyecto",
+        "description": "Para crear elementos de trabajo o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
+        "primary_button": {
+          "text": "Inicia tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil."
+          }
+        }
+      },
+      "filter": {
+        "title": "No hay proyectos coincidentes",
+        "description": "No se detectaron proyectos con los criterios coincidentes.\n Crea un nuevo proyecto en su lugar."
+      },
+      "search": {
+        "description": "No se detectaron proyectos con los criterios coincidentes.\nCrea un nuevo proyecto en su lugar"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Agregar vista",
+    "empty_state": {
+      "all-issues": {
+        "title": "No hay elementos de trabajo en el proyecto",
+        "description": "¡Primer proyecto completado! Ahora, divide tu trabajo en piezas rastreables con elementos de trabajo. ¡Vamos!",
+        "primary_button": {
+          "text": "Crear nuevo elemento de trabajo"
+        }
+      },
+      "assigned": {
+        "title": "No hay elementos de trabajo aún",
+        "description": "Los elementos de trabajo asignados a ti se pueden rastrear desde aquí.",
+        "primary_button": {
+          "text": "Crear nuevo elemento de trabajo"
+        }
+      },
+      "created": {
+        "title": "No hay elementos de trabajo aún",
+        "description": "Todos los elementos de trabajo creados por ti vienen aquí, rastréalos aquí directamente.",
+        "primary_button": {
+          "text": "Crear nuevo elemento de trabajo"
+        }
+      },
+      "subscribed": {
+        "title": "No hay elementos de trabajo aún",
+        "description": "Suscríbete a los elementos de trabajo que te interesan, rastréalos todos aquí."
+      },
+      "custom-view": {
+        "title": "No hay elementos de trabajo aún",
+        "description": "Elementos de trabajo que aplican a los filtros, rastréalos todos aquí."
+      }
+    },
+    "delete_view": {
+      "title": "¿Estás seguro de que quieres eliminar esta vista?",
+      "content": "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Borrador de elemento de trabajo",
+    "empty_state": {
+      "title": "Los elementos de trabajo a medio escribir y pronto los comentarios aparecerán aquí.",
+      "description": "Para probar esto, comienza a agregar un elemento de trabajo y déjalo a medias o crea tu primer borrador a continuación. 😉",
+      "primary_button": {
+        "text": "Crea tu primer borrador"
+      }
+    },
+    "delete_modal": {
+      "title": "Eliminar borrador",
+      "description": "¿Estás seguro de que quieres eliminar este borrador? Esto no se puede deshacer."
+    },
+    "toasts": {
+      "created": {
+        "success": "Borrador creado",
+        "error": "No se pudo crear el elemento de trabajo. Por favor, inténtalo de nuevo."
+      },
+      "deleted": {
+        "success": "Borrador eliminado"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Escribe una nota, un documento o una base de conocimiento completa. Obtén ayuda de Galileo, el asistente de IA de Plane, para comenzar",
+        "description": "Las Pages son espacios de pensamiento en Plane. Toma notas de reuniones, fórmalas fácilmente, integra elementos de trabajo, organízalas usando una biblioteca de componentes y mantenlas todas en el contexto de tu proyecto. Para hacer cualquier documento rápidamente, invoca a Galileo, la IA de Plane, con un atajo o el clic de un botón.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "private": {
+        "title": "Aún no hay Pages privadas",
+        "description": "Mantén tus pensamientos privados aquí. Cuando estés listo para compartir, el equipo está a un clic de distancia.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "public": {
+        "title": "Aún no hay Pages de espacio de trabajo",
+        "description": "Ve las Pages compartidas con todos en tu espacio de trabajo aquí mismo.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "archived": {
+        "title": "Aún no hay Pages archivadas",
+        "description": "Archiva las Pages que no estén en tu radar. Accede a ellas aquí cuando las necesites."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "No hay Cycles activos",
+        "description": "Cycles de tus proyectos que incluyen cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles de todos tus Cycles activos aquí."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Importar miembros desde CSV",
+      "description": "Sube un CSV con columnas: Email, Display Name, First Name, Last Name, Role (5, 15 o 20)",
+      "dropzone": {
+        "active": "Suelta el archivo CSV aquí",
+        "inactive": "Arrastra y suelta o haz clic para subir",
+        "file_type": "Solo se admiten archivos .csv"
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "import": "Importar",
+        "try_again": "Intentar de nuevo",
+        "close": "Cerrar",
+        "done": "Hecho"
+      },
+      "progress": {
+        "uploading": "Subiendo...",
+        "importing": "Importando..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Importación fallida",
+          "complete": "Importación completada"
+        },
+        "message": {
+          "seat_limit": "No se pueden importar miembros debido a restricciones de límite de asientos.",
+          "success": "{count} miembro{plural} agregado{plural} exitosamente al espacio de trabajo.",
+          "no_imports": "No se importaron miembros desde el archivo CSV."
+        },
+        "stats": {
+          "successful": "Exitoso",
+          "failed": "Fallido"
+        },
+        "download_errors": "Descargar errores"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Archivo inválido",
+          "message": "Solo se admiten archivos CSV."
+        },
+        "import_failed": {
+          "title": "Importación fallida",
+          "message": "Algo salió mal."
+        }
+      }
+    }
+  }
+}

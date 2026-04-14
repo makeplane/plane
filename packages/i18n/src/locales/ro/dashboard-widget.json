@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bară",
+          "long_label": "Grafic cu bare",
+          "chart_models": {
+            "basic": "De bază",
+            "stacked": "Stivuit",
+            "grouped": "Grupat"
+          },
+          "orientation": {
+            "label": "Orientare",
+            "horizontal": "Orizontal",
+            "vertical": "Vertical",
+            "placeholder": "Adaugă orientare"
+          },
+          "bar_color": "Culoarea barei"
+        },
+        "line_chart": {
+          "short_label": "Linie",
+          "long_label": "Grafic cu linii",
+          "chart_models": {
+            "basic": "De bază",
+            "multi_line": "Multi-linie"
+          },
+          "line_color": "Culoarea liniei",
+          "line_type": {
+            "label": "Tipul liniei",
+            "solid": "Solid",
+            "dashed": "Punctat",
+            "placeholder": "Adaugă tipul liniei"
+          }
+        },
+        "area_chart": {
+          "short_label": "Arie",
+          "long_label": "Grafic arie",
+          "chart_models": {
+            "basic": "De bază",
+            "stacked": "Stivuit",
+            "comparison": "Comparație"
+          },
+          "fill_color": "Culoare de umplere"
+        },
+        "donut_chart": {
+          "short_label": "Gogoașă",
+          "long_label": "Grafic gogoașă",
+          "chart_models": {
+            "basic": "De bază",
+            "progress": "Progres"
+          },
+          "center_value": "Valoare centrală",
+          "completed_color": "Culoare completat"
+        },
+        "pie_chart": {
+          "short_label": "Plăcintă",
+          "long_label": "Grafic plăcintă",
+          "chart_models": {
+            "basic": "De bază"
+          },
+          "group": {
+            "label": "Bucăți grupate",
+            "group_thin_pieces": "Grupează bucățile subțiri",
+            "minimum_threshold": {
+              "label": "Prag minim",
+              "placeholder": "Adaugă prag"
+            },
+            "name_group": {
+              "label": "Nume grup",
+              "placeholder": "\"Mai puțin de 5%\""
+            }
+          },
+          "show_values": "Arată valorile",
+          "value_type": {
+            "percentage": "Procentaj",
+            "count": "Număr"
+          }
+        },
+        "text": {
+          "short_label": "Text",
+          "long_label": "Text",
+          "alignment": {
+            "label": "Aliniere text",
+            "left": "Stânga",
+            "center": "Centru",
+            "right": "Dreapta",
+            "placeholder": "Adaugă alinierea textului"
+          },
+          "text_color": "Culoare text"
+        },
+        "table_chart": {
+          "short_label": "Tabel",
+          "long_label": "Grafic tabel",
+          "chart_models": {
+            "basic": {
+              "short_label": "De bază",
+              "long_label": "Tabel"
+            }
+          },
+          "columns": "Coloane",
+          "rows": "Rânduri",
+          "rows_placeholder": "Adaugă rânduri",
+          "configure_rows_hint": "Selectați o proprietate pentru rânduri pentru a vizualiza acest tabel."
+        }
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Orizont",
+        "earthen": "Pământiu"
+      },
+      "common": {
+        "add_widget": "Adaugă widget",
+        "widget_title": {
+          "label": "Denumește acest widget",
+          "placeholder": "ex., \"De făcut ieri\", \"Toate Completate\""
+        },
+        "chart_type": "Tip grafic",
+        "visualization_type": {
+          "label": "Tip vizualizare",
+          "placeholder": "Adaugă tip vizualizare"
+        },
+        "date_group": {
+          "label": "Grupare după dată",
+          "placeholder": "Adaugă grupare după dată"
+        },
+        "group_by": "Grupează după",
+        "stack_by": "Stivuiește după",
+        "daily": "Zilnic",
+        "weekly": "Săptămânal",
+        "monthly": "Lunar",
+        "yearly": "Anual",
+        "work_item_count": "Număr de elemente de lucru",
+        "estimate_point": "Punct de estimare",
+        "pending_work_item": "Elemente de lucru în așteptare",
+        "completed_work_item": "Elemente de lucru completate",
+        "in_progress_work_item": "Elemente de lucru în progres",
+        "blocked_work_item": "Elemente de lucru blocate",
+        "work_item_due_this_week": "Elemente de lucru scadente săptămâna aceasta",
+        "work_item_due_today": "Elemente de lucru scadente astăzi",
+        "color_scheme": {
+          "label": "Schemă de culori",
+          "placeholder": "Adaugă schemă de culori"
+        },
+        "smoothing": "Netezire",
+        "markers": "Markeri",
+        "legends": "Legende",
+        "tooltips": "Tooltipuri",
+        "opacity": {
+          "label": "Opacitate",
+          "placeholder": "Adaugă opacitate"
+        },
+        "border": "Bordură",
+        "widget_configuration": "Configurare widget",
+        "configure_widget": "Configurează widget",
+        "guides": "Ghiduri",
+        "style": "Stil",
+        "area_appearance": "Aspectul ariei",
+        "comparison_line_appearance": "Aspectul liniei de comparație",
+        "add_property": "Adaugă proprietate",
+        "add_metric": "Adaugă metrică"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "stacked": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Stivuiește după lipsește o valoare."
+          },
+          "grouped": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Grupează după lipsește o valoare."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "multi_line": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Grupează după lipsește o valoare."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "stacked": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Stivuiește după lipsește o valoare."
+          },
+          "comparison": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "progress": {
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Coloanelor lipsește o valoare.",
+            "group_by": "Rândurilor lipsește o valoare."
+          }
+        },
+        "ask_admin": "Întreabă administratorul tău pentru a configura acest widget."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Creează dashboard nou",
+        "update": "Actualizează dashboard"
+      },
+      "title": {
+        "label": "Denumește dashboard-ul tău.",
+        "placeholder": "\"Capacitate între proiecte\", \"Încărcare de lucru pe echipă\", \"Stare în toate proiectele\"",
+        "required_error": "Titlul este obligatoriu"
+      },
+      "project": {
+        "label": "Alege proiecte",
+        "placeholder": "Datele din aceste proiecte vor alimenta acest dashboard.",
+        "required_error": "Proiectele sunt obligatorii"
+      },
+      "filters_label": "Setează filtre pentru sursele de date de mai sus",
+      "create_dashboard": "Creează dashboard",
+      "update_dashboard": "Actualizează dashboard"
+    },
+    "delete_modal": {
+      "heading": "Șterge dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Prezintă-ți progresul în dashboard-uri la cerere, pentru totdeauna.",
+        "description": "Construiește orice dashboard de care ai nevoie și personalizează modul în care arată datele tale pentru prezentarea perfectă a progresului tău.",
+        "coming_soon_to_mobile": "În curând în aplicația mobilă",
+        "card_1": {
+          "title": "Pentru toate proiectele tale",
+          "description": "Obține o viziune divină completă a workspace-ului tău cu toate proiectele tale sau segmentează datele de lucru pentru acea vizualizare perfectă a progresului tău."
+        },
+        "card_2": {
+          "title": "Pentru orice date din Plane",
+          "description": "Depășește Analiticile predefinite și graficele Ciclurilor gata făcute pentru a privi echipele, inițiativele sau orice altceva așa cum nu ai făcut-o până acum."
+        },
+        "card_3": {
+          "title": "Pentru toate nevoile tale de vizualizare de date",
+          "description": "Alege din mai multe grafice personalizabile cu controale fine pentru a vedea și a arăta datele tale de lucru exact așa cum dorești."
+        },
+        "card_4": {
+          "title": "La cerere și permanent",
+          "description": "Construiește o dată, păstrează pentru totdeauna cu actualizări automate ale datelor tale, flag-uri contextuale pentru modificări de scop și linkuri permanente partajabile."
+        },
+        "card_5": {
+          "title": "Exporturi și comunicări programate",
+          "description": "Pentru acele momente când linkurile nu funcționează, obține dashboard-urile tale în PDF-uri unice sau programează-le să fie trimise automat către părțile interesate."
+        },
+        "card_6": {
+          "title": "Auto-aranjate pentru toate dispozitivele",
+          "description": "Redimensionează widget-urile tale pentru aspectul dorit și vezi-l exact la fel pe mobile, tabletă și alte browsere."
+        }
+      },
+      "dashboards_list": {
+        "title": "Vizualizează datele în widget-uri, construiește dashboard-urile tale cu widget-uri și vezi cele mai recente la cerere.",
+        "description": "Construiește dashboard-urile tale cu Widget-uri Personalizate care îți arată datele în domeniul specificat. Obține dashboard-uri pentru tot lucrul tău între proiecte și echipe și distribuie link-uri permanente către părțile interesate pentru urmărire la cerere."
+      },
+      "dashboards_search": {
+        "title": "Asta nu se potrivește cu numele unui dashboard.",
+        "description": "Asigură-te că interogarea ta este corectă sau încearcă o altă interogare."
+      },
+      "widgets_list": {
+        "title": "Vizualizează-ți datele așa cum dorești.",
+        "description": "Folosește linii, bare, plăcinte și alte formate pentru a-ți vedea datele\nașa cum dorești din sursele pe care le specifici."
+      },
+      "widget_data": {
+        "title": "Nimic de văzut aici",
+        "description": "Reîmprospătează sau adaugă date pentru a le vedea aici."
+      }
+    },
+    "common": {
+      "editing": "Editare"
+    }
+  }
+}

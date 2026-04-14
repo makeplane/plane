@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Stĺpec",
+          "long_label": "Stĺpcový graf",
+          "chart_models": {
+            "basic": "Základný",
+            "stacked": "Vrstvený",
+            "grouped": "Zoskupený"
+          },
+          "orientation": {
+            "label": "Orientácia",
+            "horizontal": "Horizontálny",
+            "vertical": "Vertikálny",
+            "placeholder": "Pridať orientáciu"
+          },
+          "bar_color": "Farba stĺpca"
+        },
+        "line_chart": {
+          "short_label": "Čiara",
+          "long_label": "Čiarový graf",
+          "chart_models": {
+            "basic": "Základný",
+            "multi_line": "Viacčiarový"
+          },
+          "line_color": "Farba čiary",
+          "line_type": {
+            "label": "Typ čiary",
+            "solid": "Plná",
+            "dashed": "Prerušovaná",
+            "placeholder": "Pridať typ čiary"
+          }
+        },
+        "area_chart": {
+          "short_label": "Plocha",
+          "long_label": "Plošný graf",
+          "chart_models": {
+            "basic": "Základný",
+            "stacked": "Vrstvený",
+            "comparison": "Porovnávací"
+          },
+          "fill_color": "Farba výplne"
+        },
+        "donut_chart": {
+          "short_label": "Donut",
+          "long_label": "Donut graf",
+          "chart_models": {
+            "basic": "Základný",
+            "progress": "Pokrok"
+          },
+          "center_value": "Hodnota v strede",
+          "completed_color": "Farba dokončenia"
+        },
+        "pie_chart": {
+          "short_label": "Koláč",
+          "long_label": "Koláčový graf",
+          "chart_models": {
+            "basic": "Základný"
+          },
+          "group": {
+            "label": "Zoskupené časti",
+            "group_thin_pieces": "Zoskupiť tenké časti",
+            "minimum_threshold": {
+              "label": "Minimálna hranica",
+              "placeholder": "Pridať hranicu"
+            },
+            "name_group": {
+              "label": "Názov skupiny",
+              "placeholder": "\"Menej ako 5%\""
+            }
+          },
+          "show_values": "Zobraziť hodnoty",
+          "value_type": {
+            "percentage": "Percentá",
+            "count": "Počet"
+          }
+        },
+        "text": {
+          "short_label": "Text",
+          "long_label": "Text",
+          "alignment": {
+            "label": "Zarovnanie textu",
+            "left": "Vľavo",
+            "center": "V strede",
+            "right": "Vpravo",
+            "placeholder": "Pridať zarovnanie textu"
+          },
+          "text_color": "Farba textu"
+        },
+        "table_chart": {
+          "short_label": "Tabuľka",
+          "long_label": "Tabuľkový graf",
+          "chart_models": {
+            "basic": {
+              "short_label": "Základný",
+              "long_label": "Tabuľka"
+            }
+          },
+          "columns": "Stĺpce",
+          "rows": "Riadky",
+          "rows_placeholder": "Pridať riadky",
+          "configure_rows_hint": "Vyberte vlastnosť pre riadky na zobrazenie tejto tabuľky."
+        }
+      },
+      "color_palettes": {
+        "modern": "Moderná",
+        "horizon": "Horizont",
+        "earthen": "Zemitá"
+      },
+      "common": {
+        "add_widget": "Pridať vidžet",
+        "widget_title": {
+          "label": "Pomenujte tento vidžet",
+          "placeholder": "napr., \"Úlohy na včera\", \"Všetko dokončené\""
+        },
+        "chart_type": "Typ grafu",
+        "visualization_type": {
+          "label": "Typ vizualizácie",
+          "placeholder": "Pridať typ vizualizácie"
+        },
+        "date_group": {
+          "label": "Skupina dátumov",
+          "placeholder": "Pridať skupinu dátumov"
+        },
+        "group_by": "Zoskupiť podľa",
+        "stack_by": "Vrstviť podľa",
+        "daily": "Denne",
+        "weekly": "Týždenne",
+        "monthly": "Mesačne",
+        "yearly": "Ročne",
+        "work_item_count": "Počet pracovných položiek",
+        "estimate_point": "Odhadovaný bod",
+        "pending_work_item": "Čakajúce pracovné položky",
+        "completed_work_item": "Dokončené pracovné položky",
+        "in_progress_work_item": "Rozpracované pracovné položky",
+        "blocked_work_item": "Blokované pracovné položky",
+        "work_item_due_this_week": "Pracovné položky splatné tento týždeň",
+        "work_item_due_today": "Pracovné položky splatné dnes",
+        "color_scheme": {
+          "label": "Farebná schéma",
+          "placeholder": "Pridať farebnú schému"
+        },
+        "smoothing": "Vyhladzovanie",
+        "markers": "Značky",
+        "legends": "Legendy",
+        "tooltips": "Popisky",
+        "opacity": {
+          "label": "Priehľadnosť",
+          "placeholder": "Pridať priehľadnosť"
+        },
+        "border": "Ohraničenie",
+        "widget_configuration": "Konfigurácia vidžetu",
+        "configure_widget": "Konfigurovať vidžet",
+        "guides": "Návody",
+        "style": "Štýl",
+        "area_appearance": "Vzhľad plochy",
+        "comparison_line_appearance": "Vzhľad porovnávacej čiary",
+        "add_property": "Pridať vlastnosť",
+        "add_metric": "Pridať metriku"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "stacked": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Vrstveniu podľa chýba hodnota."
+          },
+          "grouped": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Zoskupovaniu podľa chýba hodnota."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "multi_line": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Zoskupovaniu podľa chýba hodnota."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "stacked": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Vrstveniu podľa chýba hodnota."
+          },
+          "comparison": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "progress": {
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Stĺpcom chýba hodnota.",
+            "group_by": "Riadkom chýba hodnota."
+          }
+        },
+        "ask_admin": "Požiadajte svojho administrátora o konfiguráciu tohto vidžetu."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Vytvoriť nový dešbord",
+        "update": "Aktualizovať dešbord"
+      },
+      "title": {
+        "label": "Pomenujte svoj dešbord.",
+        "placeholder": "\"Kapacita naprieč projektmi\", \"Pracovné zaťaženie podľa tímu\", \"Stav naprieč všetkými projektmi\"",
+        "required_error": "Názov je povinný"
+      },
+      "project": {
+        "label": "Vyberte projekty",
+        "placeholder": "Dáta z týchto projektov budú poháňať tento dešbord.",
+        "required_error": "Projekty sú povinné"
+      },
+      "filters_label": "Nastavte filtre pre vyššie uvedené zdroje údajov",
+      "create_dashboard": "Vytvoriť dešbord",
+      "update_dashboard": "Aktualizovať dešbord"
+    },
+    "delete_modal": {
+      "heading": "Odstrániť dešbord"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Prezentujte svoj pokrok v dešbordoch na vyžiadanie, navždy.",
+        "description": "Vytvorte akýkoľvek dešbord, ktorý potrebujete, a prispôsobte vzhľad vašich dát pre dokonalú prezentáciu vášho pokroku.",
+        "coming_soon_to_mobile": "Čoskoro aj v mobilnej aplikácii",
+        "card_1": {
+          "title": "Pre všetky vaše projekty",
+          "description": "Získajte celkový pohľad na váš vorkspejs so všetkými vašimi projektmi alebo rozdeľte svoje pracovné dáta pre dokonalý pohľad na váš pokrok."
+        },
+        "card_2": {
+          "title": "Pre akékoľvek dáta v Plane",
+          "description": "Prejdite za hranice predpripravených Analytík a hotových grafov Cyklov, aby ste sa pozreli na tímy, iniciatívy alebo čokoľvek iné tak, ako nikdy predtým."
+        },
+        "card_3": {
+          "title": "Pre všetky vaše potreby vizualizácie dát",
+          "description": "Vyberte si z niekoľkých prispôsobiteľných grafov s podrobnými ovládacími prvkami, aby ste videli a zobrazili vaše pracovné dáta presne tak, ako chcete."
+        },
+        "card_4": {
+          "title": "Na vyžiadanie a trvalo",
+          "description": "Vytvorte raz, uchovajte navždy s automatickým obnovovaním vašich dát, kontextovými vlajkami pre zmeny rozsahu a zdieľateľnými permalinkami."
+        },
+        "card_5": {
+          "title": "Exporty a plánovaná komunikácia",
+          "description": "Pre tie časy, keď odkazy nefungujú, dostanete vaše dešbordy do jednorazových PDF alebo ich naplánujte na automatické odosielanie zainteresovaným stranám."
+        },
+        "card_6": {
+          "title": "Automatické rozloženie pre všetky zariadenia",
+          "description": "Zmeňte veľkosť vašich vidžetov pre požadované rozloženie a vidíte ich presne rovnako na mobiloch, tabletoch a iných prehliadačoch."
+        }
+      },
+      "dashboards_list": {
+        "title": "Vizualizujte dáta vo vidžetoch, vytvárajte dešbordy s vidžetmi a vidíte najnovšie na vyžiadanie.",
+        "description": "Vytvorte svoje dešbordy s Vlastnými Vidžetmi, ktoré zobrazujú vaše dáta v rozsahu, ktorý špecifikujete. Získajte dešbordy pre všetku vašu prácu naprieč projektmi a tímami a zdieľajte permanentné odkazy so zainteresovanými stranami pre sledovanie na vyžiadanie."
+      },
+      "dashboards_search": {
+        "title": "To nezodpovedá názvu dešbordu.",
+        "description": "Uistite sa, že váš dotaz je správny alebo skúste iný dotaz."
+      },
+      "widgets_list": {
+        "title": "Vizualizujte svoje dáta tak, ako chcete.",
+        "description": "Použite čiary, stĺpce, koláče a iné formáty na zobrazenie vašich dát\ntakým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete."
+      },
+      "widget_data": {
+        "title": "Nie je tu nič na zobrazenie",
+        "description": "Obnovte alebo pridajte dáta, aby ste ich tu videli."
+      }
+    },
+    "common": {
+      "editing": "Upravuje sa"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "모든 에픽",
+    "label": "{count, plural, one {에픽} other {에픽}}",
+    "new": "새 에픽",
+    "adding": "에픽 추가 중",
+    "create": {
+      "success": "에픽이 성공적으로 생성되었습니다"
+    },
+    "add": {
+      "press_enter": "다른 에픽을 추가하려면 'Enter'를 누르세요",
+      "label": "에픽 추가"
+    },
+    "title": {
+      "label": "에픽 제목",
+      "required": "에픽 제목이 필요합니다."
+    },
+    "archive": {
+      "description": "완료되었거나 취소된 에픽만\n아카이브할 수 있습니다",
+      "label": "에픽 아카이브",
+      "confirm_message": "에픽을 아카이브하시겠습니까? 아카이브한 에픽은 나중에 복원할 수 있습니다.",
+      "success": {
+        "label": "아카이브 성공",
+        "message": "아카이브는 프로젝트 아카이브에서 확인할 수 있습니다."
+      },
+      "failed": {
+        "message": "에픽을 아카이브할 수 없습니다. 다시 시도해 주세요."
+      }
+    }
+  },
+  "epics": {
+    "label": "에픽스",
+    "no_epics_selected": "선택된 에픽 없음",
+    "add_selected_epics": "선택한 에픽 추가",
+    "epic_link_copied_to_clipboard": "에픽 링크가 클립보드에 복사되었습니다.",
+    "project_link_copied_to_clipboard": "프로젝트 링크가 클립보드에 복사되었습니다",
+    "empty_state": {
+      "general": {
+        "title": "에픽을 만들고 다른 사람 또는 자신에게 할당하세요",
+        "description": "여러 사이클에 걸쳐 있고 모듈 간에 존재할 수 있는 더 큰 작업 단위에 대해 에픽을 만드세요. 프로젝트의 작업 항목과 하위 작업 항목을 에픽에 연결하고 오버뷰에서 작업 항목으로 이동하세요.",
+        "primary_button": {
+          "text": "에픽 생성"
+        }
+      },
+      "section": {
+        "title": "아직 에픽이 없습니다",
+        "description": "진행 상황을 관리하고 추적하기 위해 에픽 추가를 시작하세요.",
+        "primary_button": {
+          "text": "에픽 추가"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "일치하는 에픽을 찾을 수 없습니다"
+      },
+      "no_epics": {
+        "title": "에픽을 찾을 수 없습니다"
+      }
+    }
+  }
+}

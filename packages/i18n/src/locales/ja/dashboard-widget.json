@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "バー",
+          "long_label": "バー チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "grouped": "グループド"
+          },
+          "orientation": {
+            "label": "オリエンテーション",
+            "horizontal": "ホリゾンタル",
+            "vertical": "バーティカル",
+            "placeholder": "オリエンテーション アッド"
+          },
+          "bar_color": "バー カラー"
+        },
+        "line_chart": {
+          "short_label": "ライン",
+          "long_label": "ライン チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "multi_line": "マルチライン"
+          },
+          "line_color": "ライン カラー",
+          "line_type": {
+            "label": "ライン タイプ",
+            "solid": "ソリッド",
+            "dashed": "ダッシュド",
+            "placeholder": "ライン タイプ アッド"
+          }
+        },
+        "area_chart": {
+          "short_label": "エリア",
+          "long_label": "エリア チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "comparison": "コンパリソン"
+          },
+          "fill_color": "フィル カラー"
+        },
+        "donut_chart": {
+          "short_label": "ドーナツ",
+          "long_label": "ドーナツ チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "progress": "プログレス"
+          },
+          "center_value": "センター バリュー",
+          "completed_color": "コンプリーテッド カラー"
+        },
+        "pie_chart": {
+          "short_label": "パイ",
+          "long_label": "パイ チャート",
+          "chart_models": {
+            "basic": "ベーシック"
+          },
+          "group": {
+            "label": "グループド ピーセズ",
+            "group_thin_pieces": "グループ シン ピーセズ",
+            "minimum_threshold": {
+              "label": "ミニマム スレショルド",
+              "placeholder": "スレショルド アッド"
+            },
+            "name_group": {
+              "label": "ネーム グループ",
+              "placeholder": "\"レス ザン 5%\""
+            }
+          },
+          "show_values": "ショー バリューズ",
+          "value_type": {
+            "percentage": "パーセンテージ",
+            "count": "カウント"
+          }
+        },
+        "text": {
+          "short_label": "テキスト",
+          "long_label": "テキスト",
+          "alignment": {
+            "label": "テキスト アラインメント",
+            "left": "レフト",
+            "center": "センター",
+            "right": "ライト",
+            "placeholder": "テキスト アラインメント アッド"
+          },
+          "text_color": "テキスト カラー"
+        },
+        "table_chart": {
+          "short_label": "表",
+          "long_label": "表グラフ",
+          "chart_models": {
+            "basic": {
+              "short_label": "基本",
+              "long_label": "表"
+            }
+          },
+          "columns": "列",
+          "rows": "行",
+          "rows_placeholder": "行を追加",
+          "configure_rows_hint": "この表を表示するには行のプロパティを選択してください。"
+        }
+      },
+      "color_palettes": {
+        "modern": "モダン",
+        "horizon": "ホライゾン",
+        "earthen": "アーセン"
+      },
+      "common": {
+        "add_widget": "アッド ウィジェット",
+        "widget_title": {
+          "label": "ネーム ディス ウィジェット",
+          "placeholder": "例: \"トゥードゥー イェスタデイ\", \"オール コンプリート\""
+        },
+        "chart_type": "チャート タイプ",
+        "visualization_type": {
+          "label": "ビジュアライゼーション タイプ",
+          "placeholder": "ビジュアライゼーション タイプ アッド"
+        },
+        "date_group": {
+          "label": "デート グループ",
+          "placeholder": "デート グループ アッド"
+        },
+        "group_by": "グループ バイ",
+        "stack_by": "スタック バイ",
+        "daily": "デイリー",
+        "weekly": "ウィークリー",
+        "monthly": "マンスリー",
+        "yearly": "イヤーリー",
+        "work_item_count": "ワーク アイテム カウント",
+        "estimate_point": "エスティメート ポイント",
+        "pending_work_item": "ペンディング ワーク アイテムズ",
+        "completed_work_item": "コンプリーテッド ワーク アイテムズ",
+        "in_progress_work_item": "イン プログレス ワーク アイテムズ",
+        "blocked_work_item": "ブロックド ワーク アイテムズ",
+        "work_item_due_this_week": "ワーク アイテムズ デュー ディス ウィーク",
+        "work_item_due_today": "ワーク アイテムズ デュー トゥデイ",
+        "color_scheme": {
+          "label": "カラー スキーム",
+          "placeholder": "カラー スキーム アッド"
+        },
+        "smoothing": "スムージング",
+        "markers": "マーカーズ",
+        "legends": "レジェンズ",
+        "tooltips": "ツールチップス",
+        "opacity": {
+          "label": "オパシティ",
+          "placeholder": "オパシティ アッド"
+        },
+        "border": "ボーダー",
+        "widget_configuration": "ウィジェット コンフィギュレーション",
+        "configure_widget": "コンフィギュア ウィジェット",
+        "guides": "ガイズ",
+        "style": "スタイル",
+        "area_appearance": "エリア アピアランス",
+        "comparison_line_appearance": "コンペア ライン アピアランス",
+        "add_property": "アッド プロパティ",
+        "add_metric": "アッド メトリック"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "stacked": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "スタック バイ イズ ミッシング ア バリュー"
+          },
+          "grouped": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "グループ バイ イズ ミッシング ア バリュー"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "multi_line": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "グループ バイ イズ ミッシング ア バリュー"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "stacked": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "スタック バイ イズ ミッシング ア バリュー"
+          },
+          "comparison": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "progress": {
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "列に値がありません。",
+            "group_by": "行に値がありません。"
+          }
+        },
+        "ask_admin": "アスク ユア アドミン トゥ コンフィギュア ディス ウィジェット"
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "クリエイト ニュー ダッシュボード",
+        "update": "アップデート ダッシュボード"
+      },
+      "title": {
+        "label": "ネーム ユア ダッシュボード",
+        "placeholder": "\"キャパシティ アクロス プロジェクツ\", \"ワークロード バイ チーム\", \"ステート アクロス オール プロジェクツ\"",
+        "required_error": "タイトル イズ リクワイアド"
+      },
+      "project": {
+        "label": "チューズ プロジェクツ",
+        "placeholder": "データ フロム ジーズ プロジェクツ ウィル パワー ディス ダッシュボード",
+        "required_error": "プロジェクツ アー リクワイアド"
+      },
+      "filters_label": "上記のデータソースにフィルターを設定",
+      "create_dashboard": "クリエイト ダッシュボード",
+      "update_dashboard": "アップデート ダッシュボード"
+    },
+    "delete_modal": {
+      "heading": "デリート ダッシュボード"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "プレゼント ユア プログレス イン オンデマンド、フォーエバー ダッシュボーズ",
+        "description": "ビルド エニー ダッシュボード ユー ニード トゥ アンド カスタマイズ ハウ ユア データ ルックス フォー ザ パーフェクト プレゼンテーション オブ ユア プログレス",
+        "coming_soon_to_mobile": "カミング スーン トゥ ザ モバイル アップ",
+        "card_1": {
+          "title": "フォー オール ユア プロジェクツ",
+          "description": "ゲット ア トータル ゴッドビュー オブ ユア ワークスペース ウィズ オール ユア プロジェクツ オア スライス ユア ワーク データ フォー ザット パーフェクト ビュー ユア プログレス"
+        },
+        "card_2": {
+          "title": "フォー エニー データ イン プレーン",
+          "description": "ゴー ビヨンド アウトオブザボックス アナリティクス アンド レディメイド サイクル チャーツ トゥ ルック アット チームズ、イニシアティブス、オア エニシング エルス ライク ユー ハブント ビフォー"
+        },
+        "card_3": {
+          "title": "フォー オール ユア データ ビズ ニーズ",
+          "description": "チューズ フロム セベラル カスタマイザブル チャーツ ウィズ ファイングレインド コントロールズ トゥ シー アンド ショー ユア ワーク データ イグザクトリー ハウ ユー ウォント トゥ"
+        },
+        "card_4": {
+          "title": "オンデマンド アンド パーマネント",
+          "description": "ビルド ワンス、キープ フォーエバー ウィズ オートマティック リフレッシュズ オブ ユア データ、コンテクスチュアル フラッグズ フォー スコープ チェンジズ、アンド シェアラブル パーマリンクス"
+        },
+        "card_5": {
+          "title": "エクスポーツ アンド スケジュールド コムズ",
+          "description": "フォー ゾーズ タイムズ ウェン リンクス ドント ワーク、ゲット ユア ダッシュボーズ アウト イントゥ ワンタイム ピーディーエフス オア スケジュール ゼム トゥ ビー セント トゥ ステークホルダーズ オートマティカリー"
+        },
+        "card_6": {
+          "title": "オートレイドアウト フォー オール デバイセズ",
+          "description": "リサイズ ユア ウィジェッツ フォー ザ レイアウト ユー ウォント アンド シー イット ザ イグザクト セイム アクロス モバイル、タブレット、アンド アザー ブラウザーズ"
+        }
+      },
+      "dashboards_list": {
+        "title": "ビジュアライズ データ イン ウィジェッツ、ビルド ユア ダッシュボーズ ウィズ ウィジェッツ、アンド シー ザ レイテスト オン デマンド",
+        "description": "ビルド ユア ダッシュボーズ ウィズ カスタム ウィジェッツ ザット ショー ユア データ イン ザ スコープ ユー スペシファイ。ゲット ダッシュボーズ フォー オール ユア ワーク アクロス プロジェクツ アンド チームズ アンド シェア パーマリンクス ウィズ ステークホルダーズ フォー オンデマンド トラッキング"
+      },
+      "dashboards_search": {
+        "title": "ザット ダズント マッチ ア ダッシュボーズ ネーム",
+        "description": "メイク シュア ユア クエリー イズ ライト オア トライ アナザー クエリー"
+      },
+      "widgets_list": {
+        "title": "ビジュアライズ ユア データ ハウ ユー ウォント トゥ",
+        "description": "ユーズ ラインズ、バーズ、パイズ、アンド アザー フォーマッツ トゥ シー ユア データ ザ ウェイ ユー ウォント トゥ フロム ザ ソーセズ ユー スペシファイ"
+      },
+      "widget_data": {
+        "title": "ナッシング トゥ シー ヒア",
+        "description": "リフレッシュ オア アッド データ トゥ シー イット ヒア"
+      }
+    },
+    "common": {
+      "editing": "エディティング"
+    }
+  }
+}

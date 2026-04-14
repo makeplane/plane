@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "建立工作項目",
+      "sub-title": "讓團隊知道您希望他們處理的內容。",
+      "name": "名稱",
+      "email": "電子郵件",
+      "about": "此工作項目的內容是什麼？",
+      "description": "描述應該發生什麼",
+      "description_placeholder": "盡量提供詳細資訊，協助團隊了解您的情況與需求。",
+      "loading": "建立中",
+      "create_work_item": "建立工作項目",
+      "errors": {
+        "name": "名稱為必填",
+        "name_max_length": "名稱不得超過 255 個字元",
+        "email": "電子郵件為必填",
+        "email_invalid": "電子郵件地址無效",
+        "title": "標題為必填",
+        "title_max_length": "標題不得超過 255 個字元"
+      }
+    },
+    "success": {
+      "title": "您的工作項目已加入團隊佇列。",
+      "description": "團隊現在可以從進件佇列中核准或捨棄此工作項目。",
+      "primary_button": {
+        "text": "新增另一個工作項目"
+      },
+      "secondary_button": {
+        "text": "進一步了解進件"
+      }
+    },
+    "how_it_works": {
+      "title": "運作方式",
+      "heading": "這是進件表單。",
+      "description": "進件是 Plane 的功能，讓專案管理員與經理能將外部工作項目納入專案。",
+      "steps": {
+        "step_1": "此簡短表單可讓您在 Plane 專案中建立新的工作項目。",
+        "step_2": "提交此表單後，會在該專案的進件中建立新的工作項目。",
+        "step_3": "該專案或團隊的成員會進行審核。",
+        "step_4": "若核准，此工作項目將移至專案的工作佇列；否則將被拒絕。",
+        "step_5": "若要查詢該工作項目的狀態，請聯絡專案經理、管理員或提供此頁面連結的人。"
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "選擇工作項目類型",
+        "search_placeholder": "搜尋工作項目類型"
+      },
+      "actions": {
+        "select_properties": "選擇屬性"
+      }
+    }
+  }
+}

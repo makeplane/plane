@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Bildirimler",
+    "page_label": "{workspace} - Bildirimler",
+    "options": {
+      "mark_all_as_read": "Tümünü okundu olarak işaretle",
+      "mark_read": "Okundu olarak işaretle",
+      "mark_unread": "Okunmamış olarak işaretle",
+      "refresh": "Yenile",
+      "filters": "Bildirim Filtreleri",
+      "show_unread": "Okunmamışları göster",
+      "show_snoozed": "Ertelenenleri göster",
+      "show_archived": "Arşivlenmişleri göster",
+      "mark_archive": "Arşivle",
+      "mark_unarchive": "Arşivden çıkar",
+      "mark_snooze": "Ertelenmiş",
+      "mark_unsnooze": "Ertelenmemiş"
+    },
+    "toasts": {
+      "read": "Bildirim okundu olarak işaretlendi",
+      "unread": "Bildirim okunmamış olarak işaretlendi",
+      "archived": "Bildirim arşivlendi",
+      "unarchived": "Bildirim arşivden çıkarıldı",
+      "snoozed": "Bildirim ertelendi",
+      "unsnoozed": "Bildirim ertelenmedi"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Detayları görüntülemek için seçin."
+      },
+      "all": {
+        "title": "Atanan iş öğesi yok",
+        "description": "Size atanan iş öğelerinin güncellemelerini\n burada görebilirsiniz"
+      },
+      "mentions": {
+        "title": "Atanan iş öğesi yok",
+        "description": "Size atanan iş öğelerinin güncellemelerini\n burada görebilirsiniz"
+      }
+    },
+    "tabs": {
+      "all": "Tümü",
+      "mentions": "Bahsetmeler"
+    },
+    "filter": {
+      "assigned": "Bana atanan",
+      "created": "Benim oluşturduğum",
+      "subscribed": "Abone olduğum"
+    },
+    "snooze": {
+      "1_day": "1 gün",
+      "3_days": "3 gün",
+      "5_days": "5 gün",
+      "1_week": "1 hafta",
+      "2_weeks": "2 hafta",
+      "custom": "Özel"
+    }
+  }
+}

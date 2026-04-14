@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Crear un elemento de trabajo",
+      "sub-title": "Haz saber al equipo en qué te gustaría que trabajen.",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "about": "¿De qué trata este elemento de trabajo?",
+      "description": "Describe qué debería ocurrir",
+      "description_placeholder": "Añade todos los detalles que quieras para ayudar al equipo a identificar tu situación y necesidades.",
+      "loading": "Creando",
+      "create_work_item": "Crear elemento de trabajo",
+      "errors": {
+        "name": "El nombre es obligatorio",
+        "name_max_length": "El nombre debe tener menos de 255 caracteres",
+        "email": "El correo electrónico es obligatorio",
+        "email_invalid": "Dirección de correo no válida",
+        "title": "El título es obligatorio",
+        "title_max_length": "El título debe tener menos de 255 caracteres"
+      }
+    },
+    "success": {
+      "title": "¡Genial! Tu elemento de trabajo ya está en la cola del equipo.",
+      "description": "El equipo puede aprobar o descartar este elemento de trabajo desde su cola de entrada.",
+      "primary_button": {
+        "text": "Añadir otro elemento de trabajo"
+      },
+      "secondary_button": {
+        "text": "Saber más sobre Entrada"
+      }
+    },
+    "how_it_works": {
+      "title": "¿Cómo funciona?",
+      "heading": "Este es un formulario de Entrada.",
+      "description": "Entrada es una función de Plane que permite a los administradores y gestores de proyecto recibir elementos de trabajo externos en sus proyectos.",
+      "steps": {
+        "step_1": "Este breve formulario te permite crear un nuevo elemento de trabajo en un proyecto de Plane.",
+        "step_2": "Al enviar este formulario, se crea un nuevo elemento de trabajo en la Entrada de ese proyecto.",
+        "step_3": "Alguien de ese proyecto o equipo lo revisará.",
+        "step_4": "Si lo aprueban, el elemento pasará a la cola de trabajo del proyecto. Si no, se rechazará.",
+        "step_5": "Para consultar el estado de ese elemento, contacta con el gestor del proyecto, el administrador o quien te envió el enlace a esta página."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Seleccionar tipo de elemento de trabajo",
+        "search_placeholder": "Buscar un tipo de elemento de trabajo"
+      },
+      "actions": {
+        "select_properties": "Seleccionar propiedades"
+      }
+    }
+  }
+}

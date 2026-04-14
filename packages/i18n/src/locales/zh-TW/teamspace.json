@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "團隊空間",
+    "empty_state": {
+      "general": {
+        "title": "團隊空間在 Plane 中解鎖更好的組織和追蹤。",
+        "description": "為每個現實世界的團隊創建一個專用表面，與 Plane 中的所有其他工作表面分開，並根據您的團隊工作方式進行自定義。",
+        "primary_button": {
+          "text": "創建新的團隊空間"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "您尚未連結任何團隊空間。",
+          "description": "團隊空間和專案所有者可以管理專案的訪問權限。"
+        }
+      },
+      "primary_button": {
+        "text": "連結團隊空間"
+      },
+      "secondary_button": {
+        "text": "了解更多"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "團隊空間名稱",
+          "members": "成員",
+          "accountType": "帳戶類型"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "移除團隊空間"
+            },
+            "confirm": {
+              "title": "從 {projectName} 移除 {teamspaceName}",
+              "description": "當您從連結的專案中移除此團隊空間時，此處的成員將失去對連結專案的訪問權限。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "未找到匹配的團隊空間"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {您已將一個團隊空間連結到此專案。} other {您已將 # 個團隊空間連結到此專案。}}",
+            "description": "{additionalCount, plural, =0 {團隊空間 {firstTeamspaceName} 現在已連結到此專案。} other {團隊空間 {firstTeamspaceName} 和其他 {additionalCount} 個團隊空間現在已連結到此專案。}}"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "請重試或重新載入頁面後再試一次。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "您已從此專案中移除該團隊空間。",
+            "description": "團隊空間 {teamspaceName} 已從 {projectName} 中移除。"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "請重試或重新載入頁面後再試一次。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "搜尋團隊空間",
+        "info": {
+          "title": "新增團隊空間將授予所有團隊空間成員對此專案的訪問權限。",
+          "link": "了解更多"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "您沒有任何可連結的團隊空間。",
+            "description": "您可能不在可以連結的團隊空間中，或者您已經連結了所有可用的團隊空間。"
+          },
+          "no_results": {
+            "title": "沒有匹配您的團隊空間。",
+            "description": "請嘗試其他搜尋詞或確保您有可連結的團隊空間。"
+          }
+        },
+        "primary_button": {
+          "text": "連結選定的團隊空間"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "創建團隊特定的工作項目。",
+        "description": "在任何連結專案中分配給此團隊成員的工作項目將自動顯示在此處。如果您希望在此處看到一些工作項目，請確保您的連結專案有分配給此團隊成員的工作項目或創建工作項目。",
+        "primary_button": {
+          "text": "將工作項目添加到連結專案"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "應用的過濾器沒有團隊特定的工作項目",
+        "description": "更改其中一些過濾器或清除所有過濾器以查看與此空間相關的工作項目。",
+        "secondary_button": {
+          "text": "清除所有過濾器"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "您的連結專案沒有活動週期。",
+        "description": "連結專案中的活動週期將自動顯示在此處。如果您希望看到活動週期，請確保它現在正在連結專案中運行。"
+      },
+      "completed": {
+        "title": "您的連結專案沒有完成的週期。",
+        "description": "連結專案中完成的週期將自動顯示在此處。如果您希望看到完成的週期，請確保它也在連結專案中完成。"
+      },
+      "upcoming": {
+        "title": "您的連結專案沒有即將到來的週期。",
+        "description": "連結專案中即將到來的週期將自動顯示在此處。如果您希望看到即將到來的週期，請確保它也在連結專案中。"
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "您團隊對工作的視圖，不會干擾工作空間中的任何其他視圖",
+        "description": "在為您的團隊單獨保存的視圖中查看您團隊的工作，與專案的視圖分開。",
+        "primary_button": {
+          "text": "創建視圖"
+        }
+      },
+      "filter": {
+        "title": "沒有匹配的視圖",
+        "description": "沒有視圖符合搜索條件。\n 創建一個新視圖代替。"
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "在團隊頁面中存放您團隊的知識。",
+        "description": "與專案中的頁面不同，您可以在此處的一組單獨頁面中保存特定於團隊的知識。獲得頁面的所有功能，輕鬆創建最佳實踐文檔和團隊維基。",
+        "primary_button": {
+          "text": "創建您的第一個團隊頁面"
+        }
+      },
+      "filter": {
+        "title": "沒有匹配的頁面",
+        "description": "移除過濾器以查看所有頁面"
+      },
+      "search": {
+        "title": "沒有匹配的頁面",
+        "description": "移除搜索條件以查看所有頁面"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "您的連結專案沒有發布的工作項目。",
+        "description": "在一個或多個這些專案中創建一些工作項目，以查看按日期、狀態和優先級的進度。"
+      },
+      "relation": {
+        "blocking": {
+          "title": "您沒有任何阻礙團隊成員的工作項目。",
+          "description": "做得好！您已為您的團隊清除了道路。您是一個優秀的團隊成員。"
+        },
+        "blocked": {
+          "title": "您沒有任何團隊成員的工作項目阻礙您。",
+          "description": "好消息！您可以在所有分配給您的工作項目上取得進展。"
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "您的連結專案沒有發布的工作項目。",
+          "description": "在一個或多個這些專案中創建一些工作項目，以查看按專案和團隊成員的工作分配。"
+        },
+        "filter": {
+          "title": "應用的過濾器沒有團隊統計數據。",
+          "description": "在一個或多個這些專案中創建一些工作項目，以查看按專案和團隊成員的工作分配。"
+        }
+      }
+    }
+  }
+}

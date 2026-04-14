@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "Propojit stránky",
+    "show_wiki_pages": "Zobrazit wikipedií",
+    "link_pages_to": "Propojit stránky k",
+    "linked_pages": "Propojené stránky",
+    "no_description": "Tato stránka je prázdná. Napište něco do ní a uvidíte to zde jako tento placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Stránky aktualizovány",
+          "message": "Stránky byly úspěšně aktualizovány"
+        },
+        "error": {
+          "title": "Stránky nebyly aktualizovány",
+          "message": "Nepodařilo se aktualizovat stránky"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Stránka odstraněna",
+          "message": "Stránka byla úspěšně odstraněna"
+        },
+        "error": {
+          "title": "Stránka nebyla odstraněna",
+          "message": "Nepodařilo se odstranit stránku"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Osnova",
+        "empty_state": {
+          "title": "Chybí nadpisy",
+          "description": "Přidejte na tuto stránku nějaké nadpisy, aby se zde zobrazily."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Slova",
+          "characters": "Znaky",
+          "paragraphs": "Odstavce",
+          "read_time": "Doba čtení"
+        },
+        "actors_info": {
+          "edited_by": "Upravil",
+          "created_by": "Vytvořil"
+        },
+        "version_history": {
+          "label": "Historie verzí",
+          "current_version": "Aktuální verze",
+          "highlight_changes": "Zvýraznit změny"
+        }
+      },
+      "assets": {
+        "label": "Přílohy",
+        "download_button": "Stáhnout",
+        "empty_state": {
+          "title": "Chybí obrázky",
+          "description": "Přidejte obrázky, aby se zde zobrazily."
+        }
+      }
+    },
+    "open_button": "Otevřít navigační panel",
+    "close_button": "Zavřít navigační panel",
+    "outline_floating_button": "Otevřít osnovu"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "Hledat wiki kolekce, projekty a týmové prostory",
+        "project_to_project_with_wiki": "Hledat wiki kolekce a projekty",
+        "teamspace_to_all_with_wiki": "Hledat wiki kolekce, projekty a týmové prostory"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "Přesunuto do wiki",
+          "message": "Stránka byla přesunuta do wiki, ale nepodařilo se ji přidat do vybrané kolekce. Zůstává v General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Odebrat z kolekce",
+      "success_message": "Stránka byla odebrána z kolekce.",
+      "error_message": "Stránku se nepodařilo odebrat z kolekce. Zkuste to prosím znovu."
+    }
+  }
+}

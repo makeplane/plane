@@ -1,0 +1,155 @@
+{
+  "releases": {
+    "label": "{count, plural, one {Rilis} other {Rilis}}",
+    "no_release": "Tidak ada rilis",
+    "unreleased": "Belum dirilis",
+    "select_releases": "Pilih rilis",
+    "overview": "Ringkasan",
+    "scope": "Cakupan",
+    "page_title": {
+      "scope": "Rilis - {name} | Cakupan",
+      "scope_fallback": "Rilis | Cakupan"
+    },
+    "properties": "Properti",
+    "target_date": "Tanggal target",
+    "lead": "Penanggung jawab",
+    "release_tag": "Tag",
+    "labels": "Label",
+    "description_placeholder": "Tambahkan deskripsi...",
+    "progress": "Progres",
+    "completed_work_items": "Item kerja selesai",
+    "pending_work_items": "Item kerja tertunda",
+    "cancelled_work_items": "Item kerja dibatalkan",
+    "scope_page": {
+      "work_items": "Item kerja",
+      "add_work_items": "Tambah item kerja",
+      "remove_from_release": "Hapus dari rilis",
+      "empty_state": {
+        "title": "Tidak ada item kerja",
+        "description": "Tambahkan item kerja untuk menentukan cakupan rilis."
+      },
+      "confirm_remove": {
+        "content": "Yakin ingin menghapus item kerja ini dari rilis? Item akan tetap ada di proyek.",
+        "primary_button": {
+          "default": "Hapus",
+          "loading": "Menghapus"
+        }
+      }
+    },
+    "empty_state": {
+      "title": "Belum ada ruang lingkup",
+      "description": "Tambahkan item kerja ke rilis untuk melacak penyelesaiannya untuk rilis ini.",
+      "add_scope": "Tambah ruang lingkup",
+      "not_found": {
+        "title": "Rilis tidak ditemukan",
+        "description": "Rilis mungkin telah dihapus.",
+        "primary_button": "Kembali ke rilis"
+      }
+    },
+    "toast": {
+      "work_items_added": "{count, plural, one {Item kerja ditambahkan} other {Item kerja ditambahkan}}",
+      "work_items_error": "Gagal menambahkan item kerja"
+    },
+    "count_releases": "{count, plural, one {# rilis} other {# rilis}}",
+    "actions": {
+      "delete": "Hapus"
+    },
+    "delete_modal": {
+      "title": "Hapus rilis",
+      "content": "Apakah Anda yakin ingin menghapus rilis \"{releaseName}\"? Tindakan ini tidak dapat dibatalkan."
+    },
+    "settings": {
+      "heading": {
+        "title": "Rilis",
+        "description": "Kelola deliverable proyek dengan presisi menggunakan rilis."
+      },
+      "toggle": {
+        "title": "Aktifkan rilis",
+        "description": "Anggota workspace akan memiliki akses lihat ke cakupan dalam proyek masing-masing."
+      },
+      "toasts": {
+        "enable": {
+          "loading": "Mengaktifkan rilis...",
+          "success": {
+            "title": "Rilis diaktifkan",
+            "message": "Rilis telah diaktifkan untuk workspace ini."
+          },
+          "error": {
+            "title": "Kesalahan",
+            "message": "Gagal mengaktifkan rilis. Silakan coba lagi."
+          }
+        },
+        "disable": {
+          "loading": "Menonaktifkan rilis...",
+          "success": {
+            "title": "Rilis dinonaktifkan",
+            "message": "Rilis telah dinonaktifkan untuk workspace ini."
+          },
+          "error": {
+            "title": "Kesalahan",
+            "message": "Gagal menonaktifkan rilis. Silakan coba lagi."
+          }
+        }
+      },
+      "tabs": {
+        "tags": "Tag rilis",
+        "labels": "Label"
+      },
+      "tags": {
+        "title": "Tag rilis",
+        "description": "Kategorikan dan filter rilis Anda menggunakan tag.",
+        "add": "Tambahkan tag",
+        "empty_state": "Belum ada tag. Buat tag pertama Anda.",
+        "errors": {
+          "version_required": "Versi wajib diisi.",
+          "version_already_exists": "Tag dengan versi ini sudah ada.",
+          "generic": "Terjadi kesalahan. Silakan coba lagi."
+        },
+        "delete_modal": {
+          "title": "Hapus tag",
+          "content": "Apakah Anda yakin ingin menghapus tag \"{tagVersion}\"? Tindakan ini tidak dapat dibatalkan."
+        },
+        "actions": {
+          "edit": "Edit tag",
+          "delete": "Hapus tag"
+        },
+        "toasts": {
+          "delete": {
+            "success": "Tag berhasil dihapus.",
+            "error": "Gagal menghapus tag. Silakan coba lagi."
+          }
+        }
+      },
+      "labels": {
+        "title": "Label",
+        "description": "Susun dan atur inisiatif Anda dengan label.",
+        "add": "Tambahkan label",
+        "empty_state": "Belum ada label. Buat label pertama Anda.",
+        "errors": {
+          "name_required": "Nama wajib diisi.",
+          "name_already_exists": "Label dengan nama ini sudah ada.",
+          "generic": "Terjadi kesalahan. Silakan coba lagi."
+        },
+        "modal": {
+          "name_placeholder": "Nama label",
+          "pick_color": "Pilih warna label"
+        },
+        "actions": {
+          "edit": "Edit label",
+          "delete": "Hapus label"
+        },
+        "drag_to_reorder": "Seret untuk mengurutkan ulang",
+        "delete_modal": {
+          "title": "Hapus label",
+          "content": "Apakah Anda yakin ingin menghapus label \"{labelName}\"? Tindakan ini tidak dapat dibatalkan."
+        },
+        "toasts": {
+          "delete": {
+            "success": "Label berhasil dihapus.",
+            "error": "Gagal menghapus label. Silakan coba lagi."
+          }
+        }
+      }
+    }
+  }
+}

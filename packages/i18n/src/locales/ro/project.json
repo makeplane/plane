@@ -1,0 +1,378 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Creat la",
+      "updated_at": "Actualizat la",
+      "name": "Nume"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Adaugă ciclu",
+    "more_details": "Mai multe detalii",
+    "cycle": "Ciclu",
+    "update_cycle": "Actualizează ciclul",
+    "create_cycle": "Creează ciclu",
+    "no_matching_cycles": "Niciun ciclu găsit",
+    "remove_filters_to_see_all_cycles": "Elimină filtrele pentru a vedea toate ciclurile",
+    "remove_search_criteria_to_see_all_cycles": "Elimină criteriile de căutare pentru a vedea toate ciclurile",
+    "only_completed_cycles_can_be_archived": "Doar ciclurile finalizate pot fi arhivate",
+    "transfer_work_items": "Transferați {count} elemente de lucru",
+    "transfer": {
+      "no_cycles_available": "Nu există alte cicluri disponibile pentru a transfera elemente de lucru."
+    },
+    "active_cycle": {
+      "label": "Ciclu activ",
+      "progress": "Progres",
+      "chart": "Ritmul de finalizare a activităților",
+      "priority_issue": "Activități prioritare",
+      "assignees": "Persoane atribuite",
+      "issue_burndown": "Grafic de finalizare a activităților",
+      "ideal": "Ideal",
+      "current": "Curent",
+      "labels": "Etichete",
+      "trailing": "Întârziat",
+      "leading": "Avansat"
+    },
+    "upcoming_cycle": {
+      "label": "Ciclu viitor"
+    },
+    "completed_cycle": {
+      "label": "Ciclu finalizat"
+    },
+    "status": {
+      "days_left": "Zile rămase",
+      "completed": "Finalizat",
+      "yet_to_start": "Nu a început",
+      "in_progress": "În desfășurare",
+      "draft": "Schiță"
+    },
+    "action": {
+      "restore": {
+        "title": "Restaurează ciclul",
+        "success": {
+          "title": "Ciclu restaurat",
+          "description": "Ciclul a fost restaurat."
+        },
+        "failed": {
+          "title": "Restaurarea ciclului a eșuat",
+          "description": "Ciclul nu a putut fi restaurat. Te rugăm să încerci din nou."
+        }
+      },
+      "favorite": {
+        "loading": "Se adaugă ciclul la favorite",
+        "success": {
+          "description": "Ciclul a fost adăugat la favorite.",
+          "title": "Succes!"
+        },
+        "failed": {
+          "description": "Nu s-a putut adăuga ciclul la favorite. Te rugăm să încerci din nou.",
+          "title": "Eroare!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Se elimină ciclul din favorite",
+        "success": {
+          "description": "Ciclul a fost eliminat din favorite.",
+          "title": "Succes!"
+        },
+        "failed": {
+          "description": "Nu s-a putut elimina ciclul din favorite. Te rugăm să încerci din nou.",
+          "title": "Eroare!"
+        }
+      },
+      "update": {
+        "loading": "Se actualizează ciclul",
+        "success": {
+          "description": "Ciclul a fost actualizat cu succes.",
+          "title": "Succes!"
+        },
+        "failed": {
+          "description": "Eroare la actualizarea ciclului. Te rugăm să încerci din nou.",
+          "title": "Eroare!"
+        },
+        "error": {
+          "already_exists": "Ai deja un ciclu în datele selectate. Dacă vrei să creezi o schiță, poți face asta eliminând ambele date."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Grupează și delimitează în timp munca ta în Cicluri.",
+        "description": "Împarte munca în intervale de timp, stabilește datele în funcție de termenul limită al proiectului și progresează vizibil ca echipă.",
+        "primary_button": {
+          "text": "Setează primul tău ciclu",
+          "comic": {
+            "title": "Ciclurile sunt intervale repetitive de timp.",
+            "description": "O iterație sau orice alt termen folosit pentru urmărirea săptămânală sau bilunară a muncii este un ciclu."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Nicio activitate adăugată în ciclu",
+        "description": "Adaugă sau creează activități pe care vrei să le implementezi în acest ciclu",
+        "primary_button": {
+          "text": "Creează o activitate nouă"
+        },
+        "secondary_button": {
+          "text": "Adaugă o activitate existentă"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Nicio activitate în ciclu",
+        "description": "Nu există activități în ciclu. Acestea au fost fie transferate, fie ascunse. Pentru a vedea activitățile ascunse, actualizează proprietățile de afișare."
+      },
+      "active": {
+        "title": "Niciun ciclu activ",
+        "description": "Un ciclu activ include orice perioadă care conține data de azi în intervalul său. Progresul și detaliile ciclului activ apar aici."
+      },
+      "archived": {
+        "title": "Niciun ciclu arhivat încă",
+        "description": "Pentru a păstra proiectul ordonat, arhivează ciclurile completate. Le vei găsi aici după arhivare."
+      }
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Creează o activitate și atribuie-o cuiva, chiar și ție",
+        "description": "Gândește-te la activități ca la sarcini sau lucruri care trebuie făcute. O activitate și sub-activitățile sale sunt acțiuni care trebuie realizate într-un interval de timp de către membrii echipei tale. Echipa creează, atribuie și finalizează activități pentru a duce proiectul spre obiectivul său.",
+        "primary_button": {
+          "text": "Creează prima ta activitate",
+          "comic": {
+            "title": "Activitățile sunt elemente de bază în Plane.",
+            "description": "Reproiectarea interfeței Plane, modernizarea imaginii companiei sau lansarea noului sistem de injecție sunt exemple de activități care au, cel mai probabil, sub-activități."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Nicio activitate arhivată încă",
+        "description": "Manual sau automat, poți arhiva activitățile care sunt finalizate sau anulate. Le vei găsi aici după arhivare.",
+        "primary_button": {
+          "text": "Setează automatizarea"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Nicio activitate găsită conform filtrelor aplicate",
+        "secondary_button": {
+          "text": "Șterge toate filtrele"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Adaugă Modul",
+    "update_module": "Actualizează Modul",
+    "create_module": "Creează Modul",
+    "archive_module": "Arhivează Modul",
+    "restore_module": "Restaurează Modul",
+    "delete_module": "Șterge modulul",
+    "empty_state": {
+      "general": {
+        "title": "Mapează etapele proiectului în Module și urmărește munca agregată cu ușurință.",
+        "description": "Un grup de activități care aparțin unui părinte logic și ierarhic formează un modul. Gândește-te la module ca la un mod de a urmări munca în funcție de etapele proiectului. Au propriile perioade, termene limită și statistici pentru a-ți arăta cât de aproape sau departe ești de un reper.",
+        "primary_button": {
+          "text": "Construiește primul tău modul",
+          "comic": {
+            "title": "Modulele ajută la organizarea muncii pe niveluri ierarhice.",
+            "description": "Un modul pentru caroserie, un modul pentru șasiu sau un modul pentru depozit sunt exemple bune de astfel de grupare."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Nicio activitate în modul",
+        "description": "Creează sau adaugă activități pe care vrei să le finalizezi ca parte a acestui modul",
+        "primary_button": {
+          "text": "Creează activități noi"
+        },
+        "secondary_button": {
+          "text": "Adaugă o activitate existentă"
+        }
+      },
+      "archived": {
+        "title": "Niciun modul arhivat încă",
+        "description": "Pentru a păstra proiectul ordonat, arhivează modulele finalizate sau anulate. Le vei găsi aici după arhivare."
+      },
+      "sidebar": {
+        "in_active": "Acest modul nu este încă activ.",
+        "invalid_date": "Dată invalidă. Te rugăm să introduci o dată validă."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Arhivează modulul",
+      "archive_module_description": "Doar modulele finalizate sau anulate pot fi arhivate.",
+      "delete_module": "Șterge modulul"
+    },
+    "toast": {
+      "copy": {
+        "success": "Link-ul modulului a fost copiat în memoria temporară"
+      },
+      "delete": {
+        "success": "Modulul a fost șters cu succes",
+        "error": "Ștergerea modulului a eșuat"
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Salvează perspective filtrate pentru proiectul tău. Creează câte ai nevoie",
+        "description": "Perspectivele sunt seturi de filtre salvate pe care le folosești frecvent sau la care vrei acces rapid. Toți colegii tăi dintr-un proiect pot vedea perspectivele tuturor și pot alege ce li se potrivește cel mai bine.",
+        "primary_button": {
+          "text": "Creează prima ta perspectivă",
+          "comic": {
+            "title": "Perspectivele funcționează pe baza proprietăților activităților.",
+            "description": "Poți crea o perspectivă de aici, cu oricâte proprietăți și filtre consideri necesare."
+          }
+        }
+      },
+      "filter": {
+        "title": "Nicio perspectivă potrivită",
+        "description": "Nicio perspectivă nu se potrivește criteriilor de căutare.\n Creează o nouă perspectivă în schimb."
+      }
+    },
+    "delete_view": {
+      "title": "Sunteți sigur că doriți să ștergeți această vizualizare?",
+      "content": "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura."
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Scrie o notiță, un document sau o bază completă de cunoștințe. Folosește-l pe Galileo, Inteligența Artificială a Plane, ca să te ajute să începi",
+        "description": "Documentația e spațiul în care îți notezi gândurile în Plane. Ia notițe de la ședințe, formatează-le ușor, inserează activități, așază-le folosind o bibliotecă de componente și păstrează-le pe toate în contextul proiectului tău. Pentru a redacta rapid orice document, apelează la Galileo, Inteligența Artificială a Plane, cu un shortcut sau un click.",
+        "primary_button": {
+          "text": "Creează primul tău document"
+        }
+      },
+      "private": {
+        "title": "Niciun document privată încă",
+        "description": "Păstrează-ți gândurile private aici. Când ești gata să le împarți, echipa e la un click distanță.",
+        "primary_button": {
+          "text": "Creează primul tău document"
+        }
+      },
+      "public": {
+        "title": "Niciun document public încă",
+        "description": "Vezi aici documentele distribuite cu toată echipa ta din proiect.",
+        "primary_button": {
+          "text": "Creează primul tău document"
+        }
+      },
+      "archived": {
+        "title": "Niciun document arhivat încă",
+        "description": "Arhivează documentele de care nu mai ai nevoie. Le poți accesa de aici oricând."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Funcția Cereri nu este activată pentru proiect.",
+        "description": "Funcția Cereri te ajută să gestionezi cererile care vin în proiectul tău și să le adaugi ca activități în fluxul tău. Activează Cereri din setările proiectului pentru a gestiona cererile.",
+        "primary_button": {
+          "text": "Gestionează funcțiile"
+        }
+      },
+      "cycle": {
+        "title": "Funcția Cicluri nu este activată pentru acest proiect.",
+        "description": "Împarte munca în intervale de timp, pleacă de la termenul limită al proiectului pentru a seta date și progresează vizibil ca echipă. Activează funcția de cicluri pentru a începe să o folosești.",
+        "primary_button": {
+          "text": "Gestionează funcțiile"
+        }
+      },
+      "module": {
+        "title": "Funcția Module nu este activată pentru proiect.",
+        "description": "Modulele sunt componentele de bază ale proiectului tău. Activează modulele din setările proiectului pentru a începe să le folosești.",
+        "primary_button": {
+          "text": "Gestionează funcțiile"
+        }
+      },
+      "page": {
+        "title": "Funcția Documentație nu este activată pentru proiect.",
+        "description": "Paginile sunt componentele de bază ale proiectului tău. Activează paginile din setările proiectului pentru a începe să le folosești.",
+        "primary_button": {
+          "text": "Gestionează funcțiile"
+        }
+      },
+      "view": {
+        "title": "Funcția Perspective nu este activată pentru proiect.",
+        "description": "Perspectivele sunt componentele de bază ale proiectului tău. Activează perspectivele din setările proiectului pentru a începe să le folosești.",
+        "primary_button": {
+          "text": "Gestionează funcțiile"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Restante",
+      "planned": "Planificate",
+      "in_progress": "În desfășurare",
+      "paused": "În pauză",
+      "completed": "Finalizat",
+      "cancelled": "Anulat"
+    },
+    "layout": {
+      "list": "Aspect listă",
+      "board": "Aspect galerie",
+      "timeline": "Aspect cronologic"
+    },
+    "order_by": {
+      "name": "Nume",
+      "progress": "Progres",
+      "issues": "Număr de activități",
+      "due_date": "Termen limită",
+      "created_at": "Dată creare",
+      "manual": "Manual"
+    }
+  },
+  "project": {
+    "members_import": {
+      "title": "Importă membri din CSV",
+      "description": "Încărcați un CSV cu coloanele: Email și Rol (5=Invitat, 15=Membru, 20=Administrator). Utilizatorii trebuie să fie deja membri ai spațiului de lucru.",
+      "download_sample": "Descărcați CSV exemplu",
+      "dropzone": {
+        "active": "Plasați fișierul CSV aici",
+        "inactive": "Trageți și plasați sau faceți clic pentru a încărca",
+        "file_type": "Sunt acceptate doar fișiere .csv"
+      },
+      "buttons": {
+        "cancel": "Anulare",
+        "import": "Importă",
+        "try_again": "Încearcă din nou",
+        "close": "Închide",
+        "done": "Gata"
+      },
+      "progress": {
+        "uploading": "Se încarcă...",
+        "importing": "Se importă..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Import finalizat"
+        },
+        "message": {
+          "success": "{count} membr{plural} importat{plural} cu succes în proiect.",
+          "no_imports": "Nu au fost importați membri noi din fișierul CSV."
+        },
+        "stats": {
+          "added": "Adăugate",
+          "reactivated": "Reactivați",
+          "already_members": "Deja membri",
+          "skipped": "Omise"
+        },
+        "download_errors": "Descarcă detaliile omise"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Fișier invalid",
+          "message": "Sunt acceptate doar fișiere CSV."
+        },
+        "import_failed": {
+          "title": "Import eșuat",
+          "message": "Ceva nu a funcționat."
+        }
+      }
+    }
+  }
+}

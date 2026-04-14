@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "当前日期和时间"
+        },
+        "today": {
+          "description": "今天的日期"
+        },
+        "start_of_day": {
+          "description": "今天开始"
+        },
+        "end_of_day": {
+          "description": "今天结束"
+        },
+        "start_of_week": {
+          "description": "本周开始"
+        },
+        "end_of_week": {
+          "description": "本周结束"
+        },
+        "start_of_month": {
+          "description": "本月开始"
+        },
+        "end_of_month": {
+          "description": "本月结束"
+        },
+        "start_of_year": {
+          "description": "今年开始"
+        },
+        "end_of_year": {
+          "description": "今年结束"
+        },
+        "days_ago": {
+          "description": "n 天前的日期"
+        },
+        "days_from_now": {
+          "description": "n 天后的日期"
+        },
+        "weeks_ago": {
+          "description": "n 周前的日期"
+        },
+        "weeks_from_now": {
+          "description": "n 周后的日期"
+        },
+        "months_ago": {
+          "description": "n 个月前的日期"
+        },
+        "months_from_now": {
+          "description": "n 个月后的日期"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "当前登录用户"
+        },
+        "members_of": {
+          "description": "\"project:<id>\" 或 \"teamspace:<id>\" 的成员"
+        },
+        "workspace_members": {
+          "description": "所有工作区成员"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "今天活跃的周期"
+        },
+        "completed_cycles": {
+          "description": "结束日期已过的周期"
+        },
+        "upcoming_cycles": {
+          "description": "开始日期在未来的周期"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "截止日期已过且状态为开放"
+        },
+        "has_no_assignee": {
+          "description": "工作项没有负责人"
+        },
+        "has_no_label": {
+          "description": "工作项没有标签"
+        },
+        "is_top_level": {
+          "description": "不是子工作项（没有父项）"
+        },
+        "is_sub_work_item": {
+          "description": "是子工作项（有父项）"
+        },
+        "is_epic": {
+          "description": "史诗"
+        },
+        "is_intake": {
+          "description": "是接收工作项"
+        },
+        "is_draft": {
+          "description": "是草稿工作项"
+        },
+        "is_archived": {
+          "description": "已归档"
+        },
+        "has_children": {
+          "description": "至少有一个子工作项"
+        },
+        "has_start_and_due_dates": {
+          "description": "同时有开始日期和截止日期"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "与给定工作项相关的工作项"
+        },
+        "blocked_by": {
+          "description": "被给定工作项阻塞的工作项"
+        },
+        "blocks": {
+          "description": "阻塞给定工作项的工作项"
+        },
+        "child_of": {
+          "description": "给定工作项的子工作项"
+        },
+        "parent_of": {
+          "description": "给定工作项的父工作项"
+        },
+        "duplicate_of": {
+          "description": "标记为给定工作项重复项的工作项"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "字段曾经被设置为此值"
+        },
+        "was": {
+          "description": "字段之前是此值（已更改）"
+        },
+        "changed_from": {
+          "description": "字段从此值更改"
+        },
+        "changed_to": {
+          "description": "字段更改为此值"
+        },
+        "changed": {
+          "description": "字段已更改"
+        },
+        "updated_by": {
+          "description": "此用户更新的工作项"
+        },
+        "commented_by": {
+          "description": "此用户评论的工作项"
+        },
+        "field_changed_by": {
+          "description": "此用户更改的字段"
+        },
+        "was_assigned_to": {
+          "description": "分配给此用户的工作项"
+        },
+        "changed_after": {
+          "description": "在此日期之后更改的字段"
+        },
+        "changed_before": {
+          "description": "在此日期之前更改的字段"
+        },
+        "field_changed_after": {
+          "description": "在此日期之后更改的字段"
+        },
+        "field_changed_before": {
+          "description": "在此日期之前更改的字段"
+        },
+        "changed_to_after": {
+          "description": "在此日期之后更改为此值的字段"
+        },
+        "changed_to_before": {
+          "description": "在此日期之前更改为此值的字段"
+        },
+        "field_changed_between": {
+          "description": "在这些日期之间更改的字段"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "导航",
+      "accept": "确认",
+      "close": "关闭",
+      "pick_date": "选择日期"
+    },
+    "placeholder": "输入查询并按 \"ENTER\" 进行筛选...",
+    "error": "提交查询时出错。请检查后重试。"
+  }
+}

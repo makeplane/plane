@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Tổng quan",
+    "label": "Sáng kiến",
+    "placeholder": "{count, plural, one{# sáng kiến} other{# sáng kiến}}",
+    "add_initiative": "Thêm Sáng kiến",
+    "create_initiative": "Tạo Sáng kiến",
+    "update_initiative": "Cập nhật Sáng kiến",
+    "initiative_name": "Tên sáng kiến",
+    "all_initiatives": "Tất cả Sáng kiến",
+    "delete_initiative": "Xóa Sáng kiến",
+    "fill_all_required_fields": "Vui lòng điền vào tất cả các trường bắt buộc.",
+    "archive_description": "Chỉ các sáng kiến đã hoàn thành hoặc đã đóng mới có thể lưu trữ",
+    "toast": {
+      "create_success": "Sáng kiến {name} đã được tạo thành công.",
+      "create_error": "Không thể tạo sáng kiến. Vui lòng thử lại!",
+      "update_success": "Sáng kiến {name} đã được cập nhật thành công.",
+      "update_error": "Không thể cập nhật sáng kiến. Vui lòng thử lại!",
+      "delete": {
+        "success": "Sáng kiến đã được xóa thành công.",
+        "error": "Không thể xóa Sáng kiến"
+      },
+      "archive": {
+        "success": "Đã lưu trữ sáng kiến thành công.",
+        "error": "Không thể lưu trữ sáng kiến",
+        "initiative_cannot_be_archived_in_this_state": "Không thể lưu trữ sáng kiến ở trạng thái này"
+      },
+      "link_copied": "Liên kết sáng kiến đã được sao chép vào clipboard.",
+      "project_update_success": "Dự án sáng kiến đã được cập nhật thành công.",
+      "project_update_error": "Không thể cập nhật dự án sáng kiến. Vui lòng thử lại!",
+      "epic_update_success": "Epic{count, plural, one { đã được thêm vào Sáng kiến thành công.} other {s đã được thêm vào Sáng kiến thành công.}}",
+      "epic_update_error": "Thêm Epic vào Sáng kiến thất bại. Vui lòng thử lại sau.",
+      "state_update_success": "Trạng thái sáng kiến đã được cập nhật thành công.",
+      "state_update_error": "Cập nhật trạng thái sáng kiến không thành công. Vui lòng thử lại!",
+      "label_update_error": "Không thể cập nhật nhãn sáng kiến. Vui lòng thử lại!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Tổ chức công việc ở cấp độ cao nhất với Sáng kiến",
+        "description": "Khi bạn cần tổ chức công việc trải rộng qua nhiều dự án và nhóm, Sáng kiến rất hữu ích. Kết nối dự án và epic với sáng kiến, xem cập nhật được tổng hợp tự động, và nhìn thấy toàn cảnh trước khi đi vào chi tiết.",
+        "primary_button": {
+          "text": "Tạo một sáng kiến"
+        }
+      },
+      "search": {
+        "title": "Không có sáng kiến phù hợp",
+        "description": "Không phát hiện sáng kiến nào với tiêu chí phù hợp.\n Tạo một sáng kiến mới thay thế.",
+        "archived_description": "Không phát hiện sáng kiến đã lưu trữ nào phù hợp với tiêu chí."
+      },
+      "not_found": {
+        "title": "Sáng kiến không tồn tại",
+        "description": "Sáng kiến bạn đang tìm kiếm không tồn tại, đã được lưu trữ hoặc đã bị xóa.",
+        "primary_button": {
+          "text": "Xem Sáng kiến khác"
+        }
+      },
+      "epics": {
+        "title": "Không có sáng kiến phù hợp",
+        "subHeading": "Tạo một sáng kiến mới thay thế.",
+        "action": "Tạo sáng kiến"
+      }
+    },
+    "scope": {
+      "view_scope": "Xem phạm vi",
+      "breakdown": "Phân tích phạm vi",
+      "add_scope": "Thêm phạm vi",
+      "label": "Phạm vi",
+      "empty_state": {
+        "title": "Chưa thêm phạm vi nào đến sáng kiến này",
+        "description": "Kết nối dự án và epic với sáng kiến này để bắt đầu.",
+        "primary_button": {
+          "text": "Thêm phạm vi"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Nhãn",
+        "description": "Cấu trúc và tổ chức các sáng kiến của bạn với nhãn."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Xóa nhãn",
+        "content": "Bạn có chắc chắn muốn xóa {labelName}? Việc này sẽ xóa nhãn khỏi tất cả các sáng kiến và bất kỳ chế độ xem nào đang lọc theo nhãn này."
+      },
+      "toast": {
+        "delete_error": "Không thể xóa nhãn sáng kiến. Vui lòng thử lại.",
+        "label_already_exists": "Nhãn đã tồn tại"
+      }
+    }
+  }
+}

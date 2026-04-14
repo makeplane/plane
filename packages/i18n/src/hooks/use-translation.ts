@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useContext } from "react";
-// context
-import { TranslationContext } from "../context";
-// types
-import type { ILanguageOption, TLanguage } from "../types";
+import { useCallback } from "react";
+import { useTranslation as useI18nextTranslation } from "react-i18next";
+import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants/language";
+import type { TLanguage, ILanguageOption } from "../types";
 
 export type TTranslationStore = {
   t: (key: string, params?: Record<string, unknown>) => string;
@@ -24,25 +23,33 @@ export type TTranslationStore = {
   languages: ILanguageOption[];
 };
 
-/**
- * Provides the translation store to the application
- * @returns {TTranslationStore}
- * @returns {(key: string, params?: Record<string, any>) => string} t: method to translate the key with params
- * @returns {TLanguage} currentLocale - current locale language
- * @returns {(lng: TLanguage) => void} changeLanguage - method to change the language
- * @returns {ILanguageOption[]} languages - available languages
- * @throws {Error} if the TranslationProvider is not used
- */
 export function useTranslation(): TTranslationStore {
-  const store = useContext(TranslationContext);
-  if (!store) {
-    throw new Error("useTranslation must be used within a TranslationProvider");
-  }
+  // No namespace arg — fallbackNS in the i18next config ensures all namespaces
+  // are searched for any key. Passing NAMESPACES here would trigger concurrent
+  // async loads per component, causing a re-render cascade.
+  const { t, i18n } = useI18nextTranslation();
+
+  const changeLanguage = useCallback(
+    (lng: TLanguage) => {
+      void (async () => {
+        try {
+          await i18n.changeLanguage(lng);
+          if (typeof window === "undefined") return;
+          localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+          document.documentElement.lang = lng;
+        } catch (err) {
+          console.error("Failed to change language:", err);
+        }
+      })();
+    },
+    [i18n]
+  );
 
   return {
-    t: store.t.bind(store),
-    currentLocale: store.currentLocale,
-    changeLanguage: (lng: TLanguage) => store.setLanguage(lng),
-    languages: store.availableLanguages,
+    // oxlint-disable-next-line typescript/no-explicit-any - i18next handles numbers, booleans, etc. natively
+    t: (key: string, params?: any) => t(key, params) as string,
+    currentLocale: i18n.language as TLanguage,
+    changeLanguage,
+    languages: SUPPORTED_LANGUAGES,
   };
 }

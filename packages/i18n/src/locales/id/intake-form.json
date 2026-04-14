@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Buat item kerja",
+      "sub-title": "Beritahu tim tentang apa yang ingin Anda kerjakan.",
+      "name": "Nama",
+      "email": "Email",
+      "about": "Tentang apa item kerja ini?",
+      "description": "Jelaskan apa yang seharusnya terjadi",
+      "description_placeholder": "Tambahkan detail sebanyak yang Anda suka untuk membantu tim mengidentifikasi situasi dan kebutuhan Anda.",
+      "loading": "Membuat",
+      "create_work_item": "Buat item kerja",
+      "errors": {
+        "name": "Nama wajib diisi",
+        "name_max_length": "Nama harus kurang dari 255 karakter",
+        "email": "Email wajib diisi",
+        "email_invalid": "Alamat email tidak valid",
+        "title": "Judul wajib diisi",
+        "title_max_length": "Judul harus kurang dari 255 karakter"
+      }
+    },
+    "success": {
+      "title": "Item kerja Anda sekarang ada di antrean tim.",
+      "description": "Tim sekarang dapat menyetujui atau membuang item kerja ini dari antrean penerimaan mereka.",
+      "primary_button": {
+        "text": "Tambah item kerja lain"
+      },
+      "secondary_button": {
+        "text": "Pelajari lebih lanjut tentang Penerimaan"
+      }
+    },
+    "how_it_works": {
+      "title": "Bagaimana cara kerjanya?",
+      "heading": "Ini adalah formulir Penerimaan.",
+      "description": "Penerimaan adalah fitur Plane yang memungkinkan admin dan manajer proyek menerima item kerja dari luar ke proyek mereka.",
+      "steps": {
+        "step_1": "Formulir singkat ini memungkinkan Anda membuat item kerja baru di proyek Plane.",
+        "step_2": "Saat Anda mengirim formulir ini, item kerja baru dibuat di Penerimaan proyek tersebut.",
+        "step_3": "Seseorang dari proyek atau tim akan meninjau ini.",
+        "step_4": "Jika mereka menyetujui, item kerja ini akan dipindahkan ke antrean kerja proyek. Jika tidak, akan ditolak.",
+        "step_5": "Untuk memeriksa status item kerja tersebut, hubungi manajer proyek, admin, atau siapa pun yang mengirimi Anda tautan ke halaman ini."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Pilih jenis item kerja",
+        "search_placeholder": "Cari jenis item kerja"
+      },
+      "actions": {
+        "select_properties": "Pilih properti"
+      }
+    }
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Element pracy} few {Elementy pracy} other {Elementów pracy}}",
+    "all": "Wszystkie elementy pracy",
+    "edit": "Edytuj element pracy",
+    "title": {
+      "label": "Tytuł elementu pracy",
+      "required": "Tytuł elementu pracy jest wymagany."
+    },
+    "add": {
+      "press_enter": "Naciśnij 'Enter', aby dodać kolejny element pracy",
+      "label": "Dodaj element pracy",
+      "cycle": {
+        "failed": "Nie udało się dodać elementu pracy do cyklu. Spróbuj ponownie.",
+        "success": "{count, plural, one {Element pracy} few {Elementy pracy} other {Elementów pracy}} dodano do cyklu.",
+        "loading": "Dodawanie {count, plural, one {elementu pracy} few {elementów pracy} other {elementów pracy}} do cyklu"
+      },
+      "assignee": "Dodaj przypisanego",
+      "start_date": "Dodaj datę rozpoczęcia",
+      "due_date": "Dodaj termin",
+      "parent": "Dodaj element nadrzędny",
+      "sub_issue": "Dodaj podrzędny element pracy",
+      "relation": "Dodaj relację",
+      "link": "Dodaj link",
+      "existing": "Dodaj istniejący element pracy"
+    },
+    "remove": {
+      "label": "Usuń element pracy",
+      "cycle": {
+        "loading": "Usuwanie elementu pracy z cyklu",
+        "success": "Element pracy usunięto z cyklu.",
+        "failed": "Nie udało się usunąć elementu pracy z cyklu. Spróbuj ponownie."
+      },
+      "module": {
+        "loading": "Usuwanie elementu pracy z modułu",
+        "success": "Element pracy usunięto z modułu.",
+        "failed": "Nie udało się usunąć elementu pracy z modułu. Spróbuj ponownie."
+      },
+      "parent": {
+        "label": "Usuń element nadrzędny"
+      }
+    },
+    "new": "Nowy element pracy",
+    "adding": "Dodawanie elementu pracy",
+    "create": {
+      "success": "Element pracy utworzono pomyślnie"
+    },
+    "priority": {
+      "urgent": "Pilny",
+      "high": "Wysoki",
+      "medium": "Średni",
+      "low": "Niski"
+    },
+    "display": {
+      "properties": {
+        "label": "Wyświetlane właściwości",
+        "id": "ID",
+        "issue_type": "Typ elementu pracy",
+        "sub_issue_count": "Liczba elementów podrzędnych",
+        "attachment_count": "Liczba załączników",
+        "created_on": "Utworzono dnia",
+        "sub_issue": "Element podrzędny",
+        "work_item_count": "Liczba elementów pracy"
+      },
+      "extra": {
+        "show_sub_issues": "Pokaż elementy podrzędne",
+        "show_empty_groups": "Pokaż puste grupy"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Ten układ jest sortowany według",
+      "list": "Lista",
+      "kanban": "Tablica Kanban",
+      "calendar": "Kalendarz",
+      "spreadsheet": "Arkusz",
+      "gantt": "Oś czasu",
+      "title": {
+        "list": "Układ listy",
+        "kanban": "Układ tablicy",
+        "calendar": "Układ kalendarza",
+        "spreadsheet": "Układ arkusza",
+        "gantt": "Układ osi czasu"
+      }
+    },
+    "states": {
+      "active": "Aktywny",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "placeholder": "Dodaj komentarz",
+      "switch": {
+        "private": "Przełącz na komentarz prywatny",
+        "public": "Przełącz na komentarz publiczny"
+      },
+      "create": {
+        "success": "Komentarz utworzono pomyślnie",
+        "error": "Nie udało się utworzyć komentarza. Spróbuj później."
+      },
+      "update": {
+        "success": "Komentarz zaktualizowano pomyślnie",
+        "error": "Nie udało się zaktualizować komentarza. Spróbuj później."
+      },
+      "remove": {
+        "success": "Komentarz usunięto pomyślnie",
+        "error": "Nie udało się usunąć komentarza. Spróbuj później."
+      },
+      "upload": {
+        "error": "Nie udało się przesłać załącznika. Spróbuj później."
+      },
+      "copy_link": {
+        "success": "Link do komentarza skopiowany do schowka",
+        "error": "Błąd podczas kopiowania linka do komentarza. Spróbuj ponownie później."
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Element pracy nie istnieje",
+        "description": "Element pracy, którego szukasz, nie istnieje, został zarchiwizowany lub usunięty.",
+        "primary_button": {
+          "text": "Pokaż inne elementy pracy"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Powiązane elementy pracy"
+    },
+    "archive": {
+      "description": "Można archiwizować tylko elementy pracy w stanie ukończonym lub anulowanym",
+      "label": "Archiwizuj element pracy",
+      "confirm_message": "Czy na pewno chcesz zarchiwizować ten element pracy? Wszystkie zarchiwizowane elementy można później przywrócić.",
+      "success": {
+        "label": "Archiwizacja zakończona",
+        "message": "Archiwa znajdziesz w archiwum projektu."
+      },
+      "failed": {
+        "message": "Nie udało się zarchiwizować elementu pracy. Spróbuj ponownie."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Przywrócenie zakończone",
+        "message": "Twój element pracy można znaleźć w elementach pracy projektu."
+      },
+      "failed": {
+        "message": "Nie udało się przywrócić elementu pracy. Spróbuj ponownie."
+      }
+    },
+    "relation": {
+      "relates_to": "Powiązany z",
+      "duplicate": "Duplikat",
+      "blocked_by": "Zablokowany przez",
+      "blocking": "Blokuje",
+      "start_before": "Zaczyna przed",
+      "start_after": "Zaczyna po",
+      "finish_before": "Kończy przed",
+      "finish_after": "Kończy po",
+      "implements": "Implementuje",
+      "implemented_by": "Implementowane przez"
+    },
+    "copy_link": "Kopiuj link do elementu pracy",
+    "delete": {
+      "label": "Usuń element pracy",
+      "error": "Błąd podczas usuwania elementu pracy"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Subskrypcja elementu pracy powiodła się",
+        "unsubscribed": "Anulowano subskrypcję elementu pracy"
+      }
+    },
+    "select": {
+      "error": "Wybierz co najmniej jeden element pracy",
+      "empty": "Nie wybrano żadnych elementów pracy",
+      "add_selected": "Dodaj wybrane elementy pracy",
+      "select_all": "Wybierz wszystko",
+      "deselect_all": "Odznacz wszystko"
+    },
+    "open_in_full_screen": "Otwórz element pracy na pełnym ekranie",
+    "vote": {
+      "click_to_upvote": "Kliknij, aby zagłosować za",
+      "click_to_downvote": "Kliknij, aby zagłosować przeciw",
+      "click_to_view_upvotes": "Kliknij, aby zobaczyć głosy za",
+      "click_to_view_downvotes": "Kliknij, aby zobaczyć głosy przeciw"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Podrzędny element pracy zaktualizowano pomyślnie",
+      "error": "Błąd podczas aktualizacji elementu podrzędnego"
+    },
+    "remove": {
+      "success": "Podrzędny element pracy usunięto pomyślnie",
+      "error": "Błąd podczas usuwania elementu podrzędnego"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nie masz elementów podrzędnych, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy podrzędne, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      },
+      "list_filters": {
+        "title": "Nie masz elementów pracy, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy pracy, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Brak pasujących elementów"
+      },
+      "no_issues": {
+        "title": "Brak elementów"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Brak komentarzy",
+        "description": "Komentarze służą do dyskusji i śledzenia elementów."
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Nie można zarchiwizować elementów pracy",
+        "message": "Tylko elementy pracy należące do grup stanów Ukończone lub Anulowane mogą być archiwizowane."
+      },
+      "invalid_issue_start_date": {
+        "title": "Nie można zaktualizować elementów pracy",
+        "message": "Wybrana data rozpoczęcia następuje po terminie zakończenia dla niektórych elementów pracy. Upewnij się, że data rozpoczęcia jest przed terminem zakończenia."
+      },
+      "invalid_issue_target_date": {
+        "title": "Nie można zaktualizować elementów pracy",
+        "message": "Wybrany termin zakończenia poprzedza datę rozpoczęcia dla niektórych elementów pracy. Upewnij się, że termin zakończenia jest po dacie rozpoczęcia."
+      },
+      "invalid_state_transition": {
+        "title": "Nie można zaktualizować elementów pracy",
+        "message": "Zmiana stanu nie jest dozwolona dla niektórych elementów pracy. Upewnij się, że zmiana stanu jest dozwolona."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Włącz workflowy",
+        "description": "Skonfiguruj workflowy, aby kontrolować przepływ elementów pracy",
+        "no_states_tooltip": "Do workflowu nie dodano żadnych stanów.",
+        "toast": {
+          "loading": {
+            "enabling": "Włączanie workflowów",
+            "disabling": "Wyłączanie workflowów"
+          },
+          "success": {
+            "title": "Sukces!",
+            "message": "Workflowy zostały pomyślnie włączone."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się włączyć workflowów. Spróbuj ponownie."
+          }
+        }
+      },
+      "heading": "Workflowy",
+      "description": "Zautomatyzuj przejścia elementów pracy i ustaw reguły kontrolujące, jak zadania przemieszczają się przez pipeline projektu.",
+      "add_button": "Dodaj nowy workflow",
+      "search": "Szukaj workflowów",
+      "detail": {
+        "define": "Zdefiniuj workflow",
+        "add_states": "Dodaj stany",
+        "unmapped_states": {
+          "title": "Wykryto nieprzypisane stany",
+          "description": "Niektóre elementy pracy wybranych typów znajdują się obecnie w stanach, które nie istnieją w tym workflowie.",
+          "note": "Jeśli włączysz ten workflow, te elementy zostaną automatycznie przeniesione do początkowego stanu tego workflowu.",
+          "label": "Brakujące stany",
+          "tooltip": "Niektóre elementy pracy znajdują się w stanach, które nie są przypisane do tego workflowu. Otwórz workflow, aby go sprawdzić."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Wszystkie stany są w użyciu",
+          "description": "Wszystkie stany zdefiniowane dla tego projektu są już obecne w bieżącym workflowie."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Ten workflow dotyczy każdego typu elementu pracy, który nie jest przypisany do żadnego workflowu."
+      },
+      "create": {
+        "heading": "Utwórz nowy workflow"
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Elementy pracy cykliczne",
+      "description": "Ustaw swoją cykliczną pracę raz, a my zajmiemy się powtarzaniem. Wszystko będzie tutaj, gdy będzie to potrzebne.",
+      "new_recurring_work_item": "Nowy cykliczny element pracy",
+      "update_recurring_work_item": "Zaktualizuj cykliczny element pracy",
+      "form": {
+        "interval": {
+          "title": "Harmonogram",
+          "start_date": {
+            "validation": {
+              "required": "Data rozpoczęcia jest wymagana"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ interwału jest wymagany"
+            }
+          }
+        },
+        "button": {
+          "create": "Utwórz cykliczny element pracy",
+          "update": "Zaktualizuj cykliczny element pracy"
+        }
+      },
+      "create_button": {
+        "label": "Utwórz cykliczny element pracy",
+        "no_permission": "Skontaktuj się z administratorem projektu, aby utworzyć cykliczne elementy pracy"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Twoja praca na autopilocie",
+        "description": "Ustaw raz. Przywrócimy ją, gdy nadejdzie termin. Ulepsz do Business, aby cykliczna praca była bezwysiłkowa."
+      },
+      "no_templates": {
+        "button": "Utwórz swój pierwszy cykliczny element pracy"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Cykliczny element pracy utworzony",
+          "message": "{name}, cykliczny element pracy, jest już dostępny w Twojej przestrzeni roboczej."
+        },
+        "error": {
+          "title": "Nie udało się utworzyć cyklicznego elementu pracy.",
+          "message": "Spróbuj ponownie zapisać dane lub skopiuj je do nowego cyklicznego elementu pracy, najlepiej w innej karcie."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Cykliczny element pracy zaktualizowany",
+          "message": "{name}, cykliczny element pracy, został zaktualizowany."
+        },
+        "error": {
+          "title": "Nie udało się zapisać zmian w tym cyklicznym elemencie pracy.",
+          "message": "Spróbuj ponownie zapisać dane lub wróć do tego cyklicznego elementu pracy później. Jeśli problem będzie się powtarzał, skontaktuj się z nami."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Cykliczny element pracy usunięty",
+          "message": "{name}, cykliczny element pracy, został usunięty z Twojej przestrzeni roboczej."
+        },
+        "error": {
+          "title": "Nie udało się usunąć cyklicznego elementu pracy.",
+          "message": "Spróbuj usunąć go ponownie lub wróć do niego później. Jeśli nadal nie możesz go usunąć, skontaktuj się z nami."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Usuń cykliczny element pracy",
+      "description": {
+        "prefix": "Czy na pewno chcesz usunąć cykliczny element pracy-",
+        "suffix": "? Wszystkie dane powiązane z cyklicznym elementem pracy zostaną trwale usunięte. Tej operacji nie można cofnąć."
+      }
+    }
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bar",
+          "long_label": "Grafik bar",
+          "chart_models": {
+            "basic": "Dasar",
+            "stacked": "Bertumpuk",
+            "grouped": "Dikelompokkan"
+          },
+          "orientation": {
+            "label": "Orientasi",
+            "horizontal": "Horizontal",
+            "vertical": "Vertikal",
+            "placeholder": "Tambah orientasi"
+          },
+          "bar_color": "Warna bar"
+        },
+        "line_chart": {
+          "short_label": "Garis",
+          "long_label": "Grafik garis",
+          "chart_models": {
+            "basic": "Dasar",
+            "multi_line": "Multi-garis"
+          },
+          "line_color": "Warna garis",
+          "line_type": {
+            "label": "Tipe garis",
+            "solid": "Solid",
+            "dashed": "Putus-putus",
+            "placeholder": "Tambah tipe garis"
+          }
+        },
+        "area_chart": {
+          "short_label": "Area",
+          "long_label": "Grafik area",
+          "chart_models": {
+            "basic": "Dasar",
+            "stacked": "Bertumpuk",
+            "comparison": "Perbandingan"
+          },
+          "fill_color": "Warna isi"
+        },
+        "donut_chart": {
+          "short_label": "Donat",
+          "long_label": "Grafik donat",
+          "chart_models": {
+            "basic": "Dasar",
+            "progress": "Progres"
+          },
+          "center_value": "Nilai tengah",
+          "completed_color": "Warna selesai"
+        },
+        "pie_chart": {
+          "short_label": "Pai",
+          "long_label": "Grafik pai",
+          "chart_models": {
+            "basic": "Dasar"
+          },
+          "group": {
+            "label": "Potongan dikelompokkan",
+            "group_thin_pieces": "Kelompokkan potongan tipis",
+            "minimum_threshold": {
+              "label": "Ambang batas minimum",
+              "placeholder": "Tambah ambang batas"
+            },
+            "name_group": {
+              "label": "Nama kelompok",
+              "placeholder": "\"Kurang dari 5%\""
+            }
+          },
+          "show_values": "Tampilkan nilai",
+          "value_type": {
+            "percentage": "Persentase",
+            "count": "Jumlah"
+          }
+        },
+        "text": {
+          "short_label": "Teks",
+          "long_label": "Teks",
+          "alignment": {
+            "label": "Perataan teks",
+            "left": "Kiri",
+            "center": "Tengah",
+            "right": "Kanan",
+            "placeholder": "Tambah perataan teks"
+          },
+          "text_color": "Warna teks"
+        },
+        "table_chart": {
+          "short_label": "Tabel",
+          "long_label": "Grafik tabel",
+          "chart_models": {
+            "basic": {
+              "short_label": "Dasar",
+              "long_label": "Tabel"
+            }
+          },
+          "columns": "Kolom",
+          "rows": "Baris",
+          "rows_placeholder": "Tambah baris",
+          "configure_rows_hint": "Pilih properti untuk baris untuk melihat tabel ini."
+        }
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Horizon",
+        "earthen": "Alam"
+      },
+      "common": {
+        "add_widget": "Tambah widget",
+        "widget_title": {
+          "label": "Beri nama widget ini",
+          "placeholder": "contoh, \"Tugas kemarin\", \"Semua Selesai\""
+        },
+        "chart_type": "Tipe grafik",
+        "visualization_type": {
+          "label": "Tipe visualisasi",
+          "placeholder": "Tambah tipe visualisasi"
+        },
+        "date_group": {
+          "label": "Kelompok tanggal",
+          "placeholder": "Tambah kelompok tanggal"
+        },
+        "group_by": "Kelompokkan berdasarkan",
+        "stack_by": "Tumpuk berdasarkan",
+        "daily": "Harian",
+        "weekly": "Mingguan",
+        "monthly": "Bulanan",
+        "yearly": "Tahunan",
+        "work_item_count": "Jumlah item kerja",
+        "estimate_point": "Poin estimasi",
+        "pending_work_item": "Item kerja tertunda",
+        "completed_work_item": "Item kerja selesai",
+        "in_progress_work_item": "Item kerja dalam proses",
+        "blocked_work_item": "Item kerja terblokir",
+        "work_item_due_this_week": "Item kerja jatuh tempo minggu ini",
+        "work_item_due_today": "Item kerja jatuh tempo hari ini",
+        "color_scheme": {
+          "label": "Skema warna",
+          "placeholder": "Tambah skema warna"
+        },
+        "smoothing": "Penghalusan",
+        "markers": "Penanda",
+        "legends": "Legenda",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opasitas",
+          "placeholder": "Tambah opasitas"
+        },
+        "border": "Batas",
+        "widget_configuration": "Konfigurasi widget",
+        "configure_widget": "Konfigurasi widget",
+        "guides": "Panduan",
+        "style": "Gaya",
+        "area_appearance": "Tampilan area",
+        "comparison_line_appearance": "Tampilan garis pembanding",
+        "add_property": "Tambah properti",
+        "add_metric": "Tambah metrik"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "stacked": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Tumpuk berdasarkan tidak memiliki nilai."
+          },
+          "grouped": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Kelompokkan berdasarkan tidak memiliki nilai."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "multi_line": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Kelompokkan berdasarkan tidak memiliki nilai."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "stacked": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Tumpuk berdasarkan tidak memiliki nilai."
+          },
+          "comparison": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "progress": {
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "Kolom tidak memiliki nilai.",
+            "group_by": "Baris tidak memiliki nilai."
+          }
+        },
+        "ask_admin": "Tanyakan admin Anda untuk mengonfigurasi widget ini."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Buat dashboard baru",
+        "update": "Perbarui dashboard"
+      },
+      "title": {
+        "label": "Beri nama dashboard Anda.",
+        "placeholder": "\"Kapasitas antar proyek\", \"Beban kerja berdasarkan tim\", \"Status di seluruh proyek\"",
+        "required_error": "Judul diperlukan"
+      },
+      "project": {
+        "label": "Pilih proyek",
+        "placeholder": "Data dari proyek ini akan menggerakkan dashboard ini.",
+        "required_error": "Proyek diperlukan"
+      },
+      "filters_label": "Tetapkan filter untuk sumber data di atas",
+      "create_dashboard": "Buat dashboard",
+      "update_dashboard": "Perbarui dashboard"
+    },
+    "delete_modal": {
+      "heading": "Hapus dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Tampilkan kemajuan Anda dalam dashboard on-demand dan permanen.",
+        "description": "Buat dashboard apa pun yang Anda butuhkan dan sesuaikan bagaimana data Anda ditampilkan untuk presentasi sempurna dari kemajuan Anda.",
+        "coming_soon_to_mobile": "Segera hadir di aplikasi mobile",
+        "card_1": {
+          "title": "Untuk semua proyek Anda",
+          "description": "Dapatkan tampilan menyeluruh workspace Anda dengan semua proyek atau pilah data kerja Anda untuk tampilan sempurna dari kemajuan Anda."
+        },
+        "card_2": {
+          "title": "Untuk semua data di Plane",
+          "description": "Lampaui Analitik bawaan dan grafik Siklus yang sudah jadi untuk melihat tim, inisiatif, atau hal lain seperti yang belum pernah Anda lihat sebelumnya."
+        },
+        "card_3": {
+          "title": "Untuk semua kebutuhan visualisasi data Anda",
+          "description": "Pilih dari beberapa grafik yang dapat disesuaikan dengan kontrol detail untuk melihat dan menampilkan data kerja Anda persis seperti yang Anda inginkan."
+        },
+        "card_4": {
+          "title": "On-demand dan permanen",
+          "description": "Bangun sekali, simpan selamanya dengan penyegaran otomatis data Anda, penanda kontekstual untuk perubahan cakupan, dan tautan permanen yang dapat dibagikan."
+        },
+        "card_5": {
+          "title": "Ekspor dan komunikasi terjadwal",
+          "description": "Untuk saat-saat ketika tautan tidak berfungsi, keluarkan dashboard Anda ke PDF sekali pakai atau jadwalkan untuk dikirim ke pemangku kepentingan secara otomatis."
+        },
+        "card_6": {
+          "title": "Tata letak otomatis untuk semua perangkat",
+          "description": "Ubah ukuran widget Anda untuk tata letak yang Anda inginkan dan lihat sama persis di ponsel, tablet, dan browser lainnya."
+        }
+      },
+      "dashboards_list": {
+        "title": "Visualisasikan data dalam widget, buat dashboard Anda dengan widget, dan lihat yang terbaru sesuai permintaan.",
+        "description": "Buat dashboard Anda dengan Widget Kustom yang menampilkan data dalam cakupan yang Anda tentukan. Dapatkan dashboard untuk semua pekerjaan Anda di seluruh proyek dan tim dan bagikan tautan permanen dengan pemangku kepentingan untuk pelacakan sesuai permintaan."
+      },
+      "dashboards_search": {
+        "title": "Itu tidak cocok dengan nama dashboard.",
+        "description": "Pastikan kueri Anda benar atau coba kueri lain."
+      },
+      "widgets_list": {
+        "title": "Visualisasikan data Anda sesuai keinginan.",
+        "description": "Gunakan garis, bar, pai, dan format lainnya untuk melihat data Anda\nsesuai keinginan dari sumber yang Anda tentukan."
+      },
+      "widget_data": {
+        "title": "Tidak ada yang bisa dilihat di sini",
+        "description": "Segarkan atau tambahkan data untuk melihatnya di sini."
+      }
+    },
+    "common": {
+      "editing": "Mengedit"
+    }
+  }
+}

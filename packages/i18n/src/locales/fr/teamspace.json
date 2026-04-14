@@ -1,0 +1,191 @@
+{
+  "teamspaces": {
+    "label": "Espaces d'équipe",
+    "empty_state": {
+      "general": {
+        "title": "Les espaces d'équipe permettent une meilleure organisation et un meilleur suivi dans Plane",
+        "description": "Créez une surface dédiée pour chaque équipe réelle, séparée de toutes les autres surfaces de travail dans Plane, et personnalisez-les selon le mode de travail de votre équipe.",
+        "primary_button": {
+          "text": "Créer un nouvel espace d'équipe"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Vous n'avez pas encore lié d'espaces d'équipe.",
+          "description": "Les propriétaires d'espaces d'équipe et de projets peuvent gérer l'accès aux projets."
+        }
+      },
+      "primary_button": {
+        "text": "Lier un espace d'équipe"
+      },
+      "secondary_button": {
+        "text": "En savoir plus"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nom de l'espace d'équipe",
+          "members": "Membres",
+          "accountType": "Type de compte"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Supprimer l'espace d'équipe"
+            },
+            "confirm": {
+              "title": "Supprimer {teamspaceName} de {projectName}",
+              "description": "Lorsque vous supprimez cet espace d'équipe d'un projet lié, les membres ici perdront l'accès au projet lié."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Aucun espace d'équipe correspondant trouvé"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Vous avez lié un espace d'équipe à ce projet.} other {Vous avez lié # espaces d'équipe à ce projet.}}",
+            "description": "{additionalCount, plural, =0 {L'espace d'équipe {firstTeamspaceName} est maintenant lié à ce projet.} other {L'espace d'équipe {firstTeamspaceName} et {additionalCount} autres sont maintenant liés à ce projet.}}"
+          },
+          "error": {
+            "title": "Cela n'a pas fonctionné.",
+            "description": "Essayez à nouveau ou rechargez cette page avant de réessayer."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Vous avez supprimé cet espace d'équipe de ce projet.",
+            "description": "L'espace d'équipe {teamspaceName} a été supprimé de {projectName}."
+          },
+          "error": {
+            "title": "Cela n'a pas fonctionné.",
+            "description": "Essayez à nouveau ou rechargez cette page avant de réessayer."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Rechercher des espaces d'équipe",
+        "info": {
+          "title": "L'ajout d'un espace d'équipe donne accès à ce projet à tous les membres de l'espace d'équipe.",
+          "link": "En savoir plus"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Vous n'avez pas d'espaces d'équipe à lier.",
+            "description": "Soit vous n'êtes pas dans un espace d'équipe que vous pouvez lier, soit vous avez déjà lié tous les espaces d'équipe disponibles."
+          },
+          "no_results": {
+            "title": "Cela ne correspond à aucun de vos espaces d'équipe.",
+            "description": "Essayez un autre terme ou assurez-vous d'avoir des espaces d'équipe à lier."
+          }
+        },
+        "primary_button": {
+          "text": "Lier l'espace(s) d'équipe sélectionné(s)"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Créez des éléments de travail spécifiques à l'équipe.",
+        "description": "Les éléments de travail assignés aux membres de cette équipe dans tout projet lié apparaîtront automatiquement ici. Si vous vous attendez à voir des éléments de travail ici, assurez-vous que vos projets liés ont des éléments de travail assignés aux membres de cette équipe ou créez des éléments de travail.",
+        "primary_button": {
+          "text": "Ajouter des éléments de travail à un projet lié"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Il n'y a pas d'éléments de travail spécifiques à l'équipe pour les filtres appliqués",
+        "description": "Modifiez certains de ces filtres ou effacez-les tous pour voir les éléments de travail pertinents pour cet espace.",
+        "secondary_button": {
+          "text": "Effacer tous les filtres"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Aucun de vos projets liés n'a de Cycle actif.",
+        "description": "Les Cycles actifs dans les projets liés apparaîtront automatiquement ici. Si vous vous attendez à voir un Cycle actif, assurez-vous qu'il est en cours d'exécution dans un projet lié en ce moment."
+      },
+      "completed": {
+        "title": "Aucun de vos projets liés n'a de Cycle terminé.",
+        "description": "Les Cycles terminés dans les projets liés apparaîtront automatiquement ici. Si vous vous attendez à voir un Cycle terminé, assurez-vous qu'il est également terminé dans un projet lié."
+      },
+      "upcoming": {
+        "title": "Aucun de vos projets liés n'a de Cycle à venir.",
+        "description": "Les Cycles à venir dans les projets liés apparaîtront automatiquement ici. Si vous vous attendez à voir un Cycle à venir, assurez-vous qu'il existe également dans un projet lié."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Les vues de votre équipe sur votre travail sans perturber les autres vues de votre espace de travail",
+        "description": "Visualisez le travail de votre équipe dans des vues enregistrées uniquement pour votre équipe et séparément des vues d'un projet.",
+        "primary_button": {
+          "text": "Créer une vue"
+        }
+      },
+      "filter": {
+        "title": "Aucune vue correspondante",
+        "description": "Aucune vue ne correspond aux critères de recherche.\n Créez plutôt une nouvelle vue."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Hébergez les connaissances de votre équipe dans les Pages.",
+        "description": "Contrairement aux Pages d'un projet, vous pouvez sauvegarder les connaissances spécifiques à une équipe dans un ensemble de Pages distinct ici. Obtenez toutes les fonctionnalités des Pages, créez des documents de meilleures pratiques et des wikis d'équipe facilement.",
+        "primary_button": {
+          "text": "Créez votre première Page"
+        }
+      },
+      "filter": {
+        "title": "Aucune Page correspondante",
+        "description": "Supprimez les filtres pour voir toutes les Pages"
+      },
+      "search": {
+        "title": "Aucune Page correspondante",
+        "description": "Supprimez les critères de recherche pour voir toutes les Pages"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Aucun de vos projets liés n'a d'éléments de travail publiés.",
+        "description": "Créez des éléments de travail dans un ou plusieurs de ces projets pour voir les progrès par dates, états et priorité."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Vous n'avez aucun élément de travail bloquant un coéquipier.",
+          "description": "Bon travail ! Vous avez dégagé la voie pour votre équipe. Vous êtes un bon coéquipier."
+        },
+        "blocked": {
+          "title": "Vous n'avez aucun élément de travail d'un coéquipier qui vous bloque.",
+          "description": "Bonne nouvelle ! Vous pouvez progresser sur tous vos éléments de travail assignés."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Aucun de vos projets liés n'a d'éléments de travail publiés.",
+          "description": "Créez des éléments de travail dans un ou plusieurs de ces projets pour voir la répartition du travail par projet et membres de l'équipe."
+        },
+        "filter": {
+          "title": "Il n'y a pas de statistiques d'équipe pour les filtres appliqués.",
+          "description": "Créez des éléments de travail dans un ou plusieurs de ces projets pour voir la répartition du travail par projet et membres de l'équipe."
+        }
+      }
+    }
+  }
+}

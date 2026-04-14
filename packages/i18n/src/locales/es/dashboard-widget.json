@@ -1,0 +1,308 @@
+{
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Barra",
+          "long_label": "Gráfico de barras",
+          "chart_models": {
+            "basic": "Básico",
+            "stacked": "Apilado",
+            "grouped": "Agrupado"
+          },
+          "orientation": {
+            "label": "Orientación",
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "placeholder": "Añadir orientación"
+          },
+          "bar_color": "Color de barra"
+        },
+        "line_chart": {
+          "short_label": "Línea",
+          "long_label": "Gráfico de líneas",
+          "chart_models": {
+            "basic": "Básico",
+            "multi_line": "Multi-línea"
+          },
+          "line_color": "Color de línea",
+          "line_type": {
+            "label": "Tipo de línea",
+            "solid": "Sólida",
+            "dashed": "Discontinua",
+            "placeholder": "Añadir tipo de línea"
+          }
+        },
+        "area_chart": {
+          "short_label": "Área",
+          "long_label": "Gráfico de área",
+          "chart_models": {
+            "basic": "Básico",
+            "stacked": "Apilado",
+            "comparison": "Comparación"
+          },
+          "fill_color": "Color de relleno"
+        },
+        "donut_chart": {
+          "short_label": "Dona",
+          "long_label": "Gráfico de dona",
+          "chart_models": {
+            "basic": "Básico",
+            "progress": "Progreso"
+          },
+          "center_value": "Valor central",
+          "completed_color": "Color de completado"
+        },
+        "pie_chart": {
+          "short_label": "Circular",
+          "long_label": "Gráfico circular",
+          "chart_models": {
+            "basic": "Básico"
+          },
+          "group": {
+            "label": "Piezas agrupadas",
+            "group_thin_pieces": "Agrupar piezas delgadas",
+            "minimum_threshold": {
+              "label": "Umbral mínimo",
+              "placeholder": "Añadir umbral"
+            },
+            "name_group": {
+              "label": "Nombre del grupo",
+              "placeholder": "\"Menos del 5%\""
+            }
+          },
+          "show_values": "Mostrar valores",
+          "value_type": {
+            "percentage": "Porcentaje",
+            "count": "Conteo"
+          }
+        },
+        "text": {
+          "short_label": "Texto",
+          "long_label": "Texto",
+          "alignment": {
+            "label": "Alineación de texto",
+            "left": "Izquierda",
+            "center": "Centro",
+            "right": "Derecha",
+            "placeholder": "Añadir alineación de texto"
+          },
+          "text_color": "Color de texto"
+        },
+        "table_chart": {
+          "short_label": "Tabla",
+          "long_label": "Gráfico de tabla",
+          "chart_models": {
+            "basic": {
+              "short_label": "Básico",
+              "long_label": "Tabla"
+            }
+          },
+          "columns": "Columnas",
+          "rows": "Filas",
+          "rows_placeholder": "Añadir filas",
+          "configure_rows_hint": "Seleccione una propiedad para las filas para ver esta tabla."
+        }
+      },
+      "color_palettes": {
+        "modern": "Moderno",
+        "horizon": "Horizonte",
+        "earthen": "Terroso"
+      },
+      "common": {
+        "add_widget": "Añadir widget",
+        "widget_title": {
+          "label": "Nombre de este widget",
+          "placeholder": "p.ej., \"Por hacer ayer\", \"Todos Completados\""
+        },
+        "chart_type": "Tipo de gráfico",
+        "visualization_type": {
+          "label": "Tipo de visualización",
+          "placeholder": "Añadir tipo de visualización"
+        },
+        "date_group": {
+          "label": "Grupo de fecha",
+          "placeholder": "Añadir grupo de fecha"
+        },
+        "group_by": "Agrupar por",
+        "stack_by": "Apilar por",
+        "daily": "Diario",
+        "weekly": "Semanal",
+        "monthly": "Mensual",
+        "yearly": "Anual",
+        "work_item_count": "Conteo de elementos de trabajo",
+        "estimate_point": "Punto estimado",
+        "pending_work_item": "Elementos de trabajo pendientes",
+        "completed_work_item": "Elementos de trabajo completados",
+        "in_progress_work_item": "Elementos de trabajo en progreso",
+        "blocked_work_item": "Elementos de trabajo bloqueados",
+        "work_item_due_this_week": "Elementos de trabajo que vencen esta semana",
+        "work_item_due_today": "Elementos de trabajo que vencen hoy",
+        "color_scheme": {
+          "label": "Esquema de color",
+          "placeholder": "Añadir esquema de color"
+        },
+        "smoothing": "Suavizado",
+        "markers": "Marcadores",
+        "legends": "Leyendas",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opacidad",
+          "placeholder": "Añadir opacidad"
+        },
+        "border": "Borde",
+        "widget_configuration": "Configuración del widget",
+        "configure_widget": "Configurar widget",
+        "guides": "Guías",
+        "style": "Estilo",
+        "area_appearance": "Apariencia del área",
+        "comparison_line_appearance": "Apariencia de línea de comparación",
+        "add_property": "Añadir propiedad",
+        "add_metric": "Añadir métrica"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "stacked": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Apilar por le falta un valor."
+          },
+          "grouped": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Agrupar por le falta un valor."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "multi_line": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Agrupar por le falta un valor."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "stacked": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Apilar por le falta un valor."
+          },
+          "comparison": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "progress": {
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "table_chart": {
+          "basic": {
+            "x_axis_property": "A las columnas les falta un valor.",
+            "group_by": "A las filas les falta un valor."
+          }
+        },
+        "ask_admin": "Solicite a su administrador que configure este widget."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Crear nuevo dashboard",
+        "update": "Actualizar dashboard"
+      },
+      "title": {
+        "label": "Nombre su dashboard.",
+        "placeholder": "\"Capacidad entre proyectos\", \"Carga de trabajo por equipo\", \"Estado en todos los proyectos\"",
+        "required_error": "El título es obligatorio"
+      },
+      "project": {
+        "label": "Elegir proyectos",
+        "placeholder": "Los datos de estos proyectos alimentarán este dashboard.",
+        "required_error": "Los proyectos son obligatorios"
+      },
+      "filters_label": "Configura filtros para las fuentes de datos anteriores",
+      "create_dashboard": "Crear dashboard",
+      "update_dashboard": "Actualizar dashboard"
+    },
+    "delete_modal": {
+      "heading": "Eliminar dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Presente su progreso en dashboards bajo demanda y permanentes.",
+        "description": "Construya cualquier dashboard que necesite y personalice cómo se ven sus datos para una presentación perfecta de su progreso.",
+        "coming_soon_to_mobile": "Próximamente en la aplicación móvil",
+        "card_1": {
+          "title": "Para todos sus proyectos",
+          "description": "Obtenga una visión completa de su espacio de trabajo con todos sus proyectos o filtre sus datos de trabajo para esa vista perfecta de su progreso."
+        },
+        "card_2": {
+          "title": "Para cualquier dato en Plane",
+          "description": "Vaya más allá de la Analítica predeterminada y los gráficos de Ciclo prediseñados para ver equipos, iniciativas o cualquier otra cosa como nunca antes."
+        },
+        "card_3": {
+          "title": "Para todas sus necesidades de visualización de datos",
+          "description": "Elija entre varios gráficos personalizables con controles detallados para ver y mostrar sus datos de trabajo exactamente como desee."
+        },
+        "card_4": {
+          "title": "Bajo demanda y permanentes",
+          "description": "Construya una vez, mantenga para siempre con actualizaciones automáticas de sus datos, indicadores contextuales para cambios de alcance y enlaces permanentes compartibles."
+        },
+        "card_5": {
+          "title": "Exportaciones y comunicaciones programadas",
+          "description": "Para esos momentos en que los enlaces no funcionan, exporte sus dashboards a PDFs puntuales o programe su envío automático a las partes interesadas."
+        },
+        "card_6": {
+          "title": "Diseño automático para todos los dispositivos",
+          "description": "Cambie el tamaño de sus widgets para el diseño que desee y véalo exactamente igual en dispositivos móviles, tabletas y otros navegadores."
+        }
+      },
+      "dashboards_list": {
+        "title": "Visualice datos en widgets, construya sus dashboards con widgets y vea lo último bajo demanda.",
+        "description": "Construya sus dashboards con Widgets Personalizados que muestran sus datos en el alcance que especifique. Obtenga dashboards para todo su trabajo a través de proyectos y equipos y comparta enlaces permanentes con las partes interesadas para seguimiento bajo demanda."
+      },
+      "dashboards_search": {
+        "title": "Eso no coincide con el nombre de un dashboard.",
+        "description": "Asegúrese de que su consulta sea correcta o intente otra consulta."
+      },
+      "widgets_list": {
+        "title": "Visualice sus datos como desee.",
+        "description": "Use líneas, barras, gráficos circulares y otros formatos para ver sus datos de la manera que desee desde las fuentes que especifique."
+      },
+      "widget_data": {
+        "title": "Nada que ver aquí",
+        "description": "Actualice o agregue datos para verlos aquí."
+      }
+    },
+    "common": {
+      "editing": "Editando"
+    }
+  }
+}

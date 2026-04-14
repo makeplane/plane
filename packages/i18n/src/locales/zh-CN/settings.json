@@ -1,0 +1,133 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "更改邮箱",
+        "description": "请输入新的邮箱地址以接收验证链接。",
+        "toasts": {
+          "success_title": "成功！",
+          "success_message": "邮箱已更新，请重新登录。"
+        },
+        "form": {
+          "email": {
+            "label": "新邮箱",
+            "placeholder": "请输入邮箱",
+            "errors": {
+              "required": "邮箱为必填项",
+              "invalid": "邮箱格式无效",
+              "exists": "邮箱已存在，请使用其他邮箱。",
+              "validation_failed": "邮箱验证失败，请重试。"
+            }
+          },
+          "code": {
+            "label": "验证码",
+            "placeholder": "123456",
+            "helper_text": "验证码已发送至你的新邮箱。",
+            "errors": {
+              "required": "验证码为必填项",
+              "invalid": "验证码无效，请重试。"
+            }
+          }
+        },
+        "actions": {
+          "continue": "继续",
+          "confirm": "确认",
+          "cancel": "取消"
+        },
+        "states": {
+          "sending": "发送中…"
+        }
+      }
+    },
+    "notifications": {
+      "select_default_view": "选择默认视图",
+      "compact": "紧凑",
+      "full": "全屏"
+    }
+  },
+  "profile": {
+    "label": "个人资料",
+    "page_label": "您的工作",
+    "work": "工作",
+    "details": {
+      "joined_on": "加入时间",
+      "time_zone": "时区"
+    },
+    "stats": {
+      "workload": "工作量",
+      "overview": "概览",
+      "created": "已创建的工作项",
+      "assigned": "已分配的工作项",
+      "subscribed": "已订阅的工作项",
+      "state_distribution": {
+        "title": "按状态分类的工作项",
+        "empty": "创建工作项以在图表中查看按状态分类的工作项，以便更好地分析。"
+      },
+      "priority_distribution": {
+        "title": "按优先级分类的工作项",
+        "empty": "创建工作项以在图表中查看按优先级分类的工作项，以便更好地分析。"
+      },
+      "recent_activity": {
+        "title": "最近活动",
+        "empty": "我们找不到数据。请查看您的输入",
+        "button": "下载今天的活动",
+        "button_loading": "下载中"
+      }
+    },
+    "actions": {
+      "profile": "个人资料",
+      "security": "安全",
+      "activity": "活动",
+      "appearance": "外观",
+      "notifications": "通知",
+      "connections": "连接"
+    },
+    "tabs": {
+      "summary": "摘要",
+      "assigned": "已分配",
+      "created": "已创建",
+      "subscribed": "已订阅",
+      "activity": "活动"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "尚无活动",
+        "description": "通过创建新工作项开始！为其添加详细信息和属性。在 Plane 中探索更多内容以查看您的活动。"
+      },
+      "assigned": {
+        "title": "没有分配给您的工作项",
+        "description": "可以从这里跟踪分配给您的工作项。"
+      },
+      "created": {
+        "title": "尚无工作项",
+        "description": "您创建的所有工作项都会出现在这里，直接在这里跟踪它们。"
+      },
+      "subscribed": {
+        "title": "尚无工作项",
+        "description": "订阅您感兴趣的工作项，在这里跟踪所有这些工作项。"
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "系统偏好"
+      },
+      "light": {
+        "label": "浅色"
+      },
+      "dark": {
+        "label": "深色"
+      },
+      "light_contrast": {
+        "label": "浅色高对比度"
+      },
+      "dark_contrast": {
+        "label": "深色高对比度"
+      },
+      "custom": {
+        "label": "自定义主题"
+      }
+    }
+  }
+}

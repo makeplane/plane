@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Ihre Notizen",
+    "placeholder": "Klicken, um zu schreiben",
+    "all": "Alle Notizen",
+    "no-data": "Halten Sie Ideen und Gedanken fest. Fügen Sie die erste Notiz hinzu.",
+    "add": "Notiz hinzufügen",
+    "search_placeholder": "Nach Name suchen",
+    "delete": "Notiz löschen",
+    "delete_confirmation": "Möchten Sie diese Notiz wirklich löschen?",
+    "empty_state": {
+      "simple": "Halten Sie Ideen und Gedanken fest. Fügen Sie die erste Notiz hinzu.",
+      "general": {
+        "title": "Notizen sind schnelle Aufzeichnungen.",
+        "description": "Schreiben Sie Ihre Ideen auf und greifen Sie von überall darauf zu.",
+        "primary_button": {
+          "text": "Notiz hinzufügen"
+        }
+      },
+      "search": {
+        "title": "Keine Notizen gefunden.",
+        "description": "Versuchen Sie einen anderen Begriff oder erstellen Sie eine neue.",
+        "primary_button": {
+          "text": "Notiz hinzufügen"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Der Name der Notiz darf max. 100 Zeichen haben.",
+        "already_exists": "Eine Notiz ohne Beschreibung existiert bereits"
+      },
+      "created": {
+        "title": "Notiz erstellt",
+        "message": "Notiz erfolgreich erstellt"
+      },
+      "not_created": {
+        "title": "Erstellung fehlgeschlagen",
+        "message": "Notiz konnte nicht erstellt werden"
+      },
+      "updated": {
+        "title": "Notiz aktualisiert",
+        "message": "Notiz erfolgreich aktualisiert"
+      },
+      "not_updated": {
+        "title": "Aktualisierung fehlgeschlagen",
+        "message": "Notiz konnte nicht aktualisiert werden"
+      },
+      "removed": {
+        "title": "Notiz gelöscht",
+        "message": "Notiz erfolgreich gelöscht"
+      },
+      "not_removed": {
+        "title": "Löschen fehlgeschlagen",
+        "message": "Notiz konnte nicht gelöscht werden"
+      }
+    }
+  }
+}

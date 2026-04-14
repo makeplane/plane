@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Data și ora curente"
+        },
+        "today": {
+          "description": "Data de azi"
+        },
+        "start_of_day": {
+          "description": "Începutul zilei de azi"
+        },
+        "end_of_day": {
+          "description": "Sfârșitul zilei de azi"
+        },
+        "start_of_week": {
+          "description": "Începutul săptămânii curente"
+        },
+        "end_of_week": {
+          "description": "Sfârșitul săptămânii curente"
+        },
+        "start_of_month": {
+          "description": "Începutul lunii curente"
+        },
+        "end_of_month": {
+          "description": "Sfârșitul lunii curente"
+        },
+        "start_of_year": {
+          "description": "Începutul anului curent"
+        },
+        "end_of_year": {
+          "description": "Sfârșitul anului curent"
+        },
+        "days_ago": {
+          "description": "Data cu n zile în trecut"
+        },
+        "days_from_now": {
+          "description": "Data cu n zile în viitor"
+        },
+        "weeks_ago": {
+          "description": "Data cu n săptămâni în trecut"
+        },
+        "weeks_from_now": {
+          "description": "Data cu n săptămâni în viitor"
+        },
+        "months_ago": {
+          "description": "Data cu n luni în trecut"
+        },
+        "months_from_now": {
+          "description": "Data cu n luni în viitor"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Utilizatorul conectat în prezent"
+        },
+        "members_of": {
+          "description": "Membri din \"project:<id>\" sau \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Toți membrii spațiului de lucru"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Ciclu activ azi"
+        },
+        "completed_cycles": {
+          "description": "Cicluri a căror dată de sfârșit a trecut"
+        },
+        "upcoming_cycles": {
+          "description": "Cicluri a căror dată de început este în viitor"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Data scadenței a trecut ȘI starea este deschisă"
+        },
+        "has_no_assignee": {
+          "description": "Elementul de lucru nu are responsabil"
+        },
+        "has_no_label": {
+          "description": "Elementul de lucru nu are etichete"
+        },
+        "is_top_level": {
+          "description": "Nu este un sub-element de lucru (nu are părinte)"
+        },
+        "is_sub_work_item": {
+          "description": "Este un sub-element de lucru (are părinte)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "Este un element de intake"
+        },
+        "is_draft": {
+          "description": "Este un element în ciornă"
+        },
+        "is_archived": {
+          "description": "Este arhivat"
+        },
+        "has_children": {
+          "description": "Are cel puțin un sub-element de lucru"
+        },
+        "has_start_and_due_dates": {
+          "description": "Are atât dată de început cât și dată scadentă"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Elemente de lucru legate de elementul dat"
+        },
+        "blocked_by": {
+          "description": "Elemente de lucru blocate de elementul dat"
+        },
+        "blocks": {
+          "description": "Elemente de lucru care blochează elementul dat"
+        },
+        "child_of": {
+          "description": "Sub-elementele elementului dat"
+        },
+        "parent_of": {
+          "description": "Elementul părinte al elementului dat"
+        },
+        "duplicate_of": {
+          "description": "Elemente de lucru marcate ca duplicate ale elementului dat"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Câmpul a fost vreodată setat la această valoare"
+        },
+        "was": {
+          "description": "Câmpul a fost anterior această valoare (modificat)"
+        },
+        "changed_from": {
+          "description": "Câmpul a fost modificat din această valoare"
+        },
+        "changed_to": {
+          "description": "Câmpul a fost modificat la această valoare"
+        },
+        "changed": {
+          "description": "Câmpul a fost modificat"
+        },
+        "updated_by": {
+          "description": "Element de lucru actualizat de acest utilizator"
+        },
+        "commented_by": {
+          "description": "Element de lucru comentat de acest utilizator"
+        },
+        "field_changed_by": {
+          "description": "Câmp modificat de acest utilizator"
+        },
+        "was_assigned_to": {
+          "description": "Element de lucru atribuit acestui utilizator"
+        },
+        "changed_after": {
+          "description": "Câmp modificat după această dată"
+        },
+        "changed_before": {
+          "description": "Câmp modificat înainte de această dată"
+        },
+        "field_changed_after": {
+          "description": "Câmp modificat după această dată"
+        },
+        "field_changed_before": {
+          "description": "Câmp modificat înainte de această dată"
+        },
+        "changed_to_after": {
+          "description": "Câmp modificat la această valoare după această dată"
+        },
+        "changed_to_before": {
+          "description": "Câmp modificat la această valoare înainte de această dată"
+        },
+        "field_changed_between": {
+          "description": "Câmp modificat între aceste date"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "navigați",
+      "accept": "acceptați",
+      "close": "închideți",
+      "pick_date": "Alegeți o dată"
+    },
+    "placeholder": "Introduceți o interogare și apăsați \"ENTER\" pentru filtrare...",
+    "error": "Eroare la trimiterea interogării. Verificați și încercați din nou."
+  }
+}

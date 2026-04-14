@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Prezentare generală",
+    "label": "Inițiative",
+    "placeholder": "{count, plural, one{# inițiativă} other{# inițiative}}",
+    "add_initiative": "Adaugă Inițiativă",
+    "create_initiative": "Creează Inițiativă",
+    "update_initiative": "Actualizează Inițiativă",
+    "initiative_name": "Numele inițiativei",
+    "all_initiatives": "Toate Inițiativele",
+    "delete_initiative": "Șterge Inițiativă",
+    "fill_all_required_fields": "Te rugăm să completezi toate câmpurile obligatorii.",
+    "archive_description": "Doar inițiativele finalizate sau închise pot fi arhivate",
+    "toast": {
+      "create_success": "Inițiativa {name} creată cu succes.",
+      "create_error": "Eșec la crearea inițiativei. Te rugăm să încerci din nou!",
+      "update_success": "Inițiativa {name} actualizată cu succes.",
+      "update_error": "Eșec la actualizarea inițiativei. Te rugăm să încerci din nou!",
+      "delete": {
+        "success": "Inițiativa ștearsă cu succes.",
+        "error": "Eșec la ștergerea Inițiativei"
+      },
+      "archive": {
+        "success": "Inițiativă arhivată cu succes.",
+        "error": "Arhivarea inițiativei a eșuat",
+        "initiative_cannot_be_archived_in_this_state": "Inițiativa nu poate fi arhivată în această stare"
+      },
+      "link_copied": "Link-ul inițiativei copiat în clipboard.",
+      "project_update_success": "Proiectele inițiativei actualizate cu succes.",
+      "project_update_error": "Eșec la actualizarea proiectelor inițiativei. Te rugăm să încerci din nou!",
+      "epic_update_success": "Epic{count, plural, one { adăugat la Inițiativă cu succes.} other {e adăugate la Inițiativă cu succes.}}",
+      "epic_update_error": "Adăugarea Epicului la Inițiativă a eșuat. Te rugăm să încerci din nou mai târziu.",
+      "state_update_success": "Starea inițiativei a fost actualizată cu succes.",
+      "state_update_error": "Actualizarea stării inițiativei a eșuat. Vă rugăm să încercați din nou!",
+      "label_update_error": "Nu s-a reușit actualizarea etichetelor inițiativei. Vă rugăm să încercați din nou!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizează munca la cel mai înalt nivel cu Inițiative",
+        "description": "Când ai nevoie să organizezi munca care acoperă mai multe proiecte și echipe, Inițiativele vin în ajutor. Conectează proiecte și epice la inițiative, vezi actualizări automat grupate și vezi pădurea înainte de a ajunge la copaci.",
+        "primary_button": {
+          "text": "Creează o inițiativă"
+        }
+      },
+      "search": {
+        "title": "Nicio inițiativă care să se potrivească",
+        "description": "Nu s-au detectat inițiative cu criteriile de potrivire.\n Creează o nouă inițiativă în schimb.",
+        "archived_description": "Nu s-au detectat inițiative arhivate cu criteriile de potrivire."
+      },
+      "not_found": {
+        "title": "Inițiativa nu există",
+        "description": "Inițiativa pe care o cauți nu există, a fost arhivată sau a fost ștearsă.",
+        "primary_button": {
+          "text": "Vezi alte Inițiative"
+        }
+      },
+      "epics": {
+        "title": "Nu ai epice care să se potrivească cu filtrele pe care le-ai aplicat.",
+        "subHeading": "Pentru a vedea toate epicele, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      }
+    },
+    "scope": {
+      "view_scope": "Vezi domeniu",
+      "breakdown": "Descompune domeniu",
+      "add_scope": "Adaugă domeniu",
+      "label": "Domeniu",
+      "empty_state": {
+        "title": "Nu a fost adăugat încă niciun domeniu la această inițiativă",
+        "description": "Conectează proiecte și epice la inițiativă pentru a începe.",
+        "primary_button": {
+          "text": "Adaugă domeniu"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Etichete",
+        "description": "Structurați și organizați inițiativele dvs. cu etichete."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Șterge eticheta",
+        "content": "Sigur doriți să ștergeți {labelName}? Aceasta va elimina eticheta din toate inițiativele și din orice vizualizare în care eticheta este filtrată."
+      },
+      "toast": {
+        "delete_error": "Eticheta inițiativei nu a putut fi ștearsă. Vă rugăm să încercați din nou.",
+        "label_already_exists": "Eticheta există deja"
+      }
+    }
+  }
+}

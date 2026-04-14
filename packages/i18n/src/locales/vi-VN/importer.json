@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "Nhập và đồng bộ mục công việc từ kho lưu trữ GitHub."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Nhập mục công việc và sử thi từ dự án và sử thi Jira."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Xuất mục công việc thành tệp CSV.",
+      "short_description": "Xuất sang CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Xuất mục công việc thành tệp Excel.",
+      "short_description": "Xuất sang Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Xuất mục công việc thành tệp Excel.",
+      "short_description": "Xuất sang Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Xuất mục công việc thành tệp JSON.",
+      "short_description": "Xuất sang JSON"
+    }
+  },
+  "importers": {
+    "imports": "Nhập",
+    "logo": "Logo",
+    "import_message": "Nhập dữ liệu {serviceName} của bạn vào các dự án plane.",
+    "deactivate": "Hủy kích hoạt",
+    "deactivating": "Đang hủy kích hoạt",
+    "migrating": "Đang di chuyển",
+    "migrations": "Di chuyển",
+    "refreshing": "Đang làm mới",
+    "import": "Nhập",
+    "serial_number": "STT.",
+    "project": "Dự án",
+    "workspace": "Workspace",
+    "status": "Trạng thái",
+    "summary": "Tóm tắt",
+    "total_batches": "Tổng số lô",
+    "imported_batches": "Số lô đã nhập",
+    "re_run": "Chạy lại",
+    "cancel": "Hủy",
+    "start_time": "Thời gian bắt đầu",
+    "no_jobs_found": "Không tìm thấy công việc nào",
+    "no_project_imports": "Bạn chưa nhập bất kỳ dự án {serviceName} nào.",
+    "cancel_import_job": "Hủy công việc nhập",
+    "cancel_import_job_confirmation": "Bạn có chắc muốn hủy công việc nhập này không? Điều này sẽ dừng quá trình nhập cho dự án này.",
+    "re_run_import_job": "Chạy lại công việc nhập",
+    "re_run_import_job_confirmation": "Bạn có chắc muốn chạy lại công việc nhập này không? Điều này sẽ khởi động lại quá trình nhập cho dự án này.",
+    "upload_csv_file": "Tải lên tệp CSV để nhập dữ liệu người dùng.",
+    "connect_importer": "Kết nối {serviceName}",
+    "migration_assistant": "Trợ lý di chuyển",
+    "migration_assistant_description": "Di chuyển dự án {serviceName} của bạn sang Plane một cách liền mạch với trợ lý mạnh mẽ của chúng tôi.",
+    "token_helper": "Bạn sẽ nhận được từ",
+    "personal_access_token": "Mã thông báo truy cập cá nhân",
+    "source_token_expired": "Mã thông báo hết hạn",
+    "source_token_expired_description": "Mã thông báo đã cung cấp đã hết hạn. Vui lòng hủy kích hoạt và kết nối lại với bộ thông tin đăng nhập mới.",
+    "user_email": "Email người dùng",
+    "select_state": "Chọn trạng thái",
+    "select_service_project": "Chọn dự án {serviceName}",
+    "loading_service_projects": "Đang tải dự án {serviceName}",
+    "select_service_workspace": "Chọn workspace {serviceName}",
+    "loading_service_workspaces": "Đang tải workspace {serviceName}",
+    "select_priority": "Chọn ưu tiên",
+    "select_service_team": "Chọn nhóm {serviceName}",
+    "add_seat_msg_free_trial": "Bạn đang cố nhập {additionalUserCount} người dùng chưa đăng ký và bạn chỉ có {currentWorkspaceSubscriptionAvailableSeats} chỗ có sẵn trong gói hiện tại. Để tiếp tục nhập, hãy nâng cấp ngay.",
+    "add_seat_msg_paid": "Bạn đang cố nhập {additionalUserCount} người dùng chưa đăng ký và bạn chỉ có {currentWorkspaceSubscriptionAvailableSeats} chỗ có sẵn trong gói hiện tại. Để tiếp tục nhập, hãy mua ít nhất {extraSeatRequired} chỗ bổ sung.",
+    "skip_user_import_title": "Bỏ qua việc nhập dữ liệu người dùng",
+    "skip_user_import_description": "Việc bỏ qua nhập người dùng sẽ dẫn đến mục công việc, bình luận và dữ liệu khác từ {serviceName} được tạo bởi người dùng thực hiện việc di chuyển trong Plane. Bạn vẫn có thể thêm người dùng thủ công sau.",
+    "invalid_pat": "Mã thông báo truy cập cá nhân không hợp lệ"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Nhập dữ liệu Jira của bạn vào các dự án Plane.",
+    "personal_access_token": "Mã thông báo truy cập cá nhân",
+    "user_email": "Email người dùng",
+    "create_project_automatically": "Tạo dự án tự động",
+    "create_project_automatically_description": "Chúng tôi sẽ tạo một dự án mới cho bạn dựa trên chi tiết dự án Jira.",
+    "import_to_existing_project": "Nhập vào dự án hiện có",
+    "import_to_existing_project_description": "Chọn một dự án hiện có từ menu thả xuống bên dưới.",
+    "state_mapping_automatic_creation": "Tất cả các trạng thái Jira sẽ được tự động tạo trong Plane.",
+    "atlassian_security_settings": "Cài đặt bảo mật Atlassian",
+    "email_description": "Đây là email được liên kết với mã thông báo truy cập cá nhân của bạn",
+    "jira_domain": "Tên miền Jira",
+    "jira_domain_description": "Đây là tên miền của phiên bản Jira của bạn",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Jira của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_jira": "Cấu hình Jira",
+      "description_configure_jira": "Vui lòng chọn workspace Jira mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_import_users": "Nhập người dùng",
+      "description_import_users": "Vui lòng thêm người dùng bạn muốn di chuyển từ Jira sang Plane. Ngoài ra, bạn có thể bỏ qua bước này và thêm người dùng thủ công sau.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái Jira với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Chúng tôi đã tự động khớp các ưu tiên theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ ưu tiên còn lại nào trước khi tiếp tục.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane.",
+      "custom_jql_filter": "Bộ lọc JQL tùy chỉnh",
+      "jql_filter_description": "Sử dụng JQL để lọc các vấn đề cụ thể để nhập.",
+      "project_code": "DỰ ÁN",
+      "enter_filters_placeholder": "Nhập bộ lọc (ví dụ: status = 'In Progress')",
+      "validating_query": "Đang xác thực truy vấn...",
+      "validation_successful_work_items_selected": "Xác thực thành công, {count} Mục công việc đã chọn.",
+      "run_syntax_check": "Chạy kiểm tra cú pháp để xác minh truy vấn của bạn",
+      "refresh": "Làm mới",
+      "check_syntax": "Kiểm tra cú pháp",
+      "no_work_items_selected": "Không có mục công việc nào được chọn bởi truy vấn.",
+      "validation_error_default": "Có lỗi xảy ra khi xác thực truy vấn."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Nhập dữ liệu Asana của bạn vào các dự án Plane.",
+    "select_asana_priority_field": "Chọn trường ưu tiên Asana",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Asana của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_asana": "Cấu hình Asana",
+      "description_configure_asana": "Vui lòng chọn workspace và dự án Asana mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Vui lòng chọn trạng thái Asana mà bạn muốn ánh xạ đến trạng thái dự án Plane.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên Asana mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Asana sang Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Nhập dữ liệu Linear của bạn vào các dự án Plane.",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Linear của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_linear": "Cấu hình Linear",
+      "description_configure_linear": "Vui lòng chọn nhóm Linear mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái Linear với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên Linear mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Linear sang Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Nhập dữ liệu Jira Server/Data Center của bạn vào các dự án Plane.",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Jira của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_jira": "Cấu hình Jira",
+      "description_configure_jira": "Vui lòng chọn workspace Jira mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Vui lòng chọn trạng thái Jira mà bạn muốn ánh xạ đến trạng thái dự án Plane.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên Jira mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
+    },
+    "import_epics": {
+      "title": "Nhập Epic dưới dạng Công việc",
+      "description": "Khi bật tính năng này, các epic của bạn sẽ được nhập dưới dạng công việc với loại công việc epic."
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Nhập dữ liệu Notion của bạn vào các dự án Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Notion",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Notion của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Notion của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Notion",
+      "upload_from_url": "Nhập từ URL",
+      "upload_from_url_description": "Dán URL công khai của bản xuất ZIP của bạn để tiếp tục.",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Notion của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Notion",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Notion của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Nhập dữ liệu Confluence của bạn vào wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Confluence",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Confluence của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Confluence của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Confluence",
+      "upload_from_url": "Nhập từ URL",
+      "upload_from_url_description": "Dán URL công khai của bản xuất ZIP của bạn để tiếp tục.",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Confluence của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Confluence",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Confluence của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Nhập dữ liệu CSV của bạn vào các dự án Plane.",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu CSV của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_csv": "Cấu hình CSV",
+      "description_configure_csv": "Vui lòng tải lên tệp CSV của bạn và cấu hình các trường được ánh xạ đến trường Plane."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "Nhập các mục công việc từ tệp CSV vào các dự án Plane.",
+    "steps": {
+      "title_select_project": "Chọn dự án",
+      "description_select_project": "Vui lòng chọn dự án Plane nơi bạn muốn nhập các mục công việc của mình.",
+      "title_upload_csv": "Tải lên CSV",
+      "description_upload_csv": "Tải lên tệp CSV chứa các mục công việc của bạn. Tệp phải bao gồm các cột cho tên, mô tả, ưu tiên, ngày tháng và nhóm trạng thái."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Nhập dữ liệu ClickUp của bạn vào các dự án Plane.",
+    "select_service_space": "Chọn {serviceName} Space",
+    "select_service_folder": "Chọn {serviceName} Folder",
+    "selected": "Đã chọn",
+    "users": "Người dùng",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu ClickUp của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_clickup": "Cấu hình ClickUp",
+      "description_configure_clickup": "Vui lòng chọn nhóm ClickUp, không gian và thư mục từ đó bạn muốn di chuyển dữ liệu của mình.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái ClickUp với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên ClickUp mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ ClickUp sang Plane.",
+      "pull_additional_data_title": "Nhập bình luận và đính kèm"
+    }
+  }
+}

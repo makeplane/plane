@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Ghid de pornire rapidă",
+      "not_right_now": "Nu acum",
+      "create_project": {
+        "title": "Creează un proiect",
+        "description": "Majoritatea lucrurilor încep cu un proiect în Plane.",
+        "cta": "Începe acum"
+      },
+      "invite_team": {
+        "title": "Invită-ți echipa",
+        "description": "Construiește, livrează și gestionează împreună cu colegii.",
+        "cta": "Invită-i"
+      },
+      "configure_workspace": {
+        "title": "Configurează-ți spațiul de lucru.",
+        "description": "Activează sau dezactivează opțiuni sau mergi mai departe.",
+        "cta": "Configurează acest spațiu de lucru"
+      },
+      "personalize_account": {
+        "title": "Personalizează Plane.",
+        "description": "Alege-ți poza de profil, culorile și multe altele.",
+        "cta": "Personalizează acum"
+      },
+      "widgets": {
+        "title": "Este liniște fără mini-aplicații, activează-le",
+        "description": "Se pare că toate mini-aplicațiile tale sunt dezactivate. Activează-le acum pentru a-ți îmbunătăți experiența!",
+        "primary_button": {
+          "text": "Gestionează mini-aplicațiile"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Salvează link-uri către elementele utile pe care vrei să le ai la îndemână.",
+      "add": "Adaugă link rapid",
+      "title": "Link rapid",
+      "title_plural": "Linkuri rapide"
+    },
+    "recents": {
+      "title": "Recente",
+      "empty": {
+        "project": "Proiectele vizitate recent vor apărea aici.",
+        "page": "Documentele din Documentație vizitate recent vor apărea aici.",
+        "issue": "Activitățile vizitate recent vor apărea aici.",
+        "default": "Nu ai nimic recent încă."
+      },
+      "filters": {
+        "all": "Toate",
+        "projects": "Proiecte",
+        "pages": "Documentație",
+        "issues": "Activități"
+      }
+    },
+    "new_at_plane": {
+      "title": "Noutăți în Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutorial rapid"
+    },
+    "widget": {
+      "reordered_successfully": "Mini-aplicație reordonată cu succes.",
+      "reordering_failed": "Eroare la reordonarea mini-aplicației."
+    },
+    "manage_widgets": "Gestionează mini-aplicațiile",
+    "title": "Acasă",
+    "star_us_on_github": "Dă-ne o stea pe GitHub",
+    "business_trial_banner": {
+      "title": "Perioada de probă de 14 zile pentru planul Business este activă!",
+      "description": "Explorați toate funcțiile Business. Când sunteți pregătit, alegeți să vă abonați. Nu veți fi facturat automat.",
+      "trial_ends_today": "Perioada de probă se încheie astăzi",
+      "trial_ends_in_days": "Perioada de probă se încheie în {days, plural, one {# zi} other {# zile}}",
+      "start_subscription": "Începe abonamentul",
+      "explore_business_features": "Explorează funcțiile Business"
+    }
+  }
+}

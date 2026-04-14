@@ -1,0 +1,64 @@
+{
+  "epic": {
+    "all": "すべてのエピック",
+    "label": "{count, plural, one {エピック} other {エピック}}",
+    "new": "新規エピック",
+    "adding": "エピックを追加中",
+    "create": {
+      "success": "エピックを作成しました"
+    },
+    "add": {
+      "press_enter": "Enterを押して別のエピックを追加",
+      "label": "エピックを追加"
+    },
+    "title": {
+      "label": "エピックのタイトル",
+      "required": "エピックのタイトルは必須です。"
+    },
+    "archive": {
+      "description": "完了またはキャンセルされたエピックのみ\nアーカイブできます",
+      "label": "エピックをアーカイブ",
+      "confirm_message": "エピックをアーカイブしてもよろしいですか？アーカイブしたエピックは後で復元できます。",
+      "success": {
+        "label": "アーカイブ成功",
+        "message": "アーカイブはプロジェクトのアーカイブで確認できます。"
+      },
+      "failed": {
+        "message": "エピックをアーカイブできませんでした。もう一度お試しください。"
+      }
+    }
+  },
+  "epics": {
+    "label": "エピック",
+    "no_epics_selected": "エピックが選択されていません",
+    "add_selected_epics": "選択したエピックを追加",
+    "epic_link_copied_to_clipboard": "エピックのリンクがクリップボードにコピーされました。",
+    "project_link_copied_to_clipboard": "プロジェクトのリンクがクリップボードにコピーされました",
+    "empty_state": {
+      "general": {
+        "title": "エピックを作成し、誰か（自分自身でも）に割り当てます",
+        "description": "複数のサイクルにまたがり、モジュール間で存在する可能性のある大きな作業のために、エピックを作成します。プロジェクト内の作業項目とサブ作業項目をエピックにリンクし、概要から作業項目にジャンプできます。",
+        "primary_button": {
+          "text": "エピックを作成"
+        }
+      },
+      "section": {
+        "title": "まだエピックがありません",
+        "description": "進捗を管理・追跡するためにエピックの追加を開始します。",
+        "primary_button": {
+          "text": "エピックを追加"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "一致するエピックが見つかりません"
+      },
+      "no_epics": {
+        "title": "エピックが見つかりません"
+      }
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Güncel tarih ve saat"
+        },
+        "today": {
+          "description": "Bugünün tarihi"
+        },
+        "start_of_day": {
+          "description": "Bugünün başlangıcı"
+        },
+        "end_of_day": {
+          "description": "Bugünün sonu"
+        },
+        "start_of_week": {
+          "description": "Mevcut haftanın başlangıcı"
+        },
+        "end_of_week": {
+          "description": "Mevcut haftanın sonu"
+        },
+        "start_of_month": {
+          "description": "Mevcut ayın başlangıcı"
+        },
+        "end_of_month": {
+          "description": "Mevcut ayın sonu"
+        },
+        "start_of_year": {
+          "description": "Mevcut yılın başlangıcı"
+        },
+        "end_of_year": {
+          "description": "Mevcut yılın sonu"
+        },
+        "days_ago": {
+          "description": "n gün önceki tarih"
+        },
+        "days_from_now": {
+          "description": "n gün sonraki tarih"
+        },
+        "weeks_ago": {
+          "description": "n hafta önceki tarih"
+        },
+        "weeks_from_now": {
+          "description": "n hafta sonraki tarih"
+        },
+        "months_ago": {
+          "description": "n ay önceki tarih"
+        },
+        "months_from_now": {
+          "description": "n ay sonraki tarih"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Şu anda oturum açmış kullanıcı"
+        },
+        "members_of": {
+          "description": "\"project:<id>\" veya \"teamspace:<id>\" üyeleri"
+        },
+        "workspace_members": {
+          "description": "Tüm çalışma alanı üyeleri"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Bugün aktif döngü"
+        },
+        "completed_cycles": {
+          "description": "Bitiş tarihi geçmiş döngüler"
+        },
+        "upcoming_cycles": {
+          "description": "Başlangıç tarihi gelecekte olan döngüler"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Son tarih geçmiş VE durum açık"
+        },
+        "has_no_assignee": {
+          "description": "İş öğesinin atanan kişisi yok"
+        },
+        "has_no_label": {
+          "description": "İş öğesinin etiketi yok"
+        },
+        "is_top_level": {
+          "description": "Alt iş öğesi değil (üst öğesi yok)"
+        },
+        "is_sub_work_item": {
+          "description": "Alt iş öğesi (üst öğesi var)"
+        },
+        "is_epic": {
+          "description": "Epic"
+        },
+        "is_intake": {
+          "description": "Giriş iş öğesi"
+        },
+        "is_draft": {
+          "description": "Taslak iş öğesi"
+        },
+        "is_archived": {
+          "description": "Arşivlenmiş"
+        },
+        "has_children": {
+          "description": "En az bir alt iş öğesi var"
+        },
+        "has_start_and_due_dates": {
+          "description": "Başlangıç ve bitiş tarihleri var"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Verilen iş öğesiyle ilgili iş öğeleri"
+        },
+        "blocked_by": {
+          "description": "Verilen iş öğesi tarafından engellenen iş öğeleri"
+        },
+        "blocks": {
+          "description": "Verilen iş öğesini engelleyen iş öğeleri"
+        },
+        "child_of": {
+          "description": "Verilen iş öğesinin alt öğeleri"
+        },
+        "parent_of": {
+          "description": "Verilen iş öğesinin üst öğesi"
+        },
+        "duplicate_of": {
+          "description": "Verilen iş öğesinin kopyası olarak işaretlenen öğeler"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Alan bu değere sahipti"
+        },
+        "was": {
+          "description": "Alan daha önce bu değerdeydi (değiştirildi)"
+        },
+        "changed_from": {
+          "description": "Alan bu değerden değiştirildi"
+        },
+        "changed_to": {
+          "description": "Alan bu değere değiştirildi"
+        },
+        "changed": {
+          "description": "Alan değiştirildi"
+        },
+        "updated_by": {
+          "description": "Bu kullanıcı tarafından güncellenen iş öğesi"
+        },
+        "commented_by": {
+          "description": "Bu kullanıcı tarafından yorum yapılan iş öğesi"
+        },
+        "field_changed_by": {
+          "description": "Bu kullanıcı tarafından değiştirilen alan"
+        },
+        "was_assigned_to": {
+          "description": "Bu kullanıcıya atanmış iş öğesi"
+        },
+        "changed_after": {
+          "description": "Bu tarihten sonra değiştirilen alan"
+        },
+        "changed_before": {
+          "description": "Bu tarihten önce değiştirilen alan"
+        },
+        "field_changed_after": {
+          "description": "Bu tarihten sonra değiştirilen alan"
+        },
+        "field_changed_before": {
+          "description": "Bu tarihten önce değiştirilen alan"
+        },
+        "changed_to_after": {
+          "description": "Bu tarihten sonra bu değere değiştirilen alan"
+        },
+        "changed_to_before": {
+          "description": "Bu tarihten önce bu değere değiştirilen alan"
+        },
+        "field_changed_between": {
+          "description": "Bu tarihler arasında değiştirilen alan"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "gezin",
+      "accept": "kabul et",
+      "close": "kapat",
+      "pick_date": "Tarih seçin"
+    },
+    "placeholder": "Bir sorgu yazın ve filtrelemek için \"ENTER\" tuşuna basın...",
+    "error": "Sorgu gönderilirken hata oluştu. Lütfen kontrol edip tekrar deneyin."
+  }
+}

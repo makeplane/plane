@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "ページを接続",
+    "show_wiki_pages": "Wikiページを表示",
+    "link_pages_to": "ページを接続",
+    "linked_pages": "リンクされたページ",
+    "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "ページが更新されました",
+          "message": "ページが正常に更新されました"
+        },
+        "error": {
+          "title": "ページが更新されませんでした",
+          "message": "ページを更新できませんでした"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "ページが削除されました",
+          "message": "ページが正常に削除されました"
+        },
+        "error": {
+          "title": "ページが削除されませんでした",
+          "message": "ページを削除できませんでした"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "アウトライン",
+        "empty_state": {
+          "title": "見出しがありません",
+          "description": "このページに見出しを追加してここで確認しましょう。"
+        }
+      },
+      "info": {
+        "label": "情報",
+        "document_info": {
+          "words": "単語数",
+          "characters": "文字数",
+          "paragraphs": "段落数",
+          "read_time": "読了時間"
+        },
+        "actors_info": {
+          "edited_by": "編集者",
+          "created_by": "作成者"
+        },
+        "version_history": {
+          "label": "バージョン履歴",
+          "current_version": "現在のバージョン",
+          "highlight_changes": "変更を強調表示"
+        }
+      },
+      "assets": {
+        "label": "アセット",
+        "download_button": "ダウンロード",
+        "empty_state": {
+          "title": "画像がありません",
+          "description": "画像を追加してここで確認してください。"
+        }
+      }
+    },
+    "open_button": "ナビゲーションパネルを開く",
+    "close_button": "ナビゲーションパネルを閉じる",
+    "outline_floating_button": "アウトラインを開く"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "Wiki コレクション、プロジェクト、チームスペースを検索",
+        "project_to_project_with_wiki": "Wiki コレクションとプロジェクトを検索",
+        "teamspace_to_all_with_wiki": "Wiki コレクション、プロジェクト、チームスペースを検索"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "Wiki に移動しました",
+          "message": "ページは Wiki に移動されましたが、選択したコレクションに追加できませんでした。ページは General に残ります。"
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "コレクションから削除",
+      "success_message": "ページをコレクションから削除しました。",
+      "error_message": "ページをコレクションから削除できませんでした。もう一度お試しください。"
+    }
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "Importujte položky z repozitárov GitHub."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importujte položky a epiky z Jira."
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exportujte položky do CSV.",
+      "short_description": "Exportovať ako CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Exportujte položky do Excelu.",
+      "short_description": "Exportovať ako Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exportujte položky do Excelu.",
+      "short_description": "Exportovať ako Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exportujte položky do JSON.",
+      "short_description": "Exportovať ako JSON"
+    }
+  },
+  "importers": {
+    "imports": "Importy",
+    "logo": "Logo",
+    "import_message": "Importujte vaše {serviceName} dáta do projektov plane.",
+    "deactivate": "Deaktivovať",
+    "deactivating": "Deaktivuje sa",
+    "migrating": "Migruje sa",
+    "migrations": "Migrácie",
+    "refreshing": "Obnovuje sa",
+    "import": "Import",
+    "serial_number": "Por. č.",
+    "project": "Projekt",
+    "workspace": "Vorkspejs",
+    "status": "Stav",
+    "summary": "Zhrnutie",
+    "total_batches": "Celkový počet dávok",
+    "imported_batches": "Importované dávky",
+    "re_run": "Spustiť znova",
+    "cancel": "Zrušiť",
+    "start_time": "Čas začatia",
+    "no_jobs_found": "Nenašli sa žiadne úlohy",
+    "no_project_imports": "Ešte ste neimportovali žiadne {serviceName} projekty.",
+    "cancel_import_job": "Zrušiť importnú úlohu",
+    "cancel_import_job_confirmation": "Ste si istí, že chcete zrušiť túto importnú úlohu? Týmto sa zastaví proces importu pre tento projekt.",
+    "re_run_import_job": "Opätovne spustiť importnú úlohu",
+    "re_run_import_job_confirmation": "Ste si istí, že chcete opätovne spustiť túto importnú úlohu? Týmto sa reštartuje proces importu pre tento projekt.",
+    "upload_csv_file": "Nahrajte CSV súbor na import používateľských údajov.",
+    "connect_importer": "Pripojiť {serviceName}",
+    "migration_assistant": "Asistent migrácie",
+    "migration_assistant_description": "Bezproblémovo migrujte vaše {serviceName} projekty do Plane s naším výkonným asistentom.",
+    "token_helper": "Toto získate z vášho",
+    "personal_access_token": "Osobný prístupový token",
+    "source_token_expired": "Token vypršal",
+    "source_token_expired_description": "Poskytnutý token vypršal. Prosím, deaktivujte a znovu pripojte s novým súborom prihlasovacích údajov.",
+    "user_email": "Email používateľa",
+    "select_state": "Vyberte stav",
+    "select_service_project": "Vyberte {serviceName} projekt",
+    "loading_service_projects": "Načítavajú sa {serviceName} projekty",
+    "select_service_workspace": "Vyberte {serviceName} vorkspejs",
+    "loading_service_workspaces": "Načítavajú sa {serviceName} vorkspejsy",
+    "select_priority": "Vyberte prioritu",
+    "select_service_team": "Vyberte {serviceName} tím",
+    "add_seat_msg_free_trial": "Pokúšate sa importovať {additionalUserCount} neregistrovaných používateľov a máte len {currentWorkspaceSubscriptionAvailableSeats} dostupných miest v aktuálnom pláne. Pre pokračovanie v importovaní inovujte teraz.",
+    "add_seat_msg_paid": "Pokúšate sa importovať {additionalUserCount} neregistrovaných používateľov a máte len {currentWorkspaceSubscriptionAvailableSeats} dostupných miest v aktuálnom pláne. Pre pokračovanie v importovaní kúpte najmenej {extraSeatRequired} extra miest.",
+    "skip_user_import_title": "Preskočiť import používateľských údajov",
+    "skip_user_import_description": "Preskočenie importu používateľov bude mať za následok, že pracovné položky, komentáre a ďalšie údaje z {serviceName} budú vytvorené používateľom vykonávajúcim migráciu v Plane. Používateľov môžete stále manuálne pridať neskôr.",
+    "invalid_pat": "Neplatný osobný prístupový token"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Importujte vaše Jira dáta do projektov Plane.",
+    "create_project_automatically": "Vytvoriť projekt automaticky",
+    "create_project_automatically_description": "Vytvoríme pre vás nový projekt na základe podrobností o projekte Jira.",
+    "import_to_existing_project": "Importovať do existujúceho projektu",
+    "import_to_existing_project_description": "Vyberte existujúci projekt z rozbaľovacej ponuky nižšie.",
+    "state_mapping_automatic_creation": "Všetky stavy Jira sa automaticky vytvoria v Plane.",
+    "personal_access_token": "Osobný prístupový token",
+    "user_email": "Email používateľa",
+    "atlassian_security_settings": "Bezpečnostné nastavenia Atlassian",
+    "email_description": "Toto je email prepojený s vaším osobným prístupovým tokenom",
+    "jira_domain": "Jira doména",
+    "jira_domain_description": "Toto je doména vašej Jira inštancie",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Jira dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_jira": "Nakonfigurovať Jira",
+      "description_configure_jira": "Vyberte Jira vorkspejs, z ktorého chcete migrovať vaše dáta.",
+      "title_import_users": "Importovať používateľov",
+      "description_import_users": "Pridajte používateľov, ktorých chcete migrovať z Jira do Plane. Alternatívne môžete tento krok preskočiť a manuálne pridať používateľov neskôr.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Automaticky sme priradili Jira stavy k stavom Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Automaticky sme priradili priority podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce priority.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane.",
+      "custom_jql_filter": "Vlastný JQL filter",
+      "jql_filter_description": "Použite JQL na filtrovanie konkrétnych úloh pre import.",
+      "project_code": "PROJEKT",
+      "enter_filters_placeholder": "Zadajte filtre (napr. status = 'In Progress')",
+      "validating_query": "Overovanie dopytu...",
+      "validation_successful_work_items_selected": "Overenie úspešné, vybraných {count} pracovných položiek.",
+      "run_syntax_check": "Spustiť kontrolu syntaxe na overenie dopytu",
+      "refresh": "Obnoviť",
+      "check_syntax": "Skontrolovať syntax",
+      "no_work_items_selected": "Dopyt nevybral žiadne pracovné položky.",
+      "validation_error_default": "Pri overovaní dopytu sa niečo pokazilo."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Importujte vaše Asana dáta do projektov Plane.",
+    "select_asana_priority_field": "Vyberte pole priority Asana",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Asana dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_asana": "Nakonfigurovať Asana",
+      "description_configure_asana": "Vyberte Asana vorkspejs a projekt, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Vyberte Asana stavy, ktoré chcete mapovať na stavy projektu Plane.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte Asana priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Asana do Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Importujte vaše Linear dáta do projektov Plane.",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Linear dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_linear": "Nakonfigurovať Linear",
+      "description_configure_linear": "Vyberte Linear tím, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Automaticky sme priradili Linear stavy k stavom Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte Linear priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Linear do Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Importujte vaše Jira Server/Data Center dáta do projektov Plane.",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Jira dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_jira": "Nakonfigurovať Jira",
+      "description_configure_jira": "Vyberte Jira vorkspejs, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Vyberte Jira stavy, ktoré chcete mapovať na stavy projektu Plane.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte Jira priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
+    },
+    "import_epics": {
+      "title": "Importovať epiky ako pracovné položky",
+      "description": "S touto aktivovanou funkciou budú vaše epiky importované jako pracovné položky s typom pracovnej položky epika."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Importujte vaše CSV dáta do projektov Plane.",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše CSV dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_csv": "Nakonfigurovať CSV",
+      "description_configure_csv": "Nahrajte váš CSV súbor a nakonfigurujte polia, ktoré majú byť mapované na polia Plane."
+    }
+  },
+  "csv_importer": {
+    "csv_importer_description": "Importujte pracovné položky zo súborov CSV do projektov Plane.",
+    "steps": {
+      "title_select_project": "Vybrať projekt",
+      "description_select_project": "Vyberte prosím projekt Plane, kam chcete importovat svoje pracovné položky.",
+      "title_upload_csv": "Nahrať CSV",
+      "description_upload_csv": "Nahrajte svoj súbor CSV obsahujúci pracovné položky. Súbor by mal obsahovat stĺpce pre názov, popis, prioritu, dátumy a skupinu stavov."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Importujte vaše ClickUp dáta do projektov Plane.",
+    "select_service_space": "Vyberte {serviceName} priestor",
+    "select_service_folder": "Vyberte {serviceName} priečinok",
+    "selected": "Vybrané",
+    "users": "Používatelia",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše ClickUp dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_clickup": "Nakonfigurovať ClickUp",
+      "description_configure_clickup": "Vyberte ClickUp tím, priestor a priečinok, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Máme automaticky mapované ClickUp stavy na stavy Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte ClickUp priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane.",
+      "pull_additional_data_title": "Importovať komentáre a prílohy"
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "Importujte vaše Notion dáta do projektov Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Notion",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Notion dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Notion zip súbor sem",
+      "upload_title": "Nahrať Notion export",
+      "upload_from_url": "Importovať z URL",
+      "upload_from_url_description": "Pre pokračovanie vložte verejnú URL adresu vášho ZIP exportu.",
+      "drag_drop_description": "Pretiahnite a pustite váš Notion export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Notion",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Notion dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Importujte vaše Confluence dáta do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Confluence",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Confluence dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Confluence zip súbor sem",
+      "upload_title": "Nahrať Confluence export",
+      "upload_from_url": "Importovať z URL",
+      "upload_from_url_description": "Pre pokračovanie vložte verejnú URL adresu vášho ZIP exportu.",
+      "drag_drop_description": "Pretiahnite a pustite váš Confluence export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Confluence",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Confluence dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  }
+}

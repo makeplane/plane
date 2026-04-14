@@ -1,0 +1,202 @@
+{
+  "pql": {
+    "functions": {
+      "date": {
+        "now": {
+          "description": "Aktuální datum a čas"
+        },
+        "today": {
+          "description": "Dnešní datum"
+        },
+        "start_of_day": {
+          "description": "Začátek dnes"
+        },
+        "end_of_day": {
+          "description": "Konec dnes"
+        },
+        "start_of_week": {
+          "description": "Začátek aktuálního týdne"
+        },
+        "end_of_week": {
+          "description": "Konec aktuálního týdne"
+        },
+        "start_of_month": {
+          "description": "Začátek aktuálního měsíce"
+        },
+        "end_of_month": {
+          "description": "Konec aktuálního měsíce"
+        },
+        "start_of_year": {
+          "description": "Začátek aktuálního roku"
+        },
+        "end_of_year": {
+          "description": "Konec aktuálního roku"
+        },
+        "days_ago": {
+          "description": "Datum před n dny"
+        },
+        "days_from_now": {
+          "description": "Datum za n dní"
+        },
+        "weeks_ago": {
+          "description": "Datum před n týdny"
+        },
+        "weeks_from_now": {
+          "description": "Datum za n týdnů"
+        },
+        "months_ago": {
+          "description": "Datum před n měsíci"
+        },
+        "months_from_now": {
+          "description": "Datum za n měsíců"
+        }
+      },
+      "user": {
+        "current_user": {
+          "description": "Aktuálně přihlášený uživatel"
+        },
+        "members_of": {
+          "description": "Členové \"project:<id>\" nebo \"teamspace:<id>\""
+        },
+        "workspace_members": {
+          "description": "Všichni členové pracovního prostoru"
+        }
+      },
+      "cycle": {
+        "active_cycle": {
+          "description": "Dnes aktivní cyklus"
+        },
+        "completed_cycles": {
+          "description": "Cykly, jejichž datum ukončení uplynulo"
+        },
+        "upcoming_cycles": {
+          "description": "Cykly, jejichž datum zahájení je v budoucnosti"
+        }
+      },
+      "state": {
+        "open_states": {
+          "description": "backlog, unstarted, started"
+        },
+        "closed_states": {
+          "description": "completed, canceled"
+        },
+        "active_states": {
+          "description": "unstarted, started"
+        }
+      },
+      "predicate": {
+        "is_overdue": {
+          "description": "Datum splatnosti uplynulo A stav je otevřený"
+        },
+        "has_no_assignee": {
+          "description": "Pracovní položka nemá přiřazeného řešitele"
+        },
+        "has_no_label": {
+          "description": "Pracovní položka nemá štítky"
+        },
+        "is_top_level": {
+          "description": "Není podpracovní položkou (nemá rodiče)"
+        },
+        "is_sub_work_item": {
+          "description": "Je podpracovní položkou (má rodiče)"
+        },
+        "is_epic": {
+          "description": "Epik"
+        },
+        "is_intake": {
+          "description": "Je vstupní pracovní položkou"
+        },
+        "is_draft": {
+          "description": "Je pracovní položkou v konceptu"
+        },
+        "is_archived": {
+          "description": "Je archivována"
+        },
+        "has_children": {
+          "description": "Má alespoň jednu podpracovní položku"
+        },
+        "has_start_and_due_dates": {
+          "description": "Má datum zahájení i datum splatnosti"
+        }
+      },
+      "relation": {
+        "linked_to": {
+          "description": "Pracovní položky související s danou položkou"
+        },
+        "blocked_by": {
+          "description": "Pracovní položky blokované danou položkou"
+        },
+        "blocks": {
+          "description": "Pracovní položky, které blokují danou položku"
+        },
+        "child_of": {
+          "description": "Podpracovní položky dané položky"
+        },
+        "parent_of": {
+          "description": "Nadřazená pracovní položka dané položky"
+        },
+        "duplicate_of": {
+          "description": "Pracovní položky označené jako duplikáty dané položky"
+        }
+      },
+      "history": {
+        "was_ever": {
+          "description": "Pole mělo někdy tuto hodnotu"
+        },
+        "was": {
+          "description": "Pole mělo předtím tuto hodnotu (změněno)"
+        },
+        "changed_from": {
+          "description": "Pole bylo změněno z této hodnoty"
+        },
+        "changed_to": {
+          "description": "Pole bylo změněno na tuto hodnotu"
+        },
+        "changed": {
+          "description": "Pole bylo změněno"
+        },
+        "updated_by": {
+          "description": "Pracovní položka aktualizovaná tímto uživatelem"
+        },
+        "commented_by": {
+          "description": "Pracovní položka okomentovaná tímto uživatelem"
+        },
+        "field_changed_by": {
+          "description": "Pole změněné tímto uživatelem"
+        },
+        "was_assigned_to": {
+          "description": "Pracovní položka byla přiřazena tomuto uživateli"
+        },
+        "changed_after": {
+          "description": "Pole změněné po tomto datu"
+        },
+        "changed_before": {
+          "description": "Pole změněné před tímto datem"
+        },
+        "field_changed_after": {
+          "description": "Pole změněné po tomto datu"
+        },
+        "field_changed_before": {
+          "description": "Pole změněné před tímto datem"
+        },
+        "changed_to_after": {
+          "description": "Pole změněné na tuto hodnotu po tomto datu"
+        },
+        "changed_to_before": {
+          "description": "Pole změněné na tuto hodnotu před tímto datem"
+        },
+        "field_changed_between": {
+          "description": "Pole změněné mezi těmito daty"
+        }
+      }
+    },
+    "autocomplete_dropdown": {
+      "navigate": "navigovat",
+      "accept": "přijmout",
+      "close": "zavřít",
+      "pick_date": "Vybrat datum"
+    },
+    "placeholder": "Zadejte dotaz a stiskněte \"ENTER\" pro filtrování...",
+    "error": "Chyba při odesílání dotazu. Zkontrolujte a zkuste znovu."
+  }
+}

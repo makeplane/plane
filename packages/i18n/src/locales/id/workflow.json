@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Izinkan item kerja baru",
+      "work_item_creation_disable_tooltip": "Pembuatan item kerja dinonaktifkan untuk status ini",
+      "default_state": "Status default memungkinkan semua anggota membuat item kerja baru. Ini tidak dapat diubah",
+      "state_change_count": "{count, plural, one {1 perubahan status diizinkan} other {{count} perubahan status diizinkan}}",
+      "movers_count": "{count, plural, one {1 reviewer terdaftar} other {{count} reviewer terdaftar}}",
+      "state_changes": {
+        "label": {
+          "default": "Tambah perubahan status yang diizinkan",
+          "loading": "Menambahkan perubahan status yang diizinkan"
+        },
+        "move_to": "Ubah status ke",
+        "movers": {
+          "label": "Ketika ditinjau oleh",
+          "tooltip": "Reviewer adalah orang yang diizinkan untuk memindahkan item kerja dari satu status ke status lain.",
+          "add": "Tambah reviewer"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Anda tidak dapat memindahkan item kerja ini ke sini."
+    },
+    "workflow_enabled": {
+      "label": "Perubahan status"
+    },
+    "workflow_tree": {
+      "label": "Untuk item kerja di",
+      "state_change_label": "dapat memindahkannya ke"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Kendalikan kekacauan perubahan dan tinjauan dengan Workflows.",
+        "description": "Tetapkan aturan untuk ke mana pekerjaan Anda bergerak, oleh siapa, dan kapan dengan Workflows di Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Lihat riwayat perubahan",
+      "reset_workflow": "Atur ulang workflow"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Apakah Anda yakin ingin mengatur ulang workflow ini?",
+        "description": "Jika Anda mengatur ulang workflow ini, semua aturan perubahan status Anda akan dihapus dan Anda harus membuatnya lagi untuk menjalankannya di proyek ini."
+      },
+      "delete_state_change": {
+        "title": "Apakah Anda yakin ingin menghapus aturan perubahan status ini?",
+        "description": "Setelah dihapus, Anda tidak dapat membatalkan perubahan ini dan Anda harus mengatur aturan lagi jika Anda ingin menjalankannya untuk proyek ini."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} workflow",
+        "success": {
+          "title": "Berhasil",
+          "message": "Workflow {action} berhasil"
+        },
+        "error": {
+          "title": "Error",
+          "message": "Workflow tidak dapat {action}. Silakan coba lagi."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Berhasil",
+          "message": "Workflow berhasil diatur ulang"
+        },
+        "error": {
+          "title": "Error mengatur ulang workflow",
+          "message": "Workflow tidak dapat diatur ulang. Silakan coba lagi."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Error menambahkan aturan perubahan status",
+          "message": "Aturan perubahan status tidak dapat ditambahkan. Silakan coba lagi."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Error memodifikasi aturan perubahan status",
+          "message": "Aturan perubahan status tidak dapat dimodifikasi. Silakan coba lagi."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Error menghapus aturan perubahan status",
+          "message": "Aturan perubahan status tidak dapat dihapus. Silakan coba lagi."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Error memodifikasi reviewer aturan perubahan status",
+          "message": "Reviewer aturan perubahan status tidak dapat dimodifikasi. Silakan coba lagi."
+        }
+      }
+    }
+  }
+}

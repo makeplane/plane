@@ -1,0 +1,91 @@
+{
+  "pages": {
+    "link_pages": "连接页面",
+    "show_wiki_pages": "显示 Wiki 页面",
+    "link_pages_to": "连接页面到",
+    "linked_pages": "连接的页面",
+    "no_description": "此页面为空。在此输入一些内容，并在此处查看此占位符",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "页面已更新",
+          "message": "页面已成功更新"
+        },
+        "error": {
+          "title": "页面未更新",
+          "message": "页面无法更新"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "页面已删除",
+          "message": "页面已成功删除"
+        },
+        "error": {
+          "title": "页面未删除",
+          "message": "页面无法删除"
+        }
+      }
+    }
+  },
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大纲",
+        "empty_state": {
+          "title": "缺少标题",
+          "description": "让我们在这个页面添加一些标题来在这里查看它们。"
+        }
+      },
+      "info": {
+        "label": "信息",
+        "document_info": {
+          "words": "字数",
+          "characters": "字符数",
+          "paragraphs": "段落数",
+          "read_time": "阅读时间"
+        },
+        "actors_info": {
+          "edited_by": "编辑者",
+          "created_by": "创建者"
+        },
+        "version_history": {
+          "label": "版本历史",
+          "current_version": "当前版本",
+          "highlight_changes": "高亮显示更改"
+        }
+      },
+      "assets": {
+        "label": "资源",
+        "download_button": "下载",
+        "empty_state": {
+          "title": "缺少图片",
+          "description": "添加图片以在这里查看它们。"
+        }
+      }
+    },
+    "open_button": "打开导航面板",
+    "close_button": "关闭导航面板",
+    "outline_floating_button": "打开大纲"
+  },
+  "page_actions": {
+    "move_page": {
+      "placeholders": {
+        "project_to_all_with_wiki": "搜索 Wiki 集合、项目和团队空间",
+        "project_to_project_with_wiki": "搜索 Wiki 集合和项目",
+        "teamspace_to_all_with_wiki": "搜索 Wiki 集合、项目和团队空间"
+      },
+      "toasts": {
+        "collection_error": {
+          "title": "已移动到 Wiki",
+          "message": "页面已移动到 Wiki，但无法添加到所选集合中。它会保留在 General 中。"
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "从集合中移除",
+      "success_message": "页面已从集合中移除。",
+      "error_message": "无法将页面从集合中移除。请重试。"
+    }
+  }
+}

@@ -1,0 +1,380 @@
+{
+  "workspace_creation": {
+    "heading": "Creează spațiul tău de lucru",
+    "subheading": "Pentru a începe să folosești Plane, trebuie să creezi sau să te alături unui spațiu de lucru.",
+    "form": {
+      "name": {
+        "label": "Denumește-ți spațiul de lucru",
+        "placeholder": "Cel mai bine este să alegi ceva familiar și ușor de recunoscut."
+      },
+      "url": {
+        "label": "Setează URL-ul spațiului de lucru",
+        "placeholder": "Tastează sau lipește un URL",
+        "edit_slug": "Poți edita doar identificatorul URL-ului"
+      },
+      "organization_size": {
+        "label": "Câți oameni vor folosi acest spațiu de lucru?",
+        "placeholder": "Selectează un interval"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Doar administratorul instanței poate crea spații de lucru",
+        "description": "Dacă știi adresa de email a administratorului instanței tale, apasă butonul de mai jos pentru a-l contacta.",
+        "request_button": "Solicită administratorul instanței"
+      },
+      "validation": {
+        "name_alphanumeric": "Numele spațiilor de lucru pot conține doar (' '), ('-'), ('_') și caractere alfanumerice.",
+        "name_length": "Limitează numele la 80 de caractere.",
+        "url_alphanumeric": "URL-urile pot conține doar ('-') și caractere alfanumerice.",
+        "url_length": "Limitează URL-ul la 48 de caractere.",
+        "url_already_taken": "URL-ul spațiului de lucru este deja folosit!"
+      }
+    },
+    "request_email": {
+      "subject": "Solicitare creare spațiu de lucru nou",
+      "body": "Salut administrator(i) instanței,\n\nVă rog să creați un nou spațiu de lucru cu URL-ul [/workspace-name] pentru [scopul creării spațiului de lucru].\n\nMulțumesc,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Creează spațiu de lucru",
+      "loading": "Se creează spațiul de lucru"
+    },
+    "toast": {
+      "success": {
+        "title": "Succes",
+        "message": "Spațiul de lucru a fost creat cu succes"
+      },
+      "error": {
+        "title": "Eroare",
+        "message": "Spațiul de lucru nu a putut fi creat. Te rugăm să încerci din nou."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Prezentare generală a proiectelor, activităților și statisticilor tale",
+        "description": "Bine ai venit în Plane, suntem încântați să te avem aici. Creează primul tău proiect și urmărește activitățile, iar această pagină se va transforma într-un spațiu care te ajută să progresezi. Administratorii vor vedea și elementele care ajută echipa lor să progreseze.",
+        "primary_button": {
+          "text": "Creează primul tău proiect",
+          "comic": {
+            "title": "Totul începe cu un proiect în Plane",
+            "description": "Un proiect poate fi planul de dezvoltare a unui produs, o campanie de marketing sau lansarea unei noi mașini."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Statistici",
+    "page_label": "{workspace} - Statistici",
+    "open_tasks": "Total activități deschise",
+    "error": "A apărut o eroare la preluarea datelor.",
+    "work_items_closed_in": "Activități finalizate în",
+    "selected_projects": "Proiecte selectate",
+    "total_members": "Total membri",
+    "total_cycles": "Total cicluri",
+    "total_modules": "Total module",
+    "pending_work_items": {
+      "title": "Activități în așteptare",
+      "empty_state": "Aici apare analiza activităților în așteptare atribuite colegilor."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Activități finalizate într-un an",
+      "empty_state": "Închide activități pentru a vedea statisticile sub formă de grafic."
+    },
+    "most_work_items_created": {
+      "title": "Cele mai multe activități create",
+      "empty_state": "Aici vor apărea colegii și numărul de activități create de aceștia."
+    },
+    "most_work_items_closed": {
+      "title": "Cele mai multe activități finalizate",
+      "empty_state": "Aici vor apărea colegii și numărul de activități finalizate de aceștia."
+    },
+    "tabs": {
+      "scope_and_demand": "Activități asumate și cerere",
+      "custom": "Analitice personalizate"
+    },
+    "empty_state": {
+      "customized_insights": {
+        "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici.",
+        "title": "Nu există date încă"
+      },
+      "created_vs_resolved": {
+        "description": "Elementele de lucru create și rezolvate în timp vor apărea aici.",
+        "title": "Nu există date încă"
+      },
+      "project_insights": {
+        "title": "Nu există date încă",
+        "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici."
+      },
+      "general": {
+        "title": "Urmărește progresul, sarcinile și alocările. Identifică tendințele, elimină blocajele și accelerează munca",
+        "description": "Vezi domeniul versus cererea, estimările și extinderea domeniului. Obține performanțe pe membrii echipei și echipe, și asigură-te că proiectul tău rulează la timp.",
+        "primary_button": {
+          "text": "Începe primul tău proiect",
+          "comic": {
+            "title": "Analitica funcționează cel mai bine cu Cicluri + Module",
+            "description": "Întâi, limitează-ți problemele în Cicluri și, dacă poți, grupează problemele care durează mai mult de un ciclu în Module. Verifică ambele în navigarea din stânga."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Nu există date încă",
+        "description": "Analizele progresului ciclului vor apărea aici. Adăugați elemente de lucru la cicluri pentru a începe să urmăriți progresul."
+      },
+      "module_progress": {
+        "title": "Nu există date încă",
+        "description": "Analizele progresului modulului vor apărea aici. Adăugați elemente de lucru la module pentru a începe să urmăriți progresul."
+      },
+      "intake_trends": {
+        "title": "Nu există date încă",
+        "description": "Analizele tendințelor de intake vor apărea aici. Adăugați elemente de lucru la intake pentru a începe să urmăriți tendințele."
+      }
+    },
+    "created_vs_resolved": "Creat vs Rezolvat",
+    "customized_insights": "Perspective personalizate",
+    "backlog_work_items": "{entity} din backlog",
+    "active_projects": "Proiecte active",
+    "trend_on_charts": "Tendință în grafice",
+    "all_projects": "Toate proiectele",
+    "summary_of_projects": "Sumarul proiectelor",
+    "project_insights": "Informații despre proiect",
+    "started_work_items": "{entity} începute",
+    "total_work_items": "Totalul {entity}",
+    "total_projects": "Total proiecte",
+    "total_admins": "Total administratori",
+    "total_users": "Total utilizatori",
+    "total_intake": "Venit total",
+    "un_started_work_items": "{entity} neîncepute",
+    "total_guests": "Total invitați",
+    "completed_work_items": "{entity} finalizate",
+    "total": "Totalul {entity}",
+    "projects_by_status": "Proiecte după statut",
+    "active_users": "Utilizatori activi",
+    "intake_trends": "Tendințe de admitere",
+    "workitem_resolved_vs_pending": "Elemente de lucru rezolvate vs în așteptare",
+    "upgrade_to_plan": "Upgradează la {plan} pentru a debloca {tab}"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Proiect} other {Proiecte}}",
+    "create": {
+      "label": "Adaugă proiect"
+    },
+    "network": {
+      "label": "Rețea",
+      "private": {
+        "title": "Privat",
+        "description": "Accesibil doar pe bază de invitație"
+      },
+      "public": {
+        "title": "Public",
+        "description": "Oricine din spațiul de lucru, cu excepția celor din categoria Invitați, se poate alătura"
+      }
+    },
+    "error": {
+      "permission": "Nu ai permisiunea să efectuezi această acțiune.",
+      "cycle_delete": "Ștergerea ciclului a eșuat",
+      "module_delete": "Ștergerea modulului a eșuat",
+      "issue_delete": "Ștergerea activității a eșuat"
+    },
+    "state": {
+      "backlog": "Restante",
+      "unstarted": "Neîncepute",
+      "started": "În desfășurare",
+      "completed": "Finalizate",
+      "cancelled": "Anulate"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Nume",
+      "created_at": "Data creării",
+      "members_length": "Număr de membri"
+    },
+    "scope": {
+      "my_projects": "Proiectele mele",
+      "archived_projects": "Arhivate"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# lună} other{# luni}}",
+      "days_count": "{days, plural, one{# zi} other{# zile}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Niciun proiect activ",
+        "description": "Gândește-te la fiecare proiect ca la părintele muncii orientate pe obiectiv. Proiectele sunt locul unde trăiesc Activitățile, Ciclurile și Modulele și, împreună cu colegii tăi, te ajută să îți atingi obiectivul. Creează un proiect nou sau filtrează pentru a vedea proiectele arhivate.",
+        "primary_button": {
+          "text": "Începe primul tău proiect",
+          "comic": {
+            "title": "Totul începe cu un proiect în Plane",
+            "description": "Un proiect poate fi o foaie de parcurs pentru un produs, o campanie de marketing sau lansarea unei noi mașini."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Niciun proiect",
+        "description": "Pentru a crea activități sau a-ți gestiona activitatea, trebuie să creezi un proiect sau să faci parte dintr-unul.",
+        "primary_button": {
+          "text": "Începe primul tău proiect",
+          "comic": {
+            "title": "Totul începe cu un proiect în Plane",
+            "description": "Un proiect poate fi o foaie de parcurs pentru un produs, o campanie de marketing sau lansarea unei noi mașini."
+          }
+        }
+      },
+      "filter": {
+        "title": "Niciun proiect care să corespundă filtrului",
+        "description": "Nu s-au găsit proiecte care să corespundă criteriilor aplicate.\n Creează un proiect nou."
+      },
+      "search": {
+        "description": "Nu s-au găsit proiecte care să corespundă criteriilor.\nCreează un proiect nou."
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Adaugă perspectivă",
+    "empty_state": {
+      "all-issues": {
+        "title": "Nicio activitate în proiect",
+        "description": "Primul proiect este gata! Acum împarte-ți munca în bucăți gestionabile prin activități. Hai să începem!",
+        "primary_button": {
+          "text": "Creează o nouă activitate"
+        }
+      },
+      "assigned": {
+        "title": "Nicio activitate încă",
+        "description": "Activitățile care ți-au fost atribuite pot fi urmărite de aici.",
+        "primary_button": {
+          "text": "Creează o nouă activitate"
+        }
+      },
+      "created": {
+        "title": "Nicio activitate încă",
+        "description": "Toate activitățile create de tine vor apărea aici. Le poți urmări direct din această pagină.",
+        "primary_button": {
+          "text": "Creează o nouă activitate"
+        }
+      },
+      "subscribed": {
+        "title": "Nicio activitate încă",
+        "description": "Abonează-te la activitățile care te interesează și urmărește-le pe toate aici."
+      },
+      "custom-view": {
+        "title": "Nicio activitate încă",
+        "description": "Elementele de lucru care corespund filtrelor aplicate vor fi afișate aici."
+      }
+    },
+    "delete_view": {
+      "title": "Sunteți sigur că doriți să ștergeți această vizualizare?",
+      "content": "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Salvează o activitate ca schiță",
+    "empty_state": {
+      "title": "Elementele de lucru scrise pe jumătate, și în curând și comentariile, vor apărea aici.",
+      "description": "Ca să testezi, începe să adaugi o activitate și las-o nefinalizată sau creează prima ta schiță mai jos. 😉",
+      "primary_button": {
+        "text": "Creează prima ta schiță"
+      }
+    },
+    "delete_modal": {
+      "title": "Șterge schița",
+      "description": "Ești sigur că vrei să ștergi această schiță? Această acțiune este ireversibilă."
+    },
+    "toasts": {
+      "created": {
+        "success": "Schiță creată",
+        "error": "Activitatea nu a putut fi creată. Te rugăm să încerci din nou."
+      },
+      "deleted": {
+        "success": "Schiță ștearsă"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Scrie o notă, un document sau o bază de cunoștințe completă. Obține ajutorul lui Galileo, asistentul AI al Plane, pentru a începe",
+        "description": "Paginile sunt spații de gândire în Plane. Notează notițe de întâlnire, formatează-le ușor, încorporează elemente de lucru, aranjează-le folosind o bibliotecă de componente și păstrează-le toate în contextul proiectului tău. Pentru a face o muncă scurtă din orice document, invocă Galileo, AI-ul Plane, cu o scurtătură sau click pe un buton.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "private": {
+        "title": "Încă nu există pagini private",
+        "description": "Păstrează-ți gândurile private aici. Când ești gata să le împărtășești, echipa este la doar un click distanță.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "public": {
+        "title": "Încă nu există pagini spațiu de lucru",
+        "description": "Vezi paginile împărtășite cu toată lumea din spațiul tău de lucru chiar aici.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "archived": {
+        "title": "Încă nu există pagini arhivate",
+        "description": "Arhivează paginile care nu sunt pe radarul tău. Accesează-le aici când ai nevoie."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Niciun ciclu activ",
+        "description": "Ciclurile proiectelor tale care includ orice perioadă care cuprinde data de astăzi în intervalul său. Găsește progresul și detaliile tuturor ciclurilor tale active aici."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Importă membri din CSV",
+      "description": "Încărcați un CSV cu coloane: Email, Display Name, First Name, Last Name, Role (5, 15 sau 20)",
+      "dropzone": {
+        "active": "Plasați fișierul CSV aici",
+        "inactive": "Trageți și plasați sau faceți clic pentru a încărca",
+        "file_type": "Sunt acceptate doar fișiere .csv"
+      },
+      "buttons": {
+        "cancel": "Anulare",
+        "import": "Importă",
+        "try_again": "Încearcă din nou",
+        "close": "Închide",
+        "done": "Gata"
+      },
+      "progress": {
+        "uploading": "Se încarcă...",
+        "importing": "Se importă..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Import eșuat",
+          "complete": "Import finalizat"
+        },
+        "message": {
+          "seat_limit": "Nu se pot importa membri din cauza restricțiilor de locuri.",
+          "success": "{count} membr{plural} adăugat{plural} cu succes în spațiul de lucru.",
+          "no_imports": "Nu au fost importați membri din fișierul CSV."
+        },
+        "stats": {
+          "successful": "Reușit",
+          "failed": "Eșuat"
+        },
+        "download_errors": "Descarcă erori"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Fișier invalid",
+          "message": "Sunt acceptate doar fișiere CSV."
+        },
+        "import_failed": {
+          "title": "Import eșuat",
+          "message": "Ceva nu a funcționat."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Vytvořit pracovní položku",
+      "sub-title": "Dejte týmu vědět, na čem chcete, aby pracoval.",
+      "name": "Jméno",
+      "email": "E-mail",
+      "about": "O čem je tato pracovní položka?",
+      "description": "Popište, co by se mělo stát",
+      "description_placeholder": "Přidejte tolik detailů, kolik chcete, aby tým identifikoval vaši situaci a potřeby.",
+      "loading": "Vytváření",
+      "create_work_item": "Vytvořit pracovní položku",
+      "errors": {
+        "name": "Jméno je povinné",
+        "name_max_length": "Jméno musí mít méně než 255 znaků",
+        "email": "E-mail je povinný",
+        "email_invalid": "Neplatná e-mailová adresa",
+        "title": "Název je povinný",
+        "title_max_length": "Název musí mít méně než 255 znaků"
+      }
+    },
+    "success": {
+      "title": "Skvělé! Vaše pracovní položka je nyní ve frontě týmu.",
+      "description": "Tým nyní může tuto pracovní položku schválit nebo odmítnout z fronty příjmu.",
+      "primary_button": {
+        "text": "Přidat další pracovní položku"
+      },
+      "secondary_button": {
+        "text": "Zjistit více o příjmu"
+      }
+    },
+    "how_it_works": {
+      "title": "Jak to funguje?",
+      "heading": "Toto je formulář příjmu.",
+      "description": "Příjem je funkce Plane, která umožňuje správcům a manažerům projektu získávat pracovní položky zvenčí do svých projektů.",
+      "steps": {
+        "step_1": "Tento krátký formulář umožňuje vytvořit novou pracovní položku v projektu Plane.",
+        "step_2": "Po odeslání formuláře se v příjmu tohoto projektu vytvoří nová pracovní položka.",
+        "step_3": "Někdo z projektu nebo týmu to zkontroluje.",
+        "step_4": "Pokud to schválí, pracovní položka přejde do fronty práce projektu. Jinak bude odmítnuta.",
+        "step_5": "Pro zjištění stavu pracovní položky kontaktujte manažera projektu, správce nebo toho, kdo vám poslal odkaz na tuto stránku."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Vybrat typ pracovní položky",
+        "search_placeholder": "Hledat typ pracovní položky"
+      },
+      "actions": {
+        "select_properties": "Vybrat vlastnosti"
+      }
+    }
+  }
+}

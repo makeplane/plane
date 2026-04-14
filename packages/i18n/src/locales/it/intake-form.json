@@ -1,0 +1,54 @@
+{
+  "intake_forms": {
+    "create": {
+      "title": "Crea un elemento di lavoro",
+      "sub-title": "Fai sapere al team su cosa vorresti che lavorassero.",
+      "name": "Nome",
+      "email": "Email",
+      "about": "Di cosa si tratta questo elemento di lavoro?",
+      "description": "Descrivi cosa dovrebbe succedere",
+      "description_placeholder": "Aggiungi tutti i dettagli che desideri per aiutare il team a identificare la tua situazione e le tue esigenze.",
+      "loading": "Creazione",
+      "create_work_item": "Crea elemento di lavoro",
+      "errors": {
+        "name": "Il nome è obbligatorio",
+        "name_max_length": "Il nome deve essere inferiore a 255 caratteri",
+        "email": "L'email è obbligatoria",
+        "email_invalid": "Indirizzo email non valido",
+        "title": "Il titolo è obbligatorio",
+        "title_max_length": "Il titolo deve essere inferiore a 255 caratteri"
+      }
+    },
+    "success": {
+      "title": "Il tuo elemento di lavoro è ora nella coda del team.",
+      "description": "Il team può ora approvare o scartare questo elemento di lavoro dalla coda di accettazione.",
+      "primary_button": {
+        "text": "Aggiungi un altro elemento di lavoro"
+      },
+      "secondary_button": {
+        "text": "Scopri di più sull'accettazione"
+      }
+    },
+    "how_it_works": {
+      "title": "Come funziona?",
+      "heading": "Questo è un modulo di accettazione.",
+      "description": "L'accettazione è una funzionalità di Plane che consente agli amministratori e ai responsabili di progetto di ricevere elementi di lavoro dall'esterno nei loro progetti.",
+      "steps": {
+        "step_1": "Questo breve modulo ti consente di creare un nuovo elemento di lavoro in un progetto Plane.",
+        "step_2": "Quando invii questo modulo, viene creato un nuovo elemento di lavoro nell'accettazione di quel progetto.",
+        "step_3": "Qualcuno di quel progetto o team lo esaminerà.",
+        "step_4": "Se lo approvano, questo elemento verrà spostato nella coda di lavoro del progetto. Altrimenti, verrà rifiutato.",
+        "step_5": "Per verificare lo stato di quell'elemento, contatta il responsabile del progetto, l'admin o chi ti ha inviato il link a questa pagina."
+      }
+    },
+    "type_forms": {
+      "select_types": {
+        "title": "Seleziona tipo di elemento di lavoro",
+        "search_placeholder": "Cerca un tipo di elemento di lavoro"
+      },
+      "actions": {
+        "select_properties": "Seleziona proprietà"
+      }
+    }
+  }
+}

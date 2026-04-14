@@ -1,0 +1,383 @@
+{
+  "customers": {
+    "label": "{count, plural, one {Kunde} other {Kunden}}",
+    "open": "Kunde öffnen",
+    "dropdown": {
+      "placeholder": "Kunde auswählen",
+      "required": "Bitte wählen Sie einen Kunden aus",
+      "no_selection": "Keine Kunden"
+    },
+    "upgrade": {
+      "title": "Priorisieren und verwalten Sie Arbeit mit Kunden.",
+      "description": "Ordnen Sie Ihre Arbeit Kunden zu und priorisieren Sie nach Kundenattributen."
+    },
+    "properties": {
+      "default": {
+        "title": "Standardeigenschaften",
+        "customer_name": {
+          "name": "Kundenname",
+          "placeholder": "Dies könnte der Name der Person oder des Unternehmens sein",
+          "validation": {
+            "required": "Kundenname ist erforderlich.",
+            "max_length": "Kundenname darf nicht mehr als 255 Zeichen enthalten."
+          }
+        },
+        "description": {
+          "name": "Beschreibung",
+          "validation": {}
+        },
+        "email": {
+          "name": "E-Mail",
+          "placeholder": "E-Mail eingeben",
+          "validation": {
+            "required": "E-Mail ist erforderlich.",
+            "pattern": "Ungültige E-Mail-Adresse."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Jede URL mit https:// funktioniert.",
+          "placeholder_short": "Website hinzufügen",
+          "validation": {
+            "pattern": "Ungültige Website-URL"
+          }
+        },
+        "employees": {
+          "name": "Mitarbeiter",
+          "placeholder": "Anzahl der Mitarbeiter, wenn Ihr Kunde ein Unternehmen ist.",
+          "validation": {
+            "min_length": "Mitarbeiteranzahl kann nicht weniger als 0 sein.",
+            "max_length": "Mitarbeiteranzahl darf nicht mehr als 2147483647 betragen."
+          }
+        },
+        "size": {
+          "name": "Größe",
+          "placeholder": "Unternehmensgröße hinzufügen",
+          "validation": {
+            "min_length": "Ungültige Größe"
+          }
+        },
+        "domain": {
+          "name": "Branche",
+          "placeholder": "Einzelhandel, E-Commerce, Fintech, Banking",
+          "placeholder_short": "Branche hinzufügen",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Phase",
+          "placeholder": "Phase auswählen",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Vertragsstatus",
+          "placeholder": "Vertragsstatus auswählen",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Umsatz",
+          "placeholder": "Dies ist der Umsatz, den Ihr Kunde jährlich generiert.",
+          "placeholder_short": "Umsatz hinzufügen",
+          "validation": {
+            "min_length": "Umsatz kann nicht weniger als 0 sein."
+          }
+        },
+        "requests": {
+          "name": "Anz. Anfragen"
+        },
+        "invalid_value": "Ungültige Eigenschaftswert."
+      },
+      "custom": {
+        "title": "Benutzerdefinierte Eigenschaften",
+        "info": "Fügen Sie die einzigartigen Attribute Ihrer Kunden zu Plane hinzu, damit Sie Arbeitsaufgaben oder Kundendatensätze besser verwalten können."
+      },
+      "empty_state": {
+        "title": "Sie haben noch keine benutzerdefinierten Eigenschaften.",
+        "description": "Benutzerdefinierte Eigenschaften, die Sie in Arbeitsaufgaben, an anderer Stelle in Plane oder außerhalb von Plane in einem CRM oder einem anderen Tool sehen möchten, werden hier angezeigt, wenn Sie sie hinzufügen."
+      },
+      "add": {
+        "primary_button": "Neue Eigenschaft hinzufügen"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Qualifizierter Verkaufslead",
+      "contract_negotiation": "Vertragsverhandlung",
+      "closed_won": "Abgeschlossen gewonnen",
+      "closed_lost": "Abgeschlossen verloren"
+    },
+    "contract_status": {
+      "active": "Aktiv",
+      "pre_contract": "Vor Vertragsabschluss",
+      "signed": "Unterzeichnet",
+      "inactive": "Inaktiv"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Wir konnten diesen Kundendatensatz nicht finden.",
+        "description": "Der Link zu diesem Datensatz könnte falsch sein oder dieser Datensatz wurde möglicherweise gelöscht.",
+        "primary_button": "Zu Kunden gehen",
+        "secondary_button": "Einen Kunden hinzufügen"
+      },
+      "search": {
+        "title": "Sie scheinen keine Kundendatensätze zu haben, die diesem Begriff entsprechen.",
+        "description": "Versuchen Sie es mit einem anderen Suchbegriff oder kontaktieren Sie uns, wenn Sie sicher sind, dass Ergebnisse für diesen Begriff angezeigt werden sollten."
+      },
+      "list": {
+        "title": "Verwalten Sie Volumen, Rhythmus und Fluss Ihrer Arbeit nach dem, was für Ihre Kunden wichtig ist.",
+        "description": "Mit Kunden, einer Plane-exklusiven Funktion, können Sie jetzt neue Kunden von Grund auf erstellen und mit Ihrer Arbeit verbinden. Bald können Sie sie auch aus anderen Tools zusammen mit den für Sie wichtigen benutzerdefinierten Attributen importieren.",
+        "primary_button": "Fügen Sie Ihren ersten Kunden hinzu"
+      }
+    },
+    "settings": {
+      "unauthorized": "Sie sind nicht berechtigt, auf diese Seite zuzugreifen.",
+      "description": "Verfolgen und verwalten Sie Kundenbeziehungen in Ihrem Workflow.",
+      "enable": "Kunden aktivieren",
+      "toasts": {
+        "enable": {
+          "loading": "Kundenfunktion wird aktiviert...",
+          "success": {
+            "title": "Sie haben Kunden für diesen Workspace aktiviert.",
+            "message": "Sie können es nicht wieder ausschalten."
+          },
+          "error": {
+            "title": "Wir konnten Kunden diesmal nicht aktivieren.",
+            "message": "Versuchen Sie es erneut oder kehren Sie später zu diesem Bildschirm zurück. Wenn es immer noch nicht funktioniert.",
+            "action": "Support kontaktieren"
+          }
+        },
+        "disable": {
+          "loading": "Kundenfunktion wird deaktiviert...",
+          "success": {
+            "title": "Kunden deaktiviert",
+            "message": "Kundenfunktion erfolgreich deaktiviert!"
+          },
+          "error": {
+            "title": "Fehler",
+            "message": "Kundenfunktion konnte nicht deaktiviert werden!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Wir konnten Ihre Kundenliste nicht abrufen.",
+          "message": "Versuchen Sie es erneut oder aktualisieren Sie diese Seite."
+        }
+      },
+      "copy_link": {
+        "title": "Sie haben den direkten Link zu diesem Kunden kopiert.",
+        "message": "Fügen Sie ihn überall ein und er wird direkt hierher zurückführen."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} ist jetzt verfügbar",
+          "message": "Sie können auf diesen Kunden in Arbeitsaufgaben verweisen und auch Anfragen von ihm verfolgen.",
+          "actions": {
+            "view": "Anzeigen",
+            "copy_link": "Link kopieren",
+            "copied": "Kopiert!"
+          }
+        },
+        "error": {
+          "title": "Wir konnten diesen Datensatz diesmal nicht erstellen.",
+          "message": "Versuchen Sie, ihn erneut zu speichern, oder kopieren Sie Ihren nicht gespeicherten Text in einen neuen Eintrag, vorzugsweise in einem anderen Tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Kunde erfolgreich aktualisiert!"
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Kunde konnte nicht aktualisiert werden. Versuchen Sie es erneut!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Wir konnten das Logo des Kunden nicht hochladen.",
+          "message": "Versuchen Sie, das Logo erneut zu speichern oder von vorne zu beginnen."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Sie haben eine Arbeitsaufgabe aus dem Datensatz dieses Kunden entfernt.",
+            "message": "Wir haben diesen Kunden auch automatisch aus der Arbeitsaufgabe entfernt."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Wir konnten diese Arbeitsaufgabe diesmal nicht aus dem Datensatz dieses Kunden entfernen."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Wir konnten diese Arbeitsaufgabe diesmal nicht zum Datensatz dieses Kunden hinzufügen.",
+            "message": "Versuchen Sie, diese Arbeitsaufgabe erneut hinzuzufügen oder kommen Sie später darauf zurück. Wenn es immer noch nicht funktioniert, kontaktieren Sie uns."
+          },
+          "success": {
+            "title": "Sie haben eine Arbeitsaufgabe zum Datensatz dieses Kunden hinzugefügt.",
+            "message": "Wir haben diesen Kunden auch automatisch zur Arbeitsaufgabe hinzugefügt."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Bearbeiten",
+      "copy_link": "Link zum Kunden kopieren",
+      "delete": "Löschen"
+    },
+    "create": {
+      "label": "Kundendatensatz erstellen",
+      "loading": "Erstelle",
+      "cancel": "Abbrechen"
+    },
+    "update": {
+      "label": "Kunden aktualisieren",
+      "loading": "Aktualisiere"
+    },
+    "delete": {
+      "title": "Sind Sie sicher, dass Sie den Kundendatensatz {customer_name} löschen möchten?",
+      "description": "Alle mit diesem Datensatz verknüpften Daten werden dauerhaft gelöscht. Sie können diesen Datensatz später nicht wiederherstellen."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Es gibt noch keine Anfragen zum Anzeigen.",
+          "description": "Erstellen Sie Anfragen von Ihren Kunden, damit Sie sie mit Arbeitsaufgaben verknüpfen können.",
+          "button": "Neue Anfrage hinzufügen"
+        },
+        "search": {
+          "title": "Sie scheinen keine Anfragen zu haben, die diesem Begriff entsprechen.",
+          "description": "Versuchen Sie es mit einem anderen Suchbegriff oder kontaktieren Sie uns, wenn Sie sicher sind, dass Ergebnisse für diesen Begriff angezeigt werden sollten."
+        }
+      },
+      "label": "{count, plural, one {Anfrage} other {Anfragen}}",
+      "add": "Anfrage hinzufügen",
+      "create": "Anfrage erstellen",
+      "update": "Anfrage aktualisieren",
+      "form": {
+        "name": {
+          "placeholder": "Benennen Sie diese Anfrage",
+          "validation": {
+            "required": "Name ist erforderlich.",
+            "max_length": "Anfragename sollte 255 Zeichen nicht überschreiten."
+          }
+        },
+        "description": {
+          "placeholder": "Beschreiben Sie die Art der Anfrage oder fügen Sie den Kommentar dieses Kunden aus einem anderen Tool ein."
+        },
+        "source": {
+          "add": "Quelle hinzufügen",
+          "update": "Quelle aktualisieren",
+          "url": {
+            "label": "URL",
+            "required": "URL ist erforderlich",
+            "invalid": "Ungültige Website-URL"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Link kopiert",
+          "message": "Kundenanfrage-Link in die Zwischenablage kopiert."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Anhang wird hochgeladen...",
+            "success": {
+              "title": "Anhang hochgeladen",
+              "message": "Der Anhang wurde erfolgreich hochgeladen."
+            },
+            "error": {
+              "title": "Anhang nicht hochgeladen",
+              "message": "Der Anhang konnte nicht hochgeladen werden."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Fehler!",
+              "message": "Es kann nur eine Datei gleichzeitig hochgeladen werden."
+            }
+          },
+          "length": {
+            "message": "Datei muss {size}MB oder kleiner sein"
+          },
+          "remove": {
+            "success": {
+              "title": "Anhang entfernt",
+              "message": "Der Anhang wurde erfolgreich entfernt"
+            },
+            "error": {
+              "title": "Anhang nicht entfernt",
+              "message": "Der Anhang konnte nicht entfernt werden"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Erfolg!",
+              "message": "Quelle erfolgreich aktualisiert!"
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Quelle konnte nicht aktualisiert werden."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Fehler!",
+              "message": "Arbeitsaufgaben konnten der Anfrage nicht hinzugefügt werden. Versuchen Sie es erneut."
+            },
+            "success": {
+              "title": "Erfolg!",
+              "message": "Arbeitsaufgaben zur Anfrage hinzugefügt."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Anfrage erfolgreich aktualisiert!",
+            "title": "Erfolg!"
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Anfrage konnte nicht aktualisiert werden. Versuchen Sie es erneut!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Anfrage erfolgreich erstellt!",
+            "title": "Erfolg!"
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Anfrage konnte nicht erstellt werden. Versuchen Sie es erneut!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Verknüpfte Arbeitsaufgaben",
+      "link": "Arbeitsaufgaben verknüpfen",
+      "empty_state": {
+        "list": {
+          "title": "Sie scheinen noch keine Arbeitsaufgaben mit diesem Kunden verknüpft zu haben.",
+          "description": "Verknüpfen Sie hier vorhandene Arbeitsaufgaben aus beliebigen Projekten, damit Sie sie nach diesem Kunden verfolgen können.",
+          "button": "Arbeitsaufgabe verknüpfen"
+        }
+      },
+      "action": {
+        "remove_epic": "Epic entfernen",
+        "remove": "Arbeitsaufgabe entfernen"
+      }
+    },
+    "sidebar": {
+      "properties": "Eigenschaften"
+    }
+  }
+}

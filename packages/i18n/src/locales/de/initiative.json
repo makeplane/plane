@@ -1,0 +1,93 @@
+{
+  "initiatives": {
+    "overview": "Übersicht",
+    "label": "Initiativen",
+    "placeholder": "{count, plural, one{# Initiative} other{# Initiativen}}",
+    "add_initiative": "Initiative Hinzufügen",
+    "create_initiative": "Initiative Erstellen",
+    "update_initiative": "Initiative Aktualisieren",
+    "initiative_name": "Initiativenname",
+    "all_initiatives": "Alle Initiativen",
+    "delete_initiative": "Initiative Löschen",
+    "fill_all_required_fields": "Bitte füllen Sie alle erforderlichen Felder aus.",
+    "archive_description": "Nur abgeschlossene oder geschlossene Initiativen können archiviert werden",
+    "toast": {
+      "create_success": "Initiative {name} erfolgreich erstellt.",
+      "create_error": "Fehler beim Erstellen der Initiative. Bitte versuchen Sie es erneut!",
+      "update_success": "Initiative {name} erfolgreich aktualisiert.",
+      "update_error": "Fehler beim Aktualisieren der Initiative. Bitte versuchen Sie es erneut!",
+      "delete": {
+        "success": "Initiative erfolgreich gelöscht.",
+        "error": "Fehler beim Löschen der Initiative"
+      },
+      "archive": {
+        "success": "Initiative erfolgreich archiviert.",
+        "error": "Initiative konnte nicht archiviert werden",
+        "initiative_cannot_be_archived_in_this_state": "Initiative kann in diesem Status nicht archiviert werden"
+      },
+      "link_copied": "Initiativenlink in die Zwischenablage kopiert.",
+      "project_update_success": "Initiativenprojekte erfolgreich aktualisiert.",
+      "project_update_error": "Fehler beim Aktualisieren der Initiativenprojekte. Bitte versuchen Sie es erneut!",
+      "epic_update_success": "{count, plural, one {Epic erfolgreich zur Initiative hinzugefügt.} other {{count} Epics erfolgreich zur Initiative hinzugefügt.}}",
+      "epic_update_error": "Epic-Hinzufügung zur Initiative fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+      "state_update_success": "Initiativenstatus wurde erfolgreich aktualisiert.",
+      "state_update_error": "Aktualisierung des Initiativenstatus fehlgeschlagen. Bitte versuchen Sie es erneut!",
+      "label_update_error": "Fehler beim Aktualisieren der Initiativenbezeichner. Bitte versuchen Sie es erneut!"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organisieren Sie Arbeit auf höchster Ebene mit Initiativen",
+        "description": "Wenn Sie Arbeit organisieren müssen, die sich über mehrere Projekte und Teams erstreckt, sind Initiativen praktisch. Verbinden Sie Projekte und Epics mit Initiativen, sehen Sie automatisch zusammengefasste Updates und sehen Sie den Wald, bevor Sie zu den Bäumen kommen.",
+        "primary_button": {
+          "text": "Eine Initiative erstellen"
+        }
+      },
+      "search": {
+        "title": "Keine passenden Initiativen",
+        "description": "Keine Initiativen mit den passenden Kriterien gefunden.\n Erstellen Sie stattdessen eine neue Initiative.",
+        "archived_description": "Keine archivierten Initiativen mit den passenden Kriterien gefunden."
+      },
+      "not_found": {
+        "title": "Initiative existiert nicht",
+        "description": "Die Initiative, nach der Sie suchen, existiert nicht, wurde archiviert oder wurde gelöscht.",
+        "primary_button": {
+          "text": "Andere Initiativen anzeigen"
+        }
+      },
+      "epics": {
+        "title": "Sie haben keine Epics, die den von Ihnen angewendeten Filtern entsprechen.",
+        "subHeading": "Um alle Epics zu sehen, löschen Sie alle angewendeten Filter.",
+        "action": "Alle Filter löschen"
+      }
+    },
+    "scope": {
+      "view_scope": "Umfang anzeigen",
+      "breakdown": "Umfangaufschlagung",
+      "add_scope": "Umfang hinzufügen",
+      "label": "Umfang",
+      "empty_state": {
+        "title": "Noch kein Umfang zu dieser Initiative hinzugefügt",
+        "description": "Verknüpfen Sie Projekte und Epics und verfolgen Sie diese Arbeit in diesem Raum.",
+        "primary_button": {
+          "text": "Umfang hinzufügen"
+        }
+      }
+    },
+    "initiative_settings": {
+      "labels": {
+        "heading": "Etiketten",
+        "description": "Strukturieren und organisieren Sie Ihre Initiativen mit Labels."
+      }
+    },
+    "initiative_labels": {
+      "delete_modal": {
+        "title": "Label löschen",
+        "content": "Möchten Sie {labelName} wirklich löschen? Dadurch wird das Label aus allen Initiativen und aus allen Ansichten entfernt, in denen das Label gefiltert wird."
+      },
+      "toast": {
+        "delete_error": "Das Initiativen-Label konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+        "label_already_exists": "Label existiert bereits"
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "epic": {
+    "all": "Alle Epics",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "new": "Neues Epic",
+    "adding": "Epic wird hinzugefügt",
+    "create": {
+      "success": "Epic erfolgreich erstellt"
+    },
+    "add": {
+      "press_enter": "Drücken Sie 'Enter', um ein weiteres Epic hinzuzufügen",
+      "label": "Epic hinzufügen"
+    },
+    "title": {
+      "label": "Epic-Titel",
+      "required": "Ein Titel für das Epic ist erforderlich."
+    },
+    "archive": {
+      "description": "Nur abgeschlossene oder abgebrochene\nEpics können archiviert werden",
+      "label": "Epic archivieren",
+      "confirm_message": "Sind Sie sicher, dass Sie das Epic archivieren möchten? Alle archivierten Epics können später wiederhergestellt werden.",
+      "success": {
+        "label": "Archivierung erfolgreich",
+        "message": "Ihre Archive finden Sie in den Projektarchiven."
+      },
+      "failed": {
+        "message": "Epic konnte nicht archiviert werden. Bitte versuchen Sie es erneut."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "Keine Epics ausgewählt",
+    "add_selected_epics": "Ausgewählte Epics hinzufügen",
+    "epic_link_copied_to_clipboard": "Epic-Link in die Zwischenablage kopiert.",
+    "project_link_copied_to_clipboard": "Projektlink in die Zwischenablage kopiert",
+    "empty_state": {
+      "general": {
+        "title": "Erstellen Sie ein Epic und weisen Sie es jemandem zu, auch sich selbst",
+        "description": "Für größere Arbeitsmengen, die sich über mehrere Zyklen erstrecken und in verschiedenen Modulen existieren können, erstellen Sie ein Epic. Verknüpfen Sie Arbeitsaufgaben und Unterarbeitsaufgaben in einem Projekt mit einem Epic und springen Sie von der Übersicht aus in eine Arbeitsaufgabe.",
+        "primary_button": {
+          "text": "Ein Epic erstellen"
+        }
+      },
+      "section": {
+        "title": "Noch keine Epics",
+        "description": "Beginnen Sie mit dem Hinzufügen von Epics, um den Fortschritt zu verwalten und zu verfolgen.",
+        "primary_button": {
+          "text": "Epics hinzufügen"
+        }
+      }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "Dies erstellt eine Kopie des Epics.",
+        "description2": "Alle Eigenschaftsdaten werden beim Duplizieren entfernt.",
+        "epics_not_enabled": "Epics nicht aktiviert"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic erfolgreich dupliziert"
+        },
+        "error": {
+          "message": "Epic konnte nicht dupliziert werden"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Keine passenden Epics gefunden"
+      },
+      "no_epics": {
+        "title": "Keine Epics gefunden"
+      }
+    }
+  }
+}
