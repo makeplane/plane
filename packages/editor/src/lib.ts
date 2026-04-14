@@ -17,3 +17,5 @@ export * from "@/helpers/get-document-server-event";
 export * from "@/helpers/yjs-utils";
 export * from "@/helpers/version-diff-utils";
 export * from "@/types/document-collaborative-events";
+export { getHighlighter, loadLanguage, resolveLanguage } from "@/extensions/code/utils/shiki";
+export { gitHubEmojis, shortcodeToEmoji } from "@tiptap/extension-emoji";

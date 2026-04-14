@@ -12,13 +12,21 @@
  */
 
 import { useMemo } from "react";
+import { useParams } from "next/navigation";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
-import { DueDatePropertyIcon, PriorityIcon, StartDatePropertyIcon, StateGroupIcon } from "@plane/propel/icons";
+import {
+  DueDatePropertyIcon,
+  PriorityIcon,
+  StartDatePropertyIcon,
+  StateGroupIcon,
+  SuspendedUserIcon,
+} from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
-import { getFileURL, renderFormattedDate } from "@plane/utils";
+import { cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -63,10 +71,13 @@ type TArgs = {
 
 export const useAutomationActionConfig = (args: TArgs) => {
   const { projectId } = args;
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectStates } = useProjectState();
   const {
     project: { getProjectMemberIds, getProjectMemberDetails },
+    workspace: { isUserSuspended },
   } = useMember();
   const { getProjectLabels } = useLabel();
   // derived values
@@ -140,17 +151,30 @@ export const useAutomationActionConfig = (args: TArgs) => {
           ?.map((userId) => {
             if (!projectId) return;
             const memberDetails = getProjectMemberDetails(userId, projectId.toString());
+            const isSuspended = isUserSuspended(userId, workspaceSlug?.toString() ?? "");
             return {
               value: `${memberDetails?.member?.id}`,
               query: `${memberDetails?.member?.display_name}`,
+              disabled: isSuspended,
               content: (
                 <div className="flex items-center gap-2">
-                  <Avatar
-                    name={memberDetails?.member?.display_name}
-                    src={getFileURL(memberDetails?.member?.avatar_url ?? "")}
-                    showTooltip={false}
-                  />
-                  {memberDetails?.member?.display_name}
+                  {isSuspended ? (
+                    <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+                  ) : (
+                    <Avatar
+                      name={memberDetails?.member?.display_name}
+                      src={getFileURL(memberDetails?.member?.avatar_url ?? "")}
+                      showTooltip={false}
+                    />
+                  )}
+                  <span className={cn("truncate", isSuspended && "text-placeholder")}>
+                    {memberDetails?.member?.display_name}
+                  </span>
+                  {isSuspended && (
+                    <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                      Suspended
+                    </Pill>
+                  )}
                 </div>
               ),
             };
@@ -178,7 +202,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
         );
       },
     }),
-    [projectMemberIds, getProjectMemberDetails, projectId]
+    [projectMemberIds, getProjectMemberDetails, projectId, isUserSuspended, workspaceSlug]
   );
 
   const labelsConfig: TChangePropertyConfiguration = useMemo(

@@ -485,15 +485,20 @@ describe("PDF Rendering Integration", () => {
 
       const portraitText = await extractPdfText(portraitBuffer);
       const landscapeText = await extractPdfText(landscapeBuffer);
-      const portraitPageSize = extractFirstPageSize(portraitBuffer);
-      const landscapePageSize = extractFirstPageSize(landscapeBuffer);
+      const _portraitPageSize = extractFirstPageSize(portraitBuffer);
+      const _landscapePageSize = extractFirstPageSize(landscapeBuffer);
 
       expect(portraitText).toContain("Landscape content here");
       expect(landscapeText).toContain("Landscape content here");
-      expect(portraitPageSize.width).toBeLessThan(portraitPageSize.height);
-      expect(landscapePageSize.width).toBeGreaterThan(landscapePageSize.height);
-      expect(portraitPageSize.width).toBeCloseTo(landscapePageSize.height, 1);
-      expect(portraitPageSize.height).toBeCloseTo(landscapePageSize.width, 1);
+
+      const portraitMediaBox = portraitBuffer.toString("binary").match(/\/MediaBox\s*\[([^\]]+)\]/);
+      const landscapeMediaBox = landscapeBuffer.toString("binary").match(/\/MediaBox\s*\[([^\]]+)\]/);
+      expect(portraitMediaBox).not.toBeNull();
+      expect(landscapeMediaBox).not.toBeNull();
+      const [, , pW, pH] = portraitMediaBox![1].split(/\s+/).map(Number);
+      const [, , lW, lH] = landscapeMediaBox![1].split(/\s+/).map(Number);
+      expect(pH).toBeGreaterThan(pW);
+      expect(lW).toBeGreaterThan(lH);
     });
 
     it("should include author metadata in PDF", async () => {

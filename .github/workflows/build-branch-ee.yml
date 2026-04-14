@@ -174,8 +174,6 @@ jobs:
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
-            BUILD_AIRGAPPED=true
-            BUILD_AIO=true
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=$BR_NAME" >> $GITHUB_OUTPUT  

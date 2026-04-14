@@ -21,7 +21,7 @@ from plane.ee.models import CycleSettings
 from plane.db.models import BotTypeEnum, User, Workspace, WorkspaceMember, ProjectMember
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers import AutomatedCycleSerializer
-from plane.ee.bgtasks.cycle_automation_task import schedule_cycle
+from plane.ee.bgtasks.cycle_automation_task import backfill_automated_cycles
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -97,10 +97,9 @@ class AutomatedCycleViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save(project_id=project_id)
             # when ever some one tries to schedule a cycle, we will schedule the first cycle
-            schedule_cycle.delay(
-                project_id=project_id,
-                bot_id=cycle_automation_bot.id,
-                automated_cycle_id=serializer.instance.id,
+            backfill_automated_cycles.delay(
+                automated_cycle_id=str(serializer.instance.id),
+                project_id=str(project_id),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -118,5 +117,11 @@ class AutomatedCycleViewSet(BaseViewSet):
         serializer = AutomatedCycleSerializer(automated_cycle, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+
+            backfill_automated_cycles.delay(
+                automated_cycle_id=str(serializer.instance.id),
+                project_id=str(project_id),
+            )
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -13,10 +13,24 @@
 
 import { fileURLToPath } from "url";
 import path from "path";
-import { Document, Font, Page, pdf, Text } from "@react-pdf/renderer";
+import { Document, Font, Page, pdf, Text, View } from "@react-pdf/renderer";
+import type { Style } from "@react-pdf/types";
+import { annotateCodeBlocksForPdf } from "./code-highlighter";
+import { hasLocalEmojiAssetSupport, resolveEmojiAssetSource } from "./emoji-assets";
 import { createKeyGenerator, getFontStyle, renderNode } from "./node-renderers";
 import { pdfStyles } from "./styles";
 import type { PDFExportOptions, TipTapDocument } from "./types";
+
+const PDF_PAGE_DIMENSIONS = {
+  A4: { width: 595.28, height: 841.89 },
+  A3: { width: 841.89, height: 1190.55 },
+  A2: { width: 1190.55, height: 1683.78 },
+  LETTER: { width: 612, height: 792 },
+  LEGAL: { width: 612, height: 1008 },
+  TABLOID: { width: 792, height: 1224 },
+} as const;
+
+const PAGE_HORIZONTAL_PADDING = 144;
 
 // Resolve fonts directory relative to this module (works in both dev and bundled prod)
 // In dev: resolves to apps/live/src/lib/pdf -> ../../assets/fonts
@@ -73,21 +87,70 @@ Font.register({
   ],
 });
 
+if (hasLocalEmojiAssetSupport) {
+  // Keep inline emojis airgapped-safe by resolving them from bundled local assets.
+  Font.registerEmojiSource({
+    builder: (code) => resolveEmojiAssetSource(code) || resolveEmojiAssetSource("1f4a1") || "",
+  });
+}
+
+Font.registerHyphenationCallback((word) => [word]);
+
+const normalizePdfTitle = (title: string | undefined): string => title?.replace(/\s+/g, " ").trim() ?? "";
+
+const getPdfTitleStyle = (title: string): Style => {
+  if (title.length >= 140) {
+    return pdfStyles.titleCompact;
+  }
+
+  if (title.length >= 90) {
+    return pdfStyles.titleMedium;
+  }
+
+  return {};
+};
+
+const getPageContentWidth = (
+  pageSize: NonNullable<PDFExportOptions["pageSize"]>,
+  pageOrientation: NonNullable<PDFExportOptions["pageOrientation"]>
+): number => {
+  const pageDimensions = PDF_PAGE_DIMENSIONS[pageSize] ?? PDF_PAGE_DIMENSIONS.A4;
+  const pageWidth = pageOrientation === "landscape" ? pageDimensions.height : pageDimensions.width;
+  return Math.max(pageWidth - PAGE_HORIZONTAL_PADDING, 0);
+};
+
 export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions = {}) => {
-  const { title, author, subject, pageSize = "A4", pageOrientation = "portrait", metadata, noAssets } = options;
+  const { title, author, subject, pageSize = "LETTER", pageOrientation = "portrait", metadata, noAssets } = options;
 
   // Merge noAssets into metadata for use in node renderers
-  const mergedMetadata = { ...metadata, noAssets };
+  const mergedMetadata = {
+    ...metadata,
+    noAssets,
+    pageContentWidth: getPageContentWidth(pageSize, pageOrientation),
+  };
+  const normalizedTitle = normalizePdfTitle(title);
 
   const content = doc.content || [];
   const getKey = createKeyGenerator();
   const renderedContent = content.map((node, index) => renderNode(node, "doc", index, mergedMetadata, getKey));
 
   return (
-    <Document title={title} author={author} subject={subject}>
+    <Document title={normalizedTitle || undefined} author={author} subject={subject}>
       <Page size={pageSize} orientation={pageOrientation} style={pdfStyles.page}>
-        {title && <Text style={[pdfStyles.title, getFontStyle(title)]}>{title}</Text>}
+        {normalizedTitle ? (
+          <View style={pdfStyles.titleContainer}>
+            <Text style={[pdfStyles.title, getPdfTitleStyle(normalizedTitle), getFontStyle(normalizedTitle)]}>
+              {normalizedTitle}
+            </Text>
+          </View>
+        ) : null}
         {renderedContent}
+        {normalizedTitle ? (
+          <Text fixed style={pdfStyles.footerTitle}>
+            {normalizedTitle}
+          </Text>
+        ) : null}
+        <Text fixed style={pdfStyles.footerPageNumber} render={({ pageNumber }) => `${pageNumber}`} />
       </Page>
     </Document>
   );
@@ -97,7 +160,8 @@ export const renderPlaneDocToPdfBuffer = async (
   doc: TipTapDocument,
   options: PDFExportOptions = {}
 ): Promise<Buffer> => {
-  const pdfDocument = createPdfDocument(doc, options);
+  const preparedDoc = await annotateCodeBlocksForPdf(doc);
+  const pdfDocument = createPdfDocument(preparedDoc, options);
   const pdfInstance = pdf(pdfDocument);
   const blob = await pdfInstance.toBlob();
   const arrayBuffer = await blob.arrayBuffer();
@@ -105,7 +169,8 @@ export const renderPlaneDocToPdfBuffer = async (
 };
 
 export const renderPlaneDocToPdfBlob = async (doc: TipTapDocument, options: PDFExportOptions = {}): Promise<Blob> => {
-  const pdfDocument = createPdfDocument(doc, options);
+  const preparedDoc = await annotateCodeBlocksForPdf(doc);
+  const pdfDocument = createPdfDocument(preparedDoc, options);
   const pdfInstance = pdf(pdfDocument);
   return await pdfInstance.toBlob();
 };

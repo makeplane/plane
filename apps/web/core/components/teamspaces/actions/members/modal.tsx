@@ -16,14 +16,15 @@ import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
-import { PlusIcon, ChevronDownIcon, CloseIcon } from "@plane/propel/icons";
+import { PlusIcon, ChevronDownIcon, CloseIcon, SuspendedUserIcon } from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Avatar } from "@plane/propel/avatar";
 import { CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
@@ -44,7 +45,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
   const [memberIdsToInvite, setMemberIdsToInvite] = useState<string[]>([]);
   // store hooks
   const {
-    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails, isUserSuspended },
   } = useMember();
   const { getTeamspaceById, getTeamspaceMemberIds, updateTeamspaceMembers } = useTeamspaces();
   // derived values
@@ -116,31 +117,36 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
     ?.map((userId) => {
       const memberDetails = getWorkspaceMemberDetails(userId);
       if (!memberDetails?.member) return;
+      const isSuspended = isUserSuspended(userId, workspaceSlug?.toString());
       return {
         value: `${memberDetails?.member.id}`,
         query: `${memberDetails?.member.first_name} ${
           memberDetails?.member.last_name
         } ${memberDetails?.member.display_name.toLowerCase()}`,
+        disabled: isSuspended,
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="flex-shrink-0 pt-0.5">
-              <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+              {isSuspended ? (
+                <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+              ) : (
+                <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+              )}
             </div>
-            <div className="truncate">
+            <span className={cn("truncate", isSuspended && "text-placeholder")}>
               {memberDetails?.member.display_name} (
               {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
-            </div>
+            </span>
+            {isSuspended && (
+              <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                Suspended
+              </Pill>
+            )}
           </div>
         ),
       };
     })
-    .filter((option) => !!option) as
-    | {
-        value: string;
-        query: string;
-        content: React.ReactNode;
-      }[]
-    | undefined;
+    .filter((option): option is NonNullable<typeof option> => !!option);
 
   if (!isModalOpen) return null;
 

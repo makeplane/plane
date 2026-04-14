@@ -46,11 +46,13 @@ export const useMemberOptions = ({
       .map((memberId) => {
         const memberDetails = getWorkspaceMemberDetails(memberId);
         const member = memberDetails.member;
+        const isSuspended = memberDetails?.is_active === false;
 
         return {
           value: member.id,
           query: `${member.first_name} ${member.last_name} ${member.display_name}`.toLowerCase(),
-          content: <MemberOption key={member.id} member={member} />,
+          disabled: isSuspended,
+          content: <MemberOption key={member.id} member={member} isSuspended={isSuspended} />,
         };
       });
   }, [workspaceMemberIds, currentUserId, sharedUsers, getWorkspaceMemberDetails]);

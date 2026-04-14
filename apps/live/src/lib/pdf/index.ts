@@ -12,7 +12,7 @@
  */
 
 export { createPdfDocument, renderPlaneDocToPdfBlob, renderPlaneDocToPdfBuffer } from "./plane-pdf-exporter";
-export { createKeyGenerator, nodeRenderers, renderNode } from "./node-renderers";
+export { createKeyGenerator, renderNode } from "./node-renderers";
 export { markRenderers, applyMarks } from "./mark-renderers";
 export { pdfStyles } from "./styles";
 export type {
@@ -33,3 +33,12 @@ export type {
   TipTapMark,
   TipTapNode,
 } from "./types";
+// Re-export export-core types for convenience
+export type {
+  ExportMetadata,
+  ExportWorkItemEmbed,
+  ExportWorkItemMention,
+  ExportUserMention,
+  ExportPageEmbed,
+  ExportFileAsset,
+} from "@/lib/export-core";

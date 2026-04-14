@@ -23,9 +23,11 @@ export const usePageFlag = (args: TPageFlagHookArgs): TPageFlagHookReturnType =>
   const isMovePageEnabled = useFlag(workspaceSlug, "MOVE_PAGES");
   const isPageAiSummaryEnabled = useAiFlag(workspaceSlug, "AI_PAGES_SUMMARY");
   const isPageSharingEnabled = useFlag(workspaceSlug, "SHARED_PAGES");
+  const isPageDocxExportEnabled = useFlag(workspaceSlug, "PAGE_DOCX_EXPORT");
   return {
     isMovePageEnabled,
     isPageAiSummaryEnabled,
     isPageSharingEnabled,
+    isPageDocxExportEnabled,
   };
 };
