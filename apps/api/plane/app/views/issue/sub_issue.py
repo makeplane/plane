@@ -31,6 +31,7 @@ from .. import BaseAPIView
 from plane.app.serializers import IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue, IssueType
+from plane.ee.models import WorkspaceFeature
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.utils.issue_type_hierarchy import validate_parent_child_hierarchy
@@ -262,24 +263,22 @@ class SubWorkitemSearchEndpoint(BaseAPIView):
         workitem_id = request.GET.get("workitem_id", None)
         project_id = request.GET.get("project_id", None)
 
-        # Default to level 0 if no type_id or workitem_id is provided, which means we are looking for parent workitems
-        # for a level 0 workitem
-        current_level = 0
+        # Check if hierarchy feature is enabled
+        workspace_feature = WorkspaceFeature.objects.filter(
+            workspace__slug=slug, is_workitem_hierarchy_enabled=True
+        ).first()
+        is_hierarchy_enabled = (
+            check_workspace_feature_flag(
+                feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY,
+                user_id=request.user.id,
+                slug=slug,
+            )
+            and bool(workspace_feature)
+        )
 
-        # Keep track of the current workitem's parent ID to exclude it from potential sub-workitems 
+        # Keep track of the current workitem's parent ID to exclude it from potential sub-workitems
         # to prevent circular references
         workitem_parent_id = None
-
-        # Determine the current workitem's type level based on provided type_id or workitem_id
-        if type_id:
-            issue_type = IssueType.objects.filter(id=type_id, workspace__slug=slug).first()
-            if not issue_type:
-                return Response(
-                    {"error": "Issue type not found"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-
-            current_level = issue_type.level
 
         if workitem_id:
             # Get the current workitem with its type
@@ -299,39 +298,66 @@ class SubWorkitemSearchEndpoint(BaseAPIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
-            # Determine the current workitem's type level
-            current_level = workitem.type.level if workitem.type_id else None
+        if is_hierarchy_enabled:
+            # Default to level 0 if no type_id or workitem_id is provided
+            current_level = 0
 
-        if current_level is not None:
-            # Get type IDs that are valid for sub-workitems
-            if current_level == 0:
-                # Level 0 workitems can only have level 0 sub-workitems
-                valid_type_ids = IssueType.objects.filter(
-                    workspace__slug=slug,
-                    level=current_level,
-                ).values_list("id", flat=True)
+            # Determine the current workitem's type level based on provided type_id or workitem_id
+            if type_id:
+                issue_type = IssueType.objects.filter(id=type_id, workspace__slug=slug).first()
+                if not issue_type:
+                    return Response(
+                        {"error": "Issue type not found"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+                current_level = issue_type.level
+
+            if workitem_id and workitem:
+                current_level = workitem.type.level if workitem.type_id else None
+
+            if current_level is not None:
+                # Get type IDs that are valid for sub-workitems
+                if current_level == 0:
+                    # Level 0 workitems can only have level 0 sub-workitems
+                    valid_type_ids = IssueType.objects.filter(
+                        workspace__slug=slug,
+                        level=current_level,
+                    ).values_list("id", flat=True)
+                else:
+                    # Higher level workitems can have sub-workitems with lower levels
+                    valid_type_ids = IssueType.objects.filter(
+                        workspace__slug=slug,
+                        level=(current_level - 1),
+                    ).values_list("id", flat=True)
+
+                # Build the base queryset with type filtering
+                issues = (
+                    Issue.issue_and_epics_objects.filter(
+                        workspace__slug=slug,
+                    )
+                    .filter(type_id__in=valid_type_ids)
+                    .select_related("project", "state", "workspace")
+                    .exclude(id=workitem_id)
+                    .exclude(parent_id=workitem_id)
+                    .accessible_to(request.user.id, slug)
+                    .distinct()
+                    .order_by("-last_activity_at")
+                )
             else:
-                # Higher level workitems can have sub-workitems with lower levels
-                valid_type_ids = IssueType.objects.filter(
-                    workspace__slug=slug,
-                    level=(current_level - 1),
-                ).values_list("id", flat=True)
-
-            # Build the base queryset
-            issues = (
-                Issue.issue_and_epics_objects.filter(
-                    workspace__slug=slug,
+                # If we don't have a current level, we consider all types as valid
+                issues = (
+                    Issue.issue_and_epics_objects.filter(
+                        workspace__slug=slug,
+                    )
+                    .select_related("project", "state", "workspace")
+                    .exclude(id=workitem_id)
+                    .exclude(parent_id=workitem_id)
+                    .accessible_to(request.user.id, slug)
+                    .distinct()
+                    .order_by("-last_activity_at")
                 )
-                .filter(type_id__in=valid_type_ids)
-                .select_related("project", "state", "workspace")
-                .exclude(id=workitem_id)
-                .exclude(parent_id=workitem_id)
-                .accessible_to(request.user.id, slug)
-                .distinct()
-                .order_by("-last_activity_at")
-            )
         else:
-            # If we don't have a current level, we consider all types as valid for sub-workitems
+            # Hierarchy not enabled — return all workitems with basic filters
             issues = (
                 Issue.issue_and_epics_objects.filter(
                     workspace__slug=slug,
@@ -339,6 +365,7 @@ class SubWorkitemSearchEndpoint(BaseAPIView):
                 .select_related("project", "state", "workspace")
                 .exclude(id=workitem_id)
                 .exclude(parent_id=workitem_id)
+                .exclude(Q(type__isnull=False) & Q(type__level__gt=0))
                 .accessible_to(request.user.id, slug)
                 .distinct()
                 .order_by("-last_activity_at")
@@ -360,6 +387,7 @@ class SubWorkitemSearchEndpoint(BaseAPIView):
         serializer = WorkitemSearchSerializer(issues[:30], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class ParentWorkitemSearchEndpoint(BaseAPIView):
     """Search for potential parent workitems based on type hierarchy levels."""
 
@@ -368,23 +396,21 @@ class ParentWorkitemSearchEndpoint(BaseAPIView):
         workitem_id = request.GET.get("workitem_id", None)
         project_id = request.GET.get("project_id", None)
 
-        # Default to level 0 if no type_id or workitem_id is provided, which means we are looking for parent workitems
-        # for a level 0 workitem
-        current_level = 0
+        # Check if hierarchy feature is enabled
+        workspace_feature = WorkspaceFeature.objects.filter(
+            workspace__slug=slug, is_workitem_hierarchy_enabled=True
+        ).first()
+        is_hierarchy_enabled = (
+            check_workspace_feature_flag(
+                feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY,
+                user_id=request.user.id,
+                slug=slug,
+            )
+            and bool(workspace_feature)
+        )
 
         # Keep track of the current workitem's children IDs to exclude them from potential parent workitems
         children_workitem_ids = []
-
-        # Determine the current workitem's type level based on provided type_id or workitem_id
-        if type_id:
-            issue_type = IssueType.objects.filter(id=type_id, workspace__slug=slug).first()
-            if not issue_type:
-                return Response(
-                    {"error": "Issue type not found"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-
-            current_level = issue_type.level
 
         if workitem_id:
             # Get the current workitem with its type
@@ -404,44 +430,64 @@ class ParentWorkitemSearchEndpoint(BaseAPIView):
                 )
 
             # Get the current workitem's children IDs to exclude them from potential parent workitems
-            children_workitem_ids = list(
-                Issue.issue_objects.filter(parent_id=workitem_id).values_list("id", flat=True)
+            children_workitem_ids = list(Issue.issue_objects.filter(parent_id=workitem_id).values_list("id", flat=True))
+
+        if is_hierarchy_enabled:
+            # Default to level 0 if no type_id or workitem_id is provided
+            current_level = 0
+
+            # Determine the current workitem's type level based on provided type_id or workitem_id
+            if type_id:
+                issue_type = IssueType.objects.filter(id=type_id, workspace__slug=slug).first()
+                if not issue_type:
+                    return Response(
+                        {"error": "Issue type not found"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+                current_level = issue_type.level
+
+            if workitem_id and workitem:
+                current_level = workitem.type.level if workitem.type_id else None
+
+            # Get type IDs that are valid for parent workitems
+            valid_type_ids = IssueType.objects.filter(
+                workspace__slug=slug,
             )
 
-            # Determine the current workitem's type level
-            current_level = workitem.type.level if workitem.type_id else None
+            if current_level is not None:
+                if current_level == 0:
+                    valid_type_ids = valid_type_ids.filter(
+                        Q(level=current_level) | Q(level=current_level + 1)
+                    ).values_list("id", flat=True)
+                else:
+                    valid_type_ids = valid_type_ids.filter(level=current_level + 1).values_list("id", flat=True)
 
-        # Get type IDs that are valid for parent workitems
-        valid_type_ids = IssueType.objects.filter(
-            workspace__slug=slug,
-        )
-
-        if current_level is not None:
-            # Level 0 workitems cannot have parent workitems, so we only consider types for levels greater than 0
-            if current_level == 0:
-                valid_type_ids = valid_type_ids.filter(Q(level=current_level) | Q(level=current_level + 1)).values_list(
-                    "id", flat=True
+                # Build the base queryset with type filtering
+                issues = (
+                    Issue.issue_and_epics_objects.filter(
+                        workspace__slug=slug,
+                        type_id__in=valid_type_ids,
+                    )
+                    .select_related("project", "state", "workspace")
+                    .exclude(id=workitem_id)
+                    .exclude(id__in=children_workitem_ids)
+                    .accessible_to(request.user.id, slug)
+                    .order_by("-last_activity_at")
                 )
             else:
-                valid_type_ids = valid_type_ids.filter(level=current_level + 1).values_list("id", flat=True)
-
-            # Higher level workitems can have parent workitems with higher levels
-            valid_type_ids = valid_type_ids.values_list("id", flat=True)
-
-            # Build the base queryset
-            issues = (
-                Issue.issue_and_epics_objects.filter(
-                    workspace__slug=slug,
-                    type_id__in=valid_type_ids,
+                # If we don't have a current level, we consider all types as valid
+                issues = (
+                    Issue.issue_and_epics_objects.filter(
+                        workspace__slug=slug,
+                    )
+                    .select_related("project", "state", "workspace")
+                    .exclude(id=workitem_id)
+                    .exclude(id__in=children_workitem_ids)
+                    .accessible_to(request.user.id, slug)
+                    .order_by("-last_activity_at")
                 )
-                .select_related("project", "state", "workspace")
-                .exclude(id=workitem_id)
-                .exclude(id__in=children_workitem_ids)
-                .accessible_to(request.user.id, slug)
-                .order_by("-last_activity_at")
-            )
         else:
-            # If we don't have a current level, we consider all types as valid for parent workitems
+            # Hierarchy not enabled — return all workitems with basic filters
             issues = (
                 Issue.issue_and_epics_objects.filter(
                     workspace__slug=slug,
@@ -463,4 +509,3 @@ class ParentWorkitemSearchEndpoint(BaseAPIView):
 
         serializer = WorkitemSearchSerializer(issues[:30], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
