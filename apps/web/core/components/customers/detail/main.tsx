@@ -192,7 +192,6 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
             await handleUpdateCustomer({ description_html: value.description_html });
           }}
           setIsSubmitting={setIsSubmitting}
-          swrDescription={customer.description_html}
           workspaceSlug={workspaceSlug}
         />
       </div>
