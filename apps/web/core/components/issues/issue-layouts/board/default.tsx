@@ -53,6 +53,8 @@ export interface IKanBan {
     subGroupId: string | undefined,
     isSubGroupCumulative: boolean
   ) => number | undefined;
+  projectId?: string;
+  stateIdAllowlist?: Set<string> | readonly string[];
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
@@ -84,6 +86,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     getWorkItemById,
     groupedIssueIds,
     getGroupIssueCount,
+    projectId,
+    stateIdAllowlist,
     displayProperties,
     sub_group_by,
     group_by,
@@ -123,6 +127,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    projectId,
+    stateIdAllowlist: group_by === "state" || group_by === "state_detail.group" ? stateIdAllowlist : undefined,
   });
 
   if (!list) return null;

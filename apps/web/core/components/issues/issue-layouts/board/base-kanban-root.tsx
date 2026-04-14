@@ -12,7 +12,7 @@
  */
 
 import type { FC } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -26,6 +26,8 @@ import { cn } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -38,6 +40,7 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "@/helpers/work-item-layout";
+import { computeStateIdAllowlist } from "@/helpers/work-item-layout";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 
@@ -99,6 +102,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
+  const { getProjectStateIds, getStateById } = useProjectState();
+  const { getWorkflowById } = useWorkflows();
 
   const sub_group_by = displayFilters?.sub_group_by;
   const group_by = displayFilters?.group_by;
@@ -123,6 +128,29 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const userDisplayFilters = displayFilters || null;
 
   const KanBanView = sub_group_by ? KanBanSwimLanes : KanBan;
+  const shouldComputeStateIdAllowlist = group_by === "state" || sub_group_by === "state";
+  const stateIdAllowlist = useMemo(
+    () =>
+      shouldComputeStateIdAllowlist
+        ? computeStateIdAllowlist({
+            issueFilters: issuesFilter?.issueFilters,
+            projectId: projectId?.toString(),
+            storeType,
+            getProjectStateIds: (id) => getProjectStateIds(id),
+            getStateById,
+            getWorkflowById,
+          })
+        : undefined,
+    [
+      shouldComputeStateIdAllowlist,
+      issuesFilter?.issueFilters,
+      projectId,
+      storeType,
+      getProjectStateIds,
+      getStateById,
+      getWorkflowById,
+    ]
+  );
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
@@ -284,6 +312,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 sub_group_by={sub_group_by}
                 group_by={group_by}
                 orderBy={orderBy}
+                projectId={projectId?.toString()}
+                stateIdAllowlist={stateIdAllowlist}
                 updateIssue={updateIssue}
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}

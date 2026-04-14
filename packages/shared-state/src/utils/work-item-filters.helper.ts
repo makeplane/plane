@@ -16,6 +16,7 @@ import { EIssuesStoreType } from "@plane/types";
 import type {
   TBuildFilterExpressionParams,
   TFilterConditionForBuild,
+  TFilterExpression,
   TFilterValue,
   TWorkItemFilterExpression,
   TWorkItemFilterProperty,
@@ -45,6 +46,10 @@ export const buildWorkItemFilterExpressionFromConditions = (
   if (!workItemFilterExpression) console.error("Failed to build work item filter expression from conditions");
   return workItemFilterExpression;
 };
+
+export const toInternalWorkItemFilterExpression = (
+  external: TWorkItemFilterExpression
+): TFilterExpression<TWorkItemFilterProperty> | null => workItemFiltersAdapter.toInternal(external);
 
 type TEnrichRichFiltersWithEntityContextParams = {
   richFilters: TWorkItemFilterExpression | undefined;

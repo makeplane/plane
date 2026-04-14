@@ -28,8 +28,11 @@ export type { TVersionDiffEditorProps, TPrecomputedDiff, TUserInfo, UserColor } 
 // PQL editor
 export { PQLEditorWithRef } from "@/components/editors/pql/editor";
 export type { PQLEditorProps, PQLEditorHandle } from "@/components/editors/pql/editor";
-export type { FieldDef, ParseResult, ParseError } from "@/extensions/pql-editor/types";
+export type { FieldDef, ParseResult, ParseError, ASTNode, Token, ValueNode } from "@/extensions/pql-editor/types";
+export { TokenKind } from "@/extensions/pql-editor/types";
 export { FIELD_ALIASES } from "@/extensions/pql-editor/plugins/grammar";
+export { tokenize as tokenizePQL } from "@/extensions/pql-editor/plugins/lexer";
+export { parse as parsePQL } from "@/extensions/pql-editor/plugins/parser";
 export { PiChatEditorWithRef } from "./ee/components/editors/pi-chat-editor/editor";
 
 // constants

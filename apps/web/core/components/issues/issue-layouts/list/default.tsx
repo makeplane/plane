@@ -47,6 +47,8 @@ export interface IList {
   getWorkItemById: (issueId: string) => TIssue | undefined;
   group_by: TIssueGroupByOptions | null;
   orderBy: TIssueOrderByOptions | undefined;
+  projectId?: string;
+  stateIdAllowlist?: Set<string> | readonly string[];
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -70,6 +72,8 @@ export const List = observer(function List(props: IList) {
     getWorkItemById,
     group_by,
     orderBy,
+    projectId,
+    stateIdAllowlist,
     updateIssue,
     quickActions,
     displayProperties,
@@ -98,6 +102,8 @@ export const List = observer(function List(props: IList) {
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    projectId,
+    stateIdAllowlist: group_by === "state" || group_by === "state_detail.group" ? stateIdAllowlist : undefined,
   });
 
   // Enable Auto Scroll for Main Kanban

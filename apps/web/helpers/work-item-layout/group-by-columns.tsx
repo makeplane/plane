@@ -43,6 +43,7 @@ export const getGroupByColumns = ({
   isWorkspaceLevel,
   isEpic = false,
   projectId,
+  stateIdAllowlist,
 }: TGetGroupByColumns): IGroupByColumn[] | undefined => {
   // If no groupBy is specified and includeNone is true, return "All Issues" group
   if (!groupBy && includeNone) {
@@ -81,7 +82,30 @@ export const getGroupByColumns = ({
   };
 
   // Get and return the columns for the specified group by option
-  return groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId });
+  const columns = groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId });
+  if (!columns) return columns;
+
+  if (groupBy === "state" && stateIdAllowlist) {
+    const allowlist = stateIdAllowlist instanceof Set ? stateIdAllowlist : new Set(stateIdAllowlist);
+    if (allowlist.size > 0) return columns.filter((c) => allowlist.has(c.id));
+  }
+
+  if (groupBy === "state_detail.group" && stateIdAllowlist && projectId) {
+    const allowlist = stateIdAllowlist instanceof Set ? stateIdAllowlist : new Set(stateIdAllowlist);
+    if (allowlist.size > 0) {
+      const { getProjectStates, projectStates } = store.state;
+      const states = getProjectStates(projectId) ?? projectStates;
+      if (states && states.length > 0) {
+        const allowedGroupKeys = new Set<string>();
+        for (const st of states) {
+          if (allowlist.has(st.id)) allowedGroupKeys.add(st.group);
+        }
+        if (allowedGroupKeys.size > 0) return columns.filter((c) => allowedGroupKeys.has(c.id));
+      }
+    }
+  }
+
+  return columns;
 };
 
 const getProjectColumns = (): IGroupByColumn[] | undefined => {

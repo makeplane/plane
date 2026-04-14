@@ -34,4 +34,5 @@ export type TGetGroupByColumns = {
   isWorkspaceLevel: boolean;
   isEpic?: boolean;
   projectId?: string;
+  stateIdAllowlist?: Set<string> | readonly string[];
 };

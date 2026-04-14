@@ -314,6 +314,8 @@ export interface IKanBanSwimLanes {
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   isEpic?: boolean;
+  projectId?: string;
+  stateIdAllowlist?: Set<string> | readonly string[];
   getWorkItemById: (issueId: string) => TIssue | undefined;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   orderBy: TIssueOrderByOptions | undefined;
@@ -333,6 +335,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     displayProperties,
     sub_group_by,
     group_by,
+    projectId,
+    stateIdAllowlist,
     orderBy,
     updateIssue,
     quickActions,
@@ -357,12 +361,16 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    projectId,
+    stateIdAllowlist: group_by === "state" || group_by === "state_detail.group" ? stateIdAllowlist : undefined,
   });
   const subGroupByList = getGroupByColumns({
     groupBy: sub_group_by as GroupByColumnTypes,
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    projectId,
+    stateIdAllowlist: sub_group_by === "state" || sub_group_by === "state_detail.group" ? stateIdAllowlist : undefined,
   });
 
   if (!groupByList || !subGroupByList) return null;

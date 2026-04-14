@@ -12,7 +12,7 @@
  */
 
 import type { FC } from "react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
@@ -23,6 +23,8 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useUserPermissions } from "@/hooks/store/user";
 // hooks
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
@@ -30,6 +32,7 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
+import { computeStateIdAllowlist } from "@/helpers/work-item-layout";
 import { List } from "./default";
 // types
 import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
@@ -94,6 +97,31 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   const { updateFilters } = useIssuesActions(storeType);
   const collapsedGroups =
     issuesFilter?.issueFilters?.kanbanFilters || ({ group_by: [], sub_group_by: [] } as TIssueKanbanFilters);
+  const { getProjectStateIds, getStateById } = useProjectState();
+  const { getWorkflowById } = useWorkflows();
+  const shouldComputeStateIdAllowlist = group_by === "state";
+  const stateIdAllowlist = useMemo(
+    () =>
+      shouldComputeStateIdAllowlist
+        ? computeStateIdAllowlist({
+            issueFilters: issuesFilter?.issueFilters,
+            projectId: projectId?.toString(),
+            storeType,
+            getProjectStateIds: (id) => getProjectStateIds(id),
+            getStateById,
+            getWorkflowById,
+          })
+        : undefined,
+    [
+      shouldComputeStateIdAllowlist,
+      issuesFilter?.issueFilters,
+      projectId,
+      storeType,
+      getProjectStateIds,
+      getStateById,
+      getWorkflowById,
+    ]
+  );
 
   // Initiative scope list: scope root already fetches; a second fetch here would clear the store and show empty list
   useEffect(() => {
@@ -171,6 +199,8 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
           displayProperties={displayProperties}
           group_by={group_by}
           orderBy={orderBy}
+          projectId={projectId?.toString()}
+          stateIdAllowlist={stateIdAllowlist}
           updateIssue={updateIssue}
           quickActions={renderQuickActions}
           groupedIssueIds={groupedIssueIds ?? {}}

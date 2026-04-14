@@ -11,12 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./types";
-export * from "./block";
-export * from "./group-by-columns";
-export * from "./drag-drop";
-export * from "./display-properties";
-export * from "./filters";
-export * from "./timeline";
-export * from "./custom-property-columns";
-export * from "./state-id-allowlist";
+export type TSetExprCond = {
+  kind: "cond";
+  field: string;
+  op: "=" | "!=" | "IN" | "NOT_IN" | "UNRESOLVED";
+  values: string[];
+};
+
+export type TSetExpr =
+  | { kind: "and"; children: TSetExpr[] }
+  | { kind: "or"; children: TSetExpr[] }
+  | { kind: "not"; child: TSetExpr }
+  | TSetExprCond;
+
+export const unresolvedCond = (): TSetExprCond => ({
+  kind: "cond",
+  field: "__unresolved__",
+  op: "UNRESOLVED",
+  values: [],
+});
