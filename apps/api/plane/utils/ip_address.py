@@ -41,7 +41,9 @@ def validate_url(url, allowed_ips=None):
     for addr in addr_info:
         ip = ipaddress.ip_address(addr[4][0])
         if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
-            if allowed_ips and any(ip in network for network in allowed_ips):
+            if allowed_ips and any(
+                network.version == ip.version and ip in network for network in allowed_ips
+            ):
                 continue
             raise ValueError("Access to private/internal networks is not allowed")
 

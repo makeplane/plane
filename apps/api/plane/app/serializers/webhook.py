@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Python imports
+import logging
 from urllib.parse import urlparse
 
 # Third party imports
@@ -17,6 +18,8 @@ from plane.db.models import Webhook, WebhookLog
 from plane.db.models.webhook import validate_domain, validate_schema
 from plane.utils.ip_address import validate_url
 
+logger = logging.getLogger(__name__)
+
 
 class WebhookSerializer(DynamicBaseSerializer):
     url = serializers.URLField(validators=[validate_schema, validate_domain])
@@ -26,7 +29,8 @@ class WebhookSerializer(DynamicBaseSerializer):
         try:
             validate_url(url, allowed_ips=settings.WEBHOOK_ALLOWED_IPS)
         except ValueError as e:
-            raise serializers.ValidationError({"url": str(e)})
+            logger.warning("Webhook URL validation failed for %s: %s", url, e)
+            raise serializers.ValidationError({"url": "Invalid or disallowed webhook URL."})
 
         hostname = (urlparse(url).hostname or "").rstrip(".").lower()
 

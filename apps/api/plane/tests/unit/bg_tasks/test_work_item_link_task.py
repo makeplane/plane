@@ -69,6 +69,25 @@ class TestValidateUrlAllowlist:
             mock_dns.return_value = [(None, None, None, None, ("127.0.0.1", 0))]
             validate_url("http://example.com", allowed_ips=allowed)  # Should not raise
 
+    def test_allowlist_permits_matching_ipv4_with_mixed_version_networks(self):
+        allowed = [
+            ipaddress.ip_network("2001:db8::/32"),
+            ipaddress.ip_network("192.168.1.0/24"),
+        ]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("192.168.1.50", 0))]
+            validate_url("http://example.com", allowed_ips=allowed)  # Should not raise
+
+    def test_allowlist_blocks_non_matching_ipv4_with_mixed_version_networks(self):
+        allowed = [
+            ipaddress.ip_network("2001:db8::/32"),
+            ipaddress.ip_network("192.168.1.0/24"),
+        ]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("10.0.0.1", 0))]
+            with pytest.raises(ValueError, match="private/internal"):
+                validate_url("http://example.com", allowed_ips=allowed)
+
 
 @pytest.mark.unit
 class TestSafeGet:
