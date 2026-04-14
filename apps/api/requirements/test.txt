@@ -1,6 +1,6 @@
 -r base.txt
 # test framework
-pytest==9.0.2
+pytest==9.0.3
 pytest-django==4.5.2
 pytest-cov==4.1.0
 pytest-xdist==3.3.1
