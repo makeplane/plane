@@ -39,11 +39,14 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
             # level cannot be negative
             if data["level"] < 0:
                 raise serializers.ValidationError({"level": "Level cannot be negative."})
-            
+
             # the values of the levels should be in between 0 and the max level + 1 allowed for the workspace
-            max_level = IssueType.objects.filter(
-                workspace_id=self.context["workspace_id"],
-            ).aggregate(max_level=models.Max("level"))["max_level"] or 0
+            max_level = (
+                IssueType.objects.filter(
+                    workspace_id=self.context["workspace_id"],
+                ).aggregate(max_level=models.Max("level"))["max_level"]
+                or 0
+            )
             if data["level"] > max_level + 1:
                 raise serializers.ValidationError(
                     {"level": f"Level must be between 0 and {max_level + 1} for this workspace."}
@@ -68,9 +71,7 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
         since they are unpositioned in the hierarchy."""
         # Check parent compatibility
         issue_with_parent = (
-            Issue.objects.filter(type=self.instance, parent__isnull=False)
-            .select_related("parent__type")
-            .first()
+            Issue.objects.filter(type=self.instance, parent__isnull=False).select_related("parent__type").first()
         )
         if issue_with_parent:
             parent_level = self._get_type_level(issue_with_parent.parent)
@@ -80,11 +81,7 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
                     raise serializers.ValidationError({"level": error_msg})
 
         # Check child compatibility
-        child_issue = (
-            Issue.objects.filter(parent__type=self.instance)
-            .select_related("type")
-            .first()
-        )
+        child_issue = Issue.objects.filter(parent__type=self.instance).select_related("type").first()
         if child_issue:
             child_level = self._get_type_level(child_issue)
             if child_level != 0:
@@ -95,7 +92,7 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
     class Meta:
         model = IssueType
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "deleted_at", "is_default"]
+        read_only_fields = ["workspace", "project", "deleted_at", "is_default", "is_epic"]
 
     def get_properties(self, obj):
         return {str(itp.property_id): itp.sort_order for itp in obj.issue_type_properties.all()}
@@ -107,7 +104,14 @@ class IssueTypeSerializer(BaseSerializer):
     class Meta:
         model = IssueType
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "deleted_at", "level", "is_default"]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "deleted_at",
+            "level",
+            "is_default",
+            "is_epic",
+        ]
 
 
 class IssuePropertySerializer(BaseSerializer):
