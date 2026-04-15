@@ -3473,6 +3473,7 @@ export default {
   },
   ho: {
     all_workspaces: "Tất cả không gian làm việc", // TODO: native review
+    all_departments: "Tất cả phòng ban", // TODO: native review
     all_projects: "Tất cả dự án", // TODO: native review
     select_workspace_first: "Vui lòng chọn không gian làm việc trước", // TODO: review
     display: "Hiển thị", // TODO: native review

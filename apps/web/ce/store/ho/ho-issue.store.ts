@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, runInAction } from "mobx";
+import { makeObservable, observable, computed, action, runInAction } from "mobx";
 import type {
   THoIssue,
   THoCategorySummary,
@@ -14,7 +14,9 @@ export interface IHoIssueStore {
   categorySummary: THoCategorySummary[];
   accessibleWorkspaces: THoAccessibleWorkspace[];
   filterOptions: THoFilterOptions | null;
-  selectedWorkspaceSlug: string | null;
+  // Computed: unique departments derived from categorySummary
+  departmentOptions: { id: string; name: string }[];
+  selectedDepartmentId: string | null;
   selectedProjectIds: string[];
   filters: {
     priority: string[];
@@ -50,7 +52,7 @@ export interface IHoIssueStore {
   updateOrderBy: (key: string) => void;
   setDateRange: (from: string, to: string) => void;
   updateDisplayProperties: (props: Partial<THoDisplayProperties>) => void;
-  setWorkspaceFilter: (slug: string | null) => void;
+  setDepartmentFilter: (departmentId: string | null) => void;
   setProjectFilter: (ids: string[]) => void;
   updateFilters: (filters: Partial<IHoIssueStore["filters"]>) => void;
   clearFilters: () => void;
@@ -61,7 +63,7 @@ export class HoIssueStore implements IHoIssueStore {
   categorySummary: THoCategorySummary[] = [];
   accessibleWorkspaces: THoAccessibleWorkspace[] = [];
   filterOptions: THoFilterOptions | null = null;
-  selectedWorkspaceSlug: string | null = null;
+  selectedDepartmentId: string | null = null;
   selectedProjectIds: string[] = [];
   filters: IHoIssueStore["filters"] = {
     priority: [],
@@ -92,6 +94,15 @@ export class HoIssueStore implements IHoIssueStore {
   private _filterSeq = 0;
   private service: HoIssueService;
 
+  // Unique departments derived from category summary — stays in sync with the table automatically
+  get departmentOptions(): { id: string; name: string }[] {
+    const seen = new Set<string>();
+    return this.categorySummary
+      .filter((r) => r.department_id && !seen.has(r.department_id) && !!seen.add(r.department_id))
+      .map((r) => ({ id: r.department_id, name: r.department_name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   constructor() {
     this.service = new HoIssueService();
     makeObservable(this, {
@@ -99,7 +110,8 @@ export class HoIssueStore implements IHoIssueStore {
       categorySummary: observable,
       accessibleWorkspaces: observable,
       filterOptions: observable,
-      selectedWorkspaceSlug: observable,
+      departmentOptions: computed,
+      selectedDepartmentId: observable,
       selectedProjectIds: observable,
       filters: observable,
       isLoading: observable,
@@ -123,7 +135,7 @@ export class HoIssueStore implements IHoIssueStore {
       updateOrderBy: action,
       setDateRange: action,
       updateDisplayProperties: action,
-      setWorkspaceFilter: action,
+      setDepartmentFilter: action,
       setProjectFilter: action,
       updateFilters: action,
       clearFilters: action,
@@ -136,7 +148,7 @@ export class HoIssueStore implements IHoIssueStore {
       from_date: this.fromDate,
       to_date: this.toDate,
     };
-    if (this.selectedWorkspaceSlug) params.workspace_slug = this.selectedWorkspaceSlug;
+    if (this.selectedDepartmentId) params.department_id = this.selectedDepartmentId;
     if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
 
     // Additional filters
@@ -161,17 +173,13 @@ export class HoIssueStore implements IHoIssueStore {
       this.isFetchingIssues = true;
     });
     try {
-      const [issues, summary] = await Promise.all([
-        this.service.listIssues({ page: "1", ...this._filterParams() }),
-        this.service.getCategorySummary(this._filterParams()),
-      ]);
+      const issues = await this.service.listIssues({ page: "1", ...this._filterParams() });
       if (seq !== this._filterSeq) return;
       runInAction(() => {
         this.issues = issues.results;
         this.totalCount = issues.count;
         this.nextPageUrl = issues.next;
         this.currentPage = 1;
-        this.categorySummary = summary;
         this.isFetchingIssues = false;
       });
     } catch {
@@ -220,7 +228,8 @@ export class HoIssueStore implements IHoIssueStore {
       this.isCategoryLoading = true;
     });
     try {
-      const data = await this.service.getCategorySummary(this._filterParams());
+      // Category summary is always unfiltered — department filtering is done on the frontend
+      const data = await this.service.getCategorySummary({});
       runInAction(() => {
         this.categorySummary = data;
       });
@@ -263,7 +272,7 @@ export class HoIssueStore implements IHoIssueStore {
     });
     try {
       const params = {
-        workspace_slug: this.selectedWorkspaceSlug || "",
+        department_id: this.selectedDepartmentId || "",
         project_id: this.selectedProjectIds.join(","),
         from_date: this.fromDate,
         to_date: this.toDate,
@@ -298,9 +307,9 @@ export class HoIssueStore implements IHoIssueStore {
     this.displayProperties = { ...this.displayProperties, ...props } as THoDisplayProperties;
   };
 
-  setWorkspaceFilter = (slug: string | null): void => {
+  setDepartmentFilter = (departmentId: string | null): void => {
     runInAction(() => {
-      this.selectedWorkspaceSlug = slug;
+      this.selectedDepartmentId = departmentId;
       this.selectedProjectIds = [];
       this.currentPage = 1;
     });

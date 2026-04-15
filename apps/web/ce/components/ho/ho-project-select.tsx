@@ -10,7 +10,7 @@ export const HoProjectSelect = observer(function HoProjectSelect() {
   const { t } = useTranslation();
   const store = useHoIssues();
 
-  const workspace = store.accessibleWorkspaces.find((w) => w.slug === store.selectedWorkspaceSlug);
+  const workspace = store.accessibleWorkspaces.find((w) => w.department_id === store.selectedDepartmentId);
 
   if (!workspace) return null; // hidden when no workspace selected
 
