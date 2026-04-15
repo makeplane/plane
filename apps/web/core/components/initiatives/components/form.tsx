@@ -278,7 +278,7 @@ export function CreateUpdateInitiativeForm(props: Props) {
             value={formData?.label_ids || []}
             labels={allLabels}
             onChange={(val: string[]) => handleFormDataChange("label_ids", val)}
-            placeholder={t("label")}
+            placeholder={t("label.select")}
             onAddLabel={createLabel}
           />
         </div>

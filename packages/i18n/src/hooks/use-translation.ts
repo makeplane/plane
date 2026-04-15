@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation as useI18nextTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants/language";
 import type { TLanguage, ILanguageOption } from "../types";
@@ -23,10 +23,28 @@ export type TTranslationStore = {
   languages: ILanguageOption[];
 };
 
+// Guards React from crashing when a key resolves to a namespace node (i18next-icu
+// bypasses returnObjects). Remove once t() is type-safe at the key level.
+function coerceToString(key: string, value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (value == null) {
+    if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+      console.warn(`[i18n] Missing translation for key "${key}"`);
+    }
+    return key;
+  }
+  if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+    console.warn(
+      `[i18n] Translation for key "${key}" is not a string (got ${typeof value}). ` +
+        `This usually means the key resolves to a namespace node. Use a leaf key instead.`
+    );
+  }
+  return key;
+}
+
 export function useTranslation(): TTranslationStore {
-  // No namespace arg — fallbackNS in the i18next config ensures all namespaces
-  // are searched for any key. Passing NAMESPACES here would trigger concurrent
-  // async loads per component, causing a re-render cascade.
+  // No ns arg — fallbackNS handles lookup; passing NAMESPACES triggers a re-render cascade.
   const { t, i18n } = useI18nextTranslation();
 
   const changeLanguage = useCallback(
@@ -45,9 +63,14 @@ export function useTranslation(): TTranslationStore {
     [i18n]
   );
 
-  return {
+  const safeT = useMemo<TTranslationStore["t"]>(
     // oxlint-disable-next-line typescript/no-explicit-any - i18next handles numbers, booleans, etc. natively
-    t: (key: string, params?: any) => t(key, params) as string,
+    () => (key, params) => coerceToString(key, t(key, params as any)),
+    [t]
+  );
+
+  return {
+    t: safeT,
     currentLocale: i18n.language as TLanguage,
     changeLanguage,
     languages: SUPPORTED_LANGUAGES,

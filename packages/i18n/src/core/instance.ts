@@ -46,6 +46,8 @@ export const initPromise = i18nInstance
     interpolation: { escapeValue: false },
     returnNull: false,
     returnEmptyString: false,
+    // Default, but ICU plugin still returns objects; useTranslation has the actual guard.
+    returnObjects: false,
     react: { useSuspense: false },
   })
   // Eagerly pre-load all namespaces for the initial language so they're cached
