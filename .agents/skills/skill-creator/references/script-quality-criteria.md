@@ -60,6 +60,7 @@ load_dotenv('./.claude/.env')
 ## Documentation Requirements
 
 ### .env.example
+
 Show required variables without values:
 
 ```
@@ -69,6 +70,7 @@ DEBUG=false
 ```
 
 ### requirements.txt (Python)
+
 Pin major versions:
 
 ```
@@ -77,6 +79,7 @@ python-dotenv>=1.0.0
 ```
 
 ### package.json (Node.js)
+
 Include scripts:
 
 ```json

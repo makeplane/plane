@@ -3,10 +3,12 @@
 Execute via `git-manager` subagent.
 
 ## Variables
+
 - TO_BRANCH: target (defaults to `main`)
 - FROM_BRANCH: source (defaults to current branch)
 
 ## CRITICAL: Use REMOTE diff
+
 PRs based on remote branches. Local diff includes unpushed changes.
 
 ## Tool 1: Sync + Analyze
@@ -28,10 +30,12 @@ git diff origin/$BASE...origin/$HEAD --stat
 **If "Branch not on remote":** Push first, retry.
 
 ## Tool 2: Generate Content
+
 **Title:** Conventional commit format, <72 chars, NO version numbers
 **Body:** Summary bullets + Test plan checklist
 
 ## Tool 3: Create PR
+
 ```bash
 gh pr create --base $BASE --head $HEAD --title "..." --body "$(cat <<'EOF'
 ## Summary
@@ -44,15 +48,16 @@ EOF
 ```
 
 ## DO NOT use (local comparison)
+
 - ❌ `git diff main...HEAD`
 - ❌ `git diff --cached`
 - ❌ `git status`
 
 ## Error Handling
 
-| Error | Action |
-|-------|--------|
-| Branch not on remote | `git push -u origin HEAD`, retry |
-| Empty diff | Warn: "No changes for PR" |
-| Push rejected | `git pull --rebase`, resolve, push |
-| No upstream | `git push -u origin HEAD` |
+| Error                | Action                             |
+| -------------------- | ---------------------------------- |
+| Branch not on remote | `git push -u origin HEAD`, retry   |
+| Empty diff           | Warn: "No changes for PR"          |
+| Push rejected        | `git pull --rebase`, resolve, push |
+| No upstream          | `git push -u origin HEAD`          |

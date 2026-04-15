@@ -38,13 +38,13 @@
 
 **English Translation:**
 
-| Branch    | Purpose                       | Who merges?                    |
-| --------- | ----------------------------- | ------------------------------ |
-| `preview` | Production — stable, tested   | Lead / Manager                 |
-| `develop` | Development — integrate new features | Developer              |
-| `feat/*`  | New feature                   | Developer (create & merge to develop) |
-| `fix/*`   | Bug fix                       | Developer                      |
-| `chore/*` | Config, docs, refactor        | Developer                      |
+| Branch    | Purpose                              | Who merges?                           |
+| --------- | ------------------------------------ | ------------------------------------- |
+| `preview` | Production — stable, tested          | Lead / Manager                        |
+| `develop` | Development — integrate new features | Developer                             |
+| `feat/*`  | New feature                          | Developer (create & merge to develop) |
+| `fix/*`   | Bug fix                              | Developer                             |
+| `chore/*` | Config, docs, refactor               | Developer                             |
 
 ---
 
@@ -97,6 +97,7 @@ git commit -m "feat(auth): implement login form validation"
 > **English:** See code-standards.md for detailed commit message guidelines
 >
 > **Pre-Push Checks (Automated):**
+>
 > ```bash
 > # Linting (frontend)
 > pnpm check:lint

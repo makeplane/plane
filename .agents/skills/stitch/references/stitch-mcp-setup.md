@@ -32,6 +32,7 @@ Simplest setup. No Google Cloud dependency.
 ### 3. Verify
 
 Restart Claude Code. You should see Stitch tools available:
+
 - `create_project` — Create new design project
 - `generate_screen` — Generate UI from prompt
 - `export_html` — Export as HTML/Tailwind
@@ -77,19 +78,19 @@ npx stitch-mcp-auto
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---------|-----|
-| "AUTH_FAILED" on startup | Verify API key or re-run `gcloud auth login` |
-| Tools not appearing | Restart Claude Code after config change |
-| Timeout on generation | Stitch is processing; wait 10-30s for complex designs |
-| "RATE_LIMITED" errors | Daily quota exceeded; wait until midnight UTC |
+| Symptom                  | Fix                                                   |
+| ------------------------ | ----------------------------------------------------- |
+| "AUTH_FAILED" on startup | Verify API key or re-run `gcloud auth login`          |
+| Tools not appearing      | Restart Claude Code after config change               |
+| Timeout on generation    | Stitch is processing; wait 10-30s for complex designs |
+| "RATE_LIMITED" errors    | Daily quota exceeded; wait until midnight UTC         |
 
 ## MCP Config Location
 
-| OS | Path |
-|----|------|
-| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
-| Windows | `%AppData%\Claude\claude_desktop_config.json` |
-| Linux | `~/.config/Claude/claude_desktop_config.json` |
+| OS      | Path                                                              |
+| ------- | ----------------------------------------------------------------- |
+| macOS   | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Windows | `%AppData%\Claude\claude_desktop_config.json`                     |
+| Linux   | `~/.config/Claude/claude_desktop_config.json`                     |
 
 For Claude Code CLI: use `.claude/.mcp.json` in project root (preferred for ClaudeKit).

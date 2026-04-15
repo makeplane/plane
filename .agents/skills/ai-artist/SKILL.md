@@ -25,12 +25,12 @@ python3 scripts/generate.py "<concept>" -o <output.png> [--mode MODE]
 
 ### Generation Modes
 
-| Mode | Description |
-|------|-------------|
-| `search` | Find best matching prompt from 129 curated prompts (default) |
-| `creative` | Remix elements from top 3 matching prompts |
-| `wild` | Out-of-the-box creative interpretation (random style transform) |
-| `all` | Generate all 3 variations |
+| Mode       | Description                                                     |
+| ---------- | --------------------------------------------------------------- |
+| `search`   | Find best matching prompt from 129 curated prompts (default)    |
+| `creative` | Remix elements from top 3 matching prompts                      |
+| `wild`     | Out-of-the-box creative interpretation (random style transform) |
+| `all`      | Generate all 3 variations                                       |
 
 ### Examples
 
@@ -50,15 +50,15 @@ python3 scripts/generate.py "futuristic city" -o city.png --mode all -v
 
 ### Options
 
-| Flag | Description |
-|------|-------------|
-| `-o, --output` | Output path (required) |
-| `-m, --mode` | search, creative, wild, or all |
-| `-ar, --aspect-ratio` | 1:1, 16:9, 9:16, etc. |
-| `--model` | flash2 (default, fast+quality), flash (previous), pro (quality/4K) |
-| `-v, --verbose` | Show matched prompts and details |
-| `--dry-run` | Show prompt without generating |
-| `--skip` | Bypass validation interview |
+| Flag                  | Description                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| `-o, --output`        | Output path (required)                                             |
+| `-m, --mode`          | search, creative, wild, or all                                     |
+| `-ar, --aspect-ratio` | 1:1, 16:9, 9:16, etc.                                              |
+| `--model`             | flash2 (default, fast+quality), flash (previous), pro (quality/4K) |
+| `-v, --verbose`       | Show matched prompts and details                                   |
+| `--dry-run`           | Show prompt without generating                                     |
+| `--skip`              | Bypass validation interview                                        |
 
 ---
 
@@ -75,6 +75,7 @@ cat data/awesome-prompts.csv
 ```
 
 ### Categories include:
+
 - **Profile/Avatar**: Thought-leader headshots, mirror selfies
 - **Infographics**: Bento grid, chalkboard, ingredient labels
 - **Social Media**: Quote cards, banners, thumbnails
@@ -103,21 +104,21 @@ The `wild` mode randomly applies one of these artistic transformations:
 
 ## References
 
-| Topic | File |
-|-------|------|
-| **Validation Workflow** | `references/validation-workflow.md` |
-| All Prompts | `data/awesome-prompts.csv` |
-| Nano Banana Guide | `references/nano-banana.md` |
-| Image Prompting | `references/image-prompting.md` |
-| Source | `references/awesome-nano-banana-pro-prompts.md` |
+| Topic                   | File                                            |
+| ----------------------- | ----------------------------------------------- |
+| **Validation Workflow** | `references/validation-workflow.md`             |
+| All Prompts             | `data/awesome-prompts.csv`                      |
+| Nano Banana Guide       | `references/nano-banana.md`                     |
+| Image Prompting         | `references/image-prompting.md`                 |
+| Source                  | `references/awesome-nano-banana-pro-prompts.md` |
 
 ---
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `generate.py` | Main image generation with 3 modes |
-| `search.py` | Search prompts database |
-| `extract_prompts.py` | Extract prompts from markdown |
-| `core.py` | BM25 search engine |
+| Script               | Purpose                            |
+| -------------------- | ---------------------------------- |
+| `generate.py`        | Main image generation with 3 modes |
+| `search.py`          | Search prompts database            |
+| `extract_prompts.py` | Extract prompts from markdown      |
+| `core.py`            | BM25 search engine                 |

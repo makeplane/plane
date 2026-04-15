@@ -32,8 +32,8 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12.x"
-          cache: 'pip'
-          cache-dependency-path: 'apps/api/requirements.txt'
+          cache: "pip"
+          cache-dependency-path: "apps/api/requirements.txt"
       - name: Install Pylint
         run: python -m pip install ruff
       - name: Install API Dependencies

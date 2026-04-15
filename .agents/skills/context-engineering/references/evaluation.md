@@ -12,19 +12,20 @@ Systematically assess agent performance and context engineering choices.
 
 ## Multi-Dimensional Rubric
 
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| Factual Accuracy | 30% | Ground truth verification |
-| Completeness | 25% | Coverage of requirements |
-| Tool Efficiency | 20% | Appropriate tool usage |
-| Citation Accuracy | 15% | Sources match claims |
-| Source Quality | 10% | Authority/credibility |
+| Dimension         | Weight | Description               |
+| ----------------- | ------ | ------------------------- |
+| Factual Accuracy  | 30%    | Ground truth verification |
+| Completeness      | 25%    | Coverage of requirements  |
+| Tool Efficiency   | 20%    | Appropriate tool usage    |
+| Citation Accuracy | 15%    | Sources match claims      |
+| Source Quality    | 10%    | Authority/credibility     |
 
 ## Evaluation Methods
 
 ### LLM-as-Judge
 
 Beware biases:
+
 - **Position**: First position preferred
 - **Length**: Longer = higher score
 - **Self-enhancement**: Rating own outputs higher
@@ -42,12 +43,12 @@ consistent = (score_ab > 0.5) != (score_ba > 0.5)
 
 ### Probe-Based Testing
 
-| Probe | Tests | Example |
-|-------|-------|---------|
-| Recall | Facts | "What was the error?" |
-| Artifact | Files | "Which files modified?" |
-| Continuation | Planning | "What's next?" |
-| Decision | Reasoning | "Why chose X?" |
+| Probe        | Tests     | Example                 |
+| ------------ | --------- | ----------------------- |
+| Recall       | Facts     | "What was the error?"   |
+| Artifact     | Files     | "Which files modified?" |
+| Continuation | Planning  | "What's next?"          |
+| Decision     | Reasoning | "Why chose X?"          |
 
 ## Test Set Design
 

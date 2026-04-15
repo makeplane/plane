@@ -24,6 +24,7 @@ Coordinate multiple independent Claude Code sessions. Each teammate has own cont
 **Templates:** `ck:research`, `ck:cook`, `ck:code-review`, `ck:debug`
 
 **Flags:**
+
 - `--devs N` | `--researchers N` | `--reviewers N` | `--debuggers N` -- team size
 - `--plan-approval` / `--no-plan-approval` -- plan gate (default: on for cook)
 - `--delegate` -- lead only coordinates, never touches code
@@ -32,6 +33,7 @@ Coordinate multiple independent Claude Code sessions. Each teammate has own cont
 ## Execution Protocol
 
 **Pre-flight (MANDATORY -- merged into step 2 of every template):**
+
 1. Step 2 of every template calls `TeamCreate(team_name: "...", ...)`. Do NOT check whether the tool exists first -- just call it.
 2. If the call SUCCEEDS: continue with the template.
 3. If the call returns an ERROR or is unrecognized: **STOP. Tell user:** "Agent Teams requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json. Team mode is not available."
@@ -45,6 +47,7 @@ Execute the tool calls in order. Report progress after each major step.
 ### --delegate Mode
 
 When `--delegate` flag is passed:
+
 - Lead enters delegate mode (`Shift+Tab` after TeamCreate)
 - Lead ONLY: spawns teammates, manages tasks, sends messages, synthesizes reports
 - Lead NEVER: edits files, runs tests, executes git commands directly
@@ -72,24 +75,24 @@ Agent(
 
 ### Team Management Tools
 
-| Tool | Purpose | Params |
-|------|---------|--------|
-| `TeamCreate` | Create team + task list | `team_name`, `description` |
-| `TeamDelete` | Remove team resources | *none* -- just call it |
-| `TaskCreate` | Create work item | `subject`, `description`, `priority`, `addBlockedBy`, `addBlocks` |
-| `TaskUpdate` | Claim/complete task | `taskId`, `status`, `owner`, `metadata` |
-| `TaskGet` | Full task details | `taskId` |
-| `TaskList` | All tasks (minimal fields) | *none* |
-| `SendMessage` | Inter-agent messaging | `type`, `to`/`recipient`, `message` |
+| Tool          | Purpose                    | Params                                                            |
+| ------------- | -------------------------- | ----------------------------------------------------------------- |
+| `TeamCreate`  | Create team + task list    | `team_name`, `description`                                        |
+| `TeamDelete`  | Remove team resources      | _none_ -- just call it                                            |
+| `TaskCreate`  | Create work item           | `subject`, `description`, `priority`, `addBlockedBy`, `addBlocks` |
+| `TaskUpdate`  | Claim/complete task        | `taskId`, `status`, `owner`, `metadata`                           |
+| `TaskGet`     | Full task details          | `taskId`                                                          |
+| `TaskList`    | All tasks (minimal fields) | _none_                                                            |
+| `SendMessage` | Inter-agent messaging      | `type`, `to`/`recipient`, `message`                               |
 
 ### SendMessage Types
 
-| Type | Purpose |
-|------|---------|
-| `message` | DM to one teammate (requires `recipient`) |
-| `broadcast` | Send to ALL teammates (use sparingly) |
-| `shutdown_request` | Ask teammate to gracefully exit |
-| `shutdown_response` | Teammate approves/rejects shutdown (requires `request_id`) |
+| Type                     | Purpose                                                     |
+| ------------------------ | ----------------------------------------------------------- |
+| `message`                | DM to one teammate (requires `recipient`)                   |
+| `broadcast`              | Send to ALL teammates (use sparingly)                       |
+| `shutdown_request`       | Ask teammate to gracefully exit                             |
+| `shutdown_response`      | Teammate approves/rejects shutdown (requires `request_id`)  |
 | `plan_approval_response` | Lead approves/rejects teammate plan (requires `request_id`) |
 
 ---
@@ -114,7 +117,7 @@ CK Context:
 
 ## ON `/ck:team research <topic>` [--researchers N]:
 
-*Wraps /ck:research skill -- scope, gather, analyze, report.*
+_Wraps /ck:research skill -- scope, gather, analyze, report._
 
 IMMEDIATELY execute in order:
 
@@ -157,7 +160,7 @@ IMMEDIATELY execute in order:
 
 ## ON `/ck:team cook <plan-path-or-description>` [--devs N]:
 
-*Wraps /ck:cook skill -- plan, code, test, review, finalize.*
+_Wraps /ck:cook skill -- plan, code, test, review, finalize._
 
 IMMEDIATELY execute in order:
 
@@ -197,6 +200,7 @@ IMMEDIATELY execute in order:
    - Verify: `git log --oneline --graph` to confirm merge topology
 
 7. **DOCS SYNC EVAL** (MANDATORY for cook -- from /ck:cook finalize):
+
    ```
    Docs impact: [none|minor|major]
    Action: [no update needed -- <reason>] | [updated <page>] | [needs separate PR]
@@ -212,7 +216,7 @@ IMMEDIATELY execute in order:
 
 ## ON `/ck:team review <scope>` [--reviewers N]:
 
-*Wraps /ck:code-review skill -- scout, review, synthesize with evidence gates.*
+_Wraps /ck:code-review skill -- scout, review, synthesize with evidence gates._
 
 IMMEDIATELY execute in order:
 
@@ -253,7 +257,7 @@ IMMEDIATELY execute in order:
 
 ## ON `/ck:team debug <issue>` [--debuggers N]:
 
-*Wraps /ck:fix skill -- root-cause-first, adversarial hypotheses, disprove to converge.*
+_Wraps /ck:fix skill -- root-cause-first, adversarial hypotheses, disprove to converge._
 
 IMMEDIATELY execute in order:
 
@@ -294,28 +298,29 @@ IMMEDIATELY execute in order:
 
 ## When to Use Agent Teams vs Subagents
 
-| Scenario | Subagents (Agent tool) | Agent Teams |
-|----------|----------------------|-------------|
-| Focused task (test, lint, single review) | **Yes** | Overkill |
-| Sequential chain (plan -> code -> test) | **Yes** | No |
-| 3+ independent parallel workstreams | Maybe | **Yes** |
-| Competing debug hypotheses | No | **Yes** |
-| Cross-layer work (FE + BE + tests) | Maybe | **Yes** |
-| Workers need to discuss/challenge findings | No | **Yes** |
-| Token budget is tight | **Yes** | No (high cost) |
+| Scenario                                   | Subagents (Agent tool) | Agent Teams    |
+| ------------------------------------------ | ---------------------- | -------------- |
+| Focused task (test, lint, single review)   | **Yes**                | Overkill       |
+| Sequential chain (plan -> code -> test)    | **Yes**                | No             |
+| 3+ independent parallel workstreams        | Maybe                  | **Yes**        |
+| Competing debug hypotheses                 | No                     | **Yes**        |
+| Cross-layer work (FE + BE + tests)         | Maybe                  | **Yes**        |
+| Workers need to discuss/challenge findings | No                     | **Yes**        |
+| Token budget is tight                      | **Yes**                | No (high cost) |
 
 ## Token Budget
 
-| Template | Estimated Tokens | Notes |
-|----------|-----------------|-------|
-| Research (3) | ~150K-300K | Read-only, moderate cost |
-| Cook (4) | ~400K-800K | Highest cost -- code generation |
-| Review (3) | ~100K-200K | Read-only, moderate cost |
-| Debug (3) | ~200K-400K | Mixed read/execute |
+| Template     | Estimated Tokens | Notes                           |
+| ------------ | ---------------- | ------------------------------- |
+| Research (3) | ~150K-300K       | Read-only, moderate cost        |
+| Cook (4)     | ~400K-800K       | Highest cost -- code generation |
+| Review (3)   | ~100K-200K       | Read-only, moderate cost        |
+| Debug (3)    | ~200K-400K       | Mixed read/execute              |
 
 ## Agent Memory
 
 Teammates with `memory: project` in their agent definition retain learnings across team sessions. Memory persists in `.claude/agent-memory/<name>/` (gitignored). Useful for:
+
 - Code reviewer remembering project conventions
 - Debugger recalling past failure patterns
 - Tester tracking flaky tests and coverage gaps
@@ -326,6 +331,7 @@ Memory persists after team cleanup -- it's in `.claude/agent-memory/`, not `~/.c
 ## Worktree Isolation (Cook Template)
 
 For implementation teams, `isolation: "worktree"` on the Agent tool gives each dev:
+
 - **Own git worktree** -- isolated working directory, staging area, HEAD
 - **Own branch** -- auto-created, returned in agent result
 - **No file conflicts** -- devs can edit same files independently

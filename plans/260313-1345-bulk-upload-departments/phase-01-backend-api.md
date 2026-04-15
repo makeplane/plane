@@ -8,6 +8,7 @@ effort: 2h
 # Phase 01 — Backend API
 
 ## Context
+
 - Parent plan: [plan.md](./plan.md)
 - Reference: `apps/api/plane/license/api/views/staff.py` (`InstanceStaffBulkImportEndpoint`)
 - Instance department views: `apps/api/plane/license/api/views/department.py`
@@ -19,17 +20,17 @@ Add `POST /api/instances/departments/bulk-upload/` endpoint.
 
 ## Department Model Fields (CSV columns)
 
-| CSV Column | Model Field | Required | Validation |
-|---|---|---|---|
-| `name` | `name` (max 255) | ✅ | non-empty |
-| `code` | `code` (max 20) | ❌ | - |
-| `short_name` | `short_name` (max 10) | ❌ | uppercase, min 2 chars, unique |
-| `dept_code` | `dept_code` (max 4) | ❌ | exactly 4 digits |
-| `description` | `description` | ❌ | - |
-| `dept_type` | `dept_type` | ❌ | HO / BRX / OSR |
-| `parent_short_name` | `parent` (FK lookup) | ❌ | lookup by short_name |
-| `level` | `level` | ❌ | 1–6 |
-| `is_active` | `is_active` | ❌ | true/false |
+| CSV Column          | Model Field           | Required | Validation                     |
+| ------------------- | --------------------- | -------- | ------------------------------ |
+| `name`              | `name` (max 255)      | ✅       | non-empty                      |
+| `code`              | `code` (max 20)       | ❌       | -                              |
+| `short_name`        | `short_name` (max 10) | ❌       | uppercase, min 2 chars, unique |
+| `dept_code`         | `dept_code` (max 4)   | ❌       | exactly 4 digits               |
+| `description`       | `description`         | ❌       | -                              |
+| `dept_type`         | `dept_type`           | ❌       | HO / BRX / OSR                 |
+| `parent_short_name` | `parent` (FK lookup)  | ❌       | lookup by short_name           |
+| `level`             | `level`               | ❌       | 1–6                            |
+| `is_active`         | `is_active`           | ❌       | true/false                     |
 
 ## Architecture
 
@@ -60,6 +61,7 @@ Response:
 ## Implementation Steps
 
 ### 1. Add `InstanceDepartmentBulkUploadEndpoint` view
+
 File: `apps/api/plane/license/api/views/department.py`
 
 ```python
@@ -79,6 +81,7 @@ class InstanceDepartmentBulkUploadEndpoint(BaseAPIView):
 ```
 
 ### 2. Register URL
+
 File: `apps/api/plane/license/api/urls/department.py`
 
 ```python

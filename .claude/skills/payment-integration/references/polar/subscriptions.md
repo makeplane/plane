@@ -13,26 +13,29 @@ Subscription lifecycle, upgrades, downgrades, and trial management.
 ## API Operations
 
 ### List Subscriptions
+
 ```typescript
 const subscriptions = await polar.subscriptions.list({
   organization_id: "org_xxx",
   product_id: "prod_xxx",
   customer_id: "cust_xxx",
-  status: "active"
+  status: "active",
 });
 ```
 
 ### Get Subscription
+
 ```typescript
 const subscription = await polar.subscriptions.get(subscriptionId);
 ```
 
 ### Update Subscription
+
 ```typescript
 const updated = await polar.subscriptions.update(subscriptionId, {
   product_price_id: "newPriceId",
   discount_id: "discount_xxx",
-  metadata: { plan: "pro" }
+  metadata: { plan: "pro" },
 });
 ```
 
@@ -41,11 +44,13 @@ const updated = await polar.subscriptions.update(subscriptionId, {
 ### Proration Options
 
 **Next Invoice (default):**
+
 - Credit/charge applied to upcoming invoice
 - Subscription updates immediately
 - Customer billed at next cycle
 
 **Invoice Immediately:**
+
 - Credit/charge processed right away
 - Subscription updates immediately
 - New invoice generated
@@ -53,18 +58,20 @@ const updated = await polar.subscriptions.update(subscriptionId, {
 ```typescript
 await polar.subscriptions.update(subscriptionId, {
   product_price_id: "higher_tier_price",
-  proration: "invoice_immediately" // or "next_invoice"
+  proration: "invoice_immediately", // or "next_invoice"
 });
 ```
 
 ### Customer-Initiated Changes
 
 **Enable in Product Settings:**
+
 - Toggle "Allow price change"
 - Customer can upgrade/downgrade via portal
 - Admin-only changes if disabled
 
 **Implementation:**
+
 ```typescript
 // Check if changes allowed
 const product = await polar.products.get(productId);
@@ -78,43 +85,50 @@ if (product.allow_price_change) {
 ### Configuration
 
 **Product-level:**
+
 ```typescript
 const product = await polar.products.create({
   name: "Pro Plan",
-  prices: [{
-    trial_period_days: 14
-  }]
+  prices: [
+    {
+      trial_period_days: 14,
+    },
+  ],
 });
 ```
 
 **Checkout-level:**
+
 ```typescript
 const session = await polar.checkouts.create({
   product_price_id: "price_xxx",
-  trial_period_days: 7 // Overrides product setting
+  trial_period_days: 7, // Overrides product setting
 });
 ```
 
 ### Trial Behavior
+
 - Customer not charged during trial
 - Benefits granted immediately
 - Can cancel anytime during trial
 - Charged at trial end if not canceled
 
 ### Trial Events
+
 ```typescript
 // Listen to webhooks
-subscription.created // Trial starts
-subscription.active // Trial ends, first charge
-subscription.canceled // Trial canceled
+subscription.created; // Trial starts
+subscription.active; // Trial ends, first charge
+subscription.canceled; // Trial canceled
 ```
 
 ## Cancellations
 
 ### Cancel at Period End
+
 ```typescript
 await polar.subscriptions.update(subscriptionId, {
-  cancel_at_period_end: true
+  cancel_at_period_end: true,
 });
 // Subscription remains active
 // Benefits continue until period end
@@ -122,6 +136,7 @@ await polar.subscriptions.update(subscriptionId, {
 ```
 
 ### Immediate Revocation
+
 ```typescript
 // Happens automatically at period end
 // Or manually via API (future feature)
@@ -131,9 +146,10 @@ await polar.subscriptions.update(subscriptionId, {
 ```
 
 ### Reactivate Canceled
+
 ```typescript
 await polar.subscriptions.update(subscriptionId, {
-  cancel_at_period_end: false
+  cancel_at_period_end: false,
 });
 // Removes cancellation
 // Subscription continues normally
@@ -142,14 +158,15 @@ await polar.subscriptions.update(subscriptionId, {
 ## Renewals
 
 ### Listening to Renewals
+
 ```typescript
-app.post('/webhook/polar', async (req, res) => {
+app.post("/webhook/polar", async (req, res) => {
   const event = validateEvent(req.body, req.headers, secret);
 
-  if (event.type === 'order.created') {
+  if (event.type === "order.created") {
     const order = event.data;
 
-    if (order.billing_reason === 'subscription_cycle') {
+    if (order.billing_reason === "subscription_cycle") {
       // This is a renewal
       await handleRenewal(order.subscription_id);
     }
@@ -160,6 +177,7 @@ app.post('/webhook/polar', async (req, res) => {
 ```
 
 ### Failed Renewals
+
 - `subscription.past_due` webhook fired
 - Dunning process initiated
 - Customer notified via email
@@ -169,20 +187,23 @@ app.post('/webhook/polar', async (req, res) => {
 ## Discounts
 
 ### Apply Discount
+
 ```typescript
 await polar.subscriptions.update(subscriptionId, {
-  discount_id: "discount_xxx"
+  discount_id: "discount_xxx",
 });
 ```
 
 ### Remove Discount
+
 ```typescript
 await polar.subscriptions.update(subscriptionId, {
-  discount_id: null
+  discount_id: null,
 });
 ```
 
 ### Discount Types
+
 - Percentage off: 20% off
 - Fixed amount: $5 off
 - Duration: once, forever, repeating
@@ -190,15 +211,17 @@ await polar.subscriptions.update(subscriptionId, {
 ## Customer Portal
 
 ### Generate Portal Access
+
 ```typescript
 const session = await polar.customerSessions.create({
-  customer_id: "cust_xxx"
+  customer_id: "cust_xxx",
 });
 
 // Redirect to: session.url
 ```
 
 ### Portal Features
+
 - View subscriptions
 - Upgrade/downgrade plans
 - Cancel subscriptions
@@ -207,11 +230,12 @@ const session = await polar.customerSessions.create({
 - Access benefits
 
 ### Pre-authenticated Links
+
 ```typescript
 // From your app, create session and redirect
-app.get('/portal', async (req, res) => {
+app.get("/portal", async (req, res) => {
   const session = await polar.customerSessions.create({
-    external_customer_id: req.user.id
+    external_customer_id: req.user.id,
   });
 
   res.redirect(session.url);
@@ -221,21 +245,23 @@ app.get('/portal', async (req, res) => {
 ## Metadata
 
 ### Update Subscription Metadata
+
 ```typescript
 await polar.subscriptions.update(subscriptionId, {
   metadata: {
     internal_id: "sub_123",
     tier: "pro",
-    source: "web"
-  }
+    source: "web",
+  },
 });
 ```
 
 ### Query by Metadata
+
 ```typescript
 const subscriptions = await polar.subscriptions.list({
   organization_id: "org_xxx",
-  metadata: { tier: "pro" }
+  metadata: { tier: "pro" },
 });
 ```
 
@@ -290,11 +316,12 @@ const subscriptions = await polar.subscriptions.list({
 ## Common Patterns
 
 ### Subscription Status Check
+
 ```typescript
 async function hasActiveSubscription(userId) {
   const subscriptions = await polar.subscriptions.list({
     external_customer_id: userId,
-    status: "active"
+    status: "active",
   });
 
   return subscriptions.items.length > 0;
@@ -302,11 +329,12 @@ async function hasActiveSubscription(userId) {
 ```
 
 ### Grace Period Handler
+
 ```typescript
-app.post('/webhook/polar', async (req, res) => {
+app.post("/webhook/polar", async (req, res) => {
   const event = validateEvent(req.body, req.headers, secret);
 
-  if (event.type === 'subscription.past_due') {
+  if (event.type === "subscription.past_due") {
     const subscription = event.data;
 
     // Grant 3-day grace period
@@ -321,19 +349,20 @@ app.post('/webhook/polar', async (req, res) => {
 ```
 
 ### Upgrade Path
+
 ```typescript
 async function upgradeSubscription(subscriptionId, newPriceId) {
   // Preview invoice
   const preview = await polar.subscriptions.previewUpdate(subscriptionId, {
     product_price_id: newPriceId,
-    proration: "invoice_immediately"
+    proration: "invoice_immediately",
   });
 
   // Show customer preview
   if (await confirmUpgrade(preview)) {
     await polar.subscriptions.update(subscriptionId, {
       product_price_id: newPriceId,
-      proration: "invoice_immediately"
+      proration: "invoice_immediately",
     });
   }
 }

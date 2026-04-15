@@ -1,48 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plan Review — Workspace-Level Time Tracking</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-      --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
-      --bg: #faf7f5;
-      --surface: #ffffff;
-      --surface2: #f5f0ec;
-      --surface-elevated: #fff9f5;
-      --border: rgba(0, 0, 0, 0.07);
-      --border-bright: rgba(0, 0, 0, 0.14);
-      --text: #292017;
-      --text-dim: #8a7e72;
-      --text-bright: #1a1510;
-      --accent: #c2410c;
-      --accent-dim: rgba(194, 65, 12, 0.07);
-      --node-a: #c2410c;
-      --node-a-dim: rgba(194, 65, 12, 0.07);
-      --node-b: #4d7c0f;
-      --node-b-dim: rgba(77, 124, 15, 0.07);
-      --node-c: #0f766e;
-      --node-c-dim: rgba(15, 118, 110, 0.07);
-      --green: #4d7c0f;
-      --green-dim: rgba(77, 124, 15, 0.07);
-      --red: #b91c1c;
-      --red-dim: rgba(185, 28, 28, 0.07);
-      --amber: #b45309;
-      --amber-dim: rgba(180, 83, 9, 0.07);
-      --sage: #65a30d;
-      --sage-dim: rgba(101, 163, 13, 0.07);
-      --teal: #0f766e;
-      --teal-dim: rgba(15, 118, 110, 0.07);
-      --plum: #9f1239;
-      --plum-dim: rgba(159, 18, 57, 0.07);
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plan Review — Workspace-Level Time Tracking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        --font-mono: "IBM Plex Mono", "SF Mono", monospace;
+        --bg: #faf7f5;
+        --surface: #ffffff;
+        --surface2: #f5f0ec;
+        --surface-elevated: #fff9f5;
+        --border: rgba(0, 0, 0, 0.07);
+        --border-bright: rgba(0, 0, 0, 0.14);
+        --text: #292017;
+        --text-dim: #8a7e72;
+        --text-bright: #1a1510;
+        --accent: #c2410c;
+        --accent-dim: rgba(194, 65, 12, 0.07);
+        --node-a: #c2410c;
+        --node-a-dim: rgba(194, 65, 12, 0.07);
+        --node-b: #4d7c0f;
+        --node-b-dim: rgba(77, 124, 15, 0.07);
+        --node-c: #0f766e;
+        --node-c-dim: rgba(15, 118, 110, 0.07);
+        --green: #4d7c0f;
+        --green-dim: rgba(77, 124, 15, 0.07);
+        --red: #b91c1c;
+        --red-dim: rgba(185, 28, 28, 0.07);
+        --amber: #b45309;
+        --amber-dim: rgba(180, 83, 9, 0.07);
+        --sage: #65a30d;
+        --sage-dim: rgba(101, 163, 13, 0.07);
+        --teal: #0f766e;
+        --teal-dim: rgba(15, 118, 110, 0.07);
+        --plum: #9f1239;
+        --plum-dim: rgba(159, 18, 57, 0.07);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #1a1412;
+          --surface: #231d1a;
+          --surface2: #2e2622;
+          --surface-elevated: #352d28;
+          --border: rgba(255, 255, 255, 0.06);
+          --border-bright: rgba(255, 255, 255, 0.12);
+          --text: #ede5dd;
+          --text-dim: #a69889;
+          --text-bright: #faf5f0;
+          --accent: #fb923c;
+          --accent-dim: rgba(251, 146, 60, 0.12);
+          --node-a: #fb923c;
+          --node-a-dim: rgba(251, 146, 60, 0.12);
+          --node-b: #a3e635;
+          --node-b-dim: rgba(163, 230, 53, 0.1);
+          --node-c: #5eead4;
+          --node-c-dim: rgba(94, 234, 212, 0.1);
+          --green: #a3e635;
+          --green-dim: rgba(163, 230, 53, 0.1);
+          --red: #fca5a5;
+          --red-dim: rgba(252, 165, 165, 0.1);
+          --amber: #fbbf24;
+          --amber-dim: rgba(251, 191, 36, 0.1);
+          --sage: #bef264;
+          --sage-dim: rgba(190, 242, 100, 0.1);
+          --teal: #5eead4;
+          --teal-dim: rgba(94, 234, 212, 0.1);
+          --plum: #fda4af;
+          --plum-dim: rgba(253, 164, 175, 0.1);
+        }
+      }
+      [data-theme="dark"] {
         --bg: #1a1412;
         --surface: #231d1a;
         --surface2: #2e2622;
@@ -73,553 +108,626 @@
         --plum: #fda4af;
         --plum-dim: rgba(253, 164, 175, 0.1);
       }
-    }
-    [data-theme="dark"] {
-      --bg: #1a1412;
-      --surface: #231d1a;
-      --surface2: #2e2622;
-      --surface-elevated: #352d28;
-      --border: rgba(255, 255, 255, 0.06);
-      --border-bright: rgba(255, 255, 255, 0.12);
-      --text: #ede5dd;
-      --text-dim: #a69889;
-      --text-bright: #faf5f0;
-      --accent: #fb923c;
-      --accent-dim: rgba(251, 146, 60, 0.12);
-      --node-a: #fb923c;
-      --node-a-dim: rgba(251, 146, 60, 0.12);
-      --node-b: #a3e635;
-      --node-b-dim: rgba(163, 230, 53, 0.1);
-      --node-c: #5eead4;
-      --node-c-dim: rgba(94, 234, 212, 0.1);
-      --green: #a3e635;
-      --green-dim: rgba(163, 230, 53, 0.1);
-      --red: #fca5a5;
-      --red-dim: rgba(252, 165, 165, 0.1);
-      --amber: #fbbf24;
-      --amber-dim: rgba(251, 191, 36, 0.1);
-      --sage: #bef264;
-      --sage-dim: rgba(190, 242, 100, 0.1);
-      --teal: #5eead4;
-      --teal-dim: rgba(94, 234, 212, 0.1);
-      --plum: #fda4af;
-      --plum-dim: rgba(253, 164, 175, 0.1);
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 15px; scroll-behavior: smooth; }
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 0 24px 80px;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image: radial-gradient(ellipse at 50% 0%, var(--accent-dim) 0%, transparent 60%);
-    }
-    .wrap {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 170px 1fr;
-      gap: 0 40px;
-      position: relative;
-    }
-    .main { min-width: 0; padding-top: 32px; }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 15px;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: var(--font-body);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        padding: 0 24px 80px;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: radial-gradient(ellipse at 50% 0%, var(--accent-dim) 0%, transparent 60%);
+      }
+      .wrap {
+        max-width: 1300px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 0 40px;
+        position: relative;
+      }
+      .main {
+        min-width: 0;
+        padding-top: 32px;
+      }
 
-    /* TOC */
-    .toc {
-      position: sticky;
-      top: 24px;
-      align-self: start;
-      padding: 14px 0;
-      grid-row: 1 / -1;
-      max-height: calc(100dvh - 48px);
-      overflow-y: auto;
-    }
-    .toc::-webkit-scrollbar { width: 3px; }
-    .toc::-webkit-scrollbar-thumb { background: var(--surface-elevated); border-radius: 2px; }
-    .toc-title {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-dim);
-      padding: 0 0 10px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    .toc a {
-      display: block;
-      font-size: 11px;
-      color: var(--text-dim);
-      text-decoration: none;
-      padding: 4px 8px;
-      border-radius: 5px;
-      border-left: 2px solid transparent;
-      transition: all 0.15s;
-      line-height: 1.4;
-      margin-bottom: 1px;
-    }
-    .toc a:hover { color: var(--text); background: var(--surface2); }
-    .toc a.active { color: var(--text); border-left-color: var(--accent); }
-
-    /* Header */
-    .page-header { margin-bottom: 32px; }
-    .page-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--text-bright);
-      letter-spacing: -0.5px;
-      line-height: 1.2;
-    }
-    .page-subtitle {
-      font-size: 14px;
-      color: var(--text-dim);
-      margin-top: 6px;
-    }
-    .badge-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    .badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border-bright);
-      background: var(--surface);
-      color: var(--text-dim);
-    }
-    .badge--accent { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
-    .badge--green { background: var(--green-dim); color: var(--green); border-color: var(--green); }
-    .badge--amber { background: var(--amber-dim); color: var(--amber); border-color: var(--amber); }
-    .badge--teal { background: var(--teal-dim); color: var(--teal); border-color: var(--teal); }
-
-    /* Section */
-    .sec-head {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-dim);
-      padding: 24px 0 12px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 20px;
-    }
-
-    /* Cards */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 16px;
-    }
-    .card--elevated {
-      background: var(--surface-elevated);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    }
-    .card--recessed {
-      background: color-mix(in srgb, var(--bg) 70%, var(--surface) 30%);
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .card--hero {
-      background: color-mix(in srgb, var(--surface) 92%, var(--accent) 8%);
-      border-color: color-mix(in srgb, var(--border) 50%, var(--accent) 50%);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-bright);
-      margin-bottom: 10px;
-      font-family: var(--font-mono);
-    }
-
-    /* KPI row */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .kpi {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 20px;
-      text-align: center;
-    }
-    .kpi__num {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-bright);
-      line-height: 1;
-    }
-    .kpi__label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 6px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .kpi--accent .kpi__num { color: var(--accent); }
-    .kpi--green .kpi__num { color: var(--green); }
-    .kpi--amber .kpi__num { color: var(--amber); }
-    .kpi--teal .kpi__num { color: var(--teal); }
-
-    /* Phase cards */
-    .phase-list { display: flex; flex-direction: column; gap: 12px; }
-    .phase-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 20px;
-      display: grid;
-      grid-template-columns: 36px 1fr auto;
-      gap: 0 16px;
-      align-items: start;
-    }
-    .phase-card--done { border-left: 3px solid var(--green); }
-    .phase-card--pending { border-left: 3px solid var(--amber); }
-    .phase-card--current { border-left: 3px solid var(--accent); }
-    .phase-num {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-dim);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .phase-info {}
-    .phase-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-bright);
-      margin-bottom: 4px;
-    }
-    .phase-meta {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-    .phase-tag {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-
-    /* Risk table */
-    .risk-table { width: 100%; border-collapse: collapse; }
-    .risk-table th {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-dim);
-      text-align: left;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .risk-table td {
-      font-size: 13px;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-    .risk-table tr:last-child td { border-bottom: none; }
-
-    /* Code diff */
-    .code-block {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      line-height: 1.7;
-      overflow-x: auto;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-    .code-block .added { color: var(--green); }
-    .code-block .removed { color: var(--red); }
-    .code-block .comment { color: var(--text-dim); font-style: italic; }
-
-    /* Review cards */
-    .review-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .review-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-    }
-    .review-card--good { border-top: 3px solid var(--green); }
-    .review-card--concern { border-top: 3px solid var(--amber); }
-    .review-card--gap { border-top: 3px solid var(--red); }
-    .review-card__title {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 10px;
-    }
-    .review-card--good .review-card__title { color: var(--green); }
-    .review-card--concern .review-card__title { color: var(--amber); }
-    .review-card--gap .review-card__title { color: var(--red); }
-    .review-card__items { list-style: none; }
-    .review-card__items li {
-      font-size: 13px;
-      color: var(--text);
-      padding: 3px 0;
-      display: flex;
-      gap: 8px;
-      align-items: baseline;
-    }
-    .review-card__items li::before {
-      content: '–';
-      color: var(--text-dim);
-      flex-shrink: 0;
-    }
-
-    /* Success criteria */
-    .criteria-list { list-style: none; }
-    .criteria-list li {
-      font-size: 13px;
-      color: var(--text);
-      padding: 5px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .criteria-list li::before {
-      content: '';
-      width: 16px;
-      height: 16px;
-      border: 1.5px solid var(--border-bright);
-      border-radius: 4px;
-      flex-shrink: 0;
-      background: var(--surface);
-    }
-
-    /* Dep graph */
-    .mermaid-wrap {
-      position: relative;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      overflow: auto;
-      margin-bottom: 24px;
-    }
-    .mermaid {
-      display: flex;
-      justify-content: center;
-    }
-
-    /* Theme toggle */
-    .theme-toggle {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 300;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-dim);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: background 0.15s, color 0.15s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
-    .theme-toggle:hover { background: var(--surface2); color: var(--text); }
-
-    @media (max-width: 1000px) {
-      .wrap { grid-template-columns: 1fr; padding-top: 0; }
-      body { padding-top: 0; }
+      /* TOC */
       .toc {
         position: sticky;
-        top: 0;
-        z-index: 200;
-        max-height: none;
-        display: flex;
-        gap: 4px;
-        align-items: center;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        padding: 10px 0;
-        margin: 0 -24px;
-        padding-left: 24px;
-        padding-right: 24px;
-        grid-row: auto;
+        top: 24px;
+        align-self: start;
+        padding: 14px 0;
+        grid-row: 1 / -1;
+        max-height: calc(100dvh - 48px);
+        overflow-y: auto;
       }
-      .toc::-webkit-scrollbar { display: none; }
-      .toc-title { display: none; }
+      .toc::-webkit-scrollbar {
+        width: 3px;
+      }
+      .toc::-webkit-scrollbar-thumb {
+        background: var(--surface-elevated);
+        border-radius: 2px;
+      }
+      .toc-title {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-dim);
+        padding: 0 0 10px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
       .toc a {
-        white-space: nowrap;
-        flex-shrink: 0;
-        border-left: none;
-        border-bottom: 2px solid transparent;
-        border-radius: 4px 4px 0 0;
-        padding: 6px 10px;
-        font-size: 10px;
+        display: block;
+        font-size: 11px;
+        color: var(--text-dim);
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: 5px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+        line-height: 1.4;
+        margin-bottom: 1px;
+      }
+      .toc a:hover {
+        color: var(--text);
+        background: var(--surface2);
       }
       .toc a.active {
-        border-left: none;
-        border-bottom-color: var(--accent);
+        color: var(--text);
+        border-left-color: var(--accent);
+      }
+
+      /* Header */
+      .page-header {
+        margin-bottom: 32px;
+      }
+      .page-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text-bright);
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--text-dim);
+        margin-top: 6px;
+      }
+      .badge-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--border-bright);
+        background: var(--surface);
+        color: var(--text-dim);
+      }
+      .badge--accent {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .badge--green {
+        background: var(--green-dim);
+        color: var(--green);
+        border-color: var(--green);
+      }
+      .badge--amber {
+        background: var(--amber-dim);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+      .badge--teal {
+        background: var(--teal-dim);
+        color: var(--teal);
+        border-color: var(--teal);
+      }
+
+      /* Section */
+      .sec-head {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-dim);
+        padding: 24px 0 12px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+      }
+      .card--elevated {
+        background: var(--surface-elevated);
+        box-shadow:
+          0 2px 8px rgba(0, 0, 0, 0.06),
+          0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .card--recessed {
+        background: color-mix(in srgb, var(--bg) 70%, var(--surface) 30%);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .card--hero {
+        background: color-mix(in srgb, var(--surface) 92%, var(--accent) 8%);
+        border-color: color-mix(in srgb, var(--border) 50%, var(--accent) 50%);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      }
+      .card-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-bright);
+        margin-bottom: 10px;
+        font-family: var(--font-mono);
+      }
+
+      /* KPI row */
+      .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .kpi {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 20px;
+        text-align: center;
+      }
+      .kpi__num {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-bright);
+        line-height: 1;
+      }
+      .kpi__label {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-dim);
+        margin-top: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .kpi--accent .kpi__num {
+        color: var(--accent);
+      }
+      .kpi--green .kpi__num {
+        color: var(--green);
+      }
+      .kpi--amber .kpi__num {
+        color: var(--amber);
+      }
+      .kpi--teal .kpi__num {
+        color: var(--teal);
+      }
+
+      /* Phase cards */
+      .phase-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .phase-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 36px 1fr auto;
+        gap: 0 16px;
+        align-items: start;
+      }
+      .phase-card--done {
+        border-left: 3px solid var(--green);
+      }
+      .phase-card--pending {
+        border-left: 3px solid var(--amber);
+      }
+      .phase-card--current {
+        border-left: 3px solid var(--accent);
+      }
+      .phase-num {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-dim);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .phase-info {
+      }
+      .phase-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-bright);
+        margin-bottom: 4px;
+      }
+      .phase-meta {
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+      .phase-tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      /* Risk table */
+      .risk-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .risk-table th {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-dim);
+        text-align: left;
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .risk-table td {
+        font-size: 13px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      .risk-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Code diff */
+      .code-block {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 18px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.7;
+        overflow-x: auto;
+        margin-bottom: 16px;
+        color: var(--text);
+      }
+      .code-block .added {
+        color: var(--green);
+      }
+      .code-block .removed {
+        color: var(--red);
+      }
+      .code-block .comment {
+        color: var(--text-dim);
+        font-style: italic;
+      }
+
+      /* Review cards */
+      .review-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .review-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+      }
+      .review-card--good {
+        border-top: 3px solid var(--green);
+      }
+      .review-card--concern {
+        border-top: 3px solid var(--amber);
+      }
+      .review-card--gap {
+        border-top: 3px solid var(--red);
+      }
+      .review-card__title {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 10px;
+      }
+      .review-card--good .review-card__title {
+        color: var(--green);
+      }
+      .review-card--concern .review-card__title {
+        color: var(--amber);
+      }
+      .review-card--gap .review-card__title {
+        color: var(--red);
+      }
+      .review-card__items {
+        list-style: none;
+      }
+      .review-card__items li {
+        font-size: 13px;
+        color: var(--text);
+        padding: 3px 0;
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .review-card__items li::before {
+        content: "–";
+        color: var(--text-dim);
+        flex-shrink: 0;
+      }
+
+      /* Success criteria */
+      .criteria-list {
+        list-style: none;
+      }
+      .criteria-list li {
+        font-size: 13px;
+        color: var(--text);
+        padding: 5px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .criteria-list li::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        border: 1.5px solid var(--border-bright);
+        border-radius: 4px;
+        flex-shrink: 0;
         background: var(--surface);
       }
-      .main { padding-top: 20px; }
-      .sec-head { scroll-margin-top: 52px; }
-    }
-  </style>
-</head>
-<body>
 
-<button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
+      /* Dep graph */
+      .mermaid-wrap {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        overflow: auto;
+        margin-bottom: 24px;
+      }
+      .mermaid {
+        display: flex;
+        justify-content: center;
+      }
 
-<div class="wrap">
+      /* Theme toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 300;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-dim);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      }
+      .theme-toggle:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
 
-  <nav class="toc" id="toc">
-    <div class="toc-title">Contents</div>
-    <a href="#s1">1. Overview</a>
-    <a href="#s2">2. Phases</a>
-    <a href="#s3">3. Data Flow</a>
-    <a href="#s4">4. Risks</a>
-    <a href="#s5">5. Review Cards</a>
-    <a href="#s6">6. Success Criteria</a>
-  </nav>
+      @media (max-width: 1000px) {
+        .wrap {
+          grid-template-columns: 1fr;
+          padding-top: 0;
+        }
+        body {
+          padding-top: 0;
+        }
+        .toc {
+          position: sticky;
+          top: 0;
+          z-index: 200;
+          max-height: none;
+          display: flex;
+          gap: 4px;
+          align-items: center;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          background: var(--bg);
+          border-bottom: 1px solid var(--border);
+          padding: 10px 0;
+          margin: 0 -24px;
+          padding-left: 24px;
+          padding-right: 24px;
+          grid-row: auto;
+        }
+        .toc::-webkit-scrollbar {
+          display: none;
+        }
+        .toc-title {
+          display: none;
+        }
+        .toc a {
+          white-space: nowrap;
+          flex-shrink: 0;
+          border-left: none;
+          border-bottom: 2px solid transparent;
+          border-radius: 4px 4px 0 0;
+          padding: 6px 10px;
+          font-size: 10px;
+        }
+        .toc a.active {
+          border-left: none;
+          border-bottom-color: var(--accent);
+          background: var(--surface);
+        }
+        .main {
+          padding-top: 20px;
+        }
+        .sec-head {
+          scroll-margin-top: 52px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
 
-  <div class="main">
+    <div class="wrap">
+      <nav class="toc" id="toc">
+        <div class="toc-title">Contents</div>
+        <a href="#s1">1. Overview</a>
+        <a href="#s2">2. Phases</a>
+        <a href="#s3">3. Data Flow</a>
+        <a href="#s4">4. Risks</a>
+        <a href="#s5">5. Review Cards</a>
+        <a href="#s6">6. Success Criteria</a>
+      </nav>
 
-    <div class="page-header" id="s1">
-      <div class="page-title">Workspace-Level Time Tracking</div>
-      <div class="page-subtitle">Plan vs Codebase Comparison — 2026-04-08 · 6h effort · 5 phases</div>
-      <div class="badge-row">
-        <span class="badge badge--accent">P2 Priority</span>
-        <span class="badge badge--teal">time-tracking</span>
-        <span class="badge badge--teal">workspace</span>
-        <span class="badge badge--teal">ce-feature</span>
-        <span class="badge">ngoc-feat/workspaces-default-view</span>
-      </div>
-    </div>
-
-    <!-- KPI Row -->
-    <div class="kpi-row">
-      <div class="kpi kpi--accent">
-        <div class="kpi__num">5</div>
-        <div class="kpi__label">Phases</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi__num">0</div>
-        <div class="kpi__label">Completed</div>
-      </div>
-      <div class="kpi kpi--amber">
-        <div class="kpi__num">6h</div>
-        <div class="kpi__label">Estimated</div>
-      </div>
-      <div class="kpi kpi--teal">
-        <div class="kpi__num">6</div>
-        <div class="kpi__label">Files to Create</div>
-      </div>
-      <div class="kpi kpi--green">
-        <div class="kpi__num">8</div>
-        <div class="kpi__label">Files to Modify</div>
-      </div>
-    </div>
-
-    <!-- Overview Summary -->
-    <div class="card card--hero" style="margin-bottom:24px">
-      <div class="card-title">Plan Summary</div>
-      <p style="font-size:14px;color:var(--text);line-height:1.7">
-      Expose project-level time-tracking UI (Timesheet, Analytics, Capacity) at workspace scope.
-      Backend endpoints mostly exist; main gaps: workspace analytics endpoint, frontend pages/routes/nav.
-      All phases are <strong>additive-only</strong> — no existing behavior modified destructively.
-      Rollback = delete new files + remove route/nav entries.
-      </p>
-    </div>
-
-    <!-- Section 2: Phases -->
-    <div class="sec-head" id="s2">2 — Phases</div>
-
-    <div class="phase-list">
-      <div class="phase-card phase-card--pending">
-        <div class="phase-num">01</div>
-        <div class="phase-info">
-          <div class="phase-name">Backend: Workspace Analytics Endpoint</div>
-          <div class="phase-meta">1h · Blocks Phase 2+ · 1 file create, 2 modify</div>
+      <div class="main">
+        <div class="page-header" id="s1">
+          <div class="page-title">Workspace-Level Time Tracking</div>
+          <div class="page-subtitle">Plan vs Codebase Comparison — 2026-04-08 · 6h effort · 5 phases</div>
+          <div class="badge-row">
+            <span class="badge badge--accent">P2 Priority</span>
+            <span class="badge badge--teal">time-tracking</span>
+            <span class="badge badge--teal">workspace</span>
+            <span class="badge badge--teal">ce-feature</span>
+            <span class="badge">ngoc-feat/workspaces-default-view</span>
+          </div>
         </div>
-        <span class="phase-tag" style="background:var(--amber-dim);color:var(--amber)">Pending</span>
-      </div>
-      <div class="phase-card phase-card--pending">
-        <div class="phase-num">02</div>
-        <div class="phase-info">
-          <div class="phase-name">Service + Store Updates</div>
-          <div class="phase-meta">1h · Blocks Phase 3 · 2 files modify</div>
-        </div>
-        <span class="phase-tag" style="background:var(--amber-dim);color:var(--amber)">Pending</span>
-      </div>
-      <div class="phase-card phase-card--pending">
-        <div class="phase-num">03</div>
-        <div class="phase-info">
-          <div class="phase-name">Component Adaptations</div>
-          <div class="phase-meta">1.5h · Blocks Phase 4 · 3 modify, 1 create</div>
-        </div>
-        <span class="phase-tag" style="background:var(--amber-dim);color:var(--amber)">Pending</span>
-      </div>
-      <div class="phase-card phase-card--pending">
-        <div class="phase-num">04</div>
-        <div class="phase-info">
-          <div class="phase-name">Workspace Pages (layout/header/pages)</div>
-          <div class="phase-meta">1.5h · 5 files create</div>
-        </div>
-        <span class="phase-tag" style="background:var(--amber-dim);color:var(--amber)">Pending</span>
-      </div>
-      <div class="phase-card phase-card--pending">
-        <div class="phase-num">05</div>
-        <div class="phase-info">
-          <div class="phase-name">Routes, Navigation, i18n</div>
-          <div class="phase-meta">1h · Can run parallel with Phase 4 · 7 files modify</div>
-        </div>
-        <span class="phase-tag" style="background:var(--amber-dim);color:var(--amber)">Pending</span>
-      </div>
-    </div>
 
-    <!-- Section 3: Data Flow -->
-    <div class="sec-head" id="s3">3 — Data Flow</div>
+        <!-- KPI Row -->
+        <div class="kpi-row">
+          <div class="kpi kpi--accent">
+            <div class="kpi__num">5</div>
+            <div class="kpi__label">Phases</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__num">0</div>
+            <div class="kpi__label">Completed</div>
+          </div>
+          <div class="kpi kpi--amber">
+            <div class="kpi__num">6h</div>
+            <div class="kpi__label">Estimated</div>
+          </div>
+          <div class="kpi kpi--teal">
+            <div class="kpi__num">6</div>
+            <div class="kpi__label">Files to Create</div>
+          </div>
+          <div class="kpi kpi--green">
+            <div class="kpi__num">8</div>
+            <div class="kpi__label">Files to Modify</div>
+          </div>
+        </div>
 
-    <div class="mermaid-wrap">
-      <pre class="mermaid">
+        <!-- Overview Summary -->
+        <div class="card card--hero" style="margin-bottom: 24px">
+          <div class="card-title">Plan Summary</div>
+          <p style="font-size: 14px; color: var(--text); line-height: 1.7">
+            Expose project-level time-tracking UI (Timesheet, Analytics, Capacity) at workspace scope. Backend endpoints
+            mostly exist; main gaps: workspace analytics endpoint, frontend pages/routes/nav. All phases are
+            <strong>additive-only</strong> — no existing behavior modified destructively. Rollback = delete new files +
+            remove route/nav entries.
+          </p>
+        </div>
+
+        <!-- Section 2: Phases -->
+        <div class="sec-head" id="s2">2 — Phases</div>
+
+        <div class="phase-list">
+          <div class="phase-card phase-card--pending">
+            <div class="phase-num">01</div>
+            <div class="phase-info">
+              <div class="phase-name">Backend: Workspace Analytics Endpoint</div>
+              <div class="phase-meta">1h · Blocks Phase 2+ · 1 file create, 2 modify</div>
+            </div>
+            <span class="phase-tag" style="background: var(--amber-dim); color: var(--amber)">Pending</span>
+          </div>
+          <div class="phase-card phase-card--pending">
+            <div class="phase-num">02</div>
+            <div class="phase-info">
+              <div class="phase-name">Service + Store Updates</div>
+              <div class="phase-meta">1h · Blocks Phase 3 · 2 files modify</div>
+            </div>
+            <span class="phase-tag" style="background: var(--amber-dim); color: var(--amber)">Pending</span>
+          </div>
+          <div class="phase-card phase-card--pending">
+            <div class="phase-num">03</div>
+            <div class="phase-info">
+              <div class="phase-name">Component Adaptations</div>
+              <div class="phase-meta">1.5h · Blocks Phase 4 · 3 modify, 1 create</div>
+            </div>
+            <span class="phase-tag" style="background: var(--amber-dim); color: var(--amber)">Pending</span>
+          </div>
+          <div class="phase-card phase-card--pending">
+            <div class="phase-num">04</div>
+            <div class="phase-info">
+              <div class="phase-name">Workspace Pages (layout/header/pages)</div>
+              <div class="phase-meta">1.5h · 5 files create</div>
+            </div>
+            <span class="phase-tag" style="background: var(--amber-dim); color: var(--amber)">Pending</span>
+          </div>
+          <div class="phase-card phase-card--pending">
+            <div class="phase-num">05</div>
+            <div class="phase-info">
+              <div class="phase-name">Routes, Navigation, i18n</div>
+              <div class="phase-meta">1h · Can run parallel with Phase 4 · 7 files modify</div>
+            </div>
+            <span class="phase-tag" style="background: var(--amber-dim); color: var(--amber)">Pending</span>
+          </div>
+        </div>
+
+        <!-- Section 3: Data Flow -->
+        <div class="sec-head" id="s3">3 — Data Flow</div>
+
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
 graph TD
   USR["User"] -->|"Click sidebar"| NAV[Sidebar<br/>Time Tracking]
   NAV -->|"/:ws/time-tracking/"| LYT[Workspace<br/>Layout<br/>3-tab nav]
@@ -645,11 +753,11 @@ graph TD
 
   class WA new
       </pre>
-    </div>
+        </div>
 
-    <!-- Phase dependency graph -->
-    <div class="mermaid-wrap">
-      <pre class="mermaid">
+        <!-- Phase dependency graph -->
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
 graph LR
   P1[Phase 01<br/>Backend Endpoint] --> P2[Phase 02<br/>Service+Store]
   P2 --> P3[Phase 03<br/>Components]
@@ -660,198 +768,272 @@ graph LR
   classDef phase fill:#b5761433,stroke:#b57614,stroke-width:2px
   class P1,P2,P3,P4,P5 phase
       </pre>
-    </div>
+        </div>
 
-    <!-- Section 4: Risks -->
-    <div class="sec-head" id="s4">4 — Risk Assessment</div>
+        <!-- Section 4: Risks -->
+        <div class="sec-head" id="s4">4 — Risk Assessment</div>
 
-    <div class="card">
-      <table class="risk-table">
-        <thead>
-          <tr>
-            <th>Risk</th>
-            <th>Likelihood</th>
-            <th>Impact</th>
-            <th>Mitigation</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code style="font-size:12px">AnalyticsTimesheetTable</code> expects <code style="font-size:12px">projectId</code> prop</td>
-            <td><span style="color:var(--amber)">Medium</span></td>
-            <td><span style="color:var(--amber)">Medium</span></td>
-            <td style="font-size:12px;color:var(--text-dim)">Make projectId optional; show <code>project_identifier</code> column when absent (already includes project prefix)</td>
-          </tr>
-          <tr>
-            <td><code style="font-size:12px">Capacity MemberDropdown</code> requires <code style="font-size:12px">projectId</code></td>
-            <td><span style="color:var(--amber)">Medium</span></td>
-            <td><span style="color:var(--green)">Low</span></td>
-            <td style="font-size:12px;color:var(--text-dim)">Hide member filter in cross-workspace mode (already done)</td>
-          </tr>
-          <tr>
-            <td>Route collision with existing <code style="font-size:12px">/analytics/</code> path</td>
-            <td><span style="color:var(--green)">Low</span></td>
-            <td><span style="color:var(--red)">High</span></td>
-            <td style="font-size:12px;color:var(--text-dim)">Use <code>/time-tracking/</code> prefix — distinct from workspace analytics</td>
-          </tr>
-          <tr>
-            <td><code style="font-size:12px">Route.ComponentProps</code> type file auto-generation</td>
-            <td><span style="color:var(--amber)">Medium</span></td>
-            <td><span style="color:var(--amber)">Medium</span></td>
-            <td style="font-size:12px;color:var(--text-dim)">React-router auto-generates <code>+types/page.ts</code> after routes registered in Phase 05</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <div class="card">
+          <table class="risk-table">
+            <thead>
+              <tr>
+                <th>Risk</th>
+                <th>Likelihood</th>
+                <th>Impact</th>
+                <th>Mitigation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <code style="font-size: 12px">AnalyticsTimesheetTable</code> expects
+                  <code style="font-size: 12px">projectId</code> prop
+                </td>
+                <td><span style="color: var(--amber)">Medium</span></td>
+                <td><span style="color: var(--amber)">Medium</span></td>
+                <td style="font-size: 12px; color: var(--text-dim)">
+                  Make projectId optional; show <code>project_identifier</code> column when absent (already includes
+                  project prefix)
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code style="font-size: 12px">Capacity MemberDropdown</code> requires
+                  <code style="font-size: 12px">projectId</code>
+                </td>
+                <td><span style="color: var(--amber)">Medium</span></td>
+                <td><span style="color: var(--green)">Low</span></td>
+                <td style="font-size: 12px; color: var(--text-dim)">
+                  Hide member filter in cross-workspace mode (already done)
+                </td>
+              </tr>
+              <tr>
+                <td>Route collision with existing <code style="font-size: 12px">/analytics/</code> path</td>
+                <td><span style="color: var(--green)">Low</span></td>
+                <td><span style="color: var(--red)">High</span></td>
+                <td style="font-size: 12px; color: var(--text-dim)">
+                  Use <code>/time-tracking/</code> prefix — distinct from workspace analytics
+                </td>
+              </tr>
+              <tr>
+                <td><code style="font-size: 12px">Route.ComponentProps</code> type file auto-generation</td>
+                <td><span style="color: var(--amber)">Medium</span></td>
+                <td><span style="color: var(--amber)">Medium</span></td>
+                <td style="font-size: 12px; color: var(--text-dim)">
+                  React-router auto-generates <code>+types/page.ts</code> after routes registered in Phase 05
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    <!-- Section 5: Review Cards -->
-    <div class="sec-head" id="s5">5 — Review Assessment</div>
+        <!-- Section 5: Review Cards -->
+        <div class="sec-head" id="s5">5 — Review Assessment</div>
 
-    <div class="review-grid">
-      <div class="review-card review-card--good">
-        <div class="review-card__title">✓ Strengths</div>
-        <ul class="review-card__items">
-          <li>Additive-only approach — zero existing behavior modified</li>
-          <li>Clear dependency chain — each phase blocks the next</li>
-          <li>Service/store patterns already established — Phase 02 is low-risk cloning</li>
-          <li>Backend endpoint is simple clone — remove one filter, reuse everything else</li>
-          <li>TimesheetGrid + CapacityDashboard already have cross-workspace toggles</li>
-          <li>Rollback story is clean: delete new files + route entries</li>
-        </ul>
+        <div class="review-grid">
+          <div class="review-card review-card--good">
+            <div class="review-card__title">✓ Strengths</div>
+            <ul class="review-card__items">
+              <li>Additive-only approach — zero existing behavior modified</li>
+              <li>Clear dependency chain — each phase blocks the next</li>
+              <li>Service/store patterns already established — Phase 02 is low-risk cloning</li>
+              <li>Backend endpoint is simple clone — remove one filter, reuse everything else</li>
+              <li>TimesheetGrid + CapacityDashboard already have cross-workspace toggles</li>
+              <li>Rollback story is clean: delete new files + route entries</li>
+            </ul>
+          </div>
+          <div class="review-card review-card--concern">
+            <div class="review-card__title">⚠ Concerns</div>
+            <ul class="review-card__items">
+              <li>TypeScript: making projectId optional may break existing callers — need to verify</li>
+              <li>AnalyticsTimesheetTable issue link construction may depend on projectId</li>
+              <li>Route registration order matters — Phase 05 must run after Phase 04 creates files</li>
+              <li>react-router type file auto-generation is timing-dependent</li>
+              <li>No pagination on new workspace endpoint — large workspaces could be slow</li>
+            </ul>
+          </div>
+          <div class="review-card review-card--gap">
+            <div class="review-card__title">✗ Gaps</div>
+            <ul class="review-card__items">
+              <li>Plan doesn't specify workspace-level permission check for new endpoint</li>
+              <li>No mention of workspace member vs admin distinction in timesheet visibility</li>
+              <li>WeekStart parameter validation not detailed — what happens with bad dates?</li>
+              <li>No test coverage plan for the new endpoint</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Understanding gaps -->
+        <div class="card card--recessed" style="margin-bottom: 24px">
+          <div class="card-title">Understanding Gaps</div>
+          <ul style="list-style: none; font-size: 13px; color: var(--text); line-height: 2">
+            <li>
+              <span style="color: var(--amber); font-family: var(--font-mono)">?</span> &nbsp;Does the new workspace
+              analytics endpoint need explicit ADMIN permission or does middleware handle workspace-level auth?
+            </li>
+            <li>
+              <span style="color: var(--amber); font-family: var(--font-mono)">?</span> &nbsp;Are there existing
+              workspace-level timesheet permission rules that differ from project-level?
+            </li>
+            <li>
+              <span style="color: var(--amber); font-family: var(--font-mono)">?</span> &nbsp;Should the workspace
+              time-tracking pages have a feature flag guard like project pages do?
+            </li>
+            <li>
+              <span style="color: var(--amber); font-family: var(--font-mono)">?</span> &nbsp;Should time-tracking be
+              accessible to all workspace members or ADMIN-only at workspace level?
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 6: Success Criteria -->
+        <div class="sec-head" id="s6">6 — Success Criteria</div>
+
+        <div class="card">
+          <ul class="criteria-list">
+            <li>
+              <code
+                style="
+                  font-family: var(--font-mono);
+                  font-size: 12px;
+                  background: var(--surface2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                "
+                >/:ws/time-tracking/</code
+              >
+              &nbsp;renders Timesheet tab with cross-workspace data
+            </li>
+            <li>
+              <code
+                style="
+                  font-family: var(--font-mono);
+                  font-size: 12px;
+                  background: var(--surface2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                "
+                >/:ws/time-tracking/analytics</code
+              >
+              &nbsp;renders workspace-scoped analytics
+            </li>
+            <li>
+              <code
+                style="
+                  font-family: var(--font-mono);
+                  font-size: 12px;
+                  background: var(--surface2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                "
+                >/:ws/time-tracking/capacity</code
+              >
+              &nbsp;renders capacity heatmap cross-workspace
+            </li>
+            <li>Sidebar shows "Time Tracking" nav item with Timer icon</li>
+            <li>No regression on project-level time-tracking pages</li>
+            <li>GET <code>/api/workspaces/{slug}/time-tracking/analytics/timesheet/</code> returns 200</li>
+            <li>Permission gated to ADMIN + MEMBER</li>
+            <li>No N+1 queries — select_related used</li>
+          </ul>
+        </div>
       </div>
-      <div class="review-card review-card--concern">
-        <div class="review-card__title">⚠ Concerns</div>
-        <ul class="review-card__items">
-          <li>TypeScript: making projectId optional may break existing callers — need to verify</li>
-          <li>AnalyticsTimesheetTable issue link construction may depend on projectId</li>
-          <li>Route registration order matters — Phase 05 must run after Phase 04 creates files</li>
-          <li>react-router type file auto-generation is timing-dependent</li>
-          <li>No pagination on new workspace endpoint — large workspaces could be slow</li>
-        </ul>
-      </div>
-      <div class="review-card review-card--gap">
-        <div class="review-card__title">✗ Gaps</div>
-        <ul class="review-card__items">
-          <li>Plan doesn't specify workspace-level permission check for new endpoint</li>
-          <li>No mention of workspace member vs admin distinction in timesheet visibility</li>
-          <li>WeekStart parameter validation not detailed — what happens with bad dates?</li>
-          <li>No test coverage plan for the new endpoint</li>
-        </ul>
-      </div>
+      <!-- /main -->
     </div>
+    <!-- /wrap -->
 
-    <!-- Understanding gaps -->
-    <div class="card card--recessed" style="margin-bottom:24px">
-      <div class="card-title">Understanding Gaps</div>
-      <ul style="list-style:none;font-size:13px;color:var(--text);line-height:2">
-        <li><span style="color:var(--amber);font-family:var(--font-mono)">?</span> &nbsp;Does the new workspace analytics endpoint need explicit ADMIN permission or does middleware handle workspace-level auth?</li>
-        <li><span style="color:var(--amber);font-family:var(--font-mono)">?</span> &nbsp;Are there existing workspace-level timesheet permission rules that differ from project-level?</li>
-        <li><span style="color:var(--amber);font-family:var(--font-mono)">?</span> &nbsp;Should the workspace time-tracking pages have a feature flag guard like project pages do?</li>
-        <li><span style="color:var(--amber);font-family:var(--font-mono)">?</span> &nbsp;Should time-tracking be accessible to all workspace members or ADMIN-only at workspace level?</li>
-      </ul>
-    </div>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
-    <!-- Section 6: Success Criteria -->
-    <div class="sec-head" id="s6">6 — Success Criteria</div>
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "base",
+        look: "classic",
+        themeVariables: {
+          primaryColor: isDark ? "#134e4a" : "#ccfbf1",
+          primaryBorderColor: isDark ? "#14b8a6" : "#0d9488",
+          primaryTextColor: isDark ? "#f0fdfa" : "#134e4a",
+          secondaryColor: isDark ? "#1e293b" : "#f0fdf4",
+          secondaryBorderColor: isDark ? "#059669" : "#16a34a",
+          secondaryTextColor: isDark ? "#f1f5f9" : "#1e293b",
+          tertiaryColor: isDark ? "#27201a" : "#fef3c7",
+          tertiaryBorderColor: isDark ? "#d97706" : "#f59e0b",
+          tertiaryTextColor: isDark ? "#fef3c7" : "#27201a",
+          lineColor: isDark ? "#64748b" : "#94a3b8",
+          fontSize: "16px",
+          fontFamily: "var(--font-body)",
+          noteBkgColor: isDark ? "#1e293b" : "#fefce8",
+          noteTextColor: isDark ? "#f1f5f9" : "#1e293b",
+          noteBorderColor: isDark ? "#fbbf24" : "#d97706",
+        },
+      });
+    </script>
+    <script>
+      // Theme toggle
+      (function () {
+        var toggle = document.getElementById("themeToggle");
+        var saved = localStorage.getItem("theme");
+        var initial = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        if (saved) document.documentElement.setAttribute("data-theme", initial);
+        toggle.textContent = initial === "dark" ? "\u2600" : "\u263E";
+        toggle.addEventListener("click", function () {
+          var current =
+            document.documentElement.getAttribute("data-theme") ||
+            (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          var next = current === "light" ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", next);
+          localStorage.setItem("theme", next);
+          toggle.textContent = next === "dark" ? "\u2600" : "\u263E";
+        });
+      })();
 
-    <div class="card">
-      <ul class="criteria-list">
-        <li><code style="font-family:var(--font-mono);font-size:12px;background:var(--surface2);padding:2px 6px;border-radius:4px">/:ws/time-tracking/</code> &nbsp;renders Timesheet tab with cross-workspace data</li>
-        <li><code style="font-family:var(--font-mono);font-size:12px;background:var(--surface2);padding:2px 6px;border-radius:4px">/:ws/time-tracking/analytics</code> &nbsp;renders workspace-scoped analytics</li>
-        <li><code style="font-family:var(--font-mono);font-size:12px;background:var(--surface2);padding:2px 6px;border-radius:4px">/:ws/time-tracking/capacity</code> &nbsp;renders capacity heatmap cross-workspace</li>
-        <li>Sidebar shows "Time Tracking" nav item with Timer icon</li>
-        <li>No regression on project-level time-tracking pages</li>
-        <li>GET <code>/api/workspaces/{slug}/time-tracking/analytics/timesheet/</code> returns 200</li>
-        <li>Permission gated to ADMIN + MEMBER</li>
-        <li>No N+1 queries — select_related used</li>
-      </ul>
-    </div>
-
-  </div><!-- /main -->
-</div><!-- /wrap -->
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'base',
-    look: 'classic',
-    themeVariables: {
-      primaryColor: isDark ? '#134e4a' : '#ccfbf1',
-      primaryBorderColor: isDark ? '#14b8a6' : '#0d9488',
-      primaryTextColor: isDark ? '#f0fdfa' : '#134e4a',
-      secondaryColor: isDark ? '#1e293b' : '#f0fdf4',
-      secondaryBorderColor: isDark ? '#059669' : '#16a34a',
-      secondaryTextColor: isDark ? '#f1f5f9' : '#1e293b',
-      tertiaryColor: isDark ? '#27201a' : '#fef3c7',
-      tertiaryBorderColor: isDark ? '#d97706' : '#f59e0b',
-      tertiaryTextColor: isDark ? '#fef3c7' : '#27201a',
-      lineColor: isDark ? '#64748b' : '#94a3b8',
-      fontSize: '16px',
-      fontFamily: 'var(--font-body)',
-      noteBkgColor: isDark ? '#1e293b' : '#fefce8',
-      noteTextColor: isDark ? '#f1f5f9' : '#1e293b',
-      noteBorderColor: isDark ? '#fbbf24' : '#d97706',
-    }
-  });
-</script>
-<script>
-  // Theme toggle
-  (function() {
-    var toggle = document.getElementById('themeToggle');
-    var saved = localStorage.getItem('theme');
-    var initial = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    if (saved) document.documentElement.setAttribute('data-theme', initial);
-    toggle.textContent = initial === 'dark' ? '\u2600' : '\u263E';
-    toggle.addEventListener('click', function() {
-      var current = document.documentElement.getAttribute('data-theme')
-        || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      var next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      toggle.textContent = next === 'dark' ? '\u2600' : '\u263E';
-    });
-  })();
-
-  // Scroll spy
-  (function() {
-    var toc = document.getElementById('toc');
-    var links = toc.querySelectorAll('a');
-    var sections = [];
-    links.forEach(function(link) {
-      var id = link.getAttribute('href').slice(1);
-      var el = document.getElementById(id);
-      if (el) sections.push({ id: id, el: el, link: link });
-    });
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          links.forEach(function(l) { l.classList.remove('active'); });
-          var match = sections.find(function(s) { return s.el === entry.target; });
-          if (match) {
-            match.link.classList.add('active');
-            if (window.innerWidth <= 1000) {
-              match.link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      // Scroll spy
+      (function () {
+        var toc = document.getElementById("toc");
+        var links = toc.querySelectorAll("a");
+        var sections = [];
+        links.forEach(function (link) {
+          var id = link.getAttribute("href").slice(1);
+          var el = document.getElementById(id);
+          if (el) sections.push({ id: id, el: el, link: link });
+        });
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                links.forEach(function (l) {
+                  l.classList.remove("active");
+                });
+                var match = sections.find(function (s) {
+                  return s.el === entry.target;
+                });
+                if (match) {
+                  match.link.classList.add("active");
+                  if (window.innerWidth <= 1000) {
+                    match.link.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                  }
+                }
+              }
+            });
+          },
+          { rootMargin: "-10% 0px -80% 0px" }
+        );
+        sections.forEach(function (s) {
+          observer.observe(s.el);
+        });
+        links.forEach(function (link) {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = link.getAttribute("href").slice(1);
+            var el = document.getElementById(id);
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+              history.replaceState(null, "", "#" + id);
             }
-          }
-        }
-      });
-    }, { rootMargin: '-10% 0px -80% 0px' });
-    sections.forEach(function(s) { observer.observe(s.el); });
-    links.forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        var id = link.getAttribute('href').slice(1);
-        var el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          history.replaceState(null, '', '#' + id);
-        }
-      });
-    });
-  })();
-</script>
-</body>
+          });
+        });
+      })();
+    </script>
+  </body>
 </html>

@@ -5,6 +5,7 @@
 **Challenge:** Docs in multiple languages
 
 **Approach:**
+
 1. Identify target language from user
 2. Search for language-specific llms.txt
    - `llms-es.txt`, `llms-ja.txt`
@@ -14,10 +15,12 @@
 ## Version-Specific Documentation
 
 **Latest (default):**
+
 - Use base llms.txt URL
 - No version specifier needed
 
 **Specific version:**
+
 ```
 WebSearch: "[library] v[version] llms.txt"
 Check paths:
@@ -34,6 +37,7 @@ git checkout v[version] or tags/[version]
 **Challenge:** Core framework + 50 plugins
 
 **Strategy:**
+
 1. Focus on core framework first
 2. Ask user which plugins needed
 3. Launch targeted search for specific plugins
@@ -43,11 +47,13 @@ git checkout v[version] or tags/[version]
 ## Documentation Under Construction
 
 **Signs:**
+
 - New release with incomplete docs
 - Many "Coming soon" pages
 - GitHub issues requesting docs
 
 **Approach:**
+
 1. Note status upfront in report
 2. Combine available docs + repo analysis
 3. Check tests/ and examples/ directories
@@ -57,6 +63,7 @@ git checkout v[version] or tags/[version]
 ## Conflicting Information
 
 **When sources disagree:**
+
 1. Identify primary official source
 2. Note version differences
 3. Present both approaches with context
@@ -64,6 +71,7 @@ git checkout v[version] or tags/[version]
 5. Explain why conflict exists
 
 **Priority order:**
+
 1. Official docs (latest version)
 2. Official docs (versioned)
 3. GitHub README
@@ -73,6 +81,7 @@ git checkout v[version] or tags/[version]
 ## Rate Limiting
 
 **If hitting API limits:**
+
 - Use CONTEXT7_API_KEY from .env
 - Implement exponential backoff
 - Cache results in session

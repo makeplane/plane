@@ -15,22 +15,22 @@ Comprehensive naming rules for all file types. See SKILL.md Rule 2 for overview.
 
 ### Examples
 
-| Title | Slug |
-|-------|------|
-| "User Authentication Flow" | `user-authentication-flow` |
+| Title                            | Slug                           |
+| -------------------------------- | ------------------------------ |
+| "User Authentication Flow"       | `user-authentication-flow`     |
 | "Fix: API Rate Limiting Bug #42" | `fix-api-rate-limiting-bug-42` |
-| "10 Tips for Better CI/CD" | `10-tips-for-better-ci-cd` |
-| "AI & Automation: A Guide" | `ai-automation-a-guide` |
+| "10 Tips for Better CI/CD"       | `10-tips-for-better-ci-cd`     |
+| "AI & Automation: A Guide"       | `ai-automation-a-guide`        |
 
 ## Date Formats
 
 Use `$CK_PLAN_DATE_FORMAT` env var if set, otherwise default to `YYMMDD-HHmm`.
 
-| Format | Example | Use case |
-|--------|---------|----------|
+| Format        | Example       | Use case                         |
+| ------------- | ------------- | -------------------------------- |
 | `YYMMDD-HHmm` | `260304-1530` | Default for time-sensitive files |
-| `YYMMDD` | `260304` | Date-only (ADRs, daily reports) |
-| No date | `{slug}` | Evergreen content |
+| `YYMMDD`      | `260304`      | Date-only (ADRs, daily reports)  |
+| No date       | `{slug}`      | Evergreen content                |
 
 ### When to timestamp
 
@@ -51,25 +51,25 @@ Use `$CK_PLAN_DATE_FORMAT` env var if set, otherwise default to `YYMMDD-HHmm`.
 
 Defer to `descriptive-name` hook for language-specific conventions:
 
-| Language | Convention | Example |
-|----------|-----------|---------|
-| JS/TS/Python/Shell | kebab-case | `user-auth-service.ts` |
-| C#/Java/Kotlin/Swift | PascalCase | `UserAuthService.cs` |
-| Go/Rust | snake_case | `user_auth_service.go` |
-| CSS/SCSS | kebab-case | `auth-form-styles.scss` |
+| Language             | Convention | Example                 |
+| -------------------- | ---------- | ----------------------- |
+| JS/TS/Python/Shell   | kebab-case | `user-auth-service.ts`  |
+| C#/Java/Kotlin/Swift | PascalCase | `UserAuthService.cs`    |
+| Go/Rust              | snake_case | `user_auth_service.go`  |
+| CSS/SCSS             | kebab-case | `auth-form-styles.scss` |
 
 **Priority:** Self-documenting > short. A long descriptive name is better than a cryptic abbreviation.
 
 ## File Extensions
 
-| Type | Extensions |
-|------|-----------|
-| Images | `.png`, `.jpg`, `.webp`, `.svg`, `.gif` |
-| Videos | `.mp4`, `.mov`, `.webm` |
-| Audio | `.mp3`, `.wav`, `.m4a` |
-| Documents | `.md`, `.txt`, `.pdf` |
-| Data | `.json`, `.yaml`, `.yml`, `.csv`, `.xml` |
-| Config | `.json`, `.yaml`, `.toml`, `.ini`, `.env` |
+| Type      | Extensions                                |
+| --------- | ----------------------------------------- |
+| Images    | `.png`, `.jpg`, `.webp`, `.svg`, `.gif`   |
+| Videos    | `.mp4`, `.mov`, `.webm`                   |
+| Audio     | `.mp3`, `.wav`, `.m4a`                    |
+| Documents | `.md`, `.txt`, `.pdf`                     |
+| Data      | `.json`, `.yaml`, `.yml`, `.csv`, `.xml`  |
+| Config    | `.json`, `.yaml`, `.toml`, `.ini`, `.env` |
 
 ## Variant Naming
 
@@ -116,6 +116,7 @@ Pattern: `{name}-v{N}.{ext}`
 Pattern: `{agent-type}-{YYMMDD-HHmm}-{slug}.md`
 
 Examples:
+
 - `scout-260304-1530-auth-module-analysis.md`
 - `researcher-260304-1545-oauth2-comparison.md`
 - `brainstorm-260304-1600-caching-strategy.md`
@@ -126,6 +127,7 @@ Examples:
 Pattern: `{YYMMDD-HHmm}-{slug}/`
 
 Examples:
+
 - `260304-1530-implement-user-authentication/`
 - `260305-0900-migrate-database-to-postgres/`
 - `260306-1400-redesign-dashboard-layout/`

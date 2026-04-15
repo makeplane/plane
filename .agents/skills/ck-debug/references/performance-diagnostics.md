@@ -31,14 +31,14 @@ Request → Network → Web Server → Application → Database → Filesystem
 
 **Elimination approach:** Measure time at each layer to find where delay occurs.
 
-| Layer | Check | Tool |
-|-------|-------|------|
-| Network | Latency, DNS, TLS | `curl -w` timing, network logs |
-| Web server | Request queue, connections | Server metrics, access logs |
-| Application | CPU profiling, memory | Profiler, APM, `process.memoryUsage()` |
-| Database | Query time, connections | `EXPLAIN ANALYZE`, `pg_stat_statements` |
-| Filesystem | I/O wait, disk usage | `iostat`, `df -h` |
-| External APIs | Response time, timeouts | Request logging with durations |
+| Layer         | Check                      | Tool                                    |
+| ------------- | -------------------------- | --------------------------------------- |
+| Network       | Latency, DNS, TLS          | `curl -w` timing, network logs          |
+| Web server    | Request queue, connections | Server metrics, access logs             |
+| Application   | CPU profiling, memory      | Profiler, APM, `process.memoryUsage()`  |
+| Database      | Query time, connections    | `EXPLAIN ANALYZE`, `pg_stat_statements` |
+| Filesystem    | I/O wait, disk usage       | `iostat`, `df -h`                       |
+| External APIs | Response time, timeouts    | Request logging with durations          |
 
 ### 3. Database Performance
 
@@ -84,18 +84,19 @@ EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) <your-query>;
 
 **Common bottlenecks:**
 
-| Issue | Symptom | Fix |
-|-------|---------|-----|
-| N+1 queries | Many small DB calls per request | Eager loading, batch queries |
-| Memory leaks | Growing memory over time | Profile heap, check event listeners |
-| Blocking I/O | High response time, low CPU | Async operations, connection pooling |
-| CPU-bound | High CPU, proportional to load | Optimize algorithms, caching |
-| Connection exhaustion | Intermittent timeouts | Pool sizing, connection reuse |
-| Large payloads | Slow transfers, high memory | Pagination, compression, streaming |
+| Issue                 | Symptom                         | Fix                                  |
+| --------------------- | ------------------------------- | ------------------------------------ |
+| N+1 queries           | Many small DB calls per request | Eager loading, batch queries         |
+| Memory leaks          | Growing memory over time        | Profile heap, check event listeners  |
+| Blocking I/O          | High response time, low CPU     | Async operations, connection pooling |
+| CPU-bound             | High CPU, proportional to load  | Optimize algorithms, caching         |
+| Connection exhaustion | Intermittent timeouts           | Pool sizing, connection reuse        |
+| Large payloads        | Slow transfers, high memory     | Pagination, compression, streaming   |
 
 ### 5. Optimization Strategy
 
 **Priority order:**
+
 1. **Quick wins** - Add missing index, fix N+1 query, enable caching
 2. **Configuration** - Pool sizes, timeouts, buffer sizes, worker counts
 3. **Code changes** - Algorithm optimization, data structure changes
@@ -106,6 +107,7 @@ EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) <your-query>;
 ## Reporting Performance Issues
 
 Include in diagnostic report:
+
 - **Baseline vs current** metrics (with numbers)
 - **Bottleneck identification** with evidence
 - **Root cause** explanation

@@ -21,7 +21,7 @@ import Database from "better-sqlite3";
 export const auth = betterAuth({
   database: new Database("./sqlite.db"),
   // or
-  database: new Database(":memory:") // In-memory for testing
+  database: new Database(":memory:"), // In-memory for testing
 });
 ```
 
@@ -38,11 +38,11 @@ const pool = new Pool({
   port: 5432,
   user: "postgres",
   password: "password",
-  database: "myapp"
+  database: "myapp",
 });
 
 export const auth = betterAuth({
-  database: pool
+  database: pool,
 });
 ```
 
@@ -58,11 +58,11 @@ const pool = createPool({
   password: "password",
   database: "myapp",
   waitForConnections: true,
-  connectionLimit: 10
+  connectionLimit: 10,
 });
 
 export const auth = betterAuth({
-  database: pool
+  database: pool,
 });
 ```
 
@@ -71,11 +71,13 @@ export const auth = betterAuth({
 ### Drizzle ORM
 
 **Install:**
+
 ```bash
 npm install drizzle-orm better-auth
 ```
 
 **Setup:**
+
 ```ts
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -83,7 +85,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
 });
 
 const db = drizzle(pool);
@@ -96,13 +98,14 @@ export const auth = betterAuth({
       user: "users",
       session: "sessions",
       account: "accounts",
-      verification: "verifications"
-    }
-  })
+      verification: "verifications",
+    },
+  }),
 });
 ```
 
 **Generate Schema:**
+
 ```bash
 npx @better-auth/cli generate --adapter drizzle
 ```
@@ -110,11 +113,13 @@ npx @better-auth/cli generate --adapter drizzle
 ### Prisma
 
 **Install:**
+
 ```bash
 npm install @prisma/client better-auth
 ```
 
 **Setup:**
+
 ```ts
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -125,16 +130,18 @@ const prisma = new PrismaClient();
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", // "postgresql" | "mysql" | "sqlite"
-  })
+  }),
 });
 ```
 
 **Generate Schema:**
+
 ```bash
 npx @better-auth/cli generate --adapter prisma
 ```
 
 **Apply to Prisma:**
+
 ```bash
 # Add generated schema to schema.prisma
 npx prisma migrate dev --name init
@@ -144,11 +151,13 @@ npx prisma generate
 ### Kysely
 
 **Install:**
+
 ```bash
 npm install kysely better-auth
 ```
 
 **Setup:**
+
 ```ts
 import { betterAuth } from "better-auth";
 import { kyselyAdapter } from "better-auth/adapters/kysely";
@@ -158,19 +167,20 @@ import { Pool } from "pg";
 const db = new Kysely({
   dialect: new PostgresDialect({
     pool: new Pool({
-      connectionString: process.env.DATABASE_URL
-    })
-  })
+      connectionString: process.env.DATABASE_URL,
+    }),
+  }),
 });
 
 export const auth = betterAuth({
   database: kyselyAdapter(db, {
-    provider: "pg"
-  })
+    provider: "pg",
+  }),
 });
 ```
 
 **Auto-migrate with Kysely:**
+
 ```bash
 npx @better-auth/cli migrate --adapter kysely
 ```
@@ -178,11 +188,13 @@ npx @better-auth/cli migrate --adapter kysely
 ### MongoDB
 
 **Install:**
+
 ```bash
 npm install mongodb better-auth
 ```
 
 **Setup:**
+
 ```ts
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
@@ -193,12 +205,13 @@ await client.connect();
 
 export const auth = betterAuth({
   database: mongodbAdapter(client, {
-    databaseName: "myapp"
-  })
+    databaseName: "myapp",
+  }),
 });
 ```
 
 **Generate Collections:**
+
 ```bash
 npx @better-auth/cli generate --adapter mongodb
 ```
@@ -303,31 +316,33 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: false,
-        defaultValue: "user"
+        defaultValue: "user",
       },
       phoneNumber: {
         type: "string",
-        required: false
+        required: false,
       },
       subscriptionTier: {
         type: "string",
-        required: false
-      }
-    }
-  }
+        required: false,
+      },
+    },
+  },
 });
 ```
 
 After adding fields:
+
 ```bash
 npx @better-auth/cli generate
 ```
 
 Update user with custom fields:
+
 ```ts
 await authClient.updateUser({
   role: "admin",
-  phoneNumber: "+1234567890"
+  phoneNumber: "+1234567890",
 });
 ```
 
@@ -414,7 +429,7 @@ const pool = createPool({
   connectionString: process.env.DATABASE_URL,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 ```
 
@@ -455,12 +470,14 @@ MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/dbname
 ### Indexes
 
 Better Auth CLI auto-generates essential indexes:
+
 - `user.email` (unique)
 - `session.userId`
 - `account.userId`
 - `account.providerId, accountId` (unique)
 
 Add custom indexes for performance:
+
 ```sql
 CREATE INDEX idx_session_expires ON session(expiresAt);
 CREATE INDEX idx_user_created ON user(createdAt);
@@ -478,9 +495,9 @@ export const auth = betterAuth({
     defaultCookieAttributes: {
       sameSite: "lax",
       secure: true,
-      httpOnly: true
-    }
-  }
+      httpOnly: true,
+    },
+  },
 });
 ```
 
@@ -547,7 +564,7 @@ mongorestore --db=dbname ./backup/dbname
 // Add connection timeout
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  connectionTimeoutMillis: 5000
+  connectionTimeoutMillis: 5000,
 });
 ```
 

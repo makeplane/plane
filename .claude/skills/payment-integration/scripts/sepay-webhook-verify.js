@@ -14,10 +14,10 @@
  *   SEPAY_WEBHOOK_API_KEY - API key for verification (if using api_key)
  */
 
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 class SePayWebhookVerifier {
-  constructor(authType = 'none', apiKey = null) {
+  constructor(authType = "none", apiKey = null) {
     this.authType = authType;
     this.apiKey = apiKey;
   }
@@ -26,35 +26,35 @@ class SePayWebhookVerifier {
    * Verify webhook authenticity
    */
   verifyAuthentication(headers) {
-    if (this.authType === 'none') {
-      console.log('⚠️  Warning: No authentication configured');
+    if (this.authType === "none") {
+      console.log("⚠️  Warning: No authentication configured");
       return true;
     }
 
-    if (this.authType === 'api_key') {
-      const authHeader = headers['authorization'] || headers['Authorization'];
+    if (this.authType === "api_key") {
+      const authHeader = headers["authorization"] || headers["Authorization"];
 
       if (!authHeader) {
-        throw new Error('Missing Authorization header');
+        throw new Error("Missing Authorization header");
       }
 
       const expectedAuth = `Apikey ${this.apiKey}`;
       if (authHeader !== expectedAuth) {
-        throw new Error('Invalid API key');
+        throw new Error("Invalid API key");
       }
 
       return true;
     }
 
-    if (this.authType === 'oauth2') {
-      const authHeader = headers['authorization'] || headers['Authorization'];
+    if (this.authType === "oauth2") {
+      const authHeader = headers["authorization"] || headers["Authorization"];
 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new Error('Missing or invalid OAuth2 Bearer token');
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        throw new Error("Missing or invalid OAuth2 Bearer token");
       }
 
       // In production, verify token with OAuth2 provider
-      console.log('✓ OAuth2 token present (full verification needed in production)');
+      console.log("✓ OAuth2 token present (full verification needed in production)");
       return true;
     }
 
@@ -73,13 +73,13 @@ class SePayWebhookVerifier {
    */
   validatePayload(payload) {
     const required = [
-      'id',
-      'gateway',
-      'transactionDate',
-      'accountNumber',
-      'transferType',
-      'transferAmount',
-      'referenceCode'
+      "id",
+      "gateway",
+      "transactionDate",
+      "accountNumber",
+      "transferType",
+      "transferAmount",
+      "referenceCode",
     ];
 
     for (const field of required) {
@@ -89,13 +89,13 @@ class SePayWebhookVerifier {
     }
 
     // Validate transfer type
-    if (!['in', 'out'].includes(payload.transferType)) {
+    if (!["in", "out"].includes(payload.transferType)) {
       throw new Error(`Invalid transferType: ${payload.transferType}`);
     }
 
     // Validate amount
-    if (typeof payload.transferAmount !== 'number' || payload.transferAmount <= 0) {
-      throw new Error('Invalid transferAmount');
+    if (typeof payload.transferAmount !== "number" || payload.transferAmount <= 0) {
+      throw new Error("Invalid transferAmount");
     }
 
     return true;
@@ -119,24 +119,24 @@ class SePayWebhookVerifier {
         transactionDate: new Date(payload.transactionDate),
         accountNumber: payload.accountNumber,
         code: payload.code || null,
-        content: payload.content || '',
+        content: payload.content || "",
         transferType: payload.transferType,
         transferAmount: payload.transferAmount,
         accumulated: payload.accumulated || 0,
         subAccount: payload.subAccount || null,
-        referenceCode: payload.referenceCode
+        referenceCode: payload.referenceCode,
       };
 
       return {
         success: true,
         transaction,
-        isIncoming: transaction.transferType === 'in',
-        isOutgoing: transaction.transferType === 'out'
+        isIncoming: transaction.transferType === "in",
+        isOutgoing: transaction.transferType === "out",
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -147,45 +147,45 @@ if (require.main === module) {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Usage: node sepay-webhook-verify.js <webhook-payload-json>');
-    console.log('\nEnvironment Variables:');
-    console.log('  SEPAY_WEBHOOK_AUTH_TYPE - Authentication type (api_key, oauth2, none)');
-    console.log('  SEPAY_WEBHOOK_API_KEY - API key for verification');
+    console.log("Usage: node sepay-webhook-verify.js <webhook-payload-json>");
+    console.log("\nEnvironment Variables:");
+    console.log("  SEPAY_WEBHOOK_AUTH_TYPE - Authentication type (api_key, oauth2, none)");
+    console.log("  SEPAY_WEBHOOK_API_KEY - API key for verification");
     process.exit(1);
   }
 
   try {
     const payload = JSON.parse(args[0]);
-    const authType = process.env.SEPAY_WEBHOOK_AUTH_TYPE || 'none';
+    const authType = process.env.SEPAY_WEBHOOK_AUTH_TYPE || "none";
     const apiKey = process.env.SEPAY_WEBHOOK_API_KEY || null;
 
     const verifier = new SePayWebhookVerifier(authType, apiKey);
 
     // Mock headers for CLI testing
     const headers = {};
-    if (authType === 'api_key' && apiKey) {
-      headers['Authorization'] = `Apikey ${apiKey}`;
+    if (authType === "api_key" && apiKey) {
+      headers["Authorization"] = `Apikey ${apiKey}`;
     }
 
     const result = verifier.process(payload, headers);
 
     if (result.success) {
-      console.log('✓ Webhook verified successfully\n');
-      console.log('Transaction Details:');
+      console.log("✓ Webhook verified successfully\n");
+      console.log("Transaction Details:");
       console.log(`  ID: ${result.transaction.id}`);
       console.log(`  Gateway: ${result.transaction.gateway}`);
       console.log(`  Type: ${result.transaction.transferType}`);
-      console.log(`  Amount: ${result.transaction.transferAmount.toLocaleString('vi-VN')} VND`);
+      console.log(`  Amount: ${result.transaction.transferAmount.toLocaleString("vi-VN")} VND`);
       console.log(`  Reference: ${result.transaction.referenceCode}`);
-      console.log(`  Content: ${result.transaction.content || 'N/A'}`);
-      console.log(`\n  Incoming: ${result.isIncoming ? 'Yes' : 'No'}`);
-      console.log(`  Outgoing: ${result.isOutgoing ? 'Yes' : 'No'}`);
+      console.log(`  Content: ${result.transaction.content || "N/A"}`);
+      console.log(`\n  Incoming: ${result.isIncoming ? "Yes" : "No"}`);
+      console.log(`  Outgoing: ${result.isOutgoing ? "Yes" : "No"}`);
     } else {
-      console.error('✗ Verification failed:', result.error);
+      console.error("✗ Verification failed:", result.error);
       process.exit(1);
     }
   } catch (error) {
-    console.error('✗ Error:', error.message);
+    console.error("✗ Error:", error.message);
     process.exit(1);
   }
 }

@@ -210,11 +210,11 @@ When the selected state's group is `"backlog"`, disable required-field validatio
 
 ## Phases
 
-| #   | Phase                         | Effort | Details                                                              |
-| --- | ----------------------------- | ------ | -------------------------------------------------------------------- |
-| 1   | Frontend validation bypass    | 2h     | [phase-01-frontend-validation.md](./phase-01-frontend-validation.md) |
-| 2   | Backend tolerance check       | —      | Skipped — already verified in Phase 1 Key Insights                  |
-| 3   | Edit form draft→non-draft     | 1h     | [phase-03-edit-draft-transition.md](./phase-03-edit-draft-transition.md) |
+| #   | Phase                      | Effort | Details                                                                  |
+| --- | -------------------------- | ------ | ------------------------------------------------------------------------ |
+| 1   | Frontend validation bypass | 2h     | [phase-01-frontend-validation.md](./phase-01-frontend-validation.md)     |
+| 2   | Backend tolerance check    | —      | Skipped — already verified in Phase 1 Key Insights                       |
+| 3   | Edit form draft→non-draft  | 1h     | [phase-03-edit-draft-transition.md](./phase-03-edit-draft-transition.md) |
 
 ---
 

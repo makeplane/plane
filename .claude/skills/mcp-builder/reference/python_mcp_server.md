@@ -9,6 +9,7 @@ This document provides Python-specific best practices and examples for implement
 ## Quick Reference
 
 ### Key Imports
+
 ```python
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, Field, field_validator, ConfigDict
@@ -18,11 +19,13 @@ import httpx
 ```
 
 ### Server Initialization
+
 ```python
 mcp = FastMCP("service_mcp")
 ```
 
 ### Tool Registration Pattern
+
 ```python
 @mcp.tool(name="tool_name", annotations={...})
 async def tool_function(params: InputModel) -> str:
@@ -35,6 +38,7 @@ async def tool_function(params: InputModel) -> str:
 ## MCP Python SDK and FastMCP
 
 The official MCP Python SDK provides FastMCP, a high-level framework for building MCP servers. It provides:
+
 - Automatic description and inputSchema generation from function signatures and docstrings
 - Pydantic model integration for input validation
 - Decorator-based tool registration with `@mcp.tool`
@@ -45,10 +49,12 @@ The official MCP Python SDK provides FastMCP, a high-level framework for buildin
 ## Server Naming Convention
 
 Python MCP servers must follow this naming pattern:
+
 - **Format**: `{service}_mcp` (lowercase with underscores)
 - **Examples**: `github_mcp`, `jira_mcp`, `stripe_mcp`
 
 The name should be:
+
 - General (not tied to specific features)
 - Descriptive of the service/API being integrated
 - Easy to infer from the task description
@@ -61,6 +67,7 @@ The name should be:
 Use snake_case for tool names (e.g., "search_users", "create_project", "get_channel_info") with clear, action-oriented names.
 
 **Avoid Naming Conflicts**: Include the service context to prevent overlaps:
+
 - Use "slack_send_message" instead of just "send_message"
 - Use "github_create_issue" instead of just "create_issue"
 - Use "asana_list_tasks" instead of just "list_tasks"
@@ -168,6 +175,7 @@ class UserSearchInput(BaseModel):
 ```
 
 **Markdown format**:
+
 - Use headers, lists, and formatting for clarity
 - Convert timestamps to human-readable format (e.g., "2024-01-15 10:30:00 UTC" instead of epoch)
 - Show display names with IDs in parentheses (e.g., "@john.doe (U123456)")
@@ -175,6 +183,7 @@ class UserSearchInput(BaseModel):
 - Group related information logically
 
 **JSON format**:
+
 - Return complete, structured data suitable for programmatic processing
 - Include all available fields and metadata
 - Use consistent field names and types
@@ -545,6 +554,7 @@ async def interactive_tool(resource_id: str, ctx: Context) -> str:
 ```
 
 **Context capabilities:**
+
 - `ctx.report_progress(progress, message)` - Report progress for long operations
 - `ctx.log_info(message, data)` / `ctx.log_error()` / `ctx.log_debug()` - Logging
 - `ctx.elicit(prompt, input_type)` - Request input from users
@@ -575,6 +585,7 @@ async def get_setting(key: str, ctx: Context) -> str:
 ```
 
 **When to use Resources vs Tools:**
+
 - **Resources**: For data access with simple parameters (URI templates)
 - **Tools**: For complex operations with validation and business logic
 
@@ -662,6 +673,7 @@ if __name__ == "__main__":
 ```
 
 **Transport selection:**
+
 - **Stdio**: Command-line tools, subprocess integration
 - **HTTP**: Web services, remote access, multiple clients
 - **SSE**: Real-time updates, push notifications
@@ -702,6 +714,7 @@ Your implementation MUST prioritize composability and code reuse:
 Before finalizing your Python MCP server implementation, ensure:
 
 ### Strategic Design
+
 - [ ] Tools enable complete workflows, not just API endpoint wrappers
 - [ ] Tool names reflect natural task subdivisions
 - [ ] Response formats optimize for agent context efficiency
@@ -709,6 +722,7 @@ Before finalizing your Python MCP server implementation, ensure:
 - [ ] Error messages guide agents toward correct usage
 
 ### Implementation Quality
+
 - [ ] FOCUSED IMPLEMENTATION: Most important and valuable tools implemented
 - [ ] All tools have descriptive names and documentation
 - [ ] Return types are consistent across similar operations
@@ -720,6 +734,7 @@ Before finalizing your Python MCP server implementation, ensure:
 - [ ] Outputs are properly validated and formatted
 
 ### Tool Configuration
+
 - [ ] All tools implement 'name' and 'annotations' in the decorator
 - [ ] Annotations correctly set (readOnlyHint, destructiveHint, idempotentHint, openWorldHint)
 - [ ] All tools use Pydantic BaseModel for input validation with Field() definitions
@@ -729,6 +744,7 @@ Before finalizing your Python MCP server implementation, ensure:
 - [ ] Pydantic models handle input validation (no manual validation needed)
 
 ### Advanced Features (where applicable)
+
 - [ ] Context injection used for logging, progress, or elicitation
 - [ ] Resources registered for appropriate data endpoints
 - [ ] Lifespan management implemented for persistent connections
@@ -736,6 +752,7 @@ Before finalizing your Python MCP server implementation, ensure:
 - [ ] Appropriate transport configured (stdio, HTTP, SSE)
 
 ### Code Quality
+
 - [ ] File includes proper imports including Pydantic imports
 - [ ] Pagination is properly implemented where applicable
 - [ ] Large responses check CHARACTER_LIMIT and truncate with clear messages
@@ -746,6 +763,7 @@ Before finalizing your Python MCP server implementation, ensure:
 - [ ] Constants are defined at module level in UPPER_CASE
 
 ### Testing
+
 - [ ] Server runs successfully: `python your_server.py --help`
 - [ ] All imports resolve correctly
 - [ ] Sample tool calls work as expected

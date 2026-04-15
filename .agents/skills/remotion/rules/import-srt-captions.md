@@ -26,21 +26,21 @@ pnpm exec remotion add @remotion/captions # If project uses pnpm
 Use `staticFile()` to reference an `.srt` file in your `public` folder, then fetch and parse it:
 
 ```tsx
-import {useState, useEffect, useCallback} from 'react';
-import {AbsoluteFill, staticFile, useDelayRender} from 'remotion';
-import {parseSrt} from '@remotion/captions';
-import type {Caption} from '@remotion/captions';
+import { useState, useEffect, useCallback } from "react";
+import { AbsoluteFill, staticFile, useDelayRender } from "remotion";
+import { parseSrt } from "@remotion/captions";
+import type { Caption } from "@remotion/captions";
 
 export const MyComponent: React.FC = () => {
   const [captions, setCaptions] = useState<Caption[] | null>(null);
-  const {delayRender, continueRender, cancelRender} = useDelayRender();
+  const { delayRender, continueRender, cancelRender } = useDelayRender();
   const [handle] = useState(() => delayRender());
 
   const fetchCaptions = useCallback(async () => {
     try {
-      const response = await fetch(staticFile('subtitles.srt'));
+      const response = await fetch(staticFile("subtitles.srt"));
       const text = await response.text();
-      const {captions: parsed} = parseSrt({input: text});
+      const { captions: parsed } = parseSrt({ input: text });
       setCaptions(parsed);
       continueRender(handle);
     } catch (e) {

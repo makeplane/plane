@@ -14,8 +14,8 @@ All JSON schemas used by the eval infrastructure.
       "expected_output": "Description of correct output",
       "files": [],
       "assertions": [
-        {"id": "assertion-1", "text": "Output contains valid JSON"},
-        {"id": "assertion-2", "text": "All rows processed correctly"}
+        { "id": "assertion-1", "text": "Output contains valid JSON" },
+        { "id": "assertion-2", "text": "All rows processed correctly" }
       ]
     }
   ]
@@ -29,9 +29,7 @@ All JSON schemas used by the eval infrastructure.
   "eval_id": 0,
   "eval_name": "descriptive-name",
   "prompt": "Task prompt",
-  "assertions": [
-    {"id": "assertion-1", "text": "Output contains valid JSON"}
-  ]
+  "assertions": [{ "id": "assertion-1", "text": "Output contains valid JSON" }]
 }
 ```
 
@@ -40,7 +38,7 @@ All JSON schemas used by the eval infrastructure.
 ```json
 {
   "expectations": [
-    {"text": "Output contains valid JSON", "passed": true, "evidence": "File output.json parsed successfully"}
+    { "text": "Output contains valid JSON", "passed": true, "evidence": "File output.json parsed successfully" }
   ],
   "pass_rate": 0.75,
   "metrics": {
@@ -59,13 +57,13 @@ All JSON schemas used by the eval infrastructure.
 
 ```json
 {
-  "metadata": {"skill_name": "example", "timestamp": "..."},
-  "runs": [{"eval_id": 0, "config": "with_skill", "pass_rate": 0.85}],
+  "metadata": { "skill_name": "example", "timestamp": "..." },
+  "runs": [{ "eval_id": 0, "config": "with_skill", "pass_rate": 0.85 }],
   "summaries": {
-    "with_skill": {"mean_pass_rate": 0.85, "stddev": 0.05},
-    "without_skill": {"mean_pass_rate": 0.45, "stddev": 0.10}
+    "with_skill": { "mean_pass_rate": 0.85, "stddev": 0.05 },
+    "without_skill": { "mean_pass_rate": 0.45, "stddev": 0.1 }
   },
-  "deltas": {"pass_rate_delta": 0.40, "tokens_delta": -2000}
+  "deltas": { "pass_rate_delta": 0.4, "tokens_delta": -2000 }
 }
 ```
 
@@ -85,9 +83,7 @@ Must capture immediately from subagent notifications — data not persisted else
 
 ```json
 {
-  "reviews": [
-    {"run_id": "eval-0-with_skill", "feedback": "User comment", "timestamp": "..."}
-  ],
+  "reviews": [{ "run_id": "eval-0-with_skill", "feedback": "User comment", "timestamp": "..." }],
   "status": "complete"
 }
 ```
@@ -98,9 +94,9 @@ Must capture immediately from subagent notifications — data not persisted else
 {
   "winner": "output_a",
   "reasoning": "Detailed explanation with citations",
-  "scores": {"output_a": 8, "output_b": 6},
-  "content_score": {"correctness": 4, "completeness": 5},
-  "structure_score": {"organization": 4, "formatting": 3}
+  "scores": { "output_a": 8, "output_b": 6 },
+  "content_score": { "correctness": 4, "completeness": 5 },
+  "structure_score": { "organization": 4, "formatting": 3 }
 }
 ```
 
@@ -112,8 +108,8 @@ Must capture immediately from subagent notifications — data not persisted else
     {
       "description": "Current description text",
       "pass_rate": 0.85,
-      "precision": 0.90,
-      "recall": 0.80,
+      "precision": 0.9,
+      "recall": 0.8,
       "iteration": 1
     }
   ]

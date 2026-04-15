@@ -69,12 +69,12 @@
 
 ## Test Priority Matrix
 
-| Priority | Category | Examples |
-|----------|----------|----------|
-| P0 (Critical) | Core flows | Signup, login, checkout, payment |
-| P1 (High) | Major features | Search, CRUD, navigation |
-| P2 (Medium) | Secondary features | Filters, sorting, pagination |
-| P3 (Low) | Edge cases | Empty states, max limits |
+| Priority      | Category           | Examples                         |
+| ------------- | ------------------ | -------------------------------- |
+| P0 (Critical) | Core flows         | Signup, login, checkout, payment |
+| P1 (High)     | Major features     | Search, CRUD, navigation         |
+| P2 (Medium)   | Secondary features | Filters, sorting, pagination     |
+| P3 (Low)      | Edge cases         | Empty states, max limits         |
 
 ## Test Data Checklist
 

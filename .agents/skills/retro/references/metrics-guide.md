@@ -11,6 +11,7 @@ Each metric: what it measures, why it matters, interpretation guidance, and the 
 **Measures:** Delivery cadence — how often work lands in the repo.
 **Why it matters:** Low frequency may indicate large batched PRs (risky merges); high frequency with tiny commits suggests good trunk-based dev hygiene.
 **Interpretation:**
+
 - `< 1/day` — infrequent; check for blocked PRs or slow review cycles
 - `1-3/day` — healthy for a solo dev or small team
 - `> 5/day` — high activity; verify commits are meaningful, not noise
@@ -42,6 +43,7 @@ git log --since="$SINCE" --until="$UNTIL" --format="%ai" \
 **Measures:** Raw volume of code written and deleted.
 **Why it matters:** Net negative LOC (more deleted than added) is often a sign of healthy refactoring. Very high churn on specific files is a risk signal.
 **Interpretation:**
+
 - Net negative on non-test files = good (simplification)
 - Net positive > 500 LOC/day sustained = high velocity, watch for quality regression
 
@@ -66,6 +68,7 @@ git log --since="$SINCE" --until="$UNTIL" --name-only --format="" \
 **Measures:** `(LOC_added + LOC_removed) / max(LOC_net, 1)` — how much code was rewritten vs kept.
 **Why it matters:** Churn > 3x net LOC = significant rework; investigate root cause (unclear requirements, unstable APIs, poor initial design).
 **Interpretation:**
+
 - `1.0 - 1.5` = clean, additive work
 - `1.5 - 3.0` = moderate iteration (normal)
 - `> 3.0` = high rework; flag for retro discussion
@@ -79,6 +82,7 @@ git log --since="$SINCE" --until="$UNTIL" --name-only --format="" \
 **Measures:** `test_file_changes / total_file_changes * 100`
 **Why it matters:** Proxy for whether tests accompany new code. Does not measure test quality, only presence.
 **Interpretation:**
+
 - `> 30%` = tests accompanying changes (healthy)
 - `10-30%` = some test coverage added
 - `< 10%` = tests lagging behind; technical debt accumulating
@@ -98,6 +102,7 @@ git log --since="$SINCE" --until="$UNTIL" --name-only --format="" \
 **Measures:** Breakdown of conventional commit types (`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `hotfix`).
 **Why it matters:** Ratio reveals focus. Heavy `fix` ratio may indicate quality issues; heavy `chore` may mean infra debt; balanced mix = sustainable pace.
 **Interpretation:**
+
 - `feat > 40%` = feature-driven sprint
 - `fix > 40%` = reactive sprint (bugs dominating)
 - `refactor > 20%` = healthy investment in code quality
@@ -116,6 +121,7 @@ git log --since="$SINCE" --until="$UNTIL" --format="%s" \
 **Measures:** Closed GitHub issues / total issues opened in period (or checkbox ratio in plan files).
 **Why it matters:** Tracks delivery predictability. Consistent undercompletion signals scope inflation or estimation issues.
 **Interpretation:**
+
 - `> 80%` = on track
 - `60-80%` = acceptable; review blockers
 - `< 60%` = scope or capacity mismatch; action needed

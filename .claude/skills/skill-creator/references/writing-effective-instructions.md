@@ -11,35 +11,49 @@ Write entirely in **imperative/infinitive form** (verb-first). Use objective, in
 
 ```markdown
 ---
-name: your-skill  # optional namespace: ck:your-skill
+name: your-skill # optional namespace: ck:your-skill
 description: [What + When + Key capabilities]
 ---
+
 # Skill Name
+
 ## Instructions
+
 ### Step 1: [First Major Step]
+
 Clear explanation. Example with expected output.
+
 ### Step 2: [Next Step]
+
 (Continue as needed)
+
 ## Examples
+
 ### Example 1: [Common scenario]
+
 **User says:** "[trigger phrase]"
-**Actions:** 1. Do X  2. Do Y
+**Actions:** 1. Do X 2. Do Y
 **Result:** [Expected outcome]
+
 ## Troubleshooting
+
 **Error:** [Message] → **Solution:** [Fix]
 ```
 
 ## Be Specific and Actionable
 
 **Good:**
+
 ```markdown
 Run `python scripts/validate.py --input {filename}` to check format.
 If validation fails, common issues:
+
 - Missing required fields (add to CSV)
 - Invalid date formats (use YYYY-MM-DD)
 ```
 
 **Bad:**
+
 ```markdown
 Validate the data before proceeding.
 ```
@@ -48,8 +62,11 @@ Validate the data before proceeding.
 
 ```markdown
 ## Common Issues
+
 ### MCP Connection Failed
+
 If "Connection refused":
+
 1. Verify MCP server running: Settings > Extensions
 2. Confirm API key valid
 3. Reconnect: Settings > Extensions > [Service] > Reconnect
@@ -59,6 +76,7 @@ If "Connection refused":
 
 ```markdown
 Before writing queries, consult `references/api-patterns.md` for:
+
 - Rate limiting guidance
 - Pagination patterns
 - Error codes and handling
@@ -67,6 +85,7 @@ Before writing queries, consult `references/api-patterns.md` for:
 ## Use Progressive Disclosure
 
 Keep SKILL.md focused on core instructions (<300 lines). Move to `references/`:
+
 - Detailed API documentation
 - Database schemas
 - Extended examples

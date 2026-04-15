@@ -2,11 +2,11 @@
 
 ## Core Web Vitals (2024 Targets)
 
-| Metric | Target | Description |
-|--------|--------|-------------|
-| LCP | < 2.5s | Largest Contentful Paint |
-| CLS | < 0.1 | Cumulative Layout Shift |
-| INP | < 200ms | Interaction to Next Paint (replaced FID) |
+| Metric | Target  | Description                              |
+| ------ | ------- | ---------------------------------------- |
+| LCP    | < 2.5s  | Largest Contentful Paint                 |
+| CLS    | < 0.1   | Cumulative Layout Shift                  |
+| INP    | < 200ms | Interaction to Next Paint (replaced FID) |
 
 ## Lighthouse CI Setup
 
@@ -51,16 +51,16 @@ performance:
 ## Playwright Performance Test
 
 ```typescript
-test('measure Core Web Vitals', async ({ page }) => {
-  await page.goto('/');
+test("measure Core Web Vitals", async ({ page }) => {
+  await page.goto("/");
 
   const metrics = await page.evaluate(() => {
     return new Promise((resolve) => {
       new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const lcp = entries.find(e => e.entryType === 'largest-contentful-paint');
+        const lcp = entries.find((e) => e.entryType === "largest-contentful-paint");
         resolve({ lcp: lcp?.startTime });
-      }).observe({ type: 'largest-contentful-paint', buffered: true });
+      }).observe({ type: "largest-contentful-paint", buffered: true });
     });
   });
 
@@ -71,8 +71,8 @@ test('measure Core Web Vitals', async ({ page }) => {
 ## INP Measurement
 
 ```typescript
-test('interaction responsiveness', async ({ page }) => {
-  await page.goto('/');
+test("interaction responsiveness", async ({ page }) => {
+  await page.goto("/");
 
   const inp = await page.evaluate(() => {
     return new Promise((resolve) => {
@@ -82,10 +82,10 @@ test('interaction responsiveness', async ({ page }) => {
           maxINP = Math.max(maxINP, entry.duration);
         }
         resolve(maxINP);
-      }).observe({ type: 'event', buffered: true, durationThreshold: 16 });
+      }).observe({ type: "event", buffered: true, durationThreshold: 16 });
 
       // Trigger interactions
-      document.querySelector('button')?.click();
+      document.querySelector("button")?.click();
       setTimeout(() => resolve(maxINP), 1000);
     });
   });
@@ -106,18 +106,21 @@ npx webpack-bundle-analyzer stats.json
 ## Optimization Checklist
 
 ### LCP
+
 - [ ] Lazy load below-fold images
 - [ ] Preload critical resources (`<link rel="preload">`)
 - [ ] Use CDN for static assets
 - [ ] Optimize server response time
 
 ### CLS
+
 - [ ] Set explicit width/height on images
 - [ ] Reserve space for dynamic content
 - [ ] Use `font-display: swap` or `optional`
 - [ ] Avoid inserting content above existing
 
 ### INP
+
 - [ ] Break long JavaScript tasks (<50ms)
 - [ ] Use `requestIdleCallback` for non-critical work
 - [ ] Implement code splitting

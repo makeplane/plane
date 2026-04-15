@@ -10,19 +10,19 @@
  * @throws {Error} If XPath contains injection patterns
  */
 export function parseSelector(selector) {
-  if (!selector || typeof selector !== 'string') {
-    throw new Error('Selector must be a non-empty string');
+  if (!selector || typeof selector !== "string") {
+    throw new Error("Selector must be a non-empty string");
   }
 
   // Detect XPath selectors
-  if (selector.startsWith('/') || selector.startsWith('(//')) {
+  if (selector.startsWith("/") || selector.startsWith("(//")) {
     // XPath injection prevention
     validateXPath(selector);
-    return { type: 'xpath', selector };
+    return { type: "xpath", selector };
   }
 
   // CSS selector
-  return { type: 'css', selector };
+  return { type: "css", selector };
 }
 
 /**
@@ -32,15 +32,15 @@ export function parseSelector(selector) {
  */
 function validateXPath(xpath) {
   const dangerous = [
-    'javascript:',
-    '<script',
-    'onerror=',
-    'onload=',
-    'onclick=',
-    'onmouseover=',
-    'eval(',
-    'Function(',
-    'constructor(',
+    "javascript:",
+    "<script",
+    "onerror=",
+    "onload=",
+    "onclick=",
+    "onmouseover=",
+    "eval(",
+    "Function(",
+    "constructor(",
   ];
 
   const lower = xpath.toLowerCase();
@@ -52,7 +52,7 @@ function validateXPath(xpath) {
 
   // Additional validation: check for extremely long selectors (potential DoS)
   if (xpath.length > 1000) {
-    throw new Error('XPath selector too long (max 1000 characters)');
+    throw new Error("XPath selector too long (max 1000 characters)");
   }
 }
 
@@ -67,15 +67,15 @@ export async function waitForElement(page, parsed, options = {}) {
   const defaultOptions = {
     visible: true,
     timeout: 5000,
-    ...options
+    ...options,
   };
 
-  if (parsed.type === 'xpath') {
+  if (parsed.type === "xpath") {
     // Use locator API for XPath (Puppeteer v24+)
     const locator = page.locator(`::-p-xpath(${parsed.selector})`);
     // setVisibility and setTimeout are the locator options
     await locator
-      .setVisibility(defaultOptions.visible ? 'visible' : null)
+      .setVisibility(defaultOptions.visible ? "visible" : null)
       .setTimeout(defaultOptions.timeout)
       .wait();
   } else {
@@ -90,7 +90,7 @@ export async function waitForElement(page, parsed, options = {}) {
  * @returns {Promise<void>}
  */
 export async function clickElement(page, parsed) {
-  if (parsed.type === 'xpath') {
+  if (parsed.type === "xpath") {
     // Use locator API for XPath (Puppeteer v24+)
     const locator = page.locator(`::-p-xpath(${parsed.selector})`);
     await locator.click();
@@ -108,20 +108,20 @@ export async function clickElement(page, parsed) {
  * @returns {Promise<void>}
  */
 export async function typeIntoElement(page, parsed, value, options = {}) {
-  if (parsed.type === 'xpath') {
+  if (parsed.type === "xpath") {
     // Use locator API for XPath (Puppeteer v24+)
     const locator = page.locator(`::-p-xpath(${parsed.selector})`);
 
     // Clear if requested
     if (options.clear) {
-      await locator.fill('');
+      await locator.fill("");
     }
 
     await locator.fill(value);
   } else {
     // CSS selector
     if (options.clear) {
-      await page.$eval(parsed.selector, el => el.value = '');
+      await page.$eval(parsed.selector, (el) => (el.value = ""));
     }
 
     await page.type(parsed.selector, value, { delay: options.delay || 0 });
@@ -135,17 +135,11 @@ export async function typeIntoElement(page, parsed, value, options = {}) {
  * @returns {Promise<ElementHandle|null>}
  */
 export async function getElement(page, parsed) {
-  if (parsed.type === 'xpath') {
+  if (parsed.type === "xpath") {
     // For XPath, use page.evaluate with XPath evaluation
     // This returns the first matching element
     const element = await page.evaluateHandle((xpath) => {
-      const result = document.evaluate(
-        xpath,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      );
+      const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
       return result.singleNodeValue;
     }, parsed.selector);
 
@@ -164,15 +158,18 @@ export async function getElement(page, parsed) {
  * @returns {Error} Enhanced error with troubleshooting tips
  */
 export function enhanceError(error, selector) {
-  if (error.message.includes('waiting for selector') ||
-      error.message.includes('waiting for XPath') ||
-      error.message.includes('No node found')) {
-    error.message += '\n\nTroubleshooting:\n' +
-      '1. Use snapshot.js to find correct selector: node snapshot.js --url <url>\n' +
+  if (
+    error.message.includes("waiting for selector") ||
+    error.message.includes("waiting for XPath") ||
+    error.message.includes("No node found")
+  ) {
+    error.message +=
+      "\n\nTroubleshooting:\n" +
+      "1. Use snapshot.js to find correct selector: node snapshot.js --url <url>\n" +
       '2. Try XPath selector: //button[text()="Click"] or //button[contains(text(),"Click")]\n' +
-      '3. Check element is visible on page (not display:none or hidden)\n' +
-      '4. Increase --timeout value: --timeout 10000\n' +
-      '5. Change wait strategy: --wait-until load or --wait-until domcontentloaded';
+      "3. Check element is visible on page (not display:none or hidden)\n" +
+      "4. Increase --timeout value: --timeout 10000\n" +
+      "5. Change wait strategy: --wait-until load or --wait-until domcontentloaded";
   }
   return error;
 }

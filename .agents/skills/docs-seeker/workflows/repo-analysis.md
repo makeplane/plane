@@ -49,6 +49,7 @@
 ## Example
 
 **Obscure library without llms.txt:**
+
 ```bash
 # 1. Find
 WebSearch: "MyLibrary github repository"

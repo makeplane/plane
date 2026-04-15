@@ -31,6 +31,7 @@ Without installation, you'll get **Error 500** when viewing plan details.
 ## Purpose
 
 Visual dashboard for viewing plan directories with:
+
 - Progress tracking per plan
 - Timeline/Gantt visualization
 - Phase status indicators
@@ -71,6 +72,7 @@ Use `/ck:kanban` for quick access:
 ## Features
 
 ### Dashboard View
+
 - Plan cards with progress bars
 - Phase status breakdown (completed, in-progress, pending)
 - Last modified timestamps
@@ -78,25 +80,27 @@ Use `/ck:kanban` for quick access:
 - Priority indicators
 
 ### Timeline Visualization
+
 - Gantt-style timeline of plans
 - Duration tracking
 - Activity heatmap
 
 ### Design
+
 - Glassmorphism UI with dark mode
 - Responsive grid layout
 - Warm accent colors
 
 ## CLI Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--dir <path>` | Plans directory | - |
-| `--port <number>` | Server port | 3500 |
-| `--host <addr>` | Host to bind (`0.0.0.0` for remote) | localhost |
-| `--open` | Auto-open browser | false |
-| `--background` | Run in background | false |
-| `--stop` | Stop all servers | - |
+| Option            | Description                         | Default   |
+| ----------------- | ----------------------------------- | --------- |
+| `--dir <path>`    | Plans directory                     | -         |
+| `--port <number>` | Server port                         | 3500      |
+| `--host <addr>`   | Host to bind (`0.0.0.0` for remote) | localhost |
+| `--open`          | Auto-open browser                   | false     |
+| `--background`    | Run in background                   | false     |
+| `--stop`          | Stop all servers                    | -         |
 
 ## Architecture
 
@@ -120,15 +124,15 @@ assets/
 
 ## HTTP Routes
 
-| Route | Description |
-|-------|-------------|
-| `/` or `/kanban` | Dashboard view |
-| `/kanban?dir=<path>` | Dashboard for specific directory |
-| `/api/plans` | JSON API for plans data |
-| `/api/plans?dir=<path>` | JSON API for specific directory |
-| `/view?file=<path>` | Render markdown plan/phase files in reader view |
-| `/assets/*` | Static assets |
-| `/file/*` | Local file serving |
+| Route                   | Description                                     |
+| ----------------------- | ----------------------------------------------- |
+| `/` or `/kanban`        | Dashboard view                                  |
+| `/kanban?dir=<path>`    | Dashboard for specific directory                |
+| `/api/plans`            | JSON API for plans data                         |
+| `/api/plans?dir=<path>` | JSON API for specific directory                 |
+| `/view?file=<path>`     | Render markdown plan/phase files in reader view |
+| `/assets/*`             | Static assets                                   |
+| `/file/*`               | Local file serving                              |
 
 ## Remote Access
 

@@ -92,7 +92,10 @@ DepartmentFormModal
      ```tsx
      <div className="space-y-1">
        <label className="text-13 font-medium">Dept Type</label>
-       <select {...register("dept_type")} className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13">
+       <select
+         {...register("dept_type")}
+         className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
+       >
          <option value="HO">HO</option>
          <option value="BRX">BRX</option>
          <option value="OSR">OSR</option>

@@ -14,6 +14,7 @@ Comprehensive guide for building on Shopify platform: apps, extensions, themes, 
 ## Platform Overview
 
 **Core Components:**
+
 - **Shopify CLI** - Development workflow tool
 - **GraphQL Admin API** - Primary API for data operations (recommended)
 - **REST Admin API** - Legacy API (maintenance mode)
@@ -21,6 +22,7 @@ Comprehensive guide for building on Shopify platform: apps, extensions, themes, 
 - **Liquid** - Template language for themes
 
 **Extension Points:**
+
 - Checkout UI - Customize checkout experience
 - Admin UI - Extend admin dashboard
 - POS UI - Point of Sale customization
@@ -76,28 +78,33 @@ shopify theme push --development
 ### 1. App Development
 
 **Setup:**
+
 ```bash
 shopify app init
 cd my-app
 ```
 
 **Configure Access Scopes** (`shopify.app.toml`):
+
 ```toml
 [access_scopes]
 scopes = "read_products,write_products,read_orders"
 ```
 
 **Start Development:**
+
 ```bash
 shopify app dev  # Starts local server with tunnel
 ```
 
 **Add Extensions:**
+
 ```bash
 shopify app generate extension --type checkout_ui_extension
 ```
 
 **Deploy:**
+
 ```bash
 shopify app deploy  # Builds and uploads to Shopify
 ```
@@ -105,6 +112,7 @@ shopify app deploy  # Builds and uploads to Shopify
 ### 2. Extension Development
 
 **Available Types:**
+
 - Checkout UI - `checkout_ui_extension`
 - Admin Action - `admin_action`
 - Admin Block - `admin_block`
@@ -112,6 +120,7 @@ shopify app deploy  # Builds and uploads to Shopify
 - Function - `function` (discounts, payment, delivery, validation)
 
 **Workflow:**
+
 ```bash
 shopify app generate extension
 # Select type, configure
@@ -122,12 +131,14 @@ shopify app deploy  # Publish
 ### 3. Theme Development
 
 **Setup:**
+
 ```bash
 shopify theme init
 # Choose Dawn (reference theme) or start fresh
 ```
 
 **Local Development:**
+
 ```bash
 shopify theme dev
 # Preview at localhost:9292
@@ -135,6 +146,7 @@ shopify theme dev
 ```
 
 **Deployment:**
+
 ```bash
 shopify theme push --development  # Push to dev theme
 shopify theme publish --theme=123  # Set as live
@@ -143,6 +155,7 @@ shopify theme publish --theme=123  # Set as live
 ## When to Build What
 
 ### Build an App When:
+
 - Integrating external services
 - Adding functionality across multiple stores
 - Building merchant-facing admin tools
@@ -151,6 +164,7 @@ shopify theme publish --theme=123  # Set as live
 - Charging for functionality
 
 ### Build an Extension When:
+
 - Customizing checkout flow
 - Adding fields/features to admin pages
 - Creating POS actions for retail
@@ -158,6 +172,7 @@ shopify theme publish --theme=123  # Set as live
 - Extending customer account pages
 
 ### Build a Theme When:
+
 - Creating custom storefront design
 - Building unique shopping experiences
 - Customizing product/collection pages
@@ -165,7 +180,9 @@ shopify theme publish --theme=123  # Set as live
 - Modifying homepage/content pages
 
 ### Combination Approach:
+
 **App + Theme Extension:**
+
 - App handles backend logic and data
 - Theme extension provides storefront UI
 - Example: Product reviews, wishlists, size guides
@@ -204,12 +221,12 @@ query GetProducts($first: Int!) {
 ### Checkout Extension (React)
 
 ```javascript
-import { reactExtension, BlockStack, TextField, Checkbox } from '@shopify/ui-extensions-react/checkout';
+import { reactExtension, BlockStack, TextField, Checkbox } from "@shopify/ui-extensions-react/checkout";
 
-export default reactExtension('purchase.checkout.block.render', () => <Extension />);
+export default reactExtension("purchase.checkout.block.render", () => <Extension />);
 
 function Extension() {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   return (
     <BlockStack>
@@ -235,6 +252,7 @@ function Extension() {
 ## Best Practices
 
 **API Usage:**
+
 - Prefer GraphQL over REST for new development
 - Request only needed fields to reduce costs
 - Implement pagination for large datasets
@@ -242,6 +260,7 @@ function Extension() {
 - Respect rate limits (cost-based for GraphQL)
 
 **Security:**
+
 - Store API credentials in environment variables
 - Verify webhook signatures
 - Use OAuth for public apps
@@ -249,6 +268,7 @@ function Extension() {
 - Implement session tokens for embedded apps
 
 **Performance:**
+
 - Cache API responses when appropriate
 - Optimize images in themes
 - Minimize Liquid logic complexity
@@ -256,6 +276,7 @@ function Extension() {
 - Monitor query costs in GraphQL
 
 **Testing:**
+
 - Use development stores for testing
 - Test across different store plans
 - Verify mobile responsiveness
@@ -273,6 +294,7 @@ Detailed guides for advanced topics:
 ## Scripts
 
 **[shopify_init.py](scripts/shopify_init.py)** - Initialize Shopify projects interactively
+
 ```bash
 python scripts/shopify_init.py
 ```
@@ -280,21 +302,25 @@ python scripts/shopify_init.py
 ## Troubleshooting
 
 **Rate Limit Errors:**
+
 - Monitor `X-Shopify-Shop-Api-Call-Limit` header
 - Implement exponential backoff
 - Use bulk operations for large datasets
 
 **Authentication Failures:**
+
 - Verify access token validity
 - Check required scopes granted
 - Ensure OAuth flow completed
 
 **Extension Not Appearing:**
+
 - Verify extension target correct
 - Check extension published
 - Ensure app installed on store
 
 **Webhook Not Receiving:**
+
 - Verify webhook URL accessible
 - Check signature validation
 - Review logs in Partner Dashboard
@@ -302,17 +328,20 @@ python scripts/shopify_init.py
 ## Resources
 
 **Official Documentation:**
+
 - Shopify Docs: https://shopify.dev/docs
 - GraphQL API: https://shopify.dev/docs/api/admin-graphql
 - Shopify CLI: https://shopify.dev/docs/api/shopify-cli
 - Polaris: https://polaris.shopify.com
 
 **Tools:**
+
 - GraphiQL Explorer (Admin → Settings → Apps → Develop apps)
 - Partner Dashboard (app management)
 - Development stores (free testing)
 
 **API Versioning:**
+
 - Quarterly releases (YYYY-MM format)
 - Current: 2025-01
 - 12-month support per version

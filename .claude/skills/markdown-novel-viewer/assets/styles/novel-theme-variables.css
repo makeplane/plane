@@ -22,9 +22,9 @@
   --link-hover: #8b4513;
 
   /* Fonts */
-  --font-heading: 'Libre Baskerville', Georgia, serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-heading: "Libre Baskerville", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
   /* Spacing */
   --content-width: 720px;
@@ -33,9 +33,15 @@
 }
 
 /* Content width responsive to font size */
-html[data-font-size="S"] { --content-width: 640px; }
-html[data-font-size="M"] { --content-width: 720px; }
-html[data-font-size="L"] { --content-width: 800px; }
+html[data-font-size="S"] {
+  --content-width: 640px;
+}
+html[data-font-size="M"] {
+  --content-width: 720px;
+}
+html[data-font-size="L"] {
+  --content-width: 800px;
+}
 
 [data-theme="dark"] {
   --bg-primary: #1a1a1a;

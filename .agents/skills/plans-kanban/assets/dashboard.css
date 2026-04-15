@@ -10,19 +10,19 @@
 
 :root {
   /* Warm palette aligned with novel-theme.css */
-  --dash-bg: #FAF8F3;
-  --dash-surface: #FFFFFF;
-  --dash-surface-hover: #F5F3EE;
-  --dash-border: #E8E4DC;
-  --dash-border-subtle: #F0EDE6;
+  --dash-bg: #faf8f3;
+  --dash-surface: #ffffff;
+  --dash-surface-hover: #f5f3ee;
+  --dash-border: #e8e4dc;
+  --dash-border-subtle: #f0ede6;
 
-  --dash-text: #2D2A26;
-  --dash-text-secondary: #7A756D;
-  --dash-text-muted: #A8A29E;
+  --dash-text: #2d2a26;
+  --dash-text-secondary: #7a756d;
+  --dash-text-muted: #a8a29e;
 
   /* Single accent - warm brown */
-  --dash-accent: #8B4513;
-  --dash-accent-hover: #6B3410;
+  --dash-accent: #8b4513;
+  --dash-accent-hover: #6b3410;
   --dash-accent-subtle: rgba(139, 69, 19, 0.08);
   --dash-accent-glow: rgba(139, 69, 19, 0.15);
 
@@ -38,8 +38,8 @@
   --dash-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   /* Typography */
-  --dash-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --dash-font-heading: 'Libre Baskerville', Georgia, serif;
+  --dash-font: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --dash-font-heading: "Libre Baskerville", Georgia, serif;
 
   /* Animation */
   --dash-ease: cubic-bezier(0.4, 0, 0.2, 1);
@@ -47,19 +47,19 @@
 }
 
 [data-theme="dark"] {
-  --dash-bg: #1A1A1A;
+  --dash-bg: #1a1a1a;
   --dash-surface: #242424;
-  --dash-surface-hover: #2A2A2A;
+  --dash-surface-hover: #2a2a2a;
   --dash-border: #333333;
-  --dash-border-subtle: #2A2A2A;
+  --dash-border-subtle: #2a2a2a;
 
-  --dash-text: #FAF8F3;
-  --dash-text-secondary: #A8A198;
-  --dash-text-muted: #6B6560;
+  --dash-text: #faf8f3;
+  --dash-text-secondary: #a8a198;
+  --dash-text-muted: #6b6560;
 
   /* Single accent - warm gold */
-  --dash-accent: #D4A574;
-  --dash-accent-hover: #E5B885;
+  --dash-accent: #d4a574;
+  --dash-accent-hover: #e5b885;
   --dash-accent-subtle: rgba(212, 165, 116, 0.1);
   --dash-accent-glow: rgba(212, 165, 116, 0.2);
 
@@ -381,11 +381,21 @@
   flex-shrink: 0;
 }
 
-.kanban-status-dot.pending { background: var(--dash-text-muted); }
-.kanban-status-dot.in-progress { background: #3B82F6; }
-.kanban-status-dot.in-review { background: #F59E0B; }
-.kanban-status-dot.completed { background: #10B981; }
-.kanban-status-dot.cancelled { background: #EF4444; }
+.kanban-status-dot.pending {
+  background: var(--dash-text-muted);
+}
+.kanban-status-dot.in-progress {
+  background: #3b82f6;
+}
+.kanban-status-dot.in-review {
+  background: #f59e0b;
+}
+.kanban-status-dot.completed {
+  background: #10b981;
+}
+.kanban-status-dot.cancelled {
+  background: #ef4444;
+}
 
 .kanban-column-count {
   font-size: 0.75rem;
@@ -510,33 +520,33 @@
 }
 
 .kanban-card-priority.priority-high {
-  background: #FEE2E2;
-  color: #B91C1C;
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
 .kanban-card-priority.priority-medium {
-  background: #FEF3C7;
-  color: #B45309;
+  background: #fef3c7;
+  color: #b45309;
 }
 
 .kanban-card-priority.priority-low {
-  background: #D1FAE5;
+  background: #d1fae5;
   color: #047857;
 }
 
 [data-theme="dark"] .kanban-card-priority.priority-high {
   background: rgba(185, 28, 28, 0.2);
-  color: #FCA5A5;
+  color: #fca5a5;
 }
 
 [data-theme="dark"] .kanban-card-priority.priority-medium {
   background: rgba(180, 83, 9, 0.2);
-  color: #FCD34D;
+  color: #fcd34d;
 }
 
 [data-theme="dark"] .kanban-card-priority.priority-low {
   background: rgba(4, 120, 87, 0.2);
-  color: #6EE7B7;
+  color: #6ee7b7;
 }
 
 /* Kanban Card Tags */
@@ -662,7 +672,7 @@ body:not(.view-mode-grid) .filter-pills {
 
 /* Subtle accent indicator */
 .plan-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -764,7 +774,7 @@ body:not(.view-mode-grid) .filter-pills {
 }
 
 .status-badge::before {
-  content: '';
+  content: "";
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -776,8 +786,13 @@ body:not(.view-mode-grid) .filter-pills {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* Card Body */
@@ -949,21 +964,18 @@ body:not(.view-mode-grid) .filter-pills {
 }
 
 .skeleton-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--dash-surface-hover) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, var(--dash-surface-hover) 50%, transparent 100%);
   transform: translateX(-100%);
   animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
-  100% { transform: translateX(100%); }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* ========================================
@@ -1250,14 +1262,13 @@ body:not(.view-mode-grid) .filter-pills {
   max-height: 220px;
   overflow-y: auto;
   overflow-x: hidden;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent calc(100% / 7 - 1px),
-      var(--dash-border-subtle) calc(100% / 7 - 1px),
-      var(--dash-border-subtle) calc(100% / 7)
-    );
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent calc(100% / 7 - 1px),
+    var(--dash-border-subtle) calc(100% / 7 - 1px),
+    var(--dash-border-subtle) calc(100% / 7)
+  );
 }
 
 .gantt-track::-webkit-scrollbar {
@@ -1304,24 +1315,23 @@ body:not(.view-mode-grid) .filter-pills {
 }
 
 .gantt-bar.in-progress::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
   animation: shimmer 2s ease-in-out infinite;
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .gantt-bar.pending {
@@ -1368,7 +1378,7 @@ body:not(.view-mode-grid) .filter-pills {
 }
 
 .gantt-tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
@@ -1406,7 +1416,7 @@ body:not(.view-mode-grid) .filter-pills {
 }
 
 .gantt-today-marker::before {
-  content: 'Today';
+  content: "Today";
   position: absolute;
   top: -1.25rem;
   left: 50%;

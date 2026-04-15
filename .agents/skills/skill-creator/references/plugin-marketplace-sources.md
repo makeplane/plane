@@ -20,6 +20,7 @@ Plugin source types for `marketplace.json` plugin entries.
 ```
 
 Pin to specific version:
+
 ```json
 {
   "name": "github-plugin",
@@ -32,11 +33,11 @@ Pin to specific version:
 }
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `repo` | string | Required. `owner/repo` format |
-| `ref` | string | Optional. Branch or tag (defaults to repo default) |
-| `sha` | string | Optional. Full 40-char commit SHA for exact pinning |
+| Field  | Type   | Description                                         |
+| ------ | ------ | --------------------------------------------------- |
+| `repo` | string | Required. `owner/repo` format                       |
+| `ref`  | string | Optional. Branch or tag (defaults to repo default)  |
+| `sha`  | string | Optional. Full 40-char commit SHA for exact pinning |
 
 ## Git Repositories (GitLab, Bitbucket, etc.)
 
@@ -48,6 +49,7 @@ Pin to specific version:
 ```
 
 Pin to specific version:
+
 ```json
 {
   "name": "git-plugin",
@@ -60,11 +62,11 @@ Pin to specific version:
 }
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Field | Type   | Description                              |
+| ----- | ------ | ---------------------------------------- |
 | `url` | string | Required. Full git URL (must end `.git`) |
-| `ref` | string | Optional. Branch or tag |
-| `sha` | string | Optional. Full 40-char commit SHA |
+| `ref` | string | Optional. Branch or tag                  |
+| `sha` | string | Optional. Full 40-char commit SHA        |
 
 ## Advanced Example (All Features)
 
@@ -82,10 +84,12 @@ Pin to specific version:
   "commands": ["./commands/core/", "./commands/enterprise/"],
   "agents": ["./agents/security-reviewer.md", "./agents/compliance-checker.md"],
   "hooks": {
-    "PostToolUse": [{
-      "matcher": "Write|Edit",
-      "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh" }]
-    }]
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh" }]
+      }
+    ]
   },
   "mcpServers": {
     "enterprise-db": {
@@ -98,6 +102,7 @@ Pin to specific version:
 ```
 
 **Key notes:**
+
 - `${CLAUDE_PLUGIN_ROOT}` — references files within plugin's installation cache directory
 - `strict: false` — marketplace entry defines plugin entirely, no `plugin.json` needed
 - `commands`/`agents` — multiple directories or individual files, paths relative to plugin root

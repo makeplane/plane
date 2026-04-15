@@ -15,12 +15,14 @@
 ### Quick Start
 
 **1. Clone Repository**
+
 ```bash
 git clone https://github.com/shbvn/plane.git
 cd plane
 ```
 
 **2. Setup Frontend**
+
 ```bash
 # Install dependencies
 pnpm install
@@ -34,6 +36,7 @@ pnpm dev:web
 ```
 
 **3. Setup Backend**
+
 ```bash
 cd apps/api
 
@@ -60,6 +63,7 @@ python manage.py runserver 0.0.0.0:8000
 ```
 
 **4. Setup Services (Docker Compose)**
+
 ```bash
 # Start PostgreSQL, Redis, RabbitMQ
 docker-compose -f docker-compose.dev.yml up -d
@@ -69,6 +73,7 @@ docker-compose ps
 ```
 
 **5. Start Celery Worker (in separate terminal)**
+
 ```bash
 cd apps/api
 source venv/bin/activate
@@ -78,6 +83,7 @@ celery -A plane worker -l info
 ### Environment Variables
 
 **Frontend (apps/web/.env.local):**
+
 ```env
 # API Configuration
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
@@ -93,6 +99,7 @@ NEXT_PUBLIC_LIVE_URL=http://localhost:3003
 ```
 
 **Backend (apps/api/.env):**
+
 ```env
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/plane
@@ -135,6 +142,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1,*.example.com
 ```
 
 **Real-Time Server (apps/live/.env):**
+
 ```env
 HOCUSPOCUS_PORT=3003
 HOCUSPOCUS_HOST=0.0.0.0
@@ -151,7 +159,7 @@ REDIS_URL=redis://localhost:6379/1
 **File: docker-compose.yml (Production)**
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   # Databases
@@ -328,6 +336,7 @@ volumes:
 ### Dockerfile Patterns
 
 **Django Backend (apps/api/Dockerfile):**
+
 ```dockerfile
 # Build stage
 FROM python:3.11-slim as builder
@@ -379,6 +388,7 @@ CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--threads", "2", \
 ```
 
 **React Frontend (apps/web/Dockerfile):**
+
 ```dockerfile
 # Build stage
 FROM node:22-alpine as builder
@@ -491,17 +501,20 @@ space.example.com {
 ### Running Migrations
 
 **Development:**
+
 ```bash
 cd apps/api
 python manage.py migrate
 ```
 
 **Docker:**
+
 ```bash
 docker-compose exec api python manage.py migrate
 ```
 
 **Production (with blue-green deployment):**
+
 ```bash
 # During deployment, run migrations before starting new containers
 docker-compose exec -T api python manage.py migrate
@@ -557,10 +570,8 @@ The repository includes automated pre-push checks that run before commits are ac
 
 1. **Frontend Linting:** `pnpm check:lint`
    - ESLint, Prettier, TSLint checks on TypeScript/React code
-   
 2. **Backend Linting:** `ruff check apps/api/`
    - Python linting with Ruff
-   
 3. **Type Checking:** `mypy apps/api/`
    - Python static type validation
 
@@ -591,48 +602,55 @@ cp apps/live/.env.example apps/live/.env
 ### Deployment Steps
 
 1. **Build Docker Images**
+
    ```bash
    docker-compose build --no-cache
    ```
 
 2. **Push to Registry (optional, for multi-server deployments)**
+
    ```bash
    docker tag plane-api:latest registry.example.com/plane-api:latest
    docker push registry.example.com/plane-api:latest
    ```
 
 3. **Pull Latest Code**
+
    ```bash
    git pull origin develop
    git checkout preview
    ```
 
 4. **Start Services**
+
    ```bash
    docker-compose up -d
    ```
 
 5. **Run Migrations**
+
    ```bash
    docker-compose exec -T api python manage.py migrate
    ```
 
 6. **Verify Health**
+
    ```bash
    # Check service health
    docker-compose ps
-   
+
    # Test API
    curl http://localhost:8000/health
-   
+
    # Test frontend
    curl http://localhost/
    ```
 
 7. **Monitor Logs**
+
    ```bash
    docker-compose logs -f
-   
+
    # Specific service
    docker-compose logs -f api
    docker-compose logs -f web
@@ -673,6 +691,7 @@ curl http://localhost:8000/health
 ### Container Health Checks
 
 **All services include HEALTHCHECK:**
+
 ```bash
 # Check container health
 docker inspect plane-api | jq '.[0].State.Health'
@@ -688,6 +707,7 @@ docker inspect plane-api | jq '.[0].State.Health'
 ### Logging & Monitoring
 
 **Structured Logs (JSON):**
+
 ```bash
 # View backend logs
 docker-compose logs api | jq .
@@ -703,6 +723,7 @@ docker-compose logs api | jq .
 ```
 
 **Log Aggregation (Future):**
+
 - Elasticsearch + Kibana for centralized logging
 - Datadog/New Relic for APM
 
@@ -711,33 +732,37 @@ docker-compose logs api | jq .
 ### Horizontal Scaling
 
 **Multiple API Instances:**
+
 ```yaml
 api:
   deploy:
-    replicas: 3  # Run 3 instances
+    replicas: 3 # Run 3 instances
+
 
 # Load balancer routes to all instances
 ```
 
 **Multiple Celery Workers:**
+
 ```yaml
 celery_worker:
   deploy:
-    replicas: 5  # Run 5 workers
+    replicas: 5 # Run 5 workers
 ```
 
 ### Vertical Scaling
 
 **Resource Limits (Docker):**
+
 ```yaml
 api:
   deploy:
     resources:
       limits:
-        cpus: '2'
+        cpus: "2"
         memory: 4G
       reservations:
-        cpus: '1'
+        cpus: "1"
         memory: 2G
 ```
 

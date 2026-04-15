@@ -10,11 +10,13 @@ Execute plan: <plan>$ARGUMENTS</plan>
 ## Workflow
 
 ### 1. Plan Analysis
+
 - Read `plan.md` from given path
 - **Check for:** Dependency graph, Execution strategy, Parallelization Info, File Ownership matrix
 - **Decision:** IF parallel-executable → Step 2A, ELSE → Step 2B
 
 ### 2A. Parallel Execution
+
 1. Parse execution strategy (which phases concurrent/sequential, file ownership)
 2. Launch multiple `fullstack-developer` agents simultaneously for parallel phases
    - Pass: phase file path, environment info, file ownership boundaries
@@ -23,7 +25,9 @@ Execute plan: <plan>$ARGUMENTS</plan>
 5. Proceed to Step 3
 
 ### 2B. Sequential Execution
+
 Follow `./.claude/rules/primary-workflow.md`:
+
 1. Use main agent step by step
 2. Read `plan.md`, implement phases one by one
 3. Use `project-manager` for progress updates
@@ -32,6 +36,7 @@ Follow `./.claude/rules/primary-workflow.md`:
 6. Proceed to Step 3
 
 ### 3. Testing
+
 - Use `tester` for full suite (NO fake data/mocks)
 - If fail: `debugger` → fix → repeat
 
@@ -85,16 +90,20 @@ LOOP:
 ```
 
 ### 5. Project Management & Docs
+
 - If approved: `project-manager` + `docs-manager` in parallel (update plans, docs, roadmap)
 - If rejected: fix → repeat
 
 ### 6. Onboarding
+
 - Guide user step by step (1 question at a time)
 
 ### 7. Final Report
+
 - Summary, guide, next steps
 - Ask to commit (use `git-manager` if yes)
 
 **Examples:**
+
 - Parallel: "Phases 1-3 parallel, then 4" → Launch 3 agents → Wait → Launch 1 agent
 - Sequential: "Phase 1 → 2 → 3" → Main agent implements each phase

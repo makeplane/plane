@@ -12,11 +12,11 @@ priority: P2
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-03-18 |
-| Status | pending |
-| Priority | P2 |
+| Field    | Value      |
+| -------- | ---------- |
+| Date     | 2026-03-18 |
+| Status   | pending    |
+| Priority | P2         |
 
 ## Key Insights
 
@@ -63,6 +63,7 @@ departments/page.tsx
 ## Implementation Steps
 
 1. **Service** (`instance-department.service.ts`):
+
    ```typescript
    async bulkLinkWorkspace(data: { links: { code: string; workspace_slug: string }[] }) {
      return this.post(`/api/instances/departments/bulk-link-workspace/`, data);

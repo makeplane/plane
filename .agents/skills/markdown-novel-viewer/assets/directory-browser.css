@@ -10,7 +10,11 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   background: #faf8f3;
   color: #333;
   line-height: 1.6;
@@ -30,7 +34,7 @@ header {
 }
 
 header h1 {
-  font-family: 'Libre Baskerville', Georgia, serif;
+  font-family: "Libre Baskerville", Georgia, serif;
   font-size: 1.75rem;
   font-weight: 400;
   color: #8b4513;
@@ -40,7 +44,7 @@ header h1 {
 header .path {
   font-size: 0.875rem;
   color: #666;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   word-break: break-all;
 }
 

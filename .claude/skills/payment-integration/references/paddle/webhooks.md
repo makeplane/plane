@@ -17,25 +17,21 @@ Format: `ts=1234567890;h1=sha256_signature`
 ### Node.js SDK
 
 ```typescript
-import Paddle from '@paddle/paddle-node-sdk';
+import Paddle from "@paddle/paddle-node-sdk";
 
 const paddle = new Paddle(process.env.PADDLE_API_KEY);
 
-app.post('/webhooks/paddle', async (req, res) => {
-  const signature = req.headers['paddle-signature'];
+app.post("/webhooks/paddle", async (req, res) => {
+  const signature = req.headers["paddle-signature"];
   const rawBody = req.body; // raw request body string
 
   try {
-    const event = paddle.webhooks.unmarshal(
-      rawBody,
-      process.env.PADDLE_WEBHOOK_SECRET,
-      signature
-    );
+    const event = paddle.webhooks.unmarshal(rawBody, process.env.PADDLE_WEBHOOK_SECRET, signature);
 
     await handleEvent(event);
-    res.status(200).send('OK');
+    res.status(200).send("OK");
   } catch (err) {
-    res.status(400).send('Invalid signature');
+    res.status(400).send("Invalid signature");
   }
 });
 ```
@@ -43,44 +39,34 @@ app.post('/webhooks/paddle', async (req, res) => {
 ### Manual Verification
 
 ```typescript
-import crypto from 'crypto';
+import crypto from "crypto";
 
-function verifyPaddleWebhook(
-  rawBody: string,
-  signature: string,
-  secret: string
-): boolean {
-  const [tsPart, h1Part] = signature.split(';');
-  const ts = tsPart.replace('ts=', '');
-  const h1 = h1Part.replace('h1=', '');
+function verifyPaddleWebhook(rawBody: string, signature: string, secret: string): boolean {
+  const [tsPart, h1Part] = signature.split(";");
+  const ts = tsPart.replace("ts=", "");
+  const h1 = h1Part.replace("h1=", "");
 
   const signedPayload = `${ts}:${rawBody}`;
-  const expectedSig = crypto
-    .createHmac('sha256', secret)
-    .update(signedPayload)
-    .digest('hex');
+  const expectedSig = crypto.createHmac("sha256", secret).update(signedPayload).digest("hex");
 
-  return crypto.timingSafeEqual(
-    Buffer.from(h1),
-    Buffer.from(expectedSig)
-  );
+  return crypto.timingSafeEqual(Buffer.from(h1), Buffer.from(expectedSig));
 }
 ```
 
 ## Key Events
 
-| Event | Description |
-|-------|-------------|
-| `transaction.completed` | Payment successful |
-| `transaction.payment_failed` | Payment failed |
-| `subscription.created` | New subscription |
-| `subscription.updated` | Subscription changed |
-| `subscription.canceled` | Subscription canceled |
-| `subscription.past_due` | Payment overdue |
-| `subscription.paused` | Subscription paused |
-| `subscription.resumed` | Subscription resumed |
-| `customer.created` | New customer |
-| `customer.updated` | Customer updated |
+| Event                        | Description           |
+| ---------------------------- | --------------------- |
+| `transaction.completed`      | Payment successful    |
+| `transaction.payment_failed` | Payment failed        |
+| `subscription.created`       | New subscription      |
+| `subscription.updated`       | Subscription changed  |
+| `subscription.canceled`      | Subscription canceled |
+| `subscription.past_due`      | Payment overdue       |
+| `subscription.paused`        | Subscription paused   |
+| `subscription.resumed`       | Subscription resumed  |
+| `customer.created`           | New customer          |
+| `customer.updated`           | Customer updated      |
 
 ## Event Payload
 

@@ -5,6 +5,7 @@ Complete guide to HLS/DASH streaming, live streaming platforms, and adaptive bit
 ## HLS (HTTP Live Streaming)
 
 ### Basic HLS Stream
+
 Generate playlist for on-demand streaming.
 
 ```bash
@@ -17,11 +18,13 @@ ffmpeg -i input.mp4 \
 ```
 
 **Key parameters:**
+
 - `-hls_time` - Segment duration (seconds, default 2)
 - `-hls_playlist_type` - `vod` (on-demand) or `event` (live)
 - `-hls_segment_filename` - Naming pattern for segments
 
 ### Optimized HLS
+
 Better quality and compatibility.
 
 ```bash
@@ -35,10 +38,12 @@ ffmpeg -i input.mp4 \
 ```
 
 **Parameters explained:**
+
 - `-g 48` - Keyframe every 48 frames (2s @ 24fps)
 - `-sc_threshold 0` - Disable scene detection (consistent segments)
 
 ### Multi-Bitrate HLS (Adaptive)
+
 Create multiple quality levels for adaptive streaming.
 
 ```bash
@@ -56,12 +61,14 @@ ffmpeg -i input.mp4 \
 ```
 
 **Creates:**
+
 - `master.m3u8` - Master playlist (entry point)
 - `stream_0/playlist.m3u8` - 360p stream
 - `stream_1/playlist.m3u8` - 480p stream
 - `stream_2/playlist.m3u8` - 720p stream
 
 ### HLS with Encryption
+
 Protect content with AES-128 encryption.
 
 ```bash
@@ -83,6 +90,7 @@ ffmpeg -i input.mp4 \
 ## DASH (Dynamic Adaptive Streaming)
 
 ### Basic DASH
+
 MPEG-DASH format for adaptive streaming.
 
 ```bash
@@ -94,6 +102,7 @@ ffmpeg -i input.mp4 \
 ```
 
 ### Multi-Bitrate DASH
+
 Multiple quality levels.
 
 ```bash
@@ -111,6 +120,7 @@ ffmpeg -i input.mp4 \
 ## RTMP Live Streaming
 
 ### Stream to Twitch
+
 ```bash
 ffmpeg -re -i input.mp4 \
   -c:v libx264 -preset veryfast -maxrate 3000k -bufsize 6000k \
@@ -119,6 +129,7 @@ ffmpeg -re -i input.mp4 \
 ```
 
 ### Stream to YouTube
+
 ```bash
 ffmpeg -re -i input.mp4 \
   -c:v libx264 -preset veryfast -maxrate 2500k -bufsize 5000k \
@@ -127,6 +138,7 @@ ffmpeg -re -i input.mp4 \
 ```
 
 ### Stream to Facebook
+
 ```bash
 ffmpeg -re -i input.mp4 \
   -c:v libx264 -preset veryfast -maxrate 4000k -bufsize 8000k \
@@ -135,6 +147,7 @@ ffmpeg -re -i input.mp4 \
 ```
 
 ### Custom RTMP Server
+
 ```bash
 ffmpeg -re -i input.mp4 \
   -c:v libx264 -preset veryfast -tune zerolatency \
@@ -147,6 +160,7 @@ ffmpeg -re -i input.mp4 \
 ## Screen Capture + Stream
 
 ### Linux (X11)
+
 ```bash
 ffmpeg -f x11grab -s 1920x1080 -framerate 30 -i :0.0 \
   -f pulse -ac 2 -i default \
@@ -157,6 +171,7 @@ ffmpeg -f x11grab -s 1920x1080 -framerate 30 -i :0.0 \
 ```
 
 ### macOS (AVFoundation)
+
 ```bash
 # List devices
 ffmpeg -f avfoundation -list_devices true -i ""
@@ -170,6 +185,7 @@ ffmpeg -f avfoundation -framerate 30 -i "1:0" \
 ```
 
 ### Windows (DirectShow)
+
 ```bash
 ffmpeg -f dshow -i video="screen-capture-recorder":audio="Stereo Mix" \
   -c:v libx264 -preset ultrafast -tune zerolatency \
@@ -180,6 +196,7 @@ ffmpeg -f dshow -i video="screen-capture-recorder":audio="Stereo Mix" \
 ## Thumbnail Generation
 
 ### Single Thumbnail
+
 Extract frame at specific time.
 
 ```bash
@@ -193,6 +210,7 @@ ffmpeg -ss $(ffprobe -v error -show_entries format=duration \
 ```
 
 ### Multiple Thumbnails
+
 Generate thumbnails at intervals.
 
 ```bash
@@ -207,6 +225,7 @@ ffmpeg -i input.mp4 -vframes 10 -vf scale=320:-1 thumb_%02d.jpg
 ```
 
 ### Thumbnail Sprite Sheet
+
 Create single image with multiple thumbnails.
 
 ```bash
@@ -220,6 +239,7 @@ montage frames/thumb_*.jpg -tile 5x -geometry +0+0 sprite.jpg
 ## Preview Generation
 
 ### Video Preview (Trailer)
+
 Extract multiple short clips.
 
 ```bash
@@ -239,6 +259,7 @@ ffmpeg -f concat -safe 0 -i concat.txt -c copy preview.mp4
 ```
 
 ### Fast Preview (Low Quality)
+
 Quick preview for review.
 
 ```bash
@@ -254,48 +275,59 @@ ffmpeg -i input.mp4 \
 ### Important RTMP Parameters
 
 **Real-time reading:**
+
 - `-re` - Read input at native frame rate
 
 **Low latency:**
+
 - `-tune zerolatency` - Optimize for minimal latency
 - `-preset ultrafast` or `veryfast` - Fast encoding
 
 **Keyframes:**
+
 - `-g 50` - Keyframe interval (GOP size)
-- Recommended: 2 seconds (fps * 2)
+- Recommended: 2 seconds (fps \* 2)
 
 **Rate control:**
+
 - `-maxrate` - Maximum bitrate (e.g., 3000k)
 - `-bufsize` - Buffer size (typically 2x maxrate)
 
 **Compatibility:**
+
 - `-pix_fmt yuv420p` - Compatible pixel format
 
 ### Bitrate Recommendations
 
 **1080p 60fps:**
+
 - 4500-6000 kbps video
 - 160 kbps audio
 
 **1080p 30fps:**
+
 - 3000-4500 kbps video
 - 128 kbps audio
 
 **720p 60fps:**
+
 - 2500-4000 kbps video
 - 128 kbps audio
 
 **720p 30fps:**
+
 - 1500-2500 kbps video
 - 128 kbps audio
 
 **480p:**
+
 - 500-1000 kbps video
 - 128 kbps audio
 
 ## UDP/RTP Streaming
 
 ### UDP Stream
+
 Simple network streaming.
 
 ```bash
@@ -307,6 +339,7 @@ ffplay udp://192.168.1.100:1234
 ```
 
 ### RTP Stream
+
 Real-Time Protocol for low latency.
 
 ```bash
@@ -320,6 +353,7 @@ ffmpeg -re -i input.mp4 \
 ```
 
 ### Multicast Stream
+
 Stream to multiple receivers.
 
 ```bash
@@ -333,6 +367,7 @@ ffplay udp://239.255.0.1:1234
 ## Advanced Streaming
 
 ### Hardware-Accelerated Streaming
+
 Use GPU for faster encoding.
 
 ```bash
@@ -350,6 +385,7 @@ ffmpeg -re -hwaccel qsv -i input.mp4 \
 ```
 
 ### Stream with Overlay
+
 Add graphics during stream.
 
 ```bash
@@ -361,6 +397,7 @@ ffmpeg -re -i input.mp4 -i logo.png \
 ```
 
 ### Loop Stream
+
 Continuously loop video for 24/7 stream.
 
 ```bash
@@ -373,6 +410,7 @@ ffmpeg -stream_loop -1 -re -i input.mp4 \
 ## Troubleshooting
 
 ### Buffering Issues
+
 ```bash
 # Reduce buffer size
 ffmpeg -re -i input.mp4 -maxrate 2000k -bufsize 2000k -c:v libx264 -f flv rtmp://...
@@ -382,6 +420,7 @@ ffmpeg -re -i input.mp4 -preset ultrafast -c:v libx264 -f flv rtmp://...
 ```
 
 ### Audio/Video Desync
+
 ```bash
 # Force constant frame rate
 ffmpeg -re -i input.mp4 -r 30 -c:v libx264 -f flv rtmp://...
@@ -391,6 +430,7 @@ ffmpeg -re -i input.mp4 -vsync 1 -c:v libx264 -f flv rtmp://...
 ```
 
 ### Connection Drops
+
 ```bash
 # Increase timeout
 ffmpeg -timeout 5000000 -re -i input.mp4 -c:v libx264 -f flv rtmp://...

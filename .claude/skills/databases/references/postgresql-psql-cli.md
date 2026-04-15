@@ -5,6 +5,7 @@ Command-line interface for PostgreSQL: connection, meta-commands, scripting, and
 ## Connection
 
 ### Basic Connection
+
 ```bash
 # Connect to database
 psql -U username -d database -h hostname -p 5432
@@ -22,6 +23,7 @@ psql
 ```
 
 ### Password File (~/.pgpass)
+
 ```bash
 # Format: hostname:port:database:username:password
 # chmod 600 ~/.pgpass
@@ -30,6 +32,7 @@ localhost:5432:mydb:postgres:mypassword
 ```
 
 ### SSL Connection
+
 ```bash
 # Require SSL
 psql "host=hostname sslmode=require user=username dbname=database"
@@ -44,6 +47,7 @@ psql "host=hostname sslmode=verify-full \
 ## Essential Meta-Commands
 
 ### Database Navigation
+
 ```bash
 \l or \list                    # List databases
 \l+                            # List with sizes
@@ -53,6 +57,7 @@ psql "host=hostname sslmode=verify-full \
 ```
 
 ### Schema Inspection
+
 ```bash
 \dn                            # List schemas
 \dt                            # List tables
@@ -66,6 +71,7 @@ psql "host=hostname sslmode=verify-full \
 ```
 
 ### Object Description
+
 ```bash
 \d tablename                   # Describe table
 \d+ tablename                  # Detailed description
@@ -76,6 +82,7 @@ psql "host=hostname sslmode=verify-full \
 ```
 
 ### Output Formatting
+
 ```bash
 \x                             # Toggle expanded output
 \x on                          # Enable expanded
@@ -88,6 +95,7 @@ psql "host=hostname sslmode=verify-full \
 ```
 
 ### Execution Commands
+
 ```bash
 \i filename.sql                # Execute SQL file
 \o output.txt                  # Redirect output to file
@@ -130,6 +138,7 @@ psql "host=hostname sslmode=verify-full \
 ## Running SQL
 
 ### Interactive Queries
+
 ```sql
 -- Simple query
 SELECT * FROM users;
@@ -150,6 +159,7 @@ WHERE active = true;
 ```
 
 ### Variables
+
 ```bash
 # Set variable
 \set myvar 'value'
@@ -170,6 +180,7 @@ SELECT * FROM users WHERE name = :'username';
 ```
 
 ### Scripts
+
 ```sql
 -- script.sql
 \set ON_ERROR_STOP on
@@ -205,6 +216,7 @@ psql -d mydb -1 -f script.sql
 ## Data Import/Export
 
 ### COPY (Server-side)
+
 ```sql
 -- Export to CSV
 COPY users TO '/tmp/users.csv' WITH (FORMAT CSV, HEADER);
@@ -218,6 +230,7 @@ TO '/tmp/active_users.csv' WITH (FORMAT CSV, HEADER);
 ```
 
 ### \copy (Client-side)
+
 ```bash
 # Export (from psql)
 \copy users TO 'users.csv' WITH (FORMAT CSV, HEADER)
@@ -233,6 +246,7 @@ TO '/tmp/active_users.csv' WITH (FORMAT CSV, HEADER);
 ```
 
 ### pg_dump / pg_restore
+
 ```bash
 # Dump database
 pg_dump mydb > mydb.sql
@@ -255,6 +269,7 @@ pg_restore -d mydb mydb.dump
 ## Configuration
 
 ### ~/.psqlrc
+
 ```bash
 # Auto-loaded on psql startup
 \set QUIET ON
@@ -285,6 +300,7 @@ pg_restore -d mydb mydb.dump
 ```
 
 ### Useful Aliases
+
 ```bash
 # Add to ~/.psqlrc
 \set locks 'SELECT pid, usename, pg_blocking_pids(pid) as blocked_by, query FROM pg_stat_activity WHERE cardinality(pg_blocking_pids(pid)) > 0;'
@@ -323,6 +339,7 @@ ROLLBACK;
 ## Performance Analysis
 
 ### EXPLAIN
+
 ```sql
 -- Show query plan
 EXPLAIN SELECT * FROM users WHERE id = 1;
@@ -336,6 +353,7 @@ SELECT * FROM users WHERE active = true;
 ```
 
 ### Current Activity
+
 ```sql
 -- Active queries
 SELECT pid, usename, state, query
@@ -357,6 +375,7 @@ JOIN pg_stat_activity blocking
 ```
 
 ### Statistics
+
 ```sql
 -- Database size
 SELECT pg_size_pretty(pg_database_size(current_database()));
@@ -423,6 +442,7 @@ pg_dump -n public mydb > public_schema.sql
 ## Troubleshooting
 
 ### Connection Issues
+
 ```bash
 # Test connection
 psql -h hostname -U username -d postgres -c "SELECT 1;"
@@ -435,6 +455,7 @@ psql -h hostname -d mydb --echo-all
 ```
 
 ### Performance Issues
+
 ```sql
 -- Enable slow query logging
 ALTER DATABASE mydb SET log_min_duration_statement = 100;

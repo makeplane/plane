@@ -44,6 +44,7 @@ ModuleActivity (ProjectBaseModel)
 **Activity logging approach**: Helper function `log_module_activity()` called in views after mutations. Accepts module, actor, verb, field, old/new values. Creates `ModuleActivity` record directly (synchronous, fast single INSERT).
 
 **API endpoint**: `GET /api/workspaces/:slug/projects/:project_id/modules/:module_id/activities/`
+
 - Pagination via cursor-based pagination (existing `BaseAPIView.paginate`)
 - Permission: `ProjectEntityPermission` (any member can read)
 
@@ -78,6 +79,7 @@ ModuleActivity (ProjectBaseModel)
 1. **Create `ModuleActivity` model**
    - File: `apps/api/plane/db/models/module.py`
    - Add after `ModuleUserProperties` class:
+
    ```python
    class ModuleActivity(ProjectBaseModel):
        module = models.ForeignKey(
@@ -103,16 +105,19 @@ ModuleActivity (ProjectBaseModel)
        def __str__(self):
            return f"{self.module.name} {self.verb} {self.field}"
    ```
+
    - Add `from django.conf import settings` import at top if not present (already present)
 
 2. **Export `ModuleActivity` in `__init__.py`**
    - File: `apps/api/plane/db/models/__init__.py`
    - Change line 49: add `ModuleActivity` to the module import:
+
    ```python
    from .module import Module, ModuleActivity, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
    ```
 
 3. **Create and run migration**
+
    ```bash
    cd apps/api && python manage.py makemigrations db --name="add_module_activity_model"
    cd apps/api && python manage.py migrate
@@ -120,6 +125,7 @@ ModuleActivity (ProjectBaseModel)
 
 4. **Create helper function `log_module_activity`**
    - File: `apps/api/plane/utils/module_activity.py` (new file)
+
    ```python
    from django.utils import timezone
    from plane.db.models import ModuleActivity
@@ -146,6 +152,7 @@ ModuleActivity (ProjectBaseModel)
 5. **Create `ModuleActivitySerializer`**
    - Find existing module serializer file. Check `apps/api/plane/app/serializers/` for module serializers.
    - Add `ModuleActivitySerializer` to the same file or create new:
+
    ```python
    class ModuleActivitySerializer(BaseSerializer):
        actor_detail = UserLiteSerializer(source="actor", read_only=True)
@@ -158,6 +165,7 @@ ModuleActivity (ProjectBaseModel)
 
 6. **Create activity list endpoint**
    - File: `apps/api/plane/app/views/module/activity.py` (new file, <100 lines)
+
    ```python
    from rest_framework import status
    from rest_framework.response import Response
@@ -184,6 +192,7 @@ ModuleActivity (ProjectBaseModel)
 7. **Register activity endpoint in URL config**
    - Find module URL patterns. Likely in `apps/api/plane/app/urls/` or similar.
    - Add URL pattern:
+
    ```python
    path(
        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/activities/",
@@ -191,10 +200,12 @@ ModuleActivity (ProjectBaseModel)
        name="module-activities",
    ),
    ```
+
    - Also register in the view `__init__.py` for the module views directory.
 
 8. **Log activity in app view `create` (base.py)**
    - After `serializer.save()` in `create` method, add:
+
    ```python
    log_module_activity(
        module=serializer.instance, actor=request.user,
@@ -205,6 +216,7 @@ ModuleActivity (ProjectBaseModel)
 9. **Log activity in app view `partial_update` (base.py)**
    - Before update, capture current values for changed fields.
    - After `serializer.save()`, for each changed field log:
+
    ```python
    for field_name in request.data:
        if field_name in ["name", "description", "status", "start_date", "target_date", "lead_id", "member_ids"]:
@@ -220,6 +232,7 @@ ModuleActivity (ProjectBaseModel)
 
 10. **Log activity in app view `destroy` (base.py)**
     - Before `module.delete()`:
+
     ```python
     log_module_activity(
         module=module, actor=request.user,

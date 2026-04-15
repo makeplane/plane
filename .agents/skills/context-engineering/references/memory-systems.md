@@ -4,22 +4,22 @@ Architectures for persistent context beyond the window.
 
 ## Memory Layer Architecture
 
-| Layer | Scope | Persistence | Use Case |
-|-------|-------|-------------|----------|
-| L1: Working | Current window | None | Active reasoning |
-| L2: Short-Term | Session | Session | Task continuity |
-| L3: Long-Term | Cross-session | Persistent | User preferences |
-| L4: Entity | Per-entity | Persistent | Consistency |
-| L5: Temporal Graph | Time-aware | Persistent | Evolving facts |
+| Layer              | Scope          | Persistence | Use Case         |
+| ------------------ | -------------- | ----------- | ---------------- |
+| L1: Working        | Current window | None        | Active reasoning |
+| L2: Short-Term     | Session        | Session     | Task continuity  |
+| L3: Long-Term      | Cross-session  | Persistent  | User preferences |
+| L4: Entity         | Per-entity     | Persistent  | Consistency      |
+| L5: Temporal Graph | Time-aware     | Persistent  | Evolving facts   |
 
 ## Benchmark Performance (DMR Accuracy)
 
-| System | Accuracy | Approach |
-|--------|----------|----------|
-| Zep | 94.8% | Temporal knowledge graphs |
-| MemGPT | 93.4% | Hierarchical memory |
-| GraphRAG | 75-85% | Knowledge graphs |
-| Vector RAG | 60-70% | Embedding similarity |
+| System     | Accuracy | Approach                  |
+| ---------- | -------- | ------------------------- |
+| Zep        | 94.8%    | Temporal knowledge graphs |
+| MemGPT     | 93.4%    | Hierarchical memory       |
+| GraphRAG   | 75-85%   | Knowledge graphs          |
+| Vector RAG | 60-70%   | Embedding similarity      |
 
 ## Vector Store with Metadata
 
@@ -57,12 +57,12 @@ class TemporalKnowledgeGraph:
 
 ## Memory Retrieval Patterns
 
-| Pattern | Query | Use Case |
-|---------|-------|----------|
-| Semantic | "Similar to X" | General recall |
-| Entity-based | "About user John" | Consistency |
-| Temporal | "Valid on date" | Evolving facts |
-| Hybrid | Combine above | Production |
+| Pattern      | Query             | Use Case       |
+| ------------ | ----------------- | -------------- |
+| Semantic     | "Similar to X"    | General recall |
+| Entity-based | "About user John" | Consistency    |
+| Temporal     | "Valid on date"   | Evolving facts |
+| Hybrid       | Combine above     | Production     |
 
 ## File-System-as-Memory
 

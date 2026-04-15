@@ -31,54 +31,58 @@ Check in order (stop at first match):
 
 ### 2. Detection Signals
 
-| File/Pattern | Platform |
-|---|---|
-| `vercel.json`, `.vercel/` | Vercel |
-| `netlify.toml`, `_redirects` | Netlify |
-| `wrangler.toml`, `wrangler.json` | Cloudflare |
-| `fly.toml` | Fly.io |
-| `railway.json`, `railway.toml` | Railway |
-| `render.yaml` | Render |
-| `Procfile` + `app.json` | Heroku |
-| `tose.yaml`, `tose.json` | TOSE.sh |
-| `docker-compose.yml` + `coolify` ref | Coolify |
-| `dokploy.yml` | Dokploy |
-| `.github/workflows/*pages*` | Github Pages |
-| `app.yaml` (GAE format) | GCP |
-| `amplify.yml`, `buildspec.yml` | AWS |
-| `.do/app.yaml` | Digital Ocean |
+| File/Pattern                         | Platform      |
+| ------------------------------------ | ------------- |
+| `vercel.json`, `.vercel/`            | Vercel        |
+| `netlify.toml`, `_redirects`         | Netlify       |
+| `wrangler.toml`, `wrangler.json`     | Cloudflare    |
+| `fly.toml`                           | Fly.io        |
+| `railway.json`, `railway.toml`       | Railway       |
+| `render.yaml`                        | Render        |
+| `Procfile` + `app.json`              | Heroku        |
+| `tose.yaml`, `tose.json`             | TOSE.sh       |
+| `docker-compose.yml` + `coolify` ref | Coolify       |
+| `dokploy.yml`                        | Dokploy       |
+| `.github/workflows/*pages*`          | Github Pages  |
+| `app.yaml` (GAE format)              | GCP           |
+| `amplify.yml`, `buildspec.yml`       | AWS           |
+| `.do/app.yaml`                       | Digital Ocean |
 
 ### 3. Project Type → Platform Recommendation
 
-| Project Type | Detection | Recommended (cost order) |
-|---|---|---|
-| Static site (HTML/CSS/JS) | No server files | Github Pages → Cloudflare Pages |
-| SPA (React/Vue/Svelte) | Framework config, no SSR | Vercel → Netlify → Cloudflare Pages |
-| SSR/Full-stack (Next/Nuxt) | `next.config.*`, `nuxt.config.*` | Vercel → Netlify → Cloudflare |
-| Node.js API | `server.js/ts`, Express/Fastify | Railway → Render → Fly.io → TOSE.sh |
-| Python API | `requirements.txt` + Flask/Django | Railway → Render → Fly.io |
-| Docker app | `Dockerfile` | Fly.io → Railway → TOSE.sh → Coolify |
-| Monorepo | `turbo.json`, workspaces | Vercel → Netlify |
+| Project Type               | Detection                         | Recommended (cost order)             |
+| -------------------------- | --------------------------------- | ------------------------------------ |
+| Static site (HTML/CSS/JS)  | No server files                   | Github Pages → Cloudflare Pages      |
+| SPA (React/Vue/Svelte)     | Framework config, no SSR          | Vercel → Netlify → Cloudflare Pages  |
+| SSR/Full-stack (Next/Nuxt) | `next.config.*`, `nuxt.config.*`  | Vercel → Netlify → Cloudflare        |
+| Node.js API                | `server.js/ts`, Express/Fastify   | Railway → Render → Fly.io → TOSE.sh  |
+| Python API                 | `requirements.txt` + Flask/Django | Railway → Render → Fly.io            |
+| Docker app                 | `Dockerfile`                      | Fly.io → Railway → TOSE.sh → Coolify |
+| Monorepo                   | `turbo.json`, workspaces          | Vercel → Netlify                     |
 
 ### 4. Platform Priority (Cost-Optimized)
 
 **Free tier (static/frontend):**
+
 1. Github Pages — unlimited bandwidth, free custom domain
 2. Cloudflare Pages — unlimited bandwidth, 500 builds/mo
 3. Vercel — 100GB bandwidth (hobby/non-commercial)
 4. Netlify — 100GB bandwidth, 300 build min/mo
 
 **Free tier (backend/full-stack):**
+
 1. Railway — $5 free credit/mo
 2. Render — 750 free hours/mo (cold starts after 15min idle)
 3. Fly.io — 3 shared VMs, 160GB outbound/mo
 
 **Pay-as-you-go:**
+
 1. TOSE.sh — $10 free credit, ~$17-22/mo (1vCPU+1GB), unlimited bandwidth
 2. Cloudflare Workers — $5/mo for 10M requests
 3. Railway — usage-based after free credit
 
 **Self-hosted (free, own server):**
+
 1. Coolify — Heroku alternative, Docker-based
 2. Dokploy — lightweight, Docker/Compose
 
@@ -96,13 +100,20 @@ AWS, GCP, Digital Ocean, Vultr, Heroku ($5+/mo)
 ### 6. Post-Deploy: docs/deployment.md
 
 After first successful deploy, create `docs/deployment.md`:
+
 ```markdown
 # Deployment
+
 ## Platform: [name]
+
 ## URL: [production-url]
+
 ## Deploy Command: [command]
+
 ## Environment Variables: [list]
+
 ## Custom Domain: [setup steps if applicable]
+
 ## Rollback: [instructions]
 ```
 
@@ -117,6 +128,7 @@ On subsequent deploys, update if config changed.
 ## AskUserQuestion Template
 
 When no target detected, present options based on project type analysis:
+
 - Order by cost optimization (cheapest first)
 - Include free tier info in description
 - Max 4 options (top recommendations + "Other")
@@ -125,23 +137,23 @@ When no target detected, present options based on project type analysis:
 
 Load ONLY the platform reference needed — do NOT load all files:
 
-| Platform | Reference File |
-|---|---|
-| Vercel | `references/platforms/vercel.md` |
-| Netlify | `references/platforms/netlify.md` |
-| Cloudflare | `references/platforms/cloudflare.md` |
-| Railway | `references/platforms/railway.md` |
-| Fly.io | `references/platforms/flyio.md` |
-| Render | `references/platforms/render.md` |
-| Heroku | `references/platforms/heroku.md` |
-| TOSE.sh | `references/platforms/tose.md` |
-| Github Pages | `references/platforms/github-pages.md` |
-| Coolify | `references/platforms/coolify.md` |
-| Dokploy | `references/platforms/dokploy.md` |
-| GCP Cloud Run | `references/platforms/gcp.md` |
-| AWS | `references/platforms/aws.md` |
+| Platform      | Reference File                         |
+| ------------- | -------------------------------------- |
+| Vercel        | `references/platforms/vercel.md`       |
+| Netlify       | `references/platforms/netlify.md`      |
+| Cloudflare    | `references/platforms/cloudflare.md`   |
+| Railway       | `references/platforms/railway.md`      |
+| Fly.io        | `references/platforms/flyio.md`        |
+| Render        | `references/platforms/render.md`       |
+| Heroku        | `references/platforms/heroku.md`       |
+| TOSE.sh       | `references/platforms/tose.md`         |
+| Github Pages  | `references/platforms/github-pages.md` |
+| Coolify       | `references/platforms/coolify.md`      |
+| Dokploy       | `references/platforms/dokploy.md`      |
+| GCP Cloud Run | `references/platforms/gcp.md`          |
+| AWS           | `references/platforms/aws.md`          |
 | Digital Ocean | `references/platforms/digitalocean.md` |
-| Vultr | `references/platforms/vultr.md` |
+| Vultr         | `references/platforms/vultr.md`        |
 
 - `references/platform-config-templates.md` — `docs/deployment.md` template
 

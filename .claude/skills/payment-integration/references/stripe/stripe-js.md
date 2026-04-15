@@ -11,22 +11,23 @@ Include on **every page** (enables fraud detection):
 ```
 
 Or via npm:
+
 ```bash
 npm install @stripe/stripe-js
 ```
 
 ```javascript
-import { loadStripe } from '@stripe/stripe-js';
-const stripe = await loadStripe('pk_test_...');
+import { loadStripe } from "@stripe/stripe-js";
+const stripe = await loadStripe("pk_test_...");
 ```
 
 ## Initialization
 
 ```javascript
-const stripe = Stripe('pk_test_...', {
-  apiVersion: '2024-12-18.acacia',  // Optional
-  locale: 'auto',                    // Optional
-  stripeAccount: 'acct_xxx',        // For Connect
+const stripe = Stripe("pk_test_...", {
+  apiVersion: "2024-12-18.acacia", // Optional
+  locale: "auto", // Optional
+  stripeAccount: "acct_xxx", // For Connect
 });
 ```
 
@@ -36,8 +37,8 @@ Create container for UI components:
 
 ```javascript
 const elements = stripe.elements({
-  clientSecret: 'pi_xxx_secret_xxx',
-  appearance: { theme: 'stripe' },
+  clientSecret: "pi_xxx_secret_xxx",
+  appearance: { theme: "stripe" },
 });
 ```
 
@@ -46,8 +47,8 @@ const elements = stripe.elements({
 Auto-renders available payment methods:
 
 ```javascript
-const paymentElement = elements.create('payment');
-paymentElement.mount('#payment-element');
+const paymentElement = elements.create("payment");
+paymentElement.mount("#payment-element");
 ```
 
 ### Confirm Payment
@@ -56,7 +57,7 @@ paymentElement.mount('#payment-element');
 const { error } = await stripe.confirmPayment({
   elements,
   confirmParams: {
-    return_url: 'https://example.com/complete',
+    return_url: "https://example.com/complete",
   },
 });
 
@@ -71,33 +72,33 @@ Mount Stripe-hosted checkout in your page:
 
 ```javascript
 const checkout = await stripe.initEmbeddedCheckout({
-  clientSecret: 'cs_xxx',
+  clientSecret: "cs_xxx",
 });
-checkout.mount('#checkout');
+checkout.mount("#checkout");
 ```
 
 ## Element Types
 
-| Element | Use Case |
-|---------|----------|
-| `payment` | Full payment form (recommended) |
-| `card` | Card-only input |
-| `address` | Shipping/billing address |
-| `linkAuthentication` | Link login/signup |
-| `expressCheckout` | Apple Pay, Google Pay buttons |
+| Element              | Use Case                        |
+| -------------------- | ------------------------------- |
+| `payment`            | Full payment form (recommended) |
+| `card`               | Card-only input                 |
+| `address`            | Shipping/billing address        |
+| `linkAuthentication` | Link login/signup               |
+| `expressCheckout`    | Apple Pay, Google Pay buttons   |
 
 ## Appearance API
 
 ```javascript
 const appearance = {
-  theme: 'stripe', // 'night', 'flat', 'none'
+  theme: "stripe", // 'night', 'flat', 'none'
   variables: {
-    colorPrimary: '#0570de',
-    colorBackground: '#ffffff',
-    borderRadius: '4px',
+    colorPrimary: "#0570de",
+    colorBackground: "#ffffff",
+    borderRadius: "4px",
   },
   rules: {
-    '.Input': { border: '1px solid #ccc' },
+    ".Input": { border: "1px solid #ccc" },
   },
 };
 ```

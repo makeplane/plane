@@ -2,39 +2,43 @@
 
 ## OWASP Top 10 (2024)
 
-| Rank | Vulnerability | Testing Method |
-|------|--------------|----------------|
-| A01 | Broken Access Control | Test unauthorized actions across roles |
-| A02 | Cryptographic Failures | Check HTTPS, encryption algorithms |
-| A03 | Injection (SQL/NoSQL/Cmd) | Test with payloads (see vulnerability-payloads.md) |
-| A04 | Insecure Design | Threat modeling, abuse case testing |
-| A05 | Security Misconfiguration | Default creds, open ports, headers |
-| A06 | Vulnerable Components | npm audit, Snyk scanning |
-| A07 | Auth Failures | Brute force, session hijacking |
-| A08 | Integrity Failures | Deserialization, CI/CD security |
-| A09 | Logging Failures | Verify security event logging |
-| A10 | SSRF | Test internal URL access |
+| Rank | Vulnerability             | Testing Method                                     |
+| ---- | ------------------------- | -------------------------------------------------- |
+| A01  | Broken Access Control     | Test unauthorized actions across roles             |
+| A02  | Cryptographic Failures    | Check HTTPS, encryption algorithms                 |
+| A03  | Injection (SQL/NoSQL/Cmd) | Test with payloads (see vulnerability-payloads.md) |
+| A04  | Insecure Design           | Threat modeling, abuse case testing                |
+| A05  | Security Misconfiguration | Default creds, open ports, headers                 |
+| A06  | Vulnerable Components     | npm audit, Snyk scanning                           |
+| A07  | Auth Failures             | Brute force, session hijacking                     |
+| A08  | Integrity Failures        | Deserialization, CI/CD security                    |
+| A09  | Logging Failures          | Verify security event logging                      |
+| A10  | SSRF                      | Test internal URL access                           |
 
 ## Security Testing Types
 
 ### SAST (Static Analysis)
+
 - **When**: Early development, pre-commit
 - **Tools**: SonarQube, CodeQL, Semgrep
 - **Focus**: Code flaws without execution
 - **Limitation**: High false positives
 
 ### DAST (Dynamic Analysis)
+
 - **When**: QA/staging, running application
 - **Tools**: OWASP ZAP, Burp Suite, Nuclei
 - **Focus**: Runtime vulnerabilities
 - **Limitation**: Requires running app
 
 ### SCA (Dependency Scanning)
+
 - **Tools**: npm audit, Snyk, Dependabot
 - **Focus**: Known CVEs in dependencies
 - **Automation**: CI/CD integration
 
 ### Secret Detection
+
 - **Tools**: detect-secrets, GitGuardian
 - **Focus**: API keys, passwords in code
 - **Implementation**: Pre-commit hooks
@@ -67,13 +71,13 @@ curl -I https://example.com | grep -i "security\|content-security\|x-"
 
 ## Tools Comparison
 
-| Tool | Type | Cost | Best For |
-|------|------|------|----------|
-| OWASP ZAP | DAST | Free | CI/CD, learning |
-| Burp Suite | DAST | Paid | Enterprise, detailed |
-| Nuclei | DAST | Free | Custom checks |
-| npm audit | SCA | Free | Node.js deps |
-| Snyk | SCA | Free/Paid | Multi-language |
+| Tool       | Type | Cost      | Best For             |
+| ---------- | ---- | --------- | -------------------- |
+| OWASP ZAP  | DAST | Free      | CI/CD, learning      |
+| Burp Suite | DAST | Paid      | Enterprise, detailed |
+| Nuclei     | DAST | Free      | Custom checks        |
+| npm audit  | SCA  | Free      | Node.js deps         |
+| Snyk       | SCA  | Free/Paid | Multi-language       |
 
 ## CI/CD Integration
 

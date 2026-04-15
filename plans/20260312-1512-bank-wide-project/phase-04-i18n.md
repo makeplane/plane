@@ -11,11 +11,13 @@
 ## Requirements
 
 ### Functional
+
 - Tất cả string visible trong UI phải có translation key
 - 3 file locale phải được cập nhật: `en`, `ko`, `vi`
 - Key structure theo namespace `bank_wide_project`
 
 ### Non-functional
+
 - Files là TypeScript module (`.ts`), KHÔNG phải JSON
 - Ko/vi dùng English làm placeholder nếu chưa có bản dịch chính thức
 
@@ -24,6 +26,7 @@
 ## Related Code Files
 
 ### Files to modify:
+
 - `packages/i18n/src/locales/en/translations.ts`
 - `packages/i18n/src/locales/ko/translations.ts`
 - `packages/i18n/src/locales/vi/translations.ts`
@@ -33,6 +36,7 @@
 ## Embedded Rules
 
 ### Rule 1: Translation file là TypeScript module
+
 ```typescript
 // ✅ ĐÚNG — .ts TypeScript module
 export default {
@@ -49,6 +53,7 @@ export default {
 ```
 
 ### Rule 2: Thêm keys vào CẢ 3 file locale
+
 ```
 packages/i18n/src/locales/en/translations.ts  ← English (canonical)
 packages/i18n/src/locales/ko/translations.ts  ← Korean (dùng English nếu chưa có bản dịch)
@@ -56,6 +61,7 @@ packages/i18n/src/locales/vi/translations.ts  ← Vietnamese (dùng English nế
 ```
 
 ### Rule 3: Nested key structure
+
 ```typescript
 // Dùng namespace lồng nhau để tổ chức rõ ràng
 bank_wide_project: {
@@ -180,6 +186,7 @@ grep -n 'bank_wide_project' packages/i18n/src/locales/en/translations.ts
 - [ ] Không có syntax error trong translation files (TypeScript compiler check)
 
 ### Build verification:
+
 ```bash
 # Kiểm tra TypeScript compile không có lỗi trong i18n package
 cd packages/i18n && npx tsc --noEmit

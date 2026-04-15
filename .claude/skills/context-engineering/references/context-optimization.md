@@ -4,12 +4,12 @@ Extend effective context capacity through strategic techniques.
 
 ## Four Core Strategies
 
-| Strategy | Target | Reduction | When to Use |
-|----------|--------|-----------|-------------|
-| **Compaction** | Full context | 50-70% | Approaching limits |
-| **Observation Masking** | Tool outputs | 60-80% | Verbose outputs >80% |
-| **KV-Cache Optimization** | Repeated prefixes | 70%+ hit | Stable prompts |
-| **Context Partitioning** | Work distribution | N/A | Parallelizable tasks |
+| Strategy                  | Target            | Reduction | When to Use          |
+| ------------------------- | ----------------- | --------- | -------------------- |
+| **Compaction**            | Full context      | 50-70%    | Approaching limits   |
+| **Observation Masking**   | Tool outputs      | 60-80%    | Verbose outputs >80% |
+| **KV-Cache Optimization** | Repeated prefixes | 70%+ hit  | Stable prompts       |
+| **Context Partitioning**  | Work distribution | N/A       | Parallelizable tasks |
 
 ## Compaction
 
@@ -60,12 +60,12 @@ coordinator.receive(result.summary)  # Only essentials
 
 ## Decision Framework
 
-| Dominant Component | Apply |
-|-------------------|-------|
-| Tool outputs | Observation masking |
-| Retrieved docs | Summarization or partitioning |
-| Message history | Compaction + summarization |
-| Multiple | Combine strategies |
+| Dominant Component | Apply                         |
+| ------------------ | ----------------------------- |
+| Tool outputs       | Observation masking           |
+| Retrieved docs     | Summarization or partitioning |
+| Message history    | Compaction + summarization    |
+| Multiple           | Combine strategies            |
 
 ## Guidelines
 

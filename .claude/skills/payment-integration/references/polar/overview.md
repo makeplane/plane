@@ -5,6 +5,7 @@ Comprehensive payment & billing platform for software monetization with Merchant
 ## Core Capabilities
 
 **Platform Features:**
+
 - Digital product sales (one-time, recurring, usage-based)
 - Merchant of Record - handles global tax compliance
 - Subscription lifecycle management
@@ -15,6 +16,7 @@ Comprehensive payment & billing platform for software monetization with Merchant
 - Multi-language SDKs
 
 **Merchant of Record Benefits:**
+
 - Global tax compliance (VAT, GST, sales tax)
 - Tax calculations for all jurisdictions
 - B2B reverse charge, B2C tax collection
@@ -29,11 +31,13 @@ Comprehensive payment & billing platform for software monetization with Merchant
 **For:** Server-side API access
 
 **Create:**
+
 1. Org Settings → Developers
 2. Create new access token
 3. Copy and store securely
 
 **Usage:**
+
 ```bash
 Authorization: Bearer polar_xxxxxxxxxxxxxxxx
 ```
@@ -48,6 +52,7 @@ Authorization: Bearer polar_xxxxxxxxxxxxxxxx
 **Token URL:** `https://api.polar.sh/v1/oauth2/token`
 
 **Flow:**
+
 ```
 1. Redirect to authorize URL with scopes
 2. User approves permissions
@@ -57,6 +62,7 @@ Authorization: Bearer polar_xxxxxxxxxxxxxxxx
 ```
 
 **Scopes:**
+
 - `products:read/write` - Product management
 - `checkouts:read/write` - Checkout operations
 - `orders:read` - View orders
@@ -77,33 +83,38 @@ Authorization: Bearer polar_xxxxxxxxxxxxxxxx
 ## Base URLs
 
 **Production:**
+
 - Dashboard: `https://polar.sh`
 - API: `https://api.polar.sh/v1/`
 
 **Sandbox:**
+
 - Dashboard: `https://sandbox.polar.sh`
 - API: `https://sandbox-api.polar.sh/v1/`
 
 **SDK Configuration:**
+
 ```typescript
 const polar = new Polar({
   accessToken: process.env.POLAR_ACCESS_TOKEN,
-  server: "production" // or "sandbox"
+  server: "production", // or "sandbox"
 });
 ```
 
 ## Rate Limits
 
 **Limits:**
+
 - 300 requests/minute per org/customer/OAuth2 client
 - 3 requests/second for unauthenticated license validation
 
 **Response:** HTTP 429 with `Retry-After` header
 
 **Handling:**
+
 ```javascript
 if (response.status === 429) {
-  const retryAfter = response.headers.get('Retry-After');
+  const retryAfter = response.headers.get("Retry-After");
   await sleep(retryAfter * 1000);
   return retry();
 }
@@ -112,6 +123,7 @@ if (response.status === 429) {
 ## Key Concepts
 
 ### External Customer ID
+
 - Map your user IDs to Polar customers
 - Set at checkout: `external_customer_id`
 - Query API by external_id
@@ -119,13 +131,16 @@ if (response.status === 429) {
 - Use for all customer operations
 
 ### Metadata
+
 - Custom key-value storage
 - Available on products, customers, subscriptions, orders
 - For reporting and filtering
 - Not indexed, use for supplementary data
 
 ### Billing Reasons
+
 Track order types via `billing_reason`:
+
 - `purchase` - One-time product
 - `subscription_create` - New subscription
 - `subscription_cycle` - Renewal invoice
@@ -134,12 +149,14 @@ Track order types via `billing_reason`:
 ## Environments
 
 **Sandbox:**
+
 - Separate account required
 - Separate organization
 - Separate access tokens (production tokens don't work)
 - Test with Stripe test cards
 
 **Test Cards (Stripe):**
+
 - Success: `4242 4242 4242 4242`
 - Decline: `4000 0000 0000 0002`
 - Auth Required: `4000 0025 0000 3155`
@@ -149,18 +166,21 @@ Track order types via `billing_reason`:
 ## SDKs
 
 **Official SDKs:**
+
 - TypeScript/JavaScript: `@polar-sh/sdk`
 - Python: `polar-sdk`
 - PHP: `polar-sh/sdk`
 - Go: Official SDK
 
 **Framework Adapters:**
+
 - Next.js: `@polar-sh/nextjs` (quickstart: `npx polar-init`)
 - Laravel: `polar-sh/laravel`
 - Remix, Astro, Express, TanStack Start
 - Elysia, Fastify, Hono, SvelteKit
 
 **BetterAuth Integration:**
+
 - Package: `@polar-sh/better-auth`
 - Auto-create customers on signup
 - External ID mapping

@@ -16,7 +16,6 @@ Your role is to analyze user requirements, delegate tasks to appropriate sub-age
 **Version:** v1.2.4 | **Team:** 4 developers, org: `shbvn`
 **Description:** A comprehensive boilerplate template for building professional software projects with **CLI Coding Agents** (**Claude Code** and **Open Code**). This template provides a complete development environment with AI-powered agent orchestration, automated workflows, and intelligent project management.
 
-
 ## Workflows
 
 - Primary workflow: `./.claude/rules/primary-workflow.md`

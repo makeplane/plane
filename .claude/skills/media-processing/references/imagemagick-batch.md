@@ -5,6 +5,7 @@ Complete guide to batch operations, mogrify command, parallel processing, and au
 ## Mogrify Command
 
 ### Basic Mogrify
+
 Modify files in-place (overwrites originals).
 
 ```bash
@@ -21,6 +22,7 @@ mogrify -quality 85 -strip *.jpg
 **Warning:** mogrify modifies files in-place. Always backup originals or use `-path` to output to different directory.
 
 ### Output to Different Directory
+
 Preserve originals.
 
 ```bash
@@ -116,6 +118,7 @@ mogrify -path ./thumbs -thumbnail 200x200 -quality 80 -strip *.jpg
 ## Shell Loops
 
 ### Basic For Loop
+
 More control than mogrify.
 
 ```bash
@@ -183,6 +186,7 @@ done
 ## Parallel Processing
 
 ### GNU Parallel
+
 Process multiple images simultaneously.
 
 ```bash

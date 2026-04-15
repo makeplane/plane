@@ -5,6 +5,7 @@
 Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu một project là "Bank-wide Project" — tức là project cấp toàn ngân hàng.
 
 **Hai điểm thay đổi UI chính:**
+
 1. **Create Project Dialog** — thêm switch "Bank-wide Project" trong `ProjectAttributes` (CE component)
 2. **Project Settings > General** — thêm tab/section "Bank-wide" trong sidebar settings và tạo trang settings riêng để cấu hình
 
@@ -19,13 +20,13 @@ Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu
 
 ## Phase Table
 
-| Phase | File                                      | Mô tả                                                     | Phụ thuộc |
-| ----- | ----------------------------------------- | --------------------------------------------------------- | ---------- |
-| 01    | `phase-01-backend.md`                     | Backend: model field + migration + serializer             | —          |
-| 02    | `phase-02-types-and-create-form.md`       | Types + Create Project Form switch                        | Phase 01   |
-| 03    | `phase-03-settings-page.md`               | Project Settings: sidebar entry + settings page + toggle  | Phase 02   |
-| 04    | `phase-04-i18n.md`                        | Translations en/ko/vi                                     | Phase 02   |
-| 05    | `phase-05-project-list-filter.md`         | Workspace project list: "Bank-wide only" filter           | Phase 01   |
+| Phase | File                                | Mô tả                                                    | Phụ thuộc |
+| ----- | ----------------------------------- | -------------------------------------------------------- | --------- |
+| 01    | `phase-01-backend.md`               | Backend: model field + migration + serializer            | —         |
+| 02    | `phase-02-types-and-create-form.md` | Types + Create Project Form switch                       | Phase 01  |
+| 03    | `phase-03-settings-page.md`         | Project Settings: sidebar entry + settings page + toggle | Phase 02  |
+| 04    | `phase-04-i18n.md`                  | Translations en/ko/vi                                    | Phase 02  |
+| 05    | `phase-05-project-list-filter.md`   | Workspace project list: "Bank-wide only" filter          | Phase 01  |
 
 ## Architecture Decision
 
@@ -38,11 +39,13 @@ Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu
 ## Files Map
 
 ### Backend
+
 - Modify: `apps/api/plane/db/models/project.py`
 - Create: `apps/api/plane/db/migrations/0143_project_is_bank_wide.py` _(0142 is taken by issueopinion migration)_
 - No change needed: `apps/api/plane/app/serializers/project.py` (dùng `fields = "__all__"`)
 
 ### Frontend
+
 - Modify: `apps/web/ce/types/projects/projects.ts` — extend TProject
 - Modify: `apps/web/ce/components/projects/create/attributes.tsx` — add switch
 - Create: `apps/web/ce/components/projects/settings/bank-wide/root.tsx` — settings component
@@ -53,6 +56,7 @@ Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu
 ## Validation Log
 
 ### Session 1 — 2026-03-12
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 4
 
@@ -80,21 +84,25 @@ Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu
    - **Rationale:** React Router v7 file-based routing picks up `bank-wide/page.tsx` automatically. No manual registration needed.
 
 #### Confirmed Decisions
+
 - Migration number: **0143** (0142 is committed and must be restored first)
 - ADMIN visibility: **hidden** for non-ADMINs (not disabled)
 - Switch placement: **inline** in attributes bar
 - Route registration: **file-based auto** (no `extended.ts` changes needed)
 
 #### Action Items
+
 - [ ] **CRITICAL:** Run `git restore apps/api/plane/db/migrations/0142_issueopinion.py` before starting Phase 01
 - [ ] Update Phase 01 to use migration name `0143_project_is_bank_wide`
 - [ ] Update Phase 03 checklist — remove incorrect "non-ADMIN sees disabled toggle" item
 
 #### Impact on Phases
+
 - Phase 01: Use `0143_project_is_bank_wide.py` (not 0142)
 - Phase 03: Sidebar item hidden (not disabled) for non-ADMINs; no `extended.ts` changes needed
 
 ### Session 2 — 2026-03-12
+
 **Trigger:** Re-validation to surface remaining implementation decisions
 **Questions asked:** 3
 
@@ -116,20 +124,24 @@ Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu
    - **Rationale:** Adds a new scope item: workspace project list needs a "Bank-wide" filter. This requires a new Phase 05 or extending an existing phase. Must document in plan scope table.
 
 #### Confirmed Decisions
+
 - Auth guard: **redirect** non-ADMINs from `/bank-wide/` to `/general/`
 - Header: **inline** in page.tsx — no separate `header.tsx` needed
 - Project list filter: **in scope** — add "Bank-wide only" filter to workspace project list
 
 #### Action Items
+
 - [ ] Add `useEffect` redirect guard in `bank-wide/page.tsx` (Phase 03)
 - [ ] Remove `header.tsx` from Phase 03 plan — inline header in page.tsx
 - [ ] Add Phase 05: Workspace project list filter for `is_bank_wide`
 
 #### Impact on Phases
+
 - Phase 03: Add redirect guard; inline header (no header.tsx)
 - Phase 05 (new): Workspace project list filter — "Bank-wide only"
 
 ### Session 3 — 2026-03-12
+
 **Trigger:** Re-validation to finalize remaining open questions before implementation
 **Questions asked:** 3
 
@@ -151,15 +163,18 @@ Thêm trường `is_bank_wide` (boolean) vào model `Project` để đánh dấu
    - **Rationale:** Investigate current filter UI pattern (checkbox, dropdown, or toggle) and mirror it exactly. Ensures visual consistency with existing project list filters.
 
 #### Confirmed Decisions
+
 - Create form switch: **ADMIN only** — hidden/disabled for non-ADMINs
 - Filter persistence: **ephemeral** — resets on navigation
 - Filter UI: **follow existing pattern** — investigate and mirror current filter controls
 
 #### Action Items
+
 - [ ] Phase 02: Add permission check — hide or disable `is_bank_wide` switch for non-ADMINs in create form
 - [ ] Phase 05: Filter is ephemeral (no URL params, no localStorage)
 - [ ] Phase 05: Grep existing project list filter UI before implementing to mirror exact pattern
 
 #### Impact on Phases
+
 - Phase 02: Add ADMIN-only guard on bank-wide switch in create dialog
 - Phase 05: Ephemeral filter; match existing filter UI pattern (grep first)

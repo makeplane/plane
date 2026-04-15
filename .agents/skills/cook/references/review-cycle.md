@@ -63,12 +63,14 @@ LOOP:
 ```
 
 ## Critical Issues Definition
+
 - Security: XSS, SQL injection, OWASP vulnerabilities
 - Performance: bottlenecks, inefficient algorithms
 - Architecture: violations of patterns, coupling
 - Principles: YAGNI, KISS, DRY violations
 
 ## Output Formats
+
 - Waiting: `⏸ Step 4: Code reviewed - [score]/10 - WAITING for approval`
 - After fix: `✓ Step 4: [old]/10 → Fixed [N] issues → [new]/10 - Approved`
 - Auto-approved: `✓ Step 4: Code reviewed - 9.8/10 - Auto-approved`

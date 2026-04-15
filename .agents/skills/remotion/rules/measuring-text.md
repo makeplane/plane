@@ -104,7 +104,7 @@ waitUntilDone().then(() => {
     fontFamily,
     fontSize: 32,
   });
-})
+});
 ```
 
 **Use validateFontIsLoaded:** Catch font loading issues early:

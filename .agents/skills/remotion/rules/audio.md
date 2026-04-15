@@ -96,9 +96,7 @@ const { fps } = useVideoConfig();
 return (
   <Audio
     src={staticFile("audio.mp3")}
-    volume={(f) =>
-      interpolate(f, [0, 1 * fps], [0, 1], { extrapolateRight: "clamp" })
-    }
+    volume={(f) => interpolate(f, [0, 1 * fps], [0, 1], { extrapolateRight: "clamp" })}
   />
 );
 ```

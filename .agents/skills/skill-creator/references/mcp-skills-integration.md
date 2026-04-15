@@ -9,11 +9,11 @@ Together, they enable users to accomplish complex tasks without figuring out eve
 
 ## How They Work Together
 
-| MCP (Connectivity) | Skills (Knowledge) |
-|---|---|
+| MCP (Connectivity)                                  | Skills (Knowledge)                             |
+| --------------------------------------------------- | ---------------------------------------------- |
 | Connects Claude to services (Notion, Asana, Linear) | Teaches Claude how to use services effectively |
-| Provides real-time data access and tool invocation | Captures workflows and best practices |
-| What Claude *can* do | How Claude *should* do it |
+| Provides real-time data access and tool invocation  | Captures workflows and best practices          |
+| What Claude _can_ do                                | How Claude _should_ do it                      |
 
 ## Without Skills (MCP only)
 
@@ -44,20 +44,30 @@ Together, they enable users to accomplish complex tasks without figuring out eve
 
 ```markdown
 ## Prerequisites
+
 - [Service] MCP server must be connected (Settings > Extensions)
 - Valid API key with [specific scopes]
 
 ## Workflow: [Task Name]
+
 ### Step 1: Fetch Context
+
 Call `mcp_tool_name` with parameters from user input
+
 ### Step 2: Process
+
 Apply domain rules to MCP response
+
 ### Step 3: Execute
+
 Call `mcp_action_tool` with processed data
+
 ### Step 4: Verify
+
 Confirm action completed, report results
 
 ## Troubleshooting
+
 If "Connection refused": verify MCP server running
 If auth error: check API key in Settings > Extensions
 ```
@@ -65,7 +75,9 @@ If auth error: check API key in Settings > Extensions
 ## Positioning MCP + Skills
 
 **Focus on outcomes:**
+
 > "The ProjectHub skill enables teams to set up complete project workspaces in seconds — instead of 30 minutes on manual setup."
 
 **Not features:**
+
 > ~~"The ProjectHub skill is a folder containing YAML frontmatter that calls our MCP server tools."~~

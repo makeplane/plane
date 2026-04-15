@@ -5,6 +5,7 @@ Comprehensive guide for gcloud CLI - command-line interface for Google Cloud Pla
 ## Installation
 
 ### Linux
+
 ```bash
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
 tar -xf google-cloud-cli-linux-x86_64.tar.gz
@@ -13,12 +14,14 @@ tar -xf google-cloud-cli-linux-x86_64.tar.gz
 ```
 
 ### Debian/Ubuntu
+
 ```bash
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 sudo apt-get update && sudo apt-get install google-cloud-cli
 ```
 
 ### macOS
+
 ```bash
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz
 tar -xf google-cloud-cli-darwin-arm.tar.gz
@@ -28,6 +31,7 @@ tar -xf google-cloud-cli-darwin-arm.tar.gz
 ## Authentication
 
 ### User Account
+
 ```bash
 # Login with browser
 gcloud auth login
@@ -43,6 +47,7 @@ gcloud config set account user@example.com
 ```
 
 ### Service Account
+
 ```bash
 # Activate with key file
 gcloud auth activate-service-account SA_EMAIL --key-file=key.json
@@ -62,6 +67,7 @@ gcloud projects add-iam-policy-binding PROJECT_ID \
 ```
 
 ### Service Account Impersonation (Recommended)
+
 ```bash
 # Impersonate for single command
 gcloud compute instances list \
@@ -79,6 +85,7 @@ Why impersonation? Short-lived credentials, no key files, centralized management
 ## Configuration Management
 
 ### Named Configurations
+
 ```bash
 # Create configuration
 gcloud config configurations create dev
@@ -102,6 +109,7 @@ gcloud config configurations delete dev
 ```
 
 ### Multi-Environment Pattern
+
 ```bash
 # Development
 gcloud config configurations create dev
@@ -181,6 +189,7 @@ gcloud compute instances list --filter="NOT status=TERMINATED"
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 name: Deploy to GCP
 
@@ -210,6 +219,7 @@ jobs:
 ```
 
 ### GitLab CI
+
 ```yaml
 deploy:
   image: google/cloud-sdk:alpine
@@ -225,18 +235,21 @@ deploy:
 ## Best Practices
 
 ### Security
+
 - Never commit credentials
 - Use service account impersonation
 - Grant minimal IAM permissions
 - Rotate keys regularly
 
 ### Performance
+
 - Use server-side filtering: `--filter`
 - Limit output: `--limit=10`
 - Project only needed fields: `--format="value(name)"`
 - Batch operations with `--async`
 
 ### Maintainability
+
 - Use named configurations for environments
 - Document commands
 - Use environment variables
@@ -267,27 +280,27 @@ gcloud init
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Initialize | `gcloud init` |
-| Login | `gcloud auth login` |
-| Set project | `gcloud config set project PROJECT_ID` |
-| List resources | `gcloud [SERVICE] list` |
-| Create resource | `gcloud [SERVICE] create RESOURCE` |
-| Delete resource | `gcloud [SERVICE] delete RESOURCE` |
-| Get help | `gcloud [SERVICE] --help` |
+| Task            | Command                                |
+| --------------- | -------------------------------------- |
+| Initialize      | `gcloud init`                          |
+| Login           | `gcloud auth login`                    |
+| Set project     | `gcloud config set project PROJECT_ID` |
+| List resources  | `gcloud [SERVICE] list`                |
+| Create resource | `gcloud [SERVICE] create RESOURCE`     |
+| Delete resource | `gcloud [SERVICE] delete RESOURCE`     |
+| Get help        | `gcloud [SERVICE] --help`              |
 
 ## Global Flags
 
-| Flag | Purpose |
-|------|---------|
-| `--project` | Override project |
-| `--format` | Output format (json, yaml, csv) |
-| `--filter` | Server-side filter |
-| `--limit` | Limit results |
-| `--quiet` | Suppress prompts |
+| Flag          | Purpose                                 |
+| ------------- | --------------------------------------- |
+| `--project`   | Override project                        |
+| `--format`    | Output format (json, yaml, csv)         |
+| `--filter`    | Server-side filter                      |
+| `--limit`     | Limit results                           |
+| `--quiet`     | Suppress prompts                        |
 | `--verbosity` | Log level (debug, info, warning, error) |
-| `--async` | Don't wait for operation |
+| `--async`     | Don't wait for operation                |
 
 ## Resources
 

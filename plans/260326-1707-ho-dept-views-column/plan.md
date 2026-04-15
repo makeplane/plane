@@ -18,9 +18,9 @@ Each cell shows all workspace views belonging to the department's linked workspa
 
 ## Phases
 
-| # | Phase | Status | Est. |
-|---|-------|--------|------|
-| 1 | [Fetch & render views in department row](./phase-01-view-column.md) | done | 2h |
+| #   | Phase                                                               | Status | Est. |
+| --- | ------------------------------------------------------------------- | ------ | ---- |
+| 1   | [Fetch & render views in department row](./phase-01-view-column.md) | done   | 2h   |
 
 ## Files Changed
 
@@ -30,6 +30,7 @@ Each cell shows all workspace views belonging to the department's linked workspa
 ## Validation Log
 
 ### Session 1 — 2026-03-26
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 3
 
@@ -51,17 +52,21 @@ Each cell shows all workspace views belonging to the department's linked workspa
    - **Rationale:** Component is small and tightly coupled to the row — no need for a new file.
 
 #### Confirmed Decisions
+
 - View filter: None — show all views
 - Layout: flex-wrap (multi-line)
 - Component location: inside `department-tree-row.tsx`
 
 #### Technical Questions Resolved (pre-interview)
+
 - View URL: `/{workspaceSlug}/workspace-views/{viewId}` ✅ (confirmed from route dir `[globalViewId]`)
 - WorkspaceService import: `@/services/workspace.service` ✅ (used in core stores, accessible from CE)
 - Badge subpath: `@plane/propel/badge` ✅ (confirmed in package.json exports)
 
 #### Action Items
+
 - [ ] No plan changes required — all decisions align with existing plan
 
 #### Impact on Phases
+
 - Phase 1: No changes needed — plan already reflects confirmed decisions

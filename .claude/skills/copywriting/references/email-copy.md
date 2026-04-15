@@ -5,6 +5,7 @@ Subject lines, body copy, and CTAs that convert.
 ## Subject Line Formulas
 
 ### Curiosity Gap
+
 ```
 The [thing] nobody talks about
 I was wrong about [topic]
@@ -14,6 +15,7 @@ Quick question about [topic]
 ```
 
 ### Benefit-Driven
+
 ```
 [Achieve X] in [timeframe]
 How to [benefit] without [pain]
@@ -22,6 +24,7 @@ Your [thing] is ready
 ```
 
 ### Question Format
+
 ```
 Are you [doing thing]?
 Can I ask you something?
@@ -31,6 +34,7 @@ Quick question?
 ```
 
 ### Urgency
+
 ```
 [X hours] left
 Last chance: [benefit]
@@ -40,6 +44,7 @@ Final reminder
 ```
 
 ### Personal/Conversational
+
 ```
 Just between us
 I owe you an apology
@@ -49,6 +54,7 @@ Weird request
 ```
 
 ### Number-Based
+
 ```
 [X] ways to [benefit]
 [X]% off ends tonight
@@ -67,11 +73,13 @@ In [X] minutes, you could...
 ## Preview Text
 
 The text after subject line. Use it to:
+
 - Extend the curiosity
 - Add context
 - Create contrast
 
 **Example:**
+
 ```
 Subject: Quick question?
 Preview: (no, I'm not selling anything)
@@ -80,6 +88,7 @@ Preview: (no, I'm not selling anything)
 ## Email Body Structure
 
 ### Short Email (50-100 words)
+
 ```
 [Hook: 1 sentence that grabs attention]
 
@@ -91,6 +100,7 @@ Preview: (no, I'm not selling anything)
 ```
 
 ### Standard Email (100-200 words)
+
 ```
 [Opening hook]
 
@@ -109,6 +119,7 @@ Preview: (no, I'm not selling anything)
 ```
 
 ### Story Email
+
 ```
 [Start in the middle of action]
 
@@ -126,6 +137,7 @@ Preview: (no, I'm not selling anything)
 ## Opening Lines (Never "Hi [Name]")
 
 **Start with value or story:**
+
 ```
 Ever notice how...
 Here's what most people get wrong about...
@@ -138,6 +150,7 @@ Quick story:
 ## Email CTAs
 
 ### Link CTAs
+
 ```
 → [Action verb] here
 → Get instant access
@@ -147,6 +160,7 @@ Quick story:
 ```
 
 ### Button CTAs
+
 ```
 Get Started Free
 Claim Your Spot
@@ -167,6 +181,7 @@ P.S. [Social proof]
 ```
 
 **Examples:**
+
 ```
 P.S. This offer expires at midnight.
 P.S. Bonus: Get the swipe file free when you join today.
@@ -176,13 +191,13 @@ P.S. 2,847 people joined last week.
 
 ## Email Sequence Types
 
-| Type | Emails | Goal |
-|------|--------|------|
-| Welcome | 3-5 | Introduce, value, soft CTA |
-| Nurture | 5-7 | Educate, build trust |
-| Launch | 5-10 | Urgency, overcome objections |
-| Re-engagement | 2-3 | Win back inactive |
-| Onboarding | 4-7 | Activate, reduce churn |
+| Type          | Emails | Goal                         |
+| ------------- | ------ | ---------------------------- |
+| Welcome       | 3-5    | Introduce, value, soft CTA   |
+| Nurture       | 5-7    | Educate, build trust         |
+| Launch        | 5-10   | Urgency, overcome objections |
+| Re-engagement | 2-3    | Win back inactive            |
+| Onboarding    | 4-7    | Activate, reduce churn       |
 
 ## Conversion Tips
 

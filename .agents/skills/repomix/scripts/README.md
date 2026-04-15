@@ -30,26 +30,31 @@ pip install pytest pytest-cov pytest-mock  # For running tests
 ### Usage
 
 **Process single repository:**
+
 ```bash
 python repomix_batch.py /path/to/repo
 ```
 
 **Process multiple repositories:**
+
 ```bash
 python repomix_batch.py /repo1 /repo2 /repo3
 ```
 
 **Process remote repositories:**
+
 ```bash
 python repomix_batch.py owner/repo1 owner/repo2 --remote
 ```
 
 **From JSON file:**
+
 ```bash
 python repomix_batch.py -f repos.json
 ```
 
 **With options:**
+
 ```bash
 python repomix_batch.py /repo1 /repo2 \
   --style markdown \
@@ -85,6 +90,7 @@ Create `repos.json` with repository configurations:
 ### Environment Variables
 
 Loads .env files in order of precedence:
+
 1. Process environment (highest priority)
 2. `./repomix/.env` (skill-specific)
 3. `./skills/.env` (skills directory)
@@ -113,16 +119,19 @@ options:
 ### Examples
 
 **Process local repositories:**
+
 ```bash
 python repomix_batch.py /path/to/repo1 /path/to/repo2 --style markdown
 ```
 
 **Process remote repositories:**
+
 ```bash
 python repomix_batch.py yamadashy/repomix facebook/react --remote
 ```
 
 **Mixed configuration:**
+
 ```bash
 python repomix_batch.py \
   /local/repo \
@@ -133,6 +142,7 @@ python repomix_batch.py \
 ```
 
 **TypeScript projects only:**
+
 ```bash
 python repomix_batch.py /repo1 /repo2 \
   --include "**/*.ts,**/*.tsx" \
@@ -160,20 +170,24 @@ Current coverage: 99%
 ### Troubleshooting
 
 **repomix not found:**
+
 ```bash
 npm install -g repomix
 ```
 
 **Permission denied:**
+
 ```bash
 chmod +x repomix_batch.py
 ```
 
 **Timeout errors:**
+
 - Default timeout: 5 minutes per repository
 - Reduce scope with `--include` patterns
 - Exclude large directories with `--ignore`
 
 **No repositories specified:**
+
 - Provide repository paths as arguments
 - Or use `-f` flag with JSON config file

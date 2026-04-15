@@ -14,6 +14,7 @@ Repomix packs entire repositories into single, AI-friendly files. Perfect for fe
 ## When to Use
 
 Use when:
+
 - Packaging codebases for AI analysis
 - Creating repository snapshots for LLM context
 - Analyzing third-party libraries
@@ -25,11 +26,13 @@ Use when:
 ## Quick Start
 
 ### Check Installation
+
 ```bash
 repomix --version
 ```
 
 ### Install
+
 ```bash
 # npm
 npm install -g repomix
@@ -39,6 +42,7 @@ brew install repomix
 ```
 
 ### Basic Usage
+
 ```bash
 # Package current directory (generates repomix-output.xml)
 repomix
@@ -57,6 +61,7 @@ repomix --include "src/**/*.ts" --remove-comments -o output.md
 ## Core Capabilities
 
 ### Repository Packaging
+
 - AI-optimized formatting with clear separators
 - Multiple output formats: XML, Markdown, JSON, Plain text
 - Git-aware processing (respects .gitignore)
@@ -64,7 +69,9 @@ repomix --include "src/**/*.ts" --remove-comments -o output.md
 - Security checks for sensitive information
 
 ### Remote Repository Support
+
 Process remote repositories without cloning:
+
 ```bash
 # Shorthand
 npx repomix --remote yamadashy/repomix
@@ -77,7 +84,9 @@ npx repomix --remote https://github.com/owner/repo/commit/hash
 ```
 
 ### Comment Removal
+
 Strip comments from supported languages (HTML, CSS, JavaScript, TypeScript, Vue, Svelte, Python, PHP, Ruby, C, C#, Java, Go, Rust, Swift, Kotlin, Dart, Shell, YAML):
+
 ```bash
 repomix --remove-comments
 ```
@@ -85,30 +94,35 @@ repomix --remove-comments
 ## Common Use Cases
 
 ### Code Review Preparation
+
 ```bash
 # Package feature branch for AI review
 repomix --include "src/**/*.ts" --remove-comments -o review.md --style markdown
 ```
 
 ### Security Audit
+
 ```bash
 # Package third-party library
 npx repomix --remote vendor/library --style xml -o audit.xml
 ```
 
 ### Documentation Generation
+
 ```bash
 # Package with docs and code
 repomix --include "src/**,docs/**,*.md" --style markdown -o context.md
 ```
 
 ### Bug Investigation
+
 ```bash
 # Package specific modules
 repomix --include "src/auth/**,src/api/**" -o debug-context.xml
 ```
 
 ### Implementation Planning
+
 ```bash
 # Full codebase context
 repomix --remove-comments --copy
@@ -117,6 +131,7 @@ repomix --remove-comments --copy
 ## Command Line Reference
 
 ### File Selection
+
 ```bash
 # Include specific patterns
 repomix --include "src/**/*.ts,*.md"
@@ -129,6 +144,7 @@ repomix --no-gitignore
 ```
 
 ### Output Options
+
 ```bash
 # Output format
 repomix --style markdown  # or xml, json, plain
@@ -144,6 +160,7 @@ repomix --copy
 ```
 
 ### Configuration
+
 ```bash
 # Use custom config file
 repomix -c custom-config.json
@@ -157,16 +174,19 @@ repomix --init  # creates repomix.config.json
 Repomix automatically counts tokens for individual files, total repository, and per-format output.
 
 Typical LLM context limits:
+
 - Claude Sonnet 4.5: ~200K tokens
 - GPT-4: ~128K tokens
 - GPT-3.5: ~16K tokens
 
 ### Token Count Optimization
+
 Understanding your codebase's token distribution is crucial for optimizing AI interactions. Use the --token-count-tree option to visualize token usage across your project:
 
 ```bash
 repomix --token-count-tree
 ```
+
 This displays a hierarchical view of your codebase with token counts:
 
 ```
@@ -180,6 +200,7 @@ This displays a hierarchical view of your codebase with token counts:
         ├── file/ (10,098 tokens)
         └── output/ (5,808 tokens)
 ```
+
 You can also set a minimum token threshold to focus on larger files:
 
 ```bash
@@ -198,6 +219,7 @@ This helps you:
 Repomix uses Secretlint to detect sensitive data (API keys, passwords, credentials, private keys, AWS secrets).
 
 Best practices:
+
 1. Always review output before sharing
 2. Use `.repomixignore` for sensitive files
 3. Enable security checks for unknown codebases
@@ -205,6 +227,7 @@ Best practices:
 5. Check for hardcoded credentials
 
 Disable security checks if needed:
+
 ```bash
 repomix --no-security-check
 ```
@@ -241,6 +264,7 @@ When user requests repository packaging:
 ## Reference Documentation
 
 For detailed information, see:
+
 - [Configuration Reference](./references/configuration.md) - Config files, include/exclude patterns, output formats, advanced options
 - [Usage Patterns](./references/usage-patterns.md) - AI analysis workflows, security audit preparation, documentation generation, library evaluation
 

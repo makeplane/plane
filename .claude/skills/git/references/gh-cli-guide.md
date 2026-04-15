@@ -1,6 +1,7 @@
 # GitHub CLI Guide
 
 ## Authentication
+
 ```bash
 gh auth login        # Interactive login
 gh auth status       # Check auth state
@@ -10,6 +11,7 @@ gh auth logout       # Logout
 ## Pull Requests
 
 ### Create PR
+
 ```bash
 # Basic
 gh pr create --base main --head feature-branch --title "feat: add login" --body "Summary"
@@ -37,6 +39,7 @@ gh pr create --label "bug,priority:high"
 ```
 
 ### View/Review PR
+
 ```bash
 gh pr list                    # List PRs
 gh pr view 123                # View PR details
@@ -47,6 +50,7 @@ gh pr status                  # Your PRs + reviews
 ```
 
 ### Merge PR
+
 ```bash
 gh pr merge 123               # Default merge commit
 gh pr merge 123 --squash      # Squash commits
@@ -56,6 +60,7 @@ gh pr merge 123 --delete-branch  # Delete branch after
 ```
 
 ### PR Comments
+
 ```bash
 gh pr comment 123 --body "LGTM!"
 gh api repos/{owner}/{repo}/pulls/123/comments  # View all
@@ -99,11 +104,13 @@ gh issue list --json number,title --jq '.[].title'
 ## Common Patterns
 
 ### Create PR with auto-merge
+
 ```bash
 gh pr create --fill && gh pr merge --auto --squash
 ```
 
 ### Close stale PRs
+
 ```bash
 gh pr list --state open --json number -q '.[].number' | xargs -I {} gh pr close {}
 ```

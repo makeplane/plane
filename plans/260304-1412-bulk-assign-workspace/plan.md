@@ -24,19 +24,21 @@ Add "Bulk Assign Workspace" button on god-mode `/workspace/` page. Admin uploads
 
 ## Phases
 
-| # | Phase | Status | Est. |
-|---|-------|--------|------|
-| 01 | [Backend: Bulk Assign Members Endpoint](./phase-01-backend-api.md) | complete | 1.5h |
-| 02 | [Frontend: Excel Assign UI](./phase-02-frontend-ui.md) | complete | 2.5h |
+| #   | Phase                                                              | Status   | Est. |
+| --- | ------------------------------------------------------------------ | -------- | ---- |
+| 01  | [Backend: Bulk Assign Members Endpoint](./phase-01-backend-api.md) | complete | 1.5h |
+| 02  | [Frontend: Excel Assign UI](./phase-02-frontend-ui.md)             | complete | 2.5h |
 
 ## Key Files
 
 **Backend:**
+
 - `apps/api/plane/license/api/views/workspace_member_bulk_assign.py` ← CREATE
 - `apps/api/plane/license/api/views/__init__.py` ← modify (add export)
 - `apps/api/plane/license/urls.py` ← modify (add URL)
 
 **Frontend (apps/admin):**
+
 - `apps/admin/app/(all)/(dashboard)/workspace/bulk-assign/page.tsx` ← CREATE
 - `apps/admin/components/workspace/workspace-bulk-assign-form.tsx` ← CREATE
 - `apps/admin/components/workspace/workspace-bulk-assign-preview.tsx` ← CREATE
@@ -52,6 +54,7 @@ Phase 02 blocked by Phase 01 (API URL must be confirmed first).
 ## Validation Log
 
 ### Session 1 — 2026-03-04
+
 **Trigger:** Initial plan creation validation
 **Questions asked:** 4
 
@@ -78,13 +81,16 @@ Phase 02 blocked by Phase 01 (API URL must be confirmed first).
    - **Rationale:** Consistent with existing Bulk Import pattern; no modal state complexity needed.
 
 #### Confirmed Decisions
+
 - Role value for Member: **15** (matches DB model, not spec typo of 10)
 - User not found: **skip** with reason (no auto-invite)
 - Already member: **skip** with reason (no role update)
 - UX pattern: **new page** at `/workspace/bulk-assign`
 
 #### Action Items
+
 - [x] No plan changes needed — all decisions already reflected in phase files
 
 #### Impact on Phases
+
 - No phase file updates required — all confirmed decisions already match plan content.

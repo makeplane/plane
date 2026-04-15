@@ -91,7 +91,7 @@ When writing tests, follow these guidelines:
    - For web app API (`/api/`), use `session_client`
    - For smoke tests with real HTTP, use `plane_server`
 3. Use the correct URL namespace when reverse-resolving URLs:
-   - For external API, use `reverse("api:endpoint_name")`  
+   - For external API, use `reverse("api:endpoint_name")`
    - For web app API, use `reverse("endpoint_name")`
 4. Add the `@pytest.mark.django_db` decorator to tests that interact with the database.
 5. Add the appropriate markers (`@pytest.mark.contract`, etc.) to categorize tests.
@@ -140,4 +140,4 @@ This creates an HTML report in the `htmlcov/` directory.
 
 ## Migration from Old Tests
 
-Some tests are still in the old format in the `api/` directory. These need to be migrated to the new contract test structure in the appropriate directories. 
+Some tests are still in the old format in the `api/` directory. These need to be migrated to the new contract test structure in the appropriate directories.

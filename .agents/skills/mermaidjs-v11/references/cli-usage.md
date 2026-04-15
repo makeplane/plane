@@ -5,22 +5,26 @@ Command-line interface for converting Mermaid diagrams to SVG/PNG/PDF.
 ## Installation
 
 **Global Install:**
+
 ```bash
 npm install -g @mermaid-js/mermaid-cli
 ```
 
 **Local Install:**
+
 ```bash
 npm install @mermaid-js/mermaid-cli
 ./node_modules/.bin/mmdc -h
 ```
 
 **No Install (npx):**
+
 ```bash
 npx -p @mermaid-js/mermaid-cli mmdc -h
 ```
 
 **Docker:**
+
 ```bash
 docker pull ghcr.io/mermaid-js/mermaid-cli/mermaid-cli
 ```
@@ -30,16 +34,19 @@ docker pull ghcr.io/mermaid-js/mermaid-cli/mermaid-cli
 ## Basic Commands
 
 **Convert to SVG:**
+
 ```bash
 mmdc -i input.mmd -o output.svg
 ```
 
 **Convert to PNG:**
+
 ```bash
 mmdc -i input.mmd -o output.png
 ```
 
 **Convert to PDF:**
+
 ```bash
 mmdc -i input.mmd -o output.pdf
 ```
@@ -49,6 +56,7 @@ Output format determined by file extension.
 ## CLI Flags
 
 **Core Options:**
+
 - `-i, --input <file>` - Input file (use `-` for stdin)
 - `-o, --output <file>` - Output file path
 - `-t, --theme <name>` - Theme: default, dark, forest, neutral
@@ -58,6 +66,7 @@ Output format determined by file extension.
 - `-h, --help` - Show all options
 
 **Example with All Options:**
+
 ```bash
 mmdc -i diagram.mmd -o output.png \
   -t dark \
@@ -69,6 +78,7 @@ mmdc -i diagram.mmd -o output.png \
 ## Advanced Usage
 
 **Stdin Piping:**
+
 ```bash
 cat diagram.mmd | mmdc --input - -o output.svg
 
@@ -80,6 +90,7 @@ EOF
 ```
 
 **Batch Processing:**
+
 ```bash
 for file in *.mmd; do
   mmdc -i "$file" -o "${file%.mmd}.svg"
@@ -88,6 +99,7 @@ done
 
 **Markdown Files:**
 Process markdown with embedded diagrams:
+
 ```bash
 mmdc -i README.template.md -o README.md
 ```
@@ -95,6 +107,7 @@ mmdc -i README.template.md -o README.md
 ## Docker Workflows
 
 **Basic Docker Usage:**
+
 ```bash
 docker run --rm \
   -u $(id -u):$(id -g) \
@@ -104,6 +117,7 @@ docker run --rm \
 ```
 
 **Mount Working Directory:**
+
 ```bash
 docker run --rm -v $(pwd):/data \
   ghcr.io/mermaid-js/mermaid-cli/mermaid-cli \
@@ -111,6 +125,7 @@ docker run --rm -v $(pwd):/data \
 ```
 
 **Podman (with SELinux):**
+
 ```bash
 podman run --userns keep-id --user ${UID} \
   --rm -v /path/to/diagrams:/data:z \
@@ -121,6 +136,7 @@ podman run --userns keep-id --user ${UID} \
 ## Configuration Files
 
 **Mermaid Config (JSON):**
+
 ```json
 {
   "theme": "dark",
@@ -133,11 +149,13 @@ podman run --userns keep-id --user ${UID} \
 ```
 
 **Usage:**
+
 ```bash
 mmdc -i input.mmd --configFile config.json -o output.svg
 ```
 
 **Custom CSS:**
+
 ```css
 .node rect {
   fill: #f9f;
@@ -149,6 +167,7 @@ mmdc -i input.mmd --configFile config.json -o output.svg
 ```
 
 **Usage:**
+
 ```bash
 mmdc -i input.mmd --cssFile styles.css -o output.svg
 ```
@@ -156,30 +175,33 @@ mmdc -i input.mmd --cssFile styles.css -o output.svg
 ## Node.js API
 
 **Programmatic Usage:**
-```javascript
-import { run } from '@mermaid-js/mermaid-cli';
 
-await run('input.mmd', 'output.svg', {
-  theme: 'dark',
-  backgroundColor: 'transparent'
+```javascript
+import { run } from "@mermaid-js/mermaid-cli";
+
+await run("input.mmd", "output.svg", {
+  theme: "dark",
+  backgroundColor: "transparent",
 });
 ```
 
 **With Options:**
-```javascript
-import { run } from '@mermaid-js/mermaid-cli';
 
-await run('diagram.mmd', 'output.png', {
-  theme: 'forest',
-  backgroundColor: '#ffffff',
-  cssFile: 'custom.css',
-  configFile: 'config.json'
+```javascript
+import { run } from "@mermaid-js/mermaid-cli";
+
+await run("diagram.mmd", "output.png", {
+  theme: "forest",
+  backgroundColor: "#ffffff",
+  cssFile: "custom.css",
+  configFile: "config.json",
 });
 ```
 
 ## Common Workflows
 
 **Documentation Generation:**
+
 ```bash
 # Convert all diagrams in docs/
 find docs/ -name "*.mmd" -exec sh -c \
@@ -187,6 +209,7 @@ find docs/ -name "*.mmd" -exec sh -c \
 ```
 
 **Styled Output:**
+
 ```bash
 # Create dark-themed transparent diagrams
 mmdc -i architecture.mmd -o arch.png \
@@ -196,6 +219,7 @@ mmdc -i architecture.mmd -o arch.png \
 ```
 
 **CI/CD Pipeline:**
+
 ```yaml
 # GitHub Actions example
 - name: Generate Diagrams
@@ -205,6 +229,7 @@ mmdc -i architecture.mmd -o arch.png \
 ```
 
 **Accessibility-Enhanced:**
+
 ```bash
 # Diagrams with accTitle/accDescr preserved
 mmdc -i accessible-diagram.mmd -o output.svg
@@ -217,12 +242,14 @@ Use `-u $(id -u):$(id -g)` to match host user permissions.
 
 **Large Diagrams:**
 Increase Node.js memory:
+
 ```bash
 NODE_OPTIONS="--max-old-space-size=4096" mmdc -i large.mmd -o out.svg
 ```
 
 **Validation:**
 Check syntax before rendering:
+
 ```bash
 mmdc -i diagram.mmd -o /dev/null || echo "Invalid syntax"
 ```

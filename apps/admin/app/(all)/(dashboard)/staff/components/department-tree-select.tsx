@@ -51,16 +51,18 @@ const TreeNode = observer(function TreeNode({ dept, depth, selectedId, onSelect,
         )}
         style={{ paddingLeft: `${depth * 16 + 12}px` }}
       >
-        <span
+        <button
+          type="button"
+          tabIndex={hasChildren ? 0 : -1}
           onClick={(e) => {
             if (!hasChildren) return;
             e.stopPropagation();
             setExpanded((v) => !v);
           }}
-          className={cn("w-4 h-4 flex-shrink-0 text-tertiary", !hasChildren && "invisible")}
+          className={cn("w-4 h-4 flex-shrink-0 text-tertiary p-0 bg-transparent border-0", !hasChildren && "invisible")}
         >
           <ChevronRight className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-90")} />
-        </span>
+        </button>
         <span className="truncate flex-1">{dept.name}</span>
         <span className="text-11 font-mono text-tertiary flex-shrink-0">{dept.code}</span>
       </button>
@@ -142,9 +144,7 @@ export const DepartmentTreeSelect = observer(function DepartmentTreeSelect({
         )}
       >
         <span className="flex-1 truncate">{selectedName ?? <span className="text-tertiary">{placeholder}</span>}</span>
-        {value && (
-          <X className="w-3.5 h-3.5 text-tertiary hover:text-primary flex-shrink-0" onClick={handleClear} />
-        )}
+        {value && <X className="w-3.5 h-3.5 text-tertiary hover:text-primary flex-shrink-0" onClick={handleClear} />}
         <ChevronDown className={cn("w-4 h-4 text-tertiary flex-shrink-0 transition-transform", open && "rotate-180")} />
       </button>
 
@@ -155,6 +155,7 @@ export const DepartmentTreeSelect = observer(function DepartmentTreeSelect({
           <div className="flex items-center gap-2 px-3 py-2 border-b border-subtle">
             <Search className="w-3.5 h-3.5 text-tertiary flex-shrink-0" />
             <input
+              // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -167,7 +168,11 @@ export const DepartmentTreeSelect = observer(function DepartmentTreeSelect({
           <div className="max-h-56 overflow-y-auto py-1">
             <button
               type="button"
-              onClick={() => { onChange(""); setOpen(false); setQuery(""); }}
+              onClick={() => {
+                onChange("");
+                setOpen(false);
+                setQuery("");
+              }}
               className={cn(
                 "w-full px-3 py-1.5 text-left text-13 text-tertiary rounded hover:bg-layer-1-hover",
                 !value && "bg-accent-subtle text-accent-primary"

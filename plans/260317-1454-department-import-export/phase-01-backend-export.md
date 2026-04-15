@@ -4,16 +4,17 @@
 
 ## Overview
 
-| Field | Value |
-|---|---|
-| Date | 2026-03-17 |
+| Field       | Value                                                                               |
+| ----------- | ----------------------------------------------------------------------------------- |
+| Date        | 2026-03-17                                                                          |
 | Description | Add `GET /api/instances/departments/export/` — streams flat XLSX of all departments |
-| Priority | P2 |
-| Status | ⬜ pending |
+| Priority    | P2                                                                                  |
+| Status      | ⬜ pending                                                                          |
 
 ## Requirements
 
 <!-- Updated: Validation Session 1 - XLSX only, removed CSV support -->
+
 - `GET /api/instances/departments/export/` — always returns XLSX (no format param)
 - Flat list — hierarchy via `parent_code` column
 - Columns: `name, code, short_name, dept_code, dept_type, parent_code, manager_email, sort_order, is_active, level`
@@ -24,6 +25,7 @@
 ## Architecture
 
 <!-- Updated: Validation Session 1 - XLSX only -->
+
 ```
 DepartmentExportView (GET)
   └── Query all departments (soft-delete filter)
@@ -41,7 +43,9 @@ DepartmentExportView (GET)
 ## Implementation Steps
 
 <!-- Updated: Validation Session 1 - removed _csv_response -->
+
 1. In `department.py` views, add `DepartmentExportView`:
+
    ```python
    class DepartmentExportView(BaseAPIView):
        permission_classes = [InstanceAdminPermission]
@@ -55,6 +59,7 @@ DepartmentExportView (GET)
            rows = [_dept_to_row(d) for d in departments]
            return _xlsx_response(rows)
    ```
+
 2. Add helper `_dept_to_row(dept)` → dict with all 10 columns
 3. Add `_xlsx_response(rows)` using `openpyxl` (already in Django stack)
 4. Register URL: `path("departments/export/", DepartmentExportView.as_view(http_method_names=["get"]), name="instance-department-export")`

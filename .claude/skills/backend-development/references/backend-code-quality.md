@@ -9,36 +9,60 @@ SOLID principles, design patterns, clean code practices, and refactoring strateg
 **Concept:** Class/module should have one reason to change
 
 **Bad:**
+
 ```typescript
 class User {
-  saveToDatabase() { /* ... */ }
-  sendWelcomeEmail() { /* ... */ }
-  generateReport() { /* ... */ }
-  validateInput() { /* ... */ }
+  saveToDatabase() {
+    /* ... */
+  }
+  sendWelcomeEmail() {
+    /* ... */
+  }
+  generateReport() {
+    /* ... */
+  }
+  validateInput() {
+    /* ... */
+  }
 }
 ```
 
 **Good:**
+
 ```typescript
 class User {
-  constructor(public id: string, public email: string, public name: string) {}
+  constructor(
+    public id: string,
+    public email: string,
+    public name: string
+  ) {}
 }
 
 class UserRepository {
-  async save(user: User) { /* ... */ }
-  async findById(id: string) { /* ... */ }
+  async save(user: User) {
+    /* ... */
+  }
+  async findById(id: string) {
+    /* ... */
+  }
 }
 
 class EmailService {
-  async sendWelcomeEmail(user: User) { /* ... */ }
+  async sendWelcomeEmail(user: User) {
+    /* ... */
+  }
 }
 
 class UserValidator {
-  validate(userData: any) { /* ... */ }
+  validate(userData: any) {
+    /* ... */
+  }
 }
 
 class ReportGenerator {
-  generateUserReport(user: User) { /* ... */ }
+  generateUserReport(user: User) {
+    /* ... */
+  }
 }
 ```
 
@@ -47,12 +71,13 @@ class ReportGenerator {
 **Concept:** Open for extension, closed for modification
 
 **Bad:**
+
 ```typescript
 class PaymentProcessor {
   process(amount: number, method: string) {
-    if (method === 'stripe') {
+    if (method === "stripe") {
       // Stripe logic
-    } else if (method === 'paypal') {
+    } else if (method === "paypal") {
       // PayPal logic
     }
     // Adding new payment method requires modifying this class
@@ -61,6 +86,7 @@ class PaymentProcessor {
 ```
 
 **Good (Strategy Pattern):**
+
 ```typescript
 interface PaymentStrategy {
   process(amount: number): Promise<PaymentResult>;
@@ -69,14 +95,14 @@ interface PaymentStrategy {
 class StripePayment implements PaymentStrategy {
   async process(amount: number) {
     // Stripe-specific logic
-    return { success: true, transactionId: '...' };
+    return { success: true, transactionId: "..." };
   }
 }
 
 class PayPalPayment implements PaymentStrategy {
   async process(amount: number) {
     // PayPal-specific logic
-    return { success: true, transactionId: '...' };
+    return { success: true, transactionId: "..." };
   }
 }
 
@@ -98,14 +124,17 @@ await processor.process(100);
 **Concept:** Subtypes must be substitutable for base types
 
 **Bad:**
+
 ```typescript
 class Bird {
-  fly() { /* ... */ }
+  fly() {
+    /* ... */
+  }
 }
 
 class Penguin extends Bird {
   fly() {
-    throw new Error('Penguins cannot fly!');
+    throw new Error("Penguins cannot fly!");
   }
 }
 
@@ -113,6 +142,7 @@ class Penguin extends Bird {
 ```
 
 **Good:**
+
 ```typescript
 interface Bird {
   move(): void;
@@ -122,14 +152,18 @@ class FlyingBird implements Bird {
   move() {
     this.fly();
   }
-  private fly() { /* ... */ }
+  private fly() {
+    /* ... */
+  }
 }
 
 class Penguin implements Bird {
   move() {
     this.swim();
   }
-  private swim() { /* ... */ }
+  private swim() {
+    /* ... */
+  }
 }
 ```
 
@@ -138,6 +172,7 @@ class Penguin implements Bird {
 **Concept:** Clients shouldn't depend on interfaces they don't use
 
 **Bad:**
+
 ```typescript
 interface Worker {
   work(): void;
@@ -153,6 +188,7 @@ class Robot implements Worker {
 ```
 
 **Good:**
+
 ```typescript
 interface Workable {
   work(): void;
@@ -167,13 +203,21 @@ interface Sleepable {
 }
 
 class Human implements Workable, Eatable, Sleepable {
-  work() { /* ... */ }
-  eat() { /* ... */ }
-  sleep() { /* ... */ }
+  work() {
+    /* ... */
+  }
+  eat() {
+    /* ... */
+  }
+  sleep() {
+    /* ... */
+  }
 }
 
 class Robot implements Workable {
-  work() { /* ... */ }
+  work() {
+    /* ... */
+  }
 }
 ```
 
@@ -182,9 +226,12 @@ class Robot implements Workable {
 **Concept:** Depend on abstractions, not concretions
 
 **Bad:**
+
 ```typescript
 class MySQLDatabase {
-  query(sql: string) { /* ... */ }
+  query(sql: string) {
+    /* ... */
+  }
 }
 
 class UserService {
@@ -197,24 +244,29 @@ class UserService {
 ```
 
 **Good (Dependency Injection):**
+
 ```typescript
 interface Database {
   query(sql: string, params: any[]): Promise<any>;
 }
 
 class MySQLDatabase implements Database {
-  async query(sql: string, params: any[]) { /* ... */ }
+  async query(sql: string, params: any[]) {
+    /* ... */
+  }
 }
 
 class PostgreSQLDatabase implements Database {
-  async query(sql: string, params: any[]) { /* ... */ }
+  async query(sql: string, params: any[]) {
+    /* ... */
+  }
 }
 
 class UserService {
   constructor(private db: Database) {} // Injected dependency
 
   async getUser(id: string) {
-    return this.db.query('SELECT * FROM users WHERE id = $1', [id]);
+    return this.db.query("SELECT * FROM users WHERE id = $1", [id]);
   }
 }
 
@@ -235,7 +287,7 @@ class User {
   constructor(
     public id: string,
     public email: string,
-    public name: string,
+    public name: string
   ) {}
 }
 
@@ -252,15 +304,12 @@ class PostgresUserRepository implements UserRepository {
   constructor(private db: Database) {}
 
   async findById(id: string): Promise<User | null> {
-    const row = await this.db.query('SELECT * FROM users WHERE id = $1', [id]);
+    const row = await this.db.query("SELECT * FROM users WHERE id = $1", [id]);
     return row ? new User(row.id, row.email, row.name) : null;
   }
 
   async save(user: User): Promise<void> {
-    await this.db.query(
-      'INSERT INTO users (id, email, name) VALUES ($1, $2, $3)',
-      [user.id, user.email, user.name]
-    );
+    await this.db.query("INSERT INTO users (id, email, name) VALUES ($1, $2, $3)", [user.id, user.email, user.name]);
   }
 
   // Other methods...
@@ -304,13 +353,13 @@ class PushNotification implements Notification {
 }
 
 class NotificationFactory {
-  static create(type: 'email' | 'sms' | 'push'): Notification {
+  static create(type: "email" | "sms" | "push"): Notification {
     switch (type) {
-      case 'email':
+      case "email":
         return new EmailNotification();
-      case 'sms':
+      case "sms":
         return new SMSNotification();
-      case 'push':
+      case "push":
         return new PushNotification();
       default:
         throw new Error(`Unknown notification type: ${type}`);
@@ -319,8 +368,8 @@ class NotificationFactory {
 }
 
 // Usage
-const notification = NotificationFactory.create('email');
-await notification.send('Hello!');
+const notification = NotificationFactory.create("email");
+await notification.send("Hello!");
 ```
 
 ### Decorator Pattern
@@ -339,7 +388,7 @@ class SimpleCoffee implements Coffee {
   }
 
   description() {
-    return 'Simple coffee';
+    return "Simple coffee";
   }
 }
 
@@ -397,7 +446,7 @@ class EventEmitter {
 
   emit(event: string, data: any) {
     const observers = this.observers.get(event) || [];
-    observers.forEach(observer => observer.update(data));
+    observers.forEach((observer) => observer.update(data));
   }
 }
 
@@ -416,10 +465,10 @@ class LoggerObserver implements Observer {
 
 // Usage
 const eventEmitter = new EventEmitter();
-eventEmitter.subscribe('user.created', new EmailNotifier());
-eventEmitter.subscribe('user.created', new LoggerObserver());
+eventEmitter.subscribe("user.created", new EmailNotifier());
+eventEmitter.subscribe("user.created", new LoggerObserver());
 
-eventEmitter.emit('user.created', { type: 'user.created', userId: '123' });
+eventEmitter.emit("user.created", { type: "user.created", userId: "123" });
 ```
 
 ## Clean Code Practices
@@ -427,6 +476,7 @@ eventEmitter.emit('user.created', { type: 'user.created', userId: '123' });
 ### Meaningful Names
 
 **Bad:**
+
 ```typescript
 function d(a: number, b: number) {
   return a * b * 0.0254;
@@ -434,6 +484,7 @@ function d(a: number, b: number) {
 ```
 
 **Good:**
+
 ```typescript
 function calculateAreaInMeters(widthInInches: number, heightInInches: number) {
   const INCHES_TO_METERS = 0.0254;
@@ -444,6 +495,7 @@ function calculateAreaInMeters(widthInInches: number, heightInInches: number) {
 ### Small Functions
 
 **Bad:**
+
 ```typescript
 async function processOrder(orderId: string) {
   // 200 lines of code doing everything
@@ -457,12 +509,13 @@ async function processOrder(orderId: string) {
 ```
 
 **Good:**
+
 ```typescript
 async function processOrder(orderId: string) {
   const order = await validateOrder(orderId);
   await checkInventory(order);
   const payment = await processPayment(order);
-  await updateOrderStatus(orderId, 'paid');
+  await updateOrderStatus(orderId, "paid");
   await sendConfirmationEmail(order);
   await generateInvoice(order, payment);
 }
@@ -471,19 +524,21 @@ async function processOrder(orderId: string) {
 ### Avoid Magic Numbers
 
 **Bad:**
+
 ```typescript
 if (user.age < 18) {
-  throw new Error('Too young');
+  throw new Error("Too young");
 }
 
 setTimeout(fetchData, 86400000);
 ```
 
 **Good:**
+
 ```typescript
 const MINIMUM_AGE = 18;
 if (user.age < MINIMUM_AGE) {
-  throw new Error('Too young');
+  throw new Error("Too young");
 }
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -493,6 +548,7 @@ setTimeout(fetchData, ONE_DAY_IN_MS);
 ### Error Handling
 
 **Bad:**
+
 ```typescript
 try {
   const user = await db.findUser(id);
@@ -504,6 +560,7 @@ try {
 ```
 
 **Good:**
+
 ```typescript
 try {
   const user = await db.findUser(id);
@@ -512,48 +569,50 @@ try {
   }
   return user;
 } catch (error) {
-  logger.error('Failed to fetch user', {
+  logger.error("Failed to fetch user", {
     userId: id,
     error: error.message,
     stack: error.stack,
   });
-  throw new DatabaseError('User fetch failed', { cause: error });
+  throw new DatabaseError("User fetch failed", { cause: error });
 }
 ```
 
 ### Don't Repeat Yourself (DRY)
 
 **Bad:**
+
 ```typescript
-app.post('/api/users', async (req, res) => {
-  if (!req.body.email || !req.body.email.includes('@')) {
-    return res.status(400).json({ error: 'Invalid email' });
+app.post("/api/users", async (req, res) => {
+  if (!req.body.email || !req.body.email.includes("@")) {
+    return res.status(400).json({ error: "Invalid email" });
   }
   // ...
 });
 
-app.put('/api/users/:id', async (req, res) => {
-  if (!req.body.email || !req.body.email.includes('@')) {
-    return res.status(400).json({ error: 'Invalid email' });
+app.put("/api/users/:id", async (req, res) => {
+  if (!req.body.email || !req.body.email.includes("@")) {
+    return res.status(400).json({ error: "Invalid email" });
   }
   // ...
 });
 ```
 
 **Good:**
+
 ```typescript
 function validateEmail(email: string) {
-  if (!email || !email.includes('@')) {
-    throw new ValidationError('Invalid email');
+  if (!email || !email.includes("@")) {
+    throw new ValidationError("Invalid email");
   }
 }
 
-app.post('/api/users', async (req, res) => {
+app.post("/api/users", async (req, res) => {
   validateEmail(req.body.email);
   // ...
 });
 
-app.put('/api/users/:id', async (req, res) => {
+app.put("/api/users/:id", async (req, res) => {
   validateEmail(req.body.email);
   // ...
 });
@@ -564,20 +623,22 @@ app.put('/api/users/:id', async (req, res) => {
 ### Extract Method
 
 **Before:**
+
 ```typescript
 function renderOrder(order: Order) {
-  console.log('Order Details:');
+  console.log("Order Details:");
   console.log(`ID: ${order.id}`);
   console.log(`Total: $${order.total}`);
 
-  console.log('Items:');
-  order.items.forEach(item => {
+  console.log("Items:");
+  order.items.forEach((item) => {
     console.log(`- ${item.name}: $${item.price}`);
   });
 }
 ```
 
 **After:**
+
 ```typescript
 function renderOrder(order: Order) {
   printOrderHeader(order);
@@ -585,14 +646,14 @@ function renderOrder(order: Order) {
 }
 
 function printOrderHeader(order: Order) {
-  console.log('Order Details:');
+  console.log("Order Details:");
   console.log(`ID: ${order.id}`);
   console.log(`Total: $${order.total}`);
 }
 
 function printOrderItems(items: OrderItem[]) {
-  console.log('Items:');
-  items.forEach(item => {
+  console.log("Items:");
+  items.forEach((item) => {
     console.log(`- ${item.name}: $${item.price}`);
   });
 }
@@ -601,19 +662,21 @@ function printOrderItems(items: OrderItem[]) {
 ### Replace Conditional with Polymorphism
 
 **Before:**
+
 ```typescript
 function getShippingCost(order: Order) {
-  if (order.shippingMethod === 'standard') {
+  if (order.shippingMethod === "standard") {
     return 5;
-  } else if (order.shippingMethod === 'express') {
+  } else if (order.shippingMethod === "express") {
     return 15;
-  } else if (order.shippingMethod === 'overnight') {
+  } else if (order.shippingMethod === "overnight") {
     return 30;
   }
 }
 ```
 
 **After:**
+
 ```typescript
 interface ShippingMethod {
   getCost(): number;

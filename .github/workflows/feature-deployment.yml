@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       base_tag_name:
-        description: 'Base Tag Name'
+        description: "Base Tag Name"
         required: false
-        default: 'preview'
+        default: "preview"
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -86,8 +86,7 @@ jobs:
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
-          build-args: 
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
+          build-args: BUILD_TAG=${{ env.AIO_BASE_TAG }}
             BUILD_TYPE=${{env.BUILD_TYPE}}
           # cache-from: type=gha
           # cache-to: type=gha,mode=max

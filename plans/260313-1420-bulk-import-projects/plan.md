@@ -21,10 +21,10 @@ Entry point: God Mode → `/god-mode/workspace/` → "Bulk Import Projects" → 
 
 ## Phases
 
-| # | Phase | Status | Est. | File |
-|---|-------|--------|------|------|
-| 1 | Backend UPSERT | ⬜ pending | 1.5h | [phase-01-backend-upsert.md](./phase-01-backend-upsert.md) |
-| 2 | Frontend Update | ⬜ pending | 1.5h | [phase-02-frontend-update.md](./phase-02-frontend-update.md) |
+| #   | Phase           | Status     | Est. | File                                                         |
+| --- | --------------- | ---------- | ---- | ------------------------------------------------------------ |
+| 1   | Backend UPSERT  | ⬜ pending | 1.5h | [phase-01-backend-upsert.md](./phase-01-backend-upsert.md)   |
+| 2   | Frontend Update | ⬜ pending | 1.5h | [phase-02-frontend-update.md](./phase-02-frontend-update.md) |
 
 ## Key Decisions
 

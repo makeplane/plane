@@ -5,6 +5,7 @@ Complete guide to iOS development with Swift and SwiftUI (2024-2025).
 ## Swift 6 Overview
 
 ### Key Features
+
 - **Data race safety**: Compile-time detection (default in Swift 6)
 - **Concurrency**: async/await, actors, @MainActor
 - **Macro system**: Code generation at compile time
@@ -14,6 +15,7 @@ Complete guide to iOS development with Swift and SwiftUI (2024-2025).
 ### Modern Swift Patterns
 
 **Async/Await:**
+
 ```swift
 func fetchUser(id: String) async throws -> User {
     let (data, _) = try await URLSession.shared.data(from: url)
@@ -32,6 +34,7 @@ Task {
 ```
 
 **Actors (Thread-safe classes):**
+
 ```swift
 actor UserCache {
     private var cache: [String: User] = [:]
@@ -49,6 +52,7 @@ actor UserCache {
 ## SwiftUI vs UIKit
 
 ### When to Use SwiftUI
+
 ✅ New projects (iOS 13+)
 ✅ Declarative UI preferred
 ✅ Fast iteration needed
@@ -56,6 +60,7 @@ actor UserCache {
 ✅ 40% less code vs UIKit
 
 ### When to Use UIKit
+
 ✅ Legacy app maintenance
 ✅ Complex customizations
 ✅ Fine-grained control needed
@@ -84,6 +89,7 @@ struct ContentView: View {
 ```
 
 **Property Wrappers:**
+
 - `@State`: View-local state
 - `@Binding`: Two-way binding
 - `@StateObject`: Observable object owner
@@ -146,12 +152,14 @@ struct UserListView: View {
 ### TCA (The Composable Architecture)
 
 **When to use:**
+
 - Complex state management
 - Predictable state updates
 - Excellent testing
 - Enterprise apps
 
 **Trade-offs:**
+
 - Steeper learning curve
 - More boilerplate
 - Excellent for large teams
@@ -161,6 +169,7 @@ struct UserListView: View {
 ### Compiler Optimizations
 
 **1. Use `final` classes:**
+
 ```swift
 final class FastClass {
     // Compiler can optimize (no dynamic dispatch)
@@ -168,6 +177,7 @@ final class FastClass {
 ```
 
 **2. Private methods:**
+
 ```swift
 private func optimize() {
     // Compiler can inline
@@ -175,6 +185,7 @@ private func optimize() {
 ```
 
 **3. Whole-module optimization:**
+
 ```bash
 # Build Settings
 SWIFT_WHOLE_MODULE_OPTIMIZATION = YES
@@ -183,6 +194,7 @@ SWIFT_WHOLE_MODULE_OPTIMIZATION = YES
 ### Memory Management
 
 **ARC (Automatic Reference Counting):**
+
 ```swift
 class Parent {
     var child: Child?
@@ -194,6 +206,7 @@ class Child {
 ```
 
 **Common Retain Cycles:**
+
 ```swift
 // ❌ Bad: Retain cycle
 class ViewController: UIViewController {
@@ -221,6 +234,7 @@ class ViewController: UIViewController {
 ### SwiftUI Performance
 
 **1. Use const modifiers:**
+
 ```swift
 Text("Hello")  // Recreated on every render
 
@@ -234,6 +248,7 @@ let titleText = Text("Hello").font(.title)
 ```
 
 **2. Avoid expensive computations:**
+
 ```swift
 struct ExpensiveView: View {
     let data: [Item]
@@ -311,6 +326,7 @@ final class LoginUITests: XCTestCase {
 ```
 
 **Target Coverage:**
+
 - Unit tests: 70-80%+
 - Critical paths: 100%
 - UI tests: Key user flows only (slow)
@@ -365,6 +381,7 @@ let activity = try Activity.request(
 ### App Clips
 
 **Characteristics:**
+
 - <10MB size limit
 - Fast, lightweight experiences
 - No installation required
@@ -375,18 +392,21 @@ let activity = try Activity.request(
 ### Navigation Patterns
 
 **Tab Bar:**
+
 - 2-5 top-level sections
 - Bottom placement
 - Always visible
 - Immediate navigation
 
 **Navigation Bar:**
+
 - Hierarchical navigation
 - Back button automatic
 - Title and actions
 - Large/inline title modes
 
 **Modal Presentation:**
+
 - Interrupting tasks
 - Self-contained flow
 - Clear dismiss action
@@ -395,16 +415,19 @@ let activity = try Activity.request(
 ### Design Principles
 
 **Clarity:**
+
 - Legible text (minimum 11pt)
 - Sufficient contrast (WCAG AA)
 - Precise icons
 
 **Deference:**
+
 - Content first, UI second
 - Translucent backgrounds
 - Minimal UI elements
 
 **Depth:**
+
 - Layering (sheets, overlays)
 - Visual hierarchy
 - Motion provides meaning
@@ -412,6 +435,7 @@ let activity = try Activity.request(
 ### Colors
 
 **System Colors:**
+
 ```swift
 Color.primary      // Adaptive black/white
 Color.secondary    // Gray
@@ -421,6 +445,7 @@ Color(uiColor: .label)
 ```
 
 **Dark Mode:**
+
 ```swift
 // Automatic
 Color.primary  // Adapts to light/dark
@@ -444,22 +469,26 @@ Image(systemName: "heart.fill")
 ## App Store Requirements (2024-2025)
 
 ### SDK Requirements
+
 - **Current**: Xcode 15+ with iOS 17 SDK (required as of April 2024)
 - **Upcoming**: Xcode 16+ with iOS 18 SDK (recommended for 2025 submissions)
 
 ### Privacy
+
 - **Privacy manifest**: Required for third-party SDKs
 - **Tracking permission**: ATT framework for advertising
 - **Privacy nutrition labels**: Accurate data collection info
 - **Account deletion**: In-app deletion required
 
 ### Capabilities
+
 - **Sandbox**: All apps sandboxed
 - **Entitlements**: Request only needed capabilities
 - **Background modes**: Justify background usage
 - **HealthKit**: Privacy-sensitive, strict review
 
 ### Submission Checklist
+
 ✅ App icons (all required sizes)
 ✅ Screenshots (all device sizes)
 ✅ App description and keywords
@@ -484,12 +513,14 @@ Image(systemName: "heart.fill")
 ## Resources
 
 **Official:**
+
 - Swift Documentation: https://swift.org/documentation/
 - SwiftUI Tutorials: https://developer.apple.com/tutorials/swiftui
 - HIG: https://developer.apple.com/design/human-interface-guidelines/
 - WWDC Videos: https://developer.apple.com/videos/
 
 **Community:**
+
 - Hacking with Swift: https://www.hackingwithswift.com/
 - Swift by Sundell: https://www.swiftbysundell.com/
 - objc.io: https://www.objc.io/

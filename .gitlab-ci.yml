@@ -59,7 +59,7 @@ variables:
     - if [ "$(uname)" = "Darwin" ]; then export PATH="/opt/homebrew/bin:$PATH"; fi
     - command -v pnpm || corepack enable pnpm
     - pnpm config set store-dir $PNPM_STORE_PATH
-    - pnpm install --prefer-frozen-lockfile
+    - pnpm install --prefer-frozen-lockfile --offline
 
 # =============================================================================
 # STAGE 1: LINT & FORMAT
@@ -69,6 +69,8 @@ variables:
 frontend:format:
   extends: .frontend_base
   stage: lint
+  tags:
+    - shared
   interruptible: true
   script:
     - pnpm turbo run check:format --affected
@@ -79,6 +81,8 @@ frontend:format:
 frontend:build:
   extends: .frontend_base
   stage: lint
+  tags:
+    - shared
   interruptible: true
   script:
     - pnpm turbo run build --affected
@@ -96,6 +100,8 @@ frontend:build:
 frontend:lint:
   extends: .frontend_base
   stage: lint
+  tags:
+    - shared
   interruptible: true
   needs: [frontend:build]
   allow_failure: true
@@ -108,6 +114,8 @@ frontend:lint:
 frontend:types:
   extends: .frontend_base
   stage: lint
+  tags:
+    - shared
   interruptible: true
   needs: [frontend:build]
   allow_failure: true
@@ -241,7 +249,7 @@ backend:test:shell:
   stage: build
   image: docker:latest
   tags:
-    - docker  # requires a Docker executor runner — never runs on Mac shell runner
+    - docker # requires a Docker executor runner — never runs on Mac shell runner
   services:
     - docker:dind
   variables:
@@ -386,25 +394,17 @@ build:api:shell:
 # Deploy strategy: SCP tar.gz + scripts/ci-deploy.sh to server, then SSH execute
 # =============================================================================
 
-# ─── Deploy Before Script Template (macOS shell / Linux shell) ────────────────
-# Installs sshpass using the appropriate package manager for the runner OS.
-# macOS: brew tap hudochenkov/sshpass && brew install sshpass
-# Linux: apt-get install sshpass
+# ─── Deploy Before Script Template ──────────────────────────────────────────────
+# Custom image node:22-alpine already has sshpass/rsync/openssh installed.
+# Only need to set up .ssh directory.
 .deploy_before: &deploy_before
-  - |
-    if [ "$(uname -s)" = "Darwin" ]; then
-      export PATH="/opt/homebrew/bin:$PATH"
-      brew tap hudochenkov/sshpass 2>/dev/null || true
-      brew install sshpass 2>/dev/null || true
-    else
-      apt-get update -qq && apt-get install -y -qq sshpass
-    fi
   - mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
 # ── Deploy Test — auto on merge to develop (air-gapped internal) ──────────────
 # Auth: password-based via sshpass — variables: TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST
 deploy:test:
   stage: deploy
+  image: node:22-alpine
   interruptible: false
   before_script:
     - *deploy_before
@@ -429,6 +429,7 @@ deploy:test:
 # Auth: password-based via sshpass — variables: PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD
 deploy:production:
   stage: deploy
+  image: node:22-alpine
   interruptible: false
   before_script:
     - *deploy_before
@@ -491,7 +492,7 @@ release:production:docker:
   image: alpine:latest
   needs:
     - job: build:web:docker
-      artifacts: true  # provides $SHB_VERSION from dotenv
+      artifacts: true # provides $SHB_VERSION from dotenv
   variables:
     GIT_STRATEGY: none
   before_script:
@@ -524,7 +525,7 @@ release:production:shell:
   needs:
     - job: deploy:production
     - job: build:web:shell
-      artifacts: true  # provides $SHB_VERSION from dotenv
+      artifacts: true # provides $SHB_VERSION from dotenv
   variables:
     GIT_STRATEGY: none
   script:

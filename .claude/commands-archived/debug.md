@@ -4,7 +4,7 @@ argument-hint: [issues]
 ---
 
 **Reported Issues**:
- $ARGUMENTS
+$ARGUMENTS
 
 Use the `debugger` subagent to find the root cause of the issues, then analyze and explain the reports to the user.
 

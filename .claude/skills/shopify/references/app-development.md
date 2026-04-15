@@ -7,6 +7,7 @@ Guide for building Shopify apps with OAuth, GraphQL/REST APIs, webhooks, and bil
 ### OAuth 2.0 Flow
 
 **1. Redirect to Authorization URL:**
+
 ```
 https://{shop}.myshopify.com/admin/oauth/authorize?
   client_id={api_key}&
@@ -16,13 +17,14 @@ https://{shop}.myshopify.com/admin/oauth/authorize?
 ```
 
 **2. Handle Callback:**
+
 ```javascript
-app.get('/auth/callback', async (req, res) => {
+app.get("/auth/callback", async (req, res) => {
   const { code, shop, state } = req.query;
 
   // Verify state to prevent CSRF
   if (state !== storedState) {
-    return res.status(403).send('Invalid state');
+    return res.status(403).send("Invalid state");
   }
 
   // Exchange code for access token
@@ -36,16 +38,17 @@ app.get('/auth/callback', async (req, res) => {
 ```
 
 **3. Exchange Code for Token:**
+
 ```javascript
 async function exchangeCodeForToken(shop, code) {
   const response = await fetch(`https://${shop}/admin/oauth/access_token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       client_id: process.env.SHOPIFY_API_KEY,
       client_secret: process.env.SHOPIFY_API_SECRET,
-      code
-    })
+      code,
+    }),
   });
 
   const { access_token } = await response.json();
@@ -56,6 +59,7 @@ async function exchangeCodeForToken(shop, code) {
 ### Access Scopes
 
 **Common Scopes:**
+
 - `read_products`, `write_products` - Product catalog
 - `read_orders`, `write_orders` - Order management
 - `read_customers`, `write_customers` - Customer data
@@ -94,17 +98,14 @@ async function authenticatedFetch(url, options = {}) {
 
 ```javascript
 async function graphqlRequest(shop, accessToken, query, variables = {}) {
-  const response = await fetch(
-    `https://${shop}/admin/api/2025-01/graphql.json`,
-    {
-      method: 'POST',
-      headers: {
-        'X-Shopify-Access-Token': accessToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ query, variables })
-    }
-  );
+  const response = await fetch(`https://${shop}/admin/api/2025-01/graphql.json`, {
+    method: "POST",
+    headers: {
+      "X-Shopify-Access-Token": accessToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query, variables }),
+  });
 
   const data = await response.json();
 
@@ -119,6 +120,7 @@ async function graphqlRequest(shop, accessToken, query, variables = {}) {
 ### Product Operations
 
 **Create Product:**
+
 ```graphql
 mutation CreateProduct($input: ProductInput!) {
   productCreate(input: $input) {
@@ -136,6 +138,7 @@ mutation CreateProduct($input: ProductInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -143,24 +146,30 @@ Variables:
     "productType": "Apparel",
     "vendor": "Brand",
     "status": "ACTIVE",
-    "variants": [
-      { "price": "29.99", "sku": "SKU-001", "inventoryQuantity": 100 }
-    ]
+    "variants": [{ "price": "29.99", "sku": "SKU-001", "inventoryQuantity": 100 }]
   }
 }
 ```
 
 **Update Product:**
+
 ```graphql
 mutation UpdateProduct($input: ProductInput!) {
   productUpdate(input: $input) {
-    product { id title }
-    userErrors { field message }
+    product {
+      id
+      title
+    }
+    userErrors {
+      field
+      message
+    }
   }
 }
 ```
 
 **Query Products:**
+
 ```graphql
 query GetProducts($first: Int!, $query: String) {
   products(first: $first, query: $query) {
@@ -171,12 +180,19 @@ query GetProducts($first: Int!, $query: String) {
         status
         variants(first: 5) {
           edges {
-            node { id price inventoryQuantity }
+            node {
+              id
+              price
+              inventoryQuantity
+            }
           }
         }
       }
     }
-    pageInfo { hasNextPage endCursor }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
 ```
@@ -184,6 +200,7 @@ query GetProducts($first: Int!, $query: String) {
 ### Order Operations
 
 **Query Orders:**
+
 ```graphql
 query GetOrders($first: Int!) {
   orders(first: $first) {
@@ -194,9 +211,16 @@ query GetOrders($first: Int!) {
         createdAt
         displayFinancialStatus
         totalPriceSet {
-          shopMoney { amount currencyCode }
+          shopMoney {
+            amount
+            currencyCode
+          }
         }
-        customer { email firstName lastName }
+        customer {
+          email
+          firstName
+          lastName
+        }
       }
     }
   }
@@ -204,11 +228,22 @@ query GetOrders($first: Int!) {
 ```
 
 **Fulfill Order:**
+
 ```graphql
 mutation FulfillOrder($input: FulfillmentInput!) {
   fulfillmentCreate(input: $input) {
-    fulfillment { id status trackingInfo { number url } }
-    userErrors { field message }
+    fulfillment {
+      id
+      status
+      trackingInfo {
+        number
+        url
+      }
+    }
+    userErrors {
+      field
+      message
+    }
   }
 }
 ```
@@ -218,6 +253,7 @@ mutation FulfillOrder($input: FulfillmentInput!) {
 ### Configuration
 
 In `shopify.app.toml`:
+
 ```toml
 [webhooks]
 api_version = "2025-01"
@@ -244,50 +280,52 @@ shop_deletion_url = "/webhooks/gdpr/shop-deletion"
 ### Webhook Handler
 
 ```javascript
-import crypto from 'crypto';
+import crypto from "crypto";
 
 function verifyWebhook(req) {
-  const hmac = req.headers['x-shopify-hmac-sha256'];
+  const hmac = req.headers["x-shopify-hmac-sha256"];
   const body = req.rawBody; // Raw body buffer
 
-  const hash = crypto
-    .createHmac('sha256', process.env.SHOPIFY_API_SECRET)
-    .update(body, 'utf8')
-    .digest('base64');
+  const hash = crypto.createHmac("sha256", process.env.SHOPIFY_API_SECRET).update(body, "utf8").digest("base64");
 
   return hmac === hash;
 }
 
-app.post('/webhooks/orders/create', async (req, res) => {
+app.post("/webhooks/orders/create", async (req, res) => {
   if (!verifyWebhook(req)) {
-    return res.status(401).send('Unauthorized');
+    return res.status(401).send("Unauthorized");
   }
 
   const order = req.body;
-  console.log('New order:', order.id, order.name);
+  console.log("New order:", order.id, order.name);
 
   // Process order...
 
-  res.status(200).send('OK');
+  res.status(200).send("OK");
 });
 ```
 
 ### Common Webhook Topics
 
 **Orders:**
+
 - `orders/create`, `orders/updated`, `orders/delete`
 - `orders/paid`, `orders/cancelled`, `orders/fulfilled`
 
 **Products:**
+
 - `products/create`, `products/update`, `products/delete`
 
 **Customers:**
+
 - `customers/create`, `customers/update`, `customers/delete`
 
 **Inventory:**
+
 - `inventory_levels/update`
 
 **App:**
+
 - `app/uninstalled` (critical for cleanup)
 
 ## Billing Integration
@@ -295,22 +333,29 @@ app.post('/webhooks/orders/create', async (req, res) => {
 ### App Charges
 
 **One-time Charge:**
+
 ```graphql
 mutation CreateCharge($input: AppPurchaseOneTimeInput!) {
   appPurchaseOneTimeCreate(input: $input) {
     appPurchaseOneTime {
       id
       name
-      price { amount }
+      price {
+        amount
+      }
       status
       confirmationUrl
     }
-    userErrors { field message }
+    userErrors {
+      field
+      message
+    }
   }
 }
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -322,6 +367,7 @@ Variables:
 ```
 
 **Recurring Charge (Subscription):**
+
 ```graphql
 mutation CreateSubscription($input: AppSubscriptionCreateInput!) {
   appSubscriptionCreate(input: $input) {
@@ -331,12 +377,16 @@ mutation CreateSubscription($input: AppSubscriptionCreateInput!) {
       status
       confirmationUrl
     }
-    userErrors { field message }
+    userErrors {
+      field
+      message
+    }
   }
 }
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -357,15 +407,21 @@ Variables:
 ```
 
 **Usage-based Billing:**
+
 ```graphql
 mutation CreateUsageCharge($input: AppUsageRecordCreateInput!) {
   appUsageRecordCreate(input: $input) {
     appUsageRecord {
       id
-      price { amount }
+      price {
+        amount
+      }
       description
     }
-    userErrors { field message }
+    userErrors {
+      field
+      message
+    }
   }
 }
 ```
@@ -383,12 +439,16 @@ mutation CreateMetafield($input: MetafieldInput!) {
       key
       value
     }
-    userErrors { field message }
+    userErrors {
+      field
+      message
+    }
   }
 }
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -402,6 +462,7 @@ Variables:
 ```
 
 **Metafield Types:**
+
 - `single_line_text_field`, `multi_line_text_field`
 - `number_integer`, `number_decimal`
 - `date`, `date_time`
@@ -413,11 +474,13 @@ Variables:
 ### GraphQL Cost-Based Limits
 
 **Limits:**
+
 - Available points: 2000
 - Restore rate: 100 points/second
 - Max query cost: 2000
 
 **Check Cost:**
+
 ```javascript
 const response = await graphqlRequest(shop, token, query);
 const cost = response.extensions?.cost;
@@ -426,13 +489,14 @@ console.log(`Cost: ${cost.actualQueryCost}/${cost.throttleStatus.maximumAvailabl
 ```
 
 **Handle Throttling:**
+
 ```javascript
 async function graphqlWithRetry(shop, token, query, retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
       return await graphqlRequest(shop, token, query);
     } catch (error) {
-      if (error.message.includes('Throttled') && i < retries - 1) {
+      if (error.message.includes("Throttled") && i < retries - 1) {
         await sleep(Math.pow(2, i) * 1000); // Exponential backoff
         continue;
       }
@@ -445,6 +509,7 @@ async function graphqlWithRetry(shop, token, query, retries = 3) {
 ## Best Practices
 
 **Security:**
+
 - Store credentials in environment variables
 - Verify webhook HMAC signatures
 - Validate OAuth state parameter
@@ -452,18 +517,21 @@ async function graphqlWithRetry(shop, token, query, retries = 3) {
 - Implement rate limiting on your endpoints
 
 **Performance:**
+
 - Cache access tokens securely
 - Use bulk operations for large datasets
 - Implement pagination for queries
 - Monitor GraphQL query costs
 
 **Reliability:**
+
 - Implement exponential backoff for retries
 - Handle webhook delivery failures
 - Log errors for debugging
 - Monitor app health metrics
 
 **Compliance:**
+
 - Implement GDPR webhooks (mandatory)
 - Handle customer data deletion requests
 - Provide data export functionality

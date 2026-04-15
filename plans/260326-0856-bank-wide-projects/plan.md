@@ -17,31 +17,31 @@ Add a "Bank-wide Projects" menu item in the workspace sidebar, positioned below 
 
 ## What Already Exists
 
-| Item | Status | Location |
-|------|--------|----------|
-| `is_bank_wide` model field | ✅ Done | `plane/db/models/project.py:101` |
-| Migration 0143 | ✅ Done | `plane/db/migrations/0143_project_is_bank_wide.py` |
-| Bank-wide project settings page | ✅ Done | `apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/bank-wide/` |
-| `BankWideSettingsRoot` toggle component | ✅ Done | `apps/web/ce/components/projects/settings/bank-wide/root.tsx` |
-| `is_board_of_director_workspace` flag on workspace | ✅ Done | `packages/types/src/workspace.ts` |
-| HO sidebar menu (pattern to follow) | ✅ Done | `packages/constants/src/workspace.ts` |
+| Item                                               | Status  | Location                                                                                 |
+| -------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------- |
+| `is_bank_wide` model field                         | ✅ Done | `plane/db/models/project.py:101`                                                         |
+| Migration 0143                                     | ✅ Done | `plane/db/migrations/0143_project_is_bank_wide.py`                                       |
+| Bank-wide project settings page                    | ✅ Done | `apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/bank-wide/` |
+| `BankWideSettingsRoot` toggle component            | ✅ Done | `apps/web/ce/components/projects/settings/bank-wide/root.tsx`                            |
+| `is_board_of_director_workspace` flag on workspace | ✅ Done | `packages/types/src/workspace.ts`                                                        |
+| HO sidebar menu (pattern to follow)                | ✅ Done | `packages/constants/src/workspace.ts`                                                    |
 
 ## What Needs to Be Built
 
-| Item | Phase |
-|------|-------|
-| Backend: cross-workspace bank-wide projects API endpoint | Phase 1 |
-| Frontend: sidebar constants + CE sidebar-item + icon | Phase 2 |
+| Item                                                         | Phase   |
+| ------------------------------------------------------------ | ------- |
+| Backend: cross-workspace bank-wide projects API endpoint     | Phase 1 |
+| Frontend: sidebar constants + CE sidebar-item + icon         | Phase 2 |
 | Frontend: route + page component for bank-wide projects list | Phase 3 |
-| Frontend: MobX store + service for bank-wide projects | Phase 3 |
+| Frontend: MobX store + service for bank-wide projects        | Phase 3 |
 
 ## Implementation Phases
 
-| # | Phase | Status | Effort |
-|---|-------|--------|--------|
-| 1 | [Backend API Endpoint](./phase-01-backend-api.md) | pending | 1.5h |
-| 2 | [Sidebar Navigation Item](./phase-02-sidebar-nav.md) | pending | 1h |
-| 3 | [Bank-wide Projects Page](./phase-03-frontend-page.md) | pending | 2.5h |
+| #   | Phase                                                  | Status  | Effort |
+| --- | ------------------------------------------------------ | ------- | ------ |
+| 1   | [Backend API Endpoint](./phase-01-backend-api.md)      | pending | 1.5h   |
+| 2   | [Sidebar Navigation Item](./phase-02-sidebar-nav.md)   | pending | 1h     |
+| 3   | [Bank-wide Projects Page](./phase-03-frontend-page.md) | pending | 2.5h   |
 
 ## Key Decisions
 
@@ -58,6 +58,7 @@ Add a "Bank-wide Projects" menu item in the workspace sidebar, positioned below 
 ## Validation Log
 
 ### Session 1 — 2026-03-26
+
 **Trigger:** Initial plan creation
 **Questions asked:** 4
 
@@ -84,15 +85,18 @@ Add a "Bank-wide Projects" menu item in the workspace sidebar, positioned below 
    - **Rationale:** Read-only view; no reason to restrict to admins. Backend `@allow_permission([ROLE.ADMIN, ROLE.MEMBER])` already correct.
 
 #### Confirmed Decisions
+
 - Layout: grouped by workspace — Phase 3 root.tsx groups `projects` by `workspace_slug`
 - Project links: use `project.workspace_slug` in href — Phase 3 project-card.tsx
 - Permissions: ADMIN + MEMBER, both backend and frontend — already in plan, confirmed
 - Navigation: user leaves BoD workspace when clicking project — expected, no modal needed
 
 #### Action Items
+
 - [ ] Phase 3 root.tsx: group `projects` array by `workspace_slug` before rendering
 - [ ] Phase 3 project-card.tsx: href = `/${project.workspace_slug}/projects/${project.id}/issues/`
 - [ ] Phase 3 layout.tsx: add redirect guard if `!currentWorkspace?.is_board_of_director_workspace`
 
 #### Impact on Phases
+
 - Phase 3: Group-by-workspace layout confirmed; project link uses project's own workspace slug

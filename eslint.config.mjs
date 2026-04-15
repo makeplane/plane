@@ -36,6 +36,7 @@ export default defineConfig([
     "**/public/**",
     ".claude/**",
     ".agent/**",
+    ".agents/**",
   ]),
   eslint.configs.recommended,
   // @ts-expect-error promise plugin has no flat type definitions

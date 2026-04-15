@@ -78,6 +78,7 @@ Agent(
 ```
 
 **Benefits:**
+
 - Each dev gets own git worktree + branch
 - No file conflicts -- devs can edit same files independently
 - `.git` dir shared (common config), everything else isolated
@@ -101,6 +102,7 @@ Lead continues orchestration immediately. TaskCompleted events notify when each 
 ### Wait for Teammates
 
 If lead starts implementing instead of delegating:
+
 ```
 Wait for your teammates to complete their tasks before proceeding
 ```
@@ -108,6 +110,7 @@ Wait for your teammates to complete their tasks before proceeding
 ### Avoid File Conflicts
 
 Two teammates editing same file = overwrites. Mitigate with:
+
 1. **Worktree isolation** (recommended) -- each dev in own worktree
 2. **File ownership boundaries** -- define glob patterns per task
 3. **Lead handles shared files** -- restructure tasks if overlap unavoidable
@@ -133,6 +136,7 @@ With `TaskCompleted` and `TeammateIdle` hooks enabled:
 - All tasks done triggers: "Consider shutting down teammates and synthesizing"
 
 **Cook workflow example:**
+
 ```
 1. Lead spawns 3 devs (run_in_background: true, isolation: "worktree")
 2. TaskCompleted(dev-1, task #1) -> "1/4 done"
@@ -145,6 +149,7 @@ With `TaskCompleted` and `TeammateIdle` hooks enabled:
 ### Use Agent Memory for Long-Running Projects
 
 For projects with recurring team sessions:
+
 - Code reviewer learns project conventions, stops flagging known patterns
 - Debugger remembers past failures, faster root-cause identification
 - Tester tracks flaky tests, avoids re-investigating known issues
@@ -155,6 +160,7 @@ Memory persists after team cleanup -- it's in `.claude/agent-memory/`, not `~/.c
 ### Restrict Sub-Agent Spawning
 
 Use `Task(agent_type)` in agent definitions to prevent:
+
 - Recursive agent chains (agent spawns agent spawns agent)
 - Cost escalation (teammate spawning expensive sub-agents)
 - Scope creep (tester spawning developer to "fix" issues)
@@ -163,12 +169,12 @@ Recommended: Most agents get `Task(Explore)` only. Planner gets `Task(Explore), 
 
 ## Token Budget Guidance
 
-| Template | Estimated Tokens | Notes |
-|----------|-----------------|-------|
-| Research (3 teammates) | ~150K-300K | Read-only, all Opus |
-| Cook (4 teammates) | ~400K-800K | Highest -- code generation |
-| Review (3 teammates) | ~100K-200K | Read-only, all Opus |
-| Debug (3 teammates) | ~200K-400K | Mixed read/execute |
+| Template               | Estimated Tokens | Notes                      |
+| ---------------------- | ---------------- | -------------------------- |
+| Research (3 teammates) | ~150K-300K       | Read-only, all Opus        |
+| Cook (4 teammates)     | ~400K-800K       | Highest -- code generation |
+| Review (3 teammates)   | ~100K-200K       | Read-only, all Opus        |
+| Debug (3 teammates)    | ~200K-400K       | Mixed read/execute         |
 
 Agent Teams use significantly more tokens than subagents (all teammates run Opus 4.6). Use only when parallel exploration + discussion adds clear value. For routine tasks, single session with subagents is more cost-effective.
 

@@ -12,38 +12,38 @@
 ### Consumer Side
 
 ```typescript
-import { Pact } from '@pact-foundation/pact';
+import { Pact } from "@pact-foundation/pact";
 
 const provider = new Pact({
-  consumer: 'Frontend',
-  provider: 'UserService',
+  consumer: "Frontend",
+  provider: "UserService",
 });
 
-describe('User API', () => {
+describe("User API", () => {
   beforeAll(() => provider.setup());
   afterEach(() => provider.verify());
   afterAll(() => provider.finalize());
 
-  it('gets user by id', async () => {
+  it("gets user by id", async () => {
     await provider.addInteraction({
-      state: 'user 123 exists',
-      uponReceiving: 'request for user 123',
+      state: "user 123 exists",
+      uponReceiving: "request for user 123",
       withRequest: {
-        method: 'GET',
-        path: '/users/123',
+        method: "GET",
+        path: "/users/123",
       },
       willRespondWith: {
         status: 200,
         body: {
-          id: '123',
-          name: 'John Doe',
-          email: 'john@example.com',
+          id: "123",
+          name: "John Doe",
+          email: "john@example.com",
         },
       },
     });
 
-    const user = await userClient.getUser('123');
-    expect(user.name).toBe('John Doe');
+    const user = await userClient.getUser("123");
+    expect(user.name).toBe("John Doe");
   });
 });
 ```
@@ -51,18 +51,18 @@ describe('User API', () => {
 ### Provider Side
 
 ```typescript
-import { Verifier } from '@pact-foundation/pact';
+import { Verifier } from "@pact-foundation/pact";
 
-describe('Pact Verification', () => {
-  it('validates consumer expectations', async () => {
+describe("Pact Verification", () => {
+  it("validates consumer expectations", async () => {
     await new Verifier({
-      providerBaseUrl: 'http://localhost:3000',
+      providerBaseUrl: "http://localhost:3000",
       pactBrokerUrl: process.env.PACT_BROKER_URL,
-      provider: 'UserService',
+      provider: "UserService",
       providerVersion: process.env.GIT_SHA,
       stateHandlers: {
-        'user 123 exists': async () => {
-          await db.users.insert({ id: '123', name: 'John Doe' });
+        "user 123 exists": async () => {
+          await db.users.insert({ id: "123", name: "John Doe" });
         },
       },
     }).verifyProvider();
@@ -75,14 +75,14 @@ describe('Pact Verification', () => {
 ### Setup
 
 ```typescript
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
+import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
 
 const handlers = [
-  http.get('/api/users/:id', ({ params }) => {
+  http.get("/api/users/:id", ({ params }) => {
     return HttpResponse.json({
       id: params.id,
-      name: 'John Doe',
+      name: "John Doe",
     });
   }),
 ];
@@ -98,14 +98,14 @@ afterAll(() => server.close());
 ### Per-Test Override
 
 ```typescript
-it('handles server error', async () => {
+it("handles server error", async () => {
   server.use(
-    http.get('/api/users/:id', () => {
-      return HttpResponse.json({ error: 'Not found' }, { status: 404 });
+    http.get("/api/users/:id", () => {
+      return HttpResponse.json({ error: "Not found" }, { status: 404 });
     })
   );
 
-  await expect(userClient.getUser('123')).rejects.toThrow();
+  await expect(userClient.getUser("123")).rejects.toThrow();
 });
 ```
 
@@ -113,7 +113,7 @@ it('handles server error', async () => {
 
 ```typescript
 // Use MSW to simulate provider during Pact consumer tests
-const pactMswHandler = http.get('/api/users/:id', () => {
+const pactMswHandler = http.get("/api/users/:id", () => {
   return HttpResponse.json(expectedPactResponse);
 });
 ```

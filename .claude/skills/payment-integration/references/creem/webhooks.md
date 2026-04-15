@@ -7,10 +7,12 @@ Configure webhook endpoint in Creem dashboard. Receive events at your endpoint U
 ## Event Types
 
 ### Checkout Events
+
 - `checkout.completed` - Payment successful, access granted
 - `checkout.abandoned` - Cart abandoned (triggers recovery emails if enabled)
 
 ### Subscription Events
+
 - `subscription.created` - New subscription started
 - `subscription.updated` - Changes to quantity, product, status
 - `subscription.paused` - Subscription paused
@@ -19,12 +21,14 @@ Configure webhook endpoint in Creem dashboard. Receive events at your endpoint U
 - `subscription.renewed` - Successful renewal charge
 
 ### Payment Events
+
 - `payment.succeeded` - Charge successful
 - `payment.failed` - Charge failed
 - `refund.created` - Refund processed
 - `chargeback.created` - Dispute opened
 
 ### License Events
+
 - `license.activated` - Device activated against license
 - `license.deactivated` - Device deactivated
 
@@ -97,7 +101,7 @@ Store processed event IDs to prevent duplicate processing:
 async function handleWebhook(event) {
   // Check if already processed
   const existing = await db.webhookEvents.findOne({ eventId: event.id });
-  if (existing) return { status: 'already_processed' };
+  if (existing) return { status: "already_processed" };
 
   // Process event
   await processEvent(event);
@@ -106,7 +110,7 @@ async function handleWebhook(event) {
   await db.webhookEvents.create({
     eventId: event.id,
     type: event.type,
-    processedAt: new Date()
+    processedAt: new Date(),
   });
 }
 ```

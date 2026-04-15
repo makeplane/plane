@@ -17,6 +17,7 @@ Thêm các Django ORM lookups mới (`__gt`, `__lt`) vào `IssueFilterSet` để
 ### Functional
 
 **Date filters mới:**
+
 - `start_date__gt` — Issue.start_date greater than date
 - `start_date__lt` — Issue.start_date less than date
 - `target_date__gt` — Issue.target_date greater than date
@@ -27,11 +28,13 @@ Thêm các Django ORM lookups mới (`__gt`, `__lt`) vào `IssueFilterSet` để
 - `updated_at__lt` — Issue.updated_at less than datetime
 
 **Negation (is not / is none of):**
+
 - Backend đã hỗ trợ `{"not": {...}}` trong `filter_backend.py`
 - Frontend việc gửi `{"not": {"state_id__exact": "uuid"}}` hoạt động với existing setup
 - **KHÔNG cần thêm backend code mới** cho negation — chỉ cần frontend wrapper đúng
 
 ### Non-functional
+
 - Các lookups mới phải được khai báo trong `filterset_class` để pass `_validate_fields` check
 - Filter backend validate fields dựa trên `filterset_class.base_filters.keys()`
 
@@ -40,9 +43,11 @@ Thêm các Django ORM lookups mới (`__gt`, `__lt`) vào `IssueFilterSet` để
 ## Related Code Files
 
 ### Modify:
+
 - `apps/api/plane/utils/filters/filterset.py` — thêm `__gt`/`__lt` fields vào `IssueFilterSet.Meta.fields`
 
 ### Reference (không modify):
+
 - `apps/api/plane/utils/filters/filter_backend.py` — đã có `{"not": {...}}` support ✅
 - `apps/api/plane/utils/filters/converters.py` — không cần thay đổi (legacy converter)
 
@@ -57,10 +62,12 @@ Thêm các Django ORM lookups mới (`__gt`, `__lt`) vào `IssueFilterSet` để
 3. **`filterset.py` validation** — `ComplexFilterBackend._validate_fields()` check `filterset_class.base_filters.keys()`. Nếu không khai báo trong Meta, filter sẽ bị reject với `"Filtering on field 'start_date__gt' is not allowed"`.
 
 4. **`filter_backend.py` NOT wrapper** — Khi frontend gửi:
+
    ```json
-   {"not": {"state_id__exact": "some-uuid"}}
+   { "not": { "state_id__exact": "some-uuid" } }
    ```
-   Backend xử lý `{"not": leaf}` → `~Q(state_id__exact="some-uuid")`. 
+
+   Backend xử lý `{"not": leaf}` → `~Q(state_id__exact="some-uuid")`.
    Không cần thêm backend logic.
 
 5. **Date vs DateTime** — `start_date` và `target_date` là `DateField`. `created_at` và `updated_at` là `DateTimeField`. Cả hai đều hỗ trợ `__gt` và `__lt` Django lookups.
@@ -89,6 +96,7 @@ class Meta:
 ```
 
 Điều này tạo ra các filters sau trong `base_filters`:
+
 - `start_date__gt`, `start_date__lt`
 - `target_date__gt`, `target_date__lt`
 - `created_at__gt`, `created_at__lt`

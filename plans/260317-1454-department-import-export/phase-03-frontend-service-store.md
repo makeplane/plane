@@ -4,16 +4,17 @@
 
 ## Overview
 
-| Field | Value |
-|---|---|
-| Date | 2026-03-17 |
+| Field       | Value                                                           |
+| ----------- | --------------------------------------------------------------- |
+| Date        | 2026-03-17                                                      |
 | Description | Add `exportDepartments()` and `bulkImport()` to service + store |
-| Priority | P2 |
-| Status | ⬜ pending |
+| Priority    | P2                                                              |
+| Status      | ⬜ pending                                                      |
 
 ## Requirements
 
 <!-- Updated: Validation Session 1 - window.open() for export, no blob/service method needed -->
+
 - Service: **one new method** on `InstanceDepartmentService`
   - `bulkImport(data: IDepartmentBulkImportRequest): Promise<IDepartmentBulkImportResponse>`
   - Export uses `window.open()` directly — no service method needed
@@ -32,6 +33,7 @@
 ### Service (`instance-department.service.ts`)
 
 1. Add types at top of file:
+
    ```typescript
    export interface IDepartmentBulkImportRow {
      name: string;
@@ -64,18 +66,20 @@
    ```
 
 2. Add `exportDepartments(format = "xlsx"): Promise<Blob>`:
+
    ```typescript
    // Use axios responseType: "blob" for binary download
    return this.get("/api/instances/departments/export/", {
      params: { format },
      responseType: "blob",
-   }).then((res) => res?.data as Blob)
+   }).then((res) => res?.data as Blob);
    ```
 
 3. Add `bulkImport(data: IDepartmentBulkImportRequest): Promise<IDepartmentBulkImportResponse>`:
    ```typescript
-   return this.post("/api/instances/departments/bulk-import/", data)
-     .then((res) => res?.data as IDepartmentBulkImportResponse)
+   return this.post("/api/instances/departments/bulk-import/", data).then(
+     (res) => res?.data as IDepartmentBulkImportResponse
+   );
    ```
 
 ### Store (`instance-department.store.ts`)

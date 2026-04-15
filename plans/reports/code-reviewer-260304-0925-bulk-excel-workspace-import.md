@@ -7,17 +7,17 @@
 
 ## Scope
 
-| File | LOC | Status |
-|------|-----|--------|
-| `apps/api/plane/license/api/views/workspace_bulk_create.py` | 123 | New |
-| `apps/api/plane/license/api/views/__init__.py` | 36 | Modified |
-| `apps/api/plane/license/urls.py` | 101 | Modified |
-| `apps/admin/store/workspace.store.ts` | 190 | Modified |
-| `apps/admin/components/workspace/workspace-bulk-import-form.tsx` | 239 | New |
-| `apps/admin/app/(all)/(dashboard)/workspace/bulk-import/page.tsx` | 30 | New |
-| `apps/admin/app/(all)/(dashboard)/workspace/page.tsx` | 175 | Modified |
-| `apps/admin/app/routes.ts` | 34 | Modified |
-| `apps/admin/package.json` | 66 | Modified |
+| File                                                              | LOC | Status   |
+| ----------------------------------------------------------------- | --- | -------- |
+| `apps/api/plane/license/api/views/workspace_bulk_create.py`       | 123 | New      |
+| `apps/api/plane/license/api/views/__init__.py`                    | 36  | Modified |
+| `apps/api/plane/license/urls.py`                                  | 101 | Modified |
+| `apps/admin/store/workspace.store.ts`                             | 190 | Modified |
+| `apps/admin/components/workspace/workspace-bulk-import-form.tsx`  | 239 | New      |
+| `apps/admin/app/(all)/(dashboard)/workspace/bulk-import/page.tsx` | 30  | New      |
+| `apps/admin/app/(all)/(dashboard)/workspace/page.tsx`             | 175 | Modified |
+| `apps/admin/app/routes.ts`                                        | 34  | Modified |
+| `apps/admin/package.json`                                         | 66  | Modified |
 
 **Focus:** correctness, security, adherence to existing patterns
 
@@ -43,6 +43,7 @@ except Exception as e:
 `str(e)` on an unhandled Django/DB exception can expose stack traces, SQL snippets, or field names to the admin UI. The existing `user_bulk_import.py` has the same pattern — but it is still wrong.
 
 **Fix:** log the full error server-side; return a sanitized string to the client.
+
 ```python
 import logging
 logger = logging.getLogger(__name__)
@@ -57,14 +58,12 @@ except Exception as e:
 **File:** `workspace.store.ts` lines 176-179
 
 ```ts
-const response = await this.instanceWorkspaceService.post(
-  "/api/instances/workspaces/bulk-create/",
-  { workspaces }
-);
+const response = await this.instanceWorkspaceService.post("/api/instances/workspaces/bulk-create/", { workspaces });
 const result = response?.data as IWorkspaceBulkCreateResponse;
 ```
 
 `InstanceWorkspaceService.list()` and `.create()` already unwrap `response.data` internally and throw `error?.response?.data`. The raw `.post()` call:
+
 - returns `AxiosResponse` not the data payload (`.data` unwrap is manual here only)
 - bypasses the consistent error unwrapping — thrown errors will have a different shape than callers expect
 - hardcodes the URL string instead of keeping it in the service
@@ -86,6 +85,7 @@ existing_slugs.add(slug.lower())
 ```
 
 But `existing_slugs` is seeded from the DB with:
+
 ```python
 existing_slugs = set(Workspace.objects.values_list("slug", flat=True))
 ```
@@ -105,6 +105,7 @@ existing_slugs = set(
 There is an extension check but no `file.size` guard before calling `file.arrayBuffer()`. A malicious or accidental 100 MB spreadsheet will be fully loaded into browser memory before the row-count check fires.
 
 **Fix:**
+
 ```ts
 const MAX_FILE_SIZE_MB = 5;
 if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
@@ -132,6 +133,7 @@ with transaction.atomic():
 **File:** `workspace-bulk-import-form.tsx` lines 167, 199
 
 Both sub-components receive plain props (no MobX observables), so `observer()` is not strictly required here. However, project convention from `development-rules.md` and confirmed across other admin components requires `observer()` on every component in MobX-connected files. The parent `WorkspaceBulkImportForm` is `observer()`, the children are not. Wrap them for consistency:
+
 ```ts
 const WorkspaceBulkImportPreview = observer(function WorkspaceBulkImportPreview(...) { ... })
 ```
@@ -240,12 +242,12 @@ After a successful import the file input, `parsedRows`, and `selectedFile` state
 
 ## Metrics
 
-| Metric | Value |
-|--------|-------|
-| Type Coverage | Good — interface defined, but unsafe `as` cast present |
-| Linting Issues | None observed (ESLint max-warnings budget not increased) |
-| Transaction Safety | Missing (H3) |
-| Test Coverage | No new tests added |
+| Metric             | Value                                                    |
+| ------------------ | -------------------------------------------------------- |
+| Type Coverage      | Good — interface defined, but unsafe `as` cast present   |
+| Linting Issues     | None observed (ESLint max-warnings budget not increased) |
+| Transaction Safety | Missing (H3)                                             |
+| Test Coverage      | No new tests added                                       |
 
 ---
 

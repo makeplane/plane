@@ -6,12 +6,12 @@
  * @module plan-metadata-extractor
  */
 
-const fs = require('fs');
-const path = require('path');
-const matter = require('gray-matter');
+const fs = require("fs");
+const path = require("path");
+const matter = require("gray-matter");
 
 // Import shared normalizeStatus from plan-table-parser (DRY — single source of truth)
-const sharedParser = require('../../../_shared/lib/plan-table-parser.cjs');
+const sharedParser = require("../../../_shared/lib/plan-table-parser.cjs");
 
 /**
  * Normalize status string to standard format.
@@ -21,11 +21,11 @@ const sharedParser = require('../../../_shared/lib/plan-table-parser.cjs');
  * @returns {string} - Normalized status (pending|in-progress|completed|cancelled|in-review)
  */
 function normalizeStatus(status) {
-  if (!status) return 'pending';
+  if (!status) return "pending";
   const s = String(status).toLowerCase().trim();
   // Metadata-specific statuses not in the shared parser
-  if (s === 'cancelled' || s === 'canceled') return 'cancelled';
-  if (s === 'in-review' || s === 'review') return 'in-review';
+  if (s === "cancelled" || s === "canceled") return "cancelled";
+  if (s === "in-review" || s === "review") return "in-review";
   // Delegate to shared parser for standard statuses
   return sharedParser.normalizeStatus(status);
 }
@@ -38,9 +38,9 @@ function normalizeStatus(status) {
 function normalizePriority(priority) {
   if (!priority) return null;
   const p = String(priority).toUpperCase().trim();
-  if (p === 'P1' || p === 'HIGH' || p === 'CRITICAL') return 'P1';
-  if (p === 'P2' || p === 'MEDIUM' || p === 'NORMAL') return 'P2';
-  if (p === 'P3' || p === 'LOW') return 'P3';
+  if (p === "P1" || p === "HIGH" || p === "CRITICAL") return "P1";
+  if (p === "P2" || p === "MEDIUM" || p === "NORMAL") return "P2";
+  if (p === "P3" || p === "LOW") return "P3";
   if (p.match(/^P[0-3]$/)) return p;
   return null;
 }
@@ -51,7 +51,7 @@ function normalizePriority(priority) {
  * @returns {Object|null} - Extracted metadata or null if no frontmatter
  */
 function extractFromFrontmatter(content) {
-  if (!content || !content.trim().startsWith('---')) return null;
+  if (!content || !content.trim().startsWith("---")) return null;
 
   try {
     const { data } = matter(content);
@@ -68,7 +68,7 @@ function extractFromFrontmatter(content) {
       tags: Array.isArray(data.tags) ? data.tags : [],
       createdDate: data.created ? new Date(data.created) : null,
       completedDate: data.completed ? new Date(data.completed) : null,
-      assignee: data.assignee || null
+      assignee: data.assignee || null,
     };
   } catch (e) {
     // YAML parse error - fall back to regex
@@ -140,11 +140,11 @@ function extractHeaderMetadata(content) {
     issue: null,
     branch: null,
     planId: null,
-    headerStatus: null
+    headerStatus: null,
   };
 
   // Only look at first ~50 lines for header metadata
-  const headerSection = content.split('\n').slice(0, 50).join('\n');
+  const headerSection = content.split("\n").slice(0, 50).join("\n");
 
   // **Created:** 2025-12-01 or **Date:** 2025-12-11
   const createdMatch = headerSection.match(/\*\*(?:Created|Date):?\*\*:?\s*(\d{4}-\d{2}-\d{2})/i);
@@ -227,7 +227,7 @@ function parseEffortToHours(effortStr) {
 function extractEffortFromTable(content) {
   const result = {
     totalEffort: 0,
-    phaseEfforts: []
+    phaseEfforts: [],
   };
 
   // Match table rows with effort column
@@ -244,7 +244,7 @@ function extractEffortFromTable(content) {
       result.phaseEfforts.push({
         phase: phaseNum,
         effort,
-        effortStr
+        effortStr,
       });
       result.totalEffort += effort;
       phaseNum++;
@@ -273,12 +273,12 @@ function calculateDuration(startDate, endDate) {
  * @returns {string} - Formatted string like "3 days" or "2 weeks"
  */
 function formatDuration(days) {
-  if (days === 0) return 'Today';
-  if (days === 1) return '1 day';
+  if (days === 0) return "Today";
+  if (days === 1) return "1 day";
   if (days < 7) return `${days} days`;
-  if (days < 14) return '1 week';
+  if (days < 14) return "1 week";
   if (days < 30) return `${Math.floor(days / 7)} weeks`;
-  if (days < 60) return '1 month';
+  if (days < 60) return "1 month";
   return `${Math.floor(days / 30)} months`;
 }
 
@@ -289,7 +289,7 @@ function formatDuration(days) {
  * @returns {Object} - Complete metadata object
  */
 function extractPlanMetadata(planFilePath) {
-  const content = fs.readFileSync(planFilePath, 'utf8');
+  const content = fs.readFileSync(planFilePath, "utf8");
   const dir = path.dirname(planFilePath);
   const dirName = path.basename(dir);
   const stats = fs.statSync(planFilePath);
@@ -342,9 +342,7 @@ function extractPlanMetadata(planFilePath) {
 
     // Effort
     totalEffortHours: totalEffort,
-    totalEffortFormatted: totalEffort > 0
-      ? `${totalEffort.toFixed(1)}h`
-      : null,
+    totalEffortFormatted: totalEffort > 0 ? `${totalEffort.toFixed(1)}h` : null,
     phaseEfforts: effortData.phaseEfforts,
 
     // Metadata (merged from frontmatter + regex)
@@ -360,7 +358,7 @@ function extractPlanMetadata(planFilePath) {
     headerStatus: frontmatter?.status || headerMeta.headerStatus,
 
     // Source indicator for debugging
-    hasFrontmatter: !!frontmatter
+    hasFrontmatter: !!frontmatter,
   };
 }
 
@@ -381,7 +379,7 @@ function generateTimelineStats(plans) {
     totalEffortHours: 0,
     completedEffortHours: 0,
     thisWeekCompleted: 0,
-    thisMonthCompleted: 0
+    thisMonthCompleted: 0,
   };
 
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -391,7 +389,7 @@ function generateTimelineStats(plans) {
 
   for (const plan of plans) {
     // Count by status
-    if (plan.status === 'completed') {
+    if (plan.status === "completed") {
       stats.completedPlans++;
       if (plan.completedDate) {
         const completed = new Date(plan.completedDate);
@@ -401,7 +399,7 @@ function generateTimelineStats(plans) {
       if (plan.totalEffortHours) {
         stats.completedEffortHours += plan.totalEffortHours;
       }
-    } else if (plan.status === 'in-progress') {
+    } else if (plan.status === "in-progress") {
       stats.activePlans++;
     } else {
       stats.pendingPlans++;
@@ -422,9 +420,7 @@ function generateTimelineStats(plans) {
     }
   }
 
-  stats.avgDurationDays = durationCount > 0
-    ? Math.round(totalDuration / durationCount)
-    : 0;
+  stats.avgDurationDays = durationCount > 0 ? Math.round(totalDuration / durationCount) : 0;
 
   return stats;
 }
@@ -461,9 +457,9 @@ function generateActivityHeatmap(plans) {
 
     weeks.push({
       weekStart: weekStart.toISOString(),
-      weekLabel: weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      weekLabel: weekStart.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
       activity,
-      level: activity === 0 ? 0 : activity === 1 ? 1 : activity <= 3 ? 2 : 3
+      level: activity === 0 ? 0 : activity === 1 ? 1 : activity <= 3 ? 2 : 3,
     });
   }
 
@@ -490,5 +486,5 @@ module.exports = {
 
   // Statistics generators
   generateTimelineStats,
-  generateActivityHeatmap
+  generateActivityHeatmap,
 };

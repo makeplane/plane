@@ -22,6 +22,7 @@ Structured format for diagnostic and investigation reports. Sacrifice grammar fo
 ### 2. Technical Analysis
 
 **Timeline:**
+
 ```
 HH:MM - Event description
 HH:MM - Next event
@@ -29,12 +30,14 @@ HH:MM - Next event
 ```
 
 **Evidence:**
+
 - Relevant log excerpts (trimmed to essential lines)
 - Query results with key metrics
 - Error messages and stack traces
 - Before/after comparisons
 
 **Findings:**
+
 - List each finding with supporting evidence
 - Distinguish confirmed facts from hypotheses
 - Note correlation vs causation
@@ -42,12 +45,15 @@ HH:MM - Next event
 ### 3. Actionable Recommendations
 
 **Immediate (P0):**
+
 - [ ] Critical fix with implementation steps
 
 **Short-term (P1):**
+
 - [ ] Follow-up improvements
 
 **Long-term (P2):**
+
 - [ ] Monitoring/alerting enhancements
 - [ ] Architecture improvements
 - [ ] Preventive measures
@@ -65,6 +71,7 @@ Each recommendation: what to do, why, expected impact, effort estimate (low/medi
 ### 5. Unresolved Questions
 
 List anything that remains unclear:
+
 - Items needing further investigation
 - Questions for the team
 - Assumptions that need validation
@@ -89,6 +96,7 @@ Use naming pattern from `## Naming` section injected by hooks. Pattern includes 
 # [Issue Title] - Investigation Report
 
 ## Executive Summary
+
 - **Issue:**
 - **Impact:**
 - **Root cause:**
@@ -96,27 +104,36 @@ Use naming pattern from `## Naming` section injected by hooks. Pattern includes 
 - **Fix:**
 
 ## Timeline
+
 - HH:MM -
 - HH:MM -
 
 ## Technical Analysis
+
 ### Findings
+
 1.
 2.
 
 ### Evidence
+
 [logs, queries, metrics]
 
 ## Recommendations
+
 ### Immediate (P0)
+
 - [ ]
 
 ### Short-term (P1)
+
 - [ ]
 
 ### Long-term (P2)
+
 - [ ]
 
 ## Unresolved Questions
+
 -
 ```

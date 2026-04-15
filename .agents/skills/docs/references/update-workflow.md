@@ -26,6 +26,7 @@
 **CRITICAL:** You MUST spawn `docs-manager` agent via Task tool with merged reports and doc readings.
 
 Pass the gathered context to docs-manager agent to update documentation:
+
 - `README.md`: Update README (keep it under 300 lines)
 - `docs/project-overview-pdr.md`: Update project overview and PDR
 - `docs/codebase-summary.md`: Update codebase summary
@@ -36,13 +37,15 @@ Pass the gathered context to docs-manager agent to update documentation:
 - `docs/design-guidelines.md` [optional]: Update design guidelines
 
 ## Additional requests
+
 <additional_requests>
-  $ARGUMENTS
+$ARGUMENTS
 </additional_requests>
 
 ## Phase 3: Size Check (Post-Update)
 
 After docs-manager completes:
+
 1. Run `wc -l docs/*.md 2>/dev/null | sort -rn` to check LOC
 2. Use `docs.maxLoc` from session context (default: 800)
 3. For files exceeding limit: report and ask user
@@ -50,10 +53,12 @@ After docs-manager completes:
 ## Phase 4: Documentation Validation (Post-Update)
 
 Run validation to detect potential hallucinations:
+
 1. Run: `node .claude/scripts/validate-docs.cjs docs/`
 2. Display validation report (warnings only, non-blocking)
 3. Checks: code references, internal links, config keys
 
 ## Important
+
 - Use `docs/` directory as the source of truth.
 - **Do not** start implementing.

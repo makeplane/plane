@@ -16,6 +16,7 @@ Comprehensive debugging techniques, tools, and best practices for mobile develop
 ### Debugging Philosophy
 
 **Golden Rules:**
+
 1. **Test on real devices** - Simulators lie about performance
 2. **Reproduce consistently** - Intermittent bugs need reproducible steps
 3. **Check the obvious first** - Network, permissions, resources
@@ -46,6 +47,7 @@ func fetchUserData(userId: String) {
 ```
 
 **LLDB Advanced Commands:**
+
 ```bash
 # Conditional breakpoint
 breakpoint set --name fetchUserData --condition userId == "123"
@@ -63,6 +65,7 @@ po self.value(forKey: "description")
 **2. Instruments (Performance Profiling)**
 
 **Time Profiler** - CPU usage
+
 ```
 1. Xcode → Product → Profile
 2. Select "Time Profiler"
@@ -71,6 +74,7 @@ po self.value(forKey: "description")
 ```
 
 **Allocations** - Memory usage
+
 ```
 1. Select "Allocations" instrument
 2. Look for memory growth
@@ -79,6 +83,7 @@ po self.value(forKey: "description")
 ```
 
 **Leaks** - Memory leaks
+
 ```
 1. Select "Leaks" instrument
 2. Leaks shown in red
@@ -87,6 +92,7 @@ po self.value(forKey: "description")
 ```
 
 **Network** - API debugging
+
 ```
 1. Select "Network" instrument
 2. See all HTTP requests
@@ -162,6 +168,7 @@ fun fetchUserData(userId: String) {
 ```
 
 **Advanced Debugger Features:**
+
 ```kotlin
 // Conditional breakpoint
 // Right-click breakpoint → Condition: userId == "123"
@@ -176,6 +183,7 @@ fun fetchUserData(userId: String) {
 **2. Android Profiler**
 
 **CPU Profiler:**
+
 ```
 View → Tool Windows → Profiler → CPU
 - Record trace
@@ -184,6 +192,7 @@ View → Tool Windows → Profiler → CPU
 ```
 
 **Memory Profiler:**
+
 ```
 View → Tool Windows → Profiler → Memory
 - Track allocations
@@ -192,6 +201,7 @@ View → Tool Windows → Profiler → Memory
 ```
 
 **Network Profiler:**
+
 ```
 View → Tool Windows → Profiler → Network
 - All HTTP requests
@@ -290,15 +300,15 @@ npm install --save-dev react-native-flipper
 // Opens Chrome DevTools
 
 // Console.log appears in Chrome
-console.log('User data:', userData);
+console.log("User data:", userData);
 
 // Set breakpoints in source code
 debugger; // Pauses execution
 
 // Network tab shows API calls
-fetch('https://api.example.com/users')
-  .then(res => res.json())
-  .then(data => console.log(data));
+fetch("https://api.example.com/users")
+  .then((res) => res.json())
+  .then((data) => console.log(data));
 ```
 
 **4. React Native Debugger (Standalone)**
@@ -334,11 +344,9 @@ open "rndebugger://set-debugger-loc?host=localhost&port=8081"
 
 ```javascript
 // Ignore specific warnings
-import { LogBox } from 'react-native';
+import { LogBox } from "react-native";
 
-LogBox.ignoreLogs([
-  'Warning: componentWillReceiveProps',
-]);
+LogBox.ignoreLogs(["Warning: componentWillReceiveProps"]);
 
 // Ignore all logs (NOT recommended)
 LogBox.ignoreAllLogs();
@@ -440,6 +448,7 @@ Future<User> fetchUser(String id) async {
 ### Layout Issues
 
 **iOS (SwiftUI):**
+
 ```swift
 struct ContentView: View {
     var body: some View {
@@ -459,6 +468,7 @@ Text("Hello")
 ```
 
 **Android (Jetpack Compose):**
+
 ```kotlin
 @Composable
 fun DebugLayout() {
@@ -476,17 +486,17 @@ fun DebugLayout() {
 ```
 
 **React Native:**
+
 ```javascript
 // Debug borders
-<View style={{ borderWidth: 1, borderColor: 'red' }}>
+<View style={{ borderWidth: 1, borderColor: "red" }}>
   <Text>Hello</Text>
-</View>
+</View>;
 
 // Layout animation debugging
-import { LayoutAnimation, UIManager } from 'react-native';
+import { LayoutAnimation, UIManager } from "react-native";
 
-UIManager.setLayoutAnimationEnabledExperimental &&
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 
 // Inspector
 // Shake device → "Toggle Inspector"
@@ -494,6 +504,7 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 ```
 
 **Flutter:**
+
 ```dart
 // Debug paint
 void main() {
@@ -515,6 +526,7 @@ Container(
 ### Animation Debugging
 
 **Slow Animations:**
+
 ```dart
 // Flutter: Slow down animations
 timeDilation = 5.0; // 5x slower
@@ -528,6 +540,7 @@ Animated.timing(value, {
 ```
 
 **Animation Performance:**
+
 ```swift
 // iOS: Core Animation Instrument
 // Instruments → Core Animation
@@ -544,6 +557,7 @@ Animated.timing(value, {
 **Diagnosis:**
 
 **React Native:**
+
 ```javascript
 // Enable performance monitor
 // Shows JS and UI thread FPS
@@ -555,6 +569,7 @@ Animated.timing(value, {
 ```
 
 **Solutions:**
+
 ```javascript
 // ❌ Bad: Heavy computation in render
 function UserList({ users }) {
@@ -587,6 +602,7 @@ function UserList({ users }) {
 ```
 
 **Flutter:**
+
 ```dart
 // Check for:
 // - Build phase too long
@@ -621,6 +637,7 @@ ListView.builder(
 **Detection:**
 
 **iOS:**
+
 ```
 Xcode → Debug Navigator → Memory
 - Watch memory graph
@@ -628,6 +645,7 @@ Xcode → Debug Navigator → Memory
 ```
 
 **Android:**
+
 ```
 Android Studio → Profiler → Memory
 - Take heap dump
@@ -641,29 +659,29 @@ Android Studio → Profiler → Memory
 
 // ❌ Bad: Event listener not removed
 useEffect(() => {
-  EventEmitter.on('data', handleData);
+  EventEmitter.on("data", handleData);
   // Missing cleanup
 }, []);
 
 // ✅ Good: Cleanup
 useEffect(() => {
-  EventEmitter.on('data', handleData);
+  EventEmitter.on("data", handleData);
   return () => {
-    EventEmitter.off('data', handleData);
+    EventEmitter.off("data", handleData);
   };
 }, []);
 
 // ❌ Bad: Timer not cleared
 useEffect(() => {
   setInterval(() => {
-    console.log('tick');
+    console.log("tick");
   }, 1000);
 }, []);
 
 // ✅ Good: Clear timer
 useEffect(() => {
   const timer = setInterval(() => {
-    console.log('tick');
+    console.log("tick");
   }, 1000);
   return () => clearInterval(timer);
 }, []);
@@ -703,6 +721,7 @@ class _MyWidgetState extends State<MyWidget> {
 ### HTTP Debugging
 
 **iOS (Proxyman / Charles)**
+
 ```
 1. Install Proxyman (free) or Charles
 2. Configure device proxy
@@ -711,6 +730,7 @@ class _MyWidgetState extends State<MyWidget> {
 ```
 
 **Android (Charles / Flipper)**
+
 ```
 1. Install Charles Proxy
 2. Configure device proxy: Settings → WiFi → Modify → Proxy
@@ -719,11 +739,12 @@ class _MyWidgetState extends State<MyWidget> {
 ```
 
 **React Native (Flipper Network Plugin)**
+
 ```javascript
 // Automatically captures all fetch/axios requests
-fetch('https://api.example.com/users')
-  .then(res => res.json())
-  .then(data => console.log(data));
+fetch("https://api.example.com/users")
+  .then((res) => res.json())
+  .then((data) => console.log(data));
 
 // View in Flipper:
 // - Request/response headers
@@ -732,6 +753,7 @@ fetch('https://api.example.com/users')
 ```
 
 **Flutter (DevTools Network Tab)**
+
 ```dart
 // Automatically captures HTTP requests
 final response = await http.get(
@@ -747,17 +769,20 @@ final response = await http.get(
 ### Network Simulation
 
 **Test scenarios:**
+
 - Slow network (3G, 2G)
 - High latency (500ms+)
 - Packet loss (10%)
 - Offline mode
 
 **iOS:**
+
 ```
 Settings → Developer → Network Link Conditioner
 ```
 
 **Android:**
+
 ```
 Emulator: Settings → Network → Network Profile
 ```
@@ -769,11 +794,12 @@ Emulator: Settings → Network → Network Profile
 **Firebase Crashlytics (Recommended)**
 
 **React Native:**
+
 ```javascript
-import crashlytics from '@react-native-firebase/crashlytics';
+import crashlytics from "@react-native-firebase/crashlytics";
 
 // Log custom events
-crashlytics().log('User pressed purchase button');
+crashlytics().log("User pressed purchase button");
 
 // Set user identifier
 crashlytics().setUserId(userId);
@@ -790,6 +816,7 @@ crashlytics().crash();
 ```
 
 **Flutter:**
+
 ```dart
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
@@ -811,6 +838,7 @@ FirebaseCrashlytics.instance.setUserIdentifier(userId);
 ```
 
 **iOS Native:**
+
 ```swift
 import FirebaseCrashlytics
 
@@ -825,6 +853,7 @@ Crashlytics.crashlytics().record(error: error)
 ```
 
 **Android Native:**
+
 ```kotlin
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
@@ -841,6 +870,7 @@ FirebaseCrashlytics.getInstance().recordException(exception)
 ### Analyzing Crash Reports
 
 **iOS (Xcode Organizer):**
+
 ```
 Window → Organizer → Crashes
 - Symbolicated crash logs
@@ -849,6 +879,7 @@ Window → Organizer → Crashes
 ```
 
 **Android (Play Console):**
+
 ```
 Play Console → Quality → Crashes & ANRs
 - Crash stack traces
@@ -857,6 +888,7 @@ Play Console → Quality → Crashes & ANRs
 ```
 
 **Reading Stack Traces:**
+
 ```
 Fatal Exception: java.lang.NullPointerException
 Attempt to invoke virtual method 'java.lang.String User.getName()' on a null object reference
@@ -874,12 +906,14 @@ Fix:
 ### 1. App Crashes on Startup
 
 **Steps:**
+
 1. Check crash logs
 2. Look for initialization errors
 3. Verify dependencies loaded
 4. Check permissions
 
 **Example:**
+
 ```javascript
 // React Native: Missing native dependency
 // Error: Invariant Violation: Native module cannot be null
@@ -893,6 +927,7 @@ cd ios && pod install
 ### 2. UI Not Updating
 
 **React Native:**
+
 ```javascript
 // ❌ Bad: Mutating state directly
 this.state.users.push(newUser); // Won't trigger re-render
@@ -902,6 +937,7 @@ this.setState({ users: [...this.state.users, newUser] });
 ```
 
 **Flutter:**
+
 ```dart
 // ❌ Bad: Not calling setState
 void addUser(User user) {
@@ -919,18 +955,20 @@ void addUser(User user) {
 ### 3. Image Not Loading
 
 **Common causes:**
+
 1. Wrong URL
 2. CORS issues
 3. SSL certificate issues
 4. Network timeout
 
 **Debugging:**
+
 ```javascript
 // React Native
 <Image
   source={{ uri: imageUrl }}
-  onError={(error) => console.log('Image error:', error)}
-  onLoad={() => console.log('Image loaded')}
+  onError={(error) => console.log("Image error:", error)}
+  onLoad={() => console.log("Image loaded")}
 />
 
 // Check network tab for 404, 403, etc.
@@ -939,18 +977,17 @@ void addUser(User user) {
 ### 4. Keyboard Covering Input
 
 **React Native:**
-```javascript
-import { KeyboardAvoidingView } from 'react-native';
 
-<KeyboardAvoidingView
-  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-  style={{ flex: 1 }}
->
+```javascript
+import { KeyboardAvoidingView } from "react-native";
+
+<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
   <TextInput placeholder="Email" />
-</KeyboardAvoidingView>
+</KeyboardAvoidingView>;
 ```
 
 **Flutter:**
+
 ```dart
 // Automatically handled by Scaffold
 Scaffold(
@@ -962,10 +999,11 @@ Scaffold(
 ### 5. Navigation Not Working
 
 **React Navigation:**
+
 ```javascript
 // ❌ Bad: Navigation prop not available
 function MyComponent() {
-  navigation.navigate('Home'); // Error
+  navigation.navigate("Home"); // Error
 }
 
 // ✅ Good: Use hook or prop
@@ -973,7 +1011,7 @@ function MyComponent({ navigation }) {
   // or
   // const navigation = useNavigation();
 
-  navigation.navigate('Home');
+  navigation.navigate("Home");
 }
 ```
 
@@ -982,10 +1020,11 @@ function MyComponent({ navigation }) {
 ### Remote Logging
 
 **LogRocket (Session Replay)**
-```javascript
-import LogRocket from '@logrocket/react-native';
 
-LogRocket.init('your-app-id');
+```javascript
+import LogRocket from "@logrocket/react-native";
+
+LogRocket.init("your-app-id");
 
 // Identify users
 LogRocket.identify(userId, {
@@ -1003,13 +1042,13 @@ LogRocket.identify(userId, {
 ### Feature Flags for Debugging
 
 ```javascript
-import { useFlags } from 'launchdarkly-react-native-client-sdk';
+import { useFlags } from "launchdarkly-react-native-client-sdk";
 
 function MyComponent() {
   const { debugMode } = useFlags();
 
   if (debugMode) {
-    console.log('Debug info:', userData);
+    console.log("Debug info:", userData);
   }
 
   return <View>...</View>;
@@ -1022,7 +1061,7 @@ function MyComponent() {
 
 ```javascript
 // Gradually roll out fix
-if (abTest.variant === 'fixed') {
+if (abTest.variant === "fixed") {
   return <FixedComponent />;
 } else {
   return <OriginalComponent />;
@@ -1034,6 +1073,7 @@ if (abTest.variant === 'fixed') {
 ## Debugging Checklist
 
 **Before Filing Bug:**
+
 - [ ] Reproduce on real device
 - [ ] Check both iOS and Android
 - [ ] Test on multiple OS versions
@@ -1043,6 +1083,7 @@ if (abTest.variant === 'fixed') {
 - [ ] Check crash logs
 
 **Investigation:**
+
 - [ ] Enable debug logging
 - [ ] Use platform debugger
 - [ ] Profile performance if slow
@@ -1051,6 +1092,7 @@ if (abTest.variant === 'fixed') {
 - [ ] Inspect UI hierarchy
 
 **Production Issues:**
+
 - [ ] Check crash reporting dashboard
 - [ ] Review user-reported issues
 - [ ] Analyze affected OS versions
@@ -1059,6 +1101,7 @@ if (abTest.variant === 'fixed') {
 - [ ] Compare crash-free rates
 
 **After Fix:**
+
 - [ ] Test on real devices
 - [ ] Verify on affected OS versions
 - [ ] Add regression test
@@ -1068,22 +1111,26 @@ if (abTest.variant === 'fixed') {
 ## Resources
 
 **General:**
+
 - React Native Debugging: https://reactnative.dev/docs/debugging
 - Flutter DevTools: https://docs.flutter.dev/tools/devtools
 - iOS Debugging: https://developer.apple.com/documentation/xcode/debugging
 - Android Debugging: https://developer.android.com/studio/debug
 
 **Crash Reporting:**
+
 - Firebase Crashlytics: https://firebase.google.com/docs/crashlytics
 - Sentry: https://docs.sentry.io/platforms/react-native/
 - Bugsnag: https://docs.bugsnag.com/
 
 **Performance:**
+
 - iOS Instruments: https://developer.apple.com/instruments/
 - Android Profiler: https://developer.android.com/studio/profile
 - Flipper: https://fbflipper.com/
 
 **Network:**
+
 - Proxyman: https://proxyman.io/
 - Charles Proxy: https://www.charlesproxy.com/
 - Flipper Network Plugin: https://fbflipper.com/docs/features/network-plugin/

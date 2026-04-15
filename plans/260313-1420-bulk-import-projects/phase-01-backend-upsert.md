@@ -1,6 +1,7 @@
 # Phase 01: Backend UPSERT
 
 ## Context Links
+
 - [Plan Overview](./plan.md)
 - Extends: `plans/260313-1403-bulk-import-projects/phase-01-backend-api.md`
 - Research: `research/researcher-01-existing-impl.md`, `research/researcher-02-project-model.md`
@@ -8,11 +9,11 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Priority | P2 |
-| Status | ⬜ pending |
-| Effort | 1.5h |
+| Field       | Value                                                                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Priority    | P2                                                                                                                                                |
+| Status      | ⬜ pending                                                                                                                                        |
+| Effort      | 1.5h                                                                                                                                              |
 | Description | Extend `InstanceWorkspaceProjectBulkImportEndpoint` to support UPSERT: if `project_id` provided, update the project; otherwise, create as before. |
 
 ## Key Insights
@@ -86,6 +87,7 @@ Response: { created, updated, skipped, total_created, total_updated, total_skipp
 2. **Initialize `updated` list** alongside `created = []`
 
 3. **Extend per-row loop** — insert UPSERT branch before existing create logic:
+
    ```python
    project_id_raw = str(item.get("project_id") or "").strip()
    if project_id_raw:
@@ -118,6 +120,7 @@ Response: { created, updated, skipped, total_created, total_updated, total_skipp
    ```
 
 4. **Update response** — add `updated` and `total_updated`:
+
    ```python
    return Response({
        "created": created,

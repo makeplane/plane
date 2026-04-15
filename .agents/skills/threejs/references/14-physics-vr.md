@@ -11,26 +11,20 @@ Three.js doesn't include physics - use external libraries:
 Rust-based, high-performance:
 
 ```javascript
-import { RapierPhysics } from 'three/addons/physics/RapierPhysics.js';
+import { RapierPhysics } from "three/addons/physics/RapierPhysics.js";
 
 // Initialize
 const physics = await RapierPhysics();
 
 // Create physics body
-const box = new THREE.Mesh(
-  new THREE.BoxGeometry(),
-  new THREE.MeshStandardMaterial()
-);
+const box = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
 scene.add(box);
 
 // Add physics (mass > 0 = dynamic)
 physics.addMesh(box, 1); // mass = 1
 
 // Static ground
-const ground = new THREE.Mesh(
-  new THREE.BoxGeometry(10, 0.5, 10),
-  new THREE.MeshStandardMaterial()
-);
+const ground = new THREE.Mesh(new THREE.BoxGeometry(10, 0.5, 10), new THREE.MeshStandardMaterial());
 ground.position.y = -2;
 scene.add(ground);
 physics.addMesh(ground); // no mass = static
@@ -48,7 +42,7 @@ function animate() {
 Port of Bullet physics engine:
 
 ```javascript
-import { AmmoPhysics } from 'three/addons/physics/AmmoPhysics.js';
+import { AmmoPhysics } from "three/addons/physics/AmmoPhysics.js";
 
 const physics = await AmmoPhysics();
 
@@ -67,7 +61,7 @@ function animate() {
 High-performance alternative:
 
 ```javascript
-import { JoltPhysics } from 'three/addons/physics/JoltPhysics.js';
+import { JoltPhysics } from "three/addons/physics/JoltPhysics.js";
 
 const physics = await JoltPhysics();
 physics.addMesh(mesh, mass);
@@ -80,8 +74,8 @@ physics.addMesh(mesh, mass);
 const physics = await RapierPhysics();
 
 // Point-to-point constraint
-physics.addConstraint(meshA, meshB, 'fixed');
-physics.addConstraint(meshA, meshB, 'spring', { stiffness: 100 });
+physics.addConstraint(meshA, meshB, "fixed");
+physics.addConstraint(meshA, meshB, "spring", { stiffness: 100 });
 
 // Remove constraint
 physics.removeConstraint(constraint);
@@ -92,7 +86,7 @@ physics.removeConstraint(constraint);
 ### Basic WebXR
 
 ```javascript
-import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { VRButton } from "three/addons/webxr/VRButton.js";
 
 // Enable XR
 renderer.xr.enabled = true;
@@ -111,7 +105,7 @@ renderer.setAnimationLoop(() => {
 ### AR Mode
 
 ```javascript
-import { ARButton } from 'three/addons/webxr/ARButton.js';
+import { ARButton } from "three/addons/webxr/ARButton.js";
 
 renderer.xr.enabled = true;
 document.body.appendChild(ARButton.createButton(renderer));
@@ -134,16 +128,16 @@ scene.add(controller1);
 scene.add(controller2);
 
 // Controller events
-controller1.addEventListener('selectstart', () => {
-  console.log('Trigger pressed');
+controller1.addEventListener("selectstart", () => {
+  console.log("Trigger pressed");
 });
 
-controller1.addEventListener('selectend', () => {
-  console.log('Trigger released');
+controller1.addEventListener("selectend", () => {
+  console.log("Trigger released");
 });
 
 // Add visual controller models
-import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+import { XRControllerModelFactory } from "three/addons/webxr/XRControllerModelFactory.js";
 
 const controllerModelFactory = new XRControllerModelFactory();
 
@@ -159,7 +153,7 @@ scene.add(grip2);
 ### Hand Tracking
 
 ```javascript
-import { OculusHandModel } from 'three/addons/webxr/OculusHandModel.js';
+import { OculusHandModel } from "three/addons/webxr/OculusHandModel.js";
 
 const hand1 = renderer.xr.getHand(0);
 const handModel1 = new OculusHandModel(hand1);
@@ -185,7 +179,7 @@ function handleController(controller) {
     const intersection = intersections[0];
 
     // Teleport on button release
-    controller.addEventListener('selectend', () => {
+    controller.addEventListener("selectend", () => {
       const offset = intersection.point.y;
       camera.position.y += offset;
     });
@@ -209,7 +203,7 @@ camera.add(listener);
 const sound = new THREE.PositionalAudio(listener);
 const audioLoader = new THREE.AudioLoader();
 
-audioLoader.load('sound.ogg', (buffer) => {
+audioLoader.load("sound.ogg", (buffer) => {
   sound.setBuffer(buffer);
   sound.setRefDistance(1);
   sound.setLoop(true);
@@ -230,14 +224,16 @@ renderer.setAnimationLoop(() => {
 
 ```javascript
 // Request room-scale experience
-navigator.xr.requestSession('immersive-vr', {
-  requiredFeatures: ['local-floor']
-}).then((session) => {
-  // Session setup
-});
+navigator.xr
+  .requestSession("immersive-vr", {
+    requiredFeatures: ["local-floor"],
+  })
+  .then((session) => {
+    // Session setup
+  });
 
 // Get play area bounds
-session.requestReferenceSpace('bounded-floor').then((space) => {
+session.requestReferenceSpace("bounded-floor").then((space) => {
   const bounds = space.boundsGeometry;
   // Create visual boundary
 });
@@ -256,7 +252,7 @@ session.requestReferenceSpace('bounded-floor').then((space) => {
 ```javascript
 // Foveated rendering (Quest 2+)
 const gl = renderer.getContext();
-const ext = gl.getExtension('WEBGL_foveated_rendering');
+const ext = gl.getExtension("WEBGL_foveated_rendering");
 if (ext) {
   ext.foveatedRenderingModeWEBGL(gl.FOVEATED_RENDERING_MODE_ENABLE_WEBGL);
 }
@@ -265,13 +261,13 @@ if (ext) {
 ## Mixed Reality (MR)
 
 ```javascript
-import { XRButton } from 'three/addons/webxr/XRButton.js';
+import { XRButton } from "three/addons/webxr/XRButton.js";
 
 // Request MR features
 document.body.appendChild(
   XRButton.createButton(renderer, {
-    requiredFeatures: ['hand-tracking', 'layers'],
-    optionalFeatures: ['local-floor', 'bounded-floor']
+    requiredFeatures: ["hand-tracking", "layers"],
+    optionalFeatures: ["local-floor", "bounded-floor"],
   })
 );
 

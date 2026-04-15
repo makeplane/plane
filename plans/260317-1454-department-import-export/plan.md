@@ -15,16 +15,17 @@ Adds Import and Export buttons to `/god-mode/departments/` following the establi
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | Backend Export endpoint | ✅ complete | [phase-01-backend-export.md](./phase-01-backend-export.md) |
-| 2 | Backend Bulk Import endpoint | ✅ complete | [phase-02-backend-bulk-import.md](./phase-02-backend-bulk-import.md) |
-| 3 | Frontend Service + Store | ✅ complete | [phase-03-frontend-service-store.md](./phase-03-frontend-service-store.md) |
-| 4 | Frontend UI | ✅ complete | [phase-04-frontend-ui.md](./phase-04-frontend-ui.md) |
+| #   | Phase                        | Status      | File                                                                       |
+| --- | ---------------------------- | ----------- | -------------------------------------------------------------------------- |
+| 1   | Backend Export endpoint      | ✅ complete | [phase-01-backend-export.md](./phase-01-backend-export.md)                 |
+| 2   | Backend Bulk Import endpoint | ✅ complete | [phase-02-backend-bulk-import.md](./phase-02-backend-bulk-import.md)       |
+| 3   | Frontend Service + Store     | ✅ complete | [phase-03-frontend-service-store.md](./phase-03-frontend-service-store.md) |
+| 4   | Frontend UI                  | ✅ complete | [phase-04-frontend-ui.md](./phase-04-frontend-ui.md)                       |
 
 ## Validation Log
 
 ### Session 1 — 2026-03-17
+
 **Trigger:** Initial plan creation
 **Questions asked:** 4
 
@@ -51,17 +52,20 @@ Adds Import and Export buttons to `/god-mode/departments/` following the establi
    - **Rationale:** Zero extra code — browser handles download directly. No blob/axios complexity. Export action in store becomes a single `window.open(url)` call.
 
 #### Confirmed Decisions
+
 - **Import UI**: Dedicated page at `/god-mode/departments/import` (not a modal)
 - **Error handling**: Partial success — skip bad rows, create valid ones
 - **Export format**: XLSX only
 - **Export download**: `window.open('/api/instances/departments/export/')` in store
 
 #### Action Items
+
 - [ ] Update Phase 1: remove CSV support, XLSX only
 - [ ] Update Phase 3: `exportDepartments` store action uses `window.open()` not blob fetch
 - [ ] Update Phase 4: replace modal with dedicated page + route; Import button navigates to page
 
 #### Impact on Phases
+
 - Phase 1: Remove `_csv_response` helper and `format` query param handling — XLSX only
 - Phase 3: `exportDepartments` store action → `window.open(url)` instead of blob download
 - Phase 4: Replace modal component with dedicated page route `/departments/import`; Import button uses `useRouter` to navigate; page mirrors `workspace-bulk-import-form.tsx` structure

@@ -4,13 +4,13 @@ Track investigation and debugging pipelines via Claude Native Tasks (TaskCreate,
 
 ## When to Create Tasks
 
-| Debug Scope | Tasks? | Rationale |
-|-------------|--------|-----------|
-| Single bug, one file | No | Systematic debugging handles directly |
-| Multi-component investigation (3+ steps) | Yes | Track assess → collect → analyze → fix → verify |
-| Parallel log/data collection agents | Yes | Coordinate independent evidence gathering |
-| Performance investigation with multiple layers | Yes | Track bottleneck analysis per layer |
-| CI/CD pipeline failure with 3+ possible causes | Yes | Track hypothesis elimination |
+| Debug Scope                                    | Tasks? | Rationale                                       |
+| ---------------------------------------------- | ------ | ----------------------------------------------- |
+| Single bug, one file                           | No     | Systematic debugging handles directly           |
+| Multi-component investigation (3+ steps)       | Yes    | Track assess → collect → analyze → fix → verify |
+| Parallel log/data collection agents            | Yes    | Coordinate independent evidence gathering       |
+| Performance investigation with multiple layers | Yes    | Track bottleneck analysis per layer             |
+| CI/CD pipeline failure with 3+ possible causes | Yes    | Track hypothesis elimination                    |
 
 **3-Task Rule:** Skip task creation when investigation has <3 meaningful steps.
 
@@ -141,6 +141,7 @@ Limit to 3 cycles. After cycle 3 → question architecture (systematic-debugging
 Debug tasks are **separate from** cook/planning phase tasks.
 
 **When cook spawns debugger:**
+
 1. Cook encounters failing tests → creates debug pipeline tasks
 2. Debug pipeline executes (assess → collect → analyze → fix → verify)
 3. All debug tasks complete → cook marks phase debugging as done

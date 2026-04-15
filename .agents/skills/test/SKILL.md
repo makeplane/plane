@@ -15,10 +15,10 @@ Comprehensive testing framework covering code-level testing (unit, integration, 
 
 If invoked with context (test scope), proceed with testing. If invoked WITHOUT arguments, use `AskUserQuestion` to present available test operations:
 
-| Operation | Description |
-|-----------|-------------|
+| Operation   | Description                    |
+| ----------- | ------------------------------ |
 | `(default)` | Run unit/integration/e2e tests |
-| `ui` | Run UI tests on a website |
+| `ui`        | Run UI tests on a website      |
 
 Present as options via `AskUserQuestion` with header "Test Operation", question "What would you like to do?".
 
@@ -98,6 +98,7 @@ Reports        → report-format.md
 - Never ignore failing tests to pass the build
 
 ## Report Output
+
 **IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.
 
 Use naming pattern from `## Naming` section injected by hooks.
@@ -105,6 +106,7 @@ Use naming pattern from `## Naming` section injected by hooks.
 ## Team Mode
 
 When operating as teammate:
+
 1. On start: check `TaskList`, claim assigned/next unblocked task via `TaskUpdate`
 2. Read full task description via `TaskGet` before starting
 3. Wait for blocked tasks (implementation) to complete before testing

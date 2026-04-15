@@ -11,11 +11,13 @@
 ## Requirements
 
 ### Functional
+
 - `Project.is_bank_wide` là `BooleanField`, mặc định `False`
 - Field được expose qua `ProjectSerializer`, `ProjectListSerializer`, `ProjectDetailSerializer` (tất cả dùng `fields = "__all__"` → tự động)
 - Không cần view/endpoint riêng — field được cập nhật qua endpoint update project hiện tại (`PATCH /api/workspaces/{slug}/projects/{projectId}/`)
 
 ### Non-functional
+
 - Migration an toàn, không phá vỡ data hiện tại (default=False)
 
 ---
@@ -23,12 +25,15 @@
 ## Related Code Files
 
 ### Files to modify:
+
 - `apps/api/plane/db/models/project.py` — thêm field vào class `Project`
 
 ### Files to create:
+
 - `apps/api/plane/db/migrations/0143_project_is_bank_wide.py` — migration tự động generate
 
 ### Files to verify (không sửa):
+
 - `apps/api/plane/app/serializers/project.py` — xác nhận `fields = "__all__"` (không cần sửa)
 
 ---
@@ -36,6 +41,7 @@
 ## Embedded Rules
 
 ### Rule 1: BaseModel — Chọn đúng base class
+
 ```
 - BaseModel → workspace-level entities ✅ (Project kế thừa BaseModel)
 - ProjectBaseModel → project-scoped entities
@@ -43,6 +49,7 @@ Project đã kế thừa BaseModel (workspace-level) → đúng, không cần th
 ```
 
 ### Rule 2: Migration an toàn
+
 ```python
 # Luôn dùng default= khi thêm field mới vào bảng có data
 is_bank_wide = models.BooleanField(default=False)
@@ -51,6 +58,7 @@ is_bank_wide = models.BooleanField(default=False)
 ```
 
 ### Rule 3: Không mix API layers
+
 ```
 - plane/app/ (internal, session auth) → serializers SET riêng
 - plane/api/ (external, API key) → serializers SET riêng
@@ -59,6 +67,7 @@ Field mới tự động exposed tại cả hai layer vì dùng fields="__all__"
 ```
 
 ### Rule 4: Không cần Activity Tracking cho trường hợp này
+
 ```
 Activity tracking (model_activity.delay) chỉ bắt buộc khi mutation tạo
 audit log riêng. Vì project update đã có activity tracking, field mới
@@ -75,6 +84,7 @@ sẽ được track tự động bởi ChangeTrackerMixin nếu cần.
 Mở: `apps/api/plane/db/models/project.py`
 
 Tìm block các BooleanField (khoảng line 93–100):
+
 ```python
     module_view = models.BooleanField(default=False)
     cycle_view = models.BooleanField(default=False)
@@ -87,6 +97,7 @@ Tìm block các BooleanField (khoảng line 93–100):
 ```
 
 Thêm sau `guest_view_all_features`:
+
 ```python
     is_bank_wide = models.BooleanField(default=False, verbose_name="Is Bank-wide Project")
 ```
@@ -103,6 +114,7 @@ python manage.py makemigrations --name="project_is_bank_wide"
 ```
 
 Xác nhận file `0143_project_is_bank_wide.py` được tạo với nội dung:
+
 ```python
 migrations.AddField(
     model_name='project',
@@ -120,6 +132,7 @@ python manage.py migrate
 ### Step 4: Verify Serializer
 
 Mở `apps/api/plane/app/serializers/project.py`, xác nhận:
+
 - `ProjectSerializer` — `fields = "__all__"` ✅
 - `ProjectListSerializer` — `fields = "__all__"` ✅
 - `ProjectDetailSerializer` — `fields = "__all__"` ✅
@@ -137,6 +150,7 @@ Mở `apps/api/plane/app/serializers/project.py`, xác nhận:
 - [ ] Không có breaking change với data/migration hiện tại
 
 ### Verification commands:
+
 ```bash
 # Kiểm tra field tồn tại trong DB
 python manage.py shell -c "from plane.db.models import Project; p = Project.objects.first(); print(p.is_bank_wide)"

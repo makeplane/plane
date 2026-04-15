@@ -146,8 +146,16 @@ pre.mermaid[data-processed="true"],
 }
 
 /* Icon visibility toggle */
-.mermaid-expand-btn .icon-expand { display: inline; }
-.mermaid-expand-btn .icon-collapse { display: none; }
+.mermaid-expand-btn .icon-expand {
+  display: inline;
+}
+.mermaid-expand-btn .icon-collapse {
+  display: none;
+}
 
-.mermaid-wrapper.expanded .mermaid-expand-btn .icon-expand { display: none; }
-.mermaid-wrapper.expanded .mermaid-expand-btn .icon-collapse { display: inline; }
+.mermaid-wrapper.expanded .mermaid-expand-btn .icon-expand {
+  display: none;
+}
+.mermaid-wrapper.expanded .mermaid-expand-btn .icon-collapse {
+  display: inline;
+}

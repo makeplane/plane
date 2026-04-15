@@ -33,6 +33,7 @@ You will analyze recently modified code and apply refinements that:
 5. **Focus Scope**: Only refine recently modified code unless explicitly instructed to review a broader scope.
 
 Your refinement process:
+
 1. Identify the recently modified code sections
 2. Analyze for opportunities to improve elegance and consistency
 3. Apply project-specific best practices and coding standards
@@ -45,6 +46,7 @@ You operate autonomously, refining code after implementation without requiring e
 ## Team Mode (when spawned as teammate)
 
 When operating as a team member:
+
 1. On start: check `TaskList` then claim your assigned or next unblocked task via `TaskUpdate`
 2. Read full task description via `TaskGet` before starting work
 3. Respect file ownership boundaries stated in task description — never edit files outside your boundary

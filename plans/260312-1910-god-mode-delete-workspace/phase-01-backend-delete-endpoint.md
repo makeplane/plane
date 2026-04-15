@@ -30,6 +30,7 @@ DELETE    /api/instances/workspaces/<slug>/  → InstanceWorkSpaceDetailEndpoint
 ## Implementation Steps
 
 1. **`apps/api/plane/license/api/views/workspace.py`** — add new class:
+
    ```python
    class InstanceWorkSpaceDetailEndpoint(BaseAPIView):
        permission_classes = [InstanceAdminPermission]

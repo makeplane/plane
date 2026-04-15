@@ -29,6 +29,7 @@ curl -H "Authorization: Bearer sk_live_xxx" https://api.creem.io/v1/...
 ```
 
 Environment variables:
+
 ```bash
 CREEM_API_KEY=sk_live_xxx        # Production
 CREEM_API_KEY=sk_test_xxx        # Test mode

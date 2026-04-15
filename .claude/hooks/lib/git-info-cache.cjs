@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
 /**
  * Git Info Cache - Cross-platform git information batching
@@ -11,26 +11,26 @@
  * Cross-platform: No bash-only syntax (no 2>/dev/null), windowsHide on all exec calls
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 // Cache TTL — long fallback for external changes (git checkout outside Claude)
 // Active invalidation happens via PostToolUse hooks after Edit/Write/Bash
 const CACHE_TTL = 30000;
-const CACHE_MISS = Symbol('cache_miss');
-const CACHE_SKIP = Symbol('cache_skip');
+const CACHE_MISS = Symbol("cache_miss");
+const CACHE_SKIP = Symbol("cache_skip");
 
 function isTimeoutError(error) {
   if (!error) return false;
   if (error.killed) return true;
-  if (error.signal === 'SIGTERM') return true;
-  return /timed out|etimedout/i.test(String(error.message || ''));
+  if (error.signal === "SIGTERM") return true;
+  return /timed out|etimedout/i.test(String(error.message || ""));
 }
 
 function getExecTimeoutMs() {
-  const parsed = Number.parseInt(process.env.CK_GIT_TIMEOUT_MS || '', 10);
+  const parsed = Number.parseInt(process.env.CK_GIT_TIMEOUT_MS || "", 10);
   if (Number.isFinite(parsed) && parsed > 0) return parsed;
   return 3000;
 }
@@ -43,18 +43,18 @@ function execIn(cmd, cwd) {
   try {
     return {
       output: execSync(cmd, {
-        encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'ignore'],
+        encoding: "utf8",
+        stdio: ["pipe", "pipe", "ignore"],
         windowsHide: true,
         cwd: cwd || undefined,
-        timeout: getExecTimeoutMs()
+        timeout: getExecTimeoutMs(),
       }).trim(),
-      timedOut: false
+      timedOut: false,
     };
   } catch (error) {
     return {
-      output: '',
-      timedOut: isTimeoutError(error)
+      output: "",
+      timedOut: isTimeoutError(error),
     };
   }
 }
@@ -63,11 +63,7 @@ function execIn(cmd, cwd) {
  * Get cache file path for current working directory
  */
 function getCachePath(cwd) {
-  const hash = require('crypto')
-    .createHash('md5')
-    .update(cwd)
-    .digest('hex')
-    .slice(0, 8);
+  const hash = require("crypto").createHash("md5").update(cwd).digest("hex").slice(0, 8);
   return path.join(os.tmpdir(), `ck-git-cache-${hash}.json`);
 }
 
@@ -78,7 +74,7 @@ function getCachePath(cwd) {
 function readCache(cachePath, options = {}) {
   const { allowStale = false } = options;
   try {
-    const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+    const cache = JSON.parse(fs.readFileSync(cachePath, "utf8"));
     if (Date.now() - cache.timestamp < CACHE_TTL || allowStale) {
       return cache.data; // Can be null (non-git dir) or object (git info)
     }
@@ -92,12 +88,14 @@ function readCache(cachePath, options = {}) {
  * Write cache atomically (temp file + rename to avoid partial reads on Windows)
  */
 function writeCache(cachePath, data) {
-  const tmpPath = cachePath + '.tmp';
+  const tmpPath = cachePath + ".tmp";
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ timestamp: Date.now(), data }));
     fs.renameSync(tmpPath, cachePath);
   } catch {
-    try { fs.unlinkSync(tmpPath); } catch {}
+    try {
+      fs.unlinkSync(tmpPath);
+    } catch {}
   }
 }
 
@@ -106,7 +104,7 @@ function writeCache(cachePath, data) {
  */
 function countLines(str) {
   if (!str) return 0;
-  return str.split('\n').filter(l => l.trim()).length;
+  return str.split("\n").filter((l) => l.trim()).length;
 }
 
 /**
@@ -117,17 +115,17 @@ function countLines(str) {
  */
 function fetchGitInfo(cwd) {
   // Check if git repo (fast check) — run in target cwd, not process.cwd()
-  const repoCheck = execIn('git rev-parse --git-dir', cwd);
+  const repoCheck = execIn("git rev-parse --git-dir", cwd);
   if (repoCheck.timedOut) return CACHE_SKIP;
   if (!repoCheck.output) {
     return null;
   }
 
-  const branchPrimary = execIn('git branch --show-current', cwd);
-  const branchFallback = execIn('git rev-parse --short HEAD', cwd);
-  const unstagedResult = execIn('git diff --name-only', cwd);
-  const stagedResult = execIn('git diff --cached --name-only', cwd);
-  const aheadBehindResult = execIn('git rev-list --left-right --count @{u}...HEAD', cwd);
+  const branchPrimary = execIn("git branch --show-current", cwd);
+  const branchFallback = execIn("git rev-parse --short HEAD", cwd);
+  const unstagedResult = execIn("git diff --name-only", cwd);
+  const stagedResult = execIn("git diff --cached --name-only", cwd);
+  const aheadBehindResult = execIn("git rev-list --left-right --count @{u}...HEAD", cwd);
 
   if (
     branchPrimary.timedOut ||
@@ -185,7 +183,9 @@ function getGitInfo(cwd = process.cwd()) {
  * Invalidate cache for a directory (call after file changes to trigger fresh git query)
  */
 function invalidateCache(cwd = process.cwd()) {
-  try { fs.unlinkSync(getCachePath(cwd)); } catch {}
+  try {
+    fs.unlinkSync(getCachePath(cwd));
+  } catch {}
 }
 
 module.exports = { getGitInfo, invalidateCache };

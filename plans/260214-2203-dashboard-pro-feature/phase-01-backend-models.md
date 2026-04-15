@@ -225,6 +225,7 @@ class DashboardWidget(BaseModel):
 **File**: `apps/api/plane/db/models/__init__.py`
 
 Add to existing exports:
+
 ```python
 from .dashboard import Dashboard, DashboardWidget
 ```
@@ -311,15 +312,19 @@ python manage.py dbshell
 ## Risk Assessment
 
 **Risk**: Migration conflicts with existing migrations
+
 - **Mitigation**: Review latest migration number before generating, resolve conflicts manually
 
 **Risk**: JSONField schema not validated
+
 - **Mitigation**: Add validation in serializer layer (Phase 2)
 
 **Risk**: Workspace FK not auto-populated
+
 - **Mitigation**: WorkspaceBaseModel handles this via save() override
 
 **Risk**: Performance on large widget queries
+
 - **Mitigation**: Indexes on dashboard FK and widget_type
 
 ## Security Considerations
@@ -332,6 +337,7 @@ python manage.py dbshell
 ## Next Steps
 
 Proceed to [Phase 2: Backend API Endpoints](./phase-02-backend-api.md)
+
 - Create serializers for Dashboard and DashboardWidget
 - Implement ViewSets for CRUD operations
 - Add widget data endpoint using `build_analytics_chart()`

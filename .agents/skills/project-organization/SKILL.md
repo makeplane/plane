@@ -21,10 +21,10 @@ Standardize file locations, naming conventions, directory structures, and markdo
 
 ## Modes
 
-| Mode | Trigger | Behavior |
-|------|---------|----------|
+| Mode         | Trigger                                  | Behavior                                             |
+| ------------ | ---------------------------------------- | ---------------------------------------------------- |
 | **Advisory** | Other skills/agents reference this skill | Return correct path + naming for requested file type |
-| **Organize** | User invokes directly with dirs/files | Scan → propose changes → execute after confirm |
+| **Organize** | User invokes directly with dirs/files    | Scan → propose changes → execute after confirm       |
 
 ## Core Rules
 
@@ -32,16 +32,16 @@ Standardize file locations, naming conventions, directory structures, and markdo
 
 Every project file belongs to one of these top-level categories:
 
-| Category | Path | Purpose |
-|----------|------|---------|
-| Source code | `src/` or project root | Application code (language-specific, not managed here) |
-| Documentation | `docs/` | Human & AI readable docs, guides, specs |
-| Plans | `plans/` | Implementation plans, research, agent reports |
-| Tests | `tests/` or `test/` | Test suites (unit, integration, e2e) |
-| Scripts | `scripts/` | Build, deploy, utility scripts |
-| Assets | `assets/{type}/` | Media, branding, designs, generated content |
-| Config | Root or `.config/` | dotfiles, config files, env files |
-| Guides | `guide/` or `guides/` | User-facing reference docs, tutorials |
+| Category      | Path                   | Purpose                                                |
+| ------------- | ---------------------- | ------------------------------------------------------ |
+| Source code   | `src/` or project root | Application code (language-specific, not managed here) |
+| Documentation | `docs/`                | Human & AI readable docs, guides, specs                |
+| Plans         | `plans/`               | Implementation plans, research, agent reports          |
+| Tests         | `tests/` or `test/`    | Test suites (unit, integration, e2e)                   |
+| Scripts       | `scripts/`             | Build, deploy, utility scripts                         |
+| Assets        | `assets/{type}/`       | Media, branding, designs, generated content            |
+| Config        | Root or `.config/`     | dotfiles, config files, env files                      |
+| Guides        | `guide/` or `guides/`  | User-facing reference docs, tutorials                  |
 
 **Subcategories within each:**
 
@@ -76,13 +76,14 @@ All filenames use **kebab-case**, self-documenting names.
 
 **Three naming modes based on content temporality:**
 
-| Mode | Pattern | When to use | Examples |
-|------|---------|-------------|---------|
-| **Timestamped** | `{YYMMDD-HHmm}-{slug}` | Time-sensitive: plans, reports, journals, sessions | `260304-1530-auth-plan` |
-| **Evergreen** | `{slug}` | Stable docs, configs, guides | `system-architecture.md` |
-| **Variant** | `{slug}-{variant}.{ext}` | Multiple versions of same asset | `logo-dark.svg`, `hero-1920x1080.png` |
+| Mode            | Pattern                  | When to use                                        | Examples                              |
+| --------------- | ------------------------ | -------------------------------------------------- | ------------------------------------- |
+| **Timestamped** | `{YYMMDD-HHmm}-{slug}`   | Time-sensitive: plans, reports, journals, sessions | `260304-1530-auth-plan`               |
+| **Evergreen**   | `{slug}`                 | Stable docs, configs, guides                       | `system-architecture.md`              |
+| **Variant**     | `{slug}-{variant}.{ext}` | Multiple versions of same asset                    | `logo-dark.svg`, `hero-1920x1080.png` |
 
 **Slug rules:**
+
 - Lowercase, hyphens only (no underscores, spaces, special chars)
 - Max 50 chars (truncate at word boundary)
 - Self-documenting: readable without opening the file
@@ -100,13 +101,13 @@ date +%y%m%d-%H%M   # Bash
 
 Decide between flat file vs folder based on output count:
 
-| Scenario | Pattern | Example |
-|----------|---------|---------|
-| Single file output | Flat file in category dir | `docs/journals/260304-session-review.md` |
-| Multi-file output | Self-contained subdirectory | `plans/260304-auth-impl/plan.md` + `phase-01-*.md` |
-| Scoped to parent | Nested under parent context | `plans/260304-auth-impl/reports/scout-report.md` |
-| Platform-specific | Platform subdirectory | `assets/posts/twitter/`, `assets/posts/linkedin/` |
-| Variant-based | Flat with variant suffix | `assets/branding/logo-light.svg`, `logo-dark.svg` |
+| Scenario           | Pattern                     | Example                                            |
+| ------------------ | --------------------------- | -------------------------------------------------- |
+| Single file output | Flat file in category dir   | `docs/journals/260304-session-review.md`           |
+| Multi-file output  | Self-contained subdirectory | `plans/260304-auth-impl/plan.md` + `phase-01-*.md` |
+| Scoped to parent   | Nested under parent context | `plans/260304-auth-impl/reports/scout-report.md`   |
+| Platform-specific  | Platform subdirectory       | `assets/posts/twitter/`, `assets/posts/linkedin/`  |
+| Variant-based      | Flat with variant suffix    | `assets/branding/logo-light.svg`, `logo-dark.svg`  |
 
 **Empty directories:** Add `.gitkeep` to preserve in git.
 
@@ -115,6 +116,7 @@ Decide between flat file vs folder based on output count:
 Every markdown file MUST have consistent structure based on its type.
 
 **Universal rules for all markdown:**
+
 - Start with a `# Title` (H1)
 - Use frontmatter (`---`) for metadata when the file is consumed by tools
 - Keep sections ordered: context → content → next steps
@@ -123,18 +125,18 @@ Every markdown file MUST have consistent structure based on its type.
 
 **Quick reference — required sections by type:**
 
-| Type | Key sections |
-|------|-------------|
-| **Plan** | frontmatter → overview → phases with status → dependencies → success criteria |
-| **Phase** | context links → overview → requirements → architecture → impl steps → todo checklist → risks |
-| **Report** | frontmatter → summary → findings → recommendations → unresolved questions |
-| **Journal** | frontmatter → context → what happened → reflection → decisions → next |
-| **Doc** | title → overview → content sections → references |
-| **ADR** | status → context → decision → consequences → alternatives considered |
-| **Changelog** | version blocks → categories (added/changed/fixed/removed/deprecated) |
-| **README** | name → badges → description → quick start → usage → contributing → license |
-| **Guide** | title → prerequisites → step-by-step → troubleshooting → FAQ |
-| **Spec** | overview → requirements → constraints → API/interface → acceptance criteria |
+| Type          | Key sections                                                                                 |
+| ------------- | -------------------------------------------------------------------------------------------- |
+| **Plan**      | frontmatter → overview → phases with status → dependencies → success criteria                |
+| **Phase**     | context links → overview → requirements → architecture → impl steps → todo checklist → risks |
+| **Report**    | frontmatter → summary → findings → recommendations → unresolved questions                    |
+| **Journal**   | frontmatter → context → what happened → reflection → decisions → next                        |
+| **Doc**       | title → overview → content sections → references                                             |
+| **ADR**       | status → context → decision → consequences → alternatives considered                         |
+| **Changelog** | version blocks → categories (added/changed/fixed/removed/deprecated)                         |
+| **README**    | name → badges → description → quick start → usage → contributing → license                   |
+| **Guide**     | title → prerequisites → step-by-step → troubleshooting → FAQ                                 |
+| **Spec**      | overview → requirements → constraints → API/interface → acceptance criteria                  |
 
 Load: `references/markdown-body-templates.md` for full templates.
 
@@ -188,6 +190,7 @@ When invoked directly with `/ck:project-organization [targets]`:
 6. **Verify** — List final structure, flag any remaining issues
 
 **Safety:**
+
 - Never overwrite existing files (prompt on conflict)
 - Never touch `.git/`, `node_modules/`, `.env` files
 - Create backups when renaming (git handles this)
@@ -220,6 +223,7 @@ Other skills reference it when determining output paths:
 ## Pre-Output Checklist
 
 Before writing any file:
+
 1. Determine category → get base path (Rule 1)
 2. Choose naming mode → timestamped/evergreen/variant (Rule 2)
 3. Decide nesting → flat or subdirectory (Rule 3)

@@ -15,17 +15,18 @@ updated: 2026-03-18
 ## Summary
 
 Two features:
+
 1. **Permission Control (frontend-only)** -- Hide module create/edit/delete buttons for non-admin users. No backend permission changes needed.
 2. **Activity Tracking** -- Add Activities section to `ModuleAnalyticsSidebar` showing module lifecycle events.
 
 ## Phases
 
-| # | Phase | Effort | Status | File |
-|---|-------|--------|--------|------|
-| ~~1~~ | ~~Backend Permissions~~ | ~~1h~~ | removed | ~~[phase-01](phase-01-backend-permissions.md)~~ |
-| 2 | Backend Module Activity | 3h | completed | [phase-02](phase-02-backend-module-activity.md) |
-| 3 | Frontend Permissions (UI-only) | 0.5h | completed | [phase-03](phase-03-frontend-permissions.md) |
-| 4 | Frontend Activity Sidebar | 2.5h | completed | [phase-04](phase-04-frontend-activity-sidebar.md) |
+| #     | Phase                          | Effort | Status    | File                                              |
+| ----- | ------------------------------ | ------ | --------- | ------------------------------------------------- |
+| ~~1~~ | ~~Backend Permissions~~        | ~~1h~~ | removed   | ~~[phase-01](phase-01-backend-permissions.md)~~   |
+| 2     | Backend Module Activity        | 3h     | completed | [phase-02](phase-02-backend-module-activity.md)   |
+| 3     | Frontend Permissions (UI-only) | 0.5h   | completed | [phase-03](phase-03-frontend-permissions.md)      |
+| 4     | Frontend Activity Sidebar      | 2.5h   | completed | [phase-04](phase-04-frontend-activity-sidebar.md) |
 
 ## Dependency Graph
 
@@ -47,14 +48,17 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
 ## Files Overview
 
 ### Backend (Modify)
+
 - `apps/api/plane/db/models/module.py` -- add `ModuleActivity` model
 - `apps/api/plane/db/models/__init__.py` -- export `ModuleActivity`
 
 ### Backend (Create)
+
 - `apps/api/plane/app/views/module/activity.py` -- activity list endpoint
 - Migration file for `ModuleActivity`
 
 ### Frontend (Modify)
+
 - `apps/web/core/components/modules/analytics-sidebar/root.tsx` -- change permission check, add activity section
 - `apps/web/core/components/modules/module-list-item-action.tsx` -- hide edit/delete for non-ADMIN
 - `apps/web/core/components/modules/module-card-item.tsx` -- hide edit/delete for non-ADMIN
@@ -62,6 +66,7 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
 - `apps/web/core/components/modules/modules-list-view.tsx` -- hide create for non-ADMIN
 
 ### Frontend (Create)
+
 - `apps/web/ce/store/module-activity.store.ts`
 - `apps/web/ce/services/module-activity.service.ts`
 - `apps/web/ce/components/modules/activity/` -- activity UI components
@@ -70,6 +75,7 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
 ## Validation Log
 
 ### Session 1 — 2026-03-18
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 4
 
@@ -96,24 +102,28 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
    - **Rationale:** Cursor-based pagination with "Load more" is more scalable for modules with many activities. Auto-refresh after mutations ensures fresh data. Extracted wrapper keeps sidebar under 200-line limit.
 
 #### Confirmed Decisions
+
 - **Module delete**: ADMIN-only, no creator fallback — simplifies permission model
 - **Work items**: ADMIN+MEMBER — day-to-day member action, not restricted
 - **Activity logging scope**: App views only — reduces scope, API v1 rarely used
 - **Activity UI**: Cursor pagination + auto-refresh + extracted sidebar wrapper component
 
 #### Action Items
+
 - [ ] Remove activity logging from API views in Phase 2 (steps 13, related files)
 - [ ] Update Phase 4 to use cursor-based pagination with "Load more"
 - [ ] Update Phase 4 to add auto-refresh after module mutations
 - [ ] Update Phase 4 to extract Activity Disclosure into wrapper component
 
 #### Impact on Phases
+
 - Phase 1: No changes needed (ADMIN-only delete already planned)
 - Phase 2: Remove steps related to API view activity logging (step 13). Remove `apps/api/plane/api/views/module.py` from activity-related modifications. Reduces effort.
 - Phase 3: No changes needed
 - Phase 4: Update pagination to cursor-based with "Load more" button. Add auto-refresh on mutation. Extract Activity Disclosure into `module-sidebar-activities.tsx` wrapper.
 
 ### Session 2 — 2026-03-18
+
 **Trigger:** Re-validation — user clarified that only admins edit module info, but members can still add/remove work items per existing rules
 **Questions asked:** 3
 
@@ -135,21 +145,25 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
    - **Rationale:** Consistent with how other permission restrictions work in Plane. No extra UI needed.
 
 #### Confirmed Decisions
+
 - **Links**: ADMIN-only — same gate as module info, no split needed
 - **Favorites**: Available to all members — personal preference, not a module mutation. Must separate from `isEditingAllowed`
 - **UX**: Silently disable — no badge or tooltip needed
 
 #### Action Items
+
 - [ ] Phase 3: Ensure favorite toggle in `module-card-item.tsx` and `module-list-item-action.tsx` is NOT gated by `isEditingAllowed`
 - [ ] Phase 3: Verify work item add/remove UI components are not affected by the permission change
 
 #### Impact on Phases
+
 - Phase 1: No changes needed
 - Phase 2: No changes needed
 - Phase 3: Must ensure favorite toggle is excluded from `isEditingAllowed` gate in card/list components. Verify work item UI unchanged.
 - Phase 4: No changes needed
 
 ### Session 3 — 2026-03-18
+
 **Trigger:** Final validation — CE pattern compliance, pagination implementation gap, data retention
 **Questions asked:** 3
 
@@ -171,35 +185,42 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
    - **Rationale:** Hard deletes are rare in Plane (soft-delete is default). Simpler model. Acceptable tradeoff.
 
 #### Confirmed Decisions
+
 - **Core modifications**: Allowed for Phase 3 permission constant swaps — pragmatic exception, not new features
 - **Pagination**: Cursor-based in store with next_cursor tracking per module, append on "Load more"
 - **Data retention**: CASCADE on module FK — acceptable for soft-delete-default codebase
 
 #### Action Items
+
 - [ ] Phase 4: Update store implementation to track `next_cursor` per module and support incremental append
 
 #### Impact on Phases
+
 - Phase 1: No changes needed
 - Phase 2: No changes needed (CASCADE confirmed)
 - Phase 3: No changes needed (core modifications approved)
 - Phase 4: Store must implement cursor tracking — `nextCursorMap: Record<string, string | null>`, `fetchActivities` appends to existing array, `hasMore` computed from cursor presence
 
 ### Session 4 — 2026-03-18
+
 **Trigger:** User simplification — non-admin users just need buttons hidden, no backend permission enforcement needed
 **Questions asked:** 0
 
 #### Confirmed Decisions
+
 - **Phase 1 REMOVED**: No backend permission changes. Frontend-only approach — just hide create/edit/delete buttons for non-admin users.
 - **Phase 3 simplified**: Pure UI hiding, no backend dependency. Effort reduced from 1.5h to 0.5h.
 - **Total effort reduced**: 8h → 6h (removed 1h backend perms + reduced 1h frontend perms)
 
 #### Impact on Phases
+
 - Phase 1: **REMOVED** — no backend permission changes needed
 - Phase 2: No changes
 - Phase 3: Simplified to UI-only button hiding. No longer depends on Phase 1. Effort reduced to 0.5h.
 - Phase 4: No changes
 
 ### Session 5 — 2026-03-18
+
 **Trigger:** Code-level validation — pagination response shape mismatch, missing i18n keys, undefined refresh mechanism
 **Questions asked:** 3
 
@@ -221,11 +242,13 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
    - **Rationale:** Add `refreshActivities(moduleId)` to `ModuleActivityStore`. Call it at the end of module mutation methods in existing module store (e.g., after `updateModuleDetails`). Keeps logic in store layer, not scattered in components.
 
 #### Confirmed Decisions
+
 - **Pagination shape**: Match real `BasePaginator` response — `next_cursor` is encoded string, use `next_page_results` boolean for hasMore
 - **i18n**: Add translation keys to en.json for all activity strings
 - **Refresh**: Store-level `refreshActivities()` method called after module mutations
 
 #### Action Items
+
 - [ ] Phase 4: Update service return type to match real paginator response shape (`next_cursor`, `next_page_results`, `total_count`, etc.)
 - [ ] Phase 4: Update store to use `next_page_results` boolean for `hasMore` instead of checking cursor presence
 - [ ] Phase 4: Add `refreshActivities(moduleId)` method that clears cache and refetches first page
@@ -233,11 +256,13 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
 - [ ] Phase 4: Call `refreshActivities` from module store after mutation methods
 
 #### Impact on Phases
+
 - Phase 2: No changes needed (backend paginator is correct as-is)
 - Phase 3: No changes needed
 - Phase 4: Multiple updates — service response type, store pagination logic, refresh method, i18n keys. See action items above.
 
 ### Session 6 — 2026-03-18
+
 **Trigger:** Final validation — sidebar wrapper contradiction, i18n namespace, refresh trigger scope
 **Questions asked:** 3
 
@@ -259,19 +284,23 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
    - **Rationale:** Every mutation that generates an activity record should trigger a refresh so the sidebar always reflects current state.
 
 #### Confirmed Decisions
+
 - **Sidebar wrapper**: Extract `module-sidebar-activities.tsx` component — root.tsx imports and renders it, not inline
 - **i18n namespace**: `modules` namespace — keys like `modules:activity.created_module`, `modules:activity.no_activities`
 - **Refresh triggers**: All 4 mutations — `updateModuleDetails`, `createModule`, `deleteModule`, `addIssuesToModule`/`removeIssueFromModule`
 
 #### Action Items
+
 - [ ] Phase 4: Replace Step 10 inline Disclosure with import of `ModuleSidebarActivities` in root.tsx
 - [ ] Phase 4: i18n keys use `modules` namespace prefix
 - [ ] Phase 4: Wire `refreshActivities` after all 4 mutation methods in module store
 
 #### Impact on Phases
+
 - Phase 4: Step 10 changes from inline Disclosure to `<ModuleSidebarActivities moduleId={moduleId} />`. i18n keys under `modules:` namespace. Refresh wired to all 4 mutations.
 
 ### Session 7 — 2026-03-18
+
 **Trigger:** Code-level bug fixes — store property mismatch, missing props, refresh wiring pattern
 **Questions asked:** 3
 
@@ -293,14 +322,17 @@ Phases 2 and 3 are independent. Phase 4 depends on 2.
    - **Rationale:** Module store already receives rootStore in constructor. Call `this._rootStore.moduleActivity.refreshActivities(...)` after mutations. Keeps refresh logic in store layer.
 
 #### Confirmed Decisions
+
 - **Store fix**: Add `nextPageResultsMap: Record<string, boolean> = {}` as separate observable alongside `nextCursorMap`
 - **Props**: `ModuleActivityList` receives `workspaceSlug`, `projectId`, `moduleId` as explicit props
 - **Refresh wiring**: Use `this._rootStore.moduleActivity.refreshActivities(...)` in module store mutations
 
 #### Action Items
+
 - [ ] Phase 4: Add `nextPageResultsMap` observable property to store class and makeObservable
 - [ ] Phase 4: Update `ModuleActivityList` and `ModuleSidebarActivities` interfaces to include `workspaceSlug` and `projectId` props
 - [ ] Phase 4: Wire refresh via `this._rootStore.moduleActivity.refreshActivities(...)` in module store
 
 #### Impact on Phases
+
 - Phase 4: Store class needs `nextPageResultsMap` declared. Component props updated. Refresh wired through rootStore reference.

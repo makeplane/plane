@@ -5,6 +5,7 @@ Structured, reflective problem-solving methodology converted from the sequential
 ## Overview
 
 This skill teaches Claude to apply systematic sequential thinking methodology for complex problem-solving, without relying on external MCP tools. It enables:
+
 - Breaking down complex problems into manageable thought sequences
 - Dynamic adjustment of thought count as understanding evolves
 - Revision of previous thoughts when new insights emerge
@@ -64,19 +65,24 @@ sequential-thinking/
 ## Key Features
 
 ### Progressive Disclosure Design
+
 Each file focuses on specific aspects, loaded only when needed:
+
 - **SKILL.md**: Quick reference with core methodology
 - **core-patterns.md**: Common patterns for everyday use
-- **examples-*.md**: Real-world walkthroughs for learning
-- **advanced-*.md**: Sophisticated techniques for complex scenarios
+- **examples-\*.md**: Real-world walkthroughs for learning
+- **advanced-\*.md**: Sophisticated techniques for complex scenarios
 
 ### Token Efficiency
+
 - Concise explanations sacrifice grammar for brevity
 - Examples demonstrate patterns without verbose explanation
 - Cross-references between files avoid duplication
 
 ### Methodology Conversion
+
 Extracted from MCP server's approach and converted to instructions:
+
 - MCP tool provided **interface** for sequential thinking
 - Agent skill provides **methodology** to think sequentially
 - No dependency on external tools—pure instructional approach
@@ -84,6 +90,7 @@ Extracted from MCP server's approach and converted to instructions:
 ## Usage Modes
 
 **Explicit Mode**: Use visible thought markers
+
 ```
 Thought 1/5: [Analysis]
 Thought 2/5: [Further analysis]
@@ -94,6 +101,7 @@ Thought 2/5: [Further analysis]
 ## When Claude Should Use This Skill
 
 Automatically activated for:
+
 - Complex problem decomposition
 - Adaptive planning with potential revisions
 - Debugging and root cause analysis
@@ -160,12 +168,14 @@ npm run test:coverage
 ## When to Use Scripts
 
 **Use scripts when**:
+
 - Need deterministic validation of thought structure
 - Want persistent thought history tracking
 - Require formatted output for documentation
 - Building tools that integrate with sequential thinking
 
 **Don't use scripts when**:
+
 - Applying methodology directly in responses
 - Want lightweight, inline thinking
 - No need for validation or tracking
@@ -178,6 +188,7 @@ Converted from: https://github.com/modelcontextprotocol/servers/tree/main/src/se
 
 Original MCP server by Anthropic (MIT License).
 Skill conversion:
+
 - Extracts methodology as instructions
 - Adds executable scripts for deterministic validation
 - Makes tool-independent while preserving functionality

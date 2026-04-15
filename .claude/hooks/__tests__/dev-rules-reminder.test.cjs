@@ -10,14 +10,14 @@
  * - Path consistency validation
  */
 
-const { describe, it } = require('node:test');
-const assert = require('node:assert');
-const { spawn, execSync } = require('child_process');
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
+const { describe, it } = require("node:test");
+const assert = require("node:assert");
+const { spawn, execSync } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const os = require("os");
 
-const HOOK_PATH = path.join(__dirname, '..', 'dev-rules-reminder.cjs');
+const HOOK_PATH = path.join(__dirname, "..", "dev-rules-reminder.cjs");
 
 /**
  * Execute dev-rules-reminder.cjs with given stdin data and return stdout
@@ -27,36 +27,40 @@ const HOOK_PATH = path.join(__dirname, '..', 'dev-rules-reminder.cjs');
  */
 function runHook(inputData, options = {}) {
   return new Promise((resolve, reject) => {
-    const proc = spawn('node', [HOOK_PATH], {
+    const proc = spawn("node", [HOOK_PATH], {
       cwd: options.cwd || process.cwd(),
       env: {
         ...process.env,
-        CLAUDE_ENV_FILE: '',
-        CK_DEBUG: options.debug ? '1' : '',
-        ...options.env
-      }
+        CLAUDE_ENV_FILE: "",
+        CK_DEBUG: options.debug ? "1" : "",
+        ...options.env,
+      },
     });
 
-    let stdout = '';
-    let stderr = '';
+    let stdout = "";
+    let stderr = "";
 
-    proc.stdout.on('data', (data) => { stdout += data.toString(); });
-    proc.stderr.on('data', (data) => { stderr += data.toString(); });
+    proc.stdout.on("data", (data) => {
+      stdout += data.toString();
+    });
+    proc.stderr.on("data", (data) => {
+      stderr += data.toString();
+    });
 
     if (inputData) {
       proc.stdin.write(JSON.stringify(inputData));
     }
     proc.stdin.end();
 
-    proc.on('close', (code) => {
+    proc.on("close", (code) => {
       resolve({ stdout, stderr, exitCode: code });
     });
 
-    proc.on('error', reject);
+    proc.on("error", reject);
 
     setTimeout(() => {
-      proc.kill('SIGTERM');
-      reject(new Error('Hook execution timed out'));
+      proc.kill("SIGTERM");
+      reject(new Error("Hook execution timed out"));
     }, 10000);
   });
 }
@@ -66,178 +70,166 @@ function runHook(inputData, options = {}) {
  */
 function getGitRoot(cwd = process.cwd()) {
   try {
-    return execSync('git rev-parse --show-toplevel', {
-      encoding: 'utf8',
-      cwd
+    return execSync("git rev-parse --show-toplevel", {
+      encoding: "utf8",
+      cwd,
     }).trim();
   } catch (e) {
     return null;
   }
 }
 
-describe('dev-rules-reminder.cjs', () => {
-
-  describe('Basic Functionality', () => {
-
-    it('exits with code 0 (non-blocking)', async () => {
-      const result = await runHook({ user_prompt: 'test' });
-      assert.strictEqual(result.exitCode, 0, 'Hook should exit with code 0');
+describe("dev-rules-reminder.cjs", () => {
+  describe("Basic Functionality", () => {
+    it("exits with code 0 (non-blocking)", async () => {
+      const result = await runHook({ user_prompt: "test" });
+      assert.strictEqual(result.exitCode, 0, "Hook should exit with code 0");
     });
 
-    it('handles empty stdin gracefully', async () => {
+    it("handles empty stdin gracefully", async () => {
       const result = await runHook(null);
-      assert.strictEqual(result.exitCode, 0, 'Hook should exit with code 0');
+      assert.strictEqual(result.exitCode, 0, "Hook should exit with code 0");
     });
 
-    it('produces output for valid input', async () => {
-      const result = await runHook({ user_prompt: 'test prompt' });
+    it("produces output for valid input", async () => {
+      const result = await runHook({ user_prompt: "test prompt" });
       assert.strictEqual(result.exitCode, 0);
       // Should produce some output (session info, rules, etc.)
-      assert.ok(result.stdout.length > 0 || result.stderr.length === 0, 'Should produce output or run silently');
+      assert.ok(result.stdout.length > 0 || result.stderr.length === 0, "Should produce output or run silently");
     });
-
   });
 
-  describe('Issue #327: Path Resolution', () => {
-
-    it('includes absolute paths in Reports output', async () => {
+  describe("Issue #327: Path Resolution", () => {
+    it("includes absolute paths in Reports output", async () => {
       const gitRoot = getGitRoot();
       if (!gitRoot) {
-        console.log('  → Skipped: not in git repo');
+        console.log("  → Skipped: not in git repo");
         return;
       }
 
-      const result = await runHook({ user_prompt: 'test' }, { cwd: gitRoot });
+      const result = await runHook({ user_prompt: "test" }, { cwd: gitRoot });
 
       // Output should include absolute paths starting with /
       if (result.stdout) {
-        const hasAbsolutePath = result.stdout.includes(gitRoot) ||
-                                result.stdout.match(/Reports:.*\//);
-        assert.ok(hasAbsolutePath, 'Should include absolute paths in output');
+        const hasAbsolutePath = result.stdout.includes(gitRoot) || result.stdout.match(/Reports:.*\//);
+        assert.ok(hasAbsolutePath, "Should include absolute paths in output");
       }
     });
 
-    it('uses CWD as base for paths, not git root', async () => {
+    it("uses CWD as base for paths, not git root", async () => {
       const gitRoot = getGitRoot();
       if (!gitRoot) {
-        console.log('  → Skipped: not in git repo');
+        console.log("  → Skipped: not in git repo");
         return;
       }
 
       // Use .claude/hooks as subdirectory
-      const subdirPath = path.join(gitRoot, '.claude', 'hooks');
+      const subdirPath = path.join(gitRoot, ".claude", "hooks");
       if (!fs.existsSync(subdirPath)) {
-        console.log('  → Skipped: subdirectory does not exist');
+        console.log("  → Skipped: subdirectory does not exist");
         return;
       }
 
-      const result = await runHook({ user_prompt: 'test' }, { cwd: subdirPath });
+      const result = await runHook({ user_prompt: "test" }, { cwd: subdirPath });
 
       // Paths in output should reference the subdirectory, not git root
-      if (result.stdout && result.stdout.includes('Reports:')) {
+      if (result.stdout && result.stdout.includes("Reports:")) {
         // The path should contain the subdirectory path
         assert.ok(
-          result.stdout.includes(subdirPath) || result.stdout.includes('.claude/hooks'),
+          result.stdout.includes(subdirPath) || result.stdout.includes(".claude/hooks"),
           `Paths should be relative to CWD (${subdirPath})`
         );
       }
     });
 
-    it('includes Plans path in output', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+    it("includes Plans path in output", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
-        assert.ok(
-          result.stdout.includes('plans') || result.stdout.includes('Plans'),
-          'Should mention plans directory'
-        );
+        assert.ok(result.stdout.includes("plans") || result.stdout.includes("Plans"), "Should mention plans directory");
       }
     });
 
-    it('includes Docs path in output', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+    it("includes Docs path in output", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
-        assert.ok(
-          result.stdout.includes('docs') || result.stdout.includes('Docs'),
-          'Should mention docs directory'
-        );
+        assert.ok(result.stdout.includes("docs") || result.stdout.includes("Docs"), "Should mention docs directory");
       }
     });
-
   });
 
-  describe('Output Sections Validation', () => {
-
-    it('includes Session section', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+  describe("Output Sections Validation", () => {
+    it("includes Session section", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
         assert.ok(
-          result.stdout.includes('## Session') || result.stdout.includes('Session'),
-          'Should include Session section'
+          result.stdout.includes("## Session") || result.stdout.includes("Session"),
+          "Should include Session section"
         );
       }
     });
 
-    it('includes Rules section', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+    it("includes Rules section", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
         assert.ok(
-          result.stdout.includes('## Rules') || result.stdout.includes('Rules'),
-          'Should include Rules section'
+          result.stdout.includes("## Rules") || result.stdout.includes("Rules"),
+          "Should include Rules section"
         );
       }
     });
 
-    it('includes Modularization reminder', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+    it("includes Modularization reminder", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
         assert.ok(
-          result.stdout.includes('Modularization') || result.stdout.includes('[IMPORTANT]'),
-          'Should include Modularization reminder'
+          result.stdout.includes("Modularization") || result.stdout.includes("[IMPORTANT]"),
+          "Should include Modularization reminder"
         );
       }
     });
 
-    it('includes Naming section', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+    it("includes Naming section", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
         assert.ok(
-          result.stdout.includes('## Naming') || result.stdout.includes('Naming'),
-          'Should include Naming section'
+          result.stdout.includes("## Naming") || result.stdout.includes("Naming"),
+          "Should include Naming section"
         );
       }
     });
-
   });
 
-  describe('Transcript Deduplication', () => {
-
-    it('skips output if recently injected', async () => {
+  describe("Transcript Deduplication", () => {
+    it("skips output if recently injected", async () => {
       // Create temp transcript file with marker
-      const tempDir = path.join(os.tmpdir(), 'dev-rules-test-' + Date.now());
+      const tempDir = path.join(os.tmpdir(), "dev-rules-test-" + Date.now());
       fs.mkdirSync(tempDir, { recursive: true });
-      const transcriptPath = path.join(tempDir, 'transcript.txt');
+      const transcriptPath = path.join(tempDir, "transcript.txt");
 
       try {
         // Write transcript with modularization marker (last 150 lines)
-        const lines = Array(200).fill('some content');
-        lines[180] = '[IMPORTANT] Consider Modularization';
-        fs.writeFileSync(transcriptPath, lines.join('\n'));
+        const lines = Array(200).fill("some content");
+        lines[180] = "[IMPORTANT] Consider Modularization";
+        fs.writeFileSync(transcriptPath, lines.join("\n"));
 
-        const result = await runHook({
-          user_prompt: 'test',
-          transcript_path: transcriptPath
-        }, { cwd: tempDir });
+        const result = await runHook(
+          {
+            user_prompt: "test",
+            transcript_path: transcriptPath,
+          },
+          { cwd: tempDir }
+        );
 
         // Should exit cleanly with minimal/no output
         assert.strictEqual(result.exitCode, 0);
         // When recently injected, should have minimal output
-        if (result.stdout.includes('[IMPORTANT] Consider Modularization')) {
+        if (result.stdout.includes("[IMPORTANT] Consider Modularization")) {
           // If it does output, that's also acceptable (hook may have different logic)
           assert.ok(true);
         }
@@ -246,91 +238,87 @@ describe('dev-rules-reminder.cjs', () => {
       }
     });
 
-    it('outputs if marker not in recent lines', async () => {
-      const tempDir = path.join(os.tmpdir(), 'dev-rules-test-no-marker-' + Date.now());
+    it("outputs if marker not in recent lines", async () => {
+      const tempDir = path.join(os.tmpdir(), "dev-rules-test-no-marker-" + Date.now());
       fs.mkdirSync(tempDir, { recursive: true });
-      const transcriptPath = path.join(tempDir, 'transcript.txt');
+      const transcriptPath = path.join(tempDir, "transcript.txt");
 
       try {
         // Write transcript without marker
-        const lines = Array(200).fill('some content without marker');
-        fs.writeFileSync(transcriptPath, lines.join('\n'));
+        const lines = Array(200).fill("some content without marker");
+        fs.writeFileSync(transcriptPath, lines.join("\n"));
 
-        const result = await runHook({
-          user_prompt: 'test',
-          transcript_path: transcriptPath
-        }, { cwd: tempDir });
+        const result = await runHook(
+          {
+            user_prompt: "test",
+            transcript_path: transcriptPath,
+          },
+          { cwd: tempDir }
+        );
 
         assert.strictEqual(result.exitCode, 0);
         // Should produce full output since no marker found
         if (result.stdout) {
-          assert.ok(result.stdout.length > 0, 'Should produce output when no recent injection');
+          assert.ok(result.stdout.length > 0, "Should produce output when no recent injection");
         }
       } finally {
         fs.rmSync(tempDir, { recursive: true, force: true });
       }
     });
-
   });
 
-  describe('Language Configuration', () => {
-
-    it('handles config without language settings', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+  describe("Language Configuration", () => {
+    it("handles config without language settings", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       assert.strictEqual(result.exitCode, 0);
       // Should not crash when locale config is missing
     });
-
   });
 
-  describe('Error Handling', () => {
-
-    it('exits 0 on error (fail-open)', async () => {
+  describe("Error Handling", () => {
+    it("exits 0 on error (fail-open)", async () => {
       // Send invalid JSON-like input via write
-      const proc = spawn('node', [HOOK_PATH], {
+      const proc = spawn("node", [HOOK_PATH], {
         cwd: process.cwd(),
-        env: { ...process.env, CLAUDE_ENV_FILE: '' }
+        env: { ...process.env, CLAUDE_ENV_FILE: "" },
       });
 
-      proc.stdin.write('not valid json{{{');
+      proc.stdin.write("not valid json{{{");
       proc.stdin.end();
 
       const exitCode = await new Promise((resolve) => {
-        proc.on('close', resolve);
+        proc.on("close", resolve);
       });
 
-      assert.strictEqual(exitCode, 0, 'Should exit 0 on parse error (fail-open)');
+      assert.strictEqual(exitCode, 0, "Should exit 0 on parse error (fail-open)");
     });
 
-    it('handles missing transcript_path gracefully', async () => {
+    it("handles missing transcript_path gracefully", async () => {
       const result = await runHook({
-        user_prompt: 'test',
-        transcript_path: '/nonexistent/path/transcript.txt'
+        user_prompt: "test",
+        transcript_path: "/nonexistent/path/transcript.txt",
       });
 
       assert.strictEqual(result.exitCode, 0);
       // Should still produce output despite missing transcript
     });
-
   });
 
-  describe('Memory and Performance Info', () => {
-
-    it('includes system resource info', async () => {
-      const result = await runHook({ user_prompt: 'test' });
+  describe("Memory and Performance Info", () => {
+    it("includes system resource info", async () => {
+      const result = await runHook({ user_prompt: "test" });
 
       if (result.stdout) {
         // Should include memory or system info
-        const hasResourceInfo = result.stdout.includes('Memory') ||
-                                result.stdout.includes('CPU') ||
-                                result.stdout.includes('OS') ||
-                                result.stdout.includes('platform');
+        const hasResourceInfo =
+          result.stdout.includes("Memory") ||
+          result.stdout.includes("CPU") ||
+          result.stdout.includes("OS") ||
+          result.stdout.includes("platform");
         // This is informational, not required
-        assert.ok(true, 'System resource info check completed');
+        assert.ok(true, "System resource info check completed");
       }
     });
-
   });
-
 });

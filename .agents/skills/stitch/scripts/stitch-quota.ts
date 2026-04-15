@@ -62,13 +62,19 @@ function check(): void {
   const remaining = state.limit - state.count;
   const pct = remaining / state.limit;
 
-  console.log(JSON.stringify({
-    date: state.date,
-    used: state.count,
-    remaining,
-    limit: state.limit,
-    percentRemaining: Math.round(pct * 100),
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        date: state.date,
+        used: state.count,
+        remaining,
+        limit: state.limit,
+        percentRemaining: Math.round(pct * 100),
+      },
+      null,
+      2
+    )
+  );
 
   if (remaining <= 0) {
     console.error("[X] Daily quota exhausted. Use ck:ui-ux-pro-max as fallback.");

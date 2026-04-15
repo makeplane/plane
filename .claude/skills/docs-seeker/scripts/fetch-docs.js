@@ -5,13 +5,13 @@
  * Fetches documentation from context7.com with topic support and fallback chain
  */
 
-const https = require('https');
-const { loadEnv } = require('./utils/env-loader');
-const { detectTopic } = require('./detect-topic');
+const https = require("https");
+const { loadEnv } = require("./utils/env-loader");
+const { detectTopic } = require("./detect-topic");
 
 // Load environment
 const env = loadEnv();
-const DEBUG = env.DEBUG === 'true';
+const DEBUG = env.DEBUG === "true";
 const API_KEY = env.CONTEXT7_API_KEY;
 
 /**
@@ -22,26 +22,28 @@ const API_KEY = env.CONTEXT7_API_KEY;
 function httpsGet(url) {
   return new Promise((resolve, reject) => {
     const options = {
-      headers: API_KEY ? { 'Authorization': `Bearer ${API_KEY}` } : {},
+      headers: API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {},
     };
 
-    https.get(url, options, (res) => {
-      let data = '';
+    https
+      .get(url, options, (res) => {
+        let data = "";
 
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
 
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          resolve(data);
-        } else if (res.statusCode === 404) {
-          resolve(null);
-        } else {
-          reject(new Error(`HTTP ${res.statusCode}: ${data}`));
-        }
-      });
-    }).on('error', reject);
+        res.on("end", () => {
+          if (res.statusCode === 200) {
+            resolve(data);
+          } else if (res.statusCode === 404) {
+            resolve(null);
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+          }
+        });
+      })
+      .on("error", reject);
   });
 }
 
@@ -55,13 +57,13 @@ function buildContext7Url(library, topic = null) {
   // Determine if GitHub repo or website
   let basePath;
 
-  if (library.includes('/')) {
+  if (library.includes("/")) {
     // GitHub repo format: org/repo
-    const [org, repo] = library.split('/');
+    const [org, repo] = library.split("/");
     basePath = `${org}/${repo}`;
   } else {
     // Try common patterns
-    const normalized = library.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const normalized = library.toLowerCase().replace(/[^a-z0-9-]/g, "");
     basePath = `websites/${normalized}`;
   }
 
@@ -85,13 +87,13 @@ async function getUrlVariations(library, topic = null) {
 
   // Known repo mappings
   const knownRepos = {
-    'next.js': 'vercel/next.js',
-    'nextjs': 'vercel/next.js',
-    'remix': 'remix-run/remix',
-    'astro': 'withastro/astro',
-    'shadcn': 'shadcn-ui/ui',
-    'shadcn/ui': 'shadcn-ui/ui',
-    'better-auth': 'better-auth/better-auth',
+    "next.js": "vercel/next.js",
+    nextjs: "vercel/next.js",
+    remix: "remix-run/remix",
+    astro: "withastro/astro",
+    shadcn: "shadcn-ui/ui",
+    "shadcn/ui": "shadcn-ui/ui",
+    "better-auth": "better-auth/better-auth",
   };
 
   const normalized = library.toLowerCase();
@@ -117,7 +119,7 @@ async function fetchDocs(query) {
   const topicInfo = detectTopic(query);
 
   if (DEBUG) {
-    console.error('[DEBUG] Topic detection result:', topicInfo);
+    console.error("[DEBUG] Topic detection result:", topicInfo);
   }
 
   let urls = [];
@@ -127,7 +129,7 @@ async function fetchDocs(query) {
     urls = await getUrlVariations(topicInfo.library, topicInfo.topic);
 
     if (DEBUG) {
-      console.error('[DEBUG] Topic-specific URLs:', urls);
+      console.error("[DEBUG] Topic-specific URLs:", urls);
     }
   } else {
     // Extract library from general query
@@ -137,7 +139,7 @@ async function fetchDocs(query) {
       urls = await getUrlVariations(library);
 
       if (DEBUG) {
-        console.error('[DEBUG] General library URLs:', urls);
+        console.error("[DEBUG] General library URLs:", urls);
       }
     }
   }
@@ -154,10 +156,10 @@ async function fetchDocs(query) {
       if (content) {
         return {
           success: true,
-          source: 'context7.com',
+          source: "context7.com",
           url,
           content,
-          topicSpecific: url.includes('?topic='),
+          topicSpecific: url.includes("?topic="),
         };
       }
     } catch (error) {
@@ -170,10 +172,10 @@ async function fetchDocs(query) {
   // No URL worked
   return {
     success: false,
-    source: 'context7.com',
-    error: 'Documentation not found on context7.com',
+    source: "context7.com",
+    error: "Documentation not found on context7.com",
     urls,
-    suggestion: 'Try repository analysis or web search',
+    suggestion: "Try repository analysis or web search",
   };
 }
 
@@ -188,14 +190,14 @@ async function main() {
     process.exit(1);
   }
 
-  const query = args.join(' ');
+  const query = args.join(" ");
 
   try {
     const result = await fetchDocs(query);
     console.log(JSON.stringify(result, null, 2));
     process.exit(result.success ? 0 : 1);
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
   }
 }

@@ -10,14 +10,14 @@
 
 ## Phase Table
 
-| Phase | Name                     | Scope                                             |
-|-------|--------------------------|---------------------------------------------------|
-| 01    | Remove Opinion           | Xoá backend + frontend của opinion feature        |
-| 02    | Backend: Reason          | Validate + lưu reason trong activity              |
-| 03    | Frontend: Reason Modal   | Component modal nhập lý do                        |
-| 04    | Frontend: Wire Up        | Gắn modal vào sidebar due_date + completed_at     |
-| 05    | Frontend: Activity Display | Hiển thị reason trong activity feed             |
-| 06    | i18n                     | Xoá opinion keys, thêm reason keys               |
+| Phase | Name                       | Scope                                         |
+| ----- | -------------------------- | --------------------------------------------- |
+| 01    | Remove Opinion             | Xoá backend + frontend của opinion feature    |
+| 02    | Backend: Reason            | Validate + lưu reason trong activity          |
+| 03    | Frontend: Reason Modal     | Component modal nhập lý do                    |
+| 04    | Frontend: Wire Up          | Gắn modal vào sidebar due_date + completed_at |
+| 05    | Frontend: Activity Display | Hiển thị reason trong activity feed           |
+| 06    | i18n                       | Xoá opinion keys, thêm reason keys            |
 
 ## Status
 
@@ -31,6 +31,7 @@
 ## Validation Log
 
 ### Session 1 — 2026-03-24
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 4
 
@@ -59,24 +60,28 @@
    - **Rationale:** `IWorkLogUpdate` has explicit `reason?: string`. Same pattern for issues: create `TIssueUpdatePayload` type, update `patchIssue` service signature. No cast needed, no `TIssue` pollution.
 
 #### Confirmed Decisions
+
 - **Clear date**: No reason required — only when setting a new value
 - **Core/ modification**: Avoided — use CE wrapper for due date intercept
 - **Activity storage**: Reuse `comment` field in IssueActivity
 - **TypeScript**: Add `TIssueUpdatePayload = Partial<TIssue> & { reason?: string }` to packages/types, update patchIssue
 
 #### Action Items
+
 - [ ] Phase 02: Guard — only validate reason when new value is non-null (not when clearing)
 - [ ] Phase 03/04: Create CE wrapper for due date in sidebar instead of modifying core/
 - [ ] Phase 04: Add `TIssueUpdatePayload` to packages/types; update patchIssue service signature
 - [ ] Phase 04: Update `TIssueOperations.update` in root.tsx to accept `TIssueUpdatePayload`
 
 #### Impact on Phases
+
 - Phase 02: Update validation logic — only require reason when `target_date`/`completed_at` is non-null in request
 - Phase 04: Replace direct core/sidebar.tsx modification with CE wrapper component for due date; add TIssueUpdatePayload type
 
 ---
 
 ### Session 2 — 2026-03-24
+
 **Trigger:** Re-validation covering unchecked decision points after Session 1
 **Questions asked:** 3
 
@@ -98,25 +103,30 @@
    - **Rationale:** File is under `apps/web/ce/` so in-place modification is fine. No wrapper needed.
 
 #### Confirmed Decisions
+
 - **target_date activity display**: Do NOT modify core/ — use CE mechanism (investigate AdditionalActivityRoot or CE activity override pattern)
 - **Opinion table drop**: No export needed before migration
 - **completed_at property**: CE file, modify in place
 
 #### Action Items
+
 - [ ] Phase 05: Do NOT patch core/target_date.tsx — investigate CE override pattern for activity display (e.g. handle in AdditionalActivityRoot or a CE-level activity action override)
 
 #### Impact on Phases
+
 - Phase 05: Remove the core/target_date.tsx change; find a CE-compatible approach to inject reason display for target_date activity entries
 
 ---
 
 ### Session 3 — 2026-03-24
+
 **Trigger:** Implementation complete — mark all phases done, document session outcomes
 **Status:** ALL PHASES COMPLETE
 
 #### Implementation Summary
 
 **Opinion Feature Removed (Phase 01)**
+
 - Backend: `IssueOpinion` model deleted from `apps/api/plane/db/models/`
 - Migration: `0143_remove_issueopinion.py` created (DROP TABLE)
 - Views: `opinion` endpoint removed from `apps/api/plane/app/views/workflow.py`
@@ -126,17 +136,20 @@
 - No user-facing data loss — opinion feature never exposed
 
 **Reason Validation Added (Phase 02)**
+
 - Backend: `IssueSerializer.partial_update()` validates `reason` when `target_date` or `completed_at` is set to non-null
 - Only triggers on create/edit, not on clear (nulling a date)
 - Reason stored in `IssueActivity.comment` field (reused, no migration needed)
 - Validation: `reason` is required string when setting new date value
 
 **Reason Modal Created (Phase 03)**
+
 - Component: `FieldChangeReasonModal` in `apps/web/ce/components/sidebar/issue-detail/field-change-reason-modal/`
 - Accepts field name, old/new values, and callback for reason submission
 - Modal UI matches worklog reason pattern (compact, contextual)
 
 **Wire Up Complete (Phase 04)**
+
 - `DueDateProperty`: CE wrapper created in CE sidebar folder
   - Intercepts due date changes from core `DateDropdown`
   - Launches reason modal before API call
@@ -149,6 +162,7 @@
 - MobX: `reason` field stripped before merge (H1 code review fix)
 
 **Activity Display Wired (Phase 05)**
+
 - `AdditionalActivityRoot`: Updated to handle `target_date` + `completed_at` activities
   - Displays change: "(old date) → (new date)"
   - Appends reason: "Reason: {reason text}"
@@ -156,15 +170,18 @@
 - No core/ modifications — reason display handled entirely in CE layer
 
 **i18n Updated (Phase 06)**
+
 - Opinion keys removed: `issue.opinion.*`, `worklog.opinion.*`
 - Reason keys added: `common.reason`, `issue.reason_required`, `activity.reason_label`
 - Language files: `en`, `ko`, `vi` updated
 
 #### Code Review Notes (H1, H2 Applied)
+
 - **H1 Applied**: `reason` field stripped in store before MobX merge (prevents untracked state)
 - **H2 Exemption Documented**: `IssueBulkUpdateDateEndpoint` (Gantt/calendar bulk changes) bypasses reason validation intentionally — bulk operations don't require reason
 
 #### Deliverables Checklist
+
 - [x] Opinion backend removed (model, migration, views, serializers, URLs)
 - [x] Opinion frontend removed (store, hooks, components, types)
 - [x] Drop migration created: `0143_remove_issueopinion.py`
@@ -181,6 +198,7 @@
 - [x] Code review findings applied (H1: reason stripping; H2: bulk exemption documented)
 
 #### Timeline
+
 - Session 1 (2026-03-24): Plan validation, 4 key decisions
 - Session 2 (2026-03-24): Re-validation, CE pattern clarifications
 - Session 3 (2026-03-24): Implementation & completion

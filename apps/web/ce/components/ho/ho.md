@@ -17,12 +17,12 @@ HO managers view tasks by department, as a datasheet, or by task category.
 
 ### Roles & Visibility
 
-| Role | Department tab | Datasheet tab | Category tab |
-|---|---|---|---|
-| Instance Admin | ✅ Full tree | ✅ All workspaces | ✅ All depts |
-| Department Manager (`is_department_manager=true`) | ✅ Own subtree only | ✅ Managed + member workspaces | ✅ Own dept subtree |
-| Workspace Admin (role=20) | ❌ Hidden | ✅ All issues in admin workspaces | ✅ Linked dept |
-| Regular Member | ❌ Hidden | ✅ Only assigned issues | ✅ Linked dept ancestors |
+| Role                                              | Department tab      | Datasheet tab                     | Category tab             |
+| ------------------------------------------------- | ------------------- | --------------------------------- | ------------------------ |
+| Instance Admin                                    | ✅ Full tree        | ✅ All workspaces                 | ✅ All depts             |
+| Department Manager (`is_department_manager=true`) | ✅ Own subtree only | ✅ Managed + member workspaces    | ✅ Own dept subtree      |
+| Workspace Admin (role=20)                         | ❌ Hidden           | ✅ All issues in admin workspaces | ✅ Linked dept           |
+| Regular Member                                    | ❌ Hidden           | ✅ Only assigned issues           | ✅ Linked dept ancestors |
 
 ### Tab Visibility Logic (`ho-view-tabs.tsx`)
 
@@ -55,6 +55,7 @@ Shows the department hierarchy tree with linked workspace info.
 **Data source:** `DepartmentService.getDepartmentTree(workspaceSlug)` (SWR, key: `DEPARTMENTS_TREE_<slug>`)
 
 **Tree scoping:**
+
 - Instance admin → full tree
 - Dept manager → subtree rooted at `staffProfile.department`
 - Others → not visible
@@ -62,6 +63,7 @@ Shows the department hierarchy tree with linked workspace info.
 **Search:** Client-side recursive filter (`filterBySearch`) — matches name, preserves ancestors of matches
 
 **`HoDepartmentTreeRow`:**
+
 - Recursive component, indented by `depth * 20 + 12` px
 - Expand/collapse with chevron (starts expanded)
 - Linked workspace shown as a button → confirms then opens in new tab (`window.open`)
@@ -73,6 +75,7 @@ Shows the department hierarchy tree with linked workspace info.
 Paginated table of work items across workspaces.
 
 **Store calls on mount:**
+
 - `store.fetchIssues(1)` — page 1
 - `store.fetchAccessibleWorkspaces()`
 - `store.fetchFilterOptions()`
@@ -80,10 +83,12 @@ Paginated table of work items across workspaces.
 **Pagination:** "Load more" button at bottom, calls `store.fetchNextPage()`. Shows `loaded / total` count.
 
 **Loading states:**
+
 - Initial load with no data → full `<Loader>` skeleton
 - Subsequent fetches while data present → overlay `<Spinner>` (absolute, z-10)
 
 **Components:**
+
 - `HoDatasheetToolbar` — date range, workspace/project selects, Display toggle
 - `HoDatasheetTable` — scrollable table with sticky first column + frozen header
 - `HoDatasheetDisplayProps` — toggle panel for visible columns (18 columns)
@@ -103,6 +108,7 @@ Paginated table of work items across workspaces.
 Read-only summary of task categories per department (no issue counts — just the taxonomy tree).
 
 **Store call on mount:**
+
 - `store.fetchCategorySummary()`
 - `store.fetchAccessibleWorkspaces()`
 - `store.fetchFilterOptions()`
@@ -113,6 +119,7 @@ Read-only summary of task categories per department (no issue counts — just th
 **Client-side sort:** default `department_name` ASC (sort UI rendered but sort key fixed)
 
 **Columns:**
+
 1. Department Name (sticky left, shadow on horizontal scroll)
 2. Main Task Category (bold; description shown in smaller italic below if present)
 3. Sub Task Category
@@ -156,32 +163,32 @@ Read-only summary of task categories per department (no issue counts — just th
 
 ## Backend API Endpoints
 
-| Method | URL | View | Description |
-|---|---|---|---|
-| GET | `/api/ho/issues/` | `HoIssueListView` | Paginated issues (100/page, max 500) |
-| GET | `/api/ho/category-summary/` | `HoCategorySummaryView` | Dept × MainCat × SubCat rows |
-| GET | `/api/ho/filter-options/` | `HoFilterOptionsView` | Distinct filter values |
-| GET | `/api/ho/workspaces/` | `HoAccessibleWorkspacesView` | Workspaces + projects |
-| GET | `/api/ho/issues/<id>/worklogs/` | `HoIssueWorklogBreakdownView` | Per-user worklog totals |
+| Method | URL                             | View                          | Description                          |
+| ------ | ------------------------------- | ----------------------------- | ------------------------------------ |
+| GET    | `/api/ho/issues/`               | `HoIssueListView`             | Paginated issues (100/page, max 500) |
+| GET    | `/api/ho/category-summary/`     | `HoCategorySummaryView`       | Dept × MainCat × SubCat rows         |
+| GET    | `/api/ho/filter-options/`       | `HoFilterOptionsView`         | Distinct filter values               |
+| GET    | `/api/ho/workspaces/`           | `HoAccessibleWorkspacesView`  | Workspaces + projects                |
+| GET    | `/api/ho/issues/<id>/worklogs/` | `HoIssueWorklogBreakdownView` | Per-user worklog totals              |
 
 ### Query Parameters — `/api/ho/issues/`
 
-| Param | Type | Notes |
-|---|---|---|
-| `workspace_slug` | string | Filter to single workspace |
-| `project_id` | csv UUIDs | Must belong to accessible workspaces |
-| `order_by` | string | Whitelist-validated; default `project__workspace__name` |
-| `from_date` | YYYY-MM-DD | `target_date >= from_date` (skipped if `progress` active) |
-| `to_date` | YYYY-MM-DD | `start_date <= to_date` |
-| `priority` | csv | e.g. `urgent,high` |
-| `state` | csv | State names |
-| `assignees` | csv UUIDs | Assignee user IDs |
-| `main_task_category` | csv | Category names |
-| `sub_task_category` | csv | Sub-category names |
-| `cycle` | csv | Cycle names |
-| `module` | csv | Module names |
-| `bank_wide` | `true`/`false` | Bank-wide project flag |
-| `progress` | csv | `off_track`, `due_today`, `at_risk`, `on_track` |
+| Param                | Type           | Notes                                                     |
+| -------------------- | -------------- | --------------------------------------------------------- |
+| `workspace_slug`     | string         | Filter to single workspace                                |
+| `project_id`         | csv UUIDs      | Must belong to accessible workspaces                      |
+| `order_by`           | string         | Whitelist-validated; default `project__workspace__name`   |
+| `from_date`          | YYYY-MM-DD     | `target_date >= from_date` (skipped if `progress` active) |
+| `to_date`            | YYYY-MM-DD     | `start_date <= to_date`                                   |
+| `priority`           | csv            | e.g. `urgent,high`                                        |
+| `state`              | csv            | State names                                               |
+| `assignees`          | csv UUIDs      | Assignee user IDs                                         |
+| `main_task_category` | csv            | Category names                                            |
+| `sub_task_category`  | csv            | Sub-category names                                        |
+| `cycle`              | csv            | Cycle names                                               |
+| `module`             | csv            | Module names                                              |
+| `bank_wide`          | `true`/`false` | Bank-wide project flag                                    |
+| `progress`           | csv            | `off_track`, `due_today`, `at_risk`, `on_track`           |
 
 ### Progress Filter Logic
 
@@ -203,6 +210,7 @@ Read-only summary of task categories per department (no issue counts — just th
 Located at `apps/web/ce/store/ho/`
 
 **Key observables:**
+
 - `issues: THoIssue[]` — current page results (appended on load-more)
 - `categorySummary: THoCategorySummary[]`
 - `accessibleWorkspaces: THoAccessibleWorkspace[]`
@@ -218,6 +226,7 @@ Located at `apps/web/ce/store/ho/`
 - `totalCount: number`
 
 **Actions:**
+
 - `fetchIssues(page)` — builds query params from filters, calls service
 - `fetchNextPage()` — follows `nextPageUrl`
 - `fetchCategorySummary()` — uses workspace/project/date filters
@@ -263,6 +272,7 @@ THoFilterOptions {
 ## Scroll Behavior (Tables)
 
 Both `HoDatasheetTable` and `HoCategoryTable`:
+
 - `containerRef` + scroll event listener → `isScrolled` boolean
 - First column is `sticky left-0` with conditional `shadow-[2px_0_8px_rgba(0,0,0,0.1)]` when scrolled
 - Table header is `sticky top-0 z-[20]`; first header cell is `z-[15]`; body first cell is `z-[5]`
@@ -273,27 +283,27 @@ Both `HoDatasheetTable` and `HoCategoryTable`:
 
 ## Key File Locations
 
-| File | Purpose |
-|---|---|
-| `ho-view-tabs.tsx` | Tab navigation, access control for tab visibility |
-| `ho-category-view.tsx` | Category tab root, search + sort + data fetch |
-| `ho-category-table.tsx` | Category table with sticky header + column filters |
-| `ho-category-row.tsx` | Single category row, dept group border |
-| `ho-datasheet-view.tsx` | Datasheet tab root, pagination, loading states |
-| `ho-datasheet-toolbar.tsx` | Date range + workspace/project selects + Display toggle |
-| `ho-datasheet-table.tsx` | Issue table with scroll tracking |
-| `ho-datasheet-header.tsx` | Sticky thead with per-column `HoHeaderFilter` |
-| `ho-datasheet-row.tsx` | Single issue row with display property control |
-| `ho-datasheet-display-props.tsx` | Column visibility toggle panel |
-| `ho-workspace-select.tsx` | Workspace dropdown filter |
-| `ho-project-select.tsx` | Project multi-select (workspace-scoped) |
-| `ho-header-filter.tsx` | Column sort + filter dropdown |
-| `department-list.tsx` | Department tab: tree loader + search |
-| `department-tree-row.tsx` | Recursive dept row with expand/collapse |
-| `apps/web/ce/store/ho/ho-issue.store.ts` | MobX store (state + actions) |
-| `apps/web/ce/store/ho/ho-issue.defaults.ts` | Default display properties |
-| `apps/web/ce/services/ho-issue.service.ts` | API service (all HO endpoints) |
-| `apps/api/plane/app/views/ho.py` | Django views (all HO endpoints) |
+| File                                        | Purpose                                                 |
+| ------------------------------------------- | ------------------------------------------------------- |
+| `ho-view-tabs.tsx`                          | Tab navigation, access control for tab visibility       |
+| `ho-category-view.tsx`                      | Category tab root, search + sort + data fetch           |
+| `ho-category-table.tsx`                     | Category table with sticky header + column filters      |
+| `ho-category-row.tsx`                       | Single category row, dept group border                  |
+| `ho-datasheet-view.tsx`                     | Datasheet tab root, pagination, loading states          |
+| `ho-datasheet-toolbar.tsx`                  | Date range + workspace/project selects + Display toggle |
+| `ho-datasheet-table.tsx`                    | Issue table with scroll tracking                        |
+| `ho-datasheet-header.tsx`                   | Sticky thead with per-column `HoHeaderFilter`           |
+| `ho-datasheet-row.tsx`                      | Single issue row with display property control          |
+| `ho-datasheet-display-props.tsx`            | Column visibility toggle panel                          |
+| `ho-workspace-select.tsx`                   | Workspace dropdown filter                               |
+| `ho-project-select.tsx`                     | Project multi-select (workspace-scoped)                 |
+| `ho-header-filter.tsx`                      | Column sort + filter dropdown                           |
+| `department-list.tsx`                       | Department tab: tree loader + search                    |
+| `department-tree-row.tsx`                   | Recursive dept row with expand/collapse                 |
+| `apps/web/ce/store/ho/ho-issue.store.ts`    | MobX store (state + actions)                            |
+| `apps/web/ce/store/ho/ho-issue.defaults.ts` | Default display properties                              |
+| `apps/web/ce/services/ho-issue.service.ts`  | API service (all HO endpoints)                          |
+| `apps/api/plane/app/views/ho.py`            | Django views (all HO endpoints)                         |
 
 ---
 

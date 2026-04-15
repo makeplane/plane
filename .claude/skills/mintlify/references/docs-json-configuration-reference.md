@@ -66,8 +66,8 @@ Choose from 7 available themes:
 
 ```json
 {
-  "eyebrows": "section",         // "section" | "breadcrumbs"
-  "latex": true,                 // Enable LaTeX math rendering
+  "eyebrows": "section", // "section" | "breadcrumbs"
+  "latex": true, // Enable LaTeX math rendering
   "codeblocks": {
     "theme": {
       "light": "github-light",
@@ -84,7 +84,7 @@ Choose from 7 available themes:
 ```json
 {
   "icon": {
-    "library": "fontawesome"     // "fontawesome" | "lucide"
+    "library": "fontawesome" // "fontawesome" | "lucide"
   }
 }
 ```
@@ -108,7 +108,7 @@ Use any Google Font name. Custom fonts loaded automatically.
 ```json
 {
   "modeToggle": {
-    "default": "light",          // "light" | "dark"
+    "default": "light", // "light" | "dark"
     "isHidden": false
   }
 }
@@ -120,7 +120,7 @@ Use any Google Font name. Custom fonts loaded automatically.
 {
   "background": {
     "image": "/images/background.png",
-    "decoration": "grid",         // "grid" | "gradient" | "none"
+    "decoration": "grid", // "grid" | "gradient" | "none"
     "color": "#FFFFFF"
   }
 }
@@ -138,7 +138,7 @@ Use any Google Font name. Custom fonts loaded automatically.
       }
     ],
     "primary": {
-      "type": "button",           // "button" | "github"
+      "type": "button", // "button" | "github"
       "label": "Get Started",
       "url": "https://example.com/signup"
     }
@@ -147,6 +147,7 @@ Use any Google Font name. Custom fonts loaded automatically.
 ```
 
 For GitHub:
+
 ```json
 {
   "navbar": {
@@ -388,7 +389,7 @@ Dropdown menus within tabs:
 ```json
 {
   "interaction": {
-    "drilldown": true              // Enable multi-level navigation
+    "drilldown": true // Enable multi-level navigation
   }
 }
 ```
@@ -398,7 +399,7 @@ Dropdown menus within tabs:
 ```json
 {
   "metadata": {
-    "timestamp": "last-modified"   // Show last modified date
+    "timestamp": "last-modified" // Show last modified date
   }
 }
 ```
@@ -476,6 +477,7 @@ Supports MDX formatting in content.
 ```
 
 Options:
+
 - `copy` - Copy page content
 - `view` - View raw markdown
 - `chatgpt` - Open in ChatGPT
@@ -496,7 +498,7 @@ Options:
       "expanded": true
     },
     "playground": {
-      "display": "interactive",    // "interactive" | "simple" | "none"
+      "display": "interactive", // "interactive" | "simple" | "none"
       "proxy": "https://api.example.com"
     },
     "examples": {
@@ -525,7 +527,7 @@ Options:
         "content": "documentation, api, guide"
       }
     ],
-    "indexing": "navigable"        // "navigable" | "all"
+    "indexing": "navigable" // "navigable" | "all"
   }
 }
 ```
@@ -676,21 +678,17 @@ Options:
     "dark": "#007A5A"
   },
   "navbar": {
-    "links": [
-      {"name": "Blog", "url": "https://blog.acme.com"}
-    ],
+    "links": [{ "name": "Blog", "url": "https://blog.acme.com" }],
     "primary": {
       "type": "github",
       "url": "https://github.com/acme/docs"
     }
   },
   "tabs": [
-    {"name": "Docs", "url": "docs"},
-    {"name": "API", "url": "api", "icon": "code"}
+    { "name": "Docs", "url": "docs" },
+    { "name": "API", "url": "api", "icon": "code" }
   ],
-  "anchors": [
-    {"name": "Community", "icon": "discord", "url": "https://discord.gg/acme"}
-  ],
+  "anchors": [{ "name": "Community", "icon": "discord", "url": "https://discord.gg/acme" }],
   "navigation": [
     {
       "group": "Getting Started",

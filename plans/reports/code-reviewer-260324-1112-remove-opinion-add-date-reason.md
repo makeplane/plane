@@ -37,6 +37,7 @@ None (no security vulnerabilities, no data loss).
 `IssueStoreActions.updateIssue` interface declares `data: TIssueUpdatePayload`, but the **implementation** at line 181 still types `data: Partial<TIssue>`. This means TypeScript accepts calls with `reason` but then passes `data` down to `currentStore.updateIssue(...)`, which is `BaseIssueStore.issueUpdate(... data: Partial<TIssue>)`. `issueUpdate` calls `this.issueService.patchIssue(... data)` — `patchIssue` does accept `TIssueUpdatePayload` now, so `reason` reaches the network. However, `this.rootIssueStore.issues.updateIssue(issueId, data)` (line 565 base-issues) accepts `Partial<TIssue>` and would try to merge `{ reason: "..." }` into the local MobX store cache — which means after an update the cached issue object gets a phantom `reason` property. This won't crash but creates dirty observable state.
 
 **Fix:** Change `issueUpdate` signature to accept `TIssueUpdatePayload`, and strip `reason` before calling `this.rootIssueStore.issues.updateIssue(issueId, data)`:
+
 ```ts
 const { reason: _reason, ...issueData } = data;
 this.rootIssueStore.issues.updateIssue(issueId, issueData);
@@ -59,6 +60,7 @@ This endpoint accepts `target_date` per issue with no reason validation and no r
 **File:** `apps/web/ce/components/issues/issue-details/sidebar/completed-at-property.tsx`
 
 `CompletedAtProperty.handleDateChange` is only triggered when the user picks a date. There is no "clear" affordance wired up in this component. The `CompletedAtDateTimePicker` child component may emit a clear/null value — if it does, `setPendingCompletedAt(null)` then `setIsReasonModalOpen(true)` would open the reason modal even for a clear, contradicting the "only require reason when SETTING a date" decision. Confirm the picker never emits `null` through `onChange`, or add a guard:
+
 ```ts
 const handleDateChange = (isoString: string | null) => {
   if (!isoString) {
@@ -86,6 +88,7 @@ When `target_date` or `completed_at` is cleared (set to null), the reason gate i
 **File:** `apps/web/core/components/issues/issue-detail/issue-activity/activity/activity-list.tsx` line 75–77
 
 `completed_at` has no explicit case in the switch — it falls through to `default` which also routes to `AdditionalActivityRoot`. This works, but is non-obvious and could cause a future regression if someone adds a `completed_at` case before `default`. Add an explicit case for `completed_at` alongside `target_date`:
+
 ```ts
 case "completed_at":
   return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;

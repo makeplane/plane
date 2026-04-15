@@ -43,6 +43,7 @@ WHY: Items may be related. Partial understanding = wrong implementation.
 **Human partner:** Trusted - implement after understanding, no performative agreement
 
 **External reviewers:**
+
 ```
 BEFORE implementing:
   1. Technically correct for THIS codebase?
@@ -99,13 +100,13 @@ IF reviewer suggests "implementing properly":
 
 ## Quick Reference
 
-| Mistake | Fix |
-|---------|-----|
-| Performative agreement | State requirement or act |
-| Blind implementation | Verify against codebase |
-| Batch without testing | One at a time |
-| Assuming reviewer right | Check if breaks things |
-| Avoiding pushback | Technical correctness > comfort |
+| Mistake                 | Fix                             |
+| ----------------------- | ------------------------------- |
+| Performative agreement  | State requirement or act        |
+| Blind implementation    | Verify against codebase         |
+| Batch without testing   | One at a time                   |
+| Assuming reviewer right | Check if breaks things          |
+| Avoiding pushback       | Technical correctness > comfort |
 
 ## Bottom Line
 

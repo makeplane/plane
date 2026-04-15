@@ -17,13 +17,14 @@ Add a "Sign out" button to the header of `/create-workspace` so users can log ou
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | [Implement Sign Out button](./phase-01-implement-sign-out-button.md) | complete | `apps/web/app/(all)/create-workspace/page.tsx` |
+| #   | Phase                                                                | Status   | File                                           |
+| --- | -------------------------------------------------------------------- | -------- | ---------------------------------------------- |
+| 1   | [Implement Sign Out button](./phase-01-implement-sign-out-button.md) | complete | `apps/web/app/(all)/create-workspace/page.tsx` |
 
 ## Validation Log
 
 ### Session 1 — 2026-03-04
+
 **Trigger:** Initial plan creation validation
 **Questions asked:** 3
 
@@ -45,14 +46,17 @@ Add a "Sign out" button to the header of `/create-workspace` so users can log ou
    - **Rationale:** Consistent with existing sidebar sign-out pattern; i18n-ready
 
 #### Confirmed Decisions
+
 - Button variant: `link-danger`
 - Loading state: none
 - Label: `t("sign_out")` with `LogOut` icon from lucide-react
 
 #### Action Items
+
 - [x] Update phase-01 with confirmed styling decisions
 
 #### Impact on Phases
+
 - Phase 1: Update implementation steps with correct variant, icon, i18n key
 
 ---

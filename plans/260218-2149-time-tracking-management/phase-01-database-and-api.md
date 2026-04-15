@@ -1,6 +1,7 @@
 # Phase 1: Database & API (Backend)
 
 ## Context Links
+
 - Model base: `apps/api/plane/db/models/base.py` (BaseModel with UUID pk, AuditModel)
 - ProjectBaseModel: `apps/api/plane/db/models/project.py:178` (auto-sets workspace from project)
 - Issue model: `apps/api/plane/db/models/issue.py` (has `estimate_point` FK, no time estimate)
@@ -10,12 +11,15 @@
 - Permissions: `apps/api/plane/app/permissions/` (allow_permission, ROLE)
 
 ## Overview
+
 - **Priority**: P1
 - **Status**: complete
 - Create IssueWorkLog model, add estimate_time to Issue, build CRUD API + summary endpoints.
 
 ## Key Insights
+
 <!-- Updated: Validation Session 2 - v0 API layer, enabled by default -->
+
 - `ProjectBaseModel` auto-sets workspace from project FK — use it for IssueWorkLog
 - `is_time_tracking_enabled` already exists on Project — gate API access behind it; **change default to True**
 - **Use v0 API layer** (`plane/app/`) following IssueComment pattern exactly
@@ -25,7 +29,9 @@
 - Add migration to set `is_time_tracking_enabled` default=True
 
 ## Requirements
+
 ### Functional
+
 - CRUD for worklog entries scoped to workspace/project/issue
 - Members can edit/delete only own entries; admins can edit/delete any
 - Time estimate field on issues (nullable integer minutes)
@@ -33,12 +39,15 @@
 - Workspace-level summary endpoint for cross-project reporting
 
 ### Non-functional
+
 - DB indexes on (issue_id, logged_by_id) and (project_id, logged_at)
 - Pagination on list endpoints
 - Gate behind `is_time_tracking_enabled` project setting
 
 ## Architecture
+
 ### IssueWorkLog Model
+
 ```python
 class IssueWorkLog(ProjectBaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_worklogs")
@@ -57,21 +66,26 @@ class IssueWorkLog(ProjectBaseModel):
 ```
 
 ### Issue Model Addition
+
 ```python
 estimate_time = models.PositiveIntegerField(null=True, blank=True)  # minutes
 ```
 
 ### API Endpoints
+
 <!-- Updated: Validation Session 2 - Use v0 API layer (plane/app/), not v1 -->
-| Method | Path | Description |
-|--------|------|-------------|
-| GET/POST | `/api/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | List/Create |
-| GET/PUT/DELETE | `/api/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | Detail |
-| GET | `/api/workspaces/{slug}/projects/{pid}/worklogs/summary/` | Project summary |
-| GET | `/api/workspaces/{slug}/time-tracking/summary/` | Workspace summary |
+
+| Method         | Path                                                                | Description       |
+| -------------- | ------------------------------------------------------------------- | ----------------- |
+| GET/POST       | `/api/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | List/Create       |
+| GET/PUT/DELETE | `/api/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | Detail            |
+| GET            | `/api/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | Project summary   |
+| GET            | `/api/workspaces/{slug}/time-tracking/summary/`                     | Workspace summary |
 
 ## Related Code Files
+
 ### Create
+
 - `apps/api/plane/db/models/worklog.py` — IssueWorkLog model
 - `apps/api/plane/app/serializers/worklog.py` — serializers
 - `apps/api/plane/app/views/issue/worklog.py` — viewset
@@ -80,6 +94,7 @@ estimate_time = models.PositiveIntegerField(null=True, blank=True)  # minutes
 - Migration file for IssueWorkLog + estimate_time on Issue
 
 ### Modify
+
 - `apps/api/plane/db/models/__init__.py` — add IssueWorkLog import
 - `apps/api/plane/db/models/issue.py` — add estimate_time field
 - `apps/api/plane/app/serializers/__init__.py` — add serializer imports
@@ -98,7 +113,7 @@ estimate_time = models.PositiveIntegerField(null=True, blank=True)  # minutes
    - `apps/api/plane/db/models/issue.py`: add `estimate_time = models.PositiveIntegerField(null=True, blank=True)`
    - After `type` field (line ~168)
 
-3. **Register in __init__.py**
+3. **Register in **init**.py**
    - `apps/api/plane/db/models/__init__.py`: `from .worklog import IssueWorkLog`
 
 4. **Create migration**
@@ -136,9 +151,10 @@ estimate_time = models.PositiveIntegerField(null=True, blank=True)  # minutes
 12. **Issue activity integration** — fire `issue_activity` task on worklog create/update/delete with `WORKLOG` type
 
 ## Todo List
+
 - [ ] Create IssueWorkLog model
 - [ ] Add estimate_time to Issue model
-- [ ] Register model in __init__.py
+- [ ] Register model in **init**.py
 - [ ] Create and run migration
 - [ ] Create worklog serializers
 - [ ] Add estimate_time to Issue serializer
@@ -150,6 +166,7 @@ estimate_time = models.PositiveIntegerField(null=True, blank=True)  # minutes
 - [ ] Test API endpoints manually
 
 ## Success Criteria
+
 - Migration runs cleanly
 - CRUD operations work via API
 - Summary endpoints return correct aggregations
@@ -157,14 +174,17 @@ estimate_time = models.PositiveIntegerField(null=True, blank=True)  # minutes
 - Own-entry restriction enforced for non-admins
 
 ## Risk Assessment
+
 - **Migration conflicts**: Other branches may add Issue fields simultaneously → coordinate merge
 - **Performance**: Summary queries on large datasets → add DB indexes, use `.only()` selectively
 
 ## Security Considerations
+
 - Permission check: project membership required
 - Owner check: non-admins can only modify own worklogs
 - Feature gate: check `is_time_tracking_enabled` before allowing operations
 - Input validation: duration_minutes > 0, logged_at not in far future
 
 ## Next Steps
+
 - Phase 2: TypeScript types matching these API responses

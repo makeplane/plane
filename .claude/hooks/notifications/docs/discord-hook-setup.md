@@ -71,26 +71,31 @@ Discord notifications are sent via `notify.cjs` + `providers/discord.cjs`. The b
 ### 2. Configure Environment Variables
 
 Environment variables are loaded with this priority (highest to lowest):
+
 1. **process.env** - System/shell environment variables
 2. **.claude/.env** - Project-level Claude configuration
 3. **.claude/hooks/.env** - Hook-specific configuration
 
 **Option A: Project Root `.env`** (recommended):
+
 ```bash
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
 ```
 
 **Option B: `.claude/.env`** (project-level override):
+
 ```bash
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
 ```
 
 **Option C: `.claude/hooks/.env`** (hook-specific):
+
 ```bash
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
 ```
 
 **Example:**
+
 ```bash
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1234567890/AbCdEfGhIjKlMnOpQrStUvWxYz
 ```
@@ -114,6 +119,7 @@ Add `.env` to `.gitignore` to prevent committing webhook URLs:
 **Cause:** Environment variable not loaded or `.env` file missing
 
 **Solutions:**
+
 1. Verify `.env` file exists in project root
 2. Check `.env` contains `DISCORD_WEBHOOK_URL=...` line
 3. Ensure no extra spaces around `=` sign
@@ -131,6 +137,7 @@ Add `.env` to `.gitignore` to prevent committing webhook URLs:
    - If deleted, create new webhook and update `.env`
 
 2. **Test webhook directly:**
+
    ```bash
    curl -X POST "YOUR_WEBHOOK_URL" \
      -H "Content-Type: application/json" \
@@ -145,6 +152,7 @@ Add `.env` to `.gitignore` to prevent committing webhook URLs:
 ## Security Best Practices
 
 1. **Never commit webhook URLs:**
+
    ```bash
    # .gitignore
    .env
@@ -160,6 +168,7 @@ Add `.env` to `.gitignore` to prevent committing webhook URLs:
    - Update `.env` file
 
 4. **Use separate webhooks per environment:**
+
    ```bash
    # .env.development
    DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/.../dev-channel

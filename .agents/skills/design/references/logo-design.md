@@ -4,11 +4,11 @@ AI-powered logo design with 55+ styles, 30 color palettes, 25 industry guides. U
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `scripts/logo/search.py` | Search styles, colors, industries; generate design briefs |
-| `scripts/logo/generate.py` | Generate logos with Gemini Nano Banana |
-| `scripts/logo/core.py` | BM25 search engine for logo data |
+| Script                     | Purpose                                                   |
+| -------------------------- | --------------------------------------------------------- |
+| `scripts/logo/search.py`   | Search styles, colors, industries; generate design briefs |
+| `scripts/logo/generate.py` | Generate logos with Gemini Nano Banana                    |
+| `scripts/logo/core.py`     | BM25 search engine for logo data                          |
 
 ## Commands
 
@@ -44,32 +44,32 @@ Options: `--style`, `--industry`, `--prompt`
 
 ## Available Styles
 
-| Category | Styles |
-|----------|--------|
-| General | Minimalist, Wordmark, Lettermark, Pictorial Mark, Abstract Mark, Mascot, Emblem, Combination Mark |
-| Aesthetic | Vintage/Retro, Art Deco, Luxury, Playful, Corporate, Organic, Neon, Grunge, Watercolor |
-| Modern | Gradient, Flat Design, 3D/Isometric, Geometric, Line Art, Duotone, Motion-Ready |
-| Clever | Negative Space, Monoline, Split/Fragmented, Responsive/Adaptive |
+| Category  | Styles                                                                                            |
+| --------- | ------------------------------------------------------------------------------------------------- |
+| General   | Minimalist, Wordmark, Lettermark, Pictorial Mark, Abstract Mark, Mascot, Emblem, Combination Mark |
+| Aesthetic | Vintage/Retro, Art Deco, Luxury, Playful, Corporate, Organic, Neon, Grunge, Watercolor            |
+| Modern    | Gradient, Flat Design, 3D/Isometric, Geometric, Line Art, Duotone, Motion-Ready                   |
+| Clever    | Negative Space, Monoline, Split/Fragmented, Responsive/Adaptive                                   |
 
 ## Color Psychology
 
-| Color | Psychology | Best For |
-|-------|------------|----------|
-| Blue | Trust, stability | Finance, tech, healthcare |
-| Green | Growth, natural | Eco, wellness, organic |
-| Red | Energy, passion | Food, sports, entertainment |
-| Gold | Luxury, premium | Fashion, jewelry, hotels |
-| Purple | Creative, innovative | Beauty, creative, tech |
+| Color  | Psychology           | Best For                    |
+| ------ | -------------------- | --------------------------- |
+| Blue   | Trust, stability     | Finance, tech, healthcare   |
+| Green  | Growth, natural      | Eco, wellness, organic      |
+| Red    | Energy, passion      | Food, sports, entertainment |
+| Gold   | Luxury, premium      | Fashion, jewelry, hotels    |
+| Purple | Creative, innovative | Beauty, creative, tech      |
 
 ## Industry Defaults
 
-| Industry | Style | Colors | Typography |
-|----------|-------|--------|------------|
-| Tech | Minimalist, Abstract | Blues, purples, gradients | Geometric sans |
-| Healthcare | Professional, Line Art | Blues, greens, teals | Clean sans |
-| Finance | Corporate, Emblem | Navy, gold | Serif or clean sans |
-| Food | Vintage Badge, Mascot | Warm reds, oranges | Friendly, script |
-| Fashion | Wordmark, Luxury | Black, gold, white | Elegant serif |
+| Industry   | Style                  | Colors                    | Typography          |
+| ---------- | ---------------------- | ------------------------- | ------------------- |
+| Tech       | Minimalist, Abstract   | Blues, purples, gradients | Geometric sans      |
+| Healthcare | Professional, Line Art | Blues, greens, teals      | Clean sans          |
+| Finance    | Corporate, Emblem      | Navy, gold                | Serif or clean sans |
+| Food       | Vintage Badge, Mascot  | Warm reds, oranges        | Friendly, script    |
+| Fashion    | Wordmark, Luxury       | Black, gold, white        | Elegant serif       |
 
 ## Workflow
 

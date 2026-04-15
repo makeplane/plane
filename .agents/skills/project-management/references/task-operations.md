@@ -19,6 +19,7 @@ TaskCreate(
 ```
 
 **Parameters:**
+
 - `subject` (required): Imperative title, <60 chars ("Implement X", "Add Y", "Fix Z")
 - `description` (required): Detailed requirements + acceptance criteria
 - `activeForm` (optional): Present-continuous shown in spinner ("Implementing X")
@@ -42,6 +43,7 @@ TaskUpdate(
 **Status lifecycle:** `pending` → `in_progress` → `completed`
 
 **Dependency fields:**
+
 - `addBlockedBy`: "I cannot start until these tasks complete"
 - `addBlocks`: "These tasks cannot start until I complete"
 - `owner`: Assign to specific agent
@@ -66,13 +68,13 @@ Step 3.4 (addBlockedBy: [P2-id])   ← critical steps share phase dependency
 
 ## When to Use Tasks
 
-| Scenario | Tasks? | Why |
-|----------|--------|-----|
-| Multi-phase feature (3+) | Yes | Track progress, enable parallel |
-| Complex dependencies | Yes | Automatic unblocking |
-| Parallel agent work | Yes | Shared progress tracking |
-| Single-phase quick fix | No | Overhead exceeds benefit |
-| <3 related steps | No | Just do them directly |
+| Scenario                 | Tasks? | Why                             |
+| ------------------------ | ------ | ------------------------------- |
+| Multi-phase feature (3+) | Yes    | Track progress, enable parallel |
+| Complex dependencies     | Yes    | Automatic unblocking            |
+| Parallel agent work      | Yes    | Shared progress tracking        |
+| Single-phase quick fix   | No     | Overhead exceeds benefit        |
+| <3 related steps         | No     | Just do them directly           |
 
 **3-Task Rule:** <3 tasks → skip creation, overhead not worth it.
 

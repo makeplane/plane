@@ -34,14 +34,14 @@ rmbg image.jpg -r 4096 -o image-4k.png
 
 ## Available Models
 
-| Model | Size | Speed | Quality | Use Case |
-|-------|------|-------|---------|----------|
-| `u2netp` | 4.5MB | ⚡⚡⚡ Fastest | Fair | Batch processing |
-| `modnet` | 25MB | ⚡⚡ Fast | Good | Default, balanced |
-| `briaai` | 44MB | ⚡ Slower | Excellent | High-quality |
-| `isnet-anime` | 168MB | ⚡ Slower | Specialized | Anime/manga |
-| `silueta` | 43MB | ⚡⚡⚡ Fast | Good | Portraits |
-| `u2net-cloth` | 170MB | ⚡ Slower | Specialized | Fashion/clothing |
+| Model         | Size  | Speed          | Quality     | Use Case          |
+| ------------- | ----- | -------------- | ----------- | ----------------- |
+| `u2netp`      | 4.5MB | ⚡⚡⚡ Fastest | Fair        | Batch processing  |
+| `modnet`      | 25MB  | ⚡⚡ Fast      | Good        | Default, balanced |
+| `briaai`      | 44MB  | ⚡ Slower      | Excellent   | High-quality      |
+| `isnet-anime` | 168MB | ⚡ Slower      | Specialized | Anime/manga       |
+| `silueta`     | 43MB  | ⚡⚡⚡ Fast    | Good        | Portraits         |
+| `u2net-cloth` | 170MB | ⚡ Slower      | Specialized | Fashion/clothing  |
 
 ## Examples
 

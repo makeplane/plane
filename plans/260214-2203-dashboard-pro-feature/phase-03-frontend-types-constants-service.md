@@ -210,10 +210,7 @@ export interface IDashboardDetail extends IDashboard {
 }
 
 // Dashboard creation payload
-export type TDashboardCreate = Pick<
-  IDashboard,
-  "name" | "description" | "logo_props" | "config"
->;
+export type TDashboardCreate = Pick<IDashboard, "name" | "description" | "logo_props" | "config">;
 
 // Dashboard update payload
 export type TDashboardUpdate = Partial<TDashboardCreate> & {
@@ -224,12 +221,7 @@ export type TDashboardUpdate = Partial<TDashboardCreate> & {
 // Widget creation payload
 export type TWidgetCreate = Pick<
   IDashboardWidget,
-  | "widget_type"
-  | "title"
-  | "chart_property"
-  | "chart_metric"
-  | "config"
-  | "position"
+  "widget_type" | "title" | "chart_property" | "chart_metric" | "config" | "position"
 >;
 
 // Widget update payload
@@ -478,10 +470,7 @@ export class DashboardService extends APIService {
    * @param data - Dashboard creation payload
    * @returns Promise resolving to created dashboard
    */
-  async createDashboard(
-    workspaceSlug: string,
-    data: TDashboardCreate
-  ): Promise<IDashboard> {
+  async createDashboard(workspaceSlug: string, data: TDashboardCreate): Promise<IDashboard> {
     return this.post(`/api/workspaces/${workspaceSlug}/dashboards/`, data)
       .then((res) => res?.data)
       .catch((err) => {
@@ -495,10 +484,7 @@ export class DashboardService extends APIService {
    * @param dashboardId - Dashboard ID
    * @returns Promise resolving to dashboard detail
    */
-  async getDashboard(
-    workspaceSlug: string,
-    dashboardId: string
-  ): Promise<IDashboardDetail> {
+  async getDashboard(workspaceSlug: string, dashboardId: string): Promise<IDashboardDetail> {
     return this.get(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/`)
       .then((res) => res?.data)
       .catch((err) => {
@@ -513,15 +499,8 @@ export class DashboardService extends APIService {
    * @param data - Dashboard update payload
    * @returns Promise resolving to updated dashboard
    */
-  async updateDashboard(
-    workspaceSlug: string,
-    dashboardId: string,
-    data: TDashboardUpdate
-  ): Promise<IDashboard> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/`,
-      data
-    )
+  async updateDashboard(workspaceSlug: string, dashboardId: string, data: TDashboardUpdate): Promise<IDashboard> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/`, data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -533,10 +512,7 @@ export class DashboardService extends APIService {
    * @param workspaceSlug - Workspace slug
    * @param dashboardId - Dashboard ID
    */
-  async deleteDashboard(
-    workspaceSlug: string,
-    dashboardId: string
-  ): Promise<void> {
+  async deleteDashboard(workspaceSlug: string, dashboardId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/`)
       .then((res) => res?.data)
       .catch((err) => {
@@ -550,13 +526,8 @@ export class DashboardService extends APIService {
    * @param dashboardId - Dashboard ID
    * @returns Promise resolving to array of widgets
    */
-  async getWidgets(
-    workspaceSlug: string,
-    dashboardId: string
-  ): Promise<IDashboardWidget[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/`
-    )
+  async getWidgets(workspaceSlug: string, dashboardId: string): Promise<IDashboardWidget[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -570,15 +541,8 @@ export class DashboardService extends APIService {
    * @param data - Widget creation payload
    * @returns Promise resolving to created widget
    */
-  async createWidget(
-    workspaceSlug: string,
-    dashboardId: string,
-    data: TWidgetCreate
-  ): Promise<IDashboardWidget> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/`,
-      data
-    )
+  async createWidget(workspaceSlug: string, dashboardId: string, data: TWidgetCreate): Promise<IDashboardWidget> {
+    return this.post(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/`, data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -592,14 +556,8 @@ export class DashboardService extends APIService {
    * @param widgetId - Widget ID
    * @returns Promise resolving to widget
    */
-  async getWidget(
-    workspaceSlug: string,
-    dashboardId: string,
-    widgetId: string
-  ): Promise<IDashboardWidget> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/`
-    )
+  async getWidget(workspaceSlug: string, dashboardId: string, widgetId: string): Promise<IDashboardWidget> {
+    return this.get(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -620,10 +578,7 @@ export class DashboardService extends APIService {
     widgetId: string,
     data: TWidgetUpdate
   ): Promise<IDashboardWidget> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/`, data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -636,14 +591,8 @@ export class DashboardService extends APIService {
    * @param dashboardId - Dashboard ID
    * @param widgetId - Widget ID
    */
-  async deleteWidget(
-    workspaceSlug: string,
-    dashboardId: string,
-    widgetId: string
-  ): Promise<void> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/`
-    )
+  async deleteWidget(workspaceSlug: string, dashboardId: string, widgetId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -664,10 +613,7 @@ export class DashboardService extends APIService {
     widgetId: string,
     params?: Record<string, any>
   ): Promise<IChartData | INumberWidgetData> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/data/`,
-      { params }
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/data/`, { params })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -751,12 +697,15 @@ describe("DashboardService", () => {
 ## Risk Assessment
 
 **Risk**: Type definitions don't match backend response
+
 - **Mitigation**: Use backend serializer fields to define interfaces
 
 **Risk**: Color preset hex codes invalid
+
 - **Mitigation**: Test colors in browser dev tools
 
 **Risk**: Service methods have incorrect signatures
+
 - **Mitigation**: Add unit tests verifying method signatures
 
 ## Security Considerations
@@ -769,6 +718,7 @@ describe("DashboardService", () => {
 ## Next Steps
 
 Proceed to [Phase 4: Frontend MobX Store](./phase-04-frontend-store.md)
+
 - Create DashboardStore with MobX observables
 - Implement actions for CRUD operations
 - Add computed properties for derived state

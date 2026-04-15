@@ -21,12 +21,14 @@ Enable AI assistant in `docs.json`:
 ### Features
 
 **Conversational Search:**
+
 - Natural language queries
 - Context-aware responses
 - Source citations from docs
 - Follow-up questions
 
 **Capabilities:**
+
 - Search across all documentation
 - Answer technical questions
 - Provide code examples
@@ -36,6 +38,7 @@ Enable AI assistant in `docs.json`:
 ### Customization
 
 **Custom Prompt:**
+
 ```json
 {
   "search": {
@@ -46,6 +49,7 @@ Enable AI assistant in `docs.json`:
 ```
 
 **Search Scope:**
+
 ```json
 {
   "search": {
@@ -62,6 +66,7 @@ Optimize documentation for LLM consumption and indexing.
 ### What is llms.txt?
 
 Special file format that makes documentation machine-readable for AI models:
+
 - Structured content for LLMs
 - Optimized token usage
 - Hierarchical organization
@@ -128,11 +133,13 @@ Security best practices
 ### Use Cases
 
 **Feed to LLMs:**
+
 - Provide entire docs context to ChatGPT, Claude, etc.
 - Enable AI to answer questions about your product
 - Generate code examples based on documentation
 
 **RAG Systems:**
+
 - Index for retrieval-augmented generation
 - Build custom AI assistants
 - Create documentation chatbots
@@ -144,6 +151,7 @@ Make documentation agent-ready with skill definitions.
 ### What is skill.md?
 
 Defines your API/product as a "skill" that AI agents can execute:
+
 - Function signatures
 - Parameter schemas
 - Authentication requirements
@@ -157,7 +165,7 @@ Mintlify auto-generates `skill.md` from OpenAPI specs.
 
 ### Format
 
-```markdown
+````markdown
 # API Skills
 
 ## Create User
@@ -167,6 +175,7 @@ Create a new user account
 **Function:** `createUser`
 
 **Parameters:**
+
 - `email` (string, required) - User email address
 - `name` (string, required) - Full name
 - `password` (string, required) - Password (min 8 chars)
@@ -174,6 +183,7 @@ Create a new user account
 **Returns:** User object with ID and timestamps
 
 **Example:**
+
 ```json
 {
   "email": "user@example.com",
@@ -181,8 +191,10 @@ Create a new user account
   "password": "SecurePass123"
 }
 ```
+````
 
 **Response:**
+
 ```json
 {
   "id": "usr_abc123",
@@ -199,12 +211,14 @@ Retrieve paginated list of users
 **Function:** `listUsers`
 
 **Parameters:**
+
 - `page` (number, optional) - Page number (default: 1)
 - `limit` (number, optional) - Items per page (default: 10)
 - `sort` (string, optional) - Sort field (default: created_at)
 
 **Returns:** Array of user objects with pagination metadata
-```
+
+````
 
 ### Configuration
 
@@ -221,17 +235,19 @@ Customize skill.md generation:
     }
   }
 }
-```
+````
 
 ### Use Cases
 
 **AI Agents:**
+
 - Claude Code, Cursor, Windsurf
 - Auto-discover API capabilities
 - Generate correct API calls
 - Handle errors appropriately
 
 **Documentation Tools:**
+
 - Auto-complete in IDEs
 - API client generation
 - Testing frameworks
@@ -243,6 +259,7 @@ Expose documentation through Model Context Protocol for AI tools.
 ### What is MCP?
 
 Protocol that allows AI tools to access and interact with documentation:
+
 - Standardized interface
 - Real-time doc access
 - Function calling support
@@ -270,16 +287,19 @@ Enable MCP in `docs.json`:
 ### MCP Capabilities
 
 **Resources:**
+
 - List all documentation pages
 - Read page content
 - Access metadata
 
 **Search:**
+
 - Full-text search
 - Semantic search
 - Filter by section
 
 **Navigation:**
+
 - Get navigation structure
 - Find related pages
 - Access breadcrumbs
@@ -287,6 +307,7 @@ Enable MCP in `docs.json`:
 ### MCP Client Integration
 
 **Claude Desktop:**
+
 ```json
 {
   "mcpServers": {
@@ -299,6 +320,7 @@ Enable MCP in `docs.json`:
 ```
 
 **VSCode with Continue:**
+
 ```json
 {
   "contextProviders": [
@@ -320,16 +342,7 @@ Quick access to AI tools from documentation pages.
 ```json
 {
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
   }
 }
 ```
@@ -337,48 +350,56 @@ Quick access to AI tools from documentation pages.
 ### Available Options
 
 **copy** - Copy page content to clipboard
+
 ```
 Copies: Markdown content with frontmatter
 Use: Paste into any editor or tool
 ```
 
 **view** - View raw markdown source
+
 ```
 Opens: Raw .mdx file content
 Use: See exact markdown structure
 ```
 
 **chatgpt** - Open in ChatGPT
+
 ```
 Action: Opens ChatGPT with page context
 Prompt: "Explain this documentation: [content]"
 ```
 
 **claude** - Open in Claude
+
 ```
 Action: Opens Claude.ai with page context
 Prompt: "Help me understand: [content]"
 ```
 
 **perplexity** - Open in Perplexity
+
 ```
 Action: Search Perplexity with page topic
 Query: Key concepts from page
 ```
 
 **mcp** - Copy MCP resource URI
+
 ```
 Copies: MCP resource identifier
 Use: Reference in MCP-enabled tools
 ```
 
 **cursor** - Open in Cursor editor
+
 ```
 Action: cursor://open?url=[page-url]
 Use: Edit in Cursor IDE
 ```
 
 **vscode** - Open in VS Code
+
 ```
 Action: vscode://file/[local-path]
 Use: Edit in VS Code
@@ -441,6 +462,7 @@ AI-powered Discord bot for documentation queries.
 ### Usage
 
 **Search Documentation:**
+
 ```
 !docs search authentication
 !docs how to create API key
@@ -448,12 +470,14 @@ AI-powered Discord bot for documentation queries.
 ```
 
 **Get Page:**
+
 ```
 !docs page introduction
 !docs link api/users
 ```
 
 **Ask Questions:**
+
 ```
 !docs What authentication methods are supported?
 !docs How do I paginate results?
@@ -502,6 +526,7 @@ AI assistant for Slack workspaces.
 ### Usage
 
 **Ask Questions:**
+
 ```
 @DocsBot How do I authenticate API requests?
 @DocsBot Show me user creation example
@@ -509,12 +534,14 @@ AI assistant for Slack workspaces.
 ```
 
 **Search:**
+
 ```
 /docs search webhooks
 /docs find deployment guide
 ```
 
 **Get Updates:**
+
 ```
 /docs subscribe api-updates
 /docs notifications on
@@ -540,12 +567,7 @@ AI agent for automated documentation tasks.
   "ai": {
     "agent": {
       "enabled": true,
-      "capabilities": [
-        "suggest-improvements",
-        "detect-outdated",
-        "generate-examples",
-        "fix-broken-links"
-      ],
+      "capabilities": ["suggest-improvements", "detect-outdated", "generate-examples", "fix-broken-links"],
       "schedule": "daily",
       "notifications": {
         "slack": "#docs-updates",
@@ -559,24 +581,28 @@ AI agent for automated documentation tasks.
 ### Capabilities
 
 **Suggest Improvements:**
+
 - Identify unclear explanations
 - Suggest better wording
 - Recommend additional examples
 - Highlight missing sections
 
 **Detect Outdated Content:**
+
 - Compare with codebase
 - Check API version compatibility
 - Flag deprecated features
 - Identify stale examples
 
 **Generate Examples:**
+
 - Auto-generate code examples
 - Create usage scenarios
 - Build tutorial content
 - Produce troubleshooting guides
 
 **Fix Broken Links:**
+
 - Scan for 404s
 - Update redirected URLs
 - Fix internal references
@@ -614,21 +640,13 @@ Configure automated workflows:
         "name": "Weekly Review",
         "trigger": "schedule",
         "schedule": "0 9 * * MON",
-        "actions": [
-          "detect-outdated",
-          "broken-links",
-          "suggest-improvements"
-        ],
+        "actions": ["detect-outdated", "broken-links", "suggest-improvements"],
         "output": "slack"
       },
       {
         "name": "PR Review",
         "trigger": "pull_request",
-        "actions": [
-          "validate-changes",
-          "suggest-examples",
-          "check-consistency"
-        ],
+        "actions": ["validate-changes", "suggest-examples", "check-consistency"],
         "output": "github"
       }
     ]
@@ -643,6 +661,7 @@ Programmatic access to AI features.
 ### Endpoints
 
 **Search:**
+
 ```bash
 curl -X POST https://api.mintlify.com/v1/ai/search \
   -H "Authorization: Bearer YOUR_API_KEY" \
@@ -654,6 +673,7 @@ curl -X POST https://api.mintlify.com/v1/ai/search \
 ```
 
 **Ask Question:**
+
 ```bash
 curl -X POST https://api.mintlify.com/v1/ai/ask \
   -H "Authorization: Bearer YOUR_API_KEY" \
@@ -665,6 +685,7 @@ curl -X POST https://api.mintlify.com/v1/ai/ask \
 ```
 
 **Generate Example:**
+
 ```bash
 curl -X POST https://api.mintlify.com/v1/ai/generate \
   -H "Authorization: Bearer YOUR_API_KEY" \
@@ -679,14 +700,15 @@ curl -X POST https://api.mintlify.com/v1/ai/generate \
 ### SDK Usage
 
 **JavaScript:**
-```javascript
-import { MintlifyAI } from '@mintlify/ai';
 
-const ai = new MintlifyAI({ apiKey: 'YOUR_API_KEY' });
+```javascript
+import { MintlifyAI } from "@mintlify/ai";
+
+const ai = new MintlifyAI({ apiKey: "YOUR_API_KEY" });
 
 const answer = await ai.ask({
-  question: 'How do I authenticate API requests?',
-  context: ['api/authentication']
+  question: "How do I authenticate API requests?",
+  context: ["api/authentication"],
 });
 
 console.log(answer.response);
@@ -694,6 +716,7 @@ console.log(answer.sources);
 ```
 
 **Python:**
+
 ```python
 from mintlify import MintlifyAI
 
@@ -715,18 +738,21 @@ Track AI feature usage and effectiveness.
 ### AI Metrics
 
 **Search Analytics:**
+
 - Popular queries
 - Query success rate
 - Zero-result searches
 - Click-through rates
 
 **Question Analytics:**
+
 - Most asked questions
 - Response accuracy
 - User satisfaction ratings
 - Follow-up questions
 
 **Usage Patterns:**
+
 - Peak usage times
 - User segments
 - Feature adoption
@@ -735,6 +761,7 @@ Track AI feature usage and effectiveness.
 ### Dashboard
 
 View AI analytics in Mintlify dashboard:
+
 - AI > Analytics
 - Filter by date range
 - Export reports

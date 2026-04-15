@@ -64,6 +64,7 @@ Telegram notifications are sent via `notify.cjs` + `providers/telegram.cjs`. The
 1. Open Telegram and search for **@BotFather**
 2. Send `/newbot` command
 3. Follow the prompts:
+
    ```
    BotFather: Alright, a new bot. How are we going to call it?
    You: Claude Code Notifier
@@ -71,6 +72,7 @@ Telegram notifications are sent via `notify.cjs` + `providers/telegram.cjs`. The
    BotFather: Good. Now let's choose a username for your bot.
    You: claudecode_notifier_bot
    ```
+
 4. BotFather will respond with your bot token:
    ```
    Done! Congratulations on your new bot...
@@ -95,16 +97,18 @@ You need a chat ID to specify where notifications should be sent.
    ```json
    {
      "ok": true,
-     "result": [{
-       "update_id": 123456789,
-       "message": {
-         "chat": {
-           "id": 987654321,
-           "first_name": "Your Name",
-           "type": "private"
+     "result": [
+       {
+         "update_id": 123456789,
+         "message": {
+           "chat": {
+             "id": 987654321,
+             "first_name": "Your Name",
+             "type": "private"
+           }
          }
        }
-     }]
+     ]
    }
    ```
 5. Copy the chat ID (e.g., `987654321`)
@@ -128,20 +132,23 @@ You need a chat ID to specify where notifications should be sent.
    ```json
    {
      "ok": true,
-     "result": [{
-       "message": {
-         "chat": {
-           "id": -100123456789,
-           "title": "Dev Team",
-           "type": "supergroup"
+     "result": [
+       {
+         "message": {
+           "chat": {
+             "id": -100123456789,
+             "title": "Dev Team",
+             "type": "supergroup"
+           }
          }
        }
-     }]
+     ]
    }
    ```
 6. Copy the chat ID (negative number for groups, e.g., `-100123456789`)
 
 **Quick Command to Get Chat ID:**
+
 ```bash
 curl -s "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates" | jq '.result[-1].message.chat.id'
 ```
@@ -149,6 +156,7 @@ curl -s "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates" | jq '.result[
 ### 3. Configure Environment Variables
 
 Environment variables are loaded with this priority (highest to lowest):
+
 1. **process.env** - System/shell environment variables
 2. **.claude/.env** - Project-level Claude configuration
 3. **.claude/hooks/.env** - Hook-specific configuration
@@ -167,11 +175,13 @@ export TELEGRAM_CHAT_ID="987654321"
 ```
 
 **Reload shell:**
+
 ```bash
 source ~/.bash_profile  # or ~/.bashrc or ~/.zshrc
 ```
 
 **Verify:**
+
 ```bash
 echo $TELEGRAM_BOT_TOKEN
 echo $TELEGRAM_CHAT_ID
@@ -189,6 +199,7 @@ TELEGRAM_CHAT_ID=987654321
 ```
 
 **Secure the file:**
+
 ```bash
 # Add to .gitignore
 echo ".env" >> .gitignore
@@ -222,18 +233,26 @@ Hooks are configured in `.claude/settings.local.json`:
 ```json
 {
   "hooks": {
-    "Stop": [{
-      "hooks": [{
-        "type": "command",
-        "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/notifications/notify.cjs"
-      }]
-    }],
-    "SubagentStop": [{
-      "hooks": [{
-        "type": "command",
-        "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/notifications/notify.cjs"
-      }]
-    }]
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/notifications/notify.cjs"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/notifications/notify.cjs"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -267,6 +286,7 @@ Check your Telegram chat for the test notification.
 **Triggered when:** Main Claude Code session ends (user stops Claude or task completes)
 
 **Includes:**
+
 - Total tool operations count
 - Tool usage breakdown (with counts)
 - List of modified files
@@ -275,6 +295,7 @@ Check your Telegram chat for the test notification.
 - Project name and location
 
 **Example notification:**
+
 ```
 🚀 Project Task Completed
 
@@ -285,13 +306,15 @@ Check your Telegram chat for the test notification.
 
 Tools Used:
 ```
-   5 Edit
-   3 Read
-   2 Bash
-   2 Write
-   1 TodoWrite
-   1 Grep
-   1 Glob
+
+5 Edit
+3 Read
+2 Bash
+2 Write
+1 TodoWrite
+1 Grep
+1 Glob
+
 ```
 
 Files Modified:
@@ -307,6 +330,7 @@ Files Modified:
 **Triggered when:** Specialized subagent completes its task
 
 **Subagent Types:**
+
 - `planner` - Implementation planning
 - `tester` - Test execution and analysis
 - `debugger` - Log collection and debugging
@@ -316,6 +340,7 @@ Files Modified:
 - `project-manager` - Progress tracking
 
 **Example notification:**
+
 ```
 🤖 Project Subagent Completed
 
@@ -332,6 +357,7 @@ Specialized agent completed its task.
 ## Notification Examples
 
 ### Basic Implementation Task
+
 ```
 🚀 Project Task Completed
 
@@ -342,10 +368,12 @@ Specialized agent completed its task.
 
 Tools Used:
 ```
-   3 Edit
-   2 Read
-   2 Bash
-   1 Write
+
+3 Edit
+2 Read
+2 Bash
+1 Write
+
 ```
 
 Files Modified:
@@ -356,6 +384,7 @@ Files Modified:
 ```
 
 ### Complex Feature Development
+
 ```
 🚀 Project Task Completed
 
@@ -366,11 +395,13 @@ Files Modified:
 
 Tools Used:
 ```
-  12 Edit
-   6 Read
-   3 Write
-   2 Bash
-   1 TodoWrite
+
+12 Edit
+6 Read
+3 Write
+2 Bash
+1 TodoWrite
+
 ```
 
 Files Modified:
@@ -386,6 +417,7 @@ Files Modified:
 ```
 
 ### Subagent Completion
+
 ```
 🤖 Project Subagent Completed
 
@@ -408,17 +440,20 @@ Specialized agent completed its task.
 **Solutions:**
 
 1. **Verify environment variables:**
+
    ```bash
    echo $TELEGRAM_BOT_TOKEN
    echo $TELEGRAM_CHAT_ID
    ```
 
 2. **If using global config, reload shell:**
+
    ```bash
    source ~/.bash_profile  # or ~/.bashrc or ~/.zshrc
    ```
 
 3. **If using project `.env`, verify file exists:**
+
    ```bash
    ls -la .env
    cat .env | grep TELEGRAM_
@@ -436,6 +471,7 @@ Specialized agent completed its task.
 
 1. Follow "Get Chat ID" steps in setup section
 2. Verify chat ID is a number without quotes:
+
    ```bash
    # Correct
    export TELEGRAM_CHAT_ID="123456789"
@@ -455,12 +491,15 @@ Specialized agent completed its task.
    - For group: Add bot and send message mentioning it
 
 2. **Verify bot token is correct:**
+
    ```bash
    curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getMe"
    ```
+
    Should return bot info. If error, token is invalid.
 
 3. **Verify chat ID is correct:**
+
    ```bash
    curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
      -d "chat_id=$TELEGRAM_CHAT_ID" \
@@ -484,22 +523,26 @@ Specialized agent completed its task.
 **Solutions:**
 
 **macOS:**
+
 ```bash
 brew install jq
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt-get update
 sudo apt-get install jq
 ```
 
 **CentOS/RHEL:**
+
 ```bash
 sudo yum install jq
 ```
 
 **Verify installation:**
+
 ```bash
 jq --version
 ```
@@ -511,6 +554,7 @@ jq --version
 **Solutions:**
 
 1. **Verify `.claude/settings.local.json` exists and is valid JSON:**
+
    ```bash
    cat .claude/settings.local.json | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d)))"
    ```
@@ -542,6 +586,7 @@ jq --version
 Send notifications to different chats based on event type:
 
 **.env file:**
+
 ```bash
 TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
 TELEGRAM_CHAT_ID=123456789          # Default
@@ -550,6 +595,7 @@ TELEGRAM_CHAT_ID_ERROR=987654321    # Error notifications
 ```
 
 **Set per-event env vars in `.env`:**
+
 ```bash
 TELEGRAM_CHAT_ID_SUCCESS=123456789  # Success notifications
 TELEGRAM_CHAT_ID_ERROR=987654321    # Error notifications
@@ -564,12 +610,14 @@ Filtering logic lives in `providers/telegram.cjs`. Edit that file to add custom 
 Use different bots per project for better organization:
 
 **Project A `.env`:**
+
 ```bash
 TELEGRAM_BOT_TOKEN=111111111:AAA_ProjectA_Bot_Token
 TELEGRAM_CHAT_ID=123456789
 ```
 
 **Project B `.env`:**
+
 ```bash
 TELEGRAM_BOT_TOKEN=222222222:BBB_ProjectB_Bot_Token
 TELEGRAM_CHAT_ID=987654321
@@ -580,6 +628,7 @@ TELEGRAM_CHAT_ID=987654321
 Test different hook scenarios:
 
 **Stop event:**
+
 ```bash
 echo '{
   "hook_event_name": "Stop",
@@ -589,6 +638,7 @@ echo '{
 ```
 
 **SubagentStop event:**
+
 ```bash
 echo '{
   "hook_event_name": "SubagentStop",
@@ -603,6 +653,7 @@ echo '{
 ## Security Best Practices
 
 1. **Never commit bot tokens:**
+
    ```bash
    # .gitignore
    .env
@@ -625,6 +676,7 @@ echo '{
    - Don't make bot admin in groups unless necessary
 
 5. **Use separate bots per environment:**
+
    ```bash
    # Development bot
    TELEGRAM_BOT_TOKEN_DEV=111111111:DEV_Token
@@ -650,10 +702,12 @@ echo '{
 **Configuration:** `.claude/settings.local.json`
 
 **Environment Variables:**
+
 - `TELEGRAM_BOT_TOKEN` (required)
 - `TELEGRAM_CHAT_ID` (required)
 
 **Supported Events:**
+
 - `Stop` - Main session completion
 - `SubagentStop` - Subagent completion
 

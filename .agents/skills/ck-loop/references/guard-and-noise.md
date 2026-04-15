@@ -5,6 +5,7 @@
 The verify command measures improvement. The guard command confirms nothing else broke.
 
 **Separation of concerns:**
+
 - Verify = "did the target metric improve?"
 - Guard = "did anything else break?"
 
@@ -34,14 +35,14 @@ Guard fails →
 
 ### Common Guard Commands
 
-| Stack | Guard Command | Notes |
-|-------|--------------|-------|
-| Node.js | `npm test` | Runs Jest/Vitest suite |
-| Python | `pytest` | Full test suite |
-| Go | `go test ./...` | All packages |
-| Rust | `cargo test` | Unit + integration |
-| TypeScript | `tsc --noEmit && npm test` | Type check then tests |
-| Any | `npm run lint && npm test` | Lint + test combined |
+| Stack      | Guard Command              | Notes                  |
+| ---------- | -------------------------- | ---------------------- |
+| Node.js    | `npm test`                 | Runs Jest/Vitest suite |
+| Python     | `pytest`                   | Full test suite        |
+| Go         | `go test ./...`            | All packages           |
+| Rust       | `cargo test`               | Unit + integration     |
+| TypeScript | `tsc --noEmit && npm test` | Type check then tests  |
+| Any        | `npm run lint && npm test` | Lint + test combined   |
 
 ### Guard Command Selection Heuristic
 
@@ -58,11 +59,11 @@ Noisy metrics produce false positives. A "5% improvement" that's really measurem
 
 ### Noise Levels
 
-| Level | Description | Strategy |
-|-------|-------------|----------|
-| Low | Deterministic output (LOC, type errors, lint count) | Single run, trust result |
-| Medium | Slight variance (build time ±5%, unit test timing) | 2 runs, use worse result |
-| High | High variance (API latency, benchmark, ML accuracy) | 3-5 runs, use median |
+| Level  | Description                                         | Strategy                 |
+| ------ | --------------------------------------------------- | ------------------------ |
+| Low    | Deterministic output (LOC, type errors, lint count) | Single run, trust result |
+| Medium | Slight variance (build time ±5%, unit test timing)  | 2 runs, use worse result |
+| High   | High variance (API latency, benchmark, ML accuracy) | 3-5 runs, use median     |
 
 ### Multi-Run Median (High Noise)
 
@@ -87,6 +88,7 @@ if improvement < min_delta:
 ```
 
 **Default thresholds by noise level:**
+
 - Low noise: 0 (any improvement counts)
 - Medium noise: 1-2% of baseline
 - High noise: 3-5% of baseline
@@ -106,6 +108,7 @@ candidate looks good →
 ### Environment Pinning (User Responsibility)
 
 ck:loop cannot control the environment. User must ensure:
+
 - Fixed random seeds for ML workloads
 - Warmed caches (or cold caches) consistently
 - No background processes competing for CPU
@@ -114,6 +117,7 @@ ck:loop cannot control the environment. User must ensure:
 ### Config Examples
 
 **Low noise (lint errors):**
+
 ```
 verify: eslint src --format json | jq '[.[] | .errorCount] | add'
 noise: low
@@ -122,6 +126,7 @@ guard: npm test
 ```
 
 **Medium noise (build time):**
+
 ```
 verify: { start=$(date +%s%N); npm run build; echo $(( ($(date +%s%N) - start) / 1000000 )); }
 noise: medium
@@ -131,6 +136,7 @@ guard: tsc --noEmit
 ```
 
 **High noise (API latency):**
+
 ```
 verify: wrk -t2 -c10 -d10s http://localhost:3000/api/health | grep 'Latency' | awk '{print $2}' | sed 's/ms//'
 noise: high

@@ -1,6 +1,7 @@
 # Phase 02: Frontend UI
 
 ## Context Links
+
 - [Plan Overview](./plan.md)
 - Depends on: [phase-01-backend-api.md](./phase-01-backend-api.md)
 - Pattern — form: `apps/admin/components/workspace/workspace-project-bulk-import-form.tsx`
@@ -12,11 +13,11 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Priority | P2 |
-| Status | ⬜ pending |
-| Effort | 2h |
+| Field       | Value                                                                                                                       |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Priority    | P2                                                                                                                          |
+| Status      | ⬜ pending                                                                                                                  |
+| Effort      | 2h                                                                                                                          |
 | Description | Mirror workspace-project-bulk-import UI pattern for modules — service type, store method, 3 components, route, entry button |
 
 ## Key Insights
@@ -97,6 +98,7 @@ IModuleRow (interface in preview component):
 ## Implementation Steps
 
 1. **Add type + method to service** (`instance-workspace.service.ts`):
+
    ```typescript
    export type IWorkspaceModuleBulkImportResponse = {
      created: Array<{ workspace_slug: string; project_identifier: string; name: string }>;
@@ -111,6 +113,7 @@ IModuleRow (interface in preview component):
      return this.post("/api/instances/bulk-import-modules/", { modules });
    }
    ```
+
    Export type from package barrel (`packages/services/src/index.ts` or nearest barrel).
 
 2. **Add store method** (`workspace.store.ts`):
@@ -139,6 +142,7 @@ IModuleRow (interface in preview component):
    - ≤150 lines
 
 6. **Create route page** (`bulk-import-modules/page.tsx`):
+
    ```tsx
    import { WorkspaceModuleBulkImportForm } from "@/components/workspace/workspace-module-bulk-import-form";
    export default function WorkspaceModuleBulkImportPage() {
@@ -150,6 +154,7 @@ IModuleRow (interface in preview component):
      );
    }
    ```
+
    Mirror existing `bulk-import-projects/page.tsx` for layout.
 
 7. **Add entry button to workspace list page** (`/workspace/page.tsx`):

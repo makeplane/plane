@@ -24,15 +24,16 @@ Add required validation for the `module_ids` field in the issue creation/edit fo
 
 ## Phases
 
-| Phase | Description | Effort |
-|-------|-------------|--------|
-| 01    | Add module-aware validation to hook + form | 2h |
+| Phase | Description                                | Effort |
+| ----- | ------------------------------------------ | ------ |
+| 01    | Add module-aware validation to hook + form | 2h     |
 
 See [phase-01-modules-required-validation.md](./phase-01-modules-required-validation.md) for details.
 
 ## Validation Log
 
 ### Session 1 — 2026-03-12
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 4
 
@@ -59,14 +60,17 @@ See [phase-01-modules-required-validation.md](./phase-01-modules-required-valida
    - **Rationale:** Frontend-only for now; backend enforcement tracked as a separate follow-up plan.
 
 #### Confirmed Decisions
+
 - Validation scope: create-only — editing existing issues not affected
 - Null module store: skip validation (safe default)
 - Error clearing: immediate on state change via useEffect
 - Backend: out of scope for this plan
 
 #### Action Items
+
 - [x] Confirm `default-properties.tsx` module Controller only renders on create modal, not edit modal (or add create-only guard if needed)
   - **Finding:** Component renders in both create + edit. `id` prop is `string | undefined` — use `!id` guard in rules to skip validation on edit.
 
 #### Impact on Phases
+
 - Phase 01: No structural changes needed — all answers confirm the plan as written. Add note that validation applies to issue creation form only.

@@ -19,6 +19,7 @@ Thought 7/7 [FINAL]: Robust solution or clear info requirement
 **Use for**: Decisions under uncertainty, incomplete requirements.
 
 **Strategies**:
+
 - Find solution robust to uncertainty
 - Identify minimal info needed to resolve
 - Make safe assumptions with clear documentation

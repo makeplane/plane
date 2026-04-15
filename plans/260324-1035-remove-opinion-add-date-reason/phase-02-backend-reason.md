@@ -1,11 +1,14 @@
 # Phase 02: Backend – Reason Validation & Activity Storage
 
 ## Overview
+
 Khi PATCH issue có `target_date` hoặc `completed_at` thay đổi, backend phải:
+
 1. Yêu cầu `reason` non-empty trong request body
 2. Lưu `reason` vào `IssueActivity.comment` cho activity entry tương ứng
 
 ## Key Insight (Pattern from Worklog)
+
 - Worklog: `reason` → `IssueActivity.new_value` (vì `new_value` không dùng cho worklog)
 - Due date / Completed at: `new_value` đã dùng cho giá trị ngày → lưu `reason` vào `comment` field
 - `IssueActivity.comment` hiện được set cứng `"updated the target date to"` (không hiển thị ở frontend) → an toàn để thay bằng reason của user
@@ -75,6 +78,7 @@ def track_target_date(requested_data, current_instance, issue_id, project_id, wo
 Same pattern — thêm `reason = (requested_data.get("reason") or "").strip()` và set `comment=reason`.
 
 ## Verification
+
 - Gọi PATCH với `{ "target_date": "2026-04-01" }` (không có reason) → 400 error
 - Gọi PATCH với `{ "target_date": "2026-04-01", "reason": "Q2 deadline" }` → 200 OK
 - `IssueActivity.comment` có giá trị là reason

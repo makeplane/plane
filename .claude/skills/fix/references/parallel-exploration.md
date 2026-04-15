@@ -5,11 +5,13 @@ Patterns for launching multiple subagents in parallel to scout codebase, verify 
 ## Parallel Exploration (Scouting)
 
 Launch multiple `Explore` subagents simultaneously when needing to find:
+
 - Related files across different areas
 - Similar implementations/patterns
 - Dependencies and usage
 
 **Pattern:**
+
 ```
 Task(subagent_type="Explore", prompt="Find [X] in [area1]", description="Scout area1")
 Task(subagent_type="Explore", prompt="Find [Y] in [area2]", description="Scout area2")
@@ -17,6 +19,7 @@ Task(subagent_type="Explore", prompt="Find [Z] in [area3]", description="Scout a
 ```
 
 **Example - Multi-area scouting:**
+
 ```
 // Launch in SINGLE message with multiple Task calls:
 Task("Explore", "Find auth-related files in src/", "Scout auth")
@@ -29,12 +32,14 @@ Task("Explore", "Find test files for auth module", "Scout tests")
 Launch multiple `Bash` subagents to verify implementation from different angles.
 
 **Pattern:**
+
 ```
 Task(subagent_type="Bash", prompt="Run [command1]", description="Verify X")
 Task(subagent_type="Bash", prompt="Run [command2]", description="Verify Y")
 ```
 
 **Example - Multi-verification:**
+
 ```
 // Launch in SINGLE message:
 Task("Bash", "Run typecheck: bun run typecheck", "Verify types")
@@ -48,6 +53,7 @@ For multi-phase fixes, use native Tasks to coordinate parallel agents.
 See `references/task-orchestration.md` for full patterns.
 
 **Pattern - Parallel issue trees:**
+
 ```
 // Create separate task trees per independent issue
 T_A1 = TaskCreate(subject="[Issue A] Debug", activeForm="Debugging A")
@@ -65,13 +71,13 @@ Agents claim work via `TaskUpdate(status="in_progress")` and complete via `TaskU
 
 ## When to Use Parallel
 
-| Scenario | Parallel Strategy |
-|----------|-------------------|
-| Root cause unclear, multiple suspects | 2-3 Explore agents on different areas |
-| Multi-module fix | Explore each module in parallel |
-| After implementation | Bash agents for typecheck + lint + build |
-| Before commit | Bash agents for test + build + lint |
-| 2+ independent issues | Task trees per issue + fullstack-developer agents |
+| Scenario                              | Parallel Strategy                                 |
+| ------------------------------------- | ------------------------------------------------- |
+| Root cause unclear, multiple suspects | 2-3 Explore agents on different areas             |
+| Multi-module fix                      | Explore each module in parallel                   |
+| After implementation                  | Bash agents for typecheck + lint + build          |
+| Before commit                         | Bash agents for test + build + lint               |
+| 2+ independent issues                 | Task trees per issue + fullstack-developer agents |
 
 ## Combining Explore + Tasks + Bash
 

@@ -41,11 +41,7 @@ File operations with restricted access:
 {
   "filesystem": {
     "command": "npx",
-    "args": [
-      "-y",
-      "@modelcontextprotocol/server-filesystem",
-      "/allowed/path"
-    ]
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/allowed/path"]
   }
 }
 ```
@@ -108,6 +104,7 @@ Scripts check for config in this order:
 ## Validation
 
 Config must:
+
 - Be valid JSON
 - Include `mcpServers` object
 - Each server must have `command` and `args`

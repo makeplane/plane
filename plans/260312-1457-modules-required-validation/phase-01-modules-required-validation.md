@@ -49,9 +49,9 @@ Make `getFieldRules` accept a second `skip` boolean. Rejected -- violates KISS; 
 
 ## Related Code Files
 
-| File | Change Type |
-|------|------------|
-| `apps/web/ce/hooks/use-issue-form-validation.ts` | Modify -- add `projectId` param, `getModuleFieldRules` |
+| File                                                                            | Change Type                                                  |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `apps/web/ce/hooks/use-issue-form-validation.ts`                                | Modify -- add `projectId` param, `getModuleFieldRules`       |
 | `apps/web/core/components/issues/issue-modal/components/default-properties.tsx` | Modify -- add rules + error outline to module_ids Controller |
 
 ## Implementation Steps
@@ -89,6 +89,7 @@ File: `apps/web/core/components/issues/issue-modal/components/default-properties
 Add `module_is_required` to the i18n translation files (same location as existing `assignee_is_required`, `frequency_is_required`, etc.).
 
 Search for where these keys are defined:
+
 - Check `packages/i18n/` for the translation JSON files
 - Add `"module_is_required": "Module is required"` alongside other validation messages
 
@@ -112,11 +113,11 @@ Search for where these keys are defined:
 
 ## Risk Assessment
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| Hook signature change breaks other callers | Low | `projectId` is optional param; `getFieldRules` unchanged |
-| Module store not loaded when form renders | Low | `getProjectModuleIds` returns null for unloaded -> treated as "no modules" = skip validation (safe default) |
-| `module_ids` field not registered by RHF when module_view is off | None | Controller only renders when `projectDetails?.module_view` is true; no Controller = no validation |
+| Risk                                                             | Likelihood | Mitigation                                                                                                  |
+| ---------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| Hook signature change breaks other callers                       | Low        | `projectId` is optional param; `getFieldRules` unchanged                                                    |
+| Module store not loaded when form renders                        | Low        | `getProjectModuleIds` returns null for unloaded -> treated as "no modules" = skip validation (safe default) |
+| `module_ids` field not registered by RHF when module_view is off | None       | Controller only renders when `projectDetails?.module_view` is true; no Controller = no validation           |
 
 ## Security Considerations
 

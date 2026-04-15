@@ -1,6 +1,7 @@
 # Code Review: God Mode Monitoring Dashboard
 
 ## Scope
+
 - **Files reviewed:** 19 (7 new, 12 modified)
 - **LOC (new):** ~650
 - **Focus:** Security, N+1 queries, MobX patterns, component limits, semantic tokens
@@ -21,6 +22,7 @@ Solid implementation. Clean separation of concerns, correct admin-only auth via 
 `resetOnSignOut()` resets all stores EXCEPT `monitoring`. If Admin A views monitoring data, signs out, and Admin B signs in on same browser, Admin B sees Admin A's cached email logs (which include user emails -- PII).
 
 **Fix:**
+
 ```typescript
 resetOnSignOut() {
   localStorage.setItem("theme", "system");
@@ -40,6 +42,7 @@ resetOnSignOut() {
 ### H1. Hardcoded Tailwind colors violate semantic token requirement
 
 **Files:**
+
 - `email-logs-tab.tsx` lines 16-19: `text-green-600`, `bg-green-500/10`, `text-yellow-600`, `bg-yellow-500/10`
 - `scheduled-jobs-tab.tsx` line 53: `bg-green-500`, `bg-red-500`
 - `worker-health-tab.tsx` line 39: `text-yellow-500`
@@ -47,12 +50,18 @@ resetOnSignOut() {
 Codebase convention uses semantic tokens: `text-success-primary`, `bg-success-subtle`, `text-danger-primary`, `bg-danger-subtle`, `text-warning-primary`, `bg-warning-subtle`.
 
 **Fix for StatusBadge (email-logs-tab.tsx):**
+
 ```tsx
-if (sentAt) return <span className="text-success-primary bg-success-subtle px-2 py-0.5 rounded text-body-xs-medium">Sent</span>;
-if (processedAt) return <span className="text-warning-primary bg-warning-subtle px-2 py-0.5 rounded text-body-xs-medium">Processed</span>;
+if (sentAt)
+  return <span className="text-success-primary bg-success-subtle px-2 py-0.5 rounded text-body-xs-medium">Sent</span>;
+if (processedAt)
+  return (
+    <span className="text-warning-primary bg-warning-subtle px-2 py-0.5 rounded text-body-xs-medium">Processed</span>
+  );
 ```
 
 **Fix for enabled dot (scheduled-jobs-tab.tsx):**
+
 ```tsx
 className={`inline-block h-2 w-2 rounded-full ${job.enabled ? "bg-success-strong" : "bg-danger-strong"}`}
 ```
@@ -62,9 +71,10 @@ className={`inline-block h-2 w-2 rounded-full ${job.enabled ? "bg-success-strong
 **File:** `email-logs-tab.tsx` lines 31-34 + `monitoring.store.ts` lines 65-74
 
 In `handleApplyFilters`:
+
 ```typescript
-setEmailLogsFilters(localFilters);  // MobX action, synchronous
-fetchEmailLogs();                    // Reads this.emailLogsFilters
+setEmailLogsFilters(localFilters); // MobX action, synchronous
+fetchEmailLogs(); // Reads this.emailLogsFilters
 ```
 
 This works because `setEmailLogsFilters` is synchronous and MobX updates are immediate. However, the `fetchEmailLogs` action reads `this.emailLogsFilters` AFTER the store is updated, so it picks up the new values. **This is actually fine** -- MobX actions are synchronous. No race condition exists.
@@ -78,15 +88,16 @@ However, there's a subtler issue: `fetchEmailLogs` does NOT reset the cursor whe
 Other admin stores (`instance.store.ts`, `user.store.ts`) use `observable.ref` for `isLoading` and `error` records. The monitoring store uses plain `observable`, creating deep proxies unnecessarily.
 
 **Fix:**
+
 ```typescript
 makeObservable(this, {
-  emailLogs: observable,           // OK -- array items need observation
+  emailLogs: observable, // OK -- array items need observation
   emailLogsPagination: observable, // OK
-  emailLogsFilters: observable,    // OK
-  scheduledJobs: observable,       // OK
-  workerHealth: observable,        // OK
-  isLoading: observable.ref,       // CHANGE: replaced entirely, not mutated
-  error: observable.ref,           // CHANGE: replaced entirely, not mutated
+  emailLogsFilters: observable, // OK
+  scheduledJobs: observable, // OK
+  workerHealth: observable, // OK
+  isLoading: observable.ref, // CHANGE: replaced entirely, not mutated
+  error: observable.ref, // CHANGE: replaced entirely, not mutated
   // actions unchanged
 });
 ```
@@ -98,6 +109,7 @@ makeObservable(this, {
 The store tracks `error.emailLogs`, `error.scheduledJobs`, `error.workerHealth` but NO component renders these errors. If the API returns an error, the user sees a loading spinner forever (no loading state) or empty data (no explanation).
 
 **Fix:** Add error rendering in each tab. Example for `scheduled-jobs-tab.tsx`:
+
 ```tsx
 const { scheduledJobs, isLoading, error, fetchScheduledJobs } = useMonitoring();
 // ...
@@ -197,14 +209,14 @@ Should be `.ts` since it only exports a hook with no JSX. Matches pattern of oth
 
 ## Recommended Actions
 
-| # | Priority | Action | Effort |
-|---|----------|--------|--------|
-| 1 | Critical | Add `this.monitoring = new MonitoringStore(this)` to `resetOnSignOut()` | 1 min |
-| 2 | High | Replace hardcoded colors with semantic tokens | 10 min |
-| 3 | High | Use `observable.ref` for `isLoading` and `error` | 2 min |
-| 4 | High | Add error state rendering in all 3 tab components | 15 min |
-| 5 | Medium | Extract sub-component from email-logs-tab to meet 150-line limit | 10 min |
-| 6 | Medium | Consider `created_at` index for EmailNotificationLog (separate migration) | 5 min |
+| #   | Priority | Action                                                                    | Effort |
+| --- | -------- | ------------------------------------------------------------------------- | ------ |
+| 1   | Critical | Add `this.monitoring = new MonitoringStore(this)` to `resetOnSignOut()`   | 1 min  |
+| 2   | High     | Replace hardcoded colors with semantic tokens                             | 10 min |
+| 3   | High     | Use `observable.ref` for `isLoading` and `error`                          | 2 min  |
+| 4   | High     | Add error state rendering in all 3 tab components                         | 15 min |
+| 5   | Medium   | Extract sub-component from email-logs-tab to meet 150-line limit          | 10 min |
+| 6   | Medium   | Consider `created_at` index for EmailNotificationLog (separate migration) | 5 min  |
 
 ---
 

@@ -1,263 +1,308 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shinhan Bank - Enterprise Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        shinhan: {
-                            blue: '#0070e0', /* Vibrant blue matching the concept */
-                            dark: '#005bb5',
-                            light: '#e6f3ff',
-                            gradientStart: '#0047cc',
-                            gradientEnd: '#00d4ff'
-                        },
-                        surface: {
-                            1: '#ffffff',
-                            2: '#f3f6f9'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'Roboto', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              shinhan: {
+                blue: "#0070e0" /* Vibrant blue matching the concept */,
+                dark: "#005bb5",
+                light: "#e6f3ff",
+                gradientStart: "#0047cc",
+                gradientEnd: "#00d4ff",
+              },
+              surface: {
+                1: "#ffffff",
+                2: "#f3f6f9",
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "Roboto", "sans-serif"],
+            },
+          },
+        },
+      };
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e0faff 0%, #ffffff 50%, #d4f1f9 100%);
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #e0faff 0%, #ffffff 50%, #d4f1f9 100%);
+      }
 
-        .main-container {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 30px 60px -15px rgba(0, 100, 200, 0.1);
-            border-radius: 28px;
-        }
+      .main-container {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 30px 60px -15px rgba(0, 100, 200, 0.1);
+        border-radius: 28px;
+      }
 
-        .login-card {
-            background: white;
-            box-shadow: 0 15px 35px -5px rgba(0, 100, 200, 0.15);
-            border-radius: 20px;
-        }
+      .login-card {
+        background: white;
+        box-shadow: 0 15px 35px -5px rgba(0, 100, 200, 0.15);
+        border-radius: 20px;
+      }
 
-        .tab-active {
-            color: #0070e0;
-            font-weight: 600;
-            position: relative;
-            background: white;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            z-index: 10;
-        }
+      .tab-active {
+        color: #0070e0;
+        font-weight: 600;
+        position: relative;
+        background: white;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        z-index: 10;
+      }
 
-        .tab-inactive {
-            color: #9ca3af;
-            background: #f8fbff;
-            border-bottom: 1px solid #eef2f6;
-        }
+      .tab-inactive {
+        color: #9ca3af;
+        background: #f8fbff;
+        border-bottom: 1px solid #eef2f6;
+      }
 
-        .tab-inactive:first-child {
-            border-top-left-radius: 20px;
-        }
+      .tab-inactive:first-child {
+        border-top-left-radius: 20px;
+      }
 
-        .tab-inactive:last-child {
-            border-top-right-radius: 20px;
-        }
+      .tab-inactive:last-child {
+        border-top-right-radius: 20px;
+      }
 
-        .custom-input {
-            background-color: #f4f7f9;
-            border: 1px solid transparent;
-            border-radius: 9999px;
-            padding: 12px 16px;
-            transition: all 0.2s ease;
-        }
+      .custom-input {
+        background-color: #f4f7f9;
+        border: 1px solid transparent;
+        border-radius: 9999px;
+        padding: 12px 16px;
+        transition: all 0.2s ease;
+      }
 
-        .custom-input:focus-within {
-            background-color: #ffffff;
-            border-color: #0070e0;
-            box-shadow: 0 0 0 3px rgba(0, 112, 224, 0.1);
-        }
+      .custom-input:focus-within {
+        background-color: #ffffff;
+        border-color: #0070e0;
+        box-shadow: 0 0 0 3px rgba(0, 112, 224, 0.1);
+      }
 
-        .custom-button {
-            background: linear-gradient(90deg, #0047cc 0%, #0070e0 40%, #00d4ff 100%);
-            border-radius: 9999px;
-            box-shadow: 0 8px 16px rgba(0, 112, 224, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+      .custom-button {
+        background: linear-gradient(90deg, #0047cc 0%, #0070e0 40%, #00d4ff 100%);
+        border-radius: 9999px;
+        box-shadow: 0 8px 16px rgba(0, 112, 224, 0.3);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
 
-        .custom-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 112, 224, 0.4);
-        }
+      .custom-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 112, 224, 0.4);
+      }
 
-        .gradient-text {
-            background: linear-gradient(90deg, #003399 0%, #0066cc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+      .gradient-text {
+        background: linear-gradient(90deg, #003399 0%, #0066cc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
     </style>
-</head>
+  </head>
 
-<body class="min-h-screen w-full flex items-center justify-center p-4 sm:p-8">
-
+  <body class="min-h-screen w-full flex items-center justify-center p-4 sm:p-8">
     <!-- The Glassmorphism Container (matched closely to the Universal Trading layout) -->
     <!-- The Glassmorphism Container -->
     <div
-        class="main-container w-full max-w-[1280px] min-h-[750px] flex flex-col md:flex-row-reverse items-center p-6 md:p-12 relative overflow-hidden gap-12 md:gap-16">
-
-        <!-- Right Section: Login Form -->
-        <div class="w-full md:w-[420px] relative z-10 flex flex-col justify-center flex-shrink-0">
-            <div class="login-card w-full overflow-hidden flex flex-col">
-                <div class="p-8 sm:p-10 bg-white">
-                    <!-- Brand Header in Card -->
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white"
-                            style="background: linear-gradient(135deg, #0047cc, #00d4ff);">
-                            <span class="font-bold text-[15px]">S</span>
-                        </div>
-                        <span class="text-[#0a1e3f] font-bold text-[17px] tracking-tight">Shinhan Bank</span>
-                    </div>
-
-                    <div class="mb-8 pb-4 border-b border-gray-100 w-full">
-                        <h2 class="text-[28px] font-bold text-[#0a1e3f] mb-1 tracking-tight">
-                            Sign In
-                        </h2>
-                        <p class="text-[13px] text-gray-500 font-medium">Use your Swing ID & password</p>
-                    </div>
-                    <form class="space-y-5">
-                        <!-- Login / Email -->
-                        <div>
-                            <label for="email"
-                                class="block text-[11px] font-bold text-gray-800 tracking-wide mb-2 ml-2">Employee
-                                No.</label>
-                            <div class="custom-input flex items-center">
-                                <svg class="h-5 w-5 text-gray-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                <input id="email" name="email" type="email" autocomplete="email" required
-                                    class="bg-transparent w-full text-gray-800 font-medium placeholder-gray-400 focus:outline-none text-sm"
-                                    placeholder="e.g. 20508888">
-                            </div>
-                        </div>
-
-                        <!-- Password -->
-                        <div>
-                            <label for="password"
-                                class="block text-[11px] font-bold text-gray-800 tracking-wide mb-2 ml-2">Password</label>
-                            <div class="custom-input flex items-center relative">
-                                <svg class="h-5 w-5 text-gray-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                                <input id="password" name="password" type="password" autocomplete="current-password"
-                                    required
-                                    class="bg-transparent w-full text-gray-800 font-bold tracking-[0.3em] placeholder-gray-400 focus:outline-none text-[15px] translate-y-[2px]"
-                                    placeholder="••••••">
-
-                                <div
-                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-600">
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <!-- Submit Button -->
-                        <div class="pt-6">
-                            <button type="submit"
-                                class="custom-button w-full flex justify-center items-center py-4 text-white font-bold text-[15px]">
-                                Sign In
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Section: Copy & Illustration -->
-        <div class="flex-1 flex flex-col items-center justify-center text-center relative z-10 w-full h-full">
-
-            <!-- Graphic Container representing the right side -->
-            <div class="w-full flex-1 flex flex-col items-center justify-center px-4 md:px-12 mt-8 md:mt-0">
-
-                <!-- Welcome Top Logo -->
-                <div class="mb-2 flex flex-col items-center">
-                    <img src="/assets/shinhan-bank-logo-white-text.svg" alt="Shinhan Bank Logo"
-                        class="h-12 w-auto mb-6 drop-shadow-md">
-                    <h1
-                        class="text-[#0a1b3f] text-3xl sm:text-4xl font-extrabold tracking-tight leading-snug mb-1 max-w-[500px]">
-                        Welcome to <span class="gradient-text">Daily Note</span>
-                    </h1>
-                    <h2 class="text-[#0a1b3f] text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug mb-4">
-                        Task Management System
-                    </h2>
-                    <p class="text-gray-600 text-base leading-relaxed max-w-[500px] mb-2">
-                        Smart, Centralized Task Management.<br>
-                        Easy tracking for teams, effortless oversight for leaders. Empowering Shinhan's workforce to
-                        achieve more together.
-                    </p>
-                </div>
-
-                <!-- Abstract Illustration Area mimicking the growing arrow / dashboard image -->
-                <div class="relative w-full max-w-[600px] h-[300px] sm:h-[400px] flex items-center justify-center">
-                    <!-- The user's new dashboard image -->
-                    <div class="relative w-[110%] z-20 flex justify-center items-center overflow-hidden rounded-[32px]">
-                        <!-- Strong inner white shadow to feather the corners to total transparency (via multiply) -->
-                        <div
-                            class="absolute inset-0 shadow-[inset_0_0_120px_80px_#ffffff] pointer-events-none z-30 rounded-[32px]">
-                        </div>
-                        <img src="./image_plan_logon2.webp" alt="Dashboard Illustration"
-                            class="w-full h-auto max-h-[100%] object-contain mix-blend-multiply">
-                    </div>
-
-                    <!-- Decorative Elements to give it that "fintech/startup" look from the concept image -->
-
-                    <!-- Background arrow/shape -->
-                    <div
-                        class="absolute right-0 top-0 w-32 h-64 bg-cyan-400 rotate-45 transform origin-bottom-right rounded-t-full opacity-20 -z-10 blur-xl">
-                    </div>
-
-                    <!-- Floating abstract spheres -->
-                    <div
-                        class="absolute -left-10 top-10 w-24 h-24 bg-blue-300 rounded-full opacity-60 mix-blend-multiply blur-md animate-pulse">
-                    </div>
-                    <div class="absolute right-10 bottom-10 w-32 h-32 bg-cyan-300 rounded-full opacity-60 mix-blend-multiply blur-md animate-pulse"
-                        style="animation-delay: 2s;"></div>
-                </div>
-
+      class="main-container w-full max-w-[1280px] min-h-[750px] flex flex-col md:flex-row-reverse items-center p-6 md:p-12 relative overflow-hidden gap-12 md:gap-16"
+    >
+      <!-- Right Section: Login Form -->
+      <div class="w-full md:w-[420px] relative z-10 flex flex-col justify-center flex-shrink-0">
+        <div class="login-card w-full overflow-hidden flex flex-col">
+          <div class="p-8 sm:p-10 bg-white">
+            <!-- Brand Header in Card -->
+            <div class="flex items-center gap-3 mb-6">
+              <div
+                class="w-8 h-8 rounded-lg flex items-center justify-center text-white"
+                style="background: linear-gradient(135deg, #0047cc, #00d4ff)"
+              >
+                <span class="font-bold text-[15px]">S</span>
+              </div>
+              <span class="text-[#0a1e3f] font-bold text-[17px] tracking-tight">Shinhan Bank</span>
             </div>
 
-        </div>
+            <div class="mb-8 pb-4 border-b border-gray-100 w-full">
+              <h2 class="text-[28px] font-bold text-[#0a1e3f] mb-1 tracking-tight">Sign In</h2>
+              <p class="text-[13px] text-gray-500 font-medium">Use your Swing ID & password</p>
+            </div>
+            <form class="space-y-5">
+              <!-- Login / Email -->
+              <div>
+                <label for="email" class="block text-[11px] font-bold text-gray-800 tracking-wide mb-2 ml-2"
+                  >Employee No.</label
+                >
+                <div class="custom-input flex items-center">
+                  <svg
+                    class="h-5 w-5 text-gray-500 mr-3 flex-shrink-0"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    class="bg-transparent w-full text-gray-800 font-medium placeholder-gray-400 focus:outline-none text-sm"
+                    placeholder="e.g. 20508888"
+                  />
+                </div>
+              </div>
 
+              <!-- Password -->
+              <div>
+                <label for="password" class="block text-[11px] font-bold text-gray-800 tracking-wide mb-2 ml-2"
+                  >Password</label
+                >
+                <div class="custom-input flex items-center relative">
+                  <svg
+                    class="h-5 w-5 text-gray-500 mr-3 flex-shrink-0"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                    class="bg-transparent w-full text-gray-800 font-bold tracking-[0.3em] placeholder-gray-400 focus:outline-none text-[15px] translate-y-[2px]"
+                    placeholder="••••••"
+                  />
+
+                  <div
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-600"
+                  >
+                    <svg
+                      class="h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="pt-6">
+                <button
+                  type="submit"
+                  class="custom-button w-full flex justify-center items-center py-4 text-white font-bold text-[15px]"
+                >
+                  Sign In
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Section: Copy & Illustration -->
+      <div class="flex-1 flex flex-col items-center justify-center text-center relative z-10 w-full h-full">
+        <!-- Graphic Container representing the right side -->
+        <div class="w-full flex-1 flex flex-col items-center justify-center px-4 md:px-12 mt-8 md:mt-0">
+          <!-- Welcome Top Logo -->
+          <div class="mb-2 flex flex-col items-center">
+            <img
+              src="/assets/shinhan-bank-logo-white-text.svg"
+              alt="Shinhan Bank Logo"
+              class="h-12 w-auto mb-6 drop-shadow-md"
+            />
+            <h1
+              class="text-[#0a1b3f] text-3xl sm:text-4xl font-extrabold tracking-tight leading-snug mb-1 max-w-[500px]"
+            >
+              Welcome to <span class="gradient-text">Daily Note</span>
+            </h1>
+            <h2 class="text-[#0a1b3f] text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug mb-4">
+              Task Management System
+            </h2>
+            <p class="text-gray-600 text-base leading-relaxed max-w-[500px] mb-2">
+              Smart, Centralized Task Management.<br />
+              Easy tracking for teams, effortless oversight for leaders. Empowering Shinhan's workforce to achieve more
+              together.
+            </p>
+          </div>
+
+          <!-- Abstract Illustration Area mimicking the growing arrow / dashboard image -->
+          <div class="relative w-full max-w-[600px] h-[300px] sm:h-[400px] flex items-center justify-center">
+            <!-- The user's new dashboard image -->
+            <div class="relative w-[110%] z-20 flex justify-center items-center overflow-hidden rounded-[32px]">
+              <!-- Strong inner white shadow to feather the corners to total transparency (via multiply) -->
+              <div
+                class="absolute inset-0 shadow-[inset_0_0_120px_80px_#ffffff] pointer-events-none z-30 rounded-[32px]"
+              ></div>
+              <img
+                src="./image_plan_logon2.webp"
+                alt="Dashboard Illustration"
+                class="w-full h-auto max-h-[100%] object-contain mix-blend-multiply"
+              />
+            </div>
+
+            <!-- Decorative Elements to give it that "fintech/startup" look from the concept image -->
+
+            <!-- Background arrow/shape -->
+            <div
+              class="absolute right-0 top-0 w-32 h-64 bg-cyan-400 rotate-45 transform origin-bottom-right rounded-t-full opacity-20 -z-10 blur-xl"
+            ></div>
+
+            <!-- Floating abstract spheres -->
+            <div
+              class="absolute -left-10 top-10 w-24 h-24 bg-blue-300 rounded-full opacity-60 mix-blend-multiply blur-md animate-pulse"
+            ></div>
+            <div
+              class="absolute right-10 bottom-10 w-32 h-32 bg-cyan-300 rounded-full opacity-60 mix-blend-multiply blur-md animate-pulse"
+              style="animation-delay: 2s"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Footer Copyright -->
     <div
-        class="fixed bottom-4 left-1/2 -translate-x-1/2 text-gray-500 text-[13px] font-medium tracking-wide w-full text-center z-50">
-        Shinhan Bank Vietnam - Build on Plane Achitechture
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 text-gray-500 text-[13px] font-medium tracking-wide w-full text-center z-50"
+    >
+      Shinhan Bank Vietnam - Build on Plane Achitechture
     </div>
-
-</body>
-
+  </body>
 </html>

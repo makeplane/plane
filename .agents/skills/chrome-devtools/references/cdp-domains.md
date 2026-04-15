@@ -21,19 +21,23 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Core Domains
 
 ### Runtime
+
 **Purpose:** Execute JavaScript, manage objects, handle promises
 
 **Key Commands:**
+
 - `Runtime.evaluate(expression)` - Execute JavaScript
 - `Runtime.callFunctionOn(functionDeclaration, objectId)` - Call function on object
 - `Runtime.getProperties(objectId)` - Get object properties
 - `Runtime.awaitPromise(promiseObjectId)` - Wait for promise resolution
 
 **Key Events:**
+
 - `Runtime.consoleAPICalled` - Console message logged
 - `Runtime.exceptionThrown` - Uncaught exception
 
 **Use Cases:**
+
 - Execute custom JavaScript
 - Access page data
 - Monitor console output
@@ -42,9 +46,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Debugger
+
 **Purpose:** JavaScript debugging, breakpoints, stack traces
 
 **Key Commands:**
+
 - `Debugger.enable()` - Enable debugger
 - `Debugger.setBreakpoint(location)` - Set breakpoint
 - `Debugger.pause()` - Pause execution
@@ -52,11 +58,13 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Debugger.stepOver/stepInto/stepOut()` - Step through code
 
 **Key Events:**
+
 - `Debugger.paused` - Execution paused
 - `Debugger.resumed` - Execution resumed
 - `Debugger.scriptParsed` - Script loaded
 
 **Use Cases:**
+
 - Debug JavaScript errors
 - Inspect call stacks
 - Set conditional breakpoints
@@ -65,6 +73,7 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Console (Deprecated - Use Runtime/Log)
+
 **Purpose:** Legacy console message access
 
 **Note:** Use `Runtime.consoleAPICalled` event instead for new implementations.
@@ -74,9 +83,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## DOM & Styling Domains
 
 ### DOM
+
 **Purpose:** Access and manipulate DOM tree
 
 **Key Commands:**
+
 - `DOM.getDocument()` - Get root document node
 - `DOM.querySelector(nodeId, selector)` - Query selector
 - `DOM.querySelectorAll(nodeId, selector)` - Query all
@@ -86,10 +97,12 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `DOM.focus(nodeId)` - Focus element
 
 **Key Events:**
+
 - `DOM.documentUpdated` - Document changed
 - `DOM.setChildNodes` - Child nodes updated
 
 **Use Cases:**
+
 - Navigate DOM tree
 - Query elements
 - Modify DOM structure
@@ -98,9 +111,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### CSS
+
 **Purpose:** Inspect and modify CSS styles
 
 **Key Commands:**
+
 - `CSS.enable()` - Enable CSS domain
 - `CSS.getComputedStyleForNode(nodeId)` - Get computed styles
 - `CSS.getInlineStylesForNode(nodeId)` - Get inline styles
@@ -108,10 +123,12 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `CSS.setStyleTexts(edits)` - Modify styles
 
 **Key Events:**
+
 - `CSS.styleSheetAdded` - Stylesheet added
 - `CSS.styleSheetChanged` - Stylesheet modified
 
 **Use Cases:**
+
 - Inspect element styles
 - Debug CSS issues
 - Modify styles dynamically
@@ -120,15 +137,18 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Accessibility
+
 **Purpose:** Access accessibility tree
 
 **Key Commands:**
+
 - `Accessibility.enable()` - Enable accessibility
 - `Accessibility.getFullAXTree()` - Get complete AX tree
 - `Accessibility.getPartialAXTree(nodeId)` - Get node subtree
 - `Accessibility.queryAXTree(nodeId, role, name)` - Query AX tree
 
 **Use Cases:**
+
 - Accessibility testing
 - Screen reader simulation
 - ARIA attribute inspection
@@ -139,9 +159,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Network & Fetch Domains
 
 ### Network
+
 **Purpose:** Monitor and control HTTP traffic
 
 **Key Commands:**
+
 - `Network.enable()` - Enable network tracking
 - `Network.setCacheDisabled(cacheDisabled)` - Disable cache
 - `Network.setExtraHTTPHeaders(headers)` - Add custom headers
@@ -151,12 +173,14 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Network.emulateNetworkConditions(offline, latency, downloadThroughput, uploadThroughput)` - Throttle network
 
 **Key Events:**
+
 - `Network.requestWillBeSent` - Request starting
 - `Network.responseReceived` - Response received
 - `Network.loadingFinished` - Request completed
 - `Network.loadingFailed` - Request failed
 
 **Use Cases:**
+
 - Monitor API calls
 - Intercept requests
 - Analyze response data
@@ -166,18 +190,22 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Fetch
+
 **Purpose:** Intercept and modify network requests
 
 **Key Commands:**
+
 - `Fetch.enable(patterns)` - Enable request interception
 - `Fetch.continueRequest(requestId, url, method, headers)` - Continue/modify request
 - `Fetch.fulfillRequest(requestId, responseCode, headers, body)` - Mock response
 - `Fetch.failRequest(requestId, errorReason)` - Fail request
 
 **Key Events:**
+
 - `Fetch.requestPaused` - Request intercepted
 
 **Use Cases:**
+
 - Mock API responses
 - Block requests
 - Modify request/response
@@ -188,9 +216,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Page & Navigation Domains
 
 ### Page
+
 **Purpose:** Control page lifecycle and navigation
 
 **Key Commands:**
+
 - `Page.enable()` - Enable page domain
 - `Page.navigate(url)` - Navigate to URL
 - `Page.reload(ignoreCache)` - Reload page
@@ -202,12 +232,14 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Page.handleJavaScriptDialog(accept, promptText)` - Handle alerts/confirms
 
 **Key Events:**
+
 - `Page.loadEventFired` - Page loaded
 - `Page.domContentEventFired` - DOM ready
 - `Page.frameNavigated` - Frame navigated
 - `Page.javascriptDialogOpening` - Alert/confirm shown
 
 **Use Cases:**
+
 - Navigate pages
 - Capture screenshots
 - Generate PDFs
@@ -217,9 +249,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Target
+
 **Purpose:** Manage browser targets (tabs, workers, frames)
 
 **Key Commands:**
+
 - `Target.getTargets()` - List all targets
 - `Target.createTarget(url)` - Open new tab
 - `Target.closeTarget(targetId)` - Close tab
@@ -228,11 +262,13 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Target.setDiscoverTargets(discover)` - Auto-discover targets
 
 **Key Events:**
+
 - `Target.targetCreated` - New target created
 - `Target.targetDestroyed` - Target closed
 - `Target.targetInfoChanged` - Target updated
 
 **Use Cases:**
+
 - Multi-tab automation
 - Service worker debugging
 - Frame inspection
@@ -241,9 +277,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Input
+
 **Purpose:** Simulate user input
 
 **Key Commands:**
+
 - `Input.dispatchKeyEvent(type, key, code)` - Keyboard input
 - `Input.dispatchMouseEvent(type, x, y, button)` - Mouse input
 - `Input.dispatchTouchEvent(type, touchPoints)` - Touch input
@@ -251,6 +289,7 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Input.synthesizeScrollGesture(x, y, xDistance, yDistance)` - Scroll
 
 **Use Cases:**
+
 - Simulate clicks
 - Type text
 - Drag and drop
@@ -262,9 +301,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Storage & Data Domains
 
 ### Storage
+
 **Purpose:** Manage browser storage
 
 **Key Commands:**
+
 - `Storage.getCookies(browserContextId)` - Get cookies
 - `Storage.setCookies(cookies)` - Set cookies
 - `Storage.clearCookies(browserContextId)` - Clear cookies
@@ -272,9 +313,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Storage.getUsageAndQuota(origin)` - Get storage usage
 
 **Storage Types:**
+
 - appcache, cookies, file_systems, indexeddb, local_storage, shader_cache, websql, service_workers, cache_storage
 
 **Use Cases:**
+
 - Cookie management
 - Clear browser data
 - Inspect storage usage
@@ -283,29 +326,35 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### DOMStorage
+
 **Purpose:** Access localStorage/sessionStorage
 
 **Key Commands:**
+
 - `DOMStorage.enable()` - Enable storage tracking
 - `DOMStorage.getDOMStorageItems(storageId)` - Get items
 - `DOMStorage.setDOMStorageItem(storageId, key, value)` - Set item
 - `DOMStorage.removeDOMStorageItem(storageId, key)` - Remove item
 
 **Key Events:**
+
 - `DOMStorage.domStorageItemsCleared` - Storage cleared
 - `DOMStorage.domStorageItemAdded/Updated/Removed` - Item changed
 
 ---
 
 ### IndexedDB
+
 **Purpose:** Query IndexedDB databases
 
 **Key Commands:**
+
 - `IndexedDB.requestDatabaseNames(securityOrigin)` - List databases
 - `IndexedDB.requestDatabase(securityOrigin, databaseName)` - Get DB structure
 - `IndexedDB.requestData(securityOrigin, databaseName, objectStoreName)` - Query data
 
 **Use Cases:**
+
 - Inspect IndexedDB data
 - Debug database issues
 - Extract stored data
@@ -313,14 +362,17 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### CacheStorage
+
 **Purpose:** Manage Cache API
 
 **Key Commands:**
+
 - `CacheStorage.requestCacheNames(securityOrigin)` - List caches
 - `CacheStorage.requestCachedResponses(cacheId, securityOrigin)` - List cached responses
 - `CacheStorage.deleteCache(cacheId)` - Delete cache
 
 **Use Cases:**
+
 - Service worker cache inspection
 - Offline functionality testing
 
@@ -329,17 +381,21 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Performance & Profiling Domains
 
 ### Performance
+
 **Purpose:** Collect performance metrics
 
 **Key Commands:**
+
 - `Performance.enable()` - Enable performance tracking
 - `Performance.disable()` - Disable tracking
 - `Performance.getMetrics()` - Get current metrics
 
 **Metrics:**
+
 - Timestamp, Documents, Frames, JSEventListeners, Nodes, LayoutCount, RecalcStyleCount, LayoutDuration, RecalcStyleDuration, ScriptDuration, TaskDuration, JSHeapUsedSize, JSHeapTotalSize
 
 **Use Cases:**
+
 - Monitor page metrics
 - Track memory usage
 - Measure render times
@@ -347,35 +403,44 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### PerformanceTimeline
+
 **Purpose:** Access Performance Timeline API
 
 **Key Commands:**
+
 - `PerformanceTimeline.enable(eventTypes)` - Subscribe to events
 
 **Event Types:**
+
 - mark, measure, navigation, resource, longtask, paint, layout-shift
 
 **Key Events:**
+
 - `PerformanceTimeline.timelineEventAdded` - New performance entry
 
 ---
 
 ### Tracing
+
 **Purpose:** Record Chrome trace
 
 **Key Commands:**
+
 - `Tracing.start(categories, options)` - Start recording
 - `Tracing.end()` - Stop recording
 - `Tracing.requestMemoryDump()` - Capture memory snapshot
 
 **Trace Categories:**
-- blink, cc, devtools, gpu, loading, navigation, rendering, v8, disabled-by-default-*
+
+- blink, cc, devtools, gpu, loading, navigation, rendering, v8, disabled-by-default-\*
 
 **Key Events:**
+
 - `Tracing.dataCollected` - Trace chunk received
 - `Tracing.tracingComplete` - Recording finished
 
 **Use Cases:**
+
 - Deep performance analysis
 - Frame rendering profiling
 - CPU flame graphs
@@ -384,14 +449,17 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Profiler
+
 **Purpose:** CPU profiling
 
 **Key Commands:**
+
 - `Profiler.enable()` - Enable profiler
 - `Profiler.start()` - Start CPU profiling
 - `Profiler.stop()` - Stop and get profile
 
 **Use Cases:**
+
 - Find CPU bottlenecks
 - Optimize JavaScript
 - Generate flame graphs
@@ -399,9 +467,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### HeapProfiler (via Memory domain)
+
 **Purpose:** Memory profiling
 
 **Key Commands:**
+
 - `Memory.getDOMCounters()` - Get DOM object counts
 - `Memory.prepareForLeakDetection()` - Prepare leak detection
 - `Memory.forciblyPurgeJavaScriptMemory()` - Force GC
@@ -409,6 +479,7 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Memory.simulatePressureNotification(level)` - Simulate memory pressure
 
 **Use Cases:**
+
 - Detect memory leaks
 - Analyze heap snapshots
 - Monitor object counts
@@ -418,9 +489,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Emulation & Simulation Domains
 
 ### Emulation
+
 **Purpose:** Emulate device conditions
 
 **Key Commands:**
+
 - `Emulation.setDeviceMetricsOverride(width, height, deviceScaleFactor, mobile)` - Emulate device
 - `Emulation.setGeolocationOverride(latitude, longitude, accuracy)` - Fake location
 - `Emulation.setEmulatedMedia(media, features)` - Emulate media type
@@ -429,6 +502,7 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `Emulation.setUserAgentOverride(userAgent)` - Change user agent
 
 **Use Cases:**
+
 - Mobile device testing
 - Geolocation testing
 - Print media emulation
@@ -437,12 +511,15 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### DeviceOrientation
+
 **Purpose:** Simulate device orientation
 
 **Key Commands:**
+
 - `DeviceOrientation.setDeviceOrientationOverride(alpha, beta, gamma)` - Set orientation
 
 **Use Cases:**
+
 - Test accelerometer features
 - Orientation-dependent layouts
 
@@ -451,9 +528,11 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Worker & Service Domains
 
 ### ServiceWorker
+
 **Purpose:** Manage service workers
 
 **Key Commands:**
+
 - `ServiceWorker.enable()` - Enable tracking
 - `ServiceWorker.unregister(scopeURL)` - Unregister worker
 - `ServiceWorker.startWorker(scopeURL)` - Start worker
@@ -461,21 +540,25 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 - `ServiceWorker.inspectWorker(versionId)` - Debug worker
 
 **Key Events:**
+
 - `ServiceWorker.workerRegistrationUpdated` - Registration changed
 - `ServiceWorker.workerVersionUpdated` - Version updated
 
 ---
 
 ### WebAuthn
+
 **Purpose:** Simulate WebAuthn/FIDO2
 
 **Key Commands:**
+
 - `WebAuthn.enable()` - Enable virtual authenticators
 - `WebAuthn.addVirtualAuthenticator(options)` - Add virtual device
 - `WebAuthn.removeVirtualAuthenticator(authenticatorId)` - Remove device
 - `WebAuthn.addCredential(authenticatorId, credential)` - Add credential
 
 **Use Cases:**
+
 - Test WebAuthn flows
 - Simulate biometric auth
 - Test security keys
@@ -485,25 +568,31 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Developer Tools Support
 
 ### Inspector
+
 **Purpose:** Protocol-level debugging
 
 **Key Events:**
+
 - `Inspector.detached` - Debugger disconnected
 - `Inspector.targetCrashed` - Target crashed
 
 ---
 
 ### Log
+
 **Purpose:** Collect browser logs
 
 **Key Commands:**
+
 - `Log.enable()` - Enable log collection
 - `Log.clear()` - Clear logs
 
 **Key Events:**
+
 - `Log.entryAdded` - New log entry
 
 **Use Cases:**
+
 - Collect console logs
 - Monitor violations
 - Track deprecations
@@ -511,25 +600,31 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### DOMDebugger
+
 **Purpose:** DOM-level debugging
 
 **Key Commands:**
+
 - `DOMDebugger.setDOMBreakpoint(nodeId, type)` - Break on DOM changes
 - `DOMDebugger.setEventListenerBreakpoint(eventName)` - Break on event
 - `DOMDebugger.setXHRBreakpoint(url)` - Break on XHR
 
 **Breakpoint Types:**
+
 - subtree-modified, attribute-modified, node-removed
 
 ---
 
 ### DOMSnapshot
+
 **Purpose:** Capture complete DOM snapshot
 
 **Key Commands:**
+
 - `DOMSnapshot.captureSnapshot(computedStyles)` - Capture full DOM
 
 **Use Cases:**
+
 - Export page structure
 - Offline analysis
 - DOM diffing
@@ -537,25 +632,31 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ---
 
 ### Audits (Lighthouse Integration)
+
 **Purpose:** Run automated audits
 
 **Key Commands:**
+
 - `Audits.enable()` - Enable audits
 - `Audits.getEncodingIssues()` - Check encoding issues
 
 ---
 
 ### LayerTree
+
 **Purpose:** Inspect rendering layers
 
 **Key Commands:**
+
 - `LayerTree.enable()` - Enable layer tracking
 - `LayerTree.compositingReasons(layerId)` - Get why layer created
 
 **Key Events:**
+
 - `LayerTree.layerTreeDidChange` - Layers changed
 
 **Use Cases:**
+
 - Debug rendering performance
 - Identify layer creation
 - Optimize compositing
@@ -565,51 +666,63 @@ CDP is organized into **47 domains**, each providing specific browser capabiliti
 ## Other Domains
 
 ### Browser
+
 **Purpose:** Browser-level control
 
 **Key Commands:**
+
 - `Browser.getVersion()` - Get browser info
 - `Browser.getBrowserCommandLine()` - Get launch args
 - `Browser.setPermission(permission, setting, origin)` - Set permissions
 - `Browser.grantPermissions(permissions, origin)` - Grant permissions
 
 **Permissions:**
+
 - geolocation, midi, notifications, push, camera, microphone, background-sync, sensors, accessibility-events, clipboard-read, clipboard-write, payment-handler
 
 ---
 
 ### IO
+
 **Purpose:** File I/O operations
 
 **Key Commands:**
+
 - `IO.read(handle, offset, size)` - Read stream
 - `IO.close(handle)` - Close stream
 
 **Use Cases:**
+
 - Read large response bodies
 - Process binary data
 
 ---
 
 ### Media
+
 **Purpose:** Inspect media players
 
 **Key Commands:**
+
 - `Media.enable()` - Track media players
 
 **Key Events:**
+
 - `Media.playerPropertiesChanged` - Player state changed
 - `Media.playerEventsAdded` - Player events
 
 ---
 
 ### BackgroundService
+
 **Purpose:** Track background services
 
 **Key Commands:**
+
 - `BackgroundService.startObserving(service)` - Track service
 
 **Services:**
+
 - backgroundFetch, backgroundSync, pushMessaging, notifications, paymentHandler, periodicBackgroundSync
 
 ---

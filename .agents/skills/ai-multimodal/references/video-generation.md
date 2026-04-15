@@ -17,6 +17,7 @@ Comprehensive guide for video creation using Veo models via Gemini API.
 ### Veo 3.1 Preview (Latest)
 
 **veo-3.1-generate-preview** - Latest with advanced controls
+
 - Frame-specific generation
 - Up to 3 reference images for image-to-video
 - Video extension capability
@@ -27,6 +28,7 @@ Comprehensive guide for video creation using Veo models via Gemini API.
 - Updated: September 2025
 
 **veo-3.1-fast-generate-preview** - Speed-optimized
+
 - Optimized for business use cases
 - Programmatic ad creation
 - Social media content
@@ -37,6 +39,7 @@ Comprehensive guide for video creation using Veo models via Gemini API.
 ### Veo 3.0 Stable
 
 **veo-3.0-generate-001** - Production-ready
+
 - Native audio generation
 - Text-to-video and image-to-video
 - 720p and 1080p (16:9 only)
@@ -45,6 +48,7 @@ Comprehensive guide for video creation using Veo models via Gemini API.
 - Updated: July 2025
 
 **veo-3.0-fast-generate-001** - Stable fast variant
+
 - Speed-optimized stable version
 - Same reliability as 3.0
 - Status: Stable
@@ -52,12 +56,12 @@ Comprehensive guide for video creation using Veo models via Gemini API.
 
 ## Model Comparison
 
-| Model | Speed | Features | Audio | Status | Best For |
-|-------|-------|----------|-------|--------|----------|
-| veo-3.1-preview | Medium | All | ✓ | Preview | Latest features |
-| veo-3.1-fast | Fast | All | ✓ | Preview | Business/speed |
-| veo-3.0-001 | Medium | Standard | ✓ | Stable | Production |
-| veo-3.0-fast | Fast | Standard | ✓ | Stable | Production/speed |
+| Model           | Speed  | Features | Audio | Status  | Best For         |
+| --------------- | ------ | -------- | ----- | ------- | ---------------- |
+| veo-3.1-preview | Medium | All      | ✓     | Preview | Latest features  |
+| veo-3.1-fast    | Fast   | All      | ✓     | Preview | Business/speed   |
+| veo-3.0-001     | Medium | Standard | ✓     | Stable  | Production       |
+| veo-3.0-fast    | Fast   | Standard | ✓     | Stable  | Production/speed |
 
 ## Quick Start
 
@@ -158,6 +162,7 @@ response = client.models.generate_video(
 ### Effective Video Prompts
 
 **Structure**:
+
 1. **Subject**: What's in the scene
 2. **Action**: What's happening
 3. **Camera**: How it's filmed
@@ -165,6 +170,7 @@ response = client.models.generate_video(
 5. **Timing**: Pacing details
 
 **Example**:
+
 ```
 "A hummingbird [subject] hovers near a red flower, then flies away [action].
 Slow-motion close-up shot [camera] with vibrant colors and soft focus background [style].
@@ -174,16 +180,19 @@ Gentle, peaceful pacing [timing]."
 ### Action Verbs
 
 **Movement**:
+
 - "walks", "runs", "flies", "swims", "dances"
 - "rotates", "spins", "rolls", "bounces"
 - "emerges", "disappears", "transforms"
 
 **Camera**:
+
 - "zoom in on", "pull back from", "follow"
 - "orbit around", "track alongside"
 - "tilt up to reveal", "pan across"
 
 **Transitions**:
+
 - "gradually changes from... to..."
 - "morphs into", "dissolves into"
 - "cuts to", "fades to"
@@ -211,6 +220,7 @@ config = types.VideoGenerationConfig(
 ```
 
 **Considerations**:
+
 - 1080p: Higher quality, longer generation time, larger file
 - 720p: Faster generation, smaller file, good for drafts
 
@@ -223,6 +233,7 @@ config = types.VideoGenerationConfig(
 ```
 
 **Use Cases**:
+
 - 16:9: Landscape, YouTube, traditional video
 - 9:16: Mobile, TikTok, Instagram Stories
 - 1:1: Square, Instagram feed, versatile
@@ -242,25 +253,30 @@ Native audio is generated automatically and synchronized with video content.
 ### 1. Prompt Quality
 
 **Be specific**:
+
 - ❌ "A person walking"
 - ✅ "A young woman in a red coat walking through a park in autumn"
 
 **Include motion**:
+
 - ❌ "A city street"
 - ✅ "A busy city street with cars passing and people crossing"
 
 **Specify camera**:
+
 - ❌ "A mountain"
 - ✅ "Aerial drone shot slowly ascending over a snow-capped mountain"
 
 ### 2. Reference Images
 
 **Quality**:
+
 - Use high-resolution images (1080p+)
 - Clear, well-lit subjects
 - Minimal motion blur
 
 **Composition**:
+
 - Match desired final aspect ratio
 - Leave room for motion/movement
 - Consider camera angle in prompt
@@ -268,11 +284,13 @@ Native audio is generated automatically and synchronized with video content.
 ### 3. Performance Optimization
 
 **Generation Time**:
+
 - 720p: ~30-60 seconds
 - 1080p: ~60-120 seconds
 - Fast models: 30-50% faster
 
 **Strategies**:
+
 - Use 720p for iteration/drafts
 - Use fast models for rapid feedback
 - Batch multiple requests
@@ -390,6 +408,7 @@ print(f"Generated in {duration:.1f}s")
 ```
 
 **Expected times**:
+
 - Fast models + 720p: 30-45s
 - Standard models + 720p: 45-90s
 - Fast models + 1080p: 45-60s
@@ -431,6 +450,7 @@ def generate_with_retry(model, prompt, max_retries=3):
 **Pricing**: TBD (preview models)
 
 **Estimated based on compute**:
+
 - Fast + 720p: ~$0.05-$0.10 per video
 - Standard + 1080p: ~$0.15-$0.25 per video
 
@@ -450,6 +470,7 @@ def generate_with_retry(model, prompt, max_retries=3):
 **Current**: Video Generation
 
 **Related Capabilities**:
+
 - [Video Analysis](./video-analysis.md) - Understanding existing videos
 - [Image Generation](./image-generation.md) - Creating static images
 - [Image Understanding](./vision-understanding.md) - Analyzing reference images

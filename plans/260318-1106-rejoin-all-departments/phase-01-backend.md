@@ -4,12 +4,12 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-03-18 |
-| Priority | P2 |
-| Status | ⬜ pending |
-| Est. | 30m |
+| Field    | Value      |
+| -------- | ---------- |
+| Date     | 2026-03-18 |
+| Priority | P2         |
+| Status   | ⬜ pending |
+| Est.     | 30m        |
 
 Add `RejoinAllEndpoint` class to views and register its URL path.
 
@@ -23,6 +23,7 @@ Add `RejoinAllEndpoint` class to views and register its URL path.
 ## Requirements
 
 <!-- Updated: Validation Session 1 - mode param required -->
+
 - New `POST /api/instances/departments/rejoin-all/` endpoint
 - Accepts `{ mode: "all_projects" | "bank_wide_projects" }` in request body (same validation as `InstanceDepartmentAutoJoinEndpoint`)
 - Loops all depts with `linked_workspace` (no `pk` param — global op)
@@ -32,6 +33,7 @@ Add `RejoinAllEndpoint` class to views and register its URL path.
 ## Architecture
 
 <!-- Updated: Validation Session 1 - mode param added to flow -->
+
 ```
 RejoinAllEndpoint.post(mode)
   ├── Validate mode ∈ {"all_projects", "bank_wide_projects"} → 400 if invalid
@@ -139,6 +141,7 @@ class RejoinAllEndpoint(BaseAPIView):
 ### 2. `urls/department.py` — Register URL
 
 Add import to existing import block:
+
 ```python
 from plane.license.api.views.department import (
     ...
@@ -147,6 +150,7 @@ from plane.license.api.views.department import (
 ```
 
 Add path in static-paths section (before `departments/<uuid:pk>/`):
+
 ```python
 path(
     "departments/rejoin-all/",

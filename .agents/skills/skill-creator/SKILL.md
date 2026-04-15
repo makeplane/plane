@@ -15,18 +15,18 @@ Create effective, eval-driven Claude skills using progressive disclosure and hum
 ## Core Principles
 
 - Skills are **practical instructions**, not documentation
-- Each skill teaches Claude *how* to perform tasks, not *what* tools are
+- Each skill teaches Claude _how_ to perform tasks, not _what_ tools are
 - **Progressive disclosure:** Metadata → SKILL.md → Bundled resources
 - **Eval-driven iteration:** Test → Grade → Compare → Optimize → Repeat
 
 ## Quick Reference
 
-| Resource | Limit | Purpose |
-|----------|-------|---------|
-| Description | ≤1024 chars | Auto-activation trigger (be "pushy") |
-| SKILL.md | <300 lines | Core instructions |
-| Each reference | <300 lines | Detail loaded as-needed |
-| Scripts | No limit | Executed without loading |
+| Resource       | Limit       | Purpose                              |
+| -------------- | ----------- | ------------------------------------ |
+| Description    | ≤1024 chars | Auto-activation trigger (be "pushy") |
+| SKILL.md       | <300 lines  | Core instructions                    |
+| Each reference | <300 lines  | Detail loaded as-needed              |
+| Scripts        | No limit    | Executed without loading             |
 
 ## Skill Structure
 
@@ -60,6 +60,7 @@ Follow the process in `references/skill-creation-workflow.md`:
 ## Eval & Testing (CRITICAL)
 
 Eval infrastructure for quantitative skill validation:
+
 1. Create test cases in `evals/evals.json` with prompts + assertions
 2. Spawn **parallel** with-skill + baseline runs (critical for fair timing)
 3. Draft assertions while runs execute
@@ -122,16 +123,16 @@ Optimization patterns: `references/benchmark-optimization-guide.md`
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `scripts/init_skill.py` | Initialize new skill from template |
-| `scripts/package_skill.py` | Validate + package skill as zip |
-| `scripts/quick_validate.py` | Quick frontmatter validation |
-| `scripts/run_eval.py` | Test skill triggering on queries |
-| `scripts/aggregate_benchmark.py` | Consolidate runs into summary stats |
-| `scripts/improve_description.py` | AI-powered description optimization |
-| `scripts/run_loop.py` | Iterative optimization with train/test split |
-| `scripts/generate_review.py` | Generate interactive HTML eval viewer |
+| Script                           | Purpose                                      |
+| -------------------------------- | -------------------------------------------- |
+| `scripts/init_skill.py`          | Initialize new skill from template           |
+| `scripts/package_skill.py`       | Validate + package skill as zip              |
+| `scripts/quick_validate.py`      | Quick frontmatter validation                 |
+| `scripts/run_eval.py`            | Test skill triggering on queries             |
+| `scripts/aggregate_benchmark.py` | Consolidate runs into summary stats          |
+| `scripts/improve_description.py` | AI-powered description optimization          |
+| `scripts/run_loop.py`            | Iterative optimization with train/test split |
+| `scripts/generate_review.py`     | Generate interactive HTML eval viewer        |
 
 ## Validation & Distribution
 

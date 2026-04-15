@@ -16,6 +16,7 @@ created: 2026-03-12
 Hide the "Delete this workspace" UI section from workspace settings page by modifying the CE component to return null.
 
 ## Target URL
+
 `/[workspace-slug]/settings/` → General settings page
 
 ## Component Hierarchy
@@ -29,13 +30,14 @@ WorkspaceDetails (core/) → renders <DeleteWorkspaceSection>
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | [Hide CE component](./phase-01-hide-ce-component.md) | ✅ complete | phase-01-hide-ce-component.md |
+| #   | Phase                                                | Status      | File                          |
+| --- | ---------------------------------------------------- | ----------- | ----------------------------- |
+| 1   | [Hide CE component](./phase-01-hide-ce-component.md) | ✅ complete | phase-01-hide-ce-component.md |
 
 ## Validation Log
 
 ### Session 1 — 2026-03-12
+
 **Trigger:** Initial plan creation
 **Questions asked:** 3
 
@@ -57,12 +59,15 @@ WorkspaceDetails (core/) → renders <DeleteWorkspaceSection>
    - **Rationale:** General settings page stays accessible; only delete section is hidden.
 
 #### Confirmed Decisions
+
 - Scope: UI-only — no backend changes
 - Permanence: Unconditional null return
 - Nav: No sidebar changes
 
 #### Action Items
+
 - [ ] No changes to phase-01 required — plan matches decisions
 
 #### Impact on Phases
+
 - No phase changes required

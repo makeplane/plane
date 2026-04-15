@@ -8,16 +8,18 @@ Guidelines for designing schemas specific to SQLite.
 
 SQLite has **dynamic typing**, with only 5 storage classes:
 
-| Storage Class | Use case | Notes |
-|---------------|----------|-------|
-| `INTEGER` | PK, FK, counts, booleans | |
-| `REAL` | Floats, decimals | |
-| `TEXT` | Strings, dates, JSON, enums | |
-| `BLOB` | Binary data | |
-| `NULL` | Null values | |
+| Storage Class | Use case                    | Notes |
+| ------------- | --------------------------- | ----- |
+| `INTEGER`     | PK, FK, counts, booleans    |       |
+| `REAL`        | Floats, decimals            |       |
+| `TEXT`        | Strings, dates, JSON, enums |       |
+| `BLOB`        | Binary data                 |       |
+| `NULL`        | Null values                 |       |
 
 ### Type affinity
+
 SQLite does not strictly enforce types. Type declaration is just a "hint":
+
 ```sql
 -- All of these will be stored
 CREATE TABLE test (price REAL);
@@ -27,7 +29,9 @@ INSERT INTO test VALUES ('free');   -- Stored as TEXT (!)
 ```
 
 ### Date/Time
+
 SQLite **does not have** DATE/TIME type. Store as TEXT with ISO format:
+
 ```sql
 created_at TEXT DEFAULT (datetime('now'))
 -- Format: YYYY-MM-DD HH:MM:SS
@@ -178,14 +182,14 @@ CREATE INDEX idx_orders_active ON orders(user_id)
 
 ## Limitations
 
-| Feature | Status | Workaround |
-|---------|--------|------------|
-| `ALTER COLUMN` | ❌ Not supported | Recreate table |
-| `DROP COLUMN` | ✅ SQLite 3.35+ | Recreate table (older) |
-| Comments | ❌ Not supported | Metadata tables |
-| ENUM | ❌ Not supported | CHECK constraint |
-| Stored procedures | ❌ Not supported | App logic |
-| Concurrent writes | ⚠️ Limited | Single writer |
+| Feature           | Status           | Workaround             |
+| ----------------- | ---------------- | ---------------------- |
+| `ALTER COLUMN`    | ❌ Not supported | Recreate table         |
+| `DROP COLUMN`     | ✅ SQLite 3.35+  | Recreate table (older) |
+| Comments          | ❌ Not supported | Metadata tables        |
+| ENUM              | ❌ Not supported | CHECK constraint       |
+| Stored procedures | ❌ Not supported | App logic              |
+| Concurrent writes | ⚠️ Limited       | Single writer          |
 
 ---
 

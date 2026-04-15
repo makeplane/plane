@@ -31,9 +31,9 @@ Well-written code that doesn't match requirements is still wrong.
 
 ## Checklist Template
 
-| # | Requirement | Status | Notes |
-|---|-------------|--------|-------|
-| 1 | [from spec] | PASS/MISSING/EXTRA | [evidence] |
+| #   | Requirement | Status             | Notes      |
+| --- | ----------- | ------------------ | ---------- |
+| 1   | [from spec] | PASS/MISSING/EXTRA | [evidence] |
 
 ## Red Flags
 

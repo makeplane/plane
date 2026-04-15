@@ -52,13 +52,13 @@ Workarounds: symlinks (followed during copying) or restructure so shared files a
 
 ## User Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/plugin marketplace add <source>` | Add marketplace |
-| `/plugin marketplace update` | Refresh marketplace |
-| `/plugin install <name>@<marketplace>` | Install plugin |
-| `/plugin validate .` | Validate marketplace JSON |
-| `claude plugin validate .` | CLI validation |
+| Command                                | Purpose                   |
+| -------------------------------------- | ------------------------- |
+| `/plugin marketplace add <source>`     | Add marketplace           |
+| `/plugin marketplace update`           | Refresh marketplace       |
+| `/plugin install <name>@<marketplace>` | Install plugin            |
+| `/plugin validate .`                   | Validate marketplace JSON |
+| `claude plugin validate .`             | CLI validation            |
 
 ## Validation & Testing
 

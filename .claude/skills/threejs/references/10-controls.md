@@ -7,7 +7,7 @@ Interactive camera navigation systems.
 Orbit camera around a target:
 
 ```javascript
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -23,9 +23,9 @@ controls.minDistance = 5;
 controls.maxDistance = 50;
 
 // Rotation limits
-controls.minPolarAngle = 0;                // radians
-controls.maxPolarAngle = Math.PI / 2;      // prevent going below ground
-controls.minAzimuthAngle = -Math.PI / 4;   // horizontal limit
+controls.minPolarAngle = 0; // radians
+controls.maxPolarAngle = Math.PI / 2; // prevent going below ground
+controls.minAzimuthAngle = -Math.PI / 4; // horizontal limit
 controls.maxAzimuthAngle = Math.PI / 4;
 
 // Behavior
@@ -39,7 +39,7 @@ controls.autoRotateSpeed = 2.0;
 controls.mouseButtons = {
   LEFT: THREE.MOUSE.ROTATE,
   MIDDLE: THREE.MOUSE.DOLLY,
-  RIGHT: THREE.MOUSE.PAN
+  RIGHT: THREE.MOUSE.PAN,
 };
 
 // In animation loop (required if damping enabled)
@@ -50,7 +50,7 @@ function animate() {
 }
 
 // Events
-controls.addEventListener('change', () => {
+controls.addEventListener("change", () => {
   renderer.render(scene, camera);
 });
 ```
@@ -60,7 +60,7 @@ controls.addEventListener('change', () => {
 Bird's-eye map navigation (like OrbitControls but different mouse behavior):
 
 ```javascript
-import { MapControls } from 'three/addons/controls/MapControls.js';
+import { MapControls } from "three/addons/controls/MapControls.js";
 
 const controls = new MapControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -71,7 +71,7 @@ controls.maxPolarAngle = Math.PI / 2;
 controls.mouseButtons = {
   LEFT: THREE.MOUSE.PAN,
   MIDDLE: THREE.MOUSE.DOLLY,
-  RIGHT: THREE.MOUSE.ROTATE
+  RIGHT: THREE.MOUSE.ROTATE,
 };
 ```
 
@@ -80,7 +80,7 @@ controls.mouseButtons = {
 FPS-style camera movement:
 
 ```javascript
-import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
+import { FirstPersonControls } from "three/addons/controls/FirstPersonControls.js";
 
 const controls = new FirstPersonControls(camera, renderer.domElement);
 
@@ -106,7 +106,7 @@ function animate() {
 Free-form flying navigation:
 
 ```javascript
-import { FlyControls } from 'three/addons/controls/FlyControls.js';
+import { FlyControls } from "three/addons/controls/FlyControls.js";
 
 const controls = new FlyControls(camera, renderer.domElement);
 
@@ -129,33 +129,41 @@ function animate() {
 Locked pointer FPS controls:
 
 ```javascript
-import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 
 const controls = new PointerLockControls(camera, renderer.domElement);
 
 // Lock pointer on click
-renderer.domElement.addEventListener('click', () => {
+renderer.domElement.addEventListener("click", () => {
   controls.lock();
 });
 
-controls.addEventListener('lock', () => {
-  console.log('Locked');
+controls.addEventListener("lock", () => {
+  console.log("Locked");
 });
 
-controls.addEventListener('unlock', () => {
-  console.log('Unlocked');
+controls.addEventListener("unlock", () => {
+  console.log("Unlocked");
 });
 
 // Movement
 const velocity = new THREE.Vector3();
 const direction = new THREE.Vector3();
 
-window.addEventListener('keydown', (event) => {
+window.addEventListener("keydown", (event) => {
   switch (event.code) {
-    case 'KeyW': moveForward = true; break;
-    case 'KeyS': moveBackward = true; break;
-    case 'KeyA': moveLeft = true; break;
-    case 'KeyD': moveRight = true; break;
+    case "KeyW":
+      moveForward = true;
+      break;
+    case "KeyS":
+      moveBackward = true;
+      break;
+    case "KeyA":
+      moveLeft = true;
+      break;
+    case "KeyD":
+      moveRight = true;
+      break;
   }
 });
 
@@ -179,7 +187,7 @@ function animate() {
 Intuitive rotation (no gimbal lock):
 
 ```javascript
-import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 
 const controls = new TrackballControls(camera, renderer.domElement);
 
@@ -201,7 +209,7 @@ function animate() {
 3D rotation with virtual ball metaphor:
 
 ```javascript
-import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
+import { ArcballControls } from "three/addons/controls/ArcballControls.js";
 
 const controls = new ArcballControls(camera, renderer.domElement, scene);
 
@@ -231,7 +239,7 @@ function animate() {
 
 ```javascript
 // Disable controls during UI interaction
-transformControls.addEventListener('dragging-changed', (event) => {
+transformControls.addEventListener("dragging-changed", (event) => {
   orbitControls.enabled = !event.value;
 });
 
@@ -247,13 +255,13 @@ function moveCameraTo(position, target) {
     x: position.x,
     y: position.y,
     z: position.z,
-    onUpdate: () => controls.update()
+    onUpdate: () => controls.update(),
   });
   gsap.to(controls.target, {
     duration: 1,
     x: target.x,
     y: target.y,
-    z: target.z
+    z: target.z,
   });
 }
 ```

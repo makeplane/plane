@@ -4,10 +4,10 @@ Track parallel scout agent execution via Claude Native Tasks (TaskCreate, TaskUp
 
 ## When to Create Tasks
 
-| Agents | Create Tasks? | Rationale |
-|--------|--------------|-----------|
-| ≤ 2    | No           | Overhead exceeds benefit, finishes quickly |
-| ≥ 3    | Yes          | Meaningful coordination, progress monitoring |
+| Agents | Create Tasks? | Rationale                                    |
+| ------ | ------------- | -------------------------------------------- |
+| ≤ 2    | No            | Overhead exceeds benefit, finishes quickly   |
+| ≥ 3    | Yes           | Meaningful coordination, progress monitoring |
 
 ## Task Registration Flow
 
@@ -111,6 +111,7 @@ Scout tasks are **independent** from cook/planning phase tasks — NOT parent-ch
 **Rationale:** Different lifecycle. Scout completes before cook continues. Mixing creates confusion in TaskList.
 
 **Sequence when cook spawns scout:**
+
 1. Cook Step 2 → spawns planner → planner spawns scout
 2. Scout registers its own tasks (Step 3), executes (Step 4-5)
 3. Scout returns aggregated report → planner continues

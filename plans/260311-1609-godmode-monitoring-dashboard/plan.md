@@ -29,10 +29,10 @@ Phase 1 monitoring dashboard for God Mode admin app. Uses ONLY existing infrastr
 
 ## Phases
 
-| # | Phase | Effort | Status |
-|---|-------|--------|--------|
-| 1 | [Backend API](./phase-01-backend-api.md) | 2.5h | complete |
-| 2 | [Frontend Dashboard](./phase-02-frontend-dashboard.md) | 3.5h | complete |
+| #   | Phase                                                  | Effort | Status   |
+| --- | ------------------------------------------------------ | ------ | -------- |
+| 1   | [Backend API](./phase-01-backend-api.md)               | 2.5h   | complete |
+| 2   | [Frontend Dashboard](./phase-02-frontend-dashboard.md) | 3.5h   | complete |
 
 ## Key Dependencies
 
@@ -59,6 +59,7 @@ Phase 1 monitoring dashboard for God Mode admin app. Uses ONLY existing infrastr
 ## Validation Log
 
 ### Session 1 — 2026-03-11
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 4
 
@@ -85,15 +86,18 @@ Phase 1 monitoring dashboard for God Mode admin app. Uses ONLY existing infrastr
    - **Rationale:** Acceptable staleness for monitoring. Reduces Celery Inspect API load.
 
 #### Confirmed Decisions
+
 - Email Logs scope: Show existing EmailNotificationLog only, rename tab to "Issue Email Logs"
 - Scheduled Jobs: Read-only in Phase 1, no mutations
 - Service location: `packages/services/src/instance/monitoring.service.ts`
 - Caching: 30s server + 30s client refresh — confirmed
 
 #### Action Items
+
 - [ ] Rename "Email Logs" to "Issue Email Logs" throughout plan and code
 - [ ] Ensure tab description clarifies this tracks issue notification emails only
 
 #### Impact on Phases
+
 - Phase 1: Rename email-logs endpoint description to clarify scope (issue notification emails only)
 - Phase 2: Rename tab label "Email Logs" → "Issue Email Logs", update wireframes, update types

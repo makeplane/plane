@@ -17,6 +17,7 @@ Register "HO" as a dynamic workspace sidebar nav item. Dynamic items live in the
 ## Requirements
 
 <!-- Updated: Validation Session 1 - Changed from DYNAMIC to STATIC, added BOD workspace check -->
+
 1. Add `ho` entry to `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS` object (NOT dynamic)
 2. Append to `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS` array
 3. Use hardcoded label `"HO"` (no i18n key needed)
@@ -48,6 +49,7 @@ ho: {
 ```
 
 Then append to `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS`:
+
 ```typescript
 WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["ho"],
 ```
@@ -57,6 +59,7 @@ WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["ho"],
 ### 2. `apps/web/ce/components/workspace/sidebar/helper.tsx`
 
 Add case before the closing brace of the switch:
+
 ```typescript
 case "ho":
   return <BuildingIcon className={cn("size-4 flex-shrink-0", className)} />;
@@ -67,6 +70,7 @@ Use `Building2` from lucide-react if `@plane/propel/icons` has no org icon.
 ### 3. `apps/web/app/routes/core.ts`
 
 After the stickies route block (line ~104):
+
 ```typescript
 layout("./(all)/[workspaceSlug]/(projects)/ho/layout.tsx", [
   route(":workspaceSlug/ho", "./(all)/[workspaceSlug]/(projects)/ho/page.tsx"),
@@ -76,6 +80,7 @@ layout("./(all)/[workspaceSlug]/(projects)/ho/layout.tsx", [
 ## Todo
 
 <!-- Updated: Validation Session 1 -->
+
 - [ ] Add `ho` to `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS` (hardcoded label, ADMIN+MEMBER access)
 - [ ] Append to `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS`
 - [ ] Add icon in `helper.tsx` (use `Building2` from lucide-react)

@@ -6,12 +6,12 @@ D1 is a SQLite-based database running on Cloudflare edge. Inherits from [sqlite.
 
 ## Important Limitations
 
-| Limit | Value |
-|-------|-------|
-| Max database size | **10 GB** |
-| Concurrent queries | Single-threaded (1 query/time) |
-| Batch operations | No more than 100k rows/query |
-| Max tables | No hard limit, but recommend < 100 |
+| Limit              | Value                              |
+| ------------------ | ---------------------------------- |
+| Max database size  | **10 GB**                          |
+| Concurrent queries | Single-threaded (1 query/time)     |
+| Batch operations   | No more than 100k rows/query       |
+| Max tables         | No hard limit, but recommend < 100 |
 
 **Throughput**: ~1000 queries/s if avg query = 1ms. Query 100ms = only 10 queries/s.
 
@@ -21,12 +21,12 @@ D1 is a SQLite-based database running on Cloudflare edge. Inherits from [sqlite.
 
 Same as SQLite:
 
-| Storage Class | Use case |
-|---------------|----------|
-| `INTEGER` | PK, FK, counts, booleans |
-| `REAL` | Floats, decimals |
-| `TEXT` | Strings, dates, JSON |
-| `BLOB` | Binary |
+| Storage Class | Use case                 |
+| ------------- | ------------------------ |
+| `INTEGER`     | PK, FK, counts, booleans |
+| `REAL`        | Floats, decimals         |
+| `TEXT`        | Strings, dates, JSON     |
+| `BLOB`        | Binary                   |
 
 **Date/Time**: Store as `TEXT` with ISO format: `datetime('now')`
 
@@ -80,12 +80,14 @@ CREATE INDEX idx_order_items_order ON order_items(order_id);
 ## Best Practices
 
 ### Performance
+
 - **Use indexes** - since single-threaded, queries must be fast
 - **Batch writes** to reduce latency
 - **Avoid large transactions** (>100k rows)
 - **Pagination** with LIMIT/OFFSET or cursor-based
 
 ### Monitoring
+
 - Track query duration
 - Monitor database size
 - Alert when approaching 10GB limit

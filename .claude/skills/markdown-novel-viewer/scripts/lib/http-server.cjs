@@ -11,10 +11,10 @@
  * Security: Paths are validated to prevent directory traversal attacks
  */
 
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const url = require("url");
 
 // Allowed base directories for file access (set at runtime)
 let allowedBaseDirs = [];
@@ -24,7 +24,7 @@ let allowedBaseDirs = [];
  * @param {string[]} dirs - Array of allowed directory paths
  */
 function setAllowedDirs(dirs) {
-  allowedBaseDirs = dirs.map(d => path.resolve(d));
+  allowedBaseDirs = dirs.map((d) => path.resolve(d));
 }
 
 /**
@@ -37,7 +37,7 @@ function isPathSafe(filePath, allowedDirs = allowedBaseDirs) {
   const resolved = path.resolve(filePath);
 
   // Check for path traversal attempts
-  if (resolved.includes('..') || filePath.includes('\0')) {
+  if (resolved.includes("..") || filePath.includes("\0")) {
     return false;
   }
 
@@ -47,32 +47,32 @@ function isPathSafe(filePath, allowedDirs = allowedBaseDirs) {
   }
 
   // Must be within one of the allowed directories
-  return allowedDirs.some(dir => resolved.startsWith(dir));
+  return allowedDirs.some((dir) => resolved.startsWith(dir));
 }
 
 /**
  * Sanitize error message to prevent path disclosure
  */
 function sanitizeErrorMessage(message) {
-  return message.replace(/\/[^\s'"<>]+/g, '[path]');
+  return message.replace(/\/[^\s'"<>]+/g, "[path]");
 }
 
 // MIME type mapping
 const MIME_TYPES = {
-  '.html': 'text/html',
-  '.css': 'text/css',
-  '.js': 'application/javascript',
-  '.json': 'application/json',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.svg': 'image/svg+xml',
-  '.webp': 'image/webp',
-  '.ico': 'image/x-icon',
-  '.md': 'text/markdown',
-  '.txt': 'text/plain',
-  '.pdf': 'application/pdf'
+  ".html": "text/html",
+  ".css": "text/css",
+  ".js": "application/javascript",
+  ".json": "application/json",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".webp": "image/webp",
+  ".ico": "image/x-icon",
+  ".md": "text/markdown",
+  ".txt": "text/plain",
+  ".pdf": "application/pdf",
 };
 
 /**
@@ -80,14 +80,14 @@ const MIME_TYPES = {
  */
 function getMimeType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
-  return MIME_TYPES[ext] || 'application/octet-stream';
+  return MIME_TYPES[ext] || "application/octet-stream";
 }
 
 /**
  * Send response with content
  */
 function sendResponse(res, statusCode, contentType, content) {
-  res.writeHead(statusCode, { 'Content-Type': contentType });
+  res.writeHead(statusCode, { "Content-Type": contentType });
   res.end(content);
 }
 
@@ -96,7 +96,11 @@ function sendResponse(res, statusCode, contentType, content) {
  */
 function sendError(res, statusCode, message) {
   const safeMessage = sanitizeErrorMessage(message);
-  sendResponse(res, statusCode, 'text/html', `
+  sendResponse(
+    res,
+    statusCode,
+    "text/html",
+    `
     <!DOCTYPE html>
     <html>
     <head><title>Error ${statusCode}</title></head>
@@ -105,7 +109,8 @@ function sendError(res, statusCode, message) {
       <p>${safeMessage}</p>
     </body>
     </html>
-  `);
+  `
+  );
 }
 
 /**
@@ -113,12 +118,12 @@ function sendError(res, statusCode, message) {
  */
 function serveFile(res, filePath, skipValidation = false) {
   if (!skipValidation && !isPathSafe(filePath)) {
-    sendError(res, 403, 'Access denied');
+    sendError(res, 403, "Access denied");
     return;
   }
 
   if (!fs.existsSync(filePath)) {
-    sendError(res, 404, 'File not found');
+    sendError(res, 404, "File not found");
     return;
   }
 
@@ -133,29 +138,29 @@ function serveFile(res, filePath, skipValidation = false) {
 function getFileIcon(filename) {
   const ext = path.extname(filename).toLowerCase();
   const iconMap = {
-    '.md': '📄',
-    '.txt': '📝',
-    '.json': '📋',
-    '.js': '📜',
-    '.cjs': '📜',
-    '.mjs': '📜',
-    '.ts': '📘',
-    '.css': '🎨',
-    '.html': '🌐',
-    '.png': '🖼️',
-    '.jpg': '🖼️',
-    '.jpeg': '🖼️',
-    '.gif': '🖼️',
-    '.svg': '🖼️',
-    '.pdf': '📕',
-    '.yaml': '⚙️',
-    '.yml': '⚙️',
-    '.toml': '⚙️',
-    '.env': '🔐',
-    '.sh': '💻',
-    '.bash': '💻'
+    ".md": "📄",
+    ".txt": "📝",
+    ".json": "📋",
+    ".js": "📜",
+    ".cjs": "📜",
+    ".mjs": "📜",
+    ".ts": "📘",
+    ".css": "🎨",
+    ".html": "🌐",
+    ".png": "🖼️",
+    ".jpg": "🖼️",
+    ".jpeg": "🖼️",
+    ".gif": "🖼️",
+    ".svg": "🖼️",
+    ".pdf": "📕",
+    ".yaml": "⚙️",
+    ".yml": "⚙️",
+    ".toml": "⚙️",
+    ".env": "🔐",
+    ".sh": "💻",
+    ".bash": "💻",
   };
-  return iconMap[ext] || '📄';
+  return iconMap[ext] || "📄";
 }
 
 /**
@@ -163,7 +168,7 @@ function getFileIcon(filename) {
  */
 function renderDirectoryBrowser(dirPath, assetsDir) {
   const items = fs.readdirSync(dirPath);
-  const displayPath = dirPath.length > 50 ? '...' + dirPath.slice(-47) : dirPath;
+  const displayPath = dirPath.length > 50 ? "..." + dirPath.slice(-47) : dirPath;
 
   // Separate directories and files, sort alphabetically
   const dirs = [];
@@ -171,7 +176,7 @@ function renderDirectoryBrowser(dirPath, assetsDir) {
 
   for (const item of items) {
     // Skip hidden files and deprecated folders
-    if (item.startsWith('.') || item === 'deprecated') continue;
+    if (item.startsWith(".") || item === "deprecated") continue;
 
     const itemPath = path.join(dirPath, item);
     try {
@@ -190,7 +195,7 @@ function renderDirectoryBrowser(dirPath, assetsDir) {
   files.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
   // Build file list HTML
-  let listHtml = '';
+  let listHtml = "";
 
   // Parent directory link (if not root)
   const parentDir = path.dirname(dirPath);
@@ -218,7 +223,7 @@ function renderDirectoryBrowser(dirPath, assetsDir) {
   for (const file of files) {
     const fullPath = path.join(dirPath, file);
     const icon = getFileIcon(file);
-    const isMarkdown = file.endsWith('.md');
+    const isMarkdown = file.endsWith(".md");
 
     if (isMarkdown) {
       listHtml += `<li class="dir-item file markdown">
@@ -243,10 +248,10 @@ function renderDirectoryBrowser(dirPath, assetsDir) {
   }
 
   // Read CSS
-  let css = '';
-  const cssPath = path.join(assetsDir, 'directory-browser.css');
+  let css = "";
+  const cssPath = path.join(assetsDir, "directory-browser.css");
   if (fs.existsSync(cssPath)) {
-    css = fs.readFileSync(cssPath, 'utf8');
+    css = fs.readFileSync(cssPath, "utf8");
   }
 
   return `<!DOCTYPE html>
@@ -269,7 +274,7 @@ function renderDirectoryBrowser(dirPath, assetsDir) {
       ${listHtml}
     </ul>
     <footer>
-      <p>${dirs.length} folder${dirs.length !== 1 ? 's' : ''}, ${files.length} file${files.length !== 1 ? 's' : ''}</p>
+      <p>${dirs.length} folder${dirs.length !== 1 ? "s" : ""}, ${files.length} file${files.length !== 1 ? "s" : ""}</p>
     </footer>
   </div>
 </body>
@@ -297,10 +302,10 @@ function createHttpServer(options) {
     const pathname = decodeURIComponent(parsedUrl.pathname);
 
     // Route: /assets/* - serve static files from assets directory
-    if (pathname.startsWith('/assets/')) {
-      const relativePath = pathname.replace('/assets/', '');
-      if (relativePath.includes('..')) {
-        sendError(res, 403, 'Access denied');
+    if (pathname.startsWith("/assets/")) {
+      const relativePath = pathname.replace("/assets/", "");
+      if (relativePath.includes("..")) {
+        sendError(res, 403, "Access denied");
         return;
       }
       const assetPath = path.join(assetsDir, relativePath);
@@ -309,13 +314,13 @@ function createHttpServer(options) {
     }
 
     // Route: /file/* - serve local files (images, etc.)
-    if (pathname.startsWith('/file/')) {
+    if (pathname.startsWith("/file/")) {
       // Extract path after '/file/' prefix (slice(6) removes '/file/')
       // Path is already URL-decoded by decodeURIComponent above
       const filePath = pathname.slice(6);
 
       if (!isPathSafe(filePath)) {
-        sendError(res, 403, 'Access denied');
+        sendError(res, 403, "Access denied");
         return;
       }
 
@@ -324,66 +329,70 @@ function createHttpServer(options) {
     }
 
     // Route: /view?file=<path> - render markdown (query param)
-    if (pathname === '/view') {
+    if (pathname === "/view") {
       const filePath = parsedUrl.query?.file;
 
       if (!filePath) {
-        sendError(res, 400, 'Missing ?file= parameter. Use /view?file=/path/to/file.md');
+        sendError(res, 400, "Missing ?file= parameter. Use /view?file=/path/to/file.md");
         return;
       }
 
       if (!isPathSafe(filePath)) {
-        sendError(res, 403, 'Access denied');
+        sendError(res, 403, "Access denied");
         return;
       }
 
       if (!fs.existsSync(filePath)) {
-        sendError(res, 404, 'File not found');
+        sendError(res, 404, "File not found");
         return;
       }
 
       try {
         const html = renderMarkdown(filePath);
-        sendResponse(res, 200, 'text/html', html);
+        sendResponse(res, 200, "text/html", html);
       } catch (err) {
-        console.error('[http-server] Render error:', err.message);
-        sendError(res, 500, 'Error rendering markdown');
+        console.error("[http-server] Render error:", err.message);
+        sendError(res, 500, "Error rendering markdown");
       }
       return;
     }
 
     // Route: /browse?dir=<path> - directory browser (query param)
-    if (pathname === '/browse') {
+    if (pathname === "/browse") {
       const dirPath = parsedUrl.query?.dir;
 
       if (!dirPath) {
-        sendError(res, 400, 'Missing ?dir= parameter. Use /browse?dir=/path/to/directory');
+        sendError(res, 400, "Missing ?dir= parameter. Use /browse?dir=/path/to/directory");
         return;
       }
 
       if (!isPathSafe(dirPath)) {
-        sendError(res, 403, 'Access denied');
+        sendError(res, 403, "Access denied");
         return;
       }
 
       if (!fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
-        sendError(res, 404, 'Directory not found');
+        sendError(res, 404, "Directory not found");
         return;
       }
 
       try {
         const html = renderDirectoryBrowser(dirPath, assetsDir);
-        sendResponse(res, 200, 'text/html', html);
+        sendResponse(res, 200, "text/html", html);
       } catch (err) {
-        console.error('[http-server] Browse error:', err.message);
-        sendError(res, 500, 'Error listing directory');
+        console.error("[http-server] Browse error:", err.message);
+        sendError(res, 500, "Error listing directory");
       }
       return;
     }
 
     // Route: / - show welcome/usage page
-    if (pathname === '/') {
-      sendResponse(res, 200, 'text/html', `
+    if (pathname === "/") {
+      sendResponse(
+        res,
+        200,
+        "text/html",
+        `
         <!DOCTYPE html>
         <html>
         <head>
@@ -408,12 +417,13 @@ function createHttpServer(options) {
           <p>Use the <code>/ck:preview</code> skill invocation to start viewing files.</p>
         </body>
         </html>
-      `);
+      `
+      );
       return;
     }
 
     // Default: 404
-    sendError(res, 404, 'Not found');
+    sendError(res, 404, "Not found");
   });
 
   return server;
@@ -430,5 +440,5 @@ module.exports = {
   sanitizeErrorMessage,
   MIME_TYPES,
   renderDirectoryBrowser,
-  getFileIcon
+  getFileIcon,
 };

@@ -10,21 +10,22 @@
 
 **Component Categories:**
 
-| Category | Examples |
-|----------|----------|
-| **Buttons** | Button, IconButton, ButtonGroup |
-| **Forms** | Input, Select, Textarea, Checkbox, Radio, DatePicker |
-| **Dialogs** | Dialog, AlertDialog, Sheet, Popover, Tooltip |
-| **Navigation** | Tabs, Breadcrumb, Pagination, Sidebar |
-| **Data Display** | Table, List, Card, Badge, Tag, Progress |
-| **Charts** | LineChart, BarChart, PieChart, AreaChart |
-| **Feedback** | Toast, Alert, Skeleton, Spinner |
-| **Layout** | Container, Grid, Flex, Stack |
-| **Rich Text** | RichTextEditor, CodeBlock, Markdown |
+| Category         | Examples                                             |
+| ---------------- | ---------------------------------------------------- |
+| **Buttons**      | Button, IconButton, ButtonGroup                      |
+| **Forms**        | Input, Select, Textarea, Checkbox, Radio, DatePicker |
+| **Dialogs**      | Dialog, AlertDialog, Sheet, Popover, Tooltip         |
+| **Navigation**   | Tabs, Breadcrumb, Pagination, Sidebar                |
+| **Data Display** | Table, List, Card, Badge, Tag, Progress              |
+| **Charts**       | LineChart, BarChart, PieChart, AreaChart             |
+| **Feedback**     | Toast, Alert, Skeleton, Spinner                      |
+| **Layout**       | Container, Grid, Flex, Stack                         |
+| **Rich Text**    | RichTextEditor, CodeBlock, Markdown                  |
 
 **Usage:**
+
 ```typescript
-import { Button, Input, Dialog, Select } from "@plane/propel"
+import { Button, Input, Dialog, Select } from "@plane/propel";
 
 export function CreateIssueDialog() {
   return (
@@ -33,11 +34,12 @@ export function CreateIssueDialog() {
       <Select options={states} label="State" />
       <Button variant="primary">Create</Button>
     </Dialog>
-  )
+  );
 }
 ```
 
 **Guidelines:**
+
 - Prefer Propel over ui/ for new components
 - Use semantic props (variant, size, state)
 - Accessible by default (ARIA labels, keyboard nav)
@@ -50,11 +52,13 @@ export function CreateIssueDialog() {
 **Migration:** Avoid using in new features; refactor existing usage to Propel
 
 **Examples:**
+
 - Button, Input, Select (legacy versions)
 - Modal, Dropdown
 - Loaders, Badges
 
 **When to Use:**
+
 - Only if Propel equivalent not available
 - During incremental refactoring
 - Maintenance of existing features
@@ -65,28 +69,24 @@ export function CreateIssueDialog() {
 **Base:** Tiptap v2 + Y.js CRDT
 
 **Features:**
+
 - Markdown preview + rich editing mode
 - Real-time collaboration (Y.js)
 - Embedded images, code blocks, mentions
 - Custom extensions for Plane domain types
 
 **Usage:**
+
 ```typescript
-import { RichTextEditor } from "@plane/editor"
+import { RichTextEditor } from "@plane/editor";
 
 export function IssueDescription({ initialValue, onChange }) {
-  return (
-    <RichTextEditor
-      value={initialValue}
-      onChange={onChange}
-      editable={true}
-      withBorder={true}
-    />
-  )
+  return <RichTextEditor value={initialValue} onChange={onChange} editable={true} withBorder={true} />;
 }
 ```
 
 **Guidelines:**
+
 - Use for issue descriptions, page content, comments
 - Support markdown syntax
 - Always enable Y.js for collaboration
@@ -97,24 +97,25 @@ export function IssueDescription({ initialValue, onChange }) {
 
 **Core Palette (CSS Variables):**
 
-| Token | Usage | Example |
-|-------|-------|---------|
-| **text-primary** | Main text | Headers, labels, body copy |
-| **text-secondary** | Muted text | Hints, secondary info |
-| **text-tertiary** | Very muted | Timestamps, disabled state |
-| **text-inverted** | On dark backgrounds | CTAs on primary buttons |
-| **bg-canvas** | Page background | Main workspace area |
-| **bg-surface-1** | Card/section background | Issue cards, panels |
-| **bg-surface-2** | Elevated surface | Modals, popovers |
-| **border-subtle** | Dividers | Section separators |
-| **border-strong** | Emphasized borders | Input focus, important dividers |
-| **bg-primary** | Brand color | CTA buttons, highlights |
-| **bg-success** | Success state | Checkmarks, done state |
-| **bg-warning** | Warning state | Caution, pending |
-| **bg-error** | Error state | Validation failures |
-| **bg-info** | Info state | Help text, notifications |
+| Token              | Usage                   | Example                         |
+| ------------------ | ----------------------- | ------------------------------- |
+| **text-primary**   | Main text               | Headers, labels, body copy      |
+| **text-secondary** | Muted text              | Hints, secondary info           |
+| **text-tertiary**  | Very muted              | Timestamps, disabled state      |
+| **text-inverted**  | On dark backgrounds     | CTAs on primary buttons         |
+| **bg-canvas**      | Page background         | Main workspace area             |
+| **bg-surface-1**   | Card/section background | Issue cards, panels             |
+| **bg-surface-2**   | Elevated surface        | Modals, popovers                |
+| **border-subtle**  | Dividers                | Section separators              |
+| **border-strong**  | Emphasized borders      | Input focus, important dividers |
+| **bg-primary**     | Brand color             | CTA buttons, highlights         |
+| **bg-success**     | Success state           | Checkmarks, done state          |
+| **bg-warning**     | Warning state           | Caution, pending                |
+| **bg-error**       | Error state             | Validation failures             |
+| **bg-info**        | Info state              | Help text, notifications        |
 
 **CSS Variable Definition (tailwind.config.js):**
+
 ```javascript
 export default {
   theme: {
@@ -137,17 +138,19 @@ export default {
       // ... more colors
     },
   },
-}
+};
 ```
 
 ### Spacing System
 
 **Scale (Tailwind):**
+
 - `p-1` to `p-12` (4px to 48px, step of 4px)
 - `gap-1` to `gap-12`
 - `m-1` to `m-12`
 
 **Common Usage:**
+
 - **Compact (p-2):** Form inputs, badges
 - **Standard (p-3):** Cards, list items
 - **Spacious (p-4):** Modals, sections
@@ -156,28 +159,31 @@ export default {
 ### Typography
 
 **Font Stack:**
+
 - Family: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue"`
 - Fallback: sans-serif
 
 **Size & Weight Scale:**
 
-| Token | Size | Weight | Usage |
-|-------|------|--------|-------|
-| **text-xs** | 12px | 400 | Timestamps, badges |
-| **text-sm** | 14px | 400/600 | Labels, secondary text |
-| **text-base** | 16px | 400 | Body text |
-| **text-lg** | 18px | 600 | Subheadings |
-| **text-xl** | 20px | 600 | Section headers |
-| **text-2xl** | 24px | 700 | Page titles |
+| Token         | Size | Weight  | Usage                  |
+| ------------- | ---- | ------- | ---------------------- |
+| **text-xs**   | 12px | 400     | Timestamps, badges     |
+| **text-sm**   | 14px | 400/600 | Labels, secondary text |
+| **text-base** | 16px | 400     | Body text              |
+| **text-lg**   | 18px | 600     | Subheadings            |
+| **text-xl**   | 20px | 600     | Section headers        |
+| **text-2xl**  | 24px | 700     | Page titles            |
 
 ### Dark Mode
 
 **Implementation:**
+
 - CSS variables adapt to `prefers-color-scheme: dark`
 - Or toggle via `.dark` class on root element
 - No hardcoded colors (always use semantic tokens)
 
 **Example:**
+
 ```css
 :root {
   --color-text-primary: #1a1a1a;
@@ -197,6 +203,7 @@ export default {
 ### Button Component
 
 **Variants:**
+
 ```typescript
 // Primary action
 <Button variant="primary">Create Issue</Button>
@@ -218,6 +225,7 @@ export default {
 ```
 
 **Sizes:**
+
 - `sm` (32px height, 12px font)
 - `md` (40px height, 14px font) — default
 - `lg` (48px height, 16px font)
@@ -225,6 +233,7 @@ export default {
 ### Input Component
 
 **Variants:**
+
 ```typescript
 // Text input
 <Input type="text" placeholder="Search issues..." />
@@ -250,6 +259,7 @@ export default {
 ### Select Component
 
 **Variants:**
+
 ```typescript
 // Single select
 <Select
@@ -280,6 +290,7 @@ export default {
 ### Dialog Component
 
 **Pattern:**
+
 ```typescript
 <Dialog open={isOpen} onOpenChange={setIsOpen}>
   <DialogTrigger asChild>
@@ -309,15 +320,14 @@ export default {
 ### Card Component
 
 **Pattern:**
+
 ```typescript
 <Card className="p-4">
   <Card.Header>
     <Card.Title>Issue #123</Card.Title>
     <Card.Description>Created 2 hours ago</Card.Description>
   </Card.Header>
-  <Card.Content className="text-sm text-secondary">
-    {issueDescription}
-  </Card.Content>
+  <Card.Content className="text-sm text-secondary">{issueDescription}</Card.Content>
   <Card.Footer className="flex justify-end gap-2">
     <Button size="sm">Edit</Button>
   </Card.Footer>
@@ -329,6 +339,7 @@ export default {
 ### Issue List Layout
 
 **Structure:**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ Filters & Sorting Bar                       │
@@ -341,6 +352,7 @@ export default {
 ```
 
 **Components:**
+
 - Top toolbar: Filters, sort dropdown, view selector
 - Table header with sortable columns
 - Row with drag handle (for reordering)
@@ -349,6 +361,7 @@ export default {
 ### Kanban Board Layout
 
 **Structure:**
+
 ```
 ┌──────────┬──────────┬──────────┐
 │ Backlog  │ Todo     │ Done     │
@@ -363,12 +376,14 @@ export default {
 ```
 
 **Components:**
+
 - KanbanGroup per state (column)
 - IssueCard with drag handle (Atlaskit pragmatic DnD)
 - Add issue button at bottom
 - State transition via drag-and-drop
 
 **DnD Validation:**
+
 - useWorkflowFDragNDrop hook checks workflow rules
 - Block invalid transitions visually (disabled drop zone)
 - Show error modal on blocked transition
@@ -376,13 +391,14 @@ export default {
 ### Form Layout
 
 **Standard Pattern:**
+
 ```typescript
 <form className="space-y-4">
   <div>
     <label className="text-sm font-medium">Title *</label>
     <Input required placeholder="Issue title" />
   </div>
-  
+
   <div className="grid grid-cols-2 gap-4">
     <div>
       <label className="text-sm font-medium">State</label>
@@ -393,12 +409,12 @@ export default {
       <Select options={priorities} />
     </div>
   </div>
-  
+
   <div>
     <label className="text-sm font-medium">Description</label>
     <RichTextEditor />
   </div>
-  
+
   <div className="flex justify-end gap-2">
     <Button variant="secondary">Cancel</Button>
     <Button variant="primary">Create</Button>
@@ -407,7 +423,8 @@ export default {
 ```
 
 **Guidelines:**
-- Required field indicator (*) on label
+
+- Required field indicator (\*) on label
 - Error messages below input (red text)
 - Helper text below input (gray text)
 - Consistent spacing (space-y-4)
@@ -465,18 +482,19 @@ export default {
 
 ### Breakpoints (Tailwind v4)
 
-| Prefix | Min Width | Usage |
-|--------|-----------|-------|
-| **xs** | — | Default (mobile-first) |
-| **sm** | 640px | Small devices |
-| **md** | 768px | Tablets |
-| **lg** | 1024px | Desktops |
-| **xl** | 1280px | Large screens |
-| **2xl** | 1536px | Extra large screens |
+| Prefix  | Min Width | Usage                  |
+| ------- | --------- | ---------------------- |
+| **xs**  | —         | Default (mobile-first) |
+| **sm**  | 640px     | Small devices          |
+| **md**  | 768px     | Tablets                |
+| **lg**  | 1024px    | Desktops               |
+| **xl**  | 1280px    | Large screens          |
+| **2xl** | 1536px    | Extra large screens    |
 
 ### Mobile-First Approach
 
 **Pattern:**
+
 ```typescript
 // Mobile (xs):
 <div className="
@@ -493,20 +511,23 @@ export default {
 ### Common Patterns
 
 **Sidebar + Content:**
+
 ```typescript
-<div className="
+<div
+  className="
   flex flex-col
   lg:flex-row lg:gap-6
-">
-  <aside className="
+"
+>
+  <aside
+    className="
     w-full mb-4
     lg:w-64 lg:mb-0
-  ">
+  "
+  >
     {sidebar}
   </aside>
-  <main className="flex-1">
-    {content}
-  </main>
+  <main className="flex-1">{content}</main>
 </div>
 ```
 
@@ -515,22 +536,23 @@ export default {
 ### Icon Library
 
 **Source:** Heroicons (via @plane/propel)
+
 - Size: 16px (xs), 20px (sm), 24px (md), 32px (lg)
 - Stroke: 2px (consistent weight)
 - Color: Inherits text color or use semantic tokens
 
 **Usage:**
-```typescript
-import { ChevronDownIcon, PlusIcon } from "@plane/propel/icons"
 
-<Button icon={<PlusIcon className="w-4 h-4" />}>
-  Add Issue
-</Button>
+```typescript
+import { ChevronDownIcon, PlusIcon } from "@plane/propel/icons";
+
+<Button icon={<PlusIcon className="w-4 h-4" />}>Add Issue</Button>;
 ```
 
 ### Illustrations
 
 **Guidelines:**
+
 - Use for empty states, errors, onboarding
 - Consistent art style (minimalist, flat)
 - Accessible: include alt text
@@ -583,6 +605,7 @@ import { ChevronDownIcon, PlusIcon } from "@plane/propel/icons"
 ### Translation Keys
 
 **Convention:** Dot notation (nested)
+
 ```json
 {
   "workspace": {
@@ -600,19 +623,20 @@ import { ChevronDownIcon, PlusIcon } from "@plane/propel/icons"
 ```
 
 **Usage:**
+
 ```typescript
-import { useI18n } from "@plane/i18n"
+import { useI18n } from "@plane/i18n";
 
 export function IssueForm() {
-  const { t } = useI18n()
-  
+  const { t } = useI18n();
+
   return (
     <form>
       <label>{t("issue.title")}</label>
       <Input placeholder={t("issue.placeholder.title")} />
       <Button>{t("issue.create")}</Button>
     </form>
-  )
+  );
 }
 ```
 
@@ -625,7 +649,7 @@ export function IssueForm() {
 ```
 
 ```typescript
-t("issues.count", { count: 5 }) // "5 issues"
+t("issues.count", { count: 5 }); // "5 issues"
 ```
 
 ## Dark Mode Support
@@ -635,6 +659,7 @@ t("issues.count", { count: 5 }) // "5 issues"
 All components automatically support dark mode via CSS variables.
 
 **Testing:**
+
 ```bash
 # Test dark mode
 # 1. System preference: System Settings → Display → Dark Mode
@@ -642,10 +667,13 @@ All components automatically support dark mode via CSS variables.
 ```
 
 **Manual Toggle (optional):**
+
 ```typescript
-<button onClick={() => {
-  document.documentElement.classList.toggle("dark")
-}}>
+<button
+  onClick={() => {
+    document.documentElement.classList.toggle("dark");
+  }}
+>
   Toggle Dark Mode
 </button>
 ```

@@ -651,12 +651,15 @@ curl -X GET http://localhost:8000/api/workspaces/test-workspace/dashboards/<dash
 ## Risk Assessment
 
 **Risk**: Performance degradation with many widgets
+
 - **Mitigation**: Add widget data caching, consider batch endpoint
 
 **Risk**: build_analytics_chart may not support all chart properties
+
 - **Mitigation**: Validate chart_property against x_axis_mapper
 
 **Risk**: Concurrent widget updates cause data inconsistency
+
 - **Mitigation**: Use database transactions for bulk operations
 
 ## Security Considerations
@@ -670,6 +673,7 @@ curl -X GET http://localhost:8000/api/workspaces/test-workspace/dashboards/<dash
 ## Next Steps
 
 Proceed to [Phase 3: Frontend Types, Constants & Service](./phase-03-frontend-types-constants-service.md)
+
 - Define TypeScript interfaces for API responses
 - Create constants for widget types and color presets
 - Implement DashboardService class

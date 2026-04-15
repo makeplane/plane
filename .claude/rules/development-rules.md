@@ -4,6 +4,7 @@
 **IMPORTANT:** You ALWAYS follow these principles: **YAGNI (You Aren't Gonna Need It) - KISS (Keep It Simple, Stupid) - DRY (Don't Repeat Yourself)**
 
 ## General
+
 - **File Naming**: Use kebab-case for file names with a meaningful name that describes the purpose of the file, doesn't matter if the file name is long, just make sure when LLMs read the file names while using Grep or other tools, they can understand the purpose of the file right away without reading the file content.
 - **File Size Management**: Keep individual code files under 200 lines for optimal context management
   - Split large files into smaller, focused components/modules
@@ -20,6 +21,7 @@
 - **[IMPORTANT]** Do not just simulate the implementation or mocking them, always implement the real code.
 
 ## Code Quality Guidelines
+
 - Read and follow codebase structure and code standards in `./docs`
 - Don't be too harsh on code linting, but **make sure there are no syntax errors and code are compilable**
 - Prioritize functionality and readability over strict style enforcement and code formatting
@@ -28,6 +30,7 @@
 - Use `code-reviewer` agent to review code after every implementation
 
 ## Pre-commit/Push Rules
+
 - Run linting before commit
 - Run tests before push (DO NOT ignore failed tests just to pass the build or github actions)
 - Keep commits focused on the actual code changes
@@ -35,6 +38,7 @@
 - Create clean, professional commit messages without AI references. Use conventional commit format.
 
 ## Code Implementation
+
 - Write clean, readable, and maintainable code
 - Follow established architectural patterns
 - Implement features according to specifications
@@ -42,6 +46,7 @@
 - **DO NOT** create new enhanced files, update to the existing files directly.
 
 ## Visual Aids
+
 - Use `/ck:preview --explain` when explaining unfamiliar code patterns or complex logic
 - Use `/ck:preview --diagram` for architecture diagrams and data flow visualization
 - Use `/ck:preview --slides` for step-by-step walkthroughs and presentations

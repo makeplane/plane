@@ -85,6 +85,7 @@ When score < 6/10:
 5. **Iterate until score ≥ 7/10**
 
 Example:
+
 ```bash
 # First attempt scores 5/10 - "colors too muted, composition unbalanced"
 

@@ -12,9 +12,9 @@ Via checkout session with recurring product:
 
 ```javascript
 const session = await creem.checkout.sessions.create({
-  product_id: 'prod_recurring_xxx',
-  success_url: 'https://example.com/success',
-  customer_email: 'user@example.com'
+  product_id: "prod_recurring_xxx",
+  success_url: "https://example.com/success",
+  customer_email: "user@example.com",
 });
 ```
 
@@ -22,7 +22,7 @@ const session = await creem.checkout.sessions.create({
 
 ```javascript
 // GET /v1/subscriptions/:id
-const subscription = await creem.subscriptions.retrieve('sub_xxx');
+const subscription = await creem.subscriptions.retrieve("sub_xxx");
 // Returns: { id, status, product_id, current_period_end, ... }
 ```
 
@@ -32,19 +32,19 @@ const subscription = await creem.subscriptions.retrieve('sub_xxx');
 
 ```javascript
 // PATCH /v1/subscriptions/:id
-const updated = await creem.subscriptions.update('sub_xxx', {
-  quantity: 10,           // Seat count
-  prorate: true,          // Prorate charges
-  billing_immediately: false
+const updated = await creem.subscriptions.update("sub_xxx", {
+  quantity: 10, // Seat count
+  prorate: true, // Prorate charges
+  billing_immediately: false,
 });
 ```
 
 ### Upgrade/Downgrade
 
 ```javascript
-const updated = await creem.subscriptions.update('sub_xxx', {
-  product_id: 'prod_higher_tier',
-  prorate: true
+const updated = await creem.subscriptions.update("sub_xxx", {
+  product_id: "prod_higher_tier",
+  prorate: true,
 });
 ```
 
@@ -52,8 +52,8 @@ const updated = await creem.subscriptions.update('sub_xxx', {
 
 ```javascript
 // POST /v1/subscriptions/:id/pause
-const paused = await creem.subscriptions.pause('sub_xxx', {
-  resume_at: '2024-02-01T00:00:00Z'  // Optional auto-resume date
+const paused = await creem.subscriptions.pause("sub_xxx", {
+  resume_at: "2024-02-01T00:00:00Z", // Optional auto-resume date
 });
 ```
 
@@ -61,15 +61,15 @@ const paused = await creem.subscriptions.pause('sub_xxx', {
 
 ```javascript
 // POST /v1/subscriptions/:id/resume
-const resumed = await creem.subscriptions.resume('sub_xxx');
+const resumed = await creem.subscriptions.resume("sub_xxx");
 ```
 
 ## Cancel Subscription
 
 ```javascript
 // POST /v1/subscriptions/:id/cancel
-const cancelled = await creem.subscriptions.cancel('sub_xxx', {
-  at_period_end: true    // false = immediate cancellation
+const cancelled = await creem.subscriptions.cancel("sub_xxx", {
+  at_period_end: true, // false = immediate cancellation
 });
 ```
 
@@ -79,11 +79,11 @@ Configure on product level:
 
 ```javascript
 const product = await creem.products.create({
-  name: 'Pro Plan',
+  name: "Pro Plan",
   price: 2900,
-  currency: 'usd',
-  recurring: { interval: 'month' },
-  trial_period_days: 14
+  currency: "usd",
+  recurring: { interval: "month" },
+  trial_period_days: 14,
 });
 ```
 
@@ -91,18 +91,18 @@ const product = await creem.products.create({
 
 ```javascript
 const product = await creem.products.create({
-  name: 'Team Plan',
-  price: 1000,           // Per seat price
-  currency: 'usd',
-  recurring: { interval: 'month' },
-  billing_scheme: 'per_unit'
+  name: "Team Plan",
+  price: 1000, // Per seat price
+  currency: "usd",
+  recurring: { interval: "month" },
+  billing_scheme: "per_unit",
 });
 
 // Checkout with quantity
 const session = await creem.checkout.sessions.create({
-  product_id: 'prod_xxx',
-  quantity: 5,           // 5 seats
-  success_url: '...'
+  product_id: "prod_xxx",
+  quantity: 5, // 5 seats
+  success_url: "...",
 });
 ```
 
@@ -112,8 +112,8 @@ Group related tiers for upsells:
 
 ```javascript
 const bundle = await creem.bundles.create({
-  name: 'Growth Plans',
-  products: ['prod_starter', 'prod_pro', 'prod_enterprise']
+  name: "Growth Plans",
+  products: ["prod_starter", "prod_pro", "prod_enterprise"],
 });
 ```
 

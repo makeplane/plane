@@ -2,13 +2,13 @@
 
 ## Question Categories
 
-| Category | Keywords to detect |
-|----------|-------------------|
-| **Architecture** | "approach", "pattern", "design", "structure", "database", "API" |
-| **Assumptions** | "assume", "expect", "should", "will", "must", "default" |
-| **Tradeoffs** | "tradeoff", "vs", "alternative", "option", "choice", "either/or" |
-| **Risks** | "risk", "might", "could fail", "dependency", "blocker", "concern" |
-| **Scope** | "phase", "MVP", "future", "out of scope", "nice to have" |
+| Category         | Keywords to detect                                                |
+| ---------------- | ----------------------------------------------------------------- |
+| **Architecture** | "approach", "pattern", "design", "structure", "database", "API"   |
+| **Assumptions**  | "assume", "expect", "should", "will", "must", "default"           |
+| **Tradeoffs**    | "tradeoff", "vs", "alternative", "option", "choice", "either/or"  |
+| **Risks**        | "risk", "might", "could fail", "dependency", "blocker", "concern" |
+| **Scope**        | "phase", "MVP", "future", "out of scope", "nice to have"          |
 
 ## Question Format Rules
 
@@ -22,6 +22,7 @@
 Category: Architecture
 Question: "How should the validation results be persisted?"
 Options:
+
 1. Save to plan.md frontmatter (Recommended)
 2. Create validation-answers.md
 3. Don't persist
@@ -29,6 +30,7 @@ Options:
 Category: Assumptions
 Question: "The plan assumes API rate limiting is not needed. Is this correct?"
 Options:
+
 1. Yes, not needed for MVP
 2. No, add basic rate limiting now (Recommended)
 3. Defer to Phase 2
@@ -39,6 +41,7 @@ Options:
 ## Validation Log
 
 ### Session {N} — {YYYY-MM-DD}
+
 **Trigger:** {what prompted this validation}
 **Questions asked:** {count}
 
@@ -51,12 +54,15 @@ Options:
    - **Rationale:** {why this decision matters}
 
 #### Confirmed Decisions
+
 - {decision}: {choice} — {brief why}
 
 #### Action Items
+
 - [ ] {specific change needed}
 
 #### Impact on Phases
+
 - Phase {N}: {what needs updating and why}
 ```
 
@@ -71,10 +77,10 @@ Options:
 
 ## Section Mapping for Phase Propagation
 
-| Change Type | Target Section |
-|-------------|----------------|
-| Requirements | Requirements |
-| Architecture | Architecture |
-| Scope | Overview / Implementation Steps |
-| Risk | Risk Assessment |
-| Unknown | Key Insights (new subsection) |
+| Change Type  | Target Section                  |
+| ------------ | ------------------------------- |
+| Requirements | Requirements                    |
+| Architecture | Architecture                    |
+| Scope        | Overview / Implementation Steps |
+| Risk         | Risk Assessment                 |
+| Unknown      | Key Insights (new subsection)   |

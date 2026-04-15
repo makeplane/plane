@@ -82,7 +82,10 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
       success: { title: "Workspace deleted", message: () => `"${workspace.name}" has been deleted.` },
       error: { title: "Error", message: () => "Failed to delete workspace." },
     });
-    await deletePromise.then(handleClose).catch(() => {}).finally(() => setIsDeleting(false));
+    await deletePromise
+      .then(handleClose)
+      .catch(() => {})
+      .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -96,8 +99,8 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
             <div className="flex flex-col gap-1">
               <h3 className="text-16 font-medium">Delete workspace</h3>
               <p className="text-13 text-secondary">
-                You are about to delete <span className="font-medium text-primary">{workspace.name}</span>. All projects,
-                issues, and data will be permanently lost.
+                You are about to delete <span className="font-medium text-primary">{workspace.name}</span>. All
+                projects, issues, and data will be permanently lost.
               </p>
             </div>
           </div>
@@ -118,7 +121,8 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
             </div>
             <div>
               <p className="text-13 text-secondary mb-2">
-                For final confirmation, type <span className="font-medium text-primary">delete my workspace</span> below.
+                For final confirmation, type <span className="font-medium text-primary">delete my workspace</span>{" "}
+                below.
               </p>
               <input
                 type="text"
@@ -155,6 +159,7 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal({ wor
 - Render `<DeleteWorkspaceModal>`
 
 Key structural change:
+
 ```tsx
 // Before: entire row is <a>
 // After:
@@ -176,6 +181,7 @@ Key structural change:
 ### 3. Update `apps/admin/app/(all)/(dashboard)/workspace/page.tsx`
 
 Remove the stale note (lines 128–130):
+
 ```tsx
 // Remove:
 <div className={cn("font-regular leading-5 text-tertiary text-11")}>

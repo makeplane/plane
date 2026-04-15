@@ -1,6 +1,7 @@
 node_modules
 .next
 .yarn
+.pnpm-store/
 
 ### NextJS ###
 # Dependencies

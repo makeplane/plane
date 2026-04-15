@@ -44,6 +44,7 @@ cat llms.txt | node scripts/analyze-llms-txt.js -
 ## Examples
 
 **Astro framework:**
+
 ```bash
 # Execute scripts (no manual URL construction)
 node scripts/detect-topic.js "Documentation for Astro"
@@ -82,6 +83,7 @@ node scripts/analyze-llms-txt.js < llms.txt
 ## Fallback
 
 Scripts handle fallback automatically:
+
 1. `fetch-docs.js` tries context7.com
 2. If 404, script suggests WebSearch for llms.txt
 3. If still unavailable: [Repository Analysis](./repo-analysis.md)

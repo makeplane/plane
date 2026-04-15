@@ -5,19 +5,25 @@ Model selection strategies and budget guidelines.
 ## Model Selection Strategy
 
 ### 1. Exploration Phase
+
 Use fast model (3-5 variations):
+
 - **Cost**: ~$0.02 per image
 - **Speed**: ~5-10 seconds per generation
 - **Use for**: Rapid iteration, aesthetic exploration
 
 ### 2. Refinement Phase
+
 Use standard model (1-2 variations):
+
 - **Cost**: ~$0.04 per image
 - **Speed**: ~10-20 seconds per generation
 - **Use for**: Production-ready assets
 
 ### 3. Final Polish
+
 Use ultra model (1 generation):
+
 - **Cost**: ~$0.08 per image
 - **Speed**: ~20-30 seconds per generation
 - **Use for**: Hero images, marketing materials, critical assets

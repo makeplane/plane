@@ -19,18 +19,18 @@ export const auth = betterAuth({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       // Optional: custom scopes
-      scope: ["user:email", "read:user"]
+      scope: ["user:email", "read:user"],
     },
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      scope: ["openid", "email", "profile"]
+      scope: ["openid", "email", "profile"],
     },
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -42,7 +42,7 @@ import { authClient } from "@/lib/auth-client";
 // Basic sign in
 await authClient.signIn.social({
   provider: "github",
-  callbackURL: "/dashboard"
+  callbackURL: "/dashboard",
 });
 
 // With callbacks
@@ -101,9 +101,9 @@ export const auth = betterAuth({
       clientSecret: process.env.APPLE_CLIENT_SECRET!,
       teamId: process.env.APPLE_TEAM_ID!,
       keyId: process.env.APPLE_KEY_ID!,
-      privateKey: process.env.APPLE_PRIVATE_KEY!
-    }
-  }
+      privateKey: process.env.APPLE_PRIVATE_KEY!,
+    },
+  },
 });
 ```
 
@@ -116,8 +116,8 @@ export const auth = betterAuth({
       clientId: process.env.MICROSOFT_CLIENT_ID!,
       clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
       tenantId: process.env.MICROSOFT_TENANT_ID, // Optional: for specific tenant
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -129,8 +129,8 @@ export const auth = betterAuth({
     twitter: {
       clientId: process.env.TWITTER_CLIENT_ID!,
       clientSecret: process.env.TWITTER_CLIENT_SECRET!,
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -155,10 +155,10 @@ export const auth = betterAuth({
         id: profile.id,
         email: profile.email,
         name: profile.name,
-        image: profile.avatar_url
-      })
-    }
-  }
+        image: profile.avatar_url,
+      }),
+    },
+  },
 });
 ```
 
@@ -173,9 +173,9 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["google", "github"] // Auto-link these providers
-    }
-  }
+      trustedProviders: ["google", "github"], // Auto-link these providers
+    },
+  },
 });
 ```
 
@@ -185,7 +185,7 @@ export const auth = betterAuth({
 // Link new provider to existing account
 await authClient.linkSocial({
   provider: "google",
-  callbackURL: "/profile"
+  callbackURL: "/profile",
 });
 
 // List linked accounts
@@ -194,7 +194,7 @@ const accounts = session.user.accounts;
 
 // Unlink account
 await authClient.unlinkAccount({
-  accountId: "account-id"
+  accountId: "account-id",
 });
 ```
 
@@ -205,15 +205,15 @@ await authClient.unlinkAccount({
 ```ts
 // Server-side
 const session = await auth.api.getSession({
-  headers: request.headers
+  headers: request.headers,
 });
 
 const accounts = await auth.api.listAccounts({
-  userId: session.user.id
+  userId: session.user.id,
 });
 
 // Get specific provider token
-const githubAccount = accounts.find(a => a.providerId === "github");
+const githubAccount = accounts.find((a) => a.providerId === "github");
 const accessToken = githubAccount.accessToken;
 const refreshToken = githubAccount.refreshToken;
 ```
@@ -223,7 +223,7 @@ const refreshToken = githubAccount.refreshToken;
 ```ts
 // Manually refresh OAuth token
 const newToken = await auth.api.refreshToken({
-  accountId: "account-id"
+  accountId: "account-id",
 });
 ```
 
@@ -231,12 +231,12 @@ const newToken = await auth.api.refreshToken({
 
 ```ts
 // Example: Use GitHub token to fetch repos
-const githubAccount = accounts.find(a => a.providerId === "github");
+const githubAccount = accounts.find((a) => a.providerId === "github");
 
 const response = await fetch("https://api.github.com/user/repos", {
   headers: {
-    Authorization: `Bearer ${githubAccount.accessToken}`
-  }
+    Authorization: `Bearer ${githubAccount.accessToken}`,
+  },
 });
 
 const repos = await response.json();
@@ -256,10 +256,10 @@ export const auth = betterAuth({
         "user:email",
         "read:user",
         "repo", // Access repositories
-        "gist" // Access gists
-      ]
-    }
-  }
+        "gist", // Access gists
+      ],
+    },
+  },
 });
 ```
 
@@ -278,8 +278,8 @@ export const auth = betterAuth({
     validateState: async (state: string) => {
       // Custom state validation
       return true;
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -293,8 +293,8 @@ export const auth = betterAuth({
     customProvider: {
       pkce: true, // Enable PKCE
       // ... other config
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -303,18 +303,21 @@ export const auth = betterAuth({
 ### Client-Side
 
 ```ts
-await authClient.signIn.social({
-  provider: "github",
-  errorCallbackURL: "/auth/error"
-}, {
-  onError: (ctx) => {
-    console.error("OAuth error:", ctx.error);
-    // Handle specific errors
-    if (ctx.error.code === "OAUTH_ACCOUNT_ALREADY_LINKED") {
-      alert("This account is already linked to another user");
-    }
+await authClient.signIn.social(
+  {
+    provider: "github",
+    errorCallbackURL: "/auth/error",
+  },
+  {
+    onError: (ctx) => {
+      console.error("OAuth error:", ctx.error);
+      // Handle specific errors
+      if (ctx.error.code === "OAUTH_ACCOUNT_ALREADY_LINKED") {
+        alert("This account is already linked to another user");
+      }
+    },
   }
-});
+);
 ```
 
 ### Server-Side
@@ -326,8 +329,8 @@ export const auth = betterAuth({
       console.error(`OAuth error with ${provider}:`, error);
       // Log to monitoring service
       await logError(error);
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -358,21 +361,15 @@ export function SocialSignIn() {
   const handleOAuth = async (provider: string) => {
     await authClient.signIn.social({
       provider,
-      callbackURL: "/dashboard"
+      callbackURL: "/dashboard",
     });
   };
 
   return (
     <div className="space-y-2">
-      <button onClick={() => handleOAuth("github")}>
-        Sign in with GitHub
-      </button>
-      <button onClick={() => handleOAuth("google")}>
-        Sign in with Google
-      </button>
-      <button onClick={() => handleOAuth("discord")}>
-        Sign in with Discord
-      </button>
+      <button onClick={() => handleOAuth("github")}>Sign in with GitHub</button>
+      <button onClick={() => handleOAuth("google")}>Sign in with Google</button>
+      <button onClick={() => handleOAuth("discord")}>Sign in with Discord</button>
     </div>
   );
 }
@@ -396,6 +393,7 @@ export function SocialSignIn() {
 ### Redirect URI Mismatch
 
 Ensure callback URL in OAuth app matches exactly:
+
 ```
 http://localhost:3000/api/auth/callback/github
 ```
@@ -403,14 +401,16 @@ http://localhost:3000/api/auth/callback/github
 ### Missing Scopes
 
 Add required scopes for email access:
+
 ```ts
-scope: ["user:email"] // GitHub
-scope: ["email"] // Google
+scope: ["user:email"]; // GitHub
+scope: ["email"]; // Google
 ```
 
 ### HTTPS Required
 
 Some providers (Apple, Microsoft) require HTTPS callbacks. Use ngrok for local development:
+
 ```bash
 ngrok http 3000
 ```
@@ -418,13 +418,14 @@ ngrok http 3000
 ### CORS Errors
 
 Configure CORS if frontend/backend on different domains:
+
 ```ts
 export const auth = betterAuth({
   advanced: {
     corsOptions: {
       origin: ["https://yourdomain.com"],
-      credentials: true
-    }
-  }
+      credentials: true,
+    },
+  },
 });
 ```

@@ -3,28 +3,28 @@
  * Handles theme toggle, font size, sidebar, and keyboard navigation
  */
 
-(function() {
-  'use strict';
+(function () {
+  "use strict";
 
   // DOM Elements
   const html = document.documentElement;
-  const themeToggle = document.getElementById('theme-toggle');
-  const sidebarToggle = document.getElementById('sidebar-toggle');
-  const sidebar = document.getElementById('sidebar');
-  const fontBtns = document.querySelectorAll('.font-btn');
-  const hljsLight = document.getElementById('hljs-light');
-  const hljsDark = document.getElementById('hljs-dark');
-  const header = document.querySelector('.reader-header');
-  const progressBar = document.getElementById('progress-bar');
-  const progressFill = progressBar?.querySelector('.progress-bar-fill');
-  const shortcutsToast = document.getElementById('shortcuts-toast');
-  const shortcutsOverlay = document.getElementById('shortcuts-overlay');
+  const themeToggle = document.getElementById("theme-toggle");
+  const sidebarToggle = document.getElementById("sidebar-toggle");
+  const sidebar = document.getElementById("sidebar");
+  const fontBtns = document.querySelectorAll(".font-btn");
+  const hljsLight = document.getElementById("hljs-light");
+  const hljsDark = document.getElementById("hljs-dark");
+  const header = document.querySelector(".reader-header");
+  const progressBar = document.getElementById("progress-bar");
+  const progressFill = progressBar?.querySelector(".progress-bar-fill");
+  const shortcutsToast = document.getElementById("shortcuts-toast");
+  const shortcutsOverlay = document.getElementById("shortcuts-overlay");
 
   // Storage keys (shared with kanban dashboard for theme persistence)
-  const THEME_KEY = 'theme';
-  const FONT_KEY = 'novel-viewer-font';
-  const SIDEBAR_KEY = 'novel-viewer-sidebar';
-  const TOAST_SHOWN_KEY = 'reader:shortcuts-toast-shown';
+  const THEME_KEY = "theme";
+  const FONT_KEY = "novel-viewer-font";
+  const SIDEBAR_KEY = "novel-viewer-sidebar";
+  const TOAST_SHOWN_KEY = "reader:shortcuts-toast-shown";
 
   // Scroll state
   let lastScrollY = 0;
@@ -33,8 +33,8 @@
   // Initialize theme
   function initTheme() {
     const stored = localStorage.getItem(THEME_KEY);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = stored || (prefersDark ? 'dark' : 'light');
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const theme = stored || (prefersDark ? "dark" : "light");
 
     setTheme(theme);
   }
@@ -46,8 +46,8 @@
 
     // Switch highlight.js theme
     if (hljsLight && hljsDark) {
-      hljsLight.disabled = theme === 'dark';
-      hljsDark.disabled = theme === 'light';
+      hljsLight.disabled = theme === "dark";
+      hljsDark.disabled = theme === "light";
     }
 
     // Re-render mermaid diagrams with new theme (skip on initial load)
@@ -58,14 +58,14 @@
 
   // Toggle theme
   function toggleTheme() {
-    const current = html.dataset.theme || 'light';
-    const next = current === 'light' ? 'dark' : 'light';
+    const current = html.dataset.theme || "light";
+    const next = current === "light" ? "dark" : "light";
     setTheme(next);
   }
 
   // Initialize font size
   function initFontSize() {
-    const stored = localStorage.getItem(FONT_KEY) || 'M';
+    const stored = localStorage.getItem(FONT_KEY) || "M";
     setFontSize(stored);
   }
 
@@ -75,8 +75,8 @@
     localStorage.setItem(FONT_KEY, size);
 
     // Update button states
-    fontBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.size === size);
+    fontBtns.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.size === size);
     });
   }
 
@@ -86,16 +86,16 @@
     const isMobile = window.innerWidth <= 900;
 
     if (isMobile) {
-      sidebar?.classList.add('hidden');
-    } else if (stored === 'hidden') {
-      sidebar?.classList.add('hidden');
+      sidebar?.classList.add("hidden");
+    } else if (stored === "hidden") {
+      sidebar?.classList.add("hidden");
     }
   }
 
   // Toggle sidebar
   function toggleSidebar() {
-    const isHidden = sidebar?.classList.toggle('hidden');
-    localStorage.setItem(SIDEBAR_KEY, isHidden ? 'hidden' : 'visible');
+    const isHidden = sidebar?.classList.toggle("hidden");
+    localStorage.setItem(SIDEBAR_KEY, isHidden ? "hidden" : "visible");
   }
 
   // Show shortcuts toast (first visit)
@@ -107,7 +107,7 @@
 
     // Show toast after short delay
     setTimeout(() => {
-      shortcutsToast.classList.add('show');
+      shortcutsToast.classList.add("show");
 
       // Auto-dismiss after 5 seconds
       setTimeout(() => {
@@ -119,40 +119,40 @@
   // Dismiss toast
   function dismissToast() {
     if (!shortcutsToast) return;
-    shortcutsToast.classList.remove('show');
-    localStorage.setItem(TOAST_SHOWN_KEY, 'true');
+    shortcutsToast.classList.remove("show");
+    localStorage.setItem(TOAST_SHOWN_KEY, "true");
   }
 
   // Show shortcuts cheatsheet
   function showCheatsheet() {
     if (!shortcutsOverlay) return;
-    shortcutsOverlay.removeAttribute('hidden');
-    shortcutsOverlay.setAttribute('aria-hidden', 'false');
+    shortcutsOverlay.removeAttribute("hidden");
+    shortcutsOverlay.setAttribute("aria-hidden", "false");
     // Focus trap
-    const closeBtn = shortcutsOverlay.querySelector('.modal-close');
+    const closeBtn = shortcutsOverlay.querySelector(".modal-close");
     closeBtn?.focus();
   }
 
   // Hide shortcuts cheatsheet
   function hideCheatsheet() {
     if (!shortcutsOverlay) return;
-    shortcutsOverlay.setAttribute('hidden', '');
-    shortcutsOverlay.setAttribute('aria-hidden', 'true');
+    shortcutsOverlay.setAttribute("hidden", "");
+    shortcutsOverlay.setAttribute("aria-hidden", "true");
   }
 
   // Initialize shortcuts
   function initShortcuts() {
     // Toast dismiss button
-    const dismissBtn = shortcutsToast?.querySelector('.toast-dismiss');
-    dismissBtn?.addEventListener('click', dismissToast);
+    const dismissBtn = shortcutsToast?.querySelector(".toast-dismiss");
+    dismissBtn?.addEventListener("click", dismissToast);
 
     // Cheatsheet close button
-    const closeBtn = shortcutsOverlay?.querySelector('.modal-close');
-    closeBtn?.addEventListener('click', hideCheatsheet);
+    const closeBtn = shortcutsOverlay?.querySelector(".modal-close");
+    closeBtn?.addEventListener("click", hideCheatsheet);
 
     // Backdrop click
-    const backdrop = shortcutsOverlay?.querySelector('.shortcuts-backdrop');
-    backdrop?.addEventListener('click', hideCheatsheet);
+    const backdrop = shortcutsOverlay?.querySelector(".shortcuts-backdrop");
+    backdrop?.addEventListener("click", hideCheatsheet);
 
     // Show toast on first visit
     showToast();
@@ -161,20 +161,20 @@
   // Keyboard navigation
   function handleKeydown(e) {
     // Skip if in input/textarea
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
       return;
     }
 
     // Close cheatsheet on Escape
-    if (e.key === 'Escape' && shortcutsOverlay && !shortcutsOverlay.hasAttribute('hidden')) {
+    if (e.key === "Escape" && shortcutsOverlay && !shortcutsOverlay.hasAttribute("hidden")) {
       e.preventDefault();
       hideCheatsheet();
       return;
     }
 
     // Close bottom sheet on Escape
-    const bottomSheet = document.getElementById('bottom-sheet');
-    if (e.key === 'Escape' && bottomSheet && bottomSheet.getAttribute('aria-hidden') === 'false') {
+    const bottomSheet = document.getElementById("bottom-sheet");
+    if (e.key === "Escape" && bottomSheet && bottomSheet.getAttribute("aria-hidden") === "false") {
       e.preventDefault();
       if (window.closeBottomSheet) {
         window.closeBottomSheet();
@@ -183,41 +183,41 @@
     }
 
     // Show cheatsheet on ?
-    if (e.key === '?' && !e.shiftKey) {
+    if (e.key === "?" && !e.shiftKey) {
       e.preventDefault();
       showCheatsheet();
       return;
     }
 
-    const navPrev = document.querySelector('.nav-prev');
-    const navNext = document.querySelector('.nav-next');
+    const navPrev = document.querySelector(".nav-prev");
+    const navNext = document.querySelector(".nav-next");
 
     switch (e.key) {
-      case 'ArrowLeft':
+      case "ArrowLeft":
         if (navPrev) {
           e.preventDefault();
           window.location.href = navPrev.href;
         }
         break;
-      case 'ArrowRight':
+      case "ArrowRight":
         if (navNext) {
           e.preventDefault();
           window.location.href = navNext.href;
         }
         break;
-      case 'Escape':
-        if (window.innerWidth <= 900 && sidebar && !sidebar.classList.contains('hidden')) {
+      case "Escape":
+        if (window.innerWidth <= 900 && sidebar && !sidebar.classList.contains("hidden")) {
           toggleSidebar();
         }
         break;
-      case 't':
-      case 'T':
+      case "t":
+      case "T":
         if (!e.ctrlKey && !e.metaKey) {
           toggleTheme();
         }
         break;
-      case 's':
-      case 'S':
+      case "s":
+      case "S":
         if (!e.ctrlKey && !e.metaKey) {
           toggleSidebar();
         }
@@ -227,15 +227,15 @@
 
   // Smooth scroll to anchor with sidebar active state update
   function handleAnchorClick(e) {
-    const anchor = e.target.closest('a');
-    const href = anchor?.getAttribute('href');
-    if (href?.startsWith('#')) {
+    const anchor = e.target.closest("a");
+    const href = anchor?.getAttribute("href");
+    if (href?.startsWith("#")) {
       e.preventDefault();
       const targetId = href.slice(1);
       const target = document.getElementById(targetId);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        history.pushState(null, '', href);
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.pushState(null, "", href);
         // Update sidebar active state
         updateSidebarActiveState(targetId);
       }
@@ -244,53 +244,53 @@
 
   // Update sidebar active state based on anchor
   function updateSidebarActiveState(anchorId) {
-    const planNav = document.getElementById('plan-nav');
+    const planNav = document.getElementById("plan-nav");
     if (!planNav) return;
 
     // Remove active from all items
-    planNav.querySelectorAll('.phase-item').forEach(item => {
-      item.classList.remove('active');
+    planNav.querySelectorAll(".phase-item").forEach((item) => {
+      item.classList.remove("active");
     });
 
     // Add active to matching item
     const matchingItem = planNav.querySelector(`[data-anchor="${anchorId}"]`);
     if (matchingItem) {
-      matchingItem.classList.add('active');
+      matchingItem.classList.add("active");
     }
   }
 
   // Setup Intersection Observer for section tracking
   function setupSectionObserver() {
-    const planNav = document.getElementById('plan-nav');
+    const planNav = document.getElementById("plan-nav");
     if (!planNav) return;
 
     // Get all anchors from sidebar
-    const anchors = Array.from(planNav.querySelectorAll('[data-anchor]'))
-      .map(item => item.dataset.anchor);
+    const anchors = Array.from(planNav.querySelectorAll("[data-anchor]")).map((item) => item.dataset.anchor);
 
     if (anchors.length === 0) return;
 
     // Find corresponding elements in content
-    const sections = anchors
-      .map(id => document.getElementById(id))
-      .filter(el => el !== null);
+    const sections = anchors.map((id) => document.getElementById(id)).filter((el) => el !== null);
 
     if (sections.length === 0) return;
 
     // Create observer
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          updateSidebarActiveState(entry.target.id);
-        }
-      });
-    }, {
-      rootMargin: '-20% 0px -60% 0px', // Trigger when section is in upper portion of viewport
-      threshold: 0
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            updateSidebarActiveState(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-20% 0px -60% 0px", // Trigger when section is in upper portion of viewport
+        threshold: 0,
+      }
+    );
 
     // Observe all sections
-    sections.forEach(section => observer.observe(section));
+    sections.forEach((section) => observer.observe(section));
   }
 
   // Handle hash change (browser back/forward)
@@ -308,7 +308,7 @@
   // Throttle utility
   function throttle(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
       if (!timeout) {
         timeout = setTimeout(() => {
           timeout = null;
@@ -337,9 +337,9 @@
 
     // Add fixed shadow when scrolled past header
     if (currentScrollY > 60) {
-      header.classList.add('is-fixed');
+      header.classList.add("is-fixed");
     } else {
-      header.classList.remove('is-fixed');
+      header.classList.remove("is-fixed");
     }
 
     lastScrollY = currentScrollY;
@@ -359,24 +359,24 @@
     // Wait for mermaid module to load (imported in template.html)
     let attempts = 0;
     while (!window.mermaidModule && attempts < 50) {
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 100));
       attempts++;
     }
 
     if (!window.mermaidModule) {
-      console.warn('Mermaid module not loaded');
+      console.warn("Mermaid module not loaded");
       return;
     }
 
     const mermaid = window.mermaidModule;
-    const isDark = html.dataset.theme === 'dark';
+    const isDark = html.dataset.theme === "dark";
 
     // Initialize mermaid with theme
     mermaid.initialize({
       startOnLoad: false,
-      theme: isDark ? 'dark' : 'default',
-      securityLevel: 'loose',
-      fontFamily: 'Inter, sans-serif'
+      theme: isDark ? "dark" : "default",
+      securityLevel: "loose",
+      fontFamily: "Inter, sans-serif",
     });
 
     // Find unprocessed mermaid elements (both pre and div)
@@ -387,7 +387,7 @@
     }
 
     // Store original source before mermaid replaces content (for theme switching)
-    diagrams.forEach(el => {
+    diagrams.forEach((el) => {
       if (!el.dataset.mermaidSource) {
         el.dataset.mermaidSource = el.textContent;
       }
@@ -397,20 +397,20 @@
     try {
       await mermaid.run({
         nodes: diagrams,
-        suppressErrors: false
+        suppressErrors: false,
       });
     } catch (err) {
-      console.error('Mermaid run error:', err);
+      console.error("Mermaid run error:", err);
       // Show errors inline for diagrams that failed
-      diagrams.forEach(el => {
-        if (!el.querySelector('svg') && !el.hasAttribute('data-processed')) {
+      diagrams.forEach((el) => {
+        if (!el.querySelector("svg") && !el.hasAttribute("data-processed")) {
           const code = el.dataset.mermaidSource || el.textContent;
           el.innerHTML = `<div class="mermaid-error">
             <strong>Mermaid Error:</strong>
             <pre>${err.message || err}</pre>
             <details><summary>Source</summary><pre>${code}</pre></details>
           </div>`;
-          el.classList.add('mermaid-error-container');
+          el.classList.add("mermaid-error-container");
         }
       });
     }
@@ -420,23 +420,23 @@
   async function updateMermaidTheme() {
     if (!window.mermaidModule) return;
 
-    const isDark = html.dataset.theme === 'dark';
+    const isDark = html.dataset.theme === "dark";
 
     // Re-initialize with new theme
     window.mermaidModule.initialize({
       startOnLoad: false,
-      theme: isDark ? 'dark' : 'default',
-      securityLevel: 'loose',
-      fontFamily: 'Inter, sans-serif'
+      theme: isDark ? "dark" : "default",
+      securityLevel: "loose",
+      fontFamily: "Inter, sans-serif",
     });
 
     // Restore original source and re-render
     const diagrams = document.querySelectorAll('.mermaid[data-processed="true"]');
-    diagrams.forEach(el => {
+    diagrams.forEach((el) => {
       const source = el.dataset.mermaidSource;
       if (source) {
         el.textContent = source;
-        el.removeAttribute('data-processed');
+        el.removeAttribute("data-processed");
       }
     });
 
@@ -449,25 +449,26 @@
   // without using viewport units (immune to sidebar state changes)
   function applyExpandLayout(wrapper, isExpanded) {
     if (!isExpanded) {
-      wrapper.style.width = '';
-      wrapper.style.left = '';
+      wrapper.style.width = "";
+      wrapper.style.left = "";
       return;
     }
-    const mainContent = document.querySelector('.main-content');
+    const mainContent = document.querySelector(".main-content");
     if (!mainContent) return;
     const mainRect = mainContent.getBoundingClientRect();
     const mainPadding = parseFloat(getComputedStyle(mainContent).paddingLeft) || 0;
     const availableWidth = mainRect.width - mainPadding * 2;
     const wrapperRect = wrapper.getBoundingClientRect();
     const offset = mainRect.left + mainPadding - wrapperRect.left;
-    wrapper.style.width = availableWidth + 'px';
-    wrapper.style.left = offset + 'px';
+    wrapper.style.width = availableWidth + "px";
+    wrapper.style.left = offset + "px";
   }
 
   // Recalculate expanded wrappers on resize or sidebar toggle
-  window.addEventListener('resize', () => {
-    document.querySelectorAll('.mermaid-wrapper.expanded, .code-wrapper.expanded')
-      .forEach(w => applyExpandLayout(w, true));
+  window.addEventListener("resize", () => {
+    document
+      .querySelectorAll(".mermaid-wrapper.expanded, .code-wrapper.expanded")
+      .forEach((w) => applyExpandLayout(w, true));
   });
 
   // Initialize Mermaid expand toggle buttons
@@ -475,43 +476,40 @@
     // Find all rendered mermaid diagrams not already wrapped
     const diagrams = document.querySelectorAll('.mermaid[data-processed="true"]');
 
-    diagrams.forEach(diagram => {
+    diagrams.forEach((diagram) => {
       // Skip if already wrapped
-      if (diagram.parentElement?.classList.contains('mermaid-wrapper')) {
+      if (diagram.parentElement?.classList.contains("mermaid-wrapper")) {
         return;
       }
 
       // Create wrapper
-      const wrapper = document.createElement('div');
-      wrapper.className = 'mermaid-wrapper';
+      const wrapper = document.createElement("div");
+      wrapper.className = "mermaid-wrapper";
 
       // Create expand button
-      const btn = document.createElement('button');
-      btn.className = 'mermaid-expand-btn';
-      btn.setAttribute('aria-label', 'Expand diagram to full width');
+      const btn = document.createElement("button");
+      btn.className = "mermaid-expand-btn";
+      btn.setAttribute("aria-label", "Expand diagram to full width");
       btn.innerHTML = `
         <span class="icon-expand">⤢</span>
         <span class="icon-collapse">⤡</span>
       `;
 
       // Toggle handler — expand to fill .main-content, re-render at new width
-      btn.addEventListener('click', async () => {
-        const isExpanded = wrapper.classList.toggle('expanded');
-        btn.setAttribute('aria-label', isExpanded
-          ? 'Collapse diagram'
-          : 'Expand diagram to full width'
-        );
+      btn.addEventListener("click", async () => {
+        const isExpanded = wrapper.classList.toggle("expanded");
+        btn.setAttribute("aria-label", isExpanded ? "Collapse diagram" : "Expand diagram to full width");
         applyExpandLayout(wrapper, isExpanded);
 
         // Re-render mermaid at the new container width for crisp output
         const source = diagram.dataset.mermaidSource;
         if (source && window.mermaidModule) {
           diagram.textContent = source;
-          diagram.removeAttribute('data-processed');
+          diagram.removeAttribute("data-processed");
           try {
             await window.mermaidModule.run({ nodes: [diagram], suppressErrors: false });
           } catch (e) {
-            console.error('Mermaid re-render on expand failed:', e);
+            console.error("Mermaid re-render on expand failed:", e);
           }
         }
       });
@@ -530,12 +528,14 @@
   // Initialize code block expand toggle buttons (for wide ASCII art)
   function initCodeExpand() {
     // Find all pre elements that are not mermaid and not already wrapped
-    const codeBlocks = document.querySelectorAll('pre:not(.mermaid)');
+    const codeBlocks = document.querySelectorAll("pre:not(.mermaid)");
 
-    codeBlocks.forEach(pre => {
+    codeBlocks.forEach((pre) => {
       // Skip if already wrapped or inside mermaid error
-      if (pre.parentElement?.classList.contains('code-wrapper') ||
-          pre.parentElement?.classList.contains('mermaid-error')) {
+      if (
+        pre.parentElement?.classList.contains("code-wrapper") ||
+        pre.parentElement?.classList.contains("mermaid-error")
+      ) {
         return;
       }
 
@@ -546,25 +546,22 @@
       }
 
       // Create wrapper
-      const wrapper = document.createElement('div');
-      wrapper.className = 'code-wrapper';
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-wrapper";
 
       // Create expand button
-      const btn = document.createElement('button');
-      btn.className = 'code-expand-btn';
-      btn.setAttribute('aria-label', 'Expand code block to full width');
+      const btn = document.createElement("button");
+      btn.className = "code-expand-btn";
+      btn.setAttribute("aria-label", "Expand code block to full width");
       btn.innerHTML = `
         <span class="icon-expand">⤢</span>
         <span class="icon-collapse">⤡</span>
       `;
 
       // Toggle handler — expand to fill .main-content
-      btn.addEventListener('click', () => {
-        const isExpanded = wrapper.classList.toggle('expanded');
-        btn.setAttribute('aria-label', isExpanded
-          ? 'Collapse code block'
-          : 'Expand code block to full width'
-        );
+      btn.addEventListener("click", () => {
+        const isExpanded = wrapper.classList.toggle("expanded");
+        btn.setAttribute("aria-label", isExpanded ? "Collapse code block" : "Expand code block to full width");
         applyExpandLayout(wrapper, isExpanded);
       });
 
@@ -579,8 +576,8 @@
 
       // Auto-expand overflowing code blocks to fill available width
       // (user can collapse back via the button)
-      wrapper.classList.add('expanded');
-      btn.setAttribute('aria-label', 'Collapse code block');
+      wrapper.classList.add("expanded");
+      btn.setAttribute("aria-label", "Collapse code block");
       applyExpandLayout(wrapper, true);
     });
   }
@@ -589,17 +586,17 @@
 
   // Initialize accordion
   function initAccordion() {
-    const phaseHeaders = document.querySelectorAll('.phase-header');
+    const phaseHeaders = document.querySelectorAll(".phase-header");
     if (phaseHeaders.length === 0) return;
 
     // Get plan identifier for localStorage key
-    const planNav = document.getElementById('plan-nav');
+    const planNav = document.getElementById("plan-nav");
     if (!planNav) return;
-    const planName = planNav.querySelector('.plan-title span:last-child')?.textContent || 'unknown';
-    const planId = planName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const planName = planNav.querySelector(".plan-title span:last-child")?.textContent || "unknown";
+    const planId = planName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-    phaseHeaders.forEach(header => {
-      const phaseGroup = header.closest('.phase-group');
+    phaseHeaders.forEach((header) => {
+      const phaseGroup = header.closest(".phase-group");
       if (!phaseGroup) return;
 
       const phaseId = phaseGroup.dataset.phaseId;
@@ -608,8 +605,8 @@
       // Restore collapsed state from localStorage
       try {
         const collapsed = localStorage.getItem(storageKey);
-        if (collapsed === 'true') {
-          phaseGroup.classList.add('collapsed');
+        if (collapsed === "true") {
+          phaseGroup.classList.add("collapsed");
         }
       } catch (e) {
         // Graceful fallback if localStorage unavailable
@@ -617,7 +614,7 @@
 
       // Toggle handler
       const toggleAccordion = () => {
-        const isCollapsed = phaseGroup.classList.toggle('collapsed');
+        const isCollapsed = phaseGroup.classList.toggle("collapsed");
 
         // Persist state
         try {
@@ -628,11 +625,11 @@
       };
 
       // Click handler
-      header.addEventListener('click', toggleAccordion);
+      header.addEventListener("click", toggleAccordion);
 
       // Keyboard accessibility
-      header.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+      header.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           toggleAccordion();
         }
@@ -642,20 +639,20 @@
 
   // Initialize mobile navigation (FAB + bottom sheet)
   function initMobileNav() {
-    const fabMenu = document.getElementById('fab-menu');
-    const fabNext = document.querySelector('.nav-next-mobile');
-    const fabPrev = document.querySelector('.nav-prev-mobile');
-    const bottomSheet = document.getElementById('bottom-sheet');
-    const bottomSheetContent = document.getElementById('bottom-sheet-content');
-    const backdrop = bottomSheet?.querySelector('.bottom-sheet-backdrop');
-    const handle = bottomSheet?.querySelector('.bottom-sheet-handle');
-    const sidebar = document.getElementById('sidebar');
+    const fabMenu = document.getElementById("fab-menu");
+    const fabNext = document.querySelector(".nav-next-mobile");
+    const fabPrev = document.querySelector(".nav-prev-mobile");
+    const bottomSheet = document.getElementById("bottom-sheet");
+    const bottomSheetContent = document.getElementById("bottom-sheet-content");
+    const backdrop = bottomSheet?.querySelector(".bottom-sheet-backdrop");
+    const handle = bottomSheet?.querySelector(".bottom-sheet-handle");
+    const sidebar = document.getElementById("sidebar");
 
     if (!fabMenu || !bottomSheet) return;
 
     // Set FAB hrefs from footer navigation
-    const navNext = document.querySelector('.nav-next');
-    const navPrev = document.querySelector('.nav-prev');
+    const navNext = document.querySelector(".nav-next");
+    const navPrev = document.querySelector(".nav-prev");
     if (navNext && fabNext) {
       fabNext.href = navNext.href;
     }
@@ -670,35 +667,43 @@
 
     // Open bottom sheet
     function openBottomSheet() {
-      bottomSheet.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+      bottomSheet.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
     }
 
     // Close bottom sheet
     function closeBottomSheet() {
-      bottomSheet.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+      bottomSheet.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
     }
 
     // FAB menu click handler
-    fabMenu.addEventListener('click', openBottomSheet);
+    fabMenu.addEventListener("click", openBottomSheet);
 
     // Backdrop click handler
-    backdrop?.addEventListener('click', closeBottomSheet);
+    backdrop?.addEventListener("click", closeBottomSheet);
 
     // Swipe down gesture on handle
     let touchStartY = 0;
     let touchEndY = 0;
 
-    handle?.addEventListener('touchstart', (e) => {
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
+    handle?.addEventListener(
+      "touchstart",
+      (e) => {
+        touchStartY = e.touches[0].clientY;
+      },
+      { passive: true }
+    );
 
-    handle?.addEventListener('touchmove', (e) => {
-      touchEndY = e.touches[0].clientY;
-    }, { passive: true });
+    handle?.addEventListener(
+      "touchmove",
+      (e) => {
+        touchEndY = e.touches[0].clientY;
+      },
+      { passive: true }
+    );
 
-    handle?.addEventListener('touchend', () => {
+    handle?.addEventListener("touchend", () => {
       const swipeDistance = touchEndY - touchStartY;
       // Swipe down threshold: 50px
       if (swipeDistance > 50) {
@@ -710,10 +715,10 @@
 
     // Close on resize to desktop
     let resizeTimeout;
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        if (window.innerWidth > 768 && bottomSheet.getAttribute('aria-hidden') === 'false') {
+        if (window.innerWidth > 768 && bottomSheet.getAttribute("aria-hidden") === "false") {
           closeBottomSheet();
         }
       }, 100);
@@ -724,9 +729,9 @@
   }
 
   // Sidebar resize functionality
-  const SIDEBAR_WIDTH_KEY = 'novel-viewer-sidebar-width';
-  const resizeHandle = document.getElementById('sidebar-resize');
-  const mainContent = document.querySelector('.main-content');
+  const SIDEBAR_WIDTH_KEY = "novel-viewer-sidebar-width";
+  const resizeHandle = document.getElementById("sidebar-resize");
+  const mainContent = document.querySelector(".main-content");
 
   function initSidebarResize() {
     if (!resizeHandle || !sidebar) return;
@@ -736,8 +741,8 @@
     if (savedWidth) {
       const width = parseInt(savedWidth, 10);
       if (width >= 200 && width <= 480) {
-        sidebar.style.width = width + 'px';
-        if (mainContent) mainContent.style.marginLeft = width + 'px';
+        sidebar.style.width = width + "px";
+        if (mainContent) mainContent.style.marginLeft = width + "px";
       }
     }
 
@@ -745,30 +750,30 @@
     let startX = 0;
     let startWidth = 0;
 
-    resizeHandle.addEventListener('mousedown', (e) => {
+    resizeHandle.addEventListener("mousedown", (e) => {
       isDragging = true;
       startX = e.clientX;
       startWidth = sidebar.offsetWidth;
-      resizeHandle.classList.add('dragging');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
+      resizeHandle.classList.add("dragging");
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
       e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
       const delta = e.clientX - startX;
       const newWidth = Math.min(480, Math.max(200, startWidth + delta));
-      sidebar.style.width = newWidth + 'px';
-      if (mainContent) mainContent.style.marginLeft = newWidth + 'px';
+      sidebar.style.width = newWidth + "px";
+      if (mainContent) mainContent.style.marginLeft = newWidth + "px";
     });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener("mouseup", () => {
       if (!isDragging) return;
       isDragging = false;
-      resizeHandle.classList.remove('dragging');
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
+      resizeHandle.classList.remove("dragging");
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
       localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebar.offsetWidth.toString());
     });
   }
@@ -796,18 +801,18 @@
     }
 
     // Event listeners
-    themeToggle?.addEventListener('click', toggleTheme);
-    sidebarToggle?.addEventListener('click', toggleSidebar);
+    themeToggle?.addEventListener("click", toggleTheme);
+    sidebarToggle?.addEventListener("click", toggleSidebar);
 
-    fontBtns.forEach(btn => {
-      btn.addEventListener('click', () => setFontSize(btn.dataset.size));
+    fontBtns.forEach((btn) => {
+      btn.addEventListener("click", () => setFontSize(btn.dataset.size));
     });
 
-    document.addEventListener('keydown', handleKeydown);
-    document.addEventListener('click', handleAnchorClick);
+    document.addEventListener("keydown", handleKeydown);
+    document.addEventListener("click", handleAnchorClick);
 
     // Handle hash change for sidebar active state
-    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener("hashchange", handleHashChange);
 
     // Setup section observer for auto-highlighting sidebar
     setupSectionObserver();
@@ -820,30 +825,30 @@
     // Initialize scroll state and handlers
     lastScrollY = window.scrollY;
     updateProgressBar();
-    window.addEventListener('scroll', throttle(handleScroll, 100), { passive: true });
+    window.addEventListener("scroll", throttle(handleScroll, 100), { passive: true });
 
     // Handle resize
     let resizeTimeout;
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
         if (window.innerWidth > 900) {
-          sidebar?.classList.remove('visible');
+          sidebar?.classList.remove("visible");
         }
       }, 100);
     });
 
     // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
       if (!localStorage.getItem(THEME_KEY)) {
-        setTheme(e.matches ? 'dark' : 'light');
+        setTheme(e.matches ? "dark" : "light");
       }
     });
   }
 
   // Run when DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
   }

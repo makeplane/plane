@@ -8,22 +8,22 @@ Flip core assumptions to reveal hidden constraints and alternative approaches. "
 
 ## When to Use
 
-| Symptom | Action |
-|---------|--------|
-| "There's only one way" | Flip the assumption |
-| Solution feels forced | Invert the constraints |
-| Can't articulate why necessary | Question the "must" |
-| "This is just how it's done" | Try the opposite |
+| Symptom                        | Action                 |
+| ------------------------------ | ---------------------- |
+| "There's only one way"         | Flip the assumption    |
+| Solution feels forced          | Invert the constraints |
+| Can't articulate why necessary | Question the "must"    |
+| "This is just how it's done"   | Try the opposite       |
 
 ## Quick Reference
 
-| Normal Assumption | Inverted | What It Reveals |
-|-------------------|----------|-----------------|
-| Cache to reduce latency | Add latency to enable caching | Debouncing patterns |
-| Pull data when needed | Push data before needed | Prefetching, eager loading |
-| Handle errors when occur | Make errors impossible | Type systems, contracts |
-| Build features users want | Remove features users don't need | Simplicity >> addition |
-| Optimize for common case | Optimize for worst case | Resilience patterns |
+| Normal Assumption         | Inverted                         | What It Reveals            |
+| ------------------------- | -------------------------------- | -------------------------- |
+| Cache to reduce latency   | Add latency to enable caching    | Debouncing patterns        |
+| Pull data when needed     | Push data before needed          | Prefetching, eager loading |
+| Handle errors when occur  | Make errors impossible           | Type systems, contracts    |
+| Build features users want | Remove features users don't need | Simplicity >> addition     |
+| Optimize for common case  | Optimize for worst case          | Resilience patterns        |
 
 ## Process
 
@@ -38,12 +38,14 @@ Flip core assumptions to reveal hidden constraints and alternative approaches. "
 **Problem:** Users complain app is slow
 
 **Normal approach:** Make everything faster
+
 - Add caching
 - Optimize queries
 - Use CDN
 - Reduce bundle size
 
 **Inverted approach:** Make things intentionally slower in some places
+
 - **Debounce search** - Add latency → enable better results (wait for full query)
 - **Rate limit requests** - Add friction → prevent abuse, improve for others
 - **Lazy load content** - Delay loading → reduce initial load time
@@ -54,11 +56,13 @@ Flip core assumptions to reveal hidden constraints and alternative approaches. "
 ## Valid vs Invalid Inversions
 
 **Valid inversion example:**
+
 - Normal: "Store data in database"
 - Inverted: "Derive data on-demand instead of storing"
 - Valid when: Computation cheaper than storage, data changes frequently
 
 **Invalid inversion example:**
+
 - Normal: "Validate user input"
 - Inverted: "Trust all user input"
 - Invalid because: Security vulnerability, not context-dependent
@@ -76,6 +80,7 @@ Flip core assumptions to reveal hidden constraints and alternative approaches. "
 ## Red Flags
 
 You need inversion exercise when:
+
 - "There's only one way to do this"
 - Forcing solution that feels wrong
 - Can't articulate why approach is necessary

@@ -15,10 +15,10 @@ Add "Auto Join" button per department in God Mode admin. Joins the department ma
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | Backend — auto-join endpoint | complete | [phase-01-backend.md](./phase-01-backend.md) |
-| 2 | Frontend — service, store, modal, button | complete | [phase-02-frontend.md](./phase-02-frontend.md) |
+| #   | Phase                                    | Status   | File                                           |
+| --- | ---------------------------------------- | -------- | ---------------------------------------------- |
+| 1   | Backend — auto-join endpoint             | complete | [phase-01-backend.md](./phase-01-backend.md)   |
+| 2   | Frontend — service, store, modal, button | complete | [phase-02-frontend.md](./phase-02-frontend.md) |
 
 ## Scope
 

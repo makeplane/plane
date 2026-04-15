@@ -16,11 +16,13 @@ Add `deleteWorkspace(workspaceId, workspaceSlug)` MobX action to the admin `Work
 ## Implementation Steps
 
 1. **Interface `IWorkspaceStore`** — add to interface:
+
    ```typescript
    deleteWorkspace: (workspaceId: string, workspaceSlug: string) => Promise<void>;
    ```
 
 2. **`makeObservable`** — register action:
+
    ```typescript
    deleteWorkspace: action,
    ```

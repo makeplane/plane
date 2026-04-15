@@ -12,12 +12,12 @@
  *   node process-thought.js --reset  # Reset thought history
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Configuration
-const HISTORY_FILE = path.join(__dirname, '.thought-history.json');
-const DISABLE_LOGGING = process.env.DISABLE_THOUGHT_LOGGING?.toLowerCase() === 'true';
+const HISTORY_FILE = path.join(__dirname, ".thought-history.json");
+const DISABLE_LOGGING = process.env.DISABLE_THOUGHT_LOGGING?.toLowerCase() === "true";
 
 class ThoughtProcessor {
   constructor() {
@@ -27,7 +27,7 @@ class ThoughtProcessor {
   loadHistory() {
     try {
       if (fs.existsSync(HISTORY_FILE)) {
-        const data = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8'));
+        const data = JSON.parse(fs.readFileSync(HISTORY_FILE, "utf8"));
         this.thoughtHistory = data.thoughtHistory || [];
         this.branches = data.branches || {};
       } else {
@@ -43,10 +43,14 @@ class ThoughtProcessor {
   saveHistory() {
     fs.writeFileSync(
       HISTORY_FILE,
-      JSON.stringify({
-        thoughtHistory: this.thoughtHistory,
-        branches: this.branches
-      }, null, 2)
+      JSON.stringify(
+        {
+          thoughtHistory: this.thoughtHistory,
+          branches: this.branches,
+        },
+        null,
+        2
+      )
     );
   }
 
@@ -61,41 +65,44 @@ class ThoughtProcessor {
   validateThought(input) {
     const errors = [];
 
-    if (!input.thought || typeof input.thought !== 'string' || input.thought.trim() === '') {
-      errors.push('Invalid thought: must be a non-empty string');
+    if (!input.thought || typeof input.thought !== "string" || input.thought.trim() === "") {
+      errors.push("Invalid thought: must be a non-empty string");
     }
 
-    if (!input.thoughtNumber || typeof input.thoughtNumber !== 'number' || input.thoughtNumber < 1) {
-      errors.push('Invalid thoughtNumber: must be a positive number');
+    if (!input.thoughtNumber || typeof input.thoughtNumber !== "number" || input.thoughtNumber < 1) {
+      errors.push("Invalid thoughtNumber: must be a positive number");
     }
 
-    if (!input.totalThoughts || typeof input.totalThoughts !== 'number' || input.totalThoughts < 1) {
-      errors.push('Invalid totalThoughts: must be a positive number');
+    if (!input.totalThoughts || typeof input.totalThoughts !== "number" || input.totalThoughts < 1) {
+      errors.push("Invalid totalThoughts: must be a positive number");
     }
 
-    if (typeof input.nextThoughtNeeded !== 'boolean') {
-      errors.push('Invalid nextThoughtNeeded: must be a boolean');
+    if (typeof input.nextThoughtNeeded !== "boolean") {
+      errors.push("Invalid nextThoughtNeeded: must be a boolean");
     }
 
     // Optional field validations
-    if (input.isRevision !== undefined && typeof input.isRevision !== 'boolean') {
-      errors.push('Invalid isRevision: must be a boolean');
+    if (input.isRevision !== undefined && typeof input.isRevision !== "boolean") {
+      errors.push("Invalid isRevision: must be a boolean");
     }
 
-    if (input.revisesThought !== undefined && (typeof input.revisesThought !== 'number' || input.revisesThought < 1)) {
-      errors.push('Invalid revisesThought: must be a positive number');
+    if (input.revisesThought !== undefined && (typeof input.revisesThought !== "number" || input.revisesThought < 1)) {
+      errors.push("Invalid revisesThought: must be a positive number");
     }
 
-    if (input.branchFromThought !== undefined && (typeof input.branchFromThought !== 'number' || input.branchFromThought < 1)) {
-      errors.push('Invalid branchFromThought: must be a positive number');
+    if (
+      input.branchFromThought !== undefined &&
+      (typeof input.branchFromThought !== "number" || input.branchFromThought < 1)
+    ) {
+      errors.push("Invalid branchFromThought: must be a positive number");
     }
 
-    if (input.branchId !== undefined && typeof input.branchId !== 'string') {
-      errors.push('Invalid branchId: must be a string');
+    if (input.branchId !== undefined && typeof input.branchId !== "string") {
+      errors.push("Invalid branchId: must be a string");
     }
 
-    if (input.needsMoreThoughts !== undefined && typeof input.needsMoreThoughts !== 'boolean') {
-      errors.push('Invalid needsMoreThoughts: must be a boolean');
+    if (input.needsMoreThoughts !== undefined && typeof input.needsMoreThoughts !== "boolean") {
+      errors.push("Invalid needsMoreThoughts: must be a boolean");
     }
 
     return errors;
@@ -108,7 +115,7 @@ class ThoughtProcessor {
       return {
         success: false,
         errors,
-        status: 'failed'
+        status: "failed",
       };
     }
 
@@ -128,7 +135,7 @@ class ThoughtProcessor {
       branchFromThought: input.branchFromThought,
       branchId: input.branchId,
       needsMoreThoughts: input.needsMoreThoughts,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Add to history
@@ -152,7 +159,7 @@ class ThoughtProcessor {
       nextThoughtNeeded: thoughtData.nextThoughtNeeded,
       branches: Object.keys(this.branches),
       thoughtHistoryLength: this.thoughtHistory.length,
-      timestamp: thoughtData.timestamp
+      timestamp: thoughtData.timestamp,
     };
   }
 
@@ -160,7 +167,7 @@ class ThoughtProcessor {
     return {
       thoughts: this.thoughtHistory,
       branches: this.branches,
-      totalThoughts: this.thoughtHistory.length
+      totalThoughts: this.thoughtHistory.length,
     };
   }
 }
@@ -175,22 +182,22 @@ if (require.main === module) {
     const parsed = {};
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
-      if (arg.startsWith('--')) {
+      if (arg.startsWith("--")) {
         const key = arg.slice(2);
         const value = args[i + 1];
 
-        if (key === 'reset') {
+        if (key === "reset") {
           return { reset: true };
         }
 
-        if (key === 'history') {
+        if (key === "history") {
           return { history: true };
         }
 
-        if (value && !value.startsWith('--')) {
+        if (value && !value.startsWith("--")) {
           // Parse boolean
-          if (value === 'true') parsed[key] = true;
-          else if (value === 'false') parsed[key] = false;
+          if (value === "true") parsed[key] = true;
+          else if (value === "false") parsed[key] = false;
           // Parse number
           else if (!isNaN(value)) parsed[key] = parseFloat(value);
           // String
@@ -206,7 +213,7 @@ if (require.main === module) {
 
   if (input.reset) {
     processor.resetHistory();
-    console.log(JSON.stringify({ success: true, message: 'History reset' }, null, 2));
+    console.log(JSON.stringify({ success: true, message: "History reset" }, null, 2));
     process.exit(0);
   }
 
@@ -225,7 +232,7 @@ if (require.main === module) {
     revisesThought: input.revision,
     branchFromThought: input.branch,
     branchId: input.branchId,
-    needsMoreThoughts: input.needsMore
+    needsMoreThoughts: input.needsMore,
   };
 
   const result = processor.processThought(thoughtInput);

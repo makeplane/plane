@@ -34,15 +34,15 @@ Skip any step = lying, not verifying
 
 ## Common Failures
 
-| Claim | Requires | Not Sufficient |
-|-------|----------|----------------|
-| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
-| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
-| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
-| Regression test works | Red-green cycle verified | Test passes once |
-| Agent completed | VCS diff shows changes | Agent reports "success" |
-| Requirements met | Line-by-line checklist | Tests passing |
+| Claim                 | Requires                        | Not Sufficient                 |
+| --------------------- | ------------------------------- | ------------------------------ |
+| Tests pass            | Test command output: 0 failures | Previous run, "should pass"    |
+| Linter clean          | Linter output: 0 errors         | Partial check, extrapolation   |
+| Build succeeds        | Build command: exit 0           | Linter passing, logs look good |
+| Bug fixed             | Test original symptom: passes   | Code changed, assumed fixed    |
+| Regression test works | Red-green cycle verified        | Test passes once               |
+| Agent completed       | VCS diff shows changes          | Agent reports "success"        |
+| Requirements met      | Line-by-line checklist          | Tests passing                  |
 
 ## Red Flags - STOP
 
@@ -57,42 +57,47 @@ Skip any step = lying, not verifying
 
 ## Rationalization Prevention
 
-| Excuse | Reality |
-|--------|---------|
-| "Should work now" | RUN verification |
-| "I'm confident" | Confidence ≠ evidence |
-| "Just this once" | No exceptions |
-| "Linter passed" | Linter ≠ compiler |
-| "Agent said success" | Verify independently |
+| Excuse                    | Reality                |
+| ------------------------- | ---------------------- |
+| "Should work now"         | RUN verification       |
+| "I'm confident"           | Confidence ≠ evidence  |
+| "Just this once"          | No exceptions          |
+| "Linter passed"           | Linter ≠ compiler      |
+| "Agent said success"      | Verify independently   |
 | "Partial check is enough" | Partial proves nothing |
 
 ## Key Patterns
 
 **Tests:**
+
 ```
 ✅ [Run test command] [See: 34/34 pass] "All tests pass"
 ❌ "Should pass now" / "Looks correct"
 ```
 
 **Regression tests (TDD Red-Green):**
+
 ```
 ✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
 ❌ "I've written regression test" (without red-green verification)
 ```
 
 **Build:**
+
 ```
 ✅ [Run build] [See: exit 0] "Build passes"
 ❌ "Linter passed" (linter doesn't check compilation)
 ```
 
 **Requirements:**
+
 ```
 ✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
 ❌ "Tests pass, phase complete"
 ```
 
 **Agent delegation:**
+
 ```
 ✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
 ❌ Trust agent report
@@ -101,6 +106,7 @@ Skip any step = lying, not verifying
 ## When To Apply
 
 **ALWAYS before:**
+
 - ANY variation of success/completion claims
 - ANY expression of satisfaction
 - ANY positive statement about work state
@@ -109,6 +115,7 @@ Skip any step = lying, not verifying
 - Delegating to agents
 
 **Rule applies to:**
+
 - Exact phrases
 - Paraphrases and synonyms
 - Implications of success

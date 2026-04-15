@@ -50,6 +50,7 @@ Create `repomix.config.json` in project root:
 ## Glob Patterns
 
 **Wildcards:**
+
 - `*` - Any chars except `/`
 - `**` - Any chars including `/`
 - `?` - Single char
@@ -57,6 +58,7 @@ Create `repomix.config.json` in project root:
 - `{js,ts}` - Either extension
 
 **Examples:**
+
 - `**/*.ts` - All TypeScript
 - `src/**` - Specific dir
 - `**/*.{js,jsx,ts,tsx}` - Multiple extensions
@@ -125,6 +127,7 @@ logs/
 ### Pattern Precedence
 
 Order (highest to lowest priority):
+
 1. CLI ignore patterns (`-i`)
 2. `.repomixignore` file
 3. Custom patterns in config
@@ -134,47 +137,58 @@ Order (highest to lowest priority):
 ### Pattern Examples
 
 **TypeScript:**
+
 ```json
-{"include": ["**/*.ts", "**/*.tsx"], "ignore": {"customPatterns": ["**/*.test.ts", "dist/"]}}
+{ "include": ["**/*.ts", "**/*.tsx"], "ignore": { "customPatterns": ["**/*.test.ts", "dist/"] } }
 ```
 
 **React:**
+
 ```json
-{"include": ["src/**/*.{js,jsx,ts,tsx}", "*.md"], "ignore": {"customPatterns": ["build/"]}}
+{ "include": ["src/**/*.{js,jsx,ts,tsx}", "*.md"], "ignore": { "customPatterns": ["build/"] } }
 ```
 
 **Monorepo:**
+
 ```json
-{"include": ["packages/*/src/**"], "ignore": {"customPatterns": ["packages/*/dist/"]}}
+{ "include": ["packages/*/src/**"], "ignore": { "customPatterns": ["packages/*/dist/"] } }
 ```
 
 ## Output Formats
 
 ### XML (Default)
+
 ```bash
 repomix --style xml
 ```
+
 Structured AI consumption. Features: tags, hierarchy, metadata, AI-optimized separators.
 Use for: LLMs, structured analysis, programmatic parsing.
 
 ### Markdown
+
 ```bash
 repomix --style markdown
 ```
+
 Human-readable with syntax highlighting. Features: syntax highlighting, headers, TOC.
 Use for: documentation, code review, sharing.
 
 ### JSON
+
 ```bash
 repomix --style json
 ```
+
 Programmatic processing. Features: structured data, easy parsing, metadata.
 Use for: API integration, custom tooling, data analysis.
 
 ### Plain Text
+
 ```bash
 repomix --style plain
 ```
+
 Simple concatenation. Features: no formatting, minimal overhead.
 Use for: simple analysis, minimal processing.
 
@@ -199,6 +213,7 @@ repomix --no-line-numbers
 **Worker Threads:** Parallel processing handles large codebases efficiently (e.g., facebook/react: 29x faster, 123s → 4s)
 
 **Optimization:**
+
 ```bash
 # Exclude unnecessary files
 repomix -i "node_modules/**,dist/**,*.min.js"

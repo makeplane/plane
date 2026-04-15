@@ -32,24 +32,25 @@ Context engineering curates the smallest high-signal token set for LLM tasks. Th
 5. **Measure before optimizing** - Know your baseline
 
 **IMPORTANT:**
+
 - Sacrifice grammar for the sake of concision.
 - Ensure token efficiency while maintaining high quality.
 - Pass these rules to subagents.
 
 ## Quick Reference
 
-| Topic | When to Use | Reference |
-|-------|-------------|-----------|
-| **Fundamentals** | Understanding context anatomy, attention mechanics | [context-fundamentals.md](./references/context-fundamentals.md) |
-| **Degradation** | Debugging failures, lost-in-middle, poisoning | [context-degradation.md](./references/context-degradation.md) |
-| **Optimization** | Compaction, masking, caching, partitioning | [context-optimization.md](./references/context-optimization.md) |
-| **Compression** | Long sessions, summarization strategies | [context-compression.md](./references/context-compression.md) |
-| **Memory** | Cross-session persistence, knowledge graphs | [memory-systems.md](./references/memory-systems.md) |
-| **Multi-Agent** | Coordination patterns, context isolation | [multi-agent-patterns.md](./references/multi-agent-patterns.md) |
-| **Evaluation** | Testing agents, LLM-as-Judge, metrics | [evaluation.md](./references/evaluation.md) |
-| **Tool Design** | Tool consolidation, description engineering | [tool-design.md](./references/tool-design.md) |
-| **Pipelines** | Project development, batch processing | [project-development.md](./references/project-development.md) |
-| **Runtime Awareness** | Usage limits, context window monitoring | [runtime-awareness.md](./references/runtime-awareness.md) |
+| Topic                 | When to Use                                        | Reference                                                       |
+| --------------------- | -------------------------------------------------- | --------------------------------------------------------------- |
+| **Fundamentals**      | Understanding context anatomy, attention mechanics | [context-fundamentals.md](./references/context-fundamentals.md) |
+| **Degradation**       | Debugging failures, lost-in-middle, poisoning      | [context-degradation.md](./references/context-degradation.md)   |
+| **Optimization**      | Compaction, masking, caching, partitioning         | [context-optimization.md](./references/context-optimization.md) |
+| **Compression**       | Long sessions, summarization strategies            | [context-compression.md](./references/context-compression.md)   |
+| **Memory**            | Cross-session persistence, knowledge graphs        | [memory-systems.md](./references/memory-systems.md)             |
+| **Multi-Agent**       | Coordination patterns, context isolation           | [multi-agent-patterns.md](./references/multi-agent-patterns.md) |
+| **Evaluation**        | Testing agents, LLM-as-Judge, metrics              | [evaluation.md](./references/evaluation.md)                     |
+| **Tool Design**       | Tool consolidation, description engineering        | [tool-design.md](./references/tool-design.md)                   |
+| **Pipelines**         | Project development, batch processing              | [project-development.md](./references/project-development.md)   |
+| **Runtime Awareness** | Usage limits, context window monitoring            | [runtime-awareness.md](./references/runtime-awareness.md)       |
 
 ## Key Metrics
 
@@ -97,10 +98,12 @@ Context Window Usage: 67%
 ```
 
 **Thresholds:**
+
 - 70%: WARNING - consider optimization/compaction
 - 90%: CRITICAL - immediate action needed
 
 **Data Sources:**
+
 - Usage limits: Anthropic OAuth API (`https://api.anthropic.com/api/oauth/usage`)
 - Context window: Statusline temp file (`/tmp/ck-context-{session_id}.json`)
 

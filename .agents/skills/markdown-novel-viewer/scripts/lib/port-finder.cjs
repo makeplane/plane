@@ -3,7 +3,7 @@
  * Used by markdown-novel-viewer server
  */
 
-const net = require('net');
+const net = require("net");
 
 const DEFAULT_PORT = 3456;
 const PORT_RANGE_END = 3500;
@@ -16,8 +16,8 @@ const PORT_RANGE_END = 3500;
 function isPortAvailable(port) {
   return new Promise((resolve) => {
     const server = net.createServer();
-    server.once('error', () => resolve(false));
-    server.once('listening', () => {
+    server.once("error", () => resolve(false));
+    server.once("listening", () => {
       server.close();
       resolve(true);
     });
@@ -44,5 +44,5 @@ module.exports = {
   isPortAvailable,
   findAvailablePort,
   DEFAULT_PORT,
-  PORT_RANGE_END
+  PORT_RANGE_END,
 };

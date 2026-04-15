@@ -3,8 +3,8 @@
  * Converts markdown to styled HTML for novel-reader UI
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Lazy load dependencies
 let marked = null;
@@ -18,11 +18,11 @@ let matter = null;
  */
 function escapeHtml(str) {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /**
@@ -30,27 +30,27 @@ function escapeHtml(str) {
  */
 function initDependencies() {
   if (!marked) {
-    const { Marked } = require('marked');
-    hljs = require('highlight.js');
+    const { Marked } = require("marked");
+    hljs = require("highlight.js");
 
     marked = new Marked({
       gfm: true,
-      breaks: true
+      breaks: true,
     });
 
     // Custom extension for code blocks (handles mermaid specially)
     // marked v17+ requires extensions array for custom token handling
     const mermaidExtension = {
-      name: 'mermaidCodeBlock',
-      level: 'block',
+      name: "mermaidCodeBlock",
+      level: "block",
       renderer(token) {
         // This is called for code tokens
-        if (token.type === 'code') {
-          const code = token.text || '';
-          const language = token.lang || '';
+        if (token.type === "code") {
+          const code = token.text || "";
+          const language = token.lang || "";
 
           // Handle mermaid code blocks - render as div for client-side processing
-          if (language === 'mermaid') {
+          if (language === "mermaid") {
             return `<pre class="mermaid">${escapeHtml(code)}</pre>`;
           }
 
@@ -69,18 +69,18 @@ function initDependencies() {
           return `<pre><code class="hljs">${highlighted}</code></pre>`;
         }
         return false; // Use default renderer for other tokens
-      }
+      },
     };
 
     // Use the renderer override approach for marked v17+
     marked.use({
       renderer: {
         code(token) {
-          const code = typeof token === 'string' ? token : (token.text || '');
-          const language = typeof token === 'string' ? '' : (token.lang || '');
+          const code = typeof token === "string" ? token : token.text || "";
+          const language = typeof token === "string" ? "" : token.lang || "";
 
           // Handle mermaid code blocks - render as div for client-side processing
-          if (language === 'mermaid') {
+          if (language === "mermaid") {
             return `<pre class="mermaid">${escapeHtml(code)}</pre>`;
           }
 
@@ -97,11 +97,11 @@ function initDependencies() {
           // Auto-detect language or plain text
           const highlighted = hljs.highlightAuto(code).value;
           return `<pre><code class="hljs">${highlighted}</code></pre>`;
-        }
-      }
+        },
+      },
     });
 
-    matter = require('gray-matter');
+    matter = require("gray-matter");
   }
 }
 
@@ -113,7 +113,7 @@ function initDependencies() {
  */
 function resolveImageSrc(src, basePath) {
   // Skip absolute URLs
-  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/file')) {
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/file")) {
     return src;
   }
   // Resolve relative path to absolute /file/ route
@@ -165,7 +165,7 @@ function generateTOC(html) {
     headings.push({
       level: parseInt(match[1], 10),
       id: match[2],
-      text: match[3].trim()
+      text: match[3].trim(),
     });
   }
 
@@ -180,8 +180,8 @@ function generateTOC(html) {
 function slugify(text) {
   return text
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 /**
@@ -202,7 +202,7 @@ function addHeadingIds(html) {
       // Generate phase-specific anchor ID that matches plan-navigator.cjs format
       const phaseNum = parseInt(phaseMatch[1], 10);
       const phaseName = phaseMatch[2].trim();
-      id = `phase-${String(phaseNum).padStart(2, '0')}-${slugify(phaseName)}`;
+      id = `phase-${String(phaseNum).padStart(2, "0")}-${slugify(phaseName)}`;
     } else {
       // Standard heading ID generation
       id = slugify(text);
@@ -235,7 +235,7 @@ function addPhaseTableAnchors(html) {
   return html.replace(/<tr>\s*<td>(\d{2})<\/td>\s*<td>([^<]+)<\/td>/gi, (match, phaseNum, description) => {
     const num = parseInt(phaseNum, 10);
     const slug = slugify(description.trim());
-    const id = `phase-${String(num).padStart(2, '0')}-${slug}`;
+    const id = `phase-${String(num).padStart(2, "0")}-${slug}`;
 
     // Handle duplicates
     let uniqueId = id;
@@ -270,7 +270,7 @@ function parseFrontmatter(content) {
 function renderMarkdownFile(filePath, options = {}) {
   initDependencies();
 
-  const rawContent = fs.readFileSync(filePath, 'utf8');
+  const rawContent = fs.readFileSync(filePath, "utf8");
   const basePath = path.dirname(filePath);
 
   // Parse frontmatter
@@ -295,14 +295,14 @@ function renderMarkdownFile(filePath, options = {}) {
   let title = frontmatter.title;
   if (!title) {
     const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
-    title = h1Match ? h1Match[1] : path.basename(filePath, '.md');
+    title = h1Match ? h1Match[1] : path.basename(filePath, ".md");
   }
 
   return {
     html,
     toc,
     frontmatter,
-    title
+    title,
   };
 }
 
@@ -312,12 +312,14 @@ function renderMarkdownFile(filePath, options = {}) {
  * @returns {string} - HTML string
  */
 function renderTOCHtml(toc) {
-  if (!toc.length) return '';
+  if (!toc.length) return "";
 
-  const items = toc.map(({ level, id, text }) => {
-    const indent = (level - 1) * 12;
-    return `<li style="padding-left: ${indent}px"><a href="#${id}">${text}</a></li>`;
-  }).join('\n');
+  const items = toc
+    .map(({ level, id, text }) => {
+      const indent = (level - 1) * 12;
+      return `<li style="padding-left: ${indent}px"><a href="#${id}">${text}</a></li>`;
+    })
+    .join("\n");
 
   return `<ul class="toc-list">${items}</ul>`;
 }
@@ -331,5 +333,5 @@ module.exports = {
   addPhaseTableAnchors,
   parseFrontmatter,
   renderTOCHtml,
-  initDependencies
+  initDependencies,
 };

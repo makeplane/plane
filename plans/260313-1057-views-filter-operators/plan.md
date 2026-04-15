@@ -5,11 +5,13 @@
 Thêm các điều kiện lọc mới cho Views (workspace & project): **is not**, **greater than**, **less than**.
 
 Hiện tại hệ thống rich-filter chỉ hỗ trợ:
+
 - `exact` ("is") — single/date field
 - `in` ("is any of") — multi-select
 - `range` ("between") — date range
 
 Mục tiêu thêm:
+
 - `not_exact` → **"is not"** (phủ định của `exact`) — áp dụng cho single-select, date
 - `not_in` → **"is not any of"** (phủ định của `in`) — áp dụng cho multi-select
 - `gt` → **"greater than"** — áp dụng cho date fields
@@ -68,17 +70,18 @@ apps/
 
 ## Bảng Phase
 
-| Phase | Tên | Nội dung | Độ phức tạp |
-|-------|-----|----------|-------------|
-| 01 | types-operators | Thêm operators & types vào packages/types | Thấp |
-| 02 | constants-labels | Thêm labels vào packages/constants | Thấp |
-| 03 | utils-factories | Cập nhật factory functions, getSupportedDateOperators | Trung bình |
-| 04 | backend-filterset | Thêm __gt/__lt lookups vào IssueFilterSet | Trung bình |
-| 05 | frontend-ui | Thêm UI input cho gt/lt (single date picker), xử lý negation | Cao |
+| Phase | Tên               | Nội dung                                                     | Độ phức tạp |
+| ----- | ----------------- | ------------------------------------------------------------ | ----------- |
+| 01    | types-operators   | Thêm operators & types vào packages/types                    | Thấp        |
+| 02    | constants-labels  | Thêm labels vào packages/constants                           | Thấp        |
+| 03    | utils-factories   | Cập nhật factory functions, getSupportedDateOperators        | Trung bình  |
+| 04    | backend-filterset | Thêm **gt/**lt lookups vào IssueFilterSet                    | Trung bình  |
+| 05    | frontend-ui       | Thêm UI input cho gt/lt (single date picker), xử lý negation | Cao         |
 
 ## File thay đổi (tóm tắt)
 
 ### Modify:
+
 - `packages/types/src/rich-filters/operators/extended.ts`
 - `packages/types/src/rich-filters/operator-configs/extended.ts`
 - `packages/types/src/rich-filters/field-types/extended.ts`
@@ -89,21 +92,23 @@ apps/
 - `apps/api/plane/utils/filters/filterset.py`
 
 ### Create:
+
 - `apps/web/core/components/rich-filters/filter-value-input/date/single-bounded.tsx` (optional, nếu cần variant của date picker cho gt/lt)
 
 ## Status
 
-| Phase | Status |
-|-------|--------|
-| 01 | ✅ Done |
-| 02 | ✅ Done |
-| 03 | ✅ Done |
-| 04 | ✅ Done |
-| 05 | ✅ Done |
+| Phase | Status  |
+| ----- | ------- |
+| 01    | ✅ Done |
+| 02    | ✅ Done |
+| 03    | ✅ Done |
+| 04    | ✅ Done |
+| 05    | ✅ Done |
 
 ## Validation Log
 
 ### Session 1 — 2026-03-13
+
 **Trigger:** Initial plan creation — validating before implementation begins
 **Questions asked:** 4
 
@@ -130,17 +135,20 @@ apps/
    - **Rationale:** Only `IssueFilterSet.Meta.fields` will be updated. ViewFilterSets (if any) are deferred to a future scope. Reduces risk of unintended regressions.
 
 #### Confirmed Decisions
+
 - **Negation conversion**: Adapter `toExternal` layer — not internal expression tree
 - **Field scope**: All select + date fields expose negation operators
 - **Date operator labels**: "greater than" / "less than" (not "after" / "before")
 - **Backend scope**: IssueFilterSet only
 
 #### Action Items
+
 - [ ] Phase 02: Use "greater than" / "less than" labels (not "after"/"before")
 - [ ] Phase 03: Update `getSupportedDateOperators` to add `NOT_EXACT` for date fields; add `NOT_EXACT`/`NOT_IN` to ALL select field factory helpers
 - [ ] Phase 05: Implement negation conversion in `toExternal` adapter, NOT in `_updateCondition`
 
 #### Impact on Phases
+
 - Phase 02: Label constants must use "greater than" / "less than" for `gt`/`lt`
 - Phase 03: Factory helpers for single-select AND multi-select must include negation operators (not only date fields)
 - Phase 05: Negation handling in adapter `toExternal` — skip any `_updateCondition` negation logic
@@ -148,6 +156,7 @@ apps/
 ---
 
 ### Session 2 — 2026-03-13
+
 **Trigger:** Re-validation to surface remaining unresolved decision points before implementation
 **Questions asked:** 3
 
@@ -169,16 +178,19 @@ apps/
    - **Rationale:** Add translation keys in en/ko/vi alongside Phase 02 constant changes. Prevents a follow-up task and ensures full i18n coverage from day one.
 
 #### Confirmed Decisions
+
 - **Phase 05 labels**: Fix "after"/"before" → "greater than"/"less than" in Requirements + Checklist
 - **Value reset**: Reset to empty on multi→single operator switch (`_shouldResetValueOnOperatorChange`)
 - **i18n scope**: Add translation keys in Phase 02 (en/ko/vi)
 
 #### Action Items
+
 - [ ] Phase 02: Add i18n translation keys for all 4 operators in en/ko/vi translation files
 - [ ] Phase 03: `_shouldResetValueOnOperatorChange` must return `true` for multi→single transitions (e.g. `in`→`not_exact`, `not_in`→`exact`)
 - [ ] Phase 05: Fix "after"/"before" labels → "greater than"/"less than" in Requirements + Post-Phase Checklist
 
 #### Impact on Phases
+
 - Phase 02: Add i18n keys alongside constant changes
 - Phase 03: Document value reset logic in `_shouldResetValueOnOperatorChange`
 - Phase 05: Update Requirements + Checklist to replace "after"/"before" with "greater than"/"less than"
@@ -186,6 +198,7 @@ apps/
 ---
 
 ### Session 3 — 2026-03-13
+
 **Trigger:** Re-validation to resolve remaining implementation unknowns (function locations, config ownership)
 **Questions asked:** 3
 
@@ -207,16 +220,19 @@ apps/
    - **Rationale:** Add `singleValueOperator: "not_exact"` to `TExtendedNotInOperatorConfigs` in `operator-configs/extended.ts` so TypeScript enforces it at the type level. Phase 03 factory then sets the value when constructing the config object.
 
 #### Confirmed Decisions
+
 - **getOperatorForPayload location**: `packages/utils/src/rich-filters/operators/core.ts` (create if not found)
 - **Negation serialization**: Inside `filter.ts` toPayload/buildQuery method in `packages/shared-state`
 - **singleValueOperator for not_in**: Declared in Phase 01 types (`operator-configs/extended.ts`)
 
 #### Action Items
+
 - [ ] Phase 01: Add `singleValueOperator: typeof EXTENDED_EQUALITY_OPERATOR.NOT_EXACT` field to `TExtendedNotInOperatorConfigs`
 - [ ] Phase 03: If `getOperatorForPayload` not found via grep → create in `packages/utils/src/rich-filters/operators/core.ts`
 - [ ] Phase 05: Implement negation serialization (`not_exact`/`not_in` → `{"not": {...}}`) inside existing `toPayload`/`buildQuery` in `packages/shared-state/src/store/rich-filters/filter.ts`
 
 #### Impact on Phases
+
 - Phase 01: `TExtendedNotInOperatorConfigs` must include `singleValueOperator: "not_exact"` field
 - Phase 03: Fallback location for `getOperatorForPayload` is `packages/utils/src/rich-filters/operators/core.ts`
 - Phase 05: Negation serialization goes in `filter.ts` `toPayload`/`buildQuery` — not a new file

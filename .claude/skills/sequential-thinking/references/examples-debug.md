@@ -4,7 +4,7 @@
 
 ## Sequential Thinking Approach
 
-```
+````
 Thought 1/5: Initial investigation
 
 Endpoint: GET /api/users/{id}/dashboard
@@ -67,12 +67,13 @@ Create composite index:
 ```sql
 CREATE INDEX idx_activities_user_created
 ON activities(user_id, created_at DESC);
-```
+````
 
 Tested: Response time now 120ms (target met).
 
 Confidence: High (verified with profiling)
 Result: 95% performance improvement
+
 ```
 
 ## Key Techniques Demonstrated
@@ -88,3 +89,4 @@ Result: 95% performance improvement
 **Without sequential thinking**: Might jump to N+1 conclusion (common issue), waste time optimizing wrong thing.
 
 **With sequential thinking**: Systematically tested hypotheses, identified actual root cause, implemented correct fix.
+```

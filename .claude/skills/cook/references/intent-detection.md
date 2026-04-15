@@ -51,16 +51,17 @@ Detect multiple features from natural language:
 
 ## Mode Behaviors
 
-| Mode | Skip Research | Skip Test | Review Gates | Auto-Approve | Parallel Exec |
-|------|---------------|-----------|--------------|--------------|---------------|
-| interactive | ✗ | ✗ | **Yes (stops)** | ✗ | ✗ |
-| auto | ✗ | ✗ | **No (skips)** | ✓ (score≥9.5) | ✓ (all phases) |
-| fast | ✓ | ✗ | Yes (stops) | ✗ | ✗ |
-| parallel | Optional | ✗ | Yes (stops) | ✗ | ✓ |
-| no-test | ✗ | ✓ | Yes (stops) | ✗ | ✗ |
-| code | ✓ | ✗ | Yes (stops) | Per plan | Per plan |
+| Mode        | Skip Research | Skip Test | Review Gates    | Auto-Approve  | Parallel Exec  |
+| ----------- | ------------- | --------- | --------------- | ------------- | -------------- |
+| interactive | ✗             | ✗         | **Yes (stops)** | ✗             | ✗              |
+| auto        | ✗             | ✗         | **No (skips)**  | ✓ (score≥9.5) | ✓ (all phases) |
+| fast        | ✓             | ✗         | Yes (stops)     | ✗             | ✗              |
+| parallel    | Optional      | ✗         | Yes (stops)     | ✗             | ✓              |
+| no-test     | ✗             | ✓         | Yes (stops)     | ✗             | ✗              |
+| code        | ✓             | ✗         | Yes (stops)     | Per plan      | Per plan       |
 
 **Review Gates:** Human approval checkpoints between major steps (see `workflow-steps.md`).
+
 - All modes EXCEPT `auto` stop at review gates for human approval.
 - `auto` mode is the only mode that runs continuously without stopping.
 
@@ -94,6 +95,7 @@ Detect multiple features from natural language:
 ## Conflict Resolution
 
 When multiple signals detected, priority order:
+
 1. Explicit flags (`--fast`, `--auto`, etc.)
 2. Path detection (plan files)
 3. Keywords in text

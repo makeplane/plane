@@ -22,13 +22,13 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 
 **Default breakpoints:**
 
-| Prefix | Min Width | CSS Media Query |
-|--------|-----------|-----------------|
-| `sm:` | 640px | `@media (min-width: 640px)` |
-| `md:` | 768px | `@media (min-width: 768px)` |
-| `lg:` | 1024px | `@media (min-width: 1024px)` |
-| `xl:` | 1280px | `@media (min-width: 1280px)` |
-| `2xl:` | 1536px | `@media (min-width: 1536px)` |
+| Prefix | Min Width | CSS Media Query              |
+| ------ | --------- | ---------------------------- |
+| `sm:`  | 640px     | `@media (min-width: 640px)`  |
+| `md:`  | 768px     | `@media (min-width: 768px)`  |
+| `lg:`  | 1024px    | `@media (min-width: 1024px)` |
+| `xl:`  | 1280px    | `@media (min-width: 1280px)` |
+| `2xl:` | 1536px    | `@media (min-width: 1536px)` |
 
 ## Responsive Patterns
 
@@ -53,14 +53,10 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 
 ```html
 <!-- Hide on mobile, show on desktop -->
-<div class="hidden lg:block">
-  Desktop only content
-</div>
+<div class="hidden lg:block">Desktop only content</div>
 
 <!-- Show on mobile, hide on desktop -->
-<div class="block lg:hidden">
-  Mobile only content
-</div>
+<div class="block lg:hidden">Mobile only content</div>
 
 <!-- Different content per breakpoint -->
 <div class="lg:hidden">Mobile menu</div>
@@ -71,22 +67,16 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 
 ```html
 <!-- Responsive text sizes -->
-<h1 class="text-2xl md:text-4xl lg:text-6xl font-bold">
-  Heading scales with screen size
-</h1>
+<h1 class="text-2xl md:text-4xl lg:text-6xl font-bold">Heading scales with screen size</h1>
 
-<p class="text-sm md:text-base lg:text-lg">
-  Body text scales appropriately
-</p>
+<p class="text-sm md:text-base lg:text-lg">Body text scales appropriately</p>
 ```
 
 ### Spacing
 
 ```html
 <!-- Responsive padding -->
-<div class="p-4 md:p-6 lg:p-8">
-  More padding on larger screens
-</div>
+<div class="p-4 md:p-6 lg:p-8">More padding on larger screens</div>
 
 <!-- Responsive gap -->
 <div class="flex gap-2 md:gap-4 lg:gap-6">
@@ -99,14 +89,10 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 
 ```html
 <!-- Full width on mobile, constrained on desktop -->
-<div class="w-full lg:w-1/2 xl:w-1/3">
-  Responsive width
-</div>
+<div class="w-full lg:w-1/2 xl:w-1/3">Responsive width</div>
 
 <!-- Responsive max-width -->
-<div class="max-w-sm md:max-w-2xl lg:max-w-4xl mx-auto">
-  Centered with responsive max width
-</div>
+<div class="max-w-sm md:max-w-2xl lg:max-w-4xl mx-auto">Centered with responsive max width</div>
 ```
 
 ## Common Responsive Layouts
@@ -116,14 +102,10 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 ```html
 <div class="flex flex-col lg:flex-row min-h-screen">
   <!-- Sidebar: Full width on mobile, fixed on desktop -->
-  <aside class="w-full lg:w-64 bg-gray-100 p-4">
-    Sidebar
-  </aside>
+  <aside class="w-full lg:w-64 bg-gray-100 p-4">Sidebar</aside>
 
   <!-- Main content -->
-  <main class="flex-1 p-4 md:p-8">
-    Main content
-  </main>
+  <main class="flex-1 p-4 md:p-8">Main content</main>
 </div>
 ```
 
@@ -145,15 +127,9 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
   <div class="container mx-auto px-4">
     <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
       <div class="flex-1 text-center lg:text-left">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-          Hero Title
-        </h1>
-        <p class="text-lg md:text-xl mb-6">
-          Hero description
-        </p>
-        <button class="px-6 py-3 md:px-8 md:py-4">
-          CTA Button
-        </button>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">Hero Title</h1>
+        <p class="text-lg md:text-xl mb-6">Hero description</p>
+        <button class="px-6 py-3 md:px-8 md:py-4">CTA Button</button>
       </div>
       <div class="flex-1">
         <img src="hero.jpg" class="w-full rounded-lg" />
@@ -194,14 +170,10 @@ Apply styles only below certain breakpoint using `max-*:` prefix:
 
 ```html
 <!-- Only on mobile and tablet (below 1024px) -->
-<div class="max-lg:text-center">
-  Centered on mobile/tablet, left-aligned on desktop
-</div>
+<div class="max-lg:text-center">Centered on mobile/tablet, left-aligned on desktop</div>
 
 <!-- Only on mobile (below 640px) -->
-<div class="max-sm:hidden">
-  Hidden only on mobile
-</div>
+<div class="max-sm:hidden">Hidden only on mobile</div>
 ```
 
 Available: `max-sm:` `max-md:` `max-lg:` `max-xl:` `max-2xl:`
@@ -212,14 +184,10 @@ Apply styles between breakpoints:
 
 ```html
 <!-- Only on tablets (between md and lg) -->
-<div class="md:block lg:hidden">
-  Visible only on tablets
-</div>
+<div class="md:block lg:hidden">Visible only on tablets</div>
 
 <!-- Between sm and xl -->
-<div class="sm:grid-cols-2 xl:grid-cols-4">
-  2 columns on tablet, 4 on extra large
-</div>
+<div class="sm:grid-cols-2 xl:grid-cols-4">2 columns on tablet, 4 on extra large</div>
 ```
 
 ## Container Queries
@@ -228,9 +196,7 @@ Style elements based on parent container width:
 
 ```html
 <div class="@container">
-  <div class="@md:grid-cols-2 @lg:grid-cols-3">
-    Responds to parent width, not viewport
-  </div>
+  <div class="@md:grid-cols-2 @lg:grid-cols-3">Responds to parent width, not viewport</div>
 </div>
 ```
 
@@ -242,15 +208,13 @@ Define custom breakpoints in theme:
 
 ```css
 @theme {
-  --breakpoint-3xl: 120rem;  /* 1920px */
-  --breakpoint-tablet: 48rem;  /* 768px */
+  --breakpoint-3xl: 120rem; /* 1920px */
+  --breakpoint-tablet: 48rem; /* 768px */
 }
 ```
 
 ```html
-<div class="tablet:grid-cols-2 3xl:grid-cols-6">
-  Uses custom breakpoints
-</div>
+<div class="tablet:grid-cols-2 3xl:grid-cols-6">Uses custom breakpoints</div>
 ```
 
 ## Responsive State Variants
@@ -259,14 +223,10 @@ Combine responsive with hover/focus:
 
 ```html
 <!-- Hover effect only on desktop -->
-<button class="lg:hover:scale-105">
-  Scale on hover (desktop only)
-</button>
+<button class="lg:hover:scale-105">Scale on hover (desktop only)</button>
 
 <!-- Different hover colors per breakpoint -->
-<a class="hover:text-blue-600 lg:hover:text-purple-600">
-  Link
-</a>
+<a class="hover:text-blue-600 lg:hover:text-purple-600"> Link </a>
 ```
 
 ## Best Practices
@@ -278,9 +238,9 @@ Start with mobile styles, add complexity at larger breakpoints:
 ```html
 <!-- Good: Mobile first -->
 <div class="text-base md:text-lg lg:text-xl">
-
-<!-- Avoid: Desktop first -->
-<div class="text-xl lg:text-base">
+  <!-- Avoid: Desktop first -->
+  <div class="text-xl lg:text-base"></div>
+</div>
 ```
 
 ### 2. Consistent Breakpoint Usage
@@ -288,9 +248,7 @@ Start with mobile styles, add complexity at larger breakpoints:
 Use same breakpoints across related elements:
 
 ```html
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-  Spacing scales with layout
-</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">Spacing scales with layout</div>
 ```
 
 ### 3. Test at Breakpoint Boundaries
@@ -301,9 +259,7 @@ Test at exact breakpoint widths (640px, 768px, 1024px, etc.) to catch edge cases
 
 ```html
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-  <div class="max-w-7xl">
-    Content with consistent max width
-  </div>
+  <div class="max-w-7xl">Content with consistent max width</div>
 </div>
 ```
 
@@ -315,9 +271,7 @@ Ensure core functionality works on mobile, enhance for larger screens:
 <!-- Core layout works on mobile -->
 <div class="p-4">
   <!-- Enhanced spacing on desktop -->
-  <div class="lg:p-8">
-    Content
-  </div>
+  <div class="lg:p-8">Content</div>
 </div>
 ```
 
@@ -328,9 +282,9 @@ Use 2-3 breakpoints per element for maintainability:
 ```html
 <!-- Good: 2 breakpoints -->
 <div class="grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-
-<!-- Avoid: Too many breakpoints -->
-<div class="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+  <!-- Avoid: Too many breakpoints -->
+  <div class="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"></div>
+</div>
 ```
 
 ## Common Responsive Utilities
@@ -338,17 +292,13 @@ Use 2-3 breakpoints per element for maintainability:
 ### Responsive Display
 
 ```html
-<div class="block md:flex lg:grid">
-  Changes display type per breakpoint
-</div>
+<div class="block md:flex lg:grid">Changes display type per breakpoint</div>
 ```
 
 ### Responsive Position
 
 ```html
-<div class="relative lg:absolute">
-  Positioned differently per breakpoint
-</div>
+<div class="relative lg:absolute">Positioned differently per breakpoint</div>
 ```
 
 ### Responsive Order
@@ -363,9 +313,7 @@ Use 2-3 breakpoints per element for maintainability:
 ### Responsive Overflow
 
 ```html
-<div class="overflow-auto lg:overflow-visible">
-  Scrollable on mobile, expanded on desktop
-</div>
+<div class="overflow-auto lg:overflow-visible">Scrollable on mobile, expanded on desktop</div>
 ```
 
 ## Testing Checklist

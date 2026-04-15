@@ -12,6 +12,7 @@
 **CRITICAL:** You MUST spawn `docs-manager` agent via Task tool with merged reports. Do not wait for user input.
 
 Pass the gathered context to docs-manager agent to create initial documentation:
+
 - `README.md`: Update README with initial documentation (keep it under 300 lines)
 - `docs/project-overview-pdr.md`: Project overview and PDR (Product Development Requirements)
 - `docs/codebase-summary.md`: Codebase summary
@@ -24,6 +25,7 @@ Pass the gathered context to docs-manager agent to create initial documentation:
 ## Phase 3: Size Check (Post-Generation)
 
 After docs-manager completes:
+
 1. Run `wc -l docs/*.md 2>/dev/null | sort -rn` to check LOC
 2. Use `docs.maxLoc` from session context (default: 800)
 3. For files exceeding limit:

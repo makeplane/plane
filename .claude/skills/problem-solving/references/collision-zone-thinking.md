@@ -8,22 +8,22 @@ Revolutionary insights from deliberate metaphor-mixing. Treat X like Y and see w
 
 ## When to Use
 
-| Symptom | Action |
-|---------|--------|
-| Stuck in conventional thinking | Force wild domain collision |
-| Solutions feel incremental | Need breakthrough, not optimization |
-| "Tried everything in this domain" | Import concepts from elsewhere |
-| Need innovation, not iteration | Deliberately mix unrelated ideas |
+| Symptom                           | Action                              |
+| --------------------------------- | ----------------------------------- |
+| Stuck in conventional thinking    | Force wild domain collision         |
+| Solutions feel incremental        | Need breakthrough, not optimization |
+| "Tried everything in this domain" | Import concepts from elsewhere      |
+| Need innovation, not iteration    | Deliberately mix unrelated ideas    |
 
 ## Quick Reference Collisions
 
-| Treat This | Like This | Discovers |
-|------------|-----------|-----------|
-| Code organization | DNA/genetics | Mutation testing, evolutionary algorithms |
-| Service architecture | Lego bricks | Composable microservices, plug-and-play |
-| Data management | Water flow | Streaming, data lakes, flow-based systems |
-| Request handling | Postal mail | Message queues, async processing |
-| Error handling | Circuit breakers | Fault isolation, graceful degradation |
+| Treat This           | Like This        | Discovers                                 |
+| -------------------- | ---------------- | ----------------------------------------- |
+| Code organization    | DNA/genetics     | Mutation testing, evolutionary algorithms |
+| Service architecture | Lego bricks      | Composable microservices, plug-and-play   |
+| Data management      | Water flow       | Streaming, data lakes, flow-based systems |
+| Request handling     | Postal mail      | Message queues, async processing          |
+| Error handling       | Circuit breakers | Fault isolation, graceful degradation     |
 
 ## Process
 
@@ -40,6 +40,7 @@ Revolutionary insights from deliberate metaphor-mixing. Treat X like Y and see w
 **Collision:** "What if we treated services like electrical circuits?"
 
 **Emergent properties:**
+
 - Circuit breakers (disconnect on overload)
 - Fuses (one-time failure protection)
 - Ground faults (error isolation)
@@ -55,6 +56,7 @@ Revolutionary insights from deliberate metaphor-mixing. Treat X like Y and see w
 ## Best Source Domains
 
 Rich domains for concept mining:
+
 - **Physics** - Forces, thermodynamics, relativity
 - **Biology** - Evolution, ecosystems, immune systems
 - **Economics** - Markets, incentives, game theory
@@ -64,6 +66,7 @@ Rich domains for concept mining:
 ## Red Flags
 
 You need collision-zone thinking when:
+
 - "I've tried everything in this domain"
 - Solutions feel incremental, not breakthrough
 - Stuck in conventional thinking

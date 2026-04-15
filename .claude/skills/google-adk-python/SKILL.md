@@ -70,34 +70,34 @@ Use `App` when needing plugins, event compaction, or custom lifecycle management
 
 ## CLI Tools
 
-| Command | Purpose |
-|---------|---------|
-| `adk web <agents_dir>` | Dev UI (recommended for development) |
-| `adk run <agent_dir>` | Interactive CLI testing |
-| `adk api_server <agents_dir>` | FastAPI production server |
-| `adk eval <agent> <evalset.json>` | Run evaluation suite |
+| Command                           | Purpose                              |
+| --------------------------------- | ------------------------------------ |
+| `adk web <agents_dir>`            | Dev UI (recommended for development) |
+| `adk run <agent_dir>`             | Interactive CLI testing              |
+| `adk api_server <agents_dir>`     | FastAPI production server            |
+| `adk eval <agent> <evalset.json>` | Run evaluation suite                 |
 
 ## Agent Types
 
-| Type | Use Case |
-|------|----------|
+| Type                 | Use Case                             |
+| -------------------- | ------------------------------------ |
 | `Agent` / `LlmAgent` | Dynamic routing, tool use, reasoning |
-| `SequentialAgent` | Fixed-order pipeline |
-| `ParallelAgent` | Concurrent execution |
-| `LoopAgent` | Iterative processing |
-| `RemoteA2aAgent` | Remote agent via A2A protocol |
+| `SequentialAgent`    | Fixed-order pipeline                 |
+| `ParallelAgent`      | Concurrent execution                 |
+| `LoopAgent`          | Iterative processing                 |
+| `RemoteA2aAgent`     | Remote agent via A2A protocol        |
 
 ## Key APIs
 
-| Feature | API |
-|---------|-----|
-| State | `tool_context.state[key] = value` |
-| Artifacts | `tool_context.save_artifact(name, part)` |
-| Callbacks | `before_agent_callback`, `after_model_callback`, etc. |
-| MCP Tools | `MCPToolset(connection_params=StdioConnectionParams(...))` |
-| Sub-agents | `Agent(..., sub_agents=[agent1, agent2])` |
-| Human-in-loop | `LongRunningFunctionTool(func=my_func)` |
-| Plugins | `App(..., plugins=[MyPlugin()])` |
+| Feature       | API                                                        |
+| ------------- | ---------------------------------------------------------- |
+| State         | `tool_context.state[key] = value`                          |
+| Artifacts     | `tool_context.save_artifact(name, part)`                   |
+| Callbacks     | `before_agent_callback`, `after_model_callback`, etc.      |
+| MCP Tools     | `MCPToolset(connection_params=StdioConnectionParams(...))` |
+| Sub-agents    | `Agent(..., sub_agents=[agent1, agent2])`                  |
+| Human-in-loop | `LongRunningFunctionTool(func=my_func)`                    |
+| Plugins       | `App(..., plugins=[MyPlugin()])`                           |
 
 ## Model Support
 

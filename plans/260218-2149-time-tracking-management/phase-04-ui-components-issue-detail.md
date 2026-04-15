@@ -1,6 +1,7 @@
 # Phase 4: UI Components (Issue Detail)
 
 ## Context Links
+
 - CE stubs: `apps/web/ce/components/issues/worklog/`
   - `property/root.tsx` — IssueWorklogProperty (sidebar + peek overview)
   - `activity/root.tsx` — IssueActivityWorklog (activity feed item)
@@ -14,11 +15,13 @@
 - Permission check: `isWorklogButtonEnabled` = !isIntakeIssue && !isGuest && (isAdmin || isAssigned)
 
 ## Overview
+
 - **Priority**: P1
 - **Status**: complete
 - Implement the CE stub components + create worklog create/edit modal + time estimate input.
 
 ## Key Insights
+
 - All 3 CE stubs already imported and rendered in core components — just fill them in
 - `isWorklogButtonEnabled` logic already exists in activity root — no permission changes needed
 - Need a modal/dialog for log time form (reuse pattern from existing modals)
@@ -26,7 +29,9 @@
 - Project-level `is_time_tracking_enabled` should conditionally show/hide worklog UI
 
 ## Requirements
+
 ### Functional
+
 - **IssueWorklogProperty**: Show total logged time + estimate comparison in sidebar
 - **IssueActivityWorklogCreateButton**: "Log Time" button opening modal
 - **IssueActivityWorklog**: Render individual worklog entry in activity feed
@@ -35,11 +40,13 @@
 - **Conditional rendering**: Only show when project has time tracking enabled
 
 ### Non-functional
+
 - Match existing UI patterns (Tailwind, @plane/ui components)
 - Responsive in sidebar and peek overview contexts
 - Accessible: proper labels, keyboard navigation
 
 ## Architecture
+
 ```
 IssueWorklogProperty (sidebar)
 ├── Shows: "Time: 2h 30m / 4h est." with progress indicator
@@ -63,12 +70,15 @@ WorklogModal (shared create/edit)
 ```
 
 ## Related Code Files
+
 ### Create
+
 - `apps/web/ce/components/issues/worklog/worklog-modal.tsx` — create/edit modal
 - `apps/web/ce/components/issues/worklog/time-display.tsx` — reusable time display component
 - `apps/web/ce/components/issues/worklog/time-estimate-input.tsx` — estimate input for issue forms
 
 ### Modify
+
 - `apps/web/ce/components/issues/worklog/property/root.tsx` — implement IssueWorklogProperty
 - `apps/web/ce/components/issues/worklog/activity/root.tsx` — implement IssueActivityWorklog
 - `apps/web/ce/components/issues/worklog/activity/worklog-create-button.tsx` — implement button
@@ -123,6 +133,7 @@ WorklogModal (shared create/edit)
    - Already handled by Phase 2 constants changes — verify rendering
 
 ## Todo List
+
 - [ ] Create WorklogModal component
 - [ ] Create TimeDisplay component
 - [ ] Implement IssueWorklogProperty
@@ -134,6 +145,7 @@ WorklogModal (shared create/edit)
 - [ ] Test in sidebar and peek overview contexts
 
 ## Success Criteria
+
 - "Log Time" button appears in activity header for eligible users
 - Modal opens, accepts input, saves via API
 - Logged time appears in sidebar property
@@ -142,13 +154,16 @@ WorklogModal (shared create/edit)
 - Estimate time input works on issue create/edit
 
 ## Risk Assessment
+
 - **Component size**: Modal may exceed 200 lines → split form logic into hook
 - **Project setting check**: Need to fetch project details to check flag → may already be in project store
 - **Date handling**: Timezone issues with logged_at → use date-only (no time component)
 
 ## Security Considerations
+
 - Client-side permission checks match server-side (display only, actual enforcement on API)
 - No sensitive data in component state
 
 ## Next Steps
+
 - Phase 5: Reports page using summary endpoints

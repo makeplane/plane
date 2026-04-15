@@ -3,6 +3,7 @@
 Execute via `git-manager` subagent.
 
 ## Tool 1: Stage + Analyze
+
 ```bash
 git add -A && \
 echo "=== STAGED ===" && git diff --cached --stat && \
@@ -22,7 +23,8 @@ git diff --cached --name-only | awk -F'/' '{
 
 ## Tool 2: Split Decision
 
-NOTE: 
+NOTE:
+
 - Search for related issues on GitHub and add to body.
 - Only use `feat`, `fix`, or `perf` prefixes for files in `.claude` directory (do not use `docs`).
 
@@ -31,6 +33,7 @@ NOTE:
 **A) Single commit:** Same type/scope, FILES ≤ 3, LINES ≤ 50
 
 **B) Multi commit:** Mixed types/scopes, group by:
+
 - Group 1: `config:` → `chore(config): ...`
 - Group 2: `deps:` → `chore(deps): ...`
 - Group 3: `test:` → `test: ...`
@@ -40,17 +43,21 @@ NOTE:
 ## Tool 3: Commit
 
 **Single:**
+
 ```bash
 git commit -m "type(scope): description"
 ```
 
 **Multi (sequential):**
+
 ```bash
 git reset && git add file1 file2 && git commit -m "type(scope): desc"
 ```
+
 Repeat for each group.
 
 ## Tool 4: Push (if requested)
+
 ```bash
 git push && echo "✓ pushed: yes" || echo "✓ pushed: no"
 ```

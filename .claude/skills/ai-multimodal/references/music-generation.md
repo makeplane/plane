@@ -12,6 +12,7 @@ Real-time music generation using Lyria RealTime via WebSocket API.
 ## Model
 
 **Lyria RealTime** (Experimental)
+
 - WebSocket-based streaming
 - Real-time parameter adjustment
 - Instrumental only (no vocals)
@@ -59,44 +60,44 @@ async def generate_music():
 const client = new GenaiClient({ apiKey: process.env.GEMINI_API_KEY });
 
 async function generateMusic() {
-    const session = await client.live.music.connect();
+  const session = await client.live.music.connect();
 
-    await session.setWeightedPrompts([
-        { prompt: "Calm ambient background", weight: 0.9 },
-        { prompt: "Nature sounds influence", weight: 0.3 }
-    ]);
+  await session.setWeightedPrompts([
+    { prompt: "Calm ambient background", weight: 0.9 },
+    { prompt: "Nature sounds influence", weight: 0.3 },
+  ]);
 
-    await session.setMusicGenerationConfig({
-        guidance: 3.5,
-        bpm: 80,
-        density: 0.4,
-        brightness: 0.6
-    });
+  await session.setMusicGenerationConfig({
+    guidance: 3.5,
+    bpm: 80,
+    density: 0.4,
+    brightness: 0.6,
+  });
 
-    session.onAudio((audioChunk) => {
-        // Process 48kHz stereo PCM audio
-        audioBuffer.push(audioChunk);
-    });
+  session.onAudio((audioChunk) => {
+    // Process 48kHz stereo PCM audio
+    audioBuffer.push(audioChunk);
+  });
 
-    await session.play();
+  await session.play();
 }
 ```
 
 ## Configuration Parameters
 
-| Parameter | Range | Default | Description |
-|-----------|-------|---------|-------------|
-| `guidance` | 0.0-6.0 | 4.0 | Prompt adherence (higher = stricter) |
-| `bpm` | 60-200 | 120 | Tempo in beats per minute |
-| `density` | 0.0-1.0 | 0.5 | Note/sound density |
-| `brightness` | 0.0-1.0 | 0.5 | Tonal quality (higher = brighter) |
-| `scale` | 12 keys | C Major | Musical key |
-| `mute_bass` | bool | false | Remove bass elements |
-| `mute_drums` | bool | false | Remove drum elements |
-| `mode` | enum | QUALITY | QUALITY, DIVERSITY, VOCALIZATION |
-| `temperature` | 0.0-2.0 | 1.0 | Sampling randomness |
-| `top_k` | int | 40 | Sampling top-k |
-| `seed` | int | random | Reproducibility seed |
+| Parameter     | Range   | Default | Description                          |
+| ------------- | ------- | ------- | ------------------------------------ |
+| `guidance`    | 0.0-6.0 | 4.0     | Prompt adherence (higher = stricter) |
+| `bpm`         | 60-200  | 120     | Tempo in beats per minute            |
+| `density`     | 0.0-1.0 | 0.5     | Note/sound density                   |
+| `brightness`  | 0.0-1.0 | 0.5     | Tonal quality (higher = brighter)    |
+| `scale`       | 12 keys | C Major | Musical key                          |
+| `mute_bass`   | bool    | false   | Remove bass elements                 |
+| `mute_drums`  | bool    | false   | Remove drum elements                 |
+| `mode`        | enum    | QUALITY | QUALITY, DIVERSITY, VOCALIZATION     |
+| `temperature` | 0.0-2.0 | 1.0     | Sampling randomness                  |
+| `top_k`       | int     | 40      | Sampling top-k                       |
+| `seed`        | int     | random  | Reproducibility seed                 |
 
 ## Weighted Prompts
 
@@ -111,6 +112,7 @@ await session.set_weighted_prompts([
 ```
 
 **Weight guidelines**:
+
 - 0.8-1.0: Dominant influence
 - 0.5-0.7: Secondary contribution
 - 0.2-0.4: Subtle accent

@@ -84,7 +84,8 @@ table {
   font-size: 0.9rem;
 }
 
-th, td {
+th,
+td {
   padding: 0.75rem 1rem;
   text-align: left;
   border: 1px solid var(--border);
@@ -120,7 +121,9 @@ hr {
 .code-wrapper {
   position: relative;
   margin: 1.5rem 0;
-  transition: width 0.2s ease, left 0.2s ease;
+  transition:
+    width 0.2s ease,
+    left 0.2s ease;
 }
 
 .code-wrapper pre {
@@ -181,8 +184,16 @@ hr {
 }
 
 /* Icon visibility toggle for code blocks */
-.code-expand-btn .icon-expand { display: inline; }
-.code-expand-btn .icon-collapse { display: none; }
+.code-expand-btn .icon-expand {
+  display: inline;
+}
+.code-expand-btn .icon-collapse {
+  display: none;
+}
 
-.code-wrapper.expanded .code-expand-btn .icon-expand { display: none; }
-.code-wrapper.expanded .code-expand-btn .icon-collapse { display: inline; }
+.code-wrapper.expanded .code-expand-btn .icon-expand {
+  display: none;
+}
+.code-wrapper.expanded .code-expand-btn .icon-collapse {
+  display: inline;
+}

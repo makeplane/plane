@@ -8,25 +8,25 @@
 
 ## Tool Support
 
-| Tool | Support | Method |
-|------|---------|--------|
-| Playwright | Native | `>>` piercing selector |
-| Cypress | Good | `.shadow()` command |
-| Selenium | Limited | JS execution |
-| Axe | v5.7+ | API support |
+| Tool       | Support | Method                 |
+| ---------- | ------- | ---------------------- |
+| Playwright | Native  | `>>` piercing selector |
+| Cypress    | Good    | `.shadow()` command    |
+| Selenium   | Limited | JS execution           |
+| Axe        | v5.7+   | API support            |
 
 ## Playwright Shadow Piercing
 
 ```javascript
-const input = page.locator('my-component >> .internal-input');
-const button = page.locator('comp-a >> comp-b >> button');
+const input = page.locator("my-component >> .internal-input");
+const button = page.locator("comp-a >> comp-b >> button");
 const el = page.locator('custom-element >> button:has-text("Click me")');
 ```
 
 ## Cypress Shadow DOM
 
 ```javascript
-cy.get('my-component').shadow().find('.internal-button').click();
+cy.get("my-component").shadow().find(".internal-button").click();
 
 // Enable globally: { includeShadowDom: true }
 ```
@@ -34,9 +34,9 @@ cy.get('my-component').shadow().find('.internal-button').click();
 ## Selenium Workaround
 
 ```javascript
-const shadowHost = driver.findElement(By.css('my-component'));
-const shadowRoot = driver.executeScript('return arguments[0].shadowRoot', shadowHost);
-const button = shadowRoot.findElement(By.css('button'));
+const shadowHost = driver.findElement(By.css("my-component"));
+const shadowRoot = driver.executeScript("return arguments[0].shadowRoot", shadowHost);
+const button = shadowRoot.findElement(By.css("button"));
 ```
 
 ## Page Object Pattern
@@ -65,6 +65,6 @@ export class MyComponentPO {
 
 ```javascript
 const contents = await page.evaluate(() => {
-  return document.querySelector('my-component').shadowRoot.innerHTML;
+  return document.querySelector("my-component").shadowRoot.innerHTML;
 });
 ```

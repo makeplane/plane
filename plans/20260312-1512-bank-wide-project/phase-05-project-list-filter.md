@@ -11,11 +11,13 @@
 ## Requirements
 
 ### Functional
+
 - Project list có thêm filter option "Bank-wide only" (hoặc toggle)
 - Khi bật filter: chỉ hiển thị projects có `is_bank_wide: true`
 - Filter state là ephemeral (không persist) hoặc persist theo pattern hiện tại
 
 ### Non-functional
+
 - Follow pattern filter hiện có trong project list (grep existing UI before implementing)
 - Filter là **ephemeral** — không persist qua URL hoặc localStorage <!-- Updated: Validation Session 3 - ephemeral confirmed -->
 - i18n key: `bank_wide_project.filter.label`
@@ -25,6 +27,7 @@
 ## Related Code Files
 
 ### Files to investigate first:
+
 - Grep existing project list filter implementation:
   ```bash
   grep -r "project.*filter\|filter.*project" apps/web/ce/components/projects/ --include="*.tsx" -l
@@ -33,6 +36,7 @@
 - Find where workspace project list renders and how existing filters are applied
 
 ### Files to modify (TBD after investigation):
+
 - Project list filter component (CE)
 - Project list hook/store (filter logic)
 
@@ -43,6 +47,7 @@
 ### Step 1: Investigate existing filter pattern
 
 Grep để hiểu cấu trúc filter hiện tại trước khi implement:
+
 ```bash
 # Tìm project list components
 grep -r "projectsList\|projects-list\|ProjectList" apps/web/ce/components/ --include="*.tsx" -l
@@ -53,6 +58,7 @@ grep -r "displayFilters\|project.*filter" apps/web/ce/store/ --include="*.ts" -l
 ### Step 2: Extend filter type (nếu có typed filter object)
 
 Nếu có `TProjectDisplayFilters` hoặc tương đương, thêm:
+
 ```typescript
 is_bank_wide?: boolean;
 ```
@@ -64,15 +70,15 @@ Thêm toggle/checkbox "Bank-wide only" vào project list filter panel, follow ex
 ### Step 4: Add filter logic
 
 Trong store hoặc component, filter projects:
+
 ```typescript
-const filteredProjects = projects.filter(p =>
-  displayFilters.is_bank_wide ? p.is_bank_wide : true
-);
+const filteredProjects = projects.filter((p) => (displayFilters.is_bank_wide ? p.is_bank_wide : true));
 ```
 
 ### Step 5: Add i18n key
 
 Thêm vào Phase 04 i18n files:
+
 ```
 "bank_wide_project.filter.label": "Bank-wide only"  // en
 "bank_wide_project.filter.label": "전행 프로젝트만"  // ko

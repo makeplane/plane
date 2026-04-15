@@ -31,6 +31,7 @@
 ## Requirements
 
 **Functional:**
+
 - "Bulk Assign Workspace" `Link` button on `/workspace/` page
 - Route `/workspace/bulk-assign` renders assign form in `PageWrapper`
 - File upload: `.xlsx`, `.xls` only, max 5 MB, max 500 rows
@@ -40,6 +41,7 @@
 - Results: show `total_assigned`, `total_skipped`, skipped rows with reason
 
 **Non-functional:**
+
 - `observer()` wrapper on all components
 - Each file under 200 lines
 - Role normalization on parse (string/number → valid int)
@@ -70,52 +72,66 @@ WorkspaceStore.bulkAssignMembers()
 ## Related Code Files
 
 **CREATE:**
+
 - `apps/admin/app/(all)/(dashboard)/workspace/bulk-assign/page.tsx`
 - `apps/admin/components/workspace/workspace-bulk-assign-form.tsx`
 - `apps/admin/components/workspace/workspace-bulk-assign-preview.tsx`
 - `apps/admin/components/workspace/workspace-bulk-assign-results.tsx`
 
 **MODIFY:**
+
 - `apps/admin/app/(all)/(dashboard)/workspace/page.tsx` — add Link button (lines 132–139)
 - `apps/admin/store/workspace.store.ts` — add `bulkAssignMembers` action
 - `packages/services/src/workspace/instance-workspace.service.ts` — add type + method
 
 **NO CHANGE:**
+
 - `apps/admin/hooks/store/use-workspace.tsx` — auto-exposes `IWorkspaceStore` members
 
 ## Embedded Rules
 
 **Rule 1 — observer() on every component (MobX requirement):**
+
 ```tsx
 import { observer } from "mobx-react";
 export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm() { ... });
 ```
 
 **Rule 2 — xlsx dynamic import (avoid bundle bloat):**
+
 ```ts
 const XLSX = await import("xlsx");
 ```
 
 **Rule 3 — Button/toast imports:**
+
 ```ts
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 ```
 
 **Rule 4 — Role normalization (CRITICAL: Member=15, NOT 10):**
+
 ```ts
 const ROLE_MAP: Record<string, number> = {
-  guest: 5, member: 15, admin: 20,
-  "5": 5, "15": 15, "20": 20,
+  guest: 5,
+  member: 15,
+  admin: 20,
+  "5": 5,
+  "15": 15,
+  "20": 20,
 };
 function normalizeRole(raw: unknown): number {
   if (typeof raw === "number" && [5, 15, 20].includes(raw)) return raw;
-  const key = String(raw ?? "").trim().toLowerCase();
+  const key = String(raw ?? "")
+    .trim()
+    .toLowerCase();
   return ROLE_MAP[key] ?? 15; // default Member
 }
 ```
 
 **Rule 5 — Service additions in `instance-workspace.service.ts`:**
+
 ```ts
 export interface IWorkspaceBulkAssignResponse {
   assigned: Array<{ email: string; workspace_slug: string; role: number }>;
@@ -134,6 +150,7 @@ async bulkAssignMembers(
 ```
 
 **Rule 6 — Store action (no observable mutation needed):**
+
 ```ts
 bulkAssignMembers = async (
   members: Array<{ email: string; workspace_slug: string; role: number }>
@@ -209,7 +226,9 @@ export const WorkspaceBulkAssignPreview = observer(function WorkspaceBulkAssignP
               <tr key={idx} className="border-t border-border-subtle">
                 <td className="px-3 py-2 text-tertiary">{idx + 1}</td>
                 <td className="px-3 py-2">{row.email || <span className="text-color-danger-primary">—</span>}</td>
-                <td className="px-3 py-2">{row.workspace_slug || <span className="text-color-danger-primary">—</span>}</td>
+                <td className="px-3 py-2">
+                  {row.workspace_slug || <span className="text-color-danger-primary">—</span>}
+                </td>
                 <td className="px-3 py-2">{String(row.role ?? 15)}</td>
               </tr>
             ))}
@@ -309,13 +328,19 @@ const MAX_ROWS = 500;
 const MAX_FILE_SIZE_MB = 5;
 
 const ROLE_MAP: Record<string, number> = {
-  guest: 5, member: 15, admin: 20,
-  "5": 5, "15": 15, "20": 20,
+  guest: 5,
+  member: 15,
+  admin: 20,
+  "5": 5,
+  "15": 15,
+  "20": 20,
 };
 
 function normalizeRole(raw: unknown): number {
   if (typeof raw === "number" && [5, 15, 20].includes(raw)) return raw;
-  const key = String(raw ?? "").trim().toLowerCase();
+  const key = String(raw ?? "")
+    .trim()
+    .toLowerCase();
   return ROLE_MAP[key] ?? 15;
 }
 
@@ -334,7 +359,9 @@ async function parseExcel(file: File): Promise<IWorkspaceAssignRow[]> {
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
   return raw.map((r) => ({
-    email: String(r.email ?? "").trim().toLowerCase(),
+    email: String(r.email ?? "")
+      .trim()
+      .toLowerCase(),
     workspace_slug: String(r.workspace_slug ?? "").trim(),
     role: normalizeRole(r.role),
   }));
@@ -388,8 +415,7 @@ export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm
       setResult(data);
       if (data.total_assigned > 0)
         setToast({ type: TOAST_TYPE.SUCCESS, title: `${data.total_assigned} member(s) assigned successfully` });
-      if (data.total_skipped > 0)
-        setToast({ type: TOAST_TYPE.WARNING, title: `${data.total_skipped} row(s) skipped` });
+      if (data.total_skipped > 0) setToast({ type: TOAST_TYPE.WARNING, title: `${data.total_skipped} row(s) skipped` });
     } catch (err) {
       const error = err as Record<string, string>;
       setToast({ type: TOAST_TYPE.ERROR, title: "Assignment failed", message: error?.error || "Something went wrong" });
@@ -404,25 +430,40 @@ export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm
         <p className="text-sm font-medium">Excel file requirements:</p>
         <p className="text-sm text-tertiary">
           File must have a header row with columns: <code className="text-primary">email</code>,{" "}
-          <code className="text-primary">workspace_slug</code>,{" "}
-          <code className="text-primary">role</code> (5=Guest, 15=Member, 20=Admin — or text "Guest"/"Member"/"Admin"). Default role: Member.
+          <code className="text-primary">workspace_slug</code>, <code className="text-primary">role</code> (5=Guest,
+          15=Member, 20=Admin — or text "Guest"/"Member"/"Admin"). Default role: Member.
         </p>
-        <p className="text-sm text-tertiary">Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.</p>
+        <p className="text-sm text-tertiary">
+          Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import.
+        </p>
       </div>
 
-      <button type="button" onClick={() => void downloadTemplate()}
-        className="flex items-center gap-2 text-sm text-primary hover:underline w-fit">
+      <button
+        type="button"
+        onClick={() => void downloadTemplate()}
+        className="flex items-center gap-2 text-sm text-primary hover:underline w-fit"
+      >
         <Download className="h-4 w-4" />
         Download template
       </button>
 
       <div className="space-y-2">
-        <input ref={fileInputRef} type="file" accept=".xlsx,.xls"
-          onChange={(e) => void handleFileChange(e)} className="hidden" />
-        <button type="button" onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={(e) => void handleFileChange(e)}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center gap-3 rounded-md border border-dashed border-border-subtle p-6 w-full hover:bg-surface-hover transition-colors cursor-pointer"
+        >
           <Upload className="h-5 w-5 text-tertiary" />
-          <span className="text-sm">{selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}</span>
+          <span className="text-sm">
+            {selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}
+          </span>
         </button>
         {parseError && <p className="text-sm text-red-500">{parseError}</p>}
       </div>
@@ -430,12 +471,18 @@ export const WorkspaceBulkAssignForm = observer(function WorkspaceBulkAssignForm
       {parsedRows.length > 0 && <WorkspaceBulkAssignPreview rows={parsedRows} />}
 
       <div className="flex items-center gap-4">
-        <Button variant="primary" size="lg" loading={isSubmitting}
+        <Button
+          variant="primary"
+          size="lg"
+          loading={isSubmitting}
           disabled={parsedRows.length === 0 || isSubmitting}
-          onClick={() => void handleSubmit()}>
+          onClick={() => void handleSubmit()}
+        >
           {isSubmitting ? "Assigning..." : "Assign members"}
         </Button>
-        <Link href="/workspace" className={getButtonStyling("secondary", "lg")}>Cancel</Link>
+        <Link href="/workspace" className={getButtonStyling("secondary", "lg")}>
+          Cancel
+        </Link>
       </div>
 
       {result && <WorkspaceBulkAssignResults result={result} />}

@@ -6,14 +6,14 @@ Comprehensive guide for audio analysis and speech generation using Gemini API.
 
 ### Supported Formats
 
-| Format | MIME Type | Best Use |
-|--------|-----------|----------|
-| WAV | `audio/wav` | Uncompressed, highest quality |
-| MP3 | `audio/mp3` | Compressed, widely compatible |
-| AAC | `audio/aac` | Compressed, good quality |
-| FLAC | `audio/flac` | Lossless compression |
-| OGG Vorbis | `audio/ogg` | Open format |
-| AIFF | `audio/aiff` | Apple format |
+| Format     | MIME Type    | Best Use                      |
+| ---------- | ------------ | ----------------------------- |
+| WAV        | `audio/wav`  | Uncompressed, highest quality |
+| MP3        | `audio/mp3`  | Compressed, widely compatible |
+| AAC        | `audio/aac`  | Compressed, good quality      |
+| FLAC       | `audio/flac` | Lossless compression          |
+| OGG Vorbis | `audio/ogg`  | Open format                   |
+| AIFF       | `audio/aiff` | Apple format                  |
 
 ### Specifications
 
@@ -159,10 +159,10 @@ response = client.models.generate_content(
 
 ### Available Models
 
-| Model | Quality | Speed | Cost/1M tokens |
-|-------|---------|-------|----------------|
-| `gemini-2.5-flash-native-audio-preview-09-2025` | High | Fast | $10 |
-| `gemini-2.5-pro` TTS mode | Premium | Slower | $20 |
+| Model                                           | Quality | Speed  | Cost/1M tokens |
+| ----------------------------------------------- | ------- | ------ | -------------- |
+| `gemini-2.5-flash-native-audio-preview-09-2025` | High    | Fast   | $10            |
+| `gemini-2.5-pro` TTS mode                       | Premium | Slower | $20            |
 
 ### Basic TTS
 
@@ -221,17 +221,20 @@ response = client.models.generate_content(
 ### Prompt Engineering
 
 **Effective prompts**:
+
 - "Transcribe from 02:30 to 03:29 in MM:SS format"
 - "Identify speakers and extract dialogue with timestamps"
 - "Summarize key points with relevant timestamps"
 - "Transcribe and analyze sentiment for each speaker"
 
 **Context improves accuracy**:
+
 - "This is a medical interview - use appropriate terminology"
 - "Transcribe this legal deposition with precise terminology"
 - "This is a technical podcast about machine learning"
 
 **Combined tasks**:
+
 - "Transcribe and summarize in bullet points"
 - "Extract key quotes with timestamps and speaker labels"
 - "Transcribe and identify action items with timestamps"
@@ -239,16 +242,19 @@ response = client.models.generate_content(
 ### Cost Optimization
 
 **Token calculation**:
+
 - 1 minute audio = 1,920 tokens
 - 1 hour audio = 115,200 tokens
 - 9.5 hours = 1,094,400 tokens
 
 **Model selection**:
+
 - Use `gemini-2.5-flash` ($1/1M tokens) for most tasks
 - Upgrade to `gemini-2.5-pro` ($3/1M tokens) for complex analysis
 - For high-volume: `gemini-1.5-flash` ($0.70/1M tokens)
 
 **Reduce costs**:
+
 - Process only relevant segments using timestamps
 - Use lower-quality audio when possible
 - Batch multiple short files in one request
@@ -356,12 +362,14 @@ response = client.models.generate_content(
 ## Token Costs
 
 **Audio Input** (32 tokens/second):
+
 - 1 minute = 1,920 tokens
 - 10 minutes = 19,200 tokens
 - 1 hour = 115,200 tokens
 - 9.5 hours = 1,094,400 tokens
 
 **Example costs** (Gemini 2.5 Flash at $1/1M):
+
 - 1 hour audio: 115,200 tokens = $0.12
 - Full day podcast (8 hours): 921,600 tokens = $0.92
 
@@ -380,6 +388,7 @@ response = client.models.generate_content(
 **Current**: Audio Processing
 
 **Related Capabilities**:
+
 - [Video Analysis](./video-analysis.md) - Extract audio from videos
 - [Video Generation](./video-generation.md) - Generate videos with native audio
 - [Image Understanding](./vision-understanding.md) - Analyze audio with visual context

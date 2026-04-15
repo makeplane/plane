@@ -4,17 +4,17 @@
 
 MUST update project documentation in `./docs` when:
 
-| Trigger | Which Docs | Action |
-|---------|-----------|--------|
-| Phase status changes | project-roadmap.md | Update progress %, milestone status |
-| Major feature complete | project-roadmap.md, codebase-summary.md | Add feature, update architecture |
-| Bug fix (significant) | project-roadmap.md | Document fix, severity, impact |
-| Security patch | project-roadmap.md, system-architecture.md | Record improvement |
-| API contract changes | system-architecture.md, code-standards.md | Update endpoints, schemas |
-| Architecture decision | system-architecture.md | Document decision + rationale |
-| Scope/timeline change | project-roadmap.md | Adjust phases, dates |
-| Dependencies updated | system-architecture.md | Record version changes |
-| Breaking changes | code-standards.md | Document migration path |
+| Trigger                | Which Docs                                 | Action                              |
+| ---------------------- | ------------------------------------------ | ----------------------------------- |
+| Phase status changes   | project-roadmap.md                         | Update progress %, milestone status |
+| Major feature complete | project-roadmap.md, codebase-summary.md    | Add feature, update architecture    |
+| Bug fix (significant)  | project-roadmap.md                         | Document fix, severity, impact      |
+| Security patch         | project-roadmap.md, system-architecture.md | Record improvement                  |
+| API contract changes   | system-architecture.md, code-standards.md  | Update endpoints, schemas           |
+| Architecture decision  | system-architecture.md                     | Document decision + rationale       |
+| Scope/timeline change  | project-roadmap.md                         | Adjust phases, dates                |
+| Dependencies updated   | system-architecture.md                     | Record version changes              |
+| Breaking changes       | code-standards.md                          | Document migration path             |
 
 ## Documentation Files
 

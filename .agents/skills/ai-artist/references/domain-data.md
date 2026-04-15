@@ -1,6 +1,7 @@
 # Data & Analysis Patterns
 
 ## Structured Extraction
+
 ```
 Extract from text:
 <text>[content]</text>
@@ -18,6 +19,7 @@ Rules:
 ```
 
 ## Document Analysis
+
 ```
 Analyze [document type]:
 1. Summary (2-3 sentences)
@@ -28,6 +30,7 @@ Analyze [document type]:
 ```
 
 ## Comparison
+
 ```
 Compare [A] and [B]:
 | Criterion | A | B |
@@ -39,6 +42,7 @@ Recommendation: [choice] for [use case]
 ```
 
 ## Problem Solving
+
 ```
 Problem: [description]
 
@@ -52,6 +56,7 @@ Analyze:
 ```
 
 ## Data Transformation
+
 ```
 Transform data:
 - Input format: [CSV/JSON/etc]
@@ -63,6 +68,7 @@ Handle: missing values, type mismatches.
 ```
 
 ## Summarization
+
 ```
 Summarize [content]:
 - Length: [sentences/words]
