@@ -605,7 +605,9 @@
       "enable": "Etkinleştir",
       "disable": "Devre dışı bırak",
       "copy_markdown": "Markdown'ı kopyala",
-      "reply": "Yanıtla"
+      "reply": "Yanıtla",
+      "copy_id": "ID'yi kopyala",
+      "id_copied": "ID kopyalandı!"
     },
     "name": "Ad",
     "discard": "Vazgeç",

@@ -605,7 +605,9 @@
       "enable": "Увімкнути",
       "disable": "Вимкнути",
       "copy_markdown": "Скопіювати markdown",
-      "reply": "Відповісти"
+      "reply": "Відповісти",
+      "copy_id": "Скопіювати ID",
+      "id_copied": "ID скопійовано!"
     },
     "name": "Назва",
     "discard": "Скасувати",

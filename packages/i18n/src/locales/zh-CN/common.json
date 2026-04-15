@@ -606,7 +606,9 @@
       "enable": "启用",
       "disable": "禁用",
       "copy_markdown": "复制Markdown",
-      "reply": "回复"
+      "reply": "回复",
+      "copy_id": "复制 ID",
+      "id_copied": "ID 已复制！"
     },
     "name": "名称",
     "discard": "放弃",

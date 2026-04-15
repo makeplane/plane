@@ -605,7 +605,9 @@
       "enable": "Aktifkan",
       "disable": "Nonaktifkan",
       "copy_markdown": "Salin markdown",
-      "reply": "Balas"
+      "reply": "Balas",
+      "copy_id": "Salin ID",
+      "id_copied": "ID Disalin!"
     },
     "name": "Nama",
     "discard": "Buang",

@@ -580,6 +580,8 @@
       "copy_link": "Link kopieren",
       "copy_markdown": "Markdown kopieren",
       "reply": "Antworten",
+      "copy_id": "ID kopieren",
+      "id_copied": "ID kopiert!",
       "copy_branch_name": "Branch-Name kopieren",
       "archive": "Archivieren",
       "restore": "Wiederherstellen",

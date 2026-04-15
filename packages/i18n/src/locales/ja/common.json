@@ -605,7 +605,9 @@
       "enable": "有効化",
       "disable": "無効化",
       "copy_markdown": "マークダウンをコピー",
-      "reply": "返信"
+      "reply": "返信",
+      "copy_id": "IDをコピー",
+      "id_copied": "IDをコピーしました！"
     },
     "name": "名前",
     "discard": "破棄",

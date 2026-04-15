@@ -605,7 +605,9 @@
       "enable": "Povolit",
       "disable": "Zakázat",
       "copy_markdown": "Kopírovat markdown",
-      "reply": "Odpovědět"
+      "reply": "Odpovědět",
+      "copy_id": "Kopírovat ID",
+      "id_copied": "ID zkopírováno!"
     },
     "name": "Název",
     "discard": "Zahodit",

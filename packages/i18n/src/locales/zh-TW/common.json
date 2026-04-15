@@ -605,7 +605,9 @@
       "enable": "啟用",
       "disable": "停用",
       "copy_markdown": "複製 Markdown",
-      "reply": "回覆"
+      "reply": "回覆",
+      "copy_id": "複製 ID",
+      "id_copied": "ID 已複製！"
     },
     "name": "名稱",
     "discard": "捨棄",

@@ -618,7 +618,9 @@
       "enable": "Включить",
       "disable": "Отключить",
       "copy_markdown": "Копировать markdown",
-      "reply": "Ответить"
+      "reply": "Ответить",
+      "copy_id": "Копировать ID",
+      "id_copied": "ID скопирован!"
     },
     "name": "Название",
     "discard": "Отменить",

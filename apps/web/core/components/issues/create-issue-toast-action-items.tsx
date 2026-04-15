@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// plane imports
-// helpers
+import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { cn, copyTextToClipboard, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -31,9 +30,14 @@ type TCreateIssueToastActionItems = {
 export const CreateIssueToastActionItems = observer(function CreateIssueToastActionItems(
   props: TCreateIssueToastActionItems
 ) {
-  const { workspaceSlug, projectId, issueId, isEpic = false } = props;
+  const { workspaceSlug, issueId, isEpic = false } = props;
+  const { t } = useTranslation();
   // state
-  const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [idCopied, setIdCopied] = useState(false);
+  // refs for timeout cleanup
+  const linkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // store hooks
   const {
     issue: { getIssueById },
@@ -44,8 +48,6 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   const issue = getIssueById(issueId);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
-  if (!issue) return null;
-
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
     projectId: issue?.project_id,
@@ -55,42 +57,63 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
     isEpic,
   });
 
-  const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    try {
-      await copyUrlToClipboard(workItemLink);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
-      setCopied(false);
-    }
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  const workItemIdentifier = projectIdentifier && issue?.sequence_id ? `${projectIdentifier}-${issue.sequence_id}` : "";
+
+  const handleCopyLink = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      try {
+        await copyUrlToClipboard(workItemLink);
+        setLinkCopied(true);
+        if (linkTimerRef.current) clearTimeout(linkTimerRef.current);
+        linkTimerRef.current = setTimeout(() => setLinkCopied(false), 3000);
+      } catch (_error) {
+        setLinkCopied(false);
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    [workItemLink]
+  );
+
+  const handleCopyId = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      try {
+        await copyTextToClipboard(workItemIdentifier);
+        setIdCopied(true);
+        if (idTimerRef.current) clearTimeout(idTimerRef.current);
+        idTimerRef.current = setTimeout(() => setIdCopied(false), 3000);
+      } catch (_error) {
+        setIdCopied(false);
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    [workItemIdentifier]
+  );
+
+  if (!issue) return null;
 
   return (
-    <div className="flex items-center gap-1 text-11 text-secondary -ml-2">
-      <a
-        href={workItemLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-accent-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
-      >
-        {`View ${isEpic ? "epic" : "work item"}`}
-      </a>
+    <div className="flex items-center justify-between text-11 text-secondary w-full">
+      <div className="flex items-center gap-1">
+        <a
+          href={workItemLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(getButtonStyling("ghost", "sm"), "text-accent-primary no-underline")}
+        >
+          {t("common.view")}
+        </a>
 
-      {copied ? (
-        <>
-          <span className="cursor-default px-2 py-1 text-secondary">Copied!</span>
-        </>
-      ) : (
-        <>
-          <button
-            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-surface-2 rounded-sm"
-            onClick={copyToClipboard}
-          >
-            Copy link
-          </button>
-        </>
+        <Button variant="ghost" size="sm" onClick={handleCopyLink} disabled={linkCopied}>
+          {linkCopied ? t("common.copied") : t("common.actions.copy_link")}
+        </Button>
+      </div>
+
+      {workItemIdentifier && (
+        <Button variant="ghost" size="sm" onClick={handleCopyId} disabled={idCopied}>
+          {idCopied ? t("common.actions.id_copied") : workItemIdentifier}
+        </Button>
       )}
     </div>
   );

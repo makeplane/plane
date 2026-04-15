@@ -605,7 +605,9 @@
       "enable": "Bật",
       "disable": "Tắt",
       "copy_markdown": "Sao chép markdown",
-      "reply": "Trả lời"
+      "reply": "Trả lời",
+      "copy_id": "Sao chép ID",
+      "id_copied": "Đã sao chép ID!"
     },
     "name": "Tên",
     "discard": "Hủy bỏ",

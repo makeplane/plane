@@ -603,7 +603,9 @@
       "enable": "Abilita",
       "disable": "Disabilita",
       "copy_markdown": "Copia markdown",
-      "reply": "Rispondi"
+      "reply": "Rispondi",
+      "copy_id": "Copia ID",
+      "id_copied": "ID copiato!"
     },
     "name": "Nome",
     "discard": "Scarta",

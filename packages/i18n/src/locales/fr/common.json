@@ -605,7 +605,9 @@
       "enable": "Activer",
       "disable": "Désactiver",
       "copy_markdown": "Copier le markdown",
-      "reply": "Répondre"
+      "reply": "Répondre",
+      "copy_id": "Copier l'ID",
+      "id_copied": "ID copié !"
     },
     "name": "Nom",
     "discard": "Abandonner",

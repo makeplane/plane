@@ -619,7 +619,9 @@
       "enable": "Povoliť",
       "disable": "Zakázať",
       "copy_markdown": "Kopírovať markdown",
-      "reply": "Odpovedať"
+      "reply": "Odpovedať",
+      "copy_id": "Kopírovať ID",
+      "id_copied": "ID skopírované!"
     },
     "name": "Názov",
     "discard": "Zahodiť",

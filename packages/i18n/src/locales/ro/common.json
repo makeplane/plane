@@ -605,7 +605,9 @@
       "enable": "Activează",
       "disable": "Dezactivează",
       "copy_markdown": "Copiază markdown",
-      "reply": "Răspunde"
+      "reply": "Răspunde",
+      "copy_id": "Copiază ID",
+      "id_copied": "ID copiat!"
     },
     "name": "Nume",
     "discard": "Renunță",

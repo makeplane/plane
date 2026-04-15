@@ -605,7 +605,9 @@
       "enable": "활성화",
       "disable": "비활성화",
       "copy_markdown": "마크다운 복사",
-      "reply": "답글"
+      "reply": "답글",
+      "copy_id": "ID 복사",
+      "id_copied": "ID 복사됨!"
     },
     "name": "이름",
     "discard": "폐기",
