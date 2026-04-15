@@ -22,6 +22,11 @@ on:
           required: false
           default: false
           type: boolean
+        recreate:
+          description: 'Tear down existing namespace and DB before deploying (full recreate)'
+          required: false
+          default: false
+          type: boolean
     # This workflow is only triggered by the `/deploy` command dispatch
     repository_dispatch:
       types: [deploy-command]
@@ -121,6 +126,14 @@ jobs:
           PR_NUMBER="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
           DEPLOY_TYPE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}"
 
+          # When recreate=true, skip the helm check — cleanup_dp.yml handles teardown
+          # via the recreate-cleanup job running in parallel.
+          if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.recreate || github.event.client_payload.slash_command.args.named.recreate || 'false' }}" == "true" ]; then
+            echo "has_deployment=false" >> "$GITHUB_OUTPUT"
+            echo "Recreate flag set — all images will be rebuilt"
+            exit 0
+          fi
+
           # Only check the release matching the current deploy type.
           # This ensures a type switch (e.g. cloud → enterprise) is treated as
           # a fresh deployment so all images (including monitor) are rebuilt.
@@ -144,27 +157,76 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           PR_NUMBER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
+          DEPLOY_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}
         run: |
-          # Fetch up to 100 changed files from GitHub API (no checkout needed)
-          RESPONSE=$(curl -sf \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/files?per_page=100")
-
-          FILE_COUNT=$(echo "$RESPONSE" | jq 'length')
-          echo "Changed files detected: ${FILE_COUNT}"
-
-          # If the page is full (100), there may be more files we can't see.
-          # Rebuild everything to avoid missing a changed service.
-          if [ "$FILE_COUNT" -ge 100 ]; then
-            echo "Too many changed files — rebuilding all services to be safe"
+          rebuild_all() {
+            echo "$1"
             for svc in admin silo web space live monitor api email proxy; do
               echo "build_${svc}=true" >> "$GITHUB_OUTPUT"
             done
             exit 0
+          }
+
+          # Determine the namespace for this deployment
+          if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
+            NAMESPACE="ee-${PR_NUMBER}-ent"
+          else
+            NAMESPACE="ee-${PR_NUMBER}-cloud"
           fi
 
-          CHANGED_FILES=$(echo "$RESPONSE" | jq -r '.[].filename')
+          # Read the commit SHA that was used for the last deploy from the namespace annotation.
+          # This lets us diff against everything that changed since the last build — including
+          # changes merged into the base branch that aren't part of the PR itself.
+          DEPLOYED_COMMIT=$(kubectl get namespace "${NAMESPACE}" \
+            -o jsonpath='{.metadata.annotations.plane\.so/deployed-commit}' 2>/dev/null || echo "")
+
+          if [ -z "${DEPLOYED_COMMIT}" ]; then
+            rebuild_all "No deployed-commit annotation found on namespace ${NAMESPACE} — rebuilding all services"
+          fi
+
+          # Get the current PR merge commit SHA
+          CURRENT_COMMIT=$(curl -sf \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" \
+            | jq -r '.merge_commit_sha')
+
+          echo "Deployed commit: ${DEPLOYED_COMMIT}"
+          echo "Current commit:  ${CURRENT_COMMIT}"
+
+          if [ "${DEPLOYED_COMMIT}" == "${CURRENT_COMMIT}" ]; then
+            echo "Commits are identical — no services need rebuilding"
+            for svc in admin silo web space live monitor api email proxy; do
+              echo "build_${svc}=false" >> "$GITHUB_OUTPUT"
+            done
+            exit 0
+          fi
+
+          # Compare the deployed commit to the current merge commit.
+          # The GitHub compare API returns all files changed between the two SHAs
+          # (up to 300), capturing both PR changes and any base-branch merges in between.
+          COMPARE=$(curl -sf \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/compare/${DEPLOYED_COMMIT}...${CURRENT_COMMIT}" \
+            || echo '{}')
+
+          COMPARE_STATUS=$(echo "$COMPARE" | jq -r '.status // "error"')
+
+          # If the history has diverged or the API failed, play it safe and rebuild everything.
+          if [[ "$COMPARE_STATUS" == "error" || "$COMPARE_STATUS" == "diverged" || "$COMPARE_STATUS" == "behind" ]]; then
+            rebuild_all "Compare status is '${COMPARE_STATUS}' — rebuilding all services to be safe"
+          fi
+
+          FILE_COUNT=$(echo "$COMPARE" | jq '.files // [] | length')
+          echo "Changed files since last deploy: ${FILE_COUNT}"
+
+          # GitHub compare API returns at most 300 files; if we hit the limit, rebuild everything.
+          if [ "$FILE_COUNT" -ge 300 ]; then
+            rebuild_all "Too many changed files — rebuilding all services to be safe"
+          fi
+
+          CHANGED_FILES=$(echo "$COMPARE" | jq -r '.files[]?.filename')
 
           # packages/** is a shared library used by all frontend services
           if echo "$CHANGED_FILES" | grep -qE '^packages/'; then
@@ -196,6 +258,17 @@ jobs:
           set_flag api     '^apps/api/'     false  # backend
           set_flag email   '^apps/email/'   false  # backend
           set_flag proxy   '^apps/proxy/'   false  # nginx config
+
+  recreate-cleanup:
+    name: Recreate — tear down existing deployment
+    if: |
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.recreate == 'true') ||
+      github.event.client_payload.slash_command.args.named.recreate == 'true'
+    uses: ./.github/workflows/cleanup_dp.yml
+    with:
+      pr_number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
+      deploy_type: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}
+    secrets: inherit
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
@@ -672,6 +745,7 @@ jobs:
     name: Deploy plane
     needs: [pre-requisites,
       check-deployment,
+      recreate-cleanup,
       branch_build_push_admin,
       branch_build_push_web,
       branch_build_push_space,
@@ -682,7 +756,7 @@ jobs:
       branch_build_push_email,
       branch_build_push_silo
     ]
-    if: always() && needs.pre-requisites.result == 'success' && needs.check-deployment.result == 'success' && needs.branch_build_push_admin.result != 'failure' && needs.branch_build_push_web.result != 'failure' && needs.branch_build_push_space.result != 'failure' && needs.branch_build_push_live.result != 'failure' && needs.branch_build_push_monitor.result != 'failure' && needs.branch_build_push_api.result != 'failure' && needs.branch_build_push_proxy.result != 'failure' && needs.branch_build_push_email.result != 'failure' && needs.branch_build_push_silo.result != 'failure'
+    if: always() && needs.pre-requisites.result == 'success' && needs.check-deployment.result == 'success' && needs.recreate-cleanup.result != 'failure' && needs.branch_build_push_admin.result != 'failure' && needs.branch_build_push_web.result != 'failure' && needs.branch_build_push_space.result != 'failure' && needs.branch_build_push_live.result != 'failure' && needs.branch_build_push_monitor.result != 'failure' && needs.branch_build_push_api.result != 'failure' && needs.branch_build_push_proxy.result != 'failure' && needs.branch_build_push_email.result != 'failure' && needs.branch_build_push_silo.result != 'failure'
     runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
@@ -944,6 +1018,22 @@ jobs:
               --set planeVersion=${IMAGE_TAG}
             kubectl annotate namespace ${NAMESPACE} field.cattle.io/projectId=${{ env.rancher_project_id }} --overwrite || true
           fi
+
+      - name: Annotate namespace with deployed commit
+        run: |
+          PR_NUMBER="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
+          DEPLOY_TYPE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}"
+          RELEASE_NAME="${{ needs.pre-requisites.outputs.release_version }}"
+
+          if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
+            NAMESPACE="${RELEASE_NAME}-ent"
+          else
+            NAMESPACE="${RELEASE_NAME}-cloud"
+          fi
+
+          kubectl annotate namespace "${NAMESPACE}" \
+            plane.so/deployed-commit="$(git rev-parse HEAD)" \
+            --overwrite
 
       - name: Comment URL to access plane deployment
         uses: peter-evans/create-or-update-comment@v5

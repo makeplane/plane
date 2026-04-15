@@ -4,6 +4,16 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
+  workflow_call:
+    inputs:
+      pr_number:
+        description: 'PR number whose deployment to tear down'
+        required: true
+        type: string
+      deploy_type:
+        description: 'Deploy type: enterprise or cloud'
+        required: true
+        type: string
 
 jobs:
   execute:
@@ -45,41 +55,58 @@ jobs:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           set -e
-          # Match release names ee-<PR>-ent or ee-<PR>-cloud (e.g. ee-5657-ent, ee-5657-cloud)
-          deployed_charts="$(helm ls -A --filter 'ee-[0-9]+-(ent|cloud)' --output json | jq -r '.[].name')"
+
+          if [ -n "${{ inputs.pr_number }}" ]; then
+            # Single-PR recreate: target only the specified namespace
+            PR="${{ inputs.pr_number }}"
+            DEPLOY_TYPE="${{ inputs.deploy_type }}"
+            if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
+              deployed_charts="ee-${PR}-ent"
+            else
+              deployed_charts="ee-${PR}-cloud"
+            fi
+          else
+            # Scheduled/manual: match all deployed PR releases
+            deployed_charts="$(helm ls -A --filter 'ee-[0-9]+-(ent|cloud)' --output json | jq -r '.[].name')"
+          fi
+
           for deployed_chart in $deployed_charts; do
             namespace="$deployed_chart"
             pr=$(echo "$deployed_chart" | sed -n 's/^ee-\([0-9]*\)-.*/\1/p')
 
-            pr_state="$(gh pr view "$pr" --json state --jq .state)"
-
-            if [[ "$pr_state" == "MERGED" || "$pr_state" == "CLOSED" ]]; then
-              echo "Cleaning up namespace $namespace for PR $pr"
-
-              # K8s cleanup - failures must not prevent DB drop (wrapped so set -e won't exit)
-              {
-                helm uninstall "$namespace" --namespace "$namespace" || true
-                kubectl delete namespace "$namespace" --grace-period=0 --force || true
-
-                pv_json=$(kubectl get pv -o json 2>/dev/null || echo '{}')
-                pv_list=$(echo "$pv_json" | jq -r --arg ns "$namespace" '.items[]? | select(.spec.claimRef.namespace == $ns) | .metadata.name' 2>/dev/null) || pv_list=""
-                for pv in $pv_list; do
-                  echo "Deleting PV $pv"
-                  kubectl patch pv "$pv" --type=json \
-                    -p='[{"op": "remove", "path": "/metadata/finalizers"}]' || true
-                  kubectl delete pv "$pv" --grace-period=0 --force || true
-                done
-              } || true
-
-              DB_ENT="ee${pr}ent"
-              DB_CLOUD="ee${pr}cloud"
-
-              # Delete postgres-operator CRDs (operator will drop databases via dropOnDelete)
-              kubectl delete postgres "${DB_ENT}" -n postgres-operator --ignore-not-found || true
-              kubectl delete postgresuser "${DB_ENT}-appuser" -n postgres-operator --ignore-not-found || true
-              kubectl delete postgres "${DB_CLOUD}" -n postgres-operator --ignore-not-found || true
-              kubectl delete postgresuser "${DB_CLOUD}-appuser" -n postgres-operator --ignore-not-found || true
+            # For scheduled/manual runs only: skip PRs that are still open
+            if [ -z "${{ inputs.pr_number }}" ]; then
+              pr_state="$(gh pr view "$pr" --json state --jq .state)"
+              if [[ "$pr_state" != "MERGED" && "$pr_state" != "CLOSED" ]]; then
+                continue
+              fi
             fi
+
+            echo "Cleaning up namespace $namespace for PR $pr"
+
+            # K8s cleanup - failures must not prevent DB drop (wrapped so set -e won't exit)
+            {
+              helm uninstall "$namespace" --namespace "$namespace" || true
+              kubectl delete namespace "$namespace" --grace-period=0 --force || true
+
+              pv_json=$(kubectl get pv -o json 2>/dev/null || echo '{}')
+              pv_list=$(echo "$pv_json" | jq -r --arg ns "$namespace" '.items[]? | select(.spec.claimRef.namespace == $ns) | .metadata.name' 2>/dev/null) || pv_list=""
+              for pv in $pv_list; do
+                echo "Deleting PV $pv"
+                kubectl patch pv "$pv" --type=json \
+                  -p='[{"op": "remove", "path": "/metadata/finalizers"}]' || true
+                kubectl delete pv "$pv" --grace-period=0 --force || true
+              done
+            } || true
+
+            DB_ENT="ee${pr}ent"
+            DB_CLOUD="ee${pr}cloud"
+
+            # Delete postgres-operator CRDs (operator will drop databases via dropOnDelete)
+            kubectl delete postgres "${DB_ENT}" -n postgres-operator --ignore-not-found || true
+            kubectl delete postgresuser "${DB_ENT}-appuser" -n postgres-operator --ignore-not-found || true
+            kubectl delete postgres "${DB_CLOUD}" -n postgres-operator --ignore-not-found || true
+            kubectl delete postgresuser "${DB_CLOUD}-appuser" -n postgres-operator --ignore-not-found || true
           done
 
           echo "Cleanup complete."
