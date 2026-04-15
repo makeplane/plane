@@ -27,7 +27,7 @@ export default {
       close_project_menu: "प्रोजेक्ट मेनू बंद करें",
       collapse_sidebar: "साइडबार संकुचित करें",
       expand_sidebar: "साइडबार विस्तृत करें",
-      edition_badge: "भुगतान योजनाओं का मॉडल खोलें",
+      edition_badge: "भुगतान योजनाओं का मोडल खोलें",
     },
     auth_forms: {
       clear_email: "ईमेल साफ़ करें",
