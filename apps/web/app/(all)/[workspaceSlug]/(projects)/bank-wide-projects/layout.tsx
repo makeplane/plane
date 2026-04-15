@@ -1,10 +1,12 @@
-import { Globe } from "lucide-react";
+import { Archive, Globe } from "lucide-react";
 import { Outlet, useNavigate, useSearchParams } from "react-router";
+import { cn } from "@plane/utils";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { BankWideProjectsSearch } from "@/plane-web/components/bank-wide-projects/search";
+import { BankWideWorkspaceSelect } from "@/plane-web/components/bank-wide-projects/workspace-select";
 
 export default function BankWideProjectsLayout() {
   const [searchParams] = useSearchParams();
@@ -13,6 +15,7 @@ export default function BankWideProjectsLayout() {
   const searchQuery = searchParams.get("search") ?? "";
   const fromDate = searchParams.get("from_date") ?? "";
   const toDate = searchParams.get("to_date") ?? "";
+  const showArchived = searchParams.get("show_archived") === "true";
 
   const updateParam = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -39,6 +42,10 @@ export default function BankWideProjectsLayout() {
               <BankWideProjectsSearch searchQuery={searchQuery} onChange={(q) => updateParam("search", q)} />
               {/* Date range filter */}
               <div className="hidden items-center gap-2 md:flex">
+                <BankWideWorkspaceSelect
+                  value={searchParams.get("workspace_slug") ?? ""}
+                  onChange={(slug) => updateParam("workspace_slug", slug)}
+                />
                 <span className="text-13 font-medium text-secondary">From</span>
                 <input
                   type="date"
@@ -53,6 +60,18 @@ export default function BankWideProjectsLayout() {
                   onChange={(e) => updateParam("to_date", e.target.value)}
                   className="rounded-md border border-subtle bg-layer-2 px-3 py-1.5 text-13 text-primary outline-none focus:border-accent-primary transition-colors"
                 />
+                <button
+                  onClick={() => updateParam("show_archived", showArchived ? "" : "true")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-13 font-medium transition-colors",
+                    showArchived
+                      ? "border-accent-primary bg-accent-primary/10 text-accent-primary"
+                      : "border-subtle bg-layer-2 text-secondary hover:text-primary"
+                  )}
+                >
+                  <Archive className="h-3.5 w-3.5" />
+                  Archived
+                </button>
               </div>
             </Header.RightItem>
           </Header>

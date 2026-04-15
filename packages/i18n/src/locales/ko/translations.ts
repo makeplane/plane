@@ -3423,6 +3423,7 @@ export default {
   },
   ho: {
     all_workspaces: "모든 워크스페이스", // TODO: native review
+    all_departments: "모든 부서", // TODO: native review
     all_projects: "모든 프로젝트", // TODO: native review
     select_workspace_first: "워크스페이스를 먼저 선택하세요", // TODO: native review
     display: "표시", // TODO: native review

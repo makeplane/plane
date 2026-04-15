@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Prefetch, Sum, Q
 from django.db.models.functions import Coalesce
 
 from rest_framework import status
@@ -13,11 +13,13 @@ from plane.app.serializers.ho import HoIssueSerializer
 from plane.app.views.base import BaseAPIView
 from plane.db.models import (
     Department,
+    DepartmentTaskCategory,
     Issue,
     IssueWorkLog,
     Project,
     ProjectMember,
     StaffProfile,
+    SubTaskCategory,
     Workspace,
     WorkspaceMember,
 )
@@ -46,6 +48,46 @@ def _get_all_descendant_dept_ids(dept_id):
     for child_id in children:
         result.extend(_get_all_descendant_dept_ids(child_id))
     return result
+
+
+def _get_accessible_dept_ids(user):
+    """Return department IDs accessible to the user in HO context.
+
+    - Instance admin: all departments.
+    - Dept manager: own department + all descendants.
+    - Regular member: departments linked to joined workspaces + all ancestors.
+    """
+    if _is_instance_admin(user):
+        return list(Department.objects.filter(deleted_at__isnull=True).values_list("id", flat=True))
+
+    managed_dept_ids_qs = StaffProfile.objects.filter(
+        user=user,
+        is_department_manager=True,
+        deleted_at__isnull=True,
+    ).values_list("department_id", flat=True)
+
+    if managed_dept_ids_qs.exists():
+        dept_ids = []
+        for dept_id in managed_dept_ids_qs:
+            if dept_id:
+                dept_ids.extend(_get_all_descendant_dept_ids(dept_id))
+        return list(set(dept_ids))
+
+    # Regular member: departments linked to joined workspaces + all ancestors
+    member_ws_ids = WorkspaceMember.objects.filter(
+        member=user, deleted_at__isnull=True
+    ).values_list("workspace_id", flat=True)
+    depts = Department.objects.filter(
+        linked_workspace_id__in=member_ws_ids,
+        deleted_at__isnull=True,
+    ).select_related("parent__parent__parent__parent__parent")
+    dept_ids: set = set()
+    for dept in depts:
+        current = dept
+        while current is not None:
+            dept_ids.add(current.id)
+            current = current.parent
+    return list(dept_ids)
 
 
 def get_accessible_workspace_ids(user):
@@ -88,6 +130,39 @@ def get_accessible_workspace_ids(user):
         accessible_ids.update(dept_ws_ids)
 
     return list(accessible_ids)
+
+
+def _get_user_scope_q(user, workspace_ids):
+    """Return a Q filter scoping issues to what the user is allowed to see.
+
+    - Instance admin or dept manager: all issues in accessible workspaces.
+    - Workspace admin (role=20): all issues in those admin workspaces.
+    - Regular member: only issues assigned to the user in their member workspaces.
+    """
+    if _is_instance_admin(user):
+        return Q(workspace_id__in=workspace_ids)
+
+    is_dept_manager = StaffProfile.objects.filter(
+        user=user, is_department_manager=True, deleted_at__isnull=True
+    ).exists()
+    if is_dept_manager:
+        return Q(workspace_id__in=workspace_ids)
+
+    # Split accessible workspaces by admin role
+    admin_ws_ids = set(
+        WorkspaceMember.objects.filter(
+            member=user, role=20, deleted_at__isnull=True,
+            workspace_id__in=workspace_ids
+        ).values_list("workspace_id", flat=True)
+    )
+    member_only_ws_ids = set(workspace_ids) - admin_ws_ids
+
+    q = Q()
+    if admin_ws_ids:
+        q |= Q(workspace_id__in=admin_ws_ids)
+    if member_only_ws_ids:
+        q |= Q(workspace_id__in=member_only_ws_ids, assignees=user)
+    return q if q else Q(pk__in=[])
 
 
 # ---------------------------------------------------------------------------
@@ -149,14 +224,14 @@ class HoIssueListView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Optional workspace filter
-        workspace_slug = request.query_params.get("workspace_slug")
-        if workspace_slug:
-            ws = Workspace.objects.filter(slug=workspace_slug, id__in=workspace_ids).first()
+        # Optional department filter: narrow to workspace linked to that department
+        department_id = request.query_params.get("department_id")
+        if department_id:
+            ws = Workspace.objects.filter(linked_department_id=department_id, id__in=workspace_ids).first()
             if ws:
                 workspace_ids = [ws.id]
             else:
-                return Response({"detail": "Workspace not found."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Optional project filter — validate UUIDs and enforce workspace boundary
         project_ids_param = request.query_params.get("project_id")
@@ -187,13 +262,15 @@ class HoIssueListView(BaseAPIView):
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
 
+        scope_q = _get_user_scope_q(request.user, workspace_ids)
         qs = (
             Issue.objects.filter(
-                workspace_id__in=workspace_ids,
+                scope_q,
                 is_draft=False,
                 archived_at__isnull=True,
                 deleted_at__isnull=True,
             )
+            .distinct()
             .select_related(
                 "project",
                 "project__workspace",
@@ -292,144 +369,69 @@ class HoCategorySummaryView(BaseAPIView):
     """GET /api/ho/category-summary/ — aggregated work item counts per category combination."""
 
     def get(self, request):
-        workspace_ids = get_accessible_workspace_ids(request.user)
-        if not workspace_ids:
-            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
+        # Build accessible department IDs directly — do NOT go through workspace_ids,
+        # because departments (e.g. Head Office) may have no linked_workspace.
+        accessible_dept_ids = _get_accessible_dept_ids(request.user)
 
-        # Optional workspace filter
-        workspace_slug = request.query_params.get("workspace_slug")
-        if workspace_slug:
-            ws = Workspace.objects.filter(slug=workspace_slug, id__in=workspace_ids).first()
-            if ws:
-                workspace_ids = [ws.id]
-            else:
-                return Response({"detail": "Workspace not found."}, status=status.HTTP_404_NOT_FOUND)
+        if not accessible_dept_ids:
+            return Response([], status=status.HTTP_200_OK)
 
-        # Optional project filter — validate UUIDs and enforce workspace boundary
-        project_ids_param = request.query_params.get("project_id")
-        project_ids = []
-        if project_ids_param:
-            raw_ids = [pid.strip() for pid in project_ids_param.split(",") if pid.strip()]
-            # Validate UUID format before hitting ORM (prevents 500 on malformed input)
-            try:
-                from uuid import UUID
-
-                [UUID(pid) for pid in raw_ids]
-            except ValueError:
-                return Response({"detail": "Invalid project_id format."}, status=status.HTTP_400_BAD_REQUEST)
-            # Validate project IDs belong to accessible workspaces (prevents cross-workspace enumeration)
-            project_ids = list(
-                Project.objects.filter(id__in=raw_ids, workspace_id__in=workspace_ids).values_list("id", flat=True)
+        # Fetch task categories linked to accessible departments
+        dept_cat_qs = (
+            DepartmentTaskCategory.objects.filter(
+                department_id__in=accessible_dept_ids,
+                deleted_at__isnull=True,
+                main_task_category__is_active=True,
+                department__deleted_at__isnull=True,
             )
-            if len(project_ids) < len(raw_ids):
-                return Response(
-                    {"detail": "One or more project IDs are invalid or inaccessible."},
-                    status=status.HTTP_400_BAD_REQUEST,
+            .select_related("department", "main_task_category")
+            .prefetch_related(
+                Prefetch(
+                    "main_task_category__sub_categories",
+                    queryset=SubTaskCategory.objects.filter(
+                        is_active=True, deleted_at__isnull=True
+                    ).order_by("sort_order", "name"),
                 )
-
-        from_date = request.query_params.get("from_date")
-        to_date = request.query_params.get("to_date")
-
-        qs = Issue.objects.filter(
-            workspace_id__in=workspace_ids,
-            is_draft=False,
-            archived_at__isnull=True,
-            deleted_at__isnull=True,
+            )
+            .order_by(
+                "department__name",
+                "main_task_category__sort_order",
+                "main_task_category__name",
+            )
         )
 
-        # Apply project filter if provided
-        if project_ids:
-            qs = qs.filter(project_id__in=project_ids)
-
-        # Apply additional filters
-        priority = request.query_params.get("priority")
-        if priority:
-            qs = qs.filter(priority__in=priority.split(","))
-
-        state = request.query_params.get("state")
-        if state:
-            qs = qs.filter(state__name__in=state.split(","))
-
-        assignees = request.query_params.get("assignees")
-        if assignees:
-            qs = qs.filter(assignees__id__in=assignees.split(",")).distinct()
-
+        # Optional category name filters
         main_task_category = request.query_params.get("main_task_category")
         if main_task_category:
-            qs = qs.filter(main_task_category__name__in=main_task_category.split(","))
+            dept_cat_qs = dept_cat_qs.filter(main_task_category__name__in=main_task_category.split(","))
 
-        sub_task_category = request.query_params.get("sub_task_category")
-        if sub_task_category:
-            qs = qs.filter(sub_task_category__name__in=sub_task_category.split(","))
+        sub_task_category_filter = request.query_params.get("sub_task_category")
 
-        cycle = request.query_params.get("cycle")
-        if cycle:
-            qs = qs.filter(issue_cycle__cycle__name__in=cycle.split(","))
+        result = []
+        for dept_cat in dept_cat_qs:
+            main_cat = dept_cat.main_task_category
+            subs = list(main_cat.sub_categories.all())
+            if sub_task_category_filter:
+                subs = [s for s in subs if s.name in sub_task_category_filter.split(",")]
 
-        module = request.query_params.get("module")
-        if module:
-            qs = qs.filter(issue_module__module__name__in=module.split(","))
-
-        bank_wide = request.query_params.get("bank_wide")
-        if bank_wide:
-            qs = qs.filter(is_bank_wide_project=bank_wide.lower() == "true")
-
-        progress = request.query_params.get("progress")
-        if progress:
-            from datetime import timedelta
-            from django.utils import timezone
-            today = timezone.now().date()
-            tomorrow = today + timedelta(days=1)
-            p_filters = Q()
-            for p in progress.split(","):
-                if p == "off_track":
-                    p_filters |= Q(target_date__lt=today)
-                elif p == "due_today":
-                    p_filters |= Q(target_date=today)
-                elif p == "at_risk":
-                    p_filters |= Q(target_date=tomorrow)
-                elif p == "on_track":
-                    p_filters |= Q(target_date__gt=tomorrow)
-            if p_filters:
-                qs = qs.filter(p_filters)
-
-        # Skip target_date lower-bound when progress filter is active
-        if from_date and not progress:
-            qs = qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
-        if to_date:
-            qs = qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
-
-        summary = list(
-            qs.values(
-                "project__workspace__name",
-                "project__workspace__slug",
-                "project_id",
-                "project__name",
-                "main_task_category__name",
-                "sub_task_category__name",
-            )
-            .annotate(work_item_count=Count("id"))
-            .order_by(
-                "project__workspace__name",
-                "project__name",
-                "main_task_category__name",
-                "sub_task_category__name",
-            )
-        )
-
-        # Reshape keys for frontend consumption
-        result = [
-            {
-                "department_name": row["project__workspace__name"],
-                "workspace_slug": row["project__workspace__slug"],
-                "project_id": str(row["project_id"]),
-                "project_name": row["project__name"],
-                "main_task_category_name": row["main_task_category__name"],
-                "sub_task_category_name": row["sub_task_category__name"],
-                "work_item_count": row["work_item_count"],
-            }
-            for row in summary
-        ]
+            if subs:
+                for sub in subs:
+                    result.append({
+                        "department_id": str(dept_cat.department.id),
+                        "department_name": dept_cat.department.name,
+                        "main_task_category_name": main_cat.name,
+                        "main_task_category_description": main_cat.description or None,
+                        "sub_task_category_name": sub.name,
+                    })
+            elif not sub_task_category_filter:
+                # Show main-only row when no sub-category filter is active
+                result.append({
+                    "department_id": str(dept_cat.department.id),
+                    "department_name": dept_cat.department.name,
+                    "main_task_category_name": main_cat.name,
+                    "main_task_category_description": main_cat.description or None,
+                    "sub_task_category_name": None,
+                })
 
         return Response(result, status=status.HTTP_200_OK)
 
@@ -442,10 +444,10 @@ class HoFilterOptionsView(BaseAPIView):
         if not workspace_ids:
             return Response({}, status=status.HTTP_200_OK)
 
-        # Optional workspace/project filters to narrow down options
-        workspace_slug = request.query_params.get("workspace_slug")
-        if workspace_slug:
-            ws = Workspace.objects.filter(slug=workspace_slug, id__in=workspace_ids).first()
+        # Optional department/project filters to narrow down options
+        department_id = request.query_params.get("department_id")
+        if department_id:
+            ws = Workspace.objects.filter(linked_department_id=department_id, id__in=workspace_ids).first()
             if ws:
                 workspace_ids = [ws.id]
 
@@ -627,8 +629,8 @@ class HoAccessibleWorkspacesView(BaseAPIView):
             return Response([], status=status.HTTP_200_OK)
 
         workspaces = (
-            Workspace.objects.filter(id__in=workspace_ids)
-            .select_related("logo_asset")
+            Workspace.objects.filter(id__in=workspace_ids, linked_department__isnull=False)
+            .select_related("logo_asset", "linked_department")
             .prefetch_related("workspace_project")
             .order_by("name")
         )
@@ -662,6 +664,8 @@ class HoAccessibleWorkspacesView(BaseAPIView):
                     "name": ws.name,
                     "slug": ws.slug,
                     "logo_url": ws.logo_url,  # Use @property, not raw ws.logo (resolves logo_asset for modern uploads)
+                    "department_id": str(ws.linked_department.id),
+                    "department_name": ws.linked_department.name,
                     "projects": [
                         {"id": str(p["id"]), "name": p["name"], "identifier": p["identifier"]} for p in projects
                     ],
@@ -669,3 +673,5 @@ class HoAccessibleWorkspacesView(BaseAPIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
+
+
