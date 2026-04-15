@@ -15,10 +15,10 @@ Add "Bulk Department Linked" button beside "Add Department" in the departments t
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | Backend API endpoint | complete | [phase-01-backend.md](./phase-01-backend.md) |
-| 2 | Frontend modal & button | complete | [phase-02-frontend.md](./phase-02-frontend.md) |
+| #   | Phase                   | Status   | File                                           |
+| --- | ----------------------- | -------- | ---------------------------------------------- |
+| 1   | Backend API endpoint    | complete | [phase-01-backend.md](./phase-01-backend.md)   |
+| 2   | Frontend modal & button | complete | [phase-02-frontend.md](./phase-02-frontend.md) |
 
 ## Flow Summary
 
@@ -33,6 +33,7 @@ Excel upload → parse rows [{dept_code, workspace_slug}]
 ## Validation Log
 
 ### Session 1 — 2026-03-18
+
 **Trigger:** Initial plan creation validation
 **Questions asked:** 4
 
@@ -59,16 +60,19 @@ Excel upload → parse rows [{dept_code, workspace_slug}]
    - **Rationale:** Unlink handled per-department via existing UI. Keeps bulk endpoint simple.
 
 #### Confirmed Decisions
+
 - Dept identifier: `code` field — unique, round-trip safe
 - Already-linked: skip with reason — no accidental overwrites
 - Async: use Celery for ≥10 staff — consistent with existing
 - Scope: link-only — no unlink via bulk
 
 #### Action Items
+
 - [ ] Update phase-01: Excel column name is `code`, not `dept_code`
 - [ ] Update phase-02: Template column header is `code`, not `dept_code`
 
 #### Impact on Phases
+
 - Phase 1: Change dept lookup field from `dept_code` to `code`; confirm skip behavior for already-linked; confirm Celery async reuse
 - Phase 2: Update Excel template column from `dept_code` to `code`; update parse logic accordingly
 

@@ -177,8 +177,8 @@ path(
 
 ## Risk Assessment
 
-| Risk | Mitigation |
-|------|-----------|
-| Soft-delete collision on `ProjectMember` | Use `filter(...deleted_at__isnull=True).first()` before create |
-| Manager not a workspace member | Not blocking for project membership — ProjectMember doesn't require WorkspaceMember |
-| Large workspace with many projects | Acceptable — single user, N projects, all in one request; no async needed |
+| Risk                                     | Mitigation                                                                          |
+| ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| Soft-delete collision on `ProjectMember` | Use `filter(...deleted_at__isnull=True).first()` before create                      |
+| Manager not a workspace member           | Not blocking for project membership — ProjectMember doesn't require WorkspaceMember |
+| Large workspace with many projects       | Acceptable — single user, N projects, all in one request; no async needed           |

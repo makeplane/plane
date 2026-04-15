@@ -10,16 +10,17 @@ One powerful abstraction > ten clever hacks.
 
 ## When to Use
 
-| Symptom | Action |
-|---------|--------|
-| Same thing implemented 5+ ways | Abstract the common pattern |
-| Growing special case list | Find the general case |
-| Complex rules with exceptions | Find rule with no exceptions |
-| Excessive config options | Find defaults working for 95% |
+| Symptom                        | Action                        |
+| ------------------------------ | ----------------------------- |
+| Same thing implemented 5+ ways | Abstract the common pattern   |
+| Growing special case list      | Find the general case         |
+| Complex rules with exceptions  | Find rule with no exceptions  |
+| Excessive config options       | Find defaults working for 95% |
 
 ## The Pattern
 
 **Look for:**
+
 - Multiple implementations of similar concepts
 - Special case handling everywhere
 - "We need to handle A, B, C, D differently..."
@@ -30,18 +31,21 @@ One powerful abstraction > ten clever hacks.
 ## Examples
 
 ### Example 1: Stream Abstraction
+
 - **Before:** Separate handlers for batch/real-time/file/network data
 - **Insight:** "All inputs are streams - just different sources"
 - **After:** One stream processor, multiple stream sources
 - **Eliminated:** 4 separate implementations
 
 ### Example 2: Resource Governance
+
 - **Before:** Session tracking, rate limiting, file validation, connection pooling (all separate)
 - **Insight:** "All are per-entity resource limits"
 - **After:** One ResourceGovernor with 4 resource types
 - **Eliminated:** 4 custom enforcement systems
 
 ### Example 3: Immutability
+
 - **Before:** Defensive copying, locking, cache invalidation, temporal coupling
 - **Insight:** "Treat everything as immutable data + transformations"
 - **After:** Functional programming patterns
@@ -58,6 +62,7 @@ One powerful abstraction > ten clever hacks.
 ## Red Flags
 
 Signs you're missing a cascade:
+
 - "Just need to add one more case..." (repeating forever)
 - "These are similar but different" (maybe they're the same?)
 - Refactoring feels like whack-a-mole (fix one, break another)

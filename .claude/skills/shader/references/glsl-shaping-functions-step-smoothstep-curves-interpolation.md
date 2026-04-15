@@ -5,6 +5,7 @@ Control value interpolation for smooth transitions and effects.
 ## Core Functions
 
 ### step(edge, x)
+
 Hard threshold - returns 0.0 if x < edge, else 1.0.
 
 ```glsl
@@ -12,6 +13,7 @@ float y = step(0.5, st.x);  // Black left, white right
 ```
 
 ### smoothstep(edge0, edge1, x)
+
 Smooth Hermite interpolation between edges.
 
 ```glsl
@@ -21,6 +23,7 @@ float y = smoothstep(0.2, 0.8, st.x);  // Gradual transition
 Internally: `t = clamp((x-edge0)/(edge1-edge0), 0.0, 1.0); return t*t*(3.0-2.0*t);`
 
 ### mix(a, b, t)
+
 Linear interpolation: `a*(1-t) + b*t`
 
 ```glsl
@@ -37,6 +40,7 @@ float y = log(st.x);          // Natural logarithm
 ```
 
 Exponent controls curve shape:
+
 - `pow(x, n)` where n > 1: Slow start, fast end
 - `pow(x, n)` where n < 1: Fast start, slow end
 
@@ -49,6 +53,7 @@ float y = sin(st.x * 10.0 + u_time); // Animated wave
 ```
 
 Normalize sin/cos from [-1,1] to [0,1]:
+
 ```glsl
 float y = sin(x) * 0.5 + 0.5;
 ```
@@ -80,6 +85,7 @@ float y = max(a, b);                   // Larger value
 ## Custom Shaping Curves
 
 ### Polynomial smoothstep (quintic)
+
 ```glsl
 float smootherStep(float x) {
     return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
@@ -87,6 +93,7 @@ float smootherStep(float x) {
 ```
 
 ### Exponential impulse
+
 ```glsl
 float impulse(float k, float x) {
     float h = k * x;
@@ -95,6 +102,7 @@ float impulse(float k, float x) {
 ```
 
 ### Parabola
+
 ```glsl
 float parabola(float x, float k) {
     return pow(4.0 * x * (1.0 - x), k);
@@ -102,6 +110,7 @@ float parabola(float x, float k) {
 ```
 
 ### Cubic pulse
+
 ```glsl
 float cubicPulse(float c, float w, float x) {
     x = abs(x - c);
@@ -114,11 +123,13 @@ float cubicPulse(float c, float w, float x) {
 ## Combining Functions
 
 Create band with two smoothsteps:
+
 ```glsl
 float y = smoothstep(0.2, 0.4, st.x) - smoothstep(0.6, 0.8, st.x);
 ```
 
 Smooth edges on shapes:
+
 ```glsl
 float edge = 0.01;
 float circle = smoothstep(radius + edge, radius - edge, dist);

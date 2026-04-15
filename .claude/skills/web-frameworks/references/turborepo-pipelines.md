@@ -44,6 +44,7 @@ Define tasks in `turbo.json`:
 ```
 
 Example flow:
+
 ```
 packages/ui (dependency)
   ↓ builds first
@@ -66,6 +67,7 @@ Run tasks in same package first:
 ```
 
 Execution order in same package:
+
 1. Run `build`
 2. Run `test`
 3. Run `deploy`
@@ -85,6 +87,7 @@ Mix topological and internal:
 ```
 
 Execution order:
+
 1. Build all dependencies (`^build`)
 2. Lint current package (`lint`)
 3. Run tests (`test`)
@@ -99,11 +102,11 @@ Define what gets cached:
 {
   "build": {
     "outputs": [
-      "dist/**",           // All files in dist
-      ".next/**",          // Next.js build
-      "!.next/cache/**",   // Exclude Next.js cache
-      "build/**",          // Build directory
-      "public/dist/**"     // Public assets
+      "dist/**", // All files in dist
+      ".next/**", // Next.js build
+      "!.next/cache/**", // Exclude Next.js cache
+      "build/**", // Build directory
+      "public/dist/**" // Public assets
     ]
   }
 }
@@ -116,10 +119,10 @@ Enable/disable caching:
 ```json
 {
   "dev": {
-    "cache": false        // Don't cache dev server
+    "cache": false // Don't cache dev server
   },
   "build": {
-    "cache": true         // Cache build (default)
+    "cache": true // Cache build (default)
   }
 }
 ```
@@ -132,7 +135,7 @@ Keep task running (for dev servers):
 {
   "dev": {
     "cache": false,
-    "persistent": true    // Don't kill after completion
+    "persistent": true // Don't kill after completion
   }
 }
 ```
@@ -144,11 +147,7 @@ Environment variables affecting output:
 ```json
 {
   "build": {
-    "env": [
-      "NODE_ENV",
-      "NEXT_PUBLIC_API_URL",
-      "DATABASE_URL"
-    ]
+    "env": ["NODE_ENV", "NEXT_PUBLIC_API_URL", "DATABASE_URL"]
   }
 }
 ```
@@ -161,7 +160,7 @@ Pass env vars without affecting cache:
 {
   "build": {
     "passThroughEnv": [
-      "DEBUG",            // Pass through but don't invalidate cache
+      "DEBUG", // Pass through but don't invalidate cache
       "LOG_LEVEL"
     ]
   }
@@ -191,13 +190,13 @@ Control output display:
 ```json
 {
   "build": {
-    "outputMode": "full"        // Show all output
+    "outputMode": "full" // Show all output
   },
   "dev": {
-    "outputMode": "hash-only"   // Show cache hash only
+    "outputMode": "hash-only" // Show cache hash only
   },
   "test": {
-    "outputMode": "new-only"    // Show new output only
+    "outputMode": "new-only" // Show new output only
   },
   "lint": {
     "outputMode": "errors-only" // Show errors only
@@ -307,6 +306,7 @@ turbo run test --continue
 ## Task Execution Order
 
 Example monorepo:
+
 ```
 apps/
 ├── web (depends on @repo/ui, @repo/utils)
@@ -317,6 +317,7 @@ packages/
 ```
 
 With config:
+
 ```json
 {
   "pipeline": {
@@ -328,6 +329,7 @@ With config:
 ```
 
 Execution order for `turbo run build`:
+
 1. **Wave 1** (parallel): `@repo/utils` (no dependencies)
 2. **Wave 2** (parallel): `@repo/ui` (depends on utils)
 3. **Wave 3** (parallel): `web` and `docs` (both depend on ui)

@@ -139,11 +139,13 @@ monitoring/
 
 ```typescript
 class MonitoringService extends APIService {
-  constructor() { super(API_BASE_URL); }
+  constructor() {
+    super(API_BASE_URL);
+  }
 
-  async fetchEmailLogs(params): Promise<TEmailLogPaginatedResponse>
-  async fetchScheduledJobs(): Promise<TScheduledJob[]>
-  async fetchWorkerHealth(): Promise<TWorkerHealthResponse>
+  async fetchEmailLogs(params): Promise<TEmailLogPaginatedResponse>;
+  async fetchScheduledJobs(): Promise<TScheduledJob[]>;
+  async fetchWorkerHealth(): Promise<TWorkerHealthResponse>;
 }
 ```
 
@@ -152,21 +154,21 @@ class MonitoringService extends APIService {
 ```typescript
 interface IMonitoringStore {
   // observables
-  activeTab: TMonitoringTab;                    // observable.ref
-  emailLogs: TEmailLog[];                       // observable
-  emailLogsPagination: TPaginationInfo | null;   // observable
-  emailLogsFilters: TEmailLogFilters;           // observable
-  scheduledJobs: TScheduledJob[];               // observable
-  workerHealth: TWorkerHealthResponse | null;    // observable
-  isLoading: Record<string, boolean>;           // observable
-  error: Record<string, string | null>;         // observable
+  activeTab: TMonitoringTab; // observable.ref
+  emailLogs: TEmailLog[]; // observable
+  emailLogsPagination: TPaginationInfo | null; // observable
+  emailLogsFilters: TEmailLogFilters; // observable
+  scheduledJobs: TScheduledJob[]; // observable
+  workerHealth: TWorkerHealthResponse | null; // observable
+  isLoading: Record<string, boolean>; // observable
+  error: Record<string, string | null>; // observable
 
   // actions
-  setActiveTab: action
-  fetchEmailLogs: action
-  fetchScheduledJobs: action
-  fetchWorkerHealth: action
-  setEmailLogsFilters: action
+  setActiveTab: action;
+  fetchEmailLogs: action;
+  fetchScheduledJobs: action;
+  fetchWorkerHealth: action;
+  setEmailLogsFilters: action;
 }
 ```
 
@@ -219,6 +221,7 @@ type TEmailLogFilters = {
 ## Requirements
 
 ### Functional
+
 - Tab navigation between Issue Email Logs, Scheduled Jobs, Worker Health
 - Issue Email Logs: table with pagination, date range + entity_name filters
 - Scheduled Jobs: table showing all periodic tasks with status
@@ -226,6 +229,7 @@ type TEmailLogFilters = {
 - Loading states for each tab independently
 
 ### Non-Functional
+
 - Components <150 lines each
 - `observer()` wrapper on all components reading MobX state
 - Semantic color tokens only
@@ -235,27 +239,27 @@ type TEmailLogFilters = {
 
 ### Files to Create
 
-| File | Purpose | Est. Lines |
-|------|---------|-----------|
-| `apps/admin/store/monitoring.store.ts` | MobX store | ~120 |
-| `apps/admin/store/monitoring.types.ts` | TypeScript types | ~50 |
-| `apps/admin/hooks/store/use-monitoring.tsx` | Store hook | ~10 |
-| `packages/services/src/instance/monitoring.service.ts` | API service | ~50 |
-| `apps/admin/app/(all)/(dashboard)/monitoring/page.tsx` | Page + tabs | ~60 |
-| `apps/admin/app/(all)/(dashboard)/monitoring/components/monitoring-tabs.tsx` | Tab bar | ~40 |
-| `apps/admin/app/(all)/(dashboard)/monitoring/components/email-logs-tab.tsx` | Email logs table | ~140 |
-| `apps/admin/app/(all)/(dashboard)/monitoring/components/scheduled-jobs-tab.tsx` | Jobs table | ~100 |
-| `apps/admin/app/(all)/(dashboard)/monitoring/components/worker-health-tab.tsx` | Health cards | ~120 |
+| File                                                                            | Purpose          | Est. Lines |
+| ------------------------------------------------------------------------------- | ---------------- | ---------- |
+| `apps/admin/store/monitoring.store.ts`                                          | MobX store       | ~120       |
+| `apps/admin/store/monitoring.types.ts`                                          | TypeScript types | ~50        |
+| `apps/admin/hooks/store/use-monitoring.tsx`                                     | Store hook       | ~10        |
+| `packages/services/src/instance/monitoring.service.ts`                          | API service      | ~50        |
+| `apps/admin/app/(all)/(dashboard)/monitoring/page.tsx`                          | Page + tabs      | ~60        |
+| `apps/admin/app/(all)/(dashboard)/monitoring/components/monitoring-tabs.tsx`    | Tab bar          | ~40        |
+| `apps/admin/app/(all)/(dashboard)/monitoring/components/email-logs-tab.tsx`     | Email logs table | ~140       |
+| `apps/admin/app/(all)/(dashboard)/monitoring/components/scheduled-jobs-tab.tsx` | Jobs table       | ~100       |
+| `apps/admin/app/(all)/(dashboard)/monitoring/components/worker-health-tab.tsx`  | Health cards     | ~120       |
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
-| `apps/admin/app/routes.ts` | Add `route("monitoring", ...)` |
-| `apps/admin/hooks/use-sidebar-menu/core.ts` | Add "monitoring" to menu |
-| `apps/admin/store/root.store.ts` | Register `MonitoringStore` |
-| `apps/admin/hooks/store/index.ts` | Export `useMonitoring` |
-| `packages/services/src/instance/index.ts` | Export `MonitoringService` |
+| File                                        | Change                         |
+| ------------------------------------------- | ------------------------------ |
+| `apps/admin/app/routes.ts`                  | Add `route("monitoring", ...)` |
+| `apps/admin/hooks/use-sidebar-menu/core.ts` | Add "monitoring" to menu       |
+| `apps/admin/store/root.store.ts`            | Register `MonitoringStore`     |
+| `apps/admin/hooks/store/index.ts`           | Export `useMonitoring`         |
+| `packages/services/src/instance/index.ts`   | Export `MonitoringService`     |
 
 ## Implementation Steps
 
@@ -277,19 +281,25 @@ export class MonitoringService extends APIService {
   async fetchEmailLogs(params?: Record<string, string>) {
     return this.get("/api/instances/monitoring/email-logs/", { params })
       .then((response) => response?.data)
-      .catch((error) => { throw error?.response?.data; });
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async fetchScheduledJobs() {
     return this.get("/api/instances/monitoring/scheduled-jobs/")
       .then((response) => response?.data)
-      .catch((error) => { throw error?.response?.data; });
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async fetchWorkerHealth() {
     return this.get("/api/instances/monitoring/worker-health/")
       .then((response) => response?.data)
-      .catch((error) => { throw error?.response?.data; });
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 }
 ```
@@ -306,6 +316,7 @@ Update `packages/services/src/instance/index.ts` to export it.
 ### Step 4: Register store in root
 
 Add to `root.store.ts`:
+
 ```typescript
 import { MonitoringStore } from "./monitoring.store";
 monitoring: IMonitoringStore;
@@ -327,6 +338,7 @@ Export from `hooks/store/index.ts`.
 ### Step 6: Add route
 
 In `routes.ts`, add inside dashboard layout array:
+
 ```typescript
 route("monitoring", "./(all)/(dashboard)/monitoring/page.tsx"),
 ```
@@ -334,8 +346,10 @@ route("monitoring", "./(all)/(dashboard)/monitoring/page.tsx"),
 ### Step 7: Add sidebar menu item
 
 In `core.ts`:
+
 - Add `"monitoring"` to `TCoreSidebarMenuKey` union
 - Add entry with `Activity` icon from lucide-react:
+
 ```typescript
 monitoring: {
   Icon: Activity,
@@ -358,6 +372,7 @@ monitoring: {
 **monitoring-tabs.tsx**: Button row with 3 tabs, active state styling via `cn()`.
 
 **email-logs-tab.tsx**:
+
 - `useEffect` to fetch on mount and when filters/cursor change
 - Filter row: date inputs + entity select + apply button
 - Table with columns: Receiver, Triggered By, Entity, Created, Status
@@ -365,10 +380,12 @@ monitoring: {
 - Pagination: Prev/Next buttons using cursor from API response
 
 **scheduled-jobs-tab.tsx**:
+
 - `useEffect` to fetch on mount
 - Table: Name, Task, Schedule, Enabled (dot indicator), Last Run, Run Count
 
 **worker-health-tab.tsx**:
+
 - `useEffect` to fetch on mount + `setInterval(fetchWorkerHealth, 30000)`
 - Cleanup interval on unmount
 - Summary bar: total workers, total active tasks
@@ -408,12 +425,12 @@ monitoring: {
 
 ## Risk Assessment
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| Tab component doesn't match admin app style | Medium | Follow existing button/link patterns in admin |
-| Auto-refresh causes stale closure bugs | Medium | Use `useCallback` or store action ref |
-| Large email logs table performance | Low | Pagination limits to 50 rows |
-| Store not cleaned up on nav away | Low | Interval cleared in useEffect cleanup |
+| Risk                                        | Likelihood | Mitigation                                    |
+| ------------------------------------------- | ---------- | --------------------------------------------- |
+| Tab component doesn't match admin app style | Medium     | Follow existing button/link patterns in admin |
+| Auto-refresh causes stale closure bugs      | Medium     | Use `useCallback` or store action ref         |
+| Large email logs table performance          | Low        | Pagination limits to 50 rows                  |
+| Store not cleaned up on nav away            | Low        | Interval cleared in useEffect cleanup         |
 
 ## Security Considerations
 

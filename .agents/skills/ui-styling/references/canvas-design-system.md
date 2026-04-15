@@ -11,12 +11,14 @@ Canvas design operates through two-phase process:
 Create visual philosophy - aesthetic movement expressed through form, space, color, composition. Not layouts or templates, but pure visual philosophy.
 
 **What is created:** Design manifesto emphasizing:
+
 - Visual expression over text
 - Spatial communication
 - Artistic interpretation
 - Minimal words as visual accent
 
 **Philosophy structure (4-6 paragraphs):**
+
 - Space and form principles
 - Color and material approach
 - Scale and rhythm guidance
@@ -26,6 +28,7 @@ Create visual philosophy - aesthetic movement expressed through form, space, col
 ### Phase 2: Visual Expression
 
 Express philosophy through canvas artifacts:
+
 - 90% visual design
 - 10% essential text
 - Museum-quality execution
@@ -37,6 +40,7 @@ Express philosophy through canvas artifacts:
 ### 1. Visual Communication First
 
 Information lives in design, not paragraphs. Express ideas through:
+
 - Color zones and fields
 - Geometric precision
 - Spatial relationships
@@ -46,6 +50,7 @@ Information lives in design, not paragraphs. Express ideas through:
 ### 2. Minimal Text Integration
 
 Text as rare, powerful gesture:
+
 - Never paragraphs
 - Only essential words
 - Integrated into visual architecture
@@ -55,6 +60,7 @@ Text as rare, powerful gesture:
 ### 3. Expert Craftsmanship
 
 Work must appear:
+
 - Meticulously crafted
 - Labored over with care
 - Product of countless hours
@@ -64,6 +70,7 @@ Work must appear:
 ### 4. Systematic Patterns
 
 Use scientific visual language:
+
 - Repeating patterns
 - Perfect shapes
 - Dense accumulation of marks
@@ -73,9 +80,11 @@ Use scientific visual language:
 ## Design Movement Examples
 
 ### Concrete Poetry
+
 **Philosophy:** Communication through monumental form and bold geometry.
 
 **Expression:**
+
 - Massive color blocks
 - Sculptural typography (huge words, tiny labels)
 - Brutalist spatial divisions
@@ -84,9 +93,11 @@ Use scientific visual language:
 - Text as rare, powerful gesture
 
 ### Chromatic Language
+
 **Philosophy:** Color as primary information system.
 
 **Expression:**
+
 - Geometric precision
 - Color zones create meaning
 - Typography minimal - small sans-serif labels
@@ -95,9 +106,11 @@ Use scientific visual language:
 - Words only anchor what color shows
 
 ### Analog Meditation
+
 **Philosophy:** Quiet visual contemplation through texture and breathing room.
 
 **Expression:**
+
 - Paper grain, ink bleeds
 - Vast negative space
 - Photography and illustration dominate
@@ -107,9 +120,11 @@ Use scientific visual language:
 - Text appears sparingly - short phrases only
 
 ### Organic Systems
+
 **Philosophy:** Natural clustering and modular growth patterns.
 
 **Expression:**
+
 - Rounded forms
 - Organic arrangements
 - Color from nature through architecture
@@ -119,9 +134,11 @@ Use scientific visual language:
 - Composition tells story through spatial orchestration
 
 ### Geometric Silence
+
 **Philosophy:** Pure order and restraint.
 
 **Expression:**
+
 - Grid-based precision
 - Bold photography or stark graphics
 - Dramatic negative space
@@ -136,6 +153,7 @@ Use scientific visual language:
 ### Subtle Reference Integration
 
 Embed conceptual DNA without announcing:
+
 - Niche reference woven invisibly
 - Those who know feel it intuitively
 - Others experience masterful abstract composition
@@ -146,6 +164,7 @@ Embed conceptual DNA without announcing:
 ### Color Approach
 
 **Intentional palette:**
+
 - Limited colors (2-5)
 - Cohesive system
 - Purposeful relationships
@@ -153,6 +172,7 @@ Embed conceptual DNA without announcing:
 - Each shade carries meaning
 
 **Example palette:**
+
 ```
 --color-primary: oklch(0.55 0.22 264)
 --color-accent: oklch(0.75 0.18 45)
@@ -163,6 +183,7 @@ Embed conceptual DNA without announcing:
 ### Typography System
 
 **Thin fonts preferred:**
+
 - Light weights (200-300)
 - Clean sans-serifs
 - Geometric precision
@@ -170,6 +191,7 @@ Embed conceptual DNA without announcing:
 - Large sizes for impact moments
 
 **Font integration:**
+
 - Search `./canvas-fonts` directory
 - Download needed fonts
 - Bring typography onto canvas
@@ -178,6 +200,7 @@ Embed conceptual DNA without announcing:
 ### Composition Rules
 
 **Systematic approach:**
+
 - Repeating patterns establish rhythm
 - Perfect geometric shapes
 - Clinical typography
@@ -186,6 +209,7 @@ Embed conceptual DNA without announcing:
 - Layered patterns reward attention
 
 **Spacing discipline:**
+
 - Nothing falls off page
 - Nothing overlaps
 - Every element within canvas boundaries
@@ -196,6 +220,7 @@ Embed conceptual DNA without announcing:
 ### Canvas Boundaries
 
 **Technical specs:**
+
 - Single page default (multi-page when requested)
 - PDF or PNG output
 - High resolution
@@ -208,6 +233,7 @@ Embed conceptual DNA without announcing:
 When creating multiple pages:
 
 ### Approach
+
 - Treat first page as single page in coffee table book
 - Create more pages along same philosophy
 - Distinctly different but cohesive
@@ -215,6 +241,7 @@ When creating multiple pages:
 - Full creative freedom
 
 ### Consistency Elements
+
 - Shared color palette
 - Consistent typography system
 - Related compositional approach
@@ -222,6 +249,7 @@ When creating multiple pages:
 - Philosophical thread throughout
 
 ### Variation Strategy
+
 - Unique twist per page
 - Different focal points
 - Varied spatial arrangements
@@ -249,6 +277,7 @@ Before finalizing:
 ## Quality Standards
 
 ### What to Avoid
+
 - Cartoony aesthetics
 - Amateur execution
 - Text-heavy composition
@@ -259,6 +288,7 @@ Before finalizing:
 - Lack of refinement
 
 ### What to Achieve
+
 - Museum quality
 - Magazine worthy
 - Art object status
@@ -271,9 +301,11 @@ Before finalizing:
 ## Refinement Process
 
 ### Initial Pass
+
 Create based on philosophy and principles.
 
 ### Second Pass (Critical)
+
 - Don't add more graphics
 - Refine what exists
 - Make extremely crisp
@@ -283,6 +315,7 @@ Create based on philosophy and principles.
 - Polish rather than expand
 
 ### Final Verification
+
 User already said: "It isn't perfect enough. Must be pristine, masterpiece of craftsmanship, as if about to be displayed in museum."
 
 Apply this standard before delivery.
@@ -290,16 +323,19 @@ Apply this standard before delivery.
 ## Output Format
 
 **Required files:**
+
 1. Design philosophy (.md file)
 2. Visual expression (.pdf or .png)
 
 **Philosophy file contains:**
+
 - Movement name
 - 4-6 paragraph philosophy
 - Visual principles
 - Execution guidance
 
 **Canvas file contains:**
+
 - Visual interpretation
 - Minimal text
 - Systematic composition
@@ -308,6 +344,7 @@ Apply this standard before delivery.
 ## Use Cases
 
 Apply canvas design for:
+
 - Brand identity systems
 - Poster designs
 - Visual manifestos

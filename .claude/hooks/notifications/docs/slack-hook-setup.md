@@ -44,6 +44,7 @@ echo '{"hook_event_name":"Stop","cwd":"'"$(pwd)"'","session_id":"test123"}' | \
 ## Message Format
 
 Notifications use Slack Block Kit with:
+
 - Header showing event type
 - Project name, time, session ID
 - Location path in context block
@@ -51,20 +52,20 @@ Notifications use Slack Block Kit with:
 
 ## Supported Events
 
-| Event | Description |
-|-------|-------------|
-| Stop | Main session completed |
-| SubagentStop | Subagent task completed |
+| Event         | Description             |
+| ------------- | ----------------------- |
+| Stop          | Main session completed  |
+| SubagentStop  | Subagent task completed |
 | AskUserPrompt | Claude needs user input |
 
 ## Troubleshooting
 
-| Error | Solution |
-|-------|----------|
-| `invalid_payload` | Check JSON formatting |
-| `channel_is_archived` | Webhook's target channel was archived |
-| `no_active_hooks` | Webhook was disabled in Slack |
-| No notification | Verify SLACK_WEBHOOK_URL is set correctly |
+| Error                 | Solution                                  |
+| --------------------- | ----------------------------------------- |
+| `invalid_payload`     | Check JSON formatting                     |
+| `channel_is_archived` | Webhook's target channel was archived     |
+| `no_active_hooks`     | Webhook was disabled in Slack             |
+| No notification       | Verify SLACK_WEBHOOK_URL is set correctly |
 
 ## Multiple Providers
 
@@ -79,6 +80,7 @@ The unified `notify.cjs` routes to all configured providers simultaneously. Set 
 ## Security Best Practices
 
 1. **Never commit webhook URLs:**
+
    ```bash
    # .gitignore
    .env

@@ -12,6 +12,7 @@ These skills were derived from agent patterns in the Microsoft Amplifier project
 ## Skills Derived from Amplifier Agents
 
 ### From insight-synthesizer agent:
+
 - **simplification-cascades** - Finding insights that eliminate multiple components
 - **collision-zone-thinking** - Forcing unrelated concepts together for breakthroughs
 - **meta-pattern-recognition** - Spotting patterns across 3+ domains
@@ -19,12 +20,15 @@ These skills were derived from agent patterns in the Microsoft Amplifier project
 - **scale-game** - Testing at extremes to expose fundamental truths
 
 ### From ambiguity-guardian agent:
+
 - **preserving-productive-tensions** - Preserving multiple valid approaches (in architecture skill)
 
 ### From knowledge-archaeologist agent:
+
 - **tracing-knowledge-lineages** - Understanding how ideas evolved (in research skill)
 
 ### Dispatch pattern:
+
 - **when-stuck** - Maps stuck-symptoms to appropriate technique
 
 ## What Was Adapted
@@ -42,6 +46,7 @@ The Amplifier agents are specialized long-lived agents with structured JSON outp
 Agent capabilities are domain-agnostic patterns. Whether packaged as "amplifier agent" or "problem-solving skill", the underlying technique is the same.
 
 We extracted the techniques and made them:
+
 - Portable across contexts
 - Immediately applicable
 - Token-efficient through progressive disclosure
@@ -55,6 +60,7 @@ Original Amplifier project uses MIT License. These adapted skills maintain attri
 ## Adaptation Notes
 
 **Changes from original:**
+
 - Converted from long-lived agent to scannable reference
 - Added symptom-based dispatch system
 - Removed JSON output requirements
@@ -63,6 +69,7 @@ Original Amplifier project uses MIT License. These adapted skills maintain attri
 - Structured for progressive disclosure
 
 **Preserved from original:**
+
 - Core problem-solving techniques
 - Recognition patterns
 - Application processes

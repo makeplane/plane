@@ -10,16 +10,16 @@
 
 ### Naming Rules
 
-| File Type | Convention | Example |
-|-----------|-----------|---------|
-| **JS/TS files** | kebab-case | `workflow-store.ts`, `use-workflow.ts` |
-| **React components** | PascalCase (directory) | `KanbanGroup/KanbanGroup.tsx` |
-| **Directories** | kebab-case | `issue-layouts/`, `workflow-services/` |
-| **Classes** | PascalCase | `WorkflowRootStore`, `IssueService` |
-| **Functions** | camelCase | `handleWorkFlowState()`, `getIssueDetails()` |
-| **Constants** | UPPER_SNAKE_CASE | `WORKFLOW_TRANSITION_BLOCKED`, `MAX_FILE_SIZE` |
-| **Interfaces/Types** | I prefix + PascalCase | `IWorkspace`, `IIssue`, `IPageBlock` |
-| **Boolean variables** | is/has/should prefix | `isLoading`, `hasAccess`, `shouldValidate` |
+| File Type             | Convention             | Example                                        |
+| --------------------- | ---------------------- | ---------------------------------------------- |
+| **JS/TS files**       | kebab-case             | `workflow-store.ts`, `use-workflow.ts`         |
+| **React components**  | PascalCase (directory) | `KanbanGroup/KanbanGroup.tsx`                  |
+| **Directories**       | kebab-case             | `issue-layouts/`, `workflow-services/`         |
+| **Classes**           | PascalCase             | `WorkflowRootStore`, `IssueService`            |
+| **Functions**         | camelCase              | `handleWorkFlowState()`, `getIssueDetails()`   |
+| **Constants**         | UPPER_SNAKE_CASE       | `WORKFLOW_TRANSITION_BLOCKED`, `MAX_FILE_SIZE` |
+| **Interfaces/Types**  | I prefix + PascalCase  | `IWorkspace`, `IIssue`, `IPageBlock`           |
+| **Boolean variables** | is/has/should prefix   | `isLoading`, `hasAccess`, `shouldValidate`     |
 
 ### File Size Limits
 
@@ -29,6 +29,7 @@
 - **Configuration:** No limit (but prefer YAML > JSON)
 
 **Modularization Triggers:**
+
 - Component exceeds 150 LOC → split by logical sections
 - Service exceeds 200 LOC → separate into domain-specific services
 - Store exceeds 300 LOC → extract into sub-stores (composition)
@@ -50,6 +51,7 @@
 ### Model Conventions
 
 **Base Models:**
+
 ```python
 from plane.db.models import BaseModel, ProjectBaseModel
 
@@ -60,7 +62,7 @@ class Issue(ProjectBaseModel):
     description = models.TextField(blank=True)
     created_by = models.ForeignKey("db.User", on_delete=models.SET_NULL, null=True)
     updated_by = models.ForeignKey("db.User", on_delete=models.SET_NULL, null=True, related_name="+")
-    
+
     class Meta:
         ordering = ["-created_at"]
         indexes = [
@@ -73,11 +75,12 @@ class Issue(ProjectBaseModel):
                 name="unique_issue_key"
             )
         ]
-    
+
     objects = SoftDeletionManager()
 ```
 
 **Key Patterns:**
+
 - Inherit `ProjectBaseModel` for project-scoped models
 - Include `created_by` and `updated_by` for audit trails
 - Use `SoftDeletionManager` for soft deletes
@@ -88,6 +91,7 @@ class Issue(ProjectBaseModel):
 ### View Conventions
 
 **DRF Viewset Pattern:**
+
 ```python
 from plane.utils.decorators import allow_permission
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -95,24 +99,25 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 class IssueViewSet(ReadOnlyModelViewSet):
     serializer_class = IssueSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self):
         # CRITICAL: Always scope to workspace + project
         return Issue.objects.filter(
             project__workspace__slug=self.kwargs["workspace_slug"],
             project__slug=self.kwargs["project_slug"]
         ).select_related("created_by", "updated_by")
-    
+
     @allow_permission("workspace.member")
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-    
+
     @allow_permission("project.member")
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 ```
 
 **Key Patterns:**
+
 - All queries scoped by `project__workspace__slug` (never just `project_id`)
 - Use `select_related()` for FK relationships
 - Use `prefetch_related()` for M2M/reverse relationships
@@ -122,16 +127,17 @@ class IssueViewSet(ReadOnlyModelViewSet):
 ### Serializer Conventions
 
 **Pattern:**
+
 ```python
 # apps/api/plane/app/serializers/v0/issue.py
 class IssueSerializer(serializers.ModelSerializer):
     created_by_detail = UserLiteSerializer(source="created_by", read_only=True)
-    
+
     class Meta:
         model = Issue
         fields = ["id", "title", "description", "created_by", "created_by_detail"]
         read_only_fields = ["created_at", "updated_at"]
-    
+
     def create(self, validated_data):
         # Add current user
         validated_data["created_by"] = self.context["request"].user
@@ -139,6 +145,7 @@ class IssueSerializer(serializers.ModelSerializer):
 ```
 
 **Key Patterns:**
+
 - Separate nested read serializers (never use depth=)
 - Override `create()`/`update()` for custom logic
 - Mark read-only fields explicitly
@@ -148,6 +155,7 @@ class IssueSerializer(serializers.ModelSerializer):
 ### Celery Task Conventions
 
 **Pattern:**
+
 ```python
 # apps/api/plane/tasks/issues.py
 from celery import shared_task
@@ -159,7 +167,7 @@ def send_issue_notification(issue_id, user_id):
     try:
         issue = Issue.objects.get(id=issue_id)
         user = User.objects.get(id=user_id)
-        
+
         send_mail(
             subject=f"Issue {issue.key} updated",
             message=f"Title: {issue.title}",
@@ -174,6 +182,7 @@ def send_issue_notification(issue_id, user_id):
 ```
 
 **Key Patterns:**
+
 - Use `@shared_task` for routing flexibility
 - Always wrap in try-except
 - Return dict with status + optional data
@@ -185,45 +194,43 @@ def send_issue_notification(issue_id, user_id):
 ### Component Conventions
 
 **Functional Component Pattern:**
+
 ```typescript
 // KanbanGroup.tsx
-import React, { useState, useCallback } from "react"
-import { observer } from "mobx-react"
-import { IIssue } from "@plane/types"
+import React, { useState, useCallback } from "react";
+import { observer } from "mobx-react";
+import { IIssue } from "@plane/types";
 
 interface IKanbanGroupProps {
-  groupId: string
-  issues: IIssue[]
-  onDragEnter?: (sourceId: string, destId: string) => void
+  groupId: string;
+  issues: IIssue[];
+  onDragEnter?: (sourceId: string, destId: string) => void;
 }
 
 export const KanbanGroup = observer(
-  React.forwardRef<HTMLDivElement, IKanbanGroupProps>(
-    ({ groupId, issues, onDragEnter }, ref) => {
-      const [isExpanded, setIsExpanded] = useState(true)
+  React.forwardRef<HTMLDivElement, IKanbanGroupProps>(({ groupId, issues, onDragEnter }, ref) => {
+    const [isExpanded, setIsExpanded] = useState(true);
 
-      const handleDragEnter = useCallback(
-        (e: React.DragEvent) => {
-          onDragEnter?.(sourceId, groupId)
-        },
-        [groupId, onDragEnter]
-      )
+    const handleDragEnter = useCallback(
+      (e: React.DragEvent) => {
+        onDragEnter?.(sourceId, groupId);
+      },
+      [groupId, onDragEnter]
+    );
 
-      return (
-        <div ref={ref} onDragEnter={handleDragEnter}>
-          {isExpanded && issues.map((issue) => (
-            <IssueCard key={issue.id} issue={issue} />
-          ))}
-        </div>
-      )
-    }
-  )
-)
+    return (
+      <div ref={ref} onDragEnter={handleDragEnter}>
+        {isExpanded && issues.map((issue) => <IssueCard key={issue.id} issue={issue} />)}
+      </div>
+    );
+  })
+);
 
-KanbanGroup.displayName = "KanbanGroup"
+KanbanGroup.displayName = "KanbanGroup";
 ```
 
 **Key Patterns:**
+
 - Wrap components observing MobX stores with `observer()`
 - Use `React.forwardRef` for dom access
 - Type all props with interfaces
@@ -235,18 +242,19 @@ KanbanGroup.displayName = "KanbanGroup"
 ### MobX Store Conventions
 
 **Store Pattern:**
+
 ```typescript
 // workflow.store.ts
-import { makeObservable, observable, action, flow, runInAction } from "mobx"
+import { makeObservable, observable, action, flow, runInAction } from "mobx";
 
 export class WorkflowRootStore {
-  root: RootStore
-  workflows: Map<string, Workflow> = new Map()
-  isLoading = false
-  error: string | null = null
+  root: RootStore;
+  workflows: Map<string, Workflow> = new Map();
+  isLoading = false;
+  error: string | null = null;
 
   constructor(root: RootStore) {
-    this.root = root
+    this.root = root;
     makeObservable(this, {
       workflows: observable,
       isLoading: observable,
@@ -255,41 +263,42 @@ export class WorkflowRootStore {
       setWorkflows: action,
       updateWorkflow: action.bound,
       deleteWorkflow: action,
-    })
+    });
   }
 
   // Async: use flow
   *fetchWorkflows(projectId: string) {
-    this.isLoading = true
+    this.isLoading = true;
     try {
-      const response = yield this.root.workflowService.list(projectId)
+      const response = yield this.root.workflowService.list(projectId);
       runInAction(() => {
-        response.forEach((w) => this.workflows.set(w.id, w))
-        this.isLoading = false
-      })
+        response.forEach((w) => this.workflows.set(w.id, w));
+        this.isLoading = false;
+      });
     } catch (error) {
       runInAction(() => {
-        this.error = error.message
-        this.isLoading = false
-      })
+        this.error = error.message;
+        this.isLoading = false;
+      });
     }
   }
 
   // Sync: use action
   setWorkflows(workflows: Workflow[]) {
-    this.workflows.clear()
-    workflows.forEach((w) => this.workflows.set(w.id, w))
+    this.workflows.clear();
+    workflows.forEach((w) => this.workflows.set(w.id, w));
   }
 
   // Bound action for callbacks
   updateWorkflow = action((id: string, data: Partial<Workflow>) => {
-    const workflow = this.workflows.get(id)
-    if (workflow) Object.assign(workflow, data)
-  })
+    const workflow = this.workflows.get(id);
+    if (workflow) Object.assign(workflow, data);
+  });
 }
 ```
 
 **Key Patterns:**
+
 - All mutations must be `action` or `flow`
 - Async mutations use `flow` + `runInAction`
 - Use `makeObservable` with explicit action map (never `makeAutoObservable`)
@@ -300,44 +309,46 @@ export class WorkflowRootStore {
 ### Hook Conventions
 
 **Custom Hook Pattern:**
+
 ```typescript
 // use-workflow.ts
-import { useContext } from "react"
-import { StoreContext } from "@/plane-web/context/store-context"
+import { useContext } from "react";
+import { StoreContext } from "@/plane-web/context/store-context";
 
 export function useWorkflow() {
-  const { workflowStore } = useContext(StoreContext)
+  const { workflowStore } = useContext(StoreContext);
   if (!workflowStore) {
-    throw new Error("useWorkflow must be used within StoreProvider")
+    throw new Error("useWorkflow must be used within StoreProvider");
   }
-  return workflowStore
+  return workflowStore;
 }
 
 // use-issue-form.ts
-import { useCallback } from "react"
-import { useProject } from "@/hooks/store"
-import { IIssue } from "@plane/types"
+import { useCallback } from "react";
+import { useProject } from "@/hooks/store";
+import { IIssue } from "@plane/types";
 
 export function useIssueForm(projectId: string) {
-  const { projectStore } = useProject()
-  
+  const { projectStore } = useProject();
+
   const createIssue = useCallback(
     async (data: Partial<IIssue>) => {
       try {
-        const issue = await projectStore.createIssue(projectId, data)
-        return issue
+        const issue = await projectStore.createIssue(projectId, data);
+        return issue;
       } catch (error) {
-        throw new Error(`Failed to create issue: ${error.message}`)
+        throw new Error(`Failed to create issue: ${error.message}`);
       }
     },
     [projectId, projectStore]
-  )
+  );
 
-  return { createIssue }
+  return { createIssue };
 }
 ```
 
 **Key Patterns:**
+
 - Return objects with related functions
 - Always validate context availability
 - Use `useCallback` for stability
@@ -348,28 +359,30 @@ export function useIssueForm(projectId: string) {
 ### Type Conventions
 
 **Type Definitions:**
+
 ```typescript
 // packages/types/src/issue.ts
 export interface IIssue {
-  id: string
-  project_id: string
-  key: string
-  title: string
-  description: string
-  state_id: string
-  created_by: string
-  created_at: string
-  updated_at: string
+  id: string;
+  project_id: string;
+  key: string;
+  title: string;
+  description: string;
+  state_id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface IIssueUpdate extends Partial<IIssue> {
-  id: string // Required for updates
+  id: string; // Required for updates
 }
 
-export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
+export type IssueFilter = "all" | "assigned" | "created" | "subscribed";
 ```
 
 **Key Patterns:**
+
 - One type per file in `packages/types/src/`
 - Export all from `packages/types/src/index.ts`
 - Use `I*` prefix for all types
@@ -382,6 +395,7 @@ export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
 ### Request/Response Patterns
 
 **Success Response (200, 201):**
+
 ```json
 {
   "id": "uuid",
@@ -391,6 +405,7 @@ export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
 ```
 
 **Error Response (4xx, 5xx):**
+
 ```json
 {
   "detail": "Workspace not found",
@@ -400,6 +415,7 @@ export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
 ```
 
 **Pagination:**
+
 ```json
 {
   "count": 100,
@@ -411,13 +427,13 @@ export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
 
 ### Endpoint Naming
 
-| Method | Pattern | Example |
-|--------|---------|---------|
-| **GET** | `/resource/` | `/api/v1/issues/` |
-| **GET** | `/resource/{id}/` | `/api/v1/issues/{id}/` |
-| **POST** | `/resource/` | `/api/v1/issues/` |
-| **PATCH** | `/resource/{id}/` | `/api/v1/issues/{id}/` |
-| **DELETE** | `/resource/{id}/` | `/api/v1/issues/{id}/` |
+| Method     | Pattern                    | Example                          |
+| ---------- | -------------------------- | -------------------------------- |
+| **GET**    | `/resource/`               | `/api/v1/issues/`                |
+| **GET**    | `/resource/{id}/`          | `/api/v1/issues/{id}/`           |
+| **POST**   | `/resource/`               | `/api/v1/issues/`                |
+| **PATCH**  | `/resource/{id}/`          | `/api/v1/issues/{id}/`           |
+| **DELETE** | `/resource/{id}/`          | `/api/v1/issues/{id}/`           |
 | **Action** | `/resource/{id}/{action}/` | `/api/v1/issues/{id}/duplicate/` |
 
 ## Testing Standards
@@ -425,6 +441,7 @@ export type IssueFilter = "all" | "assigned" | "created" | "subscribed"
 ### Backend Tests
 
 **Pattern:**
+
 ```python
 # tests/test_issue_views.py
 from django.test import TestCase
@@ -439,23 +456,24 @@ class IssueViewsTest(TestCase):
 
     def test_list_issues_success(self):
         Issue.objects.create(project=self.project, title="Test", created_by=self.user)
-        
+
         self.client.force_authenticate(self.user)
         response = self.client.get(f"/api/v0/issues/")
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
 
     def test_list_issues_permission_denied(self):
         other_user = User.objects.create(email="other@test.com")
-        
+
         self.client.force_authenticate(other_user)
         response = self.client.get(f"/api/v0/issues/")
-        
+
         self.assertEqual(response.status_code, 403)
 ```
 
 **Key Patterns:**
+
 - One test per behavior
 - Clear assertions
 - Use `setUp()` for common data
@@ -466,42 +484,36 @@ class IssueViewsTest(TestCase):
 ### Frontend Tests
 
 **Pattern:**
+
 ```typescript
 // components/KanbanGroup.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react"
-import { observer } from "mobx-react"
-import { KanbanGroup } from "./KanbanGroup"
+import { render, screen, fireEvent } from "@testing-library/react";
+import { observer } from "mobx-react";
+import { KanbanGroup } from "./KanbanGroup";
 
 describe("KanbanGroup", () => {
   it("renders issues in group", () => {
-    const issues = [
-      { id: "1", title: "Task 1", state_id: "todo" }
-    ]
-    
-    render(<KanbanGroup groupId="todo" issues={issues} />)
-    
-    expect(screen.getByText("Task 1")).toBeInTheDocument()
-  })
+    const issues = [{ id: "1", title: "Task 1", state_id: "todo" }];
+
+    render(<KanbanGroup groupId="todo" issues={issues} />);
+
+    expect(screen.getByText("Task 1")).toBeInTheDocument();
+  });
 
   it("calls onDragEnter on drag", () => {
-    const onDragEnter = jest.fn()
-    const issues = []
-    
-    render(
-      <KanbanGroup 
-        groupId="todo" 
-        issues={issues} 
-        onDragEnter={onDragEnter} 
-      />
-    )
-    
-    fireEvent.dragEnter(screen.getByRole("group"))
-    expect(onDragEnter).toHaveBeenCalledWith(expect.any(String), "todo")
-  })
-})
+    const onDragEnter = jest.fn();
+    const issues = [];
+
+    render(<KanbanGroup groupId="todo" issues={issues} onDragEnter={onDragEnter} />);
+
+    fireEvent.dragEnter(screen.getByRole("group"));
+    expect(onDragEnter).toHaveBeenCalledWith(expect.any(String), "todo");
+  });
+});
 ```
 
 **Key Patterns:**
+
 - Test user interactions, not implementation
 - Mock stores/services as needed
 - Use `screen` for element queries
@@ -511,6 +523,7 @@ describe("KanbanGroup", () => {
 ## Code Review Checklist
 
 **Before Committing:**
+
 - [ ] No syntax errors (compile passes)
 - [ ] Tests pass (no skipped tests)
 - [ ] No linting errors (`pnpm check:lint`)
@@ -522,6 +535,7 @@ describe("KanbanGroup", () => {
 - [ ] Follows naming conventions
 
 **Before Creating PR:**
+
 - [ ] Branch name: `{user}/{feat|fix|docs}/{desc}`
 - [ ] Commit messages: conventional format (`feat:`, `fix:`, `docs:`, etc.)
 - [ ] Changelog entry if feature/fix
@@ -532,6 +546,7 @@ describe("KanbanGroup", () => {
 ## Linting & Formatting
 
 **Run before commit:**
+
 ```bash
 # Lint check
 pnpm check:lint
@@ -544,6 +559,7 @@ pnpm check:types
 ```
 
 **ESLint Rules:**
+
 - No unused variables
 - No implicit any
 - No floating promises

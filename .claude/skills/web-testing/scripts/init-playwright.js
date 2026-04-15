@@ -8,13 +8,13 @@
  *   --dir      Target directory (default: current directory)
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Parse arguments
 const args = process.argv.slice(2);
-const includeComponentTesting = args.includes('--ct');
-const dirIndex = args.indexOf('--dir');
+const includeComponentTesting = args.includes("--ct");
+const dirIndex = args.indexOf("--dir");
 const targetDir = dirIndex !== -1 ? args[dirIndex + 1] : process.cwd();
 
 // Configuration templates
@@ -195,25 +195,25 @@ function writeFile(filePath, content) {
 }
 
 // Main execution
-console.log('\n🎭 Initializing Playwright with best practices...\n');
+console.log("\n🎭 Initializing Playwright with best practices...\n");
 
 // Core files
-writeFile('playwright.config.ts', playwrightConfig);
-writeFile('tests/e2e/fixtures/auth.ts', authFixture);
-writeFile('tests/e2e/example.spec.ts', exampleTest);
-writeFile('tests/e2e/auth.spec.ts', authTest);
-writeFile('tests/e2e/global-setup.ts', globalSetup);
-writeFile('.env.test.example', envExample);
+writeFile("playwright.config.ts", playwrightConfig);
+writeFile("tests/e2e/fixtures/auth.ts", authFixture);
+writeFile("tests/e2e/example.spec.ts", exampleTest);
+writeFile("tests/e2e/auth.spec.ts", authTest);
+writeFile("tests/e2e/global-setup.ts", globalSetup);
+writeFile(".env.test.example", envExample);
 
 // Component testing (optional)
 if (includeComponentTesting) {
-  writeFile('playwright-ct.config.ts', componentTestConfig);
-  console.log('\n📦 Component testing config created. Install:');
-  console.log('   npm install -D @playwright/experimental-ct-react');
+  writeFile("playwright-ct.config.ts", componentTestConfig);
+  console.log("\n📦 Component testing config created. Install:");
+  console.log("   npm install -D @playwright/experimental-ct-react");
 }
 
 // Package.json scripts suggestion
-console.log('\n📝 Add to package.json scripts:');
+console.log("\n📝 Add to package.json scripts:");
 console.log(`
   "test:e2e": "playwright test",
   "test:e2e:ui": "playwright test --ui",
@@ -222,12 +222,12 @@ console.log(`
 `);
 
 // Install commands
-console.log('\n📦 Install dependencies:');
-console.log('   npm install -D @playwright/test');
-console.log('   npx playwright install');
+console.log("\n📦 Install dependencies:");
+console.log("   npm install -D @playwright/test");
+console.log("   npx playwright install");
 
 if (includeComponentTesting) {
-  console.log('   npm install -D @playwright/experimental-ct-react');
+  console.log("   npm install -D @playwright/experimental-ct-react");
 }
 
-console.log('\n✨ Playwright setup complete!\n');
+console.log("\n✨ Playwright setup complete!\n");

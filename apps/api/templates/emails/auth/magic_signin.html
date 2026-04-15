@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -48,7 +48,11 @@
     style="
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        &quot;Segoe UI&quot;,
         sans-serif;
       font-weight: 400;
       color: #474747;
@@ -77,32 +81,21 @@
     </span>
 
     <!-- Outer Wrapper -->
-    <center
-      class="email-body"
-      style="width: 100%; background-color: #f9f9f9; padding: 40px 0;"
-    >
+    <center class="email-body" style="width: 100%; background-color: #f9f9f9; padding: 40px 0">
       <!-- HEADER -->
       <table role="presentation" width="100%">
         <tr>
           <td></td>
 
-          <td
-            class="email-container"
-            width="620"
-            style="width: 620px; max-width: 620px; margin: 0 auto;"
-          >
-            <table
-              role="presentation"
-              width="100%"
-              style="background-color: #000000;"
-            >
+          <td class="email-container" width="620" style="width: 620px; max-width: 620px; margin: 0 auto">
+            <table role="presentation" width="100%" style="background-color: #000000">
               <tr>
-                <td style="padding: 24px 40px; text-align: center;">
+                <td style="padding: 24px 40px; text-align: center">
                   <img
                     src="{{ logo_url }}"
                     width="120"
                     alt="Daily Note"
-                    style="height: auto; display: block; margin: 0 auto;"
+                    style="height: auto; display: block; margin: 0 auto"
                   />
                 </td>
               </tr>
@@ -118,53 +111,35 @@
         <tr>
           <td></td>
 
-          <td
-            class="email-container"
-            width="620"
-            style="width: 620px; max-width: 620px; margin: 0 auto;"
-          >
+          <td class="email-container" width="620" style="width: 620px; max-width: 620px; margin: 0 auto">
             <table
               role="presentation"
               width="100%"
               class="email-content"
-              style="background-color: #ffffff; padding: 32px 40px 32px 40px;"
+              style="background-color: #ffffff; padding: 32px 40px 32px 40px"
             >
               <tr>
-                <td
-                  style="
-                    font-size: 16px;
-                    line-height: 1.5;
-                    color: #474747;
-                    padding: 24px;
-                  "
-                >
+                <td style="font-size: 16px; line-height: 1.5; color: #474747; padding: 24px">
                   <!-- ========================================= -->
                   <!--           PLANE LOGIN CODE EMAIL          -->
                   <!-- ========================================= -->
 
                   <!-- Heading -->
-                  <h1
-                    style="
-                      margin: 0 0 12px;
-                      font-size: 22px;
-                      line-height: 1.35;
-                      font-weight: 600;
-                      color: #111111;
-                    "
-                  >
+                  <h1 style="margin: 0 0 12px; font-size: 22px; line-height: 1.35; font-weight: 600; color: #111111">
                     Your login code for Daily Note
                   </h1>
 
                   <!-- Code chip -->
-                  <p style="margin: 12px 0 24px;">
+                  <p style="margin: 12px 0 24px">
                     <span
                       style="
                         display: inline-block;
                         padding: 8px 14px;
                         background-color: #e4e5e7;
                         border-radius: 6px;
-                        font-family: 'SF Mono', Menlo, Monaco, Consolas,
-                          'Liberation Mono', 'Courier New', monospace;
+                        font-family:
+                          &quot;SF Mono&quot;, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;,
+                          &quot;Courier New&quot;, monospace;
                         font-size: 15px;
                         letter-spacing: 0.14em;
                         text-transform: uppercase;
@@ -176,31 +151,16 @@
                   </p>
 
                   <!-- Main info -->
-                  <p
-                    style="
-                      margin: 0;
-                      font-size: 13px;
-                      line-height: 1.6;
-                      color: #5f5e5e;
-                    "
-                  >
-                    This code is valid for the next 10 minutes. Enter it on the
-                    sign-in page to complete your login.
+                  <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5f5e5e">
+                    This code is valid for the next 10 minutes. Enter it on the sign-in page to complete your login.
                   </p>
 
                   <!-- Secondary info -->
-                  <p
-                    style="
-                      margin: 16px 0 0;
-                      font-size: 13px;
-                      line-height: 1.6;
-                      color: #5f5e5e;
-                    "
-                  >
+                  <p style="margin: 16px 0 0; font-size: 13px; line-height: 1.6; color: #5f5e5e">
                     Note: This email was sent to
                     <span
                       style="
-                        font-family: 'Courier New', Courier, monospace;
+                        font-family: &quot;Courier New&quot;, Courier, monospace;
                         font-size: 12px;
                         background-color: #f3f3f3;
                         padding: 2px 4px;
@@ -208,8 +168,7 @@
                         border: 1px solid #e9e9e9;
                       "
                       >{{email}}</span
-                    >. If you were not expecting a sign-in code, you can safely
-                    ignore this message.
+                    >. If you were not expecting a sign-in code, you can safely ignore this message.
                   </p>
                 </td>
               </tr>
@@ -225,16 +184,12 @@
         <tr>
           <td></td>
 
-          <td
-            class="email-container"
-            width="620"
-            style="width: 620px; max-width: 620px; margin: 0 auto;"
-          >
+          <td class="email-container" width="620" style="width: 620px; max-width: 620px; margin: 0 auto">
             <table
               role="presentation"
               width="100%"
               class="email-footer"
-              style="background-color: #ffffff; padding: 0 40px 16px 40px;"
+              style="background-color: #ffffff; padding: 0 40px 16px 40px"
             >
               <tr>
                 <td
@@ -247,9 +202,7 @@
                     text-align: left;
                   "
                 >
-                  <p style="margin: 0;">
-                    Shinhan Bank Vietnam - Daily Note
-                  </p>
+                  <p style="margin: 0">Shinhan Bank Vietnam - Daily Note</p>
                 </td>
               </tr>
             </table>

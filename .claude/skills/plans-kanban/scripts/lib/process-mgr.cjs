@@ -3,13 +3,13 @@
  * Handles PID files and server lifecycle
  */
 
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 
 // Cross-platform temp directory for PID files
 const PID_DIR = os.tmpdir();
-const PID_PREFIX = 'plans-kanban-';
+const PID_PREFIX = "plans-kanban-";
 
 /**
  * Get PID file path for a port
@@ -37,7 +37,7 @@ function writePidFile(port, pid) {
 function readPidFile(port) {
   const pidPath = getPidFilePath(port);
   if (fs.existsSync(pidPath)) {
-    return parseInt(fs.readFileSync(pidPath, 'utf8').trim(), 10);
+    return parseInt(fs.readFileSync(pidPath, "utf8").trim(), 10);
   }
   return null;
 }
@@ -62,8 +62,8 @@ function findRunningInstances() {
   const files = fs.readdirSync(PID_DIR);
 
   for (const file of files) {
-    if (file.startsWith(PID_PREFIX) && file.endsWith('.pid')) {
-      const port = parseInt(file.replace(PID_PREFIX, '').replace('.pid', ''), 10);
+    if (file.startsWith(PID_PREFIX) && file.endsWith(".pid")) {
+      const port = parseInt(file.replace(PID_PREFIX, "").replace(".pid", ""), 10);
       const pid = readPidFile(port);
       if (pid) {
         try {
@@ -89,7 +89,7 @@ function stopAllServers() {
 
   for (const { port, pid } of instances) {
     try {
-      process.kill(pid, 'SIGTERM');
+      process.kill(pid, "SIGTERM");
       removePidFile(port);
       stopped++;
     } catch {
@@ -112,8 +112,8 @@ function setupShutdownHandlers(port, cleanup) {
     process.exit(0);
   };
 
-  process.on('SIGTERM', handler);
-  process.on('SIGINT', handler);
+  process.on("SIGTERM", handler);
+  process.on("SIGINT", handler);
 }
 
 module.exports = {
@@ -124,5 +124,5 @@ module.exports = {
   findRunningInstances,
   stopAllServers,
   setupShutdownHandlers,
-  PID_PREFIX
+  PID_PREFIX,
 };

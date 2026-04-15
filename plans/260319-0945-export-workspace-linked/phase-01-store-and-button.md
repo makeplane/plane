@@ -51,6 +51,7 @@ page.tsx
 ### 1. Update store interface (`IInstanceDepartmentStore`)
 
 In `instance-department.store.ts`, add to the interface:
+
 ```ts
 exportWorkspaceLinked: () => void;
 ```
@@ -58,6 +59,7 @@ exportWorkspaceLinked: () => void;
 ### 2. Add MobX observable registration
 
 In `makeObservable(...)`, add:
+
 ```ts
 exportWorkspaceLinked: action,
 ```
@@ -65,6 +67,7 @@ exportWorkspaceLinked: action,
 ### 3. Implement `exportWorkspaceLinked` action
 
 After `exportDepartments` method:
+
 ```ts
 exportWorkspaceLinked = (): void => {
   import("xlsx").then((XLSX) => {
@@ -92,6 +95,7 @@ exportWorkspaceLinked = (): void => {
 ### 4. Add button in `page.tsx`
 
 After the Bulk Linked button (line ~83), add:
+
 ```tsx
 <Button variant="outline" size="sm" onClick={() => exportWorkspaceLinked()}>
   <Download className="w-4 h-4" />

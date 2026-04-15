@@ -5,6 +5,7 @@ Complete guide to codec selection, quality optimization, and hardware accelerati
 ## Video Codecs
 
 ### H.264 (libx264)
+
 Most widely supported codec, excellent compression/quality balance.
 
 **Best for:** Universal compatibility, streaming, web video
@@ -23,6 +24,7 @@ ffmpeg -i input.mkv -c:v libx264 -preset fast -crf 23 -c:a copy output.mp4
 ```
 
 ### H.265/HEVC (libx265)
+
 25-50% better compression than H.264, slower encoding.
 
 **Best for:** 4K video, file size reduction, archival
@@ -36,6 +38,7 @@ ffmpeg -i input.mkv -c:v libx265 -preset fast -crf 26 -c:a copy output.mp4
 ```
 
 ### VP9 (libvpx-vp9)
+
 Royalty-free, WebM format, good for YouTube and open-source projects.
 
 **Best for:** YouTube, Chrome/Firefox, open platforms
@@ -50,6 +53,7 @@ ffmpeg -i input.mkv -c:v libvpx-vp9 -b:v 2M -pass 2 -c:a libopus output.webm
 ```
 
 ### AV1 (libaom-av1, libsvtav1)
+
 Next-generation codec, best compression, very slow encoding.
 
 **Best for:** Future-proofing, maximum compression, low bandwidth
@@ -65,6 +69,7 @@ ffmpeg -i input.mkv -c:v libsvtav1 -crf 30 -preset 5 output.mp4
 ## Audio Codecs
 
 ### AAC (Industry Standard)
+
 Best quality for streaming, universal support.
 
 ```bash
@@ -79,6 +84,7 @@ ffmpeg -i input.mp4 -c:a aac -b:a 96k output.mp4
 ```
 
 ### MP3 (libmp3lame)
+
 Universal compatibility, good quality.
 
 ```bash
@@ -90,6 +96,7 @@ ffmpeg -i input.wav -c:a libmp3lame -b:a 192k output.mp3
 ```
 
 ### Opus (libopus)
+
 Best quality at low bitrates, ideal for voice and streaming.
 
 ```bash
@@ -101,6 +108,7 @@ ffmpeg -i input.mp4 -c:a libopus -b:a 128k output.webm
 ```
 
 ### FLAC (Lossless)
+
 No quality loss, archival quality, larger files.
 
 ```bash
@@ -114,9 +122,11 @@ ffmpeg -i video.mp4 -c:a flac audio.flac
 ## Quality Optimization
 
 ### CRF (Constant Rate Factor)
+
 Best for quality-focused encoding. Single-pass, adjusts bitrate for complexity.
 
 **CRF Scale:**
+
 - 0 = Lossless (huge files)
 - 17-18 = Visually lossless
 - 20-23 = High quality (recommended)
@@ -136,6 +146,7 @@ ffmpeg -i input.mp4 -c:v libx264 -crf 25 -preset fast output.mp4
 ```
 
 ### Bitrate-Based Encoding
+
 Target specific file size or quality. Two-pass recommended.
 
 ```bash
@@ -148,9 +159,11 @@ ffmpeg -i input.mkv -c:v libx264 -b:v 2600k -pass 2 -c:a aac -b:a 128k output.mp
 ```
 
 ### Presets (Speed vs Compression)
+
 Trade-off between encoding speed and file size.
 
 **Available presets:**
+
 - `ultrafast` - Fastest, largest files
 - `superfast`
 - `veryfast`
@@ -176,6 +189,7 @@ ffmpeg -i input.mp4 -c:v libx264 -preset veryslow -crf 20 output.mp4
 ## Hardware Acceleration
 
 ### NVIDIA NVENC
+
 5-10x faster encoding, slightly larger files than software encoding.
 
 **Requirements:** NVIDIA GPU (GTX 10xx or newer)
@@ -192,6 +206,7 @@ ffmpeg -hwaccel cuda -i input.mp4 -c:v h264_nvenc -preset slow -rc vbr -cq 22 ou
 ```
 
 **NVENC Presets:**
+
 - `default` - Balanced
 - `slow` - Better quality
 - `medium`
@@ -204,6 +219,7 @@ ffmpeg -hwaccel cuda -i input.mp4 -c:v h264_nvenc -preset slow -rc vbr -cq 22 ou
 - `llhp` - Low latency high performance
 
 ### Intel QuickSync (QSV)
+
 Fast hardware encoding on Intel CPUs with integrated graphics.
 
 **Requirements:** Intel CPU with Quick Sync Video support
@@ -222,6 +238,7 @@ ffmpeg -hwaccel qsv -i input.mp4 -c:v h264_qsv -global_quality 20 output.mp4
 ```
 
 ### AMD VCE/VCN
+
 Hardware encoding on AMD GPUs.
 
 **Requirements:** AMD GPU with VCE/VCN support
@@ -237,6 +254,7 @@ ffmpeg -hwaccel auto -i input.mp4 \
 ```
 
 ### Apple VideoToolbox (macOS)
+
 Hardware encoding on macOS devices.
 
 ```bash
@@ -250,6 +268,7 @@ ffmpeg -i input.mp4 -c:v hevc_videotoolbox -b:v 1.5M output.mp4
 ## Performance Tuning
 
 ### Multi-Threading
+
 FFmpeg automatically uses multiple cores. Override if needed:
 
 ```bash
@@ -261,6 +280,7 @@ ffmpeg -threads 0 -i input.mp4 -c:v libx264 output.mp4
 ```
 
 ### Tune Options
+
 Optimize encoder for specific content types:
 
 ```bash
@@ -284,25 +304,25 @@ ffmpeg -i input.mp4 -c:v libx264 -tune stillimage -crf 22 output.mp4
 
 ### Use Cases
 
-| Use Case | Codec | Settings |
-|----------|-------|----------|
-| Web video | H.264 | CRF 23, preset medium |
-| 4K streaming | H.265 | CRF 24, preset fast |
-| YouTube upload | VP9 or H.264 | CRF 23 |
-| Archive | H.265 or H.264 | CRF 18, preset slow |
-| Low bandwidth | AV1 or H.265 | CRF 30 |
-| Fast encoding | H.264 NVENC | preset fast |
-| Maximum compatibility | H.264 | profile main, level 4.0 |
+| Use Case              | Codec          | Settings                |
+| --------------------- | -------------- | ----------------------- |
+| Web video             | H.264          | CRF 23, preset medium   |
+| 4K streaming          | H.265          | CRF 24, preset fast     |
+| YouTube upload        | VP9 or H.264   | CRF 23                  |
+| Archive               | H.265 or H.264 | CRF 18, preset slow     |
+| Low bandwidth         | AV1 or H.265   | CRF 30                  |
+| Fast encoding         | H.264 NVENC    | preset fast             |
+| Maximum compatibility | H.264          | profile main, level 4.0 |
 
 ### Platform Compatibility
 
-| Platform | Recommended | Supported |
-|----------|------------|-----------|
-| Web browsers | H.264 | H.264, VP9, AV1 |
-| Mobile devices | H.264 | H.264, H.265 |
-| Smart TVs | H.264 | H.264, H.265 |
-| YouTube | VP9, H.264 | All |
-| Social media | H.264 | H.264 |
+| Platform       | Recommended | Supported       |
+| -------------- | ----------- | --------------- |
+| Web browsers   | H.264       | H.264, VP9, AV1 |
+| Mobile devices | H.264       | H.264, H.265    |
+| Smart TVs      | H.264       | H.264, H.265    |
+| YouTube        | VP9, H.264  | All             |
+| Social media   | H.264       | H.264           |
 
 ## Best Practices
 
@@ -320,6 +340,7 @@ ffmpeg -i input.mp4 -c:v libx264 -tune stillimage -crf 22 output.mp4
 ## Troubleshooting
 
 ### Poor Quality Output
+
 ```bash
 # Lower CRF value
 ffmpeg -i input.mp4 -c:v libx264 -crf 18 -preset slow output.mp4
@@ -333,6 +354,7 @@ ffmpeg -i input.mp4 -c:v libx264 -b:v 5M -pass 2 -c:a aac output.mp4
 ```
 
 ### Slow Encoding
+
 ```bash
 # Use faster preset
 ffmpeg -i input.mp4 -c:v libx264 -preset ultrafast output.mp4
@@ -345,6 +367,7 @@ ffmpeg -i input.mp4 -vf scale=1280:-1 -c:v libx264 output.mp4
 ```
 
 ### Large File Size
+
 ```bash
 # Increase CRF
 ffmpeg -i input.mp4 -c:v libx264 -crf 26 output.mp4

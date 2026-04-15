@@ -187,16 +187,19 @@ WHERE r.run_status = 'failed'
 ## 5. Best Practices
 
 ### Watermark management
+
 - Commit watermark **AFTER** data has been successfully loaded
 - Use transactions to ensure consistency
 - Store both watermark_start and watermark_end for each run
 
 ### Error handling
+
 - Log enough context for debugging: source_record_id, source_data, error_stack
 - Classify errors: retryable vs non-retryable
 - Set up alerts for critical failures
 
 ### Retention policy
+
 - Keep detailed logs: 30-90 days
 - Keep summary: 1-2 years
 - Keep watermarks: indefinitely

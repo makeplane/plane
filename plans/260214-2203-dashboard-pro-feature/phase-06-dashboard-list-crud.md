@@ -115,26 +115,22 @@ interface DashboardListHeaderProps {
   onCreateClick: () => void;
 }
 
-export const DashboardListHeader = observer(
-  ({ onCreateClick }: DashboardListHeaderProps) => {
-    const { t } = useTranslation();
+export const DashboardListHeader = observer(({ onCreateClick }: DashboardListHeaderProps) => {
+  const { t } = useTranslation();
 
-    return (
-      <div className="flex items-center justify-between border-b border-custom-border-200 p-4">
-        <div>
-          <h1 className="text-xl font-semibold">{t("dashboards")}</h1>
-          <p className="text-sm text-custom-text-300">
-            Create and manage analytics dashboards
-          </p>
-        </div>
-        <Button variant="primary" size="sm" onClick={onCreateClick}>
-          <Plus className="h-4 w-4" />
-          <span>New Dashboard</span>
-        </Button>
+  return (
+    <div className="flex items-center justify-between border-b border-custom-border-200 p-4">
+      <div>
+        <h1 className="text-xl font-semibold">{t("dashboards")}</h1>
+        <p className="text-sm text-custom-text-300">Create and manage analytics dashboards</p>
       </div>
-    );
-  }
-);
+      <Button variant="primary" size="sm" onClick={onCreateClick}>
+        <Plus className="h-4 w-4" />
+        <span>New Dashboard</span>
+      </Button>
+    </div>
+  );
+});
 
 DashboardListHeader.displayName = "DashboardListHeader";
 ```
@@ -149,12 +145,7 @@ import { useNavigate } from "react-router";
 import { MoreVertical, Edit2, Trash2, LayoutDashboard } from "lucide-react";
 import type { IDashboard } from "@plane/types";
 import { Button } from "@plane/propel/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@plane/propel/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@plane/propel/dropdown-menu";
 
 interface DashboardCardProps {
   dashboard: IDashboard;
@@ -163,86 +154,76 @@ interface DashboardCardProps {
   onDelete: (dashboard: IDashboard) => void;
 }
 
-export const DashboardCard = observer(
-  ({ dashboard, workspaceSlug, onEdit, onDelete }: DashboardCardProps) => {
-    const navigate = useNavigate();
+export const DashboardCard = observer(({ dashboard, workspaceSlug, onEdit, onDelete }: DashboardCardProps) => {
+  const navigate = useNavigate();
 
-    const handleCardClick = () => {
-      navigate(`/${workspaceSlug}/dashboards/${dashboard.id}/`);
-    };
+  const handleCardClick = () => {
+    navigate(`/${workspaceSlug}/dashboards/${dashboard.id}/`);
+  };
 
-    const handleEdit = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onEdit(dashboard);
-    };
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(dashboard);
+  };
 
-    const handleDelete = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onDelete(dashboard);
-    };
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(dashboard);
+  };
 
-    return (
-      <div
-        className="group relative flex cursor-pointer flex-col rounded-lg border border-custom-border-200 bg-custom-background-100 p-4 transition-all hover:shadow-md"
-        onClick={handleCardClick}
-      >
-        {/* Header */}
-        <div className="mb-3 flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-custom-primary-100/10">
-              <LayoutDashboard className="h-5 w-5 text-custom-primary-100" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-medium text-custom-text-100">
-                {dashboard.name}
-              </h3>
-              {dashboard.is_default && (
-                <span className="text-xs text-custom-text-300">Default</span>
-              )}
-            </div>
+  return (
+    <div
+      className="group relative flex cursor-pointer flex-col rounded-lg border border-custom-border-200 bg-custom-background-100 p-4 transition-all hover:shadow-md"
+      onClick={handleCardClick}
+    >
+      {/* Header */}
+      <div className="mb-3 flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-custom-primary-100/10">
+            <LayoutDashboard className="h-5 w-5 text-custom-primary-100" />
           </div>
-
-          {/* Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleEdit}>
-                <Edit2 className="mr-2 h-4 w-4" />
-                <span>Edit</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDelete} className="text-red-500">
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Delete</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex-1">
+            <h3 className="font-medium text-custom-text-100">{dashboard.name}</h3>
+            {dashboard.is_default && <span className="text-xs text-custom-text-300">Default</span>}
+          </div>
         </div>
 
-        {/* Description */}
-        {dashboard.description && (
-          <p className="mb-3 text-sm text-custom-text-300 line-clamp-2">
-            {dashboard.description}
-          </p>
-        )}
-
-        {/* Footer Stats */}
-        <div className="mt-auto flex items-center justify-between text-xs text-custom-text-300">
-          <div className="flex items-center gap-4">
-            <span>{dashboard.widget_count} widgets</span>
-            {dashboard.config.project_ids?.length > 0 && (
-              <span>{dashboard.config.project_ids.length} projects</span>
-            )}
-          </div>
-          <span>by {dashboard.owner_name}</span>
-        </div>
+        {/* Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleEdit}>
+              <Edit2 className="mr-2 h-4 w-4" />
+              <span>Edit</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete} className="text-red-500">
+              <Trash2 className="mr-2 h-4 w-4" />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-    );
-  }
-);
+
+      {/* Description */}
+      {dashboard.description && (
+        <p className="mb-3 text-sm text-custom-text-300 line-clamp-2">{dashboard.description}</p>
+      )}
+
+      {/* Footer Stats */}
+      <div className="mt-auto flex items-center justify-between text-xs text-custom-text-300">
+        <div className="flex items-center gap-4">
+          <span>{dashboard.widget_count} widgets</span>
+          {dashboard.config.project_ids?.length > 0 && <span>{dashboard.config.project_ids.length} projects</span>}
+        </div>
+        <span>by {dashboard.owner_name}</span>
+      </div>
+    </div>
+  );
+});
 
 DashboardCard.displayName = "DashboardCard";
 ```
@@ -260,13 +241,7 @@ import type { IDashboard, TDashboardCreate } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
 import { Textarea } from "@plane/propel/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@plane/propel/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@plane/propel/dialog";
 
 interface DashboardFormModalProps {
   isOpen: boolean;
@@ -281,131 +256,98 @@ interface FormData {
   project_ids: string[];
 }
 
-export const DashboardFormModal = observer(
-  ({ isOpen, onClose, onSubmit, dashboard }: DashboardFormModalProps) => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+export const DashboardFormModal = observer(({ isOpen, onClose, onSubmit, dashboard }: DashboardFormModalProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const {
-      control,
-      handleSubmit,
-      formState: { errors },
-      reset,
-    } = useForm<FormData>({
-      defaultValues: {
-        name: dashboard?.name || "",
-        description: dashboard?.description || "",
-        project_ids: dashboard?.config?.project_ids || [],
-      },
-    });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
+    defaultValues: {
+      name: dashboard?.name || "",
+      description: dashboard?.description || "",
+      project_ids: dashboard?.config?.project_ids || [],
+    },
+  });
 
-    const handleFormSubmit = async (data: FormData) => {
-      try {
-        setIsSubmitting(true);
-        await onSubmit({
-          name: data.name,
-          description: data.description,
-          logo_props: {},
-          config: {
-            project_ids: data.project_ids,
-          },
-        });
-        reset();
-        onClose();
-      } catch (error) {
-        console.error("Failed to save dashboard:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
-
-    const handleClose = () => {
+  const handleFormSubmit = async (data: FormData) => {
+    try {
+      setIsSubmitting(true);
+      await onSubmit({
+        name: data.name,
+        description: data.description,
+        logo_props: {},
+        config: {
+          project_ids: data.project_ids,
+        },
+      });
       reset();
       onClose();
-    };
+    } catch (error) {
+      console.error("Failed to save dashboard:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {dashboard ? "Edit Dashboard" : "Create Dashboard"}
-            </DialogTitle>
-          </DialogHeader>
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
-          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-            {/* Name */}
-            <div>
-              <label className="mb-1 block text-sm font-medium">
-                Name <span className="text-red-500">*</span>
-              </label>
-              <Controller
-                name="name"
-                control={control}
-                rules={{ required: "Name is required" }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder="Analytics Dashboard"
-                    hasError={!!errors.name}
-                  />
-                )}
-              />
-              {errors.name && (
-                <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
-              )}
-            </div>
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{dashboard ? "Edit Dashboard" : "Create Dashboard"}</DialogTitle>
+        </DialogHeader>
 
-            {/* Description */}
-            <div>
-              <label className="mb-1 block text-sm font-medium">
-                Description
-              </label>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    placeholder="Dashboard description..."
-                    rows={3}
-                  />
-                )}
-              />
-            </div>
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Name <span className="text-red-500">*</span>
+            </label>
+            <Controller
+              name="name"
+              control={control}
+              rules={{ required: "Name is required" }}
+              render={({ field }) => <Input {...field} placeholder="Analytics Dashboard" hasError={!!errors.name} />}
+            />
+            {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+          </div>
 
-            {/* Project Scoping - TODO: Add project multi-select */}
-            <div>
-              <label className="mb-1 block text-sm font-medium">
-                Projects (optional)
-              </label>
-              <p className="text-xs text-custom-text-300">
-                Leave empty to include all projects
-              </p>
-            </div>
+          {/* Description */}
+          <div>
+            <label className="mb-1 block text-sm font-medium">Description</label>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => <Textarea {...field} placeholder="Dashboard description..." rows={3} />}
+            />
+          </div>
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" disabled={isSubmitting}>
-                {isSubmitting
-                  ? "Saving..."
-                  : dashboard
-                  ? "Update Dashboard"
-                  : "Create Dashboard"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-);
+          {/* Project Scoping - TODO: Add project multi-select */}
+          <div>
+            <label className="mb-1 block text-sm font-medium">Projects (optional)</label>
+            <p className="text-xs text-custom-text-300">Leave empty to include all projects</p>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : dashboard ? "Update Dashboard" : "Create Dashboard"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+});
 
 DashboardFormModal.displayName = "DashboardFormModal";
 ```
@@ -436,63 +378,49 @@ interface DashboardDeleteModalProps {
   dashboard: IDashboard | null;
 }
 
-export const DashboardDeleteModal = observer(
-  ({ isOpen, onClose, onConfirm, dashboard }: DashboardDeleteModalProps) => {
-    const [isDeleting, setIsDeleting] = useState(false);
+export const DashboardDeleteModal = observer(({ isOpen, onClose, onConfirm, dashboard }: DashboardDeleteModalProps) => {
+  const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleConfirm = async () => {
-      try {
-        setIsDeleting(true);
-        await onConfirm();
-        onClose();
-      } catch (error) {
-        console.error("Failed to delete dashboard:", error);
-      } finally {
-        setIsDeleting(false);
-      }
-    };
+  const handleConfirm = async () => {
+    try {
+      setIsDeleting(true);
+      await onConfirm();
+      onClose();
+    } catch (error) {
+      console.error("Failed to delete dashboard:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
-    if (!dashboard) return null;
+  if (!dashboard) return null;
 
-    return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10">
-              <AlertTriangle className="h-6 w-6 text-red-500" />
-            </div>
-            <DialogTitle>Delete Dashboard</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete{" "}
-              <span className="font-semibold">{dashboard.name}</span>? This
-              action cannot be undone and will delete all widgets in this
-              dashboard.
-            </DialogDescription>
-          </DialogHeader>
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10">
+            <AlertTriangle className="h-6 w-6 text-red-500" />
+          </div>
+          <DialogTitle>Delete Dashboard</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete <span className="font-semibold">{dashboard.name}</span>? This action cannot
+            be undone and will delete all widgets in this dashboard.
+          </DialogDescription>
+        </DialogHeader>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isDeleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleConfirm}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete Dashboard"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-);
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onClose} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button type="button" variant="destructive" onClick={handleConfirm} disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Delete Dashboard"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+});
 
 DashboardDeleteModal.displayName = "DashboardDeleteModal";
 ```
@@ -511,21 +439,19 @@ interface DashboardEmptyStateProps {
   onCreateClick: () => void;
 }
 
-export const DashboardEmptyState = observer(
-  ({ onCreateClick }: DashboardEmptyStateProps) => {
-    return (
-      <EmptyStateDetailed
-        icon={LayoutDashboard}
-        title="No dashboards yet"
-        description="Create your first analytics dashboard to visualize work item data with customizable charts and widgets."
-        primaryButton={{
-          text: "Create Dashboard",
-          onClick: onCreateClick,
-        }}
-      />
-    );
-  }
-);
+export const DashboardEmptyState = observer(({ onCreateClick }: DashboardEmptyStateProps) => {
+  return (
+    <EmptyStateDetailed
+      icon={LayoutDashboard}
+      title="No dashboards yet"
+      description="Create your first analytics dashboard to visualize work item data with customizable charts and widgets."
+      primaryButton={{
+        text: "Create Dashboard",
+        onClick: onCreateClick,
+      }}
+    />
+  );
+});
 
 DashboardEmptyState.displayName = "DashboardEmptyState";
 ```
@@ -559,9 +485,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedDashboard, setSelectedDashboard] = useState<IDashboard | null>(
-    null
-  );
+  const [selectedDashboard, setSelectedDashboard] = useState<IDashboard | null>(null);
 
   // Fetch dashboards on mount
   useEffect(() => {
@@ -579,11 +503,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
 
   const handleUpdate = async (data: any) => {
     if (!selectedDashboard) return;
-    await dashboardStore.updateDashboard(
-      workspaceSlug,
-      selectedDashboard.id,
-      data
-    );
+    await dashboardStore.updateDashboard(workspaceSlug, selectedDashboard.id, data);
   };
 
   const handleDelete = (dashboard: IDashboard) => {
@@ -612,9 +532,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
               <Loader />
             </div>
           ) : dashboardStore.dashboardsList.length === 0 ? (
-            <DashboardEmptyState
-              onCreateClick={() => setIsCreateModalOpen(true)}
-            />
+            <DashboardEmptyState onCreateClick={() => setIsCreateModalOpen(true)} />
           ) : (
             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
               {dashboardStore.dashboardsList.map((dashboard) => (
@@ -698,15 +616,19 @@ export default observer(DashboardListPage);
 ## Risk Assessment
 
 **Risk**: Form doesn't validate properly
+
 - **Mitigation**: Use react-hook-form validation rules
 
 **Risk**: Modal doesn't close after submit
+
 - **Mitigation**: Call onClose() after successful operation
 
 **Risk**: Optimistic updates cause stale data
+
 - **Mitigation**: Fetch dashboards after create/update/delete
 
 **Risk**: Memory leak from unclosed modals
+
 - **Mitigation**: Reset form state in handleClose
 
 ## Security Considerations
@@ -719,6 +641,7 @@ export default observer(DashboardListPage);
 ## Next Steps
 
 Proceed to [Phase 7: Widget Components & Grid Layout](./phase-07-widget-components-grid.md)
+
 - Implement widget grid layout with drag-drop
 - Create widget wrapper component
 - Implement all 6 widget chart types

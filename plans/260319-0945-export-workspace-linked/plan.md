@@ -19,9 +19,9 @@ Add an "Export Workspace Linked" button beside the existing "Bulk Linked" button
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | Store action + Page button | pending | [phase-01](./phase-01-store-and-button.md) |
+| #   | Phase                      | Status  | File                                       |
+| --- | -------------------------- | ------- | ------------------------------------------ |
+| 1   | Store action + Page button | pending | [phase-01](./phase-01-store-and-button.md) |
 
 ## Files Touched
 
@@ -31,6 +31,7 @@ Add an "Export Workspace Linked" button beside the existing "Bulk Linked" button
 ## Validation Log
 
 ### Session 1 — 2026-03-19
+
 **Trigger:** Initial plan creation
 **Questions asked:** 3
 
@@ -52,9 +53,11 @@ Add an "Export Workspace Linked" button beside the existing "Bulk Linked" button
    - **Rationale:** Matches real-world need; child depts can have their own linked workspaces.
 
 #### Confirmed Decisions
+
 - `department_code` column = `code` field (not `dept_code`)
 - Data source = MobX store `this.tree` (no extra fetch)
 - Scope = all levels recursively flattened, filter `linked_workspace_detail !== null`
 
 #### Action Items
+
 - [x] No plan changes required — all recommended options confirmed

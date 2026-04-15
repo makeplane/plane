@@ -36,11 +36,14 @@ FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ## Indexing Rules
 
 ### 1. Primary Key
+
 - Usually `BIGINT` auto-increment or UUID
 - Format: `PRIMARY KEY (id)`
 
 ### 2. Foreign Key Indexes
+
 **IMPORTANT**: Create indexes for ALL foreign keys for efficient JOINs:
+
 ```sql
 CREATE INDEX idx_orders_user_id ON orders(user_id);
 CREATE INDEX idx_order_items_order_id ON order_items(order_id);
@@ -48,12 +51,16 @@ CREATE INDEX idx_order_items_product_id ON order_items(product_id);
 ```
 
 ### 3. Frequently Filtered Columns
+
 Index columns commonly used in WHERE:
+
 - `status`, `created_at`, `updated_at`
 - Code/reference columns: `order_number`, `sku`
 
 ### 4. Composite Indexes
+
 Based on actual query patterns:
+
 ```sql
 -- Query: WHERE user_id = ? AND status = ? ORDER BY created_at DESC
 CREATE INDEX idx_orders_user_status_created ON orders(user_id, status, created_at DESC);
@@ -63,11 +70,13 @@ CREATE INDEX idx_orders_store_created ON orders(store_id, created_at);
 ```
 
 **Composite index rules:**
+
 - Put columns with **high selectivity** (fewer duplicate values) first
 - Avoid duplicate/redundant indexes
 - Index should cover WHERE + ORDER BY of query
 
 ### 5. Unique Constraints
+
 ```sql
 UNIQUE (order_number)
 UNIQUE (sku)
@@ -97,6 +106,7 @@ SELECT * FROM orders WHERE deleted_at IS NULL;
 ## Anti-patterns to Avoid
 
 ### Missing FK Index
+
 ```sql
 -- ❌ BAD: FK without index → slow JOINs
 FOREIGN KEY (user_id) REFERENCES users(id)
@@ -104,6 +114,7 @@ FOREIGN KEY (user_id) REFERENCES users(id)
 ```
 
 ### Over-indexing
+
 ```sql
 -- ❌ BAD: Indexing each column separately
 CREATE INDEX idx_a ON orders(user_id);
@@ -115,6 +126,7 @@ CREATE INDEX idx_orders_user_status_created ON orders(user_id, status, created_a
 ```
 
 ### Using TEXT instead of ENUM
+
 ```sql
 -- ❌ BAD: Cannot validate values
 status TEXT
@@ -126,6 +138,7 @@ status VARCHAR(32) CHECK (status IN ('pending', 'confirmed', 'shipped'))
 ```
 
 ### Missing Audit Columns
+
 ```sql
 -- ❌ BAD
 CREATE TABLE products (id INT, name VARCHAR(255));

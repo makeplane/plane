@@ -16,6 +16,7 @@ T6 = TaskCreate(subject="Code review",                 activeForm="Reviewing cod
 ## Workflow
 
 ### Step 1: Compile & Collect Failures
+
 `TaskUpdate(T1, status="in_progress")`
 Use `tester` agent. Fix all syntax errors before running tests.
 
@@ -25,6 +26,7 @@ Use `tester` agent. Fix all syntax errors before running tests.
 `TaskUpdate(T1, status="completed")`
 
 ### Step 2: Debug
+
 `TaskUpdate(T2, status="in_progress")`
 Use `debugger` agent for root cause analysis.
 
@@ -34,6 +36,7 @@ Use `debugger` agent for root cause analysis.
 `TaskUpdate(T2, status="completed")`
 
 ### Step 3: Plan
+
 `TaskUpdate(T3, status="in_progress")`
 Use `planner` agent for fix strategy.
 
@@ -43,24 +46,28 @@ Use `planner` agent for fix strategy.
 `TaskUpdate(T3, status="completed")`
 
 ### Step 4: Implement
+
 `TaskUpdate(T4, status="in_progress")`
 Implement fixes step by step per plan.
 
 `TaskUpdate(T4, status="completed")`
 
 ### Step 5: Re-test
+
 `TaskUpdate(T5, status="in_progress")`
 Use `tester` agent. If tests still fail → keep T5 `in_progress`, loop back to Step 2.
 
 `TaskUpdate(T5, status="completed")`
 
 ### Step 6: Review
+
 `TaskUpdate(T6, status="in_progress")`
 Use `code-reviewer` agent.
 
 `TaskUpdate(T6, status="completed")`
 
 ## Common Commands
+
 ```bash
 npm test
 bun test
@@ -69,6 +76,7 @@ go test ./...
 ```
 
 ## Tips
+
 - Run single failing test first for faster iteration
 - Check test assertions vs actual behavior
 - Verify test fixtures/mocks are correct

@@ -14,6 +14,7 @@
 ## Overview
 
 When a workitem is currently in a **draft state** (group `"backlog"`) and the user picks a **non-draft state** in the edit sidebar, all required fields must be filled before the state change proceeds. If any required field is missing:
+
 1. The update is aborted (dropdown reverts automatically — it is a controlled component)
 2. Toast notification lists the missing fields
 3. Each empty required field in the sidebar gets a red border / error highlight
@@ -21,6 +22,7 @@ When a workitem is currently in a **draft state** (group `"backlog"`) and the us
 ## Required Fields
 
 Same as creation form:
+
 - `assignee_ids` — must have length > 0
 - `start_date` — must be non-null
 - `target_date` — must be non-null
@@ -44,11 +46,11 @@ apps/web/core/components/issues/issue-detail/sidebar.tsx ← minimal change (cor
 
 ## Related Code Files
 
-| File | Role | Change |
-| --- | --- | --- |
-| `apps/web/ce/hooks/use-draft-state-transition.ts` | **New** — CE hook with transition validation | Create |
-| `apps/web/core/hooks/store/use-draft-state-transition.ts` | **New** — Core shim | Create |
-| `apps/web/core/components/issues/issue-detail/sidebar.tsx` | Edit form state dropdown | Intercept onChange, validate before update |
+| File                                                       | Role                                         | Change                                     |
+| ---------------------------------------------------------- | -------------------------------------------- | ------------------------------------------ |
+| `apps/web/ce/hooks/use-draft-state-transition.ts`          | **New** — CE hook with transition validation | Create                                     |
+| `apps/web/core/hooks/store/use-draft-state-transition.ts`  | **New** — Core shim                          | Create                                     |
+| `apps/web/core/components/issues/issue-detail/sidebar.tsx` | Edit form state dropdown                     | Intercept onChange, validate before update |
 
 ## Implementation Steps
 
@@ -62,7 +64,7 @@ import type { TIssue } from "@plane/types";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type ValidationResult = {
-  missingFieldKeys: string[];   // e.g. ["assignee_ids", "start_date"]
+  missingFieldKeys: string[]; // e.g. ["assignee_ids", "start_date"]
   missingFieldLabels: string[]; // e.g. ["Assignee", "Start date"]
 };
 
@@ -111,12 +113,14 @@ export { useDraftStateTransition } from "@/plane-web/hooks/use-draft-state-trans
 ### Step 3: Update `sidebar.tsx` — intercept state onChange
 
 Import:
+
 ```typescript
 import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
 import { toast } from "@plane/propel/toast"; // @plane/propel preferred per CLAUDE.md
 ```
 
 In component body:
+
 ```typescript
 const { validateTransition } = useDraftStateTransition();
 ```
@@ -142,6 +146,7 @@ Replace state dropdown onChange (line ~96). Track `fieldErrors` in component sta
 ```
 
 Apply error class on each required field wrapper using `fieldErrors.includes("fieldKey")`:
+
 ```tsx
 // assignee field wrapper
 <div className={cn({ "border border-red-500 rounded": fieldErrors.includes("assignee_ids") })}>
@@ -166,11 +171,13 @@ Apply error class on each required field wrapper using `fieldErrors.includes("fi
 ### Step 4: Add i18n key
 
 Locate the i18n JSON files (e.g., `packages/i18n/src/en.json` or similar) and add:
+
 ```json
 "issue": {
   "required_fields_missing": "Required fields missing"
 }
 ```
+
 Search for the key `issue.add.assignee` to find the right file and nesting location.
 
 ### Step 5: Verify lint & types
@@ -201,8 +208,8 @@ pnpm check:lint
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-| --- | --- | --- | --- |
-| Toast hook API differs from assumption | Low | Low | Check existing toast usage in sidebar.tsx at implementation time |
-| i18n keys don't exist | Low | Low | Fallback to hardcoded strings if keys missing; add keys if needed |
-| State data not loaded when onChange fires | Very Low | Low | `getStateById` returns undefined → group undefined → `!== "backlog"` → validation skipped (safe) |
+| Risk                                      | Likelihood | Impact | Mitigation                                                                                       |
+| ----------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------------------ |
+| Toast hook API differs from assumption    | Low        | Low    | Check existing toast usage in sidebar.tsx at implementation time                                 |
+| i18n keys don't exist                     | Low        | Low    | Fallback to hardcoded strings if keys missing; add keys if needed                                |
+| State data not loaded when onChange fires | Very Low   | Low    | `getStateById` returns undefined → group undefined → `!== "backlog"` → validation skipped (safe) |

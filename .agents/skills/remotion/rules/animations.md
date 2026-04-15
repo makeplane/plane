@@ -16,14 +16,12 @@ export const FadeIn = () => {
   const { fps } = useVideoConfig();
 
   const opacity = interpolate(frame, [0, 2 * fps], [0, 1], {
-    extrapolateRight: 'clamp',
+    extrapolateRight: "clamp",
   });
- 
-  return (
-    <div style={{ opacity }}>Hello World!</div>
-  );
+
+  return <div style={{ opacity }}>Hello World!</div>;
 };
 ```
 
 CSS transitions or animations are FORBIDDEN - they will not render correctly.  
-Tailwind animation class names are FORBIDDEN - they will not render correctly.  
+Tailwind animation class names are FORBIDDEN - they will not render correctly.

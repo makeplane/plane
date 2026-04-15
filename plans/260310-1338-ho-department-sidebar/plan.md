@@ -15,14 +15,15 @@ Add "HO" as a new dynamic workspace sidebar navigation item (in the Workspace se
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | Navigation Setup | ✅ completed | [phase-01-navigation-setup.md](./phase-01-navigation-setup.md) |
-| 2 | Page & Components | ✅ completed | [phase-02-page-components.md](./phase-02-page-components.md) |
+| #   | Phase             | Status       | File                                                           |
+| --- | ----------------- | ------------ | -------------------------------------------------------------- |
+| 1   | Navigation Setup  | ✅ completed | [phase-01-navigation-setup.md](./phase-01-navigation-setup.md) |
+| 2   | Page & Components | ✅ completed | [phase-02-page-components.md](./phase-02-page-components.md)   |
 
 ## Validation Log
 
 ### Session 1 — 2026-03-10
+
 **Trigger:** Initial plan validation
 **Questions asked:** 4
 
@@ -50,12 +51,14 @@ Add "HO" as a new dynamic workspace sidebar navigation item (in the Workspace se
    - **Rationale:** No i18n file changes needed. Use `label: "HO"` directly instead of `labelTranslationKey`.
 
 #### Confirmed Decisions
+
 - **Placement**: Static section (not Workspace section) — added to `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS`
 - **Display**: Flat table (Name, Code, Short Name, Parent, Staff Count, Level)
 - **Access**: Admin + Member roles AND `is_board_of_director_workspace === true`
 - **Label**: Hardcoded "HO" string
 
 #### Action Items
+
 - [ ] Change from DYNAMIC to STATIC nav item
 - [ ] Set `access: [ADMIN, MEMBER]` on the constant
 - [ ] Add `is_board_of_director_workspace` check in CE `SidebarItem` for "ho" key
@@ -63,17 +66,20 @@ Add "HO" as a new dynamic workspace sidebar navigation item (in the Workspace se
 - [ ] Page-level guard: if workspace is not BOD, show "Not available" or redirect
 
 #### Impact on Phases
+
 - Phase 1: Change from `WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS` → `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS`; use hardcoded label; access ADMIN+MEMBER; add BOD check in CE SidebarItem
 - Phase 2: Add workspace store check (is_board_of_director_workspace) in page guard
 
 ## Files Modified / Created
 
 ### Modified
+
 - `packages/constants/src/workspace.ts` — add `ho` to dynamic nav items
 - `apps/web/ce/components/workspace/sidebar/helper.tsx` — add `ho` icon case
 - `apps/web/app/routes/core.ts` — add ho route
 
 ### Created
+
 - `apps/web/app/(all)/[workspaceSlug]/(projects)/ho/layout.tsx`
 - `apps/web/app/(all)/[workspaceSlug]/(projects)/ho/page.tsx`
 - `apps/web/ce/components/ho/department-list.tsx`

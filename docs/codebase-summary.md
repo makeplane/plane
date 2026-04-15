@@ -77,46 +77,50 @@ plane/
 ## Key Files & Entry Points
 
 ### Backend (Django)
-| File/Dir | Purpose |
-|----------|---------|
-| `apps/api/plane/settings/base.py` | Django core config (DB, cache, middleware) |
-| `apps/api/plane/settings/urls.py` | API URL routing (v0, v1) |
-| `apps/api/plane/db/models/` | 37 ORM models (BaseModel, ProjectBaseModel) |
-| `apps/api/plane/app/views/` | 41+ DRF viewsets (@allow_permission) |
-| `apps/api/plane/app/serializers/v0/` | Legacy serializers (session auth) |
-| `apps/api/plane/app/serializers/v1/` | External API (API key auth, OpenAPI) |
-| `apps/api/plane/utils/workflow_checker.py` | Workflow validation logic |
-| `apps/api/plane/tasks/` | Celery async tasks (41 tasks) |
-| `apps/api/manage.py` | Django CLI |
+
+| File/Dir                                   | Purpose                                     |
+| ------------------------------------------ | ------------------------------------------- |
+| `apps/api/plane/settings/base.py`          | Django core config (DB, cache, middleware)  |
+| `apps/api/plane/settings/urls.py`          | API URL routing (v0, v1)                    |
+| `apps/api/plane/db/models/`                | 37 ORM models (BaseModel, ProjectBaseModel) |
+| `apps/api/plane/app/views/`                | 41+ DRF viewsets (@allow_permission)        |
+| `apps/api/plane/app/serializers/v0/`       | Legacy serializers (session auth)           |
+| `apps/api/plane/app/serializers/v1/`       | External API (API key auth, OpenAPI)        |
+| `apps/api/plane/utils/workflow_checker.py` | Workflow validation logic                   |
+| `apps/api/plane/tasks/`                    | Celery async tasks (41 tasks)               |
+| `apps/api/manage.py`                       | Django CLI                                  |
 
 ### Frontend (React)
-| File/Dir | Purpose |
-|----------|---------|
-| `apps/web/app/` | Next.js app router entry (layouts, pages) |
-| `apps/web/core/store/` | MobX root + 33+ feature stores |
-| `apps/web/core/hooks/store/` | Store hooks (useWorkspace, useProject, etc.) |
-| `apps/web/core/services/` | API client classes (axios) |
-| `apps/web/core/components/` | Reusable React components (layouts, modals) |
-| `apps/web/ce/store/root.store.ts` | CE root store (extends CoreRootStore) |
-| `apps/web/ce/components/workflow/` | Workflow UI + DnD hook |
-| `apps/web/ce/store/workflow.store.ts` | Workflow MobX store |
-| `apps/web/core/hooks/store/use-workflow.ts` | Workflow hook (reads CE store) |
-| `apps/web/tsconfig.json` | Path aliases (@/*, @/plane-web/*) |
+
+| File/Dir                                    | Purpose                                      |
+| ------------------------------------------- | -------------------------------------------- |
+| `apps/web/app/`                             | Next.js app router entry (layouts, pages)    |
+| `apps/web/core/store/`                      | MobX root + 33+ feature stores               |
+| `apps/web/core/hooks/store/`                | Store hooks (useWorkspace, useProject, etc.) |
+| `apps/web/core/services/`                   | API client classes (axios)                   |
+| `apps/web/core/components/`                 | Reusable React components (layouts, modals)  |
+| `apps/web/ce/store/root.store.ts`           | CE root store (extends CoreRootStore)        |
+| `apps/web/ce/components/workflow/`          | Workflow UI + DnD hook                       |
+| `apps/web/ce/store/workflow.store.ts`       | Workflow MobX store                          |
+| `apps/web/core/hooks/store/use-workflow.ts` | Workflow hook (reads CE store)               |
+| `apps/web/tsconfig.json`                    | Path aliases (@/_, @/plane-web/_)            |
 
 ### Packages
-| Package | Key Files | Purpose |
-|---------|-----------|---------|
-| **propel** | src/index.ts | New Tailwind v4 components |
-| **types** | src/index.ts | TypeScript interfaces (IWorkspace, IIssue, etc.) |
-| **services** | src/ | API client classes (WorkspaceService, IssueService) |
-| **editor** | src/index.ts | Rich text editor (Tiptap + Y.js) |
-| **i18n** | src/locales/ | Translations (en.json, ko.json, vi.json) |
+
+| Package      | Key Files    | Purpose                                             |
+| ------------ | ------------ | --------------------------------------------------- |
+| **propel**   | src/index.ts | New Tailwind v4 components                          |
+| **types**    | src/index.ts | TypeScript interfaces (IWorkspace, IIssue, etc.)    |
+| **services** | src/         | API client classes (WorkspaceService, IssueService) |
+| **editor**   | src/index.ts | Rich text editor (Tiptap + Y.js)                    |
+| **i18n**     | src/locales/ | Translations (en.json, ko.json, vi.json)            |
 
 ## Core Concepts
 
 ### ORM Models (Backend)
 
 **Base Hierarchy:**
+
 ```
 BaseModel (id, created_at, updated_at)
   ├─ ProjectBaseModel (project_id, project foreign key)
@@ -124,6 +128,7 @@ BaseModel (id, created_at, updated_at)
 ```
 
 **37+ Models Include:**
+
 - **Workspace, Project, ProjectMember**
 - **Issue, IssueFavorite, IssueLabel, IssueLink, IssueActivity**
 - **Cycle (sprints), Module, CycleIssue, ModuleIssue**
@@ -139,6 +144,7 @@ BaseModel (id, created_at, updated_at)
 - **MonitoringMetric** (CE: admin monitoring dashboard)
 
 **Key Patterns:**
+
 - Soft-delete: `deleted_at` field, `SoftDeletionManager` ORM
 - Audit trail: `created_by`, `updated_by` foreign keys
 - Uniqueness with soft-delete: `UniqueConstraint(condition=Q(deleted_at__isnull=True))`
@@ -146,6 +152,7 @@ BaseModel (id, created_at, updated_at)
 ### MobX Stores (Frontend)
 
 **Root Store:**
+
 ```
 RootStore (extends CoreRootStore in CE)
   ├─ workspaceStore → WorkspaceRootStore
@@ -163,6 +170,7 @@ RootStore (extends CoreRootStore in CE)
 ```
 
 **Store Pattern:**
+
 ```typescript
 makeObservable(this, {
   items: observable,
@@ -170,21 +178,25 @@ makeObservable(this, {
   fetchItems: action,
   updateItem: action.bound,
   asyncFetch: flow, // for async
-})
+});
 
 // Async mutations must use runInAction
-runInAction(() => { this.items = data })
+runInAction(() => {
+  this.items = data;
+});
 ```
 
 ### API Architecture
 
 **V0 API (Session Auth, Internal):**
+
 - Used by web UI
 - Cookie-based session
 - `/api/v0/` routes
 - Python serializers: `apps/api/plane/app/serializers/v0/`
 
 **V1 API (API Key Auth, External):**
+
 - External integrations
 - Header-based API key: `X-API-KEY`
 - OpenAPI docs: DRF Spectacular
@@ -192,6 +204,7 @@ runInAction(() => { this.items = data })
 - Separate serializers: `apps/api/plane/app/serializers/v1/`
 
 **Common Patterns:**
+
 - `@allow_permission("workspace.member")` — Role check
 - `project__workspace__slug=slug` — Always scope queries
 - Paginate responses (LimitOffsetPagination)
@@ -213,6 +226,7 @@ runInAction(() => { this.items = data })
 ### Celery Tasks (41 Tasks)
 
 **Categories:**
+
 - **Notifications:** email, Slack, webhook delivery
 - **Webhooks:** send events, retry logic
 - **Activities:** log issue/project changes
@@ -227,6 +241,7 @@ runInAction(() => { this.items = data })
 ### WebSocket Real-Time (apps/live)
 
 **Stack:** Hocuspocus + Y.js CRDT
+
 - Shared document state across clients
 - Conflict-free edits (CRDT resolution)
 - WebSocket server (port 3003)
@@ -239,32 +254,35 @@ runInAction(() => { this.items = data })
 **Rule:** Never modify `core/`; extend via `ce/`
 
 **Store Extension Example:**
+
 ```typescript
 // core/store/issue-root.store.ts
 export class IssueRootStore {}
 
 // ce/store/root.store.ts
 export class RootStore extends CoreRootStore {
-  workflowStore: WorkflowRootStore
+  workflowStore: WorkflowRootStore;
   constructor() {
-    super()
-    this.workflowStore = new WorkflowRootStore(this)
+    super();
+    this.workflowStore = new WorkflowRootStore(this);
   }
 }
 ```
 
 **Hook Pattern:**
+
 ```typescript
 // core/hooks/store/use-workflow.ts
 export function useWorkflow() {
-  const { workflowStore } = useContext(StoreContext)
-  return workflowStore // CE or core
+  const { workflowStore } = useContext(StoreContext);
+  return workflowStore; // CE or core
 }
 ```
 
 ### Drag-and-Drop (Kanban)
 
 **Hook:** `useWorkflowFDragNDrop` in `ce/components/workflow/use-workflow-drag-n-drop.ts`
+
 - Called per Kanban column in `kanban-group.tsx`
 - Returns: `workflowDisabledSource`, `isWorkflowDropDisabled`, `handleWorkFlowState`, etc.
 - On `onDragEnter`: `handleWorkFlowState(sourceGroupId, destGroupId)`
@@ -274,12 +292,13 @@ export function useWorkflow() {
 
 **Issue:** Blocked transitions raise errors in promises (unhandled rejection)
 **Solution:** `WorkflowBlockerModal` in project layout catches via:
+
 ```javascript
 window.addEventListener("unhandledrejection", (e) => {
   if (e.reason.code === "WORKFLOW_TRANSITION_BLOCKED") {
-    showBlockerModal(e.reason)
+    showBlockerModal(e.reason);
   }
-})
+});
 ```
 
 ### Type Management
@@ -289,36 +308,40 @@ window.addEventListener("unhandledrejection", (e) => {
 ```typescript
 // packages/types/src/workspace.ts
 export interface IWorkspace {
-  id: string
-  name: string
-  slug: string
+  id: string;
+  name: string;
+  slug: string;
 }
 
 // packages/types/src/index.ts
-export * from "./workspace"
-export * from "./project"
+export * from "./workspace";
+export * from "./project";
 // ...
 ```
 
 **Naming:** `I*` prefix for interfaces/types
+
 - `IWorkspace`, `IProject`, `IIssue`, `IPageBlock`, etc.
 
 ### i18n (Internationalization)
 
 **Locales:** `packages/i18n/src/locales/`
+
 - `en.json` — English
 - `ko.json` — Korean
 - `vi.json` — Vietnamese
 
 **Usage:**
-```typescript
-import { useI18n } from "@plane/i18n"
 
-const { t } = useI18n()
-t("workspace.settings.title")
+```typescript
+import { useI18n } from "@plane/i18n";
+
+const { t } = useI18n();
+t("workspace.settings.title");
 ```
 
 **Format:** ICU MessageFormat for plurals/gender
+
 ```json
 {
   "issues.count": "{count, plural, =0 {No issues} one {1 issue} other {# issues}}"
@@ -337,11 +360,13 @@ t("workspace.settings.title")
 ## Testing
 
 **Backend:** Django test suite + pytest
+
 ```bash
 cd apps/api && python run_tests.py
 ```
 
 **Frontend:** Vitest + React Testing Library
+
 ```bash
 pnpm test
 ```

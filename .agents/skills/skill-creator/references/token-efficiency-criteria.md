@@ -10,22 +10,24 @@ Skills use progressive disclosure to minimize context window usage.
 
 ## Size Limits
 
-| Resource | Limit | Notes |
-|----------|-------|-------|
-| Description | <200 chars | In YAML frontmatter |
-| SKILL.md | <300 lines | Core instructions only |
-| Each reference file | <300 lines | Split if larger |
-| Scripts | No limit | Executed, not loaded into context |
+| Resource            | Limit      | Notes                             |
+| ------------------- | ---------- | --------------------------------- |
+| Description         | <200 chars | In YAML frontmatter               |
+| SKILL.md            | <300 lines | Core instructions only            |
+| Each reference file | <300 lines | Split if larger                   |
+| Scripts             | No limit   | Executed, not loaded into context |
 
 ## SKILL.md Content Strategy
 
 **Include in SKILL.md:**
+
 - Purpose (2-3 sentences)
 - When to use (trigger conditions)
 - Quick reference for common workflows
 - Pointers to resources (scripts, references, assets)
 
 **Move to references/:**
+
 - Detailed documentation
 - Database schemas
 - API specs
@@ -36,6 +38,7 @@ Skills use progressive disclosure to minimize context window usage.
 ## No Duplication Rule
 
 Information lives in ONE place:
+
 - Either in SKILL.md
 - Or in references/
 
@@ -57,6 +60,7 @@ Include grep patterns in SKILL.md for discoverability:
 
 ```markdown
 ## API Documentation
+
 - Auth: `references/api-endpoints-auth.md`
 - Users: `references/api-endpoints-users.md`
 - Payments: `references/api-endpoints-payments.md`
@@ -67,6 +71,7 @@ Include grep patterns in SKILL.md for discoverability:
 Scripts execute without loading into context.
 
 **When to use scripts:**
+
 - Repetitive code patterns
 - Deterministic operations
 - Complex transformations

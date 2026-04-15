@@ -43,12 +43,15 @@ def get_stage(id):
 
 ```markdown
 ## SUMMARY
+
 [Overview]
 
 ## KEY_FINDINGS
+
 - Finding 1
 
 ## SCORE
+
 [1-5]
 ```
 
@@ -76,11 +79,11 @@ def estimate(items, tokens_per, price_per_1k):
 
 ## Single vs Multi-Agent
 
-| Factor | Single | Multi |
-|--------|--------|-------|
-| Context | Fits window | Exceeds |
-| Tasks | Sequential | Parallel |
-| Tokens | Limited | 15x OK |
+| Factor  | Single      | Multi    |
+| ------- | ----------- | -------- |
+| Context | Fits window | Exceeds  |
+| Tasks   | Sequential  | Parallel |
+| Tokens  | Limited     | 15x OK   |
 
 ## Guidelines
 

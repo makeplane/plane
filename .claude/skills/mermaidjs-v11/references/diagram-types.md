@@ -5,9 +5,11 @@ Comprehensive syntax reference for all 24+ diagram types in Mermaid.js v11.
 ## Core Diagrams
 
 ### Flowchart
+
 Process flows, decision trees, workflows.
 
 **Syntax:**
+
 ```
 flowchart {direction}
   {nodeId}[{label}] {arrow} {nodeId}[{label}]
@@ -19,9 +21,11 @@ flowchart {direction}
 **Subgraphs:** Group related nodes
 
 ### Sequence Diagram
+
 Actor interactions, API flows, message sequences.
 
 **Syntax:**
+
 ```
 sequenceDiagram
   participant A as Actor
@@ -35,9 +39,11 @@ sequenceDiagram
 **Features:** Loops, alternatives, parallel, optional, critical regions
 
 ### Class Diagram
+
 OOP structures, inheritance, relationships.
 
 **Syntax:**
+
 ```
 classDiagram
   class Animal {
@@ -52,9 +58,11 @@ classDiagram
 **Relationships:** `<|--` inheritance, `*--` composition, `o--` aggregation, `-->` association
 
 ### State Diagram
+
 State machines, transitions, workflows.
 
 **Syntax:**
+
 ```
 stateDiagram-v2
   [*] --> State1
@@ -65,9 +73,11 @@ stateDiagram-v2
 **Features:** Composite states, choice points, forks/joins, concurrency
 
 ### ER Diagram
+
 Database relationships, schemas.
 
 **Syntax:**
+
 ```
 erDiagram
   CUSTOMER ||--o{ ORDER : places
@@ -79,9 +89,11 @@ erDiagram
 ## Planning Diagrams
 
 ### Gantt Chart
+
 Project timelines, schedules.
 
 **Syntax:**
+
 ```
 gantt
   title Project
@@ -94,9 +106,11 @@ gantt
 **Status:** `done`, `active`, `crit`, `milestone`
 
 ### User Journey
+
 Experience flows, satisfaction tracking.
 
 **Syntax:**
+
 ```
 journey
   title User Journey
@@ -108,9 +122,11 @@ journey
 **Scores:** 1-5 satisfaction levels
 
 ### Kanban
+
 Task boards, workflow stages.
 
 **Syntax:**
+
 ```
 kanban
   Todo[Task Board]
@@ -121,9 +137,11 @@ kanban
 ```
 
 ### Quadrant Chart
+
 Prioritization, trend analysis.
 
 **Syntax:**
+
 ```
 quadrantChart
   x-axis Low --> High
@@ -134,9 +152,11 @@ quadrantChart
 ## Architecture Diagrams
 
 ### C4 Diagram
+
 System architecture, components.
 
 **Syntax:**
+
 ```
 C4Context
   Person(user, "User")
@@ -145,9 +165,11 @@ C4Context
 ```
 
 ### Architecture Diagram
+
 Cloud infrastructure, services.
 
 **Syntax:**
+
 ```
 architecture-beta
   service api(server)[API]
@@ -158,9 +180,11 @@ architecture-beta
 **Icons:** cloud, database, disk, internet, server, or iconify.design icons
 
 ### Block Diagram
+
 Module dependencies, networks.
 
 **Syntax:**
+
 ```
 block-beta
   columns 3
@@ -173,9 +197,11 @@ block-beta
 ## Data Visualization
 
 ### Pie Chart
+
 Proportions, distributions.
 
 **Syntax:**
+
 ```
 pie showData
   "Category A" : 45.5
@@ -183,9 +209,11 @@ pie showData
 ```
 
 ### XY Chart
+
 Trends, comparisons.
 
 **Syntax:**
+
 ```
 xychart-beta
   x-axis [jan, feb, mar]
@@ -195,9 +223,11 @@ xychart-beta
 ```
 
 ### Sankey
+
 Flow visualization, resource allocation.
 
 **Syntax:**
+
 ```
 sankey-beta
   Source,Target,Value
@@ -206,9 +236,11 @@ sankey-beta
 ```
 
 ### Radar Chart
+
 Multi-dimensional comparison.
 
 **Syntax:**
+
 ```
 radar-beta
   axis Skill1, Skill2, Skill3
@@ -217,9 +249,11 @@ radar-beta
 ```
 
 ### Treemap
+
 Hierarchical proportions.
 
 **Syntax:**
+
 ```
 treemap-beta
   "Root"
@@ -231,9 +265,11 @@ treemap-beta
 ## Technical Diagrams
 
 ### Git Graph
+
 Branching strategies, workflows.
 
 **Syntax:**
+
 ```
 gitGraph
   commit
@@ -245,9 +281,11 @@ gitGraph
 ```
 
 ### Timeline
+
 Chronological events, milestones.
 
 **Syntax:**
+
 ```
 timeline
   2024 : Event A : Event B
@@ -255,9 +293,11 @@ timeline
 ```
 
 ### Packet Diagram
+
 Network protocols, structures.
 
 **Syntax:**
+
 ```
 packet-beta
   0-15: "Header"
@@ -265,9 +305,11 @@ packet-beta
 ```
 
 ### ZenUML Sequence
+
 Alternative sequence syntax.
 
 **Syntax:**
+
 ```
 zenuml
   A.method() {
@@ -277,9 +319,11 @@ zenuml
 ```
 
 ### Mindmap
+
 Brainstorming, hierarchies.
 
 **Syntax:**
+
 ```
 mindmap
   root((Central Idea))
@@ -290,9 +334,11 @@ mindmap
 ```
 
 ### Requirement Diagram
+
 SysML requirements, traceability.
 
 **Syntax:**
+
 ```
 requirementDiagram
   requirement req1 {
@@ -304,12 +350,12 @@ requirementDiagram
 
 ## Quick Reference
 
-| Type | Best For | Complexity |
-|------|----------|------------|
-| Flowchart | Processes | Low |
-| Sequence | Interactions | Medium |
-| Class | OOP | High |
-| State | Behaviors | Medium |
-| ER | Databases | Low |
-| Gantt | Timelines | Medium |
-| Architecture | Systems | High |
+| Type         | Best For     | Complexity |
+| ------------ | ------------ | ---------- |
+| Flowchart    | Processes    | Low        |
+| Sequence     | Interactions | Medium     |
+| Class        | OOP          | High       |
+| State        | Behaviors    | Medium     |
+| ER           | Databases    | Low        |
+| Gantt        | Timelines    | Medium     |
+| Architecture | Systems      | High       |

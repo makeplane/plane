@@ -12,6 +12,7 @@
      - `dev/* beta/* experiment/*` → beta
      - Unclear → `AskUserQuestion` with options: "Official (main)", "Beta (dev)"
 3. Auto-detect target branch:
+
    ```bash
    # For official: detect default branch
    git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
@@ -23,6 +24,7 @@
      git rev-parse --verify origin/$b 2>/dev/null && echo "$b" && break
    done
    ```
+
 4. Run `git status` (never use `-uall`). Uncommitted changes are always included.
 5. Run `git diff <target>...HEAD --stat` and `git log <target>..HEAD --oneline` to understand what's being shipped.
 6. If `--dry-run`: output what would happen at each step and stop here.
@@ -32,6 +34,7 @@
 Find or create related GitHub issues for traceability.
 
 1. Search for related open issues by keywords from branch name and commit messages:
+
    ```bash
    # Extract keywords from branch name
    BRANCH=$(git branch --show-current)
@@ -42,6 +45,7 @@ Find or create related GitHub issues for traceability.
    ```
 
 2. Also check if any issues are referenced in commit messages:
+
    ```bash
    git log <target>..HEAD --oneline | grep -oE '#[0-9]+' | sort -u
    ```
@@ -49,6 +53,7 @@ Find or create related GitHub issues for traceability.
 3. **If related issues found:** Note issue numbers for PR linking.
 
 4. **If NO related issues found:** Create a new issue with structured format:
+
    ```bash
    gh issue create --title "<type>: <summary from commits>" --body "$(cat <<'EOF'
    ## Problem Statement
@@ -62,6 +67,7 @@ Find or create related GitHub issues for traceability.
 
    ### Architecture
    ```
+
    <ASCII diagram of component interactions>
    ```
 
@@ -78,8 +84,11 @@ Find or create related GitHub issues for traceability.
    - [ ] Verify business logic correctness
    - [ ] Check for edge cases not covered by tests
    - [ ] Validate UX/API contract changes (if any)
-   EOF
-   )"
+         EOF
+         )"
+
+   ```
+
    ```
 
 5. Store issue numbers for Step 12 (PR creation).
@@ -118,6 +127,7 @@ git fetch origin <target> && git merge origin/<target> --no-edit
    - **Pass 2 (INFORMATIONAL):** Dead code, magic numbers, test gaps, style
 
 4. **Output findings:**
+
    ```
    Pre-Landing Review: N issues (X critical, Y informational)
    ```
@@ -210,6 +220,7 @@ git push -u origin $(git branch --show-current)
 ## Step 12: Create PR
 
 Check if `gh` CLI is available:
+
 ```bash
 which gh 2>/dev/null || echo "MISSING"
 ```
@@ -217,6 +228,7 @@ which gh 2>/dev/null || echo "MISSING"
 If missing: output "Install GitHub CLI (gh) to auto-create PRs" and stop after push.
 
 Create PR targeting the correct branch:
+
 ```bash
 gh pr create --base <target-branch> --title "<type>: <summary>" --body "$(cat <<'EOF'
 <PR body from pr-template.md>
@@ -225,6 +237,7 @@ EOF
 ```
 
 **Link issues** collected from Step 2:
+
 ```bash
 # If issues were found/created, add closing keywords in PR body
 # e.g., "Closes #42, Relates to #43"
@@ -233,6 +246,7 @@ EOF
 **Output the PR URL** — this is the final output the user sees.
 
 If PR already exists for this branch, update it instead:
+
 ```bash
 gh pr edit --title "<type>: <summary>" --body "$(cat <<'EOF'
 <PR body>

@@ -86,12 +86,7 @@ new THREE.PolyhedronGeometry(vertices, indices, 1, 0);
 
 ```javascript
 // Lathe - points[], segments, phiStart, phiLength
-const points = [
-  new THREE.Vector2(0, 0),
-  new THREE.Vector2(0.5, 0),
-  new THREE.Vector2(0.5, 1),
-  new THREE.Vector2(0, 1),
-];
+const points = [new THREE.Vector2(0, 0), new THREE.Vector2(0.5, 0), new THREE.Vector2(0.5, 1), new THREE.Vector2(0, 1)];
 new THREE.LatheGeometry(points, 32);
 
 // Extrude - shape, options
@@ -266,17 +261,11 @@ const interleavedBuffer = new THREE.InterleavedBuffer(
     // pos.x, pos.y, pos.z, uv.u, uv.v (repeated per vertex)
     -1, -1, 0, 0, 0, 1, -1, 0, 1, 0, 1, 1, 0, 1, 1, -1, 1, 0, 0, 1,
   ]),
-  5, // stride (floats per vertex)
+  5 // stride (floats per vertex)
 );
 
-geometry.setAttribute(
-  "position",
-  new THREE.InterleavedBufferAttribute(interleavedBuffer, 3, 0),
-); // size 3, offset 0
-geometry.setAttribute(
-  "uv",
-  new THREE.InterleavedBufferAttribute(interleavedBuffer, 2, 3),
-); // size 2, offset 3
+geometry.setAttribute("position", new THREE.InterleavedBufferAttribute(interleavedBuffer, 3, 0)); // size 3, offset 0
+geometry.setAttribute("uv", new THREE.InterleavedBufferAttribute(interleavedBuffer, 2, 3)); // size 2, offset 3
 ```
 
 ## EdgesGeometry & WireframeGeometry
@@ -284,17 +273,11 @@ geometry.setAttribute(
 ```javascript
 // Edge lines (only hard edges)
 const edges = new THREE.EdgesGeometry(boxGeometry, 15); // 15 = threshold angle
-const edgeMesh = new THREE.LineSegments(
-  edges,
-  new THREE.LineBasicMaterial({ color: 0xffffff }),
-);
+const edgeMesh = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
 // Wireframe (all triangles)
 const wireframe = new THREE.WireframeGeometry(boxGeometry);
-const wireMesh = new THREE.LineSegments(
-  wireframe,
-  new THREE.LineBasicMaterial({ color: 0xffffff }),
-);
+const wireMesh = new THREE.LineSegments(wireframe, new THREE.LineBasicMaterial({ color: 0xffffff }));
 ```
 
 ## Points
@@ -326,16 +309,9 @@ scene.add(points);
 
 ```javascript
 // Line (connected points)
-const points = [
-  new THREE.Vector3(-1, 0, 0),
-  new THREE.Vector3(0, 1, 0),
-  new THREE.Vector3(1, 0, 0),
-];
+const points = [new THREE.Vector3(-1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(1, 0, 0)];
 const geometry = new THREE.BufferGeometry().setFromPoints(points);
-const line = new THREE.Line(
-  geometry,
-  new THREE.LineBasicMaterial({ color: 0xff0000 }),
-);
+const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
 
 // LineLoop (closed loop)
 const loop = new THREE.LineLoop(geometry, material);
@@ -359,8 +335,8 @@ segmentsGeometry.setAttribute(
       0,
       0, // segment 2
     ]),
-    3,
-  ),
+    3
+  )
 );
 const segments = new THREE.LineSegments(segmentsGeometry, material);
 ```
@@ -381,11 +357,7 @@ const dummy = new THREE.Object3D();
 const matrix = new THREE.Matrix4();
 
 for (let i = 0; i < count; i++) {
-  dummy.position.set(
-    (Math.random() - 0.5) * 20,
-    (Math.random() - 0.5) * 20,
-    (Math.random() - 0.5) * 20,
-  );
+  dummy.position.set((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20);
   dummy.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
   dummy.scale.setScalar(0.5 + Math.random());
   dummy.updateMatrix();
@@ -397,15 +369,9 @@ for (let i = 0; i < count; i++) {
 instancedMesh.instanceMatrix.needsUpdate = true;
 
 // Optional: per-instance colors
-instancedMesh.instanceColor = new THREE.InstancedBufferAttribute(
-  new Float32Array(count * 3),
-  3,
-);
+instancedMesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(count * 3), 3);
 for (let i = 0; i < count; i++) {
-  instancedMesh.setColorAt(
-    i,
-    new THREE.Color(Math.random(), Math.random(), Math.random()),
-  );
+  instancedMesh.setColorAt(i, new THREE.Color(Math.random(), Math.random(), Math.random()));
 }
 instancedMesh.instanceColor.needsUpdate = true;
 
@@ -514,9 +480,7 @@ for (let i = 0; i < morphPositions.length; i += 3) {
   morphPositions[i + 1] *= 0.5; // Squash Y
 }
 
-geometry.morphAttributes.position = [
-  new THREE.BufferAttribute(new Float32Array(morphPositions), 3),
-];
+geometry.morphAttributes.position = [new THREE.BufferAttribute(new Float32Array(morphPositions), 3)];
 
 const mesh = new THREE.Mesh(geometry, material);
 mesh.morphTargetInfluences[0] = 0.5; // 50% blend

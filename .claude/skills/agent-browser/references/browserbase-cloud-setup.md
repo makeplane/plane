@@ -5,6 +5,7 @@ Configure agent-browser to use Browserbase cloud browsers for CI/CD and headless
 ## Overview
 
 Browserbase provides remote browser infrastructure. Use when:
+
 - Running in CI/CD pipelines
 - Local browser not available
 - Need consistent browser environment
@@ -31,6 +32,7 @@ export AGENT_BROWSER_PROVIDER="browserbase"
 ## Usage
 
 ### Explicit Provider Flag
+
 ```bash
 agent-browser -p browserbase open https://example.com
 agent-browser snapshot -i
@@ -39,6 +41,7 @@ agent-browser close
 ```
 
 ### With Default Provider (env var)
+
 ```bash
 # After setting AGENT_BROWSER_PROVIDER=browserbase
 agent-browser open https://example.com  # Uses Browserbase automatically
@@ -47,6 +50,7 @@ agent-browser open https://example.com  # Uses Browserbase automatically
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 name: Browser Tests
 on: [push]
@@ -60,7 +64,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install agent-browser
         run: npm install -g agent-browser
@@ -84,6 +88,7 @@ jobs:
 ```
 
 ### GitLab CI
+
 ```yaml
 browser-test:
   image: node:20
@@ -125,27 +130,31 @@ agent-browser -p browserbase --session user2 open https://example.com
 ## Debugging
 
 ### View Session Logs
+
 Check Browserbase dashboard for:
+
 - Session recordings
 - Network logs
 - Console output
 - Screenshots
 
 ### Local Fallback
+
 If Browserbase unavailable, remove provider flag to use local browser:
+
 ```bash
 agent-browser open https://example.com  # Uses local Chromium
 ```
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Authentication failed | Verify API key is correct and not expired |
-| Project not found | Check BROWSERBASE_PROJECT_ID matches dashboard |
-| Connection timeout | Check network/firewall allows outbound connections |
+| Issue                 | Solution                                                |
+| --------------------- | ------------------------------------------------------- |
+| Authentication failed | Verify API key is correct and not expired               |
+| Project not found     | Check BROWSERBASE_PROJECT_ID matches dashboard          |
+| Connection timeout    | Check network/firewall allows outbound connections      |
 | Session limit reached | Upgrade Browserbase plan or wait for sessions to expire |
-| Commands hang | Ensure previous session closed properly |
+| Commands hang         | Ensure previous session closed properly                 |
 
 ## Pricing Considerations
 

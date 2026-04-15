@@ -3,6 +3,7 @@
 ## FFmpeg Issues
 
 ### Unknown Encoder Error
+
 ```bash
 # Check available encoders
 ffmpeg -encoders | grep h264
@@ -12,6 +13,7 @@ sudo apt-get install libx264-dev libx265-dev libvpx-dev
 ```
 
 ### Memory Errors
+
 ```bash
 # Limit thread usage
 ffmpeg -threads 4 input.mp4 output.mp4
@@ -22,6 +24,7 @@ ffmpeg -i large.mp4 -ss 600 -t 600 segment2.mp4
 ```
 
 ### Slow Encoding
+
 ```bash
 # Use faster preset (trades compression for speed)
 ffmpeg -i input.mp4 -c:v libx264 -preset ultrafast output.mp4
@@ -33,6 +36,7 @@ ffmpeg -hwaccel cuda -i input.mp4 -c:v h264_nvenc output.mp4
 ## ImageMagick Issues
 
 ### "Not Authorized" Error
+
 ```bash
 # Edit policy file
 sudo nano /etc/ImageMagick-7/policy.xml
@@ -45,6 +49,7 @@ sudo nano /etc/ImageMagick-7/policy.xml
 ```
 
 ### Memory Limit Errors
+
 ```bash
 # Increase memory limits
 magick -limit memory 2GB -limit map 4GB input.jpg output.jpg
@@ -54,6 +59,7 @@ ls *.jpg | xargs -n 10 -P 4 mogrify -resize 800x
 ```
 
 ### Slow Batch Processing
+
 ```bash
 # Use parallel processing with GNU Parallel
 ls *.jpg | parallel -j 4 magick {} -resize 800x resized-{}
@@ -65,6 +71,7 @@ mogrify -resize 800x *.jpg
 ## RMBG Issues
 
 ### Model Download Failures
+
 ```bash
 # Check network connectivity
 curl https://unpkg.com/@rmbg/model-modnet/modnet-256.onnx
@@ -78,6 +85,7 @@ rmbg input.jpg
 ```
 
 ### Out of Memory
+
 ```bash
 # Use smaller model
 rmbg input.jpg -m u2netp -o output.png
@@ -87,6 +95,7 @@ rmbg input.jpg -r 1024 -o output.png
 ```
 
 ### Slow Processing
+
 ```bash
 # Use fastest model
 rmbg input.jpg -m u2netp -o output.png

@@ -38,7 +38,7 @@ export const getVideoDimensions = async (src: string) => {
 
 ```tsx
 const dimensions = await getVideoDimensions("https://remotion.media/video.mp4");
-console.log(dimensions.width);  // e.g. 1920
+console.log(dimensions.width); // e.g. 1920
 console.log(dimensions.height); // e.g. 1080
 ```
 

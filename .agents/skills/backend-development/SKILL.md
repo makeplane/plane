@@ -36,18 +36,22 @@ See: `references/backend-technologies.md` for detailed comparisons
 ## Reference Navigation
 
 **Core Technologies:**
+
 - `backend-technologies.md` - Languages, frameworks, databases, message queues, ORMs
 - `backend-api-design.md` - REST, GraphQL, gRPC patterns and best practices
 
 **Security & Authentication:**
+
 - `backend-security.md` - OWASP Top 10 2025, security best practices, input validation
 - `backend-authentication.md` - OAuth 2.1, JWT, RBAC, MFA, session management
 
 **Performance & Architecture:**
+
 - `backend-performance.md` - Caching, query optimization, load balancing, scaling
 - `backend-architecture.md` - Microservices, event-driven, CQRS, saga patterns
 
 **Quality & Operations:**
+
 - `backend-testing.md` - Testing strategies, frameworks, tools, CI/CD testing
 - `backend-code-quality.md` - SOLID principles, design patterns, clean code
 - `backend-devops.md` - Docker, Kubernetes, deployment strategies, monitoring
@@ -66,18 +70,18 @@ See: `references/backend-technologies.md` for detailed comparisons
 
 ## Quick Decision Matrix
 
-| Need | Choose |
-|------|--------|
-| Fast development | Node.js + NestJS |
+| Need                | Choose           |
+| ------------------- | ---------------- |
+| Fast development    | Node.js + NestJS |
 | Data/ML integration | Python + FastAPI |
-| High concurrency | Go + Gin |
-| Max performance | Rust + Axum |
-| ACID transactions | PostgreSQL |
-| Flexible schema | MongoDB |
-| Caching | Redis |
-| Internal services | gRPC |
-| Public APIs | GraphQL/REST |
-| Real-time events | Kafka |
+| High concurrency    | Go + Gin         |
+| Max performance     | Rust + Axum      |
+| ACID transactions   | PostgreSQL       |
+| Flexible schema     | MongoDB          |
+| Caching             | Redis            |
+| Internal services   | gRPC             |
+| Public APIs         | GraphQL/REST     |
+| Real-time events    | Kafka            |
 
 ## Implementation Checklist
 

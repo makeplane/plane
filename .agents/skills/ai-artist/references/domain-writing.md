@@ -1,6 +1,7 @@
 # Creative Writing Patterns
 
 ## Story Outline
+
 ```
 Create [length] story outline:
 - Genre: [genre]
@@ -17,6 +18,7 @@ Structure:
 ```
 
 ## Character Voice
+
 ```
 Write as [character]:
 - Background: [history]
@@ -28,6 +30,7 @@ Maintain voice consistency.
 ```
 
 ## Dialogue
+
 ```
 Write dialogue between [A] and [B]:
 - Scene: [context]
@@ -38,6 +41,7 @@ Each character distinct voice. Show don't tell.
 ```
 
 ## Scene Description
+
 ```
 Describe [scene]:
 - POV: [character/omniscient]
@@ -49,6 +53,7 @@ Use active verbs, concrete details.
 ```
 
 ## Editing Pass
+
 ```
 Edit this [content type]:
 Focus: [clarity/flow/voice/grammar]
@@ -59,6 +64,7 @@ Provide tracked changes with rationale.
 ```
 
 ## Genre Adaptation
+
 ```
 Rewrite [content] as [genre]:
 - Keep: core plot/message

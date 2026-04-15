@@ -33,24 +33,27 @@ app/
 ### Dynamic Routes
 
 Single parameter:
+
 ```tsx
 // app/blog/[slug]/page.tsx
 export default function BlogPost({ params }: { params: { slug: string } }) {
-  return <h1>Post: {params.slug}</h1>
+  return <h1>Post: {params.slug}</h1>;
 }
 // Matches: /blog/hello-world, /blog/my-post
 ```
 
 Catch-all segments:
+
 ```tsx
 // app/shop/[...slug]/page.tsx
 export default function Shop({ params }: { params: { slug: string[] } }) {
-  return <h1>Category: {params.slug.join('/')}</h1>
+  return <h1>Category: {params.slug.join("/")}</h1>;
 }
 // Matches: /shop/clothes, /shop/clothes/shirts, /shop/clothes/shirts/red
 ```
 
 Optional catch-all:
+
 ```tsx
 // app/docs/[[...slug]]/page.tsx
 // Matches: /docs, /docs/getting-started, /docs/api/reference
@@ -64,11 +67,7 @@ Must include `<html>` and `<body>` tags:
 
 ```tsx
 // app/layout.tsx
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
@@ -77,7 +76,7 @@ export default function RootLayout({
         <footer>Global Footer</footer>
       </body>
     </html>
-  )
+  );
 }
 ```
 
@@ -85,21 +84,18 @@ export default function RootLayout({
 
 ```tsx
 // app/dashboard/layout.tsx
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <nav>Dashboard Navigation</nav>
       <main>{children}</main>
     </div>
-  )
+  );
 }
 ```
 
 Layout characteristics:
+
 - Preserve state during navigation
 - Do not re-render on navigation between child routes
 - Can fetch data
@@ -123,6 +119,7 @@ app/
 ```
 
 Use cases:
+
 - Multiple root layouts
 - Organize code by feature/team
 - Different layouts for different sections
@@ -148,9 +145,9 @@ export default function Layout({
   team,
   analytics,
 }: {
-  children: React.ReactNode
-  team: React.ReactNode
-  analytics: React.ReactNode
+  children: React.ReactNode;
+  team: React.ReactNode;
+  analytics: React.ReactNode;
 }) {
   return (
     <>
@@ -160,11 +157,12 @@ export default function Layout({
         {analytics}
       </div>
     </>
-  )
+  );
 }
 ```
 
 Use cases:
+
 - Split views (dashboards)
 - Modals
 - Conditional rendering based on auth state
@@ -186,6 +184,7 @@ app/
 ```
 
 Matching conventions:
+
 - `(.)` - Match same level
 - `(..)` - Match one level above
 - `(..)(..)` - Match two levels above
@@ -202,7 +201,7 @@ Automatically wraps page in Suspense:
 ```tsx
 // app/dashboard/loading.tsx
 export default function Loading() {
-  return <div className="spinner">Loading dashboard...</div>
+  return <div className="spinner">Loading dashboard...</div>;
 }
 ```
 
@@ -212,11 +211,11 @@ Fine-grained control:
 
 ```tsx
 // app/page.tsx
-import { Suspense } from 'react'
+import { Suspense } from "react";
 
 async function Posts() {
-  const posts = await fetchPosts()
-  return <PostsList posts={posts} />
+  const posts = await fetchPosts();
+  return <PostsList posts={posts} />;
 }
 
 export default function Page() {
@@ -227,7 +226,7 @@ export default function Page() {
         <Posts />
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
@@ -239,22 +238,16 @@ Wraps segment in Error Boundary:
 
 ```tsx
 // app/error.tsx
-'use client' // Error components must be Client Components
+"use client"; // Error components must be Client Components
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string }
-  reset: () => void
-}) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div>
       <h2>Something went wrong!</h2>
       <p>{error.message}</p>
       <button onClick={() => reset()}>Try again</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -264,15 +257,9 @@ Catches errors in root layout:
 
 ```tsx
 // app/global-error.tsx
-'use client'
+"use client";
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string }
-  reset: () => void
-}) {
+export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <html>
       <body>
@@ -280,7 +267,7 @@ export default function GlobalError({
         <button onClick={() => reset()}>Try again</button>
       </body>
     </html>
-  )
+  );
 }
 ```
 
@@ -288,21 +275,21 @@ export default function GlobalError({
 
 ```tsx
 // app/blog/[slug]/page.tsx
-import { notFound } from 'next/navigation'
+import { notFound } from "next/navigation";
 
 export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug)
+  const post = await getPost(params.slug);
 
   if (!post) {
-    notFound() // Triggers not-found.tsx
+    notFound(); // Triggers not-found.tsx
   }
 
-  return <article>{post.content}</article>
+  return <article>{post.content}</article>;
 }
 
 // app/blog/[slug]/not-found.tsx
 export default function NotFound() {
-  return <h2>Post not found</h2>
+  return <h2>Post not found</h2>;
 }
 ```
 
@@ -341,38 +328,38 @@ import Link from 'next/link'
 ### useRouter Hook (Client)
 
 ```tsx
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 export function NavigateButton() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
-      <button onClick={() => router.push('/dashboard')}>Dashboard</button>
-      <button onClick={() => router.replace('/login')}>Login</button>
+      <button onClick={() => router.push("/dashboard")}>Dashboard</button>
+      <button onClick={() => router.replace("/login")}>Login</button>
       <button onClick={() => router.refresh()}>Refresh</button>
       <button onClick={() => router.back()}>Back</button>
       <button onClick={() => router.forward()}>Forward</button>
     </>
-  )
+  );
 }
 ```
 
 ### Programmatic Navigation (Server)
 
 ```tsx
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await getSession()
+  const session = await getSession();
 
   if (!session) {
-    redirect('/login')
+    redirect("/login");
   }
 
-  return <div>Protected content</div>
+  return <div>Protected content</div>;
 }
 ```
 
@@ -382,15 +369,15 @@ export default async function Page() {
 
 ```tsx
 // app/shop/page.tsx
-export default function Shop({
-  searchParams,
-}: {
-  searchParams: { sort?: string; filter?: string }
-}) {
-  const sort = searchParams.sort || 'newest'
-  const filter = searchParams.filter
+export default function Shop({ searchParams }: { searchParams: { sort?: string; filter?: string } }) {
+  const sort = searchParams.sort || "newest";
+  const filter = searchParams.filter;
 
-  return <div>Showing: {filter}, sorted by {sort}</div>
+  return (
+    <div>
+      Showing: {filter}, sorted by {sort}
+    </div>
+  );
 }
 // Accessed via: /shop?sort=price&filter=shirts
 ```
@@ -398,39 +385,39 @@ export default function Shop({
 ### useSearchParams (Client)
 
 ```tsx
-'use client'
+"use client";
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from "next/navigation";
 
 export function SearchFilter() {
-  const searchParams = useSearchParams()
-  const query = searchParams.get('q')
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q");
 
-  return <div>Search query: {query}</div>
+  return <div>Search query: {query}</div>;
 }
 ```
 
 ### usePathname (Client)
 
 ```tsx
-'use client'
+"use client";
 
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function Navigation() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <nav>
-      <Link href="/" className={pathname === '/' ? 'active' : ''}>
+      <Link href="/" className={pathname === "/" ? "active" : ""}>
         Home
       </Link>
-      <Link href="/about" className={pathname === '/about' ? 'active' : ''}>
+      <Link href="/about" className={pathname === "/about" ? "active" : ""}>
         About
       </Link>
     </nav>
-  )
+  );
 }
 ```
 

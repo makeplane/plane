@@ -1,6 +1,7 @@
 # Phase 02: Frontend Update
 
 ## Context Links
+
 - [Plan Overview](./plan.md)
 - Depends on: [phase-01-backend-upsert.md](./phase-01-backend-upsert.md)
 - Extends: `plans/260313-1403-bulk-import-projects/phase-02-frontend-ui.md`
@@ -8,11 +9,11 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Priority | P2 |
-| Status | ⬜ pending |
-| Effort | 1.5h |
+| Field       | Value                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------- |
+| Priority    | P2                                                                                                      |
+| Status      | ⬜ pending                                                                                              |
+| Effort      | 1.5h                                                                                                    |
 | Description | Update service type, store, form, preview, and results components to support `project_id` UPSERT column |
 
 ## Key Insights
@@ -78,6 +79,7 @@ apps/admin/components/workspace/workspace-project-bulk-import-results.tsx
 ## Implementation Steps
 
 1. **Update `IWorkspaceProjectBulkImportResponse` type** in `instance-workspace.service.ts`
+
    ```typescript
    export type IWorkspaceProjectBulkImportResponse = {
      created: Array<{ workspace_slug: string; name: string; identifier: string }>;
@@ -88,12 +90,14 @@ apps/admin/components/workspace/workspace-project-bulk-import-results.tsx
      total_skipped: number;
    };
    ```
+
    Also update `bulkImportProjects()` param type to include `project_id?: string`.
 
 2. **Update store `bulkImportProjects()` param type** in `workspace.store.ts`
    - Add `project_id?: string` to the array item type in the method signature.
 
 3. **Update `IProjectRow` in preview component** (`workspace-project-bulk-import-preview.tsx`)
+
    ```typescript
    export interface IProjectRow {
      project_id?: string;
@@ -103,6 +107,7 @@ apps/admin/components/workspace/workspace-project-bulk-import-results.tsx
      network?: number;
    }
    ```
+
    - Add `project_id` column to table header and body:
      - Header: `"Project ID"` (first column)
      - Cell: `row.project_id ? row.project_id.slice(0, 8) + "…" : "—"`

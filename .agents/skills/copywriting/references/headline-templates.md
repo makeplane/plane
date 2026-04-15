@@ -13,6 +13,7 @@ How I [achieved X] in [timeframe]
 ```
 
 **Examples:**
+
 - How to write emails that get replies without being pushy
 - How to lose 10 pounds in 30 days
 - How to land clients (even if you have no portfolio)
@@ -28,6 +29,7 @@ The top [number] [things] for [outcome]
 ```
 
 **Examples:**
+
 - 7 ways to double your email open rates
 - 5 mistakes that kill landing page conversions
 - The top 10 tools for remote teams
@@ -43,6 +45,7 @@ Is [common belief] holding you back?
 ```
 
 **Examples:**
+
 - Are you making this pricing mistake?
 - What if you could write copy in half the time?
 - Do you struggle to find clients?
@@ -58,6 +61,7 @@ The hidden [thing] behind [outcome]
 ```
 
 **Examples:**
+
 - The secret to landing page conversions
 - The surprising truth about cold email
 - What gurus won't tell you about passive income
@@ -73,6 +77,7 @@ Don't [do X] until you [read/see this]
 ```
 
 **Examples:**
+
 - Why discounting doesn't work
 - Stop writing long emails (do this instead)
 - 5 reasons your ads aren't converting
@@ -88,6 +93,7 @@ Join [number] [people] who [benefit]
 ```
 
 **Examples:**
+
 - Double your revenue in 90 days
 - Get more leads without cold calling
 - Join 10,000+ marketers who save 5 hours/week
@@ -102,6 +108,7 @@ The difference between [success] and [failure]
 ```
 
 **Examples:**
+
 - SEO vs Paid Ads: Which grows revenue faster?
 - Why webinars beat ebooks for lead gen
 

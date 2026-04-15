@@ -10,17 +10,21 @@ Quick summary of work done in current session.
 ## Session Report: [Date]
 
 ### Work Completed
+
 - [x] [Task/feature description]
 - [x] [Task/feature description]
 
 ### In Progress
+
 - [ ] [Task description] — [% complete, blocker if any]
 
 ### Tasks Created
+
 - [N] tasks hydrated from [plan]
 - [M] completed, [K] remaining
 
 ### Next Session
+
 1. [Priority item]
 2. [Follow-up item]
 ```
@@ -33,18 +37,22 @@ Comprehensive summary when a plan reaches completion.
 ## Plan Complete: [Plan Name]
 
 ### Summary
+
 - **Duration:** [start] → [end]
 - **Phases:** [N] completed
 - **Files changed:** [count]
 - **Tests:** [pass/total]
 
 ### Achievements
+
 - [Feature/capability delivered]
 
 ### Known Limitations
+
 - [Any caveats or future work needed]
 
 ### Documentation Updates
+
 - [Which docs were updated]
 ```
 
@@ -55,17 +63,20 @@ Overview across all active plans.
 ```markdown
 ## Project Progress: [Date]
 
-| Plan | Status | Progress | Priority | Next Action |
-|------|--------|----------|----------|-------------|
-| [name] | [status] | [%] | P[N] | [action] |
+| Plan   | Status   | Progress | Priority | Next Action |
+| ------ | -------- | -------- | -------- | ----------- |
+| [name] | [status] | [%]      | P[N]     | [action]    |
 
 ### Highlights
+
 - [Key achievement or milestone]
 
 ### Risks
+
 - [Risk] — [Mitigation]
 
 ### Blockers
+
 - [Blocker] — [Resolution path]
 ```
 

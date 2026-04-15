@@ -49,19 +49,23 @@ POST /api/instances/workspaces/bulk-assign-members/
 ## Related Code Files
 
 **CREATE:**
+
 - `apps/api/plane/license/api/views/workspace_member_bulk_assign.py`
 
 **MODIFY:**
+
 - `apps/api/plane/license/api/views/__init__.py` — add import line
 - `apps/api/plane/license/urls.py` — add path
 
 **NO CHANGE:**
+
 - `apps/api/plane/db/models/workspace.py`
 - `apps/api/plane/license/api/permissions/__init__.py`
 
 ## Embedded Rules
 
 **Rule 1 — BaseAPIView + permission:**
+
 ```python
 from plane.app.views.base import BaseAPIView
 from plane.license.api.permissions import InstanceAdminPermission
@@ -71,6 +75,7 @@ class InstanceWorkspaceBulkAssignMembersEndpoint(BaseAPIView):
 ```
 
 **Rule 2 — Atomic per row (mirror workspace_bulk_create.py):**
+
 ```python
 with transaction.atomic():
     WorkspaceMember.objects.create(workspace=ws, member=user, role=role)
@@ -216,6 +221,7 @@ class InstanceWorkspaceBulkAssignMembersEndpoint(BaseAPIView):
 File: `apps/api/plane/license/api/views/__init__.py`
 
 Append at end:
+
 ```python
 from .workspace_member_bulk_assign import InstanceWorkspaceBulkAssignMembersEndpoint
 ```
@@ -225,11 +231,13 @@ from .workspace_member_bulk_assign import InstanceWorkspaceBulkAssignMembersEndp
 File: `apps/api/plane/license/urls.py`
 
 1. Add to import block (line 8+):
+
 ```python
     InstanceWorkspaceBulkAssignMembersEndpoint,
 ```
 
 2. Add URL after the `bulk-create` path (after line 80):
+
 ```python
 path("workspaces/bulk-assign-members/", InstanceWorkspaceBulkAssignMembersEndpoint.as_view(), name="instance-workspace-bulk-assign-members"),
 ```

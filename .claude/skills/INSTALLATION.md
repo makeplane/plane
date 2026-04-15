@@ -19,6 +19,7 @@ chmod +x install.sh
 ```
 
 The script will:
+
 - Detect your OS (Linux or macOS)
 - Install package managers (Homebrew for macOS, apt-get for Linux)
 - Install system dependencies (FFmpeg, ImageMagick)
@@ -39,6 +40,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 ```
 
 Options:
+
 ```powershell
 # Skip Chocolatey installation if already installed
 .\install.ps1 -SkipChocolatey
@@ -48,6 +50,7 @@ Options:
 ```
 
 The script will:
+
 - Install Chocolatey package manager (if needed)
 - Install system dependencies (FFmpeg, ImageMagick)
 - Install Node.js and global packages
@@ -58,16 +61,19 @@ The script will:
 ### What Gets Installed
 
 **System Tools:**
+
 - FFmpeg (video/audio processing)
 - ImageMagick (image processing)
 
 **Node.js Packages (global):**
+
 - rmbg-cli (AI background removal)
 - pnpm (package manager)
 - wrangler (Cloudflare CLI)
 - repomix (repository packaging)
 
 **Python Packages:**
+
 - google-genai (Gemini API)
 - pypdf, python-docx (document processing)
 - Pillow (image processing)
@@ -109,6 +115,7 @@ pip install -r requirements.txt
 Most skills use only Python standard library. Only **ai-multimodal** requires external packages:
 
 **ai-multimodal** (`.claude/skills/ai-multimodal/scripts/requirements.txt`):
+
 - `google-genai>=0.1.0` - Google Gemini API
 - `pypdf>=4.0.0` - PDF processing
 - `python-docx>=1.0.0` - DOCX conversion
@@ -122,6 +129,7 @@ Most skills use only Python standard library. Only **ai-multimodal** requires ex
 Several skills require external CLI tools:
 
 #### media-processing
+
 - **FFmpeg**: Video/audio processing
   - Ubuntu/Debian: `sudo apt-get install ffmpeg`
   - macOS: `brew install ffmpeg`
@@ -134,22 +142,26 @@ Several skills require external CLI tools:
   - All platforms: `npm install -g rmbg-cli`
 
 #### devops
+
 - **Cloudflare Wrangler**: `npm install -g wrangler`
 - **Docker**: https://docs.docker.com/get-docker/
 - **Google Cloud CLI**: https://cloud.google.com/sdk/docs/install
 
 #### better-auth, repomix, shopify
+
 - **Node.js 18+**: https://nodejs.org/
 - **Better Auth**: `npm install better-auth`
 - **Repomix**: `npm install -g repomix`
 - **Shopify CLI**: `npm install -g @shopify/cli @shopify/theme`
 
 #### databases
+
 - **PostgreSQL client**: `sudo apt-get install postgresql-client` (Linux)
 - **MongoDB Shell**: https://www.mongodb.com/try/download/shell
 - **MongoDB Tools**: https://www.mongodb.com/try/download/database-tools
 
 #### web-frameworks, ui-styling
+
 - **Node.js 18+**: https://nodejs.org/
 - **pnpm**: `npm install -g pnpm`
 - **yarn**: `npm install -g yarn`
@@ -287,11 +299,13 @@ chmod +x .claude/skills/*/scripts/*.py
 If you only want to use specific skills:
 
 **For ai-multimodal only:**
+
 ```bash
 pip install google-genai pypdf python-docx markdown Pillow python-dotenv
 ```
 
 **For media-processing only:**
+
 ```bash
 # macOS
 brew install ffmpeg imagemagick
@@ -330,22 +344,26 @@ pytest .claude/skills/*/scripts/tests/ --cov=.claude/skills --cov-report=html
 ## Skill-Specific Notes
 
 ### ai-multimodal
+
 - Requires `GEMINI_API_KEY` in environment
 - Get API key: https://aistudio.google.com/app/apikey
 - Windows users: `docx2pdf` requires Microsoft Word installed
 
 ### media-processing
+
 - FFmpeg must be in PATH
 - ImageMagick must be in PATH
 - RMBG CLI must be installed globally
 - Test with: `ffmpeg -version`, `convert -version`, and `rmbg --version`
 
 ### devops
+
 - Cloudflare: Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
 - GCloud: Requires `GOOGLE_APPLICATION_CREDENTIALS` path to service account JSON
 - Docker: Must have Docker daemon running
 
 ### shopify
+
 - Requires Shopify CLI authentication: `shopify auth login`
 - Partner account needed for app development
 

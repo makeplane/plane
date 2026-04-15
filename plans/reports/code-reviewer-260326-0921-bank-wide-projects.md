@@ -33,6 +33,7 @@ None.
 **Problem:** The query `Project.objects.filter(is_bank_wide=True)` does not exclude archived projects (`archived_at IS NOT NULL`). Soft-deleted projects are already excluded by `SoftDeleteModel`'s default manager, but archived projects are a separate concept in this codebase (see `project.py` line 115, and `base.py` line 222 where `retrieve` explicitly adds `.filter(archived_at__isnull=True)`). The BoD view will therefore show archived bank-wide projects to users.
 
 **Fix:**
+
 ```python
 projects = (
     Project.objects.filter(is_bank_wide=True, archived_at__isnull=True)
@@ -50,6 +51,7 @@ projects = (
 **Problem:** Both the `AppHeader` heading and `PageHead` title use hardcoded English strings (`"Bank-wide Projects"`), bypassing the i18n system entirely. The Vietnamese and Korean translations (`bank_wide_projects.title`) are defined but never used in these files.
 
 **Affected files:**
+
 - `apps/web/app/(all)/[workspaceSlug]/(projects)/bank-wide-projects/layout.tsx` line 8
 - `apps/web/app/(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx` line 7
 
@@ -62,6 +64,7 @@ projects = (
 **Problem:** `bank-wide-projects-${currentWorkspace.slug}` is an ad-hoc inline key. The rest of the codebase uses screaming-snake-case constants (e.g., `DEPARTMENTS_TREE_${slug}`, `INSTANCE_ADMIN_STATUS`), defined with a consistent prefix. This is a minor DRY violation and makes it harder to invalidate or share the cache key across future components.
 
 **Recommendation:** Extract to a constant following the existing pattern:
+
 ```ts
 const key = currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug}` : null;
 ```
@@ -83,12 +86,14 @@ const key = currentWorkspace?.slug ? `BANK_WIDE_PROJECTS_${currentWorkspace.slug
 ### L1 — Two separate `if` guards for BoD items could be combined (`sidebar-item.tsx` lines 23–24)
 
 **Current:**
+
 ```ts
 if (item.key === "ho" && !currentWorkspace?.is_board_of_director_workspace) return null;
 if (item.key === "bank-wide-projects" && !currentWorkspace?.is_board_of_director_workspace) return null;
 ```
 
 **Simpler:**
+
 ```ts
 const BOD_ONLY_KEYS = ["ho", "bank-wide-projects"];
 if (BOD_ONLY_KEYS.includes(item.key) && !currentWorkspace?.is_board_of_director_workspace) return null;

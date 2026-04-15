@@ -20,6 +20,7 @@ Add "Bank-wide Projects" as a static sidebar item below "HO". Follows the exact 
 ### 1. Add constant: `packages/constants/src/workspace.ts`
 
 After the `ho` entry (~line 288), add:
+
 ```typescript
 "bank-wide-projects": {
   key: "bank-wide-projects",
@@ -31,6 +32,7 @@ After the `ho` entry (~line 288), add:
 ```
 
 In `WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS` (~line 291), add after `ho`:
+
 ```typescript
 WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["bank-wide-projects"],
 ```
@@ -38,11 +40,13 @@ WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["bank-wide-projects"],
 ### 2. Add conditional guard: `apps/web/ce/components/workspace/sidebar/sidebar-item.tsx`
 
 After the HO guard (line 23), add:
+
 ```typescript
 if (item.key === "bank-wide-projects" && !currentWorkspace?.is_board_of_director_workspace) return null;
 ```
 
 Also update `additionalStaticItems` prop:
+
 ```typescript
 return <SidebarItemBase item={resolvedItem} additionalStaticItems={["ho", "bank-wide-projects"]} />;
 ```
@@ -50,12 +54,14 @@ return <SidebarItemBase item={resolvedItem} additionalStaticItems={["ho", "bank-
 ### 3. Add icon: `apps/web/ce/components/workspace/sidebar/helper.tsx`
 
 After the `ho` case:
+
 ```typescript
 case "bank-wide-projects":
   return <Globe className={cn("size-4 flex-shrink-0", className)} />;
 ```
 
 Add `Globe` to the lucide-react import at the top:
+
 ```typescript
 import { Building2, Globe } from "lucide-react";
 ```
@@ -65,6 +71,7 @@ import { Building2, Globe } from "lucide-react";
 ### 4. Add translation key
 
 Find the en.json (or equivalent) under `packages/i18n/src/` and add:
+
 ```json
 "bank_wide_projects": {
   "sidebar_label": "Bank-wide Projects"

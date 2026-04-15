@@ -29,23 +29,23 @@ fi
 
 ## Choosing Your Approach
 
-| Scenario | Approach |
-|----------|----------|
-| **Source-available sites** | Read source code first, write selectors directly |
-| **Unknown layouts** | Use `aria-snapshot.js` for semantic discovery |
-| **Visual inspection** | Take screenshots to verify rendering |
-| **Debug issues** | Collect console logs, analyze with session storage |
-| **Accessibility audit** | Use ARIA snapshot for semantic structure analysis |
+| Scenario                   | Approach                                           |
+| -------------------------- | -------------------------------------------------- |
+| **Source-available sites** | Read source code first, write selectors directly   |
+| **Unknown layouts**        | Use `aria-snapshot.js` for semantic discovery      |
+| **Visual inspection**      | Take screenshots to verify rendering               |
+| **Debug issues**           | Collect console logs, analyze with session storage |
+| **Accessibility audit**    | Use ARIA snapshot for semantic structure analysis  |
 
 ## Automation Browsing Running Mode
 
 Browser visibility is resolved automatically by `resolveHeadless()` in `lib/browser.js`:
 
-| Environment | Default | Why |
-|-------------|---------|-----|
-| **macOS / Windows** | **Headed** (visible) | Better debugging, OAuth login support |
-| **Linux / WSL** | **Headless** | Servers typically have no display |
-| **CI** (`CI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL` env vars) | **Headless** | No display available |
+| Environment                                                          | Default              | Why                                   |
+| -------------------------------------------------------------------- | -------------------- | ------------------------------------- |
+| **macOS / Windows**                                                  | **Headed** (visible) | Better debugging, OAuth login support |
+| **Linux / WSL**                                                      | **Headless**         | Servers typically have no display     |
+| **CI** (`CI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL` env vars) | **Headless**         | No display available                  |
 
 Override with `--headless true` or `--headless false` on any script.
 
@@ -88,16 +88,16 @@ node "$SKILL_DIR/aria-snapshot.js" --url https://example.com --output ./.claude/
 
 ### Interpreting ARIA Notation
 
-| Notation | Meaning |
-|----------|---------|
-| `[ref=eN]` | Stable identifier for interactive elements |
-| `[checked]` | Checkbox/radio is selected |
-| `[disabled]` | Element is inactive |
-| `[expanded]` | Accordion/dropdown is open |
-| `[level=N]` | Heading hierarchy (1-6) |
-| `/url:` | Link destination |
-| `/placeholder:` | Input placeholder text |
-| `/value:` | Current input value |
+| Notation        | Meaning                                    |
+| --------------- | ------------------------------------------ |
+| `[ref=eN]`      | Stable identifier for interactive elements |
+| `[checked]`     | Checkbox/radio is selected                 |
+| `[disabled]`    | Element is inactive                        |
+| `[expanded]`    | Accordion/dropdown is open                 |
+| `[level=N]`     | Heading hierarchy (1-6)                    |
+| `/url:`         | Link destination                           |
+| `/placeholder:` | Input placeholder text                     |
+| `/value:`       | Current input value                        |
 
 ### Interact by Ref
 
@@ -141,6 +141,7 @@ node "$SKILL_DIR/aria-snapshot.js" --url https://example.com --output .claude/ch
 ### Workflow: Unknown Page Structure
 
 1. **Get snapshot** to discover elements:
+
    ```bash
    node "$SKILL_DIR/aria-snapshot.js" --url https://example.com
    ```
@@ -148,6 +149,7 @@ node "$SKILL_DIR/aria-snapshot.js" --url https://example.com --output .claude/ch
 2. **Identify target** from YAML output (e.g., `[ref=e5]` for a button)
 
 3. **Interact by ref**:
+
    ```bash
    node "$SKILL_DIR/select-ref.js" --ref e5 --action click
    ```
@@ -208,6 +210,7 @@ node "$SKILL_DIR/navigate.js" --url about:blank --close true
 ```
 
 **Session management**:
+
 - `--close true`: Close browser and clear session
 - Default (no flag): Keep browser running for next script
 
@@ -216,24 +219,24 @@ node "$SKILL_DIR/navigate.js" --url about:blank --close true
 Skills can exist in **project-scope** or **user-scope**. Priority: project-scope > user-scope.
 All in `.claude/skills/chrome-devtools/scripts/`:
 
-| Script | Purpose |
-|--------|---------|
-| `navigate.js` | Navigate to URLs |
-| `screenshot.js` | Capture screenshots (auto-compress >5MB via Sharp) |
-| `click.js` | Click elements |
-| `fill.js` | Fill form fields |
-| `evaluate.js` | Execute JS in page context |
-| `snapshot.js` | Extract interactive elements (JSON format) |
-| `aria-snapshot.js` | Get ARIA accessibility tree (YAML format with refs) |
-| `select-ref.js` | Interact with elements by ref from ARIA snapshot |
-| `console.js` | Monitor console messages/errors |
-| `network.js` | Track HTTP requests/responses |
-| `performance.js` | Measure Core Web Vitals |
-| `ws-debug.js` | Debug WebSocket connections (basic) |
-| `ws-full-debug.js` | Debug WebSocket with full events/frames |
-| `inject-auth.js` | Inject cookies/tokens for authentication |
-| `import-cookies.js` | Import cookies from JSON/Netscape file |
-| `connect-chrome.js` | Connect to Chrome with remote debugging |
+| Script              | Purpose                                             |
+| ------------------- | --------------------------------------------------- |
+| `navigate.js`       | Navigate to URLs                                    |
+| `screenshot.js`     | Capture screenshots (auto-compress >5MB via Sharp)  |
+| `click.js`          | Click elements                                      |
+| `fill.js`           | Fill form fields                                    |
+| `evaluate.js`       | Execute JS in page context                          |
+| `snapshot.js`       | Extract interactive elements (JSON format)          |
+| `aria-snapshot.js`  | Get ARIA accessibility tree (YAML format with refs) |
+| `select-ref.js`     | Interact with elements by ref from ARIA snapshot    |
+| `console.js`        | Monitor console messages/errors                     |
+| `network.js`        | Track HTTP requests/responses                       |
+| `performance.js`    | Measure Core Web Vitals                             |
+| `ws-debug.js`       | Debug WebSocket connections (basic)                 |
+| `ws-full-debug.js`  | Debug WebSocket with full events/frames             |
+| `inject-auth.js`    | Inject cookies/tokens for authentication            |
+| `import-cookies.js` | Import cookies from JSON/Netscape file              |
+| `connect-chrome.js` | Connect to Chrome with remote debugging             |
 
 ## Workflow Loop
 
@@ -283,6 +286,7 @@ node $SKILL_DIR/.claude/chrome-devtools/tmp/login-test.js
 ```
 
 **Key principles for custom scripts**:
+
 - Single-purpose: one script, one task
 - Always call `disconnectBrowser()` at the end (keeps browser running)
 - Use `closeBrowser()` only when ending session completely
@@ -407,6 +411,7 @@ node "$SKILL_DIR/click.js" --selector "//button[contains(text(),'Submit')]"
 ## Common Patterns
 
 ### Web Scraping
+
 ```bash
 node "$SKILL_DIR/evaluate.js" --url https://example.com --script "
   Array.from(document.querySelectorAll('.item')).map(el => ({
@@ -417,6 +422,7 @@ node "$SKILL_DIR/evaluate.js" --url https://example.com --script "
 ```
 
 ### Form Automation
+
 ```bash
 node "$SKILL_DIR/navigate.js" --url https://example.com/form
 node "$SKILL_DIR/fill.js" --selector "#search" --value "query"
@@ -424,6 +430,7 @@ node "$SKILL_DIR/click.js" --selector "button[type=submit]"
 ```
 
 ### Performance Testing
+
 ```bash
 node "$SKILL_DIR/performance.js" --url https://example.com | jq '.vitals'
 ```
@@ -431,32 +438,36 @@ node "$SKILL_DIR/performance.js" --url https://example.com | jq '.vitals'
 ## Script Options
 
 All scripts support:
+
 - `--headless true/false` - Override auto-detected headless mode (default: auto by OS)
 - `--close true` - Close browser completely (default: stay running)
 - `--timeout 30000` - Set timeout (ms)
 - `--wait-until networkidle2` - Wait strategy
 
 `navigate.js` additionally supports:
+
 - `--wait-for-login <pattern>` - Interactive login: open headed, wait for URL regex match
 - `--login-timeout <ms>` - Max wait for login completion (default: 300000 = 5 min)
 
 ## Troubleshooting
+
 Skills can exist in **project-scope** or **user-scope**. Priority: project-scope > user-scope.
 
-| Error | Solution |
-|-------|----------|
-| `Cannot find package 'puppeteer'` | Run `npm install` in scripts directory |
-| `libnss3.so` missing (Linux) | Run `./install-deps.sh` |
-| Element not found | Use `snapshot.js` to find correct selector |
-| Script hangs | Use `--timeout 60000` or `--wait-until load` |
-| Screenshot >5MB | Auto-compressed; use `--max-size 3` for lower |
-| Session stale | Delete `.browser-session.json` and retry |
+| Error                             | Solution                                      |
+| --------------------------------- | --------------------------------------------- |
+| `Cannot find package 'puppeteer'` | Run `npm install` in scripts directory        |
+| `libnss3.so` missing (Linux)      | Run `./install-deps.sh`                       |
+| Element not found                 | Use `snapshot.js` to find correct selector    |
+| Script hangs                      | Use `--timeout 60000` or `--wait-until load`  |
+| Screenshot >5MB                   | Auto-compressed; use `--max-size 3` for lower |
+| Session stale                     | Delete `.browser-session.json` and retry      |
 
 ### Screenshot Analysis: Missing Images
 
 If images don't appear in screenshots, they may be waiting for animation triggers:
 
 1. **Scroll-triggered animations**: Scroll element into view first
+
    ```bash
    node "$SKILL_DIR/evaluate.js" --script "document.querySelector('.lazy-image').scrollIntoView()"
    # Wait for animation
@@ -465,6 +476,7 @@ If images don't appear in screenshots, they may be waiting for animation trigger
    ```
 
 2. **Sequential animation queue**: Wait longer and retry
+
    ```bash
    # First attempt
    node "$SKILL_DIR/screenshot.js" --url http://localhost:3000 --output ./attempt1.png
@@ -540,6 +552,7 @@ node "$SKILL_DIR/navigate.js" --url https://site.com --profile "/path/to/chrome/
 **[!] Important**: Chrome must be fully closed when using its profile (single instance lock).
 
 **Profile paths by OS:**
+
 - **macOS**: `~/Library/Application Support/Google/Chrome`
 - **Windows**: `%LOCALAPPDATA%/Google/Chrome/User Data`
 - **Linux**: `~/.config/google-chrome`
@@ -587,6 +600,7 @@ node "$SKILL_DIR/navigate.js" --url https://app.example.com/login \
 ```
 
 **How it works:**
+
 1. Opens browser in **headed mode** (always, regardless of OS)
 2. Navigates to the login URL
 3. Waits for you to complete the login flow manually (OAuth, 2FA, etc.)
@@ -612,15 +626,15 @@ node "$SKILL_DIR/inject-auth.js" --url https://site.com --clear true
 
 ### Choosing the Right Method
 
-| Method | Best For | Complexity |
-|--------|----------|------------|
-| Inject cookies | Simple session cookies, API tokens | Low |
-| Import from extension | Multi-cookie auth, OAuth tokens | Medium |
-| Chrome profile | 2FA, SSO, complex OAuth flows | Low* |
-| Connect to Chrome | Debugging, visual verification | Medium |
-| Interactive login | OAuth/SSO with manual browser interaction | Low |
+| Method                | Best For                                  | Complexity |
+| --------------------- | ----------------------------------------- | ---------- |
+| Inject cookies        | Simple session cookies, API tokens        | Low        |
+| Import from extension | Multi-cookie auth, OAuth tokens           | Medium     |
+| Chrome profile        | 2FA, SSO, complex OAuth flows             | Low\*      |
+| Connect to Chrome     | Debugging, visual verification            | Medium     |
+| Interactive login     | OAuth/SSO with manual browser interaction | Low        |
 
-*Requires Chrome to be closed first
+\*Requires Chrome to be closed first
 
 ## Reference Documentation
 

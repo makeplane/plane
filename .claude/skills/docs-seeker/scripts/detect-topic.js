@@ -6,11 +6,11 @@
  * Returns null for general queries, topic info for specific queries
  */
 
-const { loadEnv } = require('./utils/env-loader');
+const { loadEnv } = require("./utils/env-loader");
 
 // Load environment
 const env = loadEnv();
-const DEBUG = env.DEBUG === 'true';
+const DEBUG = env.DEBUG === "true";
 
 /**
  * Topic-specific query patterns
@@ -54,10 +54,10 @@ function normalizeTopic(topic) {
   return topic
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '')  // Remove special chars
-    .replace(/\s+/g, '-')          // Replace spaces with hyphens
-    .split('-')[0]                 // Take first word for multi-word topics
-    .slice(0, 20);                 // Limit length
+    .replace(/[^a-z0-9\s-]/g, "") // Remove special chars
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .split("-")[0] // Take first word for multi-word topics
+    .slice(0, 20); // Limit length
 }
 
 /**
@@ -69,8 +69,8 @@ function normalizeLibrary(library) {
   return library
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s\-\/\.]/g, '')
-    .replace(/\s+/g, '-');
+    .replace(/[^a-z0-9\s\-\/\.]/g, "")
+    .replace(/\s+/g, "-");
 }
 
 /**
@@ -79,7 +79,7 @@ function normalizeLibrary(library) {
  * @returns {Object|null} Topic info or null for general query
  */
 function detectTopic(query) {
-  if (!query || typeof query !== 'string') {
+  if (!query || typeof query !== "string") {
     return null;
   }
 
@@ -89,7 +89,7 @@ function detectTopic(query) {
   for (const pattern of GENERAL_PATTERNS) {
     const match = trimmedQuery.match(pattern);
     if (match) {
-      if (DEBUG) console.error('[DEBUG] Matched general pattern, no topic');
+      if (DEBUG) console.error("[DEBUG] Matched general pattern, no topic");
       return null;
     }
   }
@@ -119,9 +119,9 @@ function detectTopic(query) {
       }
 
       if (DEBUG) {
-        console.error('[DEBUG] Matched topic pattern');
-        console.error('[DEBUG] Topic:', topic);
-        console.error('[DEBUG] Library:', library);
+        console.error("[DEBUG] Matched topic pattern");
+        console.error("[DEBUG] Topic:", topic);
+        console.error("[DEBUG] Library:", library);
       }
 
       return {
@@ -133,7 +133,7 @@ function detectTopic(query) {
     }
   }
 
-  if (DEBUG) console.error('[DEBUG] No pattern matched, treating as general');
+  if (DEBUG) console.error("[DEBUG] No pattern matched, treating as general");
   return null;
 }
 
@@ -148,7 +148,7 @@ function main() {
     process.exit(1);
   }
 
-  const query = args.join(' ');
+  const query = args.join(" ");
   const result = detectTopic(query);
 
   if (result) {

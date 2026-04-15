@@ -18,25 +18,28 @@ Add "Bulk Create Workspace" button on the god-mode `/workspace/` admin page. Adm
 ## Architecture Decision
 
 **Frontend parses Excel** (not backend):
+
 - Enables preview UI before creation
 - No new Python deps required
 - Backend receives simple JSON; validates & creates workspaces
 
 ## Phases
 
-| # | Phase | Status | Est. |
-|---|-------|--------|------|
-| 01 | [Backend: Bulk Create Endpoint](./phase-01-backend-bulk-create-endpoint.md) | complete | 1.5h |
-| 02 | [Frontend: Excel Import UI](./phase-02-frontend-excel-import-ui.md) | complete | 2.5h |
+| #   | Phase                                                                       | Status   | Est. |
+| --- | --------------------------------------------------------------------------- | -------- | ---- |
+| 01  | [Backend: Bulk Create Endpoint](./phase-01-backend-bulk-create-endpoint.md) | complete | 1.5h |
+| 02  | [Frontend: Excel Import UI](./phase-02-frontend-excel-import-ui.md)         | complete | 2.5h |
 
 ## Key Files
 
 **Backend:**
+
 - `apps/api/plane/license/api/views/workspace_bulk_create.py` ← NEW
 - `apps/api/plane/license/api/views/__init__.py` ← modify (export)
 - `apps/api/plane/license/urls.py` ← modify (add URL)
 
 **Frontend (apps/admin):**
+
 - `apps/admin/components/workspace/bulk-import-form.tsx` ← NEW
 - `apps/admin/app/(all)/(dashboard)/workspace/bulk-import/page.tsx` ← NEW
 - `apps/admin/store/workspace.store.ts` ← modify (add bulkCreateWorkspaces)
@@ -56,6 +59,7 @@ Phase 02 blocked by Phase 01 (needs API endpoint URL confirmed).
 ## Validation Log
 
 ### Session 1 — 2026-03-04
+
 **Trigger:** Initial plan creation
 **Questions asked:** 4
 
@@ -82,16 +86,19 @@ Phase 02 blocked by Phase 01 (needs API endpoint URL confirmed).
    - **Rationale:** Avoids package rebuild; this is an admin-only feature; faster to implement with no shared-package coordination needed.
 
 #### Confirmed Decisions
+
 - **Slug generation**: Auto-generated from name on backend (not in template) — simplifies UX
 - **Workspace owner**: `request.user` (admin) — no change from single-create
 - **Preview table**: Read-only — consistent with existing pattern
 - **Service method**: Inline API call in admin store — no @plane/services change
 
 #### Action Items
+
 - [ ] Remove `slug` column from Excel template (only `name`, `organization_size`)
 - [ ] Backend: auto-generate slug from name using `django.utils.text.slugify` + uniqueness suffix if collision
 - [ ] Remove `@plane/services bulkCreate()` step from Phase 02 — inline `axios.post` in store instead
 
 #### Impact on Phases
+
 - Phase 01: Backend must auto-generate slug from name, handle slug collisions (append suffix)
 - Phase 02: Template has only 2 columns (`name`, `organization_size`); service method inlined in store

@@ -24,17 +24,18 @@ Production-proven payment processing with SePay (Vietnamese banks), Polar (globa
 
 ## Platform Selection
 
-| Platform | Best For |
-|----------|----------|
-| **SePay** | Vietnamese market, VND, bank transfers, VietQR |
-| **Polar** | Global SaaS, subscriptions, automated benefits (GitHub/Discord) |
-| **Stripe** | Enterprise payments, Connect platforms, custom checkout |
-| **Paddle** | MoR subscriptions, global tax compliance, churn prevention |
-| **Creem.io** | MoR + licensing, revenue splits, no-code checkout |
+| Platform     | Best For                                                        |
+| ------------ | --------------------------------------------------------------- |
+| **SePay**    | Vietnamese market, VND, bank transfers, VietQR                  |
+| **Polar**    | Global SaaS, subscriptions, automated benefits (GitHub/Discord) |
+| **Stripe**   | Enterprise payments, Connect platforms, custom checkout         |
+| **Paddle**   | MoR subscriptions, global tax compliance, churn prevention      |
+| **Creem.io** | MoR + licensing, revenue splits, no-code checkout               |
 
 ## Quick Reference
 
 ### SePay
+
 - `references/sepay/overview.md` - Auth, supported banks
 - `references/sepay/api.md` - Endpoints, transactions
 - `references/sepay/webhooks.md` - Setup, verification
@@ -43,6 +44,7 @@ Production-proven payment processing with SePay (Vietnamese banks), Polar (globa
 - `references/sepay/best-practices.md` - Production patterns
 
 ### Polar
+
 - `references/polar/overview.md` - Auth, MoR concept
 - `references/polar/products.md` - Pricing models
 - `references/polar/checkouts.md` - Checkout flows
@@ -53,6 +55,7 @@ Production-proven payment processing with SePay (Vietnamese banks), Polar (globa
 - `references/polar/best-practices.md` - Production patterns
 
 ### Stripe
+
 - `references/stripe/stripe-best-practices.md` - Integration design
 - `references/stripe/stripe-sdks.md` - Server SDKs
 - `references/stripe/stripe-js.md` - Payment Element
@@ -61,6 +64,7 @@ Production-proven payment processing with SePay (Vietnamese banks), Polar (globa
 - External: https://docs.stripe.com/llms.txt
 
 ### Paddle
+
 - `references/paddle/overview.md` - MoR, auth, entity IDs
 - `references/paddle/api.md` - Products, prices, transactions
 - `references/paddle/paddle-js.md` - Checkout overlay/inline
@@ -71,6 +75,7 @@ Production-proven payment processing with SePay (Vietnamese banks), Polar (globa
 - External: https://developer.paddle.com/llms.txt
 
 ### Creem.io
+
 - `references/creem/overview.md` - MoR, auth, global support
 - `references/creem/api.md` - Products, checkout sessions
 - `references/creem/checkouts.md` - No-code links, storefronts
@@ -81,22 +86,24 @@ Production-proven payment processing with SePay (Vietnamese banks), Polar (globa
 - External: https://docs.creem.io/llms.txt
 
 ### Multi-Provider
+
 - `references/multi-provider-order-management-patterns.md` - Unified orders, currency conversion
 
 ### Scripts
+
 - `scripts/sepay-webhook-verify.js` - SePay webhook verification
 - `scripts/polar-webhook-verify.js` - Polar webhook verification
 - `scripts/checkout-helper.js` - Checkout session generator
 
 ## Key Capabilities
 
-| Platform | Highlights |
-|----------|------------|
-| **SePay** | QR/bank/cards, 44+ VN banks, webhooks, 2 req/s |
-| **Polar** | MoR, subscriptions, usage billing, benefits, 300 req/min |
-| **Stripe** | CheckoutSessions, Billing, Connect, Payment Element |
-| **Paddle** | MoR, overlay/inline checkout, Retain (churn prevention), tax |
-| **Creem.io** | MoR, licensing, revenue splits, no-code checkout |
+| Platform     | Highlights                                                   |
+| ------------ | ------------------------------------------------------------ |
+| **SePay**    | QR/bank/cards, 44+ VN banks, webhooks, 2 req/s               |
+| **Polar**    | MoR, subscriptions, usage billing, benefits, 300 req/min     |
+| **Stripe**   | CheckoutSessions, Billing, Connect, Payment Element          |
+| **Paddle**   | MoR, overlay/inline checkout, Retain (churn prevention), tax |
+| **Creem.io** | MoR, licensing, revenue splits, no-code checkout             |
 
 ## Implementation
 

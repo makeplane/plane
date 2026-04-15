@@ -18,10 +18,10 @@ v.divide(otherVector);
 v.divideScalar(scalar);
 
 // Analysis
-v.length();           // magnitude
-v.lengthSq();         // magnitude squared (faster)
-v.normalize();        // make length = 1
-v.dot(otherVector);   // dot product
+v.length(); // magnitude
+v.lengthSq(); // magnitude squared (faster)
+v.normalize(); // make length = 1
+v.dot(otherVector); // dot product
 v.cross(otherVector); // cross product
 v.distanceTo(otherVector);
 v.angleTo(otherVector);
@@ -52,7 +52,7 @@ Rotation representation (avoids gimbal lock):
 const q = new THREE.Quaternion(x, y, z, w);
 
 // From Euler angles
-q.setFromEuler(new THREE.Euler(x, y, z, 'XYZ'));
+q.setFromEuler(new THREE.Euler(x, y, z, "XYZ"));
 
 // From axis-angle
 const axis = new THREE.Vector3(0, 1, 0);
@@ -74,7 +74,7 @@ v.applyQuaternion(q);
 Rotation as XYZ angles (degrees):
 
 ```javascript
-const euler = new THREE.Euler(x, y, z, 'XYZ');
+const euler = new THREE.Euler(x, y, z, "XYZ");
 // Order: 'XYZ', 'YXZ', 'ZXY', 'ZYX', 'YZX', 'XZY'
 
 // From quaternion
@@ -128,13 +128,13 @@ Color manipulation:
 
 ```javascript
 const color = new THREE.Color(0xff0000); // hex
-const color = new THREE.Color('red');    // CSS
-const color = new THREE.Color(1, 0, 0);  // RGB 0-1
+const color = new THREE.Color("red"); // CSS
+const color = new THREE.Color(1, 0, 0); // RGB 0-1
 
 // Conversions
-color.getHex();      // 0xff0000
+color.getHex(); // 0xff0000
 color.getHexString(); // "ff0000"
-color.getStyle();    // "rgb(255,0,0)"
+color.getStyle(); // "rgb(255,0,0)"
 
 // Color spaces
 color.setHSL(h, s, l); // hue, saturation, lightness
@@ -168,10 +168,10 @@ const intersects = raycaster.intersectObjects(scene.children, true);
 
 if (intersects.length > 0) {
   const hit = intersects[0];
-  console.log(hit.object);   // intersected object
-  console.log(hit.point);    // intersection point (Vector3)
+  console.log(hit.object); // intersected object
+  console.log(hit.point); // intersection point (Vector3)
   console.log(hit.distance); // distance from camera
-  console.log(hit.face);     // intersected face
+  console.log(hit.face); // intersected face
 }
 ```
 
@@ -192,7 +192,7 @@ box.setFromPoints(arrayOfVector3);
 box.min; // Vector3
 box.max; // Vector3
 box.getCenter(target); // fills target Vector3
-box.getSize(target);   // fills target Vector3
+box.getSize(target); // fills target Vector3
 
 // Tests
 box.containsPoint(point);

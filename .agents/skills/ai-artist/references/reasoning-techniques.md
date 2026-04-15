@@ -3,15 +3,18 @@
 ## Chain of Thought (CoT) Variants
 
 ### Zero-Shot CoT
+
 ```
 [Task description]
 
 Think step by step before answering.
 ```
+
 **Use when**: Quick reasoning, no examples available
 **Effectiveness**: +40-60% on reasoning tasks
 
 ### Few-Shot CoT
+
 ```
 Example 1:
 Q: [Question]
@@ -30,10 +33,12 @@ A: Breaking this down...
 Now solve:
 Q: [Your question]
 ```
+
 **Use when**: Complex reasoning, pattern demonstration needed
 **Effectiveness**: +50-80% on complex tasks
 
 ### Auto-CoT
+
 ```
 Let me approach this systematically:
 1. Identify the key elements
@@ -42,11 +47,13 @@ Let me approach this systematically:
 4. Draw conclusions
 5. Verify my reasoning
 ```
+
 **Use when**: General problem-solving, exploratory reasoning
 
 ## Tree of Thoughts (ToT)
 
 ### Implementation Pattern
+
 ```
 Problem: [Complex problem]
 
@@ -84,12 +91,14 @@ Execution: [Step-by-step implementation]
 ## Self-Consistency
 
 ### Process
+
 1. Generate 5 responses at temp=0.7
 2. Extract final answers from each
 3. Take majority vote
 4. Report confidence = agreement %
 
 ### Implementation
+
 ```
 Run this prompt 5 times (or use n=5 parameter):
 [Your reasoning task]
@@ -105,6 +114,7 @@ Aggregate: If 4/5 agree = high confidence
 ## ReAct (Reasoning + Acting)
 
 ### Full Pattern
+
 ```
 Task: [Goal to achieve]
 
@@ -129,6 +139,7 @@ Final Answer: [Conclusion with reasoning]
 ## Least-to-Most Prompting
 
 ### Structure
+
 ```
 Complex problem: [Full problem statement]
 
@@ -153,6 +164,7 @@ Final integrated answer: [Complete solution]
 ## Decomposed Prompting (DECOMP)
 
 ### Pattern
+
 ```
 Task: [Complex task]
 
@@ -174,6 +186,7 @@ Integrate results: [Final response]
 ## Constitutional AI Reasoning
 
 ### Self-Critique Pattern
+
 ```
 Initial response: [Generated content]
 
@@ -189,13 +202,13 @@ Revised response that addresses [specific issues]:
 
 ## Choosing the Right Technique
 
-| Task Type | Best Technique |
-|-----------|---------------|
-| Simple reasoning | Zero-shot CoT |
-| Complex multi-step | Few-shot CoT |
-| Strategic decisions | Tree of Thoughts |
-| Factual verification | Self-Consistency |
-| Tool-using tasks | ReAct |
-| Word problems | Least-to-Most |
-| Specialized sub-tasks | DECOMP |
-| Safety-critical | Constitutional AI |
+| Task Type             | Best Technique    |
+| --------------------- | ----------------- |
+| Simple reasoning      | Zero-shot CoT     |
+| Complex multi-step    | Few-shot CoT      |
+| Strategic decisions   | Tree of Thoughts  |
+| Factual verification  | Self-Consistency  |
+| Tool-using tasks      | ReAct             |
+| Word problems         | Least-to-Most     |
+| Specialized sub-tasks | DECOMP            |
+| Safety-critical       | Constitutional AI |

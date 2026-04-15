@@ -4,7 +4,7 @@
 
 - **Priority**: Medium — phụ thuộc Phase 02
 - **Status**: TODO
-- **Goal**: 
+- **Goal**:
   1. Thêm entry "Bank-wide" vào sidebar Project Settings dưới category GENERAL
   2. Tạo trang settings `/settings/projects/[projectId]/bank-wide/` với toggle switch
   3. Chỉ ADMIN mới thấy và thao tác được
@@ -14,6 +14,7 @@
 ## Requirements
 
 ### Functional
+
 - Sidebar Project Settings có thêm item "Bank-wide" dưới "General" category
 - Route: `/{workspaceSlug}/settings/projects/{projectId}/bank-wide/`
 - Trang settings hiển thị toggle `is_bank_wide` kèm mô tả
@@ -21,6 +22,7 @@
 - Chỉ ADMIN (`EUserProjectRoles.ADMIN`) có quyền truy cập
 
 ### Non-functional
+
 - Pattern giống các settings page hiện tại (`SettingsContentWrapper` + header)
 - Component < 150 lines; nếu lớn thì tách thành sub-components
 
@@ -29,13 +31,16 @@
 ## Related Code Files
 
 ### Files to modify:
+
 - `packages/constants/src/settings/project.ts` — thêm `bank_wide` vào `PROJECT_SETTINGS` và `GROUPED_PROJECT_SETTINGS`
 
 ### Files to create:
+
 - `apps/web/ce/components/projects/settings/bank-wide/root.tsx` — settings component chính
 - `apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/bank-wide/page.tsx` — route page (header inlined, no separate header.tsx) <!-- Updated: Validation Session 2 - inline header, no header.tsx -->
 
 ### Files to verify:
+
 - `apps/web/core/components/settings/project/sidebar/item-categories.tsx` — đọc từ `GROUPED_PROJECT_SETTINGS` → tự động hiển thị item mới
 
 ---
@@ -43,6 +48,7 @@
 ## Embedded Rules
 
 ### Rule 1: CE Settings Pattern — Layout phải có SettingsContentWrapper
+
 ```typescript
 // Pattern từ page.tsx settings hiện tại:
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
@@ -57,6 +63,7 @@ return (
 ```
 
 ### Rule 2: Permission check — ADMIN only
+
 ```typescript
 // Pattern từ page.tsx settings:
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -75,6 +82,7 @@ access: [EUserProjectRoles.ADMIN],
 ```
 
 ### Rule 3: Constants — Thêm đúng vào PROJECT_SETTINGS
+
 ```typescript
 // packages/constants/src/settings/project.ts
 // Thêm vào PROJECT_SETTINGS object:
@@ -98,6 +106,7 @@ bank_wide: {
 > ⚠️ **QUAN TRỌNG**: `TProjectSettingsTabs` trong `@plane/types` cần được update để TypeScript không báo lỗi. Xem Step 1.
 
 ### Rule 4: ToggleSwitch pattern từ settings hiện tại
+
 ```typescript
 // Pattern từ feature-control-item.tsx + auto-close-automation.tsx:
 import { ToggleSwitch } from "@plane/ui";
@@ -121,26 +130,23 @@ const handleToggle = async () => {
   }
 };
 
-<ToggleSwitch
-  value={currentProject?.is_bank_wide ?? false}
-  onChange={handleToggle}
-  disabled={!isAdmin}
-  size="sm"
-/>
+<ToggleSwitch value={currentProject?.is_bank_wide ?? false} onChange={handleToggle} disabled={!isAdmin} size="sm" />;
 ```
 
 ### Rule 5: observer() trên MobX-reading components
+
 ```typescript
 // ✅ BẮT BUỘC wrap observer nếu đọc từ MobX store
 import { observer } from "mobx-react";
 
 export const BankWideSettingsRoot = observer(function BankWideSettingsRoot(props) {
-  const { currentProjectDetails } = useProject();  // MobX store
+  const { currentProjectDetails } = useProject(); // MobX store
   // ...
 });
 ```
 
 ### Rule 6: setToast() sau mutations — LUÔN LUÔN
+
 ```typescript
 // Sau updateProject thành công:
 setToast({ type: TOAST_TYPE.SUCCESS, title: t("toast.success"), message: t("...") });
@@ -149,6 +155,7 @@ setToast({ type: TOAST_TYPE.ERROR, title: t("toast.error"), message: t("...") })
 ```
 
 ### Rule 7: Types — TProjectSettingsTabs
+
 ```typescript
 // packages/types/src/settings/project.ts (hoặc tương đương)
 // Cần thêm "bank_wide" vào TProjectSettingsTabs union type
@@ -163,11 +170,13 @@ setToast({ type: TOAST_TYPE.ERROR, title: t("toast.error"), message: t("...") })
 ### Step 1: Extend TProjectSettingsTabs (nếu cần)
 
 Tìm `TProjectSettingsTabs`:
+
 ```bash
 grep -r "TProjectSettingsTabs" packages/types/src/
 ```
 
 Thêm `"bank_wide"` vào union type:
+
 ```typescript
 // Ví dụ pattern
 export type TProjectSettingsTabs = "general" | "members" | ... | "bank_wide";
@@ -178,6 +187,7 @@ export type TProjectSettingsTabs = "general" | "members" | ... | "bank_wide";
 Mở: `packages/constants/src/settings/project.ts`
 
 **2a. Thêm "bank_wide" vào `PROJECT_SETTINGS`** (sau `worklogs`):
+
 ```typescript
 bank_wide: {
   key: "bank_wide",
@@ -189,6 +199,7 @@ bank_wide: {
 ```
 
 **2b. Thêm vào `GROUPED_PROJECT_SETTINGS[GENERAL]`**:
+
 ```typescript
 [PROJECT_SETTINGS_CATEGORY.GENERAL]: [
   PROJECT_SETTINGS["general"],
@@ -244,12 +255,8 @@ export const BankWideSettingsRoot = observer(function BankWideSettingsRoot(props
     <div className={`w-full ${!isAdmin ? "opacity-60" : ""}`}>
       <div className="flex items-center justify-between gap-4 py-4 border-b border-color-subtle">
         <div>
-          <h4 className="text-sm font-medium text-color-primary">
-            {t("bank_wide_project.settings.label")}
-          </h4>
-          <p className="text-sm text-color-secondary mt-1">
-            {t("bank_wide_project.settings.description")}
-          </p>
+          <h4 className="text-sm font-medium text-color-primary">{t("bank_wide_project.settings.label")}</h4>
+          <p className="text-sm text-color-secondary mt-1">{t("bank_wide_project.settings.description")}</p>
         </div>
         <ToggleSwitch
           value={currentProjectDetails?.is_bank_wide ?? false}
@@ -287,12 +294,7 @@ function BankWideProjectSettingsPage({ params }: Route.ComponentProps) {
   const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
 
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   // Redirect non-ADMINs to general settings
   useEffect(() => {
@@ -307,23 +309,15 @@ function BankWideProjectSettingsPage({ params }: Route.ComponentProps) {
 
   const header = (
     <div>
-      <h3 className="text-lg font-semibold text-color-primary">
-        {t("bank_wide_project.settings.title")}
-      </h3>
-      <p className="text-sm text-color-secondary mt-1">
-        {t("bank_wide_project.settings.header_description")}
-      </p>
+      <h3 className="text-lg font-semibold text-color-primary">{t("bank_wide_project.settings.title")}</h3>
+      <p className="text-sm text-color-secondary mt-1">{t("bank_wide_project.settings.header_description")}</p>
     </div>
   );
 
   return (
     <SettingsContentWrapper header={header}>
       <PageHead title={pageTitle} />
-      <BankWideSettingsRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        isAdmin={isAdmin}
-      />
+      <BankWideSettingsRoot workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
     </SettingsContentWrapper>
   );
 }
@@ -354,6 +348,7 @@ React Router v7 file-based routing tự động pick up `bank-wide/page.tsx`. **
 - [ ] Không có hardcoded strings, không có hardcoded colors
 
 ### Grep verification:
+
 ```bash
 # Kiểm tra hardcoded strings
 grep -n '"[A-Z]' apps/web/ce/components/projects/settings/bank-wide/root.tsx | grep -v 'import\|className'

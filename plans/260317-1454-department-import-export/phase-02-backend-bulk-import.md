@@ -4,12 +4,12 @@
 
 ## Overview
 
-| Field | Value |
-|---|---|
-| Date | 2026-03-17 |
+| Field       | Value                                                                                         |
+| ----------- | --------------------------------------------------------------------------------------------- |
+| Date        | 2026-03-17                                                                                    |
 | Description | Add `POST /api/instances/departments/bulk-import/` — validate, sort, batch-create departments |
-| Priority | P2 |
-| Status | ⬜ pending |
+| Priority    | P2                                                                                            |
+| Status      | ⬜ pending                                                                                    |
 
 ## Requirements
 
@@ -45,14 +45,14 @@ DepartmentBulkImportView (POST)
 
 ## Model Constraints to Enforce
 
-| Field | Constraint |
-|---|---|
-| `name` | required, ≤100 chars |
-| `short_name` | ≥2 chars, uppercase, unique across non-deleted depts |
-| `dept_code` | exactly 4 digits `[0-9]{4}` |
-| `dept_type` | `HO`, `BRX`, `OSR`, or empty/null |
-| `level` | auto-calculated, max 6 |
-| circular parent | parent_code must not create cycle |
+| Field           | Constraint                                           |
+| --------------- | ---------------------------------------------------- |
+| `name`          | required, ≤100 chars                                 |
+| `short_name`    | ≥2 chars, uppercase, unique across non-deleted depts |
+| `dept_code`     | exactly 4 digits `[0-9]{4}`                          |
+| `dept_type`     | `HO`, `BRX`, `OSR`, or empty/null                    |
+| `level`         | auto-calculated, max 6                               |
+| circular parent | parent_code must not create cycle                    |
 
 ## Related Code Files
 

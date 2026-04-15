@@ -6,22 +6,23 @@ Guidelines for designing schemas specific to MySQL / MariaDB.
 
 ## Data Types
 
-| Use case | Type | Notes |
-|----------|------|-------|
-| Primary key | `BIGINT UNSIGNED AUTO_INCREMENT` | For large tables |
-| Primary key (small) | `INT UNSIGNED AUTO_INCREMENT` | Tables < 2 billion rows |
-| Foreign key | Match with PK type | |
-| Money/Price | `DECIMAL(18,2)` | **Do NOT use FLOAT/DOUBLE** |
-| Quantity | `INT` or `DECIMAL(18,4)` | |
-| Boolean | `TINYINT(1)` or `BOOLEAN` | |
-| Short text | `VARCHAR(n)` | n ≤ 255 for indexing |
-| Long text | `TEXT` | Cannot index directly |
-| JSON | `JSON` | MySQL 5.7+ |
-| Timestamp | `DATETIME` or `TIMESTAMP` | |
-| Date | `DATE` | |
-| UUID | `CHAR(36)` or `BINARY(16)` | |
+| Use case            | Type                             | Notes                       |
+| ------------------- | -------------------------------- | --------------------------- |
+| Primary key         | `BIGINT UNSIGNED AUTO_INCREMENT` | For large tables            |
+| Primary key (small) | `INT UNSIGNED AUTO_INCREMENT`    | Tables < 2 billion rows     |
+| Foreign key         | Match with PK type               |                             |
+| Money/Price         | `DECIMAL(18,2)`                  | **Do NOT use FLOAT/DOUBLE** |
+| Quantity            | `INT` or `DECIMAL(18,4)`         |                             |
+| Boolean             | `TINYINT(1)` or `BOOLEAN`        |                             |
+| Short text          | `VARCHAR(n)`                     | n ≤ 255 for indexing        |
+| Long text           | `TEXT`                           | Cannot index directly       |
+| JSON                | `JSON`                           | MySQL 5.7+                  |
+| Timestamp           | `DATETIME` or `TIMESTAMP`        |                             |
+| Date                | `DATE`                           |                             |
+| UUID                | `CHAR(36)` or `BINARY(16)`       |                             |
 
 ### TIMESTAMP vs DATETIME
+
 - `TIMESTAMP`: Auto-converts timezone, range 1970-2038
 - `DATETIME`: No timezone conversion, range 1000-9999
 
@@ -32,6 +33,7 @@ Guidelines for designing schemas specific to MySQL / MariaDB.
 MySQL supports comments directly in DDL:
 
 ### Table comment
+
 ```sql
 CREATE TABLE orders (
     ...
@@ -39,6 +41,7 @@ CREATE TABLE orders (
 ```
 
 ### Column comment
+
 ```sql
 CREATE TABLE orders (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT
@@ -53,6 +56,7 @@ CREATE TABLE orders (
 ```
 
 ### Query comments
+
 ```sql
 -- Table comment
 SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES
@@ -68,6 +72,7 @@ WHERE TABLE_SCHEMA = 'your_db' AND TABLE_NAME = 'orders';
 ## Index Types
 
 ### B-Tree (default)
+
 ```sql
 CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_user_status_created ON orders(user_id, status, created_at DESC);
@@ -75,6 +80,7 @@ CREATE UNIQUE INDEX idx_orders_number ON orders(order_number);
 ```
 
 ### FULLTEXT (text search)
+
 ```sql
 CREATE FULLTEXT INDEX idx_products_search ON products(name, description);
 
@@ -84,6 +90,7 @@ WHERE MATCH(name, description) AGAINST('gaming laptop' IN NATURAL LANGUAGE MODE)
 ```
 
 ### Notes
+
 - **Partial index**: Not natively supported in MySQL
 - Index prefix for TEXT: `CREATE INDEX idx ON table(col(255))`
 
@@ -117,11 +124,13 @@ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTA
 ## ENUM vs VARCHAR
 
 ### Use ENUM when values are fixed and rarely change
+
 ```sql
 status ENUM('pending', 'confirmed', 'shipped', 'cancelled') NOT NULL DEFAULT 'pending'
 ```
 
 ### Use VARCHAR + CHECK when flexibility needed
+
 ```sql
 status VARCHAR(32) NOT NULL DEFAULT 'pending',
 CONSTRAINT chk_orders_status CHECK (status IN ('pending', 'confirmed', 'shipped'))
@@ -158,6 +167,7 @@ CREATE INDEX idx_orderitems_product ON order_items(product_id);
 ## Partitioning
 
 ### Range partitioning (by date)
+
 ```sql
 CREATE TABLE fact_orders (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

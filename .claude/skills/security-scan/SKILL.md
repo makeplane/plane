@@ -22,11 +22,11 @@ Lightweight security scanner using Claude's reasoning + shell tools. No external
 
 ## Scan Categories
 
-| Category | Method | Speed | Reference |
-|----------|--------|-------|-----------|
-| Secrets | Grep regex patterns | Fast | `references/secret-patterns.md` |
-| Dependencies | `npm audit` / `pip audit` | Medium | Built-in |
-| Code patterns | Grep + Claude analysis | Medium | `references/vulnerability-patterns.md` |
+| Category      | Method                    | Speed  | Reference                              |
+| ------------- | ------------------------- | ------ | -------------------------------------- |
+| Secrets       | Grep regex patterns       | Fast   | `references/secret-patterns.md`        |
+| Dependencies  | `npm audit` / `pip audit` | Medium | Built-in                               |
+| Code patterns | Grep + Claude analysis    | Medium | `references/vulnerability-patterns.md` |
 
 ## Workflow
 
@@ -44,6 +44,7 @@ Lightweight security scanner using Claude's reasoning + shell tools. No external
 Load `references/secret-patterns.md` for regex patterns.
 
 Use Grep tool to search for each pattern category:
+
 - API keys and tokens (AWS, GitHub, Stripe, etc.)
 - Private keys and certificates
 - Database connection strings with credentials
@@ -52,12 +53,14 @@ Use Grep tool to search for each pattern category:
 **Exclude**: `.env.example`, test fixtures, documentation, `node_modules/`, `dist/`
 
 For each match:
+
 - Verify it's a real secret (not a placeholder like `YOUR_API_KEY`)
 - Rate severity: CRITICAL (exposed prod key), HIGH (real credential), MEDIUM (possible credential)
 
 ### 3. Dependency Audit (If applicable)
 
 Run the appropriate command:
+
 ```bash
 # Node.js
 npm audit --json 2>/dev/null || echo '{"error":"npm audit failed"}'
@@ -73,6 +76,7 @@ Parse output, categorize by severity (critical/high/moderate/low).
 Load `references/vulnerability-patterns.md` for patterns.
 
 Use Grep tool to search for dangerous patterns:
+
 - SQL injection (string concatenation in queries)
 - XSS (innerHTML, dangerouslySetInnerHTML without sanitization)
 - Command injection (exec/spawn with unsanitized input)
@@ -81,6 +85,7 @@ Use Grep tool to search for dangerous patterns:
 - eval() / Function() with dynamic input
 
 For each match:
+
 - Read surrounding code context (5-10 lines)
 - Use Claude reasoning to determine if it's a real vulnerability or false positive
 - Rate severity and suggest fix
@@ -106,23 +111,27 @@ Output a markdown report directly in chat:
 **Files checked:** {count}
 
 ## Summary
+
 | Category | Critical | High | Medium | Low |
-|----------|----------|------|--------|-----|
-| Secrets  | X | X | X | - |
-| Deps     | X | X | X | X |
-| Code     | X | X | X | - |
+| -------- | -------- | ---- | ------ | --- |
+| Secrets  | X        | X    | X      | -   |
+| Deps     | X        | X    | X      | X   |
+| Code     | X        | X    | X      | -   |
 
 ## Findings
 
 ### CRITICAL
+
 1. **[SECRET]** Hardcoded AWS key in `src/config.js:42`
    - Pattern: `AKIA[0-9A-Z]{16}`
    - Fix: Move to environment variable
 
 ### HIGH
+
 ...
 
 ## Recommendations
+
 1. ...
 ```
 

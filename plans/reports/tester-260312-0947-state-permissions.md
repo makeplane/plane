@@ -127,6 +127,7 @@ Created comprehensive unit and contract tests for state permission guards in Sta
    - **Status:** Tested in `test_mark_system_state_as_default_by_admin_blocked`
 
 4. **Destroy Guard** (line 133-140)
+
    ```python
    @allow_permission([ROLE.ADMIN])
    def destroy(self, request, slug, project_id, pk):

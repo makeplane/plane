@@ -7,7 +7,7 @@ global.testStats = {
   passed: 0,
   failed: 0,
   suites: [],
-  currentSuite: null
+  currentSuite: null,
 };
 
 class TestSuite {
@@ -35,7 +35,7 @@ class TestSuite {
       name: this.name,
       passed: 0,
       failed: 0,
-      errors: []
+      errors: [],
     };
 
     console.log(`\n  ${this.name}`);
@@ -53,14 +53,14 @@ class TestSuite {
         }
 
         results.passed++;
-        process.stdout.write('.');
+        process.stdout.write(".");
       } catch (error) {
         results.failed++;
         results.errors.push({
           test: test.name,
-          error: error.message
+          error: error.message,
         });
-        process.stdout.write('F');
+        process.stdout.write("F");
       }
     }
 
@@ -70,38 +70,38 @@ class TestSuite {
 
 global.testSuites = {};
 
-global.describe = function(name, fn) {
+global.describe = function (name, fn) {
   const suite = new TestSuite(name);
   global.testStats.currentSuite = suite;
   global.testSuites[name] = suite;
   fn();
 };
 
-global.it = function(name, fn) {
+global.it = function (name, fn) {
   if (!global.testStats.currentSuite) {
-    throw new Error('it() called outside describe()');
+    throw new Error("it() called outside describe()");
   }
   global.testStats.currentSuite.addTest(name, fn);
 };
 
-global.before = function(fn) {
+global.before = function (fn) {
   if (!global.testStats.currentSuite) {
-    throw new Error('before() called outside describe()');
+    throw new Error("before() called outside describe()");
   }
   global.testStats.currentSuite.setBefore(fn);
 };
 
-global.after = function(fn) {
+global.after = function (fn) {
   if (!global.testStats.currentSuite) {
-    throw new Error('after() called outside describe()');
+    throw new Error("after() called outside describe()");
   }
   global.testStats.currentSuite.setAfter(fn);
 };
 
-global.runAllTests = async function() {
-  console.log('\n' + '='.repeat(70));
-  console.log('Running Test Suites');
-  console.log('='.repeat(70));
+global.runAllTests = async function () {
+  console.log("\n" + "=".repeat(70));
+  console.log("Running Test Suites");
+  console.log("=".repeat(70));
 
   const suites = Object.values(global.testSuites);
   const results = [];
@@ -120,19 +120,19 @@ global.runAllTests = async function() {
 };
 
 function printTestResults(results) {
-  console.log('\n\n' + '='.repeat(70));
-  console.log('Test Results');
-  console.log('='.repeat(70) + '\n');
+  console.log("\n\n" + "=".repeat(70));
+  console.log("Test Results");
+  console.log("=".repeat(70) + "\n");
 
   let totalPassed = 0;
   let totalFailed = 0;
 
   for (const result of results) {
-    const status = result.failed > 0 ? '✗' : '✓';
+    const status = result.failed > 0 ? "✗" : "✓";
     console.log(`${status} ${result.name}`);
 
     if (result.errors.length > 0) {
-      result.errors.forEach(err => {
+      result.errors.forEach((err) => {
         console.log(`  ✗ ${err.test}`);
         console.log(`    ${err.error}`);
       });
@@ -142,9 +142,9 @@ function printTestResults(results) {
     totalFailed += result.failed;
   }
 
-  console.log('\n' + '='.repeat(70));
+  console.log("\n" + "=".repeat(70));
   console.log(`Total: ${totalPassed + totalFailed} | Passed: ${totalPassed} | Failed: ${totalFailed}`);
-  console.log('='.repeat(70) + '\n');
+  console.log("=".repeat(70) + "\n");
 
   if (totalFailed > 0) {
     process.exit(1);

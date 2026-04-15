@@ -15,10 +15,10 @@ Add a global **Rejoin** button beside "Add Department" on the Departments admin 
 
 ## Phases
 
-| # | Phase | File(s) | Status | Est. |
-|---|-------|---------|--------|------|
-| 1 | [Backend Endpoint](./phase-01-backend.md) | `views/department.py`, `urls/department.py` | ✅ done | 30m |
-| 2 | [Frontend: Service + Store + UI](./phase-02-frontend.md) | `service.ts`, `store.ts`, `page.tsx`, `rejoin-all-modal.tsx` | ✅ done | 75m |
+| #   | Phase                                                    | File(s)                                                      | Status  | Est. |
+| --- | -------------------------------------------------------- | ------------------------------------------------------------ | ------- | ---- |
+| 1   | [Backend Endpoint](./phase-01-backend.md)                | `views/department.py`, `urls/department.py`                  | ✅ done | 30m  |
+| 2   | [Frontend: Service + Store + UI](./phase-02-frontend.md) | `service.ts`, `store.ts`, `page.tsx`, `rejoin-all-modal.tsx` | ✅ done | 75m  |
 
 ## Files Changed
 
@@ -27,7 +27,7 @@ Add a global **Rejoin** button beside "Add Department" on the Departments admin 
 3. `packages/services/src/department/instance-department.service.ts`
 4. `apps/admin/store/instance-department.store.ts`
 5. `apps/admin/app/(all)/(dashboard)/departments/page.tsx`
-6. `apps/admin/app/(all)/(dashboard)/departments/components/rejoin-all-modal.tsx` *(new)*
+6. `apps/admin/app/(all)/(dashboard)/departments/components/rejoin-all-modal.tsx` _(new)_
 
 ## Key Design Decisions
 
@@ -41,6 +41,7 @@ Add a global **Rejoin** button beside "Add Department" on the Departments admin 
 ## Validation Log
 
 ### Session 1 — 2026-03-18
+
 **Trigger:** Initial plan validation
 **Questions asked:** 3
 
@@ -62,16 +63,19 @@ Add a global **Rejoin** button beside "Add Department" on the Departments admin 
    - **Rationale:** No changes to backend execution model needed
 
 #### Confirmed Decisions
+
 - Confirmation UX: Small modal with mode selector (All Projects / Bank-wide) + Confirm/Cancel
 - Backend: Accepts `mode` param (`all_projects` | `bank_wide_projects`), synchronous
 - New file: `rejoin-all-modal.tsx` component needed
 
 #### Action Items
+
 - [ ] Backend: Add `mode` param to `RejoinAllEndpoint.post()`, validate same as `InstanceDepartmentAutoJoinEndpoint`
 - [ ] Frontend: Create `rejoin-all-modal.tsx` (small modal, mirrors AutoJoinModal pattern)
 - [ ] Frontend: Update `page.tsx` to use modal instead of `window.confirm()`
 - [ ] Service: `rejoinAll(mode)` accepts mode param
 
 #### Impact on Phases
+
 - Phase 1 (backend): `RejoinAllEndpoint` must read `mode` from `request.data`, filter projects accordingly
 - Phase 2 (frontend): Add new `rejoin-all-modal.tsx` component; update page to open modal on button click

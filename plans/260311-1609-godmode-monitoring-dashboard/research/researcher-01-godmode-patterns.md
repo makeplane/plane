@@ -1,6 +1,7 @@
 # God Mode Admin App Patterns Research
 
 ## Overview
+
 Analysis of Plane.so God Mode admin app architecture for building monitoring dashboard feature.
 
 ---
@@ -25,6 +26,7 @@ export default [
 ```
 
 **Pattern:** React Router v7 route config using `layout()` and `route()` helpers. Nested groups use directory structure `(group)` for logical organization. To add monitoring dashboard:
+
 - Add route: `route("monitoring", "./(all)/(dashboard)/monitoring/page.tsx")`
 - Create directory: `apps/admin/app/(all)/(dashboard)/monitoring/`
 
@@ -35,6 +37,7 @@ export default [
 **Location:** `apps/admin/store/instance.store.ts`
 
 **Key Structure:**
+
 ```typescript
 export interface IInstanceStore {
   // observables
@@ -80,6 +83,7 @@ export class InstanceStore implements IInstanceStore {
 ```
 
 **Critical Rules:**
+
 - Use `makeObservable()` explicitly (NOT `makeAutoObservable`)
 - Declare all observables and actions in config
 - Use `runInAction()` for async state updates
@@ -114,6 +118,7 @@ export class InstanceWorkspaceService extends APIService {
 ```
 
 **Pattern:**
+
 - Extend `APIService` base class
 - Endpoint routes: `/api/instances/{resource}/`
 - Use `.get()`, `.post()`, `.put()`, `.delete()` methods
@@ -143,6 +148,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
 ```
 
 **To Add Menu Item:**
+
 1. Add key to `TCoreSidebarMenuKey` union type
 2. Add entry to `coreSidebarMenuLinks` object
 3. Import icon from `lucide-react` or `@plane/propel/icons`
@@ -176,6 +182,7 @@ export default observer(GeneralPage);
 ```
 
 **Pattern:**
+
 - Wrap component with `observer()` from `mobx-react`
 - Use custom hooks like `useInstance()` to access stores
 - Call fetch in `useEffect` with empty dependency array
@@ -186,6 +193,7 @@ export default observer(GeneralPage);
 ## 6. Component Libraries & Imports
 
 **Key Imports Used:**
+
 ```typescript
 // UI Components
 import { Tooltip } from "@plane/propel/tooltip";
@@ -239,6 +247,7 @@ export default observer(AdminLayout);
 ```
 
 **Structure:**
+
 - Sidebar (left, 290px or 70px collapsed)
 - Header (top)
 - Content area (right, scrollable)

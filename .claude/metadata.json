@@ -8950,12 +8950,5 @@
   "name": "ClaudeKit Engineer",
   "version": "v2.15.1",
   "installedAt": "2026-04-02T09:33:38.023Z",
-  "userConfigFiles": [
-    ".gitignore",
-    ".repomixignore",
-    ".mcp.json",
-    ".ckignore",
-    ".ck.json",
-    "CLAUDE.md"
-  ]
+  "userConfigFiles": [".gitignore", ".repomixignore", ".mcp.json", ".ckignore", ".ck.json", "CLAUDE.md"]
 }

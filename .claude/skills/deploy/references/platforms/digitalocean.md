@@ -1,6 +1,7 @@
 # Digital Ocean App Platform
 
 ## CLI
+
 ```bash
 brew install doctl    # macOS
 snap install doctl    # Linux
@@ -12,6 +13,7 @@ doctl apps update APP_ID --spec spec.yaml  # update
 ```
 
 ## Config: spec.yaml
+
 ```yaml
 name: my-app
 services:
@@ -27,19 +29,23 @@ services:
 ```
 
 ## Detection
+
 - `.do/app.yaml`, `spec.yaml`
 - Dockerfile, buildpack detection
 
 ## Free Tier
+
 - 3 static sites free
 - Dynamic apps from $5/mo
 - Droplets (VPS) from $4/mo
 
 ## Rollback
+
 ```bash
 doctl apps list-deployments APP_ID
 # Redeploy previous via dashboard or force-rebuild
 ```
 
 ## Best For
+
 Simple full-stack deploys, managed Postgres, free static sites

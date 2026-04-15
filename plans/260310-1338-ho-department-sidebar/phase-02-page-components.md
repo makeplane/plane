@@ -20,6 +20,7 @@ Create the HO page layout and CE department list components. Follows the stickie
 ## Requirements
 
 <!-- Updated: Validation Session 1 - flat table confirmed; add BOD workspace guard on page -->
+
 1. `layout.tsx` — AppHeader + ContentWrapper shell
 2. `page.tsx` — imports and renders CE `<HoDepartmentList />`; guard: if not BOD workspace, show "Not available"
 3. `department-list.tsx` — fetches departments, renders flat table
@@ -49,6 +50,7 @@ ce/components/ho/
 ### 1. `apps/web/app/(all)/[workspaceSlug]/(projects)/ho/layout.tsx`
 
 Mirror stickies layout:
+
 ```tsx
 import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";

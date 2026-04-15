@@ -20,7 +20,7 @@
 - `apps/web/ce/components/dashboards/widget-adapter.tsx` (138 lines) — Refactored to use drill-down renderers; added M4 number text_align/text_color; uses `useAppRouter` for navigation
 - `apps/web/ce/components/dashboards/config/style-settings-section.tsx` (198 lines) — Added M2 line type buttons, M1 orientation toggle, M4 text_align buttons + color input for NUMBER type
 - `packages/types/src/custom-dashboard.ts` — Added `line_type`, `orientation`, `text_align`, `text_color` to `IAnalyticsWidgetConfig`
-- `packages/i18n/src/locales/en/translations.ts` — Added 11 new keys (line*type*_, orientation\__, text_align, text_color\*)
+- `packages/i18n/src/locales/en/translations.ts` — Added 11 new keys (line*type*\_, orientation\_\_, text_align, text_color\*)
 - `packages/i18n/src/locales/ko/translations.ts` — Same keys in Korean
 - `packages/i18n/src/locales/vi/translations.ts` — Same keys in Vietnamese
 

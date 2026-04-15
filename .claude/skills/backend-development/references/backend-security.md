@@ -5,15 +5,18 @@ Security best practices, OWASP Top 10 mitigation, and modern security standards 
 ## OWASP Top 10 (2025 RC1)
 
 ### New Entries (2025)
+
 - **Supply Chain Failures** - Vulnerable dependencies, compromised packages
 - **Mishandling of Exceptional Conditions** - Improper error handling exposing system info
 
 ### Top Vulnerabilities & Mitigation
 
 #### 1. Broken Access Control
+
 **Risk:** Users access unauthorized resources (28% of vulnerabilities)
 
 **Mitigation:**
+
 - Implement RBAC (Role-Based Access Control)
 - Deny by default, explicitly allow
 - Log access control failures
@@ -31,9 +34,11 @@ async deleteUser(@Param('id') id: string) {
 ```
 
 #### 2. Cryptographic Failures
+
 **Risk:** Sensitive data exposure, weak encryption
 
 **Mitigation:**
+
 - Use Argon2id for password hashing (replaces bcrypt as of 2025)
 - TLS 1.3 for data in transit
 - Encrypt sensitive data at rest (AES-256)
@@ -50,9 +55,11 @@ ph.verify(hash, "password123")  # Verify password
 ```
 
 #### 3. Injection Attacks
+
 **Risk:** SQL injection, NoSQL injection, command injection (6x increase 2020-2024)
 
 **Mitigation (98% vulnerability reduction):**
+
 - Use parameterized queries ALWAYS
 - Input validation with allow-lists
 - Escape special characters
@@ -63,23 +70,27 @@ ph.verify(hash, "password123")  # Verify password
 const query = `SELECT * FROM users WHERE email = '${email}'`;
 
 // Good: Parameterized query
-const query = 'SELECT * FROM users WHERE email = $1';
+const query = "SELECT * FROM users WHERE email = $1";
 const result = await db.query(query, [email]);
 ```
 
 #### 4. Insecure Design
+
 **Risk:** Flawed architecture, missing security controls
 
 **Mitigation:**
+
 - Threat modeling during design phase
 - Security requirements from start
 - Principle of least privilege
 - Defense in depth (multiple security layers)
 
 #### 5. Security Misconfiguration
+
 **Risk:** Default credentials, verbose errors, unnecessary features enabled
 
 **Mitigation:**
+
 - Remove default accounts
 - Disable directory listing
 - Use security headers (CSP, HSTS, X-Frame-Options)
@@ -88,24 +99,28 @@ const result = await db.query(query, [email]);
 
 ```typescript
 // Security headers middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+      },
     },
-  },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-  },
-}));
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+    },
+  })
+);
 ```
 
 #### 6. Vulnerable Components
+
 **Risk:** Outdated dependencies with known vulnerabilities
 
 **Mitigation:**
+
 - Regular dependency updates (npm audit, pip-audit)
 - Use Dependabot/Renovate for automated updates
 - Monitor CVE databases
@@ -119,9 +134,11 @@ pip-audit --fix
 ```
 
 #### 7. Authentication Failures
+
 **Risk:** Weak passwords, session hijacking, credential stuffing
 
 **Mitigation:**
+
 - MFA mandatory for admin accounts
 - Rate limiting on login endpoints (10 attempts/minute)
 - Strong password policies (12+ chars, complexity)
@@ -129,18 +146,22 @@ pip-audit --fix
 - FIDO2/WebAuthn for passwordless auth
 
 #### 8. Software & Data Integrity Failures
+
 **Risk:** CI/CD pipeline compromise, unsigned updates
 
 **Mitigation:**
+
 - Code signing for releases
 - Verify integrity of packages (lock files)
 - Secure CI/CD pipelines (immutable builds)
 - Checksum verification
 
 #### 9. Logging & Monitoring Failures
+
 **Risk:** Breaches undetected, insufficient audit trail
 
 **Mitigation:**
+
 - Log authentication events (success/failure)
 - Log access control failures
 - Centralized logging (ELK Stack, Splunk)
@@ -148,9 +169,11 @@ pip-audit --fix
 - Log rotation and retention policies
 
 #### 10. Server-Side Request Forgery (SSRF)
+
 **Risk:** Server makes malicious requests to internal resources
 
 **Mitigation:**
+
 - Validate and sanitize URLs
 - Allow-list for remote resources
 - Network segmentation
@@ -161,6 +184,7 @@ pip-audit --fix
 ### Validation Strategies
 
 **1. Type Validation**
+
 ```typescript
 // Use class-validator with NestJS
 class CreateUserDto {
@@ -179,19 +203,21 @@ class CreateUserDto {
 ```
 
 **2. Sanitization**
+
 ```typescript
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from "isomorphic-dompurify";
 
 // Sanitize HTML input
 const clean = DOMPurify.sanitize(userInput);
 ```
 
 **3. Allow-lists (Preferred over Deny-lists)**
+
 ```typescript
 // Good: Allow-list approach
-const allowedFields = ['name', 'email', 'age'];
+const allowedFields = ["name", "email", "age"];
 const sanitized = Object.keys(input)
-  .filter(key => allowedFields.includes(key))
+  .filter((key) => allowedFields.includes(key))
   .reduce((obj, key) => ({ ...obj, [key]: input[key] }), {});
 ```
 
@@ -200,17 +226,17 @@ const sanitized = Object.keys(input)
 ### Token Bucket Algorithm (Industry Standard)
 
 ```typescript
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // 100 requests per window
   standardHeaders: true,
   legacyHeaders: false,
-  message: 'Too many requests, please try again later',
+  message: "Too many requests, please try again later",
 });
 
-app.use('/api/', limiter);
+app.use("/api/", limiter);
 ```
 
 ### API-Specific Limits
@@ -254,7 +280,7 @@ app.use('/api/', limiter);
 ```typescript
 // Good: Secrets from environment
 const dbPassword = process.env.DB_PASSWORD;
-if (!dbPassword) throw new Error('DB_PASSWORD not set');
+if (!dbPassword) throw new Error("DB_PASSWORD not set");
 ```
 
 ## API Security Checklist

@@ -1,6 +1,7 @@
 # Kubernetes Troubleshooting Advanced
 
 ## Node Issues
+
 ```bash
 kubectl describe node <node-name> | grep -A 5 "Conditions:"
 kubectl top node <node-name>
@@ -10,6 +11,7 @@ kubectl uncordon <node-name>
 ```
 
 ## CrashLoopBackOff
+
 ```bash
 kubectl logs <pod-name> --previous
 kubectl describe pod <pod-name>
@@ -17,6 +19,7 @@ kubectl get pod <pod-name> -o yaml | grep -A 5 resources:
 ```
 
 ## HPA
+
 ```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -28,23 +31,25 @@ spec:
   minReplicas: 2
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
 ```
 
 ## Anti-Patterns
 
 **Using `latest` tag:**
+
 ```yaml
 # ❌ image: myapp:latest
 # ✅ image: myapp:v1.2.3
 ```
 
 **Missing resources:**
+
 ```yaml
 # ✅ Always set
 resources:
@@ -53,6 +58,7 @@ resources:
 ```
 
 **Missing health checks:**
+
 ```yaml
 livenessProbe:
   httpGet: { path: /health, port: 8080 }
@@ -61,6 +67,7 @@ readinessProbe:
 ```
 
 **Running as root:**
+
 ```yaml
 securityContext:
   runAsNonRoot: true
@@ -68,6 +75,7 @@ securityContext:
 ```
 
 ## Monitoring
+
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring

@@ -12,11 +12,11 @@ priority: P2
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-03-18 |
-| Status | pending |
-| Priority | P2 |
+| Field    | Value      |
+| -------- | ---------- |
+| Date     | 2026-03-18 |
+| Status   | pending    |
+| Priority | P2         |
 
 ## Key Insights
 
@@ -69,6 +69,7 @@ POST /api/instances/departments/bulk-link-workspace/
    - POST method: validate → loop rows → link → return results
 
 2. Register URL in `apps/api/plane/license/api/urls/department.py`:
+
    ```python
    path(
        "departments/bulk-link-workspace/",
@@ -76,6 +77,7 @@ POST /api/instances/departments/bulk-link-workspace/
        name="instance-department-bulk-link-workspace",
    ),
    ```
+
    ⚠️ Must be registered BEFORE `departments/<uuid:pk>/` routes
 
 3. Import new view in `apps/api/plane/license/api/urls/department.py`
@@ -93,7 +95,7 @@ POST /api/instances/departments/bulk-link-workspace/
 - Invalid dept_code → row skipped with reason "Department not found"
 - Invalid workspace_slug → row skipped with reason "Workspace not found"
 - Already-linked dept → row skipped with reason "Already linked to workspace {name}"
-- >500 rows → 400 error
+- > 500 rows → 400 error
 - Returns correct summary counts
 
 ## Risk Assessment

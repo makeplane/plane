@@ -23,10 +23,10 @@ Default cache location: `./node_modules/.cache/turbo`
   "pipeline": {
     "build": {
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "cache": true  // default
+      "cache": true // default
     },
     "dev": {
-      "cache": false  // don't cache dev servers
+      "cache": false // don't cache dev servers
     }
   }
 }
@@ -40,18 +40,19 @@ Specify what gets cached:
 {
   "build": {
     "outputs": [
-      "dist/**",              // All files in dist
-      "build/**",             // Build directory
-      ".next/**",             // Next.js output
-      "!.next/cache/**",      // Exclude Next.js cache
-      "storybook-static/**",  // Storybook build
-      "*.tsbuildinfo"         // TypeScript build info
+      "dist/**", // All files in dist
+      "build/**", // Build directory
+      ".next/**", // Next.js output
+      "!.next/cache/**", // Exclude Next.js cache
+      "storybook-static/**", // Storybook build
+      "*.tsbuildinfo" // TypeScript build info
     ]
   }
 }
 ```
 
 **Best practices:**
+
 - Include all build artifacts
 - Exclude nested caches
 - Include type definitions
@@ -77,6 +78,7 @@ Share cache across team and CI/CD.
 ### Vercel Remote Cache (Recommended)
 
 **Setup:**
+
 ```bash
 # Login to Vercel
 turbo login
@@ -86,6 +88,7 @@ turbo link
 ```
 
 **Use in CI:**
+
 ```yaml
 # .github/workflows/ci.yml
 env:
@@ -97,6 +100,7 @@ steps:
 ```
 
 Get tokens from Vercel dashboard:
+
 1. Go to https://vercel.com/account/tokens
 2. Create new token
 3. Add as GitHub secrets
@@ -115,6 +119,7 @@ Configure custom remote cache server:
 ```
 
 Or use environment variables:
+
 ```bash
 export TURBO_API="https://cache.example.com"
 export TURBO_TOKEN="your-token"
@@ -139,6 +144,7 @@ Cache invalidated when these change:
 ### 1. Source Files
 
 All tracked Git files in package:
+
 ```
 packages/ui/
 ├── src/
@@ -151,10 +157,11 @@ packages/ui/
 ### 2. Package Dependencies
 
 Changes in package.json:
+
 ```json
 {
   "dependencies": {
-    "react": "18.2.0"  // Version change invalidates cache
+    "react": "18.2.0" // Version change invalidates cache
   }
 }
 ```
@@ -162,10 +169,11 @@ Changes in package.json:
 ### 3. Environment Variables
 
 Configured in pipeline:
+
 ```json
 {
   "build": {
-    "env": ["NODE_ENV", "API_URL"]  // Changes invalidate cache
+    "env": ["NODE_ENV", "API_URL"] // Changes invalidate cache
   }
 }
 ```
@@ -173,24 +181,22 @@ Configured in pipeline:
 ### 4. Global Dependencies
 
 Files affecting all packages:
+
 ```json
 {
-  "globalDependencies": [
-    "**/.env.*local",
-    "tsconfig.json",
-    ".eslintrc.js"
-  ]
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", ".eslintrc.js"]
 }
 ```
 
 ### 5. Task Configuration
 
 Changes to turbo.json pipeline:
+
 ```json
 {
   "build": {
     "dependsOn": ["^build"],
-    "outputs": ["dist/**"]  // Config changes invalidate cache
+    "outputs": ["dist/**"] // Config changes invalidate cache
   }
 }
 ```
@@ -205,18 +211,19 @@ Explicitly define what affects cache:
 {
   "build": {
     "inputs": [
-      "src/**/*.ts",           // Include TS files
-      "src/**/*.tsx",          // Include TSX files
-      "!src/**/*.test.ts",     // Exclude tests
+      "src/**/*.ts", // Include TS files
+      "src/**/*.tsx", // Include TSX files
+      "!src/**/*.test.ts", // Exclude tests
       "!src/**/*.stories.tsx", // Exclude stories
-      "package.json",          // Include package.json
-      "tsconfig.json"          // Include config
+      "package.json", // Include package.json
+      "tsconfig.json" // Include config
     ]
   }
 }
 ```
 
 Use cases:
+
 - Exclude test files from build cache
 - Exclude documentation from production builds
 - Include only source files, not generated files
@@ -224,6 +231,7 @@ Use cases:
 ### Global vs Package Inputs
 
 **Global inputs** (affect all packages):
+
 ```json
 {
   "globalDependencies": [".env", "tsconfig.json"]
@@ -231,6 +239,7 @@ Use cases:
 ```
 
 **Package inputs** (affect specific tasks):
+
 ```json
 {
   "pipeline": {
@@ -252,7 +261,7 @@ Include in cache signature:
   "pipeline": {
     "build": {
       "env": [
-        "NODE_ENV",           // Must match for cache hit
+        "NODE_ENV", // Must match for cache hit
         "NEXT_PUBLIC_API_URL",
         "DATABASE_URL"
       ]
@@ -272,7 +281,7 @@ Don't affect cache:
   "pipeline": {
     "build": {
       "passThroughEnv": [
-        "DEBUG",        // Different values use same cache
+        "DEBUG", // Different values use same cache
         "LOG_LEVEL",
         "VERBOSE"
       ]
@@ -289,11 +298,7 @@ Available to all tasks:
 
 ```json
 {
-  "globalEnv": [
-    "NODE_ENV",
-    "CI",
-    "VERCEL"
-  ]
+  "globalEnv": ["NODE_ENV", "CI", "VERCEL"]
 }
 ```
 
@@ -326,8 +331,8 @@ Define precise outputs to minimize cache size:
   "build": {
     "outputs": [
       ".next/**",
-      "!.next/cache/**",      // Exclude Next.js cache
-      "!.next/server/**/*.js.map",  // Exclude source maps
+      "!.next/cache/**", // Exclude Next.js cache
+      "!.next/server/**/*.js.map", // Exclude source maps
       "!.next/static/**/*.map"
     ]
   }
@@ -345,10 +350,10 @@ Define precise outputs to minimize cache size:
     },
     "test": {
       "dependsOn": ["build"],
-      "cache": true  // Separate from build
+      "cache": true // Separate from build
     },
     "dev": {
-      "cache": false  // Never cache
+      "cache": false // Never cache
     }
   }
 }
@@ -361,12 +366,7 @@ Only track relevant files:
 ```json
 {
   "build": {
-    "inputs": [
-      "src/**/*.{ts,tsx}",
-      "!src/**/*.{test,spec}.{ts,tsx}",
-      "public/**",
-      "package.json"
-    ]
+    "inputs": ["src/**/*.{ts,tsx}", "!src/**/*.{test,spec}.{ts,tsx}", "public/**", "package.json"]
   }
 }
 ```
@@ -458,16 +458,19 @@ build:
 ### Cache Not Working
 
 **Check outputs are defined:**
+
 ```bash
 turbo run build --dry-run=json | jq '.tasks[] | {task: .task, outputs: .outputs}'
 ```
 
 **Verify cache location:**
+
 ```bash
 ls -la ./node_modules/.cache/turbo
 ```
 
 **Check environment variables:**
+
 ```bash
 echo $TURBO_TOKEN
 echo $TURBO_TEAM
@@ -476,24 +479,27 @@ echo $TURBO_TEAM
 ### Cache Too Large
 
 **Analyze cache size:**
+
 ```bash
 du -sh ./node_modules/.cache/turbo
 ```
 
 **Reduce outputs:**
+
 ```json
 {
   "build": {
     "outputs": [
       "dist/**",
-      "!dist/**/*.map",      // Exclude source maps
-      "!dist/**/*.test.js"   // Exclude test files
+      "!dist/**/*.map", // Exclude source maps
+      "!dist/**/*.test.js" // Exclude test files
     ]
   }
 }
 ```
 
 **Clear old cache:**
+
 ```bash
 # Turborepo doesn't auto-clean, manually remove:
 rm -rf ./node_modules/.cache/turbo
@@ -502,17 +508,20 @@ rm -rf ./node_modules/.cache/turbo
 ### Remote Cache Connection Issues
 
 **Test connection:**
+
 ```bash
 curl -I https://cache.example.com
 ```
 
 **Verify token:**
+
 ```bash
 turbo link
 # Should show: "Remote caching enabled"
 ```
 
 **Check logs:**
+
 ```bash
 turbo run build --output-logs=full
 ```
@@ -533,18 +542,21 @@ turbo run build --output-logs=full
 ## Cache Performance Tips
 
 **For CI/CD:**
+
 - Enable remote caching
 - Run only changed packages: `--filter='...[origin/main]'`
 - Use `--continue` to see all errors
 - Cache node_modules separately
 
 **For Local Development:**
+
 - Keep local cache enabled
 - Don't force rebuild unless needed
 - Use filters to build only what changed
 - Clear cache if issues arise
 
 **For Large Monorepos:**
+
 - Use granular outputs
 - Implement input filters
 - Monitor cache size regularly

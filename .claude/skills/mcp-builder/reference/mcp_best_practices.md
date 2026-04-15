@@ -9,25 +9,30 @@ This document compiles essential best practices and guidelines for building Mode
 ## Quick Reference
 
 ### Server Naming
+
 - **Python**: `{service}_mcp` (e.g., `slack_mcp`)
 - **Node/TypeScript**: `{service}-mcp-server` (e.g., `slack-mcp-server`)
 
 ### Tool Naming
+
 - Use snake_case with service prefix
 - Format: `{service}_{action}_{resource}`
 - Example: `slack_send_message`, `github_create_issue`
 
 ### Response Formats
+
 - Support both JSON and Markdown formats
 - JSON for programmatic processing
 - Markdown for human readability
 
 ### Pagination
+
 - Always respect `limit` parameter
 - Return `has_more`, `next_offset`, `total_count`
 - Default to 20-50 items
 
 ### Character Limits
+
 - Set CHARACTER_LIMIT constant (typically 25,000)
 - Truncate gracefully with clear messages
 - Provide guidance on filtering
@@ -35,6 +40,7 @@ This document compiles essential best practices and guidelines for building Mode
 ---
 
 ## Table of Contents
+
 1. Server Naming Conventions
 2. Tool Naming and Design
 3. Response Format Guidelines
@@ -57,12 +63,15 @@ This document compiles essential best practices and guidelines for building Mode
 Follow these standardized naming patterns for MCP servers:
 
 **Python**: Use format `{service}_mcp` (lowercase with underscores)
+
 - Examples: `slack_mcp`, `github_mcp`, `jira_mcp`, `stripe_mcp`
 
 **Node/TypeScript**: Use format `{service}-mcp-server` (lowercase with hyphens)
+
 - Examples: `slack-mcp-server`, `github-mcp-server`, `jira-mcp-server`
 
 The name should be:
+
 - General (not tied to specific features)
 - Descriptive of the service/API being integrated
 - Easy to infer from the task description
@@ -98,6 +107,7 @@ The name should be:
 All tools that return data should support multiple formats for flexibility:
 
 ### JSON Format (`response_format="json"`)
+
 - Machine-readable structured data
 - Include all available fields and metadata
 - Consistent field names and types
@@ -105,6 +115,7 @@ All tools that return data should support multiple formats for flexibility:
 - Use for when LLMs need to process data further
 
 ### Markdown Format (`response_format="markdown"`, typically default)
+
 - Human-readable formatted text
 - Use headers, lists, and formatting for clarity
 - Convert timestamps to human-readable format (e.g., "2024-01-15 10:30:00 UTC" instead of epoch)
@@ -127,6 +138,7 @@ For tools that list resources:
 - **Include clear pagination info in responses**: Make it easy for LLMs to request more data
 
 Example pagination response structure:
+
 ```json
 {
   "total": 150,
@@ -151,6 +163,7 @@ To prevent overwhelming responses with too much data:
 - **Include truncation metadata**: Show what was truncated and how to get more
 
 Example truncation handling:
+
 ```python
 CHARACTER_LIMIT = 25000
 
@@ -174,12 +187,14 @@ MCP servers support multiple transport mechanisms for different deployment scena
 **Best for**: Command-line tools, local integrations, subprocess execution
 
 **Characteristics**:
+
 - Standard input/output stream communication
 - Simple setup, no network configuration needed
 - Runs as a subprocess of the client
 - Ideal for desktop applications and CLI tools
 
 **Use when**:
+
 - Building tools for local development environments
 - Integrating with desktop applications (e.g., Claude Desktop)
 - Creating command-line utilities
@@ -190,12 +205,14 @@ MCP servers support multiple transport mechanisms for different deployment scena
 **Best for**: Web services, remote access, multi-client scenarios
 
 **Characteristics**:
+
 - Request-response pattern over HTTP
 - Supports multiple simultaneous clients
 - Can be deployed as a web service
 - Requires network configuration and security considerations
 
 **Use when**:
+
 - Serving multiple clients simultaneously
 - Deploying as a cloud service
 - Integration with web applications
@@ -206,12 +223,14 @@ MCP servers support multiple transport mechanisms for different deployment scena
 **Best for**: Real-time updates, push notifications, streaming data
 
 **Characteristics**:
+
 - One-way server-to-client streaming over HTTP
 - Enables real-time updates without polling
 - Long-lived connections for continuous data flow
 - Built on standard HTTP infrastructure
 
 **Use when**:
+
 - Clients need real-time data updates
 - Implementing push notifications
 - Streaming logs or monitoring data
@@ -219,19 +238,20 @@ MCP servers support multiple transport mechanisms for different deployment scena
 
 ### Transport Selection Criteria
 
-| Criterion | Stdio | HTTP | SSE |
-|-----------|-------|------|-----|
-| **Deployment** | Local | Remote | Remote |
-| **Clients** | Single | Multiple | Multiple |
+| Criterion         | Stdio         | HTTP             | SSE         |
+| ----------------- | ------------- | ---------------- | ----------- |
+| **Deployment**    | Local         | Remote           | Remote      |
+| **Clients**       | Single        | Multiple         | Multiple    |
 | **Communication** | Bidirectional | Request-Response | Server-Push |
-| **Complexity** | Low | Medium | Medium-High |
-| **Real-time** | No | No | Yes |
+| **Complexity**    | Low           | Medium           | Medium-High |
+| **Real-time**     | No            | No               | Yes         |
 
 ---
 
 ## 7. Tool Development Best Practices
 
 ### General Guidelines
+
 1. Tool names should be descriptive and action-oriented
 2. Use parameter validation with detailed JSON schemas
 3. Include examples in tool descriptions
@@ -246,6 +266,7 @@ MCP servers support multiple transport mechanisms for different deployment scena
 ### Security Considerations for Tools
 
 #### Input Validation
+
 - Validate all parameters against schema
 - Sanitize file paths and system commands
 - Validate URLs and external identifiers
@@ -253,6 +274,7 @@ MCP servers support multiple transport mechanisms for different deployment scena
 - Prevent command injection
 
 #### Access Control
+
 - Implement authentication where needed
 - Use appropriate authorization checks
 - Audit tool usage
@@ -260,6 +282,7 @@ MCP servers support multiple transport mechanisms for different deployment scena
 - Monitor for abuse
 
 #### Error Handling
+
 - Don't expose internal errors to clients
 - Log security-relevant errors
 - Handle timeouts appropriately
@@ -267,6 +290,7 @@ MCP servers support multiple transport mechanisms for different deployment scena
 - Validate return values
 
 ### Tool Annotations
+
 - Provide readOnlyHint and destructiveHint annotations
 - Remember annotations are hints, not security guarantees
 - Clients should not make security-critical decisions based solely on annotations
@@ -276,6 +300,7 @@ MCP servers support multiple transport mechanisms for different deployment scena
 ## 8. Transport Best Practices
 
 ### General Transport Guidelines
+
 1. Handle connection lifecycle properly
 2. Implement proper error handling
 3. Use appropriate timeout values
@@ -283,12 +308,14 @@ MCP servers support multiple transport mechanisms for different deployment scena
 5. Clean up resources on disconnection
 
 ### Security Best Practices for Transport
+
 - Follow security considerations for DNS rebinding attacks
 - Implement proper authentication mechanisms
 - Validate message formats
 - Handle malformed messages gracefully
 
 ### Stdio Transport Specific
+
 - Local MCP servers should NOT log to stdout (interferes with protocol)
 - Use stderr for logging messages
 - Handle standard I/O streams properly
@@ -300,18 +327,23 @@ MCP servers support multiple transport mechanisms for different deployment scena
 A comprehensive testing strategy should cover:
 
 ### Functional Testing
+
 - Verify correct execution with valid/invalid inputs
 
 ### Integration Testing
+
 - Test interaction with external systems
 
 ### Security Testing
+
 - Validate auth, input sanitization, rate limiting
 
 ### Performance Testing
+
 - Check behavior under load, timeouts
 
 ### Error Handling
+
 - Ensure proper error reporting and cleanup
 
 ---
@@ -323,6 +355,7 @@ A comprehensive testing strategy should cover:
 MCP servers that connect to external services should implement proper authentication:
 
 **OAuth 2.1 Implementation:**
+
 - Use secure OAuth 2.1 with certificates from recognized authorities
 - Validate access tokens before processing requests
 - Only accept tokens specifically intended for your server
@@ -330,6 +363,7 @@ MCP servers that connect to external services should implement proper authentica
 - Never pass through tokens received from MCP clients
 
 **API Key Management:**
+
 - Store API keys in environment variables, never in code
 - Validate keys on server startup
 - Provide clear error messages when authentication fails
@@ -338,6 +372,7 @@ MCP servers that connect to external services should implement proper authentica
 ### Input Validation and Security
 
 **Always validate inputs:**
+
 - Sanitize file paths to prevent directory traversal
 - Validate URLs and external identifiers
 - Check parameter sizes and ranges
@@ -345,6 +380,7 @@ MCP servers that connect to external services should implement proper authentica
 - Use schema validation (Pydantic/Zod) for all inputs
 
 **Error handling security:**
+
 - Don't expose internal errors to clients
 - Log security-relevant errors server-side
 - Provide helpful but not revealing error messages
@@ -353,12 +389,14 @@ MCP servers that connect to external services should implement proper authentica
 ### Privacy and Data Protection
 
 **Data collection principles:**
+
 - Only collect data strictly necessary for functionality
 - Don't collect extraneous conversation data
 - Don't collect PII unless explicitly required for the tool's purpose
 - Provide clear information about what data is accessed
 
 **Data transmission:**
+
 - Don't send data to servers outside your organization without disclosure
 - Use secure transmission (HTTPS) for all network communication
 - Validate certificates for external services
@@ -419,9 +457,7 @@ MCP servers that connect to external services should implement proper authentica
 
 These best practices represent the comprehensive guidelines for building secure, efficient, and compliant MCP servers that work well within the ecosystem. Developers should follow these guidelines to ensure their MCP servers meet the standards for inclusion in the MCP directory and provide a safe, reliable experience for users.
 
-
-----------
-
+---
 
 # Tools
 
@@ -437,9 +473,9 @@ Tools are a powerful primitive in the Model Context Protocol (MCP) that enable s
 
 Tools in MCP allow servers to expose executable functions that can be invoked by clients and used by LLMs to perform actions. Key aspects of tools include:
 
-* **Discovery**: Clients can obtain a list of available tools by sending a `tools/list` request
-* **Invocation**: Tools are called using the `tools/call` request, where servers perform the requested operation and return results
-* **Flexibility**: Tools can range from simple calculations to complex API interactions
+- **Discovery**: Clients can obtain a list of available tools by sending a `tools/list` request
+- **Invocation**: Tools are called using the `tools/call` request, where servers perform the requested operation and return results
+- **Flexibility**: Tools can range from simple calculations to complex API interactions
 
 Like [resources](/docs/concepts/resources), tools are identified by unique names and can include descriptions to guide their usage. However, unlike resources, tools represent dynamic operations that can modify state or interact with external systems.
 
@@ -515,6 +551,7 @@ Here's an example of implementing a basic tool in an MCP server:
       throw new Error("Tool not found");
     });
     ```
+
   </Tab>
 
   <Tab title="Python">
@@ -550,6 +587,7 @@ Here's an example of implementing a basic tool in an MCP server:
             return [types.TextContent(type="text", text=str(result))]
         raise ValueError(f"Tool not found: {name}")
     ```
+
   </Tab>
 </Tabs>
 
@@ -638,9 +676,9 @@ MCP client applications and MCP server proxies may encounter tool name conflicts
 
 Applications may disambiguiate tools with one of the following strategies (among others; not an exhaustive list):
 
-* Concatenating a unique, user-defined server name with the tool name, e.g. `web1___search_web` and `web2___search_web`. This strategy may be preferable when unique server names are already provided by the user in a configuration file.
-* Generating a random prefix for the tool name, e.g. `jrwxs___search_web` and `6cq52___search_web`. This strategy may be preferable in server proxies where user-defined unique names are not available.
-* Using the server URI as a prefix for the tool name, e.g. `web1.example.com:search_web` and `web2.example.com:search_web`. This strategy may be suitable when working with remote MCP servers.
+- Concatenating a unique, user-defined server name with the tool name, e.g. `web1___search_web` and `web2___search_web`. This strategy may be preferable when unique server names are already provided by the user in a configuration file.
+- Generating a random prefix for the tool name, e.g. `jrwxs___search_web` and `6cq52___search_web`. This strategy may be preferable in server proxies where user-defined unique names are not available.
+- Using the server URI as a prefix for the tool name, e.g. `web1.example.com:search_web` and `web2.example.com:search_web`. This strategy may be suitable when working with remote MCP servers.
 
 Note that the server-provided name from the initialization flow is not guaranteed to be unique and is not generally suitable for disambiguation purposes.
 
@@ -650,27 +688,27 @@ When exposing tools:
 
 ### Input validation
 
-* Validate all parameters against the schema
-* Sanitize file paths and system commands
-* Validate URLs and external identifiers
-* Check parameter sizes and ranges
-* Prevent command injection
+- Validate all parameters against the schema
+- Sanitize file paths and system commands
+- Validate URLs and external identifiers
+- Check parameter sizes and ranges
+- Prevent command injection
 
 ### Access control
 
-* Implement authentication where needed
-* Use appropriate authorization checks
-* Audit tool usage
-* Rate limit requests
-* Monitor for abuse
+- Implement authentication where needed
+- Use appropriate authorization checks
+- Audit tool usage
+- Rate limit requests
+- Monitor for abuse
 
 ### Error handling
 
-* Don't expose internal errors to clients
-* Log security-relevant errors
-* Handle timeouts appropriately
-* Clean up resources after errors
-* Validate return values
+- Don't expose internal errors to clients
+- Log security-relevant errors
+- Handle timeouts appropriately
+- Clean up resources after errors
+- Validate return values
 
 ## Tool discovery and updates
 
@@ -889,6 +927,7 @@ Here's how to define tools with annotations for different scenarios:
         result = a + b
         return str(result)
     ```
+
   </Tab>
 </Tabs>
 
@@ -908,8 +947,8 @@ Here's how to define tools with annotations for different scenarios:
 
 A comprehensive testing strategy for MCP tools should cover:
 
-* **Functional testing**: Verify tools execute correctly with valid inputs and handle invalid inputs appropriately
-* **Integration testing**: Test tool interaction with external systems using both real and mocked dependencies
-* **Security testing**: Validate authentication, authorization, input sanitization, and rate limiting
-* **Performance testing**: Check behavior under load, timeout handling, and resource cleanup
-* **Error handling**: Ensure tools properly report errors through the MCP protocol and clean up resources
+- **Functional testing**: Verify tools execute correctly with valid inputs and handle invalid inputs appropriately
+- **Integration testing**: Test tool interaction with external systems using both real and mocked dependencies
+- **Security testing**: Validate authentication, authorization, input sanitization, and rate limiting
+- **Performance testing**: Check behavior under load, timeout handling, and resource cleanup
+- **Error handling**: Ensure tools properly report errors through the MCP protocol and clean up resources

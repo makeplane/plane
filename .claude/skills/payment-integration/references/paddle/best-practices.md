@@ -12,26 +12,22 @@ Production patterns for reliable integration.
 
 const processedEvents = new Set(); // Use Redis in production
 
-app.post('/webhooks/paddle', async (req, res) => {
-  const signature = req.headers['paddle-signature'];
+app.post("/webhooks/paddle", async (req, res) => {
+  const signature = req.headers["paddle-signature"];
 
   // Verify
-  const event = paddle.webhooks.unmarshal(
-    req.rawBody,
-    process.env.PADDLE_WEBHOOK_SECRET,
-    signature
-  );
+  const event = paddle.webhooks.unmarshal(req.rawBody, process.env.PADDLE_WEBHOOK_SECRET, signature);
 
   // Idempotency
   if (processedEvents.has(event.eventId)) {
-    return res.status(200).send('Already processed');
+    return res.status(200).send("Already processed");
   }
 
   // Acknowledge immediately
-  res.status(200).send('OK');
+  res.status(200).send("OK");
 
   // Process async
-  await queue.add('paddle-webhook', event);
+  await queue.add("paddle-webhook", event);
 });
 ```
 
@@ -44,7 +40,7 @@ async function checkAccess(userId: string): Promise<boolean> {
   if (!user.paddleSubscriptionId) return false;
 
   const sub = await paddle.subscriptions.get(user.paddleSubscriptionId);
-  return ['active', 'trialing'].includes(sub.status);
+  return ["active", "trialing"].includes(sub.status);
 }
 ```
 
@@ -82,8 +78,8 @@ async function handlePastDue(subscriptionId: string) {
 
   // Email customer with portal link
   await sendEmail(sub.customer.email, {
-    subject: 'Update your payment method',
-    link: portal.urls.general.overview
+    subject: "Update your payment method",
+    link: portal.urls.general.overview,
   });
 }
 ```
@@ -93,7 +89,7 @@ async function handlePastDue(subscriptionId: string) {
 ```typescript
 // Use sandbox environment
 const paddle = new Paddle(process.env.PADDLE_API_KEY, {
-  environment: 'sandbox'
+  environment: "sandbox",
 });
 
 // Sandbox card: 4242 4242 4242 4242
@@ -105,8 +101,8 @@ const paddle = new Paddle(process.env.PADDLE_API_KEY, {
 ```typescript
 // Preview localized prices before checkout
 const preview = await paddle.PricePreview({
-  items: [{ priceId: 'pri_xxx', quantity: 1 }],
-  address: { countryCode: customerCountry }
+  items: [{ priceId: "pri_xxx", quantity: 1 }],
+  address: { countryCode: customerCountry },
 });
 
 // Display localized price
@@ -116,6 +112,7 @@ const formattedPrice = preview.data.details.totals.total;
 ## Paddle Retain (Churn Prevention)
 
 Features enabled in dashboard:
+
 - **Payment recovery**: Automated dunning emails
 - **Cancellation surveys**: Collect feedback + offer discounts
 - **Term optimization**: Auto-upgrade annual suggestions

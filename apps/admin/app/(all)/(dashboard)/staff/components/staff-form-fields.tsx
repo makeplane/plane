@@ -49,7 +49,7 @@ export const StaffFormFields = observer(function StaffFormFields({
   const [selectedGradeId, setSelectedGradeId] = useState<string>("");
 
   useEffect(() => {
-    if (!hasFetched) fetchAll();
+    if (!hasFetched) void fetchAll();
   }, [hasFetched, fetchAll]);
 
   // Sync selectedGradeId when the watched grade name or data availability changes (e.g., edit modal reset)
@@ -57,7 +57,7 @@ export const StaffFormFields = observer(function StaffFormFields({
   useEffect(() => {
     const gradeObj = Object.values(grades).find((g) => g.name === watchedGradeName);
     setSelectedGradeId(gradeObj?.id ?? "");
-  }, [watchedGradeName, hasFetched]); // hasFetched ensures sync after initial data load
+  }, [watchedGradeName, hasFetched, grades]); // hasFetched ensures sync after initial data load
 
   const activeGrades = Object.values(grades).filter((g) => g.is_active);
 
@@ -77,49 +77,68 @@ export const StaffFormFields = observer(function StaffFormFields({
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-13 font-medium">Staff ID *</label>
-          <Input {...register("staff_id", { required: "Required" })} placeholder="e.g. EMP001" />
+          <label htmlFor="staff_id" className="text-13 font-medium">
+            Staff ID *
+          </label>
+          <Input id="staff_id" {...register("staff_id", { required: "Required" })} placeholder="e.g. EMP001" />
           {errors.staff_id && <p className="text-11 text-danger-primary">{errors.staff_id.message}</p>}
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Display name</label>
-          <Input {...register("display_name")} placeholder="Display name" />
+          <label htmlFor="display_name" className="text-13 font-medium">
+            Display name
+          </label>
+          <Input id="display_name" {...register("display_name")} placeholder="Display name" />
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">First name *</label>
-          <Input {...register("first_name", { required: "Required" })} placeholder="First name" />
+          <label htmlFor="first_name" className="text-13 font-medium">
+            First name *
+          </label>
+          <Input id="first_name" {...register("first_name", { required: "Required" })} placeholder="First name" />
           {errors.first_name && <p className="text-11 text-danger-primary">{errors.first_name.message}</p>}
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Last name *</label>
-          <Input {...register("last_name", { required: "Required" })} placeholder="Last name" />
+          <label htmlFor="last_name" className="text-13 font-medium">
+            Last name *
+          </label>
+          <Input id="last_name" {...register("last_name", { required: "Required" })} placeholder="Last name" />
           {errors.last_name && <p className="text-11 text-danger-primary">{errors.last_name.message}</p>}
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Email *</label>
-          <Input type="email" {...register("email", { required: "Required" })} placeholder="user@example.com" />
+          <label htmlFor="email" className="text-13 font-medium">
+            Email *
+          </label>
+          <Input
+            id="email"
+            type="email"
+            {...register("email", { required: "Required" })}
+            placeholder="user@example.com"
+          />
           {errors.email && <p className="text-11 text-danger-primary">{errors.email.message}</p>}
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Phone</label>
-          <Input {...register("phone")} placeholder="+84..." />
+          <label htmlFor="phone" className="text-13 font-medium">
+            Phone
+          </label>
+          <Input id="phone" {...register("phone")} placeholder="+84..." />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className="text-13 font-medium">Department</label>
           <Controller
             name="department"
             control={control}
-            render={({ field }) => (
-              <DepartmentTreeSelect value={field.value} onChange={field.onChange} />
-            )}
+            render={({ field }) => <DepartmentTreeSelect value={field.value} onChange={field.onChange} />}
           />
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Status</label>
+          <label htmlFor="employment_status" className="text-13 font-medium">
+            Status
+          </label>
           <select
+            id="employment_status"
             {...register("employment_status")}
             className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
           >
@@ -131,8 +150,11 @@ export const StaffFormFields = observer(function StaffFormFields({
           </select>
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Job grade</label>
+          <label htmlFor="job_grade" className="text-13 font-medium">
+            Job grade
+          </label>
           <select
+            id="job_grade"
             {...gradeRegistration}
             onChange={handleGradeChange}
             className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
@@ -146,6 +168,7 @@ export const StaffFormFields = observer(function StaffFormFields({
           </select>
         </div>
         <div className="space-y-1">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className="text-13 font-medium">Position</label>
           {/* Controller keeps value in sync with form state (not DOM) — fixes edit case where
               options load after reset() is called, causing uncontrolled select to lose its value */}
@@ -169,8 +192,10 @@ export const StaffFormFields = observer(function StaffFormFields({
           />
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Date of joining</label>
-          <Input type="date" {...register("date_of_joining")} />
+          <label htmlFor="date_of_joining" className="text-13 font-medium">
+            Date of joining
+          </label>
+          <Input id="date_of_joining" type="date" {...register("date_of_joining")} />
         </div>
       </div>
 
@@ -182,8 +207,10 @@ export const StaffFormFields = observer(function StaffFormFields({
       </div>
 
       <div className="space-y-1">
-        <label className="text-13 font-medium">Notes</label>
-        <Input {...register("notes")} placeholder="Optional notes" />
+        <label htmlFor="notes" className="text-13 font-medium">
+          Notes
+        </label>
+        <Input id="notes" {...register("notes")} placeholder="Optional notes" />
       </div>
     </div>
   );

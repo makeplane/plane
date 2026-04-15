@@ -7,6 +7,7 @@ ARIA patterns, keyboard navigation, screen reader support, and accessible compon
 shadcn/ui built on Radix UI primitives - unstyled, accessible components following WAI-ARIA design patterns.
 
 Benefits:
+
 - Keyboard navigation built-in
 - Screen reader announcements
 - Focus management
@@ -18,13 +19,13 @@ Benefits:
 ### Focus Management
 
 **Focus visible states:**
+
 ```tsx
-<Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-  Accessible Button
-</Button>
+<Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">Accessible Button</Button>
 ```
 
 **Skip to content:**
+
 ```tsx
 <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2">
   Skip to content
@@ -40,20 +41,21 @@ Benefits:
 Dialogs trap focus automatically via Radix Dialog primitive:
 
 ```tsx
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 <Dialog>
   <DialogTrigger>Open</DialogTrigger>
   <DialogContent>
     {/* Focus trapped here */}
-    <input />  {/* Auto-focused */}
+    <input /> {/* Auto-focused */}
     <Button>Action</Button>
     {/* Esc to close, Tab to navigate */}
   </DialogContent>
-</Dialog>
+</Dialog>;
 ```
 
 Features:
+
 - Focus trapped within dialog
 - Esc key closes
 - Tab cycles through focusable elements
@@ -62,7 +64,12 @@ Features:
 ### Dropdown/Menu Navigation
 
 ```tsx
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 <DropdownMenu>
   <DropdownMenuTrigger>Open</DropdownMenuTrigger>
@@ -71,10 +78,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
     <DropdownMenuItem>Settings</DropdownMenuItem>
     <DropdownMenuItem>Logout</DropdownMenuItem>
   </DropdownMenuContent>
-</DropdownMenu>
+</DropdownMenu>;
 ```
 
 Keyboard shortcuts:
+
 - `Space/Enter`: Open menu
 - `Arrow Up/Down`: Navigate items
 - `Esc`: Close menu
@@ -83,7 +91,7 @@ Keyboard shortcuts:
 ### Command Palette Navigation
 
 ```tsx
-import { Command } from "@/components/ui/command"
+import { Command } from "@/components/ui/command";
 
 <Command>
   <CommandInput placeholder="Search..." />
@@ -93,10 +101,11 @@ import { Command } from "@/components/ui/command"
       <CommandItem>Search</CommandItem>
     </CommandGroup>
   </CommandList>
-</Command>
+</Command>;
 ```
 
 Features:
+
 - Type to filter
 - Arrow keys to navigate
 - Enter to select
@@ -120,6 +129,7 @@ Use proper HTML elements:
 ### ARIA Labels
 
 **Label interactive elements:**
+
 ```tsx
 <Button aria-label="Close dialog">
   <X className="h-4 w-4" />
@@ -129,6 +139,7 @@ Use proper HTML elements:
 ```
 
 **Describe elements:**
+
 ```tsx
 <Button aria-describedby="delete-description">
   Delete Account
@@ -178,13 +189,14 @@ Announce dynamic content:
 ```
 
 Toast component includes live region:
+
 ```tsx
-const { toast } = useToast()
+const { toast } = useToast();
 
 toast({
   title: "Success",
-  description: "Profile updated"
-})
+  description: "Profile updated",
+});
 // Announced to screen readers automatically
 ```
 
@@ -193,30 +205,30 @@ toast({
 ### Labels and Descriptions
 
 **Always label inputs:**
+
 ```tsx
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 <div>
   <Label htmlFor="email">Email</Label>
   <Input id="email" type="email" />
-</div>
+</div>;
 ```
 
 **Add descriptions:**
+
 ```tsx
-import { FormDescription, FormMessage } from "@/components/ui/form"
+import { FormDescription, FormMessage } from "@/components/ui/form";
 
 <FormItem>
   <FormLabel>Username</FormLabel>
   <FormControl>
     <Input {...field} />
   </FormControl>
-  <FormDescription>
-    Your public display name
-  </FormDescription>
-  <FormMessage />  {/* Error messages */}
-</FormItem>
+  <FormDescription>Your public display name</FormDescription>
+  <FormMessage /> {/* Error messages */}
+</FormItem>;
 ```
 
 ### Error Handling
@@ -261,9 +273,7 @@ Group related fields:
 
 ```tsx
 <fieldset>
-  <legend className="text-lg font-semibold mb-4">
-    Contact Information
-  </legend>
+  <legend className="text-lg font-semibold mb-4">Contact Information</legend>
   <div className="space-y-4">
     <FormField name="email" />
     <FormField name="phone" />
@@ -276,7 +286,7 @@ Group related fields:
 ### Accordion
 
 ```tsx
-import { Accordion } from "@/components/ui/accordion"
+import { Accordion } from "@/components/ui/accordion";
 
 <Accordion type="single" collapsible>
   <AccordionItem value="item-1">
@@ -289,13 +299,13 @@ import { Accordion } from "@/components/ui/accordion"
       Yes. Follows WAI-ARIA design pattern.
     </AccordionContent>
   </AccordionItem>
-</Accordion>
+</Accordion>;
 ```
 
 ### Tabs
 
 ```tsx
-import { Tabs } from "@/components/ui/tabs"
+import { Tabs } from "@/components/ui/tabs";
 
 <Tabs defaultValue="account">
   <TabsList role="tablist">
@@ -307,13 +317,13 @@ import { Tabs } from "@/components/ui/tabs"
     {/* Hidden unless selected, aria-labelledby links to trigger */}
     Account content
   </TabsContent>
-</Tabs>
+</Tabs>;
 ```
 
 ### Select
 
 ```tsx
-import { Select } from "@/components/ui/select"
+import { Select } from "@/components/ui/select";
 
 <Select>
   <SelectTrigger aria-label="Choose theme">
@@ -324,7 +334,7 @@ import { Select } from "@/components/ui/select"
     <SelectItem value="light">Light</SelectItem>
     <SelectItem value="dark">Dark</SelectItem>
   </SelectContent>
-</Select>
+</Select>;
 ```
 
 ### Checkbox and Radio
@@ -345,15 +355,13 @@ import { Label } from "@/components/ui/label"
 ### Alert
 
 ```tsx
-import { Alert } from "@/components/ui/alert"
+import { Alert } from "@/components/ui/alert";
 
 <Alert role="alert">
   {/* Announced immediately to screen readers */}
   <AlertTitle>Error</AlertTitle>
-  <AlertDescription>
-    Your session has expired
-  </AlertDescription>
-</Alert>
+  <AlertDescription>Your session has expired</AlertDescription>
+</Alert>;
 ```
 
 ## Color Contrast
@@ -361,10 +369,12 @@ import { Alert } from "@/components/ui/alert"
 Ensure sufficient contrast between text and background.
 
 **WCAG Requirements:**
+
 - **AA**: 4.5:1 for normal text, 3:1 for large text
 - **AAA**: 7:1 for normal text, 4.5:1 for large text
 
 **Check defaults:**
+
 ```tsx
 // Good: High contrast
 <p className="text-gray-900 dark:text-gray-100">Text</p>
@@ -374,11 +384,10 @@ Ensure sufficient contrast between text and background.
 ```
 
 **Muted text:**
+
 ```tsx
 // Use semantic muted foreground
-<p className="text-muted-foreground">
-  Secondary text with accessible contrast
-</p>
+<p className="text-muted-foreground">Secondary text with accessible contrast</p>
 ```
 
 ## Focus Indicators
@@ -386,20 +395,24 @@ Ensure sufficient contrast between text and background.
 Always provide visible focus indicators:
 
 **Default focus ring:**
+
 ```tsx
-<Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-  Button
-</Button>
+<Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">Button</Button>
 ```
 
 **Custom focus styles:**
+
 ```tsx
-<a href="#" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:underline">
+<a
+  href="#"
+  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:underline"
+>
   Link
 </a>
 ```
 
 **Don't remove focus styles:**
+
 ```tsx
 // Avoid
 <button className="focus:outline-none">Bad</button>
@@ -423,10 +436,9 @@ Respect reduced motion preference:
 ```
 
 In components:
+
 ```tsx
-<div className="transition-all motion-reduce:transition-none">
-  Respects user preference
-</div>
+<div className="transition-all motion-reduce:transition-none">Respects user preference</div>
 ```
 
 ## Testing Checklist
@@ -449,6 +461,7 @@ In components:
 ## Tools
 
 **Testing tools:**
+
 - Lighthouse accessibility audit
 - axe DevTools browser extension
 - NVDA/JAWS screen readers
@@ -456,16 +469,17 @@ In components:
 - Color contrast checkers (Contrast Ratio, WebAIM)
 
 **Automated testing:**
+
 ```bash
 npm install -D @axe-core/react
 ```
 
 ```tsx
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
-if (process.env.NODE_ENV === 'development') {
-  import('@axe-core/react').then((axe) => {
-    axe.default(React, ReactDOM, 1000)
-  })
+if (process.env.NODE_ENV === "development") {
+  import("@axe-core/react").then((axe) => {
+    axe.default(React, ReactDOM, 1000);
+  });
 }
 ```

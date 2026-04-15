@@ -1,6 +1,7 @@
 # Phase 04: Frontend – Wire Up Reason Modal
 
 ## Overview
+
 Gắn `FieldChangeReasonModal` vào 2 điểm: due date trong sidebar và completed-at property.
 
 ---
@@ -10,7 +11,9 @@ Gắn `FieldChangeReasonModal` vào 2 điểm: due date trong sidebar và comple
 <!-- Updated: Validation Session 1 - Use CE wrapper instead of modifying core/sidebar.tsx -->
 
 ### Pattern
+
 Create a CE wrapper component `DueDateProperty` in `apps/web/ce/components/issues/issue-details/sidebar/` that:
+
 - Receives same props as the DateDropdown in core sidebar
 - Intercepts onChange → lưu pending date → mở modal → on confirm gọi update với reason
 - Exported and used via `@/plane-web/` import in core/sidebar.tsx (read-only import, no state change to core)
@@ -30,10 +33,17 @@ type TDueDatePropertyProps = {
   issueId: string;
   issueOperations: TIssueOperations;
   isEditable: boolean;
-  value: string | null;  // current target_date
+  value: string | null; // current target_date
 };
 
-export function DueDateProperty({ workspaceSlug, projectId, issueId, issueOperations, isEditable, value }: TDueDatePropertyProps) {
+export function DueDateProperty({
+  workspaceSlug,
+  projectId,
+  issueId,
+  issueOperations,
+  isEditable,
+  value,
+}: TDueDatePropertyProps) {
   const { t } = useTranslation();
   const [pendingDueDate, setPendingDueDate] = useState<string | null | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,7 +72,10 @@ export function DueDateProperty({ workspaceSlug, projectId, issueId, issueOperat
       {/* ... existing DateDropdown JSX from core/sidebar.tsx ... */}
       <FieldChangeReasonModal
         isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setPendingDueDate(undefined); }}
+        onClose={() => {
+          setIsModalOpen(false);
+          setPendingDueDate(undefined);
+        }}
         onConfirm={handleConfirm}
         fieldLabel={t("common.order_by.due_date")}
       />
@@ -80,13 +93,16 @@ export function DueDateProperty({ workspaceSlug, projectId, issueId, issueOperat
 ## 2. Completed At – `apps/web/ce/components/issues/issue-details/sidebar/completed-at-property.tsx`
 
 ### State to add
+
 ```tsx
 const [pendingCompletedAt, setPendingCompletedAt] = useState<string | null>(null);
 const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
 ```
 
 ### Change CompletedAtDateTimePicker onChange
+
 <!-- Updated: Validation Session 1 - Only require reason when setting a value, not clearing -->
+
 ```tsx
 // Before:
 onChange={(isoString) =>
@@ -108,6 +124,7 @@ onChange={(isoString) => {
 ```
 
 ### Modal handler
+
 ```tsx
 const handleConfirm = async (reason: string) => {
   await updateIssue(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", issueId, {
@@ -118,6 +135,7 @@ const handleConfirm = async (reason: string) => {
 ```
 
 ### Add modal in JSX
+
 ```tsx
 <FieldChangeReasonModal
   isOpen={isReasonModalOpen}
@@ -131,6 +149,7 @@ const handleConfirm = async (reason: string) => {
 ```
 
 ### Import
+
 ```tsx
 import { useState } from "react";
 import { FieldChangeReasonModal } from "./field-change-reason-modal";
@@ -152,6 +171,7 @@ export type TIssueUpdatePayload = Partial<TIssue> & { reason?: string };
 ```
 
 Export from `packages/types/src/index.ts`:
+
 ```ts
 export type { TIssueUpdatePayload } from "./issues/issue-update";
 ```
@@ -171,6 +191,7 @@ update: (workspaceSlug: string, projectId: string, issueId: string, data: TIssue
 This makes `reason` a first-class typed field — no casts needed anywhere.
 
 ## Verification
+
 - Click thay đổi due date → reason modal xuất hiện → nhập reason → confirm → issue update
 - Click thay đổi due date → close modal → issue KHÔNG update (pending cleared)
 - Tương tự cho completed_at

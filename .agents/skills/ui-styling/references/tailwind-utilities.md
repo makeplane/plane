@@ -20,6 +20,7 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ### Flexbox
 
 **Container:**
+
 ```html
 <div class="flex flex-row">Row (default)</div>
 <div class="flex flex-col">Column</div>
@@ -28,6 +29,7 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ```
 
 **Justify (main axis):**
+
 ```html
 <div class="flex justify-start">Start</div>
 <div class="flex justify-center">Center</div>
@@ -38,6 +40,7 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ```
 
 **Align (cross axis):**
+
 ```html
 <div class="flex items-start">Start</div>
 <div class="flex items-center">Center</div>
@@ -47,12 +50,14 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ```
 
 **Gap:**
+
 ```html
 <div class="flex gap-4">All sides</div>
 <div class="flex gap-x-6 gap-y-2">X and Y</div>
 ```
 
 **Wrap:**
+
 ```html
 <div class="flex flex-wrap">Wrap</div>
 <div class="flex flex-nowrap">No wrap</div>
@@ -61,6 +66,7 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ### Grid
 
 **Columns:**
+
 ```html
 <div class="grid grid-cols-1">1 column</div>
 <div class="grid grid-cols-2">2 columns</div>
@@ -71,18 +77,21 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ```
 
 **Rows:**
+
 ```html
 <div class="grid grid-rows-3">3 rows</div>
 <div class="grid grid-rows-[auto_1fr_auto]">Custom</div>
 ```
 
 **Span:**
+
 ```html
 <div class="col-span-2">Span 2 columns</div>
 <div class="row-span-3">Span 3 rows</div>
 ```
 
 **Gap:**
+
 ```html
 <div class="grid gap-4">All sides</div>
 <div class="grid gap-x-8 gap-y-4">X and Y</div>
@@ -210,9 +219,7 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ### Combined Font Utilities
 
 ```html
-<h1 class="text-4xl/tight font-bold">
-  Font size 4xl with tight line height
-</h1>
+<h1 class="text-4xl/tight font-bold">Font size 4xl with tight line height</h1>
 ```
 
 ### Text Transform
@@ -265,6 +272,7 @@ Core utility classes for layout, spacing, typography, colors, borders, and shado
 ### Color Scale
 
 Each color has 11 shades (50-950):
+
 - `50`: Lightest
 - `100-400`: Light variations
 - `500`: Base color
@@ -282,12 +290,8 @@ Each color has 11 shades (50-950):
 ### Gradients
 
 ```html
-<div class="bg-gradient-to-r from-blue-500 to-purple-600">
-  Left to right gradient
-</div>
-<div class="bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
-  With via color
-</div>
+<div class="bg-gradient-to-r from-blue-500 to-purple-600">Left to right gradient</div>
+<div class="bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">With via color</div>
 ```
 
 Directions: `to-t | to-tr | to-r | to-br | to-b | to-bl | to-l | to-tl`

@@ -27,18 +27,12 @@
                 "description": "An array of observation contents associated with the entity"
               }
             },
-            "required": [
-              "name",
-              "entityType",
-              "observations"
-            ],
+            "required": ["name", "entityType", "observations"],
             "additionalProperties": false
           }
         }
       },
-      "required": [
-        "entities"
-      ],
+      "required": ["entities"],
       "additionalProperties": false
     }
   },
@@ -67,18 +61,12 @@
                 "description": "The type of the relation"
               }
             },
-            "required": [
-              "from",
-              "to",
-              "relationType"
-            ],
+            "required": ["from", "to", "relationType"],
             "additionalProperties": false
           }
         }
       },
-      "required": [
-        "relations"
-      ],
+      "required": ["relations"],
       "additionalProperties": false
     }
   },
@@ -106,17 +94,12 @@
                 "description": "An array of observation contents to add"
               }
             },
-            "required": [
-              "entityName",
-              "contents"
-            ],
+            "required": ["entityName", "contents"],
             "additionalProperties": false
           }
         }
       },
-      "required": [
-        "observations"
-      ],
+      "required": ["observations"],
       "additionalProperties": false
     }
   },
@@ -135,9 +118,7 @@
           "description": "An array of entity names to delete"
         }
       },
-      "required": [
-        "entityNames"
-      ],
+      "required": ["entityNames"],
       "additionalProperties": false
     }
   },
@@ -165,17 +146,12 @@
                 "description": "An array of observations to delete"
               }
             },
-            "required": [
-              "entityName",
-              "observations"
-            ],
+            "required": ["entityName", "observations"],
             "additionalProperties": false
           }
         }
       },
-      "required": [
-        "deletions"
-      ],
+      "required": ["deletions"],
       "additionalProperties": false
     }
   },
@@ -204,19 +180,13 @@
                 "description": "The type of the relation"
               }
             },
-            "required": [
-              "from",
-              "to",
-              "relationType"
-            ],
+            "required": ["from", "to", "relationType"],
             "additionalProperties": false
           },
           "description": "An array of relations to delete"
         }
       },
-      "required": [
-        "relations"
-      ],
+      "required": ["relations"],
       "additionalProperties": false
     }
   },
@@ -242,9 +212,7 @@
           "description": "The search query to match against entity names, types, and observation content"
         }
       },
-      "required": [
-        "query"
-      ],
+      "required": ["query"],
       "additionalProperties": false
     }
   },
@@ -263,9 +231,7 @@
           "description": "An array of entity names to retrieve"
         }
       },
-      "required": [
-        "names"
-      ],
+      "required": ["names"],
       "additionalProperties": false
     }
   },
@@ -317,12 +283,7 @@
           "description": "If more thoughts are needed"
         }
       },
-      "required": [
-        "thought",
-        "nextThoughtNeeded",
-        "thoughtNumber",
-        "totalThoughts"
-      ]
+      "required": ["thought", "nextThoughtNeeded", "thoughtNumber", "totalThoughts"]
     }
   },
   {
@@ -337,9 +298,7 @@
           "description": "Library name to search for and retrieve a Context7-compatible library ID."
         }
       },
-      "required": [
-        "libraryName"
-      ],
+      "required": ["libraryName"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -364,9 +323,7 @@
           "description": "Maximum number of tokens of documentation to retrieve (default: 5000). Higher values provide more context but consume more tokens."
         }
       },
-      "required": [
-        "context7CompatibleLibraryID"
-      ],
+      "required": ["context7CompatibleLibraryID"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -388,17 +345,12 @@
         },
         "detail": {
           "type": "string",
-          "enum": [
-            "quick",
-            "detailed"
-          ],
+          "enum": ["quick", "detailed"],
           "default": "detailed",
           "description": "Analysis depth"
         }
       },
-      "required": [
-        "source"
-      ],
+      "required": ["source"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -420,20 +372,12 @@
         },
         "focus": {
           "type": "string",
-          "enum": [
-            "differences",
-            "similarities",
-            "layout",
-            "content"
-          ],
+          "enum": ["differences", "similarities", "layout", "content"],
           "default": "differences",
           "description": "What to compare"
         }
       },
-      "required": [
-        "image1",
-        "image2"
-      ],
+      "required": ["image1", "image2"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -456,18 +400,12 @@
         },
         "extract": {
           "type": "string",
-          "enum": [
-            "text",
-            "tables",
-            "both"
-          ],
+          "enum": ["text", "tables", "both"],
           "default": "both",
           "description": "What to extract"
         }
       },
-      "required": [
-        "document"
-      ],
+      "required": ["document"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -485,11 +423,7 @@
         },
         "length": {
           "type": "string",
-          "enum": [
-            "brief",
-            "medium",
-            "detailed"
-          ],
+          "enum": ["brief", "medium", "detailed"],
           "default": "medium",
           "description": "Summary length"
         },
@@ -498,9 +432,7 @@
           "description": "Specific topics to focus on"
         }
       },
-      "required": [
-        "document"
-      ],
+      "required": ["document"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -518,18 +450,13 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "gemini-2.5-flash-image-preview"
-          ],
+          "enum": ["gemini-2.5-flash-image-preview"],
           "default": "gemini-2.5-flash-image-preview",
           "description": "Image generation model"
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "base64",
-            "url"
-          ],
+          "enum": ["base64", "url"],
           "default": "base64",
           "description": "Output format for the generated image"
         },
@@ -539,24 +466,12 @@
         },
         "style": {
           "type": "string",
-          "enum": [
-            "photorealistic",
-            "artistic",
-            "cartoon",
-            "sketch",
-            "digital_art"
-          ],
+          "enum": ["photorealistic", "artistic", "cartoon", "sketch", "digital_art"],
           "description": "Style of the generated image"
         },
         "aspect_ratio": {
           "type": "string",
-          "enum": [
-            "1:1",
-            "16:9",
-            "9:16",
-            "4:3",
-            "3:4"
-          ],
+          "enum": ["1:1", "16:9", "9:16", "4:3", "3:4"],
           "default": "1:1",
           "description": "Aspect ratio of the generated image"
         },
@@ -565,9 +480,7 @@
           "description": "Random seed for reproducible generation"
         }
       },
-      "required": [
-        "prompt"
-      ],
+      "required": ["prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -585,40 +498,25 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "veo-3.0-generate-001"
-          ],
+          "enum": ["veo-3.0-generate-001"],
           "default": "veo-3.0-generate-001",
           "description": "Video generation model"
         },
         "duration": {
           "type": "string",
-          "enum": [
-            "4s",
-            "8s",
-            "12s"
-          ],
+          "enum": ["4s", "8s", "12s"],
           "default": "4s",
           "description": "Duration of the generated video"
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "mp4",
-            "webm"
-          ],
+          "enum": ["mp4", "webm"],
           "default": "mp4",
           "description": "Output format for the generated video"
         },
         "aspect_ratio": {
           "type": "string",
-          "enum": [
-            "1:1",
-            "16:9",
-            "9:16",
-            "4:3",
-            "3:4"
-          ],
+          "enum": ["1:1", "16:9", "9:16", "4:3", "3:4"],
           "default": "16:9",
           "description": "Aspect ratio of the generated video"
         },
@@ -635,26 +533,12 @@
         },
         "style": {
           "type": "string",
-          "enum": [
-            "realistic",
-            "cinematic",
-            "artistic",
-            "cartoon",
-            "animation"
-          ],
+          "enum": ["realistic", "cinematic", "artistic", "cartoon", "animation"],
           "description": "Style of the generated video"
         },
         "camera_movement": {
           "type": "string",
-          "enum": [
-            "static",
-            "pan_left",
-            "pan_right",
-            "zoom_in",
-            "zoom_out",
-            "dolly_forward",
-            "dolly_backward"
-          ],
+          "enum": ["static", "pan_left", "pan_right", "zoom_in", "zoom_out", "dolly_forward", "dolly_backward"],
           "description": "Camera movement type"
         },
         "seed": {
@@ -662,9 +546,7 @@
           "description": "Random seed for reproducible generation"
         }
       },
-      "required": [
-        "prompt"
-      ],
+      "required": ["prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -686,40 +568,25 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "veo-3.0-generate-001"
-          ],
+          "enum": ["veo-3.0-generate-001"],
           "default": "veo-3.0-generate-001",
           "description": "Video generation model"
         },
         "duration": {
           "type": "string",
-          "enum": [
-            "4s",
-            "8s",
-            "12s"
-          ],
+          "enum": ["4s", "8s", "12s"],
           "default": "4s",
           "description": "Duration of the generated video"
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "mp4",
-            "webm"
-          ],
+          "enum": ["mp4", "webm"],
           "default": "mp4",
           "description": "Output format for the generated video"
         },
         "aspect_ratio": {
           "type": "string",
-          "enum": [
-            "1:1",
-            "16:9",
-            "9:16",
-            "4:3",
-            "3:4"
-          ],
+          "enum": ["1:1", "16:9", "9:16", "4:3", "3:4"],
           "default": "16:9",
           "description": "Aspect ratio of the generated video"
         },
@@ -732,26 +599,12 @@
         },
         "style": {
           "type": "string",
-          "enum": [
-            "realistic",
-            "cinematic",
-            "artistic",
-            "cartoon",
-            "animation"
-          ],
+          "enum": ["realistic", "cinematic", "artistic", "cartoon", "animation"],
           "description": "Style of the generated video"
         },
         "camera_movement": {
           "type": "string",
-          "enum": [
-            "static",
-            "pan_left",
-            "pan_right",
-            "zoom_in",
-            "zoom_out",
-            "dolly_forward",
-            "dolly_backward"
-          ],
+          "enum": ["static", "pan_left", "pan_right", "zoom_in", "zoom_out", "dolly_forward", "dolly_backward"],
           "description": "Camera movement type"
         },
         "seed": {
@@ -759,10 +612,7 @@
           "description": "Random seed for reproducible generation"
         }
       },
-      "required": [
-        "prompt",
-        "image_input"
-      ],
+      "required": ["prompt", "image_input"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -776,13 +626,7 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": [
-            "inpaint",
-            "outpaint",
-            "style_transfer",
-            "object_manipulation",
-            "multi_image_compose"
-          ],
+          "enum": ["inpaint", "outpaint", "style_transfer", "object_manipulation", "multi_image_compose"],
           "description": "Type of image editing operation to perform"
         },
         "input_image": {
@@ -804,15 +648,7 @@
         },
         "expand_direction": {
           "type": "string",
-          "enum": [
-            "all",
-            "left",
-            "right",
-            "top",
-            "bottom",
-            "horizontal",
-            "vertical"
-          ],
+          "enum": ["all", "left", "right", "top", "bottom", "horizontal", "vertical"],
           "description": "Direction to expand the image"
         },
         "expansion_ratio": {
@@ -839,13 +675,7 @@
         },
         "manipulation_type": {
           "type": "string",
-          "enum": [
-            "move",
-            "resize",
-            "remove",
-            "replace",
-            "duplicate"
-          ],
+          "enum": ["move", "resize", "remove", "replace", "duplicate"],
           "description": "Type of object manipulation"
         },
         "target_position": {
@@ -861,23 +691,12 @@
         },
         "composition_layout": {
           "type": "string",
-          "enum": [
-            "blend",
-            "collage",
-            "overlay",
-            "side_by_side"
-          ],
+          "enum": ["blend", "collage", "overlay", "side_by_side"],
           "description": "How to combine multiple images"
         },
         "blend_mode": {
           "type": "string",
-          "enum": [
-            "normal",
-            "multiply",
-            "screen",
-            "overlay",
-            "soft_light"
-          ],
+          "enum": ["normal", "multiply", "screen", "overlay", "soft_light"],
           "description": "Blending mode for image composition"
         },
         "negative_prompt": {
@@ -905,29 +724,18 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "base64",
-            "url"
-          ],
+          "enum": ["base64", "url"],
           "default": "base64",
           "description": "Output format for the edited image"
         },
         "quality": {
           "type": "string",
-          "enum": [
-            "draft",
-            "standard",
-            "high"
-          ],
+          "enum": ["draft", "standard", "high"],
           "default": "standard",
           "description": "Quality level of the editing"
         }
       },
-      "required": [
-        "operation",
-        "input_image",
-        "prompt"
-      ],
+      "required": ["operation", "input_image", "prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -981,28 +789,18 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "base64",
-            "url"
-          ],
+          "enum": ["base64", "url"],
           "default": "base64",
           "description": "Output format"
         },
         "quality": {
           "type": "string",
-          "enum": [
-            "draft",
-            "standard",
-            "high"
-          ],
+          "enum": ["draft", "standard", "high"],
           "default": "standard",
           "description": "Quality level"
         }
       },
-      "required": [
-        "input_image",
-        "prompt"
-      ],
+      "required": ["input_image", "prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1025,15 +823,7 @@
         },
         "expand_direction": {
           "type": "string",
-          "enum": [
-            "all",
-            "left",
-            "right",
-            "top",
-            "bottom",
-            "horizontal",
-            "vertical"
-          ],
+          "enum": ["all", "left", "right", "top", "bottom", "horizontal", "vertical"],
           "default": "all",
           "description": "Direction to expand the image"
         },
@@ -1069,28 +859,18 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "base64",
-            "url"
-          ],
+          "enum": ["base64", "url"],
           "default": "base64",
           "description": "Output format"
         },
         "quality": {
           "type": "string",
-          "enum": [
-            "draft",
-            "standard",
-            "high"
-          ],
+          "enum": ["draft", "standard", "high"],
           "default": "standard",
           "description": "Quality level"
         }
       },
-      "required": [
-        "input_image",
-        "prompt"
-      ],
+      "required": ["input_image", "prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1140,28 +920,18 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "base64",
-            "url"
-          ],
+          "enum": ["base64", "url"],
           "default": "base64",
           "description": "Output format"
         },
         "quality": {
           "type": "string",
-          "enum": [
-            "draft",
-            "standard",
-            "high"
-          ],
+          "enum": ["draft", "standard", "high"],
           "default": "standard",
           "description": "Quality level"
         }
       },
-      "required": [
-        "input_image",
-        "prompt"
-      ],
+      "required": ["input_image", "prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1191,24 +961,13 @@
         },
         "composition_layout": {
           "type": "string",
-          "enum": [
-            "blend",
-            "collage",
-            "overlay",
-            "side_by_side"
-          ],
+          "enum": ["blend", "collage", "overlay", "side_by_side"],
           "default": "blend",
           "description": "How to combine the images"
         },
         "blend_mode": {
           "type": "string",
-          "enum": [
-            "normal",
-            "multiply",
-            "screen",
-            "overlay",
-            "soft_light"
-          ],
+          "enum": ["normal", "multiply", "screen", "overlay", "soft_light"],
           "default": "normal",
           "description": "Blending mode for image composition"
         },
@@ -1237,29 +996,18 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "base64",
-            "url"
-          ],
+          "enum": ["base64", "url"],
           "default": "base64",
           "description": "Output format"
         },
         "quality": {
           "type": "string",
-          "enum": [
-            "draft",
-            "standard",
-            "high"
-          ],
+          "enum": ["draft", "standard", "high"],
           "default": "standard",
           "description": "Quality level"
         }
       },
-      "required": [
-        "input_image",
-        "secondary_images",
-        "prompt"
-      ],
+      "required": ["input_image", "secondary_images", "prompt"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1277,15 +1025,7 @@
         },
         "mode": {
           "type": "string",
-          "enum": [
-            "manual",
-            "center",
-            "top_left",
-            "top_right",
-            "bottom_left",
-            "bottom_right",
-            "aspect_ratio"
-          ],
+          "enum": ["manual", "center", "top_left", "top_right", "bottom_left", "bottom_right", "aspect_ratio"],
           "default": "manual",
           "description": "Crop mode"
         },
@@ -1315,11 +1055,7 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg",
-            "bmp"
-          ],
+          "enum": ["png", "jpeg", "bmp"],
           "default": "png",
           "description": "Output image format"
         },
@@ -1330,9 +1066,7 @@
           "description": "JPEG quality (0-100)"
         }
       },
-      "required": [
-        "input_image"
-      ],
+      "required": ["input_image"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1371,23 +1105,13 @@
         },
         "algorithm": {
           "type": "string",
-          "enum": [
-            "nearestNeighbor",
-            "bilinear",
-            "bicubic",
-            "hermite",
-            "bezier"
-          ],
+          "enum": ["nearestNeighbor", "bilinear", "bicubic", "hermite", "bezier"],
           "default": "bilinear",
           "description": "Resize algorithm"
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg",
-            "bmp"
-          ],
+          "enum": ["png", "jpeg", "bmp"],
           "default": "png",
           "description": "Output image format"
         },
@@ -1398,9 +1122,7 @@
           "description": "JPEG quality (0-100)"
         }
       },
-      "required": [
-        "input_image"
-      ],
+      "required": ["input_image"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1426,11 +1148,7 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg",
-            "bmp"
-          ],
+          "enum": ["png", "jpeg", "bmp"],
           "default": "png",
           "description": "Output image format"
         },
@@ -1441,10 +1159,7 @@
           "description": "JPEG quality (0-100)"
         }
       },
-      "required": [
-        "input_image",
-        "angle"
-      ],
+      "required": ["input_image", "angle"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1466,11 +1181,7 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg",
-            "bmp"
-          ],
+          "enum": ["png", "jpeg", "bmp"],
           "default": "png",
           "description": "Output image format"
         },
@@ -1481,10 +1192,7 @@
           "description": "JPEG quality (0-100)"
         }
       },
-      "required": [
-        "input_image",
-        "mask_image"
-      ],
+      "required": ["input_image", "mask_image"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1502,20 +1210,13 @@
         },
         "quality": {
           "type": "string",
-          "enum": [
-            "fast",
-            "balanced",
-            "high"
-          ],
+          "enum": ["fast", "balanced", "high"],
           "default": "balanced",
           "description": "Processing quality (fast = quick but less accurate, high = slower but more accurate)"
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg"
-          ],
+          "enum": ["png", "jpeg"],
           "default": "png",
           "description": "Output image format (PNG preserves transparency, JPEG requires background color)"
         },
@@ -1531,9 +1232,7 @@
           "description": "JPEG quality (0-100)"
         }
       },
-      "required": [
-        "input_image"
-      ],
+      "required": ["input_image"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1552,10 +1251,7 @@
         },
         "format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg"
-          ],
+          "enum": ["png", "jpeg"],
           "default": "png",
           "description": "Screenshot format"
         },
@@ -1574,11 +1270,7 @@
         },
         "wait_until": {
           "type": "string",
-          "enum": [
-            "load",
-            "domcontentloaded",
-            "networkidle"
-          ],
+          "enum": ["load", "domcontentloaded", "networkidle"],
           "default": "networkidle",
           "description": "When to consider navigation successful"
         },
@@ -1602,9 +1294,7 @@
           "description": "Viewport dimensions"
         }
       },
-      "required": [
-        "url"
-      ],
+      "required": ["url"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1623,10 +1313,7 @@
         },
         "format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg"
-          ],
+          "enum": ["png", "jpeg"],
           "default": "png",
           "description": "Screenshot format"
         },
@@ -1645,11 +1332,7 @@
         },
         "wait_until": {
           "type": "string",
-          "enum": [
-            "load",
-            "domcontentloaded",
-            "networkidle"
-          ],
+          "enum": ["load", "domcontentloaded", "networkidle"],
           "default": "networkidle",
           "description": "When to consider navigation successful"
         },
@@ -1673,9 +1356,7 @@
           "description": "Viewport dimensions"
         }
       },
-      "required": [
-        "url"
-      ],
+      "required": ["url"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1699,20 +1380,13 @@
         },
         "selector_type": {
           "type": "string",
-          "enum": [
-            "css",
-            "text",
-            "role"
-          ],
+          "enum": ["css", "text", "role"],
           "default": "css",
           "description": "Type of selector (css, text, or role)"
         },
         "format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg"
-          ],
+          "enum": ["png", "jpeg"],
           "default": "png",
           "description": "Screenshot format"
         },
@@ -1731,11 +1405,7 @@
         },
         "wait_until": {
           "type": "string",
-          "enum": [
-            "load",
-            "domcontentloaded",
-            "networkidle"
-          ],
+          "enum": ["load", "domcontentloaded", "networkidle"],
           "default": "networkidle",
           "description": "When to consider navigation successful"
         },
@@ -1764,10 +1434,7 @@
           "description": "Wait for the selector to be visible before capturing"
         }
       },
-      "required": [
-        "url",
-        "selector"
-      ],
+      "required": ["url", "selector"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1825,10 +1492,7 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "gemini-2.5-flash-preview-tts",
-            "gemini-2.5-pro-preview-tts"
-          ],
+          "enum": ["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"],
           "default": "gemini-2.5-flash-preview-tts",
           "description": "Speech generation model"
         },
@@ -1865,11 +1529,7 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "wav",
-            "base64",
-            "url"
-          ],
+          "enum": ["wav", "base64", "url"],
           "default": "base64",
           "description": "Output format for generated audio"
         },
@@ -1878,9 +1538,7 @@
           "description": "Natural language prompt to control speaking style"
         }
       },
-      "required": [
-        "text"
-      ],
+      "required": ["text"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -1937,10 +1595,7 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "gemini-2.5-flash-preview-tts",
-            "gemini-2.5-pro-preview-tts"
-          ],
+          "enum": ["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"],
           "default": "gemini-2.5-pro-preview-tts",
           "description": "Speech generation model"
         },
@@ -1977,22 +1632,13 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "wav",
-            "base64",
-            "url"
-          ],
+          "enum": ["wav", "base64", "url"],
           "default": "base64",
           "description": "Output format for generated audio"
         },
         "narration_style": {
           "type": "string",
-          "enum": [
-            "professional",
-            "casual",
-            "educational",
-            "storytelling"
-          ],
+          "enum": ["professional", "casual", "educational", "storytelling"],
           "default": "professional",
           "description": "Narration style"
         },
@@ -2007,9 +1653,7 @@
           "description": "Maximum characters per audio chunk"
         }
       },
-      "required": [
-        "content"
-      ],
+      "required": ["content"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2101,30 +1745,19 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "gemini-2.5-flash-preview-tts",
-            "gemini-2.5-pro-preview-tts"
-          ],
+          "enum": ["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"],
           "default": "gemini-2.5-pro-preview-tts",
           "description": "Speech generation model"
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "wav",
-            "base64",
-            "url"
-          ],
+          "enum": ["wav", "base64", "url"],
           "default": "base64",
           "description": "Output format for generated audio"
         },
         "explanation_level": {
           "type": "string",
-          "enum": [
-            "beginner",
-            "intermediate",
-            "advanced"
-          ],
+          "enum": ["beginner", "intermediate", "advanced"],
           "default": "intermediate",
           "description": "Technical level of explanation"
         },
@@ -2134,9 +1767,7 @@
           "description": "Include examples in explanation"
         }
       },
-      "required": [
-        "code"
-      ],
+      "required": ["code"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2193,10 +1824,7 @@
         },
         "model": {
           "type": "string",
-          "enum": [
-            "gemini-2.5-flash-preview-tts",
-            "gemini-2.5-pro-preview-tts"
-          ],
+          "enum": ["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"],
           "default": "gemini-2.5-flash-preview-tts",
           "description": "Speech generation model"
         },
@@ -2233,11 +1861,7 @@
         },
         "output_format": {
           "type": "string",
-          "enum": [
-            "wav",
-            "base64",
-            "url"
-          ],
+          "enum": ["wav", "base64", "url"],
           "default": "base64",
           "description": "Output format for generated audio"
         },
@@ -2289,10 +1913,7 @@
           "description": "Additional voices to compare with the main voice"
         }
       },
-      "required": [
-        "text",
-        "voice"
-      ],
+      "required": ["text", "voice"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2350,12 +1971,7 @@
           "description": "Branching point thought number"
         }
       },
-      "required": [
-        "thought",
-        "nextThoughtNeeded",
-        "thoughtNumber",
-        "totalThoughts"
-      ],
+      "required": ["thought", "nextThoughtNeeded", "thoughtNumber", "totalThoughts"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2373,13 +1989,7 @@
         },
         "pattern": {
           "type": "string",
-          "enum": [
-            "problem_solving",
-            "root_cause",
-            "pros_cons",
-            "swot",
-            "cause_effect"
-          ],
+          "enum": ["problem_solving", "root_cause", "pros_cons", "swot", "cause_effect"],
           "description": "Analysis framework to use"
         },
         "context": {
@@ -2387,10 +1997,7 @@
           "description": "Additional context or background information"
         }
       },
-      "required": [
-        "problem",
-        "pattern"
-      ],
+      "required": ["problem", "pattern"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2447,18 +2054,12 @@
         },
         "detailLevel": {
           "type": "string",
-          "enum": [
-            "concise",
-            "detailed"
-          ],
+          "enum": ["concise", "detailed"],
           "default": "detailed",
           "description": "Level of analysis detail"
         }
       },
-      "required": [
-        "originalAnalysis",
-        "focusAreas"
-      ],
+      "required": ["originalAnalysis", "focusAreas"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2479,9 +2080,7 @@
           "description": "Set to true for double clicks. Default is false."
         }
       },
-      "required": [
-        "uid"
-      ],
+      "required": ["uid"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2498,9 +2097,7 @@
           "description": "The index of the page to close. Call list_pages to list pages."
         }
       },
-      "required": [
-        "pageIdx"
-      ],
+      "required": ["pageIdx"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2521,10 +2118,7 @@
           "description": "The uid of the element to drop into"
         }
       },
-      "required": [
-        "from_uid",
-        "to_uid"
-      ],
+      "required": ["from_uid", "to_uid"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2538,14 +2132,7 @@
       "properties": {
         "networkConditions": {
           "type": "string",
-          "enum": [
-            "No emulation",
-            "Offline",
-            "Slow 3G",
-            "Fast 3G",
-            "Slow 4G",
-            "Fast 4G"
-          ],
+          "enum": ["No emulation", "Offline", "Slow 3G", "Fast 3G", "Slow 4G", "Fast 4G"],
           "description": "Throttle network. Set to \"No emulation\" to disable. If omitted, conditions remain unchanged."
         },
         "cpuThrottlingRate": {
@@ -2580,17 +2167,13 @@
                 "description": "The uid of an element on the page from the page content snapshot"
               }
             },
-            "required": [
-              "uid"
-            ],
+            "required": ["uid"],
             "additionalProperties": false
           },
           "description": "An optional list of arguments to pass to the function."
         }
       },
-      "required": [
-        "function"
-      ],
+      "required": ["function"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2611,10 +2194,7 @@
           "description": "The value to fill in"
         }
       },
-      "required": [
-        "uid",
-        "value"
-      ],
+      "required": ["uid", "value"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2640,18 +2220,13 @@
                 "description": "Value for the element"
               }
             },
-            "required": [
-              "uid",
-              "value"
-            ],
+            "required": ["uid", "value"],
             "additionalProperties": false
           },
           "description": "Elements from snapshot to fill out."
         }
       },
-      "required": [
-        "elements"
-      ],
+      "required": ["elements"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2668,9 +2243,7 @@
           "description": "The msgid of a console message on the page from the listed console messages"
         }
       },
-      "required": [
-        "msgid"
-      ],
+      "required": ["msgid"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2700,10 +2273,7 @@
       "properties": {
         "action": {
           "type": "string",
-          "enum": [
-            "accept",
-            "dismiss"
-          ],
+          "enum": ["accept", "dismiss"],
           "description": "Whether to dismiss or accept the dialog"
         },
         "promptText": {
@@ -2711,9 +2281,7 @@
           "description": "Optional prompt text to enter into the dialog."
         }
       },
-      "required": [
-        "action"
-      ],
+      "required": ["action"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2730,9 +2298,7 @@
           "description": "The uid of an element on the page from the page content snapshot"
         }
       },
-      "required": [
-        "uid"
-      ],
+      "required": ["uid"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2867,12 +2433,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": [
-            "url",
-            "back",
-            "forward",
-            "reload"
-          ],
+          "enum": ["url", "back", "forward", "reload"],
           "description": "Navigate the page by URL, back or forward in history, or reload."
         },
         "url": {
@@ -2908,9 +2469,7 @@
           "description": "Maximum wait time in milliseconds. If set to 0, the default timeout will be used."
         }
       },
-      "required": [
-        "url"
-      ],
+      "required": ["url"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2931,10 +2490,7 @@
           "description": "The name of the Insight you want more information on. For example: \"DocumentLatency\" or \"LCPBreakdown\""
         }
       },
-      "required": [
-        "insightSetId",
-        "insightName"
-      ],
+      "required": ["insightSetId", "insightName"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2955,10 +2511,7 @@
           "description": "Determines if the trace recording should be automatically stopped."
         }
       },
-      "required": [
-        "reload",
-        "autoStop"
-      ],
+      "required": ["reload", "autoStop"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -2986,9 +2539,7 @@
           "description": "A key or a combination (e.g., \"Enter\", \"Control+A\", \"Control++\", \"Control+Shift+R\"). Modifiers: Control, Shift, Alt, Meta"
         }
       },
-      "required": [
-        "key"
-      ],
+      "required": ["key"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -3009,10 +2560,7 @@
           "description": "Page height"
         }
       },
-      "required": [
-        "width",
-        "height"
-      ],
+      "required": ["width", "height"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -3029,9 +2577,7 @@
           "description": "The index of the page to select. Call list_pages to list pages."
         }
       },
-      "required": [
-        "pageIdx"
-      ],
+      "required": ["pageIdx"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -3045,11 +2591,7 @@
       "properties": {
         "format": {
           "type": "string",
-          "enum": [
-            "png",
-            "jpeg",
-            "webp"
-          ],
+          "enum": ["png", "jpeg", "webp"],
           "default": "png",
           "description": "Type of format to save the screenshot as. Default is \"png\""
         },
@@ -3112,10 +2654,7 @@
           "description": "The local path of the file to upload"
         }
       },
-      "required": [
-        "uid",
-        "filePath"
-      ],
+      "required": ["uid", "filePath"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }
@@ -3136,9 +2675,7 @@
           "description": "Maximum wait time in milliseconds. If set to 0, the default timeout will be used."
         }
       },
-      "required": [
-        "text"
-      ],
+      "required": ["text"],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"
     }

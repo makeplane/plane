@@ -1,6 +1,7 @@
 # Phase 02: Frontend — Excel Import UI
 
 ## Context Links
+
 - Parent plan: [plan.md](./plan.md)
 - Depends on: [Phase 01](./phase-01-backend-bulk-create-endpoint.md) (API endpoint URL)
 - Reference: [researcher-02-frontend-patterns.md](./research/researcher-02-frontend-patterns.md)
@@ -29,6 +30,7 @@
 ## Requirements
 
 ### Functional
+
 - "Bulk Create Workspace" button on `/workspace/` page → navigates to `/workspace/bulk-import`
 - "Download Template" button on import page → generates & downloads `workspace-import-template.xlsx`
 - File picker: accept `.xlsx`, `.xls`
@@ -39,6 +41,7 @@
 - Max 200 rows enforced with user-facing error message
 
 ### Non-Functional
+
 - `xlsx` package added to `apps/admin/package.json` (or workspace root if shared)
 - Keep form component under 200 lines — split into sub-components if needed
 - Use existing Tailwind CSS + `@plane/propel` component patterns
@@ -71,11 +74,14 @@ WorkspaceStore.bulkCreateWorkspaces(workspaces)
 ## Related Code Files
 
 **Create:**
+
 - `apps/admin/components/workspace/workspace-bulk-import-form.tsx`
 - `apps/admin/app/(all)/(dashboard)/workspace/bulk-import/page.tsx`
 
 <!-- Updated: Validation Session 1 - No @plane/services change; service method inlined in store -->
+
 **Modify:**
+
 - `apps/admin/store/workspace.store.ts` — add `bulkCreateWorkspaces()` action + interface method (inline API call)
 - `apps/admin/hooks/store/use-workspace.tsx` — expose `bulkCreateWorkspaces`
 - `apps/admin/app/(all)/(dashboard)/workspace/page.tsx` — add "Bulk Create Workspace" Link button
@@ -84,14 +90,18 @@ WorkspaceStore.bulkCreateWorkspaces(workspaces)
 ## Embedded Rules (Phase-Specific)
 
 ### Rule 1 — Observer Pattern
+
 All MobX-connected components must use `observer()` from `mobx-react`.
+
 ```tsx
 import { observer } from "mobx-react";
 export const WorkspaceBulkImportForm = observer(function WorkspaceBulkImportForm() { ... });
 ```
 
 ### Rule 2 — Store Action Pattern
+
 Follow `workspace.store.ts` pattern: set `loader = "mutation"`, call service, `runInAction()` to update state.
+
 ```ts
 bulkCreateWorkspaces = async (workspaces: Partial<IWorkspace>[]): Promise<IBulkCreateResponse> => {
   try {
@@ -110,9 +120,11 @@ bulkCreateWorkspaces = async (workspaces: Partial<IWorkspace>[]): Promise<IBulkC
 ```
 
 ### Rule 3 — Toast Pattern
+
 Use `@plane/propel/toast`: `setToast({ type: TOAST_TYPE.SUCCESS/ERROR/WARNING, title, message })`.
 
 ### Rule 4 — Button & Link Styling
+
 ```tsx
 import { Button, getButtonStyling } from "@plane/propel/button";
 import Link from "next/link";
@@ -127,6 +139,7 @@ import Link from "next/link";
 ```
 
 ### Rule 5 — xlsx Usage
+
 ```ts
 import * as XLSX from "xlsx";
 
@@ -145,21 +158,24 @@ XLSX.writeFile(templateWb, "workspace-import-template.xlsx");
 ```
 
 ### Rule 6 — File Size / Count Validation (frontend)
+
 - Max 200 rows: show inline error if exceeded, do not proceed
 - Accept only `.xlsx`, `.xls`: `accept=".xlsx,.xls"` on file input
 - Show file name after selection
 
 ### Rule 7 — Inline Service Call in Store
+
 <!-- Updated: Validation Session 1 - Inline in store, not @plane/services -->
+
 Do NOT modify `@plane/services`. Inline the API call in `workspace.store.ts`:
+
 ```ts
 // In WorkspaceStore, use the existing instanceWorkspaceService's axios instance
 // OR import APIService directly from @plane/services
 bulkCreateWorkspaces = async (workspaces: Array<{ name: string; organization_size?: string }>) => {
-  const response = await this.instanceWorkspaceService["requester"].post(
-    "/god-mode/workspaces/bulk-create/",
-    { workspaces }
-  );
+  const response = await this.instanceWorkspaceService["requester"].post("/god-mode/workspaces/bulk-create/", {
+    workspaces,
+  });
   return response?.data;
 };
 // Alternatively, look at how instanceWorkspaceService makes requests and follow same pattern
@@ -242,12 +258,12 @@ bulkCreateWorkspaces = async (workspaces: Array<{ name: string; organization_siz
 
 ## Risk Assessment
 
-| Risk | Mitigation |
-|------|-----------|
-| xlsx bundle size (~800KB) | Lazy import with dynamic `import("xlsx")` inside handler functions |
-| Slug auto-generation | Do NOT auto-generate slug; require user to fill it in the template |
-| @plane/services build needed | If adding to shared service, rebuild package before admin app runs |
-| Preview table for 200 rows slow | Virtual scrolling not needed for ≤200 rows; simple table is fine |
+| Risk                            | Mitigation                                                         |
+| ------------------------------- | ------------------------------------------------------------------ |
+| xlsx bundle size (~800KB)       | Lazy import with dynamic `import("xlsx")` inside handler functions |
+| Slug auto-generation            | Do NOT auto-generate slug; require user to fill it in the template |
+| @plane/services build needed    | If adding to shared service, rebuild package before admin app runs |
+| Preview table for 200 rows slow | Virtual scrolling not needed for ≤200 rows; simple table is fine   |
 
 ## Security Considerations
 
@@ -259,6 +275,7 @@ bulkCreateWorkspaces = async (workspaces: Array<{ name: string; organization_siz
 ## Next Steps
 
 After both phases complete:
+
 - Run `pnpm build` for admin app to verify production build
 - Manual test: upload template with 3-5 valid + 2 invalid rows
 - Commit with message: `feat(god-mode): add bulk Excel workspace import`

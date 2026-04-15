@@ -4,12 +4,12 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-03-18 |
-| Priority | P2 |
-| Status | ⬜ pending |
-| Est. | 60m |
+| Field    | Value      |
+| -------- | ---------- |
+| Date     | 2026-03-18 |
+| Priority | P2         |
+| Status   | ⬜ pending |
+| Est.     | 60m        |
 
 Three-layer frontend change: service type + method → store action → page button.
 
@@ -24,6 +24,7 @@ Three-layer frontend change: service type + method → store action → page but
 ## Requirements
 
 <!-- Updated: Validation Session 1 - modal + mode param required -->
+
 - `IRejoinAllResult` interface exported from service file
 - `rejoinAll(mode: TAutoJoinMode)` service method calls `POST /api/instances/departments/rejoin-all/` with `{ mode }`
 - `rejoinAll` store action in interface + implementation + `makeObservable`
@@ -34,6 +35,7 @@ Three-layer frontend change: service type + method → store action → page but
 ## Related Code Files
 
 <!-- Updated: Validation Session 1 - new modal file added -->
+
 - `packages/services/src/department/instance-department.service.ts` — add after line 88 (after `IAutoJoinResult`)
 - `apps/admin/store/instance-department.store.ts` — extend interface line ~43, add action after `autoJoin` line ~207
 - `apps/admin/app/(all)/(dashboard)/departments/page.tsx` — add modal state + button (no `isRejoining` needed — modal handles loading)
@@ -44,6 +46,7 @@ Three-layer frontend change: service type + method → store action → page but
 ### 1. Service — `instance-department.service.ts`
 
 After `IAutoJoinResult` interface (~line 88), add:
+
 ```typescript
 export interface IRejoinAllResult {
   departments_processed: number;
@@ -54,6 +57,7 @@ export interface IRejoinAllResult {
 ```
 
 After `autoJoin()` method (~line 173), add:
+
 ```typescript
 // Updated: Validation Session 1 - accepts mode param
 async rejoinAll(mode: TAutoJoinMode): Promise<IRejoinAllResult> {
@@ -68,6 +72,7 @@ async rejoinAll(mode: TAutoJoinMode): Promise<IRejoinAllResult> {
 ### 1b. New Modal — `rejoin-all-modal.tsx`
 
 <!-- Updated: Validation Session 1 - modal replaces window.confirm() -->
+
 New file: `apps/admin/app/(all)/(dashboard)/departments/components/rejoin-all-modal.tsx`
 
 Mirrors `auto-join-modal.tsx` structure but for global rejoin (no `deptId`/`deptName` props):
@@ -128,6 +133,7 @@ export const RejoinAllModal = function RejoinAllModal({ open, onClose }: Props) 
 ```
 
 **Key differences from `AutoJoinModal`:**
+
 - No `deptId`/`deptName` props — global operation
 - `IRejoinAllResult` has `departments_processed` extra field → show 4th stat card
 - Use `RefreshCw` icon instead of `UserPlus`
@@ -136,6 +142,7 @@ export const RejoinAllModal = function RejoinAllModal({ open, onClose }: Props) 
 ### 2. Store — `instance-department.store.ts`
 
 **Import** — add `IRejoinAllResult` to `@plane/services` import block (alongside `IAutoJoinResult`):
+
 ```typescript
 import type {
   ...
@@ -146,6 +153,7 @@ import type {
 ```
 
 **Interface** — add after `autoJoin` line (~43):
+
 ```typescript
 rejoinAll: (mode: TAutoJoinMode) => Promise<IRejoinAllResult>;
 ```
@@ -153,6 +161,7 @@ rejoinAll: (mode: TAutoJoinMode) => Promise<IRejoinAllResult>;
 **`makeObservable`** — add `rejoinAll: action` alongside `autoJoin: action`
 
 **Method** — add after `autoJoin` method (~line 207):
+
 ```typescript
 rejoinAll = async (mode: TAutoJoinMode): Promise<IRejoinAllResult> => {
   try {
@@ -167,7 +176,9 @@ rejoinAll = async (mode: TAutoJoinMode): Promise<IRejoinAllResult> => {
 ### 3. Page — `departments/page.tsx`
 
 <!-- Updated: Validation Session 1 - modal replaces window.confirm() + isRejoining -->
+
 **Imports:**
+
 ```typescript
 // lucide-react — add RefreshCw to existing import
 import { Download, Plus, Upload, Loader as LoaderIcon, RefreshCw } from "lucide-react";
@@ -176,11 +187,13 @@ import { RejoinAllModal } from "./components/rejoin-all-modal";
 ```
 
 **State** — add after existing `useState` calls:
+
 ```typescript
 const [rejoinModalOpen, setRejoinModalOpen] = useState(false);
 ```
 
 **Button** — add between Import and Add Department buttons (~line 74):
+
 ```tsx
 <Button variant="outline" size="sm" onClick={() => setRejoinModalOpen(true)}>
   <RefreshCw className="w-4 h-4" />
@@ -189,6 +202,7 @@ const [rejoinModalOpen, setRejoinModalOpen] = useState(false);
 ```
 
 **Modal** — add alongside `DepartmentFormModal` and `AutoJoinModal` at bottom of JSX:
+
 ```tsx
 <RejoinAllModal open={rejoinModalOpen} onClose={() => setRejoinModalOpen(false)} />
 ```

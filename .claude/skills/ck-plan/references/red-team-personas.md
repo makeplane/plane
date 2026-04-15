@@ -2,12 +2,12 @@
 
 ## Available Lenses
 
-| Reviewer | Lens | Focus |
-|----------|------|-------|
-| **Security Adversary** | Attacker mindset | Auth bypass, injection, data exposure, privilege escalation, supply chain, OWASP top 10 |
-| **Failure Mode Analyst** | Murphy's Law | Race conditions, data loss, cascading failures, recovery gaps, deployment risks, rollback holes |
-| **Assumption Destroyer** | Skeptic | Unstated dependencies, false "will work" claims, missing error paths, scale assumptions, integration assumptions |
-| **Scope & Complexity Critic** | YAGNI enforcer | Over-engineering, premature abstraction, unnecessary complexity, missing MVP cuts, scope creep, gold plating |
+| Reviewer                      | Lens             | Focus                                                                                                            |
+| ----------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Security Adversary**        | Attacker mindset | Auth bypass, injection, data exposure, privilege escalation, supply chain, OWASP top 10                          |
+| **Failure Mode Analyst**      | Murphy's Law     | Race conditions, data loss, cascading failures, recovery gaps, deployment risks, rollback holes                  |
+| **Assumption Destroyer**      | Skeptic          | Unstated dependencies, false "will work" claims, missing error paths, scale assumptions, integration assumptions |
+| **Scope & Complexity Critic** | YAGNI enforcer   | Over-engineering, premature abstraction, unnecessary complexity, missing MVP cuts, scope creep, gold plating     |
 
 ## Reviewer Prompt Template
 
@@ -46,6 +46,7 @@ Output format per finding:
 ## Red Team Findings
 
 ### Finding 1: {title} — {SEVERITY}
+
 **Reviewer:** {lens name}
 **Location:** {phase/section}
 **Flaw:** {description}
@@ -60,10 +61,11 @@ Output format per finding:
 ## Red Team Review
 
 ### Session — {YYYY-MM-DD}
+
 **Findings:** {total} ({accepted} accepted, {rejected} rejected)
 **Severity breakdown:** {N} Critical, {N} High, {N} Medium
 
-| # | Finding | Severity | Disposition | Applied To |
-|---|---------|----------|-------------|------------|
-| 1 | {title} | Critical | Accept | Phase 2 |
+| #   | Finding | Severity | Disposition | Applied To |
+| --- | ------- | -------- | ----------- | ---------- |
+| 1   | {title} | Critical | Accept      | Phase 2    |
 ```

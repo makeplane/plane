@@ -8,15 +8,15 @@
 
 ## Scope
 
-| Layer | Files |
-|---|---|
-| Backend models | `apps/api/plane/db/models/issue.py` |
-| Backend serializers | `apps/api/plane/app/serializers/issue.py` |
-| Backend activity | `apps/api/plane/bgtasks/issue_activities_task.py` |
-| Backend migration | `apps/api/plane/db/migrations/0137_issue_frequency.py` |
-| Types | `packages/types/src/issues.ts`, `packages/types/src/issues/issue.ts` |
-| Constants | `packages/constants/src/issue/common.ts` |
-| Components | `apps/web/ce/components/dropdowns/frequency.tsx`, `apps/web/core/components/issues/issue-detail/sidebar.tsx`, `apps/web/ce/components/issues/issue-modal/modal-additional-properties.tsx` |
+| Layer               | Files                                                                                                                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backend models      | `apps/api/plane/db/models/issue.py`                                                                                                                                                       |
+| Backend serializers | `apps/api/plane/app/serializers/issue.py`                                                                                                                                                 |
+| Backend activity    | `apps/api/plane/bgtasks/issue_activities_task.py`                                                                                                                                         |
+| Backend migration   | `apps/api/plane/db/migrations/0137_issue_frequency.py`                                                                                                                                    |
+| Types               | `packages/types/src/issues.ts`, `packages/types/src/issues/issue.ts`                                                                                                                      |
+| Constants           | `packages/constants/src/issue/common.ts`                                                                                                                                                  |
+| Components          | `apps/web/ce/components/dropdowns/frequency.tsx`, `apps/web/core/components/issues/issue-detail/sidebar.tsx`, `apps/web/ce/components/issues/issue-modal/modal-additional-properties.tsx` |
 
 **LOC added:** ~250 (backend) + ~290 (frontend)
 **Focus:** Full feature review against priority CharField pattern
@@ -92,7 +92,7 @@ Both model classes define identical `FREQUENCY_CHOICES` tuples inline. If a new 
 **File:** `apps/web/ce/components/issues/issue-modal/modal-additional-properties.tsx`, line 37
 
 ```tsx
-placeholder="Frequency"
+placeholder = "Frequency";
 ```
 
 The `FrequencyDropdown` already accepts a `placeholder` prop and falls back to `t("common.frequency")` internally — so this hardcoded string overrides the i18n fallback. The sidebar correctly omits the `placeholder` prop and relies on the i18n default.
@@ -137,16 +137,16 @@ The `Combobox` values here are `TIssueFrequency` strings (not objects with a `.n
 
 ## Edge Cases Reviewed
 
-| Scenario | Status |
-|---|---|
-| `null` frequency → serializer returns `null` | Correct — field is `null=True, blank=True` |
-| Clearing frequency in UI (`None` option) | Handled — `onChange(null)` calls `issueOperations.update` with `{ frequency: null }` |
-| Activity tracking when frequency unchanged | Correct — `track_frequency` guards with inequality check |
-| Activity tracking stores `null` old/new value | Handled — `IssueActivity.old_value` and `new_value` are nullable |
-| `IssueVersion.log_issue_version` includes frequency | Confirmed at line 809 |
-| Max key length vs `max_length=20` | Max key is `"quarterly"` at 9 chars — well within limit |
-| All three i18n locales (en/ko/vi) define `common.frequency` | Confirmed |
-| `TIssueFrequency` exported via `packages/types/src/index.ts` | Confirmed via `export * from "./issues"` chain |
+| Scenario                                                     | Status                                                                               |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `null` frequency → serializer returns `null`                 | Correct — field is `null=True, blank=True`                                           |
+| Clearing frequency in UI (`None` option)                     | Handled — `onChange(null)` calls `issueOperations.update` with `{ frequency: null }` |
+| Activity tracking when frequency unchanged                   | Correct — `track_frequency` guards with inequality check                             |
+| Activity tracking stores `null` old/new value                | Handled — `IssueActivity.old_value` and `new_value` are nullable                     |
+| `IssueVersion.log_issue_version` includes frequency          | Confirmed at line 809                                                                |
+| Max key length vs `max_length=20`                            | Max key is `"quarterly"` at 9 chars — well within limit                              |
+| All three i18n locales (en/ko/vi) define `common.frequency`  | Confirmed                                                                            |
+| `TIssueFrequency` exported via `packages/types/src/index.ts` | Confirmed via `export * from "./issues"` chain                                       |
 
 ---
 
@@ -175,15 +175,15 @@ The `Combobox` values here are `TIssueFrequency` strings (not objects with a `.n
 
 ## Metrics
 
-| Metric | Value |
-|---|---|
-| FrequencyDropdown lines | 246 (limit: 150) |
-| Serializers updated | 4 of 4 relevant |
-| i18n locales covered | 3 of 3 (en, ko, vi) |
-| Security issues | 0 |
-| Breaking changes | 0 |
-| Activity tracking | Correct |
-| Migration completeness | Both `issue` + `issueversion` tables |
+| Metric                  | Value                                |
+| ----------------------- | ------------------------------------ |
+| FrequencyDropdown lines | 246 (limit: 150)                     |
+| Serializers updated     | 4 of 4 relevant                      |
+| i18n locales covered    | 3 of 3 (en, ko, vi)                  |
+| Security issues         | 0                                    |
+| Breaking changes        | 0                                    |
+| Activity tracking       | Correct                              |
+| Migration completeness  | Both `issue` + `issueversion` tables |
 
 ---
 

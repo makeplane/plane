@@ -22,13 +22,13 @@ metadata:
 
 ## When NOT to Use
 
-| Situation | Better Tool |
-|-----------|-------------|
-| Subjective goals ("make it cleaner") | `ck:cook` |
-| Bug fixing with known root cause | `ck:fix` or `ck:debug` |
-| One-shot tasks, no repetition needed | `ck:cook` |
+| Situation                                | Better Tool             |
+| ---------------------------------------- | ----------------------- |
+| Subjective goals ("make it cleaner")     | `ck:cook`               |
+| Bug fixing with known root cause         | `ck:fix` or `ck:debug`  |
+| One-shot tasks, no repetition needed     | `ck:cook`               |
 | No mechanical metric to measure progress | `ck:cook --interactive` |
-| Files outside a defined scope | manual approach |
+| Files outside a defined scope            | manual approach         |
 
 ## Configuration Format
 
@@ -36,21 +36,21 @@ Parsed from user message. Missing required fields trigger a **batched** `AskUser
 
 ### Required
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `Goal` | Human description of what to improve | `"Increase test coverage in src/utils"` |
-| `Scope` | Glob pattern(s) for editable files | `"src/utils/**/*.ts"` |
+| Field    | Description                                    | Example                                                                                                                                                 |
+| -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Goal`   | Human description of what to improve           | `"Increase test coverage in src/utils"`                                                                                                                 |
+| `Scope`  | Glob pattern(s) for editable files             | `"src/utils/**/*.ts"`                                                                                                                                   |
 | `Verify` | Shell command that outputs **a single number** | `"npx jest --coverage --json \| jq '.coverageMap \| .. \| .s? \| to_entries \| map(.value) \| (map(select(.>0)) \| length) / length * 100' \| tail -1"` |
 
 ### Optional
 
-| Field | Default | Description |
-|-------|---------|-------------|
-| `Guard` | none | Regression check command (exit 0 = pass) |
-| `Iterations` | 10 | Maximum iterations to run |
-| `Noise` | medium | Tolerance for metric variance: `low` / `medium` / `high` |
-| `Min-Delta` | 0 | Minimum improvement to count as progress |
-| `Direction` | higher | Whether `higher` or `lower` metric value is better |
+| Field        | Default | Description                                              |
+| ------------ | ------- | -------------------------------------------------------- |
+| `Guard`      | none    | Regression check command (exit 0 = pass)                 |
+| `Iterations` | 10      | Maximum iterations to run                                |
+| `Noise`      | medium  | Tolerance for metric variance: `low` / `medium` / `high` |
+| `Min-Delta`  | 0       | Minimum improvement to count as progress                 |
+| `Direction`  | higher  | Whether `higher` or `lower` metric value is better       |
 
 ## Interactive Setup
 
@@ -72,6 +72,7 @@ AskUserQuestion({
 See [`references/autonomous-loop-protocol.md`](references/autonomous-loop-protocol.md) for the full 8-phase specification.
 
 **Key invariants:**
+
 - ONE atomic change per iteration — atomicity test: can you describe it in one sentence without "and"?
 - Commit BEFORE verify — git is memory, not a safety net
 - Guard files are **read-only** — never modify files in guard command's scope
@@ -92,10 +93,10 @@ See [`references/autonomous-loop-protocol.md`](references/autonomous-loop-protoc
 
 ## Stuck Detection
 
-| Condition | Action |
-|-----------|--------|
-| 5 consecutive discards | Analyze patterns → shift strategy (different files, different approach) |
-| 10 consecutive discards | STOP — report findings, surface to user |
+| Condition               | Action                                                                  |
+| ----------------------- | ----------------------------------------------------------------------- |
+| 5 consecutive discards  | Analyze patterns → shift strategy (different files, different approach) |
+| 10 consecutive discards | STOP — report findings, surface to user                                 |
 
 ## Example Invocations
 

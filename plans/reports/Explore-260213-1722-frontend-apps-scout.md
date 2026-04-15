@@ -7,6 +7,7 @@ License: AGPL-3.0
 ## App: Web
 
 ### Structure
+
 - **Type**: Client-side React app with React Router v7
 - **Framework**: React (SSR disabled)
 - **Entry Point**: `app/entry.client.tsx`
@@ -14,6 +15,7 @@ License: AGPL-3.0
 - **Config**: `react-router.config.ts` (appDirectory: "app", ssr: false)
 
 **Directory Layout**:
+
 ```
 apps/web/
 ├── app/
@@ -48,6 +50,7 @@ apps/web/
 ```
 
 ### Dependencies (Key)
+
 - **React**: catalog (latest)
 - **React Router**: v7 with react-router@latest, @react-router/node, @react-router/dev
 - **State Management**: MobX, mobx-react, mobx-utils
@@ -65,12 +68,15 @@ apps/web/
 - **Dev**: Vite, TypeScript, Tailwind CSS
 
 ### Routing
+
 **Architecture**: Hierarchical file-based routing using React Router v7
+
 - Client-side SPA (ssr: false)
 - Routes defined in code: `app/routes/core.ts` and `app/routes/extended.ts`
 - Base route groups: `(home)` (auth/signup), `(all)` (main app)
 
 **Main Route Structure**:
+
 ```
 / (home)
   - sign-up
@@ -106,15 +112,17 @@ apps/web/
 ```
 
 ### State Management
+
 **Pattern**: MobX-based centralized store with multiple domain stores
 
 **Store Structure** (`core/store/`):
+
 - **Root Store**: `root.store.ts`, `router.store.ts`
 - **User Management**: `user/` (user auth, profile, preferences)
 - **Workspace**: `workspace/` (workspace data, members, settings)
 - **Project**: `project/` (project list, settings, favorites)
 - **Issue Management**: `issue/` (32 issue-related stores including issue detail, filters, status)
-- **Workspace Features**: 
+- **Workspace Features**:
   - `cycle.store.ts`, `cycle_filter.store.ts` (sprint/cycle management)
   - `module.store.ts`, `module_filter.store.ts` (module management)
   - `label.store.ts` (issue labels)
@@ -128,6 +136,7 @@ apps/web/
 **Hook Integration**: `core/hooks/store/` exposes stores via custom hooks
 
 ### Key Features
+
 1. **Project Management**: Workspaces, projects, issues, cycles, modules
 2. **Issue Tracking**: Issue creation, detail views, status tracking, filtering
 3. **Board Views**: Kanban boards, list views, calendar view, spreadsheet, Gantt, timeline
@@ -145,6 +154,7 @@ apps/web/
 ## App: Admin
 
 ### Structure
+
 - **Type**: Client-side React app with React Router v7
 - **Framework**: React (SSR disabled)
 - **Entry Point**: `app/entry.client.tsx`
@@ -152,6 +162,7 @@ apps/web/
 - **Config**: `react-router.config.ts` (appDirectory: "app", basename from env, ssr: false)
 
 **Directory Layout**:
+
 ```
 apps/admin/
 ├── app/
@@ -189,6 +200,7 @@ apps/admin/
 ```
 
 ### Dependencies (Key)
+
 - **React**: catalog
 - **React Router**: v7 with basename support for path-based deployment
 - **State Management**: MobX, mobx-react
@@ -200,9 +212,11 @@ apps/admin/
 - **Dev**: Vite, TypeScript, Tailwind CSS
 
 ### Routing
+
 **Architecture**: Simple file-based routing for admin dashboard
 
 **Route Structure**:
+
 ```
 / (home)
 
@@ -219,14 +233,17 @@ apps/admin/
 /image        (image service settings)
 ```
 
-**Configuration**: 
+**Configuration**:
+
 - Supports custom basename via `VITE_ADMIN_BASE_PATH` environment variable
 - Allows deployment at sub-paths
 
 ### State Management
+
 **Pattern**: Minimal MobX store (5 core stores)
 
 **Store Structure** (`core/store/`):
+
 - `instance.store.ts` - Instance configuration
 - `root.store.ts` - Root store container
 - `theme.store.ts` - Theme switching
@@ -236,6 +253,7 @@ apps/admin/
 **Note**: More focused than web app; admin-specific feature management
 
 ### Key Features
+
 1. **Instance Management**: General instance configuration
 2. **Workspace Administration**: Workspace settings, member management
 3. **Email Configuration**: Email service setup
@@ -249,6 +267,7 @@ apps/admin/
 ## App: Space
 
 ### Structure
+
 - **Type**: Full-stack React app with React Router v7 SSR
 - **Framework**: React (SSR enabled)
 - **Entry Point**: `app/entry.client.tsx` + server-side rendering
@@ -256,6 +275,7 @@ apps/admin/
 - **Config**: `react-router.config.ts` (appDirectory: "app", basename from env, ssr: true)
 
 **Directory Layout**:
+
 ```
 apps/space/
 ├── app/
@@ -304,6 +324,7 @@ apps/space/
 ```
 
 ### Dependencies (Key)
+
 - **React**: catalog
 - **React Router**: v7 with SSR enabled (@react-router/serve for server-side rendering)
 - **State Management**: MobX, mobx-react, mobx-utils
@@ -316,9 +337,11 @@ apps/space/
 - **Dev**: Vite, TypeScript, Tailwind CSS, @tailwindcss/typography
 
 ### Routing
+
 **Architecture**: File-based routing with SSR
 
 **Route Structure**:
+
 ```
 / (index home)
 
@@ -328,14 +351,17 @@ apps/space/
 ```
 
 **Configuration**:
+
 - Supports custom basename via `VITE_SPACE_BASE_PATH` environment variable
 - Server-side rendering enabled for better SEO and initial load performance
 - Can be deployed at custom paths
 
 ### State Management
+
 **Pattern**: MobX stores focused on public/shared content
 
 **Store Structure** (`core/store/`):
+
 - **Root**: `root.store.ts`
 - **Content**: `issue.store.ts`, `issue-detail.store.ts`, `issue-filters.store.ts`
 - **Workspace**: `cycle.store.ts`, `module.store.ts`, `members.store.ts`, `label.store.ts`
@@ -345,6 +371,7 @@ apps/space/
 - **Helpers**: `helpers/` (store helper utilities)
 
 ### Key Features
+
 1. **Public Issue Sharing**: Share issues publicly via anchor links
 2. **Read-Only Views**: Browse public projects and issues
 3. **Issue Filtering**: Filter issues by various criteria
@@ -359,12 +386,14 @@ apps/space/
 ## App: Live
 
 ### Structure
+
 - **Type**: Backend/Real-time Collaboration Server (Node.js)
 - **Framework**: Express.js + Hocuspocus (Y.js CRDT)
 - **Entry Point**: `src/start.ts` (launches Server class)
 - **Language**: TypeScript (compiled to ESM)
 
 **Directory Layout**:
+
 ```
 apps/live/
 ├── src/
@@ -389,6 +418,7 @@ apps/live/
 ```
 
 ### Dependencies (Key)
+
 - **Server**: Express.js with express-ws for WebSocket support
 - **Real-time Collaboration**: @hocuspocus/server (2.15.2) - CRDT server
   - Extensions: @hocuspocus/extension-database, extension-logger, extension-redis
@@ -411,9 +441,11 @@ apps/live/
 - **Dev**: TypeScript, ESM module system
 
 ### Routing
+
 **Architecture**: Express.js REST + WebSocket via Hocuspocus
 
 **Routes** (controller-based):
+
 ```
 Base Path: env.LIVE_BASE_PATH
 
@@ -422,20 +454,24 @@ Base Path: env.LIVE_BASE_PATH
 ```
 
 **Hocuspocus Features**:
+
 - WebSocket connection for real-time document sync
 - Database persistence via extension
 - Redis pub-sub for distributed syncing
 - Logging for debugging
 
 ### State Management
+
 **Pattern**: No client-side state store (server-side focus)
 
 **Server State**:
+
 - Hocuspocus document state (Y.js CRDT)
 - Redis cache for distributed systems
 - In-memory connections manager
 
 ### Key Features
+
 1. **Real-time Collaboration**: WebSocket-based collaborative editing
 2. **CRDT-based Sync**: Y.js CRDT for conflict-free synchronization
 3. **Editor Integration**: Works with TipTap/ProseMirror editors
@@ -453,6 +489,7 @@ Base Path: env.LIVE_BASE_PATH
 ## Cross-App Architecture
 
 ### Shared Dependencies
+
 - **@plane/ui**: Shared UI component library
 - **@plane/types**: Shared TypeScript type definitions
 - **@plane/utils**: Shared utilities
@@ -466,12 +503,14 @@ Base Path: env.LIVE_BASE_PATH
 - **@plane/decorators**: Decorators for live app
 
 ### Architecture Pattern
+
 1. **Web App**: Main workspace/project management UI (most complex)
 2. **Admin App**: System administration dashboard (minimal feature set)
 3. **Space App**: Public sharing portal with SSR (simplified feature set)
 4. **Live App**: Backend service for real-time collaboration (server-side only)
 
 ### Tech Stack Summary
+
 - **Frontend Build**: React Router v7 + Vite
 - **State Management**: MobX across all client apps
 - **API**: Axios + SWR for data fetching
@@ -485,31 +524,35 @@ Base Path: env.LIVE_BASE_PATH
 ## Key Observations
 
 ### 1. Modular Monorepo Structure
-- Shared workspace packages (@plane/*)
+
+- Shared workspace packages (@plane/\*)
 - Feature parity between web/space with differences in scope
 - Live service fully separated (Node.js backend)
 
 ### 2. MobX State Management
+
 - Extensive store hierarchy in web app (32 stores)
 - Simplified in admin (5 stores)
 - Space app balances both (14 stores)
 - Hooks for store access (`core/hooks/store/`)
 
 ### 3. Routing Architecture
+
 - React Router v7 file-based routing
 - Web & Admin: Client-side SPA (no SSR)
 - Space: Server-side rendering for public sharing
 - Hierarchical parameter-based routes
 
 ### 4. Real-time Collaboration
+
 - Hocuspocus + Y.js CRDT for conflict-free sync
 - Redis for pub-sub in distributed systems
 - WebSocket integration via express-ws
 
 ### 5. Development Philosophy
+
 - TypeScript throughout
 - Tailwind CSS for styling
 - Extensive componentization
 - Service layer abstraction for APIs
 - Environmental configuration for multi-tenant deployment
-

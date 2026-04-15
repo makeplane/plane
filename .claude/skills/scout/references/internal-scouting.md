@@ -35,7 +35,9 @@ Report format:
 ## Spawning Strategy
 
 ### Directory Division
+
 Split codebase logically:
+
 - `src/` - Source code
 - `lib/` - Libraries
 - `tests/` - Test files
@@ -43,6 +45,7 @@ Split codebase logically:
 - `api/` - API routes
 
 ### Parallel Execution
+
 - Spawn all agents in single `Task` tool call
 - Each agent gets distinct directory scope
 - No overlap between agents
@@ -72,15 +75,18 @@ Agent 6: Scout types/, interfaces/ for auth types
 When needing to read file content, use chunking to stay within context limits (<150K tokens safe zone).
 
 ### Step 1: Get Line Counts
+
 ```bash
 wc -l path/to/file1.ts path/to/file2.ts path/to/file3.ts
 ```
 
 ### Step 2: Calculate Chunks
+
 - **Target:** ~500 lines per chunk (safe for most files)
 - **Max files per agent:** 3-5 small files OR 1 large file chunked
 
 **Chunking formula:**
+
 ```
 chunks = ceil(total_lines / 500)
 lines_per_chunk = ceil(total_lines / chunks)
@@ -89,12 +95,14 @@ lines_per_chunk = ceil(total_lines / chunks)
 ### Step 3: Spawn Parallel Bash Agents
 
 **Small files (<500 lines each):**
+
 ```
 Task 1: subagent_type="Bash", prompt="cat file1.ts file2.ts"
 Task 2: subagent_type="Bash", prompt="cat file3.ts file4.ts"
 ```
 
 **Large file (>500 lines) - use sed for ranges:**
+
 ```
 Task 1: subagent_type="Bash", prompt="sed -n '1,500p' large-file.ts"
 Task 2: subagent_type="Bash", prompt="sed -n '501,1000p' large-file.ts"
@@ -102,6 +110,7 @@ Task 3: subagent_type="Bash", prompt="sed -n '1001,1500p' large-file.ts"
 ```
 
 ### Chunking Decision Tree
+
 ```
 File < 500 lines     → Read entire file
 File 500-1500 lines  → Split into 2-3 chunks
@@ -113,6 +122,7 @@ Spawn all in single message for parallel execution.
 ## Result Aggregation
 
 Combine results from all agents:
+
 1. Deduplicate file paths
 2. Merge descriptions
 3. Note any gaps/timeouts

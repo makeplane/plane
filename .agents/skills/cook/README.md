@@ -5,6 +5,7 @@ End-to-end feature implementation with smart intent detection.
 ## Installation
 
 Copy the `cook/` folder to your Claude skills directory:
+
 ```bash
 cp -r cook ~/.claude/skills/
 ```
@@ -44,18 +45,19 @@ The skill automatically detects your intent and routes to the appropriate workfl
 
 ## Modes
 
-| Mode | Research | Testing | Review | Use Case |
-|------|----------|---------|--------|----------|
-| interactive | ✓ | ✓ | User approval | Default, full control |
-| auto | ✓ | ✓ | Auto if score≥9.5 | Trusted, hands-off |
-| fast | ✗ | ✓ | Simplified | Quick fixes |
-| parallel | Optional | ✓ | User approval | Multi-feature work |
-| no-test | ✓ | ✗ | User approval | Speed priority |
-| code | ✗ | ✓ | User approval | Existing plans |
+| Mode        | Research | Testing | Review            | Use Case              |
+| ----------- | -------- | ------- | ----------------- | --------------------- |
+| interactive | ✓        | ✓       | User approval     | Default, full control |
+| auto        | ✓        | ✓       | Auto if score≥9.5 | Trusted, hands-off    |
+| fast        | ✗        | ✓       | Simplified        | Quick fixes           |
+| parallel    | Optional | ✓       | User approval     | Multi-feature work    |
+| no-test     | ✓        | ✗       | User approval     | Speed priority        |
+| code        | ✗        | ✓       | User approval     | Existing plans        |
 
 ## Intent Detection
 
 The skill detects mode from:
+
 1. **Explicit flags:** `--fast`, `--auto`, `--parallel`, `--no-test`
 2. **Plan paths:** `./plans/*`, `plan.md`, `phase-*.md`
 3. **Keywords:** "fast", "quick", "trust me", "auto", "no test"

@@ -1,9 +1,11 @@
 # Backend Infrastructure Research: Celery Monitoring
 
 ## EmailNotificationLog Model
+
 **Location**: `apps/api/plane/db/models/notification.py` (lines 122-150)
 
 Core fields:
+
 - `receiver` (FK User) - email recipient
 - `triggered_by` (FK User) - user who triggered the action
 - `entity_identifier` (UUID) - link to domain object (issue, page, etc.)
@@ -21,14 +23,17 @@ Core fields:
 ---
 
 ## Celery Configuration
+
 **Location**: `apps/api/plane/celery.py`
 
 ### Broker & Scheduling
+
 - Broker: Redis (configured via Django settings)
 - Scheduler: `django_celery_beat.schedulers.DatabaseScheduler` — tasks persisted in DB
 - Beat schedule file defines 10+ periodic tasks
 
 ### Beat Schedule (Current Tasks)
+
 ```
 • "check-every-five-minutes-to-send-email-notifications"
   Task: plane.bgtasks.email_notification_task.stack_email_notification
@@ -64,6 +69,7 @@ Core fields:
 ```
 
 ### Task Registration
+
 - All tasks use `@shared_task` decorator from `celery`
 - 35+ task files in `apps/api/plane/bgtasks/`
 - Auto-discovery enabled: `app.autodiscover_tasks()`
@@ -72,9 +78,11 @@ Core fields:
 ---
 
 ## Celery Inspect API Capabilities
+
 Django-Celery provides `celery` application with Inspect API:
 
 **Available inspect() methods:**
+
 ```python
 from plane.celery import app
 inspector = app.control.inspect()
@@ -96,6 +104,7 @@ inspector.query_task_states()
 ```
 
 **Expected responses structure:**
+
 ```json
 {
   "celery@worker1": {
@@ -125,9 +134,11 @@ inspector.query_task_states()
 ---
 
 ## Instance/Admin API Pattern
+
 **Location**: `apps/api/plane/license/api/views/`
 
 ### Base Architecture
+
 - **Base Class**: `BaseAPIView` (extends TimezoneMixin + APIView + BasePaginator)
 - **Default Permission**: `InstanceAdminPermission`
 - **Authentication**: `BaseSessionAuthentication`
@@ -135,6 +146,7 @@ inspector.query_task_states()
 - **Features**: Method-level permission override, caching decorators, pagination
 
 ### InstanceAdminPermission
+
 **Location**: `apps/api/plane/license/api/permissions/instance.py`
 
 ```python
@@ -154,6 +166,7 @@ class InstanceAdminPermission(BasePermission):
 **Pattern**: Query InstanceAdmin join for role-based access (role >= 15)
 
 ### Example View Pattern
+
 ```python
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
@@ -182,9 +195,11 @@ class InstanceEndpoint(BaseAPIView):
 ---
 
 ## Admin URL Registration Pattern
+
 **Location**: `apps/api/plane/license/urls.py`
 
 ### URL Structure
+
 ```python
 from django.urls import path
 from plane.license.api.views import InstanceAdminEndpoint, ...
@@ -199,9 +214,11 @@ urlpatterns = [
 ```
 
 ### Integration into Main URLs
+
 **Location**: Main URL router includes license URLs with prefix `/api/instances/`
 
 Example from main urls.py:
+
 ```python
 path("api/instances/", include("plane.license.urls"))
 ```
@@ -213,6 +230,7 @@ path("api/instances/", include("plane.license.urls"))
 ---
 
 ## Django-Celery-Beat Model (PeriodicTask)
+
 Standard model from django-celery-beat package. Key queryable fields:
 
 - `name` (CharField) - unique task identifier

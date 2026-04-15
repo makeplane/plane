@@ -27,16 +27,16 @@ User override: `--quick` mode allows fast scout→diagnose→fix cycle for trivi
 
 ## Anti-Rationalization
 
-| Thought | Reality |
-|---------|---------|
-| "I can see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. Scout first. |
-| "Quick fix for now, investigate later" | "Later" never comes. Fix properly now. |
-| "Just try changing X" | Random fixes waste time and create new bugs. Diagnose first. |
-| "It's probably X" | "Probably" = guessing. Use structured diagnosis. Verify first. |
-| "One more fix attempt" (after 2+) | 3+ failures = wrong approach. Question architecture. |
-| "Emergency, no time for process" | Systematic diagnosis is FASTER than guess-and-check. |
-| "I already know the codebase" | Knowledge decays. Scout to verify assumptions before acting. |
-| "The fix is done, tests pass" | Without prevention, same bug class will recur. Add guards. |
+| Thought                                | Reality                                                        |
+| -------------------------------------- | -------------------------------------------------------------- |
+| "I can see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. Scout first.       |
+| "Quick fix for now, investigate later" | "Later" never comes. Fix properly now.                         |
+| "Just try changing X"                  | Random fixes waste time and create new bugs. Diagnose first.   |
+| "It's probably X"                      | "Probably" = guessing. Use structured diagnosis. Verify first. |
+| "One more fix attempt" (after 2+)      | 3+ failures = wrong approach. Question architecture.           |
+| "Emergency, no time for process"       | Systematic diagnosis is FASTER than guess-and-check.           |
+| "I already know the codebase"          | Knowledge decays. Scout to verify assumptions before acting.   |
+| "The fix is done, tests pass"          | Without prevention, same bug class will recur. Add guards.     |
 
 ## Process Flow (Authoritative)
 
@@ -70,11 +70,11 @@ flowchart TD
 
 **First action:** If there is no "auto" keyword in the request, use `AskUserQuestion` to determine workflow mode:
 
-| Option | Recommend When | Behavior |
-|--------|----------------|----------|
-| **Autonomous** (default) | Simple/moderate issues | Auto-approve if score >= 9.5 & 0 critical |
-| **Human-in-the-loop Review** | Critical/production code | Pause for approval at each step |
-| **Quick** | Type errors, lint, trivial bugs | Fast scout → diagnose → fix → review cycle |
+| Option                       | Recommend When                  | Behavior                                   |
+| ---------------------------- | ------------------------------- | ------------------------------------------ |
+| **Autonomous** (default)     | Simple/moderate issues          | Auto-approve if score >= 9.5 & 0 critical  |
+| **Human-in-the-loop Review** | Critical/production code        | Pause for approval at each step            |
+| **Quick**                    | Type errors, lint, trivial bugs | Fast scout → diagnose → fix → review cycle |
 
 See `references/mode-selection.md` for AskUserQuestion format.
 
@@ -83,6 +83,7 @@ See `references/mode-selection.md` for AskUserQuestion format.
 **Purpose:** Understand the affected codebase BEFORE forming any hypotheses.
 
 **Mandatory skill chain:**
+
 1. Activate `ck:scout` skill OR launch 2-3 parallel `Explore` subagents
 2. Discover: affected files, dependencies, related tests, recent changes (`git log`)
 3. Read `./docs` for project context if unfamiliar
@@ -97,6 +98,7 @@ See `references/mode-selection.md` for AskUserQuestion format.
 **Purpose:** Structured root cause analysis. NO guessing. Evidence-based only.
 
 **Mandatory skill chain:**
+
 1. **Capture pre-fix state:** Record exact error messages, failing test output, stack traces, log snippets. This becomes the baseline for Step 5 verification.
 2. Activate `ck:debug` skill (systematic-debugging + root-cause-tracing techniques).
 3. Activate `ck:sequential-thinking` skill — form hypotheses through structured reasoning, NOT guessing.
@@ -112,14 +114,15 @@ See `references/diagnosis-protocol.md` for full methodology.
 
 Classify before routing. See `references/complexity-assessment.md`.
 
-| Level | Indicators | Workflow |
-|-------|------------|----------|
-| **Simple** | Single file, clear error, type/lint | `references/workflow-quick.md` |
-| **Moderate** | Multi-file, root cause unclear | `references/workflow-standard.md` |
-| **Complex** | System-wide, architecture impact | `references/workflow-deep.md` |
+| Level        | Indicators                                 | Workflow                              |
+| ------------ | ------------------------------------------ | ------------------------------------- |
+| **Simple**   | Single file, clear error, type/lint        | `references/workflow-quick.md`        |
+| **Moderate** | Multi-file, root cause unclear             | `references/workflow-standard.md`     |
+| **Complex**  | System-wide, architecture impact           | `references/workflow-deep.md`         |
 | **Parallel** | 2+ independent issues OR `--parallel` flag | Parallel `fullstack-developer` agents |
 
 **Task Orchestration (Moderate+ only):** After classifying, create native Claude Tasks for all phases upfront with dependencies. See `references/task-orchestration.md`.
+
 - Skip for Quick workflow (< 3 steps, overhead exceeds benefit)
 - Use `TaskCreate` with `addBlockedBy` for dependency chains
 - Update via `TaskUpdate` as each phase completes
@@ -137,6 +140,7 @@ Classify before routing. See `references/complexity-assessment.md`.
 **Purpose:** Prove the fix works AND prevent the same bug class from recurring.
 
 **Mandatory skill chain:**
+
 1. **Verify (iron-law):** Run the EXACT commands from pre-fix state capture. Compare output. NO claims without fresh evidence.
 2. **Regression test:** Add or update test(s) that specifically cover the fixed issue. The test MUST fail without the fix and pass with it.
 3. **Prevention gate:** Apply defense-in-depth validation where applicable. See `references/prevention-gate.md`.
@@ -163,11 +167,13 @@ See `references/prevention-gate.md` for prevention requirements.
 See `references/skill-activation-matrix.md` for complete matrix.
 
 **Always activate (ALL workflows):**
+
 - `ck:scout` (Step 1) — understand before diagnosing
 - `ck:debug` (Step 2) — systematic root cause investigation
 - `ck:sequential-thinking` (Step 2) — structured hypothesis formation
 
 **Conditional:**
+
 - `ck:problem-solving` — auto-triggers when 2+ hypotheses fail in Step 2
 - `ck:brainstorm` — multiple valid approaches, architecture decision (Deep only)
 - `ck:context-engineering` — fixing AI/LLM/agent code
@@ -179,6 +185,7 @@ See `references/skill-activation-matrix.md` for complete matrix.
 ## Output Format
 
 Unified step markers:
+
 ```
 ✓ Step 0: [Mode] selected
 ✓ Step 1: Scouted - [N] files, [M] deps
@@ -192,6 +199,7 @@ Unified step markers:
 ## References
 
 Load as needed:
+
 - `references/mode-selection.md` - AskUserQuestion format for mode
 - `references/diagnosis-protocol.md` - Structured diagnosis methodology (NEW)
 - `references/prevention-gate.md` - Prevention requirements after fix (NEW)
@@ -205,6 +213,7 @@ Load as needed:
 - `references/parallel-exploration.md` - Parallel Explore/Bash/Task coordination patterns
 
 **Specialized Workflows:**
+
 - `references/workflow-ci.md` - GitHub Actions/CI failures
 - `references/workflow-logs.md` - Application log analysis
 - `references/workflow-test.md` - Test suite failures

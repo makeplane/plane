@@ -14,7 +14,9 @@ Labels này được hiển thị trong dropdown chọn operator trên UI filter
 ## Requirements
 
 <!-- Updated: Validation Session 1 - Use "greater than"/"less than" for gt/lt (not "after"/"before") -->
+
 ### Functional
+
 - Operator `"not_exact"` → label `"is not"`
 - Operator `"not_in"` → label `"is not any of"` (hoặc `"is none of"`)
 - Operator `"gt"` → label `"greater than"`
@@ -22,6 +24,7 @@ Labels này được hiển thị trong dropdown chọn operator trên UI filter
 - i18n: thêm translation keys cho cả 4 operators vào `en/ko/vi` translation files trong cùng phase này <!-- Updated: Validation Session 2 - Add i18n keys now alongside constants -->
 
 ### Non-functional
+
 - Chỉ thêm vào `extended.ts` — KHÔNG sửa `core.ts`
 - `Record<TExtendedSupportedOperators, string>` phải type-safe
 
@@ -30,6 +33,7 @@ Labels này được hiển thị trong dropdown chọn operator trên UI filter
 ## Related Code Files
 
 ### Modify:
+
 - `packages/constants/src/rich-filters/operator-labels/extended.ts`
 
 ---
@@ -40,7 +44,6 @@ Labels này được hiển thị trong dropdown chọn operator trên UI filter
    - `"is not"` thay vì `"is not equal to"`
    - `"after"` thay vì `"greater than"` (ngữ cảnh date thân thiện hơn)
    - `"before"` thay vì `"less than"`
-   
 2. **Date-specific labels** — `DATE_OPERATOR_LABELS_MAP` dành riêng cho date fields. `gt` và `lt` chỉ áp dụng cho date nên cần thêm vào cả `EXTENDED_OPERATOR_LABELS_MAP` (generic) và `EXTENDED_DATE_OPERATOR_LABELS_MAP`.
 
 3. **Negated labels** — `NEGATED_OPERATOR_LABELS_MAP` và `NEGATED_DATE_OPERATOR_LABELS_MAP` hiện đã là `Record<never, string>`. Với approach hiện tại (not_exact, not_in là operators riêng biệt thay vì "negated versions"), KHÔNG cần thêm vào negated maps.
@@ -55,11 +58,7 @@ Labels này được hiển thị trong dropdown chọn operator trên UI filter
 
 ```typescript
 import type { TExtendedSupportedOperators } from "@plane/types";
-import {
-  EXTENDED_EQUALITY_OPERATOR,
-  EXTENDED_COLLECTION_OPERATOR,
-  EXTENDED_COMPARISON_OPERATOR,
-} from "@plane/types";
+import { EXTENDED_EQUALITY_OPERATOR, EXTENDED_COLLECTION_OPERATOR, EXTENDED_COMPARISON_OPERATOR } from "@plane/types";
 
 /**
  * Extended operator labels — generic labels for all field types

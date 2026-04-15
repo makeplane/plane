@@ -64,6 +64,7 @@ ALWAYS:
 ## Quick Mode Review
 
 Uses same logic as Autonomous but:
+
 - Lower threshold: score >= 8.5 acceptable
 - Only 1 auto-fix cycle before escalate
 - Focus on: correctness, security, no regressions

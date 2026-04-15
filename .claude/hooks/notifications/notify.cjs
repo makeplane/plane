@@ -5,14 +5,14 @@
  *
  * Usage: echo '{"hook_event_name":"Stop"}' | node notify.cjs
  */
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const path = require('path');
-const { loadEnv } = require('./lib/env-loader.cjs');
+const fs = require("fs");
+const path = require("path");
+const { loadEnv } = require("./lib/env-loader.cjs");
 
 // Provider prefixes to check for enablement
-const PROVIDER_PREFIXES = ['TELEGRAM', 'DISCORD', 'SLACK'];
+const PROVIDER_PREFIXES = ["TELEGRAM", "DISCORD", "SLACK"];
 
 /**
  * Read JSON from stdin
@@ -20,7 +20,7 @@ const PROVIDER_PREFIXES = ['TELEGRAM', 'DISCORD', 'SLACK'];
  */
 async function readStdin() {
   return new Promise((resolve, reject) => {
-    let data = '';
+    let data = "";
 
     // Handle no stdin (empty pipe)
     if (process.stdin.isTTY) {
@@ -28,9 +28,11 @@ async function readStdin() {
       return;
     }
 
-    process.stdin.setEncoding('utf8');
-    process.stdin.on('data', chunk => { data += chunk; });
-    process.stdin.on('end', () => {
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => {
+      data += chunk;
+    });
+    process.stdin.on("end", () => {
       if (!data.trim()) {
         resolve({});
         return;
@@ -42,14 +44,14 @@ async function readStdin() {
         resolve({});
       }
     });
-    process.stdin.on('error', err => {
+    process.stdin.on("error", (err) => {
       console.error(`[notify] Stdin error: ${err.message}`);
       resolve({});
     });
 
     // Timeout after 5 seconds (safety)
     setTimeout(() => {
-      console.error('[notify] Stdin timeout');
+      console.error("[notify] Stdin timeout");
       resolve({});
     }, 5000);
   });
@@ -62,7 +64,7 @@ async function readStdin() {
  * @returns {boolean}
  */
 function hasProviderEnv(prefix, env) {
-  return Object.keys(env).some(key => key.startsWith(prefix + '_'));
+  return Object.keys(env).some((key) => key.startsWith(prefix + "_"));
 }
 
 /**
@@ -71,7 +73,7 @@ function hasProviderEnv(prefix, env) {
  * @returns {Object|null} Provider module or null
  */
 function loadProvider(providerName) {
-  const providerPath = path.join(__dirname, 'providers', `${providerName}.cjs`);
+  const providerPath = path.join(__dirname, "providers", `${providerName}.cjs`);
 
   try {
     if (fs.existsSync(providerPath)) {
@@ -110,7 +112,7 @@ async function main() {
       }
 
       // Check if provider considers itself enabled
-      if (typeof provider.isEnabled === 'function' && !provider.isEnabled(env)) {
+      if (typeof provider.isEnabled === "function" && !provider.isEnabled(env)) {
         continue;
       }
 
@@ -141,10 +143,9 @@ async function main() {
 
     // Log summary if any providers ran
     if (results.length > 0) {
-      const successful = results.filter(r => r.success).length;
+      const successful = results.filter((r) => r.success).length;
       console.error(`[notify] Summary: ${successful}/${results.length} succeeded`);
     }
-
   } catch (err) {
     console.error(`[notify] Fatal error: ${err.message}`);
   }

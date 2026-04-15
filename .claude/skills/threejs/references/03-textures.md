@@ -5,31 +5,35 @@ Map images and data onto 3D surfaces.
 ## Texture Types
 
 ### Standard 2D Texture
+
 ```javascript
 const texture = new THREE.Texture(image);
 texture.needsUpdate = true; // required after manual creation
 
 // Or use loader (auto-updates)
-const texture = new THREE.TextureLoader().load('image.jpg');
+const texture = new THREE.TextureLoader().load("image.jpg");
 ```
 
 ### Canvas Texture
+
 ```javascript
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
 // Draw on canvas...
 const texture = new THREE.CanvasTexture(canvas);
 ```
 
 ### Video Texture
+
 ```javascript
-const video = document.createElement('video');
-video.src = 'video.mp4';
+const video = document.createElement("video");
+video.src = "video.mp4";
 video.play();
 const texture = new THREE.VideoTexture(video);
 ```
 
 ### Data Texture
+
 ```javascript
 const size = 512;
 const data = new Uint8Array(size * size * 4);
@@ -39,9 +43,10 @@ texture.needsUpdate = true;
 ```
 
 ### Cube Texture (Environment/Skybox)
+
 ```javascript
 const loader = new THREE.CubeTextureLoader();
-const texture = loader.load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
+const texture = loader.load(["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]);
 ```
 
 ## Material Maps
@@ -50,19 +55,19 @@ Multiple texture types for different effects:
 
 ```javascript
 const material = new THREE.MeshStandardMaterial({
-  map: diffuseTexture,           // base color
-  normalMap: normalTexture,       // surface detail
+  map: diffuseTexture, // base color
+  normalMap: normalTexture, // surface detail
   roughnessMap: roughnessTexture, // surface roughness variation
   metalnessMap: metalnessTexture, // metallic areas
-  aoMap: aoTexture,               // ambient occlusion
-  emissiveMap: emissiveTexture,   // glow areas
-  alphaMap: alphaTexture,         // transparency
-  bumpMap: bumpTexture,           // height variation
-  displacementMap: dispTexture    // vertex displacement
+  aoMap: aoTexture, // ambient occlusion
+  emissiveMap: emissiveTexture, // glow areas
+  alphaMap: alphaTexture, // transparency
+  bumpMap: bumpTexture, // height variation
+  displacementMap: dispTexture, // vertex displacement
 });
 
 // AO map requires second UV set
-geometry.setAttribute('uv2', geometry.attributes.uv);
+geometry.setAttribute("uv2", geometry.attributes.uv);
 ```
 
 ## Wrapping Modes
@@ -70,8 +75,8 @@ geometry.setAttribute('uv2', geometry.attributes.uv);
 Control texture repeat behavior:
 
 ```javascript
-texture.wrapS = THREE.RepeatWrapping;      // horizontal
-texture.wrapT = THREE.RepeatWrapping;      // vertical
+texture.wrapS = THREE.RepeatWrapping; // horizontal
+texture.wrapT = THREE.RepeatWrapping; // vertical
 
 // Options:
 // THREE.RepeatWrapping - tile infinitely

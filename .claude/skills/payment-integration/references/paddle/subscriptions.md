@@ -5,22 +5,23 @@ Full subscription lifecycle management.
 ## Create Subscription
 
 Via checkout (customer initiates):
+
 ```typescript
 paddle.Checkout.open({
-  items: [{ priceId: 'pri_monthly', quantity: 1 }],
-  customer: { email: 'user@example.com' }
+  items: [{ priceId: "pri_monthly", quantity: 1 }],
+  customer: { email: "user@example.com" },
 });
 ```
 
 ## Subscription States
 
-| Status | Description |
-|--------|-------------|
-| `trialing` | In trial period |
-| `active` | Actively billed |
+| Status     | Description              |
+| ---------- | ------------------------ |
+| `trialing` | In trial period          |
+| `active`   | Actively billed          |
 | `past_due` | Payment failed, retrying |
-| `paused` | Temporarily suspended |
-| `canceled` | Terminated |
+| `paused`   | Temporarily suspended    |
+| `canceled` | Terminated               |
 
 ## Upgrade/Downgrade
 
@@ -34,6 +35,7 @@ PATCH /subscriptions/{sub_id}
 ```
 
 Proration modes:
+
 - `prorated_immediately` - Charge/credit now
 - `prorated_next_billing_period` - Apply next cycle
 - `full_immediately` - Full new price now
@@ -56,6 +58,7 @@ PATCH /subscriptions/{sub_id}
 ## Trials
 
 Set trial on price:
+
 ```typescript
 POST /prices
 {
@@ -101,6 +104,7 @@ POST /subscriptions/{sub_id}/cancel
 ## Customer Portal
 
 Self-service subscription management:
+
 ```typescript
 // Get portal URL
 POST /customers/{ctm_id}/portal-sessions

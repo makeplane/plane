@@ -11,12 +11,7 @@ import * as THREE from "three";
 
 // Create scene, camera, renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000,
-);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -80,7 +75,7 @@ const camera = new THREE.PerspectiveCamera(
   75, // Field of view (degrees)
   window.innerWidth / window.innerHeight, // Aspect ratio
   0.1, // Near clipping plane
-  1000, // Far clipping plane
+  1000 // Far clipping plane
 );
 
 camera.position.set(0, 5, 10);
@@ -100,7 +95,7 @@ const camera = new THREE.OrthographicCamera(
   frustumSize / 2,
   frustumSize / -2,
   0.1,
-  1000,
+  1000
 );
 ```
 
@@ -110,12 +105,7 @@ const camera = new THREE.OrthographicCamera(
 const cameras = [];
 for (let i = 0; i < 4; i++) {
   const subcamera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-  subcamera.viewport = new THREE.Vector4(
-    Math.floor(i % 2) * 0.5,
-    Math.floor(i / 2) * 0.5,
-    0.5,
-    0.5,
-  );
+  subcamera.viewport = new THREE.Vector4(Math.floor(i % 2) * 0.5, Math.floor(i / 2) * 0.5, 0.5, 0.5);
   cameras.push(subcamera);
 }
 const arrayCamera = new THREE.ArrayCamera(cameras);

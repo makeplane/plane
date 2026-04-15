@@ -22,14 +22,15 @@ End-to-end project bootstrapping from idea to running code.
 
 **Flags** (optional, default `--auto`):
 
-| Flag | Mode | Thinking | User Gates | Planning Skill | Cook Skill |
-|------|------|----------|------------|----------------|------------|
-| `--full` | Full interactive | Ultrathink | Every phase | `--hard` | (interactive) |
-| `--auto` | Automatic | Ultrathink | Design only | `--auto` | `--auto` |
-| `--fast` | Quick | Think hard | None | `--fast` | `--auto` |
-| `--parallel` | Multi-agent | Ultrathink | Design only | `--parallel` | `--parallel` |
+| Flag         | Mode             | Thinking   | User Gates  | Planning Skill | Cook Skill    |
+| ------------ | ---------------- | ---------- | ----------- | -------------- | ------------- |
+| `--full`     | Full interactive | Ultrathink | Every phase | `--hard`       | (interactive) |
+| `--auto`     | Automatic        | Ultrathink | Design only | `--auto`       | `--auto`      |
+| `--fast`     | Quick            | Think hard | None        | `--fast`       | `--auto`      |
+| `--parallel` | Multi-agent      | Ultrathink | Design only | `--parallel`   | `--parallel`  |
 
 **Example:**
+
 ```
 /ck:bootstrap "Build a SaaS dashboard with auth" --fast
 /ck:bootstrap "E-commerce platform with Stripe" --parallel
@@ -48,6 +49,7 @@ Each mode loads a specific workflow reference + shared phases.
 If no flag provided, default to `--auto`.
 
 Load the appropriate workflow reference:
+
 - `--full`: Load `references/workflow-full.md`
 - `--auto`: Load `references/workflow-auto.md`
 - `--fast`: Load `references/workflow-fast.md`
@@ -58,6 +60,7 @@ All modes share: Load `references/shared-phases.md` for implementation through f
 ## Step 0: Git Init (ALL modes)
 
 Check if Git initialized. If not:
+
 - `--full`: Ask user if they want to init → `git-manager` subagent (`main` branch)
 - Others: Auto-init via `git-manager` subagent (`main` branch)
 
@@ -66,7 +69,9 @@ Check if Git initialized. If not:
 After early phases (research, tech stack, design), trigger downstream skills:
 
 ### Planning Phase
+
 Activate **ck:plan** skill with mode-appropriate flag:
+
 - `--full` → `/ck:plan --hard <requirements>` (thorough research + validation)
 - `--auto` → `/ck:plan --auto <requirements>` (auto-detect complexity)
 - `--fast` → `/ck:plan --fast <requirements>` (skip research)
@@ -75,7 +80,9 @@ Activate **ck:plan** skill with mode-appropriate flag:
 Planning skill outputs a plan path. Pass this to cook.
 
 ### Implementation Phase
+
 Activate **ck:cook** skill with the plan path and mode-appropriate flag:
+
 - `--full` → `/ck:cook <plan-path>` (interactive review gates)
 - `--auto` → `/ck:cook --auto <plan-path>` (skip review gates)
 - `--fast` → `/ck:cook --auto <plan-path>` (skip review gates)

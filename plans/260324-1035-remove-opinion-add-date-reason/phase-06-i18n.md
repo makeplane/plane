@@ -1,6 +1,7 @@
 # Phase 06: i18n
 
 ## Files to modify
+
 - `packages/i18n/src/locales/en/translations.ts`
 - `packages/i18n/src/locales/ko/translations.ts`
 - `packages/i18n/src/locales/vi/translations.ts`
@@ -18,6 +19,7 @@ Remove entire `opinion: { ... }` block từ cả 3 file (bắt đầu từ `// I
 Thêm vào `issue` object trong translations (hoặc top-level nếu cấu trúc flat):
 
 ### English (`en`)
+
 ```ts
 // In `issue` namespace:
 reason_modal_title: "Why are you changing the {{field}}?",
@@ -30,6 +32,7 @@ activity_completed_at_removed: "removed the completed date",
 ```
 
 ### Korean (`ko`)
+
 ```ts
 reason_modal_title: "{{field}}을(를) 변경하는 이유는 무엇인가요?",
 reason_label: "변경 이유",
@@ -41,6 +44,7 @@ activity_completed_at_removed: "완료 날짜를 제거했습니다",
 ```
 
 ### Vietnamese (`vi`)
+
 ```ts
 reason_modal_title: "Tại sao bạn thay đổi {{field}}?",
 reason_label: "Lý do thay đổi",

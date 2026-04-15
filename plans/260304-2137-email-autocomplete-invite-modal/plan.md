@@ -20,14 +20,15 @@ Add dropdown autocomplete suggestions when user types email in the "Invite peopl
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | Research & Analysis | ✅ done | [phase-01](./phase-01-research-and-analysis.md) |
-| 2 | Implementation | ✅ done | [phase-02](./phase-02-implementation.md) |
+| #   | Phase               | Status  | File                                            |
+| --- | ------------------- | ------- | ----------------------------------------------- |
+| 1   | Research & Analysis | ✅ done | [phase-01](./phase-01-research-and-analysis.md) |
+| 2   | Implementation      | ✅ done | [phase-02](./phase-02-implementation.md)        |
 
 ## Validation Log
 
 ### Session 1 — 2026-03-04
+
 **Trigger:** Initial plan creation
 **Questions asked:** 4
 
@@ -54,15 +55,18 @@ Add dropdown autocomplete suggestions when user types email in the "Invite peopl
    - **Rationale:** Explicit feedback confirms search ran but no matches — helps user know their query was processed.
 
 #### Confirmed Decisions
+
 - Suggestion scope: all workspace members (include existing ones)
 - Trigger: 2+ characters typed
 - Modularization: extract `invitation-field-row.tsx` ✅
 - Empty state: show "No members found" text in dropdown
 
 #### Action Items
+
 - [ ] Add "No members found" empty state to `EmailAutocompleteDropdown`
 
 #### Impact on Phases
+
 - Phase 2: Update `email-autocomplete-dropdown.tsx` to render "No members found" when `suggestions.length === 0` (instead of returning null)
 
 ---

@@ -7,10 +7,12 @@ Rules for maintaining smooth animation and rendering performance. These prevent 
 ## GPU-Safe Animations
 
 **Only animate these properties:**
+
 - `transform` (translate, scale, rotate)
 - `opacity`
 
 **Never animate:**
+
 - `top`, `left`, `right`, `bottom` — triggers layout reflow
 - `width`, `height` — triggers layout + paint
 - `margin`, `padding` — triggers layout
@@ -20,12 +22,22 @@ Rules for maintaining smooth animation and rendering performance. These prevent 
 
 ```css
 /* Good */
-.card { transform: translateY(0); transition: transform 300ms; }
-.card:hover { transform: translateY(-4px); }
+.card {
+  transform: translateY(0);
+  transition: transform 300ms;
+}
+.card:hover {
+  transform: translateY(-4px);
+}
 
 /* Bad */
-.card { top: 0; transition: top 300ms; }
-.card:hover { top: -4px; }
+.card {
+  top: 0;
+  transition: top 300ms;
+}
+.card:hover {
+  top: -4px;
+}
 ```
 
 ---
@@ -33,11 +45,13 @@ Rules for maintaining smooth animation and rendering performance. These prevent 
 ## Blur Constraints
 
 **Apply `backdrop-blur` only to:**
+
 - Fixed-position elements (sticky navbars, overlays)
 - Modals and dialogs
 - Elements that don't scroll with content
 
 **Never apply blur to:**
+
 - Scrolling containers
 - Large content areas
 - Elements inside `overflow: auto/scroll` parents
@@ -46,10 +60,15 @@ Rules for maintaining smooth animation and rendering performance. These prevent 
 
 ```css
 /* Good — fixed nav */
-.navbar { position: fixed; backdrop-filter: blur(12px); }
+.navbar {
+  position: fixed;
+  backdrop-filter: blur(12px);
+}
 
 /* Bad — scrolling card list */
-.card-list .card { backdrop-filter: blur(8px); } /* kills mobile perf */
+.card-list .card {
+  backdrop-filter: blur(8px);
+} /* kills mobile perf */
 ```
 
 ---
@@ -57,10 +76,11 @@ Rules for maintaining smooth animation and rendering performance. These prevent 
 ## Grain and Noise Overlays
 
 **Correct implementation:**
+
 ```css
 /* Fixed, pointer-events-none pseudo-element only */
 body::after {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   z-index: 50;
@@ -71,6 +91,7 @@ body::after {
 ```
 
 **Never attach grain/noise to:**
+
 - Scrolling containers
 - Individual cards or sections
 - Any element with `position: relative` inside a scroll context
@@ -94,6 +115,7 @@ body::after {
 ```
 
 **Never:**
+
 - Use arbitrary values like `z-[9999]` or `z-50` unprompted
 - Stack z-indexes without a documented reason
 - Use z-index to fix stacking without understanding the stacking context
@@ -103,6 +125,7 @@ body::after {
 ## Framer Motion Performance
 
 **Use `useMotionValue` + `useTransform` for continuous animations:**
+
 ```jsx
 // Good — runs outside React render cycle
 const mouseX = useMotionValue(0);
@@ -113,15 +136,18 @@ const [rotation, setRotation] = useState(0);
 ```
 
 **For perpetual/infinite animations:**
+
 - Wrap in `React.memo` to prevent parent re-renders
 - Extract as isolated leaf client components
 - Use `<AnimatePresence>` for enter/exit — don't conditionally render without it
 
 **For scroll-driven reveals:**
+
 - Use `whileInView` or `IntersectionObserver`
 - Never use `window.addEventListener('scroll')` — causes continuous reflows
 
 **For staggered children:**
+
 - Parent `variants` and children MUST be in the same Client Component tree
 - If data is async, pass it as props into a centralized parent motion wrapper
 
@@ -162,8 +188,12 @@ Use sparingly. `will-change: transform` tells the browser to promote the element
 
 ```css
 /* Good — scoped to hover state */
-.card:hover { will-change: transform; }
+.card:hover {
+  will-change: transform;
+}
 
 /* Bad — always promoted */
-.card { will-change: transform; }
+.card {
+  will-change: transform;
+}
 ```

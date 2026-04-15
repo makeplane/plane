@@ -13,12 +13,14 @@ Thêm các operators mới (`not_exact`, `not_in`, `gt`, `lt`) và field-types t
 ## Requirements
 
 ### Functional
+
 - Thêm 4 operators mới vào `EXTENDED_EQUALITY_OPERATOR` và `EXTENDED_COMPARISON_OPERATOR`
 - Đảm bảo TypeScript nhận diện trong `TSupportedOperators` union
 - `NOT_EXACT`, `NOT_IN` → semantics negation (sẽ được convert ở adapter layer)
 - `GT`, `LT` → semantics greater than / less than (áp dụng cho date)
 
 ### Non-functional
+
 - Không phá vỡ `TCoreSupportedOperators` — chỉ extend `extended.ts`
 - Các type map phải consistent (operator → config type)
 
@@ -27,6 +29,7 @@ Thêm các operators mới (`not_exact`, `not_in`, `gt`, `lt`) và field-types t
 ## Related Code Files
 
 ### Modify:
+
 - `packages/types/src/rich-filters/operators/extended.ts`
 - `packages/types/src/rich-filters/operators/index.ts`
 - `packages/types/src/rich-filters/operator-configs/extended.ts`
@@ -147,7 +150,7 @@ Check `operators/index.ts` — tại `MULTI_VALUE_OPERATORS`:
 // packages/types/src/rich-filters/operators/index.ts
 export const MULTI_VALUE_OPERATORS: ReadonlyArray<TSupportedOperators> = [
   ...CORE_MULTI_VALUE_OPERATORS,
-  ...EXTENDED_MULTI_VALUE_OPERATORS,  // ← sẽ bao gồm NOT_IN
+  ...EXTENDED_MULTI_VALUE_OPERATORS, // ← sẽ bao gồm NOT_IN
 ] as const;
 ```
 

@@ -1,6 +1,7 @@
 # Office Open XML Technical Reference
 
 **Important: Read this entire document before starting.** This document covers:
+
 - [Technical Guidelines](#technical-guidelines) - Schema compliance rules and validation requirements
 - [Document Content Patterns](#document-content-patterns) - XML patterns for headings, lists, tables, formatting, etc.
 - [Document Library (Python)](#document-library-python) - Recommended approach for OOXML manipulation with automatic infrastructure setup
@@ -9,6 +10,7 @@
 ## Technical Guidelines
 
 ### Schema Compliance
+
 - **Element ordering in `<w:pPr>`**: `<w:pStyle>`, `<w:numPr>`, `<w:spacing>`, `<w:ind>`, `<w:jc>`
 - **Whitespace**: Add `xml:space='preserve'` to `<w:t>` elements with leading/trailing spaces
 - **Unicode**: Escape characters in ASCII content: `"` becomes `&#8220;`
@@ -22,6 +24,7 @@
 ## Document Content Patterns
 
 ### Basic Structure
+
 ```xml
 <w:p>
   <w:r><w:t>Text content</w:t></w:r>
@@ -29,6 +32,7 @@
 ```
 
 ### Headings and Styles
+
 ```xml
 <w:p>
   <w:pPr>
@@ -45,6 +49,7 @@
 ```
 
 ### Text Formatting
+
 ```xml
 <!-- Bold -->
 <w:r><w:rPr><w:b/><w:bCs/></w:rPr><w:t>Bold</w:t></w:r>
@@ -57,6 +62,7 @@
 ```
 
 ### Lists
+
 ```xml
 <!-- Numbered list -->
 <w:p>
@@ -91,6 +97,7 @@
 ```
 
 ### Tables
+
 ```xml
 <w:tbl>
   <w:tblPr>
@@ -114,6 +121,7 @@
 ```
 
 ### Layout
+
 ```xml
 <!-- Page break before new section (common pattern) -->
 <w:p>
@@ -162,18 +170,21 @@
 When adding content, update these files:
 
 **`word/_rels/document.xml.rels`:**
+
 ```xml
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
 <Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.png"/>
 ```
 
 **`[Content_Types].xml`:**
+
 ```xml
 <Default Extension="png" ContentType="image/png"/>
 <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
 ```
 
 ### Images
+
 **CRITICAL**: Calculate dimensions to prevent page overflow and maintain aspect ratio.
 
 ```xml
@@ -218,6 +229,7 @@ When adding content, update these files:
 **IMPORTANT**: All hyperlinks (both internal and external) require the Hyperlink style to be defined in styles.xml. Without this style, links will look like regular text instead of blue underlined clickable links.
 
 **External Links:**
+
 ```xml
 <!-- In document.xml -->
 <w:hyperlink r:id="rId5">
@@ -228,7 +240,7 @@ When adding content, update these files:
 </w:hyperlink>
 
 <!-- In word/_rels/document.xml.rels -->
-<Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" 
+<Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink"
               Target="https://www.example.com/" TargetMode="External"/>
 ```
 
@@ -250,6 +262,7 @@ When adding content, update these files:
 ```
 
 **Hyperlink Style (required in styles.xml):**
+
 ```xml
 <w:style w:type="character" w:styleId="Hyperlink">
   <w:name w:val="Hyperlink"/>
@@ -268,12 +281,14 @@ When adding content, update these files:
 Use the Document class from `scripts/document.py` for all tracked changes and comments. It automatically handles infrastructure setup (people.xml, RSIDs, settings.xml, comment files, relationships, content types). Only use direct XML manipulation for complex scenarios not supported by the library.
 
 **Working with Unicode and Entities:**
+
 - **Searching**: Both entity notation and Unicode characters work - `contains="&#8220;Company"` and `contains="\u201cCompany"` find the same text
 - **Replacing**: Use either entities (`&#8220;`) or Unicode (`\u201c`) - both work and will be converted appropriately based on the file's encoding (ascii → entities, utf-8 → Unicode)
 
 ### Initialization
 
 **Find the docx skill root** (directory containing `scripts/` and `ooxml/`):
+
 ```bash
 # Search for document.py to locate the skill root
 # Note: /mnt/skills is used here as an example; check your context for the actual location
@@ -283,11 +298,13 @@ find /mnt/skills -name "document.py" -path "*/docx/scripts/*" 2>/dev/null | head
 ```
 
 **Run your script with PYTHONPATH** set to the docx skill root:
+
 ```bash
 PYTHONPATH=/mnt/skills/docx python your_script.py
 ```
 
 **In your script**, import from the skill root:
+
 ```python
 from scripts.document import Document, DocxXMLEditor
 
@@ -311,6 +328,7 @@ doc = Document('unpacked', rsid="07DC5ECB")
 **Attribute Handling**: The Document class auto-injects attributes (w:id, w:date, w:rsidR, w:rsidDel, w16du:dateUtc, xml:space) into new elements. When preserving unchanged text from the original document, copy the original `<w:r>` element with its existing attributes to maintain document integrity.
 
 **Method Selection Guide**:
+
 - **Adding your own changes to regular text**: Use `replace_node()` with `<w:del>`/`<w:ins>` tags, or `suggest_deletion()` for removing entire `<w:r>` or `<w:p>` elements
 - **Partially modifying another author's tracked change**: Use `replace_node()` to nest your changes inside their `<w:ins>`/`<w:del>`
 - **Completely rejecting another author's insertion**: Use `revert_insertion()` on the `<w:ins>` element (NOT `suggest_deletion()`)
@@ -556,7 +574,9 @@ nodes = doc["word/document.xml"].insert_after(nodes[-1], "<w:r><w:t>C</w:t></w:r
 **Use the Document class above for all tracked changes.** The patterns below are for reference when constructing replacement XML strings.
 
 ### Validation Rules
+
 The validator checks that the document text matches the original after reverting Claude's changes. This means:
+
 - **NEVER modify text inside another author's `<w:ins>` or `<w:del>` tags**
 - **ALWAYS use nested deletions** to remove another author's insertions
 - **Every edit must be properly tracked** with `<w:ins>` or `<w:del>` tags
@@ -564,10 +584,12 @@ The validator checks that the document text matches the original after reverting
 ### Tracked Change Patterns
 
 **CRITICAL RULES**:
+
 1. Never modify the content inside another author's tracked changes. Always use nested deletions.
 2. **XML Structure**: Always place `<w:del>` and `<w:ins>` at paragraph level containing complete `<w:r>` elements. Never nest inside `<w:r>` elements - this creates invalid XML that breaks document processing.
 
 **Text Insertion:**
+
 ```xml
 <w:ins w:id="1" w:author="Claude" w:date="2025-07-30T23:05:00Z" w16du:dateUtc="2025-07-31T06:05:00Z">
   <w:r w:rsidR="00792858">
@@ -577,6 +599,7 @@ The validator checks that the document text matches the original after reverting
 ```
 
 **Text Deletion:**
+
 ```xml
 <w:del w:id="2" w:author="Claude" w:date="2025-07-30T23:05:00Z" w16du:dateUtc="2025-07-31T06:05:00Z">
   <w:r w:rsidDel="00792858">
@@ -586,6 +609,7 @@ The validator checks that the document text matches the original after reverting
 ```
 
 **Deleting Another Author's Insertion (MUST use nested structure):**
+
 ```xml
 <!-- Nest deletion inside the original insertion -->
 <w:ins w:author="Jane Smith" w:id="16">
@@ -599,6 +623,7 @@ The validator checks that the document text matches the original after reverting
 ```
 
 **Restoring Another Author's Deletion:**
+
 ```xml
 <!-- Leave their deletion unchanged, add new insertion after it -->
 <w:del w:author="Jane Smith" w:id="50">

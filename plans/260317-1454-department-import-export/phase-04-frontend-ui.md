@@ -4,14 +4,15 @@
 
 ## Overview
 
-| Field | Value |
-|---|---|
-| Date | 2026-03-17 |
+| Field       | Value                                                                          |
+| ----------- | ------------------------------------------------------------------------------ |
+| Date        | 2026-03-17                                                                     |
 | Description | Add Export + Import buttons to departments page toolbar; modal for import flow |
-| Priority | P2 |
-| Status | ⬜ pending |
+| Priority    | P2                                                                             |
+| Status      | ⬜ pending                                                                     |
 
 <!-- Updated: Validation Session 1 - dedicated page (not modal); window.open() for export -->
+
 ## Requirements
 
 - **Export button**: "Export" in toolbar → calls `exportDepartments()` → `window.open()` downloads XLSX
@@ -44,17 +45,17 @@ departments/import/components/
 
 ## Import Column Mapping (XLSX → API)
 
-| XLSX Header | API Field | Required |
-|---|---|---|
-| `name` | `name` | ✅ |
-| `short_name` | `short_name` | ✅ |
-| `dept_code` | `dept_code` | ✅ |
-| `dept_type` | `dept_type` | ✅ (HO/BRX/OSR) |
-| `code` | `code` | ❌ |
-| `parent_code` | `parent_code` | ❌ |
-| `manager_email` | `manager_email` | ❌ |
-| `sort_order` | `sort_order` | ❌ |
-| `is_active` | `is_active` | ❌ (default: true) |
+| XLSX Header     | API Field       | Required           |
+| --------------- | --------------- | ------------------ |
+| `name`          | `name`          | ✅                 |
+| `short_name`    | `short_name`    | ✅                 |
+| `dept_code`     | `dept_code`     | ✅                 |
+| `dept_type`     | `dept_type`     | ✅ (HO/BRX/OSR)    |
+| `code`          | `code`          | ❌                 |
+| `parent_code`   | `parent_code`   | ❌                 |
+| `manager_email` | `manager_email` | ❌                 |
+| `sort_order`    | `sort_order`    | ❌                 |
+| `is_active`     | `is_active`     | ❌ (default: true) |
 
 ## Related Code Files
 
@@ -95,7 +96,17 @@ UI structure:
 ### 3. Template download columns
 
 ```typescript
-const TEMPLATE_HEADERS = ["name", "short_name", "dept_code", "dept_type", "code", "parent_code", "manager_email", "sort_order", "is_active"];
+const TEMPLATE_HEADERS = [
+  "name",
+  "short_name",
+  "dept_code",
+  "dept_type",
+  "code",
+  "parent_code",
+  "manager_email",
+  "sort_order",
+  "is_active",
+];
 ```
 
 ## Todo

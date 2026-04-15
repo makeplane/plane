@@ -119,7 +119,7 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
             const isNewDeptGroup = !prev || prev.department_name !== row.department_name;
             return (
               <HoCategoryRow
-                key={`${row.project_id}-${row.main_task_category_name}-${row.sub_task_category_name}`}
+                key={`${row.department_id}-${row.main_task_category_name}-${row.sub_task_category_name}`}
                 rowIndex={idx}
                 row={row}
                 isNewDeptGroup={isNewDeptGroup}

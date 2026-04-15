@@ -3,6 +3,7 @@
 ## Existing CSV Bulk Import (Users)
 
 **File**: `apps/api/plane/license/api/views/user_bulk_import.py`
+
 - Class: `InstanceUserBulkImportEndpoint(BaseAPIView)`
 - Permission: `InstanceAdminPermission`
 - Parser: `MultiPartParser` (multipart/form-data)
@@ -14,6 +15,7 @@
 ## Workspace Creation API
 
 **File**: `apps/api/plane/license/api/views/workspace.py`
+
 - Class: `InstanceWorkSpaceEndpoint`
 - `POST /god-mode/workspaces/` — creates single workspace
 - Required fields: `name` (max 80), `slug` (max 48)
@@ -23,22 +25,27 @@
 - Returns 201 with serialized workspace
 
 **Serializer**: `apps/api/plane/license/api/serializers/workspace.py`
+
 - Validates slug uniqueness in `validate_slug()`
 - Fields: all (model fields)
 
 **URL Routing**: `apps/api/plane/license/urls.py`
+
 - Pattern: `path("workspaces/", InstanceWorkSpaceEndpoint...)`
 - Views imported from `plane.license.api.views`
 - `__init__.py` exports all views
 
 ## Workspace Model Fields (relevant)
+
 - `name` CharField(80) — required
 - `slug` SlugField(48) — required, unique
 - `organization_size` CharField(20) — optional
 - `timezone` CharField — optional, pytz choices
 
 ## Proposed Backend Endpoint
+
 New endpoint: `POST /god-mode/workspaces/bulk-create/`
+
 - Accept JSON: `{ "workspaces": [{ name, slug, organization_size? }] }`
 - Validate each workspace (same rules as single create)
 - Create valid ones, collect errors for invalid ones
@@ -46,6 +53,7 @@ New endpoint: `POST /god-mode/workspaces/bulk-create/`
 - Permission: `InstanceAdminPermission`
 
 ## Notes
+
 - Existing single create endpoint can be reused per-workspace in a loop (but bulk is more efficient)
 - No Python Excel library needed if frontend parses Excel to JSON
 - openpyxl would be needed if backend parses Excel files

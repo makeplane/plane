@@ -8,6 +8,7 @@ effort: 3h
 # Phase 02 — Frontend UI
 
 ## Context
+
 - Parent plan: [plan.md](./plan.md)
 - Depends on: [Phase 01](./phase-01-backend-api.md)
 - Reference modal: `apps/admin/app/(all)/(dashboard)/staff/components/staff-import-modal.tsx`
@@ -22,9 +23,11 @@ Add "Bulk Upload" button to the admin God Mode departments page. Clicking it ope
 ## Architecture
 
 ### New Files
+
 - `apps/admin/app/(all)/(dashboard)/departments/components/department-import-modal.tsx` — import modal UI
 
 ### Modified Files
+
 - `apps/admin/app/(all)/(dashboard)/departments/page.tsx` (or header component) — add "Bulk Upload" button
 - `apps/admin/store/instance-department.store.ts` — add `bulkUpload()` action
 - `packages/services/src/instance/instance-department.service.ts` (or equivalent) — add `bulkUpload()` method
@@ -56,6 +59,7 @@ Add "Bulk Upload" button to the admin God Mode departments page. Clicking it ope
 ## CSV Template Download
 
 Generate client-side using `Blob`:
+
 ```typescript
 const TEMPLATE_HEADERS = "name,code,short_name,dept_code,description,dept_type,parent_short_name,level,is_active";
 const TEMPLATE_EXAMPLE = "Finance,FIN,FIN,1234,Finance Department,HO,,1,true";
@@ -65,6 +69,7 @@ const blob = new Blob([TEMPLATE_HEADERS + "\n" + TEMPLATE_EXAMPLE], { type: "tex
 ## Implementation Steps
 
 ### 1. Add service method
+
 File: `packages/services/src/instance/instance-department.service.ts` (verify path)
 
 ```typescript
@@ -77,6 +82,7 @@ async bulkUpload(file: File, skipExisting: boolean): Promise<IDepartmentBulkUplo
 ```
 
 ### 2. Add store action
+
 File: `apps/admin/store/instance-department.store.ts`
 
 ```typescript
@@ -86,6 +92,7 @@ bulkUpload = async (file: File, skipExisting: boolean) => {
 ```
 
 ### 3. Create DepartmentImportModal
+
 File: `apps/admin/app/(all)/(dashboard)/departments/components/department-import-modal.tsx`
 
 - Mirror `staff-import-modal.tsx` structure
@@ -95,6 +102,7 @@ File: `apps/admin/app/(all)/(dashboard)/departments/components/department-import
 - "Download template" triggers client-side CSV download
 
 ### 4. Add button to departments page
+
 File: departments `page.tsx` or header component
 
 ```tsx

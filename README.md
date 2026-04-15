@@ -38,6 +38,7 @@
 ### Tech Stack
 
 **Frontend:**
+
 - React 18 + Router v7
 - MobX (state management)
 - Tailwind CSS v4 (semantic color tokens)
@@ -45,6 +46,7 @@
 - Next.js (app router)
 
 **Backend:**
+
 - Django 4.2 + Django REST Framework
 - PostgreSQL (primary database)
 - Redis (caching, sessions)
@@ -52,6 +54,7 @@
 - Hocuspocus + Y.js (real-time collaboration)
 
 **Infrastructure:**
+
 - Docker + Docker Compose
 - Caddy (reverse proxy)
 - AWS S3 (file uploads)
@@ -72,6 +75,7 @@
 ### Local Development (5 minutes)
 
 **1. Clone & Install**
+
 ```bash
 git clone https://github.com/shbvn/plane.git
 cd plane
@@ -79,6 +83,7 @@ pnpm install
 ```
 
 **2. Setup Backend**
+
 ```bash
 cd apps/api
 python -m venv venv
@@ -91,6 +96,7 @@ python manage.py runserver
 ```
 
 **3. Setup Frontend**
+
 ```bash
 # In another terminal
 cd apps/web
@@ -99,6 +105,7 @@ pnpm dev
 ```
 
 **4. Start Services**
+
 ```bash
 # Docker Compose (in another terminal)
 docker-compose -f docker-compose.dev.yml up
@@ -139,27 +146,31 @@ plane/
 ### Development Steps
 
 1. **Create Feature Branch**
+
    ```bash
    git checkout -b {user}/feat/{feature-name}
    ```
 
 2. **Code & Test**
+
    ```bash
    # Frontend
    pnpm test
    pnpm check:lint
    pnpm check:format
-   
+
    # Backend
    cd apps/api && python run_tests.py
    ```
 
 3. **Commit with Conventional Format**
+
    ```bash
    git commit -m "feat(issue): add time tracking support"
    ```
 
 4. **Create Pull Request**
+
    ```bash
    git push origin {user}/feat/{feature-name}
    # Then open PR on GitHub (develop branch)
@@ -174,15 +185,15 @@ plane/
 
 ## Documentation Map
 
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| **project-overview-pdr.md** | Project goals, requirements, constraints | PMs, Team Leads |
-| **codebase-summary.md** | File structure, key modules, concepts | All Developers |
-| **code-standards.md** | Naming, patterns, testing, review criteria | Developers |
-| **system-architecture.md** | System design, data flow, scaling | Architects, DevOps |
-| **design-guidelines.md** | UI/UX, components, Tailwind tokens | Frontend Developers |
-| **deployment-guide.md** | Local setup, Docker, production deploy | DevOps, Backend |
-| **project-roadmap.md** | Phases, milestones, timelines, metrics | All Stakeholders |
+| Document                    | Purpose                                    | Audience            |
+| --------------------------- | ------------------------------------------ | ------------------- |
+| **project-overview-pdr.md** | Project goals, requirements, constraints   | PMs, Team Leads     |
+| **codebase-summary.md**     | File structure, key modules, concepts      | All Developers      |
+| **code-standards.md**       | Naming, patterns, testing, review criteria | Developers          |
+| **system-architecture.md**  | System design, data flow, scaling          | Architects, DevOps  |
+| **design-guidelines.md**    | UI/UX, components, Tailwind tokens         | Frontend Developers |
+| **deployment-guide.md**     | Local setup, Docker, production deploy     | DevOps, Backend     |
+| **project-roadmap.md**      | Phases, milestones, timelines, metrics     | All Stakeholders    |
 
 ## Key Architectural Decisions
 
@@ -201,8 +212,8 @@ See [System Architecture → CE Pattern](./docs/system-architecture.md#ce-patter
 Single source of truth per feature store. Async mutations use `flow` + `runInAction`.
 
 ```typescript
-issueStore.fetchIssues() // async, uses flow
-issueStore.updateIssue(id, data) // sync, uses action.bound
+issueStore.fetchIssues(); // async, uses flow
+issueStore.updateIssue(id, data); // sync, uses action.bound
 ```
 
 See [Code Standards → MobX Conventions](./docs/code-standards.md#mobx-store-conventions)
@@ -306,12 +317,12 @@ pnpm test && cd apps/api && python run_tests.py
 
 ## Performance Targets
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| API p95 latency | <200ms | ~250ms | ⚠️ Optimizing |
-| Kanban render | <1s (500 issues) | ~1.2s | ⚠️ Optimizing |
-| Frontend bundle | <250KB (gzip) | ~280KB | ⚠️ Optimizing |
-| Page load | <2s | ~1.8s | ✅ Good |
+| Metric          | Target           | Current | Status        |
+| --------------- | ---------------- | ------- | ------------- |
+| API p95 latency | <200ms           | ~250ms  | ⚠️ Optimizing |
+| Kanban render   | <1s (500 issues) | ~1.2s   | ⚠️ Optimizing |
+| Frontend bundle | <250KB (gzip)    | ~280KB  | ⚠️ Optimizing |
+| Page load       | <2s              | ~1.8s   | ✅ Good       |
 
 See [Project Roadmap → Performance & Stability](./docs/project-roadmap.md#phase-5-performance--stability-45-complete)
 

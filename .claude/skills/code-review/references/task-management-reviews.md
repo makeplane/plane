@@ -4,12 +4,12 @@ Track review pipeline execution via Claude Native Tasks (TaskCreate, TaskUpdate,
 
 ## When to Create Tasks
 
-| Review Scope | Tasks? | Rationale |
-|--------------|--------|-----------|
-| Single-file fix | No | Scout + review + done, overhead not worth it |
-| Multi-file feature (3+ files) | Yes | Track scout → review → fix → verify chain |
-| Parallel reviewers (2+ scopes) | Yes | Coordinate independent reviews |
-| Review cycle with Critical fixes | Yes | Dependencies between fix → re-verify |
+| Review Scope                     | Tasks? | Rationale                                    |
+| -------------------------------- | ------ | -------------------------------------------- |
+| Single-file fix                  | No     | Scout + review + done, overhead not worth it |
+| Multi-file feature (3+ files)    | Yes    | Track scout → review → fix → verify chain    |
+| Parallel reviewers (2+ scopes)   | Yes    | Coordinate independent reviews               |
+| Review cycle with Critical fixes | Yes    | Dependencies between fix → re-verify         |
 
 **3-Task Rule:** Skip task creation when review pipeline has <3 meaningful steps.
 
@@ -139,6 +139,7 @@ Limit to 3 cycles. If still failing after cycle 3 → escalate to user.
 Review tasks are **separate from** cook/planning phase tasks.
 
 **When cook spawns review:**
+
 1. Cook completes implementation phase → creates review pipeline tasks
 2. Review pipeline executes (scout → review → adversarial → fix → verify)
 3. All review tasks complete → cook marks phase as reviewed

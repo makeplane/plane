@@ -30,13 +30,13 @@ Five expert personas independently analyze a proposed change, then debate confli
 
 ## The 5 Personas
 
-| Persona | Focus | Core Questions |
-|---------|-------|----------------|
-| **Architect** | System design, scalability, coupling | Does this fit the architecture? Will it scale? What new coupling does it introduce? |
-| **Security** | Attack surface, data protection, auth | What can be abused? Where is data exposed? Are auth boundaries respected? |
-| **Performance** | Latency, memory, queries, bundle size | What is the latency impact? N+1 queries? Memory leaks? Bundle bloat? |
-| **UX** | User experience, accessibility, error states | Is this intuitive? What does the error state look like? Accessible on mobile? |
-| **Devil's Advocate** | Hidden assumptions, simpler alternatives | Why not do nothing? What is the simplest alternative? Which assumption could be wrong? |
+| Persona              | Focus                                        | Core Questions                                                                         |
+| -------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Architect**        | System design, scalability, coupling         | Does this fit the architecture? Will it scale? What new coupling does it introduce?    |
+| **Security**         | Attack surface, data protection, auth        | What can be abused? Where is data exposed? Are auth boundaries respected?              |
+| **Performance**      | Latency, memory, queries, bundle size        | What is the latency impact? N+1 queries? Memory leaks? Bundle bloat?                   |
+| **UX**               | User experience, accessibility, error states | Is this intuitive? What does the error state look like? Accessible on mobile?          |
+| **Devil's Advocate** | Hidden assumptions, simpler alternatives     | Why not do nothing? What is the simplest alternative? Which assumption could be wrong? |
 
 ---
 
@@ -85,13 +85,14 @@ Five expert personas independently analyze a proposed change, then debate confli
 
 ## Verdict Levels
 
-| Verdict | Meaning |
-|---------|---------|
-| **GO** | All personas aligned, no critical risks, proceed with confidence |
-| **CAUTION** | Concerns exist but are manageable — mitigations identified, proceed carefully |
-| **STOP** | Critical unresolved issue found — needs redesign or more information before proceeding |
+| Verdict     | Meaning                                                                                |
+| ----------- | -------------------------------------------------------------------------------------- |
+| **GO**      | All personas aligned, no critical risks, proceed with confidence                       |
+| **CAUTION** | Concerns exist but are manageable — mitigations identified, proceed carefully          |
+| **STOP**    | Critical unresolved issue found — needs redesign or more information before proceeding |
 
 ### STOP Triggers (any one is sufficient)
+
 - Security persona identifies auth bypass or data exposure with no viable mitigation
 - Architect identifies fundamental design incompatibility requiring significant rework
 - Performance persona identifies unacceptable latency or query explosion with no workaround
@@ -101,11 +102,11 @@ Five expert personas independently analyze a proposed change, then debate confli
 
 ## Integration with Other Skills
 
-| Workflow Step | Skill | How |
-|---------------|-------|-----|
-| Deepen risk scenarios | `ck:scenario` | Feed Risk Summary rows as feature description |
-| Create implementation plan | `ck:plan` | Attach Recommendations as constraints to planner |
-| High-risk feature implementation | `ck:cook` | Reference CAUTION/STOP items as acceptance gates |
+| Workflow Step                    | Skill         | How                                              |
+| -------------------------------- | ------------- | ------------------------------------------------ |
+| Deepen risk scenarios            | `ck:scenario` | Feed Risk Summary rows as feature description    |
+| Create implementation plan       | `ck:plan`     | Attach Recommendations as constraints to planner |
+| High-risk feature implementation | `ck:cook`     | Reference CAUTION/STOP items as acceptance gates |
 
 ---
 

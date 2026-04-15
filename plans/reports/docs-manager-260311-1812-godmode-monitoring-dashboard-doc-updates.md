@@ -12,9 +12,11 @@ Updated 2 core documentation files to reflect new Admin Monitoring Dashboard fea
 ## Files Updated
 
 ### 1. `/Volumes/Data/SHBVN/plane.so/docs/codebase-summary.md`
+
 **Lines: 675** (was 656, +19 lines)
 
 #### Changes:
+
 - **Admin App Features** (line 65): Added "monitoring" to feature list
 - **New Monitoring Feature section** (lines 76-83): Documents the complete monitoring feature:
   - Frontend route `/monitoring` with 3-tab dashboard
@@ -35,9 +37,11 @@ Updated 2 core documentation files to reflect new Admin Monitoring Dashboard fea
 - **API Versions update** (line 191): Changed `/god-mode/` to `/god-mode/instances/` to clarify scope (user management, monitoring, configuration)
 
 ### 2. `/Volumes/Data/SHBVN/plane.so/docs/system-architecture.md`
+
 **Lines: 866** (was 790, +76 lines)
 
 #### Changes:
+
 - **New Admin Monitoring Dashboard section** (lines 700-720): Comprehensive architecture documentation:
   - Frontend: 3-tab dashboard at `apps/admin/app/(all)/(dashboard)/monitoring/`
     - Tab 1: Issue Email Logs (paginated 50/page, filterable)
@@ -52,17 +56,20 @@ Updated 2 core documentation files to reflect new Admin Monitoring Dashboard fea
 ## Verification
 
 ✓ All changes are evidence-based (verified against actual implementation files):
+
 - Backend endpoints confirmed in `/Volumes/Data/SHBVN/plane.so/apps/api/plane/license/api/views/monitoring.py`
 - URL routing confirmed in `/Volumes/Data/SHBVN/plane.so/apps/api/plane/license/urls.py`
 - Frontend components confirmed in `/Volumes/Data/SHBVN/plane.so/apps/admin/app/(all)/(dashboard)/monitoring/`
 - Service confirmed in `/Volumes/Data/SHBVN/plane.so/packages/services/src/instance/monitoring.service.ts`
 
 ✓ Line limits maintained:
+
 - codebase-summary.md: 675 lines (within reasonable bounds, <800 LOC target)
 - system-architecture.md: 866 lines (within bounds)
 - project-overview-pdr.md: 242 lines (unchanged, not updated - monitoring is operational/admin feature, not user-facing)
 
 ✓ Documentation accuracy:
+
 - All API endpoints documented with correct signatures and permissions
 - Tab names match implementation ("Issue Email Logs" not "Email Logs", per plan validation)
 - Pagination details (50 items/page for email logs)
@@ -78,6 +85,7 @@ The God Mode Monitoring Dashboard is an **internal operational tool** for instan
 ## Consistency Check
 
 All documentation uses consistent terminology:
+
 - "Issue Email Logs" (not "Email Logs") - clarifies it tracks issue notification emails only
 - "Scheduled Jobs" - refers to django-celery-beat PeriodicTask
 - "Worker Health" - Celery worker stats via Inspect API
@@ -87,6 +95,7 @@ All documentation uses consistent terminology:
 ## Impact on Developers
 
 **Updated Search Surfaces**:
+
 1. Developers looking for "admin monitoring" → Will find complete feature documentation
 2. Developers looking for "email logs API" → Will find EmailLogMonitoringEndpoint documentation
 3. Developers looking for "celery worker health" → Will find WorkerHealthMonitoringEndpoint documentation

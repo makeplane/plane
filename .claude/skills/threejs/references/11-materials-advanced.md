@@ -9,27 +9,27 @@ Physically-based rendering with metallic/roughness workflow:
 ```javascript
 const material = new THREE.MeshStandardMaterial({
   color: 0xffffff,
-  metalness: 0.5,     // 0 = dielectric, 1 = metal
-  roughness: 0.5,     // 0 = smooth/shiny, 1 = rough/matte
+  metalness: 0.5, // 0 = dielectric, 1 = metal
+  roughness: 0.5, // 0 = smooth/shiny, 1 = rough/matte
 
-  map: colorTexture,          // base color
-  normalMap: normalTexture,   // surface detail
+  map: colorTexture, // base color
+  normalMap: normalTexture, // surface detail
   roughnessMap: roughnessTexture,
   metalnessMap: metalnessTexture,
-  aoMap: aoTexture,           // ambient occlusion
-  emissive: 0xff0000,         // glow color
+  aoMap: aoTexture, // ambient occlusion
+  emissive: 0xff0000, // glow color
   emissiveMap: emissiveTexture,
   emissiveIntensity: 1.0,
 
-  envMap: environmentMap,     // reflections
+  envMap: environmentMap, // reflections
   envMapIntensity: 1.0,
 
-  alphaMap: alphaTexture,     // transparency control
+  alphaMap: alphaTexture, // transparency control
   transparent: true,
   opacity: 1.0,
 
-  side: THREE.DoubleSide,     // render both sides
-  flatShading: false          // smooth normals
+  side: THREE.DoubleSide, // render both sides
+  flatShading: false, // smooth normals
 });
 ```
 
@@ -49,9 +49,9 @@ const material = new THREE.MeshPhysicalMaterial({
   clearcoatNormalMap: clearcoatNormalTexture,
 
   // Transmission (transparency with refraction)
-  transmission: 1.0,          // 0-1, glass-like
-  thickness: 0.5,             // volumetric thickness
-  ior: 1.5,                   // index of refraction (glass = 1.5)
+  transmission: 1.0, // 0-1, glass-like
+  thickness: 0.5, // volumetric thickness
+  ior: 1.5, // index of refraction (glass = 1.5)
 
   // Sheen (fabric-like edge glow)
   sheen: 1.0,
@@ -65,7 +65,7 @@ const material = new THREE.MeshPhysicalMaterial({
 
   // Anisotropy (directional reflections)
   anisotropy: 1.0,
-  anisotropyRotation: 0
+  anisotropyRotation: 0,
 });
 ```
 
@@ -78,7 +78,7 @@ const material = new THREE.ShaderMaterial({
   uniforms: {
     time: { value: 0.0 },
     color: { value: new THREE.Color(0xff0000) },
-    texture1: { value: texture }
+    texture1: { value: texture },
   },
 
   vertexShader: `
@@ -110,7 +110,7 @@ const material = new THREE.ShaderMaterial({
   `,
 
   transparent: true,
-  side: THREE.DoubleSide
+  side: THREE.DoubleSide,
 });
 
 // Update uniform in animation loop
@@ -151,13 +151,14 @@ const material = new THREE.RawShaderMaterial({
     void main() {
       gl_FragColor = vec4(vUv, 0.0, 1.0);
     }
-  `
+  `,
 });
 ```
 
 ## Common Shader Patterns
 
 ### Fresnel Effect
+
 ```glsl
 // In fragment shader
 float fresnel = pow(1.0 - dot(vNormal, vViewDirection), 3.0);
@@ -165,6 +166,7 @@ gl_FragColor = vec4(mix(baseColor, edgeColor, fresnel), 1.0);
 ```
 
 ### Noise/Distortion
+
 ```glsl
 // Simple noise function
 float noise(vec2 p) {
@@ -179,6 +181,7 @@ vec2 distortedUV = vUv + vec2(
 ```
 
 ### Scrolling Texture
+
 ```glsl
 uniform float time;
 varying vec2 vUv;

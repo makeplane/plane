@@ -11,6 +11,7 @@ A fix without prevention is incomplete. The same bug pattern WILL recur if you o
 ### 1. Regression Test (ALWAYS required)
 
 Every fix MUST have a test that:
+
 - **Fails** without the fix applied (proves the test catches the bug)
 - **Passes** with the fix applied (proves the fix works)
 
@@ -24,32 +25,32 @@ If no test framework exists:
 
 Apply layered validation from `ck:debug` defense-in-depth technique:
 
-| Layer | Apply When | Example |
-|-------|-----------|---------|
-| **Entry point validation** | Fix involves user/external input | Reject invalid input at API boundary |
-| **Business logic validation** | Fix involves data processing | Assert data makes sense for operation |
-| **Environment guards** | Fix involves env-sensitive operations | Prevent dangerous ops in wrong context |
-| **Debug instrumentation** | Fix was hard to diagnose | Add logging/context capture for forensics |
+| Layer                         | Apply When                            | Example                                   |
+| ----------------------------- | ------------------------------------- | ----------------------------------------- |
+| **Entry point validation**    | Fix involves user/external input      | Reject invalid input at API boundary      |
+| **Business logic validation** | Fix involves data processing          | Assert data makes sense for operation     |
+| **Environment guards**        | Fix involves env-sensitive operations | Prevent dangerous ops in wrong context    |
+| **Debug instrumentation**     | Fix was hard to diagnose              | Add logging/context capture for forensics |
 
 **Rule:** Not every fix needs all 4 layers. Apply what's relevant. But ALWAYS consider each.
 
 ### 3. Type Safety (When applicable)
 
-| Scenario | Prevention |
-|----------|-----------|
+| Scenario                      | Prevention                               |
+| ----------------------------- | ---------------------------------------- |
 | Null/undefined caused the bug | Add strict null checks, use `??` or `?.` |
-| Wrong type passed | Add type guard or runtime validation |
-| Missing property | Add required field to interface/type |
-| Implicit any | Add explicit types |
+| Wrong type passed             | Add type guard or runtime validation     |
+| Missing property              | Add required field to interface/type     |
+| Implicit any                  | Add explicit types                       |
 
 ### 4. Error Handling (When applicable)
 
-| Scenario | Prevention |
-|----------|-----------|
-| Unhandled promise rejection | Add `.catch()` or try/catch |
-| Missing error boundary | Add error boundary component |
-| Silent failure | Add explicit error logging |
-| No fallback for external dependency | Add timeout + fallback |
+| Scenario                            | Prevention                   |
+| ----------------------------------- | ---------------------------- |
+| Unhandled promise rejection         | Add `.catch()` or try/catch  |
+| Missing error boundary              | Add error boundary component |
+| Silent failure                      | Add explicit error logging   |
+| No fallback for external dependency | Add timeout + fallback       |
 
 ## Verification Checklist (Before Completing Step 5)
 
@@ -81,6 +82,7 @@ Before/After comparison:
 ## Quick Mode Prevention
 
 For trivial issues (type errors, lint), abbreviated prevention:
+
 - Regression test: optional (type system IS the test)
 - Parallel verification: typecheck + lint only
 - Defense-in-depth: skip (not applicable for type fixes)

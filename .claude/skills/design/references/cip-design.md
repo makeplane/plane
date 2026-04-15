@@ -4,12 +4,12 @@ Corporate Identity Program design with 50+ deliverables, 20 styles, 20 industrie
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `scripts/cip/search.py` | Search deliverables, styles, industries; generate CIP briefs |
-| `scripts/cip/generate.py` | Generate CIP mockups with Gemini (Flash/Pro) |
-| `scripts/cip/render-html.py` | Render HTML presentation from CIP mockups |
-| `scripts/cip/core.py` | BM25 search engine for CIP data |
+| Script                       | Purpose                                                      |
+| ---------------------------- | ------------------------------------------------------------ |
+| `scripts/cip/search.py`      | Search deliverables, styles, industries; generate CIP briefs |
+| `scripts/cip/generate.py`    | Generate CIP mockups with Gemini (Flash/Pro)                 |
+| `scripts/cip/render-html.py` | Render HTML presentation from CIP mockups                    |
+| `scripts/cip/core.py`        | BM25 search engine for CIP data                              |
 
 ## Commands
 
@@ -68,28 +68,28 @@ python3 ~/.claude/skills/design/scripts/cip/render-html.py --brand "TopGroup" --
 
 ## Deliverable Categories
 
-| Category | Items |
-|----------|-------|
-| Core Identity | Logo, Logo Variations |
-| Stationery | Business Card, Letterhead, Envelope, Folder, Notebook, Pen |
-| Security/Access | ID Badge, Lanyard, Access Card |
+| Category           | Items                                                            |
+| ------------------ | ---------------------------------------------------------------- |
+| Core Identity      | Logo, Logo Variations                                            |
+| Stationery         | Business Card, Letterhead, Envelope, Folder, Notebook, Pen       |
+| Security/Access    | ID Badge, Lanyard, Access Card                                   |
 | Office Environment | Reception Signage, Wayfinding, Meeting Room Signs, Wall Graphics |
-| Apparel | Polo Shirt, T-Shirt, Cap, Jacket, Apron |
-| Promotional | Tote Bag, Gift Box, USB Drive, Water Bottle, Mug, Umbrella |
-| Vehicle | Car Sedan, Van, Truck |
-| Digital | Social Media, Email Signature, PowerPoint, Document Templates |
-| Product | Packaging Box, Labels, Tags, Retail Display |
-| Events | Trade Show Booth, Banner Stand, Table Cover, Backdrop |
+| Apparel            | Polo Shirt, T-Shirt, Cap, Jacket, Apron                          |
+| Promotional        | Tote Bag, Gift Box, USB Drive, Water Bottle, Mug, Umbrella       |
+| Vehicle            | Car Sedan, Van, Truck                                            |
+| Digital            | Social Media, Email Signature, PowerPoint, Document Templates    |
+| Product            | Packaging Box, Labels, Tags, Retail Display                      |
+| Events             | Trade Show Booth, Banner Stand, Table Cover, Backdrop            |
 
 ## Design Styles
 
-| Style | Colors | Best For |
-|-------|--------|----------|
-| Corporate Minimal | Navy, White, Blue | Finance, Legal, Consulting |
-| Modern Tech | Purple, Cyan, Green | Tech, Startups, SaaS |
-| Luxury Premium | Black, Gold, White | Fashion, Jewelry, Hotels |
-| Warm Organic | Brown, Green, Cream | Food, Organic, Artisan |
-| Bold Dynamic | Red, Orange, Black | Sports, Entertainment |
+| Style             | Colors              | Best For                   |
+| ----------------- | ------------------- | -------------------------- |
+| Corporate Minimal | Navy, White, Blue   | Finance, Legal, Consulting |
+| Modern Tech       | Purple, Cyan, Green | Tech, Startups, SaaS       |
+| Luxury Premium    | Black, Gold, White  | Fashion, Jewelry, Hotels   |
+| Warm Organic      | Brown, Green, Cream | Food, Organic, Artisan     |
+| Bold Dynamic      | Red, Orange, Black  | Sports, Entertainment      |
 
 ## HTML Presentation Features
 

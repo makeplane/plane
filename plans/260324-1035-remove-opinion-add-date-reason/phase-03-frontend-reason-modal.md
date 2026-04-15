@@ -1,6 +1,7 @@
 # Phase 03: Frontend – FieldChangeReasonModal Component
 
 ## Overview
+
 Tạo modal đơn giản để user nhập lý do trước khi thay đổi `target_date` hoặc `completed_at`. Reuse styling pattern từ `worklog-modal.tsx`.
 
 ## File to CREATE
@@ -46,9 +47,7 @@ export function FieldChangeReasonModal({ isOpen, onClose, onConfirm, fieldLabel 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
       <form onSubmit={handleSubmit} className="p-5 space-y-4" data-prevent-outside-click>
-        <h2 className="text-16 font-semibold text-primary">
-          {t("issue.reason_modal_title", { field: fieldLabel })}
-        </h2>
+        <h2 className="text-16 font-semibold text-primary">{t("issue.reason_modal_title", { field: fieldLabel })}</h2>
         <div className="flex flex-col gap-1">
           <label htmlFor="field-change-reason" className="text-11 font-medium text-tertiary">
             {t("issue.reason_label")} <span className="text-red-500">*</span>
@@ -79,6 +78,7 @@ export function FieldChangeReasonModal({ isOpen, onClose, onConfirm, fieldLabel 
 ```
 
 ## Key Design Decisions
+
 - Không dùng `observer` vì không cần MobX state — chỉ là local form state
 - `autoFocus` trên textarea để UX smooth
 - `disabled={!reason.trim()}` để prevent submit khi empty (cả UI lẫn validation)
@@ -86,4 +86,5 @@ export function FieldChangeReasonModal({ isOpen, onClose, onConfirm, fieldLabel 
 - Nếu `onConfirm` throw error → modal ở lại (user có thể thử lại)
 
 ## Export
+
 Thêm vào `apps/web/ce/components/issues/issue-details/index.ts` (nếu có) hoặc import trực tiếp từ file path.

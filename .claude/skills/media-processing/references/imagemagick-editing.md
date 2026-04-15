@@ -5,6 +5,7 @@ Complete guide to format conversion, resizing, effects, transformations, and com
 ## Format Conversion
 
 ### Basic Conversion
+
 Convert between image formats.
 
 ```bash
@@ -24,6 +25,7 @@ magick input.png -quality 85 output.jpg
 ### Quality Settings
 
 **JPEG Quality (0-100):**
+
 - 95-100: Archival, minimal compression
 - 85-94: High quality, web publishing
 - 75-84: Medium quality, web optimized
@@ -42,6 +44,7 @@ magick input.png -quality 75 -sampling-factor 4:2:0 -strip output.jpg
 ```
 
 **PNG Quality (0-9 = compression level):**
+
 ```bash
 # Maximum compression (slower)
 magick input.jpg -quality 95 output.png
@@ -51,6 +54,7 @@ magick input.jpg -quality 75 output.png
 ```
 
 **WebP Quality:**
+
 ```bash
 # Lossy with quality
 magick input.jpg -quality 80 output.webp
@@ -75,6 +79,7 @@ magick input.png -quality 85 -interlace Plane -strip output.jpg
 ## Resizing Operations
 
 ### Basic Resize
+
 Maintain aspect ratio.
 
 ```bash
@@ -124,6 +129,7 @@ magick input.jpg -filter Mitchell -resize 50% output.jpg
 ```
 
 **Filter comparison:**
+
 - `Lanczos` - Highest quality, slower
 - `Mitchell` - Good quality, fast
 - `Catrom` - Sharp, good for downscaling
@@ -133,6 +139,7 @@ magick input.jpg -filter Mitchell -resize 50% output.jpg
 ## Cropping
 
 ### Basic Crop
+
 Extract region from image.
 
 ```bash
@@ -150,6 +157,7 @@ magick input.jpg -gravity center -crop 16:9 +repage output.jpg
 ```
 
 ### Smart Crop
+
 Content-aware cropping.
 
 ```bash
@@ -161,6 +169,7 @@ magick input.jpg -fuzz 10% -trim +repage output.jpg
 ```
 
 ### Thumbnail Generation
+
 Create square thumbnails from any aspect ratio.
 
 ```bash

@@ -7,6 +7,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 ### Simple (→ workflow-quick.md) — No Tasks
 
 **Indicators:**
+
 - Single file affected
 - Clear error message (type error, syntax, lint)
 - Keywords: `type`, `typescript`, `tsc`, `lint`, `eslint`, `syntax`
@@ -16,6 +17,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 **Task usage:** Skip. < 3 steps, overhead exceeds benefit.
 
 **Examples:**
+
 - "Fix type error in auth.ts"
 - "ESLint errors after upgrade"
 - "Syntax error in config file"
@@ -23,6 +25,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 ### Moderate (→ workflow-standard.md) — Use Tasks (6 phases)
 
 **Indicators:**
+
 - 2-5 files affected
 - Root cause identified but fix spans multiple files
 - Needs investigation to confirm diagnosis
@@ -32,6 +35,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 **Task usage:** Create 6 phase tasks with dependencies. See `references/task-orchestration.md`.
 
 **Examples:**
+
 - "Login sometimes fails"
 - "API returns wrong data"
 - "Component not rendering correctly"
@@ -39,6 +43,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 ### Complex (→ workflow-deep.md) — Use Tasks with Dependency Chains (9 phases)
 
 **Indicators:**
+
 - System-wide impact (5+ files)
 - Architecture decision needed
 - Research required for solution
@@ -50,6 +55,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 **Task usage:** Create 9 phase tasks. Steps 1+2+3 run parallel (scout+diagnose+research). Full dependency chains. See `references/task-orchestration.md`.
 
 **Examples:**
+
 - "Memory leak in production"
 - "Database deadlocks under load"
 - "Security vulnerability in auth flow"
@@ -57,9 +63,11 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 ### Parallel (→ multiple fullstack-developer agents) — Use Task Trees
 
 **Triggers:**
+
 - `--parallel` flag explicitly passed (activate parallel routing regardless of auto-classification)
 
 **Indicators:**
+
 - 2+ independent issues mentioned
 - Issues in different areas (frontend + backend, auth + payments)
 - No dependencies between issues
@@ -68,6 +76,7 @@ Classify issue complexity before routing to workflow. Assessment happens AFTER S
 **Task usage:** Create separate task trees per independent issue (each with scout+diagnose+fix+verify). Spawn `fullstack-developer` agent per tree. See `references/task-orchestration.md`.
 
 **Examples:**
+
 - "Fix type errors AND update UI styling"
 - "Auth bug + payment integration issue"
 - "3 different test failures in unrelated modules"

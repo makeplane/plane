@@ -17,14 +17,15 @@ Replace the current `mailto:` link in the Help menu "Contact Point" item with a 
 
 ## Phases
 
-| # | Phase | Status | File |
-|---|-------|--------|------|
-| 1 | i18n Translation Keys | ⏳ Pending | [phase-01](./phase-01-i18n-translations.md) |
-| 2 | UI: Modal + Root update | ⏳ Pending | [phase-02](./phase-02-ui-modal-implementation.md) |
+| #   | Phase                   | Status     | File                                              |
+| --- | ----------------------- | ---------- | ------------------------------------------------- |
+| 1   | i18n Translation Keys   | ⏳ Pending | [phase-01](./phase-01-i18n-translations.md)       |
+| 2   | UI: Modal + Root update | ⏳ Pending | [phase-02](./phase-02-ui-modal-implementation.md) |
 
 ## Validation Log
 
 ### Session 1 — 2026-02-26
+
 **Trigger:** Initial plan validation before implementation
 **Questions asked:** 3
 
@@ -46,14 +47,17 @@ Replace the current `mailto:` link in the Help menu "Contact Point" item with a 
    - **Rationale:** `onClick` replaces `window.open("mailto:sales@plane.so", "_blank")` entirely; cleaner UX.
 
 #### Confirmed Decisions
+
 - Contact values: placeholder values (`"Support Team"` / `"support@shbvn.com"` / `"+84 123 456 789"`)
 - Copy buttons: included with 1.5s checkmark feedback
 - mailto removal: `window.open(mailto)` removed, replaced by modal open
 
 #### Action Items
+
 - [ ] No plan changes required — all decisions match current plan
 
 #### Impact on Phases
+
 - None — plan confirmed as-is
 
 ---

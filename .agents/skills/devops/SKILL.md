@@ -24,17 +24,17 @@ Deploy and manage cloud infrastructure across Cloudflare, Docker, Google Cloud, 
 
 ## Platform Selection
 
-| Need | Choose |
-|------|--------|
-| Sub-50ms latency globally | Cloudflare Workers |
-| Large file storage (zero egress) | Cloudflare R2 |
-| SQL database (global reads) | Cloudflare D1 |
-| Containerized workloads | Docker + Cloud Run/GKE |
-| Enterprise Kubernetes | GKE |
-| Managed relational DB | Cloud SQL |
-| Static site + API | Cloudflare Pages |
-| Container orchestration | Kubernetes |
-| Package management for K8s | Helm |
+| Need                             | Choose                 |
+| -------------------------------- | ---------------------- |
+| Sub-50ms latency globally        | Cloudflare Workers     |
+| Large file storage (zero egress) | Cloudflare R2          |
+| SQL database (global reads)      | Cloudflare D1          |
+| Containerized workloads          | Docker + Cloud Run/GKE |
+| Enterprise Kubernetes            | GKE                    |
+| Managed relational DB            | Cloud SQL              |
+| Static site + API                | Cloudflare Pages       |
+| Container orchestration          | Kubernetes             |
+| Package management for K8s       | Helm                   |
 
 ## Quick Start
 
@@ -55,6 +55,7 @@ kubectl apply -f manifests/ && kubectl get pods
 ## Reference Navigation
 
 ### Cloudflare Platform
+
 - `cloudflare-platform.md` - Edge computing overview
 - `cloudflare-workers-basics.md` - Handler types, patterns
 - `cloudflare-workers-advanced.md` - Performance, optimization
@@ -64,14 +65,17 @@ kubectl apply -f manifests/ && kubectl get pods
 - `browser-rendering.md` - Puppeteer automation
 
 ### Docker
+
 - `docker-basics.md` - Dockerfile, images, containers
 - `docker-compose.md` - Multi-container apps
 
 ### Google Cloud
+
 - `gcloud-platform.md` - gcloud CLI, authentication
 - `gcloud-services.md` - Compute Engine, GKE, Cloud Run
 
 ### Kubernetes
+
 - `kubernetes-basics.md` - Core concepts, architecture, workloads
 - `kubernetes-kubectl.md` - Essential commands, debugging workflow
 - `kubernetes-helm.md` / `kubernetes-helm-advanced.md` - Helm charts, templates
@@ -80,6 +84,7 @@ kubectl apply -f manifests/ && kubectl get pods
 - `kubernetes-troubleshooting.md` / `kubernetes-troubleshooting-advanced.md` - Debug
 
 ### Scripts
+
 - `scripts/cloudflare-deploy.py` - Automate Worker deployments
 - `scripts/docker-optimize.py` - Analyze Dockerfiles
 

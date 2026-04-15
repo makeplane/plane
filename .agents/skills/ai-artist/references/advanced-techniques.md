@@ -3,13 +3,16 @@
 ## Prompt Optimization
 
 ### DSPy Framework
+
 Automatic prompt optimization through:
+
 1. Define task with input/output signatures
 2. Compile with optimizer (BootstrapFewShot, MIPRO)
 3. Model learns optimal prompting strategy
 4. Export optimized prompts for production
 
 ### Meta-Prompting
+
 ```
 You are a prompt engineer. Create 5 variations for [task]:
 1. Direct instruction approach
@@ -22,6 +25,7 @@ Evaluate each, select best.
 ```
 
 ### Self-Refinement Loop
+
 ```
 Generate: [Initial response]
 Critique: "What's wrong? Score 1-10."
@@ -32,6 +36,7 @@ Repeat until score ≥ 8.
 ## Prompt Chaining
 
 ### Sequential Chain
+
 ```
 Chain 1: [Input] → Extract key points
 Chain 2: Key points → Create outline
@@ -40,9 +45,11 @@ Chain 4: Draft → Edit and polish
 ```
 
 ### Parallel Chain
+
 Run independent subtasks simultaneously, merge results.
 
 ### Conditional Chain
+
 ```
 If [condition A]: Execute prompt variant 1
 If [condition B]: Execute prompt variant 2
@@ -50,6 +57,7 @@ Else: Execute default prompt
 ```
 
 ### Loop Pattern
+
 ```
 While not [success condition]:
     Generate attempt
@@ -61,6 +69,7 @@ While not [success condition]:
 ## Evaluation Methods
 
 ### LLM-as-Judge
+
 ```
 Rate this [output] on:
 1. Accuracy (1-10)
@@ -73,6 +82,7 @@ Final: Pass/Fail threshold = 7 average.
 ```
 
 ### A/B Testing Protocol
+
 1. Single variable per test
 2. 20+ samples minimum
 3. Score on defined criteria
@@ -80,6 +90,7 @@ Final: Pass/Fail threshold = 7 average.
 5. Document winner, roll out
 
 ### Regression Testing
+
 - Maintain test set of critical examples
 - Run before deploying prompt changes
 - Compare scores to baseline
@@ -88,6 +99,7 @@ Final: Pass/Fail threshold = 7 average.
 ## Agent Prompting
 
 ### Tool Use Design
+
 ```
 You have access to these tools:
 - search(query): Search the web
@@ -99,6 +111,7 @@ Wait for result before continuing.
 ```
 
 ### Planning Prompt
+
 ```
 Task: [Complex goal]
 
@@ -112,6 +125,7 @@ Then execute step by step.
 ```
 
 ### Reflection Pattern
+
 ```
 After each step:
 - What worked?
@@ -121,17 +135,18 @@ After each step:
 
 ## Parameter Tuning
 
-| Parameter | Low | High | Use Case |
-|-----------|-----|------|----------|
-| Temperature | 0.0-0.3 | 0.7-1.0 | Factual vs Creative |
-| Top-P | 0.8 | 0.95 | Focused vs Diverse |
-| Top-K | 10 | 100 | Conservative vs Exploratory |
+| Parameter   | Low     | High    | Use Case                    |
+| ----------- | ------- | ------- | --------------------------- |
+| Temperature | 0.0-0.3 | 0.7-1.0 | Factual vs Creative         |
+| Top-P       | 0.8     | 0.95    | Focused vs Diverse          |
+| Top-K       | 10      | 100     | Conservative vs Exploratory |
 
 **Rule**: Tune temperature first. Only adjust top-p if needed. Never both at once.
 
 ## Safety Patterns
 
 ### Output Filtering
+
 ```
 Before responding, check:
 - No PII exposure
@@ -143,12 +158,14 @@ If any fail: "I can't help with that."
 ```
 
 ### Jailbreak Prevention
+
 - Clear system boundaries upfront
 - Repeat constraints at end
 - "Ignore previous" pattern detection
 - Role-lock: "You are ONLY [role], never anything else"
 
 ### Confidence Calibration
+
 ```
 For each claim, provide:
 - Confidence: High/Medium/Low
@@ -159,17 +176,20 @@ For each claim, provide:
 ## Production Patterns
 
 ### Version Control
+
 - Git for prompt files
 - Semantic versioning (1.0.0, 1.1.0)
 - Changelog per version
 - Rollback capability
 
 ### Caching
+
 - Cache common queries
 - TTL based on content freshness
 - Invalidate on prompt update
 
 ### Fallbacks
+
 ```
 Try: Primary prompt
 If fail: Simplified fallback prompt
@@ -178,6 +198,7 @@ Log all failures for analysis.
 ```
 
 ### Cost Optimization
+
 - Shorter prompts = fewer tokens
 - Remove redundant examples
 - Use smaller model for simple tasks

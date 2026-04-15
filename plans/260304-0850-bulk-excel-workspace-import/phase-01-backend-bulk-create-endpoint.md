@@ -1,6 +1,7 @@
 # Phase 01: Backend — Bulk Create Workspace Endpoint
 
 ## Context Links
+
 - Parent plan: [plan.md](./plan.md)
 - Reference: [researcher-01-backend-api.md](./research/researcher-01-backend-api.md)
 - Reference: `apps/api/plane/license/api/views/user_bulk_import.py` (CSV import pattern)
@@ -26,7 +27,9 @@
 ## Requirements
 
 <!-- Updated: Validation Session 1 - Slug auto-generated from name; removed slug from input -->
+
 ### Functional
+
 - Accept `POST` with JSON body: `{"workspaces": [{name, organization_size?}, ...]}`
 - **Slug**: Auto-generated from `name` using `django.utils.text.slugify(name)`. If collision, append numeric suffix (`-1`, `-2`, etc.) until unique
 - Validate each row: name required (≤80 chars)
@@ -35,6 +38,7 @@
 - Permission: `InstanceAdminPermission` (admin-only)
 
 ### Non-Functional
+
 - Max 200 workspaces per request (return 400 if exceeded)
 - Use DB transaction or per-item try/except (per-item is safer for partial success)
 - No new Python dependencies
@@ -56,19 +60,24 @@ POST /god-mode/workspaces/bulk-create/
 ## Related Code Files
 
 **Create:**
+
 - `apps/api/plane/license/api/views/workspace_bulk_create.py`
 
 **Modify:**
+
 - `apps/api/plane/license/api/views/__init__.py` — add export
 - `apps/api/plane/license/urls.py` — add URL pattern
 
 ## Embedded Rules (Phase-Specific)
 
 ### Rule 1 — BaseAPIView Pattern
+
 All license views extend `plane.license.api.views.base.BaseAPIView`, use `InstanceAdminPermission`.
 
 ### Rule 2 — Slug Auto-Generation
+
 <!-- Updated: Validation Session 1 - Slug is auto-generated, not user-supplied -->
+
 ```python
 from django.utils.text import slugify
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
@@ -88,9 +97,11 @@ def _generate_unique_slug(name, existing_slugs):
 ```
 
 ### Rule 3 — WorkspaceMember Creation
+
 After creating workspace, always create `WorkspaceMember(workspace=ws, member=request.user, role=20)`.
 
 ### Rule 4 — Response Format (match user bulk import pattern)
+
 ```python
 return Response({
     "created": [...serialized workspaces...],
@@ -101,11 +112,13 @@ return Response({
 ```
 
 ### Rule 5 — No new deps
+
 Do not add openpyxl or any Excel library to backend. Frontend parses Excel to JSON.
 
 ## Implementation Steps
 
 1. **Create** `apps/api/plane/license/api/views/workspace_bulk_create.py`:
+
    ```python
    # Imports: BaseAPIView, InstanceAdminPermission, Workspace, WorkspaceMember,
    #          RESTRICTED_WORKSPACE_SLUGS, slugify
@@ -155,11 +168,11 @@ Do not add openpyxl or any Excel library to backend. Frontend parses Excel to JS
 
 ## Risk Assessment
 
-| Risk | Mitigation |
-|------|-----------|
-| Partial failure mid-batch | Per-item try/except (not a single transaction) — partial success is acceptable |
-| Slug collision within batch | Collect slugs in a set as we create; check set before DB insert |
-| DB IntegrityError on slug | Catch IntegrityError, add to skipped |
+| Risk                        | Mitigation                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| Partial failure mid-batch   | Per-item try/except (not a single transaction) — partial success is acceptable |
+| Slug collision within batch | Collect slugs in a set as we create; check set before DB insert                |
+| DB IntegrityError on slug   | Catch IntegrityError, add to skipped                                           |
 
 ## Security Considerations
 

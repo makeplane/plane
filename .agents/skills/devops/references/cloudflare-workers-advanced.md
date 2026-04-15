@@ -5,6 +5,7 @@ Advanced techniques for optimization, performance, and complex workflows.
 ## Session Reuse and Connection Pooling
 
 ### Durable Objects for Persistent Sessions
+
 ```typescript
 export class Browser {
   state: DurableObjectState;
@@ -25,7 +26,7 @@ export class Browser {
     await this.state.storage.setAlarm(Date.now() + 10000);
 
     const page = await this.browser.newPage();
-    await page.goto(new URL(request.url).searchParams.get('url'));
+    await page.goto(new URL(request.url).searchParams.get("url"));
     const screenshot = await page.screenshot();
     await page.close();
 
@@ -69,15 +70,17 @@ export default {
     response = await fetch(request);
 
     // 4. Store in both caches
-    ctx.waitUntil(Promise.all([
-      cache.put(cacheKey, response.clone()),
-      env.MY_KV.put(request.url, await response.clone().text(), {
-        expirationTtl: CACHE_TTL
-      })
-    ]));
+    ctx.waitUntil(
+      Promise.all([
+        cache.put(cacheKey, response.clone()),
+        env.MY_KV.put(request.url, await response.clone().text(), {
+          expirationTtl: CACHE_TTL,
+        }),
+      ])
+    );
 
     return response;
-  }
+  },
 };
 ```
 
@@ -129,8 +132,7 @@ export default {
 
       // Extract links
       const links = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('a'))
-          .map(a => a.href);
+        return Array.from(document.querySelectorAll("a")).map((a) => a.href);
       });
 
       // Queue new links
@@ -143,20 +145,20 @@ export default {
     }
 
     await browser.close();
-  }
+  },
 };
 ```
 
 ## Authentication Pattern
 
 ```typescript
-import { sign, verify } from 'hono/jwt';
+import { sign, verify } from "hono/jwt";
 
 async function authenticate(request: Request, env: Env): Promise<any> {
-  const authHeader = request.headers.get('Authorization');
+  const authHeader = request.headers.get("Authorization");
 
-  if (!authHeader?.startsWith('Bearer ')) {
-    throw new Error('Missing token');
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new Error("Missing token");
   }
 
   const token = authHeader.substring(7);
@@ -171,9 +173,9 @@ export default {
       const user = await authenticate(request, env);
       return new Response(`Hello ${user.name}`);
     } catch (error) {
-      return new Response('Unauthorized', { status: 401 });
+      return new Response("Unauthorized", { status: 401 });
     }
-  }
+  },
 };
 ```
 
@@ -185,13 +187,13 @@ export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
 
-    if (url.pathname === '/heavy') {
-      const { processHeavy } = await import('./heavy');
+    if (url.pathname === "/heavy") {
+      const { processHeavy } = await import("./heavy");
       return processHeavy(request);
     }
 
-    return new Response('OK');
-  }
+    return new Response("OK");
+  },
 };
 ```
 
@@ -199,9 +201,8 @@ export default {
 
 ```typescript
 // Efficient bulk inserts
-const statements = users.map(user =>
-  env.DB.prepare('INSERT INTO users (name, email) VALUES (?, ?)')
-    .bind(user.name, user.email)
+const statements = users.map((user) =>
+  env.DB.prepare("INSERT INTO users (name, email) VALUES (?, ?)").bind(user.name, user.email)
 );
 
 await env.DB.batch(statements);
@@ -214,7 +215,7 @@ const { readable, writable } = new TransformStream({
   transform(chunk, controller) {
     // Process chunk
     controller.enqueue(chunk);
-  }
+  },
 });
 
 response.body.pipeTo(writable);
@@ -224,53 +225,57 @@ return new Response(readable);
 ## AI-Powered Web Scraper
 
 ```typescript
-import { Ai } from '@cloudflare/ai';
+import { Ai } from "@cloudflare/ai";
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     // Render page
     const browser = await puppeteer.launch(env.MYBROWSER);
     const page = await browser.newPage();
-    await page.goto('https://news.ycombinator.com');
+    await page.goto("https://news.ycombinator.com");
     const content = await page.content();
     await browser.close();
 
     // Extract with AI
     const ai = new Ai(env.AI);
-    const response = await ai.run('@cf/meta/llama-3-8b-instruct', {
+    const response = await ai.run("@cf/meta/llama-3-8b-instruct", {
       messages: [
         {
-          role: 'system',
-          content: 'Extract top 5 article titles and URLs as JSON array'
+          role: "system",
+          content: "Extract top 5 article titles and URLs as JSON array",
         },
-        { role: 'user', content: content }
-      ]
+        { role: "user", content: content },
+      ],
     });
 
     return Response.json(response);
-  }
+  },
 };
 ```
 
 ## Performance Optimization
 
 ### Bundle Size
+
 - Keep Workers <1MB bundled
 - Remove unused dependencies
 - Use code splitting
 - Check with: `wrangler deploy --dry-run --outdir=dist`
 
 ### Cold Starts
+
 - Minimize initialization code
 - Use bindings over fetch
 - Avoid large imports at top level
 
 ### Memory Management
+
 - Close pages when done: `await page.close()`
 - Disconnect browsers: `await browser.disconnect()`
 - Implement cleanup alarms in Durable Objects
 
 ### Request Optimization
+
 - Use server-side filtering with `--filter`
 - Batch operations with D1 `.batch()`
 - Stream large responses

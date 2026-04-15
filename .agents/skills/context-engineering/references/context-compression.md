@@ -9,28 +9,33 @@ Aggressive compression causing re-fetching costs more than better retention.
 
 ## Compression Methods
 
-| Method | Compression | Quality | Best For |
-|--------|-------------|---------|----------|
-| **Anchored Iterative** | 98.6% | 3.70/5 | Best balance |
-| **Regenerative Full** | 98.7% | 3.44/5 | Readability |
-| **Opaque** | 99.3% | 3.35/5 | Max compression |
+| Method                 | Compression | Quality | Best For        |
+| ---------------------- | ----------- | ------- | --------------- |
+| **Anchored Iterative** | 98.6%       | 3.70/5  | Best balance    |
+| **Regenerative Full**  | 98.7%       | 3.44/5  | Readability     |
+| **Opaque**             | 99.3%       | 3.35/5  | Max compression |
 
 ## Anchored Iterative Summary Template
 
 ```markdown
 ## Session Intent
+
 Original goal: [preserved]
 
 ## Files Modified
+
 - file.py: Changes made
 
 ## Decisions Made
+
 - Key decisions with rationale
 
 ## Current State
+
 Progress summary
 
 ## Next Steps
+
 1. Next action items
 ```
 
@@ -38,15 +43,16 @@ Progress summary
 
 ## Compression Triggers
 
-| Strategy | Trigger | Use Case |
-|----------|---------|----------|
-| Fixed threshold | 70-80% utilization | General purpose |
-| Sliding window | Keep last N turns + summary | Conversations |
-| Task-boundary | At logical completion | Multi-step workflows |
+| Strategy        | Trigger                     | Use Case             |
+| --------------- | --------------------------- | -------------------- |
+| Fixed threshold | 70-80% utilization          | General purpose      |
+| Sliding window  | Keep last N turns + summary | Conversations        |
+| Task-boundary   | At logical completion       | Multi-step workflows |
 
 ## Artifact Trail Problem
 
 Weakest dimension (2.2-2.5/5.0). Coding agents need explicit tracking of:
+
 - Files created/modified/read
 - Function/variable names, error messages
 
@@ -54,12 +60,12 @@ Weakest dimension (2.2-2.5/5.0). Coding agents need explicit tracking of:
 
 ## Probe-Based Evaluation
 
-| Probe Type | Tests | Example |
-|------------|-------|---------|
-| Recall | Factual retention | "What was the error?" |
-| Artifact | File tracking | "Which files modified?" |
-| Continuation | Task planning | "What next?" |
-| Decision | Reasoning chains | "Why chose X?" |
+| Probe Type   | Tests             | Example                 |
+| ------------ | ----------------- | ----------------------- |
+| Recall       | Factual retention | "What was the error?"   |
+| Artifact     | File tracking     | "Which files modified?" |
+| Continuation | Task planning     | "What next?"            |
+| Decision     | Reasoning chains  | "Why chose X?"          |
 
 ## Six Evaluation Dimensions
 

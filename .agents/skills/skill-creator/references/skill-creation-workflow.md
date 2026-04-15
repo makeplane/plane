@@ -118,6 +118,7 @@ Draft assertions while runs execute.
 ### 6d: Human Review
 
 Present viewer to user:
+
 - **Outputs tab** — qualitative review, feedback textbox
 - **Benchmark tab** — quantitative metrics
 

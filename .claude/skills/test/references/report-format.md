@@ -8,25 +8,30 @@ Structured QA report template. Sacrifice grammar for concision.
 # Test Report — {date} — {scope}
 
 ## Test Results Overview
+
 - **Total**: X tests
 - **Passed**: X | **Failed**: X | **Skipped**: X
 - **Duration**: Xs
 
 ## Coverage Metrics
-| Metric   | Value | Threshold | Status |
-|----------|-------|-----------|--------|
-| Lines    | X%    | 80%       | PASS/FAIL |
-| Branches | X%    | 70%       | PASS/FAIL |
-| Functions| X%    | 80%       | PASS/FAIL |
+
+| Metric    | Value | Threshold | Status    |
+| --------- | ----- | --------- | --------- |
+| Lines     | X%    | 80%       | PASS/FAIL |
+| Branches  | X%    | 70%       | PASS/FAIL |
+| Functions | X%    | 80%       | PASS/FAIL |
 
 ## Failed Tests
+
 ### `test/path/file.test.ts` — TestName
+
 - **Error**: Error message
 - **Stack**: Relevant stack trace (truncated)
 - **Cause**: Brief root cause analysis
 - **Fix**: Suggested resolution
 
 ## UI Test Results (if applicable)
+
 - **Pages tested**: X
 - **Screenshots**: ./screenshots/
 - **Console errors**: none | [list]
@@ -34,17 +39,21 @@ Structured QA report template. Sacrifice grammar for concision.
 - **Performance**: LCP Xs, FID Xms, CLS X
 
 ## Build Status
+
 - **Build**: PASS/FAIL
 - **Warnings**: none | [list]
 - **Dependencies**: all resolved | [issues]
 
 ## Critical Issues
+
 1. [Blocking issue description + impact]
 
 ## Recommendations
+
 1. [Actionable improvement with priority]
 
 ## Unresolved Questions
+
 - [Any open questions, if any]
 ```
 

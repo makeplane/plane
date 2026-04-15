@@ -20,10 +20,10 @@ Entry point: `/god-mode/workspace/` → "Bulk Import Modules" button → `/works
 
 ## Phases
 
-| # | Phase | Status | Est. | File |
-|---|-------|--------|------|------|
-| 1 | Backend API | ✅ complete | 1.5h | [phase-01-backend-api.md](./phase-01-backend-api.md) |
-| 2 | Frontend UI | ✅ complete | 2h | [phase-02-frontend-ui.md](./phase-02-frontend-ui.md) |
+| #   | Phase       | Status      | Est. | File                                                 |
+| --- | ----------- | ----------- | ---- | ---------------------------------------------------- |
+| 1   | Backend API | ✅ complete | 1.5h | [phase-01-backend-api.md](./phase-01-backend-api.md) |
+| 2   | Frontend UI | ✅ complete | 2h   | [phase-02-frontend-ui.md](./phase-02-frontend-ui.md) |
 
 ## Key Decisions
 
@@ -55,15 +55,15 @@ Results inline (same page)
 
 ## Excel Template Columns
 
-| Column | Required | Notes |
-|--------|----------|-------|
-| `workspace_slug` | Yes | Target workspace |
-| `project_identifier` | Yes | Project identifier (e.g., `PROJ`) |
-| `name` | Yes | Module name — must be unique per project |
-| `description` | No | Optional description |
-| `status` | No | `backlog\|planned\|in-progress\|paused\|completed\|cancelled`; default `planned` |
-| `start_date` | No | ISO `YYYY-MM-DD`; invalid → null (row still created) |
-| `target_date` | No | ISO `YYYY-MM-DD`; invalid → null (row still created) |
+| Column               | Required | Notes                                                                            |
+| -------------------- | -------- | -------------------------------------------------------------------------------- |
+| `workspace_slug`     | Yes      | Target workspace                                                                 |
+| `project_identifier` | Yes      | Project identifier (e.g., `PROJ`)                                                |
+| `name`               | Yes      | Module name — must be unique per project                                         |
+| `description`        | No       | Optional description                                                             |
+| `status`             | No       | `backlog\|planned\|in-progress\|paused\|completed\|cancelled`; default `planned` |
+| `start_date`         | No       | ISO `YYYY-MM-DD`; invalid → null (row still created)                             |
+| `target_date`        | No       | ISO `YYYY-MM-DD`; invalid → null (row still created)                             |
 
 ## Related Files
 
@@ -78,6 +78,7 @@ Results inline (same page)
 ## Validation Log
 
 ### Session 1 — 2026-03-13
+
 **Trigger:** Initial plan creation
 **Questions asked:** 3
 
@@ -99,15 +100,18 @@ Results inline (same page)
    - **Rationale:** Consistent with Plane's existing Module uniqueness constraint; avoids extra iexact overhead.
 
 #### Confirmed Decisions
+
 - **Status column:** optional in Excel; valid values `backlog|planned|in-progress|paused|completed|cancelled`; default `planned`
 - **Invalid dates:** null the field, row continues (not skipped)
 - **Duplicate check:** case-sensitive (DB default)
 
 #### Action Items
+
 - [x] Add `status` to Excel template columns in plan.md
 - [ ] Update phase-01 backend: parse `status` from row, validate against known choices, default to `planned`
 - [ ] Update phase-02 frontend: add `status` column to template download header + preview table
 
 #### Impact on Phases
+
 - Phase 1: Add `status` field parsing — extract from row, validate against `VALID_STATUSES` set, default `"planned"` if blank/invalid; pass to `Module.objects.create()`
 - Phase 2: Add `status` as 5th column in template header (`workspace_slug`, `project_identifier`, `name`, `description`, `status`, `start_date`, `target_date`); add column to preview table; update `IModuleRow` interface

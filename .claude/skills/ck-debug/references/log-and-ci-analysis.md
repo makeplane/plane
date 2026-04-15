@@ -28,14 +28,14 @@ gh run rerun <run-id> --failed
 
 ### Common CI/CD Failure Patterns
 
-| Pattern | Likely Cause | Investigation |
-|---------|-------------|---------------|
-| Passes locally, fails CI | Environment diff | Check Node/Python version, OS, env vars |
-| Intermittent failures | Race conditions, flaky tests | Run 3x, check timing, shared state |
-| Timeout failures | Resource limits, infinite loops | Check resource usage, add timeouts |
-| Permission errors | Token/secret misconfiguration | Verify `GITHUB_TOKEN`, secret names |
-| Dependency install fails | Registry issues, version conflicts | Check lockfile, registry status |
-| Build succeeds, tests fail | Test environment setup | Check test config, database setup, fixtures |
+| Pattern                    | Likely Cause                       | Investigation                               |
+| -------------------------- | ---------------------------------- | ------------------------------------------- |
+| Passes locally, fails CI   | Environment diff                   | Check Node/Python version, OS, env vars     |
+| Intermittent failures      | Race conditions, flaky tests       | Run 3x, check timing, shared state          |
+| Timeout failures           | Resource limits, infinite loops    | Check resource usage, add timeouts          |
+| Permission errors          | Token/secret misconfiguration      | Verify `GITHUB_TOKEN`, secret names         |
+| Dependency install fails   | Registry issues, version conflicts | Check lockfile, registry status             |
+| Build succeeds, tests fail | Test environment setup             | Check test config, database setup, fixtures |
 
 ### Analyzing Failed Steps
 
@@ -91,6 +91,7 @@ Prioritize: timestamp, level, error message, stack trace, request ID, user ID, e
 ### Evidence Preservation
 
 Always capture relevant log excerpts for the diagnostic report. Include:
+
 - Exact error messages and stack traces
 - Timestamps and request IDs
 - Before/after comparison (normal vs error state)

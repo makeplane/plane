@@ -45,7 +45,7 @@ Always premount any `<Sequence>`!
 Use `<Series>` when elements should play one after another without overlap.
 
 ```tsx
-import {Series} from 'remotion';
+import { Series } from "remotion";
 
 <Series>
   <Series.Sequence durationInFrames={45}>

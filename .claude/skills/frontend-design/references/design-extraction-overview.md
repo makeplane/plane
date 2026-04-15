@@ -21,6 +21,7 @@ Reverse-engineer design principles from existing images or videos to establish d
 ## Quick Workflows
 
 ### Single Image Analysis
+
 ```bash
 python scripts/gemini_batch_process.py \
   --files docs/inspiration/reference-design.png \
@@ -31,6 +32,7 @@ python scripts/gemini_batch_process.py \
 ```
 
 ### Multi-Screen System Extraction
+
 ```bash
 python scripts/gemini_batch_process.py \
   --files docs/inspiration/home.png docs/inspiration/about.png \
@@ -41,6 +43,7 @@ python scripts/gemini_batch_process.py \
 ```
 
 ### Video Motion Analysis
+
 ```bash
 python scripts/gemini_batch_process.py \
   --files docs/inspiration/interaction-demo.mp4 \
@@ -51,6 +54,7 @@ python scripts/gemini_batch_process.py \
 ```
 
 ### Competitive Analysis
+
 ```bash
 python scripts/gemini_batch_process.py \
   --files competitor-a.png competitor-b.png competitor-c.png \

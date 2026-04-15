@@ -17,8 +17,8 @@ export const auth = betterAuth({
     sendResetPasswordToken: async ({ user, url }) => {
       // Send password reset email
       await sendEmail(user.email, url);
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -33,9 +33,9 @@ export const auth = betterAuth({
       requireUppercase: true,
       requireLowercase: true,
       requireNumbers: true,
-      requireSpecialChars: true
-    }
-  }
+      requireSpecialChars: true,
+    },
+  },
 });
 ```
 
@@ -46,39 +46,45 @@ export const auth = betterAuth({
 ```ts
 import { authClient } from "@/lib/auth-client";
 
-const { data, error } = await authClient.signUp.email({
-  email: "user@example.com",
-  password: "securePassword123",
-  name: "John Doe",
-  image: "https://example.com/avatar.jpg", // optional
-  callbackURL: "/dashboard" // optional
-}, {
-  onSuccess: (ctx) => {
-    // ctx.data contains user and session
-    console.log("User created:", ctx.data.user);
+const { data, error } = await authClient.signUp.email(
+  {
+    email: "user@example.com",
+    password: "securePassword123",
+    name: "John Doe",
+    image: "https://example.com/avatar.jpg", // optional
+    callbackURL: "/dashboard", // optional
   },
-  onError: (ctx) => {
-    alert(ctx.error.message);
+  {
+    onSuccess: (ctx) => {
+      // ctx.data contains user and session
+      console.log("User created:", ctx.data.user);
+    },
+    onError: (ctx) => {
+      alert(ctx.error.message);
+    },
   }
-});
+);
 ```
 
 ### Sign In
 
 ```ts
-const { data, error } = await authClient.signIn.email({
-  email: "user@example.com",
-  password: "securePassword123",
-  callbackURL: "/dashboard",
-  rememberMe: true // default: true
-}, {
-  onSuccess: () => {
-    // redirect or update UI
+const { data, error } = await authClient.signIn.email(
+  {
+    email: "user@example.com",
+    password: "securePassword123",
+    callbackURL: "/dashboard",
+    rememberMe: true, // default: true
   },
-  onError: (ctx) => {
-    console.error(ctx.error.message);
+  {
+    onSuccess: () => {
+      // redirect or update UI
+    },
+    onError: (ctx) => {
+      console.error(ctx.error.message);
+    },
   }
-});
+);
 ```
 
 ### Sign Out
@@ -88,8 +94,8 @@ await authClient.signOut({
   fetchOptions: {
     onSuccess: () => {
       router.push("/login");
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -105,16 +111,16 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: "Verify your email",
-        html: `Click <a href="${url}">here</a> to verify your email.`
+        html: `Click <a href="${url}">here</a> to verify your email.`,
       });
     },
     sendOnSignUp: true, // Send verification email on signup
-    autoSignInAfterVerification: true // Auto sign-in after verification
+    autoSignInAfterVerification: true, // Auto sign-in after verification
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true // Require verification before login
-  }
+    requireEmailVerification: true, // Require verification before login
+  },
 });
 ```
 
@@ -124,12 +130,12 @@ export const auth = betterAuth({
 // Send verification email
 await authClient.sendVerificationEmail({
   email: "user@example.com",
-  callbackURL: "/verify-success"
+  callbackURL: "/verify-success",
 });
 
 // Verify email with token
 await authClient.verifyEmail({
-  token: "verification-token-from-email"
+  token: "verification-token-from-email",
 });
 ```
 
@@ -145,10 +151,10 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: "Reset your password",
-        html: `Click <a href="${url}">here</a> to reset your password.`
+        html: `Click <a href="${url}">here</a> to reset your password.`,
       });
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -158,13 +164,13 @@ export const auth = betterAuth({
 // Step 1: Request password reset
 await authClient.forgetPassword({
   email: "user@example.com",
-  redirectTo: "/reset-password"
+  redirectTo: "/reset-password",
 });
 
 // Step 2: Reset password with token
 await authClient.resetPassword({
   token: "reset-token-from-email",
-  password: "newSecurePassword123"
+  password: "newSecurePassword123",
 });
 ```
 
@@ -174,7 +180,7 @@ await authClient.resetPassword({
 await authClient.changePassword({
   currentPassword: "oldPassword123",
   newPassword: "newPassword456",
-  revokeOtherSessions: true // Optional: logout other sessions
+  revokeOtherSessions: true, // Optional: logout other sessions
 });
 ```
 
@@ -192,9 +198,9 @@ export const auth = betterAuth({
   plugins: [
     username({
       // Allow sign in with username or email
-      allowUsernameOrEmail: true
-    })
-  ]
+      allowUsernameOrEmail: true,
+    }),
+  ],
 });
 ```
 
@@ -205,7 +211,7 @@ import { createAuthClient } from "better-auth/client";
 import { usernameClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  plugins: [usernameClient()]
+  plugins: [usernameClient()],
 });
 ```
 
@@ -217,19 +223,19 @@ await authClient.signUp.username({
   username: "johndoe",
   password: "securePassword123",
   email: "john@example.com", // optional
-  name: "John Doe"
+  name: "John Doe",
 });
 
 // Sign in with username
 await authClient.signIn.username({
   username: "johndoe",
-  password: "securePassword123"
+  password: "securePassword123",
 });
 
 // Sign in with username or email (if allowUsernameOrEmail: true)
 await authClient.signIn.username({
   username: "johndoe", // or "john@example.com"
-  password: "securePassword123"
+  password: "securePassword123",
 });
 ```
 
@@ -326,7 +332,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({
-    headers: request.headers
+    headers: request.headers,
   });
 
   if (!session) {
@@ -337,7 +343,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*"]
+  matcher: ["/dashboard/:path*", "/profile/:path*"],
 };
 ```
 
@@ -350,7 +356,7 @@ import { redirect } from "@sveltejs/kit";
 
 export async function handle({ event, resolve }) {
   const session = await auth.api.getSession({
-    headers: event.request.headers
+    headers: event.request.headers,
   });
 
   if (event.url.pathname.startsWith("/dashboard") && !session) {
@@ -398,7 +404,7 @@ await authClient.updateUser({
 ```ts
 await authClient.deleteUser({
   password: "currentPassword", // Required for security
-  callbackURL: "/" // Redirect after deletion
+  callbackURL: "/", // Redirect after deletion
 });
 ```
 

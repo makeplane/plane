@@ -5,6 +5,7 @@ parent: ../plan.md
 # Phase 01 — Hide CE Component
 
 ## Overview
+
 - **Date:** 2026-03-12
 - **Priority:** P2
 - **Status:** pending
@@ -23,9 +24,9 @@ The "Delete this workspace" section is rendered via a CE-layer component. Per th
 
 ## Related Files
 
-| File | Role |
-|------|------|
-| `apps/web/ce/components/workspace/delete-workspace-section.tsx` | **MODIFY** — return null |
+| File                                                                | Role                                                       |
+| ------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `apps/web/ce/components/workspace/delete-workspace-section.tsx`     | **MODIFY** — return null                                   |
 | `apps/web/core/components/workspace/settings/workspace-details.tsx` | Renders `<DeleteWorkspaceSection>` at line 324 — no change |
 
 ## Implementation Steps
@@ -37,12 +38,14 @@ The "Delete this workspace" section is rendered via a CE-layer component. Per th
 ### Code Change
 
 **Before** (`delete-workspace-section.tsx`):
+
 ```tsx
 // full component rendering SettingsBoxedControlItem + DeleteWorkspaceModal
 export const DeleteWorkspaceSection = ...
 ```
 
 **After:**
+
 ```tsx
 import React from "react";
 import { TWorkspace } from "@plane/types";

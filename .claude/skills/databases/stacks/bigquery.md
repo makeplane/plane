@@ -6,21 +6,21 @@ Guidelines for designing schemas specific to Google BigQuery.
 
 ## Data Types
 
-| Use case | Type | Notes |
-|----------|------|-------|
-| Integer | `INT64` | |
-| Decimal | `NUMERIC` or `BIGNUMERIC` | |
-| Float | `FLOAT64` | |
-| Boolean | `BOOL` | |
-| String | `STRING` | |
-| Timestamp | `TIMESTAMP` | |
-| Date | `DATE` | |
-| Time | `TIME` | |
-| DateTime | `DATETIME` | No timezone |
-| JSON | `JSON` | |
-| Bytes | `BYTES` | |
-| Nested | `STRUCT` | Record type |
-| Repeated | `ARRAY` | |
+| Use case  | Type                      | Notes       |
+| --------- | ------------------------- | ----------- |
+| Integer   | `INT64`                   |             |
+| Decimal   | `NUMERIC` or `BIGNUMERIC` |             |
+| Float     | `FLOAT64`                 |             |
+| Boolean   | `BOOL`                    |             |
+| String    | `STRING`                  |             |
+| Timestamp | `TIMESTAMP`               |             |
+| Date      | `DATE`                    |             |
+| Time      | `TIME`                    |             |
+| DateTime  | `DATETIME`                | No timezone |
+| JSON      | `JSON`                    |             |
+| Bytes     | `BYTES`                   |             |
+| Nested    | `STRUCT`                  | Record type |
+| Repeated  | `ARRAY`                   |             |
 
 ---
 
@@ -29,6 +29,7 @@ Guidelines for designing schemas specific to Google BigQuery.
 BigQuery supports description via `OPTIONS`:
 
 ### Table description
+
 ```sql
 CREATE TABLE orders (
     ...
@@ -36,6 +37,7 @@ CREATE TABLE orders (
 ```
 
 ### Column descriptions
+
 ```sql
 CREATE TABLE orders (
     id INT64 NOT NULL OPTIONS(description='Primary key'),
@@ -46,6 +48,7 @@ CREATE TABLE orders (
 ```
 
 ### Query descriptions
+
 ```sql
 SELECT column_name, description
 FROM `project.dataset.INFORMATION_SCHEMA.COLUMN_FIELD_PATHS`
@@ -101,6 +104,7 @@ CLUSTER BY customer_id, product_id;
 ```
 
 ### When to use what?
+
 - **Partition**: Filter by date range → reduces data scan
 - **Cluster**: Filter/Group by specific columns → data is organized closer together
 
@@ -141,17 +145,20 @@ FROM orders, UNNEST(items) AS item;
 ## Best Practices
 
 ### Query optimization
+
 - **Avoid `SELECT *`** - only select needed columns
 - **Filter early** - use partition column in WHERE
 - **Avoid cross-join** with large tables
 
 ### Table design
+
 - Partition tables > 1GB
 - Cluster by frequently filtered/grouped columns
 - Denormalize with STRUCT/ARRAY when appropriate
 - Avoid too many small tables
 
 ### Cost control
+
 - Partition pruning: always filter by partition column
 - Use `--dry_run` to estimate cost
 - Set up query quotas
@@ -201,6 +208,7 @@ OPTIONS(
 ## Scheduled Queries / Materialized Views
 
 ### Materialized View
+
 ```sql
 CREATE MATERIALIZED VIEW `project.dataset.mv_daily_sales`
 PARTITION BY report_date
@@ -216,6 +224,7 @@ GROUP BY 1, 2;
 ```
 
 ### Scheduled Query (ETL)
+
 Create via BigQuery Console or API with schedule expression.
 
 ---

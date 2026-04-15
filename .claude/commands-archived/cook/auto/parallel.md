@@ -10,15 +10,18 @@ argument-hint: [tasks]
 ## Workflow
 
 ### 1. Research (Optional)
+
 - Use max 2 `researcher` agents in parallel if tasks complex
 - Use `/scout:ext` to search codebase
 - Keep reports ≤150 lines
 
 ### 2. Parallel Planning
+
 - Trigger `/plan:parallel <detailed-instruction>`
 - Wait for plan with dependency graph, execution strategy, file ownership matrix
 
 ### 3. Parallel Implementation
+
 - Read `plan.md` for dependency graph
 - Launch multiple `fullstack-developer` agents in PARALLEL for concurrent phases
   - Example: "Phases 1-3 parallel" → launch 3 agents simultaneously
@@ -28,20 +31,24 @@ argument-hint: [tasks]
 - Sequential phases: launch one agent at a time
 
 ### 4. Testing
+
 - Use `tester` subagent for full test suite
 - NO fake data/mocks/cheats
 - If fail: use `debugger`, fix, repeat
 
 ### 5. Code Review
+
 - Use `code-reviewer` for all changes
 - If critical issues: fix, retest
 
 ### 6. Project Management & Docs
+
 - If approved: use `project-manager` + `docs-manager` in parallel
 - Update plan files, docs, roadmap
 - If rejected: fix and repeat
 
 ### 7. Final Report
+
 - Summary of all parallel phases
 - Guide to get started
 - Ask to commit (use `git-manager` if yes)

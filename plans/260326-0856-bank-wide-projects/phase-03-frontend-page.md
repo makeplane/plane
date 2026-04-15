@@ -71,7 +71,9 @@ export class BankWideProjectsService extends APIService {
   fetchAll(workspaceSlug: string): Promise<IBankWideProject[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/bank-wide-projects/`)
       .then(({ data }) => data)
-      .catch((error) => { throw error; });
+      .catch((error) => {
+        throw error;
+      });
   }
 }
 ```
@@ -121,6 +123,7 @@ export class BankWideProjectsStore {
 ### 3. Register in CE root store
 
 Find the CE root store override (likely `apps/web/ce/store/root.store.ts` or similar). If it extends core `RootStore`, add:
+
 ```typescript
 bankWideProjects = new BankWideProjectsStore();
 ```
@@ -130,6 +133,7 @@ If no CE root store override exists, check if core `RootStore` is extended in CE
 ### 4. CE Component: `apps/web/ce/components/bank-wide-projects/root.tsx`
 
 <!-- Updated: Validation Session 1 - confirmed grouped-by-workspace layout -->
+
 ```typescript
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
@@ -149,7 +153,9 @@ import { useEffect } from "react";
 ### 5. CE Component: `apps/web/ce/components/bank-wide-projects/project-card.tsx`
 
 <!-- Updated: Validation Session 1 - confirmed link uses project's own workspace slug -->
+
 Simple card showing:
+
 - Project logo/cover
 - Project name + identifier
 - Workspace badge (workspace name)
@@ -159,6 +165,7 @@ Simple card showing:
 ### 6. Route files
 
 `apps/web/app/(all)/[workspaceSlug]/(projects)/bank-wide-projects/layout.tsx`
+
 ```typescript
 // Same structure as /ho/layout.tsx — likely just children passthrough
 export default function BankWideProjectsLayout({ children }: { children: React.ReactNode }) {
@@ -167,6 +174,7 @@ export default function BankWideProjectsLayout({ children }: { children: React.R
 ```
 
 `apps/web/app/(all)/[workspaceSlug]/(projects)/bank-wide-projects/page.tsx`
+
 ```typescript
 import { PageHead } from "@/components/core/page-title";
 import { BankWideProjectsRoot } from "@/plane-web/components/bank-wide-projects/root";

@@ -46,9 +46,11 @@ New files:
 │   ├── module-activity-item.tsx                          # Single activity row
 │   └── module-sidebar-activities.tsx                     # Sidebar Disclosure wrapper
 ```
+
 <!-- Updated: Validation Session 1 - Added sidebar wrapper, noted cursor pagination -->
 
 **Data flow:**
+
 1. Sidebar mounts -> calls `moduleActivityStore.fetchActivities(workspaceSlug, projectId, moduleId)`
 2. Store calls service -> `GET /api/workspaces/:slug/projects/:pid/modules/:mid/activities/`
 3. Store caches activities by moduleId in `ObservableMap`
@@ -87,6 +89,7 @@ New files:
 
 1. **Create `IModuleActivity` type**
    - File: `packages/types/src/module/module-activity.ts` (new, ~30 lines)
+
    ```typescript
    export interface IModuleActivity {
      id: string;
@@ -118,6 +121,7 @@ New files:
 
 3. **Create `ModuleActivityService`**
    - File: `apps/web/ce/services/module-activity.service.ts` (new, ~40 lines)
+
    ```typescript
    import { APIService } from "@/services/api.service";
    import type { IModuleActivity } from "@plane/types";
@@ -141,12 +145,14 @@ New files:
      }
    }
    ```
+
    <!-- Updated: Validation Session 5 - Service return type matches real BasePaginator response: { results, next_cursor (encoded string), next_page_results (boolean), total_count, prev_cursor, ... } -->
    - **API response shape** (from `BasePaginator.paginate`): `{ results: T[], next_cursor: string, prev_cursor: string, next_page_results: boolean, prev_page_results: boolean, total_count: number, count: number, total_pages: number, total_results: number, grouped_by: null, sub_grouped_by: null, extra_stats: null }`
    - Use existing `TPaginationInfo` type if available, or define inline. Key fields: `results`, `next_cursor`, `next_page_results`.
 
 4. **Create `ModuleActivityStore`**
    - File: `apps/web/ce/store/module-activity.store.ts` (new, ~80 lines)
+
    ```typescript
    import { makeObservable, observable, action, runInAction } from "mobx";
    import { set } from "lodash-es";
@@ -232,6 +238,7 @@ New files:
 
 6. **Create store hook**
    - File: `apps/web/core/hooks/store/use-module-activity.ts` (new, ~10 lines)
+
    ```typescript
    import { useContext } from "react";
    import { StoreContext } from "@/lib/store-context";
@@ -239,8 +246,7 @@ New files:
 
    export const useModuleActivity = (): IModuleActivityStore => {
      const context = useContext(StoreContext);
-     if (context === undefined)
-       throw new Error("useModuleActivity must be used within StoreProvider");
+     if (context === undefined) throw new Error("useModuleActivity must be used within StoreProvider");
      return context.moduleActivity;
    };
    ```
@@ -274,6 +280,7 @@ New files:
 
 9. **Create barrel export**
    - File: `apps/web/ce/components/modules/activity/index.ts`
+
    ```typescript
    export { ModuleActivityList } from "./module-activity-list";
    ```
@@ -293,11 +300,7 @@ New files:
     - Import `ModuleSidebarActivities` from `@/plane-web/components/modules/activity`
     - After the Links Disclosure section (line ~440), add:
     ```tsx
-    <ModuleSidebarActivities
-      workspaceSlug={workspaceSlug}
-      projectId={projectId}
-      moduleId={moduleId}
-    />
+    <ModuleSidebarActivities workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
     ```
     <!-- Updated: Validation Session 7 - Pass workspaceSlug/projectId props -->
     <!-- Updated: Validation Session 6 - One-line import replaces inline Disclosure block -->
@@ -366,6 +369,7 @@ New files:
 ---
 
 ## Resolved Questions (Validation Session 1)
+
 <!-- Updated: Validation Session 1 - All unresolved questions resolved -->
 
 1. **Pagination strategy**: ✅ Cursor-based pagination. Fetch first 20, show "Load more" button if `next_cursor` exists.

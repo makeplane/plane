@@ -34,7 +34,9 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
       <td className={cn(CELL, "min-w-[220px]")}>
         <div className="truncate font-medium">{row.main_task_category_name || "—"}</div>
         {row.main_task_category_description && (
-          <div className="truncate text-xs text-custom-text-300 font-normal italic mt-0.5">{row.main_task_category_description}</div>
+          <div className="truncate text-xs text-custom-text-300 font-normal italic mt-0.5">
+            {row.main_task_category_description}
+          </div>
         )}
       </td>
       <td className={cn(CELL, "min-w-[220px]")}>

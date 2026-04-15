@@ -19,6 +19,7 @@ Guidelines for designing schemas for statistics and reporting tables.
 ### 1. Analyze Statistics Requirements
 
 Ask user to clarify:
+
 - **Analysis dimensions**: by date, by customer, by product, by channel, by region?
 - **Granularity**: per order, per item, per day, per month?
 - **Metrics**: order_count, revenue, margin, conversion_rate, avg_order_value?
@@ -27,15 +28,16 @@ Ask user to clarify:
 
 **Important**: What does 1 row in fact table represent?
 
-| Fact Table | Granularity | Use case |
-|------------|-------------|----------|
-| `fact_orders` | 1 row = 1 order | Statistics by order |
-| `fact_order_items` | 1 row = 1 order item | Statistics by product |
-| `fact_daily_sales` | 1 row = 1 day + store | Daily summary |
+| Fact Table         | Granularity           | Use case              |
+| ------------------ | --------------------- | --------------------- |
+| `fact_orders`      | 1 row = 1 order       | Statistics by order   |
+| `fact_order_items` | 1 row = 1 order item  | Statistics by product |
+| `fact_daily_sales` | 1 row = 1 day + store | Daily summary         |
 
 ### 3. Identify Required Dimensions
 
 Create separate dim table when:
+
 - Reused in multiple places
 - Has many descriptive attributes
 - Subject to slow changes (Slowly Changing Dimension)
@@ -147,12 +149,15 @@ CREATE TABLE summary_daily_sales (
 ## Slowly Changing Dimensions (SCD)
 
 ### Type 1 - Overwrite
+
 Overwrite old value, no history kept:
+
 ```sql
 UPDATE dim_customer SET segment = 'VIP' WHERE customer_id = 123;
 ```
 
 ### Type 2 - Add new row (Recommended when history needed)
+
 ```sql
 -- 1. Close old row
 UPDATE dim_customer
@@ -169,10 +174,12 @@ VALUES (123, 'VIP', CURRENT_DATE, TRUE);
 ## Indexing for Analytics
 
 ### Fact tables
+
 - Index FKs to dimensions: `date_key`, `customer_key`, `product_key`
 - Composite index based on query patterns: `INDEX (date_key, store_key)`
 
 ### Dimension tables
+
 - PK: surrogate key
 - Index natural key: `customer_id`, `product_id`
 - Index for SCD: `(is_current, customer_id)`

@@ -16,6 +16,7 @@ openapi: "GET /users/{id}"
 ```
 
 Mintlify automatically extracts:
+
 - Request parameters (path, query, header, body)
 - Request examples in multiple languages
 - Response schemas
@@ -54,6 +55,7 @@ Configure in `docs.json`:
 ```
 
 **Configuration options:**
+
 - `openapi` - Path to OpenAPI spec file (YAML or JSON)
 - `params.expanded` - Expand parameter details by default
 - `playground.display` - API playground mode (interactive, simple, none)
@@ -68,10 +70,7 @@ Configure in `docs.json`:
 ```json
 {
   "api": {
-    "openapi": [
-      "/specs/v1.yaml",
-      "/specs/v2.yaml"
-    ]
+    "openapi": ["/specs/v1.yaml", "/specs/v2.yaml"]
   }
 }
 ```
@@ -83,6 +82,7 @@ mint openapi-check
 ```
 
 Validates OpenAPI specs for:
+
 - Syntax errors
 - Schema compliance
 - Missing required fields
@@ -171,7 +171,8 @@ Document API parameters with detailed type information.
 <ParamField header="Authorization" type="string" required>
   Bearer token for authentication
 
-  Format: `Bearer YOUR_API_KEY`
+Format: `Bearer YOUR_API_KEY`
+
 </ParamField>
 
 <ParamField header="Content-Type" type="string" default="application/json">
@@ -195,7 +196,7 @@ Document API parameters with detailed type information.
     active: "User account is active and fully functional",
     inactive: "User account is temporarily disabled",
     pending: "User registration awaiting email verification",
-    suspended: "User account suspended due to policy violation"
+    suspended: "User account suspended due to policy violation",
   }}
 >
   Filter users by account status
@@ -208,7 +209,8 @@ Document API parameters with detailed type information.
 <ParamField query="tags" type="array">
   Array of tag IDs to filter by
 
-  Example: `?tags=1,2,3`
+Example: `?tags=1,2,3`
+
 </ParamField>
 
 <ParamField body="roles" type="string[]" required>
@@ -297,6 +299,7 @@ Document API response fields with type information.
         </ResponseField>
       </Expandable>
     </ResponseField>
+
   </Expandable>
 </ResponseField>
 ```
@@ -343,12 +346,12 @@ Show API request examples in multiple programming languages.
 
 ### Basic Request Example
 
-```mdx
+````mdx
 <RequestExample>
 ```bash cURL
 curl -X GET https://api.example.com/users/123 \
   -H "Authorization: Bearer YOUR_API_KEY"
-```
+````
 
 ```python Python
 import requests
@@ -365,8 +368,8 @@ print(response.json())
 const response = await fetch("https://api.example.com/users/123", {
   method: "GET",
   headers: {
-    "Authorization": "Bearer YOUR_API_KEY"
-  }
+    Authorization: "Bearer YOUR_API_KEY",
+  },
 });
 
 const data = await response.json();
@@ -394,12 +397,13 @@ func main() {
     fmt.Println(string(body))
 }
 ```
+
 </RequestExample>
 ```
 
 ### POST Request with Body
 
-```mdx
+````mdx
 <RequestExample>
 ```bash cURL
 curl -X POST https://api.example.com/users \
@@ -410,7 +414,7 @@ curl -X POST https://api.example.com/users \
     "name": "John Doe",
     "age": 30
   }'
-```
+````
 
 ```python Python
 import requests
@@ -434,16 +438,16 @@ print(response.json())
 const data = {
   email: "user@example.com",
   name: "John Doe",
-  age: 30
+  age: 30,
 };
 
 const response = await fetch("https://api.example.com/users", {
   method: "POST",
   headers: {
-    "Authorization": "Bearer YOUR_API_KEY",
-    "Content-Type": "application/json"
+    Authorization: "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json",
   },
-  body: JSON.stringify(data)
+  body: JSON.stringify(data),
 });
 
 const result = await response.json();
@@ -470,6 +474,7 @@ end
 
 puts response.body
 ```
+
 </RequestExample>
 ```
 
@@ -479,7 +484,7 @@ Show API response examples for different scenarios.
 
 ### Success and Error Responses
 
-```mdx
+````mdx
 <ResponseExample>
 ```json Success (200)
 {
@@ -489,7 +494,7 @@ Show API response examples for different scenarios.
   "created_at": "2024-01-15T10:30:00Z",
   "is_verified": true
 }
-```
+````
 
 ```json Error (400)
 {
@@ -521,12 +526,13 @@ Show API response examples for different scenarios.
   }
 }
 ```
+
 </ResponseExample>
 ```
 
 ### Paginated Response
 
-```mdx
+````mdx
 <ResponseExample>
 ```json Success (200)
 {
@@ -555,7 +561,8 @@ Show API response examples for different scenarios.
     "prev": null
   }
 }
-```
+````
+
 </ResponseExample>
 ```
 
@@ -578,6 +585,7 @@ Full interactive playground with request builder and live testing.
 ```
 
 Features:
+
 - Live API requests from browser
 - Parameter input fields
 - Authentication management
@@ -691,6 +699,7 @@ Pre-fill common values in code examples.
 ```
 
 Values replace placeholders in examples:
+
 - `{apiKey}` → `sk_test_abc123`
 - `{baseUrl}` → `https://api.example.com`
 - `{userId}` → `usr_example`
@@ -715,7 +724,7 @@ Automatically generate code examples from OpenAPI spec.
 
 Integrate Speakeasy-generated SDKs.
 
-```mdx
+````mdx
 ---
 title: "Create User"
 openapi: "POST /users"
@@ -728,10 +737,10 @@ import { SDK } from '@company/sdk';
 const sdk = new SDK({ apiKey: 'YOUR_API_KEY' });
 
 const user = await sdk.users.create({
-  email: 'user@example.com',
-  name: 'John Doe'
+email: 'user@example.com',
+name: 'John Doe'
 });
-```
+````
 
 ```python Python SDK
 from company_sdk import SDK
@@ -743,6 +752,7 @@ user = sdk.users.create(
     name='John Doe'
 )
 ```
+
 </CodeGroup>
 ```
 
@@ -750,20 +760,21 @@ user = sdk.users.create(
 
 Integrate Stainless-generated SDKs.
 
-```mdx
+````mdx
 <CodeGroup>
 ```typescript TypeScript SDK
 import { CompanyAPI } from 'company-api';
 
 const client = new CompanyAPI({
-  apiKey: process.env.COMPANY_API_KEY
+apiKey: process.env.COMPANY_API_KEY
 });
 
 const user = await client.users.create({
-  email: 'user@example.com',
-  name: 'John Doe'
+email: 'user@example.com',
+name: 'John Doe'
 });
-```
+````
+
 </CodeGroup>
 ```
 
@@ -771,7 +782,7 @@ const user = await client.users.create({
 
 Full example of documented API endpoint.
 
-```mdx
+````mdx
 ---
 title: "Create User"
 description: "Create a new user account"
@@ -831,7 +842,7 @@ curl -X POST https://api.example.com/users \
     "password": "SecurePass123",
     "role": "user"
   }'
-```
+````
 
 ```python Python
 import requests
@@ -847,6 +858,7 @@ response = requests.post(
     }
 )
 ```
+
 </RequestExample>
 
 <ResponseExample>
@@ -869,5 +881,6 @@ response = requests.post(
   }
 }
 ```
+
 </ResponseExample>
 ```

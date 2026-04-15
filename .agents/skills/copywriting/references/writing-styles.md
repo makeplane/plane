@@ -6,15 +6,15 @@ Define, extract, and apply consistent writing voices across content.
 
 Every writing style can be mapped across these dimensions:
 
-| Dimension | Spectrum | Description |
-|-----------|----------|-------------|
-| Tone | Formal ↔ Casual | How official or relaxed |
-| Pace | Fast ↔ Measured | Sentence length, rhythm |
-| Vocabulary | Simple ↔ Technical | Word complexity level |
-| Emotion | Reserved ↔ Expressive | Emotional intensity |
-| Humor | Serious ↔ Playful | Use of wit, jokes |
-| Perspective | Third-person ↔ First-person | Pronoun usage |
-| Authority | Peer ↔ Expert | Positioning relative to reader |
+| Dimension   | Spectrum                    | Description                    |
+| ----------- | --------------------------- | ------------------------------ |
+| Tone        | Formal ↔ Casual             | How official or relaxed        |
+| Pace        | Fast ↔ Measured             | Sentence length, rhythm        |
+| Vocabulary  | Simple ↔ Technical          | Word complexity level          |
+| Emotion     | Reserved ↔ Expressive       | Emotional intensity            |
+| Humor       | Serious ↔ Playful           | Use of wit, jokes              |
+| Perspective | Third-person ↔ First-person | Pronoun usage                  |
+| Authority   | Peer ↔ Expert               | Positioning relative to reader |
 
 ## Pre-Built Style Definitions
 
@@ -23,6 +23,7 @@ Every writing style can be mapped across these dimensions:
 **Best for:** Indie hackers, startups, personal brands
 
 **Dimensions:**
+
 - Tone: Casual
 - Pace: Fast
 - Vocabulary: Simple
@@ -31,6 +32,7 @@ Every writing style can be mapped across these dimensions:
 - Perspective: First-person
 
 **Characteristics:**
+
 - Contractions ("you're", "isn't")
 - Short sentences, fragments OK
 - Personal pronouns ("I", "you")
@@ -38,6 +40,7 @@ Every writing style can be mapped across these dimensions:
 - Emoji usage acceptable
 
 **Example:**
+
 > "Look, I get it. Marketing feels overwhelming. But here's what I learned after burning through $10k on ads that didn't work—it doesn't have to be complicated."
 
 ---
@@ -47,6 +50,7 @@ Every writing style can be mapped across these dimensions:
 **Best for:** Enterprise SaaS, B2B, consulting
 
 **Dimensions:**
+
 - Tone: Formal
 - Pace: Measured
 - Vocabulary: Technical
@@ -55,6 +59,7 @@ Every writing style can be mapped across these dimensions:
 - Perspective: Third-person / We
 
 **Characteristics:**
+
 - Complete sentences
 - Industry terminology
 - Data-driven claims
@@ -62,6 +67,7 @@ Every writing style can be mapped across these dimensions:
 - No emoji
 
 **Example:**
+
 > "Organizations that implement structured content strategies outperform competitors by 3.5x in lead generation. This comprehensive guide examines the frameworks that drive measurable results."
 
 ---
@@ -71,6 +77,7 @@ Every writing style can be mapped across these dimensions:
 **Best for:** Disruptor brands, hot takes, thought leadership
 
 **Dimensions:**
+
 - Tone: Casual-to-Formal (varies)
 - Pace: Fast
 - Vocabulary: Simple with punchy terms
@@ -79,6 +86,7 @@ Every writing style can be mapped across these dimensions:
 - Perspective: First-person
 
 **Characteristics:**
+
 - Bold claims
 - Contrarian positions
 - Short, punchy sentences
@@ -86,6 +94,7 @@ Every writing style can be mapped across these dimensions:
 - Strategic use of questions
 
 **Example:**
+
 > "Everything you know about content marketing is wrong. Seriously. The 'best practices' everyone follows? They're why you're invisible. Let me show you what actually works."
 
 ---
@@ -95,6 +104,7 @@ Every writing style can be mapped across these dimensions:
 **Best for:** Premium products, luxury brands, high-end services
 
 **Dimensions:**
+
 - Tone: Formal
 - Pace: Measured, spacious
 - Vocabulary: Elegant, selective
@@ -103,6 +113,7 @@ Every writing style can be mapped across these dimensions:
 - Perspective: Second-person
 
 **Characteristics:**
+
 - Fewer words, more impact
 - White space between ideas
 - Refined vocabulary
@@ -110,6 +121,7 @@ Every writing style can be mapped across these dimensions:
 - No hard sell
 
 **Example:**
+
 > "Exceptional results require exceptional attention. We work with founders who understand that true growth cannot be rushed. By invitation only."
 
 ---
@@ -119,6 +131,7 @@ Every writing style can be mapped across these dimensions:
 **Best for:** Wellness, coaching, education, community
 
 **Dimensions:**
+
 - Tone: Casual
 - Pace: Measured
 - Vocabulary: Simple
@@ -127,6 +140,7 @@ Every writing style can be mapped across these dimensions:
 - Perspective: First-person plural ("we")
 
 **Characteristics:**
+
 - Empathetic language
 - Inclusive pronouns
 - Encouraging tone
@@ -134,6 +148,7 @@ Every writing style can be mapped across these dimensions:
 - Gentle CTAs
 
 **Example:**
+
 > "It's okay if you're feeling stuck. We've all been there. The journey isn't always linear, and that's completely normal. Let's explore some gentle ways to move forward together."
 
 ---
@@ -143,6 +158,7 @@ Every writing style can be mapped across these dimensions:
 **Best for:** Developer content, technical tutorials, documentation
 
 **Dimensions:**
+
 - Tone: Neutral-to-Casual
 - Pace: Measured
 - Vocabulary: Technical but explained
@@ -151,6 +167,7 @@ Every writing style can be mapped across these dimensions:
 - Perspective: Second-person
 
 **Characteristics:**
+
 - Code examples
 - Step-by-step structure
 - Precise terminology
@@ -158,6 +175,7 @@ Every writing style can be mapped across these dimensions:
 - Occasional dry humor
 
 **Example:**
+
 > "Here's the thing about async/await—it's not magic, it's just syntactic sugar over Promises. Let's break down what's actually happening under the hood, and why your code isn't working the way you expect."
 
 ## Style Extraction Prompt
@@ -242,6 +260,7 @@ examples:
 ## Integration
 
 Use with:
+
 - `brand-guidelines` skill - Align with brand voice
 - video-to-article workflow - Apply extracted style to long-form output
 - `ck:copywriting` skill workflows - Style-aware content generation

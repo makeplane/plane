@@ -32,6 +32,7 @@
 ## Architecture
 
 Two view layers to update:
+
 1. **App views** (`plane/app/views/module/base.py`, `archive.py`) -- `@allow_permission` decorator
 2. **API views** (`plane/api/views/module.py`) -- `ProjectEntityPermission` class-level perm
 
@@ -87,6 +88,7 @@ For API views, the cleanest approach: create a new permission class `ProjectModu
 6. **Update API view `post` (create module)**
    - File: `apps/api/plane/api/views/module.py`, `ModuleListCreateAPIEndpoint.post`
    - Add admin check at start of method:
+
    ```python
    if not ProjectMember.objects.filter(
        workspace__slug=slug, member=request.user,
@@ -105,6 +107,7 @@ For API views, the cleanest approach: create a new permission class `ProjectModu
 8. **Update API view `delete` (delete module)**
    - File: `apps/api/plane/api/views/module.py`, `ModuleDetailAPIEndpoint.delete`
    - Remove the existing creator-or-admin check (lines 497-509), replace with admin-only check:
+
    ```python
    if not ProjectMember.objects.filter(
        workspace__slug=slug, member=request.user,

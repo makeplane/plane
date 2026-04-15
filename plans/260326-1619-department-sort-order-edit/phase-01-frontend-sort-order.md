@@ -26,11 +26,11 @@ Admin panel (`apps/admin`) already has complete implementation — use as refere
 
 ## Files to Change
 
-| File | Change |
-|------|--------|
-| `apps/web/ce/services/department.service.ts` | Add `sort_order?: number` to 3 interfaces |
+| File                                                      | Change                                        |
+| --------------------------------------------------------- | --------------------------------------------- |
+| `apps/web/ce/services/department.service.ts`              | Add `sort_order?: number` to 3 interfaces     |
 | HO edit/create form modal in `apps/web/ce/components/ho/` | Add `sort_order` to form data + edit populate |
-| HO form fields component in `apps/web/ce/components/ho/` | Add numeric Input for `sort_order` |
+| HO form fields component in `apps/web/ce/components/ho/`  | Add numeric Input for `sort_order`            |
 
 > **Note:** Target is god-mode HO page only. Locate exact edit/create modal component under `apps/web/ce/components/ho/` before editing.
 
@@ -44,6 +44,7 @@ Admin implementation (complete example):
 ### Step 1 — Update types in `department.service.ts`
 
 Add `sort_order?: number` to:
+
 - `IDepartment` interface
 - `IDepartmentCreate` interface
 - `IDepartmentUpdate` interface

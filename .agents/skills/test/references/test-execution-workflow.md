@@ -3,6 +3,7 @@
 ## Step 1: Identify Scope
 
 Determine what to test based on recent changes:
+
 - New feature → full test suite + new test cases
 - Bug fix → regression tests + targeted fix validation
 - Refactor → existing test suite (no new tests unless gaps found)
@@ -34,6 +35,7 @@ cargo check
 ## Step 3: Execute Tests
 
 ### JavaScript/TypeScript
+
 ```bash
 npm test                    # or yarn test / pnpm test / bun test
 npm run test:coverage       # with coverage
@@ -42,6 +44,7 @@ npx jest --coverage         # Jest with coverage
 ```
 
 ### Python
+
 ```bash
 pytest                      # basic
 pytest --cov=src --cov-report=term-missing  # with coverage
@@ -49,6 +52,7 @@ python -m unittest discover # unittest
 ```
 
 ### Go / Rust / Flutter
+
 ```bash
 go test ./... -cover        # Go with coverage
 cargo test                  # Rust
@@ -58,6 +62,7 @@ flutter test --coverage     # Flutter
 ## Step 4: Analyze Results
 
 Focus on:
+
 1. **Failing tests** — read error messages and stack traces carefully
 2. **Flaky tests** — tests that pass/fail intermittently indicate race conditions or state leaks
 3. **Slow tests** — identify bottlenecks (>5s per test is suspicious)
@@ -66,11 +71,13 @@ Focus on:
 ## Step 5: Coverage Analysis
 
 Thresholds:
+
 - **80%+** line coverage — standard minimum
 - **70%+** branch coverage — acceptable for most projects
 - Focus on critical paths: auth, payment, data mutations
 
 Identify gaps:
+
 - Uncovered error handlers
 - Missing edge case branches
 - Untested utility functions
@@ -86,6 +93,7 @@ flutter build               # Flutter
 ```
 
 Check for:
+
 - Build warnings or deprecation notices
 - Unresolved dependencies
 - Production config correctness

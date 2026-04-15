@@ -15,12 +15,12 @@ Add a Delete button (trash icon, always visible) to each workspace row in `/god-
 
 ## Phases
 
-| # | Phase | Status | Est |
-|---|-------|--------|-----|
-| 01 | [Backend: Delete Endpoint](./phase-01-backend-delete-endpoint.md) | ✅ complete | 0.5h |
-| 02 | [Service Layer: InstanceWorkspaceService](./phase-02-service-layer.md) | ✅ complete | 0.5h |
-| 03 | [Admin Store: deleteWorkspace action](./phase-03-admin-store.md) | ✅ complete | 0.5h |
-| 04 | [UI: Delete Modal + List Item Button](./phase-04-ui-components.md) | ✅ complete | 1.5h |
+| #   | Phase                                                                  | Status      | Est  |
+| --- | ---------------------------------------------------------------------- | ----------- | ---- |
+| 01  | [Backend: Delete Endpoint](./phase-01-backend-delete-endpoint.md)      | ✅ complete | 0.5h |
+| 02  | [Service Layer: InstanceWorkspaceService](./phase-02-service-layer.md) | ✅ complete | 0.5h |
+| 03  | [Admin Store: deleteWorkspace action](./phase-03-admin-store.md)       | ✅ complete | 0.5h |
+| 04  | [UI: Delete Modal + List Item Button](./phase-04-ui-components.md)     | ✅ complete | 1.5h |
 
 ## Affected Files
 
@@ -35,6 +35,7 @@ Add a Delete button (trash icon, always visible) to each workspace row in `/god-
 ## Validation Log
 
 ### Session 1 — 2026-03-12
+
 **Trigger:** Initial plan creation
 **Questions asked:** 4
 
@@ -61,14 +62,17 @@ Add a Delete button (trash icon, always visible) to each workspace row in `/god-
    - **Rationale:** Consistent discoverability. Use trash icon from lucide-react.
 
 #### Confirmed Decisions
+
 - Confirmation modal: Two fields (name + "delete my workspace") — mirrors web app
 - API: New `DELETE /api/instances/workspaces/<slug>/` with `InstanceAdminPermission`
 - Button style: Trash icon, always visible on right side of row
 - Post-delete: No redirect/special handling needed
 
 #### Action Items
+
 - [x] Update phase-04 modal to use two-field confirmation (not single field)
 - [x] Update phase-04 Delete button to use trash icon (Trash2 from lucide-react)
 
 #### Impact on Phases
+
 - Phase 04: Modal needs two-field confirmation form; Delete button must be trash icon always visible

@@ -8,11 +8,11 @@ Sub-agents exist to **isolate context**, not anthropomorphize roles.
 
 ## Token Economics
 
-| Architecture | Multiplier | Use Case |
-|--------------|------------|----------|
-| Single agent | 1x | Simple tasks |
-| Single + tools | ~4x | Moderate complexity |
-| Multi-agent | ~15x | Context isolation needed |
+| Architecture   | Multiplier | Use Case                 |
+| -------------- | ---------- | ------------------------ |
+| Single agent   | 1x         | Simple tasks             |
+| Single + tools | ~4x        | Moderate complexity      |
+| Multi-agent    | ~15x       | Context isolation needed |
 
 **Key**: Token usage explains 80% of performance variance.
 
@@ -49,11 +49,11 @@ Strategy → Planning → Execution layers
 
 ## Context Isolation Patterns
 
-| Pattern | Isolation | Use Case |
-|---------|-----------|----------|
-| Full delegation | None | Max capability |
-| Instruction passing | High | Simple tasks |
-| File coordination | Medium | Shared state |
+| Pattern             | Isolation | Use Case       |
+| ------------------- | --------- | -------------- |
+| Full delegation     | None      | Max capability |
+| Instruction passing | High      | Simple tasks   |
+| File coordination   | Medium    | Shared state   |
 
 ## Consensus Mechanisms
 
@@ -68,12 +68,12 @@ def weighted_consensus(responses):
 
 ## Failure Recovery
 
-| Failure | Mitigation |
-|---------|------------|
-| Bottleneck | Output schemas, checkpointing |
-| Overhead | Clear handoffs, batching |
+| Failure    | Mitigation                     |
+| ---------- | ------------------------------ |
+| Bottleneck | Output schemas, checkpointing  |
+| Overhead   | Clear handoffs, batching       |
 | Divergence | Boundaries, convergence checks |
-| Errors | Validation, circuit breakers |
+| Errors     | Validation, circuit breakers   |
 
 ## Guidelines
 

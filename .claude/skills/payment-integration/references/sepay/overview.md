@@ -5,6 +5,7 @@ Vietnamese payment automation platform serving as intermediary between applicati
 ## Core Capabilities
 
 **Payment Methods:**
+
 - VietQR - QR code bank transfers (NAPAS standard)
 - NAPAS QR - National payment gateway QR
 - Bank Cards - Visa/Mastercard/JCB
@@ -14,6 +15,7 @@ Vietnamese payment automation platform serving as intermediary between applicati
 **Supported Banks:** 44+ banks via NAPAS, 37+ with VietQR (Vietcombank, VPBank, BIDV, etc.)
 
 **Use Cases:**
+
 - Payment gateway for online payments
 - Bank API direct connection
 - Transaction verification automation
@@ -24,11 +26,13 @@ Vietnamese payment automation platform serving as intermediary between applicati
 ### API Token (Simple)
 
 **Create:**
+
 1. Company Configuration → API Access → "+ Add API"
 2. Provide name, set status "Active"
 3. Copy token from list
 
 **Usage:**
+
 ```
 Authorization: Bearer {API_TOKEN}
 Content-Type: application/json
@@ -39,6 +43,7 @@ Content-Type: application/json
 ### OAuth2 (Advanced)
 
 **Scopes:**
+
 - `bank-account:read` - View accounts, balances
 - `transaction:read` - Transaction history
 - `webhook:read/write/delete` - Webhook management
@@ -48,6 +53,7 @@ Content-Type: application/json
 **Authorization Code Flow:**
 
 1. **Authorization Request:**
+
 ```
 GET https://my.sepay.vn/oauth/authorize?
   response_type=code&
@@ -58,6 +64,7 @@ GET https://my.sepay.vn/oauth/authorize?
 ```
 
 2. **Token Exchange (server-side only):**
+
 ```
 POST https://my.sepay.vn/oauth/token
 {
@@ -69,6 +76,7 @@ POST https://my.sepay.vn/oauth/token
 ```
 
 3. **Token Refresh:**
+
 ```
 POST https://my.sepay.vn/oauth/token
 {
@@ -100,11 +108,13 @@ POST https://my.sepay.vn/oauth/token
 ## Environments
 
 **Sandbox:**
+
 - Dashboard: https://my.sepay.vn (free tier)
 - Endpoint: https://sandbox.pay.sepay.vn/v1/init
 - Credentials: `SP-TEST-XXXXXXX`, `spsk_test_xxxxxxxxxxxxx`
 
 **Production:**
+
 - Endpoint: https://pay.sepay.vn/v1/init
 - Requirements: Personal/business bank account, completed testing
 - Approval: 3-7 days for NAPAS QR/cards (requires documentation)
@@ -115,9 +125,10 @@ POST https://my.sepay.vn/oauth/token
 **Response:** HTTP 429 with `x-sepay-userapi-retry-after` header (seconds to wait)
 
 **Handling:**
+
 ```javascript
 if (response.status === 429) {
-  const retryAfter = response.headers.get('x-sepay-userapi-retry-after');
+  const retryAfter = response.headers.get("x-sepay-userapi-retry-after");
   await sleep(retryAfter * 1000);
   return retry();
 }

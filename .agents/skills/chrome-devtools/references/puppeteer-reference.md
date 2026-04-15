@@ -32,19 +32,19 @@ npm install puppeteer-core
 ### Basic Usage
 
 ```javascript
-import puppeteer from 'puppeteer';
+import puppeteer from "puppeteer";
 
 // Launch browser
 const browser = await puppeteer.launch({
   headless: true,
-  args: ['--no-sandbox']
+  args: ["--no-sandbox"],
 });
 
 // Open page
 const page = await browser.newPage();
 
 // Navigate
-await page.goto('https://example.com');
+await page.goto("https://example.com");
 
 // Do work...
 
@@ -61,43 +61,43 @@ await browser.close();
 ```javascript
 const browser = await puppeteer.launch({
   // Visibility
-  headless: false,              // Show browser UI
-  headless: 'new',              // New headless mode (Chrome 112+)
+  headless: false, // Show browser UI
+  headless: "new", // New headless mode (Chrome 112+)
 
   // Chrome location
-  executablePath: '/path/to/chrome',
-  channel: 'chrome',            // or 'chrome-canary', 'chrome-beta'
+  executablePath: "/path/to/chrome",
+  channel: "chrome", // or 'chrome-canary', 'chrome-beta'
 
   // Browser context
-  userDataDir: './user-data',   // Persistent profile
+  userDataDir: "./user-data", // Persistent profile
 
   // Window size
   defaultViewport: {
     width: 1920,
     height: 1080,
     deviceScaleFactor: 1,
-    isMobile: false
+    isMobile: false,
   },
 
   // Advanced options
   args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-web-security',
-    '--disable-features=IsolateOrigins',
-    '--disable-site-isolation-trials',
-    '--start-maximized'
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-web-security",
+    "--disable-features=IsolateOrigins",
+    "--disable-site-isolation-trials",
+    "--start-maximized",
   ],
 
   // Debugging
-  devtools: true,               // Open DevTools automatically
-  slowMo: 250,                  // Slow down by 250ms per action
+  devtools: true, // Open DevTools automatically
+  slowMo: 250, // Slow down by 250ms per action
 
   // Network
   proxy: {
-    server: 'http://proxy.com:8080'
-  }
+    server: "http://proxy.com:8080",
+  },
 });
 ```
 
@@ -108,7 +108,7 @@ const browser = await puppeteer.launch({
 // google-chrome --remote-debugging-port=9222
 
 const browser = await puppeteer.connect({
-  browserURL: 'http://localhost:9222',
+  browserURL: "http://localhost:9222",
   // or browserWSEndpoint: 'ws://localhost:9222/devtools/browser/...'
 });
 ```
@@ -152,16 +152,16 @@ await context.close();
 
 ```javascript
 // Navigate to URL
-await page.goto('https://example.com');
+await page.goto("https://example.com");
 
 // Navigate with options
-await page.goto('https://example.com', {
-  waitUntil: 'networkidle2',    // or 'load', 'domcontentloaded', 'networkidle0'
-  timeout: 30000                 // Max wait time (ms)
+await page.goto("https://example.com", {
+  waitUntil: "networkidle2", // or 'load', 'domcontentloaded', 'networkidle0'
+  timeout: 30000, // Max wait time (ms)
 });
 
 // Reload page
-await page.reload({ waitUntil: 'networkidle2' });
+await page.reload({ waitUntil: "networkidle2" });
 
 // Navigation history
 await page.goBack();
@@ -169,7 +169,7 @@ await page.goForward();
 
 // Wait for navigation
 await page.waitForNavigation({
-  waitUntil: 'networkidle2'
+  waitUntil: "networkidle2",
 });
 ```
 
@@ -188,15 +188,15 @@ await page.waitForNavigation({
 
 ```javascript
 // CSS selectors
-await page.$('#id');
-await page.$('.class');
-await page.$('div > p');
+await page.$("#id");
+await page.$(".class");
+await page.$("div > p");
 
 // XPath
 await page.$x('//button[text()="Submit"]');
 
 // Get all matching elements
-await page.$$('.item');
+await page.$$(".item");
 await page.$$x('//div[@class="item"]');
 ```
 
@@ -204,17 +204,17 @@ await page.$$x('//div[@class="item"]');
 
 ```javascript
 // Click by selector
-await page.click('.button');
+await page.click(".button");
 
 // Click with options
-await page.click('.button', {
-  button: 'left',           // or 'right', 'middle'
-  clickCount: 1,            // 2 for double-click
-  delay: 100                // Delay between mousedown and mouseup
+await page.click(".button", {
+  button: "left", // or 'right', 'middle'
+  clickCount: 1, // 2 for double-click
+  delay: 100, // Delay between mousedown and mouseup
 });
 
 // ElementHandle click
-const button = await page.$('.button');
+const button = await page.$(".button");
 await button.click();
 ```
 
@@ -222,26 +222,26 @@ await button.click();
 
 ```javascript
 // Type into input
-await page.type('#search', 'query text');
+await page.type("#search", "query text");
 
 // Type with delay
-await page.type('#search', 'slow typing', { delay: 100 });
+await page.type("#search", "slow typing", { delay: 100 });
 
 // Clear and type
-await page.$eval('#search', el => el.value = '');
-await page.type('#search', 'new text');
+await page.$eval("#search", (el) => (el.value = ""));
+await page.type("#search", "new text");
 ```
 
 ### Form Interaction
 
 ```javascript
 // Fill input
-await page.type('#username', 'john@example.com');
-await page.type('#password', 'secret123');
+await page.type("#username", "john@example.com");
+await page.type("#password", "secret123");
 
 // Select dropdown option
-await page.select('#country', 'US');           // By value
-await page.select('#country', 'USA', 'UK');    // Multiple
+await page.select("#country", "US"); // By value
+await page.select("#country", "USA", "UK"); // Multiple
 
 // Check/uncheck checkbox
 await page.click('input[type="checkbox"]');
@@ -251,7 +251,7 @@ await page.click('input[value="option2"]');
 
 // Upload file
 const input = await page.$('input[type="file"]');
-await input.uploadFile('/path/to/file.pdf');
+await input.uploadFile("/path/to/file.pdf");
 
 // Submit form
 await page.click('button[type="submit"]');
@@ -262,20 +262,20 @@ await page.waitForNavigation();
 
 ```javascript
 // Hover over element
-await page.hover('.menu-item');
+await page.hover(".menu-item");
 
 // Focus element
-await page.focus('#input');
+await page.focus("#input");
 
 // Blur
-await page.$eval('#input', el => el.blur());
+await page.$eval("#input", (el) => el.blur());
 ```
 
 ### Drag & Drop
 
 ```javascript
-const source = await page.$('.draggable');
-const target = await page.$('.drop-zone');
+const source = await page.$(".draggable");
+const target = await page.$(".drop-zone");
 
 await source.drag(target);
 await source.drop(target);
@@ -292,54 +292,51 @@ await source.drop(target);
 const title = await page.evaluate(() => document.title);
 
 // With arguments
-const text = await page.evaluate(
-  (selector) => document.querySelector(selector).textContent,
-  '.heading'
-);
+const text = await page.evaluate((selector) => document.querySelector(selector).textContent, ".heading");
 
 // Return complex data
 const data = await page.evaluate(() => ({
   title: document.title,
   url: location.href,
-  cookies: document.cookie
+  cookies: document.cookie,
 }));
 
 // With ElementHandle
-const element = await page.$('.button');
-const text = await page.evaluate(el => el.textContent, element);
+const element = await page.$(".button");
+const text = await page.evaluate((el) => el.textContent, element);
 ```
 
 ### Query & Modify DOM
 
 ```javascript
 // Get element property
-const value = await page.$eval('#input', el => el.value);
+const value = await page.$eval("#input", (el) => el.value);
 
 // Get multiple elements
-const items = await page.$$eval('.item', elements =>
-  elements.map(el => el.textContent)
-);
+const items = await page.$$eval(".item", (elements) => elements.map((el) => el.textContent));
 
 // Modify element
-await page.$eval('#input', (el, value) => {
-  el.value = value;
-}, 'new value');
+await page.$eval(
+  "#input",
+  (el, value) => {
+    el.value = value;
+  },
+  "new value"
+);
 
 // Add class
-await page.$eval('.element', el => el.classList.add('active'));
+await page.$eval(".element", (el) => el.classList.add("active"));
 ```
 
 ### Expose Functions
 
 ```javascript
 // Expose Node.js function to page
-await page.exposeFunction('md5', (text) =>
-  crypto.createHash('md5').update(text).digest('hex')
-);
+await page.exposeFunction("md5", (text) => crypto.createHash("md5").update(text).digest("hex"));
 
 // Call from page context
 const hash = await page.evaluate(async () => {
-  return await window.md5('hello world');
+  return await window.md5("hello world");
 });
 ```
 
@@ -352,34 +349,35 @@ const hash = await page.evaluate(async () => {
 ```javascript
 // Full page screenshot
 await page.screenshot({
-  path: 'screenshot.png',
-  fullPage: true
+  path: "screenshot.png",
+  fullPage: true,
 });
 
 // Viewport screenshot
 await page.screenshot({
-  path: 'viewport.png',
-  fullPage: false
+  path: "viewport.png",
+  fullPage: false,
 });
 
 // Element screenshot
-const element = await page.$('.chart');
+const element = await page.$(".chart");
 await element.screenshot({
-  path: 'chart.png'
+  path: "chart.png",
 });
 
 // Screenshot options
 await page.screenshot({
-  path: 'page.png',
-  type: 'png',              // or 'jpeg', 'webp'
-  quality: 80,              // JPEG quality (0-100)
-  clip: {                   // Crop region
+  path: "page.png",
+  type: "png", // or 'jpeg', 'webp'
+  quality: 80, // JPEG quality (0-100)
+  clip: {
+    // Crop region
     x: 0,
     y: 0,
     width: 500,
-    height: 500
+    height: 500,
   },
-  omitBackground: true      // Transparent background
+  omitBackground: true, // Transparent background
 });
 
 // Screenshot to buffer
@@ -391,31 +389,31 @@ const buffer = await page.screenshot();
 ```javascript
 // Generate PDF
 await page.pdf({
-  path: 'page.pdf',
-  format: 'A4',             // or 'Letter', 'Legal', etc.
+  path: "page.pdf",
+  format: "A4", // or 'Letter', 'Legal', etc.
   printBackground: true,
   margin: {
-    top: '1cm',
-    right: '1cm',
-    bottom: '1cm',
-    left: '1cm'
-  }
+    top: "1cm",
+    right: "1cm",
+    bottom: "1cm",
+    left: "1cm",
+  },
 });
 
 // Custom page size
 await page.pdf({
-  path: 'custom.pdf',
-  width: '8.5in',
-  height: '11in',
-  landscape: true
+  path: "custom.pdf",
+  width: "8.5in",
+  height: "11in",
+  landscape: true,
 });
 
 // Header and footer
 await page.pdf({
-  path: 'report.pdf',
+  path: "report.pdf",
   displayHeaderFooter: true,
   headerTemplate: '<div style="font-size:10px;">Header</div>',
-  footerTemplate: '<div style="font-size:10px;">Page <span class="pageNumber"></span></div>'
+  footerTemplate: '<div style="font-size:10px;">Page <span class="pageNumber"></span></div>',
 });
 ```
 
@@ -430,22 +428,22 @@ await page.pdf({
 await page.setRequestInterception(true);
 
 // Intercept requests
-page.on('request', (request) => {
+page.on("request", (request) => {
   // Block specific resource types
-  if (request.resourceType() === 'image') {
+  if (request.resourceType() === "image") {
     request.abort();
   }
   // Block URLs
-  else if (request.url().includes('ads')) {
+  else if (request.url().includes("ads")) {
     request.abort();
   }
   // Modify request
-  else if (request.url().includes('api')) {
+  else if (request.url().includes("api")) {
     request.continue({
       headers: {
         ...request.headers(),
-        'Authorization': 'Bearer token'
-      }
+        Authorization: "Bearer token",
+      },
     });
   }
   // Continue normally
@@ -460,15 +458,15 @@ page.on('request', (request) => {
 ```javascript
 await page.setRequestInterception(true);
 
-page.on('request', (request) => {
-  if (request.url().includes('/api/user')) {
+page.on("request", (request) => {
+  if (request.url().includes("/api/user")) {
     request.respond({
       status: 200,
-      contentType: 'application/json',
+      contentType: "application/json",
       body: JSON.stringify({
         id: 1,
-        name: 'Mock User'
-      })
+        name: "Mock User",
+      }),
     });
   } else {
     request.continue();
@@ -480,25 +478,25 @@ page.on('request', (request) => {
 
 ```javascript
 // Track requests
-page.on('request', (request) => {
-  console.log('Request:', request.method(), request.url());
+page.on("request", (request) => {
+  console.log("Request:", request.method(), request.url());
 });
 
 // Track responses
-page.on('response', (response) => {
-  console.log('Response:', response.status(), response.url());
+page.on("response", (response) => {
+  console.log("Response:", response.status(), response.url());
 });
 
 // Track failed requests
-page.on('requestfailed', (request) => {
-  console.log('Failed:', request.failure().errorText, request.url());
+page.on("requestfailed", (request) => {
+  console.log("Failed:", request.failure().errorText, request.url());
 });
 
 // Get response body
-page.on('response', async (response) => {
-  if (response.url().includes('/api/data')) {
+page.on("response", async (response) => {
+  if (response.url().includes("/api/data")) {
     const json = await response.json();
-    console.log('API Data:', json);
+    console.log("API Data:", json);
   }
 });
 ```
@@ -510,19 +508,19 @@ page.on('response', async (response) => {
 ### Predefined Devices
 
 ```javascript
-import { devices } from 'puppeteer';
+import { devices } from "puppeteer";
 
 // Emulate iPhone
-const iPhone = devices['iPhone 13 Pro'];
+const iPhone = devices["iPhone 13 Pro"];
 await page.emulate(iPhone);
 
 // Common devices
-const iPad = devices['iPad Pro'];
-const pixel = devices['Pixel 5'];
-const galaxy = devices['Galaxy S9+'];
+const iPad = devices["iPad Pro"];
+const pixel = devices["Pixel 5"];
+const galaxy = devices["Galaxy S9+"];
 
 // Navigate after emulation
-await page.goto('https://example.com');
+await page.goto("https://example.com");
 ```
 
 ### Custom Device
@@ -535,9 +533,9 @@ await page.emulate({
     deviceScaleFactor: 3,
     isMobile: true,
     hasTouch: true,
-    isLandscape: false
+    isLandscape: false,
   },
-  userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)...'
+  userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)...",
 });
 ```
 
@@ -547,7 +545,7 @@ await page.emulate({
 await page.setViewport({
   width: 1920,
   height: 1080,
-  deviceScaleFactor: 1
+  deviceScaleFactor: 1,
 });
 ```
 
@@ -558,25 +556,25 @@ await page.setViewport({
 await page.setGeolocation({
   latitude: 37.7749,
   longitude: -122.4194,
-  accuracy: 100
+  accuracy: 100,
 });
 
 // Grant permissions
 const context = browser.defaultBrowserContext();
-await context.overridePermissions('https://example.com', ['geolocation']);
+await context.overridePermissions("https://example.com", ["geolocation"]);
 ```
 
 ### Timezone & Locale
 
 ```javascript
 // Set timezone
-await page.emulateTimezone('America/New_York');
+await page.emulateTimezone("America/New_York");
 
 // Set locale
-await page.emulateMediaType('screen');
+await page.emulateMediaType("screen");
 await page.evaluateOnNewDocument(() => {
-  Object.defineProperty(navigator, 'language', {
-    get: () => 'en-US'
+  Object.defineProperty(navigator, "language", {
+    get: () => "en-US",
   });
 });
 ```
@@ -590,27 +588,25 @@ await page.evaluateOnNewDocument(() => {
 ```javascript
 // CPU throttling
 const client = await page.createCDPSession();
-await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+await client.send("Emulation.setCPUThrottlingRate", { rate: 4 });
 
 // Network throttling
 await page.emulateNetworkConditions({
   offline: false,
-  downloadThroughput: 1.5 * 1024 * 1024 / 8, // 1.5 Mbps
-  uploadThroughput: 750 * 1024 / 8,           // 750 Kbps
-  latency: 40                                  // 40ms RTT
+  downloadThroughput: (1.5 * 1024 * 1024) / 8, // 1.5 Mbps
+  uploadThroughput: (750 * 1024) / 8, // 750 Kbps
+  latency: 40, // 40ms RTT
 });
 
 // Predefined profiles
-await page.emulateNetworkConditions(
-  puppeteer.networkConditions['Fast 3G']
-);
+await page.emulateNetworkConditions(puppeteer.networkConditions["Fast 3G"]);
 
 // Disable throttling
 await page.emulateNetworkConditions({
   offline: false,
   downloadThroughput: -1,
   uploadThroughput: -1,
-  latency: 0
+  latency: 0,
 });
 ```
 
@@ -634,15 +630,12 @@ console.log(metrics);
 ```javascript
 // Start tracing
 await page.tracing.start({
-  path: 'trace.json',
-  categories: [
-    'devtools.timeline',
-    'disabled-by-default-devtools.timeline'
-  ]
+  path: "trace.json",
+  categories: ["devtools.timeline", "disabled-by-default-devtools.timeline"],
 });
 
 // Navigate
-await page.goto('https://example.com');
+await page.goto("https://example.com");
 
 // Stop tracing
 await page.tracing.stop();
@@ -660,7 +653,7 @@ await page.coverage.startJSCoverage();
 await page.coverage.startCSSCoverage();
 
 // Navigate
-await page.goto('https://example.com');
+await page.goto("https://example.com");
 
 // Stop and get coverage
 const jsCoverage = await page.coverage.stopJSCoverage();
@@ -676,7 +669,7 @@ for (const entry of [...jsCoverage, ...cssCoverage]) {
   }
 }
 
-console.log(`Used: ${usedBytes / totalBytes * 100}%`);
+console.log(`Used: ${(usedBytes / totalBytes) * 100}%`);
 ```
 
 ---
@@ -687,19 +680,16 @@ console.log(`Used: ${usedBytes / totalBytes * 100}%`);
 
 ```javascript
 // Wait for selector
-await page.waitForSelector('.element', {
+await page.waitForSelector(".element", {
   visible: true,
-  timeout: 5000
+  timeout: 5000,
 });
 
 // Wait for XPath
 await page.waitForXPath('//button[text()="Submit"]');
 
 // Wait for function
-await page.waitForFunction(
-  () => document.querySelector('.loading') === null,
-  { timeout: 10000 }
-);
+await page.waitForFunction(() => document.querySelector(".loading") === null, { timeout: 10000 });
 
 // Wait for timeout
 await page.waitForTimeout(2000);
@@ -709,7 +699,7 @@ await page.waitForTimeout(2000);
 
 ```javascript
 // Alert, confirm, prompt
-page.on('dialog', async (dialog) => {
+page.on("dialog", async (dialog) => {
   console.log(dialog.type(), dialog.message());
 
   // Accept
@@ -726,33 +716,33 @@ page.on('dialog', async (dialog) => {
 ```javascript
 // Set download path
 const client = await page.createCDPSession();
-await client.send('Page.setDownloadBehavior', {
-  behavior: 'allow',
-  downloadPath: '/path/to/downloads'
+await client.send("Page.setDownloadBehavior", {
+  behavior: "allow",
+  downloadPath: "/path/to/downloads",
 });
 
 // Trigger download
-await page.click('a[download]');
+await page.click("a[download]");
 ```
 
 ### Multiple Pages (Tabs)
 
 ```javascript
 // Listen for new pages
-browser.on('targetcreated', async (target) => {
-  if (target.type() === 'page') {
+browser.on("targetcreated", async (target) => {
+  if (target.type() === "page") {
     const newPage = await target.page();
-    console.log('New page opened:', newPage.url());
+    console.log("New page opened:", newPage.url());
   }
 });
 
 // Click link that opens new tab
 const [newPage] = await Promise.all([
-  new Promise(resolve => browser.once('targetcreated', target => resolve(target.page()))),
-  page.click('a[target="_blank"]')
+  new Promise((resolve) => browser.once("targetcreated", (target) => resolve(target.page()))),
+  page.click('a[target="_blank"]'),
 ]);
 
-console.log('New page URL:', newPage.url());
+console.log("New page URL:", newPage.url());
 ```
 
 ### Frames (iframes)
@@ -762,17 +752,17 @@ console.log('New page URL:', newPage.url());
 const frames = page.frames();
 
 // Find frame by name
-const frame = page.frames().find(f => f.name() === 'myframe');
+const frame = page.frames().find((f) => f.name() === "myframe");
 
 // Find frame by URL
-const frame = page.frames().find(f => f.url().includes('example.com'));
+const frame = page.frames().find((f) => f.url().includes("example.com"));
 
 // Main frame
 const mainFrame = page.mainFrame();
 
 // Interact with frame
-await frame.click('.button');
-await frame.type('#input', 'text');
+await frame.click(".button");
+await frame.type("#input", "text");
 ```
 
 ### Infinite Scroll
@@ -808,17 +798,17 @@ const cookies = await page.cookies();
 
 // Set cookies
 await page.setCookie({
-  name: 'session',
-  value: 'abc123',
-  domain: 'example.com',
-  path: '/',
+  name: "session",
+  value: "abc123",
+  domain: "example.com",
+  path: "/",
   httpOnly: true,
   secure: true,
-  sameSite: 'Strict'
+  sameSite: "Strict",
 });
 
 // Delete cookies
-await page.deleteCookie({ name: 'session' });
+await page.deleteCookie({ name: "session" });
 ```
 
 ### Local Storage
@@ -826,12 +816,12 @@ await page.deleteCookie({ name: 'session' });
 ```javascript
 // Set localStorage
 await page.evaluate(() => {
-  localStorage.setItem('key', 'value');
+  localStorage.setItem("key", "value");
 });
 
 // Get localStorage
 const value = await page.evaluate(() => {
-  return localStorage.getItem('key');
+  return localStorage.getItem("key");
 });
 
 // Clear localStorage
@@ -842,19 +832,19 @@ await page.evaluate(() => localStorage.clear());
 
 ```javascript
 try {
-  await page.goto('https://example.com', {
-    waitUntil: 'networkidle2',
-    timeout: 30000
+  await page.goto("https://example.com", {
+    waitUntil: "networkidle2",
+    timeout: 30000,
   });
 } catch (error) {
-  if (error.name === 'TimeoutError') {
-    console.error('Page load timeout');
+  if (error.name === "TimeoutError") {
+    console.error("Page load timeout");
   } else {
-    console.error('Navigation failed:', error);
+    console.error("Navigation failed:", error);
   }
 
   // Take screenshot on error
-  await page.screenshot({ path: 'error.png' });
+  await page.screenshot({ path: "error.png" });
 }
 ```
 
@@ -864,27 +854,24 @@ try {
 // Hide automation indicators
 await page.evaluateOnNewDocument(() => {
   // Override navigator.webdriver
-  Object.defineProperty(navigator, 'webdriver', {
-    get: () => false
+  Object.defineProperty(navigator, "webdriver", {
+    get: () => false,
   });
 
   // Mock chrome object
   window.chrome = {
-    runtime: {}
+    runtime: {},
   };
 
   // Mock permissions
   const originalQuery = window.navigator.permissions.query;
-  window.navigator.permissions.query = (parameters) => (
-    parameters.name === 'notifications' ?
-      Promise.resolve({ state: 'granted' }) :
-      originalQuery(parameters)
-  );
+  window.navigator.permissions.query = (parameters) =>
+    parameters.name === "notifications" ? Promise.resolve({ state: "granted" }) : originalQuery(parameters);
 });
 
 // Set realistic user agent
 await page.setUserAgent(
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 );
 ```
 
@@ -895,8 +882,8 @@ await page.setUserAgent(
 ### Take Screenshots on Error
 
 ```javascript
-page.on('pageerror', async (error) => {
-  console.error('Page error:', error);
+page.on("pageerror", async (error) => {
+  console.error("Page error:", error);
   await page.screenshot({ path: `error-${Date.now()}.png` });
 });
 ```
@@ -905,8 +892,8 @@ page.on('pageerror', async (error) => {
 
 ```javascript
 // Forward console to Node
-page.on('console', (msg) => {
-  console.log('PAGE LOG:', msg.text());
+page.on("console", (msg) => {
+  console.log("PAGE LOG:", msg.text());
 });
 ```
 
@@ -914,7 +901,7 @@ page.on('console', (msg) => {
 
 ```javascript
 const browser = await puppeteer.launch({
-  slowMo: 250  // 250ms delay between actions
+  slowMo: 250, // 250ms delay between actions
 });
 ```
 

@@ -1,6 +1,7 @@
 # Research Report: Plane Permission/Role System
 
 ## Summary
+
 Plane implements a tiered role-based access control (RBAC) with workspace and project roles. Module management uses `@allow_permission([ROLE.ADMIN, ROLE.MEMBER])` decorator for write ops and `@allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])` for read ops. Frontend permissions stored in MobX stores; UI controls conditionally hidden based on role checks.
 
 ---
@@ -8,6 +9,7 @@ Plane implements a tiered role-based access control (RBAC) with workspace and pr
 ## Backend Permission System
 
 ### Permission Architecture
+
 - **File**: `apps/api/plane/app/permissions/`
 - **Core exports**: `allow_permission`, `ROLE`, `ProjectEntityPermission`, `WorkspaceEntityPermission`
 - **Workspace roles** (defined in base.py): ADMIN=20, MEMBER=10, VIEWER=5, GUEST=0
@@ -19,6 +21,7 @@ Plane implements a tiered role-based access control (RBAC) with workspace and pr
   - `ProjectPagePermission` - page-specific rules
 
 ### Module Views Permission Pattern
+
 **File**: `apps/api/plane/app/views/module/base.py`
 
 ```python
@@ -40,6 +43,7 @@ def destroy(self, request, slug, project_id, pk):  # Line 723
 ```
 
 ### Key Pattern
+
 - `@allow_permission` decorator in `base.py` checks user's workspace role
 - `creator=True` parameter: enforces user created the resource OR is workspace admin
 - No permission_classes on ModuleViewSet (uses decorator-based checks)
@@ -47,6 +51,7 @@ def destroy(self, request, slug, project_id, pk):  # Line 723
 - `ModuleFavoriteViewSet` uses `ProjectLitePermission`
 
 ### is_staff/system_admin
+
 Not explicitly used in module views. Admin checks via workspace role (ROLE.ADMIN = 20).
 
 ---
@@ -54,6 +59,7 @@ Not explicitly used in module views. Admin checks via workspace role (ROLE.ADMIN
 ## Frontend Permission System
 
 ### Role Check Patterns
+
 **File**: `apps/web/ce/store/user/permission.store.ts`
 
 - Extends `BaseUserPermissionStore` (core)
@@ -62,19 +68,23 @@ Not explicitly used in module views. Admin checks via workspace role (ROLE.ADMIN
 - Used in components via `const { permission } = useUserPermissionStore()`
 
 ### Module Frontend Components
+
 **Path**: `apps/web/ce/components/modules/` - No CE-specific overrides found. Uses core components.
 
 ### Typical UI Control Pattern
+
 ```tsx
 // Pseudo-code pattern from codebase
-const { membership: { role } } = useWorkspaceStore();
+const {
+  membership: { role },
+} = useWorkspaceStore();
 const canEdit = [ROLE.ADMIN, ROLE.MEMBER].includes(role);
 
 return (
   <>
     {canEdit && <EditButton />}
     {canEdit && <DeleteButton />}
-    <ViewModule />  // Always visible
+    <ViewModule /> // Always visible
   </>
 );
 ```
@@ -83,19 +93,20 @@ return (
 
 ## Module Operations Matrix
 
-| Operation | Current Perms | Who Can Do It |
-|-----------|--------------|--------------|
-| Create    | ADMIN, MEMBER | Workspace ADMIN/MEMBER |
-| Read list | ADMIN, MEMBER, GUEST | All workspace members |
-| Read detail | ADMIN, MEMBER | ADMIN/MEMBER only |
-| Edit      | ADMIN, MEMBER | ADMIN/MEMBER only |
-| Delete    | ADMIN (creator flag) | Module creator + workspace ADMIN |
-| Toggle Favorite | ProjectLitePermission | Active project member |
-| Edit user properties | ADMIN, MEMBER, GUEST | All members (UI filters) |
+| Operation            | Current Perms         | Who Can Do It                    |
+| -------------------- | --------------------- | -------------------------------- |
+| Create               | ADMIN, MEMBER         | Workspace ADMIN/MEMBER           |
+| Read list            | ADMIN, MEMBER, GUEST  | All workspace members            |
+| Read detail          | ADMIN, MEMBER         | ADMIN/MEMBER only                |
+| Edit                 | ADMIN, MEMBER         | ADMIN/MEMBER only                |
+| Delete               | ADMIN (creator flag)  | Module creator + workspace ADMIN |
+| Toggle Favorite      | ProjectLitePermission | Active project member            |
+| Edit user properties | ADMIN, MEMBER, GUEST  | All members (UI filters)         |
 
 ---
 
 ## Key Files Referenced
+
 - Backend permissions: `apps/api/plane/app/permissions/base.py`, `project.py`, `workspace.py`
 - Module views: `apps/api/plane/app/views/module/base.py` (730+ lines)
 - Frontend permission store: `apps/web/ce/store/user/permission.store.ts`
@@ -104,6 +115,7 @@ return (
 ---
 
 ## Implications for Module Activities/Worklog
+
 - **Logging operations**: Use `@allow_permission([ROLE.ADMIN, ROLE.MEMBER])` for create/edit/delete
 - **Filtering UI**: Check role before showing worklog create/edit buttons
 - **Audit trail**: No special role escalation needed (follows module op permissions)
@@ -112,5 +124,6 @@ return (
 ---
 
 ## Unresolved Questions
+
 1. Does `ModuleLinkViewSet.permission_classes = [ProjectEntityPermission]` override `ModuleViewSet`'s decorator-based checks? Need to verify permission chain.
 2. Should worklog inherit GUEST read access or remain ADMIN/MEMBER only?

@@ -6,6 +6,7 @@
 ## Step 1: Research
 
 Spawn multiple `researcher` subagents in parallel:
+
 - Explore request, idea validation, challenges, best solutions
 - Keep every report ≤150 lines
 
@@ -36,6 +37,7 @@ No user gate — auto-select best option.
 ## Step 4: Planning
 
 Activate **ck:plan** skill: `/ck:plan --auto <requirements>`
+
 - Planning skill auto-detects complexity and picks appropriate mode
 - Creates plan directory using `## Naming` pattern
 - Overview at `plan.md` (<80 lines) + `phase-XX-*.md` files
@@ -47,6 +49,7 @@ No user gate — proceed to implementation.
 Load `references/shared-phases.md` for remaining phases.
 
 Activate **ck:cook** skill: `/ck:cook --auto <plan-path>`
+
 - Skips all review gates
 - Auto-approves if score≥9.5 and 0 critical issues
 - Continues through all phases without stopping

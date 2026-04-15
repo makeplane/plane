@@ -17,7 +17,9 @@
   justify-content: space-between;
   padding: 0 1rem;
   z-index: 100;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .reader-header.is-hidden {
@@ -86,7 +88,9 @@
   cursor: pointer;
   color: var(--text-secondary);
   border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .icon-btn:hover {
@@ -102,7 +106,9 @@ a.icon-btn {
   text-decoration: none;
   padding: 0.5rem;
   border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 a.icon-btn.back-btn {
@@ -157,10 +163,18 @@ a.icon-btn.back-btn:hover {
 }
 
 /* Theme toggle icons */
-.sun-icon { display: block; }
-.moon-icon { display: none; }
-[data-theme="dark"] .sun-icon { display: none; }
-[data-theme="dark"] .moon-icon { display: block; }
+.sun-icon {
+  display: block;
+}
+.moon-icon {
+  display: none;
+}
+[data-theme="dark"] .sun-icon {
+  display: none;
+}
+[data-theme="dark"] .moon-icon {
+  display: block;
+}
 
 /* Font controls */
 .font-controls {

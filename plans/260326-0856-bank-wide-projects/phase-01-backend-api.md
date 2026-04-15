@@ -25,6 +25,7 @@ GET /api/workspaces/{slug}/bank-wide-projects/
 ```
 
 ### Response shape (per project)
+
 Must include workspace info so the frontend can show which workspace each project belongs to. Use `ProjectListSerializer` + annotate workspace slug/name.
 
 ## Related Code Files
@@ -84,7 +85,7 @@ path(
 ),
 ```
 
-### 3. Export view in `apps/api/plane/app/views/__init__.py` or views/project/__init__.py
+### 3. Export view in `apps/api/plane/app/views/__init__.py` or views/project/**init**.py
 
 Add import for `WorkspaceBankWideProjectsEndpoint`.
 

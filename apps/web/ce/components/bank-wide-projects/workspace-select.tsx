@@ -17,9 +17,7 @@ type Props = {
 export const BankWideWorkspaceSelect = function BankWideWorkspaceSelect({ value, onChange }: Props) {
   const { t } = useTranslation();
 
-  const { data: workspaces = [] } = useSWR("HO_ACCESSIBLE_WORKSPACES", () =>
-    hoIssueService.listAccessibleWorkspaces()
-  );
+  const { data: workspaces = [] } = useSWR("HO_ACCESSIBLE_WORKSPACES", () => hoIssueService.listAccessibleWorkspaces());
 
   const options = [
     {

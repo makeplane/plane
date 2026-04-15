@@ -17,6 +17,7 @@
 ## Key Findings from Official Documentation
 
 ### Linting & Formatting Standards
+
 - **Linter:** ESLint 9 with **typed linting** (type-aware checks)
 - **Config:** Root-level `eslint.config.mjs` (single monorepo config, not per-package)
 - **Formatter:** Prettier with `@prettier/plugin-oxc` integration
@@ -28,6 +29,7 @@
 - **Pre-commit:** Husky + lint-staged runs Prettier and ESLint (with `--max-warnings=0`)
 
 ### Testing Requirements
+
 - **All features/bug fixes MUST include unit tests** (mandatory, non-optional)
 - **Backend test runner:** `apps/api/run_tests.py` with pytest
   - Supports unit, contract, smoke test markers
@@ -37,6 +39,7 @@
 - **Frontend tests:** Via turbo tasks in each package
 
 ### Issue & PR Templates
+
 - **Issue Title Format:** Emoji-prefixed conventions
   - `🐛 Bug: [description]`
   - `🚀 Feature: [description]`
@@ -46,11 +49,13 @@
 - **PR Template:** Requires Test Scenarios description (mandatory)
 
 ### Translation Contribution Standards
+
 - **File structure:** `packages/i18n/src/locales/{language}/translations.json`
 - **Format:** Nested JSON with IntlMessageFormat for dynamic content
 - **Quality checklist:** All keys in all language files, matching structures, ICU formats correct
 
 ### Development Setup Requirements
+
 - **Node.js:** 20+ (LTS)
 - **Python:** 3.8+
 - **PostgreSQL:** v14
@@ -59,6 +64,7 @@
 - **Docker:** Required
 
 ### Development Workflow (Official)
+
 1. Clone repo
 2. Run `setup.sh`
 3. Start containers: `docker compose -f docker-compose-local.yml up`
@@ -66,6 +72,7 @@
 5. Access at `http://localhost:3000` (app) and `http://localhost:3001/god-mode/` (admin)
 
 ### TypeScript ESLint Rules Enabled
+
 - TypeScript strict checks (no explicit any, floating promises, unsafe operations)
 - React hooks rules (including React Compiler rules)
 - React refresh exports
@@ -76,9 +83,11 @@
 ## Gap Analysis: Rules NOT Covered in Our `.claude/rules/`
 
 ### 1. **Prettier Formatting Standards** [HIGH PRIORITY]
+
 **Status:** Missing from our rules
 
 Our rules mention formatting but don't specify:
+
 - Print width: 120 characters (not default 80)
 - Tab width: 2 spaces
 - Trailing comma: es5
@@ -92,9 +101,11 @@ Our rules mention formatting but don't specify:
 ---
 
 ### 2. **ESLint v9 Typed Linting Specifics** [MEDIUM PRIORITY]
+
 **Status:** Partially covered (eslint.md exists in docs, but not in rules/)
 
 Our rules don't document:
+
 - ESLint flat config format (v9 only)
 - Typed linting enabled (TypeScript type-aware checks)
 - Single root-level config (not per-package)
@@ -109,9 +120,11 @@ Our rules don't document:
 ---
 
 ### 3. **Unit Test Requirement Emphasis** [MEDIUM PRIORITY]
+
 **Status:** Mentioned in general rules, not emphasized as mandatory
 
 Our rules say "write tests" but Plane.so REQUIRES:
+
 - "All features or bug fixes must be tested by one or more specs"
 - Tests are validation, not optional
 - Backend: pytest with markers (unit, contract, smoke)
@@ -124,9 +137,11 @@ Our rules say "write tests" but Plane.so REQUIRES:
 ---
 
 ### 4. **Issue/PR Title and Type Conventions** [MEDIUM PRIORITY]
+
 **Status:** Missing from our rules
 
 Official Plane.so requires:
+
 - Issue titles: emoji + type + description (`🚀 Feature: [desc]`)
 - PR type selection: bug fix, feature, improvement, refactor, perf, docs
 - Test Scenarios: mandatory field in PR template
@@ -134,6 +149,7 @@ Official Plane.so requires:
 **Impact:** Our AI agents may create PRs with non-standard formats.
 
 **Recommendation:** Create `.claude/rules/github-conventions.md` documenting:
+
 - Issue title format with emoji
 - PR template structure
 - Test Scenarios field requirement
@@ -142,9 +158,11 @@ Official Plane.so requires:
 ---
 
 ### 5. **Backend Test Command Specifics** [MEDIUM PRIORITY]
+
 **Status:** Missing from our rules
 
 Our rules say "run tests" but don't document:
+
 - Plane uses `cd apps/api && python run_tests.py` (custom test runner)
 - Supports markers: `-u` (unit), `-c` (contract), `-s` (smoke)
 - Supports: `-o` (coverage), `-p` (parallel), `-v` (verbose)
@@ -157,9 +175,11 @@ Our rules say "run tests" but don't document:
 ---
 
 ### 6. **Monorepo-Specific Linting Context** [LOW PRIORITY]
+
 **Status:** Not explicitly covered
 
 Plane.so documents:
+
 - Single root ESLint config handles all packages (not per-package)
 - Requires `tsconfig.json` in each package (for type awareness)
 - Automatic discovery pattern: `{apps,packages}/*/tsconfig.json`
@@ -172,9 +192,11 @@ Plane.so documents:
 ---
 
 ### 7. **Translation Contribution Quality Checklist** [LOW PRIORITY]
+
 **Status:** Not covered (niche but documented)
 
 Plane.so requires:
+
 - IntlMessageFormat for dynamic content (variables, pluralization)
 - All translation keys in all language files
 - Nested structure consistency across languages
@@ -189,6 +211,7 @@ Plane.so requires:
 ## What Our Rules ALREADY Cover (No Action Needed)
 
 ✅ **Already documented correctly:**
+
 - CE override pattern (never modify core/)
 - MobX store conventions (makeObservable, observer, set from lodash-es)
 - Color tokens (short form: text-primary, border-subtle)
@@ -200,15 +223,15 @@ Plane.so requires:
 
 ## Recommendations (Prioritized)
 
-| Priority | Gap | Action | File |
-|----------|-----|--------|------|
-| HIGH | Prettier formatting not specified | Create rules covering 120-char width, es5 trailing comma, oxc plugin | `.claude/rules/prettier-formatting.md` |
-| HIGH | Test requirement not mandatory | Elevate to MUST, add backend test command docs | Update `.claude/rules/development-rules.md` |
-| MEDIUM | ESLint v9/typed linting context missing | Reference/expand docs/eslint.md in rules | Create `.claude/rules/linting-standards.md` |
-| MEDIUM | GitHub conventions not documented | Issue title format, PR types, test scenarios | Create `.claude/rules/github-conventions.md` |
-| MEDIUM | Backend test command variants not specified | Document all pytest runner options | Create `.claude/rules/backend-testing.md` |
-| LOW | Monorepo tsconfig discovery unclear | Add context to package creation guidance | Update `.claude/rules/development-rules.md` |
-| LOW | Translation quality checklist missing | Document IntlMessageFormat requirements | Update `.claude/rules/i18n-rules.md` |
+| Priority | Gap                                         | Action                                                               | File                                         |
+| -------- | ------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------- |
+| HIGH     | Prettier formatting not specified           | Create rules covering 120-char width, es5 trailing comma, oxc plugin | `.claude/rules/prettier-formatting.md`       |
+| HIGH     | Test requirement not mandatory              | Elevate to MUST, add backend test command docs                       | Update `.claude/rules/development-rules.md`  |
+| MEDIUM   | ESLint v9/typed linting context missing     | Reference/expand docs/eslint.md in rules                             | Create `.claude/rules/linting-standards.md`  |
+| MEDIUM   | GitHub conventions not documented           | Issue title format, PR types, test scenarios                         | Create `.claude/rules/github-conventions.md` |
+| MEDIUM   | Backend test command variants not specified | Document all pytest runner options                                   | Create `.claude/rules/backend-testing.md`    |
+| LOW      | Monorepo tsconfig discovery unclear         | Add context to package creation guidance                             | Update `.claude/rules/development-rules.md`  |
+| LOW      | Translation quality checklist missing       | Document IntlMessageFormat requirements                              | Update `.claude/rules/i18n-rules.md`         |
 
 ## Unresolved Questions
 

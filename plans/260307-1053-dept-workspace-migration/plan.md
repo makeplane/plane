@@ -17,8 +17,8 @@ Lift Department and StaffProfile models from workspace scope to instance level. 
 
 ## Phases
 
-| #   | Phase                                                                  | Effort | Status  |
-| --- | ---------------------------------------------------------------------- | ------ | ------- |
+| #   | Phase                                                                  | Effort | Status    |
+| --- | ---------------------------------------------------------------------- | ------ | --------- |
 | 1   | [DB Model Migration](./phase-01-db-model-migration.md)                 | 4h     | completed |
 | 2   | [Backend API Migration](./phase-02-backend-api-migration.md)           | 8h     | completed |
 | 3   | [God-mode Frontend](./phase-03-godmode-frontend.md)                    | 8h     | completed |

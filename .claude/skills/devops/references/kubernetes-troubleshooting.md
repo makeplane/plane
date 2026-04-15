@@ -18,13 +18,13 @@ kubectl logs <pod-name> -c <container>
 
 ## Common Pod States
 
-| State | Cause | Solution |
-|-------|-------|----------|
-| Pending | No node resources | Check node capacity |
-| ContainerCreating | Image pulling | Check image URI |
-| CrashLoopBackOff | Container exits | Check logs, health checks |
-| ImagePullBackOff | Failed image pull | Verify credentials |
-| OOMKilled (137) | Out of memory | Increase memory limit |
+| State             | Cause             | Solution                  |
+| ----------------- | ----------------- | ------------------------- |
+| Pending           | No node resources | Check node capacity       |
+| ContainerCreating | Image pulling     | Check image URI           |
+| CrashLoopBackOff  | Container exits   | Check logs, health checks |
+| ImagePullBackOff  | Failed image pull | Verify credentials        |
+| OOMKilled (137)   | Out of memory     | Increase memory limit     |
 
 ## Service & Network
 
@@ -38,12 +38,12 @@ kubectl get networkpolicies -A
 
 ## Quick Fixes
 
-| Problem | Command |
-|---------|---------|
-| Pod stuck | `kubectl delete pod <name> --grace-period=0 --force` |
-| High CPU | `kubectl top pods -A --sort-by=cpu` |
-| High memory | `kubectl top pods -A --sort-by=memory` |
-| Restart | `kubectl rollout restart deployment/<name>` |
-| Rollback | `kubectl rollout undo deployment/<name>` |
+| Problem     | Command                                              |
+| ----------- | ---------------------------------------------------- |
+| Pod stuck   | `kubectl delete pod <name> --grace-period=0 --force` |
+| High CPU    | `kubectl top pods -A --sort-by=cpu`                  |
+| High memory | `kubectl top pods -A --sort-by=memory`               |
+| Restart     | `kubectl rollout restart deployment/<name>`          |
+| Rollback    | `kubectl rollout undo deployment/<name>`             |
 
 See `kubernetes-troubleshooting-advanced.md` for node issues, HPA, anti-patterns.

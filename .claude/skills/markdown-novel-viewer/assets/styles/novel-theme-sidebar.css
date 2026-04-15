@@ -104,7 +104,7 @@
 }
 
 .phase-item.inline-section::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -0.5rem;
   top: 0;
@@ -174,10 +174,19 @@
   flex-shrink: 0;
 }
 
-.status-dot.pending { background: #d4a574; }
-.status-dot.in-progress { background: #4a90d9; }
-.status-dot.completed, .status-dot.done { background: #5cb85c; }
-.status-dot.overview { background: #8b4513; }
+.status-dot.pending {
+  background: #d4a574;
+}
+.status-dot.in-progress {
+  background: #4a90d9;
+}
+.status-dot.completed,
+.status-dot.done {
+  background: #5cb85c;
+}
+.status-dot.overview {
+  background: #8b4513;
+}
 
 /* Unavailable/Planned phases */
 .phase-item.unavailable {
@@ -311,7 +320,9 @@
   list-style: none;
   padding-left: 1.25rem;
   margin-top: 0.25rem;
-  transition: max-height 0.3s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.2s ease;
 }
 
 .phase-group.collapsed .phase-items {

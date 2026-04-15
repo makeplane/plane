@@ -4,13 +4,13 @@ Predictable degradation as context grows. Not binary - a continuum.
 
 ## Degradation Patterns
 
-| Pattern | Cause | Detection |
-|---------|-------|-----------|
-| **Lost-in-Middle** | U-shaped attention | Critical info recall drops 10-40% |
-| **Context Poisoning** | Errors compound via reference | Persistent hallucinations despite correction |
-| **Context Distraction** | Irrelevant info overwhelms | Single distractor degrades performance |
-| **Context Confusion** | Multiple tasks mix | Wrong tool calls, mixed requirements |
-| **Context Clash** | Contradictory info | Conflicting outputs, inconsistent reasoning |
+| Pattern                 | Cause                         | Detection                                    |
+| ----------------------- | ----------------------------- | -------------------------------------------- |
+| **Lost-in-Middle**      | U-shaped attention            | Critical info recall drops 10-40%            |
+| **Context Poisoning**   | Errors compound via reference | Persistent hallucinations despite correction |
+| **Context Distraction** | Irrelevant info overwhelms    | Single distractor degrades performance       |
+| **Context Confusion**   | Multiple tasks mix            | Wrong tool calls, mixed requirements         |
+| **Context Clash**       | Contradictory info            | Conflicting outputs, inconsistent reasoning  |
 
 ## Lost-in-Middle Phenomenon
 
@@ -20,41 +20,47 @@ Predictable degradation as context grows. Not binary - a continuum.
 - **Mitigation**: Place critical info at beginning/end
 
 ```markdown
-[CURRENT TASK]              # Beginning - high attention
+[CURRENT TASK] # Beginning - high attention
+
 - Critical requirements
 
-[DETAILED CONTEXT]          # Middle - lower attention
+[DETAILED CONTEXT] # Middle - lower attention
+
 - Supporting details
 
-[KEY FINDINGS]              # End - high attention
+[KEY FINDINGS] # End - high attention
+
 - Important conclusions
 ```
 
 ## Context Poisoning
 
 **Entry points**:
+
 1. Tool outputs with errors/unexpected formats
 2. Retrieved docs with incorrect/outdated info
 3. Model-generated summaries with hallucinations
 
 **Detection symptoms**:
+
 - Degraded quality on previously successful tasks
 - Tool misalignment (wrong tools/parameters)
 - Persistent hallucinations
 
 **Recovery**:
+
 - Truncate to before poisoning point
 - Explicit note + re-evaluation request
 - Restart with clean context, preserve only verified info
 
 ## Model Degradation Thresholds
 
-| Model | Degradation Onset | Severe Degradation |
-|-------|-------------------|-------------------|
-| GPT-5.2 | ~64K tokens | ~200K tokens |
-| Claude Opus 4.5 | ~100K tokens | ~180K tokens |
-| Claude Sonnet 4.5 | ~80K tokens | ~150K tokens |
-| Gemini 3 Pro | ~500K tokens | ~800K tokens |
+| Model             | Degradation Onset | Severe Degradation |
+| ----------------- | ----------------- | ------------------ |
+| GPT-5.2           | ~64K tokens       | ~200K tokens       |
+| Claude Opus 4.5   | ~100K tokens      | ~180K tokens       |
+| Claude Sonnet 4.5 | ~80K tokens       | ~150K tokens       |
+| Gemini 3 Pro      | ~500K tokens      | ~800K tokens       |
 
 ## Four-Bucket Mitigation
 

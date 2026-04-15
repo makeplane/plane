@@ -37,6 +37,7 @@ Read, don't assume. Use `ck:debug` (systematic-debugging Phase 1).
 Activate `ck:sequential-thinking` skill. Form hypotheses through structured reasoning.
 
 **Structured hypothesis formation:**
+
 ```
 For each hypothesis:
   1. State the hypothesis clearly
@@ -46,6 +47,7 @@ For each hypothesis:
 ```
 
 **Common hypothesis categories:**
+
 - Recent code change introduced regression (`git log`, `git diff`)
 - Data/state mismatch (wrong input, stale cache, race condition)
 - Environment difference (deps version, config, platform)
@@ -64,6 +66,7 @@ Task("Explore", "Test hypothesis C: [specific search/check]", "Verify H-C")
 ```
 
 **For each hypothesis result:**
+
 - CONFIRMED: Evidence supports this as root cause → proceed to root cause tracing
 - REFUTED: Evidence contradicts → discard, note why
 - INCONCLUSIVE: Need more data → refine hypothesis or gather more evidence
@@ -84,12 +87,14 @@ Symptom (where error appears)
 ### Phase 5: Escalate — When hypotheses fail
 
 If 2+ hypotheses are REFUTED:
+
 1. Auto-activate `ck:problem-solving` skill
 2. Apply Inversion Exercise: "What would CAUSE this bug intentionally?"
 3. Apply Scale Game: "Does this fail with 1 item? 100? 10000?"
 4. Consider environmental factors (timing, concurrency, platform)
 
 If 3+ fix attempts fail after diagnosis:
+
 1. STOP immediately
 2. Question the architecture — is the design fundamentally flawed?
 3. Discuss with user before attempting more
@@ -103,22 +108,27 @@ If 3+ fix attempts fail after diagnosis:
 **Pre-fix state captured:** Yes/No
 
 ### Root Cause
+
 [Clear explanation of the root cause, traced back to origin]
 
 ### Evidence Chain
+
 1. [Observation] → led to hypothesis [X]
 2. [Test result] → confirmed/refuted [X]
 3. [Trace] → root cause at [file:line]
 
 ### Affected Scope
+
 - Files: [list]
 - Functions: [list]
 - Dependencies: [list]
 
 ### Recommended Fix
+
 [What to change and why — addressing root cause, not symptoms]
 
 ### Prevention Needed
+
 [What guards/tests to add to prevent recurrence]
 ```
 

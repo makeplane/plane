@@ -36,6 +36,7 @@
 No architectural changes. Pure permission constant swap in existing components.
 
 Pattern change:
+
 ```typescript
 // Before
 const isEditingAllowed = allowPermissions(
@@ -44,10 +45,7 @@ const isEditingAllowed = allowPermissions(
 );
 
 // After
-const isEditingAllowed = allowPermissions(
-  [EUserPermissions.ADMIN],
-  EUserPermissionsLevel.PROJECT
-);
+const isEditingAllowed = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 ```
 
 ## Related Code Files

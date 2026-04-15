@@ -20,9 +20,11 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 ## Files Created
 
 ### 1. docs/project-overview-pdr.md (640 lines)
+
 **Purpose:** Project overview + Product Development Requirements
 
 **Content:**
+
 - Executive summary (Plane as project management platform)
 - Core capabilities (issues, sprints, modules, workflows, time tracking, org chart, real-time collab)
 - PDR: Functional requirements (workspace, projects, issues, multi-layout, cycles, modules, real-time, API v0/v1, CE features)
@@ -33,14 +35,17 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Dependency management (external services, dev tools)
 
 **Accuracy:** Verified against scout reports
+
 - Requirements match actual CE features (workflows, time tracking, HO)
 - Tech stack matches package.json (React 18, Router v7, MobX, Tailwind v4)
 - Deployment model matches Docker config (multi-app architecture)
 
 ### 2. docs/codebase-summary.md (700 lines)
+
 **Purpose:** Codebase structure + key modules + concepts
 
 **Content:**
+
 - Complete directory structure (apps/, packages/, .claude/, docs/, plans/)
 - Key files & entry points (Django, React, packages)
 - Core concepts (ORM models, MobX stores, API architecture, middleware stack, Celery tasks, WebSocket, reverse proxy)
@@ -49,17 +54,20 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Testing overview
 
 **Accuracy:** Verified structure matches actual repo
+
 - 37 ORM models documented (confirmed from model imports in scout reports)
 - 33+ MobX stores documented (matches store hierarchy)
 - Middleware stack (10 layers) matches Django settings
 - Celery tasks (41) matches backend structure
 
 ### 3. docs/code-standards.md (750 lines)
+
 **Purpose:** Coding standards + conventions + patterns
 
 **Content:**
+
 - Core principles (YAGNI, KISS, DRY)
-- Naming conventions (kebab-case, PascalCase, UPPER_SNAKE_CASE, I* interfaces)
+- Naming conventions (kebab-case, PascalCase, UPPER_SNAKE_CASE, I\* interfaces)
 - File size limits (<200 LOC code, <150 LOC components, <800 LOC docs)
 - Backend standards (Django models, views, serializers, Celery tasks)
 - Frontend standards (React components, MobX stores, hooks, types)
@@ -69,15 +77,18 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Linting & formatting commands
 
 **Accuracy:** Reflects actual codebase patterns
+
 - MobX patterns match ce/store/workflow.store.ts structure
 - Django patterns match apps/api/ file structure
 - Component patterns consistent with propel/ library
 - Type conventions match packages/types/ structure
 
 ### 4. docs/system-architecture.md (780 lines)
+
 **Purpose:** System design + data flow + scalability
 
 **Content:**
+
 - High-level overview diagram (Caddy → multi-app → Django + services)
 - Frontend architecture (React app structure, state management, issue layouts with Kanban DnD)
 - Backend architecture (Django structure, request pipeline, API versioning v0/v1, database schema, Celery tasks)
@@ -89,6 +100,7 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Monitoring & observability (logging, metrics, health checks)
 
 **Accuracy:** Verified against scout reports
+
 - 10-layer middleware stack documented with actual purpose
 - 37 ORM model hierarchy documented correctly
 - API v0/v1 separation confirmed
@@ -96,9 +108,11 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Y.js CRDT real-time sync architecture confirmed
 
 ### 5. docs/design-guidelines.md (670 lines)
+
 **Purpose:** UI/UX guidelines + component libs + Tailwind tokens
 
 **Content:**
+
 - Component libraries (Propel new, ui legacy, editor rich text)
 - Tailwind CSS v4 semantic color system (text-primary/secondary, bg-canvas/surface-1, border-subtle/strong)
 - Spacing + typography scales
@@ -113,15 +127,18 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Dark mode testing
 
 **Accuracy:** Matches design system implementation
+
 - Semantic tokens documented match tailwind-config/ structure
 - Component patterns match propel/ implementation
 - i18n locales confirmed (EN, KO, VI)
 - Accessibility requirements standard for modern web apps
 
 ### 6. docs/deployment-guide.md (760 lines)
+
 **Purpose:** Local setup + Docker + production deployment
 
 **Content:**
+
 - Local development setup (prerequisites, quick start 5 steps, environment variables)
 - Docker containerization (multi-app compose, Dockerfile patterns for Django/React)
 - Caddy reverse proxy configuration (routing, TLS, headers, security)
@@ -133,15 +150,18 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Backup & recovery (manual + automated backup procedures)
 
 **Accuracy:** Verified against actual deployment patterns
+
 - Docker Compose services match apps/ structure
 - Dockerfile patterns follow multi-stage builds (standard practice)
 - Caddy configuration matches reverse proxy requirements
 - Environment variables match .env.example files
 
 ### 7. docs/project-roadmap.md (640 lines)
+
 **Purpose:** Development phases + milestones + timelines + metrics
 
 **Content:**
+
 - Current status (75% complete, May 2026 release, v0.20)
 - Active phases (Workflow 80%, Time Tracking 65%, HO 70%, Analytics 40%, Performance 45%)
 - Phase details (completed, in-progress, blocked, success criteria)
@@ -154,15 +174,18 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - Next steps (weekly, monthly, quarterly)
 
 **Accuracy:** Reflects actual project state
+
 - Workflows feature documented as 80% complete (confirmed from memory context)
 - Time Tracking in refinement (confirmed)
 - HO improvements planned (confirmed)
 - CE pattern adoption documented (confirmed)
 
 ### 8. README.md (300 lines, root)
+
 **Purpose:** Getting started + quick reference + key docs links
 
 **Content:**
+
 - Quick links (docs, repo, upstream)
 - Features (core, tech stack)
 - Getting started (prerequisites, 5-min setup)
@@ -181,6 +204,7 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - License & related projects
 
 **Accuracy:** Comprehensive and actionable
+
 - Setup instructions tested against repo structure
 - Links to all documentation files functional
 - Contributing guidelines follow conventional commits
@@ -192,6 +216,7 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 ### Accuracy Checks
 
 **1. Scout Report Cross-Reference**
+
 - ✅ Backend: 37 ORM models, 41 Celery tasks, 10-layer middleware confirmed
 - ✅ Frontend: 33+ MobX stores, 30+ services, 47 hooks, 51 component dirs confirmed
 - ✅ Packages: 18 total documented (propel 385, ui 125, editor, types, services, utils, hooks, constants, shared-state, i18n, logger, decorators, tailwind-config, typescript-config, eslint-plugin, codemods)
@@ -199,6 +224,7 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - ✅ CE features: Workflows, Time Tracking, HO, Analytics documented with completion %
 
 **2. Architecture Validation**
+
 - ✅ React + Router v7 + MobX + Tailwind v4 architecture documented
 - ✅ Django 4.2 + DRF + PostgreSQL + Celery stack documented
 - ✅ API v0 (session) vs v1 (API key) separation explained
@@ -206,12 +232,14 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 - ✅ Multi-layout issue views (single store, multiple renderers) documented
 
 **3. Pattern Compliance**
+
 - ✅ Code standards reflect actual patterns (kebab-case, MobX makeObservable, flow/action)
 - ✅ Django patterns documented (ProjectBaseModel, SoftDeletionManager, @allow_permission)
 - ✅ Frontend patterns documented (observer(), useCallback, MobX stores)
-- ✅ Type management documented (I* interfaces in packages/types/)
+- ✅ Type management documented (I\* interfaces in packages/types/)
 
 **4. File Size Verification**
+
 - ✅ project-overview-pdr.md: 640 lines (under 800)
 - ✅ codebase-summary.md: 700 lines (under 800)
 - ✅ code-standards.md: 750 lines (under 800)
@@ -245,16 +273,16 @@ Generated comprehensive initial project documentation for Plane monorepo. All 8 
 
 ## Documentation Consistency
 
-| Doc | Cross-References | Internal Links | Status |
-|-----|-----------------|-----------------|--------|
-| **README.md** | ✅ Links to all docs | ✅ Section anchors | ✅ Complete |
-| **project-overview-pdr.md** | ✅ Tech stack → codebase-summary | ✅ Constraint links | ✅ Complete |
-| **codebase-summary.md** | ✅ Architecture → system-architecture | ✅ File paths verified | ✅ Complete |
-| **code-standards.md** | ✅ Patterns → system-architecture | ✅ Examples verified | ✅ Complete |
-| **system-architecture.md** | ✅ Layers → code-standards | ✅ Data flow diagrams | ✅ Complete |
-| **design-guidelines.md** | ✅ Components → propel docs | ✅ Tailwind tokens | ✅ Complete |
-| **deployment-guide.md** | ✅ Docker → architecture | ✅ .env links | ✅ Complete |
-| **project-roadmap.md** | ✅ Phases → code-standards | ✅ Timeline links | ✅ Complete |
+| Doc                         | Cross-References                      | Internal Links         | Status      |
+| --------------------------- | ------------------------------------- | ---------------------- | ----------- |
+| **README.md**               | ✅ Links to all docs                  | ✅ Section anchors     | ✅ Complete |
+| **project-overview-pdr.md** | ✅ Tech stack → codebase-summary      | ✅ Constraint links    | ✅ Complete |
+| **codebase-summary.md**     | ✅ Architecture → system-architecture | ✅ File paths verified | ✅ Complete |
+| **code-standards.md**       | ✅ Patterns → system-architecture     | ✅ Examples verified   | ✅ Complete |
+| **system-architecture.md**  | ✅ Layers → code-standards            | ✅ Data flow diagrams  | ✅ Complete |
+| **design-guidelines.md**    | ✅ Components → propel docs           | ✅ Tailwind tokens     | ✅ Complete |
+| **deployment-guide.md**     | ✅ Docker → architecture              | ✅ .env links          | ✅ Complete |
+| **project-roadmap.md**      | ✅ Phases → code-standards            | ✅ Timeline links      | ✅ Complete |
 
 ---
 
@@ -281,24 +309,28 @@ Total: 5,240 LOC (clean, under-limit)
 ## Next Steps for Team
 
 ### Immediate (This Week)
+
 1. Review docs for accuracy (1-2 hours per doc)
 2. Add project-specific URLs/contacts in README
 3. Create CONTRIBUTING.md if not already present
 4. Add docs link to GitHub repo pinned issue
 
 ### Short-term (This Month)
+
 1. Expand troubleshooting section with common issues
 2. Add performance benchmarking results to deployment-guide
 3. Create API endpoint reference (v0, v1) if needed
 4. Set up automated docs testing (link validation)
 
 ### Medium-term (Next Quarter)
+
 1. Create video walkthroughs for setup
 2. Add architecture diagrams (Mermaid, PlantUML)
 3. Expand design system documentation
 4. Create onboarding checklist for new developers
 
 ### Maintenance (Ongoing)
+
 1. Update roadmap monthly (tasks, metrics, timelines)
 2. Review code standards quarterly
 3. Add deployment lessons learned after each release

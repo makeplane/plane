@@ -28,12 +28,14 @@
 ## Requirements
 
 ### Functional
+
 - GET `/api/instances/monitoring/email-logs/` — paginated (50/page), filterable by date range + entity_name. Tracks issue notification emails only (from email_notification_task.py), not all emails.
 <!-- Updated: Validation Session 1 - Clarified email logs scope: issue notifications only -->
 - GET `/api/instances/monitoring/scheduled-jobs/` — list all PeriodicTask records
 - GET `/api/instances/monitoring/worker-health/` — live Celery worker stats via Inspect API
 
 ### Non-Functional
+
 - Admin-only access (InstanceAdminPermission)
 - Cache worker-health for 30s to avoid hammering workers
 - Graceful fallback when no Celery workers are reachable
@@ -55,6 +57,7 @@ plane/license/api/views/__init__.py  <- export new views (MODIFY)
 ### Endpoint Specifications
 
 #### 1. Email Logs — `EmailLogMonitoringEndpoint`
+
 ```
 GET /api/instances/monitoring/email-logs/
 Query params:
@@ -70,6 +73,7 @@ Response: paginated list via self.paginate()
 ```
 
 #### 2. Scheduled Jobs — `ScheduledJobMonitoringEndpoint`
+
 ```
 GET /api/instances/monitoring/scheduled-jobs/
 
@@ -81,6 +85,7 @@ schedule_display: human-readable string built from crontab/interval FK
 ```
 
 #### 3. Worker Health — `WorkerHealthMonitoringEndpoint`
+
 ```
 GET /api/instances/monitoring/worker-health/
 
@@ -95,16 +100,18 @@ Fallback: { workers: [], summary: { total_workers: 0, ... }, error: "..." }
 ## Related Code Files
 
 ### Files to Create
-| File | Purpose |
-|------|---------|
-| `apps/api/plane/license/api/views/monitoring.py` | 3 view classes |
+
+| File                                                   | Purpose                               |
+| ------------------------------------------------------ | ------------------------------------- |
+| `apps/api/plane/license/api/views/monitoring.py`       | 3 view classes                        |
 | `apps/api/plane/license/api/serializers/monitoring.py` | Email log + scheduled job serializers |
 
 ### Files to Modify
-| File | Change |
-|------|--------|
-| `apps/api/plane/license/urls.py` | Add 3 monitoring URL patterns |
-| `apps/api/plane/license/api/views/__init__.py` | Export monitoring views |
+
+| File                                                 | Change                        |
+| ---------------------------------------------------- | ----------------------------- |
+| `apps/api/plane/license/urls.py`                     | Add 3 monitoring URL patterns |
+| `apps/api/plane/license/api/views/__init__.py`       | Export monitoring views       |
 | `apps/api/plane/license/api/serializers/__init__.py` | Export monitoring serializers |
 
 ## Implementation Steps
@@ -200,6 +207,7 @@ class WorkerHealthMonitoringEndpoint(BaseAPIView):
 ### Step 3: Register URLs (`urls.py`)
 
 Add after existing URL patterns:
+
 ```python
 # Monitoring
 path("monitoring/email-logs/", EmailLogMonitoringEndpoint.as_view(), name="monitoring-email-logs"),
@@ -210,6 +218,7 @@ path("monitoring/worker-health/", WorkerHealthMonitoringEndpoint.as_view(), name
 ### Step 4: Update `__init__.py` exports
 
 Add to `views/__init__.py`:
+
 ```python
 from .monitoring import (
     EmailLogMonitoringEndpoint,
@@ -219,6 +228,7 @@ from .monitoring import (
 ```
 
 Add to `serializers/__init__.py`:
+
 ```python
 from .monitoring import EmailNotificationLogSerializer
 ```
@@ -245,11 +255,11 @@ from .monitoring import EmailNotificationLogSerializer
 
 ## Risk Assessment
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| Celery Inspect hangs if no workers | High (dev env) | 3s timeout + try/except fallback |
-| PeriodicTask model API changes | Low | django-celery-beat is stable, pin version |
-| Large email_notification_logs table | Medium | Pagination + date range filters, db indexes exist |
+| Risk                                | Likelihood     | Mitigation                                        |
+| ----------------------------------- | -------------- | ------------------------------------------------- |
+| Celery Inspect hangs if no workers  | High (dev env) | 3s timeout + try/except fallback                  |
+| PeriodicTask model API changes      | Low            | django-celery-beat is stable, pin version         |
+| Large email_notification_logs table | Medium         | Pagination + date range filters, db indexes exist |
 
 ## Security Considerations
 

@@ -20,6 +20,7 @@ User Request
 ```
 
 **Questions to Ask:**
+
 - What happens if this component fails?
 - How does this scale under load?
 - What are the dependencies?
@@ -63,6 +64,7 @@ Decomposed:
 **Partition Tolerance** - System works despite network failures
 
 **Real-World Choices:**
+
 - **CP (Consistency + Partition Tolerance):** Banking systems, financial transactions
 - **AP (Availability + Partition Tolerance):** Social media feeds, product catalogs
 - **CA (Consistency + Availability):** Single-node databases (not distributed)
@@ -73,24 +75,26 @@ Decomposed:
 **Else (no partition):** Choose Latency or Consistency
 
 **Examples:**
+
 - **PA/EL:** Cassandra (available during partition, low latency normally)
 - **PC/EC:** HBase (consistent during partition, consistent over latency)
 - **PA/EC:** DynamoDB (configurable consistency vs latency)
 
 ### Performance vs Maintainability
 
-| Optimize For | When to Choose |
-|--------------|---------------|
-| **Performance** | Hot paths, high-traffic endpoints, real-time systems |
-| **Maintainability** | Internal tools, admin dashboards, CRUD operations |
-| **Both** | Core business logic, payment processing, authentication |
+| Optimize For        | When to Choose                                          |
+| ------------------- | ------------------------------------------------------- |
+| **Performance**     | Hot paths, high-traffic endpoints, real-time systems    |
+| **Maintainability** | Internal tools, admin dashboards, CRUD operations       |
+| **Both**            | Core business logic, payment processing, authentication |
 
 **Example:**
+
 ```typescript
 // Maintainable: Readable, easy to debug
 const users = await db.users.findAll({
   where: { active: true },
-  include: ['posts', 'comments'],
+  include: ["posts", "comments"],
 });
 
 // Performant: Optimized query, reduced joins
@@ -108,12 +112,14 @@ const users = await db.query(`
 **20-40% productivity increase** from addressing technical debt properly
 
 **Debt Quadrants:**
+
 1. **Reckless + Deliberate:** "We don't have time for design"
 2. **Reckless + Inadvertent:** "What's layering?"
 3. **Prudent + Deliberate:** "Ship now, refactor later" (acceptable)
 4. **Prudent + Inadvertent:** "Now we know better" (acceptable)
 
 **Prioritization:**
+
 - High interest, high impact → Fix immediately
 - High interest, low impact → Schedule in sprint
 - Low interest, high impact → Tech debt backlog
@@ -159,6 +165,7 @@ Each context has its own:
 ```
 
 **Benefits:**
+
 - Clear responsibilities
 - Easier testing (mock layers)
 - Flexibility to change implementations
@@ -169,6 +176,7 @@ Each context has its own:
 **Assume everything fails eventually**
 
 **Patterns:**
+
 1. **Circuit Breaker** - Stop calling failing service
 2. **Retry with Backoff** - Exponential delay between retries
 3. **Timeout** - Don't wait forever
@@ -176,7 +184,7 @@ Each context has its own:
 5. **Bulkhead** - Isolate failures (resource pools)
 
 ```typescript
-import { CircuitBreaker } from 'opossum';
+import { CircuitBreaker } from "opossum";
 
 const breaker = new CircuitBreaker(externalAPICall, {
   timeout: 3000, // 3s timeout
@@ -184,7 +192,7 @@ const breaker = new CircuitBreaker(externalAPICall, {
   resetTimeout: 30000, // Try again after 30s
 });
 
-breaker.fallback(() => ({ data: 'cached-response' }));
+breaker.fallback(() => ({ data: "cached-response" }));
 
 const result = await breaker.fire(requestParams);
 ```
@@ -196,6 +204,7 @@ const result = await breaker.fire(requestParams);
 **SOLID Principles:**
 
 **S - Single Responsibility** - Class/function does one thing
+
 ```typescript
 // Bad: User class handles auth + email + logging
 class User {
@@ -217,6 +226,7 @@ class Logger {
 ```
 
 **O - Open/Closed** - Open for extension, closed for modification
+
 ```typescript
 // Good: Strategy pattern
 interface PaymentStrategy {
@@ -224,17 +234,22 @@ interface PaymentStrategy {
 }
 
 class StripePayment implements PaymentStrategy {
-  async process(amount: number) { /* ... */ }
+  async process(amount: number) {
+    /* ... */
+  }
 }
 
 class PayPalPayment implements PaymentStrategy {
-  async process(amount: number) { /* ... */ }
+  async process(amount: number) {
+    /* ... */
+  }
 }
 ```
 
 ### Thinking About Edge Cases
 
 **Common Edge Cases:**
+
 - Empty arrays/collections
 - Null/undefined values
 - Boundary values (min/max integers)
@@ -248,14 +263,14 @@ class PayPalPayment implements PaymentStrategy {
 async function getUsers(limit?: number) {
   // Validate input
   if (limit !== undefined && (limit < 1 || limit > 1000)) {
-    throw new Error('Limit must be between 1 and 1000');
+    throw new Error("Limit must be between 1 and 1000");
   }
 
   // Handle undefined
   const safeLimit = limit ?? 50;
 
   // Prevent SQL injection with parameterized query
-  const users = await db.query('SELECT * FROM users LIMIT $1', [safeLimit]);
+  const users = await db.query("SELECT * FROM users LIMIT $1", [safeLimit]);
 
   // Handle empty results
   return users.length > 0 ? users : [];
@@ -267,6 +282,7 @@ async function getUsers(limit?: number) {
 **70% happy-path tests drafted by AI, humans focus on edge cases**
 
 **Test-Driven Development (TDD):**
+
 ```
 1. Write failing test
 2. Write minimal code to pass
@@ -275,6 +291,7 @@ async function getUsers(limit?: number) {
 ```
 
 **Behavior-Driven Development (BDD):**
+
 ```gherkin
 Feature: User Registration
   Scenario: User registers with valid email
@@ -290,13 +307,14 @@ Feature: User Registration
 **100% median ROI, $500k average return** from observability investments
 
 **Three Questions:**
+
 1. **Is it slow?** → Check metrics (response time, DB queries)
 2. **Is it broken?** → Check logs (errors, stack traces)
 3. **Where is it broken?** → Check traces (distributed systems)
 
 ```typescript
 // Good: Structured logging with context
-logger.error('Payment processing failed', {
+logger.error("Payment processing failed", {
   orderId: order.id,
   userId: user.id,
   amount: order.total,
@@ -312,6 +330,7 @@ logger.error('Payment processing failed', {
 ### API Contract Design (Treating APIs as Products)
 
 **Principles:**
+
 1. **Versioning** - `/api/v1/users`, `/api/v2/users`
 2. **Consistency** - Same patterns across endpoints
 3. **Documentation** - OpenAPI/Swagger
@@ -340,6 +359,7 @@ DELETE /api/v1/users/:id     # Delete user
 ### Database Schema Design Discussions
 
 **Key Considerations:**
+
 - **Normalization vs Denormalization** - Trade-offs for performance
 - **Indexing strategy** - Query patterns dictate indexes
 - **Migration path** - How to evolve schema without downtime
@@ -349,6 +369,7 @@ DELETE /api/v1/users/:id     # Delete user
 ### Code Review Mindset (Prevention-First)
 
 **What to Look For:**
+
 - Security vulnerabilities (SQL injection, XSS)
 - Performance issues (N+1 queries, missing indexes)
 - Error handling (uncaught exceptions)
@@ -357,6 +378,7 @@ DELETE /api/v1/users/:id     # Delete user
 - Tests (coverage for new code)
 
 **Constructive Feedback:**
+
 ```
 # Good review comment
 "This could be vulnerable to SQL injection. Consider using parameterized queries:

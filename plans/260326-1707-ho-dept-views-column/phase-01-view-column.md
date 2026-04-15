@@ -4,12 +4,12 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-03-26 |
-| Priority | P2 |
-| Status | pending |
-| Effort | 2h |
+| Field    | Value      |
+| -------- | ---------- |
+| Date     | 2026-03-26 |
+| Priority | P2         |
+| Status   | pending    |
+| Effort   | 2h         |
 
 Add a "View" column to the HO Department table. For each department row that has a `linked_workspace_detail`, fetch all workspace views via `WorkspaceService.getAllViews(workspaceSlug)` and render each view as an `<a>` tag (opens new tab) styled as a badge/chip.
 
@@ -47,19 +47,20 @@ department-tree-row.tsx
 
 ## Related Code Files
 
-| File | Role |
-|------|------|
-| `apps/web/ce/components/ho/department-list.tsx` | Table header |
-| `apps/web/ce/components/ho/department-tree-row.tsx` | Table row + new cell |
-| `apps/web/core/services/workspace.service.ts` | `getAllViews(workspaceSlug)` |
-| `packages/propel/src/badge/badge.tsx` | `Badge` component |
-| `packages/types/src/workspace-views.ts` | `IWorkspaceView` type |
+| File                                                | Role                         |
+| --------------------------------------------------- | ---------------------------- |
+| `apps/web/ce/components/ho/department-list.tsx`     | Table header                 |
+| `apps/web/ce/components/ho/department-tree-row.tsx` | Table row + new cell         |
+| `apps/web/core/services/workspace.service.ts`       | `getAllViews(workspaceSlug)` |
+| `packages/propel/src/badge/badge.tsx`               | `Badge` component            |
+| `packages/types/src/workspace-views.ts`             | `IWorkspaceView` type        |
 
 ## Implementation Steps
 
 ### Step 1 — Add View column header (`department-list.tsx`)
 
 Add after the existing `<th>Linked Workspace</th>`:
+
 ```tsx
 <th className="px-4 py-2.5 text-xs font-medium text-placeholder uppercase tracking-wide">View</th>
 ```
@@ -75,9 +76,8 @@ import type { IWorkspaceView } from "@plane/types";
 const workspaceService = new WorkspaceService();
 
 function HoDeptViewTags({ workspaceSlug }: { workspaceSlug: string }) {
-  const { data: views, isLoading } = useSWR(
-    `WORKSPACE_VIEWS_${workspaceSlug}`,
-    () => workspaceService.getAllViews(workspaceSlug)
+  const { data: views, isLoading } = useSWR(`WORKSPACE_VIEWS_${workspaceSlug}`, () =>
+    workspaceService.getAllViews(workspaceSlug)
   );
 
   if (isLoading) return <span className="text-custom-text-400 text-xs">...</span>;
@@ -92,7 +92,9 @@ function HoDeptViewTags({ workspaceSlug }: { workspaceSlug: string }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Badge variant="neutral" size="base">{view.name}</Badge>
+          <Badge variant="neutral" size="base">
+            {view.name}
+          </Badge>
         </a>
       ))}
     </div>
@@ -103,6 +105,7 @@ function HoDeptViewTags({ workspaceSlug }: { workspaceSlug: string }) {
 ### Step 3 — Add `<td>` cell in `HoDepartmentTreeRow`
 
 After the existing workspace cell:
+
 ```tsx
 <td className="px-4 py-2.5 text-sm">
   {dept.linked_workspace_detail ? (
@@ -134,12 +137,12 @@ After the existing workspace cell:
 
 ## Risk Assessment
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| `WorkspaceService.getAllViews` not exported/accessible from CE | High | Verify import path before implementing |
-| Badge is `<span>` not `<a>` | Low | Wrap in `<a>` tag |
-| Many views → wide column | Low | `flex-wrap` handles overflow |
-| SWR key collision | Low | Key includes workspace slug |
+| Risk                                                           | Impact | Mitigation                             |
+| -------------------------------------------------------------- | ------ | -------------------------------------- |
+| `WorkspaceService.getAllViews` not exported/accessible from CE | High   | Verify import path before implementing |
+| Badge is `<span>` not `<a>`                                    | Low    | Wrap in `<a>` tag                      |
+| Many views → wide column                                       | Low    | `flex-wrap` handles overflow           |
+| SWR key collision                                              | Low    | Key includes workspace slug            |
 
 ## Security Considerations
 

@@ -138,6 +138,7 @@ apps/web/
 ### State Management (MobX)
 
 **Store Hierarchy:**
+
 ```
 RootStore (ce/store/root.store.ts extends CoreRootStore)
 ├── workspaceStore: WorkspaceRootStore
@@ -167,6 +168,7 @@ RootStore (ce/store/root.store.ts extends CoreRootStore)
 ```
 
 **Data Flow:**
+
 ```
 User Action (click, drag, form submit)
     ↓
@@ -186,6 +188,7 @@ Component re-renders (via observer)
 ### Issue Layouts (Multi-View, Single Store)
 
 **Architecture:**
+
 ```
 IssueRootStore (single source of truth)
 ├── issues: Map<id, Issue>
@@ -206,6 +209,7 @@ Switching layouts = changing view, not refetching
 ```
 
 **Kanban with DnD & Workflow Validation:**
+
 ```
 KanbanLayout
 ├── KanbanGroup (per state, one per column)
@@ -329,6 +333,7 @@ Response (JSON)
 ### API Versioning
 
 **V0 API (Session Auth, Internal):**
+
 - Used by web UI (apps/web)
 - Cookie-based session
 - Endpoint: `/api/v0/{resource}/`
@@ -336,6 +341,7 @@ Response (JSON)
 - Auth: `@require_http_methods("POST")`, `@login_required`
 
 **V1 API (API Key Auth, External):**
+
 - Used by external integrations
 - Header-based API key: `X-API-KEY`
 - OpenAPI docs: `/api/v1/docs/`
@@ -348,6 +354,7 @@ Response (JSON)
 ### Database Schema
 
 **Core Hierarchy:**
+
 ```
 Workspace
 ├── WorkspaceMember (user, role, join_date)
@@ -380,6 +387,7 @@ Workspace
 ```
 
 **Key Features:**
+
 - Soft delete: `deleted_at` field with unique constraint conditions
 - Audit trail: `created_by`, `updated_by` foreignkeys
 - Timestamps: `created_at`, `updated_at` auto-set
@@ -394,18 +402,19 @@ Workspace
 
 **Task Categories (41+ tasks):**
 
-| Category | Tasks | Examples |
-|----------|-------|----------|
-| **Notifications** | 8 | Email notification, Slack webhook, user mention |
-| **Webhooks** | 6 | Send webhook event, retry failed delivery |
-| **Activity Logging** | 5 | Log issue state change, activity digest |
-| **Exports** | 4 | CSV export, PDF report generation |
-| **Cleanup** | 6 | Archive soft-deleted issues, expire sessions |
-| **Analytics** | 3 | Generate dashboard data, report aggregation |
-| **Real-Time Sync** | 5 | Update WebSocket connections, Y.js sync |
-| **CE-Specific** | 4+ | Time log processing, org chart updates, analytics computation, monitoring metrics |
+| Category             | Tasks | Examples                                                                          |
+| -------------------- | ----- | --------------------------------------------------------------------------------- |
+| **Notifications**    | 8     | Email notification, Slack webhook, user mention                                   |
+| **Webhooks**         | 6     | Send webhook event, retry failed delivery                                         |
+| **Activity Logging** | 5     | Log issue state change, activity digest                                           |
+| **Exports**          | 4     | CSV export, PDF report generation                                                 |
+| **Cleanup**          | 6     | Archive soft-deleted issues, expire sessions                                      |
+| **Analytics**        | 3     | Generate dashboard data, report aggregation                                       |
+| **Real-Time Sync**   | 5     | Update WebSocket connections, Y.js sync                                           |
+| **CE-Specific**      | 4+    | Time log processing, org chart updates, analytics computation, monitoring metrics |
 
 **Async Patterns:**
+
 ```python
 # View triggers task
 @allow_permission("project.member")
@@ -444,6 +453,7 @@ ClientA, ClientB, ClientC receive updates
 ```
 
 **Characteristics:**
+
 - Operational Transform (CRDT): No conflict on concurrent edits
 - Websocket upgrade from HTTP
 - Y.js Awareness for presence (cursors, user colors)
@@ -464,6 +474,7 @@ Route by Host/Path:
 ```
 
 **Responsibilities:**
+
 - TLS/SSL termination
 - Load balancing
 - Rate limiting
@@ -500,12 +511,12 @@ New issue appears in all layouts
 
 ### Caching Strategy
 
-| Layer | Tool | Data | TTL |
-|-------|------|------|-----|
-| **Browser** | LocalStorage | User preferences, UI state | Session |
-| **HTTP Cache** | ETags, Cache-Control | API responses | Varies |
-| **Redis Cache** | Redis | Workspace/project metadata, sessions | 1h |
-| **DB Query Cache** | ORM select/prefetch | Related objects | Request scope |
+| Layer              | Tool                 | Data                                 | TTL           |
+| ------------------ | -------------------- | ------------------------------------ | ------------- |
+| **Browser**        | LocalStorage         | User preferences, UI state           | Session       |
+| **HTTP Cache**     | ETags, Cache-Control | API responses                        | Varies        |
+| **Redis Cache**    | Redis                | Workspace/project metadata, sessions | 1h            |
+| **DB Query Cache** | ORM select/prefetch  | Related objects                      | Request scope |
 
 ### Database Optimization
 
@@ -528,11 +539,13 @@ New issue appears in all layouts
 ### Authentication & Authorization
 
 **Authentication:**
+
 - V0 API: Django session (cookie-based)
 - V1 API: API Key (header-based)
 - CSRF protection: Token validation
 
 **Authorization (RBAC):**
+
 ```python
 @allow_permission("workspace.member")  # User is workspace member
 @allow_permission("project.member")    # User is project member
@@ -540,6 +553,7 @@ New issue appears in all layouts
 ```
 
 Roles per level:
+
 - Workspace: ADMIN, MEMBER, GUEST
 - Project: ADMIN, MEMBER, GUEST
 
@@ -554,18 +568,21 @@ Roles per level:
 ## Monitoring & Observability
 
 **Logging:**
+
 - Winston structured JSON logs
 - Correlation IDs for request tracing
 - Log levels: ERROR, WARN, INFO, DEBUG
 - Central log aggregation (future)
 
 **Metrics:**
+
 - APM: Request duration, error rates
 - Database: Query count, execution time
 - Celery: Task success/fail rates
 - Redis: Cache hit rates
 
 **Health Check:**
+
 - Endpoint: `/health`
 - Checks: DB connection, Redis, RabbitMQ
 - Response: JSON status

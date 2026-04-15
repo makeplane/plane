@@ -1,6 +1,7 @@
 # Phase 01: Backend API
 
 ## Context Links
+
 - [Plan Overview](./plan.md)
 - Pattern: `apps/api/plane/license/api/views/workspace_project_bulk_import.py`
 - Module model: `apps/api/plane/db/models/module.py`
@@ -8,11 +9,11 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| Priority | P2 |
-| Status | ⬜ pending |
-| Effort | 1.5h |
+| Field       | Value                                                                                                                               |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Priority    | P2                                                                                                                                  |
+| Status      | ⬜ pending                                                                                                                          |
+| Effort      | 1.5h                                                                                                                                |
 | Description | New `InstanceWorkspaceModuleBulkImportEndpoint` — imports Modules into projects via JSON array, mirrors project bulk import pattern |
 
 ## Key Insights
@@ -124,6 +125,7 @@ return { created, skipped, total_created, total_skipped }
 
 1. **Create `_parse_date()` and `_parse_status()` helpers** at module level:
    <!-- Updated: Validation Session 1 - add _parse_status helper -->
+
    ```python
    from datetime import datetime
 
@@ -149,6 +151,7 @@ return { created, skipped, total_created, total_skipped }
    - `post(self, request)` method following the architecture pseudocode above
 
 3. **Imports needed:**
+
    ```python
    import logging
    from rest_framework import status
@@ -159,6 +162,7 @@ return { created, skipped, total_created, total_skipped }
    ```
 
 4. **Export in `__init__.py`:**
+
    ```python
    from .workspace_module_bulk_import import InstanceWorkspaceModuleBulkImportEndpoint
    ```

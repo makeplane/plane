@@ -3,6 +3,7 @@
 ## Video Optimization
 
 ### Optimize for Web
+
 ```bash
 # H.264 with good compression
 ffmpeg -i input.mp4 \
@@ -13,6 +14,7 @@ ffmpeg -i input.mp4 \
 ```
 
 ### Multi-Pass Encoding
+
 ```bash
 # Pass 1 (analysis)
 ffmpeg -y -i input.mkv -c:v libx264 -b:v 2600k -pass 1 -an -f null /dev/null
@@ -22,6 +24,7 @@ ffmpeg -i input.mkv -c:v libx264 -b:v 2600k -pass 2 -c:a aac output.mp4
 ```
 
 ### Hardware-Accelerated Encoding
+
 ```bash
 # NVIDIA NVENC
 ffmpeg -hwaccel cuda -i input.mp4 -c:v h264_nvenc -preset fast -crf 22 output.mp4
@@ -31,6 +34,7 @@ ffmpeg -hwaccel qsv -c:v h264_qsv -i input.mp4 -c:v h264_qsv output.mp4
 ```
 
 ### Extract Video Segment
+
 ```bash
 # From 1:30 to 3:00 (re-encode for precision)
 ffmpeg -i input.mp4 -ss 00:01:30 -to 00:03:00 \
@@ -40,6 +44,7 @@ ffmpeg -i input.mp4 -ss 00:01:30 -to 00:03:00 \
 ## Image Workflows
 
 ### Create Responsive Images
+
 ```bash
 # Generate multiple sizes
 for size in 320 640 1024 1920; do
@@ -48,12 +53,14 @@ done
 ```
 
 ### Batch Image Optimization
+
 ```bash
 # Convert PNG to optimized JPEG
 mogrify -path ./optimized -format jpg -quality 85 -strip *.png
 ```
 
 ### Complex Image Pipeline
+
 ```bash
 # Resize, crop, border, adjust
 magick input.jpg \
@@ -69,12 +76,14 @@ magick input.jpg \
 ## GIF Creation
 
 ### Video to GIF
+
 ```bash
 # High quality GIF with palette
 ffmpeg -i input.mp4 -vf "fps=15,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" output.gif
 ```
 
 ### Animated GIF from Images
+
 ```bash
 # Create with delay
 magick -delay 100 -loop 0 frame*.png animated.gif
@@ -86,6 +95,7 @@ magick animated.gif -fuzz 5% -layers Optimize optimized.gif
 ## Background Removal Workflows
 
 ### Batch Background Removal
+
 ```bash
 # Process all images in directory
 for img in *.jpg; do
@@ -94,6 +104,7 @@ done
 ```
 
 ### Product Photography
+
 ```bash
 # 1. Remove background
 rmbg product.jpg -m u2net-cloth -o product-no-bg.png
@@ -109,6 +120,7 @@ magick product-no-bg.png -background white -flatten product-white-bg.jpg
 ## Media Analysis
 
 ### Inspect Video Properties
+
 ```bash
 # Detailed JSON output
 ffprobe -v quiet -print_format json -show_format -show_streams input.mp4
@@ -120,6 +132,7 @@ ffprobe -v error -select_streams v:0 \
 ```
 
 ### Image Information
+
 ```bash
 # Basic info
 identify image.jpg

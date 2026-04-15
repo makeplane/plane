@@ -32,16 +32,19 @@ Rules for agents operating as teammates within an Agent Team.
 ## CK Stack Conventions
 
 ### Report Output
+
 - Save reports to `{CK_REPORTS_PATH}` (injected via hook, fallback: `plans/reports/`)
 - Naming: `{type}-{date}-{slug}.md` where type = your role (researcher, reviewer, debugger)
 - Sacrifice grammar for concision. List unresolved questions at end.
 
 ### Commit Messages
+
 - Use conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
 - No AI references in commit messages
 - Keep commits focused on actual code changes
 
 ### Docs Sync (Implementation Teams Only)
+
 - After completing implementation tasks, lead MUST evaluate docs impact
 - State explicitly: `Docs impact: [none|minor|major]`
 - If impact: update `docs/` directory or note in completion message
@@ -56,6 +59,7 @@ Rules for agents operating as teammates within an Agent Team.
 ## Plan Approval Flow
 
 When `plan_mode_required` is set:
+
 1. Research and plan your approach (read-only — no file edits)
 2. Send plan via `ExitPlanMode` — this triggers approval request to lead
 3. Wait for lead's `plan_approval_response`

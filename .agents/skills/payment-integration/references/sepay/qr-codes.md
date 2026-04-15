@@ -11,10 +11,12 @@ https://qr.sepay.vn/img?acc={ACCOUNT}&bank={BANK}&amount={AMOUNT}&des={DESCRIPTI
 ## Parameters
 
 **Required:**
+
 - `acc` - Bank account number
 - `bank` - Bank code or short name
 
 **Optional:**
+
 - `amount` - Transfer amount (omit for flexible amount)
 - `des` - Transfer description/content (URL encoded)
 - `template` - QR image template (empty/compact/qronly)
@@ -23,6 +25,7 @@ https://qr.sepay.vn/img?acc={ACCOUNT}&bank={BANK}&amount={AMOUNT}&des={DESCRIPTI
 ## Examples
 
 ### Complete QR (Fixed Amount)
+
 ```
 https://qr.sepay.vn/img?
   acc=0010000000355&
@@ -32,11 +35,13 @@ https://qr.sepay.vn/img?
 ```
 
 ### Flexible QR (Customer Enters Amount)
+
 ```
 https://qr.sepay.vn/img?acc=0010000000355&bank=Vietcombank
 ```
 
 ### QR Only Template
+
 ```
 https://qr.sepay.vn/img?
   acc=0010000000355&
@@ -48,35 +53,32 @@ https://qr.sepay.vn/img?
 ## Integration
 
 ### HTML
+
 ```html
-<img src="https://qr.sepay.vn/img?acc=0010000000355&bank=Vietcombank&amount=100000"
-     alt="Payment QR Code" />
+<img src="https://qr.sepay.vn/img?acc=0010000000355&bank=Vietcombank&amount=100000" alt="Payment QR Code" />
 ```
 
 ### JavaScript (Dynamic)
+
 ```javascript
 function generatePaymentQR(account, bank, amount, description) {
   const params = new URLSearchParams({
     acc: account,
     bank: bank,
     amount: amount,
-    des: description
+    des: description,
   });
   return `https://qr.sepay.vn/img?${params}`;
 }
 
 // Usage
-const qrUrl = generatePaymentQR(
-  '0010000000355',
-  'Vietcombank',
-  100000,
-  'Order #12345'
-);
+const qrUrl = generatePaymentQR("0010000000355", "Vietcombank", 100000, "Order #12345");
 
-document.getElementById('qr-code').src = qrUrl;
+document.getElementById("qr-code").src = qrUrl;
 ```
 
 ### PHP (Dynamic)
+
 ```php
 <?php
 function generatePaymentQR($account, $bank, $amount, $description) {
@@ -101,21 +103,23 @@ echo "<img src='{$qrUrl}' alt='Payment QR' />";
 ```
 
 ### Node.js (Express)
+
 ```javascript
-app.get('/payment/:orderId/qr', async (req, res) => {
+app.get("/payment/:orderId/qr", async (req, res) => {
   const order = await Order.findById(req.params.orderId);
 
-  const qrUrl = new URL('https://qr.sepay.vn/img');
-  qrUrl.searchParams.set('acc', process.env.SEPAY_ACCOUNT);
-  qrUrl.searchParams.set('bank', process.env.SEPAY_BANK);
-  qrUrl.searchParams.set('amount', order.total);
-  qrUrl.searchParams.set('des', `Order ${order.id}`);
+  const qrUrl = new URL("https://qr.sepay.vn/img");
+  qrUrl.searchParams.set("acc", process.env.SEPAY_ACCOUNT);
+  qrUrl.searchParams.set("bank", process.env.SEPAY_BANK);
+  qrUrl.searchParams.set("amount", order.total);
+  qrUrl.searchParams.set("des", `Order ${order.id}`);
 
-  res.render('payment', { qrUrl: qrUrl.toString() });
+  res.render("payment", { qrUrl: qrUrl.toString() });
 });
 ```
 
 ### React Component
+
 ```jsx
 function PaymentQR({ account, bank, amount, description }) {
   const qrUrl = useMemo(() => {
@@ -123,7 +127,7 @@ function PaymentQR({ account, bank, amount, description }) {
       acc: account,
       bank: bank,
       amount: amount,
-      des: description
+      des: description,
     });
     return `https://qr.sepay.vn/img?${params}`;
   }, [account, bank, amount, description]);
@@ -131,7 +135,7 @@ function PaymentQR({ account, bank, amount, description }) {
   return (
     <div className="payment-qr">
       <img src={qrUrl} alt="Payment QR Code" />
-      <p>Scan to pay {amount.toLocaleString('vi-VN')} VND</p>
+      <p>Scan to pay {amount.toLocaleString("vi-VN")} VND</p>
     </div>
   );
 }
@@ -140,16 +144,19 @@ function PaymentQR({ account, bank, amount, description }) {
 ## Templates
 
 **Default:**
+
 - Full QR with bank logo
 - Account information displayed
 - Branded with bank colors
 
 **Compact:**
+
 - Smaller version
 - Minimal branding
 - More space-efficient
 
 **QR Only:**
+
 - Pure QR code
 - No decorations
 - For custom layouts
@@ -157,11 +164,13 @@ function PaymentQR({ account, bank, amount, description }) {
 ## Bank Codes
 
 **Get Bank List:**
+
 ```
 GET https://qr.sepay.vn/banks.json
 ```
 
 **Common Banks:**
+
 - Vietcombank (VCB)
 - VPBank
 - BIDV
@@ -173,13 +182,13 @@ GET https://qr.sepay.vn/banks.json
 - And 40+ others
 
 **Cache Bank List:**
+
 ```javascript
 // Fetch once and cache
-const banks = await fetch('https://qr.sepay.vn/banks.json')
-  .then(res => res.json());
+const banks = await fetch("https://qr.sepay.vn/banks.json").then((res) => res.json());
 
 // Store in memory or Redis
-cache.set('sepay_banks', banks, 86400); // 24 hours
+cache.set("sepay_banks", banks, 86400); // 24 hours
 ```
 
 ## Best Practices
@@ -198,6 +207,7 @@ cache.set('sepay_banks', banks, 86400); // 24 hours
 ## Integration Patterns
 
 ### Checkout Page
+
 ```html
 <div class="payment-methods">
   <h3>Pay via Bank Transfer</h3>
@@ -213,6 +223,7 @@ cache.set('sepay_banks', banks, 86400); // 24 hours
 ```
 
 ### Email Receipt
+
 ```html
 <table>
   <tr>
@@ -225,4 +236,5 @@ cache.set('sepay_banks', banks, 86400); // 24 hours
 ```
 
 ### PDF Invoice
+
 Use QR URL in PDF generation libraries (wkhtmltopdf, Puppeteer, etc.)

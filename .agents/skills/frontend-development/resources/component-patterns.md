@@ -9,6 +9,7 @@ Modern React component architecture for the application emphasizing type safety,
 ### Why React.FC
 
 All components use the `React.FC<Props>` pattern for:
+
 - Explicit type safety for props
 - Consistent component signatures
 - Clear prop interface documentation
@@ -17,27 +18,24 @@ All components use the `React.FC<Props>` pattern for:
 ### Basic Pattern
 
 ```typescript
-import React from 'react';
+import React from "react";
 
 interface MyComponentProps {
-    /** User ID to display */
-    userId: number;
-    /** Optional callback when action occurs */
-    onAction?: () => void;
+  /** User ID to display */
+  userId: number;
+  /** Optional callback when action occurs */
+  onAction?: () => void;
 }
 
 export const MyComponent: React.FC<MyComponentProps> = ({ userId, onAction }) => {
-    return (
-        <div>
-            User: {userId}
-        </div>
-    );
+  return <div>User: {userId}</div>;
 };
 
 export default MyComponent;
 ```
 
 **Key Points:**
+
 - Props interface defined separately with JSDoc comments
 - `React.FC<Props>` provides type safety
 - Destructure props in parameters
@@ -50,6 +48,7 @@ export default MyComponent;
 ### When to Lazy Load
 
 Lazy load components that are:
+
 - Heavy (DataGrid, charts, rich text editors)
 - Route-level components
 - Modal/dialog content (not shown initially)
@@ -58,18 +57,16 @@ Lazy load components that are:
 ### How to Lazy Load
 
 ```typescript
-import React from 'react';
+import React from "react";
 
 // Lazy load heavy component
-const PostDataGrid = React.lazy(() =>
-    import('./grids/PostDataGrid')
-);
+const PostDataGrid = React.lazy(() => import("./grids/PostDataGrid"));
 
 // For named exports
 const MyComponent = React.lazy(() =>
-    import('./MyComponent').then(module => ({
-        default: module.MyComponent
-    }))
+  import("./MyComponent").then((module) => ({
+    default: module.MyComponent,
+  }))
 );
 ```
 
@@ -79,22 +76,22 @@ const MyComponent = React.lazy(() =>
 /**
  * Main post table container component
  */
-import React, { useState, useCallback } from 'react';
-import { Box, Paper } from '@mui/material';
+import React, { useState, useCallback } from "react";
+import { Box, Paper } from "@mui/material";
 
 // Lazy load PostDataGrid to optimize bundle size
-const PostDataGrid = React.lazy(() => import('./grids/PostDataGrid'));
+const PostDataGrid = React.lazy(() => import("./grids/PostDataGrid"));
 
-import { SuspenseLoader } from '~components/SuspenseLoader';
+import { SuspenseLoader } from "~components/SuspenseLoader";
 
 export const PostTable: React.FC<PostTableProps> = ({ formId }) => {
-    return (
-        <Box>
-            <SuspenseLoader>
-                <PostDataGrid formId={formId} />
-            </SuspenseLoader>
-        </Box>
-    );
+  return (
+    <Box>
+      <SuspenseLoader>
+        <PostDataGrid formId={formId} />
+      </SuspenseLoader>
+    </Box>
+  );
 };
 
 export default PostTable;
@@ -107,20 +104,23 @@ export default PostTable;
 ### SuspenseLoader Component
 
 **Import:**
+
 ```typescript
-import { SuspenseLoader } from '~components/SuspenseLoader';
+import { SuspenseLoader } from "~components/SuspenseLoader";
 // Or
-import { SuspenseLoader } from '@/components/SuspenseLoader';
+import { SuspenseLoader } from "@/components/SuspenseLoader";
 ```
 
 **Usage:**
+
 ```typescript
 <SuspenseLoader>
-    <LazyLoadedComponent />
+  <LazyLoadedComponent />
 </SuspenseLoader>
 ```
 
 **What it does:**
+
 - Shows loading indicator while lazy component loads
 - Smooth fade-in animation
 - Consistent loading experience
@@ -129,51 +129,54 @@ import { SuspenseLoader } from '@/components/SuspenseLoader';
 ### Where to Place Suspense Boundaries
 
 **Route Level:**
+
 ```typescript
 // routes/my-route/index.tsx
-const MyPage = lazy(() => import('@/features/my-feature/components/MyPage'));
+const MyPage = lazy(() => import("@/features/my-feature/components/MyPage"));
 
 function Route() {
-    return (
-        <SuspenseLoader>
-            <MyPage />
-        </SuspenseLoader>
-    );
+  return (
+    <SuspenseLoader>
+      <MyPage />
+    </SuspenseLoader>
+  );
 }
 ```
 
 **Component Level:**
+
 ```typescript
 function ParentComponent() {
-    return (
-        <Box>
-            <Header />
-            <SuspenseLoader>
-                <HeavyDataGrid />
-            </SuspenseLoader>
-        </Box>
-    );
+  return (
+    <Box>
+      <Header />
+      <SuspenseLoader>
+        <HeavyDataGrid />
+      </SuspenseLoader>
+    </Box>
+  );
 }
 ```
 
 **Multiple Boundaries:**
+
 ```typescript
 function Page() {
-    return (
-        <Box>
-            <SuspenseLoader>
-                <HeaderSection />
-            </SuspenseLoader>
+  return (
+    <Box>
+      <SuspenseLoader>
+        <HeaderSection />
+      </SuspenseLoader>
 
-            <SuspenseLoader>
-                <MainContent />
-            </SuspenseLoader>
+      <SuspenseLoader>
+        <MainContent />
+      </SuspenseLoader>
 
-            <SuspenseLoader>
-                <Sidebar />
-            </SuspenseLoader>
-        </Box>
-    );
+      <SuspenseLoader>
+        <Sidebar />
+      </SuspenseLoader>
+    </Box>
+  );
 }
 ```
 
@@ -190,110 +193,108 @@ Each section loads independently, better UX.
  * Component description
  * What it does, when to use it
  */
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { Box, Paper, Button } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { Box, Paper, Button } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 // Feature imports
-import { myFeatureApi } from '../api/myFeatureApi';
-import type { MyData } from '~types/myData';
+import { myFeatureApi } from "../api/myFeatureApi";
+import type { MyData } from "~types/myData";
 
 // Component imports
-import { SuspenseLoader } from '~components/SuspenseLoader';
+import { SuspenseLoader } from "~components/SuspenseLoader";
 
 // Hooks
-import { useAuth } from '@/hooks/useAuth';
-import { useMuiSnackbar } from '@/hooks/useMuiSnackbar';
+import { useAuth } from "@/hooks/useAuth";
+import { useMuiSnackbar } from "@/hooks/useMuiSnackbar";
 
 // 1. PROPS INTERFACE (with JSDoc)
 interface MyComponentProps {
-    /** The ID of the entity to display */
-    entityId: number;
-    /** Optional callback when action completes */
-    onComplete?: () => void;
-    /** Display mode */
-    mode?: 'view' | 'edit';
+  /** The ID of the entity to display */
+  entityId: number;
+  /** Optional callback when action completes */
+  onComplete?: () => void;
+  /** Display mode */
+  mode?: "view" | "edit";
 }
 
 // 2. STYLES (if inline and <100 lines)
 const componentStyles: Record<string, SxProps<Theme>> = {
-    container: {
-        p: 2,
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    header: {
-        mb: 2,
-        display: 'flex',
-        justifyContent: 'space-between',
-    },
+  container: {
+    p: 2,
+    display: "flex",
+    flexDirection: "column",
+  },
+  header: {
+    mb: 2,
+    display: "flex",
+    justifyContent: "space-between",
+  },
 };
 
 // 3. COMPONENT DEFINITION
-export const MyComponent: React.FC<MyComponentProps> = ({
-    entityId,
-    onComplete,
-    mode = 'view',
-}) => {
-    // 4. HOOKS (in this order)
-    // - Context hooks first
-    const { user } = useAuth();
-    const { showSuccess, showError } = useMuiSnackbar();
+export const MyComponent: React.FC<MyComponentProps> = ({ entityId, onComplete, mode = "view" }) => {
+  // 4. HOOKS (in this order)
+  // - Context hooks first
+  const { user } = useAuth();
+  const { showSuccess, showError } = useMuiSnackbar();
 
-    // - Data fetching
-    const { data } = useSuspenseQuery({
-        queryKey: ['myEntity', entityId],
-        queryFn: () => myFeatureApi.getEntity(entityId),
-    });
+  // - Data fetching
+  const { data } = useSuspenseQuery({
+    queryKey: ["myEntity", entityId],
+    queryFn: () => myFeatureApi.getEntity(entityId),
+  });
 
-    // - Local state
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
-    const [isEditing, setIsEditing] = useState(mode === 'edit');
+  // - Local state
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(mode === "edit");
 
-    // - Memoized values
-    const filteredData = useMemo(() => {
-        return data.filter(item => item.active);
-    }, [data]);
+  // - Memoized values
+  const filteredData = useMemo(() => {
+    return data.filter((item) => item.active);
+  }, [data]);
 
-    // - Effects
-    useEffect(() => {
-        // Setup
-        return () => {
-            // Cleanup
-        };
-    }, []);
+  // - Effects
+  useEffect(() => {
+    // Setup
+    return () => {
+      // Cleanup
+    };
+  }, []);
 
-    // 5. EVENT HANDLERS (with useCallback)
-    const handleItemSelect = useCallback((itemId: string) => {
-        setSelectedItem(itemId);
-    }, []);
+  // 5. EVENT HANDLERS (with useCallback)
+  const handleItemSelect = useCallback((itemId: string) => {
+    setSelectedItem(itemId);
+  }, []);
 
-    const handleSave = useCallback(async () => {
-        try {
-            await myFeatureApi.updateEntity(entityId, { /* data */ });
-            showSuccess('Entity updated successfully');
-            onComplete?.();
-        } catch (error) {
-            showError('Failed to update entity');
-        }
-    }, [entityId, onComplete, showSuccess, showError]);
+  const handleSave = useCallback(async () => {
+    try {
+      await myFeatureApi.updateEntity(entityId, {
+        /* data */
+      });
+      showSuccess("Entity updated successfully");
+      onComplete?.();
+    } catch (error) {
+      showError("Failed to update entity");
+    }
+  }, [entityId, onComplete, showSuccess, showError]);
 
-    // 6. RENDER
-    return (
-        <Box sx={componentStyles.container}>
-            <Box sx={componentStyles.header}>
-                <h2>My Component</h2>
-                <Button onClick={handleSave}>Save</Button>
-            </Box>
+  // 6. RENDER
+  return (
+    <Box sx={componentStyles.container}>
+      <Box sx={componentStyles.header}>
+        <h2>My Component</h2>
+        <Button onClick={handleSave}>Save</Button>
+      </Box>
 
-            <Paper sx={{ p: 2 }}>
-                {filteredData.map(item => (
-                    <div key={item.id}>{item.name}</div>
-                ))}
-            </Paper>
-        </Box>
-    );
+      <Paper sx={{ p: 2 }}>
+        {filteredData.map((item) => (
+          <div key={item.id}>{item.name}</div>
+        ))}
+      </Paper>
+    </Box>
+  );
 };
 
 // 7. EXPORT (default export at bottom)
@@ -307,6 +308,7 @@ export default MyComponent;
 ### When to Split Components
 
 **Split into multiple components when:**
+
 - Component exceeds 300 lines
 - Multiple distinct responsibilities
 - Reusable sections
@@ -317,28 +319,29 @@ export default MyComponent;
 ```typescript
 // ❌ AVOID - Monolithic
 function MassiveComponent() {
-    // 500+ lines
-    // Search logic
-    // Filter logic
-    // Grid logic
-    // Action panel logic
+  // 500+ lines
+  // Search logic
+  // Filter logic
+  // Grid logic
+  // Action panel logic
 }
 
 // ✅ PREFERRED - Modular
 function ParentContainer() {
-    return (
-        <Box>
-            <SearchAndFilter onFilter={handleFilter} />
-            <DataGrid data={filteredData} />
-            <ActionPanel onAction={handleAction} />
-        </Box>
-    );
+  return (
+    <Box>
+      <SearchAndFilter onFilter={handleFilter} />
+      <DataGrid data={filteredData} />
+      <ActionPanel onAction={handleAction} />
+    </Box>
+  );
 }
 ```
 
 ### When to Keep Together
 
 **Keep in same file when:**
+
 - Component < 200 lines
 - Tightly coupled logic
 - Not reusable elsewhere
@@ -359,6 +362,7 @@ export default MyComponent;
 ```
 
 **Why:**
+
 - Named export for testing/refactoring
 - Default export for lazy loading convenience
 - Both options available to consumers
@@ -367,9 +371,9 @@ export default MyComponent;
 
 ```typescript
 const MyComponent = React.lazy(() =>
-    import('./MyComponent').then(module => ({
-        default: module.MyComponent
-    }))
+  import("./MyComponent").then((module) => ({
+    default: module.MyComponent,
+  }))
 );
 ```
 
@@ -382,34 +386,31 @@ const MyComponent = React.lazy(() =>
 ```typescript
 // Parent
 function Parent() {
-    const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    return (
-        <Child
-            data={data}                    // Props down
-            onSelect={setSelectedId}       // Events up
-        />
-    );
+  return (
+    <Child
+      data={data} // Props down
+      onSelect={setSelectedId} // Events up
+    />
+  );
 }
 
 // Child
 interface ChildProps {
-    data: Data[];
-    onSelect: (id: string) => void;
+  data: Data[];
+  onSelect: (id: string) => void;
 }
 
 export const Child: React.FC<ChildProps> = ({ data, onSelect }) => {
-    return (
-        <div onClick={() => onSelect(data[0].id)}>
-            {/* Content */}
-        </div>
-    );
+  return <div onClick={() => onSelect(data[0].id)}>{/* Content */}</div>;
 };
 ```
 
 ### Avoid Prop Drilling
 
 **Use context for deep nesting:**
+
 ```typescript
 // ❌ AVOID - Prop drilling 5+ levels
 <A prop={x}>
@@ -445,11 +446,11 @@ function DeepChild() {
 ```typescript
 // Card.tsx
 export const Card: React.FC<CardProps> & {
-    Header: typeof CardHeader;
-    Body: typeof CardBody;
-    Footer: typeof CardFooter;
+  Header: typeof CardHeader;
+  Body: typeof CardBody;
+  Footer: typeof CardFooter;
 } = ({ children }) => {
-    return <Paper>{children}</Paper>;
+  return <Paper>{children}</Paper>;
 };
 
 Card.Header = CardHeader;
@@ -458,10 +459,10 @@ Card.Footer = CardFooter;
 
 // Usage
 <Card>
-    <Card.Header>Title</Card.Header>
-    <Card.Body>Content</Card.Body>
-    <Card.Footer>Actions</Card.Footer>
-</Card>
+  <Card.Header>Title</Card.Header>
+  <Card.Body>Content</Card.Body>
+  <Card.Footer>Actions</Card.Footer>
+</Card>;
 ```
 
 ### Render Props (Rare, but useful)
@@ -487,6 +488,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 ## Summary
 
 **Modern Component Recipe:**
+
 1. `React.FC<Props>` with TypeScript
 2. Lazy load if heavy: `React.lazy(() => import())`
 3. Wrap in `<SuspenseLoader>` for loading
@@ -497,6 +499,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 8. No early returns for loading states
 
 **See Also:**
+
 - [data-fetching.md](data-fetching.md) - useSuspenseQuery details
 - [loading-and-error-states.md](loading-and-error-states.md) - Suspense best practices
 - [complete-examples.md](complete-examples.md) - Full working examples

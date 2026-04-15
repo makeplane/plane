@@ -43,7 +43,12 @@ primary | error-fill | error-outline | secondary | tertiary | ghost | link
 **Fix:** Use `"ghost"` + a custom text-danger class, or use the `"link"` variant with a wrapper `className` for red color:
 
 ```tsx
-<Button variant="link" size="sm" onClick={handleSignOut} className="text-danger-primary hover:text-danger-primary-hover">
+<Button
+  variant="link"
+  size="sm"
+  onClick={handleSignOut}
+  className="text-danger-primary hover:text-danger-primary-hover"
+>
   <LogOut className="shrink-0 size-3.5 mr-1" />
   {t("sign_out")}
 </Button>
@@ -135,11 +140,11 @@ Minor — the project's existing convention in this file places third-party impo
 
 ## Recommended Actions
 
-| Priority | Action |
-|----------|--------|
+| Priority | Action                                                                                                                                   |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | Critical | Replace `variant="link-danger"` with a valid propel variant (e.g., `"link"` + `className` for danger color, or `"ghost"` + custom class) |
-| High | Add `.catch(() => setToast(...))` to `handleSignOut` consistent with the rest of the codebase |
-| Medium | Visual regression check on layout refactor (responsive breakpoints, `PlaneLockup` vs `PlaneLogo`, card shadow) |
+| High     | Add `.catch(() => setToast(...))` to `handleSignOut` consistent with the rest of the codebase                                            |
+| Medium   | Visual regression check on layout refactor (responsive breakpoints, `PlaneLockup` vs `PlaneLogo`, card shadow)                           |
 
 ---
 
