@@ -11,7 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
+import { Transition } from "@headlessui/react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -21,6 +22,7 @@ import {
   ConfigureJiraSelectResource,
   ConfigureJiraSelectProject,
   ConfigureJiraCustomJQL,
+  ImportEpicsConfig,
 } from "@/components/importers/jira";
 import { StepperNavigation } from "@/components/importers/ui";
 // plane web hooks
@@ -59,6 +61,7 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
     projectId: undefined,
     useCustomJql: false,
     jql: "",
+    importEpicsAsWorkItems: false,
   });
   const [isJqlValid, setIsJqlValid] = useState(true);
 
@@ -79,6 +82,7 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
     handleImporterData(currentStepKey, formData);
     handleSyncJobConfig("useCustomJql", formData.useCustomJql);
     handleSyncJobConfig("jql", formData.jql);
+    handleSyncJobConfig("importEpicsAsWorkItems", formData.importEpicsAsWorkItems);
     handleStepper("next");
   };
 
@@ -107,6 +111,20 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
             handleFormData={(value: string | undefined) => handleFormData("projectId", value)}
           />
         )}
+        <Transition
+          as={Fragment}
+          show={!!formData.projectId}
+          enter="transition-all duration-300 ease-in-out"
+          enterFrom="opacity-0 translate-y-2"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition-all duration-300 ease-in-out"
+          leaveFrom="opacity-100 translate-y-0"
+          leaveTo="opacity-0 translate-y-2"
+        >
+          <div className="pt-2">
+            <ImportEpicsConfig value={formData.importEpicsAsWorkItems || false} onFormDataUpdate={handleFormData} />
+          </div>
+        </Transition>
         <ConfigureJiraCustomJQL
           projectId={formData.projectId}
           projectKey={projectKey}

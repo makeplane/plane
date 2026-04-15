@@ -199,6 +199,92 @@ export class JiraService {
     });
   }
 
+  async getScreensForProject(projectId: number) {
+    // Step 1: Get issueTypeScreenScheme for project
+    const issueTypeScreenSchemeResponse =
+      await this.jiraClient.issueTypeScreenSchemes.getIssueTypeScreenSchemeProjectAssociations({
+        projectId: [projectId],
+      });
+
+    const issueTypeScreenSchemeIds = (issueTypeScreenSchemeResponse.values ?? [])
+      .map((v) => Number(v.issueTypeScreenScheme?.id))
+      .filter((id) => !isNaN(id));
+
+    if (issueTypeScreenSchemeIds.length === 0) return [];
+
+    // Step 2: Get screenScheme mappings from issueTypeScreenSchemes
+    const schemeMappings = await this.jiraClient.issueTypeScreenSchemes.getIssueTypeScreenSchemeMappings({
+      issueTypeScreenSchemeId: issueTypeScreenSchemeIds,
+    });
+
+    const screenSchemeIds = [
+      ...new Set((schemeMappings.values ?? []).map((item) => Number(item.screenSchemeId)).filter((id) => !isNaN(id))),
+    ];
+
+    if (screenSchemeIds.length === 0) return [];
+
+    // Step 3: Get screenSchemes to extract actual screen IDs
+    // Fetch one at a time — Jira Cloud serializes id[] as comma-separated
+    // which causes a 400 on /rest/api/3/screenscheme
+    const screenIds = new Set<number>();
+    for (const schemeId of screenSchemeIds) {
+      const screenSchemesResponse = await this.jiraClient.screenSchemes.getScreenSchemes({
+        id: [schemeId],
+      });
+      for (const scheme of screenSchemesResponse.values ?? []) {
+        const screens = scheme.screens;
+        if (screens?.default) screenIds.add(screens.default);
+        if (screens?.create) screenIds.add(screens.create);
+        if (screens?.edit) screenIds.add(screens.edit);
+        if (screens?.view) screenIds.add(screens.view);
+      }
+    }
+
+    if (screenIds.size === 0) return [];
+
+    // Step 4: Get actual screens (same issue — fetch individually)
+    const allScreens = [];
+    for (const screenId of screenIds) {
+      const screensResponse = await this.jiraClient.screens.getScreens({
+        id: [screenId],
+      });
+      allScreens.push(...(screensResponse.values ?? []));
+    }
+
+    return allScreens;
+  }
+
+  async getScreenCustomFields(projectId: number): Promise<FieldDetails[]> {
+    const screens = await this.getScreensForProject(projectId);
+    const customFieldIds = new Set<string>();
+
+    for (const screen of screens) {
+      if (!screen.id) continue;
+
+      const tabs = await this.jiraClient.screenTabs.getAllScreenTabs({
+        screenId: screen.id,
+      });
+
+      for (const tab of tabs) {
+        if (tab.id === undefined) continue;
+
+        const fields = await this.jiraClient.screenTabFields.getAllScreenTabFields({
+          screenId: screen.id,
+          tabId: tab.id,
+        });
+
+        for (const field of fields) {
+          if (field.id?.startsWith("customfield_")) {
+            customFieldIds.add(field.id);
+          }
+        }
+      }
+    }
+
+    const allFields: FieldDetails[] = await this.jiraClient.issueFields.getFields();
+    return allFields.filter((field) => field.id && customFieldIds.has(field.id));
+  }
+
   async getCustomFields() {
     const fields: FieldDetails[] = await this.jiraClient.issueFields.getFields();
     const customFields: FieldDetails[] = fields.filter((field) => field.schema?.custom);

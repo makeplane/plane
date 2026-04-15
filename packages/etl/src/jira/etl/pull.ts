@@ -20,6 +20,7 @@ import type {
   IssueTypeToContextMapping,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models/index.js";
+import { isAxiosError } from "axios";
 import Papa from "papaparse";
 import type { JiraService } from "@/jira/services";
 import type {

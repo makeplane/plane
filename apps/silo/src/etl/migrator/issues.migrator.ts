@@ -1259,6 +1259,7 @@ const generatePropertyValuesPayload = (
       return propertyValues
         .map((value) => {
           const release = planeReleases?.get(value.value);
+          console.log(planeReleases);
           if (!release) {
             logger.warn(`Release ${value.value} not found`);
           }

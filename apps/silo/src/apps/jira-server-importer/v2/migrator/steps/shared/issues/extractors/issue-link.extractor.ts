@@ -49,12 +49,12 @@ export class JiraIssueLinkExtractor {
   issueKeyCache: Map<string, string> = new Map();
 
   constructor(
-    private readonly jiraClient: JiraV2Service,
-    private readonly projectId: string,
-    private readonly resourceId: string,
-    private readonly knownCustomFieldMapping: TKnownFieldMapping[],
-    private readonly epicsAsWorkItems: boolean,
-    private readonly jiraProjectKey: string
+    protected readonly jiraClient: JiraV2Service,
+    protected readonly projectId: string,
+    protected readonly resourceId: string,
+    protected readonly knownCustomFieldMapping: TKnownFieldMapping[],
+    protected readonly epicsAsWorkItems: boolean,
+    protected readonly jiraProjectKey: string
   ) {}
 
   /**
@@ -367,7 +367,7 @@ export class JiraIssueLinkExtractor {
    * Resolves the internal Jira ID for an issue given its key (e.g., PROJ-123)
    * Uses a cache to avoid redundant API calls
    */
-  private async resolveIssueId(issueKeyToResolve: string, issueKey: string): Promise<string | undefined> {
+  protected async resolveIssueId(issueKeyToResolve: string, issueKey: string): Promise<string | undefined> {
     // 1. Check if the ID is already in our cache
     if (this.issueKeyCache.has(issueKeyToResolve)) {
       return this.issueKeyCache.get(issueKeyToResolve);

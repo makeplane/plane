@@ -86,13 +86,14 @@ export class JiraIssueDataExtractor {
     const sprintExtractor = this.getSprintExtractor(projectId, resourceId);
     const componentExtractor = this.getComponentExtractor(projectId, resourceId);
     const worklogExtractor = this.getWorklogExtractor();
-    const linkExtractor = this.getLinkExtractor(
+    const linkExtractor = await this.getLinkExtractor(
       sourceClient,
       projectId,
       resourceId,
       additionalData.knownCustomFieldMapping,
       epicsAsWorkItems,
-      jiraProjectKey
+      jiraProjectKey,
+      job
     );
     const subscribersExtractor = this.getSubscribersExtractor();
 
@@ -215,14 +216,15 @@ export class JiraIssueDataExtractor {
     return new JiraWorklogExtractor();
   }
 
-  protected getLinkExtractor(
+  protected async getLinkExtractor(
     sourceClient: JiraV2Service,
     projectId: string,
     resourceId: string,
     knownCustomFieldMapping: TKnownFieldMapping[],
     epicsAsWorkItems: boolean,
-    jiraProjectKey: string
-  ): JiraIssueLinkExtractor {
+    jiraProjectKey: string,
+    _job: TImportJob<JiraConfig>
+  ): Promise<JiraIssueLinkExtractor> {
     return new JiraIssueLinkExtractor(
       sourceClient,
       projectId,

@@ -47,6 +47,7 @@ export type TImporterDataPayload = {
     projectId: string | undefined;
     useCustomJql?: boolean;
     jql?: string;
+    importEpicsAsWorkItems?: boolean;
   };
   [E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA]: {
     userSkipToggle: boolean;

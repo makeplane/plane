@@ -29,14 +29,7 @@ export class JiraCloudSprintExtractor extends JiraSprintExtractor {
     const isSprintField = (
       value: any
     ): value is { boardId: string; id: string; name: string; startDate: string; endDate: string; state: string }[] =>
-      Array.isArray(value) &&
-      value.length > 0 &&
-      value[0].boardId &&
-      value[0].id &&
-      value[0].name &&
-      value[0].startDate &&
-      value[0].endDate &&
-      value[0].state;
+      Array.isArray(value) && value.length > 0 && value[0].boardId && value[0].id && value[0].name && value[0].state;
 
     for (const [fieldKey, fieldValue] of Object.entries(issue.fields)) {
       if (!fieldKey.startsWith("customfield_")) continue;

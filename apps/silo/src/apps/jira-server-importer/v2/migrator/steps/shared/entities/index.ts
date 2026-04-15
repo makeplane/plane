@@ -18,3 +18,5 @@ export * from "./issue-types.step";
 export * from "./modules.step";
 export * from "./users.step";
 export * from "./states.step";
+export * from "./releases.step";
+export * from "./resolutions.step";
