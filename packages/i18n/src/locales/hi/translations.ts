@@ -280,6 +280,10 @@ export default {
   comments_description: "जब कोई कार्य आइटम पर टिप्पणी करे, तो मुझे सूचित करें।",
   mentions: "मेंशन",
   mentions_description: "केवल तब सूचित करें जब कोई टिप्पणी या विवरण में मुझे मेंशन करे।",
+  old_password: "पुराना पासवर्ड",
+  general_settings: "सामान्य सेटिंग",
+  sign_out: "साइन आउट",
+  signing_out: "साइन आउट हो रहा है",
   work_items: {
     create: "कार्य आइटम बनाएं",
     creating: "कार्य आइटम बना रहे हैं",
