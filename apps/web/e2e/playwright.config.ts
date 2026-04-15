@@ -36,6 +36,12 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: AUTH_STATE,
+        // localhost が IPv6 ::1 に解決されて別プロセスに当たる環境では
+        // Chromium の DNS オーバーライドで IPv4 に強制する。
+        // cookie domain は localhost のままで変更不要。
+        launchOptions: {
+          args: ["--host-resolver-rules=MAP localhost 127.0.0.1"],
+        },
       },
     },
   ],

@@ -1,7 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { env } from "../fixtures/env";
 
-const HANDLE_OFFSET_X = 12; // block 右端から 12px 外側(6〜18px の中央)
 const DRAG_STEPS = 20;
 
 export class TimelinePage {
@@ -47,21 +46,39 @@ export class TimelinePage {
   }
 
   private async startDragFromEdge(issueId: string, edge: "left" | "right"): Promise<void> {
-    const block = this.block(issueId);
-    // hover で isBlockActive=true にする(ハンドル opacity 0 → 1)
-    await block.hover();
-    // CSS transition-opacity duration-75 が完了するのを待つ(ハンドルが確実に可視になる)
-    await this.page.waitForTimeout(100);
-    const box = await block.boundingBox();
-    if (!box) {
-      throw new Error(`block ${issueId} has no bounding box (off-screen or zero-sized)`);
-    }
+    // ハンドルの aria-label で特定する。
+    // right handle: "Drag to create dependency from this work item"
+    // left  handle: "Drag to create dependency blocking this work item"
+    const ariaLabel =
+      edge === "right"
+        ? "Drag to create dependency from this work item"
+        : "Drag to create dependency blocking this work item";
 
-    // ハンドルは block の外側 12px
-    const x = edge === "right" ? box.x + box.width + HANDLE_OFFSET_X : box.x - HANDLE_OFFSET_X;
-    const y = box.y + box.height / 2;
-    await this.page.mouse.move(x, y);
-    await this.page.mouse.down();
+    const blockEl = this.block(issueId);
+    const handle = blockEl.locator(`[aria-label="${ariaLabel}"]`);
+
+    // ハンドルは isBlockActive=false のとき pointer-events:none / opacity:0。
+    // locator.dispatchEvent はポインターイベント制限をバイパスして直接 onMouseDown を発火できる。
+    // これにより store.beginDependencyDrag が呼ばれ、document の mousemove/mouseup リスナが登録される。
+    //
+    // clientX/Y: ハンドルの中央座標を渡す(store の initialPoint に使われる)。
+    const handleBox = await handle.evaluate((el: Element) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    });
+
+    await handle.dispatchEvent("mousedown", {
+      button: 0,
+      buttons: 1,
+      clientX: handleBox.x,
+      clientY: handleBox.y,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    // dispatchEvent 後にポインタを handle の中央に移動し、
+    // document の mousemove リスナが dragPoint を更新できるようにする。
+    await this.page.mouse.move(handleBox.x, handleBox.y);
   }
 
   private async dropOnEdge(issueId: string, edge: "left" | "right", options: { shiftKey?: boolean }): Promise<void> {

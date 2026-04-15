@@ -11,7 +11,8 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  api: async (_fixtures, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  api: async ({}, use) => {
     const api = await createApi();
     await use(api);
     await api.dispose();
