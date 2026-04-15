@@ -3476,6 +3476,7 @@ export default {
   },
   ho: {
     all_workspaces: "All workspaces",
+    all_departments: "All departments",
     all_projects: "All projects",
     select_workspace_first: "Select a workspace first",
     display: "Display",

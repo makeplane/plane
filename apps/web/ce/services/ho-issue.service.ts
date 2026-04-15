@@ -40,6 +40,7 @@ export type THoIssueListResponse = {
 };
 
 export type THoCategorySummary = {
+  department_id: string;
   department_name: string;
   main_task_category_name: string | null;
   main_task_category_description: string | null;
@@ -57,6 +58,7 @@ export type THoAccessibleWorkspace = {
   name: string;
   slug: string;
   logo_url: string | null;
+  department_id: string;
   department_name: string;
   projects: THoWorkspaceProject[];
 };

@@ -18,7 +18,7 @@ export function HoCategoryRow({ rowIndex, row, isNewDeptGroup, isScrolled = fals
 
   return (
     <tr
-      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group min-h-11")}
+      className={cn(rowBorder, "odd:bg-surface-1 even:bg-surface-2 hover:bg-layer-2/50 transition-colors group h-11")}
     >
       <td
         className={cn(

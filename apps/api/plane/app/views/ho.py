@@ -50,6 +50,46 @@ def _get_all_descendant_dept_ids(dept_id):
     return result
 
 
+def _get_accessible_dept_ids(user):
+    """Return department IDs accessible to the user in HO context.
+
+    - Instance admin: all departments.
+    - Dept manager: own department + all descendants.
+    - Regular member: departments linked to joined workspaces + all ancestors.
+    """
+    if _is_instance_admin(user):
+        return list(Department.objects.filter(deleted_at__isnull=True).values_list("id", flat=True))
+
+    managed_dept_ids_qs = StaffProfile.objects.filter(
+        user=user,
+        is_department_manager=True,
+        deleted_at__isnull=True,
+    ).values_list("department_id", flat=True)
+
+    if managed_dept_ids_qs.exists():
+        dept_ids = []
+        for dept_id in managed_dept_ids_qs:
+            if dept_id:
+                dept_ids.extend(_get_all_descendant_dept_ids(dept_id))
+        return list(set(dept_ids))
+
+    # Regular member: departments linked to joined workspaces + all ancestors
+    member_ws_ids = WorkspaceMember.objects.filter(
+        member=user, deleted_at__isnull=True
+    ).values_list("workspace_id", flat=True)
+    depts = Department.objects.filter(
+        linked_workspace_id__in=member_ws_ids,
+        deleted_at__isnull=True,
+    ).select_related("parent__parent__parent__parent__parent")
+    dept_ids: set = set()
+    for dept in depts:
+        current = dept
+        while current is not None:
+            dept_ids.add(current.id)
+            current = current.parent
+    return list(dept_ids)
+
+
 def get_accessible_workspace_ids(user):
     """Return workspace IDs the user can access in HO context.
 
@@ -184,14 +224,14 @@ class HoIssueListView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Optional workspace filter
-        workspace_slug = request.query_params.get("workspace_slug")
-        if workspace_slug:
-            ws = Workspace.objects.filter(slug=workspace_slug, id__in=workspace_ids).first()
+        # Optional department filter: narrow to workspace linked to that department
+        department_id = request.query_params.get("department_id")
+        if department_id:
+            ws = Workspace.objects.filter(linked_department_id=department_id, id__in=workspace_ids).first()
             if ws:
                 workspace_ids = [ws.id]
             else:
-                return Response({"detail": "Workspace not found."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Optional project filter — validate UUIDs and enforce workspace boundary
         project_ids_param = request.query_params.get("project_id")
@@ -331,56 +371,10 @@ class HoCategorySummaryView(BaseAPIView):
     def get(self, request):
         # Build accessible department IDs directly — do NOT go through workspace_ids,
         # because departments (e.g. Head Office) may have no linked_workspace.
-        if _is_instance_admin(request.user):
-            # Instance admin sees all departments
-            accessible_dept_ids = list(
-                Department.objects.filter(deleted_at__isnull=True).values_list("id", flat=True)
-            )
-        else:
-            managed_dept_ids_qs = StaffProfile.objects.filter(
-                user=request.user,
-                is_department_manager=True,
-                deleted_at__isnull=True,
-            ).values_list("department_id", flat=True)
-
-            if managed_dept_ids_qs.exists():
-                # Dept manager: own department + all descendants (incl. depts without workspace)
-                dept_ids = []
-                for dept_id in managed_dept_ids_qs:
-                    if dept_id:
-                        dept_ids.extend(_get_all_descendant_dept_ids(dept_id))
-                accessible_dept_ids = list(set(dept_ids))
-            else:
-                # Regular member: departments linked to joined workspaces + all ancestors
-                member_ws_ids = WorkspaceMember.objects.filter(
-                    member=request.user, deleted_at__isnull=True
-                ).values_list("workspace_id", flat=True)
-                depts = Department.objects.filter(
-                    linked_workspace_id__in=member_ws_ids,
-                    deleted_at__isnull=True,
-                ).select_related("parent__parent__parent__parent__parent")
-                dept_ids: set = set()
-                for dept in depts:
-                    current = dept
-                    while current is not None:
-                        dept_ids.add(current.id)
-                        current = current.parent
-                accessible_dept_ids = list(dept_ids)
+        accessible_dept_ids = _get_accessible_dept_ids(request.user)
 
         if not accessible_dept_ids:
             return Response([], status=status.HTTP_200_OK)
-
-        # Optional workspace_slug filter: narrow to the single dept linked to that workspace
-        workspace_slug = request.query_params.get("workspace_slug")
-        if workspace_slug:
-            dept = Department.objects.filter(
-                linked_workspace__slug=workspace_slug,
-                deleted_at__isnull=True,
-            ).first()
-            if dept and dept.id in accessible_dept_ids:
-                accessible_dept_ids = [dept.id]
-            else:
-                return Response({"detail": "Workspace not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Fetch task categories linked to accessible departments
         dept_cat_qs = (
@@ -423,6 +417,7 @@ class HoCategorySummaryView(BaseAPIView):
             if subs:
                 for sub in subs:
                     result.append({
+                        "department_id": str(dept_cat.department.id),
                         "department_name": dept_cat.department.name,
                         "main_task_category_name": main_cat.name,
                         "main_task_category_description": main_cat.description or None,
@@ -431,6 +426,7 @@ class HoCategorySummaryView(BaseAPIView):
             elif not sub_task_category_filter:
                 # Show main-only row when no sub-category filter is active
                 result.append({
+                    "department_id": str(dept_cat.department.id),
                     "department_name": dept_cat.department.name,
                     "main_task_category_name": main_cat.name,
                     "main_task_category_description": main_cat.description or None,
@@ -448,10 +444,10 @@ class HoFilterOptionsView(BaseAPIView):
         if not workspace_ids:
             return Response({}, status=status.HTTP_200_OK)
 
-        # Optional workspace/project filters to narrow down options
-        workspace_slug = request.query_params.get("workspace_slug")
-        if workspace_slug:
-            ws = Workspace.objects.filter(slug=workspace_slug, id__in=workspace_ids).first()
+        # Optional department/project filters to narrow down options
+        department_id = request.query_params.get("department_id")
+        if department_id:
+            ws = Workspace.objects.filter(linked_department_id=department_id, id__in=workspace_ids).first()
             if ws:
                 workspace_ids = [ws.id]
 
@@ -668,6 +664,7 @@ class HoAccessibleWorkspacesView(BaseAPIView):
                     "name": ws.name,
                     "slug": ws.slug,
                     "logo_url": ws.logo_url,  # Use @property, not raw ws.logo (resolves logo_asset for modern uploads)
+                    "department_id": str(ws.linked_department.id),
                     "department_name": ws.linked_department.name,
                     "projects": [
                         {"id": str(p["id"]), "name": p["name"], "identifier": p["identifier"]} for p in projects
@@ -676,3 +673,5 @@ class HoAccessibleWorkspacesView(BaseAPIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
+
+
