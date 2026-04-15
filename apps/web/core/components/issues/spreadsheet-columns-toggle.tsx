@@ -71,6 +71,7 @@ export const SpreadsheetColumnsToggle = observer(function SpreadsheetColumnsTogg
 
   // Build filtered built-in properties list
   const builtInProperties = SPREADSHEET_PROPERTY_LIST.filter((key) => {
+    if (isEpic && (key === "cycle" || key === "modules")) return false;
     if (key === "cycle" && !isWorkspaceLevel && !currentProjectDetails?.cycle_view) return false;
     if (key === "modules" && !isWorkspaceLevel && !currentProjectDetails?.module_view) return false;
     if (key === "estimate" && !isEstimateEnabled) return false;

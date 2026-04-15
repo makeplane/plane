@@ -95,11 +95,12 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
       isWorkspaceLevel
         ? SPREADSHEET_PROPERTY_LIST
         : SPREADSHEET_PROPERTY_LIST.filter((property) => {
+            if (isEpic && (property === "cycle" || property === "modules")) return false;
             if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
             if (property === "modules" && !currentProjectDetails?.module_view) return false;
             return true;
           }),
-    [isWorkspaceLevel, currentProjectDetails?.cycle_view, currentProjectDetails?.module_view]
+    [isWorkspaceLevel, isEpic, currentProjectDetails?.cycle_view, currentProjectDetails?.module_view]
   );
 
   // Combine built-in and custom property columns
